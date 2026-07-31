@@ -79,6 +79,7 @@ export default defineObject({
 * `universalIdentifier` trebuie să fie unic și stabil între implementări.
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
+* `openRecordIn` stabilește unde se deschid înregistrările acestui obiect când se face clic pe ele: `ObjectOpenRecordIn.USER_CHOICE` (valoarea implicită, care respectă preferința fiecărui membru al spațiului de lucru din Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` sau `ObjectOpenRecordIn.RECORD_PAGE`. Fixează-l la `RECORD_PAGE` pentru înregistrările care au nevoie de o pagină completă pentru a fi utilizabile, așa cum este cazul fluxurilor de lucru și al dashboard-urilor, sau la `SIDE_PANEL` pentru înregistrările care au sens doar ca un panou rapid, așa cum este cazul evenimentelor din calendar.
 * Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
 * Puteți genera obiecte noi cu `yarn twenty dev:add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
 

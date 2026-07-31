@@ -411,6 +411,8 @@ export class WorkspaceService {
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,
       });
+
+      await this.enqueuePreInstalledAppsInstallation(workspace.id);
     } catch (error) {
       await this.workspaceRepository.update(workspace.id, {
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
@@ -629,6 +631,9 @@ export class WorkspaceService {
   private async deleteWorkspaceSyncableMetadataEntities(
     workspace: WorkspaceEntity,
   ): Promise<void> {
+    const fieldMetadataIdChunks = await this.getFieldMetadataIdChunks(
+      workspace.id,
+    );
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -641,6 +646,7 @@ export class WorkspaceService {
           const deletedCount = await this.deleteFieldMetadataInChunks(
             queryRunner,
             workspace.id,
+            fieldMetadataIdChunks,
           );
 
           if (deletedCount > 0) {
@@ -677,12 +683,10 @@ export class WorkspaceService {
 
   // FieldMetadataEntity has a self-referencing FK (relationTargetFieldMetadataId)
   // Related fields must be deleted together to avoid constraint violations
-  private async deleteFieldMetadataInChunks(
-    queryRunner: QueryRunner,
+  private async getFieldMetadataIdChunks(
     workspaceId: string,
-  ): Promise<number> {
+  ): Promise<string[][]> {
     const CHUNK_SIZE = 50;
-    let totalDeleted = 0;
 
     const { flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -697,7 +701,7 @@ export class WorkspaceService {
     ).filter(isDefined);
 
     if (fields.length === 0) {
-      return 0;
+      return [];
     }
 
     const processedIds = new Set<string>();
@@ -732,7 +736,17 @@ export class WorkspaceService {
       chunks.push(currentChunk);
     }
 
-    for (const [index, chunk] of chunks.entries()) {
+    return chunks;
+  }
+
+  private async deleteFieldMetadataInChunks(
+    queryRunner: QueryRunner,
+    workspaceId: string,
+    fieldMetadataIdChunks: string[][],
+  ): Promise<number> {
+    let totalDeleted = 0;
+
+    for (const [index, chunk] of fieldMetadataIdChunks.entries()) {
       const result = await queryRunner.manager
         .createQueryBuilder()
         .delete()
@@ -745,7 +759,7 @@ export class WorkspaceService {
       totalDeleted += deletedInChunk;
 
       this.logger.log(
-        `workspace ${workspaceId}: fieldMetadata chunk ${index + 1}/${chunks.length} - deleted ${deletedInChunk} record(s)`,
+        `workspace ${workspaceId}: fieldMetadata chunk ${index + 1}/${fieldMetadataIdChunks.length} - deleted ${deletedInChunk} record(s)`,
       );
     }
 
@@ -952,12 +966,16 @@ export class WorkspaceService {
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);
     }
+  }
 
+  private async enqueuePreInstalledAppsInstallation(
+    workspaceId: string,
+  ): Promise<void> {
     try {
-      await this.preInstalledAppsService.installOnWorkspace(workspaceId);
+      await this.preInstalledAppsService.enqueueInstallOnWorkspace(workspaceId);
     } catch (error) {
       this.logger.error(
-        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
+        `Non-critical: failed to enqueue pre-installed apps installation for workspace ${workspaceId}`,
         error,
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);

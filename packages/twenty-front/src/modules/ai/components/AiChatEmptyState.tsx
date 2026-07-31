@@ -6,6 +6,8 @@ import { AiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AiChat
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -32,6 +34,14 @@ export const AiChatEmptyState = ({ editor }: AiChatEmptyStateProps) => {
     agentChatErrorComponentFamilyState,
     { threadId: currentAiChatThread },
   );
+  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingFirstChunkComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
+    agentChatIsStreamingComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
   const agentChatThreadsLoading = useAtomStateValue(
     agentChatThreadsLoadingState,
   );
@@ -54,7 +64,12 @@ export const AiChatEmptyState = ({ editor }: AiChatEmptyStateProps) => {
     (agentChatThreadsLoading && isOnNewChatSlot) ||
     (agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded);
   const shouldRender =
-    !isMobile && !hasMessages && !isDefined(agentChatError) && !skeletonShowing;
+    !isMobile &&
+    !hasMessages &&
+    !isDefined(agentChatError) &&
+    !skeletonShowing &&
+    !agentChatIsAwaitingFirstChunk &&
+    !agentChatIsStreaming;
 
   if (!shouldRender) {
     return null;

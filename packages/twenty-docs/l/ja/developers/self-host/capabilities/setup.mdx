@@ -272,9 +272,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. **メール** セクションを見つけます
 3. SMTP設定を構成:
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   [アプリパスワード](https://support.google.com/accounts/answer/185833)を準備する必要があります。
   * EMAIL_DRIVER=smtp
@@ -283,9 +283,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=gmail_email_address
   * EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   2FAを有効にしている場合、[アプリパスワード](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)を準備する必要があります。
   * EMAIL_DRIVER=smtp
@@ -294,9 +294,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=office365_email_address
   * EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev** は開発とテストのためのフェイクSMTPメールサーバーです。
   * smtp4devイメージを実行: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -306,9 +306,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。

@@ -57,6 +57,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_LAYOUT_PAGE_LAYOUTS:
     '/developers/extend/apps/layout/page-layouts',
   DEVELOPERS_EXTEND_APPS_LAYOUT_VIEWS: '/developers/extend/apps/layout/views',
+  DEVELOPERS_EXTEND_APPS_LOGIC_BACKGROUND_JOBS:
+    '/developers/extend/apps/logic/background-jobs',
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:

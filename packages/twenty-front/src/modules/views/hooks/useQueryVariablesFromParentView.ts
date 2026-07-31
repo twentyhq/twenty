@@ -27,11 +27,16 @@ export const useQueryVariablesFromParentView = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const parentView =
+    contextStoreRecordShowParentView?.parentViewObjectNameSingular ===
+    objectMetadataItem.nameSingular
+      ? contextStoreRecordShowParentView
+      : undefined;
+
   const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
-    recordFilterGroups:
-      contextStoreRecordShowParentView?.parentViewFilterGroups ?? [],
-    recordFilters: contextStoreRecordShowParentView?.parentViewFilters ?? [],
-    recordSorts: contextStoreRecordShowParentView?.parentViewSorts ?? [],
+    recordFilterGroups: parentView?.parentViewFilterGroups ?? [],
+    recordFilters: parentView?.parentViewFilters ?? [],
+    recordSorts: parentView?.parentViewSorts ?? [],
     objectMetadataItem,
     objectMetadataItems,
     fieldMetadataItems: flattenedFieldMetadataItems,
@@ -39,7 +44,7 @@ export const useQueryVariablesFromParentView = ({
   });
 
   const isSoftDeleteFilterActive =
-    contextStoreRecordShowParentView?.parentViewFilters.some((recordFilter) =>
+    parentView?.parentViewFilters.some((recordFilter) =>
       isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
     ) ?? false;
 

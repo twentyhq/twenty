@@ -34,8 +34,6 @@ import {
   IconCalendarWeek,
   IconChevronLeft,
   IconLayoutList,
-  IconLayoutNavbar,
-  IconLayoutSidebarRight,
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
@@ -43,7 +41,6 @@ import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
 import {
   FeatureFlagKey,
   ViewCalendarLayout,
-  ViewOpenRecordIn,
 } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -84,12 +81,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const calendarFieldMetadata = currentView?.calendarFieldMetadataId
     ? objectMetadataItem.fields.find(
         (field) => field.id === currentView.calendarFieldMetadataId,
-      )
-    : undefined;
-
-  const calendarEndFieldMetadata = currentView?.calendarEndFieldMetadataId
-    ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarEndFieldMetadataId,
       )
     : undefined;
 
@@ -135,13 +126,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ViewType.TABLE,
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
-    ViewOpenRecordIn.SIDE_PANEL,
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
     ...(currentView?.type === ViewType.CALENDAR
       ? [
           'CalendarView',
-          'CalendarDateField',
-          ...(isCalendarWeekViewEnabled ? ['CalendarEndDateField'] : []),
+          isCalendarWeekViewEnabled
+            ? 'CalendarDateFields'
+            : 'CalendarDateField',
         ]
       : []),
     ...(currentView?.type !== ViewType.TABLE ? ['Compact view'] : []),
@@ -237,33 +228,32 @@ export const ObjectOptionsDropdownLayoutContent = () => {
           <DropdownMenuItemsContainer scrollable={false}>
             {currentView?.type === ViewType.CALENDAR && (
               <>
-                <SelectableListItem
-                  itemId="CalendarDateField"
-                  onEnter={() => onContentChange('calendarFields')}
-                >
-                  <MenuItem
-                    focused={selectedItemId === 'CalendarDateField'}
-                    onClick={() => onContentChange('calendarFields')}
-                    LeftIcon={IconCalendar}
-                    text={t`Date field`}
-                    contextualText={calendarFieldMetadata?.label}
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
-                </SelectableListItem>
-                {isCalendarWeekViewEnabled && (
+                {isCalendarWeekViewEnabled ? (
                   <SelectableListItem
-                    itemId="CalendarEndDateField"
-                    onEnter={() => onContentChange('calendarEndFields')}
+                    itemId="CalendarDateFields"
+                    onEnter={() => onContentChange('calendarDateFields')}
                   >
                     <MenuItem
-                      focused={selectedItemId === 'CalendarEndDateField'}
-                      onClick={() => onContentChange('calendarEndFields')}
+                      focused={selectedItemId === 'CalendarDateFields'}
+                      onClick={() => onContentChange('calendarDateFields')}
                       LeftIcon={IconCalendar}
-                      text={t`End date field`}
-                      contextualText={
-                        calendarEndFieldMetadata?.label ?? t`None`
-                      }
+                      text={t`Date fields`}
+                      contextualText={calendarFieldMetadata?.label}
+                      contextualTextPosition="right"
+                      hasSubMenu
+                    />
+                  </SelectableListItem>
+                ) : (
+                  <SelectableListItem
+                    itemId="CalendarDateField"
+                    onEnter={() => onContentChange('calendarFields')}
+                  >
+                    <MenuItem
+                      focused={selectedItemId === 'CalendarDateField'}
+                      onClick={() => onContentChange('calendarFields')}
+                      LeftIcon={IconCalendar}
+                      text={t`Date field`}
+                      contextualText={calendarFieldMetadata?.label}
                       contextualTextPosition="right"
                       hasSubMenu
                     />
@@ -291,32 +281,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 </SelectableListItem>
               </>
             )}
-            <SelectableListItem
-              itemId={ViewOpenRecordIn.SIDE_PANEL}
-              onEnter={() => {
-                onContentChange('layoutOpenIn');
-              }}
-            >
-              <MenuItem
-                focused={selectedItemId === ViewOpenRecordIn.SIDE_PANEL}
-                LeftIcon={
-                  currentView?.openRecordIn === ViewOpenRecordIn.SIDE_PANEL
-                    ? IconLayoutSidebarRight
-                    : IconLayoutNavbar
-                }
-                text={t`Open in`}
-                onClick={() => {
-                  onContentChange('layoutOpenIn');
-                }}
-                contextualText={
-                  currentView?.openRecordIn === ViewOpenRecordIn.SIDE_PANEL
-                    ? t`Side Panel`
-                    : t`Record Page`
-                }
-                contextualTextPosition="right"
-                hasSubMenu
-              />
-            </SelectableListItem>
             {currentView?.type === ViewType.KANBAN && (
               <SelectableListItem
                 itemId="Group"

@@ -20,9 +20,11 @@ import {
   ConfigurableModuleClass,
   type OPTIONS_TYPE,
 } from 'src/engine/core-modules/message-queue/message-queue.module-definition';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 
 @Global()
 @Module({})
@@ -43,13 +45,20 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     return {
       ...dynamicModule,
+      imports: [
+        ...(dynamicModule.imports ?? []),
+        MetricsModule,
+        ThrottlerModule,
+      ],
       providers: [
         ...(dynamicModule.providers ?? []),
+        ApplicationJobEnqueueThrottlerService,
         driverProvider,
         ...queueProviders,
       ],
       exports: [
         ...(dynamicModule.exports ?? []),
+        ApplicationJobEnqueueThrottlerService,
         ...Object.values(MessageQueue).map((queueName) =>
           getQueueToken(queueName),
         ),
@@ -78,14 +87,20 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     return {
       ...dynamicModule,
-      imports: [...(dynamicModule.imports ?? []), MetricsModule],
+      imports: [
+        ...(dynamicModule.imports ?? []),
+        MetricsModule,
+        ThrottlerModule,
+      ],
       providers: [
         ...(dynamicModule.providers ?? []),
+        ApplicationJobEnqueueThrottlerService,
         driverProvider,
         ...queueProviders,
       ],
       exports: [
         ...(dynamicModule.exports ?? []),
+        ApplicationJobEnqueueThrottlerService,
         ...Object.values(MessageQueue).map((queueName) =>
           getQueueToken(queueName),
         ),
