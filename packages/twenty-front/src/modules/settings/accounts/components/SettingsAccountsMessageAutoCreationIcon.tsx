@@ -50,13 +50,13 @@ export const SettingsAccountsMessageAutoCreationIcon = ({
       <StyledDirectionSkeleton isActive={isSentActive}>
         <IconArrowUp
           size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
+          stroke={theme.icon.stroke.md}
         />
       </StyledDirectionSkeleton>
       <StyledDirectionSkeleton isActive={isReceivedActive}>
         <IconArrowDown
           size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
+          stroke={theme.icon.stroke.md}
         />
       </StyledDirectionSkeleton>
     </StyledIconContainer>
