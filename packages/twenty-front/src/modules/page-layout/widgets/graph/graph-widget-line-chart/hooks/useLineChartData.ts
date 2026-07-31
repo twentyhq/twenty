@@ -37,7 +37,9 @@ export const useLineChartData = ({
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
-        fallbackIndex: colorIndexByKey.get(series.key) ?? index,
+        fallbackIndex: shouldApplyGradient
+          ? index
+          : colorIndexByKey.get(series.key),
         totalGroups: shouldApplyGradient ? data.length : undefined,
       });
 

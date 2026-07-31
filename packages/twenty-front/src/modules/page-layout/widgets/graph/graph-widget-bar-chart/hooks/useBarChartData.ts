@@ -46,7 +46,7 @@ export const useBarChartData = ({
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: seriesConfig?.color,
-        fallbackIndex: colorIndexByKey.get(key) ?? index,
+        fallbackIndex: shouldApplyGradient ? index : colorIndexByKey.get(key),
         totalGroups: shouldApplyGradient ? keys.length : undefined,
       });
 

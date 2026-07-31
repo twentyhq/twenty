@@ -294,6 +294,46 @@ describe('useLineChartData', () => {
     );
   });
 
+  it('should keep gradient shades positional when series order changes in explicitSingleColor mode', () => {
+    const series = (key: string): LineChartSeriesWithColor => ({
+      key,
+      label: key,
+      data: [{ x: 'Jan', y: 100 }],
+      color: 'red',
+    });
+
+    const { result: firstOrderResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('won'), series('open'), series('lost')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'explicitSingleColor',
+      }),
+    );
+
+    const { result: reorderedResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('lost'), series('won'), series('open')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'explicitSingleColor',
+      }),
+    );
+
+    const shadesByPosition = (
+      enrichedSeries: { colorScheme: { solid: string } }[],
+    ) => enrichedSeries.map((item) => item.colorScheme.solid);
+
+    const firstOrderShades = shadesByPosition(
+      firstOrderResult.current.enrichedSeries,
+    );
+
+    expect(new Set(firstOrderShades).size).toBe(firstOrderShades.length);
+    expect(shadesByPosition(reorderedResult.current.enrichedSeries)).toEqual(
+      firstOrderShades,
+    );
+  });
+
   it('should handle hidden ids that do not exist in data', () => {
     mockUseAtomComponentStateValue.mockReturnValue([
       'nonexistent',

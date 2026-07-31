@@ -37,7 +37,9 @@ export const usePieChartData = ({
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: item.color,
-        fallbackIndex: colorIndexByKey.get(item.key) ?? index,
+        fallbackIndex: shouldApplyGradient
+          ? index
+          : colorIndexByKey.get(item.key),
         totalGroups: shouldApplyGradient ? data.length : undefined,
       });
 
