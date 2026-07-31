@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
+import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   CombinedGraphQLErrors,
@@ -44,7 +45,11 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
+      const isStaleChunkLazyLoadingError =
+        error instanceof Error &&
+        checkIfItsAViteStaleChunkLazyLoadingError(error);
+
+      if (!isAbortError && !isStaleChunkLazyLoadingError) {
         enqueueErrorSnackBar(
           error instanceof Error ? { message: error.message } : {},
         );
@@ -54,6 +59,10 @@ export const PromiseRejectionEffect = () => {
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
           scope.setExtras({ mechanism: 'onUnhandle' });
+          scope.setTag(
+            'isStaleChunkLazyLoadingError',
+            isStaleChunkLazyLoadingError,
+          );
 
           const fingerprint = hasErrorCode(error) ? error.code : error.message;
           scope.setFingerprint([fingerprint]);
