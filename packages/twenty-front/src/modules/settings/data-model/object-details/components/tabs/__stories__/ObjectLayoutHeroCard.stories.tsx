@@ -1,5 +1,5 @@
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
 import recordPageLayoutCoverDark from '@/settings/data-model/object-details/assets/record-page-layout-cover-dark.png';
 import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
 import { styled } from '@linaria/react';
@@ -34,12 +34,11 @@ const renderCard = (colorScheme: 'light' | 'dark') => (
         instanceIdPrefix={`object-layout-${colorScheme}`}
         tabs={[]}
         footer={
-          <SettingsOptionCardContentButton
+          <SettingsDiscoveryHeroCardFooter
             Icon={IconAddressBook}
             title="Customize record page"
             description="Customize how your record page looks."
-            variant="hero"
-            Button={
+            action={
               <Button
                 title="Customize"
                 variant="primary"

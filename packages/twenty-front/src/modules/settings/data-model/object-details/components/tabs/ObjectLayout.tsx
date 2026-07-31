@@ -14,7 +14,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
 import recordPageLayoutCoverDark from '@/settings/data-model/object-details/assets/record-page-layout-cover-dark.png';
 import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -102,13 +102,11 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           instanceIdPrefix={RECORD_PAGE_LAYOUT_HERO_INSTANCE_ID_PREFIX}
           tabs={[]}
           footer={
-            <SettingsOptionCardContentButton
+            <SettingsDiscoveryHeroCardFooter
               Icon={IconAddressBook}
               title={t`Customize record page`}
               description={t`Customize how your record page looks.`}
-              disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
-              variant="hero"
-              Button={
+              action={
                 <Button
                   title={t`Customize`}
                   variant="primary"
