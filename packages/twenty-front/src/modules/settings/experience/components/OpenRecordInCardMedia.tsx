@@ -36,9 +36,10 @@ const StyledMemberPreferenceCanvas = styled(StyledPreviewCanvas)`
 const StyledMemberPreferenceIcon = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
-  border-radius: 50%;
+  border-radius: ${themeCssVariables.border.radius.rounded};
   box-sizing: border-box;
   color: ${themeCssVariables.accent.accent7};
+  corner-shape: round;
   display: flex;
   height: 16px;
   justify-content: center;
