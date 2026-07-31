@@ -4,6 +4,7 @@ import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { buildStableColorIndexByKey } from '@/page-layout/widgets/graph/utils/buildStableColorIndexByKey';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
@@ -38,13 +39,14 @@ export const useBarChartData = ({
 
   const allEnrichedKeys = useMemo((): BarChartEnrichedKey[] => {
     const shouldApplyGradient = colorMode === 'explicitSingleColor';
+    const colorIndexByKey = buildStableColorIndexByKey(keys);
 
     return keys.map((key, index) => {
       const seriesConfig = seriesConfigMap.get(key);
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: seriesConfig?.color,
-        fallbackIndex: index,
+        fallbackIndex: colorIndexByKey.get(key) ?? index,
         totalGroups: shouldApplyGradient ? keys.length : undefined,
       });
 

@@ -257,6 +257,43 @@ describe('useLineChartData', () => {
     expect(result.current.nivoData[0].id).toBe('series2');
   });
 
+  it('should keep the same automatic palette color per key when series order changes', () => {
+    const series = (key: string): LineChartSeriesWithColor => ({
+      key,
+      label: key,
+      data: [{ x: 'Jan', y: 100 }],
+    });
+
+    const { result: valueDescResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('won'), series('open'), series('lost')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const { result: reorderedResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('lost'), series('won'), series('open')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const colorsByKey = (
+      enrichedSeries: { key: string; colorScheme: { name: string } }[],
+    ) =>
+      Object.fromEntries(
+        enrichedSeries.map((item) => [item.key, item.colorScheme.name]),
+      );
+
+    expect(colorsByKey(valueDescResult.current.enrichedSeries)).toEqual(
+      colorsByKey(reorderedResult.current.enrichedSeries),
+    );
+  });
+
   it('should handle hidden ids that do not exist in data', () => {
     mockUseAtomComponentStateValue.mockReturnValue([
       'nonexistent',

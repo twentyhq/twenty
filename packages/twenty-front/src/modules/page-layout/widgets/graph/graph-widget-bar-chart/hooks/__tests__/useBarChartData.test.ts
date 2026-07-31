@@ -241,6 +241,35 @@ describe('useBarChartData', () => {
     expect(result.current.legendItems).toHaveLength(2);
   });
 
+  it('should keep the same automatic palette color per key when key order changes', () => {
+    const { result: initialResult } = renderHook(() =>
+      useBarChartData({
+        keys: ['won', 'open', 'lost'],
+        colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const { result: reorderedResult } = renderHook(() =>
+      useBarChartData({
+        keys: ['lost', 'won', 'open'],
+        colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const colorsByKey = (
+      enrichedKeys: { key: string; colorScheme: { name: string } }[],
+    ) =>
+      Object.fromEntries(
+        enrichedKeys.map((item) => [item.key, item.colorScheme.name]),
+      );
+
+    expect(colorsByKey(initialResult.current.enrichedKeys)).toEqual(
+      colorsByKey(reorderedResult.current.enrichedKeys),
+    );
+  });
+
   it('should handle hidden ids that do not exist in keys', () => {
     mockUseAtomComponentStateValue.mockReturnValue([
       'nonexistent',

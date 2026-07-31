@@ -5,6 +5,7 @@ import { calculatePieChartPercentage } from '@/page-layout/widgets/graph/graph-w
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { buildStableColorIndexByKey } from '@/page-layout/widgets/graph/utils/buildStableColorIndexByKey';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
@@ -28,12 +29,15 @@ export const usePieChartData = ({
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
     const shouldApplyGradient = colorMode === 'explicitSingleColor';
+    const colorIndexByKey = buildStableColorIndexByKey(
+      data.map((item) => item.key),
+    );
 
     return data.map((item, index) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: item.color,
-        fallbackIndex: index,
+        fallbackIndex: colorIndexByKey.get(item.key) ?? index,
         totalGroups: shouldApplyGradient ? data.length : undefined,
       });
 
