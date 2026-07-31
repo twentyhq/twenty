@@ -342,6 +342,25 @@ export class ApplicationSyncService {
     return validateAndBuildResult.workspaceMigration;
   }
 
+  public async runUninstallHooksForWorkspaceApplications({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      const applications =
+        await this.applicationService.findManyApplications(workspaceId);
+
+      for (const application of applications) {
+        await this.runUninstallHook({ application, workspaceId });
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Failed to run application uninstall hooks for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
   // The uninstall hook must run before the deletion migration: once the
   // migration is applied, the hook's logic function metadata, code, and the
   // application's data are gone, so nothing can be executed anymore. It is
