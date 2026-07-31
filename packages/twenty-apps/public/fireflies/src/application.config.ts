@@ -30,7 +30,8 @@ export default defineApplication({
       isSecret: true,
     },
     FIREFLIES_WEBHOOK_SECRET: {
-      universalIdentifier: FIREFLIES_WEBHOOK_SECRET_VARIABLE_UNIVERSAL_IDENTIFIER,
+      universalIdentifier:
+        FIREFLIES_WEBHOOK_SECRET_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
         'Signing secret for verifying Fireflies Webhooks V2 payloads (sent in the X-Hub-Signature header as sha256=<hex-hmac-sha256-of-body>). Configure the same value on the Fireflies V2 webhook setup page.',
       isSecret: true,
