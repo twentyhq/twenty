@@ -23,7 +23,8 @@
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0"
+    "@sniptt/guards": "^0.2.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",

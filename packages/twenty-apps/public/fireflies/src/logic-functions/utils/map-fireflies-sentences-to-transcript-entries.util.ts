@@ -1,19 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type FirefliesTranscriptSentence } from 'src/logic-functions/types/fireflies-transcript.type';
+import { type TranscriptEntry } from 'src/logic-functions/types/transcript-entry.type';
 
 const UNKNOWN_SPEAKER_LABEL = 'Speaker';
-
-export type TranscriptEntryWord = {
-  text: string;
-  start_timestamp?: { relative: number };
-  end_timestamp?: { relative: number };
-};
-
-export type TranscriptEntry = {
-  participant: { name: string };
-  words: TranscriptEntryWord[];
-};
 
 const isFiniteNumber = (value: number | null | undefined): value is number =>
   typeof value === 'number' && Number.isFinite(value);
