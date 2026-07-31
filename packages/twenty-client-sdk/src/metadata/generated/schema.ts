@@ -590,7 +590,7 @@ export type ViewKey = 'INDEX'
 
 export type ViewOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE'
 
-export type ViewCalendarLayout = 'DAY' | 'WEEK' | 'MONTH'
+export type ViewCalendarLayout = 'DAY' | 'WEEK' | 'MONTH' | 'TIMELINE'
 
 export type ViewVisibility = 'WORKSPACE' | 'UNLISTED'
 
@@ -9288,7 +9288,8 @@ export const enumViewOpenRecordIn = {
 export const enumViewCalendarLayout = {
    DAY: 'DAY' as const,
    WEEK: 'WEEK' as const,
-   MONTH: 'MONTH' as const
+   MONTH: 'MONTH' as const,
+   TIMELINE: 'TIMELINE' as const
 }
 
 export const enumViewVisibility = {

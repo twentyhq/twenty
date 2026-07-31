@@ -28,8 +28,6 @@ import {
   ViewCalendarLayout,
 } from '~/generated-metadata/graphql';
 
-const RECORD_CALENDAR_TIMELINE_VIEW_ID = 'record-calendar-timeline-view';
-
 export const ObjectOptionsDropdownCalendarViewContent = () => {
   const { resetContent } = useObjectOptionsDropdown();
   const recordIndexCalendarLayout = useAtomComponentStateValue(
@@ -58,15 +56,16 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
     ViewCalendarLayout.DAY,
     ViewCalendarLayout.WEEK,
     ViewCalendarLayout.MONTH,
-    RECORD_CALENDAR_TIMELINE_VIEW_ID,
+    ViewCalendarLayout.TIMELINE,
   ];
 
   const handleCalendarViewChange = async (calendarView: ViewCalendarLayout) => {
-    const isTimeGridLayout =
+    const isExperimentalLayout =
       calendarView === ViewCalendarLayout.DAY ||
-      calendarView === ViewCalendarLayout.WEEK;
+      calendarView === ViewCalendarLayout.WEEK ||
+      calendarView === ViewCalendarLayout.TIMELINE;
 
-    if (isTimeGridLayout && !isCalendarWeekViewEnabled) {
+    if (isExperimentalLayout && !isCalendarWeekViewEnabled) {
       return;
     }
 
@@ -162,15 +161,29 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               focused={selectedItemId === ViewCalendarLayout.MONTH}
             />
           </SelectableListItem>
-          <SelectableListItem itemId={RECORD_CALENDAR_TIMELINE_VIEW_ID}>
+          <SelectableListItem
+            itemId={ViewCalendarLayout.TIMELINE}
+            onEnter={() => {
+              if (isCalendarWeekViewEnabled) {
+                handleCalendarViewChange(ViewCalendarLayout.TIMELINE);
+              }
+            }}
+          >
             <MenuItemSelect
               LeftIcon={IconTimelineEvent}
               text={t`Timeline`}
-              selected={false}
-              focused={selectedItemId === RECORD_CALENDAR_TIMELINE_VIEW_ID}
-              contextualText={<Pill label={t`Soon`} />}
+              selected={supportedCalendarLayout === ViewCalendarLayout.TIMELINE}
+              focused={selectedItemId === ViewCalendarLayout.TIMELINE}
+              onClick={
+                isCalendarWeekViewEnabled
+                  ? () => handleCalendarViewChange(ViewCalendarLayout.TIMELINE)
+                  : undefined
+              }
+              contextualText={
+                isCalendarWeekViewEnabled ? undefined : <Pill label={t`Soon`} />
+              }
               contextualTextPosition="right"
-              disabled
+              disabled={!isCalendarWeekViewEnabled}
             />
           </SelectableListItem>
         </SelectableList>

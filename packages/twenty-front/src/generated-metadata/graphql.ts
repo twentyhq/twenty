@@ -6251,6 +6251,7 @@ export type View = {
 export enum ViewCalendarLayout {
   DAY = 'DAY',
   MONTH = 'MONTH',
+  TIMELINE = 'TIMELINE',
   WEEK = 'WEEK'
 }
 

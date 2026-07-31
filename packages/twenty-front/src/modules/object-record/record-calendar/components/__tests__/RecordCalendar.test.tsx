@@ -30,6 +30,12 @@ jest.mock(
     RecordCalendarWeek: () => <div data-testid="calendar-week" />,
   }),
 );
+jest.mock(
+  '@/object-record/record-calendar/timeline/components/RecordCalendarTimeline',
+  () => ({
+    RecordCalendarTimeline: () => <div data-testid="calendar-timeline" />,
+  }),
+);
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
   ScrollWrapper: ({ children }: { children: React.ReactNode }) => children,
 }));
@@ -108,6 +114,18 @@ describe('RecordCalendar', () => {
 
     expect(screen.getByTestId('calendar-week')).toBeInTheDocument();
     expect(screen.queryByTestId('calendar-day')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('calendar-month')).not.toBeInTheDocument();
+  });
+
+  it('renders timeline when the timeline layout is enabled', () => {
+    useAtomComponentStateValueMock.mockReturnValue(ViewCalendarLayout.TIMELINE);
+    useIsFeatureEnabledMock.mockReturnValue(true);
+
+    render(<RecordCalendar />);
+
+    expect(screen.getByTestId('calendar-timeline')).toBeInTheDocument();
+    expect(screen.queryByTestId('calendar-day')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('calendar-week')).not.toBeInTheDocument();
     expect(screen.queryByTestId('calendar-month')).not.toBeInTheDocument();
   });
 });

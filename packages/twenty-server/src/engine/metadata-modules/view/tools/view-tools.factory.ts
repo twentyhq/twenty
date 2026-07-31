@@ -107,10 +107,11 @@ const CreateViewInputSchema = z.object({
       ViewCalendarLayout.DAY,
       ViewCalendarLayout.WEEK,
       ViewCalendarLayout.MONTH,
+      ViewCalendarLayout.TIMELINE,
     ])
     .optional()
     .describe(
-      'Calendar layout (required for CALENDAR views, e.g., "DAY", "WEEK", "MONTH")',
+      'Calendar layout (required for CALENDAR views, e.g., "DAY", "WEEK", "MONTH", "TIMELINE")',
     ),
   calendarFieldName: z
     .string()
@@ -254,6 +255,7 @@ const UpsertCompleteViewInputSchema = z.object({
       ViewCalendarLayout.DAY,
       ViewCalendarLayout.WEEK,
       ViewCalendarLayout.MONTH,
+      ViewCalendarLayout.TIMELINE,
     ])
     .optional()
     .describe('Calendar layout (required for CALENDAR).'),
@@ -542,7 +544,7 @@ export class ViewToolsFactory {
 
       if (!isDefined(parameters.calendarLayout)) {
         throw new Error(
-          'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
+          'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH", "TIMELINE".',
         );
       }
     }
@@ -836,7 +838,7 @@ VIEW TYPES: TABLE (default), KANBAN (requires mainGroupByFieldName, a SELECT fie
 
               if (!parameters.calendarLayout) {
                 throw new Error(
-                  'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
+                  'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH", "TIMELINE".',
                 );
               }
             }

@@ -7,6 +7,7 @@ import { RecordCalendarTopBar } from '@/object-record/record-calendar/components
 import { RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-calendar/constants/RecordCalendarClickOutsideListenerId';
 import { RecordCalendarDay } from '@/object-record/record-calendar/day/components/RecordCalendarDay';
 import { RecordCalendarMonth } from '@/object-record/record-calendar/month/components/RecordCalendarMonth';
+import { RecordCalendarTimeline } from '@/object-record/record-calendar/timeline/components/RecordCalendarTimeline';
 import { RecordCalendarWeek } from '@/object-record/record-calendar/week/components/RecordCalendarWeek';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
@@ -85,6 +86,8 @@ export const RecordCalendar = () => {
           <RecordCalendarDay />
         ) : supportedCalendarLayout === ViewCalendarLayout.WEEK ? (
           <RecordCalendarWeek />
+        ) : supportedCalendarLayout === ViewCalendarLayout.TIMELINE ? (
+          <RecordCalendarTimeline />
         ) : (
           <RecordCalendarMonth />
         )}

@@ -100,7 +100,7 @@ describe('ObjectOptionsDropdownCalendarViewContent', () => {
     mockUpdateCurrentView.mockResolvedValue(undefined);
   });
 
-  it('offers Day, Week, and Month while keeping Timeline disabled', () => {
+  it('offers all calendar layouts when the feature is enabled', () => {
     render(<ObjectOptionsDropdownCalendarViewContent />);
 
     expect(
@@ -109,7 +109,7 @@ describe('ObjectOptionsDropdownCalendarViewContent', () => {
         .map((button) => button.textContent?.replace('Soon', '')),
     ).toEqual(['Day', 'Week', 'Month', 'Timeline']);
     expect(screen.getByText('Day').closest('button')).toBeEnabled();
-    expect(screen.getByText('Timeline').closest('button')).toBeDisabled();
+    expect(screen.getByText('Timeline').closest('button')).toBeEnabled();
   });
 
   it('persists Day without treating it as Timeline', async () => {
@@ -126,16 +126,32 @@ describe('ObjectOptionsDropdownCalendarViewContent', () => {
     await waitFor(() => expect(mockCloseDropdown).toHaveBeenCalled());
   });
 
-  it('keeps Day and Week unavailable when the feature flag is disabled', () => {
+  it('persists Timeline when selected', async () => {
+    render(<ObjectOptionsDropdownCalendarViewContent />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+
+    expect(mockSetRecordIndexCalendarLayout).toHaveBeenCalledWith(
+      ViewCalendarLayout.TIMELINE,
+    );
+    expect(mockUpdateCurrentView).toHaveBeenCalledWith({
+      calendarLayout: ViewCalendarLayout.TIMELINE,
+    });
+    await waitFor(() => expect(mockCloseDropdown).toHaveBeenCalled());
+  });
+
+  it('keeps experimental layouts unavailable when the feature flag is disabled', () => {
     mockUseIsFeatureEnabled.mockReturnValue(false);
 
     render(<ObjectOptionsDropdownCalendarViewContent />);
 
     const dayButton = screen.getByText('Day').closest('button');
     const weekButton = screen.getByText('Week').closest('button');
+    const timelineButton = screen.getByText('Timeline').closest('button');
 
     expect(dayButton).toBeDisabled();
     expect(weekButton).toBeDisabled();
+    expect(timelineButton).toBeDisabled();
 
     if (dayButton !== null) {
       fireEvent.click(dayButton);

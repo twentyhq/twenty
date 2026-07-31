@@ -123,7 +123,7 @@ describe('RecordCalendarTopBar', () => {
     });
   });
 
-  it('shows Day, Week, and Month with the selected full date', () => {
+  it('shows all calendar layouts with the selected full date', () => {
     render(<RecordCalendarTopBar />);
 
     expect(screen.getByTestId('selected-date')).toHaveTextContent(
@@ -133,7 +133,7 @@ describe('RecordCalendarTopBar', () => {
       Array.from(
         screen.getByTestId('layout-select').querySelectorAll('option'),
       ).map((option) => option.textContent),
-    ).toEqual(['Day', 'Week', 'Month']);
+    ).toEqual(['Day', 'Week', 'Month', 'Timeline']);
     expect(screen.queryByTestId('time-zone')).not.toBeInTheDocument();
   });
 

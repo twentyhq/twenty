@@ -2,8 +2,10 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { getRecordCalendarDateRangeOverlapFilter } from '@/object-record/record-calendar/month/utils/getRecordCalendarDateRangeOverlapFilter';
+import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
+import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -13,6 +15,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import {
@@ -22,7 +25,11 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
   turnPlainDateIntoUserTimeZoneInstantString,
 } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 
 const DATE_RANGE_FILTER_AFTER_ID = 'DATE_RANGE_FILTER_AFTER_ID';
 const DATE_RANGE_FILTER_BEFORE_ID = 'DATE_RANGE_FILTER_BEFORE_ID';
@@ -34,6 +41,28 @@ export const useRecordCalendarQueryDateRangeFilter = (
     useRecordCalendarContextOrThrow();
   const { firstDayOfFirstWeek, lastDayOfLastWeek } =
     useRecordCalendarMonthDaysRange(selectedDate);
+
+  const recordIndexCalendarLayout = useAtomComponentStateValue(
+    recordIndexCalendarLayoutComponentState,
+  );
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
+  const supportedCalendarLayout = getSupportedRecordCalendarLayout({
+    calendarLayout: recordIndexCalendarLayout,
+    isCalendarWeekViewEnabled,
+  });
+
+  const firstDayOfSelectedMonth = selectedDate.with({ day: 1 });
+  const firstDayOfRange =
+    supportedCalendarLayout === ViewCalendarLayout.TIMELINE
+      ? firstDayOfSelectedMonth
+      : firstDayOfFirstWeek;
+  const nextDayAfterLastDayOfRange =
+    supportedCalendarLayout === ViewCalendarLayout.TIMELINE
+      ? firstDayOfSelectedMonth.add({ months: 4 })
+      : lastDayOfLastWeek.add({ days: 1 });
+  const lastDayOfRange = nextDayAfterLastDayOfRange.subtract({ days: 1 });
 
   const { userTimezone } = useUserTimezone();
 
@@ -73,15 +102,14 @@ export const useRecordCalendarQueryDateRangeFilter = (
     };
   }
 
-  const firstDayOfFirstWeekISOString =
-    turnPlainDateIntoUserTimeZoneInstantString(
-      firstDayOfFirstWeek,
-      userTimezone,
-    );
+  const firstDayOfRangeISOString = turnPlainDateIntoUserTimeZoneInstantString(
+    firstDayOfRange,
+    userTimezone,
+  );
 
-  const nextDayAfterLastDayOfLastWeekISOString =
+  const nextDayAfterLastDayOfRangeISOString =
     turnPlainDateIntoUserTimeZoneInstantString(
-      lastDayOfLastWeek.add({ days: 1 }),
+      nextDayAfterLastDayOfRange,
       userTimezone,
     );
 
@@ -103,33 +131,33 @@ export const useRecordCalendarQueryDateRangeFilter = (
         calendarEndField: calendarEndFieldMetadataItem,
         firstDayOfRange:
           calendarFieldMetadataItem.type === FieldMetadataType.DATE_TIME
-            ? firstDayOfFirstWeekISOString
-            : firstDayOfFirstWeek.toString(),
+            ? firstDayOfRangeISOString
+            : firstDayOfRange.toString(),
         nextDayAfterLastDayOfRange:
           calendarFieldMetadataItem.type === FieldMetadataType.DATE_TIME
-            ? nextDayAfterLastDayOfLastWeekISOString
-            : lastDayOfLastWeek.add({ days: 1 }).toString(),
+            ? nextDayAfterLastDayOfRangeISOString
+            : nextDayAfterLastDayOfRange.toString(),
       })
     : undefined;
 
   const dateRangeFilterAfter: RecordFilter = {
     id: DATE_RANGE_FILTER_AFTER_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
-    value: `${firstDayOfFirstWeekISOString}`,
+    value: `${firstDayOfRangeISOString}`,
     operand: RecordFilterOperand.IS_AFTER,
     type: 'DATE_TIME',
     label: t`After or equal`,
-    displayValue: `${firstDayOfFirstWeek.toString()}`,
+    displayValue: `${firstDayOfRange.toString()}`,
   };
 
   const dateRangeFilterBefore: RecordFilter = {
     id: DATE_RANGE_FILTER_BEFORE_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
-    value: `${nextDayAfterLastDayOfLastWeekISOString}`,
+    value: `${nextDayAfterLastDayOfRangeISOString}`,
     operand: RecordFilterOperand.IS_BEFORE,
     type: 'DATE_TIME',
     label: t`Before`,
-    displayValue: `${lastDayOfLastWeek.toString()}`,
+    displayValue: `${lastDayOfRange.toString()}`,
   };
 
   const calendarRecordFilters = isDefined(dateRangeOverlapFilter)

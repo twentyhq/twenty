@@ -136,11 +136,12 @@ export const RecordCalendarTopBar = () => {
   };
 
   const handleCalendarLayoutChange = (calendarLayout: ViewCalendarLayout) => {
-    const isTimeGridLayout =
+    const isExperimentalLayout =
       calendarLayout === ViewCalendarLayout.DAY ||
-      calendarLayout === ViewCalendarLayout.WEEK;
+      calendarLayout === ViewCalendarLayout.WEEK ||
+      calendarLayout === ViewCalendarLayout.TIMELINE;
 
-    if (isTimeGridLayout && !isCalendarWeekViewEnabled) {
+    if (isExperimentalLayout && !isCalendarWeekViewEnabled) {
       return;
     }
 
@@ -186,6 +187,7 @@ export const RecordCalendarTopBar = () => {
                 { label: t`Day`, value: ViewCalendarLayout.DAY },
                 { label: t`Week`, value: ViewCalendarLayout.WEEK },
                 { label: t`Month`, value: ViewCalendarLayout.MONTH },
+                { label: t`Timeline`, value: ViewCalendarLayout.TIMELINE },
               ]}
               selectSizeVariant="small"
               dropdownWidth={120}

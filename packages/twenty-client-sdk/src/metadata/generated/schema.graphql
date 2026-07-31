@@ -854,6 +854,7 @@ enum ViewCalendarLayout {
   DAY
   WEEK
   MONTH
+  TIMELINE
 }
 
 enum ViewVisibility {

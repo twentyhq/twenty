@@ -273,7 +273,10 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                         ? t`Month`
                         : supportedCalendarLayout === ViewCalendarLayout.WEEK
                           ? t`Week`
-                          : t`Day`
+                          : supportedCalendarLayout ===
+                              ViewCalendarLayout.TIMELINE
+                            ? t`Timeline`
+                            : t`Day`
                     }
                     contextualTextPosition="right"
                     hasSubMenu
