@@ -775,7 +775,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
         nameSingular: 'workflowRun',
-        openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
         namePlural: 'workflowRuns',
         labelSingular: i18nLabel(msg`Workflow Run`),
         labelPlural: i18nLabel(msg`Workflow Runs`),
