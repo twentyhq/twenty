@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLayoutDashboard, IconReload } from 'twenty-ui/icon';
+import { IconAddressBook, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -16,7 +16,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { ObjectOpenRecordInSelect } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInSelect';
+import { ObjectOpenRecordInPicker } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -92,22 +92,23 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
     <StyledContentContainer>
       <Section>
         <H2Title
-          title={t`Customize`}
-          description={t`Customize the layout for this role`}
+          title={t`Record page`}
+          description={t`Customize the workspace record page`}
         />
         <SettingsCard
           title={t`Customize record page`}
-          Icon={<IconLayoutDashboard size={theme.icon.size.md} />}
+          description={t`Customize how your record page looks.`}
+          Icon={<IconAddressBook size={theme.icon.size.md} />}
           onClick={handleCustomizeRecordPage}
           disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
         />
       </Section>
       <Section>
         <H2Title
-          title={t`Open records in`}
-          description={t`Where records of this object open. Member preference lets each member decide for themselves.`}
+          title={t`Navigation`}
+          description={t`Where records of this object open`}
         />
-        <ObjectOpenRecordInSelect objectMetadataItem={objectMetadataItem} />
+        <ObjectOpenRecordInPicker objectMetadataItem={objectMetadataItem} />
       </Section>
       <Section>
         <H2Title
