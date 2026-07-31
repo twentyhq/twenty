@@ -1,4 +1,4 @@
-import { isValidUuid } from 'twenty-shared/utils';
+import { emailDocumentSchema, isValidUuid } from 'twenty-shared/utils';
 import { workflowFileSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
@@ -24,7 +24,14 @@ export const EmailToolInputZodSchema = z.object({
     'Recipients object with to, cc, and bcc fields (comma-separated)',
   ),
   subject: z.string().describe('The email subject line'),
-  body: z.string().describe('The email body content in HTML format'),
+  // The document is the same format campaign bodies use, so one authoring
+  // format serves 1:1 email and campaigns; it is rendered to email-safe
+  // HTML server-side. The HTML string form is kept for compatibility.
+  body: z
+    .union([emailDocumentSchema, z.string()])
+    .describe(
+      'The email body. Preferred: a structured email document ({type: "doc", content: [...]} with paragraph, heading, bulletList/orderedList, image, emailButton, emailSection, emailDivider and emailHtml blocks), rendered to email-safe HTML server-side. An HTML string is also accepted. Campaign-style {{variables}} are not substituted in 1:1 emails.',
+    ),
   connectedAccountId: z
     .string()
     .refine((val) => isValidUuid(val))
