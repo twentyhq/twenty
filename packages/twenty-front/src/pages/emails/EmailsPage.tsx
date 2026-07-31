@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
-import { IconMail, IconPlus, IconSend, IconTrash } from 'twenty-ui/icon';
+import { IconMail, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -24,7 +23,6 @@ import {
   formatCampaignRate,
   isDraftCampaign,
 } from '@/activities/emails/utils/campaignDisplay';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 
@@ -79,6 +77,15 @@ const StyledControl = styled.input`
   height: 32px;
   min-width: 160px;
   padding: 0 ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDateFilter = styled.label`
+  align-items: flex-start;
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  flex-direction: column;
+  font-size: ${themeCssVariables.font.size.xs};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSelect = styled.select`
@@ -205,9 +212,7 @@ const StyledRecipientTabs = styled.div`
 
 const StyledRecipientTab = styled.button<{ isActive: boolean }>`
   background: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.background.transparent.medium
-      : 'transparent'};
+    isActive ? themeCssVariables.background.transparent.medium : 'transparent'};
   border: 0;
   border-radius: ${themeCssVariables.border.radius.pill};
   color: ${themeCssVariables.font.color.secondary};
@@ -261,7 +266,6 @@ const campaignPath = (campaignId: string) =>
 const CampaignList = () => {
   const navigate = useNavigate();
   const { campaigns, loading, error } = useMessageCampaigns();
-  const canCreateCampaign = useHasPermissionFlag(PermissionFlagType.WORKSPACE);
   const [tab, setTab] = useState<CampaignTab>('messages');
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
@@ -273,7 +277,9 @@ const CampaignList = () => {
   const tabCampaigns = campaigns.filter((campaign) =>
     tab === 'drafts' ? isDraftCampaign(campaign) : !isDraftCampaign(campaign),
   );
-  const creators = [...new Set(tabCampaigns.map(({ creatorName }) => creatorName))];
+  const creators = [
+    ...new Set(tabCampaigns.map(({ creatorName }) => creatorName)),
+  ];
   const senders = [
     ...new Set(
       tabCampaigns
@@ -289,6 +295,7 @@ const CampaignList = () => {
     const matchesCreated =
       createdAfter === '' || campaign.createdAt.slice(0, 10) >= createdAfter;
     const matchesSent =
+      tab === 'drafts' ||
       sentAfter === '' ||
       (campaign.sentAt !== null && campaign.sentAt.slice(0, 10) >= sentAfter);
 
@@ -304,18 +311,7 @@ const CampaignList = () => {
 
   return (
     <PageContainer>
-      <PageHeader title="Emails" Icon={IconMail}>
-        {canCreateCampaign && (
-          <Button
-            size="small"
-            variant="primary"
-            accent="blue"
-            title="New campaign"
-            Icon={IconPlus}
-            onClick={() => navigate(AppPath.EmailsNew)}
-          />
-        )}
-      </PageHeader>
+      <PageHeader title="Emails" Icon={IconMail} />
       <StyledPageBody>
         <StyledTabs>
           <StyledTab
@@ -338,7 +334,10 @@ const CampaignList = () => {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
-          <StyledSelect value={status} onChange={(event) => setStatus(event.target.value)}>
+          <StyledSelect
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+          >
             <option value="">All statuses</option>
             {statuses.map((value) => (
               <option key={value} value={value}>
@@ -346,33 +345,53 @@ const CampaignList = () => {
               </option>
             ))}
           </StyledSelect>
-          <StyledSelect value={creator} onChange={(event) => setCreator(event.target.value)}>
+          <StyledSelect
+            value={creator}
+            onChange={(event) => setCreator(event.target.value)}
+          >
             <option value="">All creators</option>
             {creators.map((value) => (
-              <option key={value} value={value}>{value}</option>
+              <option key={value} value={value}>
+                {value}
+              </option>
             ))}
           </StyledSelect>
-          <StyledSelect value={sender} onChange={(event) => setSender(event.target.value)}>
+          <StyledSelect
+            value={sender}
+            onChange={(event) => setSender(event.target.value)}
+          >
             <option value="">All senders</option>
             {senders.map((value) => (
-              <option key={value} value={value}>{value}</option>
+              <option key={value} value={value}>
+                {value}
+              </option>
             ))}
           </StyledSelect>
-          <StyledControl
-            aria-label="Created after"
-            title="Created after"
-            type="date"
-            value={createdAfter}
-            onChange={(event) => setCreatedAfter(event.target.value)}
-          />
-          {tab === 'messages' && (
+          <StyledDateFilter>
+            {tab === 'drafts'
+              ? 'Draft created on or after'
+              : 'Campaign created on or after'}
             <StyledControl
-              aria-label="Sent after"
-              title="Sent after"
+              aria-label={
+                tab === 'drafts'
+                  ? 'Draft created on or after'
+                  : 'Campaign created on or after'
+              }
               type="date"
-              value={sentAfter}
-              onChange={(event) => setSentAfter(event.target.value)}
+              value={createdAfter}
+              onChange={(event) => setCreatedAfter(event.target.value)}
             />
+          </StyledDateFilter>
+          {tab === 'messages' && (
+            <StyledDateFilter>
+              Campaign sent on or after
+              <StyledControl
+                aria-label="Campaign sent on or after"
+                type="date"
+                value={sentAfter}
+                onChange={(event) => setSentAfter(event.target.value)}
+              />
+            </StyledDateFilter>
           )}
         </StyledFilters>
         {loading && campaigns.length === 0 ? (
@@ -432,19 +451,34 @@ const CampaignTable = ({
               {formatCampaignDate(campaign.sentAt ?? campaign.updatedAt)}
             </StyledMeta>
           </td>
-          <td><StyledStatus>{campaign.status.replaceAll('_', ' ')}</StyledStatus></td>
+          <td>
+            <StyledStatus>{campaign.status.replaceAll('_', ' ')}</StyledStatus>
+          </td>
           <td>{campaign.recipientCount}</td>
           <td>{campaign.sentCount}</td>
-          <td>{formatCampaignRate(campaign.failedCount, campaign.recipientCount)}</td>
-          <td>{formatCampaignRate(campaign.bouncedCount, campaign.recipientCount)}</td>
-          <td>{formatCampaignRate(campaign.complainedCount, campaign.recipientCount)}</td>
+          <td>
+            {formatCampaignRate(campaign.failedCount, campaign.recipientCount)}
+          </td>
+          <td>
+            {formatCampaignRate(campaign.bouncedCount, campaign.recipientCount)}
+          </td>
+          <td>
+            {formatCampaignRate(
+              campaign.complainedCount,
+              campaign.recipientCount,
+            )}
+          </td>
         </tr>
       ))}
     </tbody>
   </StyledTable>
 );
 
-const CampaignEditor = ({ campaign }: { campaign?: MessageCampaignDetails }) => {
+const CampaignEditor = ({
+  campaign,
+}: {
+  campaign?: MessageCampaignDetails;
+}) => {
   const navigate = useNavigate();
   const { deleteDraft, isDeleting } = useMessageCampaignDraft();
   const campaignState = useCampaignComposerState({
@@ -520,7 +554,12 @@ const CampaignEditor = ({ campaign }: { campaign?: MessageCampaignDetails }) => 
   );
 };
 
-type RecipientStatusFilter = 'ALL' | 'SENT' | 'FAILED' | 'BOUNCED' | 'COMPLAINED';
+type RecipientStatusFilter =
+  | 'ALL'
+  | 'SENT'
+  | 'FAILED'
+  | 'BOUNCED'
+  | 'COMPLAINED';
 
 const CampaignDetail = ({ campaign }: { campaign: MessageCampaignDetails }) => {
   const navigate = useNavigate();
@@ -541,8 +580,9 @@ const CampaignDetail = ({ campaign }: { campaign: MessageCampaignDetails }) => {
     campaign.recipients[0]?.messageId,
   );
   const selectedRecipient =
-    filteredRecipients.find(({ messageId }) => messageId === selectedMessageId) ??
-    filteredRecipients[0];
+    filteredRecipients.find(
+      ({ messageId }) => messageId === selectedMessageId,
+    ) ?? filteredRecipients[0];
   const filters: RecipientStatusFilter[] = [
     'ALL',
     'SENT',
@@ -601,12 +641,16 @@ const CampaignDetail = ({ campaign }: { campaign: MessageCampaignDetails }) => {
           </StyledRecipientList>
         </StyledRecipientPanel>
         <StyledPreview>
-          {selectedRecipient ? (
+          {selectedRecipient !== undefined ? (
             <>
-              <StyledName>{selectedRecipient.subject || campaign.subject || 'No subject'}</StyledName>
+              <StyledName>
+                {selectedRecipient.subject || campaign.subject || 'No subject'}
+              </StyledName>
               <StyledPreviewHeader>
-                To: {selectedRecipient.displayName} &lt;{selectedRecipient.email}&gt;
-                <br />From: {campaign.fromAddress ?? 'Unknown sender'}
+                To: {selectedRecipient.displayName} &lt;
+                {selectedRecipient.email}&gt;
+                <br />
+                From: {campaign.fromAddress ?? 'Unknown sender'}
               </StyledPreviewHeader>
               <StyledFrame
                 title={`Email to ${selectedRecipient.email}`}
@@ -614,22 +658,21 @@ const CampaignDetail = ({ campaign }: { campaign: MessageCampaignDetails }) => {
                 srcDoc={selectedRecipient.body ?? ''}
               />
             </>
+          ) : campaign.status === 'DRAFT' ? (
+            <>
+              <StyledName>{campaign.subject || 'Untitled campaign'}</StyledName>
+              <StyledPreviewHeader>
+                Draft by {campaign.creatorName} ·{' '}
+                {campaign.listName ?? 'No list selected'}
+              </StyledPreviewHeader>
+              <StyledFrame
+                title="Campaign draft preview"
+                sandbox=""
+                srcDoc={campaign.body ?? ''}
+              />
+            </>
           ) : (
-            campaign.status === 'DRAFT' ? (
-              <>
-                <StyledName>{campaign.subject || 'Untitled campaign'}</StyledName>
-                <StyledPreviewHeader>
-                  Draft by {campaign.creatorName} · {campaign.listName ?? 'No list selected'}
-                </StyledPreviewHeader>
-                <StyledFrame
-                  title="Campaign draft preview"
-                  sandbox=""
-                  srcDoc={campaign.body ?? ''}
-                />
-              </>
-            ) : (
-              <StyledEmpty>No recipients match this filter.</StyledEmpty>
-            )
+            <StyledEmpty>No recipients match this filter.</StyledEmpty>
           )}
         </StyledPreview>
       </StyledDetailGrid>
@@ -648,7 +691,9 @@ const RecipientRow = ({
 }) => (
   <StyledRecipient isActive={isActive} onClick={onClick}>
     <StyledName>{recipient.displayName}</StyledName>
-    <StyledMeta>{recipient.email} · {recipient.deliveryStatus.toLowerCase()}</StyledMeta>
+    <StyledMeta>
+      {recipient.email} · {recipient.deliveryStatus.toLowerCase()}
+    </StyledMeta>
   </StyledRecipient>
 );
 
