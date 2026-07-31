@@ -31,9 +31,7 @@ export const useAggregateGqlFieldsFromRecordIndexGroupAggregates = ({
   }
 
   if (!isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
-    throw new Error(
-      `Cannot query an aggregate without a field metadata item for ${objectMetadataItem.nameSingular}, aggregate operation : ${recordIndexGroupAggregateOperation}`,
-    );
+    return { recordAggregateGqlField: null };
   }
 
   const recordAggregateGqlField =

@@ -8,6 +8,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
@@ -35,6 +36,7 @@ import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordFie
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { reportInvalidViewAggregateConfiguration } from '@/views/utils/reportInvalidViewAggregateConfiguration';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -171,6 +173,19 @@ export const useLoadRecordIndexStates = () => {
             view.kanbanAggregateOperation,
             recordIndexGroupAggregateFieldMetadataItemValue?.type,
           );
+
+        if (
+          view.kanbanAggregateOperation !== AggregateOperations.COUNT &&
+          !isDefined(recordIndexGroupAggregateFieldMetadataItemValue)
+        ) {
+          void reportInvalidViewAggregateConfiguration({
+            viewId: view.id,
+            objectMetadataItemId: objectMetadataItem.id,
+            aggregateOperation: view.kanbanAggregateOperation,
+            aggregateFieldMetadataId:
+              view.kanbanAggregateOperationFieldMetadataId,
+          });
+        }
       }
 
       const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
