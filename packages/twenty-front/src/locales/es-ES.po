@@ -18025,7 +18025,7 @@ msgid "There was an error while updating password."
 msgstr "Hubo un error al actualizar la contraseña."
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/components/AiChatThinkingRow.tsx
 msgid "Thinking"
 msgstr "Pensando"
 
