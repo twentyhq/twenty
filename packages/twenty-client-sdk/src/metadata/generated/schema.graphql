@@ -343,6 +343,7 @@ type Object {
   isUICreatable: Boolean!
   isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
+  openRecordIn: ObjectOpenRecordIn!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -367,6 +368,12 @@ type Object {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): ObjectIndexMetadatasConnection!
+}
+
+enum ObjectOpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
+  USER_CHOICE
 }
 
 input CursorPaging {
@@ -436,6 +443,7 @@ type WorkspaceMember {
   name: FullName!
   userEmail: String!
   colorScheme: String!
+  openRecordIn: OpenRecordIn!
   avatarUrl: String
   locale: String
   calendarStartDay: Int
@@ -445,6 +453,11 @@ type WorkspaceMember {
   roles: [Role!]
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
+}
+
+enum OpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
 }
 
 """Date format as Month first, Day first, Year first or system as default"""
@@ -623,7 +636,6 @@ type UserWorkspace {
   objectPermissions: [ObjectPermission!]
   objectsPermissions: [ObjectPermission!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
-  isImpersonating: Boolean
 }
 
 enum PermissionFlagType {
@@ -794,7 +806,7 @@ type View {
   position: Float!
   isCompact: Boolean!
   isCustom: Boolean!
-  openRecordIn: ViewOpenRecordIn!
+  openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
@@ -1673,19 +1685,6 @@ type EventSubscription {
   metadataEvents: [MetadataEvent!]!
 }
 
-type UserSession {
-  id: UUID!
-  workspaceId: UUID
-  authProvider: String!
-  isImpersonating: Boolean!
-  userAgent: String
-  ipAddress: String
-  createdAt: DateTime!
-  lastActiveAt: DateTime!
-  expiresAt: DateTime!
-  isCurrent: Boolean!
-}
-
 type BillingEndTrialPeriod {
   """Updated subscription status"""
   status: SubscriptionStatus
@@ -1969,7 +1968,6 @@ type ClientConfig {
   api: ApiConfig!
   canManageFeatureFlags: Boolean!
   publicFeatureFlags: [PublicFeatureFlag!]!
-  isCookieSessionEnabled: Boolean!
   isMicrosoftMessagingEnabled: Boolean!
   isMicrosoftCalendarEnabled: Boolean!
   isGoogleMessagingEnabled: Boolean!
@@ -2471,10 +2469,6 @@ type WorkspaceInviteHashValid {
 type Impersonate {
   loginToken: AuthToken!
   workspace: WorkspaceUrlsAndId!
-}
-
-type StopImpersonation {
-  canRestoreImpersonatorSession: Boolean!
 }
 
 type UsageTimeSeries {
@@ -3182,7 +3176,6 @@ type Query {
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
-  currentUserSessions: [UserSession!]!
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
@@ -3454,8 +3447,6 @@ type Mutation {
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   revokeApiKey(input: RevokeApiKeyInput!): ApiKey
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
-  revokeUserSession(userSessionId: UUID!): Boolean!
-  revokeAllOtherUserSessions: Int!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
@@ -3626,7 +3617,6 @@ type Mutation {
   trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   impersonate(userId: UUID!, workspaceId: UUID!): Impersonate!
-  stopImpersonation: StopImpersonation!
   createCalendarEvent(input: CreateCalendarEventInput!): CreateCalendarEventOutput!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
@@ -3773,6 +3763,10 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3791,6 +3785,10 @@ input UpdateViewInput {
   icon: String
   position: Float
   isCompact: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3833,6 +3831,10 @@ input UpsertViewWidgetViewSettingsInput {
   type: ViewType
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -4206,6 +4208,7 @@ input UpdateObjectPayload {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
+  openRecordIn: ObjectOpenRecordIn
 }
 
 input CreateOneIndexInput {
