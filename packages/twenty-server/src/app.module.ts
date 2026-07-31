@@ -26,6 +26,7 @@ import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/mid
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
@@ -120,6 +121,12 @@ export class AppModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    // Must run before any middleware that authenticates from the session
+    // cookie, so no cookie-authenticated state change escapes the check.
+    consumer
+      .apply(CookieSessionCsrfMiddleware)
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+
     consumer
       .apply(
         GraphQLHydrateRequestFromTokenMiddleware,

@@ -17,6 +17,7 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
+import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 import { AppModule } from './app.module';
@@ -30,9 +31,6 @@ const bootstrap = async () => {
   setPgDateTypeParser();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    // Expose WWW-Authenticate so browser-based MCP clients can read the
-    // resource_metadata pointer on 401. Required by MCP authorization spec.
-    cors: { exposedHeaders: ['WWW-Authenticate'] },
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
@@ -66,6 +64,30 @@ const bootstrap = async () => {
     : (configTransformers.boolean(trustProxyRaw) ?? trustProxyRaw);
 
   app.set('trust proxy', trustProxy);
+
+  const allowedCredentialedOrigins =
+    resolveAllowedCredentialedOrigins(twentyConfigService);
+
+  app.enableCors({
+    // Allowlisted origins get their origin reflected so browsers accept
+    // credentialed (cookie) requests; every other origin keeps the previous
+    // public wildcard behavior, which browsers refuse to combine with
+    // credentials.
+    origin: (
+      origin: string | undefined,
+      callback: (error: Error | null, allow?: boolean | string) => void,
+    ) => {
+      if (origin && allowedCredentialedOrigins.has(origin.toLowerCase())) {
+        return callback(null, true);
+      }
+
+      return callback(null, '*');
+    },
+    credentials: true,
+    // Expose WWW-Authenticate so browser-based MCP clients can read the
+    // resource_metadata pointer on 401. Required by MCP authorization spec.
+    exposedHeaders: ['WWW-Authenticate'],
+  });
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 

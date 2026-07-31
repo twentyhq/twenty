@@ -1,5 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
-import { isNonEmptyString } from 'twenty-shared/utils';
 
 import {
   USER_SESSION_COOKIE_NAME,
