@@ -24,7 +24,7 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     viewId: contextStoreCurrentViewId ?? '',
   });
 
-  const viewGroupsSignature = view?.viewGroups
+  const viewGroupsSignature = (view?.viewGroups ?? [])
     .map((viewGroup) => viewGroup.id)
     .sort()
     .join(',');
