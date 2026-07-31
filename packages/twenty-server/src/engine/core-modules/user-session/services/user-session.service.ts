@@ -97,17 +97,37 @@ export class UserSessionService {
     }
 
     try {
+      const sessionInput = this.buildCreateSessionInputFromTokenPair(
+        tokenPair,
+        request,
+        origin,
+      );
+
+      if (!isDefined(sessionInput)) {
+        return;
+      }
+
       const presentedSessionToken =
         extractUserSessionTokenFromRequestCookie(request);
 
       if (isDefined(presentedSessionToken)) {
         if (origin === 'renewal_bridge') {
           try {
-            await this.resolveSessionPayload(presentedSessionToken);
+            const presentedPayload = await this.resolveSessionPayload(
+              presentedSessionToken,
+            );
 
-            // The client already holds a valid session: renewals must not
-            // mint a new row every 30 minutes.
-            return;
+            // The client already holds a valid session for the same user:
+            // renewals must not mint a new row every 30 minutes. A session
+            // for a different identity is replaced, never kept.
+            if (presentedPayload.userId === sessionInput.userId) {
+              return;
+            }
+
+            await this.revokeSessionByToken(
+              presentedSessionToken,
+              UserSessionRevokedReason.Superseded,
+            );
           } catch {
             // Invalid or expired session: fall through and mint a fresh one.
           }
@@ -119,16 +139,6 @@ export class UserSessionService {
             UserSessionRevokedReason.Superseded,
           );
         }
-      }
-
-      const sessionInput = this.buildCreateSessionInputFromTokenPair(
-        tokenPair,
-        request,
-        origin,
-      );
-
-      if (!isDefined(sessionInput)) {
-        return;
       }
 
       const { sessionToken, session } = await this.createSession(sessionInput);
