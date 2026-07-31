@@ -3,11 +3,6 @@ import { z } from 'zod';
 import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/schemas/role-permissions.schema';
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
-import {
-  assertRoleIsEditable,
-  assertRoleUpdateDoesNotLockOutCaller,
-  findFlatRoleForToolOrThrow,
-} from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
 import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
@@ -25,10 +20,7 @@ const updateRoleSchema = z.object({
 type UpdateRoleParams = z.infer<typeof updateRoleSchema>;
 
 export const createUpdateRoleTool = (
-  deps: Pick<
-    RoleToolDependencies,
-    'roleService' | 'flatEntityMapsCacheService'
-  >,
+  deps: Pick<RoleToolDependencies, 'roleService'>,
   context: RoleToolContext,
 ) => ({
   name: 'update_role' as const,
@@ -38,33 +30,13 @@ System-managed roles (isEditable=false, like Admin) cannot be updated. Updates t
   inputSchema: updateRoleSchema,
   execute: async (parameters: UpdateRoleParams) => {
     try {
-      const { flatRoleMaps, flatRolePermissionFlagMaps } =
-        await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId: context.workspaceId,
-            flatMapsKeys: ['flatRoleMaps', 'flatRolePermissionFlagMaps'],
-          },
-        );
-
-      const flatRole = findFlatRoleForToolOrThrow({
-        roleId: parameters.roleId,
-        flatRoleMaps,
-      });
-
-      assertRoleIsEditable(flatRole);
-      assertRoleUpdateDoesNotLockOutCaller({
-        flatRole,
-        canUpdateAllSettingsUpdate: parameters.update.canUpdateAllSettings,
-        callerRoleIds: context.callerRoleIds,
-        flatRolePermissionFlagMaps,
-      });
-
       const role = await deps.roleService.updateRole({
         workspaceId: context.workspaceId,
         input: {
           id: parameters.roleId,
           update: parameters.update,
         },
+        actingRoleIds: context.callerRoleIds,
       });
 
       return {

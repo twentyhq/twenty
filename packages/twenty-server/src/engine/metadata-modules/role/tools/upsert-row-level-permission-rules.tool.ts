@@ -4,14 +4,8 @@ import {
 } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
-import { assertRowLevelRuleOwnership } from 'src/engine/metadata-modules/role/tools/utils/assert-row-level-rule-ownership.util';
-import {
-  assertRoleIsEditable,
-  findFlatRoleForToolOrThrow,
-} from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
 import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const predicateValueSchema = z
@@ -117,10 +111,7 @@ type UpsertRowLevelPermissionRulesParams = z.infer<
 >;
 
 export const createUpsertRowLevelPermissionRulesTool = (
-  deps: Pick<
-    RoleToolDependencies,
-    'rowLevelPermissionPredicateService' | 'flatEntityMapsCacheService'
-  >,
+  deps: Pick<RoleToolDependencies, 'rowLevelPermissionPredicateService'>,
   context: RoleToolContext,
 ) => ({
   name: 'upsert_row_level_permission_rules' as const,
@@ -132,45 +123,6 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
   inputSchema: upsertRowLevelPermissionRulesSchema,
   execute: async (parameters: UpsertRowLevelPermissionRulesParams) => {
     try {
-      const {
-        flatRoleMaps,
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      } =
-        await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId: context.workspaceId,
-            flatMapsKeys: [
-              'flatRoleMaps',
-              'flatRowLevelPermissionPredicateMaps',
-              'flatRowLevelPermissionPredicateGroupMaps',
-              'flatFieldMetadataMaps',
-              'flatObjectMetadataMaps',
-            ],
-          },
-        );
-
-      const flatRole = findFlatRoleForToolOrThrow({
-        roleId: parameters.roleId,
-        flatRoleMaps,
-      });
-
-      assertRoleIsEditable(flatRole);
-      assertRowLevelRuleOwnership({
-        roleId: parameters.roleId,
-        objectMetadataId: parameters.objectMetadataId,
-        predicates: parameters.predicates,
-        predicateGroups: parameters.predicateGroups,
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps,
-        workspaceMemberObjectMetadataId: buildObjectIdByNameMaps(
-          flatObjectMetadataMaps,
-        ).idByNameSingular.workspaceMember,
-      });
-
       const { predicates, predicateGroups } =
         await deps.rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates(
           {
@@ -191,7 +143,7 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
 
       return {
         success: true,
-        message: `Row-level permission rules updated on role "${flatRole.label}" (${predicates.length} predicate${predicates.length === 1 ? '' : 's'}, ${predicateGroups.length} group${predicateGroups.length === 1 ? '' : 's'})`,
+        message: `Row-level permission rules updated (${predicates.length} predicate${predicates.length === 1 ? '' : 's'}, ${predicateGroups.length} group${predicateGroups.length === 1 ? '' : 's'})`,
         result: { predicates, predicateGroups },
       };
     } catch (error) {

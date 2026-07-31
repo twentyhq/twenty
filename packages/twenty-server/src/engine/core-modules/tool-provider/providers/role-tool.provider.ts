@@ -64,8 +64,6 @@ export class RoleToolProvider implements ToolProvider {
     return this.roleToolWorkspaceService.generateRoleTools({
       workspaceId: context.workspaceId,
       callerRoleIds: [...callerRoleIds],
-      callerWorkspaceMemberId:
-        context.actorContext?.workspaceMemberId ?? undefined,
       callerUserWorkspaceId: context.userWorkspaceId,
     });
   }

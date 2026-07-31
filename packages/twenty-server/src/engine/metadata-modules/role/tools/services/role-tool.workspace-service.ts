@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { createAssignRoleToWorkspaceMemberTool } from 'src/engine/metadata-modules/role/tools/assign-role-to-workspace-member.tool';
@@ -27,22 +25,18 @@ export class RoleToolWorkspaceService {
   constructor(
     roleService: RoleService,
     userRoleService: UserRoleService,
-    userWorkspaceService: UserWorkspaceService,
     objectPermissionService: ObjectPermissionService,
     rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
     rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
     applicationService: ApplicationService,
-    flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     this.deps = {
       roleService,
       userRoleService,
-      userWorkspaceService,
       objectPermissionService,
       rowLevelPermissionPredicateService,
       rowLevelPermissionPredicateGroupService,
       applicationService,
-      flatEntityMapsCacheService,
     };
   }
 

@@ -2,10 +2,6 @@ import { z } from 'zod';
 
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
-import {
-  assertRoleIsEditable,
-  getFlatRoleForToolOrThrow,
-} from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
 import { toObjectPermissionSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
 import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
@@ -46,10 +42,7 @@ type UpsertObjectPermissionsParams = z.infer<
 >;
 
 export const createUpsertObjectPermissionsTool = (
-  deps: Pick<
-    RoleToolDependencies,
-    'objectPermissionService' | 'flatEntityMapsCacheService'
-  >,
+  deps: Pick<RoleToolDependencies, 'objectPermissionService'>,
   context: RoleToolContext,
 ) => ({
   name: 'upsert_object_permissions' as const,
@@ -61,14 +54,6 @@ Granting write access without read access is rejected. System-managed roles (lik
   inputSchema: upsertObjectPermissionsSchema,
   execute: async (parameters: UpsertObjectPermissionsParams) => {
     try {
-      const flatRole = await getFlatRoleForToolOrThrow({
-        roleId: parameters.roleId,
-        workspaceId: context.workspaceId,
-        flatEntityMapsCacheService: deps.flatEntityMapsCacheService,
-      });
-
-      assertRoleIsEditable(flatRole);
-
       const objectPermissions =
         await deps.objectPermissionService.upsertObjectPermissions({
           workspaceId: context.workspaceId,
@@ -80,7 +65,7 @@ Granting write access without read access is rejected. System-managed roles (lik
 
       return {
         success: true,
-        message: `Object permissions updated on role "${flatRole.label}"`,
+        message: 'Object permissions updated',
         result: {
           roleId: parameters.roleId,
           objectPermissions: objectPermissions.map(toObjectPermissionSummary),

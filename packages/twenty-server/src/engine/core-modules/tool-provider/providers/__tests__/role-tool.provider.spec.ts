@@ -1,16 +1,15 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { FieldActorSource } from 'twenty-shared/types';
-import {
-  PermissionFlagType,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/providers/role-tool.provider';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/providers/role-tool.provider';
 import { type ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { RoleToolWorkspaceService } from 'src/engine/metadata-modules/role/tools/services/role-tool.workspace-service';
@@ -21,62 +20,9 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 
 const workspaceId = 'workspace-id';
 const callerRoleId = 'caller-role-id';
-const callerWorkspaceMemberId = 'caller-workspace-member-id';
 const callerUserWorkspaceId = 'caller-user-workspace-id';
 
-type PartialFlatRole = Partial<FlatRole> &
-  Pick<FlatRole, 'id' | 'label' | 'isEditable'>;
-
-const createFlatRole = (overrides: PartialFlatRole): FlatRole =>
-  ({
-    universalIdentifier: overrides.id,
-    canUpdateAllSettings: false,
-    canAccessAllTools: false,
-    canReadAllObjectRecords: false,
-    canUpdateAllObjectRecords: false,
-    canSoftDeleteAllObjectRecords: false,
-    canDestroyAllObjectRecords: false,
-    canBeAssignedToUsers: true,
-    canBeAssignedToAgents: true,
-    canBeAssignedToApiKeys: true,
-    rolePermissionFlagIds: [],
-    ...overrides,
-  }) as FlatRole;
-
-const createFlatEntityMapsKeyedById = <TEntity extends { id: string }>(
-  entities: TEntity[],
-) => ({
-  byUniversalIdentifier: Object.fromEntries(
-    entities.map((entity) => [entity.id, entity]),
-  ),
-  universalIdentifierById: Object.fromEntries(
-    entities.map((entity) => [entity.id, entity.id]),
-  ),
-});
-
-type RowLevelOwnershipRow = {
-  id: string;
-  roleId: string;
-  objectMetadataId: string;
-  deletedAt?: string | null;
-};
-
-type BuildProviderOptions = {
-  flatRoles?: FlatRole[];
-  rolesPermissionFlagEntities?: {
-    id: string;
-    permissionFlagUniversalIdentifier: string;
-  }[];
-  hasRolesPermission?: boolean;
-  flatPredicates?: RowLevelOwnershipRow[];
-  flatPredicateGroups?: RowLevelOwnershipRow[];
-  flatFields?: { id: string; name: string; objectMetadataId: string }[];
-  flatObjects?: { id: string; nameSingular: string; namePlural: string }[];
-};
-
-const buildProvider = (options?: BuildProviderOptions) => {
-  const flatRoles = options?.flatRoles ?? [];
-
+const buildProvider = (options?: { hasRolesPermission?: boolean }) => {
   const roleService = {
     getWorkspaceRoles: jest.fn().mockResolvedValue([]),
     createRole: jest.fn(),
@@ -84,11 +30,14 @@ const buildProvider = (options?: BuildProviderOptions) => {
     deleteRole: jest.fn(),
   };
   const userRoleService = {
-    assignRoleToManyUserWorkspace: jest.fn().mockResolvedValue(undefined),
-  };
-  const userWorkspaceService = {
-    getWorkspaceMemberOrThrow: jest.fn(),
-    getUserWorkspaceForUserOrThrow: jest.fn(),
+    assignRoleToWorkspaceMember: jest.fn().mockResolvedValue({
+      workspaceMember: {
+        id: 'target-member-id',
+        userId: 'target-user-id',
+        name: { firstName: 'Jane', lastName: 'Doe' },
+      },
+      userWorkspaceId: 'target-user-workspace-id',
+    }),
   };
   const objectPermissionService = {
     upsertObjectPermissions: jest.fn().mockResolvedValue([]),
@@ -112,26 +61,6 @@ const buildProvider = (options?: BuildProviderOptions) => {
         },
       }),
   };
-  const flatEntityMapsCacheService = {
-    getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-      flatRoleMaps: createFlatEntityMapsKeyedById(flatRoles),
-      flatRolePermissionFlagMaps: createFlatEntityMapsKeyedById(
-        options?.rolesPermissionFlagEntities ?? [],
-      ),
-      flatRowLevelPermissionPredicateMaps: createFlatEntityMapsKeyedById(
-        options?.flatPredicates ?? [],
-      ),
-      flatRowLevelPermissionPredicateGroupMaps: createFlatEntityMapsKeyedById(
-        options?.flatPredicateGroups ?? [],
-      ),
-      flatFieldMetadataMaps: createFlatEntityMapsKeyedById(
-        options?.flatFields ?? [],
-      ),
-      flatObjectMetadataMaps: createFlatEntityMapsKeyedById(
-        options?.flatObjects ?? [],
-      ),
-    }),
-  };
   const permissionsService = {
     checkRolesPermissions: jest
       .fn()
@@ -141,12 +70,10 @@ const buildProvider = (options?: BuildProviderOptions) => {
   const roleToolWorkspaceService = new RoleToolWorkspaceService(
     roleService as unknown as RoleService,
     userRoleService as unknown as UserRoleService,
-    userWorkspaceService as unknown as UserWorkspaceService,
     objectPermissionService as unknown as ObjectPermissionService,
     rowLevelPermissionPredicateService as unknown as RowLevelPermissionPredicateService,
     rowLevelPermissionPredicateGroupService as unknown as RowLevelPermissionPredicateGroupService,
     applicationService as unknown as ApplicationService,
-    flatEntityMapsCacheService as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService,
   );
 
   const provider = new RoleToolProvider(
@@ -158,7 +85,6 @@ const buildProvider = (options?: BuildProviderOptions) => {
     provider,
     roleService,
     userRoleService,
-    userWorkspaceService,
     objectPermissionService,
     rowLevelPermissionPredicateService,
     rowLevelPermissionPredicateGroupService,
@@ -173,7 +99,7 @@ const context: ToolProviderContext = {
   userWorkspaceId: callerUserWorkspaceId,
   actorContext: {
     source: FieldActorSource.MANUAL,
-    workspaceMemberId: callerWorkspaceMemberId,
+    workspaceMemberId: 'caller-workspace-member-id',
     name: 'Caller',
     context: {},
   },
@@ -393,101 +319,12 @@ describe('RoleToolProvider', () => {
   });
 
   describe('update_role', () => {
-    it('rejects updating a system-managed role like Admin', async () => {
-      const { provider, roleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'admin-role-id',
-            label: 'Admin',
-            isEditable: false,
-          }),
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'update_role',
-        { roleId: 'admin-role-id', update: { label: 'Renamed' } },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('system-managed');
-      expect(roleService.updateRole).not.toHaveBeenCalled();
-    });
-
-    it('rejects an update that would lock the caller out of role management', async () => {
-      const { provider, roleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: callerRoleId,
-            label: 'Manager',
-            isEditable: true,
-            canUpdateAllSettings: true,
-          }),
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'update_role',
-        { roleId: callerRoleId, update: { canUpdateAllSettings: false } },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('lock you out');
-      expect(roleService.updateRole).not.toHaveBeenCalled();
-    });
-
-    it('allows removing settings access from the caller role when it keeps an explicit ROLES flag', async () => {
-      const rolePermissionFlagId = 'role-permission-flag-id';
-      const { provider, roleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: callerRoleId,
-            label: 'Manager',
-            isEditable: true,
-            canUpdateAllSettings: true,
-            rolePermissionFlagIds: [rolePermissionFlagId],
-          }),
-        ],
-        rolesPermissionFlagEntities: [
-          {
-            id: rolePermissionFlagId,
-            permissionFlagUniversalIdentifier: SystemPermissionFlag.ROLES,
-          },
-        ],
-      });
-
-      roleService.updateRole.mockResolvedValue({
-        id: callerRoleId,
-        label: 'Manager',
-      });
-
-      const output = await provider.executeStaticTool(
-        'update_role',
-        { roleId: callerRoleId, update: { canUpdateAllSettings: false } },
-        context,
-      );
-
-      expect(output.success).toBe(true);
-      expect(roleService.updateRole).toHaveBeenCalled();
-    });
-
-    it('updates another editable role', async () => {
-      const { provider, roleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'other-role-id',
-            label: 'Support',
-            isEditable: true,
-            canUpdateAllSettings: true,
-          }),
-        ],
-      });
+    it('updates the role, forwarding the caller roles for lockout protection', async () => {
+      const { provider, roleService } = buildProvider();
 
       roleService.updateRole.mockResolvedValue({
         id: 'other-role-id',
-        label: 'Support',
+        label: 'Support L1',
       });
 
       const output = await provider.executeStaticTool(
@@ -506,79 +343,36 @@ describe('RoleToolProvider', () => {
           id: 'other-role-id',
           update: { canUpdateAllSettings: false, label: 'Support L1' },
         },
+        actingRoleIds: [callerRoleId],
       });
     });
 
-    it('fails when the role does not exist', async () => {
-      const { provider, roleService } = buildProvider({ flatRoles: [] });
+    it('surfaces service rejections such as lockout protection', async () => {
+      const { provider, roleService } = buildProvider();
+
+      roleService.updateRole.mockRejectedValue(
+        new PermissionsException(
+          PermissionsExceptionMessage.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
+          PermissionsExceptionCode.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
+        ),
+      );
 
       const output = await provider.executeStaticTool(
         'update_role',
-        { roleId: 'ba49ef7c-6b55-4a0a-a3d3-e16702c1a520', update: {} },
+        { roleId: callerRoleId, update: { canUpdateAllSettings: false } },
         context,
       );
 
       expect(output.success).toBe(false);
-      expect(output.error).toContain('not found');
-      expect(roleService.updateRole).not.toHaveBeenCalled();
+      expect(output.error).toContain(
+        PermissionsExceptionMessage.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
+      );
     });
   });
 
   describe('delete_role', () => {
-    it('rejects deleting a system-managed role like Admin', async () => {
-      const { provider, roleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'admin-role-id',
-            label: 'Admin',
-            isEditable: false,
-          }),
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'delete_role',
-        { roleId: 'admin-role-id' },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('system-managed');
-      expect(roleService.deleteRole).not.toHaveBeenCalled();
-    });
-
-    it('rejects deleting the role the caller is acting under', async () => {
-      const { provider, roleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: callerRoleId,
-            label: 'Manager',
-            isEditable: true,
-          }),
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'delete_role',
-        { roleId: callerRoleId },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('acting under');
-      expect(roleService.deleteRole).not.toHaveBeenCalled();
-    });
-
-    it('deletes another editable role', async () => {
-      const { provider, roleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'other-role-id',
-            label: 'Support',
-            isEditable: true,
-          }),
-        ],
-      });
+    it('deletes the role, forwarding the caller roles for lockout protection', async () => {
+      const { provider, roleService } = buildProvider();
 
       roleService.deleteRole.mockResolvedValue({
         id: 'other-role-id',
@@ -595,107 +389,36 @@ describe('RoleToolProvider', () => {
       expect(roleService.deleteRole).toHaveBeenCalledWith({
         roleId: 'other-role-id',
         workspaceId,
+        actingRoleIds: [callerRoleId],
       });
+    });
+
+    it('surfaces service rejections such as deleting an own role', async () => {
+      const { provider, roleService } = buildProvider();
+
+      roleService.deleteRole.mockRejectedValue(
+        new PermissionsException(
+          PermissionsExceptionMessage.CANNOT_DELETE_OWN_ROLE,
+          PermissionsExceptionCode.CANNOT_DELETE_OWN_ROLE,
+        ),
+      );
+
+      const output = await provider.executeStaticTool(
+        'delete_role',
+        { roleId: callerRoleId },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain(
+        PermissionsExceptionMessage.CANNOT_DELETE_OWN_ROLE,
+      );
     });
   });
 
   describe('assign_role_to_workspace_member', () => {
-    const assignableRole = createFlatRole({
-      id: 'other-role-id',
-      label: 'Support',
-      isEditable: true,
-      canBeAssignedToUsers: true,
-    });
-
-    it('rejects assigning a role to the caller themselves', async () => {
-      const { provider, userRoleService } = buildProvider({
-        flatRoles: [assignableRole],
-      });
-
-      const output = await provider.executeStaticTool(
-        'assign_role_to_workspace_member',
-        {
-          workspaceMemberId: callerWorkspaceMemberId,
-          roleId: 'other-role-id',
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('your own role');
-      expect(
-        userRoleService.assignRoleToManyUserWorkspace,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects assigning a role to the caller resolved through user workspace', async () => {
-      const { provider, userRoleService, userWorkspaceService } = buildProvider(
-        { flatRoles: [assignableRole] },
-      );
-
-      userWorkspaceService.getWorkspaceMemberOrThrow.mockResolvedValue({
-        id: 'target-member-id',
-        userId: 'caller-user-id',
-        name: { firstName: 'Same', lastName: 'User' },
-      });
-      userWorkspaceService.getUserWorkspaceForUserOrThrow.mockResolvedValue({
-        id: callerUserWorkspaceId,
-      });
-
-      const output = await provider.executeStaticTool(
-        'assign_role_to_workspace_member',
-        { workspaceMemberId: 'target-member-id', roleId: 'other-role-id' },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('your own role');
-      expect(
-        userRoleService.assignRoleToManyUserWorkspace,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects a role that cannot be assigned to users', async () => {
-      const { provider, userRoleService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'agent-only-role-id',
-            label: 'Agent only',
-            isEditable: true,
-            canBeAssignedToUsers: false,
-          }),
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'assign_role_to_workspace_member',
-        {
-          workspaceMemberId: 'target-member-id',
-          roleId: 'agent-only-role-id',
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('cannot be assigned to users');
-      expect(
-        userRoleService.assignRoleToManyUserWorkspace,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('assigns a role to another workspace member', async () => {
-      const { provider, userRoleService, userWorkspaceService } = buildProvider(
-        { flatRoles: [assignableRole] },
-      );
-
-      userWorkspaceService.getWorkspaceMemberOrThrow.mockResolvedValue({
-        id: 'target-member-id',
-        userId: 'target-user-id',
-        name: { firstName: 'Jane', lastName: 'Doe' },
-      });
-      userWorkspaceService.getUserWorkspaceForUserOrThrow.mockResolvedValue({
-        id: 'target-user-workspace-id',
-      });
+    it('delegates to the user role service with the acting user workspace', async () => {
+      const { provider, userRoleService } = buildProvider();
 
       const output = await provider.executeStaticTool(
         'assign_role_to_workspace_member',
@@ -704,59 +427,43 @@ describe('RoleToolProvider', () => {
       );
 
       expect(output.success).toBe(true);
-      expect(
-        userRoleService.assignRoleToManyUserWorkspace,
-      ).toHaveBeenCalledWith({
+      expect(userRoleService.assignRoleToWorkspaceMember).toHaveBeenCalledWith({
         workspaceId,
-        userWorkspaceIds: ['target-user-workspace-id'],
+        workspaceMemberId: 'target-member-id',
         roleId: 'other-role-id',
+        actingUserWorkspaceId: callerUserWorkspaceId,
       });
     });
-  });
 
-  describe('upsert_object_permissions', () => {
-    it('rejects changes on a system-managed role', async () => {
-      const { provider, objectPermissionService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'admin-role-id',
-            label: 'Admin',
-            isEditable: false,
-          }),
-        ],
-      });
+    it('surfaces service rejections such as changing your own role', async () => {
+      const { provider, userRoleService } = buildProvider();
+
+      userRoleService.assignRoleToWorkspaceMember.mockRejectedValue(
+        new PermissionsException(
+          PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
+          PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
+        ),
+      );
 
       const output = await provider.executeStaticTool(
-        'upsert_object_permissions',
+        'assign_role_to_workspace_member',
         {
-          roleId: 'admin-role-id',
-          objectPermissions: [
-            {
-              objectMetadataId: 'object-metadata-id',
-              canReadObjectRecords: true,
-            },
-          ],
+          workspaceMemberId: 'caller-workspace-member-id',
+          roleId: 'other-role-id',
         },
         context,
       );
 
       expect(output.success).toBe(false);
-      expect(output.error).toContain('system-managed');
-      expect(
-        objectPermissionService.upsertObjectPermissions,
-      ).not.toHaveBeenCalled();
+      expect(output.error).toContain(
+        PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
+      );
     });
+  });
 
-    it('upserts object permission overrides on an editable role', async () => {
-      const { provider, objectPermissionService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'support-role-id',
-            label: 'Support',
-            isEditable: true,
-          }),
-        ],
-      });
+  describe('upsert_object_permissions', () => {
+    it('upserts object permission overrides through the service', async () => {
+      const { provider, objectPermissionService } = buildProvider();
 
       objectPermissionService.upsertObjectPermissions.mockResolvedValue([
         {
@@ -807,92 +514,20 @@ describe('RoleToolProvider', () => {
   });
 
   describe('upsert_row_level_permission_rules', () => {
-    const supportRole = createFlatRole({
-      id: 'support-role-id',
-      label: 'Support',
-      isEditable: true,
-    });
-    const objectMetadataId = 'object-metadata-id';
-    const workspaceMemberObjectMetadataId = 'workspace-member-object-id';
-    const ownerFieldMetadataId = 'owner-field-metadata-id';
-    const workspaceMemberIdFieldMetadataId =
-      'workspace-member-id-field-metadata-id';
-
-    const rowLevelRuleFixtures = {
-      flatRoles: [supportRole],
-      flatObjects: [
-        {
-          id: objectMetadataId,
-          nameSingular: 'opportunity',
-          namePlural: 'opportunities',
-        },
-        {
-          id: workspaceMemberObjectMetadataId,
-          nameSingular: 'workspaceMember',
-          namePlural: 'workspaceMembers',
-        },
-      ],
-      flatFields: [
-        {
-          id: ownerFieldMetadataId,
-          name: 'owner',
-          objectMetadataId,
-        },
-        {
-          id: workspaceMemberIdFieldMetadataId,
-          name: 'id',
-          objectMetadataId: workspaceMemberObjectMetadataId,
-        },
-      ],
-    };
-
-    const ownerMatchesCurrentUserPredicate = {
-      fieldMetadataId: ownerFieldMetadataId,
-      operand: 'IS',
-      workspaceMemberFieldMetadataId: workspaceMemberIdFieldMetadataId,
-    };
-
-    it('rejects changes on a system-managed role', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'admin-role-id',
-            label: 'Admin',
-            isEditable: false,
-          }),
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'upsert_row_level_permission_rules',
-        {
-          roleId: 'admin-role-id',
-          objectMetadataId: 'object-metadata-id',
-          predicates: [],
-          predicateGroups: [],
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('system-managed');
-      expect(
-        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
-      ).not.toHaveBeenCalled();
-    });
-
     it('upserts predicates and injects the object metadata id into groups', async () => {
-      const { provider, rowLevelPermissionPredicateService } =
-        buildProvider(rowLevelRuleFixtures);
+      const { provider, rowLevelPermissionPredicateService } = buildProvider();
 
       const output = await provider.executeStaticTool(
         'upsert_row_level_permission_rules',
         {
           roleId: 'support-role-id',
-          objectMetadataId,
+          objectMetadataId: 'object-metadata-id',
           predicates: [
             {
-              ...ownerMatchesCurrentUserPredicate,
+              fieldMetadataId: 'owner-field-metadata-id',
+              operand: 'IS',
+              workspaceMemberFieldMetadataId:
+                'workspace-member-id-field-metadata-id',
               rowLevelPermissionPredicateGroupId: 'group-id',
             },
           ],
@@ -908,209 +543,40 @@ describe('RoleToolProvider', () => {
         workspaceId,
         input: expect.objectContaining({
           roleId: 'support-role-id',
-          objectMetadataId,
+          objectMetadataId: 'object-metadata-id',
           predicateGroups: [
             expect.objectContaining({
               id: 'group-id',
               logicalOperator: 'AND',
-              objectMetadataId,
+              objectMetadataId: 'object-metadata-id',
             }),
           ],
         }),
       });
     });
 
-    it('rejects a predicate id owned by another role', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider({
-        ...rowLevelRuleFixtures,
-        flatPredicates: [
-          {
-            id: 'foreign-predicate-id',
-            roleId: 'another-role-id',
-            objectMetadataId,
-            deletedAt: null,
-          },
-        ],
-      });
+    it('surfaces service rejections such as cross-role ownership violations', async () => {
+      const { provider, rowLevelPermissionPredicateService } = buildProvider();
 
-      const output = await provider.executeStaticTool(
-        'upsert_row_level_permission_rules',
-        {
-          roleId: 'support-role-id',
-          objectMetadataId,
-          predicates: [
-            { ...ownerMatchesCurrentUserPredicate, id: 'foreign-predicate-id' },
-          ],
-          predicateGroups: [],
-        },
-        context,
+      rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates.mockRejectedValue(
+        new Error(
+          'Predicate "foreign-predicate-id" belongs to a different role or object and cannot be modified here.',
+        ),
       );
 
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('different role or object');
-      expect(
-        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects a predicate group id owned by another object', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider({
-        ...rowLevelRuleFixtures,
-        flatPredicateGroups: [
-          {
-            id: 'foreign-group-id',
-            roleId: 'support-role-id',
-            objectMetadataId: 'another-object-metadata-id',
-            deletedAt: null,
-          },
-        ],
-      });
-
       const output = await provider.executeStaticTool(
         'upsert_row_level_permission_rules',
         {
           roleId: 'support-role-id',
-          objectMetadataId,
+          objectMetadataId: 'object-metadata-id',
           predicates: [],
-          predicateGroups: [{ id: 'foreign-group-id', logicalOperator: 'AND' }],
+          predicateGroups: [],
         },
         context,
       );
 
       expect(output.success).toBe(false);
       expect(output.error).toContain('different role or object');
-      expect(
-        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects a predicate referencing a group of another role', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider({
-        ...rowLevelRuleFixtures,
-        flatPredicateGroups: [
-          {
-            id: 'foreign-group-id',
-            roleId: 'another-role-id',
-            objectMetadataId,
-            deletedAt: null,
-          },
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'upsert_row_level_permission_rules',
-        {
-          roleId: 'support-role-id',
-          objectMetadataId,
-          predicates: [
-            {
-              ...ownerMatchesCurrentUserPredicate,
-              rowLevelPermissionPredicateGroupId: 'foreign-group-id',
-            },
-          ],
-          predicateGroups: [],
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('not a group of this role and object');
-      expect(
-        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects a field belonging to another object', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider({
-        ...rowLevelRuleFixtures,
-        flatFields: [
-          ...rowLevelRuleFixtures.flatFields,
-          {
-            id: 'other-object-field-id',
-            name: 'unrelatedField',
-            objectMetadataId: 'another-object-metadata-id',
-          },
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'upsert_row_level_permission_rules',
-        {
-          roleId: 'support-role-id',
-          objectMetadataId,
-          predicates: [
-            { fieldMetadataId: 'other-object-field-id', operand: 'IS' },
-          ],
-          predicateGroups: [],
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('belongs to another object');
-      expect(
-        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects a workspaceMemberFieldMetadataId that is not a workspaceMember field', async () => {
-      const { provider, rowLevelPermissionPredicateService } =
-        buildProvider(rowLevelRuleFixtures);
-
-      const output = await provider.executeStaticTool(
-        'upsert_row_level_permission_rules',
-        {
-          roleId: 'support-role-id',
-          objectMetadataId,
-          predicates: [
-            {
-              fieldMetadataId: ownerFieldMetadataId,
-              operand: 'IS',
-              workspaceMemberFieldMetadataId: ownerFieldMetadataId,
-            },
-          ],
-          predicateGroups: [],
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('not a field of the workspaceMember');
-      expect(
-        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('allows reusing an existing predicate id owned by the same role and object', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider({
-        ...rowLevelRuleFixtures,
-        flatPredicates: [
-          {
-            id: 'own-predicate-id',
-            roleId: 'support-role-id',
-            objectMetadataId,
-            deletedAt: null,
-          },
-        ],
-      });
-
-      const output = await provider.executeStaticTool(
-        'upsert_row_level_permission_rules',
-        {
-          roleId: 'support-role-id',
-          objectMetadataId,
-          predicates: [
-            { ...ownerMatchesCurrentUserPredicate, id: 'own-predicate-id' },
-          ],
-          predicateGroups: [],
-        },
-        context,
-      );
-
-      expect(output.success).toBe(true);
-      expect(
-        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
-      ).toHaveBeenCalled();
     });
   });
 });

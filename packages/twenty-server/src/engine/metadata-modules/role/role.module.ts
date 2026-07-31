@@ -6,7 +6,6 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
@@ -60,7 +59,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RowLevelPermissionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
-    UserWorkspaceModule,
     FileModule,
     ApplicationModule,
     WorkspaceCacheModule,

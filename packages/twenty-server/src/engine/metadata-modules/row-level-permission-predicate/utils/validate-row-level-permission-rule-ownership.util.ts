@@ -1,30 +1,27 @@
+/* @license Enterprise */
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import {
+  type RowLevelPermissionPredicateGroupInput,
+  type RowLevelPermissionPredicateInput,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import {
+  RowLevelPermissionPredicateException,
+  RowLevelPermissionPredicateExceptionCode,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
-// Only the identity fields matter here; the tool injects objectMetadataId onto
-// groups after this check, so accept the shape before that step.
-type PredicateOwnershipInput = {
-  id?: string;
-  fieldMetadataId: string;
-  workspaceMemberFieldMetadataId?: string | null;
-  rowLevelPermissionPredicateGroupId?: string | null;
-};
-
-type PredicateGroupOwnershipInput = {
-  id?: string;
-};
-
-// The upsert service resolves supplied ids workspace-wide and the migration
+// Supplied ids are resolved workspace-wide further down, and the migration
 // validators only compare an update against its own stored row, so a predicate
 // or group id belonging to another role or object would be silently rewritten
 // in place, and a field from another object would build a filter that never
-// matches. The model picks these ids, so scope them to the target explicitly.
-export const assertRowLevelRuleOwnership = ({
+// matches. Scope everything to the requested role and object upfront.
+export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
   roleId,
   objectMetadataId,
   predicates,
@@ -36,8 +33,8 @@ export const assertRowLevelRuleOwnership = ({
 }: {
   roleId: string;
   objectMetadataId: string;
-  predicates: PredicateOwnershipInput[];
-  predicateGroups: PredicateGroupOwnershipInput[];
+  predicates: RowLevelPermissionPredicateInput[];
+  predicateGroups: RowLevelPermissionPredicateGroupInput[];
   flatRowLevelPermissionPredicateMaps: FlatEntityMaps<FlatRowLevelPermissionPredicate>;
   flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -59,8 +56,9 @@ export const assertRowLevelRuleOwnership = ({
       (existingGroup.roleId !== roleId ||
         existingGroup.objectMetadataId !== objectMetadataId)
     ) {
-      throw new Error(
+      throw new RowLevelPermissionPredicateException(
         `Predicate group "${predicateGroup.id}" belongs to a different role or object and cannot be modified here. Omit the id to create a new group.`,
+        RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION,
       );
     }
   }
@@ -84,8 +82,9 @@ export const assertRowLevelRuleOwnership = ({
         (existingPredicate.roleId !== roleId ||
           existingPredicate.objectMetadataId !== objectMetadataId)
       ) {
-        throw new Error(
+        throw new RowLevelPermissionPredicateException(
           `Predicate "${predicate.id}" belongs to a different role or object and cannot be modified here. Omit the id to create a new predicate.`,
+          RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
         );
       }
     }
@@ -104,8 +103,9 @@ export const assertRowLevelRuleOwnership = ({
         referencedGroup.roleId !== roleId ||
         referencedGroup.objectMetadataId !== objectMetadataId
       ) {
-        throw new Error(
+        throw new RowLevelPermissionPredicateException(
           `Predicate group "${groupId}" is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.`,
+          RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         );
       }
     }
@@ -116,14 +116,16 @@ export const assertRowLevelRuleOwnership = ({
     });
 
     if (!isDefined(fieldMetadata)) {
-      throw new Error(
-        `Field "${predicate.fieldMetadataId}" not found. Use the metadata tools to look up field ids.`,
+      throw new RowLevelPermissionPredicateException(
+        `Field "${predicate.fieldMetadataId}" not found.`,
+        RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
       );
     }
 
     if (fieldMetadata.objectMetadataId !== objectMetadataId) {
-      throw new Error(
+      throw new RowLevelPermissionPredicateException(
         `Field "${fieldMetadata.name}" belongs to another object and cannot be used in a rule on this object. Rules must filter on a field of the object they restrict.`,
+        RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }
 
@@ -147,8 +149,9 @@ export const assertRowLevelRuleOwnership = ({
       workspaceMemberFieldMetadata.objectMetadataId !==
         workspaceMemberObjectMetadataId
     ) {
-      throw new Error(
+      throw new RowLevelPermissionPredicateException(
         `workspaceMemberFieldMetadataId "${workspaceMemberFieldMetadataId}" is not a field of the workspaceMember object. The rule would silently never apply.`,
+        RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }
   }
