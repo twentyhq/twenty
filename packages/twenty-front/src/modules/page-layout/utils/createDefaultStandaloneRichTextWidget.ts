@@ -1,7 +1,8 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
   type GridPosition,
   PageLayoutTabLayoutMode,
-  type PageLayoutWidget,
+  type PageLayoutWidget as PageLayoutWidgetGenerated,
   type RichTextBody,
   WidgetConfigurationType,
   WidgetType,
@@ -13,6 +14,7 @@ export const createDefaultStandaloneRichTextWidget = (
   body: RichTextBody,
   gridPosition: GridPosition,
   objectMetadataId?: string | null,
+  position?: PageLayoutWidgetGenerated['position'],
 ): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
@@ -27,7 +29,7 @@ export const createDefaultStandaloneRichTextWidget = (
       body,
     },
     gridPosition,
-    position: {
+    position: position ?? {
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: gridPosition.row,
