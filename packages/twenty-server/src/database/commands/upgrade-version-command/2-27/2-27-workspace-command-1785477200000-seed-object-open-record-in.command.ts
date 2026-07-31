@@ -1,6 +1,10 @@
 import { Command } from 'nest-commander';
 
-import { ObjectOpenRecordIn, ViewKey, ViewOpenRecordIn } from 'twenty-shared/types';
+import {
+  ObjectOpenRecordIn,
+  ViewKey,
+  ViewOpenRecordIn,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -8,7 +12,6 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -20,6 +23,11 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
     'Seed objectMetadata.openRecordIn from the standard definitions and from deliberate per-view record page choices',
 })
 export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRunner {
+  // Universal identifiers are workspace-invariant, so the expensive standard
+  // application build behind this set runs once per command run, not once per
+  // workspace.
+  private pinnedStandardUniversalIdentifiers?: string[];
+
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -29,16 +37,45 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({
-    workspaceId,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
+  private async getPinnedStandardUniversalIdentifiers(
+    workspaceId: string,
+  ): Promise<string[]> {
+    if (isDefined(this.pinnedStandardUniversalIdentifiers)) {
+      return this.pinnedStandardUniversalIdentifiers;
+    }
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
+
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        now: new Date().toISOString(),
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      });
+
+    this.pinnedStandardUniversalIdentifiers = Object.values(
+      standardAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (standardObjectMetadata) =>
+          standardObjectMetadata.openRecordIn === ObjectOpenRecordIn.RECORD_PAGE,
+      )
+      .map(
+        (standardObjectMetadata) => standardObjectMetadata.universalIdentifier,
+      );
+
+    return this.pinnedStandardUniversalIdentifiers;
+  }
+
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const isDryRun = options.dryRun ?? false;
 
     const { flatObjectMetadataMaps, flatViewMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -46,33 +83,13 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
         'flatViewMaps',
       ]);
 
-    const now = new Date().toISOString();
-
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now,
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
-
     // The column arrives as USER_CHOICE everywhere, so two kinds of objects
     // have to be told otherwise: standard objects the definitions pin, and
     // objects whose index view had been deliberately switched to the record
     // page back when the view was the only place to say so.
-    const pinnedUniversalIdentifiers = new Set<string>();
-
-    for (const standardObjectMetadata of Object.values(
-      standardAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
-    )) {
-      if (
-        isDefined(standardObjectMetadata) &&
-        standardObjectMetadata.openRecordIn === ObjectOpenRecordIn.RECORD_PAGE
-      ) {
-        pinnedUniversalIdentifiers.add(
-          standardObjectMetadata.universalIdentifier,
-        );
-      }
-    }
+    const pinnedUniversalIdentifiers = new Set(
+      await this.getPinnedStandardUniversalIdentifiers(workspaceId),
+    );
 
     for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
       if (
@@ -86,12 +103,14 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
       }
     }
 
+    const now = new Date().toISOString();
+
     const objectMetadatasToUpdate = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .filter(
-        (flatObjectMetadata): flatObjectMetadata is FlatObjectMetadata =>
+        (flatObjectMetadata) =>
           pinnedUniversalIdentifiers.has(
             flatObjectMetadata.universalIdentifier,
           ) &&
@@ -118,6 +137,11 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
     if (isDryRun) {
       return;
     }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(

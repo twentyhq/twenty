@@ -1,4 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
@@ -10,6 +11,7 @@ import {
 import {
   AppPath,
   ObjectOpenRecordIn,
+  OpenRecordIn,
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
@@ -141,10 +143,14 @@ export const useFrontComponentExecutionContext = ({
           (item) => item.nameSingular === objectNameSingular,
         );
 
-        if (
-          isMobile ||
-          objectMetadataItem?.openRecordIn === ObjectOpenRecordIn.RECORD_PAGE
-        ) {
+        const resolvedOpenRecordIn = resolveOpenRecordIn({
+          objectOpenRecordIn:
+            objectMetadataItem?.openRecordIn ?? ObjectOpenRecordIn.USER_CHOICE,
+          openRecordInPreference: OpenRecordIn.SIDE_PANEL,
+          canDisplaySidePanel: !isMobile,
+        });
+
+        if (resolvedOpenRecordIn === OpenRecordIn.RECORD_PAGE) {
           if (isDefined(tab)) {
             setRecordPageActiveTabId({
               recordId,

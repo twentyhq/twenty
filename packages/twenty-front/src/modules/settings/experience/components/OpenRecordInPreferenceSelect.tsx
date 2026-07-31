@@ -1,14 +1,19 @@
+import { useOpenRecordInDestinationOptions } from '@/settings/experience/hooks/useOpenRecordInDestinationOptions';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { OpenRecordIn } from 'twenty-shared/types';
-import { IconLayoutNavbar, IconLayoutSidebarRight } from 'twenty-ui/icon';
 
 export const OpenRecordInPreferenceSelect = () => {
   const { t } = useLingui();
 
   const { openRecordInPreference, setOpenRecordInPreference } =
     useOpenRecordInPreference();
+
+  const destinationOptions = useOpenRecordInDestinationOptions({
+    sidePanelValue: OpenRecordIn.SIDE_PANEL,
+    recordPageValue: OpenRecordIn.RECORD_PAGE,
+  });
 
   return (
     <Select
@@ -18,18 +23,7 @@ export const OpenRecordInPreferenceSelect = () => {
       dropdownWidthAuto
       fullWidth
       value={openRecordInPreference}
-      options={[
-        {
-          label: t`Side Panel`,
-          value: OpenRecordIn.SIDE_PANEL,
-          Icon: IconLayoutSidebarRight,
-        },
-        {
-          label: t`Record Page`,
-          value: OpenRecordIn.RECORD_PAGE,
-          Icon: IconLayoutNavbar,
-        },
-      ]}
+      options={destinationOptions}
       onChange={setOpenRecordInPreference}
     />
   );

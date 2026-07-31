@@ -2,7 +2,8 @@ import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { OpenRecordIn } from 'twenty-shared/types';
+import { isOpenRecordIn } from '@/workspace-member/utils/toOpenRecordInPreference';
+import { type OpenRecordIn } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
   WorkspaceMemberDateFormatEnum,
@@ -32,9 +33,6 @@ export type WorkspaceMemberSettingsUpdateInput = {
 
 const isColorScheme = (value: unknown): value is ColorScheme =>
   value === 'Dark' || value === 'Light' || value === 'System';
-
-const isOpenRecordIn = (value: unknown): value is OpenRecordIn =>
-  value === OpenRecordIn.SIDE_PANEL || value === OpenRecordIn.RECORD_PAGE;
 
 const WORKSPACE_MEMBER_DATE_FORMAT_VALUES: ReadonlySet<string> = new Set(
   Object.values(WorkspaceMemberDateFormatEnum),

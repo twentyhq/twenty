@@ -23,6 +23,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
 import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
+import { VIEW_OPEN_RECORD_IN_DEPRECATION } from 'src/engine/metadata-modules/view/constants/view-open-record-in-deprecation.constant';
 
 // TODO: this should be refactored like for view-field.input.ts
 // This is a temporary fix as we were extending the CreateViewInput class which was adding default values for the non filled fields
@@ -62,8 +63,7 @@ export class UpdateViewInput {
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,
-    description:
-      'Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.',
+    description: `Deprecated: ${VIEW_OPEN_RECORD_IN_DEPRECATION}`,
   })
   openRecordIn?: ViewOpenRecordIn;
 

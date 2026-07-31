@@ -40,11 +40,6 @@ export class AddWorkspaceMemberOpenRecordInCommand extends ProvisionedWorkspaceC
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -63,6 +58,27 @@ export class AddWorkspaceMemberOpenRecordInCommand extends ProvisionedWorkspaceC
 
       return;
     }
+
+    // Cheap idempotency check before building the whole standard application.
+    if (
+      WORKSPACE_MEMBER_OPEN_RECORD_IN_FIELD_UNIVERSAL_IDENTIFIERS.every(
+        (universalIdentifier) =>
+          isDefined(
+            flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
+          ),
+      )
+    ) {
+      this.logger.log(
+        `workspaceMember openRecordIn already exists for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({

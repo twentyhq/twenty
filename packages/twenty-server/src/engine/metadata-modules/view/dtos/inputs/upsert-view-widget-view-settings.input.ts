@@ -19,6 +19,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
 import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
+import { VIEW_OPEN_RECORD_IN_DEPRECATION } from 'src/engine/metadata-modules/view/constants/view-open-record-in-deprecation.constant';
 
 @InputType()
 export class UpsertViewWidgetViewSettingsInput {
@@ -45,8 +46,7 @@ export class UpsertViewWidgetViewSettingsInput {
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,
-    description:
-      'Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.',
+    description: `Deprecated: ${VIEW_OPEN_RECORD_IN_DEPRECATION}`,
   })
   openRecordIn?: ViewOpenRecordIn;
 
