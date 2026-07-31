@@ -9,9 +9,12 @@ import {
 } from 'src/constants/backfill';
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { postToOwnRoute } from 'src/utils/post-to-own-route';
+import { getBackfillBatchSize, getBackfillSleepMs } from 'src/utils/backfill-settings';
 
 const handler = async (): Promise<object> => {
   const existingState = await kv.get<BackfillState>(BACKFILL_STATE_KV_KEY);
+
+  console.log('Backfill params', JSON.stringify({ batchSize: getBackfillBatchSize(), sleepMs: getBackfillSleepMs() }));
 
   if (existingState) {
     return { outcome: 'already-running', state: existingState };
@@ -34,6 +37,6 @@ export default definePostInstallLogicFunction({
   description:
     'Starts the sequential last-contact backfill orchestrator after installation.',
   timeoutSeconds: 60,
-  shouldRunOnVersionUpgrade: true,
+  shouldRunOnVersionUpgrade: false,
   handler,
 });
