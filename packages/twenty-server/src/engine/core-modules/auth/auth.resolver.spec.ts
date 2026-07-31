@@ -1,4 +1,4 @@
-import { type CanActivate } from '@nestjs/common';
+import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -123,7 +123,7 @@ describe('AuthResolver', () => {
         {
           provide: getQueueToken(MessageQueue.emailQueue),
           useValue: {
-            add: jest.fn(),
+            add: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
@@ -227,6 +227,27 @@ describe('AuthResolver', () => {
           locale: 'en',
         },
         { retryLimit: 3 },
+      );
+    });
+
+    it('should return success without waiting for the job to be enqueued', async () => {
+      const loggerErrorSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation();
+
+      (messageQueueService.add as jest.Mock).mockRejectedValue(
+        new Error('redis down'),
+      );
+
+      const result = await resolver.emailPasswordResetLink(
+        emailPasswordResetInput,
+        context,
+      );
+
+      expect(result).toEqual({ success: true });
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Failed to enqueue the password reset email job',
+        expect.any(Error),
       );
     });
 

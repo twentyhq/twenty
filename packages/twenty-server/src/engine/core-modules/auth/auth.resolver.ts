@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -134,6 +134,8 @@ const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
+  private readonly logger = new Logger(AuthResolver.name);
+
   constructor(
     @InjectMessageQueue(MessageQueue.emailQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -951,15 +953,22 @@ export class AuthResolver {
       PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS,
     );
 
-    await this.messageQueueService.add<EmailPasswordResetLinkJobData>(
-      EmailPasswordResetLinkJob.name,
-      {
-        email: normalizedEmail,
-        workspaceId: emailPasswordResetInput.workspaceId,
-        locale: context.req.locale,
-      },
-      { retryLimit: 3 },
-    );
+    void this.messageQueueService
+      .add<EmailPasswordResetLinkJobData>(
+        EmailPasswordResetLinkJob.name,
+        {
+          email: normalizedEmail,
+          workspaceId: emailPasswordResetInput.workspaceId,
+          locale: context.req.locale,
+        },
+        { retryLimit: 3 },
+      )
+      .catch((error) => {
+        this.logger.error(
+          'Failed to enqueue the password reset email job',
+          error,
+        );
+      });
 
     return { success: true };
   }
