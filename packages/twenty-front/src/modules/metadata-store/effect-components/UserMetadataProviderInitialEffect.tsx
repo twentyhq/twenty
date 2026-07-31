@@ -1,3 +1,4 @@
+import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -129,6 +130,7 @@ export const UserMetadataProviderInitialEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
+        openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       };

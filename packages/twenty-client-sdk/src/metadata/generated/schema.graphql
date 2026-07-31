@@ -343,6 +343,7 @@ type Object {
   isUICreatable: Boolean!
   isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
+  openRecordIn: ObjectOpenRecordIn!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -367,6 +368,12 @@ type Object {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): ObjectIndexMetadatasConnection!
+}
+
+enum ObjectOpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
+  USER_CHOICE
 }
 
 input CursorPaging {
@@ -436,6 +443,7 @@ type WorkspaceMember {
   name: FullName!
   userEmail: String!
   colorScheme: String!
+  openRecordIn: OpenRecordIn!
   avatarUrl: String
   locale: String
   calendarStartDay: Int
@@ -445,6 +453,11 @@ type WorkspaceMember {
   roles: [Role!]
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
+}
+
+enum OpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
 }
 
 """Date format as Month first, Day first, Year first or system as default"""
@@ -793,7 +806,7 @@ type View {
   position: Float!
   isCompact: Boolean!
   isCustom: Boolean!
-  openRecordIn: ViewOpenRecordIn!
+  openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
@@ -3750,6 +3763,10 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3768,6 +3785,10 @@ input UpdateViewInput {
   icon: String
   position: Float
   isCompact: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3810,6 +3831,10 @@ input UpsertViewWidgetViewSettingsInput {
   type: ViewType
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -4183,6 +4208,7 @@ input UpdateObjectPayload {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
+  openRecordIn: ObjectOpenRecordIn
 }
 
 input CreateOneIndexInput {
