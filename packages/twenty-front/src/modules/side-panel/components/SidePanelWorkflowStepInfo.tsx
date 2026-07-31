@@ -8,6 +8,7 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
@@ -15,6 +16,7 @@ import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWo
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -63,15 +65,13 @@ export const SidePanelWorkflowStepInfo = ({
     useUpdateWorkflowVersionStep(instanceId);
   const { updateTrigger } = useUpdateWorkflowVersionTrigger(instanceId);
 
-  const {
-    trigger,
-    steps,
-    id: workflowVersionId,
-  } = workflowWithCurrentVersion?.currentVersion ?? {
-    trigger: null,
-    steps: null,
-    id: undefined,
-  };
+  const workflowVersionId = workflowWithCurrentVersion?.currentVersion?.id;
+
+  const flow = useAtomComponentStateValue(flowComponentState, instanceId);
+  const { content } = useWorkflowVersionContent(workflowVersionId);
+
+  const trigger = flow?.trigger ?? content?.trigger ?? null;
+  const steps = flow?.steps ?? content?.steps ?? null;
 
   const isTriggerStep = sidePanelWorkflowStepId === TRIGGER_STEP_ID;
 

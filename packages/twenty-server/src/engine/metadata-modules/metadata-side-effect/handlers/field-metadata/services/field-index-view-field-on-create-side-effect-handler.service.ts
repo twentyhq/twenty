@@ -183,7 +183,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
 
     if (
       !isDefined(existingIndexFlatView) ||
-      !existingIndexFlatView.isActive ||
       isDefined(existingIndexFlatView.deletedAt)
     ) {
       return undefined;
