@@ -30,12 +30,6 @@ jest.mock(
     }),
   }),
 );
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState',
-  () => ({
-    useAtomComponentFamilyState: () => [false, jest.fn()],
-  }),
-);
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue', () => ({
   useAtomFamilyStateValue: () => ({
     startsAt: '2026-07-15T09:00:00.000Z',
@@ -50,11 +44,6 @@ jest.mock('@dnd-kit/react', () => ({
     ref: jest.fn(),
   }),
 }));
-jest.mock('twenty-ui/input', () => ({
-  Checkbox: () => <input type="checkbox" />,
-  CheckboxVariant: { Secondary: 'secondary' },
-}));
-
 const renderEvent = () =>
   render(
     <RecordCalendarWeekEvent
@@ -71,15 +60,10 @@ const renderEvent = () =>
   );
 
 describe('RecordCalendarWeekEvent', () => {
-  it('keeps the selection control on the exposed edge of overlapping events', () => {
+  it('does not render a selection checkbox', () => {
     const { container } = renderEvent();
 
-    const checkboxContainer = container.querySelector('.checkbox-container');
-
-    expect(checkboxContainer).toContainElement(
-      container.querySelector('input[type="checkbox"]'),
-    );
-    expect(checkboxContainer?.nextElementSibling).toHaveTextContent('Event');
+    expect(container.querySelector('input[type="checkbox"]')).toBeNull();
   });
 
   it('stays focused only while its record is open in the side panel', () => {

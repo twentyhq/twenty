@@ -1,9 +1,7 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { useIsRecordCalendarCardDragDisabled } from '@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled';
-import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
 import { type RecordCalendarWeekDndData } from '@/object-record/record-calendar/week/types/RecordCalendarWeekDndData';
@@ -14,7 +12,6 @@ import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useDraggable } from '@dnd-kit/react';
@@ -22,7 +19,6 @@ import { styled } from '@linaria/react';
 import { type Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
-import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -151,13 +147,6 @@ const StyledCompactEventStartTime = styled.span`
   white-space: nowrap;
 `;
 
-const StyledCheckboxContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  height: 20px;
-`;
-
 const StyledEventTimeRow = styled.div`
   align-items: center;
   display: flex;
@@ -227,11 +216,6 @@ export const RecordCalendarWeekEvent = ({
     ? recordStore?.[calendarEndFieldName]
     : undefined;
 
-  const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
-    useAtomComponentFamilyState(
-      isRecordCalendarCardSelectedComponentFamilyState,
-      recordId,
-    );
   const viewableRecordId = useAtomStateValue(viewableRecordIdState);
   const isFocused = viewableRecordId === recordId;
 
@@ -277,7 +261,6 @@ export const RecordCalendarWeekEvent = ({
       <EventCard
         data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
         data-focused={isFocused}
-        data-selected={isRecordCalendarCardSelected}
         onClick={() => {
           if (!isDragSource) {
             openRecordFromIndexView({ recordId });
@@ -286,18 +269,6 @@ export const RecordCalendarWeekEvent = ({
       >
         <StyledEventContent isAllDay={isAllDay}>
           <StyledEventHeader>
-            <StyledCheckboxContainer className="checkbox-container">
-              <StopPropagationContainer>
-                <Checkbox
-                  hoverable
-                  checked={isRecordCalendarCardSelected}
-                  onChange={(event) => {
-                    setIsRecordCalendarCardSelected(event.target.checked);
-                  }}
-                  variant={CheckboxVariant.Secondary}
-                />
-              </StopPropagationContainer>
-            </StyledCheckboxContainer>
             <StyledEventLabel isDateOnly={isDateOnly}>
               <StyledRecordChipContainer>
                 <RecordChip
