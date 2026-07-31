@@ -58,7 +58,7 @@ const StyledTab = styled.button<{ isActive: boolean }>`
 `;
 
 const StyledFilters = styled.div`
-  align-items: center;
+  align-items: flex-end;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-wrap: wrap;
