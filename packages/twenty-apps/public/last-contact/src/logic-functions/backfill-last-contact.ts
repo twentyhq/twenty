@@ -20,6 +20,7 @@ const handler = async (): Promise<object> => {
   await kv.set<BackfillState>(BACKFILL_STATE_KV_KEY, {
     phase: BACKFILL_PHASE_ORDER[0],
     cursor: null,
+    iterations: 0,
   });
 
   await postToOwnRoute({ path: BACKFILL_ORCHESTRATOR_ROUTE_PATH, body: {} });

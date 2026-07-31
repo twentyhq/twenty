@@ -13,11 +13,17 @@ import { BACKFILL_ORCHESTRATOR_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/c
 import { getBackfillSleepMs } from 'src/utils/backfill-settings';
 import { callOwnRoute, postToOwnRoute, sleep } from 'src/utils/post-to-own-route';
 
+const MAX_ITERATIONS = 10_000;
+
 const handler = async (): Promise<object> => {
   const state = await kv.get<BackfillState>(BACKFILL_STATE_KV_KEY);
 
   if (!state) {
     return { outcome: 'no-active-backfill' };
+  }
+
+  if (state.iterations > MAX_ITERATIONS) {
+    return { outcome: 'max-iteration-reached' };
   }
 
   const { nextCursor } = await callOwnRoute<BackfillBatchResult>({
@@ -31,6 +37,7 @@ const handler = async (): Promise<object> => {
     await kv.set<BackfillState>(BACKFILL_STATE_KV_KEY, {
       phase: state.phase,
       cursor: nextCursor,
+      iterations: (state.iterations ?? 0) + 1,
     });
     await postToOwnRoute({ path: BACKFILL_ORCHESTRATOR_ROUTE_PATH, body: {} });
 
@@ -44,6 +51,7 @@ const handler = async (): Promise<object> => {
     await kv.set<BackfillState>(BACKFILL_STATE_KV_KEY, {
       phase: nextPhase,
       cursor: null,
+      iterations: (state.iterations ?? 0) + 1,
     });
     await postToOwnRoute({ path: BACKFILL_ORCHESTRATOR_ROUTE_PATH, body: {} });
 

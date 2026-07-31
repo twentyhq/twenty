@@ -22,7 +22,7 @@ export const BACKFILL_PHASE_ROUTE_PATHS: Record<BackfillPhase, string> = {
   companies: BACKFILL_COMPANIES_ROUTE_PATH,
 };
 
-export type BackfillState = { phase: BackfillPhase; cursor: string | null };
+export type BackfillState = { phase: BackfillPhase; cursor: string | null; iterations: number };
 export type BackfillBatchResult = { nextCursor: string | null; count: number };
 
 // Presence of this key acts as the backfill lock; it is deleted once every
