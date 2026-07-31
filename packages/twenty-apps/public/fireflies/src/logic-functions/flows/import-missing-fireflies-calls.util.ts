@@ -3,7 +3,6 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { sleepForMilliseconds } from 'src/utils/sleep-for-milliseconds.util';
 
 import { FIREFLIES_BACKFILL_PAGE_SIZE } from 'src/logic-functions/constants/fireflies-backfill-page-size.constant';
-import { FIREFLIES_BACKFILL_RATE_LIMIT_PAUSE_MILLISECONDS } from 'src/logic-functions/constants/fireflies-backfill-rate-limit-pause-milliseconds.constant';
 import { HTTP_TOO_MANY_REQUESTS_STATUS_CODE } from 'src/logic-functions/constants/http-too-many-requests-status-code.constant';
 import { findCallRecordingFieldStatesOrThrow } from 'src/logic-functions/data/find-call-recording-field-states-or-throw.util';
 import { syncFirefliesTranscriptPage } from 'src/logic-functions/flows/sync-fireflies-transcript-page.util';
@@ -13,83 +12,25 @@ import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/u
 import { isRetryableFirefliesApiStatus } from 'src/logic-functions/utils/is-retryable-fireflies-api-status.util';
 import { listFirefliesTranscripts } from 'src/logic-functions/utils/list-fireflies-transcripts.util';
 
-type FirefliesBackfillProgress = {
-  pageCount: number;
-  importedCallCount: number;
-  erroredCallCount: number;
-  skippedCallCount: number;
-};
-
 type ImportMissingFirefliesCallsParams = {
   apiKey: string;
   coreApiClient: CoreApiClient;
   cursor: FirefliesBackfillCursor;
-  deadlineAtMilliseconds: number;
-  getNowMilliseconds?: () => number;
   sleep?: (milliseconds: number) => Promise<void>;
 };
 
-type ImportNextFirefliesTranscriptPageParams = {
-  apiKey: string;
-  coreApiClient: CoreApiClient;
-  cursor: FirefliesBackfillCursor;
-  deadlineAtMilliseconds: number;
-  firefliesBackfillProgress: FirefliesBackfillProgress;
-  getNowMilliseconds: () => number;
-  sleep: (milliseconds: number) => Promise<void>;
-  slowestPageDurationMilliseconds: number;
+const EMPTY_CALL_COUNTS = {
+  importedCallCount: 0,
+  erroredCallCount: 0,
+  skippedCallCount: 0,
 };
 
-const addPageToFirefliesBackfillProgress = ({
-  firefliesBackfillProgress,
-  pageResult,
-}: {
-  firefliesBackfillProgress: FirefliesBackfillProgress;
-  pageResult: {
-    importedCallCount: number;
-    erroredCallCount: number;
-    skippedCallCount: number;
-  };
-}): FirefliesBackfillProgress => ({
-  pageCount: firefliesBackfillProgress.pageCount + 1,
-  importedCallCount:
-    firefliesBackfillProgress.importedCallCount + pageResult.importedCallCount,
-  erroredCallCount:
-    firefliesBackfillProgress.erroredCallCount + pageResult.erroredCallCount,
-  skippedCallCount:
-    firefliesBackfillProgress.skippedCallCount + pageResult.skippedCallCount,
-});
-
-const pauseBeforeFirefliesBackfillContinuation = async ({
-  deadlineAtMilliseconds,
-  getNowMilliseconds,
-  sleep,
-}: {
-  deadlineAtMilliseconds: number;
-  getNowMilliseconds: () => number;
-  sleep: (milliseconds: number) => Promise<void>;
-}): Promise<void> => {
-  const pauseDurationMilliseconds = Math.min(
-    FIREFLIES_BACKFILL_RATE_LIMIT_PAUSE_MILLISECONDS,
-    Math.max(0, deadlineAtMilliseconds - getNowMilliseconds()),
-  );
-
-  if (pauseDurationMilliseconds > 0) {
-    await sleep(pauseDurationMilliseconds);
-  }
-};
-
-const importNextFirefliesTranscriptPage = async ({
+export const importMissingFirefliesCalls = async ({
   apiKey,
   coreApiClient,
   cursor,
-  deadlineAtMilliseconds,
-  firefliesBackfillProgress,
-  getNowMilliseconds,
-  sleep,
-  slowestPageDurationMilliseconds,
-}: ImportNextFirefliesTranscriptPageParams): Promise<ImportMissingFirefliesCallsResult> => {
-  const pageStartedAtMilliseconds = getNowMilliseconds();
+  sleep = sleepForMilliseconds,
+}: ImportMissingFirefliesCallsParams): Promise<ImportMissingFirefliesCallsResult> => {
   const listFirefliesTranscriptsResult = await listFirefliesTranscripts({
     apiKey,
     fromDate: cursor.fromDate,
@@ -107,22 +48,16 @@ const importNextFirefliesTranscriptPage = async ({
       isRateLimited ||
       isRetryableFirefliesApiStatus(listFirefliesTranscriptsResult.status)
     ) {
-      await pauseBeforeFirefliesBackfillContinuation({
-        deadlineAtMilliseconds,
-        getNowMilliseconds,
-        sleep,
-      });
-
       return {
         stopReason: isRateLimited ? 'rate-limited' : 'retryable-error',
-        ...firefliesBackfillProgress,
+        ...EMPTY_CALL_COUNTS,
         continuationCursor: cursor,
       };
     }
 
     return {
       stopReason: 'list-failed',
-      ...firefliesBackfillProgress,
+      ...EMPTY_CALL_COUNTS,
       continuationCursor: cursor,
       listErrorMessage: listFirefliesTranscriptsResult.errorMessage,
     };
@@ -133,7 +68,7 @@ const importNextFirefliesTranscriptPage = async ({
   if (firefliesCallSummaries.length === 0) {
     return {
       stopReason: 'exhausted',
-      ...firefliesBackfillProgress,
+      ...EMPTY_CALL_COUNTS,
     };
   }
 
@@ -149,36 +84,21 @@ const importNextFirefliesTranscriptPage = async ({
     firefliesCallSummaries,
     callRecordingFieldStates,
     pageCursor: cursor,
-    deadlineAtMilliseconds,
-    getNowMilliseconds,
     sleep,
   });
-  const nextFirefliesBackfillProgress = addPageToFirefliesBackfillProgress({
-    firefliesBackfillProgress,
-    pageResult: pageSyncResult,
-  });
-
-  if (pageSyncResult.status === 'deadline') {
-    return {
-      stopReason: 'deadline',
-      ...nextFirefliesBackfillProgress,
-      continuationCursor: pageSyncResult.continuationCursor,
-    };
-  }
+  const pageCallCounts = {
+    importedCallCount: pageSyncResult.importedCallCount,
+    erroredCallCount: pageSyncResult.erroredCallCount,
+    skippedCallCount: pageSyncResult.skippedCallCount,
+  };
 
   if (
     pageSyncResult.status === 'rate-limited' ||
     pageSyncResult.status === 'retryable-error'
   ) {
-    await pauseBeforeFirefliesBackfillContinuation({
-      deadlineAtMilliseconds,
-      getNowMilliseconds,
-      sleep,
-    });
-
     return {
       stopReason: pageSyncResult.status,
-      ...nextFirefliesBackfillProgress,
+      ...pageCallCounts,
       continuationCursor: pageSyncResult.continuationCursor,
     };
   }
@@ -186,62 +106,16 @@ const importNextFirefliesTranscriptPage = async ({
   if (firefliesCallSummaries.length < FIREFLIES_BACKFILL_PAGE_SIZE) {
     return {
       stopReason: 'exhausted',
-      ...nextFirefliesBackfillProgress,
+      ...pageCallCounts,
     };
   }
 
-  const nextCursor = {
-    ...cursor,
-    skip: cursor.skip + firefliesCallSummaries.length,
-  };
-  const nextSlowestPageDurationMilliseconds = Math.max(
-    slowestPageDurationMilliseconds,
-    getNowMilliseconds() - pageStartedAtMilliseconds,
-  );
-
-  if (
-    getNowMilliseconds() + nextSlowestPageDurationMilliseconds >
-    deadlineAtMilliseconds
-  ) {
-    return {
-      stopReason: 'deadline',
-      ...nextFirefliesBackfillProgress,
-      continuationCursor: nextCursor,
-    };
-  }
-
-  return importNextFirefliesTranscriptPage({
-    apiKey,
-    coreApiClient,
-    cursor: nextCursor,
-    deadlineAtMilliseconds,
-    firefliesBackfillProgress: nextFirefliesBackfillProgress,
-    getNowMilliseconds,
-    sleep,
-    slowestPageDurationMilliseconds: nextSlowestPageDurationMilliseconds,
-  });
-};
-
-export const importMissingFirefliesCalls = ({
-  apiKey,
-  coreApiClient,
-  cursor,
-  deadlineAtMilliseconds,
-  getNowMilliseconds = () => Date.now(),
-  sleep = sleepForMilliseconds,
-}: ImportMissingFirefliesCallsParams): Promise<ImportMissingFirefliesCallsResult> =>
-  importNextFirefliesTranscriptPage({
-    apiKey,
-    coreApiClient,
-    cursor,
-    deadlineAtMilliseconds,
-    firefliesBackfillProgress: {
-      pageCount: 0,
-      importedCallCount: 0,
-      erroredCallCount: 0,
-      skippedCallCount: 0,
+  return {
+    stopReason: 'page-complete',
+    ...pageCallCounts,
+    continuationCursor: {
+      ...cursor,
+      skip: cursor.skip + firefliesCallSummaries.length,
     },
-    getNowMilliseconds,
-    sleep,
-    slowestPageDurationMilliseconds: 0,
-  });
+  };
+};

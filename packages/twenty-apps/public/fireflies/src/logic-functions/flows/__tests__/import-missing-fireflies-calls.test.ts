@@ -5,7 +5,6 @@ import {
   answerTwentyQueries,
   buildGraphqlResponse,
   buildListedTranscript,
-  FAR_DEADLINE_MILLISECONDS,
   FIREFLIES_API_KEY,
   FIREFLIES_BACKFILL_FROM_DATE,
   getListRequestVariables,
@@ -64,14 +63,12 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: INITIAL_FIREFLIES_BACKFILL_CURSOR,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
     expect(result).toEqual(
       expect.objectContaining({
         stopReason: 'exhausted',
-        pageCount: 1,
         importedCallCount: 2,
         erroredCallCount: 0,
       }),
@@ -98,7 +95,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: INITIAL_FIREFLIES_BACKFILL_CURSOR,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -145,7 +141,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: INITIAL_FIREFLIES_BACKFILL_CURSOR,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -198,7 +193,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -250,7 +244,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -319,7 +312,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: INITIAL_FIREFLIES_BACKFILL_CURSOR,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -396,7 +388,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: INITIAL_FIREFLIES_BACKFILL_CURSOR,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -462,7 +453,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: INITIAL_FIREFLIES_BACKFILL_CURSOR,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 

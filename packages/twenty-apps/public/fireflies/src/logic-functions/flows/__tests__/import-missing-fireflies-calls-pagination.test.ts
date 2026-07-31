@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   buildGraphqlResponse,
   buildListedTranscript,
-  FAR_DEADLINE_MILLISECONDS,
   FIREFLIES_API_KEY,
   FIREFLIES_BACKFILL_FROM_DATE,
   getListRequestVariables,
@@ -54,7 +53,6 @@ describe('importMissingFirefliesCalls pagination', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: continuationCursor,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -68,7 +66,7 @@ describe('importMissingFirefliesCalls pagination', () => {
     ]);
   });
 
-  it('returns the next page cursor when the deadline is reached', async () => {
+  it('returns the next page cursor after a full page', async () => {
     const pageSize = 50;
     const newestCallDateMilliseconds = Date.parse('2026-06-10T00:00:00.000Z');
     const initialCursor = {
@@ -82,12 +80,6 @@ describe('importMissingFirefliesCalls pagination', () => {
         newestCallDateMilliseconds - index * 60_000,
       ),
     );
-    let nowMilliseconds = 0;
-    const getNowMilliseconds = () => {
-      nowMilliseconds += 1_000;
-
-      return nowMilliseconds;
-    };
 
     serveFirefliesApi([fullPage], fetchMock);
 
@@ -96,15 +88,12 @@ describe('importMissingFirefliesCalls pagination', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: initialCursor,
-      deadlineAtMilliseconds: 100_000,
-      getNowMilliseconds,
       sleep: skipSleep,
     });
 
     expect(result).toEqual(
       expect.objectContaining({
-        stopReason: 'deadline',
-        pageCount: 1,
+        stopReason: 'page-complete',
         importedCallCount: pageSize,
         continuationCursor: {
           ...initialCursor,
@@ -112,55 +101,10 @@ describe('importMissingFirefliesCalls pagination', () => {
         },
       }),
     );
+    expect(getListRequestVariables(fetchMock)).toHaveLength(1);
   });
 
-  it('returns a mid-page cursor when the deadline expires during a page', async () => {
-    const pageSize = 50;
-    const newestCallDateMilliseconds = Date.parse('2026-06-10T00:00:00.000Z');
-    const initialCursor = {
-      fromDate: FIREFLIES_BACKFILL_FROM_DATE,
-      toDate: '2026-06-11T00:00:00.000Z',
-      skip: 0,
-    };
-    const fullPage = Array.from({ length: pageSize }, (_, index) =>
-      buildListedTranscript(
-        `call-${index}`,
-        newestCallDateMilliseconds - index * 60_000,
-      ),
-    );
-    let nowMilliseconds = 0;
-    const getNowMilliseconds = () => {
-      nowMilliseconds += 60_000;
-
-      return nowMilliseconds;
-    };
-
-    serveFirefliesApi([fullPage], fetchMock);
-
-    const { CoreApiClient } = await import('twenty-client-sdk/core');
-    const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
-      coreApiClient: new CoreApiClient(),
-      cursor: initialCursor,
-      deadlineAtMilliseconds: 150_000,
-      getNowMilliseconds,
-      sleep: skipSleep,
-    });
-
-    expect(result).toEqual(
-      expect.objectContaining({
-        stopReason: 'deadline',
-        pageCount: 1,
-        importedCallCount: 1,
-        continuationCursor: {
-          ...initialCursor,
-          skip: 1,
-        },
-      }),
-    );
-  });
-
-  it('returns the current page cursor after list rate limiting', async () => {
+  it('returns the current page cursor without pausing after list rate limiting', async () => {
     const cursor = {
       fromDate: FIREFLIES_BACKFILL_FROM_DATE,
       toDate: '2026-06-05T00:00:00.000Z',
@@ -180,7 +124,6 @@ describe('importMissingFirefliesCalls pagination', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep,
     });
 
@@ -190,7 +133,7 @@ describe('importMissingFirefliesCalls pagination', () => {
         continuationCursor: cursor,
       }),
     );
-    expect(sleep).toHaveBeenCalledWith(60_000);
+    expect(sleep).not.toHaveBeenCalled();
   });
 
   it('returns the current page cursor after a hard list failure', async () => {
@@ -209,7 +152,6 @@ describe('importMissingFirefliesCalls pagination', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -238,7 +180,6 @@ describe('importMissingFirefliesCalls pagination', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
@@ -251,7 +192,7 @@ describe('importMissingFirefliesCalls pagination', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
-  it('uses offsets when multiple pages share the same timestamp', async () => {
+  it('uses offsets across continuations when calls share the same timestamp', async () => {
     const pageSize = 50;
     const sharedCallDateMilliseconds = Date.parse('2026-06-10T00:00:00.000Z');
     const firefliesCalls = Array.from({ length: pageSize + 1 }, (_, index) =>
@@ -312,19 +253,39 @@ describe('importMissingFirefliesCalls pagination', () => {
     });
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
-    const result = await importMissingFirefliesCalls({
+    const firstPageResult = await importMissingFirefliesCalls({
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: INITIAL_FIREFLIES_BACKFILL_CURSOR,
-      deadlineAtMilliseconds: FAR_DEADLINE_MILLISECONDS,
       sleep: skipSleep,
     });
 
-    expect(result).toEqual(
+    expect(firstPageResult).toEqual(
+      expect.objectContaining({
+        stopReason: 'page-complete',
+        importedCallCount: pageSize,
+        continuationCursor: {
+          ...INITIAL_FIREFLIES_BACKFILL_CURSOR,
+          skip: pageSize,
+        },
+      }),
+    );
+
+    if (firstPageResult.stopReason !== 'page-complete') {
+      throw new Error('Expected a page-complete continuation');
+    }
+
+    const secondPageResult = await importMissingFirefliesCalls({
+      apiKey: FIREFLIES_API_KEY,
+      coreApiClient: new CoreApiClient(),
+      cursor: firstPageResult.continuationCursor,
+      sleep: skipSleep,
+    });
+
+    expect(secondPageResult).toEqual(
       expect.objectContaining({
         stopReason: 'exhausted',
-        pageCount: 2,
-        importedCallCount: pageSize + 1,
+        importedCallCount: 1,
       }),
     );
     expect(mutationMock).toHaveBeenCalledTimes(pageSize + 1);

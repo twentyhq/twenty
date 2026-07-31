@@ -17,8 +17,4 @@ export type SyncFirefliesTranscriptPageResult =
   | (FirefliesTranscriptPageCounts & {
       status: 'retryable-error';
       continuationCursor: FirefliesBackfillCursor;
-    })
-  | (FirefliesTranscriptPageCounts & {
-      status: 'deadline';
-      continuationCursor: FirefliesBackfillCursor;
     });

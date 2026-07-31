@@ -1,7 +1,6 @@
 import { type FirefliesBackfillCursor } from 'src/logic-functions/types/fireflies-backfill-cursor.type';
 
 type ImportMissingFirefliesCallsCounts = {
-  pageCount: number;
   importedCallCount: number;
   erroredCallCount: number;
   skippedCallCount: number;
@@ -12,7 +11,7 @@ export type ImportMissingFirefliesCallsResult =
       stopReason: 'exhausted';
     })
   | (ImportMissingFirefliesCallsCounts & {
-      stopReason: 'deadline';
+      stopReason: 'page-complete';
       continuationCursor: FirefliesBackfillCursor;
     })
   | (ImportMissingFirefliesCallsCounts & {

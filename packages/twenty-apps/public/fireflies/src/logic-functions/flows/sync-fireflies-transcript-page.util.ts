@@ -32,8 +32,6 @@ type SyncFirefliesTranscriptPageParams = {
   firefliesCallSummaries: FirefliesCallSummary[];
   callRecordingFieldStates: Map<string, CallRecordingFieldState>;
   pageCursor: FirefliesBackfillCursor;
-  deadlineAtMilliseconds: number;
-  getNowMilliseconds: () => number;
   sleep: (milliseconds: number) => Promise<void>;
 };
 
@@ -164,8 +162,6 @@ export const syncFirefliesTranscriptPage = async ({
   firefliesCallSummaries,
   callRecordingFieldStates,
   pageCursor,
-  deadlineAtMilliseconds,
-  getNowMilliseconds,
   sleep,
 }: SyncFirefliesTranscriptPageParams): Promise<SyncFirefliesTranscriptPageResult> => {
   const firefliesCallSyncOutcomes: FirefliesCallSyncOutcome[] = [];
@@ -174,17 +170,6 @@ export const syncFirefliesTranscriptPage = async ({
     firefliesCallIndex,
     firefliesCallSummary,
   ] of firefliesCallSummaries.entries()) {
-    if (getNowMilliseconds() >= deadlineAtMilliseconds) {
-      return {
-        status: 'deadline',
-        ...countFirefliesCallSyncOutcomes(firefliesCallSyncOutcomes),
-        continuationCursor: {
-          ...pageCursor,
-          skip: pageCursor.skip + firefliesCallIndex,
-        },
-      };
-    }
-
     const callRecordingId = computeCallRecordingIdForFirefliesMeeting(
       firefliesCallSummary.id,
     );
