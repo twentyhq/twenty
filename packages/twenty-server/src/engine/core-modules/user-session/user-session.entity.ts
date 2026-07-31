@@ -20,6 +20,7 @@ export enum UserSessionRevokedReason {
   Superseded = 'SUPERSEDED',
   PasswordChanged = 'PASSWORD_CHANGED',
   AdminRevoked = 'ADMIN_REVOKED',
+  ImpersonationEnded = 'IMPERSONATION_ENDED',
 }
 
 @Entity({ name: 'userSession', schema: 'core' })
