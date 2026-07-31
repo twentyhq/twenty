@@ -11,6 +11,7 @@ export const ACTION_TOOL_IDS = [
   'search_help_center',
   'code_interpreter',
   'navigate_app',
+  'update_campaign_body',
 ] as const;
 
 export type ActionToolId = (typeof ACTION_TOOL_IDS)[number];
@@ -36,5 +37,8 @@ export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   },
   navigate_app: {
     label: i18nLabel(msg`Navigate App`),
+  },
+  update_campaign_body: {
+    label: i18nLabel(msg`Update Campaign Body`),
   },
 };

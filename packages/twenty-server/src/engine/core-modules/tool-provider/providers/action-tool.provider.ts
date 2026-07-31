@@ -33,6 +33,7 @@ import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UpdateCampaignBodyTool } from 'src/modules/emailing/tools/update-campaign-body-tool';
 
 @Injectable()
 export class ActionToolProvider implements ToolProvider {
@@ -50,6 +51,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly navigateAppTool: NavigateAppTool,
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
     private readonly searchOutputTool: SearchOutputTool,
+    private readonly updateCampaignBodyTool: UpdateCampaignBodyTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
     private readonly i18nService: I18nService,
@@ -64,6 +66,7 @@ export class ActionToolProvider implements ToolProvider {
       ['navigate_app', this.navigateAppTool],
       ['extract_json_paths', this.extractJsonPathsTool],
       ['search_output', this.searchOutputTool],
+      ['update_campaign_body', this.updateCampaignBodyTool],
     ]);
   }
 
@@ -169,6 +172,17 @@ export class ActionToolProvider implements ToolProvider {
         'search_output',
         this.searchOutputTool,
         includeSchemas,
+      ),
+    );
+
+    // No dedicated permission flag: the underlying write runs through the
+    // caller's role-scoped repository, which enforces campaign permissions.
+    descriptors.push(
+      this.buildDescriptor(
+        'update_campaign_body',
+        this.updateCampaignBodyTool,
+        includeSchemas,
+        context.locale,
       ),
     );
 

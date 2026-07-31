@@ -20,10 +20,12 @@ import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/messa
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { MessageCampaignBodyService } from 'src/modules/emailing/services/message-campaign-body.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
+import { UpdateCampaignBodyTool } from 'src/modules/emailing/tools/update-campaign-body-tool';
 
 @Module({
   imports: [
@@ -46,10 +48,12 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
   providers: [
     EmailBillingService,
     MessageCampaignService,
+    MessageCampaignBodyService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
     EmailingDomainSenderService,
+    UpdateCampaignBodyTool,
     EmailingSendResolver,
     MessageSuppressionResolver,
     UnsubscribeTopicResolver,
@@ -60,9 +64,11 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
   exports: [
     EmailingDomainSenderService,
     MessageCampaignService,
+    MessageCampaignBodyService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
+    UpdateCampaignBodyTool,
   ],
 })
 export class EmailingModule {}
