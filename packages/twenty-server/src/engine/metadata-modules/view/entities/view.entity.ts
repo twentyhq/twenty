@@ -121,6 +121,9 @@ export class ViewEntity
   @Column({ nullable: false, default: false, type: 'boolean' })
   isCustom: boolean;
 
+  // Deprecated: superseded by objectMetadata.openRecordIn and the workspace
+  // member preference. The column is kept one release for zero-downtime
+  // compatibility and is no longer read anywhere.
   @Column({
     type: 'enum',
     enum: Object.values(ViewOpenRecordIn),

@@ -16,6 +16,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { ObjectOpenRecordInSelect } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInSelect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -100,6 +101,13 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           onClick={handleCustomizeRecordPage}
           disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
         />
+      </Section>
+      <Section>
+        <H2Title
+          title={t`Open records in`}
+          description={t`Where records of this object open. Member preference lets each member decide for themselves.`}
+        />
+        <ObjectOpenRecordInSelect objectMetadataItem={objectMetadataItem} />
       </Section>
       <Section>
         <H2Title

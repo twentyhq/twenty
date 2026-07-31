@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { act } from 'react';
+import { ObjectOpenRecordIn, OpenRecordIn } from 'twenty-shared/types';
 
 jest.mock('react-responsive', () => ({
   useMediaQuery: jest.fn().mockReturnValue(false),
@@ -22,65 +22,67 @@ const mockUseAtomFamilySelectorValue = jest.requireMock(
   '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue',
 ).useAtomFamilySelectorValue as jest.Mock;
 
-// Stands in for the views store: only the view the hook actually asks for
-// comes back, so a hook reading the wrong view id resolves to nothing.
-mockUseAtomFamilySelectorValue.mockImplementation(
-  (_selector: unknown, { viewId }: { viewId: string }) =>
-    viewId === 'test-view-id'
-      ? { id: viewId, openRecordIn: ViewOpenRecordIn.RECORD_PAGE }
-      : undefined,
+// Stands in for the object metadata store.
+const setObjectOpenRecordIn = (
+  openRecordIn: ObjectOpenRecordIn | undefined,
+) => {
+  mockUseAtomFamilySelectorValue.mockImplementation(
+    (_selector: unknown, { objectName }: { objectName: string }) =>
+      objectName === 'company' && openRecordIn !== undefined
+        ? { id: 'company-id', nameSingular: 'company', openRecordIn }
+        : undefined,
+  );
+};
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const WrapperWithoutContextStore = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
-
-const WrapperWithContextStore = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => (
-  <JotaiProvider store={jotaiStore}>
-    <ContextStoreComponentInstanceContext.Provider
-      value={{ instanceId: 'test-context-store' }}
-    >
-      {children}
-    </ContextStoreComponentInstanceContext.Provider>
-  </JotaiProvider>
-);
+const setMemberPreference = (openRecordIn: OpenRecordIn | undefined) => {
+  act(() => {
+    jotaiStore.set(
+      currentWorkspaceMemberState.atom,
+      openRecordIn === undefined
+        ? null
+        : ({ id: 'member-id', openRecordIn } as never),
+    );
+  });
+};
 
 describe('useResolveOpenRecordIn', () => {
   afterEach(() => {
-    jotaiStore.set(
-      contextStoreCurrentViewIdComponentState.atomFamily({
-        instanceId: 'test-context-store',
-      }),
-      undefined,
-    );
+    setMemberPreference(undefined);
   });
 
-  it('falls back to the default where no context store is mounted', () => {
+  it('follows the member preference when the object leaves the choice open', () => {
+    setObjectOpenRecordIn(ObjectOpenRecordIn.USER_CHOICE);
+    setMemberPreference(OpenRecordIn.RECORD_PAGE);
+
     const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
-      wrapper: WrapperWithoutContextStore,
+      wrapper: Wrapper,
     });
 
-    expect(result.current).toBe(ViewOpenRecordIn.SIDE_PANEL);
+    expect(result.current).toBe(OpenRecordIn.RECORD_PAGE);
   });
 
-  it('follows the current view of the surrounding context store', () => {
-    jotaiStore.set(
-      contextStoreCurrentViewIdComponentState.atomFamily({
-        instanceId: 'test-context-store',
-      }),
-      'test-view-id',
-    );
+  it('lets the object pin its records over the member preference', () => {
+    setObjectOpenRecordIn(ObjectOpenRecordIn.RECORD_PAGE);
+    setMemberPreference(OpenRecordIn.SIDE_PANEL);
 
     const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
-      wrapper: WrapperWithContextStore,
+      wrapper: Wrapper,
     });
 
-    expect(result.current).toBe(ViewOpenRecordIn.RECORD_PAGE);
+    expect(result.current).toBe(OpenRecordIn.RECORD_PAGE);
+  });
+
+  it('falls back to the side panel default with no metadata and no member', () => {
+    setObjectOpenRecordIn(undefined);
+
+    const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current).toBe(OpenRecordIn.SIDE_PANEL);
   });
 });

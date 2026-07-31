@@ -62,6 +62,8 @@ export class UpdateViewInput {
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,
+    description:
+      'Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.',
   })
   openRecordIn?: ViewOpenRecordIn;
 

@@ -1033,6 +1033,9 @@ export const STANDARD_OBJECT_FIELDS = {
     colorScheme: {
       universalIdentifier: '20202020-66bc-47f2-adac-f2ef7c598b63',
     },
+    openRecordIn: {
+      universalIdentifier: '20202020-1b16-419d-9323-6f3ea850e5d9',
+    },
     locale: {
       universalIdentifier: '20202020-402e-4695-b169-794fa015afbe',
     },

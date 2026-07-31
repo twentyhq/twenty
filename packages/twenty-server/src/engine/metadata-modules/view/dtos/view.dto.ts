@@ -61,6 +61,8 @@ export class ViewDTO {
   @Field(() => ViewOpenRecordIn, {
     nullable: false,
     defaultValue: ViewOpenRecordIn.SIDE_PANEL,
+    deprecationReason:
+      'Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.',
   })
   openRecordIn: ViewOpenRecordIn;
 

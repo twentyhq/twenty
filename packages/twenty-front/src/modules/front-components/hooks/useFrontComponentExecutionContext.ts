@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
@@ -8,6 +9,7 @@ import {
 } from 'twenty-front-component-renderer';
 import {
   AppPath,
+  ObjectOpenRecordIn,
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
@@ -21,7 +23,6 @@ import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/c
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
@@ -73,6 +74,7 @@ export const useFrontComponentExecutionContext = ({
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const isMobile = useIsMobile();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
   const unmountEngineCommand = useUnmountCommand();
@@ -133,7 +135,16 @@ export const useFrontComponentExecutionContext = ({
         const { recordId, objectNameSingular, tab, resetNavigationStack } =
           params;
 
-        if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+        // A developer's explicit openSidePanelPage call still honours an
+        // object pinned to the record page, and a viewport with no room.
+        const objectMetadataItem = objectMetadataItems.find(
+          (item) => item.nameSingular === objectNameSingular,
+        );
+
+        if (
+          isMobile ||
+          objectMetadataItem?.openRecordIn === ObjectOpenRecordIn.RECORD_PAGE
+        ) {
           if (isDefined(tab)) {
             setRecordPageActiveTabId({
               recordId,

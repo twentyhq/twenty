@@ -1,0 +1,2 @@
+export const ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME =
+  '2.27.0_AddOpenRecordInToObjectMetadataFastInstanceCommand_1785477000000';

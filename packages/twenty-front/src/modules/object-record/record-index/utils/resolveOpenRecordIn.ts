@@ -1,22 +1,29 @@
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { ObjectOpenRecordIn, OpenRecordIn } from 'twenty-shared/types';
 
 type ResolveOpenRecordInArgs = {
-  openRecordInViewSetting: ViewOpenRecordIn;
-  objectNameSingular: string;
+  objectOpenRecordIn: ObjectOpenRecordIn;
+  openRecordInPreference: OpenRecordIn;
   canDisplaySidePanel: boolean;
 };
 
-// The view setting is an intent, not a decision: the side panel is only a real
-// destination when there is room to display it next to the record list, and
-// when the object has a side panel to display at all.
+// The object either pins where its records open or hands the choice to the
+// member, and the side panel is only a real destination when there is room to
+// display it. Nothing else has a say, so a chip resolves the same way
+// everywhere it renders.
 export const resolveOpenRecordIn = ({
-  openRecordInViewSetting,
-  objectNameSingular,
+  objectOpenRecordIn,
+  openRecordInPreference,
   canDisplaySidePanel,
-}: ResolveOpenRecordInArgs): ViewOpenRecordIn =>
-  openRecordInViewSetting === ViewOpenRecordIn.SIDE_PANEL &&
-  canDisplaySidePanel &&
-  canOpenObjectInSidePanel(objectNameSingular)
-    ? ViewOpenRecordIn.SIDE_PANEL
-    : ViewOpenRecordIn.RECORD_PAGE;
+}: ResolveOpenRecordInArgs): OpenRecordIn => {
+  const requestedOpenRecordIn =
+    objectOpenRecordIn === ObjectOpenRecordIn.USER_CHOICE
+      ? openRecordInPreference
+      : objectOpenRecordIn === ObjectOpenRecordIn.SIDE_PANEL
+        ? OpenRecordIn.SIDE_PANEL
+        : OpenRecordIn.RECORD_PAGE;
+
+  return requestedOpenRecordIn === OpenRecordIn.SIDE_PANEL &&
+    canDisplaySidePanel
+    ? OpenRecordIn.SIDE_PANEL
+    : OpenRecordIn.RECORD_PAGE;
+};
