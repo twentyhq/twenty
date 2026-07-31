@@ -21,5 +21,4 @@ export type FirefliesBackfillResult =
       toDate: string;
       transcriptCount: number;
       batchCount: number;
-      enqueuedBatchCount: number;
     };

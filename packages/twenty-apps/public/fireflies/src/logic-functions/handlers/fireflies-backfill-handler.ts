@@ -45,9 +45,7 @@ export const firefliesBackfillHandler = async ({
     listFirefliesTranscriptIdsResult.transcriptIds,
     FIREFLIES_BACKFILL_BATCH_SIZE,
   );
-  const enqueuedBatchCount = await enqueueFirefliesBackfillBatches({
-    transcriptIdBatches,
-  });
+  await enqueueFirefliesBackfillBatches({ transcriptIdBatches });
 
   return {
     outcome: FIREFLIES_BACKFILL_OUTCOME.STARTED,
@@ -55,6 +53,5 @@ export const firefliesBackfillHandler = async ({
     toDate,
     transcriptCount: listFirefliesTranscriptIdsResult.transcriptIds.length,
     batchCount: transcriptIdBatches.length,
-    enqueuedBatchCount,
   };
 };

@@ -106,7 +106,6 @@ describe('firefliesBackfillLogicFunction', () => {
         outcome: 'started',
         transcriptCount: 25,
         batchCount: 2,
-        enqueuedBatchCount: 2,
       }),
     );
     expect(enqueueJobMock).toHaveBeenCalledTimes(2);
@@ -130,7 +129,6 @@ describe('firefliesBackfillLogicFunction', () => {
         outcome: 'started',
         transcriptCount: 0,
         batchCount: 0,
-        enqueuedBatchCount: 0,
       }),
     );
     expect(enqueueJobMock).not.toHaveBeenCalled();

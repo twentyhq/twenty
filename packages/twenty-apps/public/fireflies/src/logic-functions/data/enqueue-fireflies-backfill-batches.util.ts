@@ -8,32 +8,14 @@ export const enqueueFirefliesBackfillBatches = async ({
   transcriptIdBatches,
 }: {
   transcriptIdBatches: string[][];
-}): Promise<number> => {
-  const enqueueResults = await Promise.allSettled(
-    transcriptIdBatches.map((transcriptIds, batchIndex) =>
-      enqueueJob({
-        logicFunctionUniversalIdentifier:
-          FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-        payload: { transcriptIds },
-        retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
-        delayMs: batchIndex * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
-      }),
-    ),
-  );
-
-  for (const enqueueResult of enqueueResults) {
-    if (enqueueResult.status === 'rejected') {
-      console.error(
-        `[fireflies] backfill batch enqueue failed: ${
-          enqueueResult.reason instanceof Error
-            ? enqueueResult.reason.message
-            : String(enqueueResult.reason)
-        }`,
-      );
-    }
+}): Promise<void> => {
+  for (const [batchIndex, transcriptIds] of transcriptIdBatches.entries()) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier:
+        FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: { transcriptIds },
+      retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
+      delayMs: batchIndex * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
+    });
   }
-
-  return enqueueResults.filter(
-    (enqueueResult) => enqueueResult.status === 'fulfilled',
-  ).length;
 };
