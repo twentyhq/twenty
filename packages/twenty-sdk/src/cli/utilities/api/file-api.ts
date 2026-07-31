@@ -1,53 +1,43 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import * as fs from 'fs';
-import * as path from 'path';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { type FileFolder } from 'twenty-shared/types';
 import { pascalCase } from 'twenty-shared/utils';
 
-const MIME_TYPES: Record<string, string> = {
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.png': 'image/png',
-  '.gif': 'image/gif',
-  '.webp': 'image/webp',
-  '.svg': 'image/svg+xml',
-  '.bmp': 'image/bmp',
-  '.ico': 'image/x-icon',
-  '.pdf': 'application/pdf',
-  '.doc': 'application/msword',
-  '.docx':
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  '.xls': 'application/vnd.ms-excel',
-  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  '.ppt': 'application/vnd.ms-powerpoint',
-  '.pptx':
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  '.txt': 'text/plain',
-  '.csv': 'text/csv',
-  '.json': 'application/json',
-  '.xml': 'application/xml',
-  '.zip': 'application/zip',
-  '.tar': 'application/x-tar',
-  '.gz': 'application/gzip',
-  '.mp3': 'audio/mpeg',
-  '.mp4': 'video/mp4',
-  '.avi': 'video/x-msvideo',
-  '.mov': 'video/quicktime',
-  '.js': 'application/javascript',
-  '.ts': 'application/typescript',
-  '.jsx': 'application/javascript',
-  '.tsx': 'application/typescript',
-  '.html': 'text/html',
-  '.css': 'text/css',
+export type ApplicationFileUploadRequest = {
+  fileFolder: FileFolder;
+  filePath: string;
+  size: number;
 };
 
-const getMimeType = (filename: string): string => {
-  const ext = path.extname(filename).toLowerCase();
+export type ApplicationFileUploadTarget = {
+  fileId: string;
+  filePath: string;
+  uploadUrl: string;
+  contentType: string;
+  expiresAt: string;
+};
 
-  return MIME_TYPES[ext] || 'application/octet-stream';
+export type ApplicationFileUploadError = {
+  fileFolder: string;
+  filePath: string;
+  message: string;
+};
+
+export type CreateApplicationFileUploadsResult = {
+  targets: ApplicationFileUploadTarget[];
+  errors: ApplicationFileUploadError[];
+};
+
+export type ApplicationFileCompletionError = {
+  fileId: string;
+  message: string;
+};
+
+export type CompleteApplicationFileUploadsResult = {
+  files: { id: string; path: string }[];
+  errors: ApplicationFileCompletionError[];
 };
 
 export class FileApi {
@@ -191,80 +181,110 @@ export class FileApi {
     }
   }
 
-  async uploadFile({
-    filePath,
-    builtHandlerPath,
-    fileFolder,
+  async createApplicationFileUploads({
     applicationUniversalIdentifier,
+    files,
   }: {
-    filePath: string;
-    builtHandlerPath: string;
-    fileFolder: FileFolder;
     applicationUniversalIdentifier: string;
-  }): Promise<ApiResponse<boolean>> {
-    try {
-      const absolutePath = path.resolve(filePath);
-
-      if (!fs.existsSync(absolutePath)) {
-        return {
-          success: false,
-          error: `File not found: ${absolutePath}`,
-        };
-      }
-
-      const filename = path.basename(absolutePath);
-      const buffer = fs.readFileSync(absolutePath);
-      const mimeType = getMimeType(filename);
-
-      const mutation = `
-      mutation UploadApplicationFile($file: Upload!, $applicationUniversalIdentifier: String!, $fileFolder: FileFolder!, $filePath: String!) {
-        uploadApplicationFile(file: $file, applicationUniversalIdentifier: $applicationUniversalIdentifier, fileFolder: $fileFolder, filePath: $filePath)
-        { path }
+    files: ApplicationFileUploadRequest[];
+  }): Promise<ApiResponse<CreateApplicationFileUploadsResult>> {
+    const mutation = `
+      mutation CreateApplicationFileUploads($applicationUniversalIdentifier: String!, $files: [ApplicationFileUploadRequestInput!]!) {
+        createApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, files: $files) {
+          targets {
+            fileId
+            filePath
+            uploadUrl
+            contentType
+            expiresAt
+          }
+          errors {
+            fileFolder
+            filePath
+            message
+          }
+        }
       }
     `;
 
-      const graphqlEnumFileFolder = pascalCase(fileFolder);
+    return this.runMetadataMutation<CreateApplicationFileUploadsResult>({
+      mutation,
+      variables: {
+        applicationUniversalIdentifier,
+        files: files.map(({ fileFolder, filePath, size }) => ({
+          fileFolder: pascalCase(fileFolder),
+          filePath,
+          size,
+        })),
+      },
+      resultKey: 'createApplicationFileUploads',
+      defaultErrorMessage: 'Failed to create application file uploads',
+    });
+  }
 
-      const operations = JSON.stringify({
-        query: mutation,
-        variables: {
-          file: null,
-          applicationUniversalIdentifier,
-          filePath: builtHandlerPath,
-          fileFolder: graphqlEnumFileFolder,
-        },
-      });
+  async completeApplicationFileUploads({
+    applicationUniversalIdentifier,
+    fileIds,
+  }: {
+    applicationUniversalIdentifier: string;
+    fileIds: string[];
+  }): Promise<ApiResponse<CompleteApplicationFileUploadsResult>> {
+    const mutation = `
+      mutation CompleteApplicationFileUploads($applicationUniversalIdentifier: String!, $fileIds: [UUID!]!) {
+        completeApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, fileIds: $fileIds) {
+          files {
+            id
+            path
+          }
+          errors {
+            fileId
+            message
+          }
+        }
+      }
+    `;
 
-      const map = JSON.stringify({
-        '0': ['variables.file'],
-      });
+    return this.runMetadataMutation<CompleteApplicationFileUploadsResult>({
+      mutation,
+      variables: { applicationUniversalIdentifier, fileIds },
+      resultKey: 'completeApplicationFileUploads',
+      defaultErrorMessage: 'Failed to complete application file uploads',
+    });
+  }
 
-      const formData = new FormData();
-
-      formData.append('operations', operations);
-      formData.append('map', map);
-      formData.append(
-        '0',
-        new Blob([new Uint8Array(buffer)], { type: mimeType }),
-        filename,
-      );
-
+  private async runMetadataMutation<TData>({
+    mutation,
+    variables,
+    resultKey,
+    defaultErrorMessage,
+  }: {
+    mutation: string;
+    variables: Record<string, unknown>;
+    resultKey: string;
+    defaultErrorMessage: string;
+  }): Promise<ApiResponse<TData>> {
+    try {
       const response: AxiosResponse = await this.client.post(
         '/metadata',
-        formData,
+        { query: mutation, variables },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
       );
 
       if (response.data.errors) {
         return {
           success: false,
-          error: response.data.errors[0]?.message || 'Failed to upload file',
+          error: response.data.errors[0]?.message || defaultErrorMessage,
         };
       }
 
       return {
         success: true,
-        data: response.data.data.uploadApplicationFile,
-        message: `Successfully uploaded ${filename}`,
+        data: response.data.data[resultKey],
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
