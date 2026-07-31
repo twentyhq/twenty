@@ -22,6 +22,7 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -85,7 +86,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
 
-  const hasOnlyOneGroupByOption = availableFieldsForGrouping.length <= 1;
+  // A table view can always drop its grouping through the None option, so the
+  // field picker has to stay reachable even when a single field is groupable
+  const isGroupByFieldPickerDisabled =
+    availableFieldsForGrouping.length <= 1 && viewType !== ViewType.TABLE;
 
   const isRelationGroupBy =
     isDefined(recordIndexGroupFieldMetadataItem) &&
@@ -135,13 +139,13 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               <SelectableListItem
                 itemId="GroupBy"
                 onEnter={() =>
-                  !hasOnlyOneGroupByOption &&
+                  !isGroupByFieldPickerDisabled &&
                   onContentChange('recordGroupFields')
                 }
               >
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
-                  disabled={hasOnlyOneGroupByOption}
+                  disabled={isGroupByFieldPickerDisabled}
                   onClick={() => onContentChange('recordGroupFields')}
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
