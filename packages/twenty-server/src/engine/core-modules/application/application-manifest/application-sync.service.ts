@@ -349,7 +349,9 @@ export class ApplicationSyncService {
   }): Promise<void> {
     try {
       const applications =
-        await this.applicationService.findManyApplications(workspaceId);
+        await this.applicationService.findManyInstalledFlatApplications(
+          workspaceId,
+        );
 
       for (const application of applications) {
         await this.runUninstallHook({ application, workspaceId });
@@ -370,7 +372,7 @@ export class ApplicationSyncService {
     application,
     workspaceId,
   }: {
-    application: ApplicationEntity;
+    application: FlatApplication;
     workspaceId: string;
   }): Promise<void> {
     if (!isDefined(application.applicationRegistrationId)) {
