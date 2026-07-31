@@ -105,6 +105,8 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": null,
+            "type": "RECORD",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",

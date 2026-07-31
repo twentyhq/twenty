@@ -82,6 +82,8 @@ export class FlatNavigationMenuItemValidatorService {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatNavigationMenuItem.universalIdentifier,
+        name: flatNavigationMenuItem.name,
+        type: flatNavigationMenuItem.type,
       },
       metadataName: 'navigationMenuItem',
       type: 'create',
@@ -154,6 +156,8 @@ export class FlatNavigationMenuItemValidatorService {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatEntityToValidate.universalIdentifier,
+        name: flatEntityToValidate.name,
+        type: flatEntityToValidate.type,
       },
       metadataName: 'navigationMenuItem',
       type: 'delete',
@@ -192,6 +196,8 @@ export class FlatNavigationMenuItemValidatorService {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier,
+        name: flatEntityUpdate.name ?? fromFlatNavigationMenuItem?.name,
+        type: flatEntityUpdate.type ?? fromFlatNavigationMenuItem?.type,
       },
       metadataName: 'navigationMenuItem',
       type: 'update',

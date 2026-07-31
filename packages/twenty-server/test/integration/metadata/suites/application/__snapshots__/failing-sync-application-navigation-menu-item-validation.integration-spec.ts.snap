@@ -15,6 +15,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": "   ",
+            "type": "FOLDER",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -50,6 +52,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": null,
+            "type": "FOLDER",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -85,6 +89,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": "Link with invalid url",
+            "type": "LINK",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -120,6 +126,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": "Link without url",
+            "type": "LINK",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -155,6 +163,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": "Page layout with malformed identifier",
+            "type": "PAGE_LAYOUT",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -190,6 +200,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": "View with malformed identifier",
+            "type": "VIEW",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -225,6 +237,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": "Object with malformed target",
+            "type": "OBJECT",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -260,6 +274,8 @@ exports[`Sync application should fail on invalid navigation menu items when sync
             },
           ],
           "flatEntityMinimalInformation": {
+            "name": "Object without target",
+            "type": "OBJECT",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
