@@ -85,7 +85,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           additional_permissions: |
             actions: read
-          claude_args: '--max-turns 200 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *),Bash(rm *),Bash(find *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(touch *),Bash(chmod *),Bash(echo *),Bash(curl *),Bash(cd *),Bash(pwd *),Bash(diff *),Bash(xargs *),Bash(awk *),Bash(cut *),Bash(tee *),Bash(tr *)"'
+          claude_args: '--max-turns 200 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *),Bash(rm *),Bash(find *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(touch *),Bash(chmod *),Bash(echo *),Bash(cd *),Bash(pwd *),Bash(diff *),Bash(xargs *),Bash(awk *),Bash(cut *),Bash(tee *),Bash(tr *)"'
           settings: |
             {
               "env": {
@@ -176,7 +176,7 @@ jobs:
           prompt: ${{ steps.prompt.outputs.prompt }}
           additional_permissions: |
             actions: read
-          claude_args: '--max-turns 200 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *),Bash(rm *),Bash(find *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(touch *),Bash(chmod *),Bash(echo *),Bash(curl *),Bash(cd *),Bash(pwd *),Bash(diff *),Bash(xargs *),Bash(awk *),Bash(cut *),Bash(tee *),Bash(tr *)"'
+          claude_args: '--max-turns 200 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *),Bash(rm *),Bash(find *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(touch *),Bash(chmod *),Bash(echo *),Bash(cd *),Bash(pwd *),Bash(diff *),Bash(xargs *),Bash(awk *),Bash(cut *),Bash(tee *),Bash(tr *)"'
           settings: |
             {
               "env": {
