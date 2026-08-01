@@ -14,8 +14,13 @@
 #   createdb -h localhost -U postgres restored
 #   pg_restore -h localhost -U postgres -d restored --no-owner <dump-file>
 #
-# NOTE: dumps land on THIS machine only. Copy them somewhere off-box too
-# (external disk / cloud) for real disaster coverage.
+# A restore also needs APP_SECRET from the password manager. It is not in the
+# dump, and without it the stored Google refresh tokens cannot be decrypted, so
+# every connected account has to be re-authorised by hand.
+#
+# Each verified dump is copied to Cloudflare R2. Credentials come from
+# ~/.config/twenty-production/r2.env (see TWENTY_R2_CONFIG below); that file is
+# the only place they live and is not in this repo.
 # =============================================================================
 set -uo pipefail
 export PATH="/opt/homebrew/opt/postgresql@16/bin:/opt/homebrew/bin:$PATH"
@@ -58,6 +63,40 @@ if ! pg_restore --list "$OUT" >/dev/null; then
 fi
 
 echo "[backup-db] OK: $(du -h "$OUT" | cut -f1) verified"
+
+# Ship the verified dump off-box before pruning anything. A dump sitting on the
+# same disk as the cluster it came from does not survive the failure it exists
+# for, so an upload failure is a backup failure and must stop the prune below.
+REMOTE_CONFIG="${TWENTY_R2_CONFIG:-$HOME/.config/twenty-production/r2.env}"
+if [ "${TWENTY_BACKUP_SKIP_REMOTE:-0}" = "1" ]; then
+  echo "[backup-db] WARN: TWENTY_BACKUP_SKIP_REMOTE=1 — this dump exists on this machine only"
+elif [ ! -r "$REMOTE_CONFIG" ]; then
+  echo "[backup-db] FAIL: no readable R2 config at $REMOTE_CONFIG"
+  exit 1
+else
+  # rclone reads remotes from RCLONE_CONFIG_<NAME>_*, so sourcing this defines
+  # the r2: remote with no rclone.conf to keep in sync.
+  set -a
+  . "$REMOTE_CONFIG"
+  set +a
+  REMOTE_PATH="r2:${TWENTY_BACKUP_BUCKET}/daily/$(basename "$OUT")"
+
+  echo "[backup-db] uploading to $REMOTE_PATH"
+  if ! rclone copyto "$OUT" "$REMOTE_PATH"; then
+    echo "[backup-db] FAIL: upload failed — keeping local dumps unpruned"
+    exit 1
+  fi
+
+  # Confirm the object landed at the expected size. An upload nobody read back
+  # is a guess, and this is the copy that matters.
+  REMOTE_BYTES="$(rclone size --json "$REMOTE_PATH" 2>/dev/null |
+    sed -E 's/.*"bytes":([0-9]+).*/\1/')"
+  if [ "$REMOTE_BYTES" != "$SIZE_BYTES" ]; then
+    echo "[backup-db] FAIL: offsite copy is ${REMOTE_BYTES:-missing}, expected $SIZE_BYTES — keeping local dumps unpruned"
+    exit 1
+  fi
+  echo "[backup-db] OK: offsite copy verified ($REMOTE_BYTES bytes)"
+fi
 
 # Prune old dumps, but never prune on a failed run (we exit above on failure).
 find "$BACKUP_DIR" -name 'twenty-*.dump' -mtime +"$RETENTION_DAYS" -delete
