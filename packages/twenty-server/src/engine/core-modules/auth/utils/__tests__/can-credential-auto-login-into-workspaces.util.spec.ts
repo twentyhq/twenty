@@ -68,4 +68,26 @@ describe('canCredentialAutoLoginIntoWorkspaces', () => {
       }),
     ).toBe(false);
   });
+
+  it('should fall back to the default window when it is negative', () => {
+    expect(
+      canCredentialAutoLoginIntoWorkspaces({
+        isWorkspaceScopedCredential: false,
+        authenticatedAt: new Date('2026-01-01T11:55:00.000Z'),
+        autoLoginWindow: '-1d',
+        now,
+      }),
+    ).toBe(true);
+  });
+
+  it('should honour a zero window as a deliberate disable', () => {
+    expect(
+      canCredentialAutoLoginIntoWorkspaces({
+        isWorkspaceScopedCredential: false,
+        authenticatedAt: new Date('2026-01-01T11:59:59.000Z'),
+        autoLoginWindow: '0s',
+        now,
+      }),
+    ).toBe(false);
+  });
 });
