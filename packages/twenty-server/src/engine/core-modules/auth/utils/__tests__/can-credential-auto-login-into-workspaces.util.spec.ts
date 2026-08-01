@@ -47,4 +47,15 @@ describe('canCredentialAutoLoginIntoWorkspaces', () => {
       }),
     ).toBe(true);
   });
+
+  it('should not silently disable auto-login when the window is unparseable', () => {
+    expect(
+      canCredentialAutoLoginIntoWorkspaces({
+        isWorkspaceScopedCredential: false,
+        authenticatedAt: new Date('2020-01-01T00:00:00.000Z'),
+        autoLoginWindow: 'not-a-duration',
+        now,
+      }),
+    ).toBe(true);
+  });
 });
