@@ -171,9 +171,19 @@ export const registerDevCommands = (program: Command): void => {
     .description(
       'Generate the typed API client from the active remote (no app definition required)',
     )
-    .action(async (appPath) => {
+    .option(
+      '--output <dir>',
+      'Emit committable TypeScript source to this path instead of replacing the client inside node_modules',
+    )
+    .option(
+      '--types-only',
+      'With --output, emit only the schema types (no runtime client)',
+    )
+    .action(async (appPath, options) => {
       await generateClientCommand.execute({
         appPath: formatPath(appPath),
+        output: options.output,
+        typesOnly: options.typesOnly,
       });
     });
 

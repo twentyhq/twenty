@@ -40,7 +40,9 @@ export const generateMetadataClient = async ({
 
   const clientContent = buildClientWrapperSource(templateSource, {
     apiClientName: 'MetadataApiClient',
-    defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
+    // Read through the template's safe accessor: a bare `process.env` at
+    // module scope throws in browsers before any client is constructed.
+    defaultUrl: `\`\${getProcessEnvironment().${DEFAULT_API_URL_NAME}}/metadata\``,
     includeUploadFile: true,
   });
 

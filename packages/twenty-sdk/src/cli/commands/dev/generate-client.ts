@@ -1,30 +1,55 @@
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ClientService } from '@/cli/utilities/client/client-service';
+import { resolveClientSdkPackageRoot } from '@/cli/utilities/client/resolve-client-sdk-package-root';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
-import { pathExists } from '@/cli/utilities/file/fs-utils';
+import { isNonEmptyString } from '@sniptt/guards';
 import chalk from 'chalk';
+import { isDefined } from 'twenty-shared/utils';
 
 export type AppGenerateClientCommandOptions = {
   appPath?: string;
+  output?: string;
+  typesOnly?: boolean;
 };
 
 export class AppGenerateClientCommand {
   async execute(options: AppGenerateClientCommandOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
-    const clientSdkPath = join(appPath, 'node_modules', 'twenty-client-sdk');
+    const outputPath = isNonEmptyString(options.output)
+      ? resolve(appPath, options.output)
+      : undefined;
 
-    if (!(await pathExists(clientSdkPath))) {
-      console.error(
-        chalk.red(
-          `Cannot find twenty-client-sdk in ${appPath}.\n\n` +
-            '  Install it first:\n' +
-            '    yarn add twenty-client-sdk',
-        ),
-      );
+    if (options.typesOnly && !isDefined(outputPath)) {
+      console.error(chalk.red('--types-only requires --output.'));
       process.exit(1);
+    }
+
+    let reportedOutputPath = outputPath;
+
+    if (!isDefined(outputPath)) {
+      const clientSdkPackageRoot = await resolveClientSdkPackageRoot(appPath);
+
+      if (!isDefined(clientSdkPackageRoot)) {
+        console.error(
+          chalk.red(
+            `Cannot find twenty-client-sdk in ${appPath} or any parent directory.\n\n` +
+              '  Install it first:\n' +
+              '    yarn add twenty-client-sdk',
+          ),
+        );
+        process.exit(1);
+      }
+
+      reportedOutputPath = join(
+        clientSdkPackageRoot,
+        'dist',
+        'core',
+        'generated',
+      );
     }
 
     const apiService = new ApiService({ disableInterceptors: true });
@@ -50,12 +75,28 @@ export class AppGenerateClientCommand {
       process.exit(1);
     }
 
-    console.log(chalk.blue('Generating API client...'));
+    console.log(
+      chalk.blue(
+        options.typesOnly
+          ? 'Generating API types...'
+          : 'Generating API client...',
+      ),
+    );
 
     try {
       const clientService = new ClientService({ skipAuth: false });
 
-      await clientService.generateCoreClient({ appPath });
+      if (isDefined(outputPath)) {
+        const remoteConfig = await new ConfigService().getConfig();
+
+        await clientService.generateCoreClientToPath({
+          outputPath,
+          typesOnly: options.typesOnly ?? false,
+          remoteUrl: remoteConfig.apiUrl,
+        });
+      } else {
+        await clientService.generateCoreClient({ appPath });
+      }
     } catch (error) {
       console.error(
         chalk.red(`Failed to generate API client: ${serializeError(error)}`),
@@ -63,9 +104,11 @@ export class AppGenerateClientCommand {
       process.exit(1);
     }
 
-    console.log(chalk.green('✓ API client generated'));
     console.log(
-      chalk.gray(`Output: ${join(clientSdkPath, 'dist', 'core', 'generated')}`),
+      chalk.green(
+        options.typesOnly ? '✓ API types generated' : '✓ API client generated',
+      ),
     );
+    console.log(chalk.gray(`Output: ${reportedOutputPath}`));
   }
 }

@@ -16,4 +16,7 @@ export interface Config {
   scalarTypes?: { [k: string]: string };
   // sort the schema lexicographically before rendering
   sortProperties?: boolean;
+  // emit only schema.ts (response types, enum constant maps, scalar aliases),
+  // with no request/selection types, type guards, typeMap, runtime or client
+  typesOnly?: boolean;
 }

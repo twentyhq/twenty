@@ -90,6 +90,39 @@ Re-run the command whenever your data model changes to refresh the generated typ
 The client is generated inside `node_modules`, so it is not committed with your code. Run `yarn twenty dev:generate-client` after every install (for example in a `postinstall` script or in CI).
 </Note>
 
+### Committing the generated client (`--output`)
+
+To emit the generated client as committable TypeScript source instead of replacing the copy inside `node_modules`, pass `--output`:
+
+```bash filename="Terminal"
+# Emit the full client source to a repo path
+yarn twenty dev:generate-client --output src/generated/twenty
+
+# Emit only the schema types (response types, enums, scalar aliases)
+yarn twenty dev:generate-client --output src/generated/twenty --types-only
+```
+
+The output is self-contained TypeScript source (no compiled bundles), so your own toolchain compiles it and plain `tsc` works in CI without a running Twenty instance. Treat the committed output like a lockfile: regenerate it when your data model changes (or after upgrading Twenty), review the diff, and let the type checker surface anything that broke.
+
+Unlike the `node_modules` mode, the emitted client does not include the `CoreApiClient` wrapper: the wrapper authenticates from in-app environment variables (`TWENTY_APP_ACCESS_TOKEN`), which out-of-app consumers don't have. Construct the client yourself with your own URL and auth:
+
+```typescript
+import { createClient } from './generated/twenty';
+
+const client = createClient({
+  url: 'https://my-instance.example.com/graphql',
+  headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
+});
+```
+
+`--types-only` emits a single `schema.ts` with the response types, enum constant maps, and scalar aliases. It contains no request/selection types and no runtime client, so it is safe to consume from packages that must stay dependency-free.
+
+One bundling caveat: the full client's type map (`types.ts`) is a single object consumed at module init, so bundlers cannot tree-shake unused objects out of it. If you only need types, use `--types-only` (which erases completely at build time) and bring your own GraphQL layer.
+
+<Note>
+Committed output is for consumers living outside the app: sibling workspace packages, a custom frontend, or a standalone service. Code that runs inside Twenty (logic functions, front components) should keep importing `twenty-client-sdk/core`. The server regenerates that client from the installing workspace's schema at install time, while a committed client is baked from the schema of the remote you generated it from.
+</Note>
+
 ## Uninstalling an app (`yarn twenty app:uninstall`)
 
 Remove your app from the active workspace:

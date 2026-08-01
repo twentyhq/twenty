@@ -1,4 +1,10 @@
-import { appendFile, copyFile, writeFile } from 'node:fs/promises';
+import {
+  appendFile,
+  copyFile,
+  readdir,
+  readFile,
+  writeFile,
+} from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { build } from 'esbuild';
@@ -44,7 +50,9 @@ export const generateCoreClientFromSchema = async ({
 
     const clientContent = buildClientWrapperSource(templateSource, {
       apiClientName: 'CoreApiClient',
-      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
+      // Read through the template's safe accessor: a bare `process.env` at
+      // module scope throws in browsers before any client is constructed.
+      defaultUrl: `\`\${getProcessEnvironment().${DEFAULT_API_URL_NAME}}/graphql\``,
       includeUploadFile: true,
     });
 
@@ -58,6 +66,99 @@ export const generateCoreClientFromSchema = async ({
     await remove(tempPath);
     throw error;
   }
+};
+
+// Generates the core client as committable TypeScript source: no esbuild
+// bundles, so the consumer's own toolchain compiles it. The CoreApiClient
+// wrapper is intentionally not injected: it authenticates from in-app env
+// vars (TWENTY_APP_ACCESS_TOKEN/TWENTY_API_KEY), which out-of-app consumers
+// don't have — they call the emitted createClient with their own url, fetch
+// and auth headers instead. With `typesOnly` the output is a single schema.ts
+// (response types, enum constant maps, scalar aliases) without
+// request/selection types or any runtime code.
+export const generateCoreClientSource = async ({
+  schema,
+  outputPath,
+  typesOnly = false,
+  provenanceHeader,
+}: {
+  schema: string;
+  outputPath: string;
+  typesOnly?: boolean;
+  provenanceHeader?: string;
+}): Promise<void> => {
+  await assertOutputPathSafeToOverwrite(outputPath);
+
+  const tempPath = `${outputPath}.tmp`;
+
+  await ensureDir(tempPath);
+  await emptyDir(tempPath);
+
+  try {
+    await generate({
+      schema,
+      output: tempPath,
+      scalarTypes: COMMON_SCALAR_TYPES,
+      typesOnly,
+    });
+
+    if (provenanceHeader !== undefined) {
+      await prependHeaderToTypescriptFiles(tempPath, provenanceHeader);
+    }
+
+    await remove(outputPath);
+    await move(tempPath, outputPath);
+  } catch (error) {
+    await remove(tempPath);
+    throw error;
+  }
+};
+
+// The output path is recursively replaced on regeneration, so refuse anything
+// that is not empty and does not look like a previous generation (a caller
+// passing e.g. `--output .` must not wipe their project).
+const assertOutputPathSafeToOverwrite = async (
+  outputPath: string,
+): Promise<void> => {
+  let entries: string[];
+
+  try {
+    entries = await readdir(outputPath);
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      return;
+    }
+    throw error;
+  }
+
+  if (entries.length === 0 || entries.includes('schema.ts')) {
+    return;
+  }
+
+  throw new Error(
+    `Refusing to overwrite ${outputPath}: it is not empty and does not look like a previously generated client (no schema.ts). Use an empty or dedicated directory.`,
+  );
+};
+
+const prependHeaderToTypescriptFiles = async (
+  directory: string,
+  header: string,
+): Promise<void> => {
+  const entries = await readdir(directory, {
+    withFileTypes: true,
+    recursive: true,
+  });
+
+  await Promise.all(
+    entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.ts'))
+      .map(async (entry) => {
+        const filePath = join(entry.parentPath, entry.name);
+        const content = await readFile(filePath, 'utf-8');
+
+        await writeFile(filePath, `// ${header}\n${content}`);
+      }),
+  );
 };
 
 // Generates the core client and replaces the pre-built stub inside

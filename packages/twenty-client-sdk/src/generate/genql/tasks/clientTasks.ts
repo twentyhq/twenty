@@ -33,6 +33,17 @@ export const writeClientFiles = async (
 
   await ensurePath([output], true);
 
+  if (config.typesOnly) {
+    const typesOnlyCtx = new RenderContext(schema, config);
+    renderResponseTypes(schema, typesOnlyCtx);
+    renderEnumsMaps(schema, typesOnlyCtx);
+    await writeFileToPath(
+      [output, schemaTypesFile],
+      '// @ts-nocheck\n' + (await typesOnlyCtx.toCode('typescript')),
+    );
+    return;
+  }
+
   const schemaGqlCtx = new RenderContext(schema, config);
   renderSchema(schema, schemaGqlCtx);
   await writeFileToPath(
