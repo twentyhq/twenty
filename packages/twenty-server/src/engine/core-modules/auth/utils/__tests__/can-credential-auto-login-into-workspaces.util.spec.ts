@@ -48,7 +48,17 @@ describe('canCredentialAutoLoginIntoWorkspaces', () => {
     ).toBe(true);
   });
 
-  it('should not silently disable auto-login when the window is unparseable', () => {
+  it('should fall back to the default window when it is unparseable', () => {
+    expect(
+      canCredentialAutoLoginIntoWorkspaces({
+        isWorkspaceScopedCredential: false,
+        authenticatedAt: new Date('2026-01-01T11:55:00.000Z'),
+        autoLoginWindow: 'not-a-duration',
+        now,
+      }),
+    ).toBe(true);
+
+    // Still bounded: a malformed window must not grant indefinite entry.
     expect(
       canCredentialAutoLoginIntoWorkspaces({
         isWorkspaceScopedCredential: false,
@@ -56,6 +66,6 @@ describe('canCredentialAutoLoginIntoWorkspaces', () => {
         autoLoginWindow: 'not-a-duration',
         now,
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 });
