@@ -477,7 +477,7 @@ describe('UserSessionService', () => {
           'user-agent': 'jest',
         },
         ip: '127.0.0.1',
-        res: { cookie: jest.fn() },
+        res: { cookie: jest.fn(), clearCookie: jest.fn() },
       }) as never;
 
     const mockAccessPayload = () => {
@@ -574,13 +574,23 @@ describe('UserSessionService', () => {
     it('should not mint a new session on renewal when a valid one is presented', async () => {
       mockAccessPayload();
 
-      const presentedSession = buildActiveSession();
+      // Same scope as the renewed pair, otherwise the guard rejects it and
+      // the test would pass without ever reaching the reuse path.
+      const presentedSession = buildActiveSession({
+        userId: 'user-id',
+        workspaceId: 'workspace-id',
+        userWorkspaceId: 'user-workspace-id',
+      });
 
       cacheStorageService.get.mockResolvedValue(undefined);
       jest
         .spyOn(userSessionRepository, 'findOneBy')
         .mockResolvedValue(presentedSession);
+      jest
+        .spyOn(userSessionRepository, 'findOne')
+        .mockResolvedValue(presentedSession);
       const createSessionSpy = jest.spyOn(service, 'createSession');
+      const revokeSpy = jest.spyOn(service, 'revokeSessionByToken');
 
       await service.issueSessionForTokenPair({
         tokenPair: buildTokenPair(),
@@ -589,6 +599,43 @@ describe('UserSessionService', () => {
       });
 
       expect(createSessionSpy).not.toHaveBeenCalled();
+      expect(revokeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should supersede a presented session scoped to another workspace', async () => {
+      mockAccessPayload();
+
+      const presentedSession = buildActiveSession({
+        userId: 'user-id',
+        workspaceId: 'another-workspace-id',
+        userWorkspaceId: 'another-user-workspace-id',
+      });
+
+      cacheStorageService.get.mockResolvedValue(undefined);
+      jest
+        .spyOn(userSessionRepository, 'findOneBy')
+        .mockResolvedValue(presentedSession);
+      jest
+        .spyOn(userSessionRepository, 'findOne')
+        .mockResolvedValue(presentedSession);
+      jest
+        .spyOn(service, 'revokeSessionByToken')
+        .mockResolvedValue(true as never);
+      const createSessionSpy = jest
+        .spyOn(service, 'createSession')
+        .mockResolvedValue({
+          sessionToken: 'sess_new',
+          session: buildActiveSession(),
+        } as never);
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request: buildRequest('twenty-session=sess_current'),
+        origin: 'renewal_bridge',
+      });
+
+      expect(service.revokeSessionByToken).toHaveBeenCalled();
+      expect(createSessionSpy).toHaveBeenCalled();
     });
 
     it('should mint a session on renewal when the presented one is invalid', async () => {
