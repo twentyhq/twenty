@@ -475,9 +475,13 @@ export class UserSessionService {
     exceptSessionId?: string;
   }): Promise<number> {
     // The predicate is applied by the UPDATE itself rather than to a list of
-    // ids read beforehand: a session created between a SELECT and the UPDATE
-    // would survive a password change. RETURNING then names exactly the rows
-    // this statement revoked, so the audit trail cannot over-report.
+    // ids read beforehand, which shrinks the window a new session can slip
+    // through from two round trips down to one statement. It does not close
+    // it: a sign-in committing after this statement's snapshot is still not
+    // revoked. Closing that needs a per-user generation counter checked at
+    // session creation, which is a larger change than this migration.
+    // RETURNING names exactly the rows revoked, so the audit cannot
+    // over-report.
     const revokingQuery = this.userSessionRepository
       .createQueryBuilder()
       .update(UserSessionEntity)
