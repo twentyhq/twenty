@@ -28,6 +28,16 @@ import {
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { type CustomException } from 'src/utils/custom-exception';
 
+// Codes meaning the credential itself is no longer usable: the browser holds
+// a cookie it can never authenticate with again.
+const DEAD_SESSION_COOKIE_EXCEPTION_CODES = new Set<string>([
+  AuthExceptionCode.UNAUTHENTICATED,
+  AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+  AuthExceptionCode.FORBIDDEN_EXCEPTION,
+  AuthExceptionCode.USER_NOT_FOUND,
+  AuthExceptionCode.WORKSPACE_NOT_FOUND,
+]);
+
 @Injectable()
 export class MiddlewareService {
   constructor(
@@ -140,11 +150,15 @@ export class MiddlewareService {
       this.jwtWrapperService.extractJwtFromRequest()(request),
     );
 
-    if (
-      !isCookieAuthenticated ||
-      !(error instanceof AuthException) ||
-      error.code !== AuthExceptionCode.UNAUTHENTICATED
-    ) {
+    // Any credential the auth pipeline refuses is dead as far as the browser
+    // is concerned: a user removed from the workspace fails with
+    // USER_WORKSPACE_NOT_FOUND rather than UNAUTHENTICATED and would
+    // otherwise be locked out of signing in again on that host.
+    const isDeadCredential =
+      error instanceof AuthException &&
+      DEAD_SESSION_COOKIE_EXCEPTION_CODES.has(error.code);
+
+    if (!isCookieAuthenticated || !isDeadCredential) {
       throw error;
     }
 
