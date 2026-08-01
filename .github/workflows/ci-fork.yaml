@@ -44,6 +44,29 @@ jobs:
       # needs a live app; website/zapier tests need their own upstream CI setup.
       - name: Unit-test affected (except twenty-front / e2e / website / zapier)
         run: npx nx affected --nxBail -t test --exclude=twenty-front,twenty-e2e-testing,twenty-website,twenty-zapier --parallel=1 --base=$NX_BASE
+      # Adding a `t` or `<Trans>` string without re-extracting leaves the
+      # catalogs with no entry for its generated id, and Lingui then renders
+      # the id itself ("cKqT2J" where "View full record" belongs). Nothing
+      # caught that before: upstream's ci-front runs these targets but this
+      # fork does not use it, and the image used to extract at build time, so
+      # staging looked right while a host-built production frontend did not.
+      - name: Extract and compile message catalogs
+        run: |
+          for project in twenty-front twenty-server twenty-emails; do
+            npx nx run "${project}:lingui:extract"
+            npx nx run "${project}:lingui:compile"
+          done
+      - name: Fail if the catalogs were not committed up to date
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Message catalogs are stale. For each project below run" \
+              "'npx nx lingui:extract <project>' and 'npx nx lingui:compile <project>'," \
+              "then commit the result."
+            git status --porcelain
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "Message catalogs are up to date."
 
   front-tests:
     timeout-minutes: 60

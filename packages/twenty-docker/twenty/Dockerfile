@@ -44,9 +44,11 @@ COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
-RUN npx nx run twenty-server:lingui:extract && \
-    npx nx run twenty-server:lingui:compile && \
-    npx nx run twenty-emails:lingui:extract && \
+# Compile only. Extracting here would rescan the source and invent catalog
+# entries that were never committed, so an image built from a branch with
+# stale catalogs renders correctly while a host build of the same commit does
+# not. The i18n-catalogs CI job keeps the committed catalogs current instead.
+RUN npx nx run twenty-server:lingui:compile && \
     npx nx run twenty-emails:lingui:compile
 
 RUN npx nx run twenty-server:build
@@ -67,8 +69,11 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
-RUN npx nx run twenty-front:lingui:extract && \
-    npx nx run twenty-front:lingui:compile
+# Compile only; see the twenty-server stage above for why extract is not run
+# in the image. This divergence shipped Lingui message ids to production once:
+# staging looked correct because the image regenerated the catalogs, while the
+# host build of the same commit used the stale committed ones.
+RUN npx nx run twenty-front:lingui:compile
 # To skip the memory-intensive frontend build, pre-build on the host:
 #   npx nx build twenty-front
 # The check below will use packages/twenty-front/build/ if it already exists.
