@@ -68,7 +68,10 @@ export class UserSessionCookieService {
   clearSessionCookie(response: Response): void {
     const { options } = this.resolveCookieSettings();
 
-    // Both names are cleared so sign-out works across http/https transitions.
+    // Both names are cleared so an instance that switched from http to https
+    // drops the cookie it issued under the old name. On a plain-http instance
+    // the __Host- clear is inert, but so is the cookie: __Host- requires
+    // Secure and is never sent over http.
     response.clearCookie(USER_SESSION_SECURE_COOKIE_NAME, options);
     response.clearCookie(USER_SESSION_COOKIE_NAME, options);
   }
