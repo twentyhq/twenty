@@ -572,6 +572,8 @@ describe('UserSessionService', () => {
     });
 
     it('should not mint a new session on renewal when a valid one is presented', async () => {
+      mockAccessPayload();
+
       const presentedSession = buildActiveSession();
 
       cacheStorageService.get.mockResolvedValue(undefined);
