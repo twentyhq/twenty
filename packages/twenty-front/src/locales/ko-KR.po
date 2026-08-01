@@ -6586,6 +6586,11 @@ msgstr "샘플 파일 다운로드"
 msgid "Draft"
 msgstr "초안"
 
+#. js-lingui-id: 1dpSPf
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Draft deleted"
+msgstr ""
+
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
@@ -8084,6 +8089,11 @@ msgstr "소유권을 주장하지 못했습니다."
 msgid "Failed to create unsubscribe topic."
 msgstr "구독 취소 주제를 생성하지 못했습니다."
 
+#. js-lingui-id: dQhrqB
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Failed to delete draft"
+msgstr ""
+
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Failed to delete email channel."
@@ -8212,6 +8222,12 @@ msgstr "작업 재시도 실패. 나중에 다시 시도하세요."
 msgid "Failed to revoke signing key. Please try again later."
 msgstr "서명 키를 취소하지 못했습니다. 나중에 다시 시도하세요."
 
+#. js-lingui-id: TQfiMk
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+#: src/modules/activities/emails/mass-email/hooks/useMassEmailCampaignDraft.ts
+msgid "Failed to save draft"
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -8239,6 +8255,11 @@ msgstr "캠페인 전송에 실패했습니다"
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
 msgstr "이메일 전송에 실패했습니다"
+
+#. js-lingui-id: B6aF8Q
+#: src/modules/activities/emails/mass-email/hooks/useSendMassEmail.ts
+msgid "Failed to send emails"
+msgstr ""
 
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx

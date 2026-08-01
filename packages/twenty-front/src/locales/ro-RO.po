@@ -6586,6 +6586,11 @@ msgstr "Descarcă fișierul de mostră"
 msgid "Draft"
 msgstr "Ciornă"
 
+#. js-lingui-id: 1dpSPf
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Draft deleted"
+msgstr ""
+
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
@@ -8084,6 +8089,11 @@ msgstr "Nu s-a putut prelua proprietatea."
 msgid "Failed to create unsubscribe topic."
 msgstr "Crearea subiectului de dezabonare a eșuat."
 
+#. js-lingui-id: dQhrqB
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Failed to delete draft"
+msgstr ""
+
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Failed to delete email channel."
@@ -8212,6 +8222,12 @@ msgstr "Eșuat la reîncercarea locurilor de muncă. Încercați din nou mai tâ
 msgid "Failed to revoke signing key. Please try again later."
 msgstr "Nu s-a reușit revocarea cheii de semnare. Încercați din nou mai târziu."
 
+#. js-lingui-id: TQfiMk
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+#: src/modules/activities/emails/mass-email/hooks/useMassEmailCampaignDraft.ts
+msgid "Failed to save draft"
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -8239,6 +8255,11 @@ msgstr "Trimiterea campaniei a eșuat"
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
 msgstr "Nu s-a reușit trimiterea emailului"
+
+#. js-lingui-id: B6aF8Q
+#: src/modules/activities/emails/mass-email/hooks/useSendMassEmail.ts
+msgid "Failed to send emails"
+msgstr ""
 
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
