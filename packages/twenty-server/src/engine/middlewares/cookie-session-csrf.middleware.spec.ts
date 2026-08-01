@@ -154,6 +154,39 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
+  it('should allow an origin listed only in AUTH_COOKIE_ALLOWED_ORIGINS', () => {
+    mockConfig.AUTH_COOKIE_ALLOWED_ORIGINS = 'https://split.example.net';
+
+    const request = buildRequest({
+      headers: {
+        cookie: '__Host-twenty-session=sess_token',
+        origin: 'https://split.example.net',
+      },
+    });
+
+    middleware.use(request, buildResponse(), next);
+
+    expect(next).toHaveBeenCalled();
+
+    mockConfig.AUTH_COOKIE_ALLOWED_ORIGINS = '';
+  });
+
+  // Browsers omit :443 from Origin while Host keeps a port the client spelled
+  // out, so comparing the two as strings would 403 a same-origin request.
+  it('should treat a default port on the host as the same origin', () => {
+    const request = buildRequest({
+      get: jest.fn().mockReturnValue('crm.example.com:443'),
+      headers: {
+        cookie: '__Host-twenty-session=sess_token',
+        origin: 'https://crm.example.com',
+      },
+    });
+
+    middleware.use(request, buildResponse(), next);
+
+    expect(next).toHaveBeenCalled();
+  });
+
   it('should reject cookie requests from sibling subdomains', () => {
     const request = buildRequest({
       headers: {

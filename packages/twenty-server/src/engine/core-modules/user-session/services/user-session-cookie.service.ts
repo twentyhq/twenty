@@ -88,6 +88,10 @@ export class UserSessionCookieService {
   // browser send us one of our cookies", including the legacy plain name an
   // https deployment refuses to authenticate with but should still clear.
   hasSessionCookie(request: Request): boolean {
+    if (!this.areCookieSessionsEnabled()) {
+      return false;
+    }
+
     const cookieHeader = request.headers.cookie;
 
     if (!isNonEmptyString(cookieHeader)) {

@@ -19,11 +19,23 @@ const toOrigin = (url: string): string | undefined => {
   }
 };
 
-const LOOPBACK_HOSTNAMES = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
+// The whole 127.0.0.0/8 block is loopback, not just 127.0.0.1, and IPv6
+// loopback arrives bracketed from URL.hostname.
+const LOOPBACK_HOSTNAMES = new Set([
+  'localhost',
+  '[::1]',
+  '::1',
+  '[::ffff:127.0.0.1]',
+]);
+const IPV4_LOOPBACK_REGEX = /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 
 const isLoopbackOrigin = (origin: string): boolean => {
   try {
-    return LOOPBACK_HOSTNAMES.has(new URL(origin).hostname.toLowerCase());
+    const hostname = new URL(origin).hostname.toLowerCase();
+
+    return (
+      LOOPBACK_HOSTNAMES.has(hostname) || IPV4_LOOPBACK_REGEX.test(hostname)
+    );
   } catch {
     return false;
   }
