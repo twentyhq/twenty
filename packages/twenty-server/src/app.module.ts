@@ -29,6 +29,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
+import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
@@ -74,6 +75,7 @@ const MIGRATED_REST_METHODS = [
     RestApiModule,
     McpModule,
     MiddlewareModule,
+    JwtModule,
     UserSessionModule,
     WorkspaceMetadataVersionModule,
     // I18n module for translations
