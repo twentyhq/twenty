@@ -20,7 +20,6 @@ export enum UserSessionRevokedReason {
   UserRevoked = 'USER_REVOKED',
   Superseded = 'SUPERSEDED',
   PasswordChanged = 'PASSWORD_CHANGED',
-  AdminRevoked = 'ADMIN_REVOKED',
   ImpersonationEnded = 'IMPERSONATION_ENDED',
 }
 
