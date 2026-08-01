@@ -1,7 +1,5 @@
 import Papa from 'papaparse';
 
-import { resolveFileFetchCredentials } from '@/activities/files/utils/resolveFileFetchCredentials';
-
 const DEFAULT_PREVIEW_ROWS = 50;
 
 export type CsvPreviewData = {
@@ -10,9 +8,7 @@ export type CsvPreviewData = {
 };
 
 export const fetchCsvPreview = async (url: string): Promise<CsvPreviewData> => {
-  const response = await fetch(url, {
-    credentials: resolveFileFetchCredentials(url),
-  });
+  const response = await fetch(url);
   const text = await response.text();
 
   const result = Papa.parse<string[]>(text, {

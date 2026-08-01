@@ -158,6 +158,15 @@ export class UserSessionService {
         session.expiresAt,
       );
     } catch (error) {
+      try {
+        // The presented cookie may still be the previous account's and still
+        // be valid, so it must not survive a sign-in that failed to replace
+        // it. Guarded: issuance stays best effort whatever happens here.
+        this.userSessionCookieService.clearSessionCookie(response);
+      } catch {
+        // Nothing further to do: the error below is what gets reported.
+      }
+
       this.logger.error(
         `Failed to issue a session alongside the token pair: ${
           error instanceof Error ? error.message : String(error)
@@ -178,10 +187,24 @@ export class UserSessionService {
       presentedPayload.type === JwtTokenTypeEnum.ACCESS &&
       presentedPayload.isImpersonating === true;
 
+    if (presentedPayload.type !== JwtTokenTypeEnum.ACCESS) {
+      return (
+        presentedPayload.userId === sessionInput.userId &&
+        !isDefined(sessionInput.workspaceId) &&
+        sessionInput.isImpersonating !== true
+      );
+    }
+
     return (
       presentedPayload.userId === sessionInput.userId &&
       (presentedWorkspaceId ?? null) === (sessionInput.workspaceId ?? null) &&
-      presentedIsImpersonating === (sessionInput.isImpersonating === true)
+      presentedIsImpersonating === (sessionInput.isImpersonating === true) &&
+      (presentedPayload.userWorkspaceId ?? null) ===
+        (sessionInput.userWorkspaceId ?? null) &&
+      (presentedPayload.impersonatorUserWorkspaceId ?? null) ===
+        (sessionInput.impersonatorUserWorkspaceId ?? null) &&
+      (presentedPayload.impersonatedUserWorkspaceId ?? null) ===
+        (sessionInput.impersonatedUserWorkspaceId ?? null)
     );
   }
 
