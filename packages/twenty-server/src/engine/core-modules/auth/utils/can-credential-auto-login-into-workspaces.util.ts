@@ -34,12 +34,16 @@ export const canCredentialAutoLoginIntoWorkspaces = ({
 
   const parsedWindowMs = ms(autoLoginWindow);
 
-  // ms() yields undefined for a duration it cannot parse. Reading that as
-  // "always" would silently drop the boundary this whole check exists for,
-  // and reading it as "never" would lock everyone out of workspace entry, so
-  // a malformed window falls back to the documented default instead.
-  const autoLoginWindowMs = Number.isFinite(parsedWindowMs)
-    ? parsedWindowMs
+  // ms() yields undefined for a duration it cannot parse, and a negative one
+  // parses into a window nothing can fall inside. Reading either as "always"
+  // would silently drop the boundary this check exists for, and as "never"
+  // would lock everyone out of workspace entry, so both fall back to the
+  // documented default. Zero is kept: it deliberately turns the bridge off.
+  const isUsableWindow =
+    Number.isFinite(parsedWindowMs) && (parsedWindowMs as number) >= 0;
+
+  const autoLoginWindowMs = isUsableWindow
+    ? (parsedWindowMs as number)
     : DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS;
 
   return addMilliseconds(authenticatedAt, autoLoginWindowMs) > now;
