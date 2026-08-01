@@ -127,6 +127,13 @@ export class AppModule {
     // cookie, so no cookie-authenticated state change escapes the check.
     consumer
       .apply(CookieSessionCsrfMiddleware)
+      // The SAML POST binding is a cross-origin form post from the identity
+      // provider and authenticates on the assertion, not on the cookie, so
+      // origin validation would reject a legitimate sign-in.
+      .exclude({
+        path: 'auth/saml/callback/:identityProviderId',
+        method: RequestMethod.POST,
+      })
       .forRoutes({ path: '*path', method: RequestMethod.ALL });
 
     consumer
