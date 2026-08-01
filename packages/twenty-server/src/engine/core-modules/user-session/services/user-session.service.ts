@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, MoreThan, Not, Repository } from 'typeorm';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -291,49 +291,46 @@ export class UserSessionService {
     reason: UserSessionRevokedReason;
     exceptSessionId?: string;
   }): Promise<number> {
-    const sessions = await this.userSessionRepository.find({
-      where: {
-        userId,
-        revokedAt: IsNull(),
-        ...(isDefined(exceptSessionId) ? { id: Not(exceptSessionId) } : {}),
-      },
-    });
-
-    if (sessions.length === 0) {
-      return 0;
-    }
-
-    // RETURNING names the rows this statement actually changed, so a session
-    // revoked concurrently between the select and the update is neither
-    // counted nor audited as revoked by this call.
-    const { raw } = await this.userSessionRepository
+    // The predicate is applied by the UPDATE itself rather than to a list of
+    // ids read beforehand: a session created between a SELECT and the UPDATE
+    // would survive a password change. RETURNING then names exactly the rows
+    // this statement revoked, so the audit trail cannot over-report.
+    const revokingQuery = this.userSessionRepository
       .createQueryBuilder()
       .update(UserSessionEntity)
       .set({ revokedAt: new Date(), revokedReason: reason })
-      .where('"id" IN (:...sessionIds)', {
-        sessionIds: sessions.map((session) => session.id),
-      })
-      .andWhere('"revokedAt" IS NULL')
-      .returning(['id'])
-      .execute();
+      .where('"userId" = :userId', { userId })
+      .andWhere('"revokedAt" IS NULL');
 
-    const revokedSessionIds = new Set(
-      (raw as { id: string }[]).map((row) => row.id),
-    );
-
-    for (const session of sessions) {
-      if (revokedSessionIds.has(session.id)) {
-        this.emitAuthSessionEvent(session, 'session_revoked');
-      }
+    if (isDefined(exceptSessionId)) {
+      revokingQuery.andWhere('"id" != :exceptSessionId', { exceptSessionId });
     }
 
-    // Every selected session is dropped from cache regardless: one revoked
-    // concurrently is dead too, and evicting it again is harmless.
+    const { raw } = await revokingQuery
+      .returning(['id', 'tokenHash', 'userId', 'workspaceId'])
+      .execute();
+
+    const revokedSessions = raw as Pick<
+      UserSessionEntity,
+      'id' | 'tokenHash' | 'userId' | 'workspaceId'
+    >[];
+
+    if (revokedSessions.length === 0) {
+      return 0;
+    }
+
+    for (const revokedSession of revokedSessions) {
+      this.emitAuthSessionEvent(
+        revokedSession as UserSessionEntity,
+        'session_revoked',
+      );
+    }
+
     await this.cacheStorageService.mdel(
-      sessions.map((session) => session.tokenHash),
+      revokedSessions.map((revokedSession) => revokedSession.tokenHash),
     );
 
-    return revokedSessionIds.size;
+    return revokedSessions.length;
   }
 
   async signOut({
