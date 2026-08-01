@@ -30,10 +30,13 @@ const readCookieValue = (
   return undefined;
 };
 
-// Both names are read so sessions survive an http -> https topology change:
-// the secure __Host- name is canonical whenever it is present.
+// The plain name is only read on deployments that cannot set a __Host- cookie
+// at all (plain http), because __Host- is precisely what stops a sibling
+// subdomain from widening the cookie: accepting the plain name on an https
+// deployment would let a subdomain toss a session in and fixate the visitor.
 export const extractUserSessionTokenFromRequestCookie = (
   request: Request,
+  { allowInsecureCookieName }: { allowInsecureCookieName: boolean },
 ): string | undefined => {
   const cookieHeader = request.headers.cookie;
 
@@ -43,7 +46,9 @@ export const extractUserSessionTokenFromRequestCookie = (
 
   const token =
     readCookieValue(cookieHeader, USER_SESSION_SECURE_COOKIE_NAME) ??
-    readCookieValue(cookieHeader, USER_SESSION_COOKIE_NAME);
+    (allowInsecureCookieName
+      ? readCookieValue(cookieHeader, USER_SESSION_COOKIE_NAME)
+      : undefined);
 
   if (!isNonEmptyString(token) || !isUserSessionToken(token)) {
     return undefined;

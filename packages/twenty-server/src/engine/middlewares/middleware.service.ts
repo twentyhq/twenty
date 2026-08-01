@@ -13,7 +13,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
@@ -34,6 +34,7 @@ export class MiddlewareService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
   public isTokenPresent(request: Request): boolean {
@@ -47,7 +48,9 @@ export class MiddlewareService {
       return false;
     }
 
-    return isDefined(extractUserSessionTokenFromRequestCookie(request));
+    return isDefined(
+      this.userSessionCookieService.extractSessionTokenFromRequest(request),
+    );
   }
 
   // oxlint-disable-next-line typescript/no-explicit-any

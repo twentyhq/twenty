@@ -630,6 +630,10 @@ export class UserWorkspaceService {
     },
     user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
+    // Callers holding a credential that is not a fresh authentication pass
+    // false: the workspace list is still returned, but entering a workspace
+    // then requires signing in on the workspace itself.
+    canAutoLoginIntoWorkspaces = true,
   ) {
     const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
       await Promise.all([
@@ -648,18 +652,17 @@ export class UserWorkspaceService {
             async ({ workspace }) => {
               return {
                 ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
-                loginToken: workspaceValidator.isAuthEnabled(
-                  authProvider,
-                  workspace,
-                )
-                  ? (
-                      await this.loginTokenService.generateLoginToken(
-                        user.email,
-                        workspace.id,
-                        AuthProviderEnum.Password,
-                      )
-                    ).token
-                  : undefined,
+                loginToken:
+                  canAutoLoginIntoWorkspaces &&
+                  workspaceValidator.isAuthEnabled(authProvider, workspace)
+                    ? (
+                        await this.loginTokenService.generateLoginToken(
+                          user.email,
+                          workspace.id,
+                          AuthProviderEnum.Password,
+                        )
+                      ).token
+                    : undefined,
               };
             },
           ),
