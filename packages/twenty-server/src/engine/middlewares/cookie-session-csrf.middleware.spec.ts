@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type NextFunction, type Request, type Response } from 'express';
 
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
@@ -55,6 +56,15 @@ describe('CookieSessionCsrfMiddleware', () => {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn((key: string) => mockConfig[key]),
+          },
+        },
+        {
+          provide: JwtWrapperService,
+          useValue: {
+            // The real extractor reads the Authorization header, which is what
+            // decides whether a request is Bearer-authenticated here.
+            extractJwtFromRequest: () => (request: Request) =>
+              /^Bearer\s+(\S+)/i.exec(request.headers.authorization ?? '')?.[1],
           },
         },
       ],
