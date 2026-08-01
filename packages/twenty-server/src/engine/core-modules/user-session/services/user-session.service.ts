@@ -293,7 +293,7 @@ export class UserSessionService {
       return 0;
     }
 
-    await this.userSessionRepository.update(
+    const { affected } = await this.userSessionRepository.update(
       { id: In(sessions.map((session) => session.id)), revokedAt: IsNull() },
       { revokedAt: new Date(), revokedReason: reason },
     );
@@ -306,7 +306,9 @@ export class UserSessionService {
       sessions.map((session) => session.tokenHash),
     );
 
-    return sessions.length;
+    // A session revoked concurrently between the select and the update was
+    // not revoked by this call, so it must not be counted as such.
+    return affected ?? sessions.length;
   }
 
   async signOut({
@@ -316,15 +318,17 @@ export class UserSessionService {
     sessionToken?: string;
     refreshToken?: string;
   }): Promise<void> {
-    if (isNonEmptyString(sessionToken)) {
-      await this.revokeSessionByToken(
-        sessionToken,
-        UserSessionRevokedReason.UserSignOut,
-      );
-    }
-
-    if (isNonEmptyString(refreshToken)) {
-      await this.revokePresentedRefreshToken(refreshToken);
+    try {
+      if (isNonEmptyString(sessionToken)) {
+        await this.revokeSessionByToken(
+          sessionToken,
+          UserSessionRevokedReason.UserSignOut,
+        );
+      }
+    } finally {
+      if (isNonEmptyString(refreshToken)) {
+        await this.revokePresentedRefreshToken(refreshToken);
+      }
     }
   }
 

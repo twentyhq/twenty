@@ -37,6 +37,14 @@ describe('CookieSessionCsrfMiddleware', () => {
   };
 
   let next: NextFunction;
+  let afterEachRestoreFlag = false;
+
+  afterEach(() => {
+    if (afterEachRestoreFlag) {
+      mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = true;
+      afterEachRestoreFlag = false;
+    }
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -156,6 +164,7 @@ describe('CookieSessionCsrfMiddleware', () => {
 
   it('should skip when cookie sessions are disabled', () => {
     mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = false;
+    afterEachRestoreFlag = true;
 
     const request = buildRequest({
       headers: {
@@ -167,8 +176,6 @@ describe('CookieSessionCsrfMiddleware', () => {
     middleware.use(request, buildResponse(), next);
 
     expect(next).toHaveBeenCalled();
-
-    mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = true;
   });
 
   it('should still guard a cookie request carrying a non-Bearer authorization header', () => {
