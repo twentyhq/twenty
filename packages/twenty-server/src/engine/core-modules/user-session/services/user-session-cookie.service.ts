@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type CookieOptions, type Request, type Response } from 'express';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
@@ -80,6 +82,24 @@ export class UserSessionCookieService {
       ...options,
       expires: expiresAt,
     });
+  }
+
+  // Looser than extractSessionTokenFromRequest on purpose: it answers "did the
+  // browser send us one of our cookies", including the legacy plain name an
+  // https deployment refuses to authenticate with but should still clear.
+  hasSessionCookie(request: Request): boolean {
+    const cookieHeader = request.headers.cookie;
+
+    if (!isNonEmptyString(cookieHeader)) {
+      return false;
+    }
+
+    return [USER_SESSION_SECURE_COOKIE_NAME, USER_SESSION_COOKIE_NAME].some(
+      (cookieName) =>
+        cookieHeader
+          .split(';')
+          .some((cookiePart) => cookiePart.trim().startsWith(`${cookieName}=`)),
+    );
   }
 
   clearSessionCookie(response: Response): void {
