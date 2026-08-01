@@ -57,12 +57,49 @@ export class UserSessionResolver {
     @AuthUser() user: AuthContextUser,
     @Args('userSessionId', { type: () => UUIDScalarType })
     userSessionId: string,
+    @Context() context: { req: Request },
   ): Promise<boolean> {
-    return await this.userSessionService.revokeSessionByIdForUser({
+    const revoked = await this.userSessionService.revokeSessionByIdForUser({
       sessionId: userSessionId,
       userId: user.id,
       reason: UserSessionRevokedReason.UserRevoked,
     });
+
+    // Revoking the device you are on: drop the cookie now instead of leaving
+    // the browser holding a token that is already dead.
+    const currentSession = await this.resolveCurrentSession(context.req, user);
+
+    if (
+      revoked &&
+      currentSession?.id === userSessionId &&
+      isDefined(context.req.res)
+    ) {
+      this.userSessionCookieService.clearSessionCookie(context.req.res);
+    }
+
+    return revoked;
+  }
+
+  // Only a session that is genuinely usable counts as the current one: a
+  // revoked or expired cookie must not decide which sessions survive.
+  private async resolveCurrentSession(
+    request: Request,
+    user: AuthContextUser,
+  ): Promise<UserSessionEntity | undefined> {
+    const presentedSessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
+
+    if (!isDefined(presentedSessionToken)) {
+      return undefined;
+    }
+
+    const activeSessions =
+      await this.userSessionService.findActiveSessionsForUser(user.id);
+    const presentedTokenHash = hashUserSessionToken(presentedSessionToken);
+
+    return activeSessions.find(
+      (session) => session.tokenHash === presentedTokenHash,
+    );
   }
 
   @Mutation(() => Int)
@@ -71,22 +108,12 @@ export class UserSessionResolver {
     @AuthUser() user: AuthContextUser,
     @Context() context: { req: Request },
   ): Promise<number> {
-    const presentedSessionToken =
-      this.userSessionCookieService.extractSessionTokenFromRequest(context.req);
-
-    const currentSession = isDefined(presentedSessionToken)
-      ? await this.userSessionService.findSessionByToken(presentedSessionToken)
-      : null;
-
-    // A stale cookie can reference another user's session: it must never
-    // shape which of the authenticated user's sessions survive.
-    const exceptSessionId =
-      currentSession?.userId === user.id ? currentSession.id : undefined;
+    const currentSession = await this.resolveCurrentSession(context.req, user);
 
     return await this.userSessionService.revokeAllSessionsForUser({
       userId: user.id,
       reason: UserSessionRevokedReason.UserRevoked,
-      exceptSessionId,
+      exceptSessionId: currentSession?.id,
     });
   }
 
