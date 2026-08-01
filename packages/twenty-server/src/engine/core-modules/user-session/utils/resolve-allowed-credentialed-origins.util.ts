@@ -19,11 +19,10 @@ const toOrigin = (url: string): string | undefined => {
   }
 };
 
-// URL canonicalises [::ffff:127.0.0.1] to [::ffff:7f00:1], so matching the
-// dotted spelling alone would miss it. The whole 127.0.0.0/8 block is
-// loopback, not just 127.0.0.1.
+// URL canonicalises [::ffff:127.0.0.1] to [::ffff:7f00:1], so only the hex
+// spelling ever reaches here. The whole 127.0.0.0/8 block is loopback, not
+// just 127.0.0.1.
 const IPV4_LOOPBACK_REGEX = /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
-const IPV4_MAPPED_DOTTED_REGEX = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/;
 const IPV4_MAPPED_HEX_REGEX = /^::ffff:([0-9a-f]{1,4}):[0-9a-f]{1,4}$/;
 
 const isLoopbackHostname = (hostname: string): boolean => {
@@ -39,12 +38,6 @@ const isLoopbackHostname = (hostname: string): boolean => {
 
   if (IPV4_LOOPBACK_REGEX.test(host)) {
     return true;
-  }
-
-  const mappedDotted = IPV4_MAPPED_DOTTED_REGEX.exec(host);
-
-  if (mappedDotted !== null) {
-    return IPV4_LOOPBACK_REGEX.test(mappedDotted[1]);
   }
 
   const mappedHex = IPV4_MAPPED_HEX_REGEX.exec(host);

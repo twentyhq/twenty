@@ -419,16 +419,47 @@ describe('UserSessionService', () => {
   });
 
   describe('revokeSessionByIdForUser', () => {
-    it('should refuse to revoke a session belonging to another user', async () => {
-      jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(null);
+    it('should scope the lookup to the requesting user', async () => {
+      const sessionId = randomUUID();
+      const userId = randomUUID();
+      const findOneBySpy = jest
+        .spyOn(userSessionRepository, 'findOneBy')
+        .mockResolvedValue(null);
 
       await expect(
         service.revokeSessionByIdForUser({
-          sessionId: randomUUID(),
-          userId: randomUUID(),
+          sessionId,
+          userId,
           reason: UserSessionRevokedReason.UserRevoked,
         }),
       ).rejects.toThrow('Session not found');
+
+      // Without the userId in the filter, one user could revoke another's
+      // session by id, and a null-returning mock alone would not notice.
+      expect(findOneBySpy).toHaveBeenCalledWith({ id: sessionId, userId });
+    });
+
+    it('should revoke a session the user owns and drop its cache entry', async () => {
+      const userId = randomUUID();
+      const session = buildActiveSession({ userId, tokenHash: 'owned-hash' });
+
+      jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      jest
+        .spyOn(userSessionRepository, 'update')
+        .mockResolvedValue({ affected: 1 } as never);
+
+      const wasRevoked = await service.revokeSessionByIdForUser({
+        sessionId: session.id,
+        userId,
+        reason: UserSessionRevokedReason.UserRevoked,
+      });
+
+      expect(wasRevoked).toBe(true);
+      expect(cacheStorageService.del).toHaveBeenCalledWith('owned-hash');
+      expect(insertWorkspaceEvent).toHaveBeenCalledWith(
+        'AuthSession',
+        expect.objectContaining({ action: 'session_revoked' }),
+      );
     });
   });
 
