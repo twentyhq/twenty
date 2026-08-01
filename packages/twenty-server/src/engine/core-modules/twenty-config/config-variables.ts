@@ -413,6 +413,9 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Comma-separated list of extra origins allowed to send credentialed cross-origin requests (split-origin deployments)',
+    // Env-only: the CORS allowlist is built once at boot, so a value changed
+    // in the database would apply to the CSRF guard but not to CORS.
+    isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
