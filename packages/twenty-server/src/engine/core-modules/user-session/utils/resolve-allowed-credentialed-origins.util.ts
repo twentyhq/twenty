@@ -27,7 +27,11 @@ const IPV4_MAPPED_DOTTED_REGEX = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/;
 const IPV4_MAPPED_HEX_REGEX = /^::ffff:([0-9a-f]{1,4}):[0-9a-f]{1,4}$/;
 
 const isLoopbackHostname = (hostname: string): boolean => {
-  const host = hostname.replace(/^\[|\]$/g, '').toLowerCase();
+  // A trailing DNS dot (localhost.) resolves the same but would not match.
+  const host = hostname
+    .replace(/^\[|\]$/g, '')
+    .replace(/\.$/, '')
+    .toLowerCase();
 
   if (host === 'localhost' || host === '::1') {
     return true;

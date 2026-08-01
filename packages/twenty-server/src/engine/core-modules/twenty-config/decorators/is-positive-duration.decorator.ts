@@ -4,26 +4,17 @@ import {
   ValidatorConstraint,
   type ValidatorConstraintInterface,
 } from 'class-validator';
-import ms from 'ms';
 
-// Validated by the same parser the session code calls, so the accepted units
-// cannot drift from it: IsDuration allows "1M" and "1Month", which ms reads
-// as one minute and as nothing at all. It also allows a leading minus, which
-// would yield credentials that expire before they are issued.
+import { parseConfigDuration } from 'src/engine/core-modules/twenty-config/utils/parse-config-duration.util';
+
+// A negative lifetime would yield credentials that expire before they are
+// issued, and IsDuration accepts one.
 @ValidatorConstraint()
 export class IsPositiveDurationConstraint implements ValidatorConstraintInterface {
   validate(duration: unknown) {
-    if (typeof duration !== 'string') {
-      return false;
-    }
+    const parsedDuration = parseConfigDuration(duration);
 
-    try {
-      const parsedDuration = ms(duration as Parameters<typeof ms>[0]);
-
-      return typeof parsedDuration === 'number' && parsedDuration > 0;
-    } catch {
-      return false;
-    }
+    return parsedDuration !== undefined && parsedDuration > 0;
   }
 
   defaultMessage() {
