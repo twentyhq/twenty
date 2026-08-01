@@ -110,4 +110,4 @@ filters: [
 
 ## 보기가 UI에 표시되는 방식
 
-보기만으로는 사이드바에서 직접 접근할 수 없습니다. 사이드바에 표시하려면, 해당 보기의 `universalIdentifier`를 가리키는 `VIEW` 타입의 [탐색 메뉴 항목](/l/ko/developers/extend/apps/layout/navigation-menu-items)과 연결해야 합니다. 이것이 표준적인 패턴입니다. 일반적으로 각 커스텀 객체는 기본 보기와, 그 보기를 여는 사이드바 항목을 함께 제공합니다.
+보기만으로는 사이드바에서 직접 접근할 수 없습니다. 사이드바에 표시하려면, 해당 보기의 `universalIdentifier`를 가리키는 `VIEW` 타입의 [탐색 메뉴 항목](/l/ko/developers/extend/apps/layout/navigation-menu-items)과 연결해야 합니다. 이것이 정형화된 패턴입니다. 모든 사용자 정의 객체는 생성 시 기본 인덱스 뷰가 자동으로 생성되므로, 이를 여는 사이드바 항목만 제공하면 됩니다.
