@@ -38,13 +38,11 @@ describe('CookieSessionCsrfMiddleware', () => {
   };
 
   let next: NextFunction;
-  let afterEachRestoreFlag = false;
-
+  // Restored unconditionally: a failing assertion must not leak a mutated
+  // config into the tests that follow, since mockConfig is describe-scoped.
   afterEach(() => {
-    if (afterEachRestoreFlag) {
-      mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = true;
-      afterEachRestoreFlag = false;
-    }
+    mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = true;
+    mockConfig.AUTH_COOKIE_ALLOWED_ORIGINS = '';
   });
 
   beforeEach(async () => {
@@ -167,8 +165,6 @@ describe('CookieSessionCsrfMiddleware', () => {
     middleware.use(request, buildResponse(), next);
 
     expect(next).toHaveBeenCalled();
-
-    mockConfig.AUTH_COOKIE_ALLOWED_ORIGINS = '';
   });
 
   // Browsers omit :443 from Origin while Host keeps a port the client spelled
@@ -207,7 +203,6 @@ describe('CookieSessionCsrfMiddleware', () => {
 
   it('should skip when cookie sessions are disabled', () => {
     mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = false;
-    afterEachRestoreFlag = true;
 
     const request = buildRequest({
       headers: {
