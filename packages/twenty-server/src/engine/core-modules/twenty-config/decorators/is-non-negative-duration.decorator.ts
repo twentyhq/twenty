@@ -4,24 +4,17 @@ import {
   ValidatorConstraint,
   type ValidatorConstraintInterface,
 } from 'class-validator';
-import ms from 'ms';
+
+import { parseConfigDuration } from 'src/engine/core-modules/twenty-config/utils/parse-config-duration.util';
 
 // Like IsPositiveDuration, but zero is a meaningful value: a window of zero
 // deliberately turns the behaviour it gates off.
 @ValidatorConstraint()
 export class IsNonNegativeDurationConstraint implements ValidatorConstraintInterface {
   validate(duration: unknown) {
-    if (typeof duration !== 'string') {
-      return false;
-    }
+    const parsedDuration = parseConfigDuration(duration);
 
-    try {
-      const parsedDuration = ms(duration as Parameters<typeof ms>[0]);
-
-      return typeof parsedDuration === 'number' && parsedDuration >= 0;
-    } catch {
-      return false;
-    }
+    return parsedDuration !== undefined && parsedDuration >= 0;
   }
 
   defaultMessage() {

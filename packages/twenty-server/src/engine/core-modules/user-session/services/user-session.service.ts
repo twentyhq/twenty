@@ -490,12 +490,12 @@ export class UserSessionService {
     }
 
     const { raw } = await revokingQuery
-      .returning(['id', 'tokenHash', 'userId', 'workspaceId'])
+      .returning(['id', 'tokenHash', 'userId', 'workspaceId', 'authProvider'])
       .execute();
 
     const revokedSessions = raw as Pick<
       UserSessionEntity,
-      'id' | 'tokenHash' | 'userId' | 'workspaceId'
+      'id' | 'tokenHash' | 'userId' | 'workspaceId' | 'authProvider'
     >[];
 
     if (revokedSessions.length === 0) {
