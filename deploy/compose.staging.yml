@@ -13,7 +13,7 @@ name: twenty-staging
 services:
   server:
     image: ${STAGING_IMAGE:?Set STAGING_IMAGE to a commit-SHA image tag}
-    platform: ${STAGING_PLATFORM:-linux/amd64}
+    platform: ${STAGING_PLATFORM:-linux/arm64}
     ports:
       - "${STAGING_BIND_ADDRESS:-127.0.0.1}:${STAGING_PORT:-3020}:3000"
     volumes:
@@ -55,7 +55,7 @@ services:
 
   worker:
     image: ${STAGING_IMAGE:?Set STAGING_IMAGE to a commit-SHA image tag}
-    platform: ${STAGING_PLATFORM:-linux/amd64}
+    platform: ${STAGING_PLATFORM:-linux/arm64}
     command: ["yarn", "worker:prod"]
     volumes:
       - staging-server-data:/app/packages/twenty-server/.local-storage
