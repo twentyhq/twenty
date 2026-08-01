@@ -912,7 +912,16 @@ export class AuthResolver {
       // A failed revocation still clears the cookie: leaving the browser
       // holding a credential it believes is gone is the worse outcome, and
       // the failure itself still surfaces to the caller.
-      if (isDefined(context.req.res)) {
+      //
+      // Only for a request that actually carried one, though. This mutation is
+      // public and SameSite=Lax keeps the cookie off cross-site POSTs, so the
+      // CSRF middleware waves those through as cookie-less; clearing
+      // unconditionally would still emit a Set-Cookie the browser honours and
+      // let any site sign a visitor out.
+      if (
+        isDefined(context.req.res) &&
+        this.userSessionCookieService.hasSessionCookie(context.req)
+      ) {
         this.userSessionCookieService.clearSessionCookie(context.req.res);
       }
     }
