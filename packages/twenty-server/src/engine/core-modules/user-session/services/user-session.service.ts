@@ -38,7 +38,6 @@ import {
   type CreateUserSessionInput,
   type UserSessionCreationOrigin,
 } from 'src/engine/core-modules/user-session/types/user-session.type';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import {
   generateUserSessionToken,
   hashUserSessionToken,
@@ -108,12 +107,12 @@ export class UserSessionService {
       }
 
       const presentedSessionToken =
-        extractUserSessionTokenFromRequestCookie(request);
+        this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
       if (isDefined(presentedSessionToken)) {
         if (origin === 'renewal_bridge') {
           try {
-            const presentedPayload = await this.resolveSessionPayload(
+            const { payload: presentedPayload } = await this.resolveSession(
               presentedSessionToken,
             );
 
@@ -252,9 +251,10 @@ export class UserSessionService {
 
   // Returns the same payload shape the equivalent JWT would carry, so the
   // existing JwtAuthStrategy.validate dispatch builds the AuthContext.
-  async resolveSessionPayload(
-    sessionToken: string,
-  ): Promise<AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload> {
+  async resolveSession(sessionToken: string): Promise<{
+    payload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload;
+    authenticatedAt: Date;
+  }> {
     const tokenHash = hashUserSessionToken(sessionToken);
 
     const cachedSession =
@@ -269,7 +269,7 @@ export class UserSessionService {
 
       await this.touchSessionIfDue(tokenHash, cachedSession);
 
-      return this.buildPayloadFromCachedSession(cachedSession);
+      return this.toResolvedSession(cachedSession);
     }
 
     const session = await this.userSessionRepository.findOneBy({ tokenHash });
@@ -288,7 +288,17 @@ export class UserSessionService {
     );
     await this.assertNotRevokedAfterCaching(session.id, tokenHash);
 
-    return this.buildPayloadFromCachedSession(refreshedCachedSession);
+    return this.toResolvedSession(refreshedCachedSession);
+  }
+
+  private toResolvedSession(cachedSession: CachedUserSession): {
+    payload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload;
+    authenticatedAt: Date;
+  } {
+    return {
+      payload: this.buildPayloadFromCachedSession(cachedSession),
+      authenticatedAt: new Date(cachedSession.authenticatedAt),
+    };
   }
 
   // A revocation racing the cache write above may have had its cache delete
@@ -563,6 +573,7 @@ export class UserSessionService {
       impersonatedUserWorkspaceId: session.impersonatedUserWorkspaceId,
       expiresAt: session.expiresAt.toISOString(),
       lastActiveAt: session.lastActiveAt.toISOString(),
+      authenticatedAt: session.createdAt.toISOString(),
     };
   }
 

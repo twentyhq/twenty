@@ -5,7 +5,7 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
@@ -17,7 +17,10 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 // gap, which is same-site and therefore not covered by Lax.
 @Injectable()
 export class CookieSessionCsrfMiddleware implements NestMiddleware {
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly userSessionCookieService: UserSessionCookieService,
+  ) {}
 
   use(request: Request, response: Response, next: NextFunction): void {
     if (SAFE_METHODS.has(request.method)) {
@@ -28,7 +31,11 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
       return next();
     }
 
-    if (!isDefined(extractUserSessionTokenFromRequestCookie(request))) {
+    if (
+      !isDefined(
+        this.userSessionCookieService.extractSessionTokenFromRequest(request),
+      )
+    ) {
       return next();
     }
 

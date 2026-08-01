@@ -212,7 +212,7 @@ describe('UserSessionService', () => {
     jest.spyOn(userSessionRepository, 'findOne').mockResolvedValue(session);
   };
 
-  describe('resolveSessionPayload', () => {
+  describe('resolveSession', () => {
     it('should resolve an access payload from the database on cache miss', async () => {
       const session = buildActiveSession();
 
@@ -220,7 +220,7 @@ describe('UserSessionService', () => {
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
       mockPostCachingRevocationCheck(session);
 
-      const payload = await service.resolveSessionPayload('sess_token');
+      const { payload } = await service.resolveSession('sess_token');
 
       expect(payload).toEqual(
         expect.objectContaining({
@@ -243,7 +243,7 @@ describe('UserSessionService', () => {
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
       mockPostCachingRevocationCheck(session);
 
-      const payload = await service.resolveSessionPayload('sess_token');
+      const { payload } = await service.resolveSession('sess_token');
 
       expect(payload.type).toEqual(JwtTokenTypeEnum.WORKSPACE_AGNOSTIC);
     });
@@ -262,10 +262,11 @@ describe('UserSessionService', () => {
         impersonatedUserWorkspaceId: null,
         expiresAt: session.expiresAt.toISOString(),
         lastActiveAt: new Date().toISOString(),
+        authenticatedAt: session.createdAt.toISOString(),
       });
       const findOneBySpy = jest.spyOn(userSessionRepository, 'findOneBy');
 
-      const payload = await service.resolveSessionPayload('sess_token');
+      const { payload } = await service.resolveSession('sess_token');
 
       expect(payload.userId).toEqual(session.userId);
       expect(findOneBySpy).not.toHaveBeenCalled();
@@ -277,7 +278,7 @@ describe('UserSessionService', () => {
         .spyOn(userSessionRepository, 'findOneBy')
         .mockResolvedValue(buildActiveSession({ revokedAt: new Date() }));
 
-      await expect(service.resolveSessionPayload('sess_token')).rejects.toThrow(
+      await expect(service.resolveSession('sess_token')).rejects.toThrow(
         'Session is invalid or has expired.',
       );
     });
@@ -290,7 +291,7 @@ describe('UserSessionService', () => {
           buildActiveSession({ expiresAt: new Date(Date.now() - 1000) }),
         );
 
-      await expect(service.resolveSessionPayload('sess_token')).rejects.toThrow(
+      await expect(service.resolveSession('sess_token')).rejects.toThrow(
         'Session is invalid or has expired.',
       );
     });
@@ -307,7 +308,7 @@ describe('UserSessionService', () => {
           buildActiveSession({ lastActiveAt: idleExpiredLastActiveAt }),
         );
 
-      await expect(service.resolveSessionPayload('sess_token')).rejects.toThrow(
+      await expect(service.resolveSession('sess_token')).rejects.toThrow(
         'Session is invalid or has expired.',
       );
     });
@@ -316,9 +317,9 @@ describe('UserSessionService', () => {
       cacheStorageService.get.mockResolvedValue(undefined);
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(null);
 
-      await expect(
-        service.resolveSessionPayload('sess_unknown'),
-      ).rejects.toThrow('Session is invalid or has expired.');
+      await expect(service.resolveSession('sess_unknown')).rejects.toThrow(
+        'Session is invalid or has expired.',
+      );
     });
 
     it('should touch lastActiveAt when the touch interval elapsed', async () => {
@@ -332,7 +333,7 @@ describe('UserSessionService', () => {
         .spyOn(userSessionRepository, 'update')
         .mockResolvedValue({ affected: 1 } as never);
 
-      await service.resolveSessionPayload('sess_token');
+      await service.resolveSession('sess_token');
 
       expect(updateSpy).toHaveBeenCalledWith(
         expect.objectContaining({ id: session.id }),
@@ -348,7 +349,7 @@ describe('UserSessionService', () => {
       mockPostCachingRevocationCheck(session);
       const updateSpy = jest.spyOn(userSessionRepository, 'update');
 
-      await service.resolveSessionPayload('sess_token');
+      await service.resolveSession('sess_token');
 
       expect(updateSpy).not.toHaveBeenCalled();
     });
@@ -363,7 +364,7 @@ describe('UserSessionService', () => {
         .spyOn(userSessionRepository, 'update')
         .mockResolvedValue({ affected: 0 } as never);
 
-      await expect(service.resolveSessionPayload('sess_token')).rejects.toThrow(
+      await expect(service.resolveSession('sess_token')).rejects.toThrow(
         'Session is invalid or has expired.',
       );
       expect(cacheStorageService.del).toHaveBeenCalled();
@@ -378,7 +379,7 @@ describe('UserSessionService', () => {
         buildActiveSession({ id: session.id, revokedAt: new Date() }),
       );
 
-      await expect(service.resolveSessionPayload('sess_token')).rejects.toThrow(
+      await expect(service.resolveSession('sess_token')).rejects.toThrow(
         'Session is invalid or has expired.',
       );
       expect(cacheStorageService.del).toHaveBeenCalled();
