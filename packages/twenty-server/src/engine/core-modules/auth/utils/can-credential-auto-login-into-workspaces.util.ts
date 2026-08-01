@@ -2,6 +2,8 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { isDefined } from 'twenty-shared/utils';
 
+import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
+
 // Listing the workspaces a user belongs to is harmless and stays available
 // for the whole session, but converting that credential into workspace access
 // without re-authenticating is not: a workspace-agnostic session outlives a
@@ -9,7 +11,9 @@ import { isDefined } from 'twenty-shared/utils';
 // cookie it does not own), so it would otherwise hand the workspace back.
 // Workspace-scoped credentials are unaffected: signing out of a workspace
 // revokes them, so they cannot outlive the sign-out they would bypass.
-const DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS = 10 * 60 * 1000;
+const DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS = ms(
+  DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW,
+);
 
 export const canCredentialAutoLoginIntoWorkspaces = ({
   isWorkspaceScopedCredential,

@@ -9,6 +9,18 @@ import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-se
 import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+const isHttpsUrl = (url: string | undefined): boolean => {
+  if (!isNonEmptyString(url)) {
+    return false;
+  }
+
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 @Injectable()
 export class UserSessionCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
@@ -19,10 +31,11 @@ export class UserSessionCookieService {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
     const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
 
+    // Parsed rather than prefix-matched: a SERVER_URL spelled HTTPS:// is
+    // https, and treating it as plain http would silently hand out a cookie
+    // without the __Host- prefix.
     // SameSite=None is rejected by browsers without Secure, so it forces it.
-    return (
-      Boolean(serverUrl && serverUrl.startsWith('https')) || sameSite === 'none'
-    );
+    return isHttpsUrl(serverUrl) || sameSite === 'none';
   }
 
   // The kill switch lives here rather than at each call site: with it off,

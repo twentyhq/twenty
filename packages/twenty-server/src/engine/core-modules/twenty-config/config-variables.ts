@@ -47,6 +47,7 @@ import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/deco
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
+import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
@@ -399,7 +400,7 @@ export class ConfigVariables {
   })
   @IsNonNegativeDuration()
   @IsOptional()
-  WORKSPACE_AUTO_LOGIN_WINDOW = '10m';
+  WORKSPACE_AUTO_LOGIN_WINDOW: string = DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
