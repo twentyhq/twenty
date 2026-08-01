@@ -47,6 +47,7 @@ import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/deco
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
+import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
@@ -396,7 +397,7 @@ export class ConfigVariables {
       'Window after authenticating on the workspace-agnostic domain during which a user-level session can still auto-login into a workspace without re-authenticating',
     type: ConfigVariableType.STRING,
   })
-  @IsPositiveDuration()
+  @IsNonNegativeDuration()
   @IsOptional()
   WORKSPACE_AUTO_LOGIN_WINDOW = '10m';
 

@@ -183,14 +183,6 @@ export class UserSessionService {
     presentedPayload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload,
     sessionInput: CreateUserSessionInput,
   ): boolean {
-    const presentedWorkspaceId =
-      presentedPayload.type === JwtTokenTypeEnum.ACCESS
-        ? presentedPayload.workspaceId
-        : undefined;
-    const presentedIsImpersonating =
-      presentedPayload.type === JwtTokenTypeEnum.ACCESS &&
-      presentedPayload.isImpersonating === true;
-
     if (presentedPayload.type !== JwtTokenTypeEnum.ACCESS) {
       return (
         presentedPayload.userId === sessionInput.userId &&
@@ -201,8 +193,10 @@ export class UserSessionService {
 
     return (
       presentedPayload.userId === sessionInput.userId &&
-      (presentedWorkspaceId ?? null) === (sessionInput.workspaceId ?? null) &&
-      presentedIsImpersonating === (sessionInput.isImpersonating === true) &&
+      (presentedPayload.workspaceId ?? null) ===
+        (sessionInput.workspaceId ?? null) &&
+      (presentedPayload.isImpersonating === true) ===
+        (sessionInput.isImpersonating === true) &&
       (presentedPayload.userWorkspaceId ?? null) ===
         (sessionInput.userWorkspaceId ?? null) &&
       (presentedPayload.impersonatorUserWorkspaceId ?? null) ===

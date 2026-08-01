@@ -57,10 +57,6 @@ export class MiddlewareService {
       return true;
     }
 
-    if (!this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED')) {
-      return false;
-    }
-
     return isDefined(
       this.userSessionCookieService.extractSessionTokenFromRequest(request),
     );
