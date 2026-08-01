@@ -158,13 +158,17 @@ export class UserSessionService {
         session.expiresAt,
       );
     } catch (error) {
-      try {
-        // The presented cookie may still be the previous account's and still
-        // be valid, so it must not survive a sign-in that failed to replace
-        // it. Guarded: issuance stays best effort whatever happens here.
-        this.userSessionCookieService.clearSessionCookie(response);
-      } catch {
-        // Nothing further to do: the error below is what gets reported.
+      // Sign-in only: the presented cookie may be the previous account's and
+      // still valid, so it must not survive a sign-in that failed to replace
+      // it. On renewal the presented session is this user's own live one, and
+      // a transient failure must not destroy it. Guarded either way, since
+      // issuance stays best effort.
+      if (origin === 'sign_in') {
+        try {
+          this.userSessionCookieService.clearSessionCookie(response);
+        } catch {
+          // Nothing further to do: the error below is what gets reported.
+        }
       }
 
       this.logger.error(
