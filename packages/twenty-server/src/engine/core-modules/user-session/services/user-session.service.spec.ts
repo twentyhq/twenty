@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
 
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -433,6 +433,25 @@ describe('UserSessionService', () => {
   });
 
   describe('revokeAllSessionsForUser', () => {
+    const mockRevokingQueryBuilder = (revokedIds: string[]) => {
+      const queryBuilder = {
+        update: jest.fn().mockReturnThis(),
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockReturnThis(),
+        execute: jest
+          .fn()
+          .mockResolvedValue({ raw: revokedIds.map((id) => ({ id })) }),
+      };
+
+      jest
+        .spyOn(userSessionRepository, 'createQueryBuilder')
+        .mockReturnValue(queryBuilder as never);
+
+      return queryBuilder;
+    };
+
     it('should revoke every active session except the excluded one', async () => {
       const userId = randomUUID();
       const exceptSessionId = randomUUID();
@@ -444,9 +463,9 @@ describe('UserSessionService', () => {
       const findSpy = jest
         .spyOn(userSessionRepository, 'find')
         .mockResolvedValue(sessions);
-      const updateSpy = jest
-        .spyOn(userSessionRepository, 'update')
-        .mockResolvedValue({ affected: 2 } as never);
+      const queryBuilder = mockRevokingQueryBuilder(
+        sessions.map((session) => session.id),
+      );
 
       const revokedCount = await service.revokeAllSessionsForUser({
         userId,
@@ -462,15 +481,14 @@ describe('UserSessionService', () => {
           id: Not(exceptSessionId),
         },
       });
-      expect(updateSpy).toHaveBeenCalledWith(
-        {
-          id: In(sessions.map((session) => session.id)),
-          revokedAt: IsNull(),
-        },
+      expect(queryBuilder.set).toHaveBeenCalledWith(
         expect.objectContaining({
           revokedReason: UserSessionRevokedReason.PasswordChanged,
         }),
       );
+      expect(queryBuilder.where).toHaveBeenCalledWith(expect.any(String), {
+        sessionIds: sessions.map((session) => session.id),
+      });
       expect(cacheStorageService.mdel).toHaveBeenCalledWith([
         'hash-1',
         'hash-2',
@@ -479,14 +497,13 @@ describe('UserSessionService', () => {
 
     it('should revoke every active session when nothing is excluded', async () => {
       const userId = randomUUID();
+      const session = buildActiveSession({ userId, tokenHash: 'hash' });
 
       const findSpy = jest
         .spyOn(userSessionRepository, 'find')
-        .mockResolvedValue([buildActiveSession({ userId, tokenHash: 'hash' })]);
+        .mockResolvedValue([session]);
 
-      jest
-        .spyOn(userSessionRepository, 'update')
-        .mockResolvedValue({ affected: 1 } as never);
+      mockRevokingQueryBuilder([session.id]);
 
       await service.revokeAllSessionsForUser({
         userId,
@@ -496,6 +513,30 @@ describe('UserSessionService', () => {
       expect(findSpy).toHaveBeenCalledWith({
         where: { userId, revokedAt: IsNull() },
       });
+    });
+
+    it('should not count or audit a session revoked concurrently', async () => {
+      const userId = randomUUID();
+      const sessions = [
+        buildActiveSession({ userId, tokenHash: 'hash-1' }),
+        buildActiveSession({ userId, tokenHash: 'hash-2' }),
+      ];
+
+      jest.spyOn(userSessionRepository, 'find').mockResolvedValue(sessions);
+      // The second session lost the race: the UPDATE did not change it.
+      mockRevokingQueryBuilder([sessions[0].id]);
+
+      const revokedCount = await service.revokeAllSessionsForUser({
+        userId,
+        reason: UserSessionRevokedReason.PasswordChanged,
+      });
+
+      expect(revokedCount).toBe(1);
+      expect(insertWorkspaceEvent).toHaveBeenCalledTimes(1);
+      expect(cacheStorageService.mdel).toHaveBeenCalledWith([
+        'hash-1',
+        'hash-2',
+      ]);
     });
   });
 
