@@ -38,7 +38,6 @@ import {
   type CreateUserSessionInput,
   type UserSessionCreationOrigin,
 } from 'src/engine/core-modules/user-session/types/user-session.type';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import {
   generateUserSessionToken,
   hashUserSessionToken,
@@ -108,12 +107,12 @@ export class UserSessionService {
       }
 
       const presentedSessionToken =
-        extractUserSessionTokenFromRequestCookie(request);
+        this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
       if (isDefined(presentedSessionToken)) {
         if (origin === 'renewal_bridge') {
           try {
-            const presentedPayload = await this.resolveSessionPayload(
+            const { payload: presentedPayload } = await this.resolveSession(
               presentedSessionToken,
             );
 
