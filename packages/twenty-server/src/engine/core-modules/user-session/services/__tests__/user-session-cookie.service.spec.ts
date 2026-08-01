@@ -4,7 +4,9 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 
 describe('UserSessionCookieService', () => {
-  const buildService = (config: Record<string, unknown> = {}) =>
+  const buildService = (
+    config: Record<string, unknown> = { AUTH_COOKIE_SESSIONS_ENABLED: true },
+  ) =>
     new UserSessionCookieService({
       get: jest.fn((key: string) => config[key]),
     } as unknown as TwentyConfigService);
@@ -39,6 +41,14 @@ describe('UserSessionCookieService', () => {
     // stops sign-out from being triggered by an attacker page.
     it('should report no cookie when the request carries none', () => {
       expect(buildService().hasSessionCookie(buildRequest())).toBe(false);
+    });
+
+    it('should report no cookie when cookie sessions are disabled', () => {
+      expect(
+        buildService({ AUTH_COOKIE_SESSIONS_ENABLED: false }).hasSessionCookie(
+          buildRequest('__Host-twenty-session=sess_abc'),
+        ),
+      ).toBe(false);
     });
 
     it('should not match a cookie whose name merely ends with ours', () => {

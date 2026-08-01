@@ -12,6 +12,16 @@ import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
+// URL.origin drops a default port, so the two spellings of the same origin
+// collapse. Returns undefined for anything unparseable, which never matches.
+const toComparableOrigin = (value: string): string | undefined => {
+  try {
+    return new URL(value).origin.toLowerCase();
+  } catch {
+    return undefined;
+  }
+};
+
 // Bearer-authenticated requests are CSRF-immune (headers are never attached
 // cross-site), so this only guards requests that would authenticate through
 // the session cookie. SameSite=Lax already blocks true cross-site POSTs;
@@ -73,7 +83,18 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
 
     // Same shared helper the discovery controllers use, so the origin this
     // request arrived on is derived one way (and honors `trust proxy`).
-    if (normalizedOrigin === getRequestBaseUrl(request).toLowerCase()) {
+    // Compared through URL rather than as strings: browsers omit :443 and :80
+    // from Origin while Host keeps whatever port the client spelled out, so a
+    // genuine same-origin POST would otherwise 403 on the port alone.
+    const comparableOrigin = toComparableOrigin(normalizedOrigin);
+    const comparableRequestOrigin = toComparableOrigin(
+      getRequestBaseUrl(request),
+    );
+
+    if (
+      isDefined(comparableOrigin) &&
+      comparableOrigin === comparableRequestOrigin
+    ) {
       return true;
     }
 
