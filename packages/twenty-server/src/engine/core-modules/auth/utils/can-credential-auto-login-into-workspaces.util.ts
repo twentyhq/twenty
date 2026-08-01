@@ -9,6 +9,8 @@ import { isDefined } from 'twenty-shared/utils';
 // cookie it does not own), so it would otherwise hand the workspace back.
 // Workspace-scoped credentials are unaffected: signing out of a workspace
 // revokes them, so they cannot outlive the sign-out they would bypass.
+const DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS = 10 * 60 * 1000;
+
 export const canCredentialAutoLoginIntoWorkspaces = ({
   isWorkspaceScopedCredential,
   authenticatedAt,
@@ -30,14 +32,15 @@ export const canCredentialAutoLoginIntoWorkspaces = ({
     return true;
   }
 
-  const autoLoginWindowMs = ms(autoLoginWindow);
+  const parsedWindowMs = ms(autoLoginWindow);
 
-  // ms() returns undefined for a duration it cannot parse, which would make
-  // every comparison below false and silently disable auto-login entirely.
-  // A misconfigured window must not be read as "never".
-  if (!Number.isFinite(autoLoginWindowMs)) {
-    return true;
-  }
+  // ms() yields undefined for a duration it cannot parse. Reading that as
+  // "always" would silently drop the boundary this whole check exists for,
+  // and reading it as "never" would lock everyone out of workspace entry, so
+  // a malformed window falls back to the documented default instead.
+  const autoLoginWindowMs = Number.isFinite(parsedWindowMs)
+    ? parsedWindowMs
+    : DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS;
 
   return addMilliseconds(authenticatedAt, autoLoginWindowMs) > now;
 };
