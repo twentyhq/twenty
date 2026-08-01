@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -60,6 +61,19 @@ export class UserSessionEntity {
   @Column({ type: 'uuid', nullable: true })
   workspaceId: string | null;
 
+  // Removing someone from a workspace deletes the membership, not the
+  // workspace, so without the cascade their session would sit in the devices
+  // list until expiry while already failing every request it carries.
+  @ManyToOne(() => UserWorkspaceEntity, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({
+    name: 'userWorkspaceId',
+    foreignKeyConstraintName: 'FK_USER_SESSION_USER_WORKSPACE_ID',
+  })
+  userWorkspace: Relation<UserWorkspaceEntity> | null;
+
+  @Index('IDX_USER_SESSION_USER_WORKSPACE_ID')
   @Column({ type: 'uuid', nullable: true })
   userWorkspaceId: string | null;
 

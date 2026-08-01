@@ -4,21 +4,30 @@ import {
   ValidatorConstraint,
   type ValidatorConstraintInterface,
 } from 'class-validator';
+import ms from 'ms';
 
-// IsDuration accepts a leading minus, which is meaningless for a lifetime or
-// a timeout: a negative one yields credentials that expire before they are
-// issued. Zero is refused for the same reason.
-const POSITIVE_DURATION_REGEX =
-  /^[0-9]+(\.[0-9]+)?(m(illiseconds?)?|s(econds?)?|h((ou)?rs?)?|d(ays?)?|w(eeks?)?|M(onths?)?|y(ears?)?)?$/;
-
+// Validated by the same parser the session code calls, so the accepted units
+// cannot drift from it: IsDuration allows "1M" and "1Month", which ms reads
+// as one minute and as nothing at all. It also allows a leading minus, which
+// would yield credentials that expire before they are issued.
 @ValidatorConstraint()
 export class IsPositiveDurationConstraint implements ValidatorConstraintInterface {
-  validate(duration: string) {
-    return POSITIVE_DURATION_REGEX.test(duration) && parseFloat(duration) > 0;
+  validate(duration: unknown) {
+    if (typeof duration !== 'string') {
+      return false;
+    }
+
+    try {
+      const parsedDuration = ms(duration as Parameters<typeof ms>[0]);
+
+      return typeof parsedDuration === 'number' && parsedDuration > 0;
+    } catch {
+      return false;
+    }
   }
 
   defaultMessage() {
-    return '$property must be a positive duration, e.g. 30d, 12h or 10m';
+    return '$property must be a positive duration ms can parse, e.g. 30d, 12h or 10m';
   }
 }
 
