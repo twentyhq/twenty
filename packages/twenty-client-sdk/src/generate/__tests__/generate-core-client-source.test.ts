@@ -82,6 +82,22 @@ describe('generateCoreClientSource', () => {
       expect(entries).not.toContain('package.json');
     });
 
+    it('credits genql in a README and ships the runtime license', async () => {
+      const readmeContent = await readFile(
+        join(outputPath, 'README.md'),
+        'utf-8',
+      );
+      const licenseContent = await readFile(
+        join(outputPath, 'runtime', 'LICENSE'),
+        'utf-8',
+      );
+
+      expect(readmeContent).toContain('https://github.com/remorses/genql');
+      expect(readmeContent).toContain(PROVENANCE_HEADER);
+      expect(licenseContent).toContain('MIT License');
+      expect(licenseContent).toContain('Tommaso De Rossi');
+    });
+
     it('exports createClient without the in-app CoreApiClient wrapper', async () => {
       const indexContent = await readFile(
         join(outputPath, 'index.ts'),

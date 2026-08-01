@@ -13,6 +13,7 @@ import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 import { buildClientWrapperSource } from './client-wrapper';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';
 import { generate } from './genql';
+import { GENQL_LICENSE } from './genql/runtime-templates';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
 
 const COMMON_SCALAR_TYPES = {
@@ -102,6 +103,14 @@ export const generateCoreClientSource = async ({
       typesOnly,
     });
 
+    if (!typesOnly) {
+      await writeFile(join(tempPath, 'runtime', 'LICENSE'), GENQL_LICENSE);
+      await writeFile(
+        join(tempPath, 'README.md'),
+        buildGeneratedClientReadme(provenanceHeader),
+      );
+    }
+
     if (provenanceHeader !== undefined) {
       await prependHeaderToTypescriptFiles(tempPath, provenanceHeader);
     }
@@ -112,6 +121,26 @@ export const generateCoreClientSource = async ({
     await remove(tempPath);
     throw error;
   }
+};
+
+const buildGeneratedClientReadme = (
+  provenanceHeader: string | undefined,
+): string => {
+  const provenanceLine =
+    provenanceHeader !== undefined ? `${provenanceHeader}\n\n` : '';
+
+  return (
+    '# Generated Twenty API client\n\n' +
+    provenanceLine +
+    'Do not edit by hand. Regenerate with ' +
+    '`yarn twenty dev:generate-client --output <this directory>` ' +
+    'whenever the data model changes.\n\n' +
+    '## Credits\n\n' +
+    'The client and the vendored `runtime/` folder are produced by ' +
+    '[genql](https://github.com/remorses/genql) ' +
+    '(MIT, © Tommaso De Rossi "morse"), vendored into `twenty-client-sdk`. ' +
+    'See `runtime/LICENSE`.\n'
+  );
 };
 
 // The output path is recursively replaced on regeneration, so refuse anything

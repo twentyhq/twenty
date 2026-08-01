@@ -13,6 +13,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import genqlLicense from './LICENSE?raw';
 import batcher from './runtime/batcher.ts?raw';
 import createClient from './runtime/createClient.ts?raw';
 import error from './runtime/error.ts?raw';
@@ -33,6 +34,16 @@ const readTemplate = (
 
   return readFileSync(join(runtimeDir, fileName), 'utf-8');
 };
+
+// The upstream genql MIT license, emitted alongside every copy of the runtime
+// that leaves this package (e.g. `dev:generate-client --output`).
+export const GENQL_LICENSE: string =
+  genqlLicense !== undefined
+    ? genqlLicense
+    : readFileSync(
+        join(dirname(fileURLToPath(import.meta.url)), 'LICENSE'),
+        'utf-8',
+      );
 
 export const RUNTIME_TEMPLATE_FILES: { name: string; content: string }[] = [
   { name: 'batcher.ts', content: readTemplate(batcher, 'batcher.ts') },

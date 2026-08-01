@@ -102,7 +102,7 @@ yarn twenty dev:generate-client --output src/generated/twenty
 yarn twenty dev:generate-client --output src/generated/twenty --types-only
 ```
 
-The output is self-contained TypeScript source (no compiled bundles), so your own toolchain compiles it and plain `tsc` works in CI without a running Twenty instance. Treat the committed output like a lockfile: regenerate it when your data model changes (or after upgrading Twenty), review the diff, and let the type checker surface anything that broke.
+The output is self-contained TypeScript source (no compiled bundles), so your own toolchain compiles it and plain `tsc` works in CI without a running Twenty instance. It includes a `README.md` recording where it was generated from, and the vendored [genql](https://github.com/remorses/genql) runtime ships with its MIT license (`runtime/LICENSE`). Treat the committed output like a lockfile: regenerate it when your data model changes (or after upgrading Twenty), review the diff, and let the type checker surface anything that broke.
 
 Unlike the `node_modules` mode, the emitted client does not include the `CoreApiClient` wrapper: the wrapper authenticates from in-app environment variables (`TWENTY_APP_ACCESS_TOKEN`), which out-of-app consumers don't have. Construct the client yourself with your own URL and auth:
 
