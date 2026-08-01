@@ -27,6 +27,9 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STAGING_ENV="$REPO_ROOT/deploy/.env.staging"
 STATE_FILE="/tmp/twenty-staging-converge-state"
+# The last SHA a deployment status was reported for, so an already-converged
+# host reports once rather than every tick.
+REPORTED_FILE="/tmp/twenty-staging-converge-reported"
 LOG_PREFIX="[staging-converge]"
 
 # Shared with refresh-staging-from-production.sh. Both drive staging.sh, and a
@@ -126,6 +129,14 @@ main() {
   # Converged means both halves are on the target, not just the image. A host
   # left with the right image and a stale tree has to be able to catch up.
   if [ "$current_sha" = "$target_sha" ] && [ "$current_head" = "$target_sha" ]; then
+    # Redeploying a SHA that is already running produces a deployment nothing
+    # ever closes: the convergence that would have reported success is exactly
+    # the one skipped here, so it sits in_progress forever. Report once per
+    # SHA, tracked in a file so a converged host makes no API calls per tick.
+    if [ "$(cat "$REPORTED_FILE" 2>/dev/null)" != "$target_sha" ]; then
+      report success "staging is already running ${target_sha}"
+      echo "$target_sha" >"$REPORTED_FILE"
+    fi
     exit 0
   fi
 
@@ -175,6 +186,9 @@ before deploying ${target_sha}"
     echo "$target_sha" >"$STATE_FILE"
     log "staging is now running ${target_sha}"
     report success "staging is running ${target_sha}"
+    # Recorded here too, so the next tick's already-converged path knows this
+    # SHA has been reported and does not post a duplicate success.
+    echo "$target_sha" >"$REPORTED_FILE"
     exit 0
   fi
 

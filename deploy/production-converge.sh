@@ -19,6 +19,9 @@ set -euo pipefail
 
 DEPLOY_ROOT="${TWENTY_PRODUCTION_ROOT:-/Users/ben/Deploy/twenty}"
 STATE_FILE="/tmp/twenty-production-converge-state"
+# The last SHA a deployment status was reported for, so an already-converged
+# host reports once rather than every tick.
+REPORTED_FILE="/tmp/twenty-production-converge-reported"
 LOCK="/tmp/twenty-production-converge.lock"
 LOG_PREFIX="[production-converge]"
 TARGET_BRANCH="production-target"
@@ -61,6 +64,14 @@ target_sha="$(git rev-parse "refs/remotes/origin/${TARGET_BRANCH}")"
 current_sha="$(git rev-parse HEAD)"
 
 if [ "$current_sha" = "$target_sha" ]; then
+  # Promoting a SHA that is already running produces a deployment nothing ever
+  # closes: the convergence that would have reported success is exactly the one
+  # skipped here, so it sits in_progress forever. Report once per SHA, tracked
+  # in a file so a converged host makes no API calls per tick.
+  if [ "$(cat "$REPORTED_FILE" 2>/dev/null)" != "$target_sha" ]; then
+    report success "production is already running ${target_sha}"
+    echo "$target_sha" >"$REPORTED_FILE"
+  fi
   exit 0
 fi
 
@@ -205,3 +216,6 @@ fi
 echo "$target_sha" >"$STATE_FILE"
 log "production is now running ${target_sha} and healthy"
 report success "production is running ${target_sha}"
+# Recorded here too, so the next tick's already-converged path knows this SHA
+# has been reported and does not post a duplicate success.
+echo "$target_sha" >"$REPORTED_FILE"
