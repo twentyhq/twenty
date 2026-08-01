@@ -200,7 +200,13 @@ On Microsoft Azure Console enable the following APIs in "Permissions":
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
 
-Note: "Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+<Note>
+"Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" is mandatory if you want to create calendar events using our workflow actions. If you want to only sync calendar events, use "Calendars.Read".
+</Note>
 
 ### Authorized redirect URIs
 
