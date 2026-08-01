@@ -6,6 +6,7 @@ import { inspect } from 'util';
 
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
+import { type NextFunction, type Request, type Response } from 'express';
 import session from 'express-session';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
@@ -67,6 +68,15 @@ const bootstrap = async () => {
 
   const allowedCredentialedOrigins =
     resolveAllowedCredentialedOrigins(twentyConfigService);
+
+  // The cors package only emits Vary: Origin when it reflects an origin, so
+  // the wildcard and reflected responses below would share a cache entry and
+  // an allowlisted credentialed request could be served the wildcard, which
+  // browsers refuse to combine with credentials.
+  app.use((_request: Request, response: Response, next: NextFunction) => {
+    response.vary('Origin');
+    next();
+  });
 
   app.enableCors({
     // Allowlisted origins get their origin reflected so browsers accept
