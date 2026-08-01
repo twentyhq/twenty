@@ -120,6 +120,10 @@ export class UserSessionCookieService {
   }
 
   clearSessionCookie(response: Response): void {
+    if (!this.areCookieSessionsEnabled()) {
+      return;
+    }
+
     const { options } = this.resolveCookieSettings();
 
     // Both names are cleared so an instance that switched from http to https
