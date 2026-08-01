@@ -110,4 +110,4 @@ Câmpul `value` este întotdeauna o valoare serializabilă JSON, dar forma sa a�
 
 ## Cum apar vizualizările în interfața utilizatorului
 
-O vizualizare, de una singură, nu este accesibilă din bara laterală. Pentru a o face să apară acolo, asociați-o cu un [element de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) de tip `VIEW` care indică către `universalIdentifier` al vizualizării. Acesta este modelul canonic: fiecare obiect personalizat livrează, de obicei, o vizualizare implicită + o intrare în bara laterală care o deschide.
+O vizualizare, de una singură, nu este accesibilă din bara laterală. Pentru a o face să apară acolo, asociați-o cu un [element de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) de tip `VIEW` care indică către `universalIdentifier` al vizualizării. Acesta este tiparul canonic: fiecare obiect personalizat primește o vizualizare index implicită generată automat la creare, astfel încât trebuie doar să livrezi intrarea din bara laterală care o deschide.
