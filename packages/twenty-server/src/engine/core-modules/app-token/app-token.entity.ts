@@ -34,10 +34,6 @@ export enum AppTokenType {
   unique: true,
   where: `"type" = 'SSO_EXCHANGE_TOKEN' AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,
 })
-@Index('IDX_APP_TOKEN_USER_ID', ['userId'])
-@Index('IDX_APP_TOKEN_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_APP_TOKEN_TYPE_EXPIRES_AT', ['type', 'expiresAt'])
-@Index('IDX_APP_TOKEN_TYPE_REVOKED_AT', ['type', 'revokedAt'])
 export class AppTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
