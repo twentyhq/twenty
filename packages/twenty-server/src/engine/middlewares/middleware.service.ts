@@ -5,7 +5,10 @@ import { type Request, type Response } from 'express';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
@@ -129,6 +132,27 @@ export class MiddlewareService {
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
+  // A dead session cookie must not brick the client. Unlike a stale token in
+  // localStorage, the browser cannot drop an httpOnly cookie itself, so
+  // failing every request would also block the sign-in that would replace it.
+  private clearDeadSessionCookieOrThrow(request: Request, error: unknown) {
+    const isCookieAuthenticated = !isNonEmptyString(
+      this.jwtWrapperService.extractJwtFromRequest()(request),
+    );
+
+    if (
+      !isCookieAuthenticated ||
+      !(error instanceof AuthException) ||
+      error.code !== AuthExceptionCode.UNAUTHENTICATED
+    ) {
+      throw error;
+    }
+
+    if (isDefined(request.res)) {
+      this.userSessionCookieService.clearSessionCookie(request.res);
+    }
+  }
+
   public async hydrateGraphqlRequest(request: Request) {
     if (!this.isTokenPresent(request)) {
       request.locale =
@@ -138,7 +162,20 @@ export class MiddlewareService {
       return;
     }
 
-    const data = await this.accessTokenService.validateTokenByRequest(request);
+    let data;
+
+    try {
+      data = await this.accessTokenService.validateTokenByRequest(request);
+    } catch (error) {
+      this.clearDeadSessionCookieOrThrow(request, error);
+
+      request.locale =
+        (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
+        SOURCE_LOCALE;
+
+      return;
+    }
+
     const metadataVersion = data.workspace
       ? await this.getOrSeedMetadataVersion(data.workspace)
       : undefined;
