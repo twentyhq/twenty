@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
 
-import { Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -435,27 +435,67 @@ describe('UserSessionService', () => {
   describe('revokeAllSessionsForUser', () => {
     it('should revoke every active session except the excluded one', async () => {
       const userId = randomUUID();
+      const exceptSessionId = randomUUID();
       const sessions = [
         buildActiveSession({ userId, tokenHash: 'hash-1' }),
         buildActiveSession({ userId, tokenHash: 'hash-2' }),
       ];
 
-      jest.spyOn(userSessionRepository, 'find').mockResolvedValue(sessions);
+      const findSpy = jest
+        .spyOn(userSessionRepository, 'find')
+        .mockResolvedValue(sessions);
       const updateSpy = jest
         .spyOn(userSessionRepository, 'update')
         .mockResolvedValue({ affected: 2 } as never);
 
       const revokedCount = await service.revokeAllSessionsForUser({
         userId,
+        exceptSessionId,
         reason: UserSessionRevokedReason.PasswordChanged,
       });
 
       expect(revokedCount).toBe(2);
-      expect(updateSpy).toHaveBeenCalled();
+      expect(findSpy).toHaveBeenCalledWith({
+        where: {
+          userId,
+          revokedAt: IsNull(),
+          id: Not(exceptSessionId),
+        },
+      });
+      expect(updateSpy).toHaveBeenCalledWith(
+        {
+          id: In(sessions.map((session) => session.id)),
+          revokedAt: IsNull(),
+        },
+        expect.objectContaining({
+          revokedReason: UserSessionRevokedReason.PasswordChanged,
+        }),
+      );
       expect(cacheStorageService.mdel).toHaveBeenCalledWith([
         'hash-1',
         'hash-2',
       ]);
+    });
+
+    it('should revoke every active session when nothing is excluded', async () => {
+      const userId = randomUUID();
+
+      const findSpy = jest
+        .spyOn(userSessionRepository, 'find')
+        .mockResolvedValue([buildActiveSession({ userId, tokenHash: 'hash' })]);
+
+      jest
+        .spyOn(userSessionRepository, 'update')
+        .mockResolvedValue({ affected: 1 } as never);
+
+      await service.revokeAllSessionsForUser({
+        userId,
+        reason: UserSessionRevokedReason.PasswordChanged,
+      });
+
+      expect(findSpy).toHaveBeenCalledWith({
+        where: { userId, revokedAt: IsNull() },
+      });
     });
   });
 
