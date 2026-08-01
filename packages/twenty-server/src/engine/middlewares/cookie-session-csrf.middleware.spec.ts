@@ -126,11 +126,14 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
+  // Host deliberately absent from SERVER_URL and FRONTEND_URL, so this can
+  // only pass through the same-origin URL comparison, not the allowlist.
   it('should allow same-origin cookie requests', () => {
     const request = buildRequest({
+      get: jest.fn().mockReturnValue('api.example.com'),
       headers: {
         cookie: '__Host-twenty-session=sess_token',
-        origin: 'https://crm.example.com',
+        origin: 'https://api.example.com',
       },
     });
 
@@ -171,10 +174,10 @@ describe('CookieSessionCsrfMiddleware', () => {
   // out, so comparing the two as strings would 403 a same-origin request.
   it('should treat a default port on the host as the same origin', () => {
     const request = buildRequest({
-      get: jest.fn().mockReturnValue('crm.example.com:443'),
+      get: jest.fn().mockReturnValue('api.example.com:443'),
       headers: {
         cookie: '__Host-twenty-session=sess_token',
-        origin: 'https://crm.example.com',
+        origin: 'https://api.example.com',
       },
     });
 
