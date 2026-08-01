@@ -23,9 +23,11 @@ export class UserSessionCookieService {
     );
   }
 
-  // An instance that switches from http to https keeps its users logged in:
-  // the browser still holds the old plain-named cookie until the next auth
-  // exchange re-issues it under the __Host- name.
+  // An https deployment never reads the plain cookie name, so an instance
+  // that enables TLS signs its users out once: the browsers still holding the
+  // old plain-named cookie get a fresh __Host- one on their next sign-in.
+  // That re-login is the deliberate price of the __Host- prefix, which is what
+  // stops a sibling subdomain from tossing a Domain-widened session cookie.
   extractSessionTokenFromRequest(request: Request): string | undefined {
     return extractUserSessionTokenFromRequestCookie(request, {
       allowInsecureCookieName: !this.isSecureDeployment(),
