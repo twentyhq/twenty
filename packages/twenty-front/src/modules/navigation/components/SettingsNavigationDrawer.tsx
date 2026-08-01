@@ -1,9 +1,7 @@
-import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
 import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -16,7 +14,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { AdvancedSettingsToggle } from 'twenty-ui/input';
-import { IconSettings } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -54,15 +51,6 @@ export const SettingsNavigationDrawer = ({
 
   return (
     <NavigationDrawer className={className} title={t`Settings`}>
-      {hasAiPermission && (
-        <NavigationDrawerFixedContent>
-          <MainNavigationDrawerTabsRow
-            NavigationMenuTabIcon={IconSettings}
-            navigationMenuTabLabel={t`Settings`}
-          />
-        </NavigationDrawerFixedContent>
-      )}
-
       <NavigationDrawerScrollableContent>
         <NavigationDrawerTabbedContent
           showAiChatContent={showAiChatContent}
