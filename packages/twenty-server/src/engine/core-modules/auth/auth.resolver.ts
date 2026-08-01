@@ -961,8 +961,10 @@ export class AuthResolver {
     return { tokens: tokens };
   }
 
-  // Deliberately forgiving: revokes whatever valid credentials are presented
-  // and always clears the cookie, so signing out never fails client-side.
+  // Forgiving about which credentials are presented: an expired or malformed
+  // token is already unusable, so it is not an error. A failed revocation of
+  // a valid one is, and surfaces, because the credential still works; the
+  // cookie is cleared either way.
   @Mutation(() => Boolean)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async signOut(

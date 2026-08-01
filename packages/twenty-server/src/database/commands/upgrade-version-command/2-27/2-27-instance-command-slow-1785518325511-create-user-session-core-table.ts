@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type DataSource, type QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -24,9 +25,24 @@ export class CreateUserSessionCoreTableSlowInstanceCommand
   public async runDataMigration(dataSource: DataSource): Promise<void> {
     for (const { name, columns } of APP_TOKEN_INDEXES) {
       // A CONCURRENTLY build that fails leaves an invalid index behind, which
-      // IF NOT EXISTS would then skip forever. Dropping first keeps a retry
-      // of a failed upgrade able to actually rebuild it.
-      await dataSource.query(`DROP INDEX IF EXISTS "core"."${name}"`);
+      // IF NOT EXISTS would then skip forever. Only that leftover is dropped:
+      // dropping unconditionally would throw away a valid index built by an
+      // earlier attempt and leave the table unindexed while it rebuilds.
+      const [invalidIndex] = await dataSource.query(
+        `SELECT 1
+         FROM pg_class index_class
+         JOIN pg_index ON pg_index.indexrelid = index_class.oid
+         JOIN pg_namespace ON pg_namespace.oid = index_class.relnamespace
+         WHERE index_class.relname = $1
+           AND pg_namespace.nspname = 'core'
+           AND NOT pg_index.indisvalid`,
+        [name],
+      );
+
+      if (isDefined(invalidIndex)) {
+        await dataSource.query(`DROP INDEX IF EXISTS "core"."${name}"`);
+      }
+
       await dataSource.query(
         `CREATE INDEX CONCURRENTLY IF NOT EXISTS "${name}" ON "core"."appToken" (${columns})`,
       );
@@ -80,10 +96,13 @@ export class CreateUserSessionCoreTableSlowInstanceCommand
     );
 
     // No-ops when runDataMigration already built these concurrently. It is
-    // skipped on an instance with no workspaces, though, and AppTokenEntity
-    // declares the indexes, so without this the schema would drift from the
-    // entity. An instance with no workspaces has no logins, hence no appToken
-    // rows to lock.
+    // skipped on an instance with no active or suspended workspace, though,
+    // and AppTokenEntity declares the indexes, so without this the schema
+    // would drift from the entity. Such an instance can still hold appToken
+    // rows (workspace-agnostic tokens carry no workspaceId, and deleted
+    // workspaces leave rows behind), so this is a blocking build on a table
+    // that is not provably empty; it is accepted because an instance with no
+    // usable workspace has no sign-in traffic to block.
     for (const { name, columns } of APP_TOKEN_INDEXES) {
       await queryRunner.query(
         `CREATE INDEX IF NOT EXISTS "${name}" ON "core"."appToken" (${columns})`,
