@@ -89,11 +89,12 @@ export class UserSessionService {
     // every request it authenticates, so refuse it at creation instead.
     if (
       input.isImpersonating === true &&
-      (!isDefined(input.impersonatorUserWorkspaceId) ||
+      (!isDefined(input.workspaceId) ||
+        !isDefined(input.impersonatorUserWorkspaceId) ||
         !isDefined(input.impersonatedUserWorkspaceId))
     ) {
       throw new AuthException(
-        'Cannot create an impersonation session without both user workspaces',
+        'Cannot create an impersonation session without a workspace and both user workspaces',
         AuthExceptionCode.INVALID_INPUT,
       );
     }
