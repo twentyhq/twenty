@@ -151,41 +151,18 @@ export class ImpersonationService {
       message: `Impersonation ended by impersonatorUserWorkspaceId=${impersonationContext.impersonatorUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
-    const canRestoreImpersonatorSession =
-      this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED') &&
-      impersonatorUserWorkspace.workspaceId === workspaceId &&
-      isDefined(request.res);
-
-    if (!canRestoreImpersonatorSession) {
-      if (isDefined(request.res)) {
-        this.userSessionCookieService.clearSessionCookie(request.res);
-      }
-
-      return { canRestoreImpersonatorSession: false };
+    // Ending impersonation only ever drops the impersonation credential. It
+    // deliberately does not mint one for the impersonator: the request is
+    // authenticated by a credential that authorizes the impersonated user,
+    // and treating that as proof of the impersonator's identity would turn a
+    // stolen impersonation cookie into an administrator session. The
+    // impersonator signs in again, exactly as they do without cookie
+    // sessions.
+    if (isDefined(request.res)) {
+      this.userSessionCookieService.clearSessionCookie(request.res);
     }
 
-    // The impersonator's original auth provider is not recorded on the
-    // impersonation session, so the restored session defaults to password.
-    const { sessionToken, session } =
-      await this.userSessionService.createSession({
-        userId: impersonatorUserWorkspace.userId,
-        workspaceId,
-        userWorkspaceId: impersonatorUserWorkspace.id,
-        authProvider: AuthProviderEnum.Password,
-        userAgent: request.headers['user-agent'] ?? null,
-        ipAddress: request.ip ?? null,
-        origin: 'sign_in',
-      });
-
-    // request.res is asserted by canRestoreImpersonatorSession above.
-    // oxlint-disable-next-line typescript/no-non-null-assertion
-    this.userSessionCookieService.attachSessionTokenToResponse(
-      request.res!,
-      sessionToken,
-      session.expiresAt,
-    );
-
-    return { canRestoreImpersonatorSession: true };
+    return { canRestoreImpersonatorSession: false };
   }
 
   async generateImpersonationLoginToken(

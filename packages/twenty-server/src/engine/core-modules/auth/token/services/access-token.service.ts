@@ -212,13 +212,11 @@ export class AccessTokenService {
       return this.validateToken(token);
     }
 
-    if (this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED')) {
-      const sessionToken =
-        this.userSessionCookieService.extractSessionTokenFromRequest(request);
+    const sessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
-      if (sessionToken) {
-        return this.validateSessionToken(sessionToken);
-      }
+    if (sessionToken) {
+      return this.validateSessionToken(sessionToken);
     }
 
     throw new AuthException(

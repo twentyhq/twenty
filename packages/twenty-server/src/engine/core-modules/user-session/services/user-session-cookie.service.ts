@@ -23,12 +23,23 @@ export class UserSessionCookieService {
     );
   }
 
+  // The kill switch lives here rather than at each call site: with it off,
+  // no cookie is read, written or cleared anywhere, and retiring the flag at
+  // cutover is one deletion instead of an audit of every consumer.
+  private areCookieSessionsEnabled(): boolean {
+    return this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED');
+  }
+
   // An https deployment never reads the plain cookie name, so an instance
   // that enables TLS signs its users out once: the browsers still holding the
   // old plain-named cookie get a fresh __Host- one on their next sign-in.
   // That re-login is the deliberate price of the __Host- prefix, which is what
   // stops a sibling subdomain from tossing a Domain-widened session cookie.
   extractSessionTokenFromRequest(request: Request): string | undefined {
+    if (!this.areCookieSessionsEnabled()) {
+      return undefined;
+    }
+
     return extractUserSessionTokenFromRequestCookie(request, {
       allowInsecureCookieName: !this.isSecureDeployment(),
     });
@@ -59,6 +70,10 @@ export class UserSessionCookieService {
     sessionToken: string,
     expiresAt: Date,
   ): void {
+    if (!this.areCookieSessionsEnabled()) {
+      return;
+    }
+
     const { cookieName, options } = this.resolveCookieSettings();
 
     response.cookie(cookieName, sessionToken, {
