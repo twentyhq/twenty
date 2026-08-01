@@ -30,5 +30,17 @@ export const canCredentialAutoLoginIntoWorkspaces = ({
     return true;
   }
 
-  return addMilliseconds(authenticatedAt, ms(autoLoginWindow)) > now;
+  const autoLoginWindowMs = ms(autoLoginWindow);
+
+  // ms() returns undefined for a duration it cannot parse, which would make
+  // every comparison below false and silently disable auto-login entirely.
+  // A misconfigured window must not be read as "never".
+  if (
+    typeof autoLoginWindowMs !== 'number' ||
+    Number.isNaN(autoLoginWindowMs)
+  ) {
+    return true;
+  }
+
+  return addMilliseconds(authenticatedAt, autoLoginWindowMs) > now;
 };
