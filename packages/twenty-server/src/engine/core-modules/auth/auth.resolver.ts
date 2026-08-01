@@ -898,16 +898,21 @@ export class AuthResolver {
     @Context() context: { req: Request },
     @Args('refreshToken', { nullable: true }) refreshToken?: string,
   ): Promise<boolean> {
-    await this.userSessionService.signOut({
-      sessionToken:
-        this.userSessionCookieService.extractSessionTokenFromRequest(
-          context.req,
-        ),
-      refreshToken,
-    });
-
-    if (isDefined(context.req.res)) {
-      this.userSessionCookieService.clearSessionCookie(context.req.res);
+    try {
+      await this.userSessionService.signOut({
+        sessionToken:
+          this.userSessionCookieService.extractSessionTokenFromRequest(
+            context.req,
+          ),
+        refreshToken,
+      });
+    } finally {
+      // A failed revocation still clears the cookie: leaving the browser
+      // holding a credential it believes is gone is the worse outcome, and
+      // the failure itself still surfaces to the caller.
+      if (isDefined(context.req.res)) {
+        this.userSessionCookieService.clearSessionCookie(context.req.res);
+      }
     }
 
     return true;

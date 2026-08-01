@@ -78,6 +78,26 @@ export class UserSessionService {
       );
     }
 
+    if (!isDefined(input.workspaceId) && isDefined(input.userWorkspaceId)) {
+      throw new AuthException(
+        'Cannot create a workspace-agnostic session for a user workspace',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    // A half-filled impersonation session persists fine but is rejected on
+    // every request it authenticates, so refuse it at creation instead.
+    if (
+      input.isImpersonating === true &&
+      (!isDefined(input.impersonatorUserWorkspaceId) ||
+        !isDefined(input.impersonatedUserWorkspaceId))
+    ) {
+      throw new AuthException(
+        'Cannot create an impersonation session without both user workspaces',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const lifetime =
       input.isImpersonating === true
         ? IMPERSONATION_SESSION_LIFETIME
@@ -278,6 +298,10 @@ export class UserSessionService {
       { revokedAt: new Date(), revokedReason: reason },
     );
 
+    for (const session of sessions) {
+      this.emitAuthSessionEvent(session, 'session_revoked');
+    }
+
     await this.cacheStorageService.mdel(
       sessions.map((session) => session.tokenHash),
     );
@@ -307,33 +331,38 @@ export class UserSessionService {
   private async revokePresentedRefreshToken(
     refreshToken: string,
   ): Promise<void> {
+    let payload: RefreshTokenJwtPayload | undefined;
+
     try {
       await this.jwtWrapperService.verifyJwtToken(refreshToken);
 
-      const payload = this.jwtWrapperService.decode<RefreshTokenJwtPayload>(
+      payload = this.jwtWrapperService.decode<RefreshTokenJwtPayload>(
         refreshToken,
         { json: true },
-      );
-
-      if (
-        payload?.type !== JwtTokenTypeEnum.REFRESH ||
-        !isNonEmptyString(payload.jti)
-      ) {
-        return;
-      }
-
-      await this.appTokenRepository.update(
-        {
-          id: payload.jti,
-          type: AppTokenType.RefreshToken,
-          revokedAt: IsNull(),
-        },
-        { revokedAt: new Date() },
       );
     } catch {
       // Sign-out is forgiving: an invalid or expired refresh token is
       // already unusable, so there is nothing to revoke.
+      return;
     }
+
+    if (
+      payload?.type !== JwtTokenTypeEnum.REFRESH ||
+      !isNonEmptyString(payload.jti)
+    ) {
+      return;
+    }
+
+    // Deliberately outside the catch: a storage failure here leaves a usable
+    // refresh token behind, so it must surface rather than report success.
+    await this.appTokenRepository.update(
+      {
+        id: payload.jti,
+        type: AppTokenType.RefreshToken,
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date() },
+    );
   }
 
   private async revokeSessionEntity(

@@ -46,6 +46,9 @@ export class CreateUserSessionCoreTableFastInstanceCommand
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_EXPIRES_AT" ON "core"."userSession" ("expiresAt")`,
     );
+    await queryRunner.query(
+      `CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_REVOKED_AT" ON "core"."userSession" ("revokedAt")`,
+    );
 
     // appToken user/workspace FKs cascade on delete but were never indexed,
     // so user and workspace deletions sequential-scan the whole table.
@@ -55,11 +58,23 @@ export class CreateUserSessionCoreTableFastInstanceCommand
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_APP_TOKEN_WORKSPACE_ID" ON "core"."appToken" ("workspaceId")`,
     );
+    await queryRunner.query(
+      `CREATE INDEX IF NOT EXISTS "IDX_APP_TOKEN_TYPE_EXPIRES_AT" ON "core"."appToken" ("type", "expiresAt")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX IF NOT EXISTS "IDX_APP_TOKEN_TYPE_REVOKED_AT" ON "core"."appToken" ("type", "revokedAt")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `DROP INDEX IF EXISTS "core"."IDX_APP_TOKEN_WORKSPACE_ID"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "core"."IDX_APP_TOKEN_TYPE_EXPIRES_AT"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "core"."IDX_APP_TOKEN_TYPE_REVOKED_AT"`,
     );
     await queryRunner.query(
       `DROP INDEX IF EXISTS "core"."IDX_APP_TOKEN_USER_ID"`,
