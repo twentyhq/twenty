@@ -6,7 +6,7 @@ import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, MoreThan, Not, Repository } from 'typeorm';
+import { IsNull, MoreThan, Not, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -357,13 +357,22 @@ export class UserSessionService {
 
     const refreshedCachedSession = this.toCachedSession(session);
 
-    await this.touchSessionIfDue(tokenHash, refreshedCachedSession);
-    await this.cacheStorageService.set(
+    // A touch caches the same object and re-checks revocation itself, so
+    // repeating both here would cost an extra Redis write and an extra
+    // SELECT on the per-request auth path.
+    const wasCachedByTouch = await this.touchSessionIfDue(
       tokenHash,
       refreshedCachedSession,
-      USER_SESSION_CACHE_TTL_MS,
     );
-    await this.assertNotRevokedAfterCaching(session.id, tokenHash);
+
+    if (!wasCachedByTouch) {
+      await this.cacheStorageService.set(
+        tokenHash,
+        refreshedCachedSession,
+        USER_SESSION_CACHE_TTL_MS,
+      );
+      await this.assertNotRevokedAfterCaching(session.id, tokenHash);
+    }
 
     return this.toResolvedSession(refreshedCachedSession);
   }
@@ -483,22 +492,37 @@ export class UserSessionService {
       return 0;
     }
 
-    const { affected } = await this.userSessionRepository.update(
-      { id: In(sessions.map((session) => session.id)), revokedAt: IsNull() },
-      { revokedAt: new Date(), revokedReason: reason },
+    // RETURNING names the rows this statement actually changed, so a session
+    // revoked concurrently between the select and the update is neither
+    // counted nor audited as revoked by this call.
+    const { raw } = await this.userSessionRepository
+      .createQueryBuilder()
+      .update(UserSessionEntity)
+      .set({ revokedAt: new Date(), revokedReason: reason })
+      .where('"id" IN (:...sessionIds)', {
+        sessionIds: sessions.map((session) => session.id),
+      })
+      .andWhere('"revokedAt" IS NULL')
+      .returning(['id'])
+      .execute();
+
+    const revokedSessionIds = new Set(
+      (raw as { id: string }[]).map((row) => row.id),
     );
 
     for (const session of sessions) {
-      this.emitAuthSessionEvent(session, 'session_revoked');
+      if (revokedSessionIds.has(session.id)) {
+        this.emitAuthSessionEvent(session, 'session_revoked');
+      }
     }
 
+    // Every selected session is dropped from cache regardless: one revoked
+    // concurrently is dead too, and evicting it again is harmless.
     await this.cacheStorageService.mdel(
       sessions.map((session) => session.tokenHash),
     );
 
-    // A session revoked concurrently between the select and the update was
-    // not revoked by this call, so it must not be counted as such.
-    return affected ?? sessions.length;
+    return revokedSessionIds.size;
   }
 
   async signOut({
@@ -603,17 +627,18 @@ export class UserSessionService {
     );
   }
 
+  // Returns whether it wrote the session to cache and re-checked revocation.
   private async touchSessionIfDue(
     tokenHash: string,
     cachedSession: CachedUserSession,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const now = new Date();
 
     if (
       now.getTime() - new Date(cachedSession.lastActiveAt).getTime() <
       USER_SESSION_TOUCH_INTERVAL_MS
     ) {
-      return;
+      return false;
     }
 
     let affected: number | null | undefined;
@@ -630,7 +655,7 @@ export class UserSessionService {
         }`,
       );
 
-      return;
+      return false;
     }
 
     // Zero rows means the session was revoked or deleted since it was
@@ -649,6 +674,8 @@ export class UserSessionService {
       USER_SESSION_CACHE_TTL_MS,
     );
     await this.assertNotRevokedAfterCaching(cachedSession.sessionId, tokenHash);
+
+    return true;
   }
 
   private toCachedSession(session: UserSessionEntity): CachedUserSession {
