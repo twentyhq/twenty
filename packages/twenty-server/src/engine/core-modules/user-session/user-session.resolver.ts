@@ -59,6 +59,10 @@ export class UserSessionResolver {
     userSessionId: string,
     @Context() context: { req: Request },
   ): Promise<boolean> {
+    // Resolved before revoking: afterwards the session is no longer active and
+    // would not be found, so the cookie would never be cleared.
+    const currentSession = await this.resolveCurrentSession(context.req, user);
+
     const revoked = await this.userSessionService.revokeSessionByIdForUser({
       sessionId: userSessionId,
       userId: user.id,
@@ -67,8 +71,6 @@ export class UserSessionResolver {
 
     // Revoking the device you are on: drop the cookie now instead of leaving
     // the browser holding a token that is already dead.
-    const currentSession = await this.resolveCurrentSession(context.req, user);
-
     if (
       revoked &&
       currentSession?.id === userSessionId &&

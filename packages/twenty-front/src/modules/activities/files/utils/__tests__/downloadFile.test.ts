@@ -22,9 +22,7 @@ describe('downloadFile', () => {
   it('should download a file', async () => {
     await downloadFile('url/to/file.pdf', 'file.pdf');
 
-    expect(fetch).toHaveBeenCalledWith('url/to/file.pdf', {
-      credentials: 'include',
-    });
+    expect(fetch).toHaveBeenCalledWith('url/to/file.pdf');
     expect(saveAs).toHaveBeenCalledWith(mockBlob, 'file.pdf');
   });
 

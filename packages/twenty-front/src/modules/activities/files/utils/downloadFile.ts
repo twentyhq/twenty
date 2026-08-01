@@ -1,9 +1,7 @@
 import { saveAs } from 'file-saver';
 
-import { resolveFileFetchCredentials } from '@/activities/files/utils/resolveFileFetchCredentials';
-
 export const downloadFile = (fullPath: string, fileName: string) => {
-  return fetch(fullPath, { credentials: resolveFileFetchCredentials(fullPath) })
+  return fetch(fullPath)
     .then((resp) =>
       resp.status === 200
         ? resp.blob()
