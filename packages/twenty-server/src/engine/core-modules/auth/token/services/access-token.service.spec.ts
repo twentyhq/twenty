@@ -82,7 +82,7 @@ describe('AccessTokenService', () => {
         {
           provide: UserSessionService,
           useValue: {
-            resolveSessionPayload: jest.fn(),
+            resolveSession: jest.fn(),
           },
         },
         UserSessionCookieService,
@@ -350,16 +350,17 @@ describe('AccessTokenService', () => {
         .mockImplementation((key: string) =>
           key === 'SERVER_URL' ? 'http://localhost:3000' : true,
         );
-      jest
-        .spyOn(userSessionService, 'resolveSessionPayload')
-        .mockResolvedValue(mockPayload as any);
+      jest.spyOn(userSessionService, 'resolveSession').mockResolvedValue({
+        payload: mockPayload as any,
+        authenticatedAt: new Date(),
+      });
       jest
         .spyOn(service['jwtStrategy'], 'validate')
         .mockResolvedValue(mockAuthContext as any);
 
       const result = await service.validateTokenByRequest(mockRequest);
 
-      expect(userSessionService.resolveSessionPayload).toHaveBeenCalledWith(
+      expect(userSessionService.resolveSession).toHaveBeenCalledWith(
         mockSessionToken,
       );
       expect(service['jwtStrategy'].validate).toHaveBeenCalledWith(mockPayload);
@@ -377,12 +378,12 @@ describe('AccessTokenService', () => {
         .spyOn(jwtWrapperService, 'extractJwtFromRequest')
         .mockReturnValue(() => null);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
-      jest.spyOn(userSessionService, 'resolveSessionPayload');
+      jest.spyOn(userSessionService, 'resolveSession');
 
       await expect(service.validateTokenByRequest(mockRequest)).rejects.toThrow(
         'Missing authentication token',
       );
-      expect(userSessionService.resolveSessionPayload).not.toHaveBeenCalled();
+      expect(userSessionService.resolveSession).not.toHaveBeenCalled();
     });
   });
 });

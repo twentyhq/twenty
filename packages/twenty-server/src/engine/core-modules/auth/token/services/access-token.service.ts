@@ -230,8 +230,8 @@ export class AccessTokenService {
   private async validateSessionToken(
     sessionToken: string,
   ): Promise<AuthContext> {
-    const payload =
-      await this.userSessionService.resolveSessionPayload(sessionToken);
+    const { payload, authenticatedAt } =
+      await this.userSessionService.resolveSession(sessionToken);
 
     const context = await this.jwtStrategy.validate(payload);
 
@@ -241,6 +241,7 @@ export class AccessTokenService {
       ...context,
       workspaceMemberId:
         context.workspaceMemberId ?? context.workspaceMember?.id,
+      authenticatedAt,
     };
   }
 }

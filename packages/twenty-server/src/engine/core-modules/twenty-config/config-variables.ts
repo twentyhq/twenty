@@ -390,6 +390,16 @@ export class ConfigVariables {
   SESSION_IDLE_TIMEOUT = '30d';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Window after authenticating on the workspace-agnostic domain during which a user-level session can still auto-login into a workspace without re-authenticating',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  WORKSPACE_AUTO_LOGIN_WINDOW = '10m';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'SameSite attribute of the user session cookie. Use none only for split-origin deployments, behind https',
