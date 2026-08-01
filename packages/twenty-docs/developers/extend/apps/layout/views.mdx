@@ -110,4 +110,4 @@ The `value` field is always a JSON-serializable value, but its expected shape de
 
 ## How views show up in the UI
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object gets a default index view auto-generated at creation, so you only need to ship the sidebar entry that opens it.
