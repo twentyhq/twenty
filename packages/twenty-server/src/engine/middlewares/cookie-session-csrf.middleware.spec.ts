@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type NextFunction, type Request, type Response } from 'express';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 
 describe('CookieSessionCsrfMiddleware', () => {
@@ -40,6 +41,7 @@ describe('CookieSessionCsrfMiddleware', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CookieSessionCsrfMiddleware,
+        UserSessionCookieService,
         {
           provide: TwentyConfigService,
           useValue: {
@@ -59,7 +61,7 @@ describe('CookieSessionCsrfMiddleware', () => {
     const request = buildRequest({
       method: 'GET',
       headers: {
-        cookie: 'twenty-session=sess_token',
+        cookie: '__Host-twenty-session=sess_token',
         origin: 'https://evil.example.org',
       },
     });
@@ -73,7 +75,7 @@ describe('CookieSessionCsrfMiddleware', () => {
     const request = buildRequest({
       headers: {
         authorization: 'Bearer some-jwt',
-        cookie: 'twenty-session=sess_token',
+        cookie: '__Host-twenty-session=sess_token',
         origin: 'https://evil.example.org',
       },
     });
@@ -98,7 +100,7 @@ describe('CookieSessionCsrfMiddleware', () => {
   it('should allow cookie requests without an Origin header', () => {
     const request = buildRequest({
       headers: {
-        cookie: 'twenty-session=sess_token',
+        cookie: '__Host-twenty-session=sess_token',
       },
     });
 
@@ -110,7 +112,7 @@ describe('CookieSessionCsrfMiddleware', () => {
   it('should allow same-origin cookie requests', () => {
     const request = buildRequest({
       headers: {
-        cookie: 'twenty-session=sess_token',
+        cookie: '__Host-twenty-session=sess_token',
         origin: 'https://crm.example.com',
       },
     });
@@ -123,7 +125,7 @@ describe('CookieSessionCsrfMiddleware', () => {
   it('should allow allowlisted cross-origin cookie requests', () => {
     const request = buildRequest({
       headers: {
-        cookie: 'twenty-session=sess_token',
+        cookie: '__Host-twenty-session=sess_token',
         origin: 'https://front.example.com',
       },
     });
@@ -136,7 +138,7 @@ describe('CookieSessionCsrfMiddleware', () => {
   it('should reject cookie requests from sibling subdomains', () => {
     const request = buildRequest({
       headers: {
-        cookie: 'twenty-session=sess_token',
+        cookie: '__Host-twenty-session=sess_token',
         origin: 'https://other-workspace.example.com',
       },
     });

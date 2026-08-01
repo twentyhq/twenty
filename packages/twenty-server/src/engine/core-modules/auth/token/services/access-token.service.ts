@@ -22,7 +22,7 @@ import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/typ
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceNotFoundDefaultError } from 'src/engine/core-modules/user-workspace/user-workspace.exception';
@@ -48,6 +48,7 @@ export class AccessTokenService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userSessionService: UserSessionService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
   private async resolveTokenSubject(
@@ -212,7 +213,8 @@ export class AccessTokenService {
     }
 
     if (this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED')) {
-      const sessionToken = extractUserSessionTokenFromRequestCookie(request);
+      const sessionToken =
+        this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
       if (sessionToken) {
         return this.validateSessionToken(sessionToken);

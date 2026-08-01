@@ -1,26 +1,43 @@
 import { Injectable } from '@nestjs/common';
 
-import { type CookieOptions, type Response } from 'express';
+import { type CookieOptions, type Request, type Response } from 'express';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
+import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class UserSessionCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  private resolveCookieSettings(): {
-    cookieName: string;
-    options: CookieOptions;
-  } {
+  // Whether this deployment can set a Secure cookie at all, which is what
+  // decides between the __Host- prefixed name and the plain one.
+  private isSecureDeployment(): boolean {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
     const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
 
     // SameSite=None is rejected by browsers without Secure, so it forces it.
-    const secure =
-      Boolean(serverUrl && serverUrl.startsWith('https')) ||
-      sameSite === 'none';
+    return (
+      Boolean(serverUrl && serverUrl.startsWith('https')) || sameSite === 'none'
+    );
+  }
+
+  // An instance that switches from http to https keeps its users logged in:
+  // the browser still holds the old plain-named cookie until the next auth
+  // exchange re-issues it under the __Host- name.
+  extractSessionTokenFromRequest(request: Request): string | undefined {
+    return extractUserSessionTokenFromRequestCookie(request, {
+      allowInsecureCookieName: !this.isSecureDeployment(),
+    });
+  }
+
+  private resolveCookieSettings(): {
+    cookieName: string;
+    options: CookieOptions;
+  } {
+    const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
+    const secure = this.isSecureDeployment();
 
     return {
       cookieName: secure

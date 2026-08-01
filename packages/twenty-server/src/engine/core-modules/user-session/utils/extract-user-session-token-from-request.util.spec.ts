@@ -7,42 +7,56 @@ const buildRequest = (cookieHeader?: string): Request =>
     headers: cookieHeader === undefined ? {} : { cookie: cookieHeader },
   }) as Request;
 
+const extractOnHttpDeployment = (cookieHeader?: string) =>
+  extractUserSessionTokenFromRequestCookie(buildRequest(cookieHeader), {
+    allowInsecureCookieName: true,
+  });
+
+const extractOnHttpsDeployment = (cookieHeader?: string) =>
+  extractUserSessionTokenFromRequestCookie(buildRequest(cookieHeader), {
+    allowInsecureCookieName: false,
+  });
+
 describe('extractUserSessionTokenFromRequestCookie', () => {
   it('should return undefined without a cookie header', () => {
-    expect(extractUserSessionTokenFromRequestCookie(buildRequest())).toBe(
+    expect(extractOnHttpDeployment()).toBe(undefined);
+  });
+
+  it('should read the plain cookie name when the deployment cannot set Secure', () => {
+    expect(
+      extractOnHttpDeployment('foo=bar; twenty-session=sess_abc; other=1'),
+    ).toBe('sess_abc');
+  });
+
+  it('should ignore the plain cookie name on a secure deployment', () => {
+    expect(extractOnHttpsDeployment('twenty-session=sess_tossed')).toBe(
       undefined,
     );
   });
 
-  it('should read the plain cookie name', () => {
-    expect(
-      extractUserSessionTokenFromRequestCookie(
-        buildRequest('foo=bar; twenty-session=sess_abc; other=1'),
-      ),
-    ).toBe('sess_abc');
+  it('should read the __Host- cookie name on a secure deployment', () => {
+    expect(extractOnHttpsDeployment('__Host-twenty-session=sess_abc')).toBe(
+      'sess_abc',
+    );
   });
 
   it('should prefer the __Host- cookie name', () => {
     expect(
-      extractUserSessionTokenFromRequestCookie(
-        buildRequest('twenty-session=sess_old; __Host-twenty-session=sess_new'),
+      extractOnHttpDeployment(
+        'twenty-session=sess_old; __Host-twenty-session=sess_new',
       ),
     ).toBe('sess_new');
   });
 
   it('should ignore values without the session token prefix', () => {
-    expect(
-      extractUserSessionTokenFromRequestCookie(
-        buildRequest('twenty-session=not-a-session-token'),
-      ),
-    ).toBe(undefined);
+    expect(extractOnHttpDeployment('twenty-session=not-a-session-token')).toBe(
+      undefined,
+    );
   });
 
   it('should ignore lookalike cookie names', () => {
-    expect(
-      extractUserSessionTokenFromRequestCookie(
-        buildRequest('not-twenty-session=sess_abc'),
-      ),
-    ).toBe(undefined);
+    expect(extractOnHttpDeployment('not-twenty-session=sess_abc')).toBe(
+      undefined,
+    );
   });
 });

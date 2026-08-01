@@ -14,6 +14,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -84,6 +85,7 @@ describe('AccessTokenService', () => {
             resolveSessionPayload: jest.fn(),
           },
         },
+        UserSessionCookieService,
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
@@ -343,7 +345,11 @@ describe('AccessTokenService', () => {
       jest
         .spyOn(jwtWrapperService, 'extractJwtFromRequest')
         .mockReturnValue(() => null);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'SERVER_URL' ? 'http://localhost:3000' : true,
+        );
       jest
         .spyOn(userSessionService, 'resolveSessionPayload')
         .mockResolvedValue(mockPayload as any);
