@@ -20,7 +20,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/user-session.entity';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -132,7 +131,7 @@ export class ImpersonationService {
     }
 
     const presentedSessionToken =
-      extractUserSessionTokenFromRequestCookie(request);
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
     if (isDefined(presentedSessionToken)) {
       await this.userSessionService.revokeSessionByToken(

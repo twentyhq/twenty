@@ -28,4 +28,5 @@ export type CachedUserSession = {
   impersonatedUserWorkspaceId: string | null;
   expiresAt: string;
   lastActiveAt: string;
+  authenticatedAt: string;
 };

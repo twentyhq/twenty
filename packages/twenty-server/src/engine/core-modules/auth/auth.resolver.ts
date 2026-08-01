@@ -78,7 +78,6 @@ import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -971,7 +970,10 @@ export class AuthResolver {
     @Args('refreshToken', { nullable: true }) refreshToken?: string,
   ): Promise<boolean> {
     await this.userSessionService.signOut({
-      sessionToken: extractUserSessionTokenFromRequestCookie(context.req),
+      sessionToken:
+        this.userSessionCookieService.extractSessionTokenFromRequest(
+          context.req,
+        ),
       refreshToken,
     });
 

@@ -15,7 +15,7 @@ import {
   type UserSessionEntity,
   UserSessionRevokedReason,
 } from 'src/engine/core-modules/user-session/user-session.entity';
-import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -25,7 +25,10 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @MetadataResolver()
 export class UserSessionResolver {
-  constructor(private readonly userSessionService: UserSessionService) {}
+  constructor(
+    private readonly userSessionService: UserSessionService,
+    private readonly userSessionCookieService: UserSessionCookieService,
+  ) {}
 
   @Query(() => [UserSessionDTO])
   @UseGuards(UserAuthGuard, NoPermissionGuard)
@@ -37,9 +40,8 @@ export class UserSessionResolver {
       user.id,
     );
 
-    const presentedSessionToken = extractUserSessionTokenFromRequestCookie(
-      context.req,
-    );
+    const presentedSessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(context.req);
     const presentedTokenHash = isDefined(presentedSessionToken)
       ? hashUserSessionToken(presentedSessionToken)
       : undefined;
@@ -69,9 +71,8 @@ export class UserSessionResolver {
     @AuthUser() user: AuthContextUser,
     @Context() context: { req: Request },
   ): Promise<number> {
-    const presentedSessionToken = extractUserSessionTokenFromRequestCookie(
-      context.req,
-    );
+    const presentedSessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(context.req);
 
     const currentSession = isDefined(presentedSessionToken)
       ? await this.userSessionService.findSessionByToken(presentedSessionToken)
