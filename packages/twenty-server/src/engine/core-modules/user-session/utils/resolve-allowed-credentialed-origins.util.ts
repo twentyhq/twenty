@@ -2,9 +2,17 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+// Opaque schemes (file:, data:) serialise to the literal "null" origin, which
+// would otherwise allowlist every sandboxed document that sends Origin: null.
 const toOrigin = (url: string): string | undefined => {
   try {
-    return new URL(url).origin.toLowerCase();
+    const parsedUrl = new URL(url);
+
+    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+      return undefined;
+    }
+
+    return parsedUrl.origin.toLowerCase();
   } catch {
     return undefined;
   }

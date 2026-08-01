@@ -10,6 +10,9 @@ import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
+const isBearerAuthorizationHeader = (header: string | undefined): boolean =>
+  isNonEmptyString(header) && /^Bearer\s+\S/i.test(header);
+
 // Bearer-authenticated requests are CSRF-immune (headers are never attached
 // cross-site), so this only guards requests that would authenticate through
 // the session cookie. SameSite=Lax already blocks true cross-site POSTs;
@@ -23,11 +26,17 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
   ) {}
 
   use(request: Request, response: Response, next: NextFunction): void {
-    if (SAFE_METHODS.has(request.method)) {
+    if (
+      SAFE_METHODS.has(request.method) ||
+      !this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED')
+    ) {
       return next();
     }
 
-    if (isDefined(request.headers.authorization)) {
+    // Only a Bearer token authenticates without the cookie. Any other
+    // Authorization scheme still falls through to cookie authentication,
+    // so it must not skip the CSRF check.
+    if (isBearerAuthorizationHeader(request.headers.authorization)) {
       return next();
     }
 

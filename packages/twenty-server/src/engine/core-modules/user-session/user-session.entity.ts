@@ -89,6 +89,7 @@ export class UserSessionEntity {
   @Column({ type: 'timestamptz' })
   lastActiveAt: Date;
 
+  @Index('IDX_USER_SESSION_REVOKED_AT')
   @Column({ type: 'timestamptz', nullable: true })
   revokedAt: Date | null;
 
