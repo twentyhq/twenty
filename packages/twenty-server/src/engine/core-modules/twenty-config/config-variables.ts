@@ -47,6 +47,7 @@ import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/deco
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
+import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
@@ -375,7 +376,7 @@ export class ConfigVariables {
       'Absolute lifetime of a cookie-based user session, set at sign-in and never extended',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   SESSION_ABSOLUTE_LIFETIME = '90d';
 
@@ -385,7 +386,7 @@ export class ConfigVariables {
       'Duration of inactivity after which a cookie-based user session expires',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   SESSION_IDLE_TIMEOUT = '30d';
 
@@ -395,7 +396,7 @@ export class ConfigVariables {
       'Window after authenticating on the workspace-agnostic domain during which a user-level session can still auto-login into a workspace without re-authenticating',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   WORKSPACE_AUTO_LOGIN_WINDOW = '10m';
 
