@@ -1,4 +1,4 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -20,7 +20,7 @@ import { useStore } from 'jotai';
 
 export const SSEClientEffect = () => {
   const store = useStore();
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const tokenPair = useAtomStateValue(tokenPairState);
   const { resyncMetadataStore } = useResyncMetadataStore();
@@ -57,7 +57,9 @@ export const SSEClientEffect = () => {
     useHandleSseClientConnectionRetry();
 
   useEffect(() => {
-    if (hasAccessTokenPair && !isDefined(sseClient) && isDefined(tokenPair)) {
+    // In cookie mode there is no token pair: the session cookie carried by
+    // credentials: 'include' authenticates the stream instead.
+    if (isLogged && !isDefined(sseClient)) {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         credentials: 'include',
@@ -81,7 +83,7 @@ export const SSEClientEffect = () => {
     }
   }, [
     handleSSEClientConnected,
-    hasAccessTokenPair,
+    isLogged,
     setSseClient,
     sseClient,
     store,

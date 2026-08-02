@@ -102,4 +102,9 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
 
   @Field(() => [TwoFactorAuthenticationMethodSummaryDTO], { nullable: true })
   twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDTO[];
+
+  // Virtual field resolved from the request auth context so the client no
+  // longer has to decode the access token to know it is impersonating.
+  @Field(() => Boolean, { nullable: true })
+  isImpersonating?: boolean;
 }

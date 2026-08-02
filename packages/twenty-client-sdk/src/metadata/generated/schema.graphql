@@ -636,6 +636,7 @@ type UserWorkspace {
   objectPermissions: [ObjectPermission!]
   objectsPermissions: [ObjectPermission!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
+  isImpersonating: Boolean
 }
 
 enum PermissionFlagType {
@@ -2485,6 +2486,10 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+type StopImpersonation {
+  canRestoreImpersonatorSession: Boolean!
+}
+
 type UsageTimeSeries {
   date: String!
   creditsUsed: Float!
@@ -3634,6 +3639,7 @@ type Mutation {
   trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   impersonate(userId: UUID!, workspaceId: UUID!): Impersonate!
+  stopImpersonation: StopImpersonation!
   createCalendarEvent(input: CreateCalendarEventInput!): CreateCalendarEventOutput!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!

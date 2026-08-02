@@ -14,6 +14,8 @@ import { ImpersonationAuthorizationService } from 'src/engine/core-modules/imper
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -22,6 +24,11 @@ const UserWorkspaceFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
 const PermissionsServiceUserHasWorkspaceSettingPermissionMock = jest.fn();
 const TwentyConfigServiceGetMock = jest.fn();
+const UserSessionCreateSessionMock = jest.fn();
+const UserSessionRevokeByTokenMock = jest.fn();
+const CookieAttachMock = jest.fn();
+const CookieClearMock = jest.fn();
+const CookieExtractMock = jest.fn();
 
 describe('ImpersonationService', () => {
   let service: ImpersonationService;
@@ -60,6 +67,21 @@ describe('ImpersonationService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: TwentyConfigServiceGetMock,
+          },
+        },
+        {
+          provide: UserSessionService,
+          useValue: {
+            createSession: UserSessionCreateSessionMock,
+            revokeSessionByToken: UserSessionRevokeByTokenMock,
+          },
+        },
+        {
+          provide: UserSessionCookieService,
+          useValue: {
+            attachSessionTokenToResponse: CookieAttachMock,
+            clearSessionCookie: CookieClearMock,
+            extractSessionTokenFromRequest: CookieExtractMock,
           },
         },
         {
@@ -819,6 +841,76 @@ describe('ImpersonationService', () => {
           expiresAt: expect.any(Date),
         },
       });
+    });
+  });
+  describe('stopImpersonation', () => {
+    const buildRequest = () =>
+      ({
+        headers: {},
+        res: {},
+      }) as unknown as Parameters<
+        ImpersonationService['stopImpersonation']
+      >[0]['request'];
+
+    it('should never mint a session for the impersonator', async () => {
+      // The request is authenticated by a credential that authorizes the
+      // impersonated user, so it is not proof of the impersonator's identity.
+      const impersonatorUserWorkspaceId = 'impersonator-user-workspace-id';
+      const workspaceId = 'workspace-id';
+
+      UserWorkspaceFindOneMock.mockResolvedValue({
+        id: impersonatorUserWorkspaceId,
+        userId: 'impersonator-user-id',
+        workspaceId,
+      });
+      CookieExtractMock.mockReturnValue('sess_presented');
+
+      const result = await service.stopImpersonation({
+        impersonationContext: {
+          impersonatorUserWorkspaceId,
+          impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+        },
+        workspaceId,
+        request: buildRequest(),
+      });
+
+      expect(result).toEqual({ canRestoreImpersonatorSession: false });
+      expect(UserSessionCreateSessionMock).not.toHaveBeenCalled();
+      expect(CookieAttachMock).not.toHaveBeenCalled();
+      expect(CookieClearMock).toHaveBeenCalled();
+    });
+
+    it('should revoke the presented impersonation session', async () => {
+      UserWorkspaceFindOneMock.mockResolvedValue({
+        id: 'impersonator-user-workspace-id',
+        userId: 'impersonator-user-id',
+        workspaceId: 'workspace-id',
+      });
+      CookieExtractMock.mockReturnValue('sess_presented');
+
+      await service.stopImpersonation({
+        impersonationContext: {
+          impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
+          impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+        },
+        workspaceId: 'workspace-id',
+        request: buildRequest(),
+      });
+
+      expect(UserSessionRevokeByTokenMock).toHaveBeenCalledWith(
+        'sess_presented',
+        expect.anything(),
+      );
+    });
+
+    it('should refuse when the request is not impersonating', async () => {
+      await expect(
+        service.stopImpersonation({
+          impersonationContext: undefined,
+          workspaceId: 'workspace-id',
+          request: buildRequest(),
+        }),
+      ).rejects.toThrow(AuthException);
     });
   });
 });
