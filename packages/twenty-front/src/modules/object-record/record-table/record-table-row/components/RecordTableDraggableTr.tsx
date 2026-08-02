@@ -10,7 +10,6 @@ import { RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID } from '@/object-record/recor
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
@@ -103,7 +102,6 @@ export const RecordTableDraggableTr = ({
       <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
         <RecordTableRowDraggableContextProvider value={{ isDragging }}>
           {children}
-          <RecordTableRowMultiDragPreview />
         </RecordTableRowDraggableContextProvider>
       </DragDropItemSortableHandleRefContext.Provider>
       {isDropTarget && !isDragSource && <StyledRowDropLine />}

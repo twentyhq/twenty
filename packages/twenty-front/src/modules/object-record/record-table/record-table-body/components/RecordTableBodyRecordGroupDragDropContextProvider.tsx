@@ -7,6 +7,7 @@ import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecord
 import { useProcessTableWithGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithGroupRecordDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDragOverlayContent } from '@/object-record/record-table/record-table-row/components/RecordTableRowDragOverlayContent';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
@@ -119,7 +120,16 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     >
       {children}
       <DragOverlay>
-        {(source) => <RecordTableRowDragOverlayContent source={source} />}
+        {(source) => {
+          const sourceData = source?.data;
+          return (
+            <RecordTableRecordGroupBodyContextProvider
+              recordGroupId={sourceData?.droppableId ?? ''}
+            >
+              <RecordTableRowDragOverlayContent source={source} />
+            </RecordTableRecordGroupBodyContextProvider>
+          );
+        }}
       </DragOverlay>
     </DragDropProvider>
   );
