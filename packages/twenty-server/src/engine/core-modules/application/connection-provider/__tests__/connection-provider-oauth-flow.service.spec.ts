@@ -23,6 +23,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
@@ -51,6 +52,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     findOne: jest.Mock;
     findOneByOrFail: jest.Mock;
   };
+  let userRepository: { findOneByOrFail: jest.Mock };
   let workspaceCacheService: { getOrRecompute: jest.Mock };
   let messageQueueService: { add: jest.Mock };
   let exceptionHandlerService: { captureExceptions: jest.Mock };
@@ -102,6 +104,12 @@ describe('ConnectionProviderOAuthFlowService', () => {
         provider: ConnectedAccountProvider.APP,
       })),
     };
+    userRepository = {
+      findOneByOrFail: jest.fn(async ({ id }) => ({
+        id,
+        email: 'connecting-user@example.com',
+      })),
+    };
     workspaceCacheService = {
       getOrRecompute: jest.fn(async () => ({
         flatLogicFunctionMaps: { byUniversalIdentifier: {} },
@@ -126,6 +134,10 @@ describe('ConnectionProviderOAuthFlowService', () => {
         {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: connectedAccountRepository,
+        },
+        {
+          provide: getRepositoryToken(UserEntity),
+          useValue: userRepository,
         },
         {
           provide: WorkspaceCacheService,
@@ -378,8 +390,12 @@ describe('ConnectionProviderOAuthFlowService', () => {
           workspaceId: 'workspace-1',
           userWorkspaceId: 'uws-1',
           visibility: 'user',
+          handle: 'connecting-user@example.com',
         }),
       );
+      expect(userRepository.findOneByOrFail).toHaveBeenCalledWith({
+        id: 'user-1',
+      });
       expect(connectedAccountRepository.save).toHaveBeenCalled();
       expect(connectedAccountRepository.update).not.toHaveBeenCalled();
     });
@@ -403,6 +419,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
           refreshToken: `${FAKE_CIPHER_PREFIX}CIPHER(new_refresh)`,
           authFailedAt: null,
           visibility: 'user',
+          handle: 'connecting-user@example.com',
         }),
       );
       // Defense-in-depth: the post-update read MUST also be workspace-scoped,
