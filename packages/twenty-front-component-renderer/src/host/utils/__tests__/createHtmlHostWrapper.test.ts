@@ -1,10 +1,10 @@
 import './setupServerRenderingGlobals';
 
-import { act, createElement } from 'react';
+import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
+import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
-
-import { FrontComponentExternalNavigationContext } from '@/host/contexts/FrontComponentExternalNavigationContext';
+import { jsx } from 'react/jsx-runtime';
 
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
 
@@ -20,6 +20,11 @@ const renderWrapper = (
   renderToStaticMarkup(
     createElement(createHtmlHostWrapper(htmlTag), props, children),
   );
+
+const createWrapperElement = (
+  Wrapper: ComponentType<never>,
+  props: Record<string, unknown>,
+) => jsx(Wrapper as never, { ...props } as never);
 
 describe('createHtmlHostWrapper prop hardening', () => {
   it('should drop an on* attribute whose value is not a function', () => {
@@ -99,6 +104,16 @@ describe('createHtmlHostWrapper prop hardening', () => {
 
     expect(markup).toContain(dataImageUrl);
   });
+
+  it('should not leak the remote element symbol prop into the markup', () => {
+    const markup = renderToStaticMarkup(
+      createWrapperElement(createHtmlHostWrapper('div'), {
+        [REMOTE_ELEMENT_PROP]: { id: '7' },
+      }),
+    );
+
+    expect(markup).toBe('<div></div>');
+  });
 });
 
 describe('createHtmlHostWrapper client events', () => {
@@ -160,6 +175,23 @@ describe('createHtmlHostWrapper client events', () => {
     expect(node.value).toBe('fixed');
   });
 
+  it('should write a numeric controlled value to the host input', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 42 }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('42');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 43 }));
+    });
+
+    expect(node.value).toBe('43');
+  });
+
   it('should clear the host input when a controlled value becomes empty', () => {
     const Wrapper = createHtmlHostWrapper('input');
 
@@ -175,6 +207,48 @@ describe('createHtmlHostWrapper client events', () => {
     });
 
     expect(node.value).toBe('');
+  });
+
+  it('should forward focusin through a handler prop that arrives after mount', () => {
+    const handleFocusIn = jest.fn();
+    const Wrapper = createHtmlHostWrapper('div');
+
+    act(() => {
+      root.render(
+        createWrapperElement(Wrapper, { [REMOTE_ELEMENT_PROP]: { id: '7' } }),
+      );
+    });
+
+    act(() => {
+      root.render(
+        createWrapperElement(Wrapper, {
+          [REMOTE_ELEMENT_PROP]: { id: '7' },
+          onFocusin: handleFocusIn,
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLElement;
+    act(() => {
+      node.dispatchEvent(new Event('focusin', { bubbles: true }));
+    });
+
+    expect(handleFocusIn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not pass the remote dom instance ref to the dom element', () => {
+    const instanceRef = { current: null as unknown };
+
+    act(() => {
+      root.render(
+        createWrapperElement(createHtmlHostWrapper('div'), {
+          [REMOTE_ELEMENT_PROP]: { id: '7' },
+          ref: instanceRef,
+        }),
+      );
+    });
+
+    expect(instanceRef.current).toBeNull();
   });
 
   it('should stop forwarding focusin after the handler prop is removed', () => {
@@ -259,88 +333,5 @@ describe('createHtmlHostWrapper client events', () => {
     expect(handleDrop).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'drop' }),
     );
-  });
-});
-
-describe('createHtmlHostWrapper anchor navigation', () => {
-  let container: HTMLDivElement;
-  let root: Root;
-
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-    root = createRoot(container);
-  });
-
-  afterEach(() => {
-    act(() => {
-      root.unmount();
-    });
-    container.remove();
-  });
-
-  const renderAnchor = (
-    props: Record<string, unknown>,
-    requestExternalNavigation: ((request: unknown) => void) | null,
-  ) => {
-    const Wrapper = createHtmlHostWrapper('a');
-
-    act(() => {
-      root.render(
-        createElement(
-          FrontComponentExternalNavigationContext.Provider,
-          { value: requestExternalNavigation },
-          createElement(Wrapper, props, 'link'),
-        ),
-      );
-    });
-
-    return container.querySelector('a') as HTMLAnchorElement;
-  };
-
-  const clickAnchor = (anchor: HTMLAnchorElement): MouseEvent => {
-    const clickEvent = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-      button: 0,
-    });
-
-    act(() => {
-      anchor.dispatchEvent(clickEvent);
-    });
-
-    return clickEvent;
-  };
-
-  it('should prevent default and request navigation for an external anchor click', () => {
-    const requestExternalNavigation = jest.fn();
-    const remoteOnClick = jest.fn();
-
-    const anchor = renderAnchor(
-      { href: 'https://example.com/probe', onClick: remoteOnClick },
-      requestExternalNavigation,
-    );
-
-    const clickEvent = clickAnchor(anchor);
-
-    expect(clickEvent.defaultPrevented).toBe(true);
-    expect(requestExternalNavigation).toHaveBeenCalledWith({
-      url: 'https://example.com/probe',
-    });
-    expect(remoteOnClick).not.toHaveBeenCalled();
-  });
-
-  it('should not request navigation for a same-origin anchor click', () => {
-    const requestExternalNavigation = jest.fn();
-
-    const anchor = renderAnchor(
-      { href: 'http://localhost/objects/people' },
-      requestExternalNavigation,
-    );
-
-    const clickEvent = clickAnchor(anchor);
-
-    expect(clickEvent.defaultPrevented).toBe(false);
-    expect(requestExternalNavigation).not.toHaveBeenCalled();
   });
 });

@@ -21,6 +21,7 @@ import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.
 
 const LOCAL_TTL_MS = 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS = 60 * 1000;
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5;
@@ -44,6 +45,7 @@ export class CoreEntityCacheService implements OnModuleInit {
   private readonly memoizer = new PromiseMemoizer<CacheableValue>(
     MEMOIZER_TTL_MS,
   );
+  private lastLocalCacheExpirationSweepAt: number | undefined;
 
   private readonly logger = new Logger(CoreEntityCacheService.name);
 
@@ -82,7 +84,7 @@ export class CoreEntityCacheService implements OnModuleInit {
     cacheKeyName: K,
     entityId: string,
   ): Promise<CoreEntityCacheDataMap[K] | null> {
-    this.evictExpiredLocalEntries();
+    this.evictExpiredLocalEntriesIfNeeded();
 
     if (!isDefined(entityId) || !isValidUuid(entityId)) {
       return null;
@@ -288,9 +290,22 @@ export class CoreEntityCacheService implements OnModuleInit {
     }
   }
 
-  private evictExpiredLocalEntries(): void {
+  private evictExpiredLocalEntriesIfNeeded(): void {
     const now = Date.now();
 
+    if (
+      isDefined(this.lastLocalCacheExpirationSweepAt) &&
+      now - this.lastLocalCacheExpirationSweepAt <
+        LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS
+    ) {
+      return;
+    }
+
+    this.evictExpiredLocalEntries(now);
+    this.lastLocalCacheExpirationSweepAt = now;
+  }
+
+  private evictExpiredLocalEntries(now: number): void {
     for (const [localKey, entry] of this.localCache) {
       for (const [hash, version] of entry.versions) {
         if (now - version.lastReadAt > LOCAL_ENTRY_TTL_MS) {

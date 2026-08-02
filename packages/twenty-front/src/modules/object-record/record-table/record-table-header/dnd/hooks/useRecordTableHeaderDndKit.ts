@@ -1,20 +1,13 @@
 import { useState } from 'react';
-import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
-import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
-import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
-import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { resolveDropFromPointerX } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerX';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
@@ -36,117 +29,71 @@ export const useRecordTableHeaderDndKit = (): {
   };
 } => {
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
   const { reorderVisibleRecordFields } =
     useReorderVisibleRecordFields(recordTableId);
   const { saveViewFields } = useSaveCurrentViewFields();
   const { setDragSelectionStartEnabled } = useDragSelect();
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
-
-  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
-    isRecordTableDragColumnHiddenComponentState,
-  );
-  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
-    isRecordTableCheckboxColumnHiddenComponentState,
-  );
 
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null
   >(null);
 
-  const recordFieldsWithoutLabelIdentifier = visibleRecordFields.filter(
-    filterOutByProperty(
-      'fieldMetadataItemId',
-      labelIdentifierFieldMetadataItem?.id,
-    ),
+  const totalSize = visibleRecordFields.reduce(
+    (accumulatedSize, recordField) => accumulatedSize + recordField.size,
+    0,
   );
 
-  const labelIdentifierRecordField = visibleRecordFields.find(
-    (recordField) =>
-      recordField.fieldMetadataItemId === labelIdentifierFieldMetadataItem?.id,
-  );
-
-  const nonSortableColumnsWidth =
-    (isRecordTableDragColumnHidden
-      ? 0
-      : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH) +
-    (isRecordTableCheckboxColumnHidden
-      ? 0
-      : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH) +
-    (labelIdentifierRecordField?.size ?? 0);
-
-  const resolveDropFromPointerX = ({
-    pointerX,
-    sourceIndex,
-  }: {
-    pointerX: number;
-    sourceIndex: number;
-  }) => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
-    if (!isDefined(scrollWrapperElement)) return null;
-
-    return resolveDragDropItemDrop({
-      pointerX,
-      sourceIndex,
-      scrollWrapperElement,
-      columnWidths: recordFieldsWithoutLabelIdentifier.map(
-        (recordField) => recordField.size,
-      ),
-      leadingOffset: nonSortableColumnsWidth,
-    });
-  };
+  const lastIndex = visibleRecordFields.length - 1;
 
   const handleDragStart = (_event: DragStartPayload) => {
     setActiveDropTargetIndex(null);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
-    const { operation } = event;
-    const sourceIndex = operation.source?.data.index;
+    const { target, position } = event.operation;
 
-    if (!isDefined(sourceIndex)) {
-      setActiveDropTargetIndex(null);
-      return;
-    }
-
-    const resolvedDrop = resolveDropFromPointerX({
-      pointerX: operation.position.current.x,
-      sourceIndex,
+    const dropTargetIndex = resolveDropFromPointerX({
+      target,
+      pointerX: position.current.x,
+      totalSize,
+      lastIndex,
     });
 
-    setActiveDropTargetIndex((currentActiveDropTargetIndex) => {
-      const nextActiveDropTargetIndex = resolvedDrop?.dropTargetIndex ?? null;
-
-      return currentActiveDropTargetIndex === nextActiveDropTargetIndex
+    setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
+      currentActiveDropTargetIndex === dropTargetIndex
         ? currentActiveDropTargetIndex
-        : nextActiveDropTargetIndex;
-    });
+        : dropTargetIndex,
+    );
   };
 
   const handleDragEnd = (event: DragEndPayload) => {
-    const { operation } = event;
-    const source = operation.source;
+    const { source, target, position } = event.operation;
 
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
 
-    if (event.canceled) return;
-    if (!isDefined(source)) return;
+    if (event.canceled || !isDefined(source)) {
+      return;
+    }
 
     const sourceIndex = source.data.index;
-    const resolvedDrop = resolveDropFromPointerX({
-      pointerX: operation.position.current.x,
-      sourceIndex,
-    });
 
-    if (!isDefined(resolvedDrop)) return;
-    if (resolvedDrop.sourceIndex === resolvedDrop.destinationIndex) return;
+    const dropTargetIndex = resolveDropFromPointerX({
+      target,
+      pointerX: position.current.x,
+      totalSize,
+      lastIndex,
+    });
+    if (!isDefined(dropTargetIndex)) return;
+
+    const destinationIndex =
+      dropTargetIndex < sourceIndex ? dropTargetIndex + 1 : dropTargetIndex;
 
     // Sortable indices exclude the pinned label-identifier column at visibleRecordFields[0],
     // so shift by one to address the full visible field list.
     const updatedRecordField = reorderVisibleRecordFields({
-      fromIndex: resolvedDrop.sourceIndex + 1,
-      toIndex: resolvedDrop.destinationIndex + 1,
+      fromIndex: sourceIndex + 1,
+      toIndex: destinationIndex,
     });
 
     saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);

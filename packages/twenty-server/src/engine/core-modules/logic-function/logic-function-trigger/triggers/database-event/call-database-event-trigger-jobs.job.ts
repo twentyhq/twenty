@@ -2,10 +2,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
@@ -21,14 +23,15 @@ export class CallDatabaseEventTriggerJobsJob {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps'],
+        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
       );
 
     const logicFunctionsWithDatabaseEventTrigger = Object.values(
@@ -51,16 +54,57 @@ export class CallDatabaseEventTriggerJobsJob {
         }),
       );
 
-    const logicFunctionPayloads = transformEventBatchToEventPayloads({
-      logicFunctions: logicFunctionsToTrigger,
-      workspaceEventBatch,
-    });
+    const logicFunctionsByApplicationId = new Map<
+      string,
+      typeof logicFunctionsToTrigger
+    >();
 
-    await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      logicFunctionPayloads,
-      { retryLimit: 3 },
-    );
+    for (const logicFunction of logicFunctionsToTrigger) {
+      const applicationLogicFunctions =
+        logicFunctionsByApplicationId.get(logicFunction.applicationId) ?? [];
+
+      applicationLogicFunctions.push(logicFunction);
+      logicFunctionsByApplicationId.set(
+        logicFunction.applicationId,
+        applicationLogicFunctions,
+      );
+    }
+
+    for (const [
+      applicationId,
+      logicFunctions,
+    ] of logicFunctionsByApplicationId) {
+      const application = findActiveFlatApplicationById(
+        flatApplicationMaps,
+        applicationId,
+      );
+      const applicationRegistrationId = application?.applicationRegistrationId;
+
+      if (!isDefined(applicationRegistrationId)) {
+        continue;
+      }
+
+      const logicFunctionPayloads = transformEventBatchToEventPayloads({
+        logicFunctions,
+        workspaceEventBatch,
+      });
+
+      if (logicFunctionPayloads.length === 0) {
+        continue;
+      }
+
+      await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+        applicationId,
+        applicationRegistrationId,
+        jobCount: logicFunctionPayloads.length,
+      });
+
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        logicFunctionPayloads,
+        { retryLimit: 3 },
+      );
+    }
   }
 
   private shouldTriggerJob({

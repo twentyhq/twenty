@@ -11,9 +11,8 @@ import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
-import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
+import { resolveDropFromPointerX } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerX';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -52,7 +51,6 @@ export const useRecordBoardColumnDndKit = (): {
     viewType: ViewType.KANBAN,
   });
   const { setDragSelectionStartEnabled } = useDragSelect();
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   const isRecordGroupDraggableSort = useAtomComponentSelectorValue(
     recordIndexRecordGroupIsDraggableSortComponentSelector,
@@ -79,62 +77,33 @@ export const useRecordBoardColumnDndKit = (): {
     null,
   );
 
-  const resolveDropFromPointerX = ({
-    pointerX,
-    sourceIndex,
-  }: {
-    pointerX: number;
-    sourceIndex: number;
-  }) => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
-    if (!isDefined(scrollWrapperElement)) return null;
+  const totalSize = visibleRecordGroupIds.length * recordIndexKanbanColumnWidth;
 
-    const columnWidths = visibleRecordGroupIds.map(
-      () => recordIndexKanbanColumnWidth,
-    );
-
-    if (columnWidths.length === 0) {
-      return null;
-    }
-
-    return resolveDragDropItemDrop({
-      pointerX,
-      sourceIndex,
-      scrollWrapperElement,
-      columnWidths,
-    });
-  };
+  const lastIndex = visibleRecordGroupIds.length;
 
   const handleDragStart = (_event: DragStartPayload) => {
     setActiveDropTargetIndex(null);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
-    const { operation } = event;
-    const sourceIndex = operation.source?.data.index;
+    const { target, position } = event.operation;
 
-    if (!isDefined(sourceIndex)) {
-      setActiveDropTargetIndex(null);
-      return;
-    }
-
-    const resolvedDrop = resolveDropFromPointerX({
-      pointerX: operation.position.current.x,
-      sourceIndex,
+    const dropTargetIndex = resolveDropFromPointerX({
+      target,
+      pointerX: position.current.x,
+      totalSize,
+      lastIndex,
     });
 
-    setActiveDropTargetIndex((currentActiveDropTargetIndex) => {
-      const nextActiveDropTargetIndex = resolvedDrop?.dropTargetIndex ?? null;
-
-      return currentActiveDropTargetIndex === nextActiveDropTargetIndex
+    setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
+      currentActiveDropTargetIndex === dropTargetIndex
         ? currentActiveDropTargetIndex
-        : nextActiveDropTargetIndex;
-    });
+        : dropTargetIndex,
+    );
   };
 
   const handleDragEnd = (event: DragEndPayload) => {
-    const { operation } = event;
-    const source = operation.source;
+    const { source, target, position } = event.operation;
 
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
@@ -144,26 +113,30 @@ export const useRecordBoardColumnDndKit = (): {
     }
 
     const sourceIndex = source.data.index;
-    const resolvedDrop = resolveDropFromPointerX({
-      pointerX: operation.position.current.x,
-      sourceIndex,
-    });
 
-    if (!isDefined(resolvedDrop)) return;
-    if (resolvedDrop.sourceIndex === resolvedDrop.destinationIndex) return;
+    const dropTargetIndex = resolveDropFromPointerX({
+      target,
+      pointerX: position.current.x,
+      totalSize,
+      lastIndex,
+    });
+    if (!isDefined(dropTargetIndex)) return;
+
+    const destinationIndex =
+      dropTargetIndex > sourceIndex ? dropTargetIndex - 1 : dropTargetIndex;
 
     if (!isRecordGroupDraggableSort) {
       setPendingReorder({
-        fromIndex: resolvedDrop.sourceIndex,
-        toIndex: resolvedDrop.destinationIndex,
+        fromIndex: sourceIndex,
+        toIndex: destinationIndex,
       });
       openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
       return;
     }
 
     reorderRecordGroups({
-      fromIndex: resolvedDrop.sourceIndex,
-      toIndex: resolvedDrop.destinationIndex,
+      fromIndex: sourceIndex,
+      toIndex: destinationIndex,
     });
   };
 

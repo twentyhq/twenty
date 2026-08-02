@@ -28,6 +28,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -285,16 +286,8 @@ export class PermissionsService {
       return null;
     }
 
-    let roleIds: string[] = [];
-    let useIntersection = false;
-
-    if ('intersectionOf' in rolePermissionConfig) {
-      roleIds = rolePermissionConfig.intersectionOf;
-      useIntersection = true;
-    } else if ('unionOf' in rolePermissionConfig) {
-      roleIds = rolePermissionConfig.unionOf;
-      useIntersection = false;
-    }
+    const roleIds = getRoleIdsFromRolePermissionConfig(rolePermissionConfig);
+    const useIntersection = 'intersectionOf' in rolePermissionConfig;
 
     if (roleIds.length === 0) {
       throw new Error('No role IDs provided');

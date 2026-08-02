@@ -41,8 +41,10 @@ const StyledPlusIconHeaderCell = styled.div<{
   width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   z-index: 1;
 
-  &:hover {
-    background: ${themeCssVariables.background.secondary};
+  @media (hover: hover) {
+    &:hover {
+      background: ${themeCssVariables.background.secondary};
+    }
   }
 `;
 

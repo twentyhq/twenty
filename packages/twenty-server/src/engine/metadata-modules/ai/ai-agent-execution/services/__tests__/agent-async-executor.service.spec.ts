@@ -2,12 +2,15 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { generateText } from 'ai';
+import { ToolCategory } from 'twenty-shared/ai';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
+import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -42,7 +45,10 @@ const generateTextMock = generateText as jest.MockedFunction<
 
 describe('AgentAsyncExecutorService — workflow agent role-scoped tool resolution', () => {
   let service: AgentAsyncExecutorService;
-  let toolRegistry: { getToolsByCategories: jest.Mock };
+  let toolRegistry: {
+    getToolsByCategories: jest.Mock;
+    buildToolIndex: jest.Mock;
+  };
   let roleTargetRepository: { findOne: jest.Mock };
   let aiBillingService: {
     decrementAndCheckAvailableCredits: jest.Mock;
@@ -64,8 +70,23 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       modelConfiguration: {},
     }) as AgentEntity;
 
+  const emptyUsage = {
+    inputTokens: 0,
+    outputTokens: 0,
+    totalTokens: 0,
+    inputTokenDetails: {
+      noCacheTokens: 0,
+      cacheReadTokens: 0,
+      cacheWriteTokens: 0,
+    },
+    outputTokenDetails: { textTokens: 0, reasoningTokens: 0 },
+  };
+
   beforeEach(async () => {
-    toolRegistry = { getToolsByCategories: jest.fn().mockResolvedValue({}) };
+    toolRegistry = {
+      getToolsByCategories: jest.fn().mockResolvedValue({}),
+      buildToolIndex: jest.fn().mockResolvedValue([]),
+    };
     roleTargetRepository = { findOne: jest.fn() };
     aiBillingService = {
       decrementAndCheckAvailableCredits: jest
@@ -132,12 +153,13 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     service = module.get<AgentAsyncExecutorService>(AgentAsyncExecutorService);
   });
 
-  it('passes intersectionOf: [agentRoleId] when the agent has a role assigned', async () => {
+  it('preloads role-scoped tool schemas by default (workflow node)', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
 
     await service.executeAgent({
       agent: buildAgent(),
       userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
       workspaceId,
     });
 
@@ -146,10 +168,47 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       expect.objectContaining({
         roleId: agentRoleId,
         rolePermissionConfig: { intersectionOf: [agentRoleId] },
+        requireExplicitObjectGrants: true,
         workspaceId,
       }),
       expect.objectContaining({ wrapWithErrorContext: false }),
     );
+    expect(toolRegistry.buildToolIndex).not.toHaveBeenCalled();
+  });
+
+  it('loads tools lazily via a category-scoped catalog when toolLoadingStrategy is "lazy" (runAgent)', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+    toolRegistry.buildToolIndex.mockResolvedValueOnce([
+      {
+        name: 'find_many_people',
+        category: ToolCategory.DATABASE_CRUD,
+        objectName: 'person',
+        operation: 'find_many',
+      },
+      { name: 'create_one_workflow', category: ToolCategory.WORKFLOW },
+    ]);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+      toolLoadingStrategy: 'lazy',
+    });
+
+    expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledWith(
+      workspaceId,
+      agentRoleId,
+      expect.any(Object),
+    );
+
+    const { system } = generateTextMock.mock.calls[0][0];
+
+    expect(system).toContain('## Available Tools');
+    expect(system).toContain('person');
+    expect(system).not.toContain('Workflow Tools');
+    expect(system).not.toContain('create_one_workflow');
   });
 
   it('does not resolve registry tools when the agent has no role (fail-closed)', async () => {
@@ -158,10 +217,63 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     await service.executeAgent({
       agent: buildAgent(),
       userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
       workspaceId,
     });
 
     expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
+  });
+
+  it('prefixes the system prompt with the caller-supplied base prompt', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce(null);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      userPrompt: 'test',
+      baseSystemPrompt: 'caller base prompt',
+      workspaceId,
+    });
+
+    expect(generateTextMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: 'caller base prompt\n\ntest prompt',
+      }),
+    );
+  });
+
+  it('uses the context-neutral structured output prompt regardless of the caller base prompt', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce(null);
+    generateTextMock
+      .mockResolvedValueOnce({
+        text: 'execution result',
+        steps: [],
+        usage: emptyUsage,
+      } as unknown as Awaited<ReturnType<typeof generateText>>)
+      .mockResolvedValueOnce({
+        text: '',
+        steps: [],
+        usage: emptyUsage,
+        output: { summary: 'done' },
+      } as unknown as Awaited<ReturnType<typeof generateText>>);
+
+    await service.executeAgent({
+      agent: {
+        ...buildAgent(),
+        responseFormat: {
+          type: 'json',
+          schema: { type: 'object', properties: {} },
+        },
+      } as AgentEntity,
+      userPrompt: 'test',
+      baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+      workspaceId,
+    });
+
+    expect(generateTextMock).toHaveBeenCalledTimes(2);
+    expect(generateTextMock.mock.calls[1][0].system).toBe(
+      STRUCTURED_OUTPUT_SYSTEM_PROMPT,
+    );
+    expect(generateTextMock.mock.calls[1][0].system).not.toMatch(/workflow/i);
   });
 
   describe('cost folding', () => {
@@ -191,6 +303,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       const result = await service.executeAgent({
         agent: buildAgent(),
         userPrompt: 'test',
+        baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
 
@@ -230,6 +343,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       await service.executeAgent({
         agent: buildAgent(),
         userPrompt: 'test',
+        baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
 
@@ -264,6 +378,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       const result = await service.executeAgent({
         agent: buildAgent(),
         userPrompt: 'test',
+        baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
 

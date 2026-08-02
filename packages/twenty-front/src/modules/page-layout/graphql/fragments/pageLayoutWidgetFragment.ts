@@ -54,6 +54,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         axisNameDisplay
         displayDataLabel
         displayLegend
+        numberFormat
         rangeMin
         rangeMax
         color
@@ -84,6 +85,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         axisNameDisplay
         displayDataLabel
         displayLegend
+        numberFormat
         rangeMin
         rangeMax
         color
@@ -107,6 +109,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         displayDataLabel
         showCenterMetric
         displayLegend
+        numberFormat
         hideEmptyCategory
         splitMultiValueFields
         color
@@ -151,6 +154,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         configurationType
       }
       ... on EmailThreadConfiguration {
+        configurationType
+      }
+      ... on MessageCampaignBodyConfiguration {
+        configurationType
+      }
+      ... on MessageCampaignDetailsConfiguration {
         configurationType
       }
       ... on FieldConfiguration {

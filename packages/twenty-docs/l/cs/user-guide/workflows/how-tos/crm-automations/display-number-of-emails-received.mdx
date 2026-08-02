@@ -56,11 +56,6 @@ Akce Vyhledat záznamy je omezena na vrácení maximálně 200 záznamů. Proto�
 ### Krok 4: Aktualizujte záznam osoby pomocí akce Vytvořit nebo aktualizovat záznam
 
 1. Přidejte akci **Vytvořit nebo aktualizovat záznam**
-
-<Warning>
-Zde použijte **Upsert Record** místo **Update Record**. To vám umožní identifikovat osobu podle její e-mailové adresy (pole `handle`) místo požadavku na ID záznamu z předchozího kroku.
-</Warning>
-
 2. Vyberte jako objekt **Lidé**
 3. Najděte osobu podle shody jejího e-mailu s hodnotou `handle` z účastníka zprávy
 4. Nastavte své vlastní pole "Počet přijatých e-mailů" na hodnotu `{{searchRecords.totalCount}}`

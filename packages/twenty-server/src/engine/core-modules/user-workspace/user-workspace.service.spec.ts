@@ -1,3 +1,4 @@
+import { OpenRecordIn } from 'twenty-shared/types';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -302,6 +303,7 @@ describe('UserWorkspaceService', () => {
           lastName: user.lastName,
         },
         colorScheme: 'System',
+        openRecordIn: OpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,
         locale: 'en',
@@ -456,6 +458,40 @@ describe('UserWorkspaceService', () => {
       await expect(
         service.addUserToWorkspaceIfUserNotInWorkspace(user, workspace),
       ).rejects.toThrow(PermissionsException);
+    });
+  });
+
+  describe('isWorkspaceCreator', () => {
+    it('should treat the earliest membership as the creator, including soft-deleted ones', async () => {
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
+        userId: 'creator-user-id',
+      } as UserWorkspaceEntity);
+
+      await expect(
+        service.isWorkspaceCreator({
+          userId: 'creator-user-id',
+          workspaceId: 'workspace-id',
+        }),
+      ).resolves.toBe(true);
+
+      expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith({
+        where: { workspaceId: 'workspace-id' },
+        order: { createdAt: 'ASC' },
+        withDeleted: true,
+      });
+    });
+
+    it('should return false for a later member', async () => {
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
+        userId: 'creator-user-id',
+      } as UserWorkspaceEntity);
+
+      await expect(
+        service.isWorkspaceCreator({
+          userId: 'second-user-id',
+          workspaceId: 'workspace-id',
+        }),
+      ).resolves.toBe(false);
     });
   });
 

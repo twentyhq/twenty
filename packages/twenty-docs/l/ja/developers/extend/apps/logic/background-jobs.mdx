@@ -1,0 +1,165 @@
+---
+title: バックグラウンドジョブ
+description: 長時間かかる処理やレート制限される処理は、すべてをインラインで実行するのではなく、別のロジック関数の実行をキューに追加して Twenty のワーカーに渡してください。
+icon: layer-group
+---
+
+ロジック関数の実行は、その `timeoutSeconds`（最大 900 秒）によって制限されます。 その時間内に完了できない処理 — フル再同期、レコードごとのファンアウト、レート制限を課してくるサードパーティ API など — は、より小さい実行単位に分割する必要があります。
+
+`enqueueJob` はまさにそれを行います。Twenty のワーカーに対して、あなたのアプリのロジック関数の 1 つを、独立したプロセスと独自のタイムアウト枠で後から実行するよう依頼します。 呼び出し元はすぐに戻ります。
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## 実行をエンキューする
+
+`twenty-sdk/logic-function` から `enqueueJob` をインポートし、実行したいロジック関数の `universalIdentifier` を指定します。
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+対象の関数は、他のトリガーとまったく同様に、ハンドラーの引数として `payload` を受け取ります。 対象のロジック関数は呼び出し元と**同じアプリケーション**に属している必要があります。別のアプリの関数をエンキューしようとすると、`Logic function not found` で拒否されます。
+
+<Note>
+`enqueueJob` は、ジョブが受け付けられた時点ですぐに戻り、ジョブが実行されたタイミングでは戻りません。 対象の結果は返しません。結果を後から読み戻す必要がある場合は、対象側で [key-value store](/l/ja/developers/extend/apps/logic/key-value-store) かワークスペースレコードに出力を書き込ませてください。
+</Note>
+
+## ジョブオプション
+
+| オプション        | デフォルト | 範囲                       | 機能                                                         |
+| ------------ | ----- | ------------------------ | ---------------------------------------------------------- |
+| `retryLimit` | `0`   | `0`–`10`                 | 実行が例外をスローした場合の追加試行回数。 2 回実行しても安全なハンドラーに対してのみ、この値を増やしてください。 |
+| `delayMs`    | `0`   | `0`–`604800000` (7 days) | この時間が経過すると、その実行は実行可能になります。                                 |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**優先度はまだ設定できません。** エンキューされたジョブは常に最も低い優先度で実行されるため、プラットフォームの処理がアプリケーションジョブによって遅延することはありません。 優先度を制御できる機能は近日中に提供予定です。
+</Note>
+
+キューに入れられた実行は、それをエンキューした関数の実行ユーザーを引き継ぐため、同じ権限で動作します。
+
+## 使いどころ: 長い同期処理をページングする
+
+典型的なパターンは、次のカーソルを指定して*自分自身*をエンキューする関数です。 各実行は、自身のタイムアウト内に十分収まる 1 ページ分の処理だけを行い、処理対象がなくなったところでチェーンが停止します。
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## レコードごとにファンアウトする
+
+処理単位が自然にアイテムごとになる場合は、アイテムごとに 1 つのジョブをエンキューし、インラインでループするのではなく、ワーカーに並列で処理させます。
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## 長時間実行タスクのためのベストプラクティス
+
+ほとんどの長時間ジョブには、次の 2 つのルールで対応できます。**ループの代わりに再帰させること**、そして **1 回の実行で処理するチャンクを制限すること**。
+
+すべてを 1 回の実行で片付けようとするのは失敗パターンです。タイムアウトに達し、リトライがかかると処理全体をまた最初からやり直すことになります。 代わりに、1 つのチャンクを `timeoutSeconds` 内に余裕をもって完了するサイズにし、現在位置を永続化してから、次の実行をエンキューします。
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+これが成立する理由:
+
+* **チャンクのサイズは平均ではなく最も遅いアイテムに合わせましょう。** `CHUNK_SIZE × 最悪ケースのアイテム処理時間` が、余裕をもって `timeoutSeconds` に収まる必要があります。そうでないと、実行が打ち切られた際にチャンクの末尾が失われます。
+* **終了条件を明示的にします。** チャンクがフルで返ってきた間だけ再帰させます。 「結果が 0 件」のみで停止するチェーンは、途中で短いページが返されることがあるソースに対しては、永久に動き続けてしまいます。
+* **次の実行をエンキューする前に進捗を永続化**しておきます。そうすることで、どこかのリンクが失敗しても、最初からではなく最後に完了したチャンクから再開できます。
+* **各チャンクはべき等に保ちます。** リトライ後に 1 つのチャンクを再処理しても二重書き込みにならないように、処理対象のレコードや外部 ID をキーにして書き込みを行ってください。
+* **レート制限のあるサードパーティを相手にする場合は、巨大な 1 回のファンアウトよりもチャンク化したチェーンを優先**します。`delayMs` を設定したチェーンは自分でペース配分しますが、何千ものジョブを一度にエンキューすると、すべてが即座にキュー対象になってしまいます。
+
+<Warning>
+リトライではハンドラー全体が再実行されます。 `retryLimit` を `0` より大きく設定する前に、エンキューされるハンドラーをべき等に保ってください。
+</Warning>

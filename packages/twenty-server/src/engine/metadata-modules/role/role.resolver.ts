@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,10 +15,9 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -44,11 +42,6 @@ import { RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permissi
 import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
 import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import {
@@ -85,7 +78,6 @@ export class RoleResolver {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly roleService: RoleService,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly rolePermissionFlagService: RolePermissionFlagService,
     private readonly agentRoleService: AiAgentRoleService,
@@ -112,50 +104,30 @@ export class RoleResolver {
     @Args('workspaceMemberId', { type: () => UUIDScalarType })
     workspaceMemberId: string,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
-    @AuthWorkspaceMemberId()
-    updatorWorkspaceMemberId: string,
+    @AuthUserWorkspaceId()
+    actingUserWorkspaceId: string,
   ): Promise<WorkspaceMemberDTO> {
-    if (updatorWorkspaceMemberId === workspaceMemberId) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
-        PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
-        {
-          userFriendlyMessage: msg`You cannot change your own role. Please ask another administrator to update your role.`,
-        },
-      );
-    }
-
-    const workspaceMember =
-      await this.userWorkspaceService.getWorkspaceMemberOrThrow({
+    const { workspaceMember, userWorkspaceId } =
+      await this.userRoleService.assignRoleToWorkspaceMember({
+        workspaceId: workspace.id,
         workspaceMemberId,
-        workspaceId: workspace.id,
+        roleId,
+        actingUserWorkspaceId,
       });
-
-    const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-        userId: workspaceMember.userId,
-        workspaceId: workspace.id,
-      });
-
-    await this.userRoleService.assignRoleToManyUserWorkspace({
-      userWorkspaceIds: [userWorkspace.id],
-      workspaceId: workspace.id,
-      roleId,
-    });
 
     const roles = await this.userRoleService
       .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspace.id],
+        userWorkspaceIds: [userWorkspaceId],
         workspaceId: workspace.id,
       })
       .then(
         (rolesByUserWorkspaces) =>
-          rolesByUserWorkspaces?.get(userWorkspace.id) ?? [],
+          rolesByUserWorkspaces?.get(userWorkspaceId) ?? [],
       );
 
     return {
       ...workspaceMember,
-      userWorkspaceId: userWorkspace.id,
+      userWorkspaceId,
       roles,
     } as WorkspaceMemberDTO;
   }
@@ -184,10 +156,16 @@ export class RoleResolver {
   async updateOneRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    actingUserWorkspaceId?: string,
   ): Promise<RoleDTO> {
     const role = await this.roleService.updateRole({
       input: updateRoleInput,
       workspaceId: workspace.id,
+      actingRoleIds: await this.getActingRoleIds({
+        workspaceId: workspace.id,
+        actingUserWorkspaceId,
+      }),
     });
 
     return role;
@@ -197,13 +175,40 @@ export class RoleResolver {
   async deleteOneRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    actingUserWorkspaceId?: string,
   ): Promise<string> {
     const deletedRole = await this.roleService.deleteRole({
       roleId,
       workspaceId: workspace.id,
+      actingRoleIds: await this.getActingRoleIds({
+        workspaceId: workspace.id,
+        actingUserWorkspaceId,
+      }),
     });
 
     return deletedRole.id;
+  }
+
+  // API-key callers have no user workspace; lockout protection only applies to
+  // human actors, so they resolve to no acting roles.
+  private async getActingRoleIds({
+    workspaceId,
+    actingUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    actingUserWorkspaceId?: string;
+  }): Promise<string[] | undefined> {
+    if (!isDefined(actingUserWorkspaceId)) {
+      return undefined;
+    }
+
+    return [
+      await this.userRoleService.getRoleIdForUserWorkspace({
+        workspaceId,
+        userWorkspaceId: actingUserWorkspaceId,
+      }),
+    ];
   }
 
   @Mutation(() => [ObjectPermissionDTO])

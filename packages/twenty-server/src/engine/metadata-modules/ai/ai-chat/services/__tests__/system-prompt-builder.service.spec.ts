@@ -33,4 +33,12 @@ describe('SystemPromptBuilderService', () => {
       expect(result).toContain('Current date:');
     });
   });
+
+  describe('buildFullPrompt', () => {
+    it('does not append a trailing blank line when the skill catalog is empty', () => {
+      const result = buildService().buildFullPrompt([], [], []);
+
+      expect(result.endsWith('\n')).toBe(false);
+    });
+  });
 });
