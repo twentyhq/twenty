@@ -895,4 +895,110 @@ describe('OAuth (integration)', () => {
         .expect(401);
     });
   });
+
+  describe('Per-user authorizations', () => {
+    const exchangeForTokens = async (
+      scope = 'read write',
+    ): Promise<{
+      accessToken: string;
+      refreshToken: string;
+    }> => {
+      const code = crypto.randomBytes(42).toString('hex');
+      const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
+
+      const tokenId = await insertAppToken(ds, {
+        value: hashedCode,
+        type: AppTokenType.AuthorizationCode,
+        userId: TEST_USER_ID,
+        workspaceId: TEST_WORKSPACE_ID,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: {
+          redirectUri: 'https://example.com/callback',
+          clientId: testRegistration.oAuthClientId,
+          scope,
+        },
+      });
+
+      createdEntityIds.tokens.push(tokenId);
+
+      const res = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(200);
+
+      return {
+        accessToken: res.body.access_token,
+        refreshToken: res.body.refresh_token,
+      };
+    };
+
+    const findAuthorization = async () => {
+      const [authorization] = await ds.query(
+        `SELECT "scopes", "revokedAt" FROM core."applicationAuthorization"
+         WHERE "userId" = $1 AND "applicationId" = $2`,
+        [TEST_USER_ID, testApplication.id],
+      );
+
+      return authorization;
+    };
+
+    const revokeRefreshToken = (refreshToken: string) =>
+      request(baseUrl)
+        .post('/oauth/revoke')
+        .send({
+          token: refreshToken,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        })
+        .expect(200);
+
+    // 'read' alone, not the registration's full scope list, so the assertion
+    // fails if the granted scope is ignored in favour of the declared one.
+    it('should record the authorization with the scopes the user granted', async () => {
+      await exchangeForTokens('read');
+
+      const authorization = await findAuthorization();
+
+      expect(authorization).toBeDefined();
+      expect(authorization.scopes).toEqual(['read']);
+      expect(authorization.revokedAt).toBeNull();
+    });
+
+    it('should stop the refresh token being redeemed once the authorization is revoked', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      await revokeRefreshToken(refreshToken);
+
+      expect((await findAuthorization()).revokedAt).not.toBeNull();
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+    });
+
+    it('should let the user authorize again after revoking', async () => {
+      const { refreshToken: revokedRefreshToken } = await exchangeForTokens();
+
+      await revokeRefreshToken(revokedRefreshToken);
+
+      const { refreshToken } = await exchangeForTokens();
+
+      expect((await findAuthorization()).revokedAt).toBeNull();
+
+      await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(200);
+    });
+  });
 });
