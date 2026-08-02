@@ -1,10 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
-import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
 import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -27,10 +25,6 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       className={className}
       title={currentWorkspace?.displayName ?? ''}
     >
-      <NavigationDrawerFixedContent>
-        <MainNavigationDrawerTabsRow />
-      </NavigationDrawerFixedContent>
-
       <NavigationDrawerScrollableContent>
         <NavigationDrawerTabbedContent
           showAiChatContent={showAiChatContent}
