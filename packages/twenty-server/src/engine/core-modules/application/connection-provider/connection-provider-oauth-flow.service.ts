@@ -335,9 +335,16 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
-    const { email: handle } = await this.userRepository.findOneByOrFail({
-      id: userId,
-    });
+    const user = await this.userRepository.findOneBy({id: userId});
+
+    if (!isDefined(user)) {
+      throw new ConnectionProviderException(
+        'User not found',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      )
+    }
+
+    const { email: handle } = user;
 
     const sharedFields = {
       accessToken: encryptedAccessToken,
