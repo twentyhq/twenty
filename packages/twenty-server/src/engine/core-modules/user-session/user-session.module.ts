@@ -9,6 +9,7 @@ import { UserSessionCleanupCronJob } from 'src/engine/core-modules/user-session/
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionResolver } from 'src/engine/core-modules/user-session/user-session.resolver';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-ses
   providers: [
     UserSessionService,
     UserSessionCookieService,
+    UserSessionResolver,
     UserSessionCleanupCronJob,
     UserSessionCleanupCronCommand,
   ],

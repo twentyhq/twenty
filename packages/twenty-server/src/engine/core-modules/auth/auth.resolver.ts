@@ -236,6 +236,7 @@ export class AuthResolver {
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
+    @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
     const user =
       await this.authService.validateLoginWithPassword(userCredentials);
@@ -245,7 +246,7 @@ export class AuthResolver {
         user.email,
       );
 
-    return {
+    const result = {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
@@ -267,6 +268,14 @@ export class AuthResolver {
         }),
       },
     };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: result.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return result;
   }
 
   @Mutation(() => VerifyEmailAndGetLoginTokenDTO)
@@ -320,6 +329,7 @@ export class AuthResolver {
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @AuthProvider() authProvider: AuthProviderEnum,
+    @Context() context: { req: Request },
   ) {
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
@@ -345,7 +355,7 @@ export class AuthResolver {
         user.email,
       );
 
-    return {
+    const result = {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
@@ -367,6 +377,14 @@ export class AuthResolver {
         }),
       },
     };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: result.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return result;
   }
 
   @Mutation(() => AuthTokens)
@@ -375,6 +393,7 @@ export class AuthResolver {
     @Args()
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
     @Args('origin') origin: string,
+    @Context() context: { req: Request },
   ): Promise<AuthTokens> {
     const {
       sub: email,
@@ -395,13 +414,26 @@ export class AuthResolver {
       TwoFactorAuthenticationStrategy.TOTP,
     );
 
-    return await this.authService.verify(email, workspace.id, authProvider);
+    const authTokens = await this.authService.verify(
+      email,
+      workspace.id,
+      authProvider,
+    );
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return authTokens;
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
+    @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
@@ -428,7 +460,7 @@ export class AuthResolver {
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
-    return {
+    const result = {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
@@ -450,6 +482,14 @@ export class AuthResolver {
         }),
       },
     };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: result.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return result;
   }
 
   @Mutation(() => SignUpDTO)
@@ -632,6 +672,7 @@ export class AuthResolver {
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
+    @Context() context: { req: Request },
   ): Promise<AuthTokens> {
     const tokenPayload = await this.validateAndDecodeLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
@@ -647,6 +688,8 @@ export class AuthResolver {
       tokenPayload.workspaceId,
     );
 
+    let authTokens: AuthTokens;
+
     if (tokenPayload.authProvider === AuthProviderEnum.Impersonation) {
       const {
         workspaceId,
@@ -660,24 +703,31 @@ export class AuthResolver {
         user.email,
       );
 
-      return await this.authService.generateImpersonationAccessTokenAndRefreshToken(
-        {
+      authTokens =
+        await this.authService.generateImpersonationAccessTokenAndRefreshToken({
           workspaceId,
           impersonatorUserWorkspaceId,
           impersonatedUserWorkspaceId,
           _impersonatorUserId: impersonatorUserId,
           impersonatedUserId,
-        },
-      );
+        });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
 
-      return await this.authService.verify(
+      authTokens = await this.authService.verify(
         user.email,
         workspace.id,
         tokenPayload.authProvider,
       );
     }
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return authTokens;
   }
 
   @Mutation(() => AuthTokens)
@@ -685,13 +735,14 @@ export class AuthResolver {
   async getAuthTokensFromSSOExchangeToken(
     @Args()
     { ssoExchangeToken }: GetAuthTokensFromSSOExchangeTokenInput,
+    @Context() context: { req: Request },
   ): Promise<AuthTokens> {
     const { userId, authProvider } =
       await this.ssoExchangeTokenService.validateAndConsumeSSOExchangeTokenOrThrow(
         ssoExchangeToken,
       );
 
-    return {
+    const authTokens = {
       tokens: {
         accessOrWorkspaceAgnosticToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
@@ -707,6 +758,14 @@ export class AuthResolver {
         }),
       },
     };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return authTokens;
   }
 
   private async validateAndDecodeLoginToken(
@@ -880,12 +939,24 @@ export class AuthResolver {
     );
   }
 
+  // Transparent bridge of the cookie-session migration: every active legacy
+  // client renews within one access-token TTL, and receives a session cookie
+  // here without any interaction.
   @Mutation(() => AuthTokens)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
+  async renewToken(
+    @Args() args: AppTokenInput,
+    @Context() context: { req: Request },
+  ): Promise<AuthTokens> {
     const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
       args.appToken,
     );
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: tokens,
+      request: context.req,
+      origin: 'renewal_bridge',
+    });
 
     return { tokens: tokens };
   }

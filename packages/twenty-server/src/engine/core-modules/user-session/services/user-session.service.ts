@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
+import { type Request } from 'express';
 import ms from 'ms';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
@@ -15,6 +16,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { type AuthTokenPair } from 'src/engine/core-modules/auth/dto/auth-token-pair.dto';
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/refresh-token-jwt-payload.type';
@@ -30,9 +32,11 @@ import {
   UserSessionEntity,
   UserSessionRevokedReason,
 } from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import {
   type CachedUserSession,
   type CreateUserSessionInput,
+  type UserSessionCreationOrigin,
 } from 'src/engine/core-modules/user-session/types/user-session.type';
 import {
   generateUserSessionToken,
@@ -65,7 +69,186 @@ export class UserSessionService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
+
+  // Bridge for the dual-stack migration: mints a session alongside the JWT
+  // pair every exchange point returns, and sets the cookie on the response.
+  // Best effort by design: a session failure must never break an otherwise
+  // successful sign-in while token pairs remain the primary credential.
+  async issueSessionForTokenPair({
+    tokenPair,
+    request,
+    origin,
+  }: {
+    tokenPair: AuthTokenPair;
+    request: Request;
+    origin: UserSessionCreationOrigin;
+  }): Promise<void> {
+    if (!this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED')) {
+      return;
+    }
+
+    const response = request.res;
+
+    if (!isDefined(response)) {
+      return;
+    }
+
+    try {
+      const sessionInput = this.buildCreateSessionInputFromTokenPair(
+        tokenPair,
+        request,
+        origin,
+      );
+
+      if (!isDefined(sessionInput)) {
+        return;
+      }
+
+      const presentedSessionToken =
+        this.userSessionCookieService.extractSessionTokenFromRequest(request);
+
+      if (isDefined(presentedSessionToken)) {
+        if (origin === 'renewal_bridge') {
+          try {
+            const { payload: presentedPayload } = await this.resolveSession(
+              presentedSessionToken,
+            );
+
+            // The client already holds a valid session for the same scope:
+            // renewals must not mint a new row every 30 minutes. Anything
+            // scoped differently is replaced, never kept, so the cookie can
+            // never resolve to a workspace the renewed pair does not carry.
+            if (
+              this.isSessionScopeMatchingRenewal(presentedPayload, sessionInput)
+            ) {
+              return;
+            }
+
+            await this.revokeSessionByToken(
+              presentedSessionToken,
+              UserSessionRevokedReason.Superseded,
+            );
+          } catch (error) {
+            // Only an unusable session falls through to minting a fresh one.
+            // A cache or database failure must not mint a row per renewal.
+            if (
+              !(error instanceof AuthException) ||
+              error.code !== AuthExceptionCode.UNAUTHENTICATED
+            ) {
+              throw error;
+            }
+          }
+        } else {
+          // A real sign-in replaces whatever session the browser presented,
+          // both against fixation and because the device changes hands.
+          await this.revokeSessionByToken(
+            presentedSessionToken,
+            UserSessionRevokedReason.Superseded,
+          );
+        }
+      }
+
+      const { sessionToken, session } = await this.createSession(sessionInput);
+
+      this.userSessionCookieService.attachSessionTokenToResponse(
+        response,
+        sessionToken,
+        session.expiresAt,
+      );
+    } catch (error) {
+      // Sign-in only: the presented cookie may be the previous account's and
+      // still valid, so it must not survive a sign-in that failed to replace
+      // it. On renewal the presented session is this user's own live one, and
+      // a transient failure must not destroy it. Guarded either way, since
+      // issuance stays best effort.
+      if (origin === 'sign_in') {
+        try {
+          this.userSessionCookieService.clearSessionCookie(response);
+        } catch {
+          // Nothing further to do: the error below is what gets reported.
+        }
+      }
+
+      this.logger.error(
+        `Failed to issue a session alongside the token pair: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+  }
+
+  private isSessionScopeMatchingRenewal(
+    presentedPayload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload,
+    sessionInput: CreateUserSessionInput,
+  ): boolean {
+    if (presentedPayload.type !== JwtTokenTypeEnum.ACCESS) {
+      return (
+        presentedPayload.userId === sessionInput.userId &&
+        !isDefined(sessionInput.workspaceId) &&
+        sessionInput.isImpersonating !== true
+      );
+    }
+
+    return (
+      presentedPayload.userId === sessionInput.userId &&
+      (presentedPayload.workspaceId ?? null) ===
+        (sessionInput.workspaceId ?? null) &&
+      (presentedPayload.isImpersonating === true) ===
+        (sessionInput.isImpersonating === true) &&
+      (presentedPayload.userWorkspaceId ?? null) ===
+        (sessionInput.userWorkspaceId ?? null) &&
+      (presentedPayload.impersonatorUserWorkspaceId ?? null) ===
+        (sessionInput.impersonatorUserWorkspaceId ?? null) &&
+      (presentedPayload.impersonatedUserWorkspaceId ?? null) ===
+        (sessionInput.impersonatedUserWorkspaceId ?? null)
+    );
+  }
+
+  private buildCreateSessionInputFromTokenPair(
+    tokenPair: AuthTokenPair,
+    request: Request,
+    origin: UserSessionCreationOrigin,
+  ): CreateUserSessionInput | undefined {
+    const payload = this.jwtWrapperService.decode<
+      AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload
+    >(tokenPair.accessOrWorkspaceAgnosticToken.token, { json: true });
+
+    if (!isDefined(payload)) {
+      return undefined;
+    }
+
+    const requestMetadata = {
+      userAgent: request.headers['user-agent'] ?? null,
+      ipAddress: request.ip ?? null,
+    };
+
+    if (payload.type === JwtTokenTypeEnum.ACCESS) {
+      return {
+        userId: payload.userId ?? payload.sub,
+        workspaceId: payload.workspaceId,
+        userWorkspaceId: payload.userWorkspaceId,
+        authProvider: payload.authProvider,
+        isImpersonating: payload.isImpersonating === true,
+        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+        origin,
+        ...requestMetadata,
+      };
+    }
+
+    if (payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC) {
+      return {
+        userId: payload.userId ?? payload.sub,
+        authProvider: payload.authProvider,
+        origin,
+        ...requestMetadata,
+      };
+    }
+
+    return undefined;
+  }
 
   async createSession(input: CreateUserSessionInput): Promise<{
     sessionToken: string;

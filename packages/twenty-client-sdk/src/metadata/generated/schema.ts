@@ -1332,6 +1332,20 @@ export interface EventSubscription {
     __typename: 'EventSubscription'
 }
 
+export interface UserSession {
+    id: Scalars['UUID']
+    workspaceId?: Scalars['UUID']
+    authProvider: Scalars['String']
+    isImpersonating: Scalars['Boolean']
+    userAgent?: Scalars['String']
+    ipAddress?: Scalars['String']
+    createdAt: Scalars['DateTime']
+    lastActiveAt: Scalars['DateTime']
+    expiresAt: Scalars['DateTime']
+    isCurrent: Scalars['Boolean']
+    __typename: 'UserSession'
+}
+
 export interface BillingEndTrialPeriod {
     /** Updated subscription status */
     status?: SubscriptionStatus
@@ -1609,6 +1623,7 @@ export interface ClientConfig {
     api: ApiConfig
     canManageFeatureFlags: Scalars['Boolean']
     publicFeatureFlags: PublicFeatureFlag[]
+    isCookieSessionEnabled: Scalars['Boolean']
     isMicrosoftMessagingEnabled: Scalars['Boolean']
     isMicrosoftCalendarEnabled: Scalars['Boolean']
     isGoogleMessagingEnabled: Scalars['Boolean']
@@ -2808,6 +2823,7 @@ export interface Query {
     apiKeys: ApiKey[]
     getApiKeyRoles: Role[]
     apiKey?: ApiKey
+    currentUserSessions: UserSession[]
     getInviteSuggestions: InviteSuggestion[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
     billingPortalSession: BillingSession
@@ -2960,6 +2976,8 @@ export interface Mutation {
     updateApiKey?: ApiKey
     revokeApiKey?: ApiKey
     assignRoleToApiKey: Scalars['Boolean']
+    revokeUserSession: Scalars['Boolean']
+    revokeAllOtherUserSessions: Scalars['Int']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
     updateOneApplicationVariable: Scalars['Boolean']
@@ -4518,6 +4536,21 @@ export interface EventSubscriptionGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UserSessionGenqlSelection{
+    id?: boolean | number
+    workspaceId?: boolean | number
+    authProvider?: boolean | number
+    isImpersonating?: boolean | number
+    userAgent?: boolean | number
+    ipAddress?: boolean | number
+    createdAt?: boolean | number
+    lastActiveAt?: boolean | number
+    expiresAt?: boolean | number
+    isCurrent?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingEndTrialPeriodGenqlSelection{
     /** Updated subscription status */
     status?: boolean | number
@@ -4814,6 +4847,7 @@ export interface ClientConfigGenqlSelection{
     api?: ApiConfigGenqlSelection
     canManageFeatureFlags?: boolean | number
     publicFeatureFlags?: PublicFeatureFlagGenqlSelection
+    isCookieSessionEnabled?: boolean | number
     isMicrosoftMessagingEnabled?: boolean | number
     isMicrosoftCalendarEnabled?: boolean | number
     isGoogleMessagingEnabled?: boolean | number
@@ -6093,6 +6127,7 @@ export interface QueryGenqlSelection{
     apiKeys?: ApiKeyGenqlSelection
     getApiKeyRoles?: RoleGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
+    currentUserSessions?: UserSessionGenqlSelection
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
@@ -6286,6 +6321,8 @@ export interface MutationGenqlSelection{
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
     revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeAllOtherUserSessions?: boolean | number
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][]} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
@@ -7698,6 +7735,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isEventSubscription = (obj?: { __typename?: any } | null): obj is EventSubscription => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventSubscription"')
       return EventSubscription_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UserSession_possibleTypes: string[] = ['UserSession']
+    export const isUserSession = (obj?: { __typename?: any } | null): obj is UserSession => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
+      return UserSession_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -60,6 +60,7 @@ export const SSEClientEffect = () => {
     if (hasAccessTokenPair && !isDefined(sseClient) && isDefined(tokenPair)) {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
+        credentials: 'include',
         headers: () => {
           const currentTokenPair = store.get(tokenPairState.atom);
           const token = currentTokenPair?.accessOrWorkspaceAgnosticToken?.token;
