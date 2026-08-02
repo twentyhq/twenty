@@ -380,7 +380,7 @@ export class ConfigVariables {
   })
   @IsPositiveDuration()
   @IsOptional()
-  SESSION_ABSOLUTE_LIFETIME = '90d';
+  SESSION_ABSOLUTE_LIFETIME = '180d';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,

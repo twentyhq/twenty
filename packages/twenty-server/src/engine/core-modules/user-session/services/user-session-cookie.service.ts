@@ -5,6 +5,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CookieOptions, type Request, type Response } from 'express';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_IMPERSONATOR_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-cookie-name.constant';
+import { USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-secure-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -56,27 +58,48 @@ export class UserSessionCookieService {
     }
 
     return extractUserSessionTokenFromRequestCookie(request, {
+      secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
+      insecureCookieName: USER_SESSION_COOKIE_NAME,
       allowInsecureCookieName: !this.isSecureDeployment(),
     });
+  }
+
+  // The impersonator's own session token, parked while they impersonate.
+  // Presence alone proves nothing: stopImpersonation re-resolves it and
+  // checks it belongs to the impersonator named by the impersonation
+  // session, so a tossed cookie cannot restore into someone else's account.
+  extractImpersonatorSessionTokenFromRequest(
+    request: Request,
+  ): string | undefined {
+    if (!this.areCookieSessionsEnabled()) {
+      return undefined;
+    }
+
+    return extractUserSessionTokenFromRequestCookie(request, {
+      secureCookieName: USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME,
+      insecureCookieName: USER_SESSION_IMPERSONATOR_COOKIE_NAME,
+      allowInsecureCookieName: !this.isSecureDeployment(),
+    });
+  }
+
+  private resolveCookieOptions(): CookieOptions {
+    return {
+      httpOnly: true,
+      secure: this.isSecureDeployment(),
+      sameSite: this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE'),
+      path: '/',
+    };
   }
 
   private resolveCookieSettings(): {
     cookieName: string;
     options: CookieOptions;
   } {
-    const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
-    const secure = this.isSecureDeployment();
-
     return {
-      cookieName: secure
+      cookieName: this.isSecureDeployment()
         ? USER_SESSION_SECURE_COOKIE_NAME
         : USER_SESSION_COOKIE_NAME,
-      options: {
-        httpOnly: true,
-        secure,
-        sameSite,
-        path: '/',
-      },
+      options: this.resolveCookieOptions(),
     };
   }
 
@@ -95,6 +118,38 @@ export class UserSessionCookieService {
       ...options,
       expires: expiresAt,
     });
+  }
+
+  // Deliberately a session cookie with no expires: without cookie sessions the
+  // impersonator's credential is parked in sessionStorage, which dies with the
+  // tab, and outliving the browser would keep the restore path open longer
+  // than the mechanism it replaces.
+  attachImpersonatorSessionTokenToResponse(
+    response: Response,
+    sessionToken: string,
+  ): void {
+    if (!this.areCookieSessionsEnabled()) {
+      return;
+    }
+
+    response.cookie(
+      this.isSecureDeployment()
+        ? USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME
+        : USER_SESSION_IMPERSONATOR_COOKIE_NAME,
+      sessionToken,
+      this.resolveCookieOptions(),
+    );
+  }
+
+  clearImpersonatorSessionCookie(response: Response): void {
+    if (!this.areCookieSessionsEnabled()) {
+      return;
+    }
+
+    const options = this.resolveCookieOptions();
+
+    response.clearCookie(USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME, options);
+    response.clearCookie(USER_SESSION_IMPERSONATOR_COOKIE_NAME, options);
   }
 
   // Looser than extractSessionTokenFromRequest on purpose: it answers "did the

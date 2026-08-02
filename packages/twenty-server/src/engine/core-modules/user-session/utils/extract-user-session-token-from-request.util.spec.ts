@@ -1,5 +1,7 @@
 import { type Request } from 'express';
 
+import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 
 const buildRequest = (cookieHeader?: string): Request =>
@@ -9,11 +11,15 @@ const buildRequest = (cookieHeader?: string): Request =>
 
 const extractOnHttpDeployment = (cookieHeader?: string) =>
   extractUserSessionTokenFromRequestCookie(buildRequest(cookieHeader), {
+    secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
+    insecureCookieName: USER_SESSION_COOKIE_NAME,
     allowInsecureCookieName: true,
   });
 
 const extractOnHttpsDeployment = (cookieHeader?: string) =>
   extractUserSessionTokenFromRequestCookie(buildRequest(cookieHeader), {
+    secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
+    insecureCookieName: USER_SESSION_COOKIE_NAME,
     allowInsecureCookieName: false,
   });
 

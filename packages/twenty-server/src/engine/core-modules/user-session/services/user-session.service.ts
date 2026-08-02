@@ -140,6 +140,17 @@ export class UserSessionService {
               throw error;
             }
           }
+        } else if (sessionInput.isImpersonating === true) {
+          // The one sign-in that must not revoke what it replaces. Parking
+          // the impersonator's live session lets stopImpersonation hand back
+          // the credential they already held, instead of minting an admin
+          // session from a credential that only authorizes the impersonated
+          // user. Nothing is trusted on the strength of this cookie alone:
+          // the restore re-resolves it and checks whose session it is.
+          this.userSessionCookieService.attachImpersonatorSessionTokenToResponse(
+            response,
+            presentedSessionToken,
+          );
         } else {
           // A real sign-in replaces whatever session the browser presented,
           // both against fixation and because the device changes hands.
@@ -325,6 +336,7 @@ export class UserSessionService {
   async resolveSession(sessionToken: string): Promise<{
     payload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload;
     authenticatedAt: Date;
+    expiresAt: Date;
   }> {
     const tokenHash = hashUserSessionToken(sessionToken);
 
@@ -374,10 +386,12 @@ export class UserSessionService {
   private toResolvedSession(cachedSession: CachedUserSession): {
     payload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload;
     authenticatedAt: Date;
+    expiresAt: Date;
   } {
     return {
       payload: this.buildPayloadFromCachedSession(cachedSession),
       authenticatedAt: new Date(cachedSession.authenticatedAt),
+      expiresAt: new Date(cachedSession.expiresAt),
     };
   }
 

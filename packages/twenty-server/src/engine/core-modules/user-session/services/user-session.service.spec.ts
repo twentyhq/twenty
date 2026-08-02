@@ -37,7 +37,7 @@ describe('UserSessionService', () => {
   const insertWorkspaceEvent = jest.fn();
 
   const mockConfig: Record<string, unknown> = {
-    SESSION_ABSOLUTE_LIFETIME: '90d',
+    SESSION_ABSOLUTE_LIFETIME: '180d',
     SESSION_IDLE_TIMEOUT: '30d',
   };
 

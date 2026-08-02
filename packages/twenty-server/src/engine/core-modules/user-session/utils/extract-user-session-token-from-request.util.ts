@@ -1,8 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 
-import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
-import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
 
 const readCookieValue = (
@@ -36,7 +34,15 @@ const readCookieValue = (
 // deployment would let a subdomain toss a session in and fixate the visitor.
 export const extractUserSessionTokenFromRequestCookie = (
   request: Request,
-  { allowInsecureCookieName }: { allowInsecureCookieName: boolean },
+  {
+    secureCookieName,
+    insecureCookieName,
+    allowInsecureCookieName,
+  }: {
+    secureCookieName: string;
+    insecureCookieName: string;
+    allowInsecureCookieName: boolean;
+  },
 ): string | undefined => {
   const cookieHeader = request.headers.cookie;
 
@@ -45,9 +51,9 @@ export const extractUserSessionTokenFromRequestCookie = (
   }
 
   const token =
-    readCookieValue(cookieHeader, USER_SESSION_SECURE_COOKIE_NAME) ??
+    readCookieValue(cookieHeader, secureCookieName) ??
     (allowInsecureCookieName
-      ? readCookieValue(cookieHeader, USER_SESSION_COOKIE_NAME)
+      ? readCookieValue(cookieHeader, insecureCookieName)
       : undefined);
 
   if (!isNonEmptyString(token) || !isUserSessionToken(token)) {

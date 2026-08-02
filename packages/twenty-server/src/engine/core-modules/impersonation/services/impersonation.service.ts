@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
@@ -96,11 +97,13 @@ export class ImpersonationService {
     );
   }
 
-  // Ends a cookie-mode impersonation: revokes the impersonation session and,
-  // for same-workspace impersonation, restores the impersonator with a fresh
-  // session on the same origin. Cross-workspace impersonation runs in a
-  // separate tab whose admin session on the admin origin was never touched,
-  // so no restore session is minted there.
+  // Ends a cookie-mode impersonation: revokes the impersonation session and
+  // hands the impersonator back the session they held before it started,
+  // which was parked in a second cookie rather than revoked. Nothing is
+  // minted here, so no credential is ever created on the strength of the
+  // impersonated user's cookie. Cross-workspace impersonation runs on a
+  // different host, where a host-scoped cookie is simply absent, so it falls
+  // through to the sign-out path with no special case.
   async stopImpersonation({
     impersonationContext,
     workspaceId,
@@ -151,18 +154,78 @@ export class ImpersonationService {
       message: `Impersonation ended by impersonatorUserWorkspaceId=${impersonationContext.impersonatorUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
-    // Ending impersonation only ever drops the impersonation credential. It
-    // deliberately does not mint one for the impersonator: the request is
-    // authenticated by a credential that authorizes the impersonated user,
-    // and treating that as proof of the impersonator's identity would turn a
-    // stolen impersonation cookie into an administrator session. The
-    // impersonator signs in again, exactly as they do without cookie
-    // sessions.
-    if (isDefined(request.res)) {
+    if (!isDefined(request.res)) {
+      return { canRestoreImpersonatorSession: false };
+    }
+
+    // The looked-up row rather than the raw context value: it is the same id,
+    // already proven to exist, and definitely a string.
+    const canRestoreImpersonatorSession = await this.restoreImpersonatorSession(
+      request,
+      impersonatorUserWorkspace.id,
+    );
+
+    if (!canRestoreImpersonatorSession) {
       this.userSessionCookieService.clearSessionCookie(request.res);
     }
 
-    return { canRestoreImpersonatorSession: false };
+    this.userSessionCookieService.clearImpersonatorSessionCookie(request.res);
+
+    return { canRestoreImpersonatorSession };
+  }
+
+  // Promotes the parked impersonator session back to the active session
+  // cookie. The parked token is evidence of nothing on its own, so it is
+  // re-resolved and checked against the impersonator the impersonation
+  // session names. Any failure returns false and the caller signs the browser
+  // out, which is the same place the non-cookie flow lands when it has no
+  // stashed session to restore.
+  private async restoreImpersonatorSession(
+    request: Request,
+    impersonatorUserWorkspaceId: string,
+  ): Promise<boolean> {
+    const response = request.res;
+
+    if (!isDefined(response)) {
+      return false;
+    }
+
+    const impersonatorSessionToken =
+      this.userSessionCookieService.extractImpersonatorSessionTokenFromRequest(
+        request,
+      );
+
+    if (!isDefined(impersonatorSessionToken)) {
+      return false;
+    }
+
+    try {
+      // Fails closed on a session revoked, expired or idled out while the
+      // impersonation was running.
+      const { payload, expiresAt } =
+        await this.userSessionService.resolveSession(impersonatorSessionToken);
+
+      // Restoring into another impersonation would chain them, and a session
+      // belonging to anyone but the impersonator named by the impersonation
+      // session is not theirs to restore, however the cookie got there.
+      if (
+        payload.type !== JwtTokenTypeEnum.ACCESS ||
+        payload.isImpersonating === true ||
+        payload.userWorkspaceId !== impersonatorUserWorkspaceId
+      ) {
+        return false;
+      }
+
+      this.userSessionCookieService.attachSessionTokenToResponse(
+        response,
+        impersonatorSessionToken,
+        expiresAt,
+      );
+
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async generateImpersonationLoginToken(

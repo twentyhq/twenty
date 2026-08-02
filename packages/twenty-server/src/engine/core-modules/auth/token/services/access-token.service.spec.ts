@@ -353,6 +353,7 @@ describe('AccessTokenService', () => {
       jest.spyOn(userSessionService, 'resolveSession').mockResolvedValue({
         payload: mockPayload as any,
         authenticatedAt: new Date(),
+        expiresAt: new Date(),
       });
       jest
         .spyOn(service['jwtStrategy'], 'validate')
