@@ -30,6 +30,11 @@ export const SidePanelCampaignComposerPage = () => {
     onSent: goBackFromSidePanel,
   });
 
+  const handleClose = async () => {
+    await campaignState.saveCurrentDraft();
+    goBackFromSidePanel();
+  };
+
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
     callback: campaignState.handleSend,
@@ -49,7 +54,7 @@ export const SidePanelCampaignComposerPage = () => {
             size="small"
             variant="secondary"
             title={t`Cancel`}
-            onClick={goBackFromSidePanel}
+            onClick={handleClose}
           />,
           <Button
             key="send"

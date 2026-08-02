@@ -14,12 +14,18 @@ const StyledContainer = styled.div`
 type MassEmailWorkspaceProps = {
   connectedAccountId: string;
   personIds: string[];
+  initialDraft?: {
+    campaignId: string;
+    subject: string;
+    body: string;
+  };
   onSent: () => void;
 };
 
 export const MassEmailWorkspace = ({
   connectedAccountId,
   personIds,
+  initialDraft,
   onSent,
 }: MassEmailWorkspaceProps) => {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
@@ -27,6 +33,7 @@ export const MassEmailWorkspace = ({
   const composerState = useMassEmailComposerState({
     connectedAccountId,
     personIds,
+    initialDraft,
     onSent,
   });
 
