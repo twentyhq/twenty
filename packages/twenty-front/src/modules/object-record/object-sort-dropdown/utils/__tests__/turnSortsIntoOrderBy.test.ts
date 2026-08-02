@@ -1,6 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
+import {
+  type RecordGqlOperationOrderBy,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type EachTestingContext } from 'twenty-shared/testing';
@@ -40,6 +43,7 @@ const objectMetadataItemWithPositionField: EnrichedObjectMetadataItem = {
   isSystem: false,
   isUIEditable: true,
   isUICreatable: true,
+  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   isRemote: false,
   isSearchable: false,
   labelPlural: 'object1s',
@@ -203,6 +207,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       isRemote: false,
       isSearchable: false,
       labelPlural: 'Companies',
@@ -254,6 +259,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       isRemote: false,
       isSearchable: false,
       labelPlural: 'People',

@@ -51,9 +51,10 @@ export default definePageLayout({
 
 ### Punti chiave
 
-* `type` è in genere `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
+* `type` è uno tra `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` o `'STANDALONE_PAGE'`. Usa `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
 * `objectUniversalIdentifier` specifica a quale oggetto si applica questo layout.
-* Ogni `tab` definisce una sezione della pagina con `title`, `position` e `layoutMode` (`VERTICAL_LIST` per le pagine dei record, `GRID` per le dashboard). Una scheda che contiene un singolo widget lo visualizza automaticamente a tutta larghezza; con più widget, vengono impilati come card.
+* Ogni `tab` definisce una sezione della pagina con `title`, `position` e `layoutMode`: `VERTICAL_LIST` per le pagine dei record e le pagine autonome, `GRID` per le dashboard. In una scheda `VERTICAL_LIST`, un singolo widget viene visualizzato a tutta larghezza e occupa l’intera scheda; con più widget, vengono impilati come card. Una scheda `GRID` dispone sempre i widget come card su una griglia a 12 colonne, qualunque sia il loro numero, quindi scegli `VERTICAL_LIST` quando vuoi che un widget riempia la pagina.
+* Imposta esplicitamente `layoutMode`. Ometterlo imposta `VERTICAL_LIST` su una `STANDALONE_PAGE` e `GRID` altrove, il che raramente è ciò che vuoi per la pagina di un record.
 * Ogni `widget` all'interno di una scheda può renderizzare un [front component](/l/it/developers/extend/apps/layout/front-components), un elenco di relazioni o altri tipi di widget integrati.
 * `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
 

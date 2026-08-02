@@ -31,6 +31,8 @@ import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
+import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
+import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
@@ -73,8 +75,10 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatStreamHeartbeatService,
     AgentChatResolver,
     AgentChatSubscriptionResolver,
+    WorkspaceSetupChatResolver,
     AgentChatService,
     AgentChatStreamingService,
+    WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
     MessagePruningService,

@@ -282,6 +282,34 @@ describe('WorkspaceCacheService', () => {
     });
   });
 
+  describe('local cache expiration sweep', () => {
+    it('should run at most once per minute', async () => {
+      const expirationSweepSpy = jest.spyOn(
+        service as unknown as {
+          evictExpiredLocalEntries: (now: number) => void;
+        },
+        'evictExpiredLocalEntries',
+      );
+
+      await expect(
+        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
+      ).rejects.toThrow();
+      await expect(
+        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
+      ).rejects.toThrow();
+
+      expect(expirationSweepSpy).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(60_000);
+
+      await expect(
+        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
+      ).rejects.toThrow();
+
+      expect(expirationSweepSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('invalidateAndRecompute', () => {
     beforeEach(async () => {
       discoveryService.getProviders.mockReturnValue([

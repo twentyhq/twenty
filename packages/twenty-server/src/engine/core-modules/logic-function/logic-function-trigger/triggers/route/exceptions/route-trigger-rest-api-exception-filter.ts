@@ -34,6 +34,7 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
           404,
         );
       case RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION:
+      case RouteTriggerExceptionCode.WORKSPACE_SUSPENDED:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,

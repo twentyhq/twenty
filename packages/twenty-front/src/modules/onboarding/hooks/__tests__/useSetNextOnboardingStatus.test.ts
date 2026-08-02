@@ -6,6 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -17,7 +18,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-import { FeatureFlagKey, OnboardingStatus } from '~/generated-metadata/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,
@@ -42,6 +43,11 @@ const renderHooks = (
     isOnboardingAiChatEnabled = false,
   }: RenderHooksOptions = {},
 ) => {
+  jotaiStore.set(
+    isOnboardingAiChatEnabledState.atom,
+    isOnboardingAiChatEnabled,
+  );
+
   const { result } = renderHook(
     () => {
       const [currentUser, setCurrentUser] = useAtomState(currentUserState);
@@ -81,12 +87,6 @@ const renderHooks = (
         ? mockCurrentWorkspace.billingSubscriptions
         : [],
       workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
-          value: isOnboardingAiChatEnabled,
-        },
-      ],
     });
     result.current.setBilling({
       __typename: 'Billing',
@@ -257,7 +257,7 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-  it('should open the ai chat after onboarding when the feature flag is enabled', () => {
+  it('should open the ai chat after onboarding when it is enabled', () => {
     const { isWelcomeAnimationVisible, shouldOpenAiChatAfterOnboarding } =
       renderHooks(OnboardingStatus.INVITE_TEAM, {
         isOnboardingAiChatEnabled: true,
@@ -266,7 +266,7 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(true);
   });
 
-  it('should still show the welcome animation when the ai chat feature flag is disabled', () => {
+  it('should still show the welcome animation when the ai chat is disabled', () => {
     const { isWelcomeAnimationVisible, shouldOpenAiChatAfterOnboarding } =
       renderHooks(OnboardingStatus.INVITE_TEAM, {
         isOnboardingAiChatEnabled: false,

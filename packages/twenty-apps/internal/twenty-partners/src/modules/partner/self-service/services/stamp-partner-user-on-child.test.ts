@@ -30,6 +30,21 @@ describe('stampPartnerUserFromPartner', () => {
     });
   });
 
+  it('stamps application partnerUserId when missing', async () => {
+    query
+      .mockResolvedValueOnce({ partner: { id: 'partner-1', partnerUserId: 'member-1' } })
+      .mockResolvedValueOnce({ application: { id: 'application-1', partnerUserId: null } });
+
+    await stampPartnerUserFromPartner(client, 'partner-1', 'application', 'application-1');
+
+    expect(mutation).toHaveBeenCalledWith({
+      updateApplication: {
+        __args: { id: 'application-1', data: { partnerUserId: 'member-1' } },
+        id: true,
+      },
+    });
+  });
+
   it('stamps partnerService partnerUserId when missing', async () => {
     query
       .mockResolvedValueOnce({ partner: { id: 'partner-1', partnerUserId: 'member-1' } })

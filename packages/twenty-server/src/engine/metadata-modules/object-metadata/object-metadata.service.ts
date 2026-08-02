@@ -2,12 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import {
-  ViewKey,
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4, v5 } from 'uuid';
@@ -489,10 +483,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         flatApplication: resolvedOwnerFlatApplication,
       });
 
-    // Default view fields reference the caller-provided fields (reused as-is from
-    // the transpiler output) plus the engine-owned reserved system fields, whose
-    // deterministic identifiers we re-derive here (searchVector is never shown).
-    // TODO: remove once default view fields move to the metadata side effect engine.
+    // The INDEX table view and its view fields are provisioned by the metadata
+    // side-effect engine (objectSystemFieldsAndIndexViewOnCreate). The FIELDS_WIDGET
+    // record-page view below still references the caller-provided fields plus
+    // the engine-owned reserved system fields, whose deterministic identifiers
+    // we re-derive here (searchVector is never shown).
+    // TODO: remove once the record-page view fields move to the side-effect engine.
     const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] =
       [
         ...flatFieldMetadataToCreateOnObject,
@@ -507,19 +503,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           }),
         ),
       ];
-
-    const flatDefaultViewToCreate = this.computeFlatViewToCreate({
-      objectMetadata: flatObjectMetadataToCreate,
-      flatApplication: resolvedOwnerFlatApplication,
-    });
-
-    const flatDefaultViewFieldsToCreate = computeFlatViewFieldsToCreate({
-      flatApplication: resolvedOwnerFlatApplication,
-      objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-      viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
-    });
 
     const flatNavigationMenuItemToCreate =
       await this.computeFlatNavigationMenuItemToCreate({
@@ -557,7 +540,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const flatRecordPageFieldsViewFieldsToCreate =
       computeFlatViewFieldsToCreate({
-        flatApplication: resolvedOwnerFlatApplication,
+        applicationUniversalIdentifier:
+          resolvedOwnerFlatApplication.universalIdentifier,
         objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
         labelIdentifierFieldMetadataUniversalIdentifier:
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
@@ -594,18 +578,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToUpdate: [],
             },
             view: {
-              flatEntityToCreate: [
-                flatDefaultViewToCreate,
-                flatRecordPageFieldsViewToCreate,
-              ],
+              flatEntityToCreate: [flatRecordPageFieldsViewToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
             viewField: {
-              flatEntityToCreate: [
-                ...flatDefaultViewFieldsToCreate,
-                ...flatRecordPageFieldsViewFieldsToCreate,
-              ],
+              flatEntityToCreate: [...flatRecordPageFieldsViewFieldsToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -677,54 +655,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     return createdFlatObjectMetadata;
-  }
-
-  private computeFlatViewToCreate({
-    objectMetadata,
-    flatApplication,
-  }: {
-    flatApplication: FlatApplication;
-    objectMetadata: UniversalFlatObjectMetadata & { id: string };
-  }): UniversalFlatView & { id: string } {
-    const createdAt = new Date().toISOString();
-
-    return {
-      id: v4(),
-      objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
-      name: `All {objectLabelPlural}`,
-      key: ViewKey.INDEX,
-      icon: 'IconList',
-      type: ViewType.TABLE,
-      createdAt,
-      updatedAt: createdAt,
-      deletedAt: null,
-      isCustom: true,
-      anyFieldFilterValue: null,
-      calendarFieldMetadataUniversalIdentifier: null,
-      calendarEndFieldMetadataUniversalIdentifier: null,
-      calendarLayout: null,
-      isCompact: false,
-      shouldHideEmptyGroups: false,
-      kanbanColumnWidth: null,
-      kanbanAggregateOperation: null,
-      kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
-      mainGroupByFieldMetadataUniversalIdentifier: null,
-      openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-      position: 0,
-      universalIdentifier: v4(),
-      visibility: ViewVisibility.WORKSPACE,
-      createdByUserWorkspaceId: null,
-      isActive: true,
-      isSystemSideEffect: true,
-      universalOverrides: null,
-      viewFieldUniversalIdentifiers: [],
-      viewFieldGroupUniversalIdentifiers: [],
-      viewFilterUniversalIdentifiers: [],
-      viewGroupUniversalIdentifiers: [],
-      viewFilterGroupUniversalIdentifiers: [],
-      viewSortUniversalIdentifiers: [],
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-    };
   }
 
   private computeFlatRecordPageFieldsViewToCreate({

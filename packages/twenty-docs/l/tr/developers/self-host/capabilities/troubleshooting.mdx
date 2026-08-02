@@ -20,7 +20,7 @@ Twenty'yi ilk kez kurarken, varsayılan veritabanı parolasını değiştirmek i
 ⚠️ UYARI: Aşağıdaki adımlar veritabanındaki tüm verileri KALICI OLARAK SİLECEKTİR! ⚠️
 Bu yalnızca önemli veri içermeyen yeni kurulumlar için geçerlidir.
 
-`PG_DATABASE_PASSWORD` güncellemek için:
+`PG_DATABASE_PASSWORD` değerini güncellemek için şunları yapmanız gerekir:
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -30,7 +30,7 @@ docker compose up -d
 
 #### CR satır sonları bulundu [Windows]
 
-Bu Windows'un satır sonu karakterleri ve git yapılandırmasından kaynaklanmaktadır. Deneyin:
+Bu, Windows satır sonu karakterleri ile Git yapılandırmanızın birleşimi nedeniyle olur. Deneyin:
 
 ```
 git config --global core.autocrlf false
@@ -42,11 +42,11 @@ Ardından depoyu silin ve tekrar klonlayın.
 
 Twenty kurulumu sırasında, postgres veritabanınızı doğru şemalar, uzantılar ve kullanıcılarla hazırlamanız gerekir.
 Bu hazırlığı başarıyla tamamlarsanız, veritabanınızda `varsayılan` ve `meta veri` şemalarına sahip olmalısınız.
-Eğer yoksa, bilgisayarınızda birden fazla postgres örneği çalışmadığından emin olun.
+Eğer yoksa, bilgisayarınızda birden fazla PostgreSQL örneği çalışmadığından emin olun.
 
 #### Modül 'twenty-emails' veya buna karşılık gelen tür açıklamaları bulunamıyor.
 
-`twenty-emails` paketini veritabanını `npx nx run twenty-emails:build` ile başlatmadan önce derlemeniz gerekiyor.
+Veritabanı başlatma işlemini çalıştırmadan önce `twenty-emails` paketini (`npx nx run twenty-emails:build`) derlemeniz gerekir.
 
 #### Eksik twenty-x paketi
 
@@ -54,7 +54,7 @@ Kök dizinde yarn çalıştırdığınızdan ve ardından `npx nx server:dev twe
 
 #### Kaydettiğinde lint çalışmıyor
 
-Bu, kurulu Oxc uzantısıyla (`oxc.oxc-vscode`) kutudan çıktığı anda çalışmalıdır. Bu işe yaramazsa, vscode ayarınıza (geliştirme konteyner kapsamında) bunu eklemeyi deneyin:
+Bu, kurulu Oxc uzantısıyla (`oxc.oxc-vscode`) kutudan çıktığı anda çalışmalıdır. Bu işe yaramazsa, VS Code ayarlarınıza (geliştirme konteyner kapsamında) bunu eklemeyi deneyin:
 
 ```
 "editor.codeActionsOnSave": {
@@ -64,7 +64,7 @@ Bu, kurulu Oxc uzantısıyla (`oxc.oxc-vscode`) kutudan çıktığı anda çalı
 }
 ```
 
-#### `npx nx start` veya `npx nx start twenty-front` çalıştırırken, bellek hatası verildi
+#### `npx nx start` veya `npx nx start twenty-front` çalıştırılırken, yetersiz bellek hatası oluşuyor
 
 `npx nx start` komutu yerine yalnızca ihtiyaç duyduğunuz servisleri çalıştırın. Örneğin, sunucuda çalışıyorsanız yalnızca `npx nx worker twenty-server` çalıştırın.
 
@@ -73,7 +73,7 @@ WSL'de yalnızca `npx nx run twenty-server:start` çalıştırmayı denediyseniz
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
-Geçici çözüm, aşağıdaki komutu terminalde çalıştırmak veya otomatik olarak kurulum yapmak için .bashrc profilinize eklemektir:
+Geçici bir çözüm olarak, aşağıdaki komutu terminalinizde çalıştırabilir veya otomatik olarak uygulanması için `.bashrc` profilinize ekleyebilirsiniz:
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
@@ -81,10 +81,10 @@ Geçici çözüm, aşağıdaki komutu terminalde çalıştırmak veya otomatik o
 Referans: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
 **Bu işe yaramazsa:**
-Hangi işlemlerin makinenizin RAM'inin çoğunu kullandığını araştırın. Twenty'de bazı VScode uzantılarının çok fazla RAM aldığını fark ettik, bu yüzden onları geçici olarak devre dışı bırakıyoruz.
+Makinenizin RAM'inin çoğunu hangi işlemlerin kullandığını araştırın. Twenty'de bazı VS Code uzantılarının çok fazla RAM kullandığını fark ettik, bu yüzden onları geçici olarak devre dışı bıraktık.
 
 **Bu işe yaramazsa:**
-Makinenizi yeniden başlatmak hayalet işlemleri temizlemeye yardımcı olur.
+Makinenizi yeniden başlatmak, hayalet işlemleri temizlemeye yardımcı olur.
 
 #### `npx nx start` çalıştırırken günlüklerde garip [0] ve [1] var
 
@@ -98,19 +98,19 @@ Bu, `npx nx start` komutunun kaputun altında daha fazla komut çalıştırması
 npx nx worker twenty-server
 ```
 
-#### Microsoft 365 hesabıma bağlanamıyorum
+#### Microsoft 365 hesabımı Twenty'ye bağlayamıyorum
 
 Çoğu zaman yöneticiniz hesabınıza Microsoft 365 Lisansı sağlamadığından kaynaklanır. Denetleyin [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
 
 Bir `AADSTS50020` hata kodu alırsanız, muhtemelen kişisel bir Microsoft hesabı kullanıyorsunuzdur. Bu henüz desteklenmiyor. Daha fazla bilgi [burada](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### `yarn` çalıştırırken konsolda uyarılar beliriyor
+#### `yarn` çalıştırılırken konsolda uyarılar görünüyor
 
 Uyarılar, `package.json`'da açıkça belirtilmeyen ek bağımlılıkları çekildiğini bildiriyor, bu yüzden kritik bir hata çıkmadığı sürece her şey beklendiği gibi çalışmalıdır.
 
-#### Kullanıcı giriş sayfasına eriştiğinde, günlüklerde çalışma alanına erişmeye çalışan yetkisiz kullanıcı hatası beliriyor
+#### Bir kullanıcı giriş sayfasına eriştiğinde, günlüklerde bir çalışma alanına erişmeye çalışan yetkisiz bir kullanıcıya ilişkin hata görünüyor
 
-Bu, kullanıcı giriş yapmadığında yetkisiz olduğundan ve kimliği doğrulanmadığından beklenen bir durumdur.
+Bu beklenen bir durumdur; çünkü kullanıcı oturum açmadığında yetkisizdir ve kimliği doğrulanmamıştır.
 
 #### Çalışanınızın çalışıp çalışmadığını nasıl kontrol edersiniz?
 
@@ -137,9 +137,9 @@ Bu, kullanıcı giriş yapmadığında yetkisiz olduğundan ve kimliği doğrula
 
 * Bir **POST isteği** alıyorsanız, çalışanınız başarıyla çalışıyor demektir. Aksi halde, çalışanınızı sorun giderme yapmanız gerekir.
 
-#### Ön uç başlatılamıyor ve TS5042 hatası döndürüyor: Seçenek 'project' komut satırında kaynak dosyalarla birleştirilemez
+#### Ön uç başlatılamıyor ve şu hatayı döndürüyor: TS5042: 'project' seçeneği komut satırında kaynak dosyalarla birlikte kullanılamaz
 
-Aşağıdaki örnekte olduğu gibi `packages/twenty-ui/vite-config.ts` içindeki checker eklentisini yorum satırına alın
+Aşağıdaki örnekte gösterildiği gibi `packages/twenty-ui/vite-config.ts` içindeki checker eklentisini yorum satırı hâline getirin:
 
 ```
 plugins: [
@@ -165,13 +165,35 @@ plugins: [
 
 #### Yönetim paneline erişilemiyor
 
-Veritabanı konteynerinde `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` komutunu çalıştırarak yönetim paneline erişim sağlayın.
+Yönetim paneline erişim sağlamak için veritabanı konteynerinde `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` komutunu çalıştırın.
 
 #### Bir iş akışı çalıştırılırken, iş akışının çalıştırılması şu hatayla başarısız oluyor: "Mantık işlevi yürütme devre dışı. Etkinleştirmek için LOGIC_FUNCTION_TYPE değerini LOCAL veya LAMBDA olarak ayarlayın."
 
 Üretimde, mantık işlevleri varsayılan olarak devre dışıdır. Bunları etkinleştirmek için `LOGIC_FUNCTION_TYPE` ortam değişkenini `LOCAL` veya `LAMBDA` olarak ayarlayın. Bu, ortam değişkenleri aracılığıyla veya yönetici panelindeki veritabanı değişkenleri üzerinden yapılandırılabilir. Ayrıntılar için [Mantık İşlevleri kurulum kılavuzu](/l/tr/developers/self-host/capabilities/setup#logic-functions-available-drivers) bölümüne bakın.
 
-### 1-tıklama ile Docker Compose
+#### AI sohbetinde bir mesaj yazdığımda hemen yanıt vermiyor ve yanıtı görmek için sayfayı yenilemem gerekiyor
+
+Bu, ters proxy'nizde akış tabanlı API yanıtları için gereken yapılandırmanın eksik olduğu anlamına gelir. Aşağıda bir örnek Nginx yapılandırması bulunmaktadır:
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
+### 1 tıklamayla Docker Compose
 
 #### Giriş Yapılamıyor
 
@@ -188,7 +210,7 @@ Kurulumdan sonra giriş yapamıyorsanız:
    docker compose up -d
    ```
 
-Dikkat: database:reset komutu veritabanınızı tamamen silecek ve sıfırdan yeniden oluşturacaktır.
+`database:reset` komutunun, veritabanınızı tamamen sileceğini ve sıfırdan yeniden oluşturacağını unutmayın.
 
 #### Ters Proxy'nin Arkasında Bağlantı Sorunları
 

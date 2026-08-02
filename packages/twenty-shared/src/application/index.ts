@@ -54,6 +54,7 @@ export {
 export { getConnectionProviderUniversalIdentifier } from './deterministic-identifier/get-connection-provider-universal-identifier.util';
 export { getFieldPermissionUniversalIdentifier } from './deterministic-identifier/get-field-permission-universal-identifier.util';
 export { getFieldUniversalIdentifier } from './deterministic-identifier/get-field-universal-identifier.util';
+export { getFieldsWidgetViewUniversalIdentifier } from './deterministic-identifier/get-fields-widget-view-universal-identifier.util';
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
@@ -79,16 +80,19 @@ export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/ge
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
+export { getSystemViewFieldUniversalIdentifier } from './deterministic-identifier/get-system-view-field-universal-identifier.util';
+export { getSystemViewUniversalIdentifier } from './deterministic-identifier/get-system-view-universal-identifier.util';
 export { getViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-view-field-group-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';
 export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get-view-filter-universal-identifier.util';
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
-export {
-  getViewUniversalIdentifier,
-  getIndexViewUniversalIdentifier,
-  getFieldsWidgetViewUniversalIdentifier,
-} from './deterministic-identifier/get-view-universal-identifier.util';
+export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
+export type {
+  EnqueueJobOptions,
+  EnqueueJobInput,
+  EnqueueJobResult,
+} from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
   RegularFieldManifest,

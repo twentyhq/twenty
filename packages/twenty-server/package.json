@@ -12,6 +12,9 @@
     "database:init:prod": "node dist/database/scripts/setup-db.js && yarn database:migrate:prod --force --include-slow",
     "database:migrate:prod": "node dist/command/command run-instance-commands",
     "clickhouse:migrate:prod": "node dist/database/clickHouse/migrations/run-migrations.js",
+    "upgrade:background": "./scripts/upgrade-background.sh start",
+    "upgrade:background:logs": "./scripts/upgrade-background.sh logs",
+    "upgrade:background:stop": "./scripts/upgrade-background.sh stop",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
@@ -37,7 +40,7 @@
     "@e2b/code-interpreter": "^2.6.0",
     "@envelop/core": "4.0.3",
     "@faker-js/faker": "9.8.0",
-    "@file-type/pdf": "^0.2.0",
+    "@file-type/pdf": "^0.3.0",
     "@graphql-tools/schema": "10.0.4",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-yoga/nestjs": "2.1.0",
@@ -71,7 +74,6 @@
     "@ptc-org/nestjs-query-core": "^9.4.0",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-graphql-npm-9.4.0-8e6f7894e1.patch",
     "@ptc-org/nestjs-query-typeorm": "patch:@ptc-org/nestjs-query-typeorm@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-typeorm-npm-9.4.0-ca3414967e.patch",
-    "@react-email/render": "^1.2.3",
     "@react-pdf/renderer": "^4.1.6",
     "@sentry/nestjs": "^10.59.0",
     "@sentry/node": "^10.59.0",

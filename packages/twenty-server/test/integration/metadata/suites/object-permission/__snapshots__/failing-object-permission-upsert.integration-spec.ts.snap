@@ -1,17 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Object permission upsert should fail when object is system object 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT",
-    "userFriendlyMessage": "You cannot set permissions on system objects as they are managed by the platform.",
-  },
-  "message": "Cannot add object permission on system object",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Object permission upsert should fail when objectMetadataId does not exist 1`] = `
 {
   "extensions": {

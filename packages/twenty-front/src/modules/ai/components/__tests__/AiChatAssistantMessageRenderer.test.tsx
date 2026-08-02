@@ -8,12 +8,14 @@ jest.mock('@/ai/components/ThinkingStepsDisplay', () => ({
   ThinkingStepsDisplay: ({
     hasAssistantTextResponseStarted,
     parts,
+    isTrailingWhileStreaming,
   }: {
     parts: unknown[];
     hasAssistantTextResponseStarted: boolean;
+    isTrailingWhileStreaming?: boolean;
   }) => (
     <div data-testid="thinking-steps-display">
-      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}`}
+      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}${isTrailingWhileStreaming ? '-trailing-while-streaming' : ''}`}
     </div>
   ),
 }));
@@ -40,12 +42,15 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
-const renderAssistantRenderer = (messageParts: ExtendedUIMessagePart[]) => {
+const renderAssistantRenderer = (
+  messageParts: ExtendedUIMessagePart[],
+  { isLastMessageStreaming = false }: { isLastMessageStreaming?: boolean } = {},
+) => {
   return render(
     <ThemeProvider colorScheme="light">
       <AiChatAssistantMessageRenderer
         messageParts={messageParts}
-        isLastMessageStreaming={false}
+        isLastMessageStreaming={isLastMessageStreaming}
       />
     </ThemeProvider>,
   );
@@ -232,6 +237,70 @@ describe('AiChatAssistantMessageRenderer', () => {
       'Routing complete',
     );
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
+  });
+
+  it('should flag the trailing thinking steps group while streaming', () => {
+    const messageParts = [
+      {
+        type: 'reasoning',
+        text: 'Reasoning content',
+        state: 'done',
+      },
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'trailing-while-streaming',
+    );
+  });
+
+  it('should not flag a thinking steps group when answer text follows it', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+      {
+        type: 'text',
+        text: 'Partial answer',
+        state: 'streaming',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
+      'trailing-while-streaming',
+    );
+  });
+
+  it('should not flag the trailing thinking steps group when the message is not streaming', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
+      'trailing-while-streaming',
+    );
   });
 
   it('should group a dynamic-tool part (native web search) into ThinkingStepsDisplay', () => {

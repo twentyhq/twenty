@@ -79,6 +79,7 @@ export default defineObject({
 * `universalIdentifier` يجب أن يكون فريدًا وثابتًا عبر عمليات النشر.
 * يتطلب كل حقل `name` و`type` و`label` ومعرّف `universalIdentifier` ثابتًا خاصًا به.
 * المصفوفة `fields` اختيارية — يمكنك تعريف كائنات بدون حقول مخصصة.
+* `openRecordIn` يحدد أين تُفتح سجلات هذا الكائن عند النقر عليها: `ObjectOpenRecordIn.USER_CHOICE` (الإعداد الافتراضي، الذي يتبع تفضيل كل عضو في مساحة العمل من Settings → Experience)، أو `ObjectOpenRecordIn.SIDE_PANEL`، أو `ObjectOpenRecordIn.RECORD_PAGE`. ثبِّتها على `RECORD_PAGE` للسجلات التي تحتاج إلى صفحة كاملة لتكون قابلة للاستخدام، كما هو الحال في سير العمل ولوحات المعلومات، أو على `SIDE_PANEL` للسجلات التي لا تكون منطقية إلا كلوحة سريعة، كما هو الحال في أحداث التقويم.
 * لا تحتاج الحقول المضمّنة المُعرَّفة هنا إلى `objectUniversalIdentifier` — إذ تُورَّث من الكائن الأب. استخدم [`defineField()`](/l/ar/developers/extend/apps/data/extending-objects) لإضافة حقول إلى كائنات لا تمتلكها.
 * يمكنك إنشاء كائنات جديدة باستخدام `yarn twenty dev:add object`، والذي يرشدك خلال التسمية والحقول والعلاقات. راجع [Architecture → Scaffolding entities](/l/ar/developers/extend/apps/getting-started/scaffolding).
 
@@ -138,4 +139,4 @@ export default defineObject({
 
 * **اربط هذا الكائن بغيره من الكائنات** — راجع صفحة [Relations](/l/ar/developers/extend/apps/data/relations) لمعرفة نمط العلاقة ثنائية الاتجاه.
 * **أضف حقولًا إلى الكائنات التابعة لتطبيقات أخرى** — راجع [Extending Objects](/l/ar/developers/extend/apps/data/extending-objects) لمعرفة المزيد حول `defineField()`.
-* **اعرض هذا الكائن في واجهة المستخدم** — راجع [Views](/l/ar/developers/extend/apps/layout/views) و[Navigation Menu Items](/l/ar/developers/extend/apps/layout/navigation-menu-items) لإظهاره في الشريط الجانبي.
+* **اعرض هذا الكائن في واجهة المستخدم (UI)** — راجع [عناصر قائمة التنقل](/l/ar/developers/extend/apps/layout/navigation-menu-items) لإضافة عنصر في الشريط الجانبي؛ وراجع [طرق العرض](/l/ar/developers/extend/apps/layout/views) لإضافة تكوينات قوائم مخصصة.

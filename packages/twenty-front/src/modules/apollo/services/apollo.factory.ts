@@ -124,12 +124,12 @@ export class ApolloFactory implements ApolloManager {
         uri: REST_API_BASE_URL,
       });
 
-      const authLink = setContext(async (_, { headers }) => {
+      const authLink = setContext(async (_, { headers, skipAuthToken }) => {
         const tokenPair = getTokenPair();
 
         const locale = this.currentWorkspaceMember?.locale ?? i18n.locale;
 
-        if (isUndefinedOrNull(tokenPair)) {
+        if (isUndefinedOrNull(tokenPair) || skipAuthToken === true) {
           return {
             headers: {
               ...headers,

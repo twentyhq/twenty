@@ -4,11 +4,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLayoutDashboard, IconReload } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
+import { IconAddressBook, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -16,9 +16,13 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { ObjectOpenRecordInPicker } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledContentContainer = styled.div`
@@ -38,6 +42,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   const { t } = useLingui();
   const navigateApp = useNavigateApp();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const { openModal } = useModal();
   const { resetPageLayoutToDefault } = useResetPageLayoutToDefault();
 
@@ -55,7 +60,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   const firstRecord = records[0];
 
   const handleCustomizeRecordPage = () => {
-    if (!isDefined(firstRecord)) {
+    if (!hasLayoutsPermission || !isDefined(firstRecord)) {
       return;
     }
 
@@ -74,7 +79,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   };
 
   const handleConfirmReset = async () => {
-    if (!isDefined(pageLayout)) {
+    if (!hasLayoutsPermission || !isDefined(pageLayout)) {
       return;
     }
 
@@ -87,15 +92,23 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
     <StyledContentContainer>
       <Section>
         <H2Title
-          title={t`Customize`}
-          description={t`Customize the layout for this role`}
+          title={t`Record page`}
+          description={t`Customize the workspace record page`}
         />
         <SettingsCard
           title={t`Customize record page`}
-          Icon={<IconLayoutDashboard size={theme.icon.size.md} />}
+          description={t`Customize how your record page looks.`}
+          Icon={<IconAddressBook size={theme.icon.size.md} />}
           onClick={handleCustomizeRecordPage}
-          disabled={!isDefined(firstRecord)}
+          disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
         />
+      </Section>
+      <Section>
+        <H2Title
+          title={t`Navigation`}
+          description={t`Where records of this object open`}
+        />
+        <ObjectOpenRecordInPicker objectMetadataItem={objectMetadataItem} />
       </Section>
       <Section>
         <H2Title
@@ -108,7 +121,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           size="small"
           Icon={IconReload}
           onClick={handleResetPageLayout}
-          disabled={!isDefined(pageLayout)}
+          disabled={!hasLayoutsPermission || !isDefined(pageLayout)}
         />
       </Section>
       <ConfirmationModal

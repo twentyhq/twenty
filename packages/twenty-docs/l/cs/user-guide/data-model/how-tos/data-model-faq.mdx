@@ -42,7 +42,6 @@ Všechny aktivní objekty se zobrazují v navigaci. Objekty, které nepotřebuje
 Ne, typy polí nelze po vytvoření změnit. Pokud potřebujete jiný typ, vytvořte nové pole se správným typem, migrujte svá data a poté staré pole deaktivujte.
 </Accordion>
 
-
 <Accordion title="Proč potřebuji různé jednotné a množné názvy?">
 Naše API GraphQL používá obě formy pro různé operace:
 * `createPerson` (jednotné) pro akce na jednotlivých záznamech
@@ -73,15 +72,15 @@ Aktuálně nelze nastavit vlastní pole jako povinná. Všechna pole přijímaj�
 </Accordion>
 
 <Accordion title="Mohu vytvořit vzorcová pole?">
-Vzorcová pole přijdou v **Q1 2026**. Mezitím můžete použít pracovní postupy pro automatické výpočty a aktualizace hodnot polí.
+Pole pro vzorce přicházejí v **H2 2026**. Mezitím můžete použít pracovní postupy pro automatické výpočty a aktualizace hodnot polí.
 </Accordion>
 
 <Accordion title="Mohu mít v mých objektech vnořená pole?">
-Vnořená pole přijdou v **Q1 2026**. Aktuálně můžete použít pracovní postupy k přenesení hodnot polí z příbuzných objektů. Například k zobrazení odvětví společnosti na záznamu Osoby vytvořte vlastní pole pro Lidi a použijte pracovní postup k synchronizaci hodnoty.
+Vložená pole přicházejí v **H2 2026**. Aktuálně můžete použít pracovní postupy k přenesení hodnot polí z příbuzných objektů. Například k zobrazení odvětví společnosti na záznamu Osoby vytvořte vlastní pole pro Lidi a použijte pracovní postup k synchronizaci hodnoty.
 </Accordion>
 
 <Accordion title="Mohu přerovnat pole v objektech?">
-Přerovnávání polí bude dostupné s vlastními rozloženími ve **Q4 2025**. Aktuálně se pole zobrazují v abecedním pořadí.
+Ano, přejděte do Nastavení → Datový model → předmět dle vašeho výběru → Rozložení a klikněte **Přizpůsobit stránku záznamu**. Pokud je toto tlačítko zakázáno, musíte vytvořit záznam.
 </Accordion>
 </AccordionGroup>
 
@@ -93,7 +92,7 @@ Ano! Samo-referenční relace jsou podporovány a doporučeny pro případy pou�
 </Accordion>
 
 <Accordion title="Mohu vytvořit mnoho-mnoho vztahů?">
-Vztahy mnoho-mnoho přijdou v **H1 2026**. Aktuálně jako řešení vytvořte mezilehlý objekt se dvěma vztahy jedno-mnoho.
+Člověk k mnoha vztahům přichází v **H2 2026**. Aktuálně jako řešení vytvořte mezilehlý objekt se dvěma vztahy jedno-mnoho.
 
 Například pro propojení Lidí a Projektů (mnoho-mnoho) vytvořte objekt "Přiřazení k projektům" s:
 * Relaci k Lidem (mnoho přiřazení → jedna osoba)
@@ -146,6 +145,10 @@ Ano, data CSV můžete importovat do libovolného objektu, včetně vlastních o
 
 <Accordion title="Mohu exportovat konfiguraci svého datového modelu?">
 Aktuálně neexistuje vestavěný export konfigurace datového modelu. Pokud potřebujete migrovat svůj datový model mezi pracovními prostory, kontaktujte podporu.
+</Accordion>
+
+<Accordion title="Kolik polí může mít jeden objekt?">
+Maximální počet polí, která může mít jeden objekt je 1600 polí podle limitů Postgres, včetně existujících i odstraněných polí. Uvědomte si, že dvacet let neopraví váš pracovní prostor, pokud je dosažen limit 1600 polí, protože spadá pod naše zásady spravedlivého využívání.
 </Accordion>
 </AccordionGroup>
 

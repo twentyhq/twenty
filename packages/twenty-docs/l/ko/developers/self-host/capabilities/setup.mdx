@@ -271,9 +271,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. **이메일** 섹션을 찾으세요
 3. SMTP 설정을 구성하세요:
 
-<ArticleTabs label1="Gmail" label2="오피스365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   [App Password](https://support.google.com/accounts/answer/185833)를 프로비저닝해야 합니다.
   * EMAIL_DRIVER=smtp
@@ -282,9 +282,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=gmail_email_address
   * EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="오피스365">
 
   2단계 인증을 사용 중인 경우, [앱 비밀번호](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)를 발급받아야 합니다.
   * EMAIL_DRIVER=smtp
@@ -293,9 +293,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=office365_email_address
   * EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev**는 개발 및 테스트를 위한 가상의 SMTP 이메일 서버입니다.
   * smtp4dev 이미지를 실행하세요: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -305,9 +305,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.

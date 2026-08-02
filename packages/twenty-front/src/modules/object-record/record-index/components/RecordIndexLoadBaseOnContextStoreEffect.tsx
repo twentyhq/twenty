@@ -18,15 +18,20 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
 
-  const currentViewLoadKey = isDefined(contextStoreCurrentViewId)
-    ? `${contextStoreCurrentViewId}-${isCalendarWeekViewEnabled}`
-    : undefined;
-
   const [loadedViewKey, setLoadedViewKey] = useState<string | undefined>();
 
   const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: contextStoreCurrentViewId ?? '',
   });
+
+  const viewGroupsSignature = (view?.viewGroups ?? [])
+    .map((viewGroup) => viewGroup.id)
+    .sort()
+    .join(',');
+
+  const currentViewLoadKey = isDefined(contextStoreCurrentViewId)
+    ? `${contextStoreCurrentViewId}-${isCalendarWeekViewEnabled}-${viewGroupsSignature}`
+    : undefined;
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 

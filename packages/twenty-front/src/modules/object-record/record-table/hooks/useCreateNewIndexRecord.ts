@@ -5,12 +5,12 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
+import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -18,10 +18,9 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, OpenRecordIn } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
@@ -51,6 +50,8 @@ export const useCreateNewIndexRecord = ({
   );
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+
+  const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -85,19 +86,12 @@ export const useCreateNewIndexRecord = ({
         ...recordInput,
       };
 
-      const recordIndexOpenRecordIn = store.get(
-        recordIndexOpenRecordInState.atom,
-      );
-
       const createdRecord = await createOneRecord({
         id: recordId,
         ...mergedRecordInput,
       });
 
-      if (
-        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
-        canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
-      ) {
+      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -107,22 +101,18 @@ export const useCreateNewIndexRecord = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
+        if (isDefined(labelIdentifierFieldMetadataItem)) {
+          store.set(newRecordTitleCellToOpenState.atom, {
+            recordId,
+            fieldName: labelIdentifierFieldMetadataItem.name,
+          });
+        }
+
         closeSidePanelMenu();
-        navigate(
-          AppPath.RecordShowPage,
-          {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectRecordId: recordId,
-          },
-          undefined,
-          {
-            state: {
-              isNewRecord: true,
-              objectRecordId: recordId,
-              labelIdentifierFieldName: labelIdentifierFieldMetadataItem?.name,
-            },
-          },
-        );
+        navigate(AppPath.RecordShowPage, {
+          objectNameSingular: objectMetadataItem.nameSingular,
+          objectRecordId: recordId,
+        });
       }
 
       if (isDefined(recordIndexGroupFieldMetadataItem)) {
@@ -172,6 +162,7 @@ export const useCreateNewIndexRecord = ({
       navigate,
       objectMetadataItem,
       openRecordInSidePanel,
+      openRecordIn,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
