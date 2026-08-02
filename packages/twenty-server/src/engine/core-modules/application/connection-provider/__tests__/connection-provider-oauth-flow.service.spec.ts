@@ -52,7 +52,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     findOne: jest.Mock;
     findOneByOrFail: jest.Mock;
   };
-  let userRepository: { findOneByOrFail: jest.Mock };
+  let userRepository: { findOneBy: jest.Mock };
   let workspaceCacheService: { getOrRecompute: jest.Mock };
   let messageQueueService: { add: jest.Mock };
   let exceptionHandlerService: { captureExceptions: jest.Mock };
@@ -105,7 +105,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       })),
     };
     userRepository = {
-      findOneByOrFail: jest.fn(async ({ id }) => ({
+      findOneBy: jest.fn(async ({ id }) => ({
         id,
         email: 'connecting-user@example.com',
       })),
@@ -393,7 +393,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
           handle: 'connecting-user@example.com',
         }),
       );
-      expect(userRepository.findOneByOrFail).toHaveBeenCalledWith({
+      expect(userRepository.findOneBy).toHaveBeenCalledWith({
         id: 'user-1',
       });
       expect(connectedAccountRepository.save).toHaveBeenCalled();
@@ -466,6 +466,20 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(connectedAccountRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ visibility: 'workspace' }),
       );
+    });
+
+    it('throws when the connecting user no longer exists', async () => {
+      userRepository.findOneBy.mockResolvedValue(null);
+
+      await expect(
+        service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        }),
+      ).rejects.toMatchObject({ code: 'INVALID_STATE' });
+
+      expect(connectedAccountRepository.create).not.toHaveBeenCalled();
+      expect(connectedAccountRepository.save).not.toHaveBeenCalled();
     });
 
     it('rejects an invalid state', async () => {

@@ -335,13 +335,13 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
-    const user = await this.userRepository.findOneBy({id: userId});
+    const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!isDefined(user)) {
       throw new ConnectionProviderException(
         'User not found',
         ConnectionProviderExceptionCode.INVALID_STATE,
-      )
+      );
     }
 
     const { email: handle } = user;
