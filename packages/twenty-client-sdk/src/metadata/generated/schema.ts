@@ -2203,8 +2203,9 @@ export interface ApplicationAuthorization {
     applicationId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     applicationName: Scalars['String']
-    scopes: Scalars['String'][]
-    lastAuthorizedAt: Scalars['DateTime']
+    applicationUniversalIdentifier?: Scalars['String']
+    scopes?: Scalars['String'][]
+    lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
     createdAt: Scalars['DateTime']
     __typename: 'ApplicationAuthorization'
@@ -5507,6 +5508,7 @@ export interface ApplicationAuthorizationGenqlSelection{
     applicationId?: boolean | number
     workspaceId?: boolean | number
     applicationName?: boolean | number
+    applicationUniversalIdentifier?: boolean | number
     scopes?: boolean | number
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number

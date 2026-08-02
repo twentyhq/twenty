@@ -61,6 +61,8 @@ export class ApplicationAuthorizationResolver {
       applicationId: authorization.applicationId,
       workspaceId: authorization.workspaceId,
       applicationName: authorization.application.name,
+      applicationUniversalIdentifier:
+        authorization.application.universalIdentifier,
       scopes: authorization.scopes,
       lastAuthorizedAt: authorization.lastAuthorizedAt,
       lastUsedAt: authorization.lastUsedAt,

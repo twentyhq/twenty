@@ -48,6 +48,39 @@ export class ApplicationAuthorizationService {
     );
   }
 
+  // Stands in for the consent event that happened before this table existed.
+  // The refresh token proves the authorization took place but carries no scope
+  // claim and no timestamp for it, so both are left null instead of being
+  // guessed from what the application declares today. Insert-only, so it can
+  // never overwrite a row written by a real consent.
+  async backfillAuthorizationFromRefreshToken({
+    userId,
+    workspaceId,
+    userWorkspaceId,
+    applicationId,
+  }: {
+    userId: string;
+    workspaceId: string;
+    userWorkspaceId: string;
+    applicationId: string;
+  }): Promise<void> {
+    await this.applicationAuthorizationRepository
+      .createQueryBuilder()
+      .insert()
+      .values({
+        userId,
+        workspaceId,
+        userWorkspaceId,
+        applicationId,
+        scopes: null,
+        lastAuthorizedAt: null,
+        lastUsedAt: new Date(),
+        revokedAt: null,
+      })
+      .orIgnore()
+      .execute();
+  }
+
   // Returns revoked rows too: the caller has to tell "never authorized" apart
   // from "authorized then revoked", which are opposite answers.
   async findByUserAndApplication({

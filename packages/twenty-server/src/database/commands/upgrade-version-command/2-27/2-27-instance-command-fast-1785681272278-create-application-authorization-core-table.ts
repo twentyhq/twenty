@@ -15,8 +15,10 @@ export class CreateApplicationAuthorizationCoreTableFastInstanceCommand
         "workspaceId" uuid NOT NULL,
         "applicationId" uuid NOT NULL,
         "userWorkspaceId" uuid NOT NULL,
-        "scopes" text array NOT NULL DEFAULT '{}',
-        "lastAuthorizedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
+        -- Both nullable: a row reconstructed from a refresh token predating
+        -- this table has no record of what was consented to, or when.
+        "scopes" text array,
+        "lastAuthorizedAt" TIMESTAMP WITH TIME ZONE,
         "lastUsedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
         "revokedAt" TIMESTAMP WITH TIME ZONE,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

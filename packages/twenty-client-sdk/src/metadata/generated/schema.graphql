@@ -2515,8 +2515,9 @@ type ApplicationAuthorization {
   applicationId: UUID!
   workspaceId: UUID!
   applicationName: String!
-  scopes: [String!]!
-  lastAuthorizedAt: DateTime!
+  applicationUniversalIdentifier: String
+  scopes: [String!]
+  lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
   createdAt: DateTime!
 }

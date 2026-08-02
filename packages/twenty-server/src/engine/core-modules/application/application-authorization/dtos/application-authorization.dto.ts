@@ -16,11 +16,19 @@ export class ApplicationAuthorizationDTO {
   @Field(() => String)
   applicationName: string;
 
-  @Field(() => [String])
-  scopes: string[];
+  // Two custom applications in a workspace can carry the same name, so the
+  // name alone cannot tell the user which authorization they are revoking.
+  @Field(() => String, { nullable: true })
+  applicationUniversalIdentifier: string | null;
 
-  @Field(() => Date)
-  lastAuthorizedAt: Date;
+  // Null when the grant was reconstructed from a refresh token predating the
+  // authorization record, so the screen can say the original consent is
+  // unknown instead of inventing one.
+  @Field(() => [String], { nullable: true })
+  scopes: string[] | null;
+
+  @Field(() => Date, { nullable: true })
+  lastAuthorizedAt: Date | null;
 
   @Field(() => Date)
   lastUsedAt: Date;

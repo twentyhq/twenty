@@ -4984,6 +4984,9 @@ export default {
             "applicationName": [
                 1
             ],
+            "applicationUniversalIdentifier": [
+                1
+            ],
             "scopes": [
                 1
             ],

@@ -66,6 +66,7 @@ describe('OAuthService', () => {
 
   const applicationAuthorizationService = {
     recordAuthorization: jest.fn(),
+    backfillAuthorizationFromRefreshToken: jest.fn(),
     findByUserAndApplication: jest.fn(),
     touchLastUsedAt: jest.fn(),
     revokeAuthorizationForApplication: jest.fn(),
@@ -261,7 +262,7 @@ describe('OAuthService', () => {
       ).toHaveBeenCalledWith(authorizationId);
     });
 
-    it('should write the missing grant for a refresh token issued before authorizations were recorded', async () => {
+    it('should backfill the missing grant for a refresh token issued before authorizations were recorded', async () => {
       applicationAuthorizationService.findByUserAndApplication.mockResolvedValue(
         null,
       );
@@ -269,17 +270,33 @@ describe('OAuthService', () => {
       const result = await refresh();
 
       expect(
-        applicationAuthorizationService.recordAuthorization,
+        applicationAuthorizationService.backfillAuthorizationFromRefreshToken,
       ).toHaveBeenCalledWith({
         userId,
         workspaceId,
         userWorkspaceId,
         applicationId,
-        scopes: ['api', 'profile'],
       });
       expect(result).toEqual(
         expect.objectContaining({ access_token: 'access-token' }),
       );
+    });
+
+    // The token carries no scope claim, so what the registration declares now
+    // is not evidence of what this user agreed to.
+    it('should not pass the registration scopes off as the backfilled consent', async () => {
+      applicationAuthorizationService.findByUserAndApplication.mockResolvedValue(
+        null,
+      );
+
+      await refresh();
+
+      expect(
+        applicationAuthorizationService.backfillAuthorizationFromRefreshToken,
+      ).toHaveBeenCalledWith(expect.not.objectContaining({ scopes: [] }));
+      expect(
+        applicationAuthorizationService.recordAuthorization,
+      ).not.toHaveBeenCalled();
     });
 
     it('should refuse to renew when the user is no longer a member of the workspace', async () => {
@@ -294,7 +311,27 @@ describe('OAuthService', () => {
         expect.objectContaining({ error: 'invalid_grant' }),
       );
       expect(
-        applicationAuthorizationService.recordAuthorization,
+        applicationAuthorizationService.backfillAuthorizationFromRefreshToken,
+      ).not.toHaveBeenCalled();
+    });
+
+    // Removing a member soft-deletes the membership, so the grant outlives it.
+    it('should refuse to renew an existing grant once the membership is gone', async () => {
+      applicationAuthorizationService.findByUserAndApplication.mockResolvedValue(
+        buildAuthorization(),
+      );
+      userWorkspaceRepository.findOne.mockResolvedValue(null);
+
+      const result = await refresh();
+
+      expect(result).toEqual(
+        expect.objectContaining({ error: 'invalid_grant' }),
+      );
+      expect(
+        applicationTokenService.renewApplicationTokens,
+      ).not.toHaveBeenCalled();
+      expect(
+        applicationAuthorizationService.touchLastUsedAt,
       ).not.toHaveBeenCalled();
     });
 
@@ -330,6 +367,42 @@ describe('OAuthService', () => {
         applicationAuthorizationService.revokeAuthorizationForApplication,
       ).toHaveBeenCalledWith({ userId, applicationId });
       expect(result).toEqual({ success: true });
+    });
+
+    // Without the row, the refresh path would find nothing and backfill a
+    // fresh active grant, so revoking a token that predates the record would
+    // silently do nothing.
+    it('should lay down the row before revoking so a pre-record token stays revoked', async () => {
+      await service.revokeToken({
+        token: 'refresh-token',
+        clientId,
+        clientSecret,
+      });
+
+      expect(
+        applicationAuthorizationService.backfillAuthorizationFromRefreshToken
+          .mock.invocationCallOrder[0],
+      ).toBeLessThan(
+        applicationAuthorizationService.revokeAuthorizationForApplication.mock
+          .invocationCallOrder[0],
+      );
+    });
+
+    it('should still revoke when the membership is gone', async () => {
+      userWorkspaceRepository.findOne.mockResolvedValue(null);
+
+      await service.revokeToken({
+        token: 'refresh-token',
+        clientId,
+        clientSecret,
+      });
+
+      expect(
+        applicationAuthorizationService.backfillAuthorizationFromRefreshToken,
+      ).not.toHaveBeenCalled();
+      expect(
+        applicationAuthorizationService.revokeAuthorizationForApplication,
+      ).toHaveBeenCalledWith({ userId, applicationId });
     });
 
     it('should stay a no-op for a token that carries no user', async () => {

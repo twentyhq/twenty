@@ -377,7 +377,6 @@ export class OAuthService {
           userId: payload.userId,
           workspaceId: payload.workspaceId,
           applicationId: application.id,
-          scopes: applicationRegistration.oAuthScopes,
         });
 
         if (authorizationError) {
@@ -458,12 +457,11 @@ export class OAuthService {
         if (
           application?.applicationRegistrationId === applicationRegistration.id
         ) {
-          await this.applicationAuthorizationService.revokeAuthorizationForApplication(
-            {
-              userId: payload.userId,
-              applicationId: payload.applicationId,
-            },
-          );
+          await this.revokeUserAuthorization({
+            userId: payload.userId,
+            workspaceId: payload.workspaceId,
+            applicationId: payload.applicationId,
+          });
         }
       }
 
@@ -611,19 +609,17 @@ export class OAuthService {
 
   // Refresh tokens issued before authorizations were recorded have no row to
   // check against. Rejecting them would sign every live integration out the
-  // moment this ships, so the first refresh writes the grant that was always
+  // moment this ships, so the first refresh backfills the grant that was always
   // implied. A revoked authorization keeps its row, so this never resurrects
   // access the user turned off.
   private async consumeUserAuthorization({
     userId,
     workspaceId,
     applicationId,
-    scopes,
   }: {
     userId: string;
     workspaceId: string;
     applicationId: string;
-    scopes: string[];
   }): Promise<OAuthErrorResponse | null> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -638,25 +634,29 @@ export class OAuthService {
       );
     }
 
+    // Rechecked on every refresh, not just when backfilling: removing a member
+    // soft-deletes the membership, so an existing grant outlives it and nothing
+    // else in this path would notice.
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (!userWorkspace) {
+      return this.errorResponse(
+        'invalid_grant',
+        'User no longer has access to this workspace',
+      );
+    }
+
     if (!isDefined(authorization)) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { userId, workspaceId },
-      });
-
-      if (!userWorkspace) {
-        return this.errorResponse(
-          'invalid_grant',
-          'User no longer has access to this workspace',
-        );
-      }
-
-      await this.applicationAuthorizationService.recordAuthorization({
-        userId,
-        workspaceId,
-        userWorkspaceId: userWorkspace.id,
-        applicationId,
-        scopes,
-      });
+      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
+        {
+          userId,
+          workspaceId,
+          userWorkspaceId: userWorkspace.id,
+          applicationId,
+        },
+      );
 
       return null;
     }
@@ -666,6 +666,43 @@ export class OAuthService {
     );
 
     return null;
+  }
+
+  // A token predating the authorization record has no row to mark revoked, and
+  // the refresh path would then happily backfill a fresh active one. Lay the
+  // row down first so the revocation has something to stick to. If the
+  // membership is gone the refresh already fails on that, so there is nothing
+  // worth recording.
+  private async revokeUserAuthorization({
+    userId,
+    workspaceId,
+    applicationId,
+  }: {
+    userId: string;
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<void> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (isDefined(userWorkspace)) {
+      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
+        {
+          userId,
+          workspaceId,
+          userWorkspaceId: userWorkspace.id,
+          applicationId,
+        },
+      );
+    }
+
+    await this.applicationAuthorizationService.revokeAuthorizationForApplication(
+      {
+        userId,
+        applicationId,
+      },
+    );
   }
 
   private async isAuthorizationRevoked({

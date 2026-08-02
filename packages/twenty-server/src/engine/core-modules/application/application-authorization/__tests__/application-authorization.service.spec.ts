@@ -16,6 +16,10 @@ describe('ApplicationAuthorizationService', () => {
     andWhere: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
     getMany: jest.fn().mockResolvedValue([]),
+    insert: jest.fn().mockReturnThis(),
+    values: jest.fn().mockReturnThis(),
+    orIgnore: jest.fn().mockReturnThis(),
+    execute: jest.fn().mockResolvedValue({ identifiers: [] }),
   };
 
   const userId = 'user-1';
@@ -39,6 +43,10 @@ describe('ApplicationAuthorizationService', () => {
     queryBuilder.andWhere.mockReturnThis();
     queryBuilder.orderBy.mockReturnThis();
     queryBuilder.getMany.mockResolvedValue([]);
+    queryBuilder.insert.mockReturnThis();
+    queryBuilder.values.mockReturnThis();
+    queryBuilder.orIgnore.mockReturnThis();
+    queryBuilder.execute.mockResolvedValue({ identifiers: [] });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -101,6 +109,31 @@ describe('ApplicationAuthorizationService', () => {
     });
   });
 
+  describe('backfillAuthorizationFromRefreshToken', () => {
+    const backfill = () =>
+      service.backfillAuthorizationFromRefreshToken({
+        userId,
+        workspaceId,
+        userWorkspaceId,
+        applicationId,
+      });
+
+    it('should leave the consent unrecorded rather than guessing it', async () => {
+      await backfill();
+
+      expect(queryBuilder.values).toHaveBeenCalledWith(
+        expect.objectContaining({ scopes: null, lastAuthorizedAt: null }),
+      );
+    });
+
+    it('should never overwrite a row written by a real consent', async () => {
+      await backfill();
+
+      expect(queryBuilder.orIgnore).toHaveBeenCalled();
+      expect(repository.upsert).not.toHaveBeenCalled();
+    });
+  });
+
   describe('findByUserAndApplication', () => {
     it('should not filter on revokedAt so callers can tell a revoked grant from a missing one', async () => {
       repository.findOneBy.mockResolvedValue(null);
@@ -128,6 +161,15 @@ describe('ApplicationAuthorizationService', () => {
       );
       expect(queryBuilder.andWhere).toHaveBeenCalledWith(
         'applicationAuthorization.revokedAt IS NULL',
+      );
+    });
+
+    it('should put the most recently used authorization first', async () => {
+      await service.findActiveAuthorizationsForUser(userId);
+
+      expect(queryBuilder.orderBy).toHaveBeenCalledWith(
+        'applicationAuthorization.lastUsedAt',
+        'DESC',
       );
     });
   });

@@ -937,13 +937,21 @@ describe('OAuth (integration)', () => {
 
     const findAuthorization = async () => {
       const [authorization] = await ds.query(
-        `SELECT "scopes", "revokedAt" FROM core."applicationAuthorization"
+        `SELECT "scopes", "lastAuthorizedAt", "revokedAt"
+         FROM core."applicationAuthorization"
          WHERE "userId" = $1 AND "applicationId" = $2`,
         [TEST_USER_ID, testApplication.id],
       );
 
       return authorization;
     };
+
+    const deleteAuthorization = () =>
+      ds.query(
+        `DELETE FROM core."applicationAuthorization"
+         WHERE "userId" = $1 AND "applicationId" = $2`,
+        [TEST_USER_ID, testApplication.id],
+      );
 
     const revokeRefreshToken = (refreshToken: string) =>
       request(baseUrl)
@@ -999,6 +1007,45 @@ describe('OAuth (integration)', () => {
         client_id: testRegistration.oAuthClientId,
         client_secret: testClientSecret,
       }).expect(200);
+    });
+
+    // Deleting the row leaves a refresh token in the state every token minted
+    // before this table existed is in.
+    it('should backfill a refresh token that predates the authorization record without inventing a consent', async () => {
+      const { refreshToken } = await exchangeForTokens('read write');
+
+      await deleteAuthorization();
+
+      await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(200);
+
+      const authorization = await findAuthorization();
+
+      expect(authorization).toBeDefined();
+      expect(authorization.scopes).toBeNull();
+      expect(authorization.lastAuthorizedAt).toBeNull();
+      expect(authorization.revokedAt).toBeNull();
+    });
+
+    it('should keep a refresh token predating the authorization record revoked', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      await deleteAuthorization();
+
+      await revokeRefreshToken(refreshToken);
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
     });
   });
 });
