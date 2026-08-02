@@ -337,6 +337,43 @@ describe('convergeDivergedCallRecordings', () => {
     expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
   });
 
+  it('marks NOT_RECORDED when the done bot left because nobody joined', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        statusChanges: [
+          {
+            code: 'call_ended',
+            subCode: 'timeout_exceeded_noone_joined',
+            createdAt: '2026-06-09T14:04:00.000Z',
+          },
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [],
+      },
+    });
+    const client = buildClient([buildStuckRecordingNode()]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listRecallTranscriptsMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'NOT_RECORDED',
+          callRecorderFailureReason: 'timeout_exceeded_noone_joined',
+          endedAt: '2026-06-09T14:04:00.000Z',
+        },
+      },
+    ]);
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
   it('does not fail a completed bot sync when a persisted artifact remains reachable', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,

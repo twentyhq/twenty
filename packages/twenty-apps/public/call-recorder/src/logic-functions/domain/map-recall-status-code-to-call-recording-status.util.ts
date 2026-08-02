@@ -1,8 +1,19 @@
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { isNotRecordedRecallSubCode } from 'src/logic-functions/constants/not-recorded-recall-sub-codes';
 
-export const mapRecallStatusCodeToCallRecordingStatus = (
-  statusCode: string | undefined,
-): CallRecordingStatus | undefined => {
+export const mapRecallStatusCodeToCallRecordingStatus = ({
+  statusCode,
+  statusSubCode,
+}: {
+  statusCode: string | undefined;
+  statusSubCode?: string | undefined;
+}): CallRecordingStatus | undefined => {
+  // The sub code wins over the status code: Recall reports benign no-capture
+  // outcomes both as call_ended (bot left on its own) and fatal (bot never got in).
+  if (isNotRecordedRecallSubCode(statusSubCode)) {
+    return CallRecordingStatus.NOT_RECORDED;
+  }
+
   switch (statusCode) {
     case 'joining_call':
     case 'in_waiting_room':

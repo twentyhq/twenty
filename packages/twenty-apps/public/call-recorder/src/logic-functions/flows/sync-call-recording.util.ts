@@ -151,6 +151,11 @@ const buildSyncStateFieldUpdates = ({
       updateData.callRecorderFailureReason =
         syncState.failureReason ?? 'recall_bot_failed';
     }
+
+    if (syncState.status === CallRecordingStatus.NOT_RECORDED) {
+      updateData.callRecorderFailureReason =
+        syncState.failureReason ?? 'recall_bot_did_not_record';
+    }
   }
 
   if (
@@ -186,6 +191,7 @@ const buildMissingArtifactsFailureUpdate = ({
 }): CallRecordingUpdateFields => {
   if (
     pendingStatus === CallRecordingStatus.FAILED ||
+    pendingStatus === CallRecordingStatus.NOT_RECORDED ||
     isCallRecordingStatusDowngrade({
       fromStatus: currentStatus,
       toStatus: CallRecordingStatus.FAILED,
@@ -234,7 +240,9 @@ const resolveMediaImportUpdate = ({
 }): CallRecordingUpdateFields => {
   const isRecordingFailed =
     currentStatus === CallRecordingStatus.FAILED ||
-    pendingStatus === CallRecordingStatus.FAILED;
+    currentStatus === CallRecordingStatus.NOT_RECORDED ||
+    pendingStatus === CallRecordingStatus.FAILED ||
+    pendingStatus === CallRecordingStatus.NOT_RECORDED;
 
   if (!isRecordingFailed) {
     return mediaImportUpdate;

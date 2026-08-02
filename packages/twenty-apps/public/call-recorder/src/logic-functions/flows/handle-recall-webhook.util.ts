@@ -67,10 +67,11 @@ const handleRecallStatusEvent = async ({
   client: CoreApiClient;
   webhookEvent: RecallWebhookEvent;
 }): Promise<RecallWebhookHandlerResult> => {
-  const { event, statusCode } = webhookEvent;
+  const { event, statusCode, statusSubCode } = webhookEvent;
   const callRecordingStatus = mapRecallEventToCallRecordingStatus({
     event,
     statusCode,
+    statusSubCode,
   });
 
   if (isUndefined(callRecordingStatus)) {
@@ -224,9 +225,11 @@ const findMatchingCallRecording = async ({
 const mapRecallEventToCallRecordingStatus = ({
   event,
   statusCode,
+  statusSubCode,
 }: {
   event: string;
   statusCode: string | undefined;
+  statusSubCode: string | undefined;
 }): CallRecordingStatus | undefined => {
   if (event === 'recording.done') {
     return CallRecordingStatus.PROCESSING;
@@ -236,7 +239,10 @@ const mapRecallEventToCallRecordingStatus = ({
     return CallRecordingStatus.FAILED;
   }
 
-  return mapRecallStatusCodeToCallRecordingStatus(statusCode);
+  return mapRecallStatusCodeToCallRecordingStatus({
+    statusCode,
+    statusSubCode,
+  });
 };
 
 const buildRecordingTimestampsUpdate = ({
@@ -278,17 +284,16 @@ const buildExternalRecordingIdUpdate = (
     ? {}
     : { externalRecordingId: webhookEvent.externalRecordingId };
 
-type NonFailedCallRecordingStatus = Exclude<
-  CallRecordingStatus,
-  CallRecordingStatus.FAILED
->;
+type NoArtifactCallRecordingStatus =
+  | CallRecordingStatus.FAILED
+  | CallRecordingStatus.NOT_RECORDED;
 
 type CallRecordingStatusUpdate =
   | {
-      status: NonFailedCallRecordingStatus;
+      status: Exclude<CallRecordingStatus, NoArtifactCallRecordingStatus>;
     }
   | {
-      status: CallRecordingStatus.FAILED;
+      status: NoArtifactCallRecordingStatus;
       callRecorderFailureReason: string;
     };
 
@@ -299,7 +304,10 @@ const buildCallRecordingStatusUpdate = ({
   reason: string;
   status: CallRecordingStatus;
 }): CallRecordingStatusUpdate => {
-  if (status === CallRecordingStatus.FAILED) {
+  if (
+    status === CallRecordingStatus.FAILED ||
+    status === CallRecordingStatus.NOT_RECORDED
+  ) {
     return { status, callRecorderFailureReason: reason };
   }
 
@@ -309,4 +317,5 @@ const buildCallRecordingStatusUpdate = ({
 const getRecallWebhookFailureReason = ({
   event,
   statusCode,
-}: RecallWebhookEvent): string => statusCode ?? event;
+  statusSubCode,
+}: RecallWebhookEvent): string => statusSubCode ?? statusCode ?? event;

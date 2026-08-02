@@ -16,6 +16,7 @@ export type RecallWebhookBody = {
 export type RecallWebhookEvent = {
   event: string;
   statusCode: string | undefined;
+  statusSubCode: string | undefined;
   statusTimestamp: string | undefined;
   externalBotId: string | undefined;
   externalRecordingId: string | undefined;
@@ -46,6 +47,10 @@ export const parseRecallWebhookEvent = (
       getString(getRecordAtPath(data, ['data', 'code'])) ??
       getString(getRecordAtPath(bot, ['status', 'code'])) ??
       getStatusCodeFromEventName(event),
+    statusSubCode:
+      getString(getRecordAtPath(data, ['status', 'sub_code'])) ??
+      getString(getRecordAtPath(data, ['data', 'sub_code'])) ??
+      getString(getRecordAtPath(bot, ['status', 'sub_code'])),
     statusTimestamp: normalizeRecallTimestamp(
       getString(getRecordAtPath(data, ['status', 'created_at'])) ??
         getString(getRecordAtPath(data, ['data', 'updated_at'])) ??

@@ -473,7 +473,8 @@ const canResetCallRecordingStatusToScheduled = (
   status: string | undefined,
 ): boolean =>
   status === CallRecordingStatus.SCHEDULED ||
-  status === CallRecordingStatus.FAILED;
+  status === CallRecordingStatus.FAILED ||
+  status === CallRecordingStatus.NOT_RECORDED;
 
 const buildRemovedCalendarEventIdsByMeetingKey = (
   removedOccurrences: RemovedCallRecorderOccurrence[],
