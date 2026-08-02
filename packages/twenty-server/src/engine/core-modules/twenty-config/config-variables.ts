@@ -1682,6 +1682,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
+    description: 'API key for Atlas Cloud models',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ATLASCLOUD_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
     description: 'API key for Anthropic models (Claude)',
     type: ConfigVariableType.STRING,
   })

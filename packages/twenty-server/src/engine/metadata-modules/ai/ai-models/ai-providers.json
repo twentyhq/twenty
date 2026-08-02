@@ -1,4 +1,21 @@
 {
+  "atlascloud": {
+    "npm": "@ai-sdk/openai-compatible",
+    "label": "Atlas Cloud",
+    "baseUrl": "https://api.atlascloud.ai/v1",
+    "apiKey": "{{ATLASCLOUD_API_KEY}}",
+    "models": [
+      {
+        "name": "deepseek-ai/deepseek-v4-pro",
+        "label": "DeepSeek V4 Pro",
+        "inputCostPerMillionTokens": 1.68,
+        "outputCostPerMillionTokens": 3.38,
+        "cachedInputCostPerMillionTokens": 0.13,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 393216
+      }
+    ]
+  },
   "openai": {
     "npm": "@ai-sdk/openai",
     "label": "OpenAI",

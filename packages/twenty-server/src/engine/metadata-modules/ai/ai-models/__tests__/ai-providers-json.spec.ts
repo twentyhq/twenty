@@ -7,6 +7,7 @@ import { normalizeAiProviders } from 'src/engine/metadata-modules/ai/ai-models/u
 const PROVIDERS = normalizeAiProviders(defaultAiProviders as AiProvidersConfig);
 
 const EXPECTED_PROVIDER_NAMES = [
+  'atlascloud',
   'openai',
   'anthropic',
   'google',
@@ -79,5 +80,16 @@ describe('ai-providers.json integrity', () => {
       expect(config.npm).toBeDefined();
       expect(config.npm).toMatch(/^@ai-sdk\//);
     });
+  });
+
+  it('should configure Atlas Cloud as an OpenAI-compatible provider', () => {
+    const atlasCloud = PROVIDERS.atlascloud;
+
+    expect(atlasCloud?.npm).toBe('@ai-sdk/openai-compatible');
+    expect(atlasCloud?.baseUrl).toBe('https://api.atlascloud.ai/v1');
+    expect(atlasCloud?.apiKey).toBe('{{ATLASCLOUD_API_KEY}}');
+    expect(atlasCloud?.models?.map(({ name }) => name)).toContain(
+      'deepseek-ai/deepseek-v4-pro',
+    );
   });
 });
