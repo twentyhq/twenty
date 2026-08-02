@@ -3,8 +3,7 @@ import { isUndefined } from '@sniptt/guards';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 // Deliveries are unordered; a late event must never move status backwards.
-// FAILED and NOT_RECORDED share a rank: both are terminal no-artifact outcomes
-// and a late event must not flip one into the other.
+// FAILED and NOT_RECORDED share a rank so a late event cannot flip one into the other.
 const CALL_RECORDING_STATUS_PROGRESSION: Record<CallRecordingStatus, number> = {
   [CallRecordingStatus.SCHEDULED]: 0,
   [CallRecordingStatus.JOINING]: 1,

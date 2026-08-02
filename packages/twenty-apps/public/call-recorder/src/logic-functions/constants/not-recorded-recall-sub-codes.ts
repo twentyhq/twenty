@@ -1,8 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
-// Recall sub codes for meetings where nothing was captured: the bot was never
-// admitted, the meeting never started, or no human participant ever joined.
-// Anything else stays FAILED so real recording errors remain visible.
+// Sub codes meaning nothing was captured: bot never admitted, meeting not started, nobody joined.
 export const NOT_RECORDED_RECALL_SUB_CODES: readonly string[] = [
   'meeting_not_started',
   'timeout_exceeded_noone_joined',

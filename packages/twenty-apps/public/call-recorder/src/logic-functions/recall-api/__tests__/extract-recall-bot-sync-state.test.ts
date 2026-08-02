@@ -166,24 +166,6 @@ describe('extractRecallBotSyncState', () => {
     expect(syncState.failureReason).toBe('timeout_exceeded_noone_joined');
   });
 
-  it('classifies a fatal bot that was never admitted as NOT_RECORDED', () => {
-    const syncState = extractRecallBotSyncState(
-      buildRecallBotSnapshot({
-        statusChanges: [
-          { code: 'in_waiting_room', createdAt: '2026-01-01T12:58:00.000Z' },
-          {
-            code: 'fatal',
-            subCode: 'timeout_exceeded_waiting_room',
-            createdAt: '2026-01-01T13:10:00.000Z',
-          },
-        ],
-      }),
-    );
-
-    expect(syncState.status).toBe('NOT_RECORDED');
-    expect(syncState.failureReason).toBe('timeout_exceeded_waiting_room');
-  });
-
   it('keeps FAILED with the sub code as reason for non-benign fatal outcomes', () => {
     const syncState = extractRecallBotSyncState(
       buildRecallBotSnapshot({

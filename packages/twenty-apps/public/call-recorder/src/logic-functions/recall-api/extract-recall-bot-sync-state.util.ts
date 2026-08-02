@@ -24,13 +24,10 @@ export const extractRecallBotSyncState = (
   const { statusChanges } = bot;
   const latestStatusChange = getLatestStatusChange(statusChanges);
   const recording = bot.recordings[0];
-  // The no-capture sub code usually sits on a call_ended change that a later
-  // 'done' change hides from the latest-status mapping.
+  // A later 'done' change hides the no-capture sub code, so scan the history.
   const notRecordedStatusChange = isUndefined(recording)
     ? findNotRecordedStatusChange(statusChanges)
     : undefined;
-  // The sub code is deliberately withheld here: NOT_RECORDED is only derived
-  // through the no-recording scan above, never when an artifact exists.
   const status = isUndefined(notRecordedStatusChange)
     ? mapRecallStatusCodeToCallRecordingStatus({
         statusCode: latestStatusChange?.code,
