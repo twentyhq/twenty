@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
-import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -12,6 +11,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -30,12 +30,6 @@ export type AgentActorContext = {
   userId: string;
   userWorkspaceId: string;
   userContext: UserContext;
-};
-
-export type RunAsWorkspaceMemberContext = {
-  actorContext: ActorMetadata;
-  authContext: UserWorkspaceAuthContext;
-  roleId: string;
 };
 
 @Injectable()
@@ -124,9 +118,8 @@ export class AgentActorContextService {
     };
   }
 
-  // Used when an agent runs on behalf of a workspace member: the run gets that
-  // member's auth context, so row-level permissions and record attribution
-  // follow the member rather than the calling application.
+  // The member's auth context makes row-level permissions and record
+  // attribution follow them rather than the calling application.
   async buildRunAsWorkspaceMemberContext({
     workspaceMemberId,
     workspaceId,

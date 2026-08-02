@@ -146,10 +146,15 @@ role allow, records it creates are attributed to that member, and the member's
 row-level permissions apply. Omit the field for autonomous runs (scheduled
 jobs, database-event triggers): those keep the agent's own role.
 
+Your app is responsible for mapping the person who triggered the run to a
+workspace member. Only calls authenticated with an app access token — which is
+what `runAgent()` uses from a logic function — may name a member.
+
 <Warning>
-  The run fails when the workspace member cannot be resolved — a missing or
-  deactivated member, or one with no role. It never falls back to the agent's
-  own role, since that would grant more access than the caller asked for.
+  `runAgent()` throws when the workspace member cannot be resolved — an
+  unknown or removed member, or one with no role. It never falls back to the
+  agent's own role, since that would grant more access than the caller asked
+  for.
 </Warning>
 
 ```ts src/roles/default-role.ts

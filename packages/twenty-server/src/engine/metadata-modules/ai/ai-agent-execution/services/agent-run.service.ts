@@ -7,16 +7,19 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import {
-  AgentActorContextService,
-  type RunAsWorkspaceMemberContext,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -35,10 +38,12 @@ export class AgentRunService {
   async run({
     workspace,
     requestUserWorkspaceId,
+    callerApplication,
     input,
   }: {
     workspace: FlatWorkspace;
     requestUserWorkspaceId: string | null;
+    callerApplication?: FlatApplication;
     input: RunAgentInput;
   }): Promise<RunAgentResult> {
     const agent = await this.agentRepository.findOne(workspace.id, {
@@ -63,27 +68,11 @@ export class AgentRunService {
       );
     }
 
-    const { runAsWorkspaceMemberId } = input;
-    let runAsContext: RunAsWorkspaceMemberContext | undefined;
-
-    if (isDefined(runAsWorkspaceMemberId)) {
-      const resolvedRunAsContext = await this.buildRunAsContext({
-        workspaceMemberId: runAsWorkspaceMemberId,
-        workspaceId: workspace.id,
-      });
-
-      // Fail closed: falling back to the agent role alone would run the agent
-      // with more permissions than the member the caller asked to run as.
-      if (!isDefined(resolvedRunAsContext)) {
-        return {
-          result: null,
-          error: `Could not run as workspace member ${runAsWorkspaceMemberId}.`,
-          success: false,
-        };
-      }
-
-      runAsContext = resolvedRunAsContext;
-    }
+    const runAsContext = await this.resolveRunAsContext({
+      runAsWorkspaceMemberId: input.runAsWorkspaceMemberId,
+      callerApplication,
+      workspaceId: workspace.id,
+    });
 
     const authContext: WorkspaceAuthContext = runAsContext?.authContext ?? {
       type: 'application',
@@ -130,27 +119,33 @@ export class AgentRunService {
     }
   }
 
-  private async buildRunAsContext({
-    workspaceMemberId,
+  // Fails closed: resolution errors propagate instead of falling back to the
+  // agent role, which would grant more than the caller asked for.
+  private async resolveRunAsContext({
+    runAsWorkspaceMemberId,
+    callerApplication,
     workspaceId,
   }: {
-    workspaceMemberId: string;
+    runAsWorkspaceMemberId?: string;
+    callerApplication?: FlatApplication;
     workspaceId: string;
-  }): Promise<RunAsWorkspaceMemberContext | null> {
-    try {
-      return await this.agentActorContextService.buildRunAsWorkspaceMemberContext(
-        {
-          workspaceMemberId,
-          workspaceId,
-        },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Could not build a run-as context for workspace member ${workspaceMemberId}`,
-        error instanceof Error ? error.stack : error,
-      );
-
-      return null;
+  }): Promise<RunAsWorkspaceMemberContext | undefined> {
+    if (!isDefined(runAsWorkspaceMemberId)) {
+      return undefined;
     }
+
+    // Members are mapped to their chat identity by app code an admin installed.
+    // A user or API key naming an arbitrary member would be impersonation.
+    if (!isDefined(callerApplication)) {
+      throw new AiException(
+        'Running an agent as a workspace member requires an application access token',
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
+      );
+    }
+
+    return this.agentActorContextService.buildRunAsWorkspaceMemberContext({
+      workspaceMemberId: runAsWorkspaceMemberId,
+      workspaceId,
+    });
   }
 }

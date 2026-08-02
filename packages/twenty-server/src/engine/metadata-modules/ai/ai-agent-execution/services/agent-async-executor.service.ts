@@ -41,6 +41,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
+import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -65,7 +66,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -134,22 +134,6 @@ export class AgentAsyncExecutorService {
     return {};
   }
 
-  // The agent role stays first: it is the role explicit object grants are
-  // resolved against. A run-as role only ever narrows it further.
-  private buildAgentRolePermissionConfig({
-    agentRoleId,
-    runAsRoleId,
-  }: {
-    agentRoleId: string;
-    runAsRoleId?: string;
-  }): RolePermissionConfig {
-    return {
-      intersectionOf: isDefined(runAsRoleId)
-        ? [agentRoleId, runAsRoleId]
-        : [agentRoleId],
-    };
-  }
-
   // Workflow agent nodes run a scoped task: pre-load the full schemas of the
   // few explicitly-granted objects so the model skips the learn_tools round trip.
   private async buildPreloadedRegistryTools({
@@ -170,7 +154,7 @@ export class AgentAsyncExecutorService {
     const toolProviderContext: ToolProviderContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
-      rolePermissionConfig: this.buildAgentRolePermissionConfig({
+      rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId,
         runAsRoleId,
       }),
@@ -210,7 +194,7 @@ export class AgentAsyncExecutorService {
     // Left undefined without a run-as role so the catalog and the meta-tools
     // keep resolving permissions exactly as they do outside run-as mode.
     const rolePermissionConfig = isDefined(runAsRoleId)
-      ? this.buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
+      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
       : undefined;
 
     const toolContext: ToolContext = {

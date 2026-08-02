@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
@@ -26,6 +27,8 @@ describe('AgentRunService', () => {
     agentUniversalIdentifier: 'agent-uid',
     prompt: 'Enrich record 123',
   };
+
+  const callerApplication = { id: 'app-1' } as FlatApplication;
 
   const runAsActorContext = {
     source: 'AGENT',
@@ -147,6 +150,7 @@ describe('AgentRunService', () => {
     await service.run({
       workspace,
       requestUserWorkspaceId: 'user-workspace-1',
+      callerApplication,
       input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
     });
 
@@ -171,17 +175,30 @@ describe('AgentRunService', () => {
       new Error('Workspace member not found'),
     );
 
-    const result = await service.run({
-      workspace,
-      requestUserWorkspaceId: 'user-workspace-1',
-      input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
-    });
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: 'user-workspace-1',
+        callerApplication,
+        input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
+      }),
+    ).rejects.toThrow('Workspace member not found');
 
-    expect(result).toEqual({
-      result: null,
-      error: 'Could not run as workspace member workspace-member-1.',
-      success: false,
-    });
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('rejects running as a workspace member when the caller is not an application', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: 'user-workspace-1',
+        input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
+      }),
+    ).rejects.toThrow('requires an application access token');
+
+    expect(
+      agentActorContextService.buildRunAsWorkspaceMemberContext,
+    ).not.toHaveBeenCalled();
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });
 
