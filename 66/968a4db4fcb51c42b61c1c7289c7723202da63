@@ -1,0 +1,40 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_7b8ba79302f9af::t_6699db2ff68a71 6
+  s_7b8ba79302f9af::t_926e6654aa0fa1 25
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_7b8ba79302f9af::t_5893fcd87bcf9b 29
+  s_7b8ba79302f9af::t_a9aa32ad63803b 105,182,221-226,228-233,240-244
+  s_7b8ba79302f9af::t_a623857d832405 167-172,178-181
+  s_7b8ba79302f9af::t_0bf1189ce71407 13-14
+  s_7b8ba79302f9af::t_3ddcd7e6ec1e29 88-93,101-104
+  s_7b8ba79302f9af::t_c483a733b68758 106
+  s_7b8ba79302f9af::t_68f84ffc2f3dd6 183
+  s_7b8ba79302f9af::t_5deedfe1dd62a7 245-246
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_7b8ba79302f9af::t_20875d38b0a8a8 165-170,176-179
+  s_7b8ba79302f9af::t_a8f81dcc1d1fa6 13-14
+  s_7b8ba79302f9af::t_072de4a4336ed4 29
+  s_7b8ba79302f9af::t_d1d34b6dbe791f 104,180,219-224,226-231,238-242
+  s_7b8ba79302f9af::t_9af562ec72c6d4 87-92,100-103
+  s_7b8ba79302f9af::t_e911fe24519fe5 105
+  s_7b8ba79302f9af::t_40da89ea5e48ee 181
+  s_7b8ba79302f9af::t_66b8e2d6961097 243-244
+packages/twenty-server/src/engine/core-modules/metrics/types/metrics-keys.type.ts
+  s_7b8ba79302f9af::t_aa7d77a6cfbb27 80-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "66968a4db4fcb51c42b61c1c7289c7723202da63",
+  "prompts": {},
+  "sessions": {
+    "s_7b8ba79302f9af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b98e2bce-772a-46cf-b5b4-7db634fce020",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
