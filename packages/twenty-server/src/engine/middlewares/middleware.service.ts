@@ -143,7 +143,11 @@ export class MiddlewareService {
       error instanceof AuthException &&
       DEAD_SESSION_COOKIE_EXCEPTION_CODES.has(error.code);
 
-    if (!isCookieAuthenticated || !isDeadCredential || !isDefined(request.res)) {
+    if (
+      !isCookieAuthenticated ||
+      !isDeadCredential ||
+      !isDefined(request.res)
+    ) {
       return;
     }
 
