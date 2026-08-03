@@ -111,7 +111,50 @@ import { createClient } from './generated/twenty';
 
 const client = createClient({
   url: 'https://my-instance.example.com/graphql',
-  headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
+  headers: async () => ({
+    Authorization: `Bearer ${await getValidAccessToken()}`,
+  }),
+});
+
+const { people } = await client.query({
+  people: { edges: { node: { id: true, name: true } } },
+});
+```
+
+#### Authentication
+
+The emitted client is the genql runtime, which gives you three hooks, in increasing order of control:
+
+1. **`headers`** — a static object, or a sync/async function. A function is re-evaluated **on every request**, so it is the natural place for per-request tokens: return a fresh `Authorization` header from your auth layer each time. A static object fits server-side consumers using a long-lived API key.
+2. **`fetch`** — swap the fetch implementation; URL, body building, and header merging stay genql's.
+3. **`fetcher`** — full transport override: genql hands you the built GraphQL operation and you do the HTTP call yourself.
+
+There is **no built-in token refresh**. Error semantics: a non-2xx response throws a plain `Error`; a 200 response carrying GraphQL errors throws `GenqlError` (exported from the generated `index.ts`), so an `UNAUTHENTICATED` extension code surfaces there rather than as a 401. Two patterns:
+
+- **Proactive (recommended)**: refresh inside the async `headers` callback. If `getValidAccessToken()` checks expiry and refreshes before returning, every request carries a valid token and you never handle 401s in the normal path.
+- **Reactive**: retry on 401 with a custom `fetcher`, which is the only hook that sees the response before the client throws:
+
+```typescript
+const client = createClient({
+  fetcher: async (operation) => {
+    const post = async (token: string) =>
+      fetch(`${apiUrl}/graphql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(operation),
+      });
+
+    let response = await post(await getAccessToken());
+
+    if (response.status === 401) {
+      response = await post(await forceRefreshAccessToken());
+    }
+
+    return response.json();
+  },
 });
 ```
 
