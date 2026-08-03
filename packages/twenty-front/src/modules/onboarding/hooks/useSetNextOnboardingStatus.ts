@@ -86,8 +86,6 @@ const getNextOnboardingStatus = ({
 
 export const useSetNextOnboardingStatus = () => {
   const store = useStore();
-  // Never read currentUser from the store here: WorkspaceActivation awaits
-  // loadCurrentUser first, so the atom already holds the step to go through.
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);

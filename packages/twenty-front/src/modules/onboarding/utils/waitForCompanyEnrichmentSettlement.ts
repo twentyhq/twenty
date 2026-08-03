@@ -64,8 +64,6 @@ export const waitForCompanyEnrichmentSettlement = ({
       unsubscribes.push(store.sub(atom, settleWhenAnswered));
     }
 
-    // Subscribing mounts the atoms, which can flush a queued listener straight
-    // away, so the last subscriptions can outlive an already settled promise.
     if (isSettled) {
       unsubscribeAll();
     }

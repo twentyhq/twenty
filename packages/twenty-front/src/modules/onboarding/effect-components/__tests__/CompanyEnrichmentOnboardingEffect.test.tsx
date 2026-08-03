@@ -7,6 +7,7 @@ import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
+import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -83,6 +84,7 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
   beforeEach(() => {
     resetJotaiStore();
     localStorage.clear();
+    sessionStorage.clear();
     mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
   });
 
@@ -124,6 +126,38 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     expect(jotaiStore.get(hasAttemptedCompanyEnrichmentFetchState.atom)).toBe(
       true,
     );
+  });
+
+  it('stays unsettled for a waiter while the fetch is in flight', async () => {
+    let hasSettled = false;
+
+    void waitForCompanyEnrichmentSettlement({
+      store: jotaiStore,
+      timeoutMs: 10_000,
+    }).then(() => {
+      hasSettled = true;
+    });
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+      }),
+    ]);
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(jotaiStore.get(hasAttemptedCompanyEnrichmentFetchState.atom)).toBe(
+      true,
+    );
+    expect(hasSettled).toBe(false);
+
+    await flushMutation();
+
+    expect(hasSettled).toBe(true);
   });
 
   it.each([OnboardingStatus.COMPLETED, OnboardingStatus.WORKSPACE_ACTIVATION])(

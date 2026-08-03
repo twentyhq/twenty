@@ -110,8 +110,6 @@ export class CompanyEnrichmentService {
     return enrichmentResult;
   }
 
-  // The enrichment is only ever read by the AI-chat workspace setup and the
-  // book-a-call onboarding step, so calling a paid API without either is waste.
   private hasEnrichmentConsumer(): boolean {
     return (
       this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED') ||

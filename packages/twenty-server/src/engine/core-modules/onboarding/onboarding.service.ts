@@ -461,8 +461,6 @@ export class OnboardingService {
     );
   }
 
-  // Best-effort: a lead that cannot be flagged still onboards, it just goes
-  // straight to the plan step.
   async setOnboardingBookCallPendingIfQualified({
     userId,
     workspaceId,
@@ -494,8 +492,6 @@ export class OnboardingService {
         return;
       }
 
-      // The offered flag closes the step for good, so it must never outlive the
-      // pending step it guards.
       await this.dataSource.transaction(async (entityManager) => {
         const queryRunner = entityManager.queryRunner as QueryRunner;
 
