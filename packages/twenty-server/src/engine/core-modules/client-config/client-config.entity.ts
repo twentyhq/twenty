@@ -301,7 +301,7 @@ export class ClientConfig {
   @Field(() => ApiConfig)
   api: ApiConfig;
 
-  onboarding: OnboardingConfig;
+  onboarding?: OnboardingConfig;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;

@@ -282,10 +282,11 @@ export class WorkspaceInvitationService {
     }
 
     const isOnboardingInviteReward =
-      isOnboardingInviteRewardOverride ??
-      (await this.onboardingService.isOnboardingInviteTeamPending({
-        workspaceId: workspace.id,
-      }));
+      this.twentyConfigService.get('IS_BILLING_ENABLED') &&
+      (isOnboardingInviteRewardOverride ??
+        (await this.onboardingService.isOnboardingInviteTeamPending({
+          workspaceId: workspace.id,
+        })));
 
     if (isOnboardingInviteReward) {
       await this.throwIfOnboardingInvitationLimitReached(

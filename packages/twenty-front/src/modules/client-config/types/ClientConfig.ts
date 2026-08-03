@@ -39,7 +39,7 @@ export type ClientConfig = {
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
   isOnboardingAiChatEnabled: boolean;
-  onboarding: OnboardingConfig;
+  onboarding?: OnboardingConfig;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;
