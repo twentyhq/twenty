@@ -14,6 +14,7 @@ import { text } from '@/utils/email-renderer/nodes/text';
 import { variableTag } from '@/utils/email-renderer/nodes/variable-tag';
 import { type JSONContent } from '@tiptap/core';
 import { Fragment, type JSX, type ReactNode } from 'react';
+import { type InheritedTypography } from 'src/utils/email-renderer/utils/inherited-typography';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 const NODE_RENDERERS = {
@@ -33,21 +34,27 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.HTML]: html,
 };
 
-const renderNode = (node: JSONContent): ReactNode => {
+const renderNode = (
+  node: JSONContent,
+  inherited: InheritedTypography,
+): ReactNode => {
   const renderer = NODE_RENDERERS[node.type as keyof typeof NODE_RENDERERS];
 
   if (!renderer) {
     return null;
   }
 
-  return renderer(node);
+  return renderer(node, inherited);
 };
 
-export const mappedNodeContent = (node: JSONContent): JSX.Element[] => {
+export const mappedNodeContent = (
+  node: JSONContent,
+  inherited: InheritedTypography = {},
+): JSX.Element[] => {
   const allNodes = node.content || [];
   return allNodes
     .map((childNode, index) => {
-      const component = renderNode(childNode);
+      const component = renderNode(childNode, inherited);
       if (!component) {
         return null;
       }

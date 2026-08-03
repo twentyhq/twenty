@@ -24,6 +24,41 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
   CampaignBlockSettingsField[]
 > = {
   [TIPTAP_NODE_TYPES.SECTION]: [
+    // Typography here cascades to every block inside the section, so a
+    // section is how one part of an email gets its own look.
+    {
+      label: msg`Text color`,
+      kind: 'style',
+      property: 'color',
+      input: 'color',
+    },
+    {
+      label: msg`Font size`,
+      kind: 'style',
+      property: 'fontSize',
+      input: 'size',
+      placeholder: '14',
+    },
+    {
+      label: msg`Line height`,
+      kind: 'style',
+      property: 'lineHeight',
+      input: 'text',
+      placeholder: '1.5',
+    },
+    {
+      label: msg`Letter spacing`,
+      kind: 'style',
+      property: 'letterSpacing',
+      input: 'size',
+      placeholder: '0',
+    },
+    {
+      label: msg`Alignment`,
+      kind: 'style',
+      property: 'textAlign',
+      input: 'alignment',
+    },
     {
       label: msg`Background`,
       kind: 'style',
