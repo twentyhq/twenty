@@ -316,11 +316,10 @@ export class CalendarWebhookSubscriptionService {
 
           return;
         case WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR:
-          await this.calendarChannelRepository.update(calendarChannelId, {
-            webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+          return this.rethrowAsFailedSubscription({
+            exception,
+            calendarChannelId,
           });
-
-          throw exception;
         case WebhookSubscriptionDriverExceptionCode.PROVIDER_NOT_CONFIGURED:
         case WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID:
         case WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER:
@@ -330,12 +329,22 @@ export class CalendarWebhookSubscriptionService {
       }
     }
 
-    await this.calendarChannelRepository.update(calendarChannelId, {
-      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-    });
-
     this.exceptionHandlerService.captureExceptions([exception], {
       workspace: { id: workspaceId },
+    });
+
+    return this.rethrowAsFailedSubscription({ exception, calendarChannelId });
+  }
+
+  private async rethrowAsFailedSubscription({
+    exception,
+    calendarChannelId,
+  }: {
+    exception: unknown;
+    calendarChannelId: string;
+  }): Promise<never> {
+    await this.calendarChannelRepository.update(calendarChannelId, {
+      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
     });
 
     throw exception;

@@ -315,11 +315,10 @@ export class MessagingWebhookSubscriptionService {
 
           return;
         case WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR:
-          await this.messageChannelRepository.update(messageChannelId, {
-            webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+          return this.rethrowAsFailedSubscription({
+            exception,
+            messageChannelId,
           });
-
-          throw exception;
         case WebhookSubscriptionDriverExceptionCode.PROVIDER_NOT_CONFIGURED:
         case WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID:
         case WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER:
@@ -329,12 +328,22 @@ export class MessagingWebhookSubscriptionService {
       }
     }
 
-    await this.messageChannelRepository.update(messageChannelId, {
-      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-    });
-
     this.exceptionHandlerService.captureExceptions([exception], {
       workspace: { id: workspaceId },
+    });
+
+    return this.rethrowAsFailedSubscription({ exception, messageChannelId });
+  }
+
+  private async rethrowAsFailedSubscription({
+    exception,
+    messageChannelId,
+  }: {
+    exception: unknown;
+    messageChannelId: string;
+  }): Promise<never> {
+    await this.messageChannelRepository.update(messageChannelId, {
+      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
     });
 
     throw exception;

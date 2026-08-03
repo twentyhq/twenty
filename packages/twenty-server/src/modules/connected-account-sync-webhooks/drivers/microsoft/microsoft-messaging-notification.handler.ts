@@ -3,7 +3,9 @@ import { timingSafeEqual } from 'crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type LifecycleEventType } from '@microsoft/microsoft-graph-types';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type AssertUnreachable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -121,7 +123,7 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
     removedSubscriptionId,
     messageChannel,
   }: {
-    lifecycleEvent: string;
+    lifecycleEvent: LifecycleEventType;
     removedSubscriptionId: string;
     messageChannel: MessageChannelEntity;
   }): Promise<void> {
@@ -149,10 +151,15 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
           messageChannel.workspaceId,
         );
         break;
-      default:
+      default: {
+        const unhandledLifecycleEvent: AssertUnreachable<
+          typeof lifecycleEvent
+        > = lifecycleEvent;
+
         this.logger.warn(
-          `Ignored unrecognized lifecycle event ${lifecycleEvent} for message channel ${messageChannel.id}`,
+          `Ignored unrecognized lifecycle event ${unhandledLifecycleEvent} for message channel ${messageChannel.id}`,
         );
+      }
     }
   }
 }
