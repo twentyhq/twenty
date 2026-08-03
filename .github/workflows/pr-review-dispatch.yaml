@@ -13,7 +13,13 @@ concurrency:
 
 jobs:
   dispatch:
+    # This fork cannot dispatch to twentyhq/ci-privileged: minting the app token
+    # needs TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID and _PRIVATE_KEY, which only
+    # twentyhq configures, so the job failed on every PR here. The vars context
+    # is available in a job-level `if`, so gate on the client id and let the job
+    # skip. Setting the variable and secret re-enables the dispatch.
     if: >
+      vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID != '' &&
       github.event.pull_request.draft == false &&
       (github.event.action != 'labeled' || startsWith(github.event.label.name, 'pr-review-'))
     runs-on: ubuntu-latest
