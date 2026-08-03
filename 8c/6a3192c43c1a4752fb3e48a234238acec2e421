@@ -1,0 +1,56 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_656ed98897d2b9 249-261,265,270-271
+  s_a797c2297db2c8::t_5a2f3ad708e62d 122,126,128-135,143-145
+  s_a797c2297db2c8::t_3bd41230ca3e98 196-202
+  s_a797c2297db2c8::t_2cd0c1ec375815 101-104,106-107
+  s_a797c2297db2c8::t_844095094ebcb9 304-316,323-327
+  s_a797c2297db2c8::t_8b43a274c6c0d8 146
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/utils/parse-google-webhook-subscription-error.util.ts
+  s_a797c2297db2c8::t_61e8cc59256444 11,13-20,39-49,56
+  s_a797c2297db2c8::t_a53e8d65ab8be5 2,63,75,82,89,100,107
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler.ts
+  s_a797c2297db2c8::t_94c9361795edfe 98
+  s_a797c2297db2c8::t_d4344dff5d9020 122,126,134
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/utils/parse-microsoft-webhook-subscription-error.util.ts
+  s_a797c2297db2c8::t_aa7c0678dc8cf2 1-2,11-34,39,47,56,63,78,85
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-webhook-subscription.driver.ts
+  s_a797c2297db2c8::t_177b382e79717f 84,110,129
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_56e4fb9fdcd177 250-262,266,271-272
+  s_a797c2297db2c8::t_4a1e0843a56e1a 305-317,324-328
+  s_a797c2297db2c8::t_19aa12ab584e12 197-203
+  s_a797c2297db2c8::t_fe8b024d397da6 121,125,127-134,143-145
+  s_a797c2297db2c8::t_51eb166c1d7ff5 100-103,105-106
+  s_a797c2297db2c8::t_99ad99452168ef 146
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/google-webhook-subscription.driver.ts
+  s_a797c2297db2c8::t_7fe7949f995cb6 96,121,146,185
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
+  s_a797c2297db2c8::t_ea60dfea070972 38-39
+  s_a797c2297db2c8::t_af706c41ecec40 43-46,53-56
+  s_a797c2297db2c8::t_214ae940ce133f 3
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/utils/__tests__/parse-microsoft-webhook-subscription-error.util.spec.ts
+  s_a797c2297db2c8::t_b3f5065096f746 43-63
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/utils/__tests__/parse-google-webhook-subscription-error.util.spec.ts
+  s_a797c2297db2c8::t_cf76def2f63cf0 96-143
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler.ts
+  s_a797c2297db2c8::t_1303f1a31d2c5a 121,125,133
+  s_a797c2297db2c8::t_f1779299268c24 97
+packages/twenty-server/test/integration/microsoft/webhook/messaging-lifecycle-notification.integration-spec.ts
+  s_a797c2297db2c8::t_aad07ad93a302d 1-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "8c6a3192c43c1a4752fb3e48a234238acec2e421",
+  "prompts": {},
+  "sessions": {
+    "s_a797c2297db2c8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c113cdd-b2a2-4d5e-ac2e-06fb6e384d14",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
