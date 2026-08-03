@@ -113,9 +113,6 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
       objectNameSingular: CoreObjectNameSingular.Person,
     });
 
-  // The person's fields drive the list, so custom fields are insertable the
-  // moment they exist. fullName and personId are computed server-side and
-  // have no field of their own.
   const variableItems: Array<{
     label: string;
     name: string;
@@ -201,7 +198,6 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
         attrs: { src: uploadedUrl },
       });
     } catch {
-      // onImageUpload surfaces its own error to the user.
     } finally {
       setIsUploadingImage(false);
     }
@@ -291,9 +287,6 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
           title={isUploadingImage ? t`Uploading...` : t`Image`}
           disabled={isUploadingImage}
           onClick={() => {
-            // Uploading is the common case, so the button is the file picker
-            // rather than a menu; the URL form stays for surfaces without an
-            // uploader.
             if (isDefined(onImageUpload)) {
               imageFileInputRef.current?.click();
               return;

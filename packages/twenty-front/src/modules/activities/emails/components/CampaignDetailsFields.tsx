@@ -108,6 +108,12 @@ export const CampaignDetailsFields = ({
 
   return (
     <StyledFieldsContainer onBlur={() => detailsState.flush()}>
+      <FormTextFieldInput
+        label={t`Subject`}
+        defaultValue={detailsState.subject}
+        onChange={detailsState.setSubject}
+        placeholder={t`Subject`}
+      />
       <Select
         dropdownId="campaign-composer-from-account"
         label={t`From`}
@@ -145,12 +151,6 @@ export const CampaignDetailsFields = ({
           </StyledHint>
         </>
       )}
-      <FormTextFieldInput
-        label={t`Subject`}
-        defaultValue={detailsState.subject}
-        onChange={detailsState.setSubject}
-        placeholder={t`Subject`}
-      />
     </StyledFieldsContainer>
   );
 };
