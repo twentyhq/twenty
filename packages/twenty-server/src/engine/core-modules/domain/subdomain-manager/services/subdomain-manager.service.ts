@@ -72,14 +72,12 @@ export class SubdomainManagerService {
     desired: string,
     count: number,
   ): Promise<string[]> {
-    const minLength = this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH');
-
-    const derivedBase = isSubdomainValid(desired, minLength)
+    const derivedBase = isSubdomainValid(desired)
       ? desired
       : getSubdomainSlugFromDisplayName(desired);
 
     const base =
-      isDefined(derivedBase) && isSubdomainValid(derivedBase, minLength)
+      isDefined(derivedBase) && isSubdomainValid(derivedBase)
         ? derivedBase
         : generateRandomSubdomain();
 
@@ -113,12 +111,10 @@ export class SubdomainManagerService {
     candidates: string[],
   ): Promise<string[]> {
     const defaultSubdomain = this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
-    const minLength = this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH');
 
     const validCandidates = candidates.filter(
       (candidate) =>
-        isSubdomainValid(candidate, minLength) &&
-        candidate !== defaultSubdomain,
+        isSubdomainValid(candidate) && candidate !== defaultSubdomain,
     );
 
     if (validCandidates.length === 0) {
@@ -143,10 +139,7 @@ export class SubdomainManagerService {
   async getSubdomainAvailability(
     subdomain: string,
   ): Promise<SubdomainAvailabilityDTO> {
-    const isValid = isSubdomainValid(
-      subdomain,
-      this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
-    );
+    const isValid = isSubdomainValid(subdomain);
     const available = isValid && (await this.isSubdomainFreeToUse(subdomain));
 
     // Autofill adopts the first suggestion directly, so never echo an invalid
@@ -176,10 +169,7 @@ export class SubdomainManagerService {
   }
 
   async validateSubdomainOrThrow(subdomain: string) {
-    const isValid = isSubdomainValid(
-      subdomain,
-      this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
-    );
+    const isValid = isSubdomainValid(subdomain);
 
     if (!isValid) {
       throw new WorkspaceException(
@@ -203,10 +193,7 @@ export class SubdomainManagerService {
 
   private async isSubdomainFreeToUse(subdomain: string): Promise<boolean> {
     return (
-      isSubdomainValid(
-        subdomain,
-        this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
-      ) &&
+      isSubdomainValid(subdomain) &&
       this.twentyConfigService.get('DEFAULT_SUBDOMAIN') !== subdomain &&
       (await this.isSubdomainAvailable(subdomain))
     );
