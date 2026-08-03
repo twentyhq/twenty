@@ -114,12 +114,25 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  it('should allow cookie requests without an Origin header', () => {
+  // Browsers send Origin on every unsafe request, so its absence is either a
+  // non-browser client, which belongs on a Bearer token, or a stripped header
+  // indistinguishable from a forged request.
+  it('should reject cookie requests without an Origin header', () => {
     const request = buildRequest({
       headers: {
         cookie: '__Host-twenty-session=sess_token',
       },
     });
+    const response = buildResponse();
+
+    middleware.use(request, response, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(response.status).toHaveBeenCalledWith(403);
+  });
+
+  it('should still allow a request without an Origin header when it carries no session cookie', () => {
+    const request = buildRequest({ headers: {} });
 
     middleware.use(request, buildResponse(), next);
 

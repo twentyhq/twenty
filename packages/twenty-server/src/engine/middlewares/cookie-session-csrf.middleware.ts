@@ -7,20 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
-import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
-import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
+import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
-
-// URL.origin drops a default port, so the two spellings of the same origin
-// collapse. Returns undefined for anything unparseable, which never matches.
-const toComparableOrigin = (value: string): string | undefined => {
-  try {
-    return new URL(value).origin.toLowerCase();
-  } catch {
-    return undefined;
-  }
-};
 
 // Bearer-authenticated requests are CSRF-immune (headers are never attached
 // cross-site), so this only guards requests that would authenticate through
@@ -60,12 +49,18 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
 
     const origin = request.headers.origin;
 
-    // Non-browser clients omit Origin and never attach cookies cross-site.
-    if (!isNonEmptyString(origin)) {
-      return next();
-    }
-
-    if (this.isOriginAllowed(origin, request)) {
+    // Fails closed on a missing Origin. Browsers send it on every unsafe
+    // request, so its absence means either a non-browser client, which should
+    // be using a Bearer token, or a stripped header we cannot tell apart from
+    // a forged request.
+    if (
+      isNonEmptyString(origin) &&
+      isRequestOriginAllowed({
+        origin,
+        request,
+        twentyConfigService: this.twentyConfigService,
+      })
+    ) {
       return next();
     }
 
@@ -76,30 +71,5 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
       ],
       error: 'CSRF_ORIGIN_MISMATCH',
     });
-  }
-
-  private isOriginAllowed(origin: string, request: Request): boolean {
-    const normalizedOrigin = origin.toLowerCase();
-
-    // Same shared helper the discovery controllers use, so the origin this
-    // request arrived on is derived one way (and honors `trust proxy`).
-    // Compared through URL rather than as strings: browsers omit :443 and :80
-    // from Origin while Host keeps whatever port the client spelled out, so a
-    // genuine same-origin POST would otherwise 403 on the port alone.
-    const comparableOrigin = toComparableOrigin(normalizedOrigin);
-    const comparableRequestOrigin = toComparableOrigin(
-      getRequestBaseUrl(request),
-    );
-
-    if (
-      isDefined(comparableOrigin) &&
-      comparableOrigin === comparableRequestOrigin
-    ) {
-      return true;
-    }
-
-    return resolveAllowedCredentialedOrigins(this.twentyConfigService).has(
-      normalizedOrigin,
-    );
   }
 }

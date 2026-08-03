@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useEffect, useRef } from 'react';
@@ -15,6 +16,11 @@ import {
   GetCurrentUserDocument,
   SignOutDocument,
 } from '~/generated-metadata/graphql';
+
+type CookieSessionProbeResult =
+  | 'authenticated'
+  | 'unauthenticated'
+  | 'unreachable';
 
 // Migrates the client from the localStorage token pair onto the httpOnly
 // session cookie: once a cookie-only probe authenticates, the token pair is
@@ -34,7 +40,7 @@ export const CookieSessionBootEffect = () => {
   const hasProbeRunRef = useRef(false);
 
   useEffect(() => {
-    const probeCookieSession = async (): Promise<boolean> => {
+    const probeCookieSession = async (): Promise<CookieSessionProbeResult> => {
       try {
         const result = await apolloClient.query({
           query: GetCurrentUserDocument,
@@ -42,15 +48,60 @@ export const CookieSessionBootEffect = () => {
           context: { skipAuthToken: true },
         });
 
-        return isDefined(result.data?.currentUser);
-      } catch {
-        return false;
+        return isDefined(result.data?.currentUser)
+          ? 'authenticated'
+          : 'unauthenticated';
+      } catch (error) {
+        // Only the server answering settles whether there is a session. A
+        // transport failure says nothing, and must not be read as one.
+        return CombinedGraphQLErrors.is(error)
+          ? 'unauthenticated'
+          : 'unreachable';
       }
     };
 
     const switchToCookieAuth = () => {
       setIsCookieAuthActive(true);
       setTokenPair(null);
+    };
+
+    // Returns whether the migration reached a conclusion. Anything transient
+    // returns false so the guard is released and the next renewal, which
+    // changes tokenPair and re-runs this effect, tries again. Latching on an
+    // attempt rather than an outcome left the tab on bearer tokens until a
+    // full reload.
+    const attemptCookieSessionBoot = async (): Promise<boolean> => {
+      const probeResult = await probeCookieSession();
+
+      if (probeResult === 'authenticated') {
+        switchToCookieAuth();
+
+        return true;
+      }
+
+      if (probeResult === 'unreachable') {
+        return false;
+      }
+
+      if (!isDefined(tokenPair?.refreshToken?.token)) {
+        return true;
+      }
+
+      if (!(await ensureTokenRenewed(store))) {
+        return false;
+      }
+
+      const probeResultAfterRenewal = await probeCookieSession();
+
+      if (probeResultAfterRenewal === 'authenticated') {
+        switchToCookieAuth();
+
+        return true;
+      }
+
+      // Renewed and still no session: the server or the browser is refusing
+      // the cookie, which retrying inside this tab will not change.
+      return probeResultAfterRenewal === 'unauthenticated';
     };
 
     const runCookieSessionBoot = async () => {
@@ -89,20 +140,8 @@ export const CookieSessionBootEffect = () => {
 
       hasProbeRunRef.current = true;
 
-      if (await probeCookieSession()) {
-        switchToCookieAuth();
-
-        return;
-      }
-
-      if (!isDefined(tokenPair?.refreshToken?.token)) {
-        return;
-      }
-
-      const wasRenewed = await ensureTokenRenewed(store);
-
-      if (wasRenewed && (await probeCookieSession())) {
-        switchToCookieAuth();
+      if (!(await attemptCookieSessionBoot())) {
+        hasProbeRunRef.current = false;
       }
     };
 

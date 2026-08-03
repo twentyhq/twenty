@@ -39,6 +39,9 @@ describe('UserSessionService', () => {
   const mockConfig: Record<string, unknown> = {
     SESSION_ABSOLUTE_LIFETIME: '180d',
     SESSION_IDLE_TIMEOUT: '30d',
+    SERVER_URL: 'http://crm.example.com',
+    FRONTEND_URL: 'http://crm.example.com',
+    AUTH_COOKIE_ALLOWED_ORIGINS: '',
   };
 
   const buildActiveSession = (
@@ -341,6 +344,32 @@ describe('UserSessionService', () => {
       );
     });
 
+    // The touch is throttled, so an idle timeout shorter than the throttle
+    // would expire a continuously active session between two touches.
+    it('should touch lastActiveAt within an idle timeout shorter than the throttle', async () => {
+      mockConfig.SESSION_IDLE_TIMEOUT = '1m';
+
+      const session = buildActiveSession({
+        lastActiveAt: new Date(Date.now() - 40 * 1000),
+      });
+
+      cacheStorageService.get.mockResolvedValue(undefined);
+      jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      mockPostCachingRevocationCheck(session);
+      const updateSpy = jest
+        .spyOn(userSessionRepository, 'update')
+        .mockResolvedValue({ affected: 1 } as never);
+
+      await service.resolveSession('sess_token');
+
+      mockConfig.SESSION_IDLE_TIMEOUT = '30d';
+
+      expect(updateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: session.id }),
+        expect.objectContaining({ lastActiveAt: expect.any(Date) }),
+      );
+    });
+
     it('should not touch lastActiveAt on every request', async () => {
       const session = buildActiveSession({ lastActiveAt: new Date() });
 
@@ -571,12 +600,15 @@ describe('UserSessionService', () => {
       refreshToken: { token: 'jwt-refresh-token', expiresAt: new Date() },
     });
 
-    const buildRequest = (cookieHeader?: string) =>
+    const buildRequest = (cookieHeader?: string, origin?: string) =>
       ({
         headers: {
           ...(cookieHeader === undefined ? {} : { cookie: cookieHeader }),
+          ...(origin === undefined ? {} : { origin }),
           'user-agent': 'jest',
         },
+        protocol: 'http',
+        get: () => 'crm.example.com',
         ip: '127.0.0.1',
         res: { cookie: jest.fn(), clearCookie: jest.fn() },
       }) as never;
@@ -636,6 +668,47 @@ describe('UserSessionService', () => {
           ipAddress: '127.0.0.1',
         }),
       );
+      expect(
+        (request as { res: { cookie: jest.Mock } }).res.cookie,
+      ).toHaveBeenCalled();
+    });
+
+    // A browser elsewhere must not be handed a session for an account it did
+    // not choose, whatever credentials the request managed to carry.
+    it('should not set the cookie for a disallowed origin', async () => {
+      mockAccessPayload();
+
+      const createSessionSpy = jest.spyOn(service, 'createSession');
+      const request = buildRequest(undefined, 'https://evil.example.org');
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request,
+        origin: 'sign_in',
+      });
+
+      expect(createSessionSpy).not.toHaveBeenCalled();
+      expect(
+        (request as { res: { cookie: jest.Mock } }).res.cookie,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should set the cookie for the origin the request arrived on', async () => {
+      mockAccessPayload();
+
+      jest.spyOn(service, 'createSession').mockResolvedValue({
+        sessionToken: 'sess_new',
+        session: buildActiveSession(),
+      });
+
+      const request = buildRequest(undefined, 'http://crm.example.com');
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request,
+        origin: 'sign_in',
+      });
+
       expect(
         (request as { res: { cookie: jest.Mock } }).res.cookie,
       ).toHaveBeenCalled();

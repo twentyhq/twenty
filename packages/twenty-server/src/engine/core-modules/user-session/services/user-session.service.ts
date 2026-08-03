@@ -38,13 +38,14 @@ import {
   type CreateUserSessionInput,
   type UserSessionCreationOrigin,
 } from 'src/engine/core-modules/user-session/types/user-session.type';
+import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 import {
   generateUserSessionToken,
   hashUserSessionToken,
 } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
 
 const USER_SESSION_CACHE_TTL_MS = 60 * 1000;
-const USER_SESSION_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
+const USER_SESSION_MAX_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
 
 // Impersonation sessions keep today's short impersonation token lifetime.
 const IMPERSONATION_SESSION_LIFETIME = '1d';
@@ -92,6 +93,20 @@ export class UserSessionService {
     const response = request.res;
 
     if (!isDefined(response)) {
+      return;
+    }
+
+    // A browser somewhere else must not be handed a session for an account it
+    // did not choose. The exchange itself still succeeds and returns the token
+    // pair, so cross-origin API clients are unaffected: only the cookie, the
+    // part that would silently authenticate the browser, is withheld. Checked
+    // here rather than per resolver so every exchange point is covered, and
+    // not in the CSRF middleware, which cannot know a request will issue one.
+    if (!this.isRequestAllowedToReceiveSessionCookie(request)) {
+      this.logger.warn(
+        `Refused to issue a session cookie to origin ${request.headers.origin}`,
+      );
+
       return;
     }
 
@@ -188,6 +203,23 @@ export class UserSessionService {
         }`,
       );
     }
+  }
+
+  // No Origin means no browser to plant a cookie in, so scripted sign-ins keep
+  // working. Every browser sends one on the unsafe requests these exchanges
+  // arrive as.
+  private isRequestAllowedToReceiveSessionCookie(request: Request): boolean {
+    const origin = request.headers.origin;
+
+    if (!isNonEmptyString(origin)) {
+      return true;
+    }
+
+    return isRequestOriginAllowed({
+      origin,
+      request,
+      twentyConfigService: this.twentyConfigService,
+    });
   }
 
   private isSessionScopeMatchingRenewal(
@@ -427,9 +459,7 @@ export class UserSessionService {
     userId: string,
   ): Promise<UserSessionEntity[]> {
     const now = new Date();
-    const idleTimeoutMs = ms(
-      this.twentyConfigService.get('SESSION_IDLE_TIMEOUT'),
-    );
+    const idleTimeoutMs = this.getIdleTimeoutMs();
 
     return this.userSessionRepository.find({
       where: {
@@ -626,13 +656,26 @@ export class UserSessionService {
 
   private isCachedSessionActive(cachedSession: CachedUserSession): boolean {
     const now = Date.now();
-    const idleTimeoutMs = ms(
-      this.twentyConfigService.get('SESSION_IDLE_TIMEOUT'),
-    );
 
     return (
       new Date(cachedSession.expiresAt).getTime() > now &&
-      new Date(cachedSession.lastActiveAt).getTime() + idleTimeoutMs > now
+      new Date(cachedSession.lastActiveAt).getTime() + this.getIdleTimeoutMs() >
+        now
+    );
+  }
+
+  private getIdleTimeoutMs(): number {
+    return ms(this.twentyConfigService.get('SESSION_IDLE_TIMEOUT'));
+  }
+
+  // Writing lastActiveAt on every request would be a write per request, so it
+  // is throttled. The interval has to stay well inside the idle timeout or a
+  // continuously active user goes idle between two touches and is signed out,
+  // which a short SESSION_IDLE_TIMEOUT would otherwise cause.
+  private getTouchIntervalMs(): number {
+    return Math.min(
+      USER_SESSION_MAX_TOUCH_INTERVAL_MS,
+      Math.floor(this.getIdleTimeoutMs() / 2),
     );
   }
 
@@ -645,7 +688,7 @@ export class UserSessionService {
 
     if (
       now.getTime() - new Date(cachedSession.lastActiveAt).getTime() <
-      USER_SESSION_TOUCH_INTERVAL_MS
+      this.getTouchIntervalMs()
     ) {
       return false;
     }
