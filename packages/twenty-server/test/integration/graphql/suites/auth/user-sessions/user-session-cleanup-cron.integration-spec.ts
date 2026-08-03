@@ -110,15 +110,23 @@ describe('user session cleanup cron (integration)', () => {
 
     const remainingHashes = await findRemainingFixtureHashes();
 
-    const expectDeleted = (label: string) => {
+    // Strict lookup: a mistyped label must fail the test here, not slip
+    // through as not.toContain(undefined).
+    const getFixtureTokenHash = (label: string): string => {
       const fixture = fixtures.find((candidate) => candidate.label === label);
 
-      expect(remainingHashes).not.toContain(fixture?.tokenHash);
+      if (!fixture) {
+        throw new Error(`Unknown user session fixture: ${label}`);
+      }
+
+      return fixture.tokenHash;
+    };
+
+    const expectDeleted = (label: string) => {
+      expect(remainingHashes).not.toContain(getFixtureTokenHash(label));
     };
     const expectKept = (label: string) => {
-      const fixture = fixtures.find((candidate) => candidate.label === label);
-
-      expect(remainingHashes).toContain(fixture?.tokenHash);
+      expect(remainingHashes).toContain(getFixtureTokenHash(label));
     };
 
     expectDeleted('expired beyond retention');
@@ -199,17 +207,25 @@ describe('user session cleanup cron (integration)', () => {
       ).findBy({ id: In([...seededAppTokenIds.values()]) });
       const remainingIds = remainingRows.map((row) => row.id);
 
+      const getSeededAppTokenId = (label: string): string => {
+        const id = seededAppTokenIds.get(label);
+
+        if (id === undefined) {
+          throw new Error(`Unknown app token fixture: ${label}`);
+        }
+
+        return id;
+      };
+
       expect(remainingIds).not.toContain(
-        seededAppTokenIds.get('refresh token expired beyond retention'),
+        getSeededAppTokenId('refresh token expired beyond retention'),
       );
       expect(remainingIds).not.toContain(
-        seededAppTokenIds.get('refresh token revoked beyond retention'),
+        getSeededAppTokenId('refresh token revoked beyond retention'),
       );
+      expect(remainingIds).toContain(getSeededAppTokenId('active refresh token'));
       expect(remainingIds).toContain(
-        seededAppTokenIds.get('active refresh token'),
-      );
-      expect(remainingIds).toContain(
-        seededAppTokenIds.get('long-expired token of another type'),
+        getSeededAppTokenId('long-expired token of another type'),
       );
     });
   });

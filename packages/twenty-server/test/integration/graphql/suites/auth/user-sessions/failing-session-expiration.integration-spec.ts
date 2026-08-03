@@ -1,5 +1,3 @@
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -14,12 +12,15 @@ import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-ses
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 // Sessions created here are never resolved before the row is tampered with,
 // so the read-through cache holds no entry and the checks hit the database.
 describe('failing session expiration (integration)', () => {
+  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
+
   const signInAndTamper = async (
     tamper: Partial<Pick<UserSessionEntity, 'expiresAt' | 'lastActiveAt'>>,
   ): Promise<string> => {
@@ -52,18 +53,6 @@ describe('failing session expiration (integration)', () => {
     expect(response.body.errors).toBeDefined();
     expect(hasClearingCookie(response)).toBe(true);
   };
-
-  beforeAll(async () => {
-    await createConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-    });
-  });
-
-  afterAll(async () => {
-    await deleteConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-    }).catch(() => {});
-  });
 
   it('should reject a session past its absolute lifetime and clear the cookie', async () => {
     const sessionToken = await signInAndTamper({

@@ -1,5 +1,3 @@
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -18,6 +16,7 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 type UserSessionApiEntry = {
   id: string;
@@ -27,6 +26,8 @@ type UserSessionApiEntry = {
 };
 
 describe('successful user sessions API (integration)', () => {
+  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
+
   let currentSessionToken: string;
   let otherSessionToken: string;
 
@@ -45,10 +46,6 @@ describe('successful user sessions API (integration)', () => {
   };
 
   beforeAll(async () => {
-    await createConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-    });
-
     // Two devices: the "other" one signs in first so the second sign-in does
     // not supersede it (no cookie presented on either exchange).
     const otherDeviceResponse = await signInWithCookieCapture({
@@ -67,12 +64,6 @@ describe('successful user sessions API (integration)', () => {
 
     otherSessionToken = otherCookie.sessionToken;
     currentSessionToken = currentCookie.sessionToken;
-  });
-
-  afterAll(async () => {
-    await deleteConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-    }).catch(() => {});
   });
 
   it('should list active sessions and mark only the presented one as current', async () => {

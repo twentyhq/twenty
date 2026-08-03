@@ -1,5 +1,3 @@
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -14,24 +12,15 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const SESSION_ABSOLUTE_LIFETIME_MS = 180 * ONE_DAY_MS;
 
 describe('successful user session creation on auth exchanges (integration)', () => {
+  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
+
   let firstSessionToken: string;
-
-  beforeAll(async () => {
-    await createConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-    });
-  });
-
-  afterAll(async () => {
-    await deleteConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-    }).catch(() => {});
-  });
 
   it('should mint a session and set an httpOnly cookie on sign-in from an allowed origin', async () => {
     const response = await signInWithCookieCapture({

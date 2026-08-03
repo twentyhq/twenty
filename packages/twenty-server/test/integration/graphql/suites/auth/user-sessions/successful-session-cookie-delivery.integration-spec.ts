@@ -1,5 +1,3 @@
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 
 import {
   extractSessionCookie,
@@ -8,6 +6,7 @@ import {
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 // SameSite=None forces Secure (browsers reject the combination without it),
 // which is the one secure-deployment trigger reachable at runtime: SERVER_URL
@@ -16,23 +15,8 @@ import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessio
 // secure-deployment-session-cookie.integration-spec.ts under a dedicated app
 // boot.
 describe('successful session cookie delivery on a secure deployment (integration)', () => {
-  beforeAll(async () => {
-    await createConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-    });
-    await createConfigVariable({
-      input: { key: 'AUTH_COOKIE_SAME_SITE', value: 'none' },
-    });
-  });
-
-  afterAll(async () => {
-    await deleteConfigVariable({
-      input: { key: 'AUTH_COOKIE_SAME_SITE' },
-    }).catch(() => {});
-    await deleteConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-    }).catch(() => {});
-  });
+  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
+  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SAME_SITE', 'none');
 
   it('should deliver the host-locked secure cookie variant', async () => {
     const response = await signInWithCookieCapture({

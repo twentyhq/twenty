@@ -1,5 +1,3 @@
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -10,6 +8,7 @@ import {
 import { currentUserWorkspaceContextQueryFactory } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -25,6 +24,8 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 // (header, variable, origin) lets a session pivot to another workspace; the
 // context is rebuilt from the session row alone.
 describe('successful session workspace binding (integration)', () => {
+  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
+
   let appleSessionToken: string;
   let ycSessionToken: string;
 
@@ -43,10 +44,6 @@ describe('successful session workspace binding (integration)', () => {
   };
 
   beforeAll(async () => {
-    await createConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-    });
-
     const appleResponse = await signInWithCookieCapture({
       originHeader: ALLOWED_ORIGIN,
     });
@@ -64,12 +61,6 @@ describe('successful session workspace binding (integration)', () => {
 
     appleSessionToken = appleCookie.sessionToken;
     ycSessionToken = ycCookie.sessionToken;
-  });
-
-  afterAll(async () => {
-    await deleteConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-    }).catch(() => {});
   });
 
   it('should persist each session bound to the workspace its exchange selected', async () => {

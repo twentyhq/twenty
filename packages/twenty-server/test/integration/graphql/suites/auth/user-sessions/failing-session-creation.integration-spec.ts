@@ -1,9 +1,8 @@
 import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 import {
   extractSessionCookie,
@@ -18,7 +17,11 @@ import {
 } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 describe('failing user session creation on auth exchanges (integration)', () => {
-  describe('with cookie sessions disabled (default)', () => {
+  describe('with cookie sessions disabled', () => {
+    // Explicit rather than assuming the flag's default: another suite or a
+    // reused database could have left an override behind.
+    setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', false);
+
     it('should return auth tokens without setting a session cookie', async () => {
       const userSessionRepository =
         getCoreRepository<UserSessionEntity>(UserSessionEntity);
@@ -41,17 +44,7 @@ describe('failing user session creation on auth exchanges (integration)', () => 
   });
 
   describe('with cookie sessions enabled', () => {
-    beforeAll(async () => {
-      await createConfigVariable({
-        input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-      });
-    });
-
-    afterAll(async () => {
-      await deleteConfigVariable({
-        input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-      }).catch(() => {});
-    });
+    setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
 
     it('should refuse the cookie but still return tokens on a sign-in from a disallowed origin (login-CSRF)', async () => {
       const userSessionRepository =

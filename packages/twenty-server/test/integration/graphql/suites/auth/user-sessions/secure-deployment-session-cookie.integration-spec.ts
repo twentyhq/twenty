@@ -1,5 +1,3 @@
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 
 import {
   extractSessionCookie,
@@ -10,7 +8,10 @@ import {
 import { currentUserIdentityQueryFactory } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
+import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 // The secure/insecure cookie branch is decided by configuration, never by the
@@ -31,30 +32,20 @@ const describeOnSecureDeployment = isSecureDeployment
 describeOnSecureDeployment(
   'session cookie on a production-like secure deployment (integration)',
   () => {
+    setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
+
     let sessionToken: string;
-
-    beforeAll(async () => {
-      await createConfigVariable({
-        input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-      });
-    });
-
-    afterAll(async () => {
-      await deleteConfigVariable({
-        input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-      }).catch(() => {});
-    });
 
     it('should deliver the production cookie: __Host- name, Secure, SameSite=Lax', async () => {
       const response = await signInWithCookieCapture({
         originHeader: ALLOWED_ORIGIN,
       });
 
-      expect(extractSessionCookie(response, 'twenty-session')).toBeUndefined();
+      expect(extractSessionCookie(response, USER_SESSION_COOKIE_NAME)).toBeUndefined();
 
       const secureSessionCookie = extractSessionCookie(
         response,
-        '__Host-twenty-session',
+        USER_SESSION_SECURE_COOKIE_NAME,
       );
 
       expect(secureSessionCookie).toBeDefined();
@@ -80,7 +71,7 @@ describeOnSecureDeployment(
         currentUserIdentityQueryFactory(),
         {
           originHeader: ALLOWED_ORIGIN,
-          cookieHeader: `__Host-twenty-session=${sessionToken}`,
+          cookieHeader: `${USER_SESSION_SECURE_COOKIE_NAME}=${sessionToken}`,
         },
       );
 
@@ -96,7 +87,7 @@ describeOnSecureDeployment(
         currentUserIdentityQueryFactory(),
         {
           originHeader: ALLOWED_ORIGIN,
-          cookieHeader: `twenty-session=${sessionToken}`,
+          cookieHeader: `${USER_SESSION_COOKIE_NAME}=${sessionToken}`,
         },
       );
 
@@ -104,13 +95,3 @@ describeOnSecureDeployment(
     });
   },
 );
-
-// Keeps the file from being an empty suite on plain-http runs, where jest
-// would otherwise fail the run.
-if (!isSecureDeployment) {
-  describe('session cookie on a production-like secure deployment (integration)', () => {
-    it('is skipped: the app booted without an https SERVER_URL', () => {
-      expect(isSecureDeployment).toBe(false);
-    });
-  });
-}

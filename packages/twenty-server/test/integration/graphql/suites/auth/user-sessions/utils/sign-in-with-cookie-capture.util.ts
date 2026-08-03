@@ -3,6 +3,7 @@ import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 
 type RequestHeaders = {
   originHeader?: string;
@@ -91,7 +92,7 @@ export const getSetCookieHeaders = (response: Response): string[] =>
 // does not start with the plain one.
 export const extractSessionCookie = (
   response: Response,
-  cookieName = 'twenty-session',
+  cookieName: string = USER_SESSION_COOKIE_NAME,
 ): { rawCookie: string; sessionToken: string } | undefined => {
   const rawCookie = getSetCookieHeaders(response).find((cookie) =>
     cookie.startsWith(`${cookieName}=sess_`),
@@ -111,7 +112,7 @@ export const extractSessionCookie = (
 // extractor above will not match it because the value lacks the sess_ prefix.
 export const hasClearingCookie = (
   response: Response,
-  cookieName = 'twenty-session',
+  cookieName: string = USER_SESSION_COOKIE_NAME,
 ): boolean =>
   getSetCookieHeaders(response).some(
     (cookie) =>

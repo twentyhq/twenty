@@ -1,5 +1,3 @@
-import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
-import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -17,20 +15,14 @@ import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-ses
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
-import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import {
+  ALLOWED_ORIGIN,
+  DISALLOWED_ORIGIN,
+} from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 describe('successful sign-out (integration)', () => {
-  beforeAll(async () => {
-    await createConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
-    });
-  });
-
-  afterAll(async () => {
-    await deleteConfigVariable({
-      input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
-    }).catch(() => {});
-  });
+  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
 
   it('should revoke the presented session, clear the cookie, and reject its reuse', async () => {
     const signInResponse = await signInWithCookieCapture({
@@ -80,9 +72,13 @@ describe('successful sign-out (integration)', () => {
   });
 
   it('should not clear anything on a cookie-less sign-out, so a cross-site POST cannot log a visitor out', async () => {
+    // What a cross-site forgery actually looks like server-side: SameSite=Lax
+    // keeps the cookie off the request, and the attacker page's origin comes
+    // along. CSRF does not apply (no cookie), so the mutation runs and must
+    // still clear nothing.
     const response = await postMetadataOperationWithHeaders(
       signOutQueryFactory(),
-      { originHeader: ALLOWED_ORIGIN },
+      { originHeader: DISALLOWED_ORIGIN },
     );
 
     expect(response.body.errors).toBeUndefined();
