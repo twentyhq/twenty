@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -20,6 +22,8 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
+  private readonly logger = new Logger(CallDatabaseEventTriggerJobsJob.name);
+
   constructor(
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -102,6 +106,10 @@ export class CallDatabaseEventTriggerJobsJob {
         });
       } catch (error) {
         if (error instanceof ThrottlerException) {
+          this.logger.warn(
+            `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s)`,
+          );
+
           continue;
         }
 

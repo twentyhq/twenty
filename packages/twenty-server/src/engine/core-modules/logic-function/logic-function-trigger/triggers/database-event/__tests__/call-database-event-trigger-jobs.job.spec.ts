@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -87,6 +88,10 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   });
 
   it('should skip the throttled application and still enqueue the others', async () => {
+    const warn = jest
+      .spyOn(Logger.prototype, 'warn')
+      .mockImplementation(() => undefined);
+
     throttleOrThrow.mockImplementation(async ({ applicationId }) => {
       if (applicationId === 'app-1') {
         throw new ThrottlerException(
@@ -97,6 +102,8 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     });
 
     await job.handle(workspaceEventBatch);
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('app-1'));
 
     expect(throttleOrThrow).toHaveBeenCalledTimes(2);
     expect(throttleOrThrow).toHaveBeenCalledWith({
