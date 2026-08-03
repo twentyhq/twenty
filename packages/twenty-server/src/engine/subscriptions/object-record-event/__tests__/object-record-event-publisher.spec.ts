@@ -888,6 +888,31 @@ describe('ObjectRecordEventPublisher', () => {
           mockSubscriptionService.publishToEventStream,
         ).not.toHaveBeenCalled();
       });
+
+      it('should not publish when the application has been soft deleted', async () => {
+        mockApplicationStream({
+          flatApplicationMaps: {
+            byId: {
+              [applicationId]: {
+                id: applicationId,
+                defaultRoleId: applicationRoleId,
+                deletedAt: new Date(),
+              } as never,
+            },
+            idByUniversalIdentifier: {},
+          },
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(true),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
     });
 
     it('should combine query filter with RLS filter', async () => {
