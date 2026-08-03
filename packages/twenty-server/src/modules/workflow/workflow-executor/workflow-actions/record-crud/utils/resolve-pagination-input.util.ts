@@ -1,16 +1,28 @@
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-export const resolveLimitInput = (
+const parseFiniteNumberInput = (
   value: number | string | undefined,
 ): number | undefined => {
   if (!isDefined(value)) {
     return undefined;
   }
 
+  if (typeof value === 'string' && value.trim() === '') {
+    return undefined;
+  }
+
   const parsedValue = Number(value);
 
-  if (!Number.isFinite(parsedValue)) {
+  return Number.isFinite(parsedValue) ? parsedValue : undefined;
+};
+
+export const resolveLimitInput = (
+  value: number | string | undefined,
+): number | undefined => {
+  const parsedValue = parseFiniteNumberInput(value);
+
+  if (!isDefined(parsedValue)) {
     return undefined;
   }
 
@@ -20,13 +32,9 @@ export const resolveLimitInput = (
 export const resolveOffsetInput = (
   value: number | string | undefined,
 ): number | undefined => {
-  if (!isDefined(value)) {
-    return undefined;
-  }
+  const parsedValue = parseFiniteNumberInput(value);
 
-  const parsedValue = Number(value);
-
-  if (!Number.isFinite(parsedValue)) {
+  if (!isDefined(parsedValue)) {
     return undefined;
   }
 
