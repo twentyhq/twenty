@@ -35,25 +35,24 @@ export class MetadataEventPublisher {
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
       events: enrichedBatch.events.map((event) => {
-        const recipientUserWorkspaceIds =
-          this.resolveRecipientUserWorkspaceIds(event);
+        const ownerUserWorkspaceId = this.resolveOwnerUserWorkspaceId(event);
 
         return {
           type: event.type,
           entityName: event.metadataName,
           recordId: event.recordId,
           properties: event.properties as Record<string, unknown>,
-          ...(isDefined(recipientUserWorkspaceIds)
-            ? { recipientUserWorkspaceIds }
-            : {}),
+          recipientUserWorkspaceIds: isDefined(ownerUserWorkspaceId)
+            ? [ownerUserWorkspaceId]
+            : undefined,
         };
       }),
     });
   }
 
-  private resolveRecipientUserWorkspaceIds(
+  private resolveOwnerUserWorkspaceId(
     event: MetadataEventBatch['events'][number],
-  ): string[] | undefined {
+  ): string | undefined {
     if (event.metadataName !== 'navigationMenuItem') {
       return undefined;
     }
@@ -62,15 +61,9 @@ export class MetadataEventPublisher {
       event.type === 'deleted'
         ? event.properties.before
         : event.properties.after
-    ) as Record<string, unknown> | undefined;
+    ) as { userWorkspaceId?: string | null } | undefined;
 
-    const userWorkspaceId = record?.userWorkspaceId;
-
-    if (typeof userWorkspaceId !== 'string') {
-      return undefined;
-    }
-
-    return [userWorkspaceId];
+    return record?.userWorkspaceId ?? undefined;
   }
 
   private async enrichMetadataEventBatch(
