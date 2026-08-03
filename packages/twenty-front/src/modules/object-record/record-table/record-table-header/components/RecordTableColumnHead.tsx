@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type MouseEvent, useContext } from 'react';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
@@ -47,10 +47,12 @@ const StyledText = styled.span`
 
 type RecordTableColumnHeadProps = {
   recordField: RecordField;
+  onContextMenu?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 export const RecordTableColumnHead = ({
   recordField,
+  onContextMenu,
 }: RecordTableColumnHeadProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -77,7 +79,7 @@ export const RecordTableColumnHead = ({
     shouldCompactRecordTableFirstColumn && isLabelIdentifier;
 
   return (
-    <StyledTitle hideTitle={shouldHideTitle}>
+    <StyledTitle hideTitle={shouldHideTitle} onContextMenu={onContextMenu}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
