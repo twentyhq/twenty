@@ -6,7 +6,13 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type FindManyOptions, In, LessThanOrEqual, Repository } from 'typeorm';
+import {
+  type FindManyOptions,
+  In,
+  LessThan,
+  LessThanOrEqual,
+  Repository,
+} from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -19,6 +25,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-buffer-ms.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-cron-pattern.constant';
+import { WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_ATTEMPTS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-max-attempts.constant';
 import {
   RenewWebhookSubscriptionJob,
   type RenewWebhookSubscriptionJobData,
@@ -101,9 +108,14 @@ export class WebhookSubscriptionRenewalCronJob {
 
     const options: FindManyOptions<WebhookSubscribableChannel> = {
       where: [
+        // Retry FAILED channels only until the attempt budget is spent, so a
+        // permanently broken subscription stops being re-enqueued every hour.
         {
           ...workspaceScope,
           webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+          webhookSubscriptionFailureCount: LessThan(
+            WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_ATTEMPTS,
+          ),
         },
         {
           ...workspaceScope,

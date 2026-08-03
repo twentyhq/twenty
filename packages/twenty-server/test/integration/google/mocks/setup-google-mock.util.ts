@@ -11,6 +11,11 @@ import {
   GOOGLE_TOKEN_URLS,
   googleTokenHandlers,
 } from 'test/integration/google/mocks/google-token-handlers.util';
+import {
+  failGmailWatchHandler,
+  failGoogleCalendarWatchHandler,
+  googleWebhookSubscriptionHandlers,
+} from 'test/integration/google/mocks/google-webhook-subscription-handlers.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import {
   createMockEntityStore,
@@ -34,6 +39,8 @@ export type GoogleMock = {
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
   declineTokenRefresh: () => void;
+  failCalendarWatch: (status?: number) => void;
+  failGmailWatch: (status?: number) => void;
 };
 
 export const setupGoogleMock = ({
@@ -52,6 +59,7 @@ export const setupGoogleMock = ({
     ...googleIdentityHandlers(handle),
     ...googleCalendarEventsHandlers([], 'mock-calendar-sync-token'),
     ...gmailMailboxHandlers(inbox, labelStore),
+    ...googleWebhookSubscriptionHandlers(),
   );
 
   return {
@@ -120,5 +128,8 @@ export const setupGoogleMock = ({
           ),
         ),
       ),
+    failCalendarWatch: (status) =>
+      httpMock.use(failGoogleCalendarWatchHandler(status)),
+    failGmailWatch: (status) => httpMock.use(failGmailWatchHandler(status)),
   };
 };

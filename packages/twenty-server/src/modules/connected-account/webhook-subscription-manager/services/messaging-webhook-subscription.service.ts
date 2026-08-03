@@ -7,11 +7,13 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_ATTEMPTS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-max-attempts.constant';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
 import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
@@ -80,19 +82,20 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionClientState: clientState,
         webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
         webhookSubscriptionExpiresAt: result.expiresAt,
+        webhookSubscriptionFailureCount: 0,
       });
     } catch (error) {
-      await this.messageChannelRepository.update(messageChannel.id, {
-        webhookSubscriptionClientState: clientState,
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-        webhookSubscriptionExpiresAt: null,
+      await this.recordSubscriptionFailure({
+        messageChannel,
+        error,
+        workspaceId,
+        additionalUpdate: {
+          webhookSubscriptionClientState: clientState,
+          webhookSubscriptionExpiresAt: null,
+        },
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
-      });
-
-      throw error;
+      return;
     }
 
     if (isDefined(previousSubscription)) {
@@ -146,18 +149,57 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionExternalId: result.externalSubscriptionId,
         webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
         webhookSubscriptionExpiresAt: result.expiresAt,
+        webhookSubscriptionFailureCount: 0,
       });
     } catch (error) {
-      await this.messageChannelRepository.update(messageChannel.id, {
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+      await this.recordSubscriptionFailure({
+        messageChannel,
+        error,
+        workspaceId: messageChannel.workspaceId,
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: messageChannel.workspaceId },
-      });
-
-      throw error;
+      return;
     }
+  }
+
+  // Bounded-retry accounting shared by create and renew failures: increment the
+  // per-channel counter, keep the channel FAILED, and only report to Sentry when
+  // the retry budget is spent. The renewal cron stops re-enqueuing the channel
+  // once the counter reaches WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_ATTEMPTS, which is
+  // what breaks the previous infinite hourly retry loop.
+  private async recordSubscriptionFailure({
+    messageChannel,
+    error,
+    workspaceId,
+    additionalUpdate = {},
+  }: {
+    messageChannel: Pick<
+      MessageChannelEntity,
+      'id' | 'webhookSubscriptionFailureCount'
+    >;
+    error: unknown;
+    workspaceId: string;
+    additionalUpdate?: QueryDeepPartialEntity<MessageChannelEntity>;
+  }): Promise<void> {
+    const failureCount = messageChannel.webhookSubscriptionFailureCount + 1;
+
+    await this.messageChannelRepository.update(messageChannel.id, {
+      ...additionalUpdate,
+      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+      webhookSubscriptionFailureCount: failureCount,
+    });
+
+    if (failureCount < WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_ATTEMPTS) {
+      return;
+    }
+
+    this.exceptionHandlerService.captureExceptions([error], {
+      additionalData: {
+        messageChannelId: messageChannel.id,
+        webhookSubscriptionFailureCount: failureCount,
+      },
+      workspace: { id: workspaceId },
+    });
   }
 
   async deleteSubscription(

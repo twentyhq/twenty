@@ -132,6 +132,7 @@ import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } fro
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
 import { AddConnectedAccountHandleProviderIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785420705255-add-connected-account-handle-provider-index';
 import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785504900000-add-open-record-in-to-object-metadata';
+import { AddWebhookSubscriptionFailureCountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785505300000-add-webhook-subscription-failure-count';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -266,4 +267,5 @@ export const INSTANCE_COMMANDS = [
   AddIsHiddenToAgentMessageFastInstanceCommand,
   AddConnectedAccountHandleProviderIndexFastInstanceCommand,
   AddOpenRecordInToObjectMetadataFastInstanceCommand,
+  AddWebhookSubscriptionFailureCountFastInstanceCommand,
 ];
