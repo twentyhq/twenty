@@ -29,6 +29,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
+import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -203,17 +204,21 @@ export class PermissionsService {
 
       // An application acting on this person's behalf is bounded by its own
       // role as well as theirs, so it can never do more than either allows.
-      // An application that declares no role adds no bound.
       const applicationRoleId = isDefined(applicationId)
-        ? await this.findApplicationDefaultRoleId({
+        ? await this.findApplicationDefaultRoleIdOrThrow({
             applicationId,
             workspaceId,
           })
         : undefined;
 
-      if (isDefined(applicationRoleId)) {
+      const roleIds = resolveRoleIdsForUser({
+        userRoleId: roleOfUserWorkspace.id,
+        applicationRoleId,
+      });
+
+      if (roleIds.length > 1) {
         return this.checkRolesPermissions(
-          { intersectionOf: [roleOfUserWorkspace.id, applicationRoleId] },
+          { intersectionOf: roleIds },
           workspaceId,
           setting,
         );
@@ -266,10 +271,11 @@ export class PermissionsService {
     );
   }
 
-  // Returns undefined rather than throwing, unlike the application-only branch
-  // above: an application that declares no default role is not an error when it
-  // acts on someone's behalf, it just adds no bound beyond that person's role.
-  private async findApplicationDefaultRoleId({
+  // Declaring no default role is not an error when an application acts on
+  // someone's behalf, it just adds no bound beyond that person's role. Naming an
+  // application that no longer exists is a different matter and must not fall
+  // back to the full permissions of the user being acted for.
+  private async findApplicationDefaultRoleIdOrThrow({
     applicationId,
     workspaceId,
   }: {
@@ -280,7 +286,14 @@ export class PermissionsService {
       where: { id: applicationId, workspaceId },
     });
 
-    return application?.defaultRoleId ?? undefined;
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Could not find application ${applicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application.defaultRoleId ?? undefined;
   }
 
   public checkRolePermissions(

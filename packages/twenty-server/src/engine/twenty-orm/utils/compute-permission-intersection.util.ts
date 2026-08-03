@@ -2,8 +2,31 @@ import {
   type ObjectsPermissions,
   type RestrictedFieldPermissions,
   type RowLevelPermissionPredicate,
-  type RowLevelPermissionPredicateGroup,
 } from 'twenty-shared/types';
+
+// An intersection has no combined predicate tree to expose: enforcement
+// compiles each role's rules on its own and ANDs the results. What it can
+// state is which fields every role constrains, which is what the insert guard
+// reads to excuse a field-update deny the role's own rule forced. Keeping a
+// field constrained by only one role would let that role's rule cancel another
+// role's deny, so only fields common to all of them survive.
+const intersectRowLevelPermissionPredicates = (
+  rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][],
+): RowLevelPermissionPredicate[] => {
+  const [firstRolePredicates = [], ...otherRolesPredicates] =
+    rowLevelPermissionPredicatesPerRole;
+
+  const constrainedFieldMetadataIdsPerOtherRole = otherRolesPredicates.map(
+    (predicates) =>
+      new Set(predicates.map((predicate) => predicate.fieldMetadataId)),
+  );
+
+  return firstRolePredicates.filter((predicate) =>
+    constrainedFieldMetadataIdsPerOtherRole.every((fieldMetadataIds) =>
+      fieldMetadataIds.has(predicate.fieldMetadataId),
+    ),
+  );
+};
 
 export const computePermissionIntersection = (
   permissionsArray: ObjectsPermissions[],
@@ -32,8 +55,7 @@ export const computePermissionIntersection = (
     let canSoftDeleteObjectRecords = true;
     let canDestroyObjectRecords = true;
     const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
-    const rowLevelPermissionPredicates: RowLevelPermissionPredicate[] = [];
-    const rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[] =
+    const rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][] =
       [];
 
     for (const permissions of permissionsArray) {
@@ -44,6 +66,7 @@ export const computePermissionIntersection = (
         canUpdateObjectRecords = false;
         canSoftDeleteObjectRecords = false;
         canDestroyObjectRecords = false;
+        rowLevelPermissionPredicatesPerRole.push([]);
         continue;
       }
 
@@ -57,16 +80,8 @@ export const computePermissionIntersection = (
       canDestroyObjectRecords =
         canDestroyObjectRecords && objPerm.canDestroyObjectRecords === true;
 
-      // Kept from every role rather than discarded. Callers use these to ask
-      // which fields a row-level rule constrains, so a rule from any role has
-      // to be visible. Enforcement does not read them: it compiles each role's
-      // predicates separately and ANDs the results, which is why concatenating
-      // here cannot produce a misleading combined tree.
-      rowLevelPermissionPredicates.push(
-        ...objPerm.rowLevelPermissionPredicates,
-      );
-      rowLevelPermissionPredicateGroups.push(
-        ...objPerm.rowLevelPermissionPredicateGroups,
+      rowLevelPermissionPredicatesPerRole.push(
+        objPerm.rowLevelPermissionPredicates,
       );
 
       if (objPerm.restrictedFields) {
@@ -102,8 +117,10 @@ export const computePermissionIntersection = (
       canSoftDeleteObjectRecords,
       canDestroyObjectRecords,
       restrictedFields,
-      rowLevelPermissionPredicates,
-      rowLevelPermissionPredicateGroups,
+      rowLevelPermissionPredicates: intersectRowLevelPermissionPredicates(
+        rowLevelPermissionPredicatesPerRole,
+      ),
+      rowLevelPermissionPredicateGroups: [],
     };
   }
 

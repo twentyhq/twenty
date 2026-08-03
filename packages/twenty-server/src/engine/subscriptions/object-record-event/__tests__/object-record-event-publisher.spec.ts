@@ -2,11 +2,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
   FieldMetadataType,
+  type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -163,6 +165,13 @@ describe('ObjectRecordEventPublisher', () => {
     ...overrides,
   });
 
+  type PermissionsContextOverrides = {
+    flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
+    userWorkspaceRoleMap?: Record<string, string>;
+    rolesPermissions?: ObjectsPermissionsByRoleId;
+    flatApplicationMaps?: FlatApplicationCacheMaps;
+  };
+
   const mockFlatWorkspaceMemberMaps = {
     byId: {
       'test-workspace-member-id': {
@@ -178,11 +187,7 @@ describe('ObjectRecordEventPublisher', () => {
   };
 
   const createPermissionsContext = (
-    overrides: {
-      flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
-      userWorkspaceRoleMap?: Record<string, string>;
-      rolesPermissions?: ObjectsPermissionsByRoleId;
-    } = {},
+    overrides: PermissionsContextOverrides = {},
   ) => ({
     flatRowLevelPermissionPredicateMaps: {
       byId: {},
@@ -199,14 +204,14 @@ describe('ObjectRecordEventPublisher', () => {
     userWorkspaceRoleMap:
       overrides.userWorkspaceRoleMap ?? mockUserWorkspaceRoleMap,
     rolesPermissions: overrides.rolesPermissions ?? mockRolesPermissions,
+    flatApplicationMaps: overrides.flatApplicationMaps ?? {
+      byId: {},
+      idByUniversalIdentifier: {},
+    },
   });
 
   const createCacheMock = (
-    permissionsOverrides: {
-      flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
-      userWorkspaceRoleMap?: Record<string, string>;
-      rolesPermissions?: ObjectsPermissionsByRoleId;
-    } = {},
+    permissionsOverrides: PermissionsContextOverrides = {},
     workspaceMemberMapsOverride?: {
       byId: Record<string, unknown>;
       idByUserId: Record<string, string>;
@@ -754,6 +759,124 @@ describe('ObjectRecordEventPublisher', () => {
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();
+    });
+
+    describe('stream opened by an application acting for a user', () => {
+      const applicationId = 'test-application-id';
+      const applicationRoleId = 'test-application-role-id';
+
+      const mockApplicationStream = (
+        overrides: PermissionsContextOverrides = {},
+      ) => {
+        mockEventStreamService.getStreamsData.mockResolvedValue(
+          new Map([
+            [
+              streamChannelId,
+              {
+                ...mockStreamData,
+                authContext: { ...mockStreamData.authContext, applicationId },
+              },
+            ],
+          ]) as Map<string, EventStreamData | undefined>,
+        );
+
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock({
+            flatApplicationMaps: {
+              byId: {
+                [applicationId]: {
+                  id: applicationId,
+                  defaultRoleId: applicationRoleId,
+                } as never,
+              },
+              idByUniversalIdentifier: {},
+            },
+            ...overrides,
+          }),
+        );
+      };
+
+      const publishCompanyCreated = async () => {
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [createMockEvent()],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+      };
+
+      const buildRolePermissions = (
+        canReadObjectRecords: boolean,
+      ): ObjectsPermissions => ({
+        [companyObjectMetadata.id]: {
+          canReadObjectRecords,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        },
+      });
+
+      it('should not publish when the application role denies read', async () => {
+        mockApplicationStream({
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(false),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should publish when both roles allow read', async () => {
+        mockApplicationStream({
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(true),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
+      });
+
+      // An application's declared role is not a foreign key, so it can outlive
+      // the role it points at.
+      it('should not publish when the application role cannot be resolved', async () => {
+        mockApplicationStream({
+          rolesPermissions: { [roleId]: buildRolePermissions(true) },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should filter row level rules with both roles', async () => {
+        mockApplicationStream({
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(true),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(buildRowLevelPermissionRecordFilter).toHaveBeenCalledWith(
+          expect.objectContaining({ roleIds: [roleId, applicationRoleId] }),
+        );
+      });
     });
 
     it('should combine query filter with RLS filter', async () => {

@@ -8,6 +8,7 @@ import {
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -773,6 +774,29 @@ describe('PermissionsService', () => {
       roleRepository.find.mockResolvedValue([]);
 
       await expect(check()).resolves.toBe(true);
+    });
+
+    // Intersecting a role with itself is a no-op, but passing the same id twice
+    // trips the duplicate check inside the intersection and fails closed.
+    it('should grant when the application declares the user own role', async () => {
+      const userRole = createFlatRole({
+        id: 'user-role-id',
+        canUpdateAllSettings: true,
+      });
+
+      mockUserRole(userRole);
+      mockApplicationRole(userRole.id);
+
+      await expect(check()).resolves.toBe(true);
+    });
+
+    it('should reject when the application no longer exists', async () => {
+      mockUserRole(
+        createFlatRole({ id: 'user-role-id', canUpdateAllSettings: true }),
+      );
+      applicationRepository.findOne.mockResolvedValue(null);
+
+      await expect(check()).rejects.toThrow(ApplicationException);
     });
 
     it('should not consult the application when the request carries none', async () => {
