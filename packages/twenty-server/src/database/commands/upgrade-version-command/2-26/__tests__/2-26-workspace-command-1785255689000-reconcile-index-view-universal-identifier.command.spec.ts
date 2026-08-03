@@ -357,6 +357,28 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     expect(viewFieldUpdateMock).not.toHaveBeenCalled();
   });
 
+  it('strips the system flag when demoting a drifted view previously stamped as system-owned', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'stamped-drifted-view-id',
+          universalIdentifier: 'stamped-drifted-view-uid',
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+          objectMetadataUniversalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'stamped-drifted-view-id', workspaceId: WORKSPACE_ID },
+      { key: null, isSystemSideEffect: false },
+    );
+  });
+
   it('demotes a workspace-custom INDEX view on a standard object next to the standard INDEX view', async () => {
     mockWorkspaceCache({
       views: [

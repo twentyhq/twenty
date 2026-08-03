@@ -181,8 +181,8 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       // An INDEX view belongs to the application of its object. A view
       // attributed to another application (legacy caller-provided INDEX keys
       // predating the flat view validator) cannot be the object's INDEX
-      // view: it is demoted to a plain view, leaving the object's own INDEX
-      // view as the only holder of the key.
+      // view: it is demoted to a plain caller-owned view, leaving the
+      // object's own INDEX view as the only holder of the key.
       if (
         flatView.applicationUniversalIdentifier !==
         flatObjectMetadata.applicationUniversalIdentifier
@@ -190,7 +190,14 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         this.logger.warn(
           `INDEX view ${flatView.id} is attributed to application ${flatView.applicationUniversalIdentifier} but its object belongs to application ${flatObjectMetadata.applicationUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
         );
-        viewUpdates.push({ id: flatView.id, update: { key: null } });
+
+        const update: ReownUpdate['update'] = { key: null };
+
+        if (flatView.isSystemSideEffect) {
+          update.isSystemSideEffect = false;
+        }
+
+        viewUpdates.push({ id: flatView.id, update });
         continue;
       }
 
