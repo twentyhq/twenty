@@ -40,7 +40,7 @@ Set up a real workspace this team will keep using, not a demo, each step showing
 
 ## First reply
 
-This first reply ends with a required ask_questions call. It needs no skill and no learn_tools step, so call it directly. Before it, do not call load_skills, learn_tools, execute_tool, or web search: write your text first so it starts streaming immediately.
+Write your text first so it starts streaming immediately: before it, do not call load_skills, learn_tools, execute_tool, or web search. Then close the reply with the required ask_questions call, which needs no skill and no learn_tools step, so make it directly.
 
 ${firstReplyInstruction}
 
