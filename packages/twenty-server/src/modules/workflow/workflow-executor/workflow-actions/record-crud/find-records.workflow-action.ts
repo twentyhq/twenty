@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -24,38 +23,10 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-
-const resolveLimit = (
-  value: number | string | undefined,
-): number | undefined => {
-  if (!isDefined(value)) {
-    return undefined;
-  }
-
-  const parsedValue = Number(value);
-
-  if (!Number.isFinite(parsedValue)) {
-    return undefined;
-  }
-
-  return Math.min(Math.max(Math.floor(parsedValue), 1), QUERY_MAX_RECORDS);
-};
-
-const resolveOffset = (
-  value: number | string | undefined,
-): number | undefined => {
-  if (!isDefined(value)) {
-    return undefined;
-  }
-
-  const parsedValue = Number(value);
-
-  if (!Number.isFinite(parsedValue)) {
-    return undefined;
-  }
-
-  return Math.max(0, Math.floor(parsedValue));
-};
+import {
+  resolveLimitInput,
+  resolveOffsetInput,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-pagination-input.util';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
@@ -137,8 +108,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       objectName: workflowActionInput.objectName,
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
-      limit: resolveLimit(workflowActionInput.limit),
-      offset: resolveOffset(workflowActionInput.offset),
+      limit: resolveLimitInput(workflowActionInput.limit),
+      offset: resolveOffsetInput(workflowActionInput.offset),
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
       shouldBuildEffectiveSelectFields: false,

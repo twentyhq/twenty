@@ -1,12 +1,6 @@
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
-
-const workflowVariableReferenceSchema = z
-  .string()
-  .regex(
-    /^{{[^{}]+}}$/,
-    'Expected a workflow variable reference like {{stepId.path}}',
-  );
+import { workflowVariableReferenceSchema } from './workflow-variable-reference-schema';
 
 export const workflowFindRecordsActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
