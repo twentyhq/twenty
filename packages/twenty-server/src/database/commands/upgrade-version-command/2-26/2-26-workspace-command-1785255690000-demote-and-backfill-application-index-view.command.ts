@@ -105,28 +105,6 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
         continue;
       }
 
-      const flatObjectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          flatView.objectMetadataUniversalIdentifier
-        ];
-
-      if (
-        isDefined(flatObjectMetadata) &&
-        flatView.universalIdentifier ===
-          getSystemViewUniversalIdentifier({
-            objectMetadataApplicationUniversalIdentifier:
-              flatObjectMetadata.applicationUniversalIdentifier,
-            objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-            viewKey: ViewKey.INDEX,
-          })
-      ) {
-        // The application authored its INDEX view under the exact engine
-        // derivation: demoting it and re-creating a view with the same
-        // identifier would violate the unique index. It gets adopted in
-        // place through the backfill occupancy resolution instead.
-        continue;
-      }
-
       viewIdsToDemote.push(flatView.id);
     }
 
@@ -137,13 +115,6 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
         flatFieldMetadataMaps,
         engineOwnedApplicationUniversalIdentifiers,
         objectUniversalIdentifiersWithEngineIndexView,
-      });
-
-    const { viewIdsToAdopt, tombstoneReleases } =
-      this.resolveBackfillViewIdentifierOccupancy({
-        workspaceId,
-        backfillOperationsByApplication,
-        flatViewMaps,
       });
 
     const { backfillViewCount, backfillViewFieldCount } = [
@@ -159,8 +130,6 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
 
     if (
       viewIdsToDemote.length === 0 &&
-      viewIdsToAdopt.length === 0 &&
-      tombstoneReleases.length === 0 &&
       backfillViewCount === 0 &&
       backfillViewFieldCount === 0
     ) {
@@ -172,7 +141,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Demoting ${viewIdsToDemote.length} application INDEX view(s), adopting ${viewIdsToAdopt.length} view(s) already holding their engine identifier, releasing ${tombstoneReleases.length} soft-deleted holder(s) and backfilling ${backfillViewCount} engine INDEX view(s) with ${backfillViewFieldCount} view field(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Demoting ${viewIdsToDemote.length} application INDEX view(s) and backfilling ${backfillViewCount} engine INDEX view(s) with ${backfillViewFieldCount} view field(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -186,27 +155,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
         { id: In(viewIdsToDemote), workspaceId },
         { key: null },
       );
-    }
 
-    if (viewIdsToAdopt.length > 0) {
-      await this.viewRepository.update(
-        { id: In(viewIdsToAdopt), workspaceId },
-        { key: ViewKey.INDEX, isSystemSideEffect: true },
-      );
-    }
-
-    for (const { viewId, universalIdentifier } of tombstoneReleases) {
-      await this.viewRepository.update(
-        { id: viewId, workspaceId },
-        { universalIdentifier },
-      );
-    }
-
-    if (
-      viewIdsToDemote.length > 0 ||
-      viewIdsToAdopt.length > 0 ||
-      tombstoneReleases.length > 0
-    ) {
       await invalidateIndexViewReconcileCache({
         workspaceId,
         workspaceMigrationRunnerService: this.workspaceMigrationRunnerService,
@@ -219,95 +168,8 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     });
 
     this.logger.log(
-      `Demoted ${viewIdsToDemote.length} application INDEX view(s), adopted ${viewIdsToAdopt.length} view(s) and backfilled ${backfillViewCount} engine INDEX view(s) with ${backfillViewFieldCount} view field(s) for workspace ${workspaceId}`,
+      `Demoted ${viewIdsToDemote.length} application INDEX view(s) and backfilled ${backfillViewCount} engine INDEX view(s) with ${backfillViewFieldCount} view field(s) for workspace ${workspaceId}`,
     );
-  }
-
-  // The backfill computes creations from the engine convention alone; a row
-  // may already hold the derived identifier. An active holder is adopted in
-  // place (it becomes the engine INDEX view), a soft-deleted holder is moved
-  // onto its own primary key so the insert can go through: the unique index
-  // on (workspaceId, universalIdentifier) is not partial on deletedAt.
-  private resolveBackfillViewIdentifierOccupancy({
-    workspaceId,
-    backfillOperationsByApplication,
-    flatViewMaps,
-  }: {
-    workspaceId: string;
-    backfillOperationsByApplication: BackfillOperationsByApplication;
-    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
-  }): {
-    viewIdsToAdopt: string[];
-    tombstoneReleases: { viewId: string; universalIdentifier: string }[];
-  } {
-    const viewIdsToAdopt: string[] = [];
-    const tombstoneReleases: { viewId: string; universalIdentifier: string }[] =
-      [];
-    const droppedViewUniversalIdentifiers = new Set<string>();
-
-    for (const bucket of backfillOperationsByApplication.values()) {
-      bucket.viewsToCreate = bucket.viewsToCreate.filter((viewToCreate) => {
-        const occupyingFlatView =
-          flatViewMaps.byUniversalIdentifier[viewToCreate.universalIdentifier];
-
-        if (!isDefined(occupyingFlatView)) {
-          return true;
-        }
-
-        if (!isDefined(occupyingFlatView.deletedAt)) {
-          if (
-            occupyingFlatView.objectMetadataUniversalIdentifier ===
-            viewToCreate.objectMetadataUniversalIdentifier
-          ) {
-            viewIdsToAdopt.push(occupyingFlatView.id);
-          } else {
-            this.logger.warn(
-              `Engine INDEX view identifier ${viewToCreate.universalIdentifier} is held by active view ${occupyingFlatView.id} of another object in workspace ${workspaceId}, skipping backfill`,
-            );
-            droppedViewUniversalIdentifiers.add(
-              viewToCreate.universalIdentifier,
-            );
-          }
-
-          return false;
-        }
-
-        const releasedUniversalIdentifier = occupyingFlatView.id;
-
-        if (
-          isDefined(
-            flatViewMaps.byUniversalIdentifier[releasedUniversalIdentifier],
-          )
-        ) {
-          this.logger.warn(
-            `Cannot release engine INDEX view identifier ${viewToCreate.universalIdentifier} from soft-deleted view ${occupyingFlatView.id} in workspace ${workspaceId}, skipping backfill`,
-          );
-          droppedViewUniversalIdentifiers.add(viewToCreate.universalIdentifier);
-
-          return false;
-        }
-
-        tombstoneReleases.push({
-          viewId: occupyingFlatView.id,
-          universalIdentifier: releasedUniversalIdentifier,
-        });
-
-        return true;
-      });
-    }
-
-    if (droppedViewUniversalIdentifiers.size > 0) {
-      for (const bucket of backfillOperationsByApplication.values()) {
-        bucket.viewFieldsToCreate = bucket.viewFieldsToCreate.filter(
-          (viewFieldToCreate) =>
-            !droppedViewUniversalIdentifiers.has(
-              viewFieldToCreate.viewUniversalIdentifier,
-            ),
-        );
-      }
-    }
-
-    return { viewIdsToAdopt, tombstoneReleases };
   }
 
   private computeBackfillOperationsByApplication({
