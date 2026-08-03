@@ -34,13 +34,43 @@ export class MetadataEventPublisher {
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
-      events: enrichedBatch.events.map((event) => ({
-        type: event.type,
-        entityName: event.metadataName,
-        recordId: event.recordId,
-        properties: event.properties as Record<string, unknown>,
-      })),
+      events: enrichedBatch.events.map((event) => {
+        const recipientUserWorkspaceIds =
+          this.resolveRecipientUserWorkspaceIds(event);
+
+        return {
+          type: event.type,
+          entityName: event.metadataName,
+          recordId: event.recordId,
+          properties: event.properties as Record<string, unknown>,
+          ...(isDefined(recipientUserWorkspaceIds)
+            ? { recipientUserWorkspaceIds }
+            : {}),
+        };
+      }),
     });
+  }
+
+  private resolveRecipientUserWorkspaceIds(
+    event: MetadataEventBatch['events'][number],
+  ): string[] | undefined {
+    if (event.metadataName !== 'navigationMenuItem') {
+      return undefined;
+    }
+
+    const record = (
+      event.type === 'deleted'
+        ? event.properties.before
+        : event.properties.after
+    ) as Record<string, unknown> | undefined;
+
+    const userWorkspaceId = record?.userWorkspaceId;
+
+    if (typeof userWorkspaceId !== 'string') {
+      return undefined;
+    }
+
+    return [userWorkspaceId];
   }
 
   private async enrichMetadataEventBatch(
