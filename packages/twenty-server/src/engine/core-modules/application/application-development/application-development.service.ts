@@ -28,6 +28,13 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 const APP_DEV_RATE_LIMIT_MAX = 30;
 const APP_DEV_RATE_LIMIT_WINDOW_MS = 30_000;
 
+// File uploads scale with the number of files in an application (potentially
+// hundreds), unlike createDevelopmentApplication/syncApplication which are
+// called at most a couple of times per sync, so they need their own, much
+// more permissive bucket instead of sharing APP_DEV_RATE_LIMIT_MAX.
+const APP_DEV_FILE_UPLOAD_RATE_LIMIT_MAX = 300;
+const APP_DEV_FILE_UPLOAD_RATE_LIMIT_WINDOW_MS = 30_000;
+
 const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
 
 const ALLOWED_APPLICATION_FILE_FOLDERS: FileFolder[] = [
@@ -161,7 +168,7 @@ export class ApplicationDevelopmentService {
     // Lazy so rejected or rate-limited uploads are not buffered into memory.
     getFileBuffer: () => Promise<Buffer>;
   }): Promise<FileDTO> {
-    await this.throttlePerApplication(
+    await this.throttleFileUploadPerApplication(
       applicationUniversalIdentifier,
       workspaceId,
     );
@@ -261,6 +268,18 @@ export class ApplicationDevelopmentService {
       1,
       APP_DEV_RATE_LIMIT_MAX,
       APP_DEV_RATE_LIMIT_WINDOW_MS,
+    );
+  }
+
+  private async throttleFileUploadPerApplication(
+    applicationIdentifier: string,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-dev-file-upload:${workspaceId}:${applicationIdentifier}`,
+      1,
+      APP_DEV_FILE_UPLOAD_RATE_LIMIT_MAX,
+      APP_DEV_FILE_UPLOAD_RATE_LIMIT_WINDOW_MS,
     );
   }
 
