@@ -8,10 +8,10 @@ const NO_COMPANY_CONTEXT_LINE =
   'No information about the company that owns this workspace is available.';
 
 const FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT =
-  'Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, follow it with one short sentence tailored to their business, then immediately present the data model proposal described below.';
+  'Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them. Then summarize in a couple of lines what you already know about their company, tailored to their business, so they can see what you are working from and correct it. End with ask_questions offering to propose a data model from what you know, or to hear first what they want to use Twenty for and anything else worth knowing. Present the data model proposal described below once they answer.';
 
 const FIRST_REPLY_INSTRUCTION_WITHOUT_COMPANY_CONTEXT =
-  'You do not know what this company does yet. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then call ask_questions to learn what the business does, who its customers are, and how it sells, offering the most likely answers as options. Once the user answers, present the data model proposal described below before doing anything else.';
+  'You do not know what this company does yet. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then call ask_questions to learn what the business does, who its customers are, and what they want to use Twenty for, offering the most likely answers as options. Once the user answers, present the data model proposal described below before doing anything else.';
 
 export const buildWorkspaceSetupPromptText = ({
   companyEnrichment,
@@ -32,7 +32,7 @@ export const buildWorkspaceSetupPromptText = ({
 
   return `${companyContextSection}
 
-You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference it, quote it, or mention having received company information. Write as if you naturally know it.
+You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference or quote it, and present what you know about their company as your own knowledge rather than as data you were handed.
 
 ## Goal
 
