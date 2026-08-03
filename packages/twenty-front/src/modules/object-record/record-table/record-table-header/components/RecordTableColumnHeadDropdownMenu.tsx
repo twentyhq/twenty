@@ -8,7 +8,9 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
+import { useOpenFieldSettingsFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenFieldSettingsFromTableHeader';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
@@ -21,9 +23,11 @@ import {
   IconArrowRight,
   IconEyeOff,
   IconFilter,
+  IconSettings,
   IconSortDescending,
 } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -121,14 +125,29 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
+  const { openFieldSettingsFromTableHeader } =
+    useOpenFieldSettingsFromTableHeader();
+
+  const handleEditFieldClick = () => {
+    closeDropdownAndToggleScroll();
+
+    openFieldSettingsFromTableHeader(recordField.fieldMetadataItemId);
+  };
+
   const { isFilterable, isSortable } = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
+  const canEditField = useHasPermissionFlag(PermissionFlagType.DATA_MODEL);
+
   const showSeparator =
     (isFilterable || isSortable) && isLabelIdentifier !== true;
   const canHide = isLabelIdentifier !== true;
+
+  const showEditFieldSeparator =
+    canEditField &&
+    (isFilterable || isSortable || canMoveLeft || canMoveRight || canHide);
 
   return (
     <DropdownContent>
@@ -168,6 +187,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
               LeftIcon={IconEyeOff}
               onClick={async () => await handleColumnVisibility()}
               text={t`Hide`}
+            />
+          )}
+          {showEditFieldSeparator && <DropdownMenuSeparator />}
+          {canEditField && (
+            <MenuItem
+              LeftIcon={IconSettings}
+              onClick={handleEditFieldClick}
+              text={t`Edit field`}
             />
           )}
         </DropdownMenuItemsContainer>

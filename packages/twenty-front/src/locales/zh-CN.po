@@ -6859,6 +6859,11 @@ msgstr "编辑操作"
 msgid "Edit data structure and fields"
 msgstr "编辑数据结构和字段"
 
+#. js-lingui-id: QjNcml
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Edit field"
+msgstr ""
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
