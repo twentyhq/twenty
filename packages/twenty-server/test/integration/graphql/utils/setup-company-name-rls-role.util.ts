@@ -1,11 +1,9 @@
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { upsertContainsRlsPredicate } from 'test/integration/graphql/utils/upsert-contains-rls-predicate.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -24,33 +22,6 @@ export const setupCompanyNameRlsRole = async ({
   label: string;
   description: string;
 }): Promise<CompanyNameRlsRoleSetup> => {
-  const { objects } = await findManyObjectMetadata({
-    expectToFail: false,
-    input: { filter: {}, paging: { first: 1000 } },
-    gqlFields: `
-        id
-        nameSingular
-        fieldsList {
-          id
-          name
-        }
-      `,
-  });
-
-  jestExpectToBeDefined(objects);
-
-  const companyObjectMetadata = objects.find(
-    (object) => object.nameSingular === 'company',
-  );
-
-  jestExpectToBeDefined(companyObjectMetadata);
-
-  const companyNameFieldMetadata = companyObjectMetadata.fieldsList?.find(
-    (field) => field.name === 'name',
-  );
-
-  jestExpectToBeDefined(companyNameFieldMetadata);
-
   const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
   const { data: roleData } = await createOneRole({
@@ -75,20 +46,11 @@ export const setupCompanyNameRlsRole = async ({
 
   jestExpectToBeDefined(customRoleId);
 
-  await upsertRowLevelPermissionPredicates({
-    expectToFail: false,
-    input: {
-      roleId: customRoleId,
-      objectMetadataId: companyObjectMetadata.id,
-      predicates: [
-        {
-          fieldMetadataId: companyNameFieldMetadata.id,
-          operand: RowLevelPermissionPredicateOperand.CONTAINS,
-          value: VISIBLE_COMPANY_NAME_TOKEN,
-        },
-      ],
-      predicateGroups: [],
-    },
+  await upsertContainsRlsPredicate({
+    roleId: customRoleId,
+    objectNameSingular: 'company',
+    fieldName: 'name',
+    value: VISIBLE_COMPANY_NAME_TOKEN,
   });
 
   await updateWorkspaceMemberRole({
