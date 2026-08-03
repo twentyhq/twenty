@@ -46,6 +46,11 @@ msgstr "—"
 msgid ": Empty"
 msgstr ": Vazio"
 
+#. js-lingui-id: jmJy4X
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Exactly"
+msgstr ""
+
 #. js-lingui-id: CE75IR
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Future"
@@ -65,6 +70,11 @@ msgstr ": Não"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotEmpty"
 msgstr ": Não vazio"
+
+#. js-lingui-id: 0DaS2L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": NotExactly"
+msgstr ""
 
 #. js-lingui-id: 11QpPG
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -10325,6 +10335,11 @@ msgstr "É antes"
 msgid "Is empty"
 msgstr "Está vazio"
 
+#. js-lingui-id: tJ3FGI
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is exactly"
+msgstr ""
+
 #. js-lingui-id: glSyvW
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in future"
@@ -10394,6 +10409,11 @@ msgstr "não é um UUID válido"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not empty"
 msgstr "Não está vazio"
+
+#. js-lingui-id: UmjIni
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is not exactly"
+msgstr ""
 
 #. js-lingui-id: HQFVAU
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts

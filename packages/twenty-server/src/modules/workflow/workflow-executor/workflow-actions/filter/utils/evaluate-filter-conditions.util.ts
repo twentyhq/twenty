@@ -188,8 +188,10 @@ function evaluateTextAndArrayFilter(
           isNotEmptyTextOrArray(filter.leftOperand))
       );
     case ViewFilterOperand.IS:
+    case ViewFilterOperand.IS_EXACTLY:
       return isEqual(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
+    case ViewFilterOperand.IS_NOT_EXACTLY:
       return !isEqual(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
@@ -467,6 +469,10 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
       return leftValue == rightValue;
     case ViewFilterOperand.IS_NOT:
       return leftValue != rightValue;
+    case ViewFilterOperand.IS_EXACTLY:
+      return leftValue === rightValue;
+    case ViewFilterOperand.IS_NOT_EXACTLY:
+      return leftValue !== rightValue;
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(leftValue);
     case ViewFilterOperand.IS_NOT_EMPTY:

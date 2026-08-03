@@ -48,6 +48,8 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IS_AFTER,
       ViewFilterOperand.CONTAINS,
       ViewFilterOperand.DOES_NOT_CONTAIN,
+      ViewFilterOperand.IS_EXACTLY,
+      ViewFilterOperand.IS_NOT_EXACTLY,
       ViewFilterOperand.IS_RELATIVE,
     ].includes(selectedOperandInDropdown);
 

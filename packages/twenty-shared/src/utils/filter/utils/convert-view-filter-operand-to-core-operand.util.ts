@@ -29,6 +29,8 @@ const operandMapping: Record<string, ViewFilterOperand> = {
   [ViewFilterOperand.IS_AFTER]: ViewFilterOperand.IS_AFTER,
   [ViewFilterOperand.CONTAINS]: ViewFilterOperand.CONTAINS,
   [ViewFilterOperand.DOES_NOT_CONTAIN]: ViewFilterOperand.DOES_NOT_CONTAIN,
+  [ViewFilterOperand.IS_EXACTLY]: ViewFilterOperand.IS_EXACTLY,
+  [ViewFilterOperand.IS_NOT_EXACTLY]: ViewFilterOperand.IS_NOT_EXACTLY,
   [ViewFilterOperand.IS_EMPTY]: ViewFilterOperand.IS_EMPTY,
   [ViewFilterOperand.IS_NOT_EMPTY]: ViewFilterOperand.IS_NOT_EMPTY,
   [ViewFilterOperand.IS_RELATIVE]: ViewFilterOperand.IS_RELATIVE,

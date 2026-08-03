@@ -217,6 +217,8 @@ exports[`getRecordFilterOperands returns the expected operands for filterType=TE
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]

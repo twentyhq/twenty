@@ -70,21 +70,25 @@ const getCompositeSubFieldProperty = ({
   );
 };
 
-type ContainsBasedOperand =
+type TextBasedOperand =
   | ViewFilterOperand.CONTAINS
   | ViewFilterOperand.DOES_NOT_CONTAIN
+  | ViewFilterOperand.IS_EXACTLY
+  | ViewFilterOperand.IS_NOT_EXACTLY
   | ViewFilterOperand.IS_EMPTY
   | ViewFilterOperand.IS_NOT_EMPTY;
 
-const computeValueFromContainsOperand = (
-  operand: ContainsBasedOperand,
+const computeValueFromTextBasedOperand = (
+  operand: TextBasedOperand,
   value: string,
 ) => {
   switch (operand) {
     case ViewFilterOperand.CONTAINS:
+    case ViewFilterOperand.IS_EXACTLY:
     case ViewFilterOperand.IS_NOT_EMPTY:
       return value;
     case ViewFilterOperand.DOES_NOT_CONTAIN:
+    case ViewFilterOperand.IS_NOT_EXACTLY:
     case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
@@ -318,11 +322,11 @@ const computeValueFromFilterUUID = (
 const VALUE_HANDLER_REGISTRY: Partial<Record<FieldMetadataType, ValueHandler>> =
   {
     [FieldMetadataType.TEXT]: ({ operand, value }) =>
-      computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
+      computeValueFromTextBasedOperand(operand as TextBasedOperand, value),
     [FieldMetadataType.ARRAY]: ({ operand, value }) =>
-      computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
+      computeValueFromTextBasedOperand(operand as TextBasedOperand, value),
     [FieldMetadataType.RAW_JSON]: ({ operand, value }) =>
-      computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
+      computeValueFromTextBasedOperand(operand as TextBasedOperand, value),
     [FieldMetadataType.DATE_TIME]: ({ operand, value, timeZone }) =>
       computeValueFromFilterDate(
         operand as RecordFilterToRecordInputOperand<'DATE_TIME'>,

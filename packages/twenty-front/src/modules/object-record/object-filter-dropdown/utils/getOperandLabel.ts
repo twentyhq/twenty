@@ -18,6 +18,10 @@ export const getOperandLabel = (
       return t`Contains`;
     case ViewFilterOperand.DOES_NOT_CONTAIN:
       return t`Doesn't contain`;
+    case ViewFilterOperand.IS_EXACTLY:
+      return t`Is exactly`;
+    case ViewFilterOperand.IS_NOT_EXACTLY:
+      return t`Is not exactly`;
     case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return t`Greater than or equal`;
     case ViewFilterOperand.LESS_THAN_OR_EQUAL:
@@ -67,6 +71,10 @@ export const getOperandLabelShort = (
     case ViewFilterOperand.IS_NOT:
     case ViewFilterOperand.DOES_NOT_CONTAIN:
       return t`: Not`;
+    case ViewFilterOperand.IS_EXACTLY:
+      return t`: Exactly`;
+    case ViewFilterOperand.IS_NOT_EXACTLY:
+      return t`: NotExactly`;
     case ViewFilterOperand.IS_NOT_NULL:
       return t`: NotNull`;
     case ViewFilterOperand.IS_NOT_EMPTY:

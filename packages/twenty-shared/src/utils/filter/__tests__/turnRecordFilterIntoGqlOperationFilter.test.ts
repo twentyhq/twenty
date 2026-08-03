@@ -231,6 +231,34 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toEqual({ not: { name: { ilike: '%test%' } } });
     });
+
+    it('should handle IS_EXACTLY operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-text',
+          RecordFilterOperand.IS_EXACTLY,
+          'test',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ name: { eq: 'test' } });
+    });
+
+    it('should handle IS_NOT_EXACTLY operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-text',
+          RecordFilterOperand.IS_NOT_EXACTLY,
+          'test',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ not: { name: { eq: 'test' } } });
+    });
   });
 
   describe('NUMBER filter', () => {
