@@ -93,7 +93,7 @@ describe('WorkspaceInvitationService', () => {
         {
           provide: OnboardingService,
           useValue: {
-            setOnboardingInviteTeamPending: jest.fn(),
+            completeOnboardingInviteTeamStep: jest.fn(),
             isOnboardingInviteTeamPending: jest.fn().mockResolvedValue(false),
           },
         },
@@ -196,6 +196,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',
@@ -211,7 +212,7 @@ describe('WorkspaceInvitationService', () => {
         .mockReturnValue('http://localhost:3000');
       jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
       jest
-        .spyOn(onboardingService, 'setOnboardingInviteTeamPending')
+        .spyOn(onboardingService, 'completeOnboardingInviteTeamStep')
         .mockResolvedValue({} as any);
 
       const result = await service.sendInvitations(
@@ -224,10 +225,11 @@ describe('WorkspaceInvitationService', () => {
       expect(result.result.length).toBe(2);
       expect(emailService.send).toHaveBeenCalledTimes(2);
       expect(
-        onboardingService.setOnboardingInviteTeamPending,
+        onboardingService.completeOnboardingInviteTeamStep,
       ).toHaveBeenCalledWith({
+        userId: sender.userId,
         workspaceId: workspace.id,
-        value: false,
+        hasSentInvitations: true,
       });
     });
 
@@ -238,6 +240,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',
@@ -284,6 +287,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',
@@ -330,6 +334,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',

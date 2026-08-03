@@ -157,7 +157,7 @@ export const CreateProfile = () => {
           return current;
         });
 
-        setNextOnboardingStatus();
+        setNextOnboardingStatus({ isCurrentStepReversible: true });
         setIsNavigating(true);
       } catch (error: any) {
         setIsNavigating(false);

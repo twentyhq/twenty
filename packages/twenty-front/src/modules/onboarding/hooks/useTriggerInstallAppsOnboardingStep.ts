@@ -10,11 +10,20 @@ export const useTriggerInstallAppsOnboardingStep = () => {
   );
 
   return useCallback(
-    async (universalIdentifiers: string[]) => {
+    async ({
+      universalIdentifiers,
+      isAutoSkipped,
+    }: {
+      universalIdentifiers: string[];
+      isAutoSkipped: boolean;
+    }) => {
       await triggerInstallAppsOnboardingStep({
-        variables: { universalIdentifiers },
+        variables: { universalIdentifiers, isAutoSkipped },
       });
-      setNextOnboardingStatus();
+      setNextOnboardingStatus({
+        isCurrentStepReversible:
+          !isAutoSkipped && universalIdentifiers.length === 0,
+      });
     },
     [triggerInstallAppsOnboardingStep, setNextOnboardingStatus],
   );

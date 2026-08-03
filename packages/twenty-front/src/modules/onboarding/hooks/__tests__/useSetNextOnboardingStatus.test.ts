@@ -32,6 +32,7 @@ type RenderHooksOptions = {
   isBillingEnabled?: boolean;
   withOneWorkspaceMember?: boolean;
   isOnboardingAiChatEnabled?: boolean;
+  isCurrentStepReversible?: boolean;
 };
 
 const renderHooks = (
@@ -41,6 +42,7 @@ const renderHooks = (
     isBillingEnabled = false,
     withOneWorkspaceMember = true,
     isOnboardingAiChatEnabled = false,
+    isCurrentStepReversible = false,
   }: RenderHooksOptions = {},
 ) => {
   jotaiStore.set(
@@ -95,10 +97,12 @@ const renderHooks = (
     });
   });
   act(() => {
-    result.current.setNextOnboardingStatus();
+    result.current.setNextOnboardingStatus({ isCurrentStepReversible });
   });
   return {
     nextOnboardingStatus: result.current.currentUser?.onboardingStatus,
+    previousOnboardingStatus:
+      result.current.currentUser?.previousOnboardingStatus,
     isWelcomeAnimationVisible: result.current.isWelcomeAnimationVisible,
     shouldOpenAiChatAfterOnboarding:
       result.current.shouldOpenAiChatAfterOnboarding,
@@ -273,5 +277,21 @@ describe('useSetNextOnboardingStatus', () => {
       });
     expect(isWelcomeAnimationVisible).toBe(true);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should make the left step the one to go back to when it was reversible', () => {
+    const { previousOnboardingStatus } = renderHooks(
+      OnboardingStatus.SYNC_EMAIL,
+      { isCurrentStepReversible: true },
+    );
+    expect(previousOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
+  });
+
+  it('should keep the earlier reversible step when the left step was not reversible', () => {
+    const { previousOnboardingStatus } = renderHooks(
+      OnboardingStatus.SYNC_EMAIL,
+      { isCurrentStepReversible: false },
+    );
+    expect(previousOnboardingStatus).toBeUndefined();
   });
 });

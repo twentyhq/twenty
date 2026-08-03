@@ -11,6 +11,7 @@ import {
 import { billingState } from '@/client-config/states/billingState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
+import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
@@ -77,39 +78,46 @@ export const useSetNextOnboardingStatus = () => {
     isOnboardingAiChatEnabledState,
   );
 
-  return useCallback(() => {
-    const nextOnboardingStatus = getNextOnboardingStatus({
+  return useCallback(
+    ({ isCurrentStepReversible }: { isCurrentStepReversible: boolean }) => {
+      const nextOnboardingStatus = getNextOnboardingStatus({
+        currentUser,
+        currentWorkspace,
+        isBillingEnabled,
+      });
+      store.set(onboardingNavigationDirectionState.atom, 'forward');
+      store.set(currentUserState.atom, (current) => {
+        if (isDefined(current)) {
+          return {
+            ...current,
+            onboardingStatus: nextOnboardingStatus,
+            previousOnboardingStatus: isCurrentStepReversible
+              ? current.onboardingStatus
+              : current.previousOnboardingStatus,
+          };
+        }
+        return current;
+      });
+
+      if (
+        getHasJustCompletedOnboarding({
+          previousOnboardingStatus: currentUser?.onboardingStatus,
+          nextOnboardingStatus,
+        })
+      ) {
+        store.set(isWelcomeAnimationVisibleState.atom, true);
+        store.set(
+          shouldOpenAiChatAfterOnboardingState.atom,
+          isOnboardingAiChatEnabled,
+        );
+      }
+    },
+    [
       currentUser,
       currentWorkspace,
       isBillingEnabled,
-    });
-    store.set(currentUserState.atom, (current) => {
-      if (isDefined(current)) {
-        return {
-          ...current,
-          onboardingStatus: nextOnboardingStatus,
-        };
-      }
-      return current;
-    });
-
-    if (
-      getHasJustCompletedOnboarding({
-        previousOnboardingStatus: currentUser?.onboardingStatus,
-        nextOnboardingStatus,
-      })
-    ) {
-      store.set(isWelcomeAnimationVisibleState.atom, true);
-      store.set(
-        shouldOpenAiChatAfterOnboardingState.atom,
-        isOnboardingAiChatEnabled,
-      );
-    }
-  }, [
-    currentUser,
-    currentWorkspace,
-    isBillingEnabled,
-    isOnboardingAiChatEnabled,
-    store,
-  ]);
+      isOnboardingAiChatEnabled,
+      store,
+    ],
+  );
 };

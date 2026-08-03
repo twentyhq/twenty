@@ -153,7 +153,9 @@ export const useInviteTeam = () => {
         });
       }
 
-      setNextOnboardingStatus();
+      setNextOnboardingStatus({
+        isCurrentStepReversible: emails.length === 0,
+      });
       setIsNavigating(true);
     },
     [

@@ -379,9 +379,10 @@ export class WorkspaceInvitationService {
       }
     }
 
-    await this.onboardingService.setOnboardingInviteTeamPending({
+    await this.onboardingService.completeOnboardingInviteTeamStep({
+      userId: sender.userId,
       workspaceId: workspace.id,
-      value: false,
+      hasSentInvitations: emails.length > 0,
     });
 
     const i18n = this.i18nService.getI18nInstance(sender.locale);

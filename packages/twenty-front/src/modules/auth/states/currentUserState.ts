@@ -9,6 +9,7 @@ export type CurrentUser = Pick<
   | 'canAccessFullAdminPanel'
   | 'canImpersonate'
   | 'onboardingStatus'
+  | 'previousOnboardingStatus'
   | 'userVars'
   | 'firstName'
   | 'lastName'

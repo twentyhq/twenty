@@ -1,5 +1,7 @@
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useLocation, useOutlet } from 'react-router-dom';
@@ -26,6 +28,14 @@ export const OnboardingTransitionOutlet = () => {
   const outlet = useOutlet();
   const shouldReduceMotion = useReducedMotion();
   const transition = useOnboardingMotionTransition();
+  const onboardingNavigationDirection = useAtomStateValue(
+    onboardingNavigationDirectionState,
+  );
+
+  const exitSlideOffset =
+    onboardingNavigationDirection === 'backward'
+      ? ONBOARDING_MOTION_SLIDE_OFFSET
+      : -ONBOARDING_MOTION_SLIDE_OFFSET;
 
   return (
     <StyledTransitionContainer>
@@ -36,7 +46,7 @@ export const OnboardingTransitionOutlet = () => {
           animate={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            y: shouldReduceMotion ? 0 : -ONBOARDING_MOTION_SLIDE_OFFSET,
+            y: shouldReduceMotion ? 0 : exitSlideOffset,
             pointerEvents: 'none',
           }}
           transition={transition}
