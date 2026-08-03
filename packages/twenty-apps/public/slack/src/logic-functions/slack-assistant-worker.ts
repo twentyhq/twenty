@@ -162,8 +162,6 @@ export const slackAssistantWorkerHandler = async (
     const updateResult = await slackUpdateMessageHandler({
       slackChannelId,
       messageTimestamp: placeholderTimestamp,
-      // Carries the footer too: every fallback rung renders this text, so the
-      // duration would be lost on workspaces that reject Block Kit.
       newMessageText: buildSlackAssistantAnswerText({
         responseText,
         durationMilliseconds,
