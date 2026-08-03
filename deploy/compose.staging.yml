@@ -13,7 +13,7 @@ name: twenty-staging
 services:
   server:
     image: ${STAGING_IMAGE:?Set STAGING_IMAGE to a commit-SHA image tag}
-    platform: ${STAGING_PLATFORM:-linux/amd64}
+    platform: ${STAGING_PLATFORM:-linux/arm64}
     ports:
       - "${STAGING_BIND_ADDRESS:-127.0.0.1}:${STAGING_PORT:-3020}:3000"
     volumes:
@@ -32,6 +32,12 @@ services:
       AUTH_GOOGLE_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_CALLBACK_URL:-}
       AUTH_GOOGLE_APIS_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_APIS_CALLBACK_URL:-}
       CALENDAR_PROVIDER_GOOGLE_ENABLED: ${STAGING_CALENDAR_PROVIDER_GOOGLE_ENABLED:-false}
+      # Migrations are driven explicitly by `staging.sh migrate`, never from the
+      # entrypoint. Both callers start the server and then migrate, so leaving
+      # this unset ran two `upgrade` processes against one database: they read
+      # the same attempt number, collided on UQ_upgrade_migration_workspace, and
+      # recorded a failure for a command that had actually succeeded.
+      DISABLE_DB_MIGRATIONS: "true"
       DISABLE_CRON_JOBS_REGISTRATION: "true"
       STORAGE_TYPE: local
       EMAIL_DRIVER: logger
@@ -49,7 +55,7 @@ services:
 
   worker:
     image: ${STAGING_IMAGE:?Set STAGING_IMAGE to a commit-SHA image tag}
-    platform: ${STAGING_PLATFORM:-linux/amd64}
+    platform: ${STAGING_PLATFORM:-linux/arm64}
     command: ["yarn", "worker:prod"]
     volumes:
       - staging-server-data:/app/packages/twenty-server/.local-storage

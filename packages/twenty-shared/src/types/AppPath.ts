@@ -26,6 +26,10 @@ export enum AppPath {
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
   PageLayoutPage = '/page/:pageLayoutId',
   MassEmail = '/mass-email',
+  Emails = '/emails',
+  EmailsNew = '/emails/new',
+  EmailsCampaign = '/emails/:campaignId',
+  Duplicates = '/duplicates',
 
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,

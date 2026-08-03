@@ -82,22 +82,44 @@ export class UpgradeStatusService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
+  // Health comes from how far the sequence has been walked, not from the
+  // newest row. A slow command re-dating an early step must not make a fully
+  // upgraded instance report BEHIND.
   async getInstanceStatus(): Promise<InstanceUpgradeStatus> {
-    const migration =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
+    const { lastCompleted, blocked } =
+      await this.upgradeMigrationService.getInstanceProgress();
 
-    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-    const lastInstanceStep = [...sequence]
-      .reverse()
-      .find(
-        (step) =>
-          step.kind === 'fast-instance' || step.kind === 'slow-instance',
-      );
+    if (!isDefined(blocked)) {
+      return {
+        inferredVersion: isDefined(lastCompleted)
+          ? await this.upgradeMigrationService.getInferredVersion(
+              lastCompleted.name,
+            )
+          : null,
+        health: isDefined(lastCompleted)
+          ? UpgradeHealthEnum.UP_TO_DATE
+          : UpgradeHealthEnum.BEHIND,
+        latestCommand: lastCompleted,
+      };
+    }
 
-    return await this.buildCursorStatus(
-      migration,
-      lastInstanceStep?.name ?? null,
-    );
+    const health = isDefined(blocked.attempt)
+      ? UpgradeHealthEnum.FAILED
+      : UpgradeHealthEnum.BEHIND;
+
+    return {
+      inferredVersion: isDefined(blocked.attempt)
+        ? await this.upgradeMigrationService.getInferredVersion(
+            blocked.attempt.name,
+          )
+        : isDefined(lastCompleted)
+          ? await this.upgradeMigrationService.getInferredVersion(
+              lastCompleted.name,
+            )
+          : null,
+      health,
+      latestCommand: blocked.attempt ?? lastCompleted,
+    };
   }
 
   async getWorkspaceStatuses(

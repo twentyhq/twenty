@@ -1,5 +1,6 @@
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useMemo } from 'react';
 
 import { type MassEmailRecipient } from '@/activities/emails/mass-email/types/MassEmailRecipient';
 import {
@@ -26,28 +27,32 @@ export const useMassEmailRecipients = (personIds: string[]) => {
     skip: personIds.length === 0,
   });
 
-  const recipients: MassEmailRecipient[] = records.flatMap((record) => {
-    const email = getPrimaryEmailFromRecord(record);
+  const recipients: MassEmailRecipient[] = useMemo(
+    () =>
+      records.flatMap((record) => {
+        const email = getPrimaryEmailFromRecord(record);
 
-    if (email === null) {
-      return [];
-    }
+        if (email === null) {
+          return [];
+        }
 
-    const placeholderValues = buildPersonPlaceholderValues(
-      record as PersonRecordForPlaceholders,
-    );
+        const placeholderValues = buildPersonPlaceholderValues(
+          record as PersonRecordForPlaceholders,
+        );
 
-    return [
-      {
-        personId: record.id,
-        email,
-        displayName: placeholderValues.full_name || email,
-        avatarUrl:
-          typeof record.avatarUrl === 'string' ? record.avatarUrl : null,
-        placeholderValues,
-      },
-    ];
-  });
+        return [
+          {
+            personId: record.id,
+            email,
+            displayName: placeholderValues.full_name || email,
+            avatarUrl:
+              typeof record.avatarUrl === 'string' ? record.avatarUrl : null,
+            placeholderValues,
+          },
+        ];
+      }),
+    [records],
+  );
 
   return {
     recipients,

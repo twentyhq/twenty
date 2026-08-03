@@ -160,6 +160,10 @@ export const getResolverArgs = (
           type: GraphQLBoolean,
           isNullable: true,
         },
+        data: {
+          kind: GqlInputTypeDefinitionKind.Update,
+          isNullable: true,
+        },
       };
     case 'groupBy':
       return {

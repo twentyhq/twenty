@@ -31,6 +31,16 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      # Without this every run recomputed from cold, rebuilding twenty-shared
+      # and twenty-ui each time (~54s) and re-running tasks whose inputs had
+      # not changed since the last push to the same branch. The actions were
+      # already here, used by upstream's ci-front; this fork just never
+      # called them.
+      - name: Restore task cache
+        id: task-cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ci-fork-checks
       - name: Resolve affected base
         run: echo "NX_BASE=$(git merge-base origin/main HEAD)" >> "$GITHUB_ENV"
       - name: Build shared packages
@@ -44,8 +54,103 @@ jobs:
       # needs a live app; website/zapier tests need their own upstream CI setup.
       - name: Unit-test affected (except twenty-front / e2e / website / zapier)
         run: npx nx affected --nxBail -t test --exclude=twenty-front,twenty-e2e-testing,twenty-website,twenty-zapier --parallel=1 --base=$NX_BASE
+      # Adding a `t` or `<Trans>` string without re-extracting leaves the
+      # catalogs with no entry for its generated id, and Lingui then renders
+      # the id itself ("cKqT2J" where "View full record" belongs). Nothing
+      # caught that before: upstream's ci-front runs these targets but this
+      # fork does not use it, and the image used to extract at build time, so
+      # staging looked right while a host-built production frontend did not.
+      # Only for projects nx considers affected. Running all three
+      # unconditionally cost ~102s on every PR, including ones that touched
+      # nothing but deploy scripts. `nx show projects` prints a JSON array in
+      # some contexts and one project per line in others, so the output is
+      # normalised rather than grepped directly.
+      - name: Extract and compile message catalogs
+        run: |
+          # An empty affected list is normal, not an error: it is every push:main
+          # run (base == HEAD by design) and any PR touching no nx project. grep
+          # exits 1 when it matches nothing, and under `bash -e` that failed the
+          # step outright, which is what turned main red from 2026-08-01 01:54.
+          affected="$(
+            npx nx show projects --affected --base=$NX_BASE |
+              tr -d '[]"' | tr ',' '\n' | sed 's/^ *//; s/ *$//' | grep -v '^$' || true
+          )"
+          for project in twenty-front twenty-server twenty-emails; do
+            if printf '%s\n' "$affected" | grep -qx "$project"; then
+              npx nx run "${project}:lingui:extract"
+              npx nx run "${project}:lingui:compile"
+            else
+              echo "${project} is not affected; skipping catalog check"
+            fi
+          done
+      - name: Fail if the catalogs were not committed up to date
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Message catalogs are stale. For each project below run" \
+              "'npx nx lingui:extract <project>' and 'npx nx lingui:compile <project>'," \
+              "then commit the result."
+            git status --porcelain
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "Message catalogs are up to date."
+      - name: Save task cache
+        if: always()
+        uses: ./.github/actions/save-cache
+        with:
+          key: ${{ steps.task-cache.outputs.cache-primary-key }}
+
+  # Each front-tests shard used to spend ~172s on checkout and install before
+  # its own nx check told it there was nothing to do, three times over, on
+  # every PR that touched no frontend code. This decides that up front from
+  # the PR's file list alone: no checkout, no install, a few seconds.
+  #
+  # Deliberately one-directional. It only skips when every changed path is in
+  # a set verified not to reach twenty-front (`nx show projects --affected
+  # --files=...` reports twenty-front for twenty-front, twenty-shared,
+  # twenty-ui and the root package.json, and not for these). Anything else,
+  # including an unrecognised path or a non-PR event, runs the shards, where
+  # the precise nx check still has the final say.
+  front-scope:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run-shards: ${{ steps.scope.outputs.run-shards }}
+    steps:
+      - name: Decide whether the frontend can be affected
+        id: scope
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Not a pull request; running the shards."
+            echo "run-shards=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          files="$(
+            gh api "repos/${REPO}/pulls/${PR_NUMBER}/files" \
+              --paginate --jq '.[].filename'
+          )"
+
+          if printf '%s\n' "$files" | grep -qvE \
+            '^(deploy/|\.github/|packages/twenty-server/|packages/twenty-docker/)'; then
+            echo "Changed paths can reach twenty-front; running the shards."
+            echo "run-shards=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Every changed path is outside twenty-front's graph; skipping the shards."
+            echo "run-shards=false" >> "$GITHUB_OUTPUT"
+          fi
+          printf '%s\n' "$files"
 
   front-tests:
+    needs: front-scope
+    if: needs.front-scope.outputs.run-shards == 'true'
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
@@ -58,6 +163,11 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Restore task cache
+        id: task-cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ci-fork-front-tests-${{ matrix.shard }}
       - name: Check whether twenty-front is affected
         id: front-affected
         run: |
@@ -79,13 +189,20 @@ jobs:
       - name: Unit-test twenty-front (shard ${{ matrix.shard }}/3)
         if: steps.front-affected.outputs.affected == 'true'
         run: npx nx test twenty-front --shard=${{ matrix.shard }}/3 --coverage=false
+      - name: Save task cache
+        if: always()
+        uses: ./.github/actions/save-cache
+        with:
+          key: ${{ steps.task-cache.outputs.cache-primary-key }}
 
   # Single stable name to mark as the required status check on main.
+  # front-tests is skipped, not failed, when front-scope rules the frontend
+  # out, and a skipped job does not match the failure check below.
   ci-fork-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [checks, front-tests]
+    needs: [checks, front-scope, front-tests]
     steps:
       - name: Fail if any needed job failed
         if: contains(needs.*.result, 'failure')

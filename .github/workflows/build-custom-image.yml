@@ -69,9 +69,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # arm64 only. The single consumer of these images is staging on the
+        # Apple Silicon Mac, and production runs from a git checkout rather
+        # than a container, so the amd64 half was built every time and pulled
+        # by nothing — 8.4 minutes of runner time per push.
+        #
+        # Adding a platform back means adding it here AND to the verify step
+        # in the merge job, which checks exactly this list.
         include:
-          - platform: linux/amd64
-            runner: ubuntu-latest
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
@@ -179,9 +184,10 @@ jobs:
 
           docker buildx imagetools create "${tag_args[@]}" "${source_args[@]}"
 
-      # A tag that resolves on only one architecture is the failure this whole
-      # job structure exists to prevent, so it is checked rather than assumed.
-      - name: Verify both platforms are published
+      # A tag that does not resolve on the architecture the staging host runs
+      # is the failure this job structure exists to prevent, so it is checked
+      # rather than assumed. Keep this list in step with the build matrix.
+      - name: Verify the expected platforms are published
         env:
           IMAGE: ${{ needs.prepare.outputs.image }}
           SHA: ${{ needs.prepare.outputs.sha }}
@@ -192,7 +198,7 @@ jobs:
               grep -v unknown | sort -u
           )"
           echo "$platforms"
-          for required in linux/amd64 linux/arm64; do
+          for required in linux/arm64; do
             printf '%s\n' "$platforms" | grep -qx "$required" ||
               { echo "::error::${IMAGE}:${SHA} is missing $required"; exit 1; }
           done

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import {
@@ -38,6 +38,8 @@ import {
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { PersonRecordMergeEntity } from 'src/engine/core-modules/person-duplicate-review/entities/person-record-merge.entity';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -54,6 +56,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   MergeManyQueryArgs,
   ObjectRecord
 > {
+  private readonly logger = new Logger(CommonMergeManyQueryRunnerService.name);
+
   protected readonly operationName = CommonQueryNames.MERGE_MANY;
 
   async run(
@@ -73,13 +77,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       args.conflictPriorityIndex,
     );
 
-    const mergedData = this.performDeepMerge(
+    const automaticallyMergedData = this.performDeepMerge(
       recordsToMerge,
       priorityRecord.id,
       flatObjectMetadata,
       flatFieldMetadataMaps,
       args.dryRun ?? false,
     );
+    const mergedData = {
+      ...automaticallyMergedData,
+      ...(args.data ?? {}),
+    };
 
     if (args.dryRun) {
       return this.createDryRunResponse(priorityRecord, mergedData);
@@ -98,6 +106,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
             mergedData,
           }),
       );
+
+    if (this.isPersonObject(flatObjectMetadata)) {
+      await this.recordPersonMergeProvenance({
+        queryRunnerContext,
+        sourcePersonIds: idsToDelete,
+        targetPersonId: priorityRecord.id,
+      });
+    }
 
     await this.processNestedRelations({
       args,
@@ -151,12 +167,30 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       priorityRecordId,
     );
 
-    await transactionRepository
-      .createQueryBuilder(flatObjectMetadata.nameSingular)
-      .delete()
-      .whereInIds(idsToDelete)
-      .returning(columnsToReturn)
-      .execute();
+    if (this.isPersonObject(flatObjectMetadata)) {
+      await this.releaseAbsorbedPersonUniqueValues(
+        transactionRepository,
+        idsToDelete,
+      );
+    }
+
+    const deleteQueryBuilder = transactionRepository.createQueryBuilder(
+      flatObjectMetadata.nameSingular,
+    );
+
+    if (this.isPersonObject(flatObjectMetadata)) {
+      await deleteQueryBuilder
+        .softDelete()
+        .whereInIds(idsToDelete)
+        .returning(columnsToReturn)
+        .execute();
+    } else {
+      await deleteQueryBuilder
+        .delete()
+        .whereInIds(idsToDelete)
+        .returning(columnsToReturn)
+        .execute();
+    }
 
     return this.updatePriorityRecord(
       args,
@@ -165,6 +199,29 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       priorityRecordId,
       mergedData,
     );
+  }
+
+  private async releaseAbsorbedPersonUniqueValues(
+    repository: WorkspaceRepository<ObjectLiteral>,
+    personIds: string[],
+  ): Promise<void> {
+    // Person emails remain subject to a workspace unique index after a soft
+    // delete. Release them inside the merge transaction so a reviewed email
+    // can be assigned to the survivor. Use null because PostgreSQL unique
+    // indexes allow multiple nulls; the API still exposes this as an empty
+    // primary email in Trash. Other record details remain in Trash.
+    await repository
+      .createQueryBuilder('person')
+      .update()
+      .set({
+        emails: {
+          primaryEmail: null,
+          additionalEmails: [],
+        },
+      })
+      .where({ id: In(personIds) })
+      .returning(['id'])
+      .execute();
   }
 
   private async fetchRecordsToMerge(
@@ -524,11 +581,67 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     }
   }
 
+  private async recordPersonMergeProvenance({
+    queryRunnerContext,
+    sourcePersonIds,
+    targetPersonId,
+  }: {
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    sourcePersonIds: string[];
+    targetPersonId: string;
+  }): Promise<void> {
+    const mergedByWorkspaceMemberId = isUserAuthContext(
+      queryRunnerContext.authContext,
+    )
+      ? queryRunnerContext.authContext.workspaceMemberId
+      : null;
+
+    try {
+      await queryRunnerContext.workspaceDataSource.coreDataSource
+        .getRepository(PersonRecordMergeEntity)
+        .insert(
+          sourcePersonIds.map((sourcePersonId) => ({
+            workspaceId: queryRunnerContext.authContext.workspace.id,
+            sourcePersonId,
+            targetPersonId,
+            mergedByWorkspaceMemberId,
+          })),
+        );
+    } catch {
+      // The workspace merge has already committed. Do not report the merge as
+      // failed after the records and their relationships have been changed.
+      this.logger.error('Failed to record person merge provenance');
+    }
+  }
+
   async computeArgs(
     args: CommonInput<MergeManyQueryArgs>,
-    _queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<MergeManyQueryArgs>> {
-    return args;
+    if (!isDefined(args.data)) {
+      return args;
+    }
+
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = queryRunnerContext;
+
+    return {
+      ...args,
+      data: (
+        await this.dataArgProcessor.process({
+          partialRecordInputs: [args.data],
+          authContext,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+          shouldBackfillPositionIfUndefined: false,
+        })
+      )[0],
+    };
   }
 
   async processQueryResult(

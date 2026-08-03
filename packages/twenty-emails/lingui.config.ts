@@ -16,6 +16,7 @@ export default defineConfig({
     {
       path: '<rootDir>/src/locales/{locale}',
       include: ['src'],
+      exclude: ['src/**/*.js'],
     },
   ],
   catalogsMergePath: '<rootDir>/src/locales/generated/{locale}',

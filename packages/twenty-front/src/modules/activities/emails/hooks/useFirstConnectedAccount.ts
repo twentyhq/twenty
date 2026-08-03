@@ -4,6 +4,7 @@ import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/g
 
 type UseFirstConnectedAccountOptions = {
   skip?: boolean;
+  preferredHandle?: string;
 };
 
 export const useFirstConnectedAccount = (
@@ -15,11 +16,16 @@ export const useFirstConnectedAccount = (
     skip: options?.skip,
   });
 
-  const firstAccount = data?.myConnectedAccounts?.[0] ?? null;
+  const connectedAccount = options?.preferredHandle
+    ? (data?.myConnectedAccounts.find(
+        ({ handle }) =>
+          handle.toLowerCase() === options.preferredHandle?.toLowerCase(),
+      ) ?? null)
+    : (data?.myConnectedAccounts?.[0] ?? null);
 
   return {
-    connectedAccountId: firstAccount?.id ?? null,
-    connectedAccountHandle: firstAccount?.handle ?? null,
+    connectedAccountId: connectedAccount?.id ?? null,
+    connectedAccountHandle: connectedAccount?.handle ?? null,
     loading,
   };
 };

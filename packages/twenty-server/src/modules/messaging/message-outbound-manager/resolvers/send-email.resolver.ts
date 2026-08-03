@@ -17,12 +17,23 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { SendEmailOutputDTO } from 'src/modules/messaging/message-outbound-manager/dtos/send-email-output.dto';
 import { SendEmailInput } from 'src/modules/messaging/message-outbound-manager/dtos/send-email.input';
+import {
+  SaveMassEmailCampaignDraftInput,
+  SendMassEmailCampaignInput,
+} from 'src/modules/messaging/message-outbound-manager/dtos/mass-email-campaign.input';
+import { SendMassEmailCampaignOutputDTO } from 'src/modules/messaging/message-outbound-manager/dtos/mass-email-campaign-output.dto';
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
+import { SaveMessageCampaignDraftOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/save-message-campaign-draft-output.dto';
+import {
+  type MassEmailCampaignSendOutcome,
+  MessageCampaignService,
+} from 'src/modules/emailing/services/message-campaign.service';
 import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -41,7 +52,122 @@ export class SendEmailResolver {
     private readonly emailComposerService: EmailComposerService,
     private readonly fileEmailAttachmentService: FileEmailAttachmentService,
     private readonly sendEmailService: SendEmailService,
+    private readonly messageCampaignService: MessageCampaignService,
   ) {}
+
+  @Mutation(() => SaveMessageCampaignDraftOutputDTO)
+  async saveMassEmailCampaignDraft(
+    @Args('input') input: SaveMassEmailCampaignDraftInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+  ): Promise<SaveMessageCampaignDraftOutputDTO> {
+    const connectedAccount =
+      await this.connectedAccountMetadataService.verifyOwnership({
+        id: input.connectedAccountId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+    return this.messageCampaignService.saveMassEmailDraft({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      workspaceMemberId,
+      campaignId: input.campaignId,
+      personIds: input.personIds,
+      subject: input.subject,
+      body: input.body,
+      fromAddress: connectedAccount.handle,
+    });
+  }
+
+  @Mutation(() => SendMassEmailCampaignOutputDTO)
+  async sendMassEmailCampaign(
+    @Args('input') input: SendMassEmailCampaignInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+  ): Promise<SendMassEmailCampaignOutputDTO> {
+    const connectedAccount =
+      await this.connectedAccountMetadataService.verifyOwnership({
+        id: input.connectedAccountId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+    await this.messageCampaignService.prepareMassEmailCampaignForSending({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      workspaceMemberId,
+      campaignId: input.campaignId,
+      recipients: input.emails.map(({ personId, to }) => ({
+        personId,
+        email: to,
+      })),
+      fromAddress: connectedAccount.handle,
+    });
+
+    const outcomes: MassEmailCampaignSendOutcome[] = [];
+
+    for (const email of input.emails) {
+      try {
+        const composed = await this.emailComposerService.composeEmail(
+          {
+            recipients: { to: email.to, cc: '', bcc: '' },
+            subject: email.subject,
+            body: email.body,
+            connectedAccountId: input.connectedAccountId,
+            files: [],
+          },
+          { workspaceId: workspace.id },
+        );
+
+        if (!composed.success) {
+          outcomes.push({ ...email, email: email.to, success: false });
+          continue;
+        }
+
+        const sendResult = await this.sendEmailService.sendComposedEmail(
+          composed.data,
+        );
+        const persistedMessage = composed.data.shouldPersistMessage
+          ? await this.sendEmailService.persistSentMessage(
+              sendResult,
+              composed.data,
+              workspace.id,
+            )
+          : undefined;
+
+        outcomes.push({
+          ...email,
+          email: email.to,
+          success: true,
+          messageId: persistedMessage?.messageId,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to send campaign email to ${email.to}: ${error}`,
+        );
+        outcomes.push({ ...email, email: email.to, success: false });
+      }
+    }
+
+    await this.messageCampaignService.finalizeMassEmailCampaign({
+      workspaceId: workspace.id,
+      campaignId: input.campaignId,
+      workspaceMemberId,
+      fromAddress: connectedAccount.handle,
+      outcomes,
+    });
+
+    return {
+      campaignId: input.campaignId,
+      sentCount: outcomes.filter(({ success }) => success).length,
+      failedRecipients: outcomes
+        .filter(({ success }) => !success)
+        .map(({ email }) => email),
+    };
+  }
 
   @Mutation(() => SendEmailOutputDTO)
   async sendEmail(

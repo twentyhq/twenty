@@ -11,6 +11,11 @@ import {
 
 @InputType()
 export class SendMessageCampaignInput {
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsUUID('4')
+  campaignId?: string;
+
   @Field(() => String)
   @IsUUID('4')
   listId: string;

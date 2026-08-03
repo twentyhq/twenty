@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useMassEmailCampaignDraft } from '@/activities/emails/mass-email/hooks/useMassEmailCampaignDraft';
 import { useMassEmailRecipients } from '@/activities/emails/mass-email/hooks/useMassEmailRecipients';
 import { useSendMassEmail } from '@/activities/emails/mass-email/hooks/useSendMassEmail';
 import { type MassEmailRecipient } from '@/activities/emails/mass-email/types/MassEmailRecipient';
@@ -24,23 +25,39 @@ type ResolvedMassEmail = {
 type UseMassEmailComposerStateArgs = {
   connectedAccountId: string;
   personIds: string[];
+  initialDraft?: {
+    campaignId: string;
+    subject: string;
+    body: string;
+  };
   onSent?: () => void;
 };
 
 export const useMassEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
   personIds,
+  initialDraft,
   onSent,
 }: UseMassEmailComposerStateArgs) => {
   const [connectedAccountId, setConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
-  const [subjectTemplate, setSubjectTemplate] = useState('');
-  const [bodyTemplate, setBodyTemplate] = useState('');
+  const [subjectTemplate, setSubjectTemplate] = useState(
+    initialDraft?.subject ?? '',
+  );
+  const [bodyTemplate, setBodyTemplate] = useState(initialDraft?.body ?? '');
   const [overrides, setOverrides] = useState<Record<string, MassEmailOverride>>(
     {},
   );
   const [excludedPersonIds, setExcludedPersonIds] = useState<string[]>([]);
+  const [draftCampaignId, setDraftCampaignId] = useState<string | undefined>(
+    initialDraft?.campaignId,
+  );
+  const [draftSaveStatus, setDraftSaveStatus] = useState<
+    'saving' | 'saved' | 'error'
+  >('saving');
+  // oxlint-disable-next-line twenty/no-state-useref -- Prevents duplicate drafts under React Strict Mode.
+  const hasStartedDraftCreation = useRef(isDefined(initialDraft));
 
   const {
     recipients,
@@ -49,9 +66,14 @@ export const useMassEmailComposerState = ({
   } = useMassEmailRecipients(personIds);
 
   const { sendMassEmail, sending, sentCount } = useSendMassEmail();
+  const { saveDraft, isSaving } = useMassEmailCampaignDraft();
 
-  const includedRecipients = recipients.filter(
-    (recipient) => !excludedPersonIds.includes(recipient.personId),
+  const includedRecipients = useMemo(
+    () =>
+      recipients.filter(
+        (recipient) => !excludedPersonIds.includes(recipient.personId),
+      ),
+    [excludedPersonIds, recipients],
   );
 
   const resolveBaseForRecipient = useCallback(
@@ -165,8 +187,76 @@ export const useMassEmailComposerState = ({
     !sending &&
     !recipientsLoading;
 
+  const saveCurrentDraft = useCallback(async () => {
+    if (includedRecipients.length === 0 || recipientsLoading) {
+      return draftCampaignId;
+    }
+
+    setDraftSaveStatus('saving');
+    const savedDraft = await saveDraft({
+      campaignId: draftCampaignId,
+      connectedAccountId,
+      personIds: includedRecipients.map(({ personId }) => personId),
+      subject: subjectTemplate,
+      body: bodyTemplate,
+    });
+
+    setDraftSaveStatus(savedDraft === null ? 'error' : 'saved');
+
+    if (savedDraft !== null && draftCampaignId === undefined) {
+      setDraftCampaignId(savedDraft.campaignId);
+    }
+
+    return savedDraft?.campaignId ?? draftCampaignId;
+  }, [
+    bodyTemplate,
+    connectedAccountId,
+    draftCampaignId,
+    includedRecipients,
+    recipientsLoading,
+    saveDraft,
+    subjectTemplate,
+  ]);
+
+  useEffect(() => {
+    if (
+      recipientsLoading ||
+      includedRecipients.length === 0 ||
+      draftCampaignId !== undefined ||
+      hasStartedDraftCreation.current
+    ) {
+      return;
+    }
+
+    hasStartedDraftCreation.current = true;
+    void saveCurrentDraft();
+  }, [
+    draftCampaignId,
+    includedRecipients.length,
+    recipientsLoading,
+    saveCurrentDraft,
+  ]);
+
+  useEffect(() => {
+    if (draftCampaignId === undefined || recipientsLoading) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      void saveCurrentDraft();
+    }, 700);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [draftCampaignId, recipientsLoading, saveCurrentDraft]);
+
   const handleSend = useCallback(async () => {
     if (!canSend) {
+      return;
+    }
+
+    const savedCampaignId = await saveCurrentDraft();
+
+    if (savedCampaignId === undefined) {
       return;
     }
 
@@ -174,6 +264,7 @@ export const useMassEmailComposerState = ({
       const resolved = resolveForRecipient(recipient);
 
       return {
+        personId: recipient.personId,
         to: recipient.email,
         subject: resolved.subject,
         body: resolved.body,
@@ -181,6 +272,7 @@ export const useMassEmailComposerState = ({
     });
 
     const { failedRecipients } = await sendMassEmail({
+      campaignId: savedCampaignId,
       connectedAccountId,
       emails,
     });
@@ -193,6 +285,7 @@ export const useMassEmailComposerState = ({
     includedRecipients,
     resolveForRecipient,
     sendMassEmail,
+    saveCurrentDraft,
     connectedAccountId,
     onSent,
   ]);
@@ -217,6 +310,10 @@ export const useMassEmailComposerState = ({
     sending,
     sentCount,
     canSend,
+    draftCampaignId,
+    saveCurrentDraft,
+    isSaving,
+    draftSaveStatus,
   };
 };
 

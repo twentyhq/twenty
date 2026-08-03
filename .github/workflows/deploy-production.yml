@@ -104,16 +104,29 @@ jobs:
           SHA: ${{ steps.resolve.outputs.sha }}
           ACTOR: ${{ github.actor }}
         run: |
-          id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<JSON
-          {
-            "ref": "${SHA}",
-            "environment": "production",
-            "description": "approved by ${ACTOR}",
-            "auto_merge": false,
-            "required_contexts": []
-          }
-          JSON
-          )"
+          # See deploy-staging.yml for why `ref` is the SHA and not a branch.
+          # Production only ever promotes a commit already on main, so the
+          # branch is fixed; what the record was missing is which commit and
+          # who approved it, in a form readable without opening the API.
+          description="$(printf 'main @ %s, approved by %s' \
+            "${SHA:0:7}" "$ACTOR" | cut -c1-140)"
+          body="$(jq -nc \
+            --arg sha "$SHA" \
+            --arg description "$description" \
+            --arg actor "$ACTOR" \
+            '{
+              ref: $sha,
+              environment: "production",
+              description: $description,
+              payload: {
+                requested_ref: "main",
+                sha: $sha,
+                approved_by: $actor
+              },
+              auto_merge: false,
+              required_contexts: []
+            }')"
+          id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<<"$body")"
           gh api --method POST "repos/${REPO}/deployments/${id}/statuses" \
             -f state=in_progress \
             -f description="waiting for the production host to converge" >/dev/null

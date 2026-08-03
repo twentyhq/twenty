@@ -3410,6 +3410,7 @@ msgstr "Nu poți scana? Copiază"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 msgid "Cancel"
@@ -4162,6 +4163,11 @@ msgstr "Companii"
 msgid "Compare plans"
 msgstr "Comparați planurile"
 
+#. js-lingui-id: +vJdAa
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Compare the source records and decide. Twenty never merges or separates people without your choice."
+msgstr ""
+
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
 msgid "Complaint"
@@ -4392,6 +4398,16 @@ msgstr "Confirmați ștergerea rolului {roleName}? Această acțiune nu poate fi
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Confirmați retrogradarea"
+
+#. js-lingui-id: EfxM6i
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Confirm merge"
+msgstr ""
+
+#. js-lingui-id: x/wPTT
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Confirm merge: the chosen survivor keeps its ID and the reviewed contact details. The other selected records move to Trash with their email fields cleared; restoring them later will not move relationships back."
+msgstr ""
 
 #. js-lingui-id: 28b8wO
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -5103,6 +5119,7 @@ msgid "Create, edit, and delete workspace views"
 msgstr "Creează, editează și șterge vizualizările spațiului de lucru"
 
 #. js-lingui-id: d+F6q9
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -6569,6 +6586,11 @@ msgstr "Descarcă fișierul de mostră"
 msgid "Draft"
 msgstr "Ciornă"
 
+#. js-lingui-id: 1dpSPf
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Draft deleted"
+msgstr ""
+
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
@@ -6626,6 +6648,10 @@ msgstr ""
 
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 msgid "Duplicates"
 msgstr "Duplicat"
 
@@ -7027,6 +7053,8 @@ msgid "Email/Domain"
 msgstr "Email/Domeniu"
 
 #. js-lingui-id: BXEcos
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -8061,6 +8089,11 @@ msgstr "Nu s-a putut prelua proprietatea."
 msgid "Failed to create unsubscribe topic."
 msgstr "Crearea subiectului de dezabonare a eșuat."
 
+#. js-lingui-id: dQhrqB
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Failed to delete draft"
+msgstr ""
+
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Failed to delete email channel."
@@ -8189,6 +8222,12 @@ msgstr "Eșuat la reîncercarea locurilor de muncă. Încercați din nou mai tâ
 msgid "Failed to revoke signing key. Please try again later."
 msgstr "Nu s-a reușit revocarea cheii de semnare. Încercați din nou mai târziu."
 
+#. js-lingui-id: TQfiMk
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+#: src/modules/activities/emails/mass-email/hooks/useMassEmailCampaignDraft.ts
+msgid "Failed to save draft"
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -8216,6 +8255,11 @@ msgstr "Trimiterea campaniei a eșuat"
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
 msgstr "Nu s-a reușit trimiterea emailului"
+
+#. js-lingui-id: B6aF8Q
+#: src/modules/activities/emails/mass-email/hooks/useSendMassEmail.ts
+msgid "Failed to send emails"
+msgstr ""
 
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -9769,6 +9813,11 @@ msgstr "Opțiuni pentru obiecte inactive"
 msgid "Inactive Skill Options"
 msgstr "Opțiuni pentru abilitatea inactivă"
 
+#. js-lingui-id: KiXg6J
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Include {displayName} in merge"
+msgstr ""
+
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Include emails where all participants share the same domain."
@@ -10429,6 +10478,32 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr ""
 
+#. js-lingui-id: ok27CW
+#. placeholder {0}: link.url
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Keep {0}"
+msgstr ""
+
+#. js-lingui-id: tXq9mG
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Keep {displayValue}"
+msgstr ""
+
+#. js-lingui-id: w7Wygd
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Keep {email}"
+msgstr ""
+
+#. js-lingui-id: IwceEs
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Keep everyone separate"
+msgstr ""
+
+#. js-lingui-id: 4Hatax
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Keep this record"
+msgstr ""
+
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "Key"
@@ -10652,6 +10727,7 @@ msgid "Last signed in"
 msgstr "Ultima autentificare"
 
 #. js-lingui-id: C3yOz3
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Last updated"
@@ -10918,6 +10994,12 @@ msgstr "a asociat un eveniment din calendar cu {labelIdentifierValue}"
 msgid "linked an email with"
 msgstr "a asociat un e-mail cu"
 
+#. js-lingui-id: gggTBm
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "LinkedIn"
+msgstr ""
+
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -11146,6 +11228,11 @@ msgstr "Longitudine"
 msgid "Look up"
 msgstr ""
 
+#. js-lingui-id: 9NNx2W
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Looking for exact duplicate signals…"
+msgstr ""
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -11170,6 +11257,22 @@ msgstr "Mentenanță"
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance mode"
 msgstr "Mod de mentenanță"
+
+#. js-lingui-id: 6nweKM
+#. placeholder {0}: link.url
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Make {0} primary"
+msgstr ""
+
+#. js-lingui-id: HpCWO5
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Make {displayValue} primary"
+msgstr ""
+
+#. js-lingui-id: VSfvRD
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Make {email} primary"
+msgstr ""
 
 #. js-lingui-id: MOLprz
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -11493,10 +11596,20 @@ msgstr "Previzualizare îmbinare"
 msgid "Merge records"
 msgstr "Îmbină înregistrările"
 
+#. js-lingui-id: nLKgG0
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Merge selected"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
 msgstr "Se îmbină..."
+
+#. js-lingui-id: MJKChL
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Merging…"
+msgstr ""
 
 #. js-lingui-id: xDAtGP
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -11866,6 +11979,7 @@ msgstr "N/A"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -12090,6 +12204,11 @@ msgstr "Email nou"
 msgid "New Email Channel"
 msgstr "Canal de e-mail nou"
 
+#. js-lingui-id: 8ETZA5
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "New exact matches on full name, email, phone, or LinkedIn will appear here. No records are merged automatically."
+msgstr ""
+
 #. js-lingui-id: k6B3QD
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "New favorite"
@@ -12245,6 +12364,7 @@ msgstr "Newslettere"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/settings/components/SettingsPaginationControls.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Next"
 msgstr "Următorul"
@@ -12900,6 +13020,11 @@ msgstr "Nu au fost găsite obiecte de sistem cu vizualizări"
 msgid "No targets available"
 msgstr "Nicio țintă disponibilă"
 
+#. js-lingui-id: LPYdVr
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "No title or company"
+msgstr ""
+
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "No tools were called"
@@ -12919,6 +13044,11 @@ msgstr "Nu este configurat niciun declanșator pentru această funcție."
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "Niciun declanșator nu este activat. Comutați una dintre opțiunile de mai sus pentru a alege cum este invocată această funcție."
+
+#. js-lingui-id: Bvyu3u
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "No unresolved duplicate groups"
+msgstr ""
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -13790,6 +13920,11 @@ msgstr "Prezentare generală"
 msgid "Owner"
 msgstr "Proprietar"
 
+#. js-lingui-id: aiXStf
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Owner / creator"
+msgstr ""
+
 #. js-lingui-id: oDAEQq
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -13996,6 +14131,11 @@ msgstr "Persoanele cărora le-am trimis emailuri și de la care am primit emailu
 msgid "People I’ve sent emails to."
 msgstr "Persoanele cărora le-am trimis emailuri."
 
+#. js-lingui-id: ly1vF8
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "People merged. Absorbed records are available in Trash."
+msgstr ""
+
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "Per-day AI consumption."
@@ -14100,6 +14240,12 @@ msgstr "Număr de telefon"
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Phone number copied to clipboard"
 msgstr "Număr de telefon copiat în clipboard"
+
+#. js-lingui-id: m2ivgq
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Phones"
+msgstr ""
 
 #. js-lingui-id: vqKcU0
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -14374,6 +14520,7 @@ msgstr ""
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/components/SettingsPaginationControls.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 msgid "Previous"
 msgstr "Anterior"
 
@@ -14510,6 +14657,11 @@ msgstr "Numele proprietății"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Property value"
 msgstr "Valoarea proprietății"
+
+#. js-lingui-id: k5ePVH
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Proposed merged person"
+msgstr ""
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -15412,6 +15564,11 @@ msgstr "Valoare de returnare"
 msgid "reverse alphabetical"
 msgstr "alfabetic invers"
 
+#. js-lingui-id: wvtGe+
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Review possible duplicate people"
+msgstr ""
+
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -15627,6 +15784,26 @@ msgstr "Se execută..."
 msgid "Russian"
 msgstr "Rusă"
 
+#. js-lingui-id: Ift2Jz
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same email"
+msgstr ""
+
+#. js-lingui-id: asi7+Q
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same full name"
+msgstr ""
+
+#. js-lingui-id: aWrH6A
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same LinkedIn"
+msgstr ""
+
+#. js-lingui-id: Brfp+M
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same phone"
+msgstr ""
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -15658,6 +15835,11 @@ msgstr "Salvează ca nouă vizualizare"
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Salvați sau anulați modificările din tabloul de bord înainte de a edita dispunerea."
+
+#. js-lingui-id: K/F6pa
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Saving…"
+msgstr ""
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -16267,6 +16449,11 @@ msgstr ""
 msgid "Select an option"
 msgstr "Selectează o opțiune"
 
+#. js-lingui-id: lqGidJ
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Select at least two people to merge."
+msgstr ""
+
 #. js-lingui-id: 21YIUv
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
 msgid "Select column..."
@@ -16610,7 +16797,6 @@ msgstr "Se configurează <0>baza ta de date</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -17512,6 +17698,11 @@ msgstr "Tipuri de intrare acceptate"
 msgid "Supports reasoning"
 msgstr "Suportă raționare"
 
+#. js-lingui-id: 1T4saU
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Survivor"
+msgstr ""
+
 #. js-lingui-id: UaISq3
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Swedish"
@@ -17891,6 +18082,11 @@ msgstr "Țara implicită pentru noile adrese"
 msgid "The description of this field"
 msgstr "Descrierea acestui câmp"
 
+#. js-lingui-id: JeOanZ
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "The duplicate queue could not be loaded."
+msgstr ""
+
 #. js-lingui-id: xJSPh6
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "The email associated to this account"
@@ -17910,6 +18106,11 @@ msgstr "Acordul complet, cu câmpurile completate pentru implementarea dvs."
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Pictograma pe care declanșatorul fluxului de lucru o va afișa în meniul de comandă"
+
+#. js-lingui-id: u7SthV
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "The keep-separate decision could not be saved."
+msgstr ""
 
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -17953,6 +18154,11 @@ msgstr "Pagina pe care o căutați a dispărut sau nu a existat niciodată. Hai 
 msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
 msgstr "PDF-ul este pre-semnat de Twenty și executat cu entitatea dvs. juridică și semnatarul autorizat."
 
+#. js-lingui-id: JD8guD
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "The people could not be merged."
+msgstr ""
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -17972,6 +18178,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Adresa de e-mail partajată pe care doriți să o utilizați."
+
+#. js-lingui-id: 8XEPsC
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "The survivor keeps its ID. Checked contact details are preserved; the star marks the primary value."
+msgstr ""
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
@@ -18047,6 +18258,11 @@ msgstr "Nu există activitate asociată acestei înregistrări."
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "A apărut o eroare în timpul actualizării parolei."
+
+#. js-lingui-id: RuO91P
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "These people will remain separate unless their identity details change."
+msgstr ""
 
 #. js-lingui-id: AUV+TY
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -18470,6 +18686,11 @@ msgstr "titlu"
 msgid "Title"
 msgstr "Titlu"
 
+#. js-lingui-id: 6OdanD
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Title and current company"
+msgstr ""
+
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -18835,6 +19056,11 @@ msgstr "Turcoaz"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Câmpuri Twenty"
+
+#. js-lingui-id: 7uWmv3
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Twenty supports one current company per person, so this comes from the chosen survivor."
+msgstr ""
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -19990,6 +20216,11 @@ msgstr "filtru de vizualizare"
 msgid "view filter group"
 msgstr "grup de filtre de vizualizare"
 
+#. js-lingui-id: cKqT2J
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "View full record"
+msgstr ""
+
 #. js-lingui-id: n7a9IR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view group"
@@ -20440,6 +20671,11 @@ msgstr "Dacă acest model suportă raționare în lanț"
 msgid "Whole list"
 msgstr "Întreaga listă"
 
+#. js-lingui-id: 6rbnkB
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Why this was surfaced:"
+msgstr ""
+
 #. js-lingui-id: dmoPOu
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "widget"
@@ -20821,6 +21057,11 @@ msgstr "Nu aveți permisiunea de a crea înregistrări pentru acest obiect"
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "You can either create a private app or share it to others"
 msgstr "Puteți fie să creați o aplicație privată, fie să o partajați cu alții"
+
+#. js-lingui-id: lcoYde
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "You can review this queue, but People edit and delete permissions are required to merge or keep records separate."
+msgstr ""
 
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx

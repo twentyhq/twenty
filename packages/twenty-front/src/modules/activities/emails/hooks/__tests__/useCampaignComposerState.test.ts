@@ -1,15 +1,21 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 
 import { useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
+import { useMessageCampaignDraft } from '@/activities/emails/hooks/useMessageCampaignDraft';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
 
 jest.mock('@/activities/emails/hooks/useSendMessageCampaign');
+jest.mock('@/activities/emails/hooks/useMessageCampaignDraft');
 
 const sendMessageCampaignMock = jest.fn(
   (): Promise<boolean> => Promise.resolve(true),
 );
 
 const mockedUseSendMessageCampaign = jest.mocked(useSendMessageCampaign);
+const mockedUseMessageCampaignDraft = jest.mocked(useMessageCampaignDraft);
+const saveDraftMock = jest.fn(() =>
+  Promise.resolve({ campaignId: 'campaign-1', updatedAt: '2026-07-31' }),
+);
 
 const fillSendableFields = (result: {
   current: ReturnType<typeof useCampaignComposerState>;
@@ -28,10 +34,18 @@ describe('useCampaignComposerState', () => {
       sendMessageCampaign: sendMessageCampaignMock,
       loading: false,
     });
+    mockedUseMessageCampaignDraft.mockReturnValue({
+      saveDraft: saveDraftMock,
+      deleteDraft: jest.fn(),
+      isSaving: false,
+      isDeleting: false,
+    });
   });
 
   it('should start empty and not be sendable', () => {
-    const { result } = renderHook(() => useCampaignComposerState({}));
+    const { result } = renderHook(() =>
+      useCampaignComposerState({ autoSaveDraft: false }),
+    );
 
     expect(result.current.listId).toBeNull();
     expect(result.current.unsubscribeTopicId).toBeNull();
@@ -39,7 +53,9 @@ describe('useCampaignComposerState', () => {
   });
 
   it('should become sendable once list, from address and subject are set', () => {
-    const { result } = renderHook(() => useCampaignComposerState({}));
+    const { result } = renderHook(() =>
+      useCampaignComposerState({ autoSaveDraft: false }),
+    );
 
     fillSendableFields(result);
 
@@ -52,7 +68,9 @@ describe('useCampaignComposerState', () => {
       loading: true,
     });
 
-    const { result } = renderHook(() => useCampaignComposerState({}));
+    const { result } = renderHook(() =>
+      useCampaignComposerState({ autoSaveDraft: false }),
+    );
 
     fillSendableFields(result);
 
@@ -63,7 +81,9 @@ describe('useCampaignComposerState', () => {
     sendMessageCampaignMock.mockResolvedValue(true);
     const onSent = jest.fn();
 
-    const { result } = renderHook(() => useCampaignComposerState({ onSent }));
+    const { result } = renderHook(() =>
+      useCampaignComposerState({ onSent, autoSaveDraft: false }),
+    );
 
     act(() => {
       result.current.setUnsubscribeTopicId('topic-1');
@@ -88,7 +108,9 @@ describe('useCampaignComposerState', () => {
   it('should pass an undefined topic when none is selected', async () => {
     sendMessageCampaignMock.mockResolvedValue(true);
 
-    const { result } = renderHook(() => useCampaignComposerState({}));
+    const { result } = renderHook(() =>
+      useCampaignComposerState({ autoSaveDraft: false }),
+    );
 
     fillSendableFields(result);
 
@@ -102,7 +124,9 @@ describe('useCampaignComposerState', () => {
   });
 
   it('should not send when required fields are missing', async () => {
-    const { result } = renderHook(() => useCampaignComposerState({}));
+    const { result } = renderHook(() =>
+      useCampaignComposerState({ autoSaveDraft: false }),
+    );
 
     await act(async () => {
       await result.current.handleSend();
@@ -115,7 +139,9 @@ describe('useCampaignComposerState', () => {
     sendMessageCampaignMock.mockResolvedValue(false);
     const onSent = jest.fn();
 
-    const { result } = renderHook(() => useCampaignComposerState({ onSent }));
+    const { result } = renderHook(() =>
+      useCampaignComposerState({ onSent, autoSaveDraft: false }),
+    );
 
     fillSendableFields(result);
 
@@ -125,5 +151,22 @@ describe('useCampaignComposerState', () => {
 
     expect(sendMessageCampaignMock).toHaveBeenCalled();
     expect(onSent).not.toHaveBeenCalled();
+  });
+
+  it('creates a draft when the composer opens', async () => {
+    const { result } = renderHook(() => useCampaignComposerState({}));
+
+    await waitFor(() => {
+      expect(result.current.draftCampaignId).toBe('campaign-1');
+    });
+
+    expect(saveDraftMock).toHaveBeenCalledWith({
+      campaignId: undefined,
+      listId: null,
+      unsubscribeTopicId: null,
+      subject: '',
+      body: '',
+      fromAddress: null,
+    });
   });
 });

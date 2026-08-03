@@ -127,6 +127,7 @@ import { RepairKeyValuePairApplicationIdFastInstanceCommand } from './2-24/2-24-
 import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
 import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143586000-add-app-token-sso-exchange-index';
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
+import { CreatePersonDuplicateReviewTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785466013136-create-person-duplicate-review-tables';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -256,4 +257,5 @@ export const INSTANCE_COMMANDS = [
   AddAgentForeignKeyToRoleTargetFastInstanceCommand,
   AddAppTokenSsoExchangeIndexFastInstanceCommand,
   AddPageLayoutCascadeDeleteIndexesFastInstanceCommand,
+  CreatePersonDuplicateReviewTablesFastInstanceCommand,
 ];

@@ -3410,6 +3410,7 @@ msgstr "無法掃描？ 複製"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 msgid "Cancel"
@@ -4162,6 +4163,11 @@ msgstr "公司"
 msgid "Compare plans"
 msgstr "比較方案"
 
+#. js-lingui-id: +vJdAa
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Compare the source records and decide. Twenty never merges or separates people without your choice."
+msgstr ""
+
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
 msgid "Complaint"
@@ -4392,6 +4398,16 @@ msgstr "確認刪除 {roleName} 角色？此操作無法撤銷。{reassignSubjec
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "確認降級"
+
+#. js-lingui-id: EfxM6i
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Confirm merge"
+msgstr ""
+
+#. js-lingui-id: x/wPTT
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Confirm merge: the chosen survivor keeps its ID and the reviewed contact details. The other selected records move to Trash with their email fields cleared; restoring them later will not move relationships back."
+msgstr ""
 
 #. js-lingui-id: 28b8wO
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -5103,6 +5119,7 @@ msgid "Create, edit, and delete workspace views"
 msgstr "創建、編輯和刪除工作空間視圖"
 
 #. js-lingui-id: d+F6q9
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -6569,6 +6586,11 @@ msgstr "下載範例檔案"
 msgid "Draft"
 msgstr "草稿"
 
+#. js-lingui-id: 1dpSPf
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Draft deleted"
+msgstr ""
+
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
@@ -6626,6 +6648,10 @@ msgstr ""
 
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 msgid "Duplicates"
 msgstr "副本"
 
@@ -7027,6 +7053,8 @@ msgid "Email/Domain"
 msgstr "電子郵件/域名"
 
 #. js-lingui-id: BXEcos
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -8061,6 +8089,11 @@ msgstr "宣告所有權失敗。"
 msgid "Failed to create unsubscribe topic."
 msgstr "建立退訂主題失敗。"
 
+#. js-lingui-id: dQhrqB
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+msgid "Failed to delete draft"
+msgstr ""
+
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Failed to delete email channel."
@@ -8189,6 +8222,12 @@ msgstr "無法重試工作。請稍後重試。"
 msgid "Failed to revoke signing key. Please try again later."
 msgstr "無法撤銷簽署金鑰。請稍後再試。"
 
+#. js-lingui-id: TQfiMk
+#: src/modules/activities/emails/hooks/useMessageCampaignDraft.ts
+#: src/modules/activities/emails/mass-email/hooks/useMassEmailCampaignDraft.ts
+msgid "Failed to save draft"
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -8216,6 +8255,11 @@ msgstr "發送行銷活動失敗"
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
 msgstr "發送電子郵件失敗"
+
+#. js-lingui-id: B6aF8Q
+#: src/modules/activities/emails/mass-email/hooks/useSendMassEmail.ts
+msgid "Failed to send emails"
+msgstr ""
 
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -9746,6 +9790,11 @@ msgstr "停用的物件選項"
 msgid "Inactive Skill Options"
 msgstr ""
 
+#. js-lingui-id: KiXg6J
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Include {displayName} in merge"
+msgstr ""
+
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Include emails where all participants share the same domain."
@@ -10406,6 +10455,32 @@ msgstr "看板"
 msgid "Kanban widget"
 msgstr ""
 
+#. js-lingui-id: ok27CW
+#. placeholder {0}: link.url
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Keep {0}"
+msgstr ""
+
+#. js-lingui-id: tXq9mG
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Keep {displayValue}"
+msgstr ""
+
+#. js-lingui-id: w7Wygd
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Keep {email}"
+msgstr ""
+
+#. js-lingui-id: IwceEs
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Keep everyone separate"
+msgstr ""
+
+#. js-lingui-id: 4Hatax
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Keep this record"
+msgstr ""
+
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "Key"
@@ -10629,6 +10704,7 @@ msgid "Last signed in"
 msgstr "上次登入時間"
 
 #. js-lingui-id: C3yOz3
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Last updated"
@@ -10895,6 +10971,12 @@ msgstr "已將行事曆事件與 {labelIdentifierValue} 連結"
 msgid "linked an email with"
 msgstr "已將電子郵件連結至"
 
+#. js-lingui-id: gggTBm
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "LinkedIn"
+msgstr ""
+
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -11123,6 +11205,11 @@ msgstr "經度"
 msgid "Look up"
 msgstr ""
 
+#. js-lingui-id: 9NNx2W
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Looking for exact duplicate signals…"
+msgstr ""
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -11147,6 +11234,22 @@ msgstr "維護"
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance mode"
 msgstr "維護模式"
+
+#. js-lingui-id: 6nweKM
+#. placeholder {0}: link.url
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Make {0} primary"
+msgstr ""
+
+#. js-lingui-id: HpCWO5
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Make {displayValue} primary"
+msgstr ""
+
+#. js-lingui-id: VSfvRD
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Make {email} primary"
+msgstr ""
 
 #. js-lingui-id: MOLprz
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -11470,10 +11573,20 @@ msgstr "合併預覽"
 msgid "Merge records"
 msgstr "合併記錄"
 
+#. js-lingui-id: nLKgG0
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Merge selected"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
 msgstr "正在合併..."
+
+#. js-lingui-id: MJKChL
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Merging…"
+msgstr ""
 
 #. js-lingui-id: xDAtGP
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -11843,6 +11956,7 @@ msgstr "N/A"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -12067,6 +12181,11 @@ msgstr "新郵件"
 msgid "New Email Channel"
 msgstr "新電子郵件通道"
 
+#. js-lingui-id: 8ETZA5
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "New exact matches on full name, email, phone, or LinkedIn will appear here. No records are merged automatically."
+msgstr ""
+
 #. js-lingui-id: k6B3QD
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "New favorite"
@@ -12222,6 +12341,7 @@ msgstr "電子報"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/settings/components/SettingsPaginationControls.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Next"
 msgstr "下一步"
@@ -12877,6 +12997,11 @@ msgstr "找不到具有檢視的系統物件"
 msgid "No targets available"
 msgstr "沒有可用的目標"
 
+#. js-lingui-id: LPYdVr
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "No title or company"
+msgstr ""
+
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "No tools were called"
@@ -12896,6 +13021,11 @@ msgstr "未為此函式設定任何觸發器。"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "未啟用任何觸發器。切換上方其中一個選項以選擇此函式如何被呼叫。"
+
+#. js-lingui-id: Bvyu3u
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "No unresolved duplicate groups"
+msgstr ""
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -13767,6 +13897,11 @@ msgstr "概覽"
 msgid "Owner"
 msgstr "擁有者"
 
+#. js-lingui-id: aiXStf
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Owner / creator"
+msgstr ""
+
 #. js-lingui-id: oDAEQq
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -13973,6 +14108,11 @@ msgstr "我發送和接收電子郵件的人。"
 msgid "People I’ve sent emails to."
 msgstr "我發送電子郵件的人。"
 
+#. js-lingui-id: ly1vF8
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "People merged. Absorbed records are available in Trash."
+msgstr ""
+
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "Per-day AI consumption."
@@ -14077,6 +14217,12 @@ msgstr "電話號碼"
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Phone number copied to clipboard"
 msgstr "電話號碼已複製到剪貼板"
+
+#. js-lingui-id: m2ivgq
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Phones"
+msgstr ""
 
 #. js-lingui-id: vqKcU0
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -14351,6 +14497,7 @@ msgstr ""
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/components/SettingsPaginationControls.tsx
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 msgid "Previous"
 msgstr "上一頁"
 
@@ -14487,6 +14634,11 @@ msgstr "屬性名稱"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Property value"
 msgstr "屬性值"
+
+#. js-lingui-id: k5ePVH
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Proposed merged person"
+msgstr ""
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -15389,6 +15541,11 @@ msgstr "返回結果"
 msgid "reverse alphabetical"
 msgstr "反向依字母順序"
 
+#. js-lingui-id: wvtGe+
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Review possible duplicate people"
+msgstr ""
+
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -15604,6 +15761,26 @@ msgstr "執行中..."
 msgid "Russian"
 msgstr "俄語"
 
+#. js-lingui-id: Ift2Jz
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same email"
+msgstr ""
+
+#. js-lingui-id: asi7+Q
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same full name"
+msgstr ""
+
+#. js-lingui-id: aWrH6A
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same LinkedIn"
+msgstr ""
+
+#. js-lingui-id: Brfp+M
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Same phone"
+msgstr ""
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -15635,6 +15812,11 @@ msgstr "另存為新視圖"
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "在編輯版面配置之前，請先儲存或取消儀表板的變更。"
+
+#. js-lingui-id: K/F6pa
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Saving…"
+msgstr ""
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -16244,6 +16426,11 @@ msgstr ""
 msgid "Select an option"
 msgstr "選擇一個選項"
 
+#. js-lingui-id: lqGidJ
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Select at least two people to merge."
+msgstr ""
+
 #. js-lingui-id: 21YIUv
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
 msgid "Select column..."
@@ -16587,7 +16774,6 @@ msgstr "正在設定您的<0>資料庫</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -17489,6 +17675,11 @@ msgstr "支援的輸入類型"
 msgid "Supports reasoning"
 msgstr "支援推理"
 
+#. js-lingui-id: 1T4saU
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "Survivor"
+msgstr ""
+
 #. js-lingui-id: UaISq3
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Swedish"
@@ -17838,6 +18029,11 @@ msgstr "新地址的默認國家"
 msgid "The description of this field"
 msgstr "此字段的描述"
 
+#. js-lingui-id: JeOanZ
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "The duplicate queue could not be loaded."
+msgstr ""
+
 #. js-lingui-id: xJSPh6
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "The email associated to this account"
@@ -17857,6 +18053,11 @@ msgstr "針對您的部署所套用欄位後的完整協議。"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "您的工作流程觸發器在指令選單中顯示的圖示"
+
+#. js-lingui-id: u7SthV
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "The keep-separate decision could not be saved."
+msgstr ""
 
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -17900,6 +18101,11 @@ msgstr "您正在尋找的頁面已經消失或從未存在。讓我們幫助您
 msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
 msgstr "此 PDF 已由 Twenty 預先簽署，並與您的法人實體與授權簽署人共同生效。"
 
+#. js-lingui-id: JD8guD
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "The people could not be merged."
+msgstr ""
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -17919,6 +18125,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "您要使用的共用電子郵件。"
+
+#. js-lingui-id: 8XEPsC
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "The survivor keeps its ID. Checked contact details are preserved; the star marks the primary value."
+msgstr ""
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
@@ -17994,6 +18205,11 @@ msgstr "此記錄沒有相關的活動。"
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "更新密碼時出現錯誤。"
+
+#. js-lingui-id: RuO91P
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "These people will remain separate unless their identity details change."
+msgstr ""
 
 #. js-lingui-id: AUV+TY
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -18417,6 +18633,11 @@ msgstr "標題"
 msgid "Title"
 msgstr "標題"
 
+#. js-lingui-id: 6OdanD
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Title and current company"
+msgstr ""
+
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -18782,6 +19003,11 @@ msgstr "綠松石色"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Twenty 欄位"
+
+#. js-lingui-id: 7uWmv3
+#: src/modules/person-duplicate-review/components/PersonDuplicateMergePreview.tsx
+msgid "Twenty supports one current company per person, so this comes from the chosen survivor."
+msgstr ""
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -19937,6 +20163,11 @@ msgstr "視圖過濾器"
 msgid "view filter group"
 msgstr "視圖過濾器組"
 
+#. js-lingui-id: cKqT2J
+#: src/modules/person-duplicate-review/components/PersonDuplicateCard.tsx
+msgid "View full record"
+msgstr ""
+
 #. js-lingui-id: n7a9IR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view group"
@@ -20387,6 +20618,11 @@ msgstr "此模型是否支援 Chain-of-Thought 推理"
 msgid "Whole list"
 msgstr "整個清單"
 
+#. js-lingui-id: 6rbnkB
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "Why this was surfaced:"
+msgstr ""
+
 #. js-lingui-id: dmoPOu
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "widget"
@@ -20768,6 +21004,11 @@ msgstr "您無權在此對象中創建記錄"
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "You can either create a private app or share it to others"
 msgstr "您可以建立私人應用程式，或將它分享給其他人"
+
+#. js-lingui-id: lcoYde
+#: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
+msgid "You can review this queue, but People edit and delete permissions are required to merge or keep records separate."
+msgstr ""
 
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx

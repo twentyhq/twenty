@@ -1,4 +1,11 @@
-import { Injectable, Logger, type Type } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  type Type,
+} from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { In, type ObjectLiteral } from 'typeorm';
@@ -28,6 +35,7 @@ import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-doma
 import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
+import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -46,6 +54,7 @@ import { EmailingDomainSenderService } from 'src/modules/emailing/services/email
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -55,17 +64,33 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 type SendCampaignArgs = {
   workspaceId: string;
   userWorkspaceId: string;
+  workspaceMemberId: string;
+  campaignId?: string;
   listId: string;
   subject: string;
   html: string;
   fromAddress: string;
   unsubscribeTopicId?: string;
+};
+
+type SaveCampaignDraftArgs = {
+  workspaceId: string;
+  userWorkspaceId: string;
+  workspaceMemberId: string;
+  campaignId?: string;
+  listId?: string | null;
+  unsubscribeTopicId?: string | null;
+  subject?: string | null;
+  body?: string | null;
+  fromAddress?: string | null;
 };
 
 type SendCampaignResult = {
@@ -84,6 +109,17 @@ type CampaignAudiencePreview = {
 };
 
 type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
+
+export type MassEmailCampaignSendOutcome = {
+  personId: string;
+  email: string;
+  subject: string;
+  body: string;
+  success: boolean;
+  messageId?: string;
+};
+
+const MASS_EMAIL_RECIPIENT_LIST_PREFIX = 'Selected people (';
 
 const toRawRecipient = (person: {
   id: string;
@@ -136,6 +172,8 @@ export class MessageCampaignService {
   async send({
     workspaceId,
     userWorkspaceId,
+    workspaceMemberId,
+    campaignId: existingCampaignId,
     unsubscribeTopicId,
     subject,
     html,
@@ -174,15 +212,27 @@ export class MessageCampaignService {
             MAX_CAMPAIGN_RECIPIENTS,
           );
 
-          const newCampaignId = await this.createCampaign({
-            workspaceId,
-            roleId,
-            subject,
-            html,
-            fromAddress,
-            unsubscribeTopicId,
-            listId,
-          });
+          const newCampaignId = isDefined(existingCampaignId)
+            ? await this.prepareDraftForSending({
+                workspaceId,
+                roleId,
+                workspaceMemberId,
+                campaignId: existingCampaignId,
+                subject,
+                html,
+                fromAddress,
+                unsubscribeTopicId,
+                listId,
+              })
+            : await this.createCampaign({
+                workspaceId,
+                roleId,
+                subject,
+                html,
+                fromAddress,
+                unsubscribeTopicId,
+                listId,
+              });
 
           return {
             campaignId: newCampaignId,
@@ -212,6 +262,417 @@ export class MessageCampaignService {
     );
 
     return { campaignId, queuedCount: recipients.length, skipped };
+  }
+
+  async saveDraft({
+    workspaceId,
+    userWorkspaceId,
+    workspaceMemberId,
+    campaignId,
+    listId,
+    unsubscribeTopicId,
+    subject,
+    body,
+    fromAddress,
+  }: SaveCampaignDraftArgs): Promise<{ campaignId: string; updatedAt: Date }> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const campaignRepository = await this.getUserRepository(
+          workspaceId,
+          MessageCampaignWorkspaceEntity,
+          roleId,
+        );
+        const now = new Date();
+        const campaignValues = {
+          subject: subject?.trim().length ? subject : null,
+          bodyTemplate: body?.length ? body : null,
+          fromAddress: fromAddress?.trim().length
+            ? {
+                primaryEmail: fromAddress.trim(),
+                additionalEmails: null,
+              }
+            : null,
+          listId: listId ?? null,
+          unsubscribeTopicId: unsubscribeTopicId ?? null,
+        };
+
+        if (!isDefined(campaignId)) {
+          const workspaceMemberRepository = await this.getSystemRepository(
+            workspaceId,
+            WorkspaceMemberWorkspaceEntity,
+          );
+          const workspaceMember = await workspaceMemberRepository.findOne({
+            where: { id: workspaceMemberId },
+          });
+
+          if (workspaceMember === null) {
+            throw new NotFoundException('Workspace member not found');
+          }
+
+          const { identifiers } = await campaignRepository.insert({
+            ...campaignValues,
+            status: CAMPAIGN_STATUS.DRAFT,
+            createdBy: buildCreatedByFromFullNameMetadata({
+              workspaceMemberId,
+              fullNameMetadata: workspaceMember.name,
+            }),
+          });
+
+          return { campaignId: identifiers[0].id, updatedAt: now };
+        }
+
+        const campaign = await campaignRepository.findOne({
+          where: { id: campaignId },
+        });
+
+        this.assertCanModifyDraft(campaign, workspaceMemberId);
+
+        await campaignRepository.update({ id: campaignId }, campaignValues);
+
+        return { campaignId, updatedAt: now };
+      },
+    );
+  }
+
+  async saveMassEmailDraft({
+    workspaceId,
+    userWorkspaceId,
+    workspaceMemberId,
+    campaignId,
+    personIds,
+    subject,
+    body,
+    fromAddress,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    workspaceMemberId: string;
+    campaignId?: string;
+    personIds: string[];
+    subject?: string | null;
+    body?: string | null;
+    fromAddress: string;
+  }): Promise<{ campaignId: string; updatedAt: Date }> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const uniquePersonIds = [...new Set(personIds)];
+        const accessibleRecipients = await this.loadRecipientsByPersonIds(
+          workspaceId,
+          uniquePersonIds,
+          roleId,
+        );
+
+        if (accessibleRecipients.length !== uniquePersonIds.length) {
+          throw new ForbiddenException(
+            'One or more campaign recipients are not accessible',
+          );
+        }
+
+        const campaignRepository = await this.getSystemRepository(
+          workspaceId,
+          MessageCampaignWorkspaceEntity,
+        );
+        const listRepository = await this.getSystemRepository(
+          workspaceId,
+          MessageListWorkspaceEntity,
+        );
+        const listMemberRepository = await this.getSystemRepository(
+          workspaceId,
+          MessageListMemberWorkspaceEntity,
+        );
+        const existingCampaign = isDefined(campaignId)
+          ? await campaignRepository.findOne({
+              where: { id: campaignId },
+              relations: { list: true },
+            })
+          : null;
+
+        if (isDefined(campaignId)) {
+          this.assertCanModifyDraft(existingCampaign, workspaceMemberId);
+        }
+
+        const existingListIsMassEmailList =
+          existingCampaign?.list?.name?.startsWith(
+            MASS_EMAIL_RECIPIENT_LIST_PREFIX,
+          ) === true;
+        let recipientListId = existingListIsMassEmailList
+          ? existingCampaign.listId
+          : null;
+        const listName = `${MASS_EMAIL_RECIPIENT_LIST_PREFIX}${uniquePersonIds.length})`;
+
+        if (recipientListId === null) {
+          const { identifiers } = await listRepository.insert({
+            name: listName,
+          });
+
+          recipientListId = identifiers[0].id;
+        } else {
+          await listRepository.update(
+            { id: recipientListId },
+            { name: listName },
+          );
+          await listMemberRepository.delete({ listId: recipientListId });
+        }
+
+        await listMemberRepository.insert(
+          uniquePersonIds.map((personId) => ({
+            listId: recipientListId as string,
+            personId,
+          })),
+        );
+
+        const now = new Date();
+        const campaignValues = {
+          subject: subject?.trim().length ? subject : null,
+          bodyTemplate: body?.length ? body : null,
+          fromAddress: {
+            primaryEmail: fromAddress.trim(),
+            additionalEmails: null,
+          },
+          listId: recipientListId,
+        };
+
+        if (existingCampaign !== null) {
+          await campaignRepository.update(
+            { id: existingCampaign.id },
+            campaignValues,
+          );
+
+          return { campaignId: existingCampaign.id, updatedAt: now };
+        }
+
+        const workspaceMemberRepository = await this.getSystemRepository(
+          workspaceId,
+          WorkspaceMemberWorkspaceEntity,
+        );
+        const workspaceMember = await workspaceMemberRepository.findOne({
+          where: { id: workspaceMemberId },
+        });
+
+        if (workspaceMember === null) {
+          throw new NotFoundException('Workspace member not found');
+        }
+
+        const { identifiers } = await campaignRepository.insert({
+          ...campaignValues,
+          status: CAMPAIGN_STATUS.DRAFT,
+          createdBy: buildCreatedByFromFullNameMetadata({
+            workspaceMemberId,
+            fullNameMetadata: workspaceMember.name,
+          }),
+        });
+
+        return { campaignId: identifiers[0].id, updatedAt: now };
+      },
+    );
+  }
+
+  async prepareMassEmailCampaignForSending({
+    workspaceId,
+    userWorkspaceId,
+    workspaceMemberId,
+    campaignId,
+    recipients,
+    fromAddress,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    workspaceMemberId: string;
+    campaignId: string;
+    recipients: Array<{ personId: string; email: string }>;
+    fromAddress: string;
+  }): Promise<void> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = await this.getSystemRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+      );
+      const campaign = await campaignRepository.findOne({
+        where: { id: campaignId },
+      });
+
+      this.assertCanModifyDraft(campaign, workspaceMemberId);
+
+      if (campaign.listId === null) {
+        throw new BadRequestException('Campaign draft has no recipients');
+      }
+
+      const listMemberRepository = await this.getSystemRepository(
+        workspaceId,
+        MessageListMemberWorkspaceEntity,
+      );
+      const members = await listMemberRepository.find({
+        where: { listId: campaign.listId },
+      });
+      const expectedPersonIds = new Set(
+        members.map(({ personId }) => personId),
+      );
+      const suppliedPersonIds = new Set(
+        recipients.map(({ personId }) => personId),
+      );
+
+      if (
+        suppliedPersonIds.size !== recipients.length ||
+        expectedPersonIds.size !== suppliedPersonIds.size ||
+        [...expectedPersonIds].some(
+          (personId) => !suppliedPersonIds.has(personId),
+        )
+      ) {
+        throw new BadRequestException(
+          'Campaign recipients changed after the draft was saved',
+        );
+      }
+
+      const accessibleRecipients = await this.loadRecipientsByPersonIds(
+        workspaceId,
+        [...expectedPersonIds],
+        roleId,
+      );
+
+      if (accessibleRecipients.length !== expectedPersonIds.size) {
+        throw new ForbiddenException(
+          'One or more campaign recipients are no longer accessible',
+        );
+      }
+
+      const currentEmailByPersonId = new Map(
+        accessibleRecipients.map(({ personId, email }) => [
+          personId,
+          email?.trim().toLowerCase() ?? null,
+        ]),
+      );
+      const recipientEmailChanged = recipients.some(
+        ({ personId, email }) =>
+          currentEmailByPersonId.get(personId) !== email.trim().toLowerCase(),
+      );
+
+      if (recipientEmailChanged) {
+        throw new BadRequestException(
+          'A campaign recipient email changed after the draft was saved',
+        );
+      }
+
+      await campaignRepository.update(
+        { id: campaignId },
+        {
+          status: CAMPAIGN_STATUS.SENDING,
+          fromAddress: {
+            primaryEmail: fromAddress,
+            additionalEmails: null,
+          },
+        },
+      );
+    });
+  }
+
+  async finalizeMassEmailCampaign({
+    workspaceId,
+    campaignId,
+    workspaceMemberId,
+    fromAddress,
+    outcomes,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    workspaceMemberId: string;
+    fromAddress: string;
+    outcomes: MassEmailCampaignSendOutcome[];
+  }): Promise<void> {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = await this.getSystemRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+      );
+      const campaign = await campaignRepository.findOne({
+        where: { id: campaignId },
+      });
+
+      if (campaign === null) {
+        throw new NotFoundException('Campaign not found');
+      }
+
+      if (campaign.createdBy.workspaceMemberId !== workspaceMemberId) {
+        throw new ForbiddenException(
+          'Only the campaign creator can complete it',
+        );
+      }
+
+      for (const outcome of outcomes) {
+        await this.recordMassEmailCampaignOutcome({
+          workspaceId,
+          campaignId,
+          fromAddress,
+          outcome,
+        });
+      }
+
+      const sentCount = outcomes.filter(({ success }) => success).length;
+      const failedCount = outcomes.length - sentCount;
+
+      await campaignRepository.update(
+        { id: campaignId },
+        {
+          status:
+            failedCount > 0
+              ? CAMPAIGN_STATUS.SENT_WITH_ERRORS
+              : CAMPAIGN_STATUS.SENT,
+          sentAt: new Date(),
+          sentCount,
+          failedCount,
+        },
+      );
+    });
+  }
+
+  async deleteDraft({
+    workspaceId,
+    userWorkspaceId,
+    workspaceMemberId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    workspaceMemberId: string;
+    campaignId: string;
+  }): Promise<boolean> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const campaignRepository = await this.getUserRepository(
+          workspaceId,
+          MessageCampaignWorkspaceEntity,
+          roleId,
+        );
+        const campaign = await campaignRepository.findOne({
+          where: { id: campaignId },
+        });
+
+        this.assertCanModifyDraft(campaign, workspaceMemberId);
+
+        await campaignRepository.softDelete({ id: campaignId });
+
+        return true;
+      },
+    );
   }
 
   async processMaterializeJob(data: MaterializeCampaignJobData): Promise<void> {
@@ -533,6 +994,176 @@ export class MessageCampaignService {
     });
 
     return identifiers[0].id;
+  }
+
+  private async prepareDraftForSending({
+    workspaceId,
+    roleId,
+    workspaceMemberId,
+    campaignId,
+    subject,
+    html,
+    fromAddress,
+    unsubscribeTopicId,
+    listId,
+  }: {
+    workspaceId: string;
+    roleId: string;
+    workspaceMemberId: string;
+    campaignId: string;
+    subject: string;
+    html: string;
+    fromAddress: string;
+    unsubscribeTopicId?: string;
+    listId: string;
+  }): Promise<string> {
+    const campaignRepository = await this.getUserRepository(
+      workspaceId,
+      MessageCampaignWorkspaceEntity,
+      roleId,
+    );
+    const campaign = await campaignRepository.findOne({
+      where: { id: campaignId },
+    });
+
+    this.assertCanModifyDraft(campaign, workspaceMemberId);
+
+    await campaignRepository.update(
+      { id: campaignId },
+      {
+        subject,
+        bodyTemplate: html,
+        fromAddress: {
+          primaryEmail: fromAddress,
+          additionalEmails: null,
+        },
+        status: CAMPAIGN_STATUS.SENDING,
+        unsubscribeTopicId: unsubscribeTopicId ?? null,
+        listId,
+      },
+    );
+
+    return campaignId;
+  }
+
+  private assertCanModifyDraft(
+    campaign: MessageCampaignWorkspaceEntity | null,
+    workspaceMemberId: string,
+  ): asserts campaign is MessageCampaignWorkspaceEntity {
+    if (campaign === null) {
+      throw new NotFoundException('Campaign draft not found');
+    }
+
+    if (campaign.status !== CAMPAIGN_STATUS.DRAFT) {
+      throw new BadRequestException('Only campaign drafts can be modified');
+    }
+
+    if (campaign.createdBy.workspaceMemberId !== workspaceMemberId) {
+      throw new ForbiddenException(
+        'Only the campaign draft creator can modify it',
+      );
+    }
+  }
+
+  private async recordMassEmailCampaignOutcome({
+    workspaceId,
+    campaignId,
+    fromAddress,
+    outcome,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    fromAddress: string;
+    outcome: MassEmailCampaignSendOutcome;
+  }): Promise<void> {
+    const messageRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageWorkspaceEntity,
+    );
+    const participantRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageParticipantWorkspaceEntity,
+    );
+    const deliveryStatus = outcome.success
+      ? CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT
+      : CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED;
+    const persistedMessage = isDefined(outcome.messageId)
+      ? await messageRepository.findOne({ where: { id: outcome.messageId } })
+      : null;
+
+    if (persistedMessage !== null) {
+      await messageRepository.update(
+        { id: persistedMessage.id },
+        { messageCampaignId: campaignId, deliveryStatus },
+      );
+
+      const toParticipants = await participantRepository.find({
+        where: {
+          messageId: persistedMessage.id,
+          role: MessageParticipantRole.TO,
+        },
+      });
+
+      for (const participant of toParticipants) {
+        await participantRepository.update(
+          { id: participant.id },
+          {
+            personId: outcome.personId,
+            messageCampaignId: campaignId,
+          },
+        );
+      }
+
+      return;
+    }
+
+    const messageId = this.campaignMessageId(campaignId, outcome.personId);
+    const existingTrackingMessage = await messageRepository.findOne({
+      where: { id: messageId },
+    });
+
+    if (existingTrackingMessage !== null) {
+      await messageRepository.update({ id: messageId }, { deliveryStatus });
+
+      return;
+    }
+
+    const threadId = v4();
+    const threadRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageThreadWorkspaceEntity,
+    );
+
+    await threadRepository.insert({ id: threadId });
+    await messageRepository.insert({
+      id: messageId,
+      headerMessageId: v4(),
+      subject: outcome.subject,
+      text: this.htmlToText(outcome.body),
+      receivedAt: new Date(),
+      messageThreadId: threadId,
+      messageCampaignId: campaignId,
+      deliveryStatus,
+      isDraft: false,
+    });
+    await participantRepository.insert([
+      {
+        id: v4(),
+        messageId,
+        role: MessageParticipantRole.FROM,
+        handle: fromAddress,
+        displayName: fromAddress,
+      },
+      {
+        id: v4(),
+        messageId,
+        role: MessageParticipantRole.TO,
+        handle: outcome.email,
+        displayName: outcome.email,
+        personId: outcome.personId,
+        messageCampaignId: campaignId,
+      },
+    ]);
   }
 
   private async materializeCampaignMessages({

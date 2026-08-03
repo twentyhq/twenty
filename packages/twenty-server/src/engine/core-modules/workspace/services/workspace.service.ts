@@ -451,7 +451,7 @@ export class WorkspaceService {
     workspaceId: string;
   }): Promise<void> {
     const lastAttemptedInstanceCommand =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
+      await this.upgradeMigrationService.getInstanceCommandCursorOrThrow();
 
     const initialCursor =
       this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(

@@ -22,7 +22,12 @@ export function assertMergeManyArgs(
 
   const argKeys = Object.keys(args);
 
-  const allowedKeys = new Set(['ids', 'conflictPriorityIndex', 'dryRun']);
+  const allowedKeys = new Set([
+    'ids',
+    'conflictPriorityIndex',
+    'dryRun',
+    'data',
+  ]);
 
   for (const key of argKeys) {
     if (!allowedKeys.has(key)) {
@@ -56,6 +61,14 @@ export function assertMergeManyArgs(
   if ('dryRun' in args && isDefined(args.dryRun) && !isBoolean(args.dryRun)) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "dryRun" must be a boolean',
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  if ('data' in args && isDefined(args.data) && !isObject(args.data)) {
+    throw new GraphqlDirectExecutionException(
+      'Invalid argument: "data" must be an object',
       GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );

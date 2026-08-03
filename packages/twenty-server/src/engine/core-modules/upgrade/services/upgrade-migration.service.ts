@@ -3,8 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
+import {
+  In,
+  IsNull,
+  QueryFailedError,
+  type QueryRunner,
+  Repository,
+} from 'typeorm';
 
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import {
   UpgradeMigrationEntity,
   UpgradeMigrationStatus,
@@ -22,13 +29,41 @@ export type WorkspaceLastAttemptedCommand = {
   isInitial: boolean;
 };
 
+export type InstanceCommandAttempt = {
+  name: string;
+  status: UpgradeMigrationStatus;
+  executedByVersion: string;
+  errorMessage: string | null;
+  createdAt: Date;
+};
+
+// Where the instance sits in the upgrade sequence. `blocked` is the first
+// instance step that has not completed, and is null once every one has.
+export type InstanceUpgradeProgress = {
+  lastCompleted: InstanceCommandAttempt | null;
+  blocked: { name: string; attempt: InstanceCommandAttempt | null } | null;
+};
+
 const UPGRADE_MIGRATION_SAVE_BATCH_SIZE = 1000;
+const UPGRADE_MIGRATION_CONFLICT_RETRIES = 5;
+const POSTGRES_UNIQUE_VIOLATION = '23505';
+
+const isAttemptConflict = (error: unknown): boolean => {
+  if (!(error instanceof QueryFailedError)) {
+    return false;
+  }
+
+  const driverError = error.driverError as { code?: string } | undefined;
+
+  return driverError?.code === POSTGRES_UNIQUE_VIOLATION;
+};
 
 @Injectable()
 export class UpgradeMigrationService {
   constructor(
     @InjectRepository(UpgradeMigrationEntity)
     private readonly upgradeMigrationRepository: Repository<UpgradeMigrationEntity>,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
   ) {}
 
   async getInferredVersion(commandName?: string): Promise<string | null> {
@@ -36,7 +71,7 @@ export class UpgradeMigrationService {
       return extractVersionFromCommandName(commandName);
     }
 
-    const migration = await this.getLastAttemptedInstanceCommand();
+    const migration = await this.getInstanceCommandCursor();
 
     return isDefined(migration)
       ? extractVersionFromCommandName(migration.name)
@@ -84,25 +119,91 @@ export class UpgradeMigrationService {
     const { name, workspaceIds, isInstance, status, executedByVersion } =
       params;
 
-    const repository = params.queryRunner
-      ? params.queryRunner.manager.getRepository(UpgradeMigrationEntity)
-      : this.upgradeMigrationRepository;
-
     const errorMessage =
       params.status === 'failed'
         ? formatUpgradeErrorForStorage(params.error)
         : null;
 
+    const insertArgs = {
+      name,
+      workspaceIds,
+      isInstance,
+      status,
+      executedByVersion,
+      errorMessage,
+    };
+
+    // A caller that supplies a query runner owns the transaction, so a conflict
+    // has to surface: retrying inside its aborted transaction cannot succeed.
+    if (isDefined(params.queryRunner)) {
+      await this.insertAttempts({
+        repository: params.queryRunner.manager.getRepository(
+          UpgradeMigrationEntity,
+        ),
+        ...insertArgs,
+      });
+
+      return;
+    }
+
+    // The attempt number is derived from rows this call is about to write, so
+    // two upgrade processes can read the same number and collide on the attempt
+    // uniqueness constraint. Recompute and retry, one transaction per try so a
+    // conflict leaves nothing half-written.
+    for (
+      let retriesLeft = UPGRADE_MIGRATION_CONFLICT_RETRIES;
+      ;
+      retriesLeft--
+    ) {
+      try {
+        await this.upgradeMigrationRepository.manager.transaction(
+          async (entityManager) =>
+            this.insertAttempts({
+              repository: entityManager.getRepository(UpgradeMigrationEntity),
+              ...insertArgs,
+            }),
+        );
+
+        return;
+      } catch (error) {
+        if (retriesLeft <= 0 || !isAttemptConflict(error)) {
+          throw error;
+        }
+      }
+    }
+  }
+
+  private async insertAttempts({
+    repository,
+    name,
+    workspaceIds,
+    isInstance,
+    status,
+    executedByVersion,
+    errorMessage,
+  }: {
+    repository: Repository<UpgradeMigrationEntity>;
+    name: string;
+    workspaceIds: string[];
+    isInstance: boolean;
+    status: UpgradeMigrationStatus;
+    executedByVersion: string;
+    errorMessage: string | null;
+  }): Promise<void> {
     if (isInstance) {
-      const previousAttempts = await repository.count({
-        where: { name, workspaceId: IsNull() },
+      // Every row an instance command writes shares the instance attempt
+      // number, including the per-workspace cursor rows.
+      const attempt = await this.getNextAttempt({
+        repository,
+        name,
+        workspaceId: null,
       });
 
       const instanceRows = [
         {
           name,
           status,
-          attempt: previousAttempts + 1,
+          attempt,
           executedByVersion,
           workspaceId: null,
           errorMessage,
@@ -110,7 +211,7 @@ export class UpgradeMigrationService {
         ...workspaceIds.map((workspaceId) => ({
           name,
           status,
-          attempt: previousAttempts + 1,
+          attempt,
           executedByVersion,
           workspaceId,
           errorMessage,
@@ -130,14 +231,10 @@ export class UpgradeMigrationService {
     const rows = [];
 
     for (const workspaceId of workspaceIds) {
-      const previousAttempts = await repository.count({
-        where: { name, workspaceId },
-      });
-
       rows.push({
         name,
         status,
-        attempt: previousAttempts + 1,
+        attempt: await this.getNextAttempt({ repository, name, workspaceId }),
         executedByVersion,
         workspaceId,
         errorMessage,
@@ -147,6 +244,28 @@ export class UpgradeMigrationService {
     for (const batch of chunk(rows, UPGRADE_MIGRATION_SAVE_BATCH_SIZE)) {
       await repository.save(batch);
     }
+  }
+
+  // Counting rows would renumber attempts if any were ever removed, handing the
+  // next write a number that already exists.
+  private async getNextAttempt({
+    repository,
+    name,
+    workspaceId,
+  }: {
+    repository: Repository<UpgradeMigrationEntity>;
+    name: string;
+    workspaceId: string | null;
+  }): Promise<number> {
+    const highestAttempt = await repository.findOne({
+      where: {
+        name,
+        workspaceId: workspaceId === null ? IsNull() : workspaceId,
+      },
+      order: { attempt: 'DESC' },
+    });
+
+    return isDefined(highestAttempt) ? highestAttempt.attempt + 1 : 1;
   }
 
   async markAsWorkspaceInitial({
@@ -344,14 +463,17 @@ export class UpgradeMigrationService {
     return completedCount === workspaceIds.length;
   }
 
-  async getLastAttemptedInstanceCommand(): Promise<{
-    name: string;
-    status: UpgradeMigrationStatus;
-    executedByVersion: string;
-    errorMessage: string | null;
-    createdAt: Date;
-  } | null> {
-    const migration = await this.upgradeMigrationRepository
+  // Latest attempt per instance command, keyed by name. There is deliberately
+  // no "most recently attempted command" accessor: ordering these rows by
+  // createdAt does not tell you how far the instance has got. Slow commands,
+  // retries and --force runs all write rows newer than steps that ran long
+  // before them, so the newest row can sit far behind the real position.
+  // Resolve progress against the sequence order in code instead, which is what
+  // getInstanceProgress does.
+  async getLatestInstanceCommandAttempts(): Promise<
+    Map<string, InstanceCommandAttempt>
+  > {
+    const migrations = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
       .select([
         'migration.name',
@@ -370,27 +492,77 @@ export class UpgradeMigrationService {
           AND sub."workspaceId" IS NULL
         )`,
       )
-      .orderBy('migration.createdAt', 'DESC')
-      .getOne();
+      .getMany();
 
-    if (!migration) {
-      return null;
-    }
-
-    return {
-      name: migration.name,
-      status: migration.status,
-      executedByVersion: migration.executedByVersion,
-      errorMessage: migration.errorMessage,
-      createdAt: migration.createdAt,
-    };
+    return new Map(
+      migrations.map((migration) => [
+        migration.name,
+        {
+          name: migration.name,
+          status: migration.status,
+          executedByVersion: migration.executedByVersion,
+          errorMessage: migration.errorMessage,
+          createdAt: migration.createdAt,
+        },
+      ]),
+    );
   }
 
-  async getLastAttemptedInstanceCommandOrThrow(): Promise<{
+  async getLatestInstanceCommandStatuses(): Promise<
+    Map<string, UpgradeMigrationStatus>
+  > {
+    const attempts = await this.getLatestInstanceCommandAttempts();
+
+    return new Map(
+      [...attempts].map(([name, attempt]) => [name, attempt.status]),
+    );
+  }
+
+  // Walks the sequence declared in code and stops at the first instance step
+  // that has not completed, so execution order cannot affect the answer.
+  async getInstanceProgress(): Promise<InstanceUpgradeProgress> {
+    const attempts = await this.getLatestInstanceCommandAttempts();
+    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+
+    let lastCompleted: InstanceCommandAttempt | null = null;
+
+    for (const step of sequence) {
+      if (step.kind === 'workspace') {
+        continue;
+      }
+
+      const attempt = attempts.get(step.name);
+
+      if (!isDefined(attempt) || attempt.status !== 'completed') {
+        return {
+          lastCompleted,
+          blocked: { name: step.name, attempt: attempt ?? null },
+        };
+      }
+
+      lastCompleted = attempt;
+    }
+
+    return { lastCompleted, blocked: null };
+  }
+
+  // The command that defines where the instance stands: whatever is blocking
+  // progress if anything is, otherwise the furthest step that completed.
+  async getInstanceCommandCursor(): Promise<InstanceCommandAttempt | null> {
+    const { lastCompleted, blocked } = await this.getInstanceProgress();
+
+    if (isDefined(blocked) && isDefined(blocked.attempt)) {
+      return blocked.attempt;
+    }
+
+    return lastCompleted;
+  }
+
+  async getInstanceCommandCursorOrThrow(): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
   }> {
-    const result = await this.getLastAttemptedInstanceCommand();
+    const result = await this.getInstanceCommandCursor();
 
     if (!result) {
       throw new Error(

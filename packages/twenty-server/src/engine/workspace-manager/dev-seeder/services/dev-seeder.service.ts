@@ -81,7 +81,7 @@ export class DevSeederService {
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     const lastAttemptedInstanceCommand =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
+      await this.upgradeMigrationService.getInstanceCommandCursorOrThrow();
     const initialCursor =
       this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
         lastAttemptedInstanceCommand,

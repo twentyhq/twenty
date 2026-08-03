@@ -8,4 +8,7 @@ export const UNTESTED_APP_PATHS = [
   AppPath.Dpa,
   // Plain authenticated page with no special page-change navigation behavior
   AppPath.MassEmail,
+  AppPath.Emails,
+  AppPath.EmailsNew,
+  AppPath.EmailsCampaign,
 ];

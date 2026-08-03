@@ -63,6 +63,7 @@ export const useMergeManyRecords = <
     recordIds: string[];
     mergeSettings: MergeManySettings;
     preview?: boolean;
+    overrideData?: Partial<MergedObjectRecord>;
   };
 
   const mergeManyRecords = useCallback(
@@ -70,6 +71,7 @@ export const useMergeManyRecords = <
       recordIds,
       mergeSettings,
       preview = false,
+      overrideData,
     }: MergeManyRecordsProps): Promise<MergedObjectRecord | null> => {
       setLoading(true);
 
@@ -84,6 +86,7 @@ export const useMergeManyRecords = <
             ids: recordIds,
             conflictPriorityIndex: mergeSettings.conflictPriorityIndex,
             dryRun: preview,
+            data: overrideData,
           },
           // Prevent cache updates during dry run to avoid overwriting original record data
           ...(preview && {
