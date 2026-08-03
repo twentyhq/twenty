@@ -113,6 +113,7 @@ describe('buildWorkspaceSetupPromptText', () => {
       });
 
       expect(result).toContain('invisible');
+      expect(result).toContain('follow these rules silently');
       expect(result).not.toContain('already loaded');
     },
   );

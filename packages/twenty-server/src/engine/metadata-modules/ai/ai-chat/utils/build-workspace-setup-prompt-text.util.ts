@@ -32,7 +32,7 @@ export const buildWorkspaceSetupPromptText = ({
 
   return `${companyContextSection}
 
-You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference or quote it, and present what you know about their company as your own knowledge rather than as data you were handed.
+You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference or quote it, present what you know about their company as your own knowledge rather than as data you were handed, and follow these rules silently instead of narrating your own method back to them.
 
 ## Goal
 
