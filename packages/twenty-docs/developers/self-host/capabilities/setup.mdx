@@ -109,6 +109,33 @@ In multi-workspace mode each workspace is its own origin. If those subdomains
 are cross-origin to the API, list each one. There is no wildcard matching, so
 `*.example.com` is not accepted.
 
+### Cross-origin is not the same as cross-site
+
+Allowlisting the origin is enough only when the front-end and the API share a
+registrable domain. `app.example.com` and `api.example.com` are different
+origins but the same site, so the session cookie is sent normally under the
+default `AUTH_COOKIE_SAME_SITE=lax`.
+
+If they sit on different registrable domains — `app.example.com` calling
+`api.example-api.net`, or an API reached through a separate provider domain —
+the request is cross-site and a `Lax` cookie is never attached. Authentication
+then fails even though CORS is configured correctly.
+
+```bash
+AUTH_COOKIE_SAME_SITE=none
+```
+
+<Warning>
+`SameSite=None` is only honoured on a `Secure` cookie, so this setting requires
+HTTPS. Twenty marks the cookie `Secure` as soon as it is set, which means a
+plain-HTTP deployment that sets `none` will find the browser discards the
+cookie entirely. Put TLS in front of both hosts first.
+</Warning>
+
+Prefer keeping both hosts on one registrable domain. It avoids this setting and
+keeps the cookie same-site, which is a meaningful CSRF protection in its own
+right rather than something to opt out of.
+
 Check what a deployment answers for a given origin with:
 
 ```bash
@@ -121,8 +148,11 @@ A declared origin is echoed back in `Access-Control-Allow-Origin` alongside
 `Access-Control-Allow-Credentials: true`. An undeclared one returns `*`, which
 browsers reject for credentialed requests.
 
-`AUTH_COOKIE_ALLOWED_ORIGINS` is stored in the database, so it can be changed
-from the admin panel and takes effect without a restart.
+`AUTH_COOKIE_ALLOWED_ORIGINS` and `AUTH_COOKIE_SAME_SITE` are both database
+backed under the default `IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`, so they can
+be changed from the admin panel and take effect without a restart. Under
+`IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` they come from `.env` like everything
+else and need a container restart.
 
 ## Multi-Workspace Mode
 
