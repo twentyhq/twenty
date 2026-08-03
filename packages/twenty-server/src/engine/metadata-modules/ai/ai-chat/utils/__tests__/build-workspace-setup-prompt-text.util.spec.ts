@@ -69,6 +69,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('create_many_object_metadata');
     expect(result).toContain('create_many_field_metadata');
     expect(result).toContain('create_many_relation_fields');
+    expect(result).toContain('never set isNullable false');
   });
 
   it('should state that no company information is available when the enrichment is null', () => {
