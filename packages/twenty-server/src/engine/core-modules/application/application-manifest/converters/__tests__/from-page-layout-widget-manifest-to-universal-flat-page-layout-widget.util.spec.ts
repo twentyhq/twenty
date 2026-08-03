@@ -136,6 +136,26 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     });
   });
 
+  it('should set CANVAS position when the tab layoutMode is CANVAS', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-5',
+        title: 'Canvas Widget',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgetIndex: 0,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    });
+  });
+
   it('should leave position null when the tab layoutMode is not set', () => {
     const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
       pageLayoutWidgetManifest: {
