@@ -1,8 +1,7 @@
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
-import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { sendSlackMessageWithMarkdownFallback } from 'src/logic-functions/utils/send-slack-message-with-markdown-fallback';
+import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
 
 export const slackPostMessageHandler = async (
   parameters: SlackPostMessageInput,
@@ -17,36 +16,5 @@ export const slackPostMessageHandler = async (
     };
   }
 
-  const { client } = slackClientResult;
-
-  const parentTimestamp = parameters.parentMessageTimestamp;
-
-  return await sendSlackMessageWithMarkdownFallback({
-    messageFormat: parameters.messageFormat,
-    failureMessage: 'Failed to post Slack message',
-    sendMessage: async (messageFormat) => {
-      const bodyFields = getSlackChatMessageBodyFields(
-        parameters.messageText,
-        messageFormat,
-      );
-
-      const data = await client.chat.postMessage({
-        channel: parameters.slackChannelId,
-        thread_ts:
-          parentTimestamp != null && parentTimestamp.trim().length > 0
-            ? parentTimestamp.trim()
-            : undefined,
-        ...bodyFields,
-      });
-
-      return {
-        success: true,
-        message: data.ts
-          ? `Message posted to Slack (ts=${data.ts}).`
-          : 'Message posted to Slack.',
-        slackTs: data.ts,
-        channel: data.channel,
-      };
-    },
-  });
+  return await postSlackMessage(slackClientResult.client, parameters);
 };

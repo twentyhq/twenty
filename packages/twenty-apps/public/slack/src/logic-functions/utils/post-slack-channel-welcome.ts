@@ -2,11 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { SLACK_CHANNEL_WELCOME_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-text';
 import { SLACK_CHANNEL_WELCOME_THREAD_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-thread-text';
-import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { claimSlackChannelWelcome } from 'src/logic-functions/utils/claim-slack-channel-welcome';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { parseSlackChannelWelcomeEvent } from 'src/logic-functions/utils/parse-slack-channel-welcome-event';
+import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
 import { releaseSlackChannelWelcome } from 'src/logic-functions/utils/release-slack-channel-welcome';
 
 type SlackChannelWelcomeResult = { ok: boolean; skipped?: string };
@@ -28,7 +28,9 @@ export const postSlackChannelWelcome = async (
     throw new Error(slackClientResult.error);
   }
 
-  const authResult = await slackClientResult.client.auth.test();
+  const { client } = slackClientResult;
+
+  const authResult = await client.auth.test();
 
   if (authResult.user_id !== slackUserId) {
     return { ok: true, skipped: 'Someone other than the bot joined' };
@@ -40,7 +42,7 @@ export const postSlackChannelWelcome = async (
     return { ok: true, skipped: 'Channel was already welcomed' };
   }
 
-  const channelMessageResult = await slackPostMessageHandler({
+  const channelMessageResult = await postSlackMessage(client, {
     slackChannelId,
     messageText: SLACK_CHANNEL_WELCOME_TEXT,
     messageFormat: 'markdown',
@@ -57,7 +59,7 @@ export const postSlackChannelWelcome = async (
     );
   }
 
-  const threadMessageResult = await slackPostMessageHandler({
+  const threadMessageResult = await postSlackMessage(client, {
     slackChannelId,
     messageText: SLACK_CHANNEL_WELCOME_THREAD_TEXT,
     parentMessageTimestamp: channelMessageResult.slackTs,
