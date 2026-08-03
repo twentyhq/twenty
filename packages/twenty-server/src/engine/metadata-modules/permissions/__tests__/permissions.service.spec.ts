@@ -37,6 +37,8 @@ describe('PermissionsService', () => {
   let service: PermissionsService;
   let roleRepository: { find: jest.Mock };
   let workspaceCacheService: { getOrRecompute: jest.Mock };
+  let userRoleService: { getRolesByUserWorkspaces: jest.Mock };
+  let applicationRepository: { findOne: jest.Mock };
 
   beforeEach(async () => {
     roleRepository = {
@@ -44,6 +46,12 @@ describe('PermissionsService', () => {
     };
     workspaceCacheService = {
       getOrRecompute: jest.fn(),
+    };
+    userRoleService = {
+      getRolesByUserWorkspaces: jest.fn(),
+    };
+    applicationRepository = {
+      findOne: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -59,7 +67,7 @@ describe('PermissionsService', () => {
         },
         {
           provide: UserRoleService,
-          useValue: {},
+          useValue: userRoleService,
         },
         {
           provide: WorkspaceCacheService,
@@ -67,7 +75,7 @@ describe('PermissionsService', () => {
         },
         {
           provide: getRepositoryToken(ApplicationEntity),
-          useValue: {},
+          useValue: applicationRepository,
         },
       ],
     }).compile();
@@ -637,4 +645,152 @@ describe('PermissionsService', () => {
       });
     },
   );
+
+  describe('userHasWorkspaceSettingPermission with an application acting for a user', () => {
+    const workspaceId = 'test-workspace-id';
+    const userWorkspaceId = 'test-user-workspace-id';
+    const applicationId = 'test-application-id';
+    const setting = PermissionFlagType.DATA_MODEL;
+
+    const createFlatRole = ({
+      id,
+      canUpdateAllSettings,
+    }: {
+      id: string;
+      canUpdateAllSettings: boolean;
+    }): FlatRole =>
+      ({
+        id,
+        universalIdentifier: `${id}-universal-identifier`,
+        canAccessAllTools: false,
+        canUpdateAllSettings,
+        rolePermissionFlagIds: [],
+      }) as unknown as FlatRole;
+
+    // The user branch resolves a RoleEntity, so it needs the permission flags
+    // the entity-based check reads, not just the id the intersection uses.
+    const mockUserRole = (role: FlatRole) => {
+      userRoleService.getRolesByUserWorkspaces.mockResolvedValue(
+        new Map([
+          [
+            userWorkspaceId,
+            [
+              {
+                id: role.id,
+                canUpdateAllSettings: role.canUpdateAllSettings,
+                canAccessAllTools: role.canAccessAllTools,
+                rolePermissionFlags: [],
+              } as unknown as RoleEntity,
+            ],
+          ],
+        ]),
+      );
+    };
+
+    const mockApplicationRole = (defaultRoleId: string | null) => {
+      applicationRepository.findOne.mockResolvedValue({
+        id: applicationId,
+        defaultRoleId,
+      });
+    };
+
+    const mockCachedRoles = (roles: FlatRole[]) => {
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatRoleMaps: buildFlatEntityMaps(roles),
+        flatRolePermissionFlagMaps: buildFlatEntityMaps([]),
+      });
+    };
+
+    const check = () =>
+      service.userHasWorkspaceSettingPermission({
+        userWorkspaceId,
+        workspaceId,
+        setting,
+        applicationId,
+      });
+
+    it('should deny when the application role denies, even though the user role grants', async () => {
+      const userRole = createFlatRole({
+        id: 'user-role-id',
+        canUpdateAllSettings: true,
+      });
+      const applicationRole = createFlatRole({
+        id: 'application-role-id',
+        canUpdateAllSettings: false,
+      });
+
+      mockUserRole(userRole);
+      mockApplicationRole(applicationRole.id);
+      mockCachedRoles([userRole, applicationRole]);
+
+      await expect(check()).resolves.toBe(false);
+    });
+
+    it('should deny when the user role denies, even though the application role grants', async () => {
+      const userRole = createFlatRole({
+        id: 'user-role-id',
+        canUpdateAllSettings: false,
+      });
+      const applicationRole = createFlatRole({
+        id: 'application-role-id',
+        canUpdateAllSettings: true,
+      });
+
+      mockUserRole(userRole);
+      mockApplicationRole(applicationRole.id);
+      mockCachedRoles([userRole, applicationRole]);
+
+      await expect(check()).resolves.toBe(false);
+    });
+
+    it('should grant when both roles grant', async () => {
+      const userRole = createFlatRole({
+        id: 'user-role-id',
+        canUpdateAllSettings: true,
+      });
+      const applicationRole = createFlatRole({
+        id: 'application-role-id',
+        canUpdateAllSettings: true,
+      });
+
+      mockUserRole(userRole);
+      mockApplicationRole(applicationRole.id);
+      mockCachedRoles([userRole, applicationRole]);
+
+      await expect(check()).resolves.toBe(true);
+    });
+
+    // Declaring a role is how an application narrows itself. Declaring none
+    // leaves the person's own role as the only bound.
+    it('should fall back to the user role when the application declares none', async () => {
+      const userRole = createFlatRole({
+        id: 'user-role-id',
+        canUpdateAllSettings: true,
+      });
+
+      mockUserRole(userRole);
+      mockApplicationRole(null);
+      roleRepository.find.mockResolvedValue([]);
+
+      await expect(check()).resolves.toBe(true);
+    });
+
+    it('should not consult the application when the request carries none', async () => {
+      const userRole = createFlatRole({
+        id: 'user-role-id',
+        canUpdateAllSettings: true,
+      });
+
+      mockUserRole(userRole);
+
+      await expect(
+        service.userHasWorkspaceSettingPermission({
+          userWorkspaceId,
+          workspaceId,
+          setting,
+        }),
+      ).resolves.toBe(true);
+      expect(applicationRepository.findOne).not.toHaveBeenCalled();
+    });
+  });
 });

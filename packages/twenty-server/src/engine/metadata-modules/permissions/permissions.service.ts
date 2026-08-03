@@ -201,6 +201,24 @@ export class PermissionsService {
         );
       }
 
+      // An application acting on this person's behalf is bounded by its own
+      // role as well as theirs, so it can never do more than either allows.
+      // An application that declares no role adds no bound.
+      const applicationRoleId = isDefined(applicationId)
+        ? await this.findApplicationDefaultRoleId({
+            applicationId,
+            workspaceId,
+          })
+        : undefined;
+
+      if (isDefined(applicationRoleId)) {
+        return this.checkRolesPermissions(
+          { intersectionOf: [roleOfUserWorkspace.id, applicationRoleId] },
+          workspaceId,
+          setting,
+        );
+      }
+
       return this.checkRolePermissions(roleOfUserWorkspace, setting);
     }
 
@@ -246,6 +264,23 @@ export class PermissionsService {
         userFriendlyMessage: msg`Authentication is required to access this feature. Please sign in and try again.`,
       },
     );
+  }
+
+  // Returns undefined rather than throwing, unlike the application-only branch
+  // above: an application that declares no default role is not an error when it
+  // acts on someone's behalf, it just adds no bound beyond that person's role.
+  private async findApplicationDefaultRoleId({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+    });
+
+    return application?.defaultRoleId ?? undefined;
   }
 
   public checkRolePermissions(

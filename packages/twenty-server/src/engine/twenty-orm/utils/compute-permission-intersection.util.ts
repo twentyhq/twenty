@@ -1,6 +1,8 @@
 import {
   type ObjectsPermissions,
   type RestrictedFieldPermissions,
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
 } from 'twenty-shared/types';
 
 export const computePermissionIntersection = (
@@ -30,6 +32,9 @@ export const computePermissionIntersection = (
     let canSoftDeleteObjectRecords = true;
     let canDestroyObjectRecords = true;
     const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
+    const rowLevelPermissionPredicates: RowLevelPermissionPredicate[] = [];
+    const rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[] =
+      [];
 
     for (const permissions of permissionsArray) {
       const objPerm = permissions[objectMetadataId];
@@ -51,6 +56,18 @@ export const computePermissionIntersection = (
         objPerm.canSoftDeleteObjectRecords === true;
       canDestroyObjectRecords =
         canDestroyObjectRecords && objPerm.canDestroyObjectRecords === true;
+
+      // Kept from every role rather than discarded. Callers use these to ask
+      // which fields a row-level rule constrains, so a rule from any role has
+      // to be visible. Enforcement does not read them: it compiles each role's
+      // predicates separately and ANDs the results, which is why concatenating
+      // here cannot produce a misleading combined tree.
+      rowLevelPermissionPredicates.push(
+        ...objPerm.rowLevelPermissionPredicates,
+      );
+      rowLevelPermissionPredicateGroups.push(
+        ...objPerm.rowLevelPermissionPredicateGroups,
+      );
 
       if (objPerm.restrictedFields) {
         for (const [fieldName, fieldPerm] of Object.entries(
@@ -85,8 +102,8 @@ export const computePermissionIntersection = (
       canSoftDeleteObjectRecords,
       canDestroyObjectRecords,
       restrictedFields,
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicates,
+      rowLevelPermissionPredicateGroups,
     };
   }
 

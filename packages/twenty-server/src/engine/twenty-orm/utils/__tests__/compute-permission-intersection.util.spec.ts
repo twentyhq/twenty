@@ -383,4 +383,67 @@ describe('computePermissionIntersection', () => {
       });
     });
   });
+
+  // Callers use these to ask which fields a row-level rule constrains, so a
+  // rule from any role has to survive. Enforcement compiles each role
+  // separately and ANDs the results, so keeping them all cannot over-grant.
+  describe('row-level permission predicates', () => {
+    const buildPermissions = (
+      predicateId: string,
+      roleId: string,
+    ): ObjectsPermissions => ({
+      [objectMetadataId1]: {
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+        restrictedFields: {},
+        rowLevelPermissionPredicates: [{ id: predicateId, roleId } as never],
+        rowLevelPermissionPredicateGroups: [
+          { id: `${predicateId}-group`, roleId } as never,
+        ],
+      },
+    });
+
+    it('should keep the predicates of every role', () => {
+      const result = computePermissionIntersection([
+        buildPermissions('predicate-user', 'user-role-id'),
+        buildPermissions('predicate-application', 'application-role-id'),
+      ]);
+
+      expect(
+        result[objectMetadataId1].rowLevelPermissionPredicates.map(
+          (predicate) => predicate.id,
+        ),
+      ).toEqual(['predicate-user', 'predicate-application']);
+      expect(
+        result[objectMetadataId1].rowLevelPermissionPredicateGroups.map(
+          (group) => group.id,
+        ),
+      ).toEqual(['predicate-user-group', 'predicate-application-group']);
+    });
+
+    it('should keep the predicates of a restricted role when another role has none', () => {
+      const unrestricted: ObjectsPermissions = {
+        [objectMetadataId1]: {
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        },
+      };
+
+      const result = computePermissionIntersection([
+        buildPermissions('predicate-user', 'user-role-id'),
+        unrestricted,
+      ]);
+
+      expect(
+        result[objectMetadataId1].rowLevelPermissionPredicates,
+      ).toHaveLength(1);
+    });
+  });
 });

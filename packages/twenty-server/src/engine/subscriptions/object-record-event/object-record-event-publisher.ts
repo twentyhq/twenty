@@ -368,7 +368,7 @@ export class ObjectRecordEventPublisher {
         permissionsContext.flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       objectMetadata,
-      roleId,
+      roleIds: [roleId],
       workspaceMember,
     });
   }
