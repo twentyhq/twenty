@@ -2510,6 +2510,18 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
+type ApplicationAuthorization {
+  id: UUID!
+  applicationId: UUID!
+  workspaceId: UUID!
+  applicationName: String!
+  applicationUniversalIdentifier: String
+  scopes: [String!]
+  lastAuthorizedAt: DateTime
+  lastUsedAt: DateTime!
+  createdAt: DateTime!
+}
+
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
@@ -3306,6 +3318,7 @@ type Query {
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   findManyPublicDomains: [PublicDomain!]!
+  currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
 input GetApiKeyInput {
@@ -3651,6 +3664,7 @@ type Mutation {
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
+  revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
