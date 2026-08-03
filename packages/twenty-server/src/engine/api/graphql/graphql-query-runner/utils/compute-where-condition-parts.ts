@@ -179,6 +179,14 @@ export const computeWhereConditionParts = ({
         sql: `${fieldReference}::text[] && ARRAY[:...${key}${paramSuffix}]::text[]`,
         params: { [`${key}${paramSuffix}`]: value },
       };
+    case 'containsExactly':
+      return {
+        sql: `(${fieldReference}::text[] @> ARRAY[:...${key}${paramSuffix}]::text[] AND ${fieldReference}::text[] <@ ARRAY[:...${key}${secondParamSuffix}]::text[])`,
+        params: {
+          [`${key}${paramSuffix}`]: value,
+          [`${key}${secondParamSuffix}`]: value,
+        },
+      };
     case 'containsIlike':
       return {
         sql: `EXISTS (SELECT 1 FROM unnest(${fieldReference}) AS elem WHERE elem ILIKE :${key}${paramSuffix})`,

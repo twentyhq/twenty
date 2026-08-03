@@ -18,6 +18,7 @@ export const createGqlEnumFilterType = (
       neq: { type: enumType },
       in: { type: new GraphQLList(enumType) },
       containsAny: { type: new GraphQLList(enumType) },
+      containsExactly: { type: new GraphQLList(enumType) },
       is: { type: FilterIs },
       isEmptyArray: { type: GraphQLBoolean },
     }),

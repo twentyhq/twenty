@@ -32,7 +32,7 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 
-const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
+const ARRAY_OPERATORS = ['in', 'contains', 'notContains', 'containsExactly'];
 
 export class GraphqlQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;

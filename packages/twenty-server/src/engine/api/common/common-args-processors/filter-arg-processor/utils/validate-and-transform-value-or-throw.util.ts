@@ -35,6 +35,7 @@ export const validateAndTransformValueOrThrow = (
       );
 
     case 'containsAny':
+    case 'containsExactly':
       validateArrayOperatorValueOrThrow(value, operator, fieldName);
 
       return value;

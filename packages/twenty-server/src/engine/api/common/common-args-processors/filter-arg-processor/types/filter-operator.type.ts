@@ -12,6 +12,7 @@ export type FilterOperator =
   | 'startsWith'
   | 'endsWith'
   | 'containsAny'
+  | 'containsExactly'
   | 'containsIlike'
   | 'isEmptyArray'
   | 'search';

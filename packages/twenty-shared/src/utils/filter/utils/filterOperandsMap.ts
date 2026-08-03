@@ -103,6 +103,8 @@ export const FILTER_OPERANDS_MAP = {
   MULTI_SELECT: [
     ViewFilterOperand.CONTAINS,
     ViewFilterOperand.DOES_NOT_CONTAIN,
+    ViewFilterOperand.IS_EXACTLY,
+    ViewFilterOperand.IS_NOT_EXACTLY,
     ...emptyOperands,
   ],
   SELECT: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT, ...emptyOperands],

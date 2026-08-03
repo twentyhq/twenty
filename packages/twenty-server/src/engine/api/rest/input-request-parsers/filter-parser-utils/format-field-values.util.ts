@@ -10,7 +10,10 @@ export const formatFieldValue = (
   fieldType?: FieldMetadataType,
   comparator?: string,
 ): FieldValue => {
-  if (isDefined(comparator) && ['in', 'containsAny'].includes(comparator)) {
+  if (
+    isDefined(comparator) &&
+    ['in', 'containsAny', 'containsExactly'].includes(comparator)
+  ) {
     if (value[0] !== '[' || value[value.length - 1] !== ']') {
       throw new BadRequestException(
         `'filter' invalid for '${comparator}' operator. Received '${value}' but array value expected eg: 'field[${comparator}]:[value_1,value_2]'`,

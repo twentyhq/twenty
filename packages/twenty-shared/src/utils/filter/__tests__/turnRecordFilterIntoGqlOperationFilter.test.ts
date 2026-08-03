@@ -635,6 +635,55 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toHaveProperty('or');
     });
+
+    it('should handle IS_EXACTLY operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-multiselect',
+          RecordFilterOperand.IS_EXACTLY,
+          '["TAG1","TAG2"]',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        tags: { containsExactly: ['TAG1', 'TAG2'] },
+      });
+    });
+
+    it('should handle IS_NOT_EXACTLY operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-multiselect',
+          RecordFilterOperand.IS_NOT_EXACTLY,
+          '["TAG1","TAG2"]',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { not: { tags: { containsExactly: ['TAG1', 'TAG2'] } } },
+          { tags: { is: 'NULL' } },
+        ],
+      });
+    });
+
+    it('should handle IS_EXACTLY operand with the empty option selected', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-multiselect',
+          RecordFilterOperand.IS_EXACTLY,
+          '[""]',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ tags: { isEmptyArray: true } });
+    });
   });
 
   describe('RELATION filter', () => {

@@ -58,6 +58,7 @@ export const ARRAY_FILTER_OPERATORS: FilterOperator[] = [
 
 export const MULTI_SELECT_FILTER_OPERATORS: FilterOperator[] = [
   'containsAny',
+  'containsExactly',
   'is',
   'isEmptyArray',
 ];

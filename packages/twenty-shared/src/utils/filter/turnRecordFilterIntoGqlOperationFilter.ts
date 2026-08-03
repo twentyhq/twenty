@@ -1152,6 +1152,61 @@ const buildDirectFieldGqlOperationFilter = ({
               },
             ],
           };
+        case RecordFilterOperand.IS_EXACTLY: {
+          const conditions = [];
+
+          if (nonEmptyOptions.length > 0) {
+            conditions.push({
+              [fieldMetadataItem.name]: {
+                containsExactly: nonEmptyOptions,
+              } as MultiSelectFilter,
+            });
+          }
+
+          if (emptyOptions.length > 0) {
+            conditions.push({
+              [fieldMetadataItem.name]: {
+                isEmptyArray: true,
+              } as MultiSelectFilter,
+            });
+          }
+
+          return conditions.length === 1 ? conditions[0] : { or: conditions };
+        }
+        case RecordFilterOperand.IS_NOT_EXACTLY: {
+          const conditions: RecordGqlOperationFilter[] = [];
+
+          if (nonEmptyOptions.length > 0) {
+            conditions.push({
+              or: [
+                {
+                  not: {
+                    [fieldMetadataItem.name]: {
+                      containsExactly: nonEmptyOptions,
+                    } as MultiSelectFilter,
+                  },
+                },
+                {
+                  [fieldMetadataItem.name]: {
+                    is: 'NULL',
+                  } as MultiSelectFilter,
+                },
+              ],
+            });
+          }
+
+          if (emptyOptions.length > 0) {
+            conditions.push({
+              not: {
+                [fieldMetadataItem.name]: {
+                  isEmptyArray: true,
+                } as MultiSelectFilter,
+              },
+            });
+          }
+
+          return conditions.length === 1 ? conditions[0] : { and: conditions };
+        }
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,

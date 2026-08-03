@@ -5,6 +5,7 @@ export enum FilterComparators {
   neq = 'neq',
   in = 'in',
   containsAny = 'containsAny',
+  containsExactly = 'containsExactly',
   is = 'is',
   gt = 'gt',
   gte = 'gte',
