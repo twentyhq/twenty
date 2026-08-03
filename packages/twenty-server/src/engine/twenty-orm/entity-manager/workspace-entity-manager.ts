@@ -174,9 +174,8 @@ export class WorkspaceEntityManager extends EntityManager {
         (roleId: string) => objectPermissionsByRoleId?.[roleId],
       );
 
-      // An application's declared role is not a foreign key, so it can outlive
-      // the role it points at. A bound we cannot resolve must deny rather than
-      // let the remaining roles decide on their own.
+      // defaultRoleId has no foreign key and can dangle. A bound that cannot
+      // be resolved denies rather than letting the rest decide alone.
       objectPermissions = allRolePermissions.every(isDefined)
         ? computePermissionIntersection(allRolePermissions)
         : {};

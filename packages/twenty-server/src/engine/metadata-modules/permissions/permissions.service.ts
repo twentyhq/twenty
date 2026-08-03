@@ -202,8 +202,6 @@ export class PermissionsService {
         );
       }
 
-      // An application acting on this person's behalf is bounded by its own
-      // role as well as theirs, so it can never do more than either allows.
       const applicationRoleId = isDefined(applicationId)
         ? await this.findApplicationDefaultRoleIdOrThrow({
             applicationId,
@@ -271,10 +269,9 @@ export class PermissionsService {
     );
   }
 
-  // Declaring no default role is not an error when an application acts on
-  // someone's behalf, it just adds no bound beyond that person's role. Naming an
-  // application that no longer exists is a different matter and must not fall
-  // back to the full permissions of the user being acted for.
+  // Declaring no role adds no bound beyond the user's own. Naming an
+  // application that no longer exists is different, and must not fall back to
+  // the full permissions of the user being acted for.
   private async findApplicationDefaultRoleIdOrThrow({
     applicationId,
     workspaceId,

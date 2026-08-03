@@ -15,8 +15,6 @@ const USER_ROLE_ID = 'user-role-1';
 const APPLICATION_ROLE_ID = 'application-role-1';
 const UNRESTRICTED_ROLE_ID = 'unrestricted-role-1';
 
-// The fixtures below are deliberately partial: the builder only reads a
-// handful of fields, and a full FlatEntityMaps entity would be pure noise.
 const buildMaps = (
   entities: ({ id: string; universalIdentifier: string } & Record<
     string,
@@ -102,8 +100,6 @@ describe('buildRowLevelPermissionRecordFilter', () => {
     });
   });
 
-  // The bug this guards: intersecting used to drop row-level predicates
-  // entirely, so an application acting as a restricted user saw every record.
   it('should keep the restriction when the other role is unrestricted', () => {
     expect(build([USER_ROLE_ID, UNRESTRICTED_ROLE_ID])).toEqual({
       name: { ilike: '%visible-to-user%' },

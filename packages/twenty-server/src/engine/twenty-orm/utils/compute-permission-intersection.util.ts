@@ -4,12 +4,11 @@ import {
   type RowLevelPermissionPredicate,
 } from 'twenty-shared/types';
 
-// An intersection has no combined predicate tree to expose: enforcement
-// compiles each role's rules on its own and ANDs the results. What it can
-// state is which fields every role constrains, which is what the insert guard
-// reads to excuse a field-update deny the role's own rule forced. Keeping a
-// field constrained by only one role would let that role's rule cancel another
-// role's deny, so only fields common to all of them survive.
+// An intersection has no combined predicate tree to expose, since enforcement
+// compiles each role separately. It can only state which fields every role
+// constrains, which the insert guard reads to excuse a field-update deny a
+// role's own rule forced. Keeping a field constrained by one role alone would
+// let that rule cancel another role's deny.
 const intersectRowLevelPermissionPredicates = (
   rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][],
 ): RowLevelPermissionPredicate[] => {

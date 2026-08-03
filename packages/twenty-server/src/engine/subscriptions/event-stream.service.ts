@@ -174,9 +174,8 @@ export class EventStreamService implements OnModuleInit {
     streamData: EventStreamData;
   }): Promise<boolean> {
     if (isDefined(authContext.userWorkspaceId)) {
-      // The application is part of who a stream belongs to, not decoration:
-      // it narrows what the stream may publish, so a caller without it must
-      // not be able to take the stream over and drop that bound.
+      // The application narrows what the stream may publish, so a caller
+      // without it must not be able to take the stream over and drop it.
       return (
         streamData.authContext.userWorkspaceId ===
           authContext.userWorkspaceId &&

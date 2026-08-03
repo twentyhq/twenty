@@ -230,11 +230,10 @@ type BuildRowLevelPermissionRecordFilterArgs = Omit<
   roleIds: string[];
 };
 
-// Each role is compiled on its own and the results are ANDed, so a request
-// carrying several principals is restricted by every one of them. Merging the
-// raw predicates and groups first would be wrong: compilation honours only the
-// first parentless group, so one role's restrictions would silently vanish and
-// widen access rather than narrow it.
+// Each role compiles on its own and the results are ANDed. Merging the raw
+// predicates and groups first would be wrong: compilation honours only the
+// first parentless group, so one role's restrictions would silently vanish
+// and widen access.
 export const buildRowLevelPermissionRecordFilter = ({
   roleIds,
   ...buildRecordFilterForRoleArgs
