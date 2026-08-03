@@ -238,7 +238,7 @@ export const SettingsAdminNewAiModel = () => {
     if (isInvalidLimit(values.contextWindowTokens, contextWindowTokens)) {
       form.setError('contextWindowTokens', {
         type: 'manual',
-        message: t`Context window must be a positive number`,
+        message: t`Context window must be a positive integer`,
       });
 
       return;
@@ -247,7 +247,7 @@ export const SettingsAdminNewAiModel = () => {
     if (isInvalidLimit(values.maxOutputTokens, maxOutputTokens)) {
       form.setError('maxOutputTokens', {
         type: 'manual',
-        message: t`Max output must be a positive number`,
+        message: t`Max output must be a positive integer`,
       });
 
       return;
