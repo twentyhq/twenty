@@ -107,8 +107,7 @@ export const CookieSessionBootEffect = () => {
         try {
           await apolloClient.mutate({ mutation: SignOutDocument });
           store.set(isPendingServerSignOutState.atom, false);
-        } catch {
-        }
+        } catch {}
 
         return;
       }
