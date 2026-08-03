@@ -1,5 +1,3 @@
-import { isUndefined } from '@sniptt/guards';
-
 // Sub codes meaning nothing was captured: bot never admitted, meeting not started, nobody joined.
 export const NOT_RECORDED_RECALL_SUB_CODES: readonly string[] = [
   'meeting_not_started',
@@ -10,8 +8,3 @@ export const NOT_RECORDED_RECALL_SUB_CODES: readonly string[] = [
   'call_ended_by_platform_waiting_room_timeout',
   'bot_kicked_from_waiting_room',
 ];
-
-export const isNotRecordedRecallSubCode = (
-  subCode: string | undefined,
-): boolean =>
-  !isUndefined(subCode) && NOT_RECORDED_RECALL_SUB_CODES.includes(subCode);

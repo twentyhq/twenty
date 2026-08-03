@@ -1,5 +1,5 @@
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { isNotRecordedRecallSubCode } from 'src/logic-functions/constants/not-recorded-recall-sub-codes';
+import { isNotRecordedRecallSubCode } from 'src/logic-functions/domain/is-not-recorded-recall-sub-code.util';
 
 export const mapRecallStatusCodeToCallRecordingStatus = ({
   statusCode,

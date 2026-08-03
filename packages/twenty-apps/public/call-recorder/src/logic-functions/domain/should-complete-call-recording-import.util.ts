@@ -1,6 +1,7 @@
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { computeCallRecordingCharge } from 'src/logic-functions/domain/compute-call-recording-charge.util';
+import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { isCallRecordingImportComplete } from 'src/logic-functions/domain/is-call-recording-import-complete.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
@@ -20,10 +21,8 @@ export const shouldCompleteCallRecordingImport = ({
   updateData: CallRecordingUpdateFields;
 }): boolean =>
   current.status !== CallRecordingStatus.COMPLETED &&
-  current.status !== CallRecordingStatus.FAILED &&
-  current.status !== CallRecordingStatus.NOT_RECORDED &&
-  updateData.status !== CallRecordingStatus.FAILED &&
-  updateData.status !== CallRecordingStatus.NOT_RECORDED &&
+  !isUnavailableCallRecordingStatus(current.status) &&
+  !isUnavailableCallRecordingStatus(updateData.status) &&
   computeCallRecordingCharge({
     startedAt: updateData.startedAt ?? current.startedAt,
     endedAt: updateData.endedAt ?? current.endedAt,

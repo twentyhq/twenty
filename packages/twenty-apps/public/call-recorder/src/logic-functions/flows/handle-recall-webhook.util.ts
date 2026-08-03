@@ -284,16 +284,16 @@ const buildExternalRecordingIdUpdate = (
     ? {}
     : { externalRecordingId: webhookEvent.externalRecordingId };
 
-type NoArtifactCallRecordingStatus =
+type UnavailableCallRecordingStatus =
   | CallRecordingStatus.FAILED
   | CallRecordingStatus.NOT_RECORDED;
 
 type CallRecordingStatusUpdate =
   | {
-      status: Exclude<CallRecordingStatus, NoArtifactCallRecordingStatus>;
+      status: Exclude<CallRecordingStatus, UnavailableCallRecordingStatus>;
     }
   | {
-      status: NoArtifactCallRecordingStatus;
+      status: UnavailableCallRecordingStatus;
       callRecorderFailureReason: string;
     };
 
