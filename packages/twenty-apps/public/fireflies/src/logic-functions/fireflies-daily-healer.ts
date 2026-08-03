@@ -1,6 +1,6 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { FIREFLIES_DAILY_HEALER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/fireflies-daily-healer-logic-function-universal-identifier.constant';
+import { FIREFLIES_DAILY_HEALER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { FIREFLIES_BACKFILL_TIMEOUT_SECONDS } from 'src/logic-functions/constants/fireflies-backfill-timeout-seconds.constant';
 import { FIREFLIES_DAILY_HEALER_CRON_PATTERN } from 'src/logic-functions/constants/fireflies-daily-healer-cron-pattern.constant';
 import { FIREFLIES_HEALING_WINDOW_DAYS } from 'src/logic-functions/constants/fireflies-healing-window-days.constant';

@@ -11,6 +11,11 @@ import {
 import { FIREFLIES_BACKFILL_PAGE_SIZE } from 'src/logic-functions/constants/fireflies-backfill-page-size.constant';
 import { listFirefliesTranscriptIds } from 'src/logic-functions/utils/list-fireflies-transcript-ids.util';
 
+vi.mock(
+  'src/logic-functions/constants/fireflies-backfill-max-page-count.constant',
+  () => ({ FIREFLIES_BACKFILL_MAX_PAGE_COUNT: 2 }),
+);
+
 const fetchMock = vi.fn();
 
 const buildFullPage = (pageIndex: number) =>
@@ -82,5 +87,22 @@ describe('listFirefliesTranscriptIds', () => {
     });
 
     expect(result).toEqual(expect.objectContaining({ ok: false, status: 400 }));
+  });
+
+  it('fails after the bounded number of full pages', async () => {
+    serveFirefliesApi([buildFullPage(0), buildFullPage(1)], fetchMock);
+
+    const result = await listFirefliesTranscriptIds({
+      apiKey: FIREFLIES_API_KEY,
+      fromDate: FIREFLIES_BACKFILL_FROM_DATE,
+      toDate: FIREFLIES_BACKFILL_TO_DATE,
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      status: 0,
+      errorMessage: 'Fireflies backfill listing exceeded 2 pages',
+    });
+    expect(getListRequestVariables(fetchMock)).toHaveLength(2);
   });
 });

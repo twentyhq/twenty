@@ -45,13 +45,29 @@ export const firefliesBackfillHandler = async ({
     listFirefliesTranscriptIdsResult.transcriptIds,
     FIREFLIES_BACKFILL_BATCH_SIZE,
   );
-  await enqueueFirefliesBackfillBatches({ transcriptIdBatches });
+  const enqueueFirefliesBackfillBatchesResult =
+    await enqueueFirefliesBackfillBatches({ transcriptIdBatches });
+
+  if (!enqueueFirefliesBackfillBatchesResult.success) {
+    return {
+      outcome: FIREFLIES_BACKFILL_OUTCOME.ENQUEUE_FAILED,
+      fromDate,
+      toDate,
+      transcriptCount: listFirefliesTranscriptIdsResult.transcriptIds.length,
+      batchCount: transcriptIdBatches.length,
+      enqueuedBatchCount:
+        enqueueFirefliesBackfillBatchesResult.enqueuedBatchCount,
+      error: enqueueFirefliesBackfillBatchesResult.errorMessage,
+    };
+  }
 
   return {
-    outcome: FIREFLIES_BACKFILL_OUTCOME.STARTED,
+    outcome: FIREFLIES_BACKFILL_OUTCOME.COMPLETED,
     fromDate,
     toDate,
     transcriptCount: listFirefliesTranscriptIdsResult.transcriptIds.length,
     batchCount: transcriptIdBatches.length,
+    enqueuedBatchCount:
+      enqueueFirefliesBackfillBatchesResult.enqueuedBatchCount,
   };
 };

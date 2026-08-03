@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/fireflies-backfill-batch-logic-function-universal-identifier.constant';
+import { FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT } from 'src/logic-functions/constants/fireflies-backfill-batch-retry-limit.constant';
 import { FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS } from 'src/logic-functions/constants/fireflies-backfill-batch-stagger-milliseconds.constant';
 import { enqueueFirefliesBackfillBatches } from 'src/logic-functions/data/enqueue-fireflies-backfill-batches.util';
@@ -10,6 +10,13 @@ const enqueueJobMock = vi.hoisted(() => vi.fn());
 vi.mock('twenty-sdk/logic-function', () => ({
   enqueueJob: enqueueJobMock,
 }));
+
+vi.mock(
+  'src/logic-functions/constants/fireflies-backfill-max-batch-delay-milliseconds.constant',
+  () => ({
+    FIREFLIES_BACKFILL_MAX_BATCH_DELAY_MILLISECONDS: 120_000,
+  }),
+);
 
 describe('enqueueFirefliesBackfillBatches', () => {
   beforeEach(() => {
@@ -22,9 +29,16 @@ describe('enqueueFirefliesBackfillBatches', () => {
   });
 
   it('enqueues one staggered job per batch', async () => {
-    await enqueueFirefliesBackfillBatches({
-      transcriptIdBatches: [['call-1', 'call-2'], ['call-3'], ['call-4']],
+    const result = await enqueueFirefliesBackfillBatches({
+      transcriptIdBatches: [
+        ['call-1', 'call-2'],
+        ['call-3'],
+        ['call-4'],
+        ['call-5'],
+      ],
     });
+
+    expect(result).toEqual({ success: true, enqueuedBatchCount: 4 });
 
     expect(enqueueJobMock).toHaveBeenNthCalledWith(1, {
       logicFunctionUniversalIdentifier:
@@ -47,9 +61,16 @@ describe('enqueueFirefliesBackfillBatches', () => {
       retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
       delayMs: 2 * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
     });
+    expect(enqueueJobMock).toHaveBeenNthCalledWith(4, {
+      logicFunctionUniversalIdentifier:
+        FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: { transcriptIds: ['call-5'] },
+      retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
+      delayMs: 2 * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
+    });
   });
 
-  it('propagates an enqueue failure without enqueueing later batches', async () => {
+  it('reports an enqueue failure without enqueueing later batches', async () => {
     enqueueJobMock
       .mockResolvedValueOnce({
         enqueued: true,
@@ -58,12 +79,15 @@ describe('enqueueFirefliesBackfillBatches', () => {
       })
       .mockRejectedValueOnce(new Error('Network failed'));
 
-    await expect(
-      enqueueFirefliesBackfillBatches({
-        transcriptIdBatches: [['call-1'], ['call-2'], ['call-3']],
-      }),
-    ).rejects.toThrow('Network failed');
+    const result = await enqueueFirefliesBackfillBatches({
+      transcriptIdBatches: [['call-1'], ['call-2'], ['call-3']],
+    });
 
+    expect(result).toEqual({
+      success: false,
+      enqueuedBatchCount: 1,
+      errorMessage: 'Network failed',
+    });
     expect(enqueueJobMock).toHaveBeenCalledTimes(2);
   });
 });

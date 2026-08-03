@@ -96,6 +96,11 @@ describe('firefliesBackfillBatchLogicFunction', () => {
   });
 
   it('throws on a Fireflies rate limit so the queue retries the job', async () => {
+    const consoleLogSpy = vi
+      .spyOn(console, 'log')
+      .mockImplementation(() => undefined);
+
+    vi.useFakeTimers();
     fetchMock.mockImplementation(
       async () =>
         new Response(
@@ -105,11 +110,24 @@ describe('firefliesBackfillBatchLogicFunction', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(
-      firefliesBackfillBatchLogicFunction.config.handler({
-        transcriptIds: ['call-1'],
-      }),
-    ).rejects.toThrow('transient Fireflies API error');
+    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler({
+      transcriptIds: ['call-1'],
+    });
+    const resultExpectation = expect(resultPromise).rejects.toThrow(
+      'transient Fireflies API error',
+    );
+
+    await vi.runAllTimersAsync();
+    await resultExpectation;
+
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      '[fireflies] Backfill batch processed',
+      {
+        importedCallCount: 0,
+        erroredCallCount: 0,
+        skippedCallCount: 0,
+      },
+    );
   });
 
   it('throws on an invalid job payload', async () => {

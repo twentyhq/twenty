@@ -2,10 +2,6 @@ import type { FIREFLIES_BACKFILL_OUTCOME } from 'src/logic-functions/constants/f
 
 export type FirefliesBackfillResult =
   | {
-      outcome: typeof FIREFLIES_BACKFILL_OUTCOME.INVALID_REQUEST;
-      error: string;
-    }
-  | {
       outcome: typeof FIREFLIES_BACKFILL_OUTCOME.NOT_CONFIGURED;
       error: string;
     }
@@ -16,9 +12,19 @@ export type FirefliesBackfillResult =
       error: string;
     }
   | {
-      outcome: typeof FIREFLIES_BACKFILL_OUTCOME.STARTED;
+      outcome: typeof FIREFLIES_BACKFILL_OUTCOME.ENQUEUE_FAILED;
       fromDate: string;
       toDate: string;
       transcriptCount: number;
       batchCount: number;
+      enqueuedBatchCount: number;
+      error: string;
+    }
+  | {
+      outcome: typeof FIREFLIES_BACKFILL_OUTCOME.COMPLETED;
+      fromDate: string;
+      toDate: string;
+      transcriptCount: number;
+      batchCount: number;
+      enqueuedBatchCount: number;
     };

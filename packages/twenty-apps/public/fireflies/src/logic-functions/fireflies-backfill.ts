@@ -1,22 +1,19 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { type z } from 'zod';
+import { enqueueJob } from 'twenty-sdk/logic-function';
 
-import { FIREFLIES_BACKFILL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/fireflies-backfill-logic-function-universal-identifier.constant';
+import {
+  FIREFLIES_BACKFILL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { FIREFLIES_BACKFILL_ROUTE_PATH } from 'src/constants/fireflies-backfill-route-path.constant';
 import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/logic-functions/constants/fireflies-backfill-max-window-days.constant';
 import { FIREFLIES_BACKFILL_OUTCOME } from 'src/logic-functions/constants/fireflies-backfill-outcome.constant';
 import { FIREFLIES_BACKFILL_TIMEOUT_SECONDS } from 'src/logic-functions/constants/fireflies-backfill-timeout-seconds.constant';
-import { firefliesBackfillHandler } from 'src/logic-functions/handlers/fireflies-backfill-handler';
 import { firefliesBackfillRequestBodySchema } from 'src/logic-functions/schemas/fireflies-backfill-request-body.schema';
-import { type FirefliesBackfillResult } from 'src/logic-functions/types/fireflies-backfill-result.type';
-
-type FirefliesBackfillRequestBody = z.infer<
-  typeof firefliesBackfillRequestBodySchema
->;
 
 const firefliesBackfillRequestHandler = async (
-  payload: RoutePayload<FirefliesBackfillRequestBody>,
-): Promise<FirefliesBackfillResult> => {
+  payload: RoutePayload<unknown>,
+) => {
   const requestBodyParseResult = firefliesBackfillRequestBodySchema.safeParse(
     payload.body,
   );
@@ -28,16 +25,20 @@ const firefliesBackfillRequestHandler = async (
     };
   }
 
-  return firefliesBackfillHandler({
-    windowDays: requestBodyParseResult.data.days,
+  await enqueueJob({
+    logicFunctionUniversalIdentifier:
+      FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    payload: { days: requestBodyParseResult.data.days },
   });
+
+  return { outcome: FIREFLIES_BACKFILL_OUTCOME.STARTED };
 };
 
 export default defineLogicFunction({
   universalIdentifier: FIREFLIES_BACKFILL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'fireflies-backfill',
   description:
-    'Lists the Fireflies transcript ids for the requested days window and enqueues one import job per batch.',
+    'Enqueues a background worker that discovers and imports missing Fireflies calls for the requested days window.',
   timeoutSeconds: FIREFLIES_BACKFILL_TIMEOUT_SECONDS,
   handler: firefliesBackfillRequestHandler,
   httpRouteTriggerSettings: {

@@ -4,7 +4,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status.constant';
 import { FIREFLIES_BACKFILL_PACING_MILLISECONDS } from 'src/logic-functions/constants/fireflies-backfill-pacing-milliseconds.constant';
 import { FIREFLIES_CALL_RECORDING_FIELDS } from 'src/logic-functions/constants/fireflies-call-recording-fields.constant';
-import { HTTP_TOO_MANY_REQUESTS_STATUS_CODE } from 'src/logic-functions/constants/http-too-many-requests-status-code.constant';
 import { type CallRecordingFieldState } from 'src/logic-functions/types/call-recording-field-state.type';
 import { type FirefliesSyncableField } from 'src/logic-functions/types/fireflies-syncable-field.type';
 import { type ImportMissingFirefliesCallsResult } from 'src/logic-functions/types/import-missing-fireflies-calls-result.type';
@@ -71,6 +70,46 @@ const getFirefliesCallSyncOutcome = (
   return 'skipped';
 };
 
+const buildCurrentCallRecordingFieldState = ({
+  callRecordingFieldState,
+  firefliesFieldSyncResults,
+}: {
+  callRecordingFieldState: CallRecordingFieldState | undefined;
+  firefliesFieldSyncResults: SyncFirefliesCallResult[];
+}): CallRecordingFieldState => {
+  const isTranscriptFilled =
+    (callRecordingFieldState?.isTranscriptFilled ?? false) ||
+    firefliesFieldSyncResults.some(
+      (firefliesFieldSyncResult) =>
+        firefliesFieldSyncResult.status === 'updated' &&
+        firefliesFieldSyncResult.field === 'transcript',
+    );
+  const isSummaryFilled =
+    (callRecordingFieldState?.isSummaryFilled ?? false) ||
+    firefliesFieldSyncResults.some(
+      (firefliesFieldSyncResult) =>
+        firefliesFieldSyncResult.status === 'updated' &&
+        firefliesFieldSyncResult.field === 'summary',
+    );
+
+  if (firefliesFieldSyncResults.length === 0) {
+    return {
+      isTranscriptFilled,
+      isSummaryFilled,
+      status: callRecordingFieldState?.status,
+    };
+  }
+
+  return {
+    isTranscriptFilled,
+    isSummaryFilled,
+    status:
+      isTranscriptFilled && isSummaryFilled
+        ? CALL_RECORDING_STATUS.COMPLETED
+        : CALL_RECORDING_STATUS.PROCESSING,
+  };
+};
+
 const syncMissingFirefliesCallRecordingFields = async ({
   apiKey,
   coreApiClient,
@@ -84,30 +123,10 @@ const syncMissingFirefliesCallRecordingFields = async ({
   const firefliesFieldSyncResults: SyncFirefliesCallResult[] = [];
 
   for (const firefliesCallRecordingField of firefliesCallRecordingFields) {
-    const isTranscriptFilled =
-      (callRecordingFieldState?.isTranscriptFilled ?? false) ||
-      firefliesFieldSyncResults.some(
-        (firefliesFieldSyncResult) =>
-          firefliesFieldSyncResult.status === 'updated' &&
-          firefliesFieldSyncResult.field === 'transcript',
-      );
-    const isSummaryFilled =
-      (callRecordingFieldState?.isSummaryFilled ?? false) ||
-      firefliesFieldSyncResults.some(
-        (firefliesFieldSyncResult) =>
-          firefliesFieldSyncResult.status === 'updated' &&
-          firefliesFieldSyncResult.field === 'summary',
-      );
-    const currentCallRecordingFieldState = {
-      isTranscriptFilled,
-      isSummaryFilled,
-      status:
-        firefliesFieldSyncResults.length === 0
-          ? callRecordingFieldState?.status
-          : isTranscriptFilled && isSummaryFilled
-            ? CALL_RECORDING_STATUS.COMPLETED
-            : CALL_RECORDING_STATUS.PROCESSING,
-    };
+    const currentCallRecordingFieldState = buildCurrentCallRecordingFieldState({
+      callRecordingFieldState,
+      firefliesFieldSyncResults,
+    });
     const firefliesFieldSyncResult = await syncFirefliesCallToCallRecording({
       apiKey,
       coreApiClient,
@@ -119,9 +138,7 @@ const syncMissingFirefliesCallRecordingFields = async ({
     if (
       firefliesFieldSyncResult.status === 'error' &&
       isDefined(firefliesFieldSyncResult.httpStatus) &&
-      (firefliesFieldSyncResult.httpStatus ===
-        HTTP_TOO_MANY_REQUESTS_STATUS_CODE ||
-        isRetryableFirefliesApiStatus(firefliesFieldSyncResult.httpStatus))
+      isRetryableFirefliesApiStatus(firefliesFieldSyncResult.httpStatus)
     ) {
       return 'retryable-error';
     }

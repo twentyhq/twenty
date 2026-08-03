@@ -29,6 +29,12 @@ export const firefliesBackfillBatchHandler = async (
     transcriptIds: payloadParseResult.data.transcriptIds,
   });
 
+  console.log('[fireflies] Backfill batch processed', {
+    importedCallCount: importMissingFirefliesCallsResult.importedCallCount,
+    erroredCallCount: importMissingFirefliesCallsResult.erroredCallCount,
+    skippedCallCount: importMissingFirefliesCallsResult.skippedCallCount,
+  });
+
   if (importMissingFirefliesCallsResult.status === 'retryable-error') {
     throw new Error(
       'Fireflies backfill batch hit a transient Fireflies API error; failing the job so the queue retries it',

@@ -1,1 +1,0 @@
-export const HTTP_TOO_MANY_REQUESTS_STATUS_CODE = 429;
