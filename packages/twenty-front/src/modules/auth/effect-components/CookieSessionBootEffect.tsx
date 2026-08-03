@@ -4,7 +4,6 @@ import { useStore } from 'jotai';
 import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -22,10 +21,6 @@ type CookieSessionProbeResult =
   | 'authenticated'
   | 'unauthenticated'
   | 'unreachable';
-
-const isUnauthenticatedError = (error: unknown): boolean =>
-  CombinedGraphQLErrors.is(error) &&
-  error.errors.some(isUnauthenticatedGraphQLError);
 
 // Migrates the client from the localStorage token pair onto the httpOnly
 // session cookie. Clients without a cookie get one through a single token
@@ -55,7 +50,11 @@ export const CookieSessionBootEffect = () => {
           ? 'authenticated'
           : 'unauthenticated';
       } catch (error) {
-        return isUnauthenticatedError(error)
+        // The probe carries no credential on purpose, so any answer the server
+        // manages to give means "not authenticated by cookie". Keying on the
+        // error code instead would strand the migration: a request with no
+        // credential at all is refused as FORBIDDEN, not UNAUTHENTICATED.
+        return CombinedGraphQLErrors.is(error)
           ? 'unauthenticated'
           : 'unreachable';
       }
