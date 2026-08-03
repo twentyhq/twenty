@@ -1,4 +1,5 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
@@ -32,6 +33,9 @@ export const useInviteTeam = () => {
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const isBookCallOnboardingStepEnabled = useAtomStateValue(
+    isBookCallOnboardingStepEnabledState,
+  );
   const store = useStore();
 
   const [isNavigating, setIsNavigating] = useState(false);
@@ -136,9 +140,9 @@ export const useInviteTeam = () => {
       setIsNavigating(true);
 
       try {
-        const companyEnrichmentSettlement = waitForCompanyEnrichmentSettlement({
-          store,
-        });
+        const companyEnrichmentSettlement = isBookCallOnboardingStepEnabled
+          ? waitForCompanyEnrichmentSettlement({ store })
+          : Promise.resolve();
 
         const result = await sendInvitation({ emails });
 
@@ -174,6 +178,7 @@ export const useInviteTeam = () => {
     },
     [
       enqueueSuccessSnackBar,
+      isBookCallOnboardingStepEnabled,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
       sendInvitation,
       setNextOnboardingStatus,

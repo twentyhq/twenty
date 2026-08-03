@@ -4,10 +4,10 @@ import { onboardingConfigState } from '@/client-config/states/onboardingConfigSt
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
-import { bookCallMinEmployeeCountState } from '@/client-config/states/bookCallMinEmployeeCountState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { captchaState } from '@/client-config/states/captchaState';
+import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
@@ -106,8 +106,8 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setCalendarBookingPageId = useSetAtomState(calendarBookingPageIdState);
 
-  const setBookCallMinEmployeeCount = useSetAtomState(
-    bookCallMinEmployeeCountState,
+  const setIsBookCallOnboardingStepEnabled = useSetAtomState(
+    isBookCallOnboardingStepEnabledState,
   );
 
   const setIsEmailingDomainInDemoMode = useSetAtomState(
@@ -215,8 +215,8 @@ export const useClientConfig = (): UseClientConfigResult => {
       }));
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
-      setBookCallMinEmployeeCount(
-        clientConfig?.bookCallMinEmployeeCount ?? null,
+      setIsBookCallOnboardingStepEnabled(
+        clientConfig?.isBookCallOnboardingStepEnabled ?? false,
       );
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
       setIsEmailingDomainInDemoMode(
@@ -254,7 +254,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setAppVersion,
     setAuthProviders,
     setBilling,
-    setBookCallMinEmployeeCount,
     setCalendarBookingPageId,
     setCanManageFeatureFlags,
     setCaptcha,
@@ -264,6 +263,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsGoogleMessagingEnabled,
     setIsAnalyticsEnabled,
     setIsAttachmentPreviewEnabled,
+    setIsBookCallOnboardingStepEnabled,
     setIsConfigVariablesInDbEnabled,
     setIsDeveloperDefaultSignInPrefilled,
     setIsEmailVerificationRequired,

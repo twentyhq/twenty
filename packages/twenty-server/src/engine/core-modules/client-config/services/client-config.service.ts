@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -47,8 +48,8 @@ export class ClientConfigService {
     const calendarBookingPageId = this.twentyConfigService.get(
       'CALENDAR_BOOKING_PAGE_ID',
     );
-    const bookCallMinEmployeeCount = this.twentyConfigService.get(
-      'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
+    const isBookCallOnboardingStepEnabled = isDefined(
+      readBookCallStepMinEmployeeCount(this.twentyConfigService),
     );
 
     const isEmailingDomainInDemoMode =
@@ -279,9 +280,7 @@ export class ClientConfigService {
       calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
         ? calendarBookingPageId
         : undefined,
-      bookCallMinEmployeeCount: isNumber(bookCallMinEmployeeCount)
-        ? bookCallMinEmployeeCount
-        : undefined,
+      isBookCallOnboardingStepEnabled,
       isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(

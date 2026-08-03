@@ -9,14 +9,12 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
-import { bookCallMinEmployeeCountState } from '@/client-config/states/bookCallMinEmployeeCountState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
-import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
-import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
+import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -99,11 +97,9 @@ export const useSetNextOnboardingStatus = () => {
       currentUser,
       currentWorkspace,
       isBillingEnabled,
-      isBookCallRequired: getIsBookCallRequired({
-        companyEnrichment: store.get(companyEnrichmentState.atom),
-        bookCallMinEmployeeCount: store.get(bookCallMinEmployeeCountState.atom),
-        calendarBookingPageId: store.get(calendarBookingPageIdState.atom),
-      }),
+      isBookCallRequired:
+        store.get(isBookCallOnboardingStepEnabledState.atom) &&
+        getIsBookCallOnboardingStepPending(store.get(currentUserState.atom)),
     });
 
     store.set(currentUserState.atom, (current) => {

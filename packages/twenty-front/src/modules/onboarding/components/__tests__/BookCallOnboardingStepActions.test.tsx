@@ -7,23 +7,12 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { BookCallOnboardingStepActions } from '@/onboarding/components/BookCallOnboardingStepActions';
 
 const mockCompleteBookCallOnboardingStep = jest.fn();
-const mockOnBookingSuccessful = jest.fn();
 const mockEnqueueErrorSnackBar = jest.fn();
+const mockCalApi = jest.fn();
 
-jest.mock(
-  '@/onboarding/effect-components/BookCallBookingSuccessEffect',
-  () => ({
-    BookCallBookingSuccessEffect: ({
-      onBookingSuccessful,
-    }: {
-      onBookingSuccessful: () => void;
-    }) => {
-      mockOnBookingSuccessful.mockImplementation(onBookingSuccessful);
-
-      return null;
-    },
-  }),
-);
+jest.mock('@calcom/embed-react', () => ({
+  getCalApi: () => Promise.resolve(mockCalApi),
+}));
 
 jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
   useCompleteBookCallOnboardingStep: () => mockCompleteBookCallOnboardingStep,
@@ -35,14 +24,27 @@ jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
 
 dynamicActivate(SOURCE_LOCALE);
 
-const renderActions = () => {
-  render(
+const getSubscriptionCalls = () =>
+  mockCalApi.mock.calls.filter(([action]) => action === 'on');
+
+const emitBookingSuccessful = () => {
+  const [, subscription] = getSubscriptionCalls().at(-1) ?? [];
+
+  (subscription as { callback: () => void }).callback();
+};
+
+const renderActions = async () => {
+  const view = render(
     <I18nProvider i18n={i18n}>
       <BookCallOnboardingStepActions />
     </I18nProvider>,
   );
 
-  return { skipButton: screen.getByRole('button') };
+  await act(async () => {
+    await Promise.resolve();
+  });
+
+  return { view, skipButton: screen.getByRole('button') };
 };
 
 describe('BookCallOnboardingStepActions', () => {
@@ -52,10 +54,20 @@ describe('BookCallOnboardingStepActions', () => {
   });
 
   it('should complete the step when a booking succeeds', async () => {
-    renderActions();
+    await renderActions();
 
     await act(async () => {
-      mockOnBookingSuccessful();
+      emitBookingSuccessful();
+    });
+
+    expect(mockCompleteBookCallOnboardingStep).toHaveBeenCalledTimes(1);
+  });
+
+  it('should complete the step when skipping', async () => {
+    const { skipButton } = await renderActions();
+
+    await act(async () => {
+      skipButton.click();
     });
 
     expect(mockCompleteBookCallOnboardingStep).toHaveBeenCalledTimes(1);
@@ -70,12 +82,12 @@ describe('BookCallOnboardingStepActions', () => {
       }),
     );
 
-    const { skipButton } = renderActions();
+    const { skipButton } = await renderActions();
 
     expect(skipButton).not.toBeDisabled();
 
     act(() => {
-      mockOnBookingSuccessful();
+      emitBookingSuccessful();
     });
 
     expect(skipButton).toBeDisabled();
@@ -90,27 +102,51 @@ describe('BookCallOnboardingStepActions', () => {
       new Error('network error'),
     );
 
-    const { skipButton } = renderActions();
+    const { skipButton } = await renderActions();
 
     await act(async () => {
-      mockOnBookingSuccessful();
+      emitBookingSuccessful();
     });
 
     expect(skipButton).not.toBeDisabled();
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalled();
   });
 
-  it('should complete the step once when skipping right after a booking succeeded', async () => {
-    const { skipButton } = renderActions();
+  it('should complete the step once even when the embed emits repeatedly', async () => {
+    mockCompleteBookCallOnboardingStep.mockRejectedValue(
+      new Error('network error'),
+    );
+
+    await renderActions();
 
     await act(async () => {
-      mockOnBookingSuccessful();
+      emitBookingSuccessful();
     });
-
     await act(async () => {
-      skipButton.click();
+      emitBookingSuccessful();
     });
 
     expect(mockCompleteBookCallOnboardingStep).toHaveBeenCalledTimes(1);
+  });
+
+  it('should subscribe to the embed once across re-renders', async () => {
+    const { view } = await renderActions();
+
+    await act(async () => {
+      emitBookingSuccessful();
+    });
+
+    view.rerender(
+      <I18nProvider i18n={i18n}>
+        <BookCallOnboardingStepActions />
+      </I18nProvider>,
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(getSubscriptionCalls()).toHaveLength(1);
+    expect(mockCalApi).not.toHaveBeenCalledWith('off', expect.anything());
   });
 });

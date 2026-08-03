@@ -9,7 +9,10 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 describe('CompanyEnrichmentResolver', () => {
   let resolver: CompanyEnrichmentResolver;
   let companyEnrichmentService: { enrichCompanyForWorkspaceCreator: jest.Mock };
-  let onboardingService: { setOnboardingBookCallPendingIfQualified: jest.Mock };
+  let onboardingService: {
+    setOnboardingBookCallPendingIfQualified: jest.Mock;
+    isOnboardingBookCallPending: jest.Mock;
+  };
 
   const user = { id: 'user-id', email: 'foo@acme.com' } as AuthContextUser;
   const workspace = { id: 'workspace-id' } as WorkspaceEntity;
@@ -20,6 +23,7 @@ describe('CompanyEnrichmentResolver', () => {
     };
     onboardingService = {
       setOnboardingBookCallPendingIfQualified: jest.fn(),
+      isOnboardingBookCallPending: jest.fn().mockResolvedValue(false),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -77,4 +81,28 @@ describe('CompanyEnrichmentResolver', () => {
       ).not.toHaveBeenCalled();
     },
   );
+
+  it('should report the stored pending flag rather than whether this call flagged it', async () => {
+    companyEnrichmentService.enrichCompanyForWorkspaceCreator.mockResolvedValue(
+      { outcome: 'transientError', enrichment: null },
+    );
+    onboardingService.isOnboardingBookCallPending.mockResolvedValue(true);
+
+    const result = await resolver.enrichWorkspaceCompany(user, workspace);
+
+    expect(result.isBookCallOnboardingStepPending).toBe(true);
+  });
+
+  it('should report no pending step when the user has none', async () => {
+    companyEnrichmentService.enrichCompanyForWorkspaceCreator.mockResolvedValue(
+      {
+        outcome: 'matched',
+        enrichment: { domain: 'acme.com', employeeCount: 2 },
+      },
+    );
+
+    const result = await resolver.enrichWorkspaceCompany(user, workspace);
+
+    expect(result.isBookCallOnboardingStepPending).toBe(false);
+  });
 });

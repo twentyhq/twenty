@@ -154,6 +154,32 @@ export class UserVarsService<
     );
   }
 
+  setIfNotExists<K extends keyof KeyValueTypesMap>(
+    {
+      userId,
+      workspaceId,
+      key,
+      value,
+    }: {
+      userId?: string;
+      workspaceId?: string;
+      key: Extract<K, string>;
+      value: KeyValueTypesMap[K];
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    return this.keyValuePairService.setIfNotExists(
+      {
+        userId,
+        workspaceId,
+        key,
+        value,
+        type: KeyValuePairType.USER_VARIABLE,
+      },
+      queryRunner,
+    );
+  }
+
   async delete(
     {
       userId,

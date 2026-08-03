@@ -1,17 +1,15 @@
 import { act, renderHook } from '@testing-library/react';
 import { createElement } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
-import { bookCallMinEmployeeCountState } from '@/client-config/states/bookCallMinEmployeeCountState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -31,30 +29,13 @@ import {
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
 
-const mockCompanyEnrichment: WorkspaceCompanyEnrichment = {
-  domain: 'acme.com',
-  enrichedAt: '2026-07-21T10:00:00.000Z',
-  name: 'Acme Inc',
-  website: null,
-  industry: null,
-  employeeCount: null,
-  size: null,
-  founded: null,
-  headline: null,
-  summary: null,
-  tags: [],
-  locality: null,
-  region: null,
-  country: null,
-};
-
 type RenderHooksOptions = {
   withSubscription?: boolean;
   isBillingEnabled?: boolean;
   withOneWorkspaceMember?: boolean;
   isOnboardingAiChatEnabled?: boolean;
-  enrichedEmployeeCount?: number | null;
-  bookCallMinEmployeeCount?: number | null;
+  isBookCallOnboardingStepEnabled?: boolean;
+  isBookCallOnboardingStepPending?: boolean;
 };
 
 const renderHooks = (
@@ -64,8 +45,8 @@ const renderHooks = (
     isBillingEnabled = false,
     withOneWorkspaceMember = true,
     isOnboardingAiChatEnabled = false,
-    enrichedEmployeeCount = null,
-    bookCallMinEmployeeCount = null,
+    isBookCallOnboardingStepEnabled = false,
+    isBookCallOnboardingStepPending = false,
   }: RenderHooksOptions = {},
 ) => {
   jotaiStore.set(
@@ -81,12 +62,8 @@ const renderHooks = (
       );
       const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
       const setBilling = useSetAtomState(billingState);
-      const setCompanyEnrichment = useSetAtomState(companyEnrichmentState);
-      const setBookCallMinEmployeeCount = useSetAtomState(
-        bookCallMinEmployeeCountState,
-      );
-      const setCalendarBookingPageId = useSetAtomState(
-        calendarBookingPageIdState,
+      const setIsBookCallOnboardingStepEnabled = useSetAtomState(
+        isBookCallOnboardingStepEnabledState,
       );
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
       const isWelcomeAnimationVisible = useAtomStateValue(
@@ -101,9 +78,7 @@ const renderHooks = (
         setCurrentWorkspace,
         setCurrentUserWorkspace,
         setBilling,
-        setCompanyEnrichment,
-        setBookCallMinEmployeeCount,
-        setCalendarBookingPageId,
+        setIsBookCallOnboardingStepEnabled,
         setNextOnboardingStatus,
         isWelcomeAnimationVisible,
         shouldOpenAiChatAfterOnboarding,
@@ -114,7 +89,15 @@ const renderHooks = (
     },
   );
   act(() => {
-    result.current.setCurrentUser({ ...mockedUserData, onboardingStatus });
+    result.current.setCurrentUser({
+      ...mockedUserData,
+      onboardingStatus,
+      userVars: {
+        ...mockedUserData.userVars,
+        [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]:
+          isBookCallOnboardingStepPending,
+      },
+    });
     result.current.setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
     result.current.setCurrentWorkspace({
       ...mockCurrentWorkspace,
@@ -128,12 +111,9 @@ const renderHooks = (
       isBillingEnabled,
       trialPeriods: [],
     });
-    result.current.setCalendarBookingPageId('team/twenty/talk-to-us');
-    result.current.setBookCallMinEmployeeCount(bookCallMinEmployeeCount);
-    result.current.setCompanyEnrichment({
-      ...mockCompanyEnrichment,
-      employeeCount: enrichedEmployeeCount,
-    });
+    result.current.setIsBookCallOnboardingStepEnabled(
+      isBookCallOnboardingStepEnabled,
+    );
   });
   act(() => {
     result.current.setNextOnboardingStatus();
@@ -277,15 +257,15 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-  it('should book a call after inviting the team when the company clears the employee threshold', () => {
+  it('should book a call after inviting the team when the server flagged the step', () => {
     const {
       nextOnboardingStatus,
       isWelcomeAnimationVisible,
       shouldOpenAiChatAfterOnboarding,
     } = renderHooks(OnboardingStatus.INVITE_TEAM, {
       isBillingEnabled: true,
-      enrichedEmployeeCount: 320,
-      bookCallMinEmployeeCount: 50,
+      isBookCallOnboardingStepEnabled: true,
+      isBookCallOnboardingStepPending: true,
     });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
     expect(isWelcomeAnimationVisible).toBe(false);
@@ -298,8 +278,8 @@ describe('useSetNextOnboardingStatus', () => {
       {
         withOneWorkspaceMember: false,
         isBillingEnabled: true,
-        enrichedEmployeeCount: 320,
-        bookCallMinEmployeeCount: 50,
+        isBookCallOnboardingStepEnabled: true,
+        isBookCallOnboardingStepPending: true,
       },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
@@ -309,18 +289,27 @@ describe('useSetNextOnboardingStatus', () => {
     const { nextOnboardingStatus } = renderHooks(OnboardingStatus.INVITE_TEAM, {
       isBillingEnabled: true,
       withSubscription: true,
-      enrichedEmployeeCount: 320,
-      bookCallMinEmployeeCount: 50,
+      isBookCallOnboardingStepEnabled: true,
+      isBookCallOnboardingStepPending: true,
     });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
   it.each([
-    { enrichedEmployeeCount: 49, bookCallMinEmployeeCount: 50 },
-    { enrichedEmployeeCount: null, bookCallMinEmployeeCount: 50 },
-    { enrichedEmployeeCount: 320, bookCallMinEmployeeCount: null },
+    {
+      isBookCallOnboardingStepEnabled: true,
+      isBookCallOnboardingStepPending: false,
+    },
+    {
+      isBookCallOnboardingStepEnabled: false,
+      isBookCallOnboardingStepPending: true,
+    },
+    {
+      isBookCallOnboardingStepEnabled: false,
+      isBookCallOnboardingStepPending: false,
+    },
   ])(
-    'should skip the book-call step for employeeCount $enrichedEmployeeCount and threshold $bookCallMinEmployeeCount',
+    'should skip the book-call step when enabled is $isBookCallOnboardingStepEnabled and pending is $isBookCallOnboardingStepPending',
     (options) => {
       const { nextOnboardingStatus } = renderHooks(
         OnboardingStatus.INVITE_TEAM,
@@ -335,8 +324,8 @@ describe('useSetNextOnboardingStatus', () => {
       OnboardingStatus.BOOK_CALL,
       {
         isBillingEnabled: true,
-        enrichedEmployeeCount: 320,
-        bookCallMinEmployeeCount: 50,
+        isBookCallOnboardingStepEnabled: true,
+        isBookCallOnboardingStepPending: true,
       },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
@@ -347,8 +336,8 @@ describe('useSetNextOnboardingStatus', () => {
     const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
       OnboardingStatus.BOOK_CALL,
       {
-        enrichedEmployeeCount: 320,
-        bookCallMinEmployeeCount: 50,
+        isBookCallOnboardingStepEnabled: true,
+        isBookCallOnboardingStepPending: true,
       },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
@@ -411,7 +400,7 @@ describe('useSetNextOnboardingStatus', () => {
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
-  it('should honour an enrichment that arrives after the callback was captured', () => {
+  it('should honour a pending book-call flag that arrives after the callback was captured', () => {
     jotaiStore.set(currentUserState.atom, {
       ...mockedUserData,
       onboardingStatus: OnboardingStatus.INVITE_TEAM,
@@ -426,8 +415,7 @@ describe('useSetNextOnboardingStatus', () => {
       isBillingEnabled: true,
       trialPeriods: [],
     } as never);
-    jotaiStore.set(calendarBookingPageIdState.atom, 'team/twenty/talk-to-us');
-    jotaiStore.set(bookCallMinEmployeeCountState.atom, 50);
+    jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, true);
 
     const { result } = renderHook(() => useSetNextOnboardingStatus(), {
       wrapper: Wrapper,
@@ -436,10 +424,12 @@ describe('useSetNextOnboardingStatus', () => {
     const advanceCapturedBeforeEnrichment = result.current;
 
     act(() => {
-      jotaiStore.set(companyEnrichmentState.atom, {
-        ...mockCompanyEnrichment,
-        employeeCount: 320,
-      });
+      jotaiStore.set(currentUserState.atom, (current) => ({
+        ...current!,
+        userVars: {
+          [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]: true,
+        },
+      }));
       advanceCapturedBeforeEnrichment();
     });
 

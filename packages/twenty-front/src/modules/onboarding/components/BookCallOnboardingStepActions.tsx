@@ -1,5 +1,5 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { BookCallBookingSuccessEffect } from '@/onboarding/effect-components/BookCallBookingSuccessEffect';
@@ -11,11 +11,9 @@ export const BookCallOnboardingStepActions = () => {
   const completeBookCallOnboardingStep = useCompleteBookCallOnboardingStep();
   const [isCompleting, setIsCompleting] = useState(false);
 
-  const completeStep = async () => {
-    if (isCompleting) {
-      return;
-    }
-
+  // Kept stable so BookCallBookingSuccessEffect subscribes to the embed once
+  // instead of cycling its listener on every render.
+  const completeStep = useCallback(async () => {
     setIsCompleting(true);
 
     try {
@@ -27,7 +25,7 @@ export const BookCallOnboardingStepActions = () => {
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
-  };
+  }, [completeBookCallOnboardingStep, enqueueErrorSnackBar]);
 
   return (
     <>

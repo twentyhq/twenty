@@ -1,31 +1,29 @@
 import Cal from '@calcom/embed-react';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getAttendeeName } from '@/onboarding/utils/getAttendeeName';
 import { useThemeColorScheme } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-export const BookCallEmbed = () => {
+type BookCallEmbedProps = {
+  calendarBookingPageId: string;
+};
+
+export const BookCallEmbed = ({
+  calendarBookingPageId,
+}: BookCallEmbedProps) => {
   const colorScheme = useThemeColorScheme();
-  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const isMobile = useIsMobile();
 
-  const attendeeName = [
-    currentWorkspaceMember?.name?.firstName ?? currentUser?.firstName,
-    currentWorkspaceMember?.name?.lastName ?? currentUser?.lastName,
-  ]
-    .filter(isNonEmptyString)
-    .join(' ');
-
-  if (!isNonEmptyString(calendarBookingPageId)) {
-    return null;
-  }
+  const attendeeName = isDefined(currentWorkspaceMember?.name)
+    ? getAttendeeName(currentWorkspaceMember.name)
+    : getAttendeeName(currentUser);
 
   return (
     <ScrollWrapper

@@ -4,9 +4,12 @@ import { Provider as JotaiProvider } from 'jotai';
 import { createElement, type ReactNode } from 'react';
 import { AppPath } from 'twenty-shared/types';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { useCompleteBookCallOnboardingStep } from '@/onboarding/hooks/useCompleteBookCallOnboardingStep';
+import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -103,4 +106,30 @@ describe('useCompleteBookCallOnboardingStep', () => {
       expect(mockNavigate).not.toHaveBeenCalled();
     },
   );
+
+  it('should clear the pending flag before advancing so the step cannot reopen', async () => {
+    jotaiStore.set(currentUserState.atom, {
+      id: 'user-id',
+      userVars: { [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]: true },
+    } as never);
+
+    const { result } = renderCompleteHook({
+      isBillingEnabled: true,
+      withSubscription: false,
+    });
+
+    mockSetNextOnboardingStatus.mockImplementation(() => {
+      expect(
+        getIsBookCallOnboardingStepPending(
+          jotaiStore.get(currentUserState.atom),
+        ),
+      ).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current();
+    });
+
+    expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
+  });
 });

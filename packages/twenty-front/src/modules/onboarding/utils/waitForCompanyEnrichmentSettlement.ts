@@ -63,8 +63,4 @@ export const waitForCompanyEnrichmentSettlement = ({
     for (const atom of COMPANY_ENRICHMENT_SETTLEMENT_ATOMS) {
       unsubscribes.push(store.sub(atom, settleWhenAnswered));
     }
-
-    if (isSettled) {
-      unsubscribeAll();
-    }
   });

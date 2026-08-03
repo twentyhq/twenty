@@ -3,7 +3,6 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { BookCallEmbed } from '@/onboarding/components/BookCallEmbed';
 import {
   jotaiStore,
@@ -32,7 +31,6 @@ const renderEmbed = ({
   userName?: { firstName: string; lastName: string };
   workspaceMemberName?: { firstName: string; lastName: string };
 }) => {
-  jotaiStore.set(calendarBookingPageIdState.atom, 'team/twenty/talk-to-us');
   jotaiStore.set(currentUserState.atom, {
     id: 'user-id',
     email: 'raphael@acme.com',
@@ -49,7 +47,7 @@ const renderEmbed = ({
 
   render(
     <JotaiProvider store={jotaiStore}>
-      <BookCallEmbed />
+      <BookCallEmbed calendarBookingPageId="team/twenty/talk-to-us" />
     </JotaiProvider>,
   );
 
@@ -86,19 +84,18 @@ describe('BookCallEmbed', () => {
     expect(config.name).toBe('Raphael');
   });
 
+  it('should not mix the workspace member name with the sign-up name', () => {
+    const config = renderEmbed({
+      userName: { firstName: 'Raphael', lastName: 'Bosi' },
+      workspaceMemberName: { firstName: 'Raph', lastName: '' },
+    });
+
+    expect(config.name).toBe('Raph');
+  });
+
   it('should send an empty name rather than a blank string when nothing is known', () => {
     const config = renderEmbed({});
 
     expect(config.name).toBe('');
-  });
-
-  it('should render nothing rather than an empty embed without a booking page', () => {
-    render(
-      <JotaiProvider store={jotaiStore}>
-        <BookCallEmbed />
-      </JotaiProvider>,
-    );
-
-    expect(mockCalConfig).not.toHaveBeenCalled();
   });
 });

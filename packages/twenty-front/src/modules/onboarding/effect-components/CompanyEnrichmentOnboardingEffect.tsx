@@ -3,10 +3,12 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
+import { setIsBookCallOnboardingStepPending } from '@/onboarding/utils/setIsBookCallOnboardingStepPending';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
@@ -28,6 +30,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
   const setIsCompanyEnrichmentFetchInFlight = useSetAtomState(
     isCompanyEnrichmentFetchInFlightState,
   );
+  const setCurrentUser = useSetAtomState(currentUserState);
 
   const isOnboardingInProgress =
     isDefined(onboardingStatus) &&
@@ -51,7 +54,18 @@ export const CompanyEnrichmentOnboardingEffect = () => {
         const { data } = await enrichWorkspaceCompany();
         const result = data?.enrichWorkspaceCompany;
 
-        if (result?.outcome !== WorkspaceCompanyEnrichmentOutcome.matched) {
+        if (!isDefined(result)) {
+          return;
+        }
+
+        setCurrentUser((current) =>
+          setIsBookCallOnboardingStepPending(
+            current,
+            result.isBookCallOnboardingStepPending,
+          ),
+        );
+
+        if (result.outcome !== WorkspaceCompanyEnrichmentOutcome.matched) {
           return;
         }
 
@@ -78,6 +92,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     setHasAttemptedCompanyEnrichmentFetch,
     setIsCompanyEnrichmentFetchInFlight,
     setCompanyEnrichment,
+    setCurrentUser,
     enrichWorkspaceCompany,
   ]);
 

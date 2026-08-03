@@ -32,7 +32,11 @@ export class CompanyEnrichmentResolver {
   async enrichWorkspaceCompany(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<WorkspaceCompanyEnrichmentResult> {
+  ): Promise<
+    WorkspaceCompanyEnrichmentResult & {
+      isBookCallOnboardingStepPending: boolean;
+    }
+  > {
     const enrichmentResult =
       await this.companyEnrichmentService.enrichCompanyForWorkspaceCreator({
         userId: user.id,
@@ -48,6 +52,12 @@ export class CompanyEnrichmentResolver {
       });
     }
 
-    return enrichmentResult;
+    const isBookCallOnboardingStepPending =
+      await this.onboardingService.isOnboardingBookCallPending({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
+
+    return { ...enrichmentResult, isBookCallOnboardingStepPending };
   }
 }

@@ -3816,8 +3816,8 @@ export default {
             "calendarBookingPageId": [
                 1
             ],
-            "bookCallMinEmployeeCount": [
-                16
+            "isBookCallOnboardingStepEnabled": [
+                3
             ],
             "isCloudflareIntegrationEnabled": [
                 3
@@ -4319,6 +4319,9 @@ export default {
             ],
             "enrichment": [
                 5
+            ],
+            "isBookCallOnboardingStepPending": [
+                3
             ],
             "__typename": [
                 1

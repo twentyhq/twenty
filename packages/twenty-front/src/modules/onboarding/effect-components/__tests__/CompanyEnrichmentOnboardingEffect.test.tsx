@@ -4,9 +4,11 @@ import { GraphQLError } from 'graphql';
 import { Provider as JotaiProvider } from 'jotai';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
+import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import {
   jotaiStore,
@@ -44,10 +46,12 @@ const buildEnrichMock = ({
   outcome,
   enrichmentPayload,
   countCall,
+  isBookCallOnboardingStepPending = false,
 }: {
   outcome: string;
   enrichmentPayload: WorkspaceCompanyEnrichment | null;
   countCall: () => void;
+  isBookCallOnboardingStepPending?: boolean;
 }) => ({
   request: { query: EnrichWorkspaceCompanyDocument },
   result: () => {
@@ -59,6 +63,7 @@ const buildEnrichMock = ({
           __typename: 'WorkspaceCompanyEnrichmentResult',
           outcome,
           enrichment: enrichmentPayload,
+          isBookCallOnboardingStepPending,
         },
       },
     };
@@ -225,6 +230,44 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
       );
     },
   );
+
+  it('records the pending book-call step reported by the server', async () => {
+    jotaiStore.set(currentUserState.atom, { id: 'user-id' } as never);
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(true);
+  });
+
+  it('records the pending book-call step even when the enrichment did not match', async () => {
+    jotaiStore.set(currentUserState.atom, { id: 'user-id' } as never);
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'transientError',
+        enrichmentPayload: null,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(true);
+  });
 
   it('stores nothing when the mutation fails', async () => {
     renderEffect([

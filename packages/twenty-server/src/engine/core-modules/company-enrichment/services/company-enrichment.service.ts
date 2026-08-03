@@ -15,7 +15,7 @@ import { type PeopleDataLabsCompanyEnrichResult } from 'src/engine/core-modules/
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { getBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/get-book-call-step-min-employee-count.util';
+import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
@@ -113,16 +113,7 @@ export class CompanyEnrichmentService {
   private hasEnrichmentConsumer(): boolean {
     return (
       this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED') ||
-      isDefined(
-        getBookCallStepMinEmployeeCount({
-          calendarBookingPageId: this.twentyConfigService.get(
-            'CALENDAR_BOOKING_PAGE_ID',
-          ),
-          minEmployeeCount: this.twentyConfigService.get(
-            'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
-          ),
-        }),
-      )
+      isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
     );
   }
 

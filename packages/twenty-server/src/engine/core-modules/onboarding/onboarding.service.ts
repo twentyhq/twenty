@@ -17,7 +17,7 @@ import {
   INSTALL_ONBOARDING_APPS_JOB_NAME,
   type InstallOnboardingAppsJobData,
 } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
-import { getBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/get-book-call-step-min-employee-count.util';
+import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -138,7 +138,7 @@ export class OnboardingService {
     if (
       isBookCallPending &&
       isPlanRequired &&
-      isDefined(this.getBookCallStepMinEmployeeCount())
+      isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
     ) {
       return OnboardingStatus.BOOK_CALL;
     }
@@ -414,15 +414,26 @@ export class OnboardingService {
     );
   }
 
-  private getBookCallStepMinEmployeeCount(): number | null {
-    return getBookCallStepMinEmployeeCount({
-      calendarBookingPageId: this.twentyConfigService.get(
-        'CALENDAR_BOOKING_PAGE_ID',
-      ),
-      minEmployeeCount: this.twentyConfigService.get(
-        'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
-      ),
-    });
+  async isOnboardingBookCallPending({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (
+      !isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
+    ) {
+      return false;
+    }
+
+    return (
+      (await this.userVarsService.get({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+      })) === true
+    );
   }
 
   async setOnboardingBookCallPending(
@@ -469,41 +480,39 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
     employeeCount: number | null;
-  }) {
-    const minEmployeeCount = this.getBookCallStepMinEmployeeCount();
+  }): Promise<boolean> {
+    const minEmployeeCount = readBookCallStepMinEmployeeCount(
+      this.twentyConfigService,
+    );
 
     if (
       !isDefined(minEmployeeCount) ||
       !isNumber(employeeCount) ||
       employeeCount < minEmployeeCount
     ) {
-      return;
+      return false;
     }
 
     try {
-      const hasAlreadyBeenOffered =
-        (await this.userVarsService.get({
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
-        })) === true;
-
-      if (hasAlreadyBeenOffered) {
-        return;
-      }
-
-      await this.dataSource.transaction(async (entityManager) => {
+      return await this.dataSource.transaction(async (entityManager) => {
         const queryRunner = entityManager.queryRunner as QueryRunner;
 
-        await this.userVarsService.set(
-          {
-            userId,
-            workspaceId,
-            key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
-            value: true,
-          },
-          queryRunner,
-        );
+        // Claiming the offer is the single-winner gate: a concurrent enrichment
+        // loses the insert and must not resurrect a step the user already skipped.
+        const hasClaimedBookCallOffer =
+          await this.userVarsService.setIfNotExists(
+            {
+              userId,
+              workspaceId,
+              key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+              value: true,
+            },
+            queryRunner,
+          );
+
+        if (!hasClaimedBookCallOffer) {
+          return false;
+        }
 
         await this.setOnboardingBookCallPending(
           {
@@ -513,12 +522,16 @@ export class OnboardingService {
           },
           queryRunner,
         );
+
+        return true;
       });
     } catch (error) {
       this.logger.error(
         `Failed to flag the book-call onboarding step for user ${userId} in workspace ${workspaceId}`,
         error,
       );
+
+      return false;
     }
   }
 
