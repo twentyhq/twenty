@@ -18,6 +18,7 @@ const isBlockedUrl = (attributeName: string, rawValue: string): boolean => {
   }
 
   return (
+    // oxlint-disable-next-line no-script-url -- this is the sanitizer's blocklist
     value.startsWith('javascript:') ||
     value.startsWith('vbscript:') ||
     value.startsWith('data:')

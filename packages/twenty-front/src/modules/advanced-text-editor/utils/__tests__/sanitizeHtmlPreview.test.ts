@@ -3,7 +3,7 @@ import { sanitizeHtmlPreview } from '@/advanced-text-editor/utils/sanitizeHtmlPr
 describe('sanitizeHtmlPreview', () => {
   it('should keep benign presentational markup', () => {
     const html =
-      '<table><tbody><tr><td style="padding: 8px; color: #fff">Hi</td></tr></tbody></table>';
+      '<table><tbody><tr><td style="padding: 8px">Hi</td></tr></tbody></table>';
 
     expect(sanitizeHtmlPreview(html)).toContain('padding: 8px');
     expect(sanitizeHtmlPreview(html)).toContain('Hi');
@@ -24,12 +24,12 @@ describe('sanitizeHtmlPreview', () => {
   });
 
   it('should strip inline handlers even without a leading space', () => {
-    expect(sanitizeHtmlPreview('<img/onerror="alert(1)" src="x.png">')).not.toContain(
-      'onerror',
-    );
-    expect(sanitizeHtmlPreview('<div ONCLICK="alert(1)">x</div>')).not.toContain(
-      'ONCLICK',
-    );
+    expect(
+      sanitizeHtmlPreview('<img/onerror="alert(1)" src="x.png">'),
+    ).not.toContain('onerror');
+    expect(
+      sanitizeHtmlPreview('<div ONCLICK="alert(1)">x</div>'),
+    ).not.toContain('ONCLICK');
   });
 
   it('should drop javascript: links, including entity-encoded ones', () => {
@@ -54,11 +54,13 @@ describe('sanitizeHtmlPreview', () => {
   });
 
   it('should strip srcdoc and formaction attributes', () => {
-    expect(sanitizeHtmlPreview('<div srcdoc="<script>x</script>">a</div>')).not.toContain(
-      'srcdoc',
-    );
     expect(
-      sanitizeHtmlPreview('<button formaction="javascript:alert(1)">x</button>'),
+      sanitizeHtmlPreview('<div srcdoc="<script>x</script>">a</div>'),
+    ).not.toContain('srcdoc');
+    expect(
+      sanitizeHtmlPreview(
+        '<button formaction="javascript:alert(1)">x</button>',
+      ),
     ).not.toContain('formaction');
   });
 });
