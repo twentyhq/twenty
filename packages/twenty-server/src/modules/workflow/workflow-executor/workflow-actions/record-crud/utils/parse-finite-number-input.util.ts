@@ -1,17 +1,15 @@
-import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
+
+const finiteNumberInputSchema = z.preprocess(
+  (value) =>
+    typeof value === 'string' && value.trim() === '' ? undefined : value,
+  z.coerce.number().finite(),
+);
 
 export const parseFiniteNumberInput = (
   value: number | string | undefined,
 ): number | undefined => {
-  if (!isDefined(value)) {
-    return undefined;
-  }
+  const result = finiteNumberInputSchema.safeParse(value);
 
-  if (typeof value === 'string' && value.trim() === '') {
-    return undefined;
-  }
-
-  const parsedValue = Number(value);
-
-  return Number.isFinite(parsedValue) ? parsedValue : undefined;
+  return result.success ? result.data : undefined;
 };
