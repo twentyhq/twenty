@@ -64,13 +64,33 @@ describe('useInviteTeam', () => {
   });
 
   it('should wait for the enrichment answer before advancing', async () => {
+    let resolveCompanyEnrichmentSettlement: () => void = () => {};
+
+    mockWaitForCompanyEnrichmentSettlement.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveCompanyEnrichmentSettlement = resolve;
+      }),
+    );
+
     const { result } = renderInviteTeam();
 
+    let hasSkipResolved = false;
+
     await act(async () => {
-      await result.current.handleSkip();
+      void result.current.handleSkip().then(() => {
+        hasSkipResolved = true;
+      });
     });
 
     expect(mockWaitForCompanyEnrichmentSettlement).toHaveBeenCalled();
+    expect(hasSkipResolved).toBe(false);
+    expect(mockSetNextOnboardingStatus).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolveCompanyEnrichmentSettlement();
+    });
+
+    expect(hasSkipResolved).toBe(true);
     expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
   });
 
