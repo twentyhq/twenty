@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -31,13 +31,6 @@ type ReownUpdate = {
   };
 };
 
-type ReownPlan = {
-  viewIdsToDelete: string[];
-  viewUpdates: ReownUpdate[];
-  viewFieldIdsToDelete: string[];
-  viewFieldUpdates: ReownUpdate[];
-};
-
 type FlatViewFromMaps = NonNullable<
   AllFlatEntityMaps['flatViewMaps']['byUniversalIdentifier'][string]
 >;
@@ -46,7 +39,7 @@ type FlatViewFromMaps = NonNullable<
 @Command({
   name: 'upgrade:2-26:reconcile-index-view-universal-identifier',
   description:
-    'Re-own the INDEX table views ("All {objectLabelPlural}", keyed on ViewKey.INDEX) of the twenty-standard and workspace-custom applications, and all their view fields, onto the engine convention: the view gets the name-free deterministic universal identifier (getSystemViewUniversalIdentifier, object identifier + INDEX key), each view field gets the derived getSystemViewFieldUniversalIdentifier keyed on the application of the field it DISPLAYS — not the row attribution, which diverges when a user shows a hidden standard column and mints a workspace-custom view field on a standard field — so an app or user column on a standard INDEX view converges too, and both get isSystemSideEffect: true, as if provisioned by the metadata side-effect engine. INDEX views of other applications are handled by the demote-and-backfill command. Children reference the view by primary key, so the re-own is a lossless update.',
+    'Re-own the INDEX table views ("All {objectLabelPlural}", keyed on ViewKey.INDEX) of the twenty-standard and workspace-custom applications, and all their view fields, onto the engine convention: the view gets the name-free deterministic universal identifier (getSystemViewUniversalIdentifier, object identifier + INDEX key), each view field gets the derived getSystemViewFieldUniversalIdentifier keyed on the application of the field it DISPLAYS — not the row attribution, which diverges when a user shows a hidden standard column and mints a workspace-custom view field on a standard field — so an app or user column on a standard INDEX view converges too, and both get isSystemSideEffect: true, as if provisioned by the metadata side-effect engine. INDEX views of other applications are handled by the demote-and-backfill command. An INDEX view attributed to another application than its object (legacy caller-provided INDEX keys predating the flat view validator) is demoted to a plain view instead. Children reference the view by primary key, so the re-own is a lossless update.',
 })
 export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -99,12 +92,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
           ),
       );
 
-    const {
-      viewIdsToDelete,
-      viewUpdates,
-      viewFieldIdsToDelete,
-      viewFieldUpdates,
-    } = this.computeReownPlan({
+    const { viewUpdates, viewFieldUpdates } = this.computeReownUpdates({
       workspaceId,
       flatIndexViews,
       flatViewMaps,
@@ -122,7 +110,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Reconciling ${viewUpdates.length} INDEX view(s) and ${viewFieldUpdates.length} view field(s), deleting ${viewIdsToDelete.length} soft-deleted view(s) and ${viewFieldIdsToDelete.length} soft-deleted view field(s) holding reconciled identifiers, for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Reconciling ${viewUpdates.length} INDEX view(s) and ${viewFieldUpdates.length} view field(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -135,25 +123,8 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       const transactionalViewFieldRepository =
         entityManager.getRepository(ViewFieldEntity);
 
-      // Soft-deleted holders are removed first to free their identifiers:
-      // the unique index on (workspaceId, universalIdentifier) is not
-      // partial on deletedAt.
-      if (viewIdsToDelete.length > 0) {
-        await transactionalViewRepository.delete({
-          id: In(viewIdsToDelete),
-          workspaceId,
-        });
-      }
-
       for (const { id, update } of viewUpdates) {
         await transactionalViewRepository.update({ id, workspaceId }, update);
-      }
-
-      if (viewFieldIdsToDelete.length > 0) {
-        await transactionalViewFieldRepository.delete({
-          id: In(viewFieldIdsToDelete),
-          workspaceId,
-        });
       }
 
       for (const { id, update } of viewFieldUpdates) {
@@ -174,7 +145,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     );
   }
 
-  private computeReownPlan({
+  private computeReownUpdates({
     workspaceId,
     flatIndexViews,
     flatViewMaps,
@@ -188,10 +159,8 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
-  }): ReownPlan {
-    const viewIdsToDelete: string[] = [];
+  }): { viewUpdates: ReownUpdate[]; viewFieldUpdates: ReownUpdate[] } {
     const viewUpdates: ReownUpdate[] = [];
-    const viewFieldIdsToDelete: string[] = [];
     const viewFieldUpdates: ReownUpdate[] = [];
     const claimedViewUniversalIdentifiers = new Set<string>();
     const claimedViewFieldUniversalIdentifiers = new Set<string>();
@@ -242,26 +211,20 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
           });
         }
       } else {
-        const occupyingFlatView =
-          flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier];
-        const isHeldByActiveView =
-          isDefined(occupyingFlatView) &&
-          !isDefined(occupyingFlatView.deletedAt);
+        // The unique index on (workspaceId, universalIdentifier) covers
+        // soft-deleted rows too, and the flat maps are loaded withDeleted:
+        // any holder of the derived identifier makes the re-own impossible.
+        const isDerivedViewUniversalIdentifierTaken =
+          isDefined(
+            flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier],
+          ) ||
+          claimedViewUniversalIdentifiers.has(derivedViewUniversalIdentifier);
 
-        if (
-          isHeldByActiveView ||
-          claimedViewUniversalIdentifiers.has(derivedViewUniversalIdentifier)
-        ) {
+        if (isDerivedViewUniversalIdentifierTaken) {
           this.logger.warn(
-            `Derived identifier ${derivedViewUniversalIdentifier} of INDEX view ${flatView.id} is already held by another active view in workspace ${workspaceId}, skipping`,
+            `Derived identifier ${derivedViewUniversalIdentifier} of INDEX view ${flatView.id} is already held by another view in workspace ${workspaceId}, skipping`,
           );
           continue;
-        }
-
-        if (isDefined(occupyingFlatView)) {
-          // The soft-deleted holder cannot be restored and only blocks the
-          // identifier: delete it.
-          viewIdsToDelete.push(occupyingFlatView.id);
         }
 
         claimedViewUniversalIdentifiers.add(derivedViewUniversalIdentifier);
@@ -277,28 +240,22 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         viewUpdates.push({ id: flatView.id, update });
       }
 
-      const viewFieldReownPlan = this.computeViewFieldReownPlan({
-        workspaceId,
-        flatView,
-        derivedViewUniversalIdentifier,
-        flatViewFieldMaps,
-        flatFieldMetadataMaps,
-        claimedViewFieldUniversalIdentifiers,
-      });
-
-      viewFieldIdsToDelete.push(...viewFieldReownPlan.viewFieldIdsToDelete);
-      viewFieldUpdates.push(...viewFieldReownPlan.viewFieldUpdates);
+      viewFieldUpdates.push(
+        ...this.computeViewFieldReownUpdates({
+          workspaceId,
+          flatView,
+          derivedViewUniversalIdentifier,
+          flatViewFieldMaps,
+          flatFieldMetadataMaps,
+          claimedViewFieldUniversalIdentifiers,
+        }),
+      );
     }
 
-    return {
-      viewIdsToDelete,
-      viewUpdates,
-      viewFieldIdsToDelete,
-      viewFieldUpdates,
-    };
+    return { viewUpdates, viewFieldUpdates };
   }
 
-  private computeViewFieldReownPlan({
+  private computeViewFieldReownUpdates({
     workspaceId,
     flatView,
     derivedViewUniversalIdentifier,
@@ -312,8 +269,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     claimedViewFieldUniversalIdentifiers: Set<string>;
-  }): Pick<ReownPlan, 'viewFieldIdsToDelete' | 'viewFieldUpdates'> {
-    const viewFieldIdsToDelete: string[] = [];
+  }): ReownUpdate[] {
     const viewFieldUpdates: ReownUpdate[] = [];
 
     const flatViewFields =
@@ -365,28 +321,21 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         continue;
       }
 
-      const occupyingFlatViewField =
-        flatViewFieldMaps.byUniversalIdentifier[
-          derivedViewFieldUniversalIdentifier
-        ];
-      const isHeldByActiveViewField =
-        isDefined(occupyingFlatViewField) &&
-        !isDefined(occupyingFlatViewField.deletedAt);
-
-      if (
-        isHeldByActiveViewField ||
+      const isDerivedViewFieldUniversalIdentifierTaken =
+        isDefined(
+          flatViewFieldMaps.byUniversalIdentifier[
+            derivedViewFieldUniversalIdentifier
+          ],
+        ) ||
         claimedViewFieldUniversalIdentifiers.has(
           derivedViewFieldUniversalIdentifier,
-        )
-      ) {
+        );
+
+      if (isDerivedViewFieldUniversalIdentifierTaken) {
         this.logger.warn(
-          `Derived identifier ${derivedViewFieldUniversalIdentifier} of view field ${flatViewField.id} is already held by another active view field in workspace ${workspaceId}, skipping`,
+          `Derived identifier ${derivedViewFieldUniversalIdentifier} of view field ${flatViewField.id} is already held by another view field in workspace ${workspaceId}, skipping`,
         );
         continue;
-      }
-
-      if (isDefined(occupyingFlatViewField)) {
-        viewFieldIdsToDelete.push(occupyingFlatViewField.id);
       }
 
       claimedViewFieldUniversalIdentifiers.add(
@@ -404,6 +353,6 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       viewFieldUpdates.push({ id: flatViewField.id, update });
     }
 
-    return { viewFieldIdsToDelete, viewFieldUpdates };
+    return viewFieldUpdates;
   }
 }
