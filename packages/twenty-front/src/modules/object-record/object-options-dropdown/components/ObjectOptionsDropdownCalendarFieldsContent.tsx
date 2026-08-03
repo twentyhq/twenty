@@ -1,4 +1,3 @@
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
@@ -11,7 +10,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -33,27 +32,30 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { objectMetadataItem, resetContent, onContentChange, closeDropdown } =
     useObjectOptionsDropdown();
 
-  const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
   const { availableFieldsForCalendar, navigateToDateFieldSettings } =
     useGetAvailableFieldsForCalendar();
 
-  const setRecordIndexCalendarFieldMetadataId = useSetAtomComponentState(
-    recordIndexCalendarFieldMetadataIdComponentState,
-  );
-  const setRecordIndexCalendarEndFieldMetadataId = useSetAtomComponentState(
+  const [
+    recordIndexCalendarFieldMetadataId,
+    setRecordIndexCalendarFieldMetadataId,
+  ] = useAtomComponentState(recordIndexCalendarFieldMetadataIdComponentState);
+  const [
+    recordIndexCalendarEndFieldMetadataId,
+    setRecordIndexCalendarEndFieldMetadataId,
+  ] = useAtomComponentState(
     recordIndexCalendarEndFieldMetadataIdComponentState,
   );
 
-  const calendarFieldMetadata = currentView?.calendarFieldMetadataId
+  const calendarFieldMetadata = recordIndexCalendarFieldMetadataId
     ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarFieldMetadataId,
+        (field) => field.id === recordIndexCalendarFieldMetadataId,
       )
     : undefined;
 
-  const calendarEndFieldMetadata = currentView?.calendarEndFieldMetadataId
+  const calendarEndFieldMetadata = recordIndexCalendarEndFieldMetadataId
     ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarEndFieldMetadataId,
+        (field) => field.id === recordIndexCalendarEndFieldMetadataId,
       )
     : undefined;
 
@@ -83,7 +85,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
     fieldMetadataItem: FieldMetadataItem,
   ) => {
     const shouldClearCalendarEndField =
-      isDefined(currentView?.calendarEndFieldMetadataId) &&
+      isDefined(recordIndexCalendarEndFieldMetadataId) &&
       (!isDefined(calendarEndFieldMetadata) ||
         calendarEndFieldMetadata.id === fieldMetadataItem.id ||
         calendarEndFieldMetadata.type !== fieldMetadataItem.type);
@@ -93,12 +95,22 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       setRecordIndexCalendarEndFieldMetadataId(null);
     }
 
-    await updateCurrentView({
-      calendarFieldMetadataId: fieldMetadataItem.id,
-      ...(shouldClearCalendarEndField
-        ? { calendarEndFieldMetadataId: null }
-        : {}),
-    });
+    try {
+      await updateCurrentView({
+        calendarFieldMetadataId: fieldMetadataItem.id,
+        ...(shouldClearCalendarEndField
+          ? { calendarEndFieldMetadataId: null }
+          : {}),
+      });
+    } catch (error) {
+      setRecordIndexCalendarFieldMetadataId(recordIndexCalendarFieldMetadataId);
+      if (shouldClearCalendarEndField) {
+        setRecordIndexCalendarEndFieldMetadataId(
+          recordIndexCalendarEndFieldMetadataId,
+        );
+      }
+      throw error;
+    }
     closeDropdown();
   };
 

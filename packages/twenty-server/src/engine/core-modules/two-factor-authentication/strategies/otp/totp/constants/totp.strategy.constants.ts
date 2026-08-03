@@ -21,7 +21,7 @@ export const TOTP_DEFAULT_CONFIGURATION = {
   algorithm: TOTPHashAlgorithms.SHA1,
   digits: 6,
   encodings: TOTPKeyEncodings.HEX, // Keep as hex - this is correct for @otplib/core
-  window: 3,
+  window: 1,
   step: 30,
 };
 

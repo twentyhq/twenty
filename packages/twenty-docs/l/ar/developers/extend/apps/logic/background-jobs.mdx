@@ -1,0 +1,165 @@
+---
+title: المهام الخلفية
+description: قم بإحالة العمل الطويل الأمد أو المقيّد بالمعدل إلى عمّال Twenty عن طريق وضع تشغيل دالة منطقية أخرى في قائمة الانتظار بدلًا من تنفيذ كل شيء ضمن نفس السياق.
+icon: layer-group
+---
+
+تشغيل الدالة المنطقية محدّد بحده الأقصى `timeoutSeconds` ‏(900 ثانية كحد أقصى). أي شيء لا يمكنه أن ينتهي ضمن تلك المهلة الزمنية — مثل إعادة المزامنة الكاملة، أو التوزيع على مستوى كل سجل، أو واجهة برمجة تطبيقات لطرف ثالث تفرض حدودًا على المعدل — يجب تقسيمه إلى عمليات تشغيل أصغر.
+
+تقوم `enqueueJob` بذلك بالضبط: فهي تطلب من عمّال Twenty تشغيل واحدة من دوال المنطق في تطبيقك لاحقًا، في عملية مستقلة، وبمهلة زمنية خاصة بها. يعود المستدعي فورًا.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## إضافة تشغيل إلى قائمة الانتظار (Enqueue)
+
+قم باستيراد `enqueueJob` من `twenty-sdk/logic-function` ووجّهه إلى `universalIdentifier` الخاص بوظيفة المنطق التي تريد تشغيلها.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+تستقبل الدالة الهدف `payload` كوسيط للمعالج الخاص بها، تمامًا مثل أي مشغّل (trigger) آخر. يجب أن تنتمي إلى **نفس التطبيق** مثل الدالة المستدعية — تمت إضافة دالة في تطبيق آخر إلى قائمة الانتظار سيتم رفضها برسالة `Logic function not found`.
+
+<Note>
+تُرجِع `enqueueJob` فور قبول المهمة، وليس عند تشغيلها. لا تُرجِع ناتج الدالة الهدف — اطلب من الدالة الهدف أن تكتب ما تُنتجه في [مخزن المفاتيح والقيم](/l/ar/developers/extend/apps/logic/key-value-store) أو في سجل مساحة العمل إذا كنت بحاجة إلى قراءته لاحقًا.
+</Note>
+
+## خيارات المهمة
+
+| الخيار       | الإعداد الافتراضي | النطاق                   | ماذا يفعل                                                                                             |
+| ------------ | ----------------- | ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`               | `0`–`10`                 | محاولات إضافية إذا رمى التشغيل استثناءً. لا تقم بزيادة هذه القيمة إلا للمعالجات الآمنة للتشغيل مرتين. |
+| `delayMs`    | `0`               | `0`–`604800000` (7 أيام) | انتظر هذه المدة قبل أن يصبح التشغيل مؤهّلًا للتنفيذ.                                                  |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**أولوية التنفيذ غير قابلة للضبط بعد.** عمليات المهام في قائمة الانتظار تعمل دائمًا بأدنى أولوية، بحيث لا يتأخر عمل المنصة خلف مهام التطبيق. سيتم توفير إمكانية التحكّم في الأولوية قريبًا.
+</Note>
+
+يرث التشغيل المُضاف إلى قائمة الانتظار المستخدم الفعلي (acting user) الخاص بالدالة التي أضافته، لذلك يعمل بنفس الأذونات.
+
+## طريقة الاستخدام: التمرير عبر مزامنة طويلة
+
+النمط الكلاسيكي هو دالة تضيف *نفسها* إلى قائمة الانتظار مع المؤشر (cursor) التالي. يقوم كل تشغيل بتنفيذ صفحة واحدة من العمل ضمن مهلة التنفيذ الخاصة به، وتتوقّف السلسلة عندما لا يبقى شيء.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## توزيع متشعّب لكل سجل
+
+عندما يكون العمل بطبيعته لكل عنصر، أضِف مهمة واحدة لكل عنصر إلى قائمة الانتظار ودع العمال (workers) يعالجونها بالتوازي بدلًا من استخدام حلقة داخلية.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## ممارسات جيدة للعمل طويل الأمد
+
+قاعدتان تغطيان تقريبًا كل مهمة طويلة: **استخدم الاستدعاء الذاتي (recursion) بدلًا من الحلقات (looping)**، و**عالِج جزءًا محدود الحجم في كل تشغيل**.
+
+التشغيل الذي يحاول تنفيذ كل شيء دفعة واحدة هو نمط الفشل — يصل إلى مهلة التنفيذ، ومع إعادة المحاولة يبدأ كل شيء من الصفر. بدلًا من ذلك، اضبط حجم الجزء بحيث ينتهي بشكل مريح ضمن `timeoutSeconds`، ثم خزّن موقعك الحالي، وأضِف التشغيل التالي إلى قائمة الانتظار.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+ما الذي يجعل هذا متماسكًا:
+
+* **اضبط حجم الجزء بناءً على أبطأ عنصر، وليس على المتوسّط.** يجب أن يتناسب حاصل ضرب `CHUNK_SIZE × worst-case item time` ضمن `timeoutSeconds` مع هامش احتياطي، وإلا فإن نهاية الجزء ستُفقَد عندما يتم إيقاف التشغيل بسبب انتهاء المهلة.
+* **اجعل شرط الإنهاء صريحًا.** استخدم الاستدعاء الذاتي فقط عندما يعود جزء كامل. سلسلة تتوقّف على أساس "عدم وجود نتائج" فقط ستستمر إلى الأبد إذا أعاد المصدر صفحة قصيرة في منتصف الطريق.
+* **ثبّت التقدّم قبل إضافة التشغيل التالي إلى قائمة الانتظار،** بحيث يُعاد تشغيل الحلقة الفاشلة من آخر جزء مكتمل بدلًا من البداية.
+* **اجعل كل جزء قابلًا للتكرار دون آثار جانبية (idempotent).** يجب ألّا يؤدّي إعادة معالجة جزء واحد بعد إعادة المحاولة إلى كتابة مزدوجة — اربط عمليات الكتابة بالسجل أو المعرّف الخارجي الذي تعالجه.
+* **فضّل سلسلة مجزّأة على توزيع واحد ضخم (giant fan-out)** عندما يتعامل العمل مع طرف ثالث محدود المعدّل (rate-limited): سلسلة مع `delayMs` تنظّم نفسها، في حين أن آلاف المهام المضافة إلى قائمة الانتظار دفعة واحدة تصبح جميعها مؤهّلة فورًا.
+
+<Warning>
+عمليات إعادة المحاولة تعيد تشغيل المعالج بالكامل. حافظ على أن تكون المعالجات في قائمة الانتظار قابلة للتكرار دون آثار جانبية (idempotent) قبل ضبط `retryLimit` على قيمة أعلى من `0`.
+</Warning>

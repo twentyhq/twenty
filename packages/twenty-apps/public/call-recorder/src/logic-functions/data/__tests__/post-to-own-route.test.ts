@@ -55,6 +55,7 @@ describe('postToOwnRoute', () => {
 
   it('returns false when the route base url cannot be resolved', async () => {
     vi.stubEnv('TWENTY_FUNCTIONS_URL', '');
+    vi.stubEnv('TWENTY_API_URL', '');
 
     await expect(
       postToOwnRoute({ path: '/call-recorder/some-route', body: {} }),

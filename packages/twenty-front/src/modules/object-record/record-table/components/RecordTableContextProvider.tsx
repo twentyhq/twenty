@@ -15,7 +15,7 @@ import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/cons
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useIsTouchDevice } from 'twenty-ui/utilities';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { OpenRecordIn } from 'twenty-shared/types';
 
 type RecordTableContextProviderProps = {
   viewBarId: string;
@@ -66,7 +66,7 @@ export const RecordTableContextProvider = ({
   // Navigating on mouse down only buys a frame on a real pointer: a tap
   // synthesises its mouse events after the finger is already gone.
   const triggerEvent =
-    openRecordIn === ViewOpenRecordIn.SIDE_PANEL || isTouchDevice
+    openRecordIn === OpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'
       : 'MOUSE_DOWN';
 

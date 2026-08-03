@@ -1381,6 +1381,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 

@@ -1,5 +1,7 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
+import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -22,6 +24,12 @@ export const ObjectOptionsDropdownCalendarDateFieldsContent = () => {
     useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
+  );
+  const recordIndexCalendarEndFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarEndFieldMetadataIdComponentState,
+  );
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
@@ -33,11 +41,11 @@ export const ObjectOptionsDropdownCalendarDateFieldsContent = () => {
   }
 
   const calendarFieldMetadata = objectMetadataItem.fields.find(
-    (field) => field.id === currentView.calendarFieldMetadataId,
+    (field) => field.id === recordIndexCalendarFieldMetadataId,
   );
 
   const calendarEndFieldMetadata = objectMetadataItem.fields.find(
-    (field) => field.id === currentView.calendarEndFieldMetadataId,
+    (field) => field.id === recordIndexCalendarEndFieldMetadataId,
   );
 
   const selectableItemIdArray = ['CalendarDateField', 'CalendarEndDateField'];

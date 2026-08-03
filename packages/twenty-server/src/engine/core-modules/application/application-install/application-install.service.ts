@@ -572,6 +572,7 @@ export class ApplicationInstallService {
         },
         { retryLimit: 3 },
       );
+
       return;
     }
 
