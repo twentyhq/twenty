@@ -5389,6 +5389,11 @@ msgstr "מספר הודעות הדוא\"ל שלא נשלחו בהצלחה"
 msgid "Number of spam complaints received"
 msgstr "מספר תלונות הספאם שהתקבלו"
 
+#. js-lingui-id: 5Lb4fW
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgid "Number of tasks tied to the contact that are not done"
+msgstr ""
+
 #. js-lingui-id: MKdH/S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth {label} is required"
@@ -5602,6 +5607,11 @@ msgstr "שגיאה יחידה"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "מותרות רק הגבלות שדה."
+
+#. js-lingui-id: VVBlwg
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgid "Open tasks"
+msgstr ""
 
 #. js-lingui-id: vX5t8O
 #. placeholder {0}: allowedOperands.join(', ')
