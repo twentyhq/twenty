@@ -126,29 +126,19 @@ export const InputPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): base-ui Collapsible calls getComputedStyle, missing from
-// the remote-dom Window polyfill. The runtimes diverge (observed
-// deterministically): under Preact only the first Collapsible consumer
-// crashes and later siblings render.
-export const JsonVisualizerReact: Story = createKnownFailureGalleryStory(
+export const JsonVisualizerReact: Story = createGalleryStory(
   'twenty-ui-json-visualizer-gallery',
-  ['JsonTree', 'JsonArrayNode', 'JsonObjectNode', 'JsonNestedNode'],
 );
-export const JsonVisualizerPreact: Story = createKnownFailureGalleryStory(
+export const JsonVisualizerPreact: Story = createGalleryStory(
   'twenty-ui-json-visualizer-gallery',
-  ['JsonTree'],
   'preact',
 );
 
-// KNOWN ISSUE (TDD): same getComputedStyle gap through base-ui Collapsible,
-// with the same React/Preact divergence.
-export const LayoutReact: Story = createKnownFailureGalleryStory(
+export const LayoutReact: Story = createGalleryStory(
   'twenty-ui-layout-gallery',
-  ['AnimatedEaseInOut', 'AnimatedExpandableContainer'],
 );
-export const LayoutPreact: Story = createKnownFailureGalleryStory(
+export const LayoutPreact: Story = createGalleryStory(
   'twenty-ui-layout-gallery',
-  ['AnimatedEaseInOut'],
   'preact',
 );
 

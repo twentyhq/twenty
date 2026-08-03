@@ -9,6 +9,7 @@ import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useRe
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
+import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -17,10 +18,9 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, OpenRecordIn } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
@@ -91,7 +91,7 @@ export const useCreateNewIndexRecord = ({
         ...mergedRecordInput,
       });
 
-      if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
+      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -101,22 +101,18 @@ export const useCreateNewIndexRecord = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
+        if (isDefined(labelIdentifierFieldMetadataItem)) {
+          store.set(newRecordTitleCellToOpenState.atom, {
+            recordId,
+            fieldName: labelIdentifierFieldMetadataItem.name,
+          });
+        }
+
         closeSidePanelMenu();
-        navigate(
-          AppPath.RecordShowPage,
-          {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectRecordId: recordId,
-          },
-          undefined,
-          {
-            state: {
-              isNewRecord: true,
-              objectRecordId: recordId,
-              labelIdentifierFieldName: labelIdentifierFieldMetadataItem?.name,
-            },
-          },
-        );
+        navigate(AppPath.RecordShowPage, {
+          objectNameSingular: objectMetadataItem.nameSingular,
+          objectRecordId: recordId,
+        });
       }
 
       if (isDefined(recordIndexGroupFieldMetadataItem)) {

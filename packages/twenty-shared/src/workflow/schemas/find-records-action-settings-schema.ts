@@ -11,7 +11,6 @@ export const workflowFindRecordsActionSettingsSchema =
         .object({
           recordFilterGroups: z.array(z.any()).optional(),
           recordFilters: z.array(z.any()).optional(),
-          gqlOperationFilter: z.any().optional().nullable(),
         })
         .optional(),
       orderBy: z

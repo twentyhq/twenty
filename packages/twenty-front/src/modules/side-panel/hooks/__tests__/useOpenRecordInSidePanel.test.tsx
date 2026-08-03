@@ -7,6 +7,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
@@ -133,6 +134,7 @@ describe('useOpenRecordInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsMobile = false;
+    jotaiStore.set(newRecordTitleCellToOpenState.atom, null);
   });
 
   it('should set the correct states and navigate to the record page', () => {
@@ -284,13 +286,12 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(
-      AppPath.RecordShowPage,
-      { objectNameSingular: 'person', objectRecordId: 'record-123' },
-      undefined,
-      undefined,
-    );
+    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
+      objectNameSingular: 'person',
+      objectRecordId: 'record-123',
+    });
     expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toBeNull();
   });
 
   it('should forward new record state to the record page on mobile', () => {
@@ -305,20 +306,16 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(
-      AppPath.RecordShowPage,
-      { objectNameSingular: 'person', objectRecordId: 'new-record-123' },
-      undefined,
-      {
-        state: {
-          isNewRecord: true,
-          objectRecordId: 'new-record-123',
-          labelIdentifierFieldName: getLabelIdentifierFieldMetadataItem(
-            personMockObjectMetadataItem,
-          )?.name,
-        },
-      },
-    );
+    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
+      objectNameSingular: 'person',
+      objectRecordId: 'new-record-123',
+    });
+    expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toEqual({
+      recordId: 'new-record-123',
+      fieldName: getLabelIdentifierFieldMetadataItem(
+        personMockObjectMetadataItem,
+      )?.name,
+    });
     expect(mockOpenNewRecordTitleCell).not.toHaveBeenCalled();
   });
 

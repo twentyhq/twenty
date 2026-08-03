@@ -6,6 +6,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
+import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { FlatPageLayoutWidgetValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service';
 
@@ -18,11 +19,20 @@ const WIDGET_UNIVERSAL_IDENTIFIER = '00000000-0000-0000-0000-000000000111';
 
 const tab = (
   universalIdentifier = EXISTING_TAB_UNIVERSAL_IDENTIFIER,
+  layoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST,
 ): UniversalFlatPageLayoutTab =>
   ({
     universalIdentifier,
-    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    layoutMode,
   }) as unknown as UniversalFlatPageLayoutTab;
+
+const GRID_POSITION = {
+  layoutMode: PageLayoutTabLayoutMode.GRID,
+  row: 0,
+  column: 0,
+  rowSpan: 4,
+  columnSpan: 4,
+};
 
 const widget = (
   universalIdentifier = WIDGET_UNIVERSAL_IDENTIFIER,
@@ -141,6 +151,50 @@ describe('FlatPageLayoutWidgetValidatorService', () => {
       expect(
         result.flatEntityMinimalInformation.pageLayoutTabUniversalIdentifier,
       ).toBe(DESTINATION_TAB_UNIVERSAL_IDENTIFIER);
+    });
+
+    it('rejects a position whose layout mode does not match its tab', async () => {
+      const result = await service.validateFlatPageLayoutWidgetUpdate(
+        buildUpdateArgs({
+          update: { position: GRID_POSITION },
+        }),
+      );
+
+      expect(result.errors.map((error) => error.code)).toContain(
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
+    });
+
+    it('accepts a position whose layout mode matches a tab already flipped in the same build', async () => {
+      const result = await service.validateFlatPageLayoutWidgetUpdate(
+        buildUpdateArgs({
+          update: { position: GRID_POSITION },
+          tabs: [
+            tab(
+              EXISTING_TAB_UNIVERSAL_IDENTIFIER,
+              PageLayoutTabLayoutMode.GRID,
+            ),
+          ],
+        }),
+      );
+
+      expect(result.errors).toEqual([]);
+    });
+
+    it('accepts a null position against a tab of any layout mode', async () => {
+      const result = await service.validateFlatPageLayoutWidgetUpdate(
+        buildUpdateArgs({
+          update: { position: null },
+          tabs: [
+            tab(
+              EXISTING_TAB_UNIVERSAL_IDENTIFIER,
+              PageLayoutTabLayoutMode.GRID,
+            ),
+          ],
+        }),
+      );
+
+      expect(result.errors).toEqual([]);
     });
   });
 });

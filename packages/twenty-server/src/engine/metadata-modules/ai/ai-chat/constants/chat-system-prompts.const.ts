@@ -85,5 +85,24 @@ Record References - IMPORTANT:
 - The recordId MUST be a real UUID (like "abc12345-1234-5678-abcd-123456789012")
 - DO NOT create record references before calling the tool
 - DO NOT use placeholder IDs like "rec-snowflake" or "rec-person-1"
-- If a tool hasn't been called yet, don't reference records that don't exist`,
+- If a tool hasn't been called yet, don't reference records that don't exist
+
+Metadata References:
+Whenever you name an object, a field, or a view in your prose, write it as a metadata reference instead of plain text. Each one becomes a chip the user can click.
+
+- Object: [[object:objectNameSingular:displayName[[/object]]
+  - Example: [[object:company:Companies[[/object]]
+  - Use the \`nameSingular\` from \`get_object_metadata\` or \`create_object_metadata\` (NOT the label, NOT the plural, NOT the id)
+  - This is the only reference you may write for something that does not exist yet: when you propose creating an object, reference it with the \`nameSingular\` you intend to use and it renders as a chip without a link
+- Field: [[field:fieldMetadataId:displayName[[/field]]
+  - Example: [[field:abc12345-1234-5678-abcd-123456789012:Annual Recurring Revenue[[/field]]
+  - Use the \`id\` returned by \`get_field_metadata\`, \`create_field_metadata\`, or the \`fields\` array of \`get_object_metadata\`
+- View: [[view:viewId:displayName[[/view]]
+  - Example: [[view:abc12345-1234-5678-abcd-123456789012:All Companies[[/view]]
+  - Use the \`id\` returned by \`get_views\`, \`create_view\`, or \`upsert_complete_view\`
+
+- The displayName is what the user reads, so use the human-readable label ("Annual Recurring Revenue"), not the technical name
+- Field and view ids MUST be real UUIDs copied from a tool response - never invent one, and never reference a field or view before the tool that returns it has run
+- Always close a reference with its own tag: \`[[/object]]\`, \`[[/field]]\`, \`[[/view]]\`. A mismatched closing tag drops the chip
+- Use metadata references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML`,
 };

@@ -79,6 +79,7 @@ export default defineObject({
 * Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
 * Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
 * Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
+* `openRecordIn` určuje, kde se záznamy tohoto objektu otevřou po kliknutí: `ObjectOpenRecordIn.USER_CHOICE` (výchozí nastavení, které respektuje individuální předvolbu každého člena pracovního prostoru v Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` nebo `ObjectOpenRecordIn.RECORD_PAGE`. Připněte jej k `RECORD_PAGE` pro záznamy, které ke svému používání potřebují celou stránku, stejně jako pracovní postupy a řídicí panely, nebo k `SIDE_PANEL` pro záznamy, které dávají smysl jen jako rychlý panel, podobně jako události v kalendáři.
 * Pole definovaná zde inline **nepotřebují** `objectUniversalIdentifier` — dědí se z nadřazeného objektu. Pomocí [`defineField()`](/l/cs/developers/extend/apps/data/extending-objects) můžete přidávat pole k objektům, které nevlastníte.
 * Nové objekty můžete vygenerovat pomocí `yarn twenty dev:add object`, který vás provede pojmenováním, poli a vztahy. Viz [Architektura → Scaffolding entit](/l/cs/developers/extend/apps/getting-started/scaffolding).
 
@@ -138,4 +139,4 @@ Změny `isNullable` se použijí při každé synchronizaci, včetně těch, kte
 
 * **Propojte tento objekt s ostatními** — vzor obousměrných vztahů najdete v části [Relations](/l/cs/developers/extend/apps/data/relations).
 * **Přidávejte pole k objektům z jiných aplikací** — viz [Extending Objects](/l/cs/developers/extend/apps/data/extending-objects) pro `defineField()`.
-* **Zobrazte tento objekt v uživatelském rozhraní** — viz [Views](/l/cs/developers/extend/apps/layout/views) a [Navigation Menu Items](/l/cs/developers/extend/apps/layout/navigation-menu-items) pro umístění do postranního panelu.
+* **Zobrazit tento objekt v uživatelském rozhraní** — viz [Položky navigační nabídky](/l/cs/developers/extend/apps/layout/navigation-menu-items) pro přidání položky do postranního panelu; viz [Zobrazení](/l/cs/developers/extend/apps/layout/views) pro přidání vlastních konfigurací seznamu.
