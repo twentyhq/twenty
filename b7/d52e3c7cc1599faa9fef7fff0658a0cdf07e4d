@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_558d20a946930a::t_1d235e42a63f8e 9-15,103-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "b7d52e3c7cc1599faa9fef7fff0658a0cdf07e4d",
+  "prompts": {},
+  "sessions": {
+    "s_558d20a946930a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4033fa58-8280-4b51-b50d-f125d277a559",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
