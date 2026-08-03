@@ -125,13 +125,17 @@ describe('user session creation on auth exchanges (integration)', () => {
         throw new Error('Expected a persisted session');
       }
 
-      expect(session.userId).toBeDefined();
-      expect(session.workspaceId).not.toBeNull();
-      expect(session.userWorkspaceId).not.toBeNull();
-      expect(session.isImpersonating).toBe(false);
-      expect(session.revokedAt).toBeNull();
-      expect(session.revokedReason).toBeNull();
-      expect(session.lastActiveAt).not.toBeNull();
+      expect(session).toMatchObject({
+        userId: expect.any(String),
+        workspaceId: expect.any(String),
+        userWorkspaceId: expect.any(String),
+        isImpersonating: false,
+        revokedAt: null,
+        revokedReason: null,
+        // expect.any(Date) would fail: the entity's Date comes from the app's
+        // vm context, so it is not an instanceof the test context's Date.
+        lastActiveAt: expect.anything(),
+      });
 
       const sessionLifetimeMs =
         session.expiresAt.getTime() - session.createdAt.getTime();
