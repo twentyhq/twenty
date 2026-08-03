@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { useEffect, useState } from 'react';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect';
@@ -80,7 +81,7 @@ const buildRelationFilter = (
   }),
   displayValue: '',
   type: 'RELATION',
-  operand: 'is',
+  operand: ViewFilterOperand.IS,
   label: workspaceMemberRelationField.label,
   ...overrides,
 });
