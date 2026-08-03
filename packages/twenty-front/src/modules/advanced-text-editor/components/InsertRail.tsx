@@ -80,6 +80,11 @@ const StyledImageForm = styled.div`
   width: 220px;
 `;
 
+const StyledVariableLiteral = styled.span`
+  font-family: ${themeCssVariables.code.font.family};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 const StyledImageHint = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
@@ -319,8 +324,10 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
           {variableItems.map(({ label, name }) => (
             <MenuItem
               key={name}
-              LeftIcon={IconVariable}
-              text={label}
+              text={
+                <StyledVariableLiteral>{`{{${name}}}`}</StyledVariableLiteral>
+              }
+              contextualText={label}
               onClick={() => insertVariable(name)}
             />
           ))}
