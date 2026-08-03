@@ -3,6 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconTrash } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
@@ -29,6 +31,12 @@ const StyledHint = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
   padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledBlockHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const StyledBlockTitle = styled.div`
@@ -58,7 +66,7 @@ const BOX_FIELD_SIDE_PROPERTIES: Record<
 };
 
 const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
-  const { i18n } = useLingui();
+  const { i18n, t } = useLingui();
   const target = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) =>
@@ -84,6 +92,24 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
         }
 
         tr.setNodeMarkup(target.pos, undefined, { ...node.attrs, ...attrs });
+        return true;
+      })
+      .run();
+  };
+
+  // The floating image menu does not mount on this surface, so removing a
+  // block has to be reachable from the panel.
+  const handleRemoveBlock = () => {
+    editor
+      .chain()
+      .focus()
+      .command(({ tr }) => {
+        const node = tr.doc.nodeAt(target.pos);
+        if (!isDefined(node)) {
+          return false;
+        }
+
+        tr.delete(target.pos, target.pos + node.nodeSize);
         return true;
       })
       .run();
@@ -147,9 +173,18 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
 
   return (
     <StyledContainer>
-      <StyledBlockTitle>
-        {getCampaignBlockLabel(target.nodeType)}
-      </StyledBlockTitle>
+      <StyledBlockHeader>
+        <StyledBlockTitle>
+          {getCampaignBlockLabel(target.nodeType)}
+        </StyledBlockTitle>
+        <LightIconButton
+          Icon={IconTrash}
+          size="small"
+          accent="tertiary"
+          title={t`Remove block`}
+          onClick={handleRemoveBlock}
+        />
+      </StyledBlockHeader>
       {fields.map((field) => {
         const key = `${target.nodeType}-${target.pos}-${field.property}`;
         const sideProperties = BOX_FIELD_SIDE_PROPERTIES[field.property];

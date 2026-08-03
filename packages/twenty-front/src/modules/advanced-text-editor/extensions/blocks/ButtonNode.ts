@@ -39,6 +39,14 @@ export const ButtonNode = Node.create({
         parseHTML: (element) => element.getAttribute('data-href'),
         renderHTML: (attributes) => ({ 'data-href': attributes.href }),
       },
+      // Placed on the wrapper rather than the button itself, which is an
+      // inline-block anchor and cannot align itself.
+      align: {
+        default: 'left',
+        parseHTML: (element) =>
+          element.parentElement?.style.textAlign || 'left',
+        renderHTML: () => ({}),
+      },
       style: {
         default: DEFAULT_BUTTON_STYLE,
         parseHTML: readBlockStyleAttribute,
@@ -54,10 +62,13 @@ export const ButtonNode = Node.create({
     return [{ tag: 'div[data-button-block]' }];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ node, HTMLAttributes }) {
     return [
       'div',
-      { class: 'block-button-wrapper' },
+      {
+        class: 'block-button-wrapper',
+        style: `text-align: ${node.attrs.align ?? 'left'};`,
+      },
       [
         'div',
         mergeAttributes(HTMLAttributes, {

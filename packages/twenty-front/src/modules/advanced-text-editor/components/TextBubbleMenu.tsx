@@ -6,6 +6,7 @@ import { useTextBubbleState } from '@/advanced-text-editor/hooks/useTextBubbleSt
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { isTextSelected } from '@/advanced-text-editor/utils/isTextSelected';
 import { type Editor } from '@tiptap/core';
+import { NodeSelection } from '@tiptap/pm/state';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
   IconBold,
@@ -63,6 +64,13 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
 
   const handleShouldShow = () => {
     if (editor.isActive('image')) {
+      return false;
+    }
+
+    // A selected atom block (image, HTML, divider) holds no text to format;
+    // it is edited from the block settings panel instead.
+    const { selection } = editor.state;
+    if (selection instanceof NodeSelection && selection.node.isAtom) {
       return false;
     }
 

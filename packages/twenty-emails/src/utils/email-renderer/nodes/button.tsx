@@ -1,4 +1,4 @@
-import { Button } from 'react-email';
+import { Button, Column, Row } from 'react-email';
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import { blockStyle } from 'src/utils/email-renderer/utils/block-style';
@@ -8,13 +8,18 @@ export const button = (node: JSONContent): ReactNode => {
     .map((childNode) => childNode.text ?? '')
     .join('');
   const href = node.attrs?.href;
+  const align = node.attrs?.align ?? 'left';
 
   return (
-    <Button
-      href={typeof href === 'string' && href !== '' ? href : undefined}
-      style={blockStyle(node.attrs?.style)}
-    >
-      {label}
-    </Button>
+    <Row>
+      <Column align={align}>
+        <Button
+          href={typeof href === 'string' && href !== '' ? href : undefined}
+          style={blockStyle(node.attrs?.style)}
+        >
+          {label}
+        </Button>
+      </Column>
+    </Row>
   );
 };

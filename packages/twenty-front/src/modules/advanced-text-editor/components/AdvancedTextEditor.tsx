@@ -231,9 +231,13 @@ export const AdvancedTextEditor = ({
       ) : (
         <EditorContent className="editor-content" editor={editor} />
       )}
-      {hasEditorExtension(editor, 'image') && (
-        <ImageBubbleMenu editor={editor} />
-      )}
+      {/* Surfaces with block nodes have a settings panel that owns image
+          alignment and deletion, so the floating menu would be a second
+          source of truth. Surfaces without one still need it. */}
+      {hasEditorExtension(editor, 'image') &&
+        !hasEditorExtension(editor, 'section') && (
+          <ImageBubbleMenu editor={editor} />
+        )}
       {hasTextBubbleMenu && <TextBubbleMenu editor={editor} />}
       {hasEditorExtension(editor, 'link') && <LinkBubbleMenu editor={editor} />}
     </StyledEditorContainer>

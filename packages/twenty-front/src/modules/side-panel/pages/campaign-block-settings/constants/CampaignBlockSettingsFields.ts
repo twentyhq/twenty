@@ -90,6 +90,12 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
   ],
   [TIPTAP_NODE_TYPES.BUTTON]: [
     {
+      label: msg`Alignment`,
+      kind: 'attribute',
+      property: 'align',
+      input: 'alignment',
+    },
+    {
       label: msg`Link URL`,
       kind: 'attribute',
       property: 'href',
@@ -124,6 +130,12 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     },
   ],
   [TIPTAP_NODE_TYPES.IMAGE]: [
+    {
+      label: msg`Alignment`,
+      kind: 'attribute',
+      property: 'align',
+      input: 'alignment',
+    },
     {
       label: msg`Link URL`,
       kind: 'attribute',

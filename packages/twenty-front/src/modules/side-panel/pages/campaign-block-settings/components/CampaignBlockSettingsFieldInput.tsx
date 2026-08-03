@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type MessageDescriptor } from '@lingui/core';
 
+import { CampaignAlignmentInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignAlignmentInput';
 import { CampaignColorInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignColorInput';
 import { CampaignSizeInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignSizeInput';
 import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
@@ -12,6 +13,7 @@ export type CampaignStyleFieldKind =
   | 'color'
   | 'box'
   | 'size'
+  | 'alignment'
   | 'textarea';
 
 type CampaignBlockSettingsFieldInputProps = {
@@ -49,6 +51,14 @@ export const CampaignBlockSettingsFieldInput = ({
           value={value}
           onChange={onChange}
           placeholder={field.placeholder}
+        />
+      );
+    case 'alignment':
+      return (
+        <CampaignAlignmentInput
+          label={label}
+          value={value}
+          onChange={onChange}
         />
       );
     case 'textarea':
