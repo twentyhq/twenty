@@ -40,6 +40,9 @@ describe('credentialed CORS origins (integration)', () => {
       ALLOWED_ORIGIN,
     );
     expect(response.headers['access-control-allow-credentials']).toBe('true');
+    // Preflights are cacheable, so this is the response a shared cache is most
+    // likely to reuse across origins.
+    expect(response.headers.vary).toContain('Origin');
   });
 
   it('should fall back to the public wildcard for a non-allowlisted origin', async () => {

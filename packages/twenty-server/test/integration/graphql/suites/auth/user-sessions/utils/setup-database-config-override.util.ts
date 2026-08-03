@@ -30,12 +30,24 @@ export const setupDatabaseConfigOverrideForSuite = (
   });
 
   afterAll(async () => {
-    if (hadPreviousOverride) {
-      await updateConfigVariable({
-        input: { key, value: previousOverrideValue },
-      }).catch(() => {});
-    } else {
-      await deleteConfigVariable({ input: { key } }).catch(() => {});
+    try {
+      if (hadPreviousOverride) {
+        await updateConfigVariable({
+          input: { key, value: previousOverrideValue },
+        });
+      } else {
+        await deleteConfigVariable({ input: { key } });
+      }
+    } catch (error) {
+      // Reported rather than rethrown: a passing suite should not go red over
+      // its own teardown. But a swallowed failure leaves the override in place
+      // and the next suite fails for reasons that point nowhere near here, so
+      // it has to be visible.
+      process.stderr.write(
+        `[config-override] failed to restore ${key}, later suites may see a stale value: ${
+          error instanceof Error ? error.message : String(error)
+        }\n`,
+      );
     }
   });
 };

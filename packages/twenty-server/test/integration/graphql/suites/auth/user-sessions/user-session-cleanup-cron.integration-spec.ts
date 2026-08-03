@@ -159,6 +159,19 @@ describe('user session cleanup cron (integration)', () => {
         type: AppTokenType.RefreshToken,
         overrides: { expiresAt: daysFromNow(30) },
       },
+      // The retention boundary itself: without these two, a regression that
+      // deleted every ended refresh token rather than only those past
+      // retention would still pass the assertions above.
+      {
+        label: 'refresh token expired within retention',
+        type: AppTokenType.RefreshToken,
+        overrides: { expiresAt: daysAgo(1) },
+      },
+      {
+        label: 'refresh token revoked within retention',
+        type: AppTokenType.RefreshToken,
+        overrides: { expiresAt: daysFromNow(30), revokedAt: daysAgo(1) },
+      },
       {
         // The type filter is the safety predicate: appToken is a shared table
         // and other token types are routinely long-expired. Losing the filter
@@ -224,6 +237,12 @@ describe('user session cleanup cron (integration)', () => {
         getSeededAppTokenId('refresh token revoked beyond retention'),
       );
       expect(remainingIds).toContain(getSeededAppTokenId('active refresh token'));
+      expect(remainingIds).toContain(
+        getSeededAppTokenId('refresh token expired within retention'),
+      );
+      expect(remainingIds).toContain(
+        getSeededAppTokenId('refresh token revoked within retention'),
+      );
       expect(remainingIds).toContain(
         getSeededAppTokenId('long-expired token of another type'),
       );
