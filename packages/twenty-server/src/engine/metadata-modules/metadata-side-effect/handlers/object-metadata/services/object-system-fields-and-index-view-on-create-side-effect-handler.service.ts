@@ -58,14 +58,12 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
       applicationUniversalIdentifier,
     });
 
-    const displayableCallerFlatFieldMetadatas =
-      computeCallerFlatFieldMetadatasForObject({
-        objectMetadataUniversalIdentifier: universalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
-        displayableOnly: true,
-      });
+    const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
+      objectMetadataUniversalIdentifier: universalIdentifier,
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+      allFlatEntityOperationRecordByMetadataName,
+    });
 
     const positionByFieldUniversalIdentifier =
       computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
@@ -73,7 +71,7 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
         objectMetadataUniversalIdentifier: universalIdentifier,
         labelIdentifierFieldMetadataUniversalIdentifier:
           sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-        displayableCallerFlatFieldMetadatas,
+        callerFlatFieldMetadatas,
       });
 
     const flatViewFieldsToCreate = computeFlatViewFieldsToCreate({

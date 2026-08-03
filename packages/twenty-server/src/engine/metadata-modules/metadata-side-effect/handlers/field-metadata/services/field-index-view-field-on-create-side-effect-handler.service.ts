@@ -17,8 +17,6 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
-import { isFlatFieldMetadataDisplayableInDefaultView } from 'src/engine/metadata-modules/object-metadata/utils/is-flat-field-metadata-displayable-in-default-view.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
@@ -29,7 +27,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     metadataName: 'fieldMetadata',
     name: 'fieldIndexViewFieldOnCreate',
     description:
-      'When a field is created, provision its visible view field on the parent object INDEX view. Owns the view fields of every caller-provided field; engine-emitted fields get theirs from the handler that emits them.',
+      'When a field is created, provision its visible view field on the parent object INDEX view. Owns the view fields of every caller-provided field, relations included; engine-emitted fields get theirs from the handler that emits them.',
   },
 ) {
   buildSideEffects({
@@ -111,27 +109,16 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     };
     indexViewUniversalIdentifier: string;
     allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'fieldMetadata'>['allFlatEntityOperationRecordByMetadataName'];
-  }): UniversalFlatViewField | undefined {
+  }): UniversalFlatViewField {
     const { labelIdentifierFieldMetadataUniversalIdentifier } =
       parentFlatObjectMetadata;
 
-    if (
-      !isFlatFieldMetadataDisplayableInDefaultView({
-        flatFieldMetadata: sourceFlatFieldMetadata,
-        labelIdentifierFieldMetadataUniversalIdentifier,
-      })
-    ) {
-      return undefined;
-    }
-
-    const displayableCallerFlatFieldMetadatas =
-      computeCallerFlatFieldMetadatasForObject({
-        objectMetadataUniversalIdentifier:
-          sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
-        displayableOnly: true,
-      });
+    const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
+      objectMetadataUniversalIdentifier:
+        sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
+      labelIdentifierFieldMetadataUniversalIdentifier,
+      allFlatEntityOperationRecordByMetadataName,
+    });
 
     const positionByFieldUniversalIdentifier =
       computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
@@ -140,7 +127,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         objectMetadataUniversalIdentifier:
           sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
         labelIdentifierFieldMetadataUniversalIdentifier,
-        displayableCallerFlatFieldMetadatas,
+        callerFlatFieldMetadatas,
       });
 
     const position =
@@ -148,16 +135,11 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         sourceFlatFieldMetadata.universalIdentifier,
       ) ?? 0;
 
-    const [flatViewFieldToCreate] = computeFlatViewFieldsToCreate({
-      objectFlatFieldMetadatas: [sourceFlatFieldMetadata],
-      viewUniversalIdentifier: indexViewUniversalIdentifier,
-      applicationUniversalIdentifier:
-        sourceFlatFieldMetadata.applicationUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier,
-      startPosition: position,
+    return this.buildIndexFlatViewFieldToCreate({
+      sourceFlatFieldMetadata,
+      indexViewUniversalIdentifier,
+      position,
     });
-
-    return flatViewFieldToCreate;
   }
 
   private buildViewFieldForExistingObject({
@@ -213,17 +195,12 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         existingActivePositions.length > 0
           ? Math.min(...existingActivePositions)
           : 1;
-      const [flatLabelViewFieldToCreate] = computeFlatViewFieldsToCreate({
-        objectFlatFieldMetadatas: [sourceFlatFieldMetadata],
-        viewUniversalIdentifier: indexViewUniversalIdentifier,
-        applicationUniversalIdentifier:
-          sourceFlatFieldMetadata.applicationUniversalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-        startPosition: lowestExistingPosition - 1,
-      });
 
-      return flatLabelViewFieldToCreate;
+      return this.buildIndexFlatViewFieldToCreate({
+        sourceFlatFieldMetadata,
+        indexViewUniversalIdentifier,
+        position: lowestExistingPosition - 1,
+      });
     }
 
     const appendBasePosition =
@@ -238,7 +215,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       labelIdentifierFieldMetadataUniversalIdentifier:
         parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
       allFlatEntityOperationRecordByMetadataName,
-      displayableOnly: false,
     });
 
     const indexAmongCallerFlatFieldMetadatas = Math.max(
@@ -250,6 +226,22 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       0,
     );
 
+    return this.buildIndexFlatViewFieldToCreate({
+      sourceFlatFieldMetadata,
+      indexViewUniversalIdentifier,
+      position: appendBasePosition + indexAmongCallerFlatFieldMetadatas,
+    });
+  }
+
+  private buildIndexFlatViewFieldToCreate({
+    sourceFlatFieldMetadata,
+    indexViewUniversalIdentifier,
+    position,
+  }: {
+    sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
+    indexViewUniversalIdentifier: string;
+    position: number;
+  }): UniversalFlatViewField {
     const createdAt = new Date().toISOString();
     const { applicationUniversalIdentifier } = sourceFlatFieldMetadata;
 
@@ -268,7 +260,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       viewFieldGroupUniversalIdentifier: null,
       isVisible: true,
       size: DEFAULT_VIEW_FIELD_SIZE,
-      position: appendBasePosition + indexAmongCallerFlatFieldMetadatas,
+      position,
       aggregateOperation: null,
       isActive: true,
       isSystemSideEffect: true,

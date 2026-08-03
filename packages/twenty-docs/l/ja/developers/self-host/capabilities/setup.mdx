@@ -205,7 +205,13 @@ Microsoft Azureコンソールで"権限"の欄で以下のAPIを有効にしま
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-注: "Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合に必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
+<Note>
+"Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合にのみ必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
+</Note>
+
+<Note>
+ワークフローアクションを使用してカレンダーイベントを作成する場合は、"Calendars.ReadWrite" が必須です。 カレンダーイベントを同期するだけの場合は、"Calendars.Read" を使用してください。
+</Note>
 
 ### 認証されたリダイレクトURI
 
