@@ -8,6 +8,7 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -133,7 +134,12 @@ export class WorkflowVersionStepUpdateWorkspaceService {
         step: {
           ...builtStep,
           id: existingStep.id,
-          nextStepIds: existingStep.nextStepIds,
+          // An If/Else routes through its branches, so it must not carry a top-level
+          // nextStepIds. Keeping the previous step's would leave a reference the executor
+          // never follows and that dangles when steps are later deleted.
+          nextStepIds: isWorkflowIfElseAction(builtStep)
+            ? []
+            : existingStep.nextStepIds,
           position: existingStep.position,
         },
         workspaceId,
