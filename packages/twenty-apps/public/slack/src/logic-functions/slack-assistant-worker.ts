@@ -18,11 +18,12 @@ import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-sla
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
-import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
+import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { clearSlackAssistantThinkingReaction } from 'src/logic-functions/utils/clear-slack-assistant-thinking-reaction';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
+import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { runSlackAssistantAgentWithProgress } from 'src/logic-functions/utils/run-slack-assistant-agent-with-progress';
@@ -111,14 +112,20 @@ export const slackAssistantWorkerHandler = async (
   };
 
   try {
-    const { conversationContext, requesterName } =
-      await fetchSlackAssistantContext({
-        slackChannelId,
-        parentMessageTimestamp,
-        isDirectMessage,
-        slackUserId: record.slackUserId,
-        excludeMessageTimestamps: [slackMessageTimestamp, placeholderTimestamp],
-      });
+    const [{ conversationContext, requesterName }, workspaceBaseUrl] =
+      await Promise.all([
+        fetchSlackAssistantContext({
+          slackChannelId,
+          parentMessageTimestamp,
+          isDirectMessage,
+          slackUserId: record.slackUserId,
+          excludeMessageTimestamps: [
+            slackMessageTimestamp,
+            placeholderTimestamp,
+          ],
+        }),
+        fetchWorkspaceBaseUrl(),
+      ]);
 
     const agentResult = await runSlackAssistantAgentWithProgress({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
@@ -127,6 +134,7 @@ export const slackAssistantWorkerHandler = async (
         requesterName,
         conversationContext,
         timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
+        workspaceBaseUrl,
       }),
       slackChannelId,
       placeholderTimestamp,
@@ -148,14 +156,16 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
+    const durationMilliseconds = Date.now() - startedAt;
+
     const updateResult = await slackUpdateMessageHandler({
       slackChannelId,
       messageTimestamp: placeholderTimestamp,
-      newMessageText: buildSlackAssistantAnswerText({
+      newMessageText: responseText,
+      messageBlocks: buildSlackAssistantAnswerBlocks({
         responseText,
-        durationMilliseconds: Date.now() - startedAt,
+        durationMilliseconds,
       }),
-      messageFormat: 'markdown',
     });
 
     if (!updateResult.success) {
