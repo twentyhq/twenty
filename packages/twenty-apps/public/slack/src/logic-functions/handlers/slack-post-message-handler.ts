@@ -2,6 +2,7 @@ import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { isSlackMarkdownFormatError } from 'src/logic-functions/utils/is-slack-markdown-format-error';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
 export const slackPostMessageHandler = async (
@@ -21,10 +22,12 @@ export const slackPostMessageHandler = async (
 
   const parentTimestamp = parameters.parentMessageTimestamp;
 
-  try {
+  const postWithFormat = async (
+    messageFormat: SlackPostMessageInput['messageFormat'],
+  ): Promise<SlackToolResult> => {
     const bodyFields = getSlackChatMessageBodyFields(
       parameters.messageText,
-      parameters.messageFormat,
+      messageFormat,
     );
 
     const data = await client.chat.postMessage({
@@ -44,6 +47,21 @@ export const slackPostMessageHandler = async (
       slackTs: data.ts,
       channel: data.channel,
     };
+  };
+
+  try {
+    return await postWithFormat(parameters.messageFormat);
+  } catch (error) {
+    if (
+      parameters.messageFormat !== 'markdown' ||
+      !isSlackMarkdownFormatError(error)
+    ) {
+      return slackToolFailure('Failed to post Slack message', error);
+    }
+  }
+
+  try {
+    return await postWithFormat('plain');
   } catch (error) {
     return slackToolFailure('Failed to post Slack message', error);
   }
