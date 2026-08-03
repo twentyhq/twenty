@@ -10,6 +10,8 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -35,6 +37,7 @@ export class MessagingWebhookSubscriptionService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async createSubscription(
@@ -92,10 +95,22 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreated,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
     } catch (error) {
       await this.messageChannelRepository.update(messageChannel.id, {
         webhookSubscriptionClientState: clientState,
         webhookSubscriptionExpiresAt: null,
+      });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreationFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
       await this.handleDriverException({
@@ -192,7 +207,19 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionRenewed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
     } catch (error) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionRenewalFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
+
       await this.handleDriverException({
         exception: error,
         operation: 'RENEW',
@@ -232,6 +259,12 @@ export class MessagingWebhookSubscriptionService {
 
     try {
       await driver.deleteSubscription(this.toContext(messageChannel));
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeleted,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
     } catch (error) {
       if (
         error instanceof WebhookSubscriptionDriverException &&
@@ -239,6 +272,12 @@ export class MessagingWebhookSubscriptionService {
       ) {
         return;
       }
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeletionFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
 
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: messageChannel.workspaceId },
@@ -338,6 +377,13 @@ export class MessagingWebhookSubscriptionService {
     this.logger.warn(
       `Stopped watching message channel ${messageChannelId}: ${exception.message}`,
     );
+  }
+
+  private buildMetricAttributes(provider: string) {
+    return {
+      channel_type: WebhookSubscriptionChannelType.MESSAGING,
+      provider,
+    };
   }
 
   private toContext(

@@ -39,6 +39,11 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('tailored to their business');
+    expect(result).toContain('Do not greet them again');
+    expect(result).toContain('what you already know about their company');
+    expect(result).toContain('When their job title is in your user context');
+    expect(result).toContain('when it is missing, do not guess it');
+    expect(result).toContain('what they want to use Twenty for');
     expect(result).not.toContain('You do not know what this company does yet');
   });
 
@@ -49,6 +54,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('required ask_questions call');
+    expect(result).toContain('A written question does not count');
     expect(result).toContain('needs no skill and no learn_tools step');
     expect(result).toContain(
       'do not call load_skills, learn_tools, execute_tool, or web search',
@@ -69,6 +75,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('create_many_object_metadata');
     expect(result).toContain('create_many_field_metadata');
     expect(result).toContain('create_many_relation_fields');
+    expect(result).toContain('never set isNullable false');
   });
 
   it('should state that no company information is available when the enrichment is null', () => {
@@ -106,6 +113,7 @@ describe('buildWorkspaceSetupPromptText', () => {
       });
 
       expect(result).toContain('invisible');
+      expect(result).toContain('follow these rules silently');
       expect(result).not.toContain('already loaded');
     },
   );
@@ -121,20 +129,155 @@ describe('buildWorkspaceSetupPromptText', () => {
       'The turn is unfinished until you call ask_questions asking whether to go ahead and build it',
     );
     expect(result).toContain(
-      'End this reply with the ask_questions call asking whether to build the proposed data model.',
+      'the general guidance about skipping questions with obvious defaults does not apply',
     );
   });
 
-  it('should require making the created fields visible in the views', () => {
+  it('should not instruct any view work since new fields are visible by default', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
     });
 
-    expect(result).toContain('view-building');
-    expect(result).toContain('get_view_fields');
-    expect(result).toContain('update_many_view_fields with isVisible true');
-    expect(result).toContain('create_many_view_fields');
+    expect(result).toContain('New fields land visible on their object');
+    expect(result).not.toContain('view-building');
+    expect(result).not.toContain('get_view_fields');
+    expect(result).not.toContain('create_many_view_fields');
+    expect(result).not.toContain('update_many_view_fields');
+  });
+
+  it.each([
+    ['a full enrichment', companyEnrichment],
+    ['a null enrichment', null],
+  ])(
+    'should introduce the agent and the walkthrough when %s is provided',
+    (_label, enrichment) => {
+      const result = buildWorkspaceSetupPromptText({
+        companyEnrichment: enrichment,
+        locale: 'en',
+      });
+
+      expect(result).toContain(
+        'you are an AI agent who will walk them through Twenty',
+      );
+    },
+  );
+
+  it('should teach each capability where it comes up', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('one plain sentence');
+    expect(result).toContain('before proposing anything that uses it');
+    expect(result).toContain('fully customizable');
+    expect(result).toContain('Settings > Data model');
+    expect(result).toContain('sidebar under Workflows');
+    expect(result).toContain('sidebar under Dashboards');
+  });
+
+  it('should require a title per reply and chips for objects', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('Open each reply with a short plain title');
+    expect(result).toContain('title each new step');
+    expect(result).toContain('Write objects as chips');
+  });
+
+  it('should never re-ask for something the user already approved', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('ask_questions is for new decisions');
+    expect(result).toContain('Load a skill before proposing what it builds');
+  });
+
+  it('should keep ask_questions options within the single-recommended limit', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('at most one of them marked recommended');
+  });
+
+  it('should anchor the proposal on admission tests instead of numeric bands', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('filter, sort, or report on it');
+    expect(result).toContain('own lifecycle');
+    expect(result).toContain('not a demo');
+    expect(result).not.toContain('2 to 4 custom objects');
+    expect(result).not.toContain('3 to 6 key fields');
+    expect(result).not.toContain('under 250 words');
+  });
+
+  it('should propose tailored workflows built with the workflow tools', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('workflow-building');
+    expect(result).toContain('create_complete_workflow');
+    expect(result).toContain('validate_workflow');
+  });
+
+  it('should let the agent choose what to propose instead of following a script', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('Nothing after that is a fixed sequence');
+    expect(result).toContain('which single capability to propose next');
+    expect(result).toContain('Name the thing in their business it improves');
+  });
+
+  it('should never close without naming the capabilities it did not build', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain(
+      'never close while they are still unaware of the rest',
+    );
+    expect(result).toContain('offer to set one up');
+    expect(result).toContain('Build only what they accept');
+  });
+
+  it('should propose a dashboard built with the dashboard tools', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('dashboard-building');
+    expect(result).toContain('create_complete_dashboard');
+    expect(result).toContain('widgetErrors');
+  });
+
+  it('should propose roles and build them with the role tools', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('roles skill');
+    expect(result).toContain('list_roles');
+    expect(result).toContain('Settings > Members > Roles');
+    expect(result).not.toContain('You cannot configure roles from this chat');
+    expect(result).not.toContain('navigate_app');
   });
 
   it('should require English names with labels in the user language', () => {
