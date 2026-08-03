@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/utils/__tests__/parse-google-webhook-subscription-error.util.spec.ts
+  s_a797c2297db2c8::t_8b34118710e1d0 48,50-69
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/utils/__tests__/parse-microsoft-webhook-subscription-error.util.spec.ts
+  s_a797c2297db2c8::t_c63ab7760dc609 87-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "f3613b1d2d36099124ff2c52037bca30ab3f108f",
+  "prompts": {},
+  "sessions": {
+    "s_a797c2297db2c8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c113cdd-b2a2-4d5e-ac2e-06fb6e384d14",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
