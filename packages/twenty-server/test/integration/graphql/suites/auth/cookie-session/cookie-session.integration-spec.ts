@@ -227,7 +227,9 @@ describe('Cookie sessions (integration)', () => {
         (graphQLError: { extensions?: { code?: string } }) =>
           graphQLError.extensions?.code,
       ),
-    ).toEqual(expect.arrayContaining([expect.stringMatching(/UNAUTHENTICATED/)]));
+    ).toEqual(
+      expect.arrayContaining([expect.stringMatching(/UNAUTHENTICATED/)]),
+    );
   });
 
   it('should answer a revoked cookie with an auth error rather than a schema error', async () => {
