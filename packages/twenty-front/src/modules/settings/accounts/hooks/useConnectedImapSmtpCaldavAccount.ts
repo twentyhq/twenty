@@ -15,6 +15,7 @@ export const useConnectedImapSmtpCaldavAccount = (
     {
       variables: { id: connectedAccountId ?? '' },
       skip: !connectedAccountId,
+      fetchPolicy: 'cache-and-network',
     },
   );
 

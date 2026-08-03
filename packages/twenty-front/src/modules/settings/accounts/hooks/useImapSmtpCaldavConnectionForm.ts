@@ -10,6 +10,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import {
   type ConnectionParametersInput,
   EmailConnectionSecurity,
+  GetConnectedImapSmtpCaldavAccountDocument,
   SaveImapSmtpCaldavAccountDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -111,6 +112,9 @@ export const useImapSmtpCaldavConnectionForm = ({
 
   const [saveConnection, { loading: saveLoading }] = useMutation(
     SaveImapSmtpCaldavAccountDocument,
+    {
+      refetchQueries: [GetConnectedImapSmtpCaldavAccountDocument],
+    },
   );
 
   const watchedValues = watch();
