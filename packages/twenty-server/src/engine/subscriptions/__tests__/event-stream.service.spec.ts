@@ -184,4 +184,79 @@ describe('EventStreamService', () => {
       [ACTIVE_STREAM_EXPIRATION_MEMBER, `${WORKSPACE_ID}:stale-stream-id`],
     );
   });
+  describe('isAuthorized', () => {
+    const USER_WORKSPACE_ID = 'user-workspace-id';
+    const APPLICATION_ID = 'application-id';
+
+    const check = (
+      callerAuthContext: Record<string, string>,
+      streamAuthContext: Record<string, string>,
+    ) =>
+      service.isAuthorized({
+        streamData: { authContext: streamAuthContext } as never,
+        authContext: callerAuthContext as never,
+      });
+
+    it('authorizes the same user on a stream carrying no application', async () => {
+      await expect(
+        check(
+          { userWorkspaceId: USER_WORKSPACE_ID },
+          { userWorkspaceId: USER_WORKSPACE_ID },
+        ),
+      ).resolves.toBe(true);
+    });
+
+    it('authorizes the same user carrying the same application', async () => {
+      await expect(
+        check(
+          { userWorkspaceId: USER_WORKSPACE_ID, applicationId: APPLICATION_ID },
+          { userWorkspaceId: USER_WORKSPACE_ID, applicationId: APPLICATION_ID },
+        ),
+      ).resolves.toBe(true);
+    });
+
+    // Taking the stream over recreates it with the caller's context, so
+    // dropping the application here would drop the bound it puts on events.
+    it('denies the same user when the application is dropped', async () => {
+      await expect(
+        check(
+          { userWorkspaceId: USER_WORKSPACE_ID },
+          { userWorkspaceId: USER_WORKSPACE_ID, applicationId: APPLICATION_ID },
+        ),
+      ).resolves.toBe(false);
+    });
+
+    it('denies the same user carrying a different application', async () => {
+      await expect(
+        check(
+          {
+            userWorkspaceId: USER_WORKSPACE_ID,
+            applicationId: 'other-application-id',
+          },
+          { userWorkspaceId: USER_WORKSPACE_ID, applicationId: APPLICATION_ID },
+        ),
+      ).resolves.toBe(false);
+    });
+
+    it('denies a different user', async () => {
+      await expect(
+        check(
+          { userWorkspaceId: 'other-user-workspace-id' },
+          { userWorkspaceId: USER_WORKSPACE_ID },
+        ),
+      ).resolves.toBe(false);
+    });
+
+    it('authorizes the same api key', async () => {
+      await expect(
+        check({ apiKeyId: 'api-key-id' }, { apiKeyId: 'api-key-id' }),
+      ).resolves.toBe(true);
+    });
+
+    it('denies a request carrying no principal', async () => {
+      await expect(
+        check({}, { userWorkspaceId: USER_WORKSPACE_ID }),
+      ).resolves.toBe(false);
+    });
+  });
 });
