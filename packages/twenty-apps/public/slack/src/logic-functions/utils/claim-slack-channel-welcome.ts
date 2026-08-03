@@ -1,16 +1,15 @@
 import { isNumber } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
-export type SlackChannelWelcome = {
-  expiresAt: number;
-};
+import { type SlackChannelWelcome } from 'src/logic-functions/types/slack-channel-welcome.type';
+import { getSlackChannelWelcomeKvKey } from 'src/logic-functions/utils/get-slack-channel-welcome-kv-key';
 
 const SLACK_CHANNEL_WELCOME_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const claimSlackChannelWelcome = async (
   channelId: string,
 ): Promise<boolean> => {
-  const key = `slack-channel-welcome:${channelId}`;
+  const key = getSlackChannelWelcomeKvKey(channelId);
   const existingWelcome = await kv.get<SlackChannelWelcome>(key);
 
   if (
