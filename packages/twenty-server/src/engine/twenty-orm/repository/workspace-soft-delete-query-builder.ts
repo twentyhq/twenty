@@ -112,9 +112,11 @@ export class WorkspaceSoftDeleteQueryBuilder<
 
       const typeORMSoftRemoveResultWithOnlyIdColumn = await super.execute();
 
-      const afterWithAllFields = await beforeEventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      const afterWithAllFields = await beforeEventSelectQueryBuilder
+        .withDeleted()
+        .getMany({
+          noFormatting: true,
+        });
 
       const formattedAfter = formatResult<T[]>(
         afterWithAllFields,
