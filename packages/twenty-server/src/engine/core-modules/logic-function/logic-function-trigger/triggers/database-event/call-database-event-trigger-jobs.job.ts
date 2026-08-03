@@ -9,6 +9,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
   LogicFunctionTriggerJob,
@@ -93,11 +94,19 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
-        applicationId,
-        applicationRegistrationId,
-        jobCount: logicFunctionPayloads.length,
-      });
+      try {
+        await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+          applicationId,
+          applicationRegistrationId,
+          jobCount: logicFunctionPayloads.length,
+        });
+      } catch (error) {
+        if (error instanceof ThrottlerException) {
+          continue;
+        }
+
+        throw error;
+      }
 
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
