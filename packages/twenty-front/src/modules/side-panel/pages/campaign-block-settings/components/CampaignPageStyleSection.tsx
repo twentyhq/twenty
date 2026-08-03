@@ -7,16 +7,16 @@ import {
   isDefined,
   resolveCanvasTheme,
 } from 'twenty-shared/utils';
-import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { CampaignBlockSettingsFieldInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
 import {
   CampaignBoxSidesInput,
   type CssBoxSides,
 } from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
-import { CampaignColorInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignColorInput';
-import { CampaignSizeInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignSizeInput';
-import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
+import { CAMPAIGN_BODY_THEME_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignBodyThemeFields';
+import { CAMPAIGN_PAGE_THEME_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignPageThemeFields';
+import { type CampaignThemeField } from '@/side-panel/pages/campaign-block-settings/types/CampaignThemeField';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -32,36 +32,6 @@ const StyledGroupTitle = styled.div`
 
   &:not(:first-child) {
     margin-top: ${themeCssVariables.spacing[3]};
-  }
-`;
-
-const StyledAlignRow = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledAlignButton = styled.button<{ isActive: boolean }>`
-  align-items: center;
-  background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.medium : 'none'};
-  border: 1px solid
-    ${({ isActive }) =>
-      isActive ? themeCssVariables.border.color.strong : 'transparent'};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  height: 28px;
-  justify-content: center;
-  padding: 0;
-  width: 32px;
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -93,22 +63,18 @@ const sidesToThemeBoxValue = ({ top, right, bottom, left }: CssBoxSides) =>
     ? top
     : `${top} ${right} ${bottom} ${left}`;
 
-const BODY_ALIGN_OPTIONS = [
-  { align: 'left', Icon: IconAlignLeft },
-  { align: 'center', Icon: IconAlignCenter },
-  { align: 'right', Icon: IconAlignRight },
-] as const;
-
 type CampaignPageStyleSectionProps = {
   editor: Editor;
 };
 
 // The panel's default state, mirroring Resend's "Page style": the page
-// behind the email, then the email body itself.
+// behind the email, then the email body itself. Both groups render through
+// the same field inputs as a selected block, so a control added for one
+// surface is available to the other.
 export const CampaignPageStyleSection = ({
   editor,
 }: CampaignPageStyleSectionProps) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
   const canvasTheme = useEditorState({
     editor,
@@ -137,82 +103,38 @@ export const CampaignPageStyleSection = ({
       .run();
   };
 
+  const renderThemeField = (field: CampaignThemeField) => {
+    if (field.input === 'box') {
+      return (
+        <CampaignBoxSidesInput
+          key={field.property}
+          label={i18n._(field.label)}
+          sides={themeBoxValueToSides(canvasTheme[field.property])}
+          onChange={(sides) =>
+            setThemeValue(field.property, sidesToThemeBoxValue(sides))
+          }
+          placeholder={field.placeholder}
+        />
+      );
+    }
+
+    return (
+      <CampaignBlockSettingsFieldInput
+        key={field.property}
+        field={field}
+        value={canvasTheme[field.property]}
+        onChange={(value) => setThemeValue(field.property, value)}
+      />
+    );
+  };
+
   return (
     <StyledContainer>
       <StyledGroupTitle>{t`Page style`}</StyledGroupTitle>
-      <CampaignColorInput
-        label={t`Background`}
-        value={canvasTheme.pageBackground}
-        onChange={(value) => setThemeValue('pageBackground', value)}
-      />
-      <CampaignBoxSidesInput
-        label={t`Padding`}
-        sides={themeBoxValueToSides(canvasTheme.pagePadding)}
-        onChange={(sides) =>
-          setThemeValue('pagePadding', sidesToThemeBoxValue(sides))
-        }
-        placeholder="24"
-      />
+      {CAMPAIGN_PAGE_THEME_FIELDS.map(renderThemeField)}
 
       <StyledGroupTitle>{t`Body`}</StyledGroupTitle>
-      <div>
-        <StyledCampaignFieldLabel>{t`Alignment`}</StyledCampaignFieldLabel>
-        <StyledAlignRow>
-          {BODY_ALIGN_OPTIONS.map(({ align, Icon }) => (
-            <StyledAlignButton
-              key={align}
-              type="button"
-              isActive={canvasTheme.textAlign === align}
-              onClick={() => setThemeValue('textAlign', align)}
-            >
-              <Icon size={16} />
-            </StyledAlignButton>
-          ))}
-        </StyledAlignRow>
-      </div>
-      <CampaignColorInput
-        label={t`Text`}
-        value={canvasTheme.textColor}
-        onChange={(value) => setThemeValue('textColor', value)}
-      />
-      <CampaignColorInput
-        label={t`Background`}
-        value={canvasTheme.bodyBackground}
-        onChange={(value) => setThemeValue('bodyBackground', value)}
-      />
-      <CampaignSizeInput
-        label={t`Width`}
-        value={canvasTheme.width}
-        onChange={(value) => setThemeValue('width', value)}
-        placeholder="600"
-      />
-      <CampaignBoxSidesInput
-        label={t`Padding`}
-        sides={themeBoxValueToSides(canvasTheme.padding)}
-        onChange={(sides) =>
-          setThemeValue('padding', sidesToThemeBoxValue(sides))
-        }
-        placeholder="24"
-      />
-      <CampaignBoxSidesInput
-        label={t`Corner radius`}
-        sides={themeBoxValueToSides(canvasTheme.cornerRadius)}
-        onChange={(sides) =>
-          setThemeValue('cornerRadius', sidesToThemeBoxValue(sides))
-        }
-        placeholder="8"
-      />
-      <CampaignSizeInput
-        label={t`Border`}
-        value={canvasTheme.borderWidth}
-        onChange={(value) => setThemeValue('borderWidth', value)}
-        placeholder="0"
-      />
-      <CampaignColorInput
-        label={t`Border color`}
-        value={canvasTheme.borderColor}
-        onChange={(value) => setThemeValue('borderColor', value)}
-      />
+      {CAMPAIGN_BODY_THEME_FIELDS.map(renderThemeField)}
     </StyledContainer>
   );
 };

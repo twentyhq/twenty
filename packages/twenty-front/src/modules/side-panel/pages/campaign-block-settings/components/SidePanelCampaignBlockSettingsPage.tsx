@@ -2,7 +2,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  resolveCanvasTheme,
+  TIPTAP_NODE_TYPES,
+} from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -18,6 +22,7 @@ import {
 import { CampaignPageStyleSection } from '@/side-panel/pages/campaign-block-settings/components/CampaignPageStyleSection';
 import { CAMPAIGN_BLOCK_SETTINGS_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignBlockSettingsFields';
 import { getCampaignBlockLabel } from '@/side-panel/pages/campaign-block-settings/utils/getCampaignBlockLabel';
+import { getEffectiveSectionStyleValue } from '@/side-panel/pages/campaign-block-settings/utils/getEffectiveSectionStyleValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -81,6 +86,16 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
 
   const fields = CAMPAIGN_BLOCK_SETTINGS_FIELDS[target.nodeType] ?? [];
   const styles = getBlockStyle(target.attrs.style);
+  const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
+
+  // A section inherits from the body until it overrides, so show what is
+  // actually in effect instead of an empty field. Values are only written
+  // when edited, which keeps the section inheriting.
+  const displayedStyleValue = (property: string) =>
+    styles[property] ??
+    (target.nodeType === TIPTAP_NODE_TYPES.SECTION
+      ? getEffectiveSectionStyleValue(property, canvasTheme)
+      : '');
 
   const updateTargetAttributes = (attrs: Record<string, unknown>) => {
     editor
@@ -199,10 +214,10 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
               key={key}
               label={i18n._(field.label)}
               sides={{
-                top: styles[sideProperties[0]] ?? '',
-                right: styles[sideProperties[1]] ?? '',
-                bottom: styles[sideProperties[2]] ?? '',
-                left: styles[sideProperties[3]] ?? '',
+                top: displayedStyleValue(sideProperties[0]),
+                right: displayedStyleValue(sideProperties[1]),
+                bottom: displayedStyleValue(sideProperties[2]),
+                left: displayedStyleValue(sideProperties[3]),
               }}
               onChange={(sides) => handleBoxFieldChange(sideProperties, sides)}
               placeholder={field.placeholder}
@@ -217,7 +232,7 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
             value={
               field.kind === 'attribute'
                 ? String(target.attrs[field.property] ?? '')
-                : (styles[field.property] ?? '')
+                : displayedStyleValue(field.property)
             }
             onChange={(value) => handleFieldChange(field, value)}
           />

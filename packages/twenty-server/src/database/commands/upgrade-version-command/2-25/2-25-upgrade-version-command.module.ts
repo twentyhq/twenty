@@ -17,7 +17,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FieldMetadataEntity, ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([FieldMetadataEntity]),
     ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceMigrationModule,
