@@ -4,19 +4,8 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { GOOGLE_PERMANENT_OAUTH_ERROR_CODES } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/constants/google-permanent-oauth-error-codes.constant';
 import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
-
-/**
- * @see https://developers.google.com/identity/protocols/oauth2/web-server#authorization-errors
- */
-const PERMANENT_OAUTH_ERROR_CODES = new Set([
-  'invalid_grant',
-  'invalid_client',
-  'unauthorized_client',
-  'unsupported_grant_type',
-  'invalid_scope',
-  'admin_policy_enforced',
-]);
 
 export const parseGoogleOAuthError = (
   error: unknown,
@@ -39,7 +28,7 @@ export const parseGoogleOAuthError = (
       'Unknown error',
   };
 
-  if (PERMANENT_OAUTH_ERROR_CODES.has(googleOAuthError.reason)) {
+  if (GOOGLE_PERMANENT_OAUTH_ERROR_CODES.has(googleOAuthError.reason)) {
     return new ConnectedAccountRefreshAccessTokenException(
       `Google auth error: ${googleOAuthError.reason} - ${googleOAuthError.message}`,
       ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,

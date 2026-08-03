@@ -4,16 +4,7 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
-
-/**
- * @see https://learn.microsoft.com/en-us/entra/identity-platform/reference-error-codes
- */
-const PERMANENT_AUTH_ERROR_CODES = new Set([
-  'invalid_grant',
-  'invalid_client',
-  'unauthorized_client',
-  'invalid_request',
-]);
+import { MICROSOFT_PERMANENT_AUTH_ERROR_CODES } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/constants/microsoft-permanent-auth-error-codes.constant';
 
 export const parseMsalError = (
   error: unknown,
@@ -27,7 +18,7 @@ export const parseMsalError = (
 
   if (
     error instanceof AuthError &&
-    PERMANENT_AUTH_ERROR_CODES.has(error.errorCode)
+    MICROSOFT_PERMANENT_AUTH_ERROR_CODES.has(error.errorCode)
   ) {
     return new ConnectedAccountRefreshAccessTokenException(
       `Microsoft auth error: ${error.errorCode} - ${error.errorMessage}`,
