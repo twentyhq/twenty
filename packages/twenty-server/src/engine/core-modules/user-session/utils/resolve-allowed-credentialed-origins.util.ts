@@ -20,8 +20,7 @@ const toOrigin = (url: string): string | undefined => {
 };
 
 // URL canonicalises [::ffff:127.0.0.1] to [::ffff:7f00:1], so only the hex
-// spelling ever reaches here. The whole 127.0.0.0/8 block is loopback, not
-// just 127.0.0.1.
+// spelling reaches here. All of 127.0.0.0/8 is loopback.
 const IPV4_LOOPBACK_REGEX = /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 const IPV4_MAPPED_HEX_REGEX = /^::ffff:([0-9a-f]{1,4}):[0-9a-f]{1,4}$/;
 
@@ -54,9 +53,6 @@ const isLoopbackOrigin = (origin: string): boolean => {
   }
 };
 
-// Origins allowed to send credentialed (cookie) cross-origin requests:
-// the server itself, the configured frontend, and any explicitly
-// allowlisted split-origin deployments.
 export const resolveAllowedCredentialedOrigins = (
   twentyConfigService: TwentyConfigService,
 ): Set<string> => {
@@ -74,8 +70,7 @@ export const resolveAllowedCredentialedOrigins = (
 
   // SERVER_URL defaults to http://localhost:3000, so a deployment that never
   // set it would hand any local page on that port a credentialed origin.
-  // Explicit entries are still honoured, which keeps local development and
-  // split-origin dev setups working.
+  // Explicit entries are still honoured, so dev setups keep working.
   const isProduction =
     twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION;
 

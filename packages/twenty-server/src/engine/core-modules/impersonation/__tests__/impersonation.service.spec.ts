@@ -900,15 +900,12 @@ describe('ImpersonationService', () => {
       const result = await stopImpersonating();
 
       expect(result).toEqual({ canRestoreImpersonatorSession: true });
-      // The whole point: no credential is created out of a request
-      // authenticated as the impersonated user.
       expect(UserSessionCreateSessionMock).not.toHaveBeenCalled();
       expect(CookieAttachMock).toHaveBeenCalledWith(
         expect.anything(),
         'sess_impersonator',
         new Date('2026-07-01T00:00:00.000Z'),
       );
-      // The restored cookie must not then be cleared out from under itself.
       expect(CookieClearMock).not.toHaveBeenCalled();
       expect(CookieClearImpersonatorMock).toHaveBeenCalled();
     });

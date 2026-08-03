@@ -22,11 +22,9 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     }
 
     // TODO: Check if needed, remove otherwise.
-    // Only for a response the CORS middleware never reached. Filling any of
-    // these in on top of what it already set makes the two layers disagree:
-    // overwriting a reflected origin with the wildcard, in particular, makes
-    // the browser reject the response of a credentialed request that hit an
-    // exception, so the client sees a CORS error instead of the API error.
+    // Only for a response the CORS middleware never reached. Overwriting a
+    // reflected origin with the wildcard would make the browser reject a
+    // credentialed request that hit an exception, hiding the real error.
     if (!response.getHeader('Access-Control-Allow-Origin')) {
       response.header('Access-Control-Allow-Origin', '*');
       response.header(

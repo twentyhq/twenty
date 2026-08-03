@@ -69,20 +69,17 @@ const bootstrap = async () => {
   const allowedCredentialedOrigins =
     resolveAllowedCredentialedOrigins(twentyConfigService);
 
-  // The cors package only emits Vary: Origin when it reflects an origin, so
-  // the wildcard and reflected responses below would share a cache entry and
-  // an allowlisted credentialed request could be served the wildcard, which
-  // browsers refuse to combine with credentials.
+  // The cors package only emits Vary: Origin when it reflects one, so wildcard
+  // and reflected responses would share a cache entry and a credentialed
+  // request could be served the wildcard, which browsers reject.
   app.use((_request: Request, response: Response, next: NextFunction) => {
     response.vary('Origin');
     next();
   });
 
   app.enableCors({
-    // Allowlisted origins get their origin reflected so browsers accept
-    // credentialed (cookie) requests; every other origin keeps the previous
-    // public wildcard behavior, which browsers refuse to combine with
-    // credentials.
+    // Allowlisted origins are reflected so browsers accept cookies; the rest
+    // keep the public wildcard, which browsers refuse with credentials.
     origin: (
       origin: string | undefined,
       callback: (error: Error | null, allow?: boolean | string) => void,

@@ -15,8 +15,6 @@ const toComparableOrigin = (value: string): string | undefined => {
   }
 };
 
-// Whether a browser at this origin may hold a session cookie for this server:
-// the origin the request arrived on, plus the configured credentialed ones.
 export const isRequestOriginAllowed = ({
   origin,
   request,
@@ -28,11 +26,9 @@ export const isRequestOriginAllowed = ({
 }): boolean => {
   const normalizedOrigin = origin.toLowerCase();
 
-  // Same shared helper the discovery controllers use, so the origin this
-  // request arrived on is derived one way (and honors `trust proxy`).
   // Compared through URL rather than as strings: browsers omit :443 and :80
-  // from Origin while Host keeps whatever port the client spelled out, so a
-  // genuine same-origin POST would otherwise 403 on the port alone.
+  // from Origin while Host keeps whatever port the client spelled, so a genuine
+  // same-origin POST would otherwise 403 on the port alone.
   const comparableOrigin = toComparableOrigin(normalizedOrigin);
   const comparableRequestOrigin = toComparableOrigin(
     getRequestBaseUrl(request),

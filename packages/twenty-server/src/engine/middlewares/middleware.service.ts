@@ -136,18 +136,16 @@ export class MiddlewareService {
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
-  // A dead session cookie must not brick the client. Unlike a stale token in
-  // localStorage, the browser cannot drop an httpOnly cookie itself, so
-  // failing every request would also block the sign-in that would replace it.
+  // The browser cannot drop an httpOnly cookie itself, so failing every request
+  // would also block the sign-in that would replace it.
   private clearDeadSessionCookieOrThrow(request: Request, error: unknown) {
     const isCookieAuthenticated = !isNonEmptyString(
       this.jwtWrapperService.extractJwtFromRequest()(request),
     );
 
-    // Any credential the auth pipeline refuses is dead as far as the browser
-    // is concerned: a user removed from the workspace fails with
-    // USER_WORKSPACE_NOT_FOUND rather than UNAUTHENTICATED and would
-    // otherwise be locked out of signing in again on that host.
+    // Any credential the pipeline refuses is dead to the browser: a user
+    // removed from the workspace fails with USER_WORKSPACE_NOT_FOUND, not
+    // UNAUTHENTICATED, and would be locked out of signing in on that host.
     const isDeadCredential =
       error instanceof AuthException &&
       DEAD_SESSION_COOKIE_EXCEPTION_CODES.has(error.code);

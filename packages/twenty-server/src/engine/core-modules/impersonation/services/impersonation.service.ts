@@ -97,13 +97,10 @@ export class ImpersonationService {
     );
   }
 
-  // Ends a cookie-mode impersonation: revokes the impersonation session and
-  // hands the impersonator back the session they held before it started,
-  // which was parked in a second cookie rather than revoked. Nothing is
-  // minted here, so no credential is ever created on the strength of the
-  // impersonated user's cookie. Cross-workspace impersonation runs on a
-  // different host, where a host-scoped cookie is simply absent, so it falls
-  // through to the sign-out path with no special case.
+  // Hands the impersonator back the session parked when impersonation started.
+  // Nothing is minted, so no credential is created on the strength of the
+  // impersonated user's cookie. Cross-workspace impersonation runs on another
+  // host where the cookie is simply absent, and falls through to sign-out.
   async stopImpersonation({
     impersonationContext,
     workspaceId,
@@ -158,8 +155,6 @@ export class ImpersonationService {
       return { canRestoreImpersonatorSession: false };
     }
 
-    // The looked-up row rather than the raw context value: it is the same id,
-    // already proven to exist, and definitely a string.
     const canRestoreImpersonatorSession = await this.restoreImpersonatorSession(
       request,
       impersonatorUserWorkspace.id,
@@ -174,12 +169,9 @@ export class ImpersonationService {
     return { canRestoreImpersonatorSession };
   }
 
-  // Promotes the parked impersonator session back to the active session
-  // cookie. The parked token is evidence of nothing on its own, so it is
-  // re-resolved and checked against the impersonator the impersonation
-  // session names. Any failure returns false and the caller signs the browser
-  // out, which is the same place the non-cookie flow lands when it has no
-  // stashed session to restore.
+  // The parked token is evidence of nothing on its own, so it is re-resolved
+  // and checked against the impersonator the impersonation session names. Any
+  // failure returns false and the caller signs the browser out.
   private async restoreImpersonatorSession(
     request: Request,
     impersonatorUserWorkspaceId: string,
@@ -200,14 +192,11 @@ export class ImpersonationService {
     }
 
     try {
-      // Fails closed on a session revoked, expired or idled out while the
-      // impersonation was running.
       const { payload, expiresAt } =
         await this.userSessionService.resolveSession(impersonatorSessionToken);
 
       // Restoring into another impersonation would chain them, and a session
-      // belonging to anyone but the impersonator named by the impersonation
-      // session is not theirs to restore, however the cookie got there.
+      // belonging to anyone else is not theirs to restore.
       if (
         payload.type !== JwtTokenTypeEnum.ACCESS ||
         payload.isImpersonating === true ||

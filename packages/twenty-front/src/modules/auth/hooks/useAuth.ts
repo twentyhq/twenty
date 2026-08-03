@@ -133,8 +133,7 @@ export const useAuth = () => {
   const handleSetAuthTokens = useCallback(
     (tokens: AuthTokenPair) => {
       setTokenPair(tokens);
-      // A fresh authentication supersedes any un-acknowledged sign-out:
-      // without this, the boot retry would revoke the new session.
+      // Without this, the boot retry would revoke the session just created.
       store.set(isPendingServerSignOutState.atom, false);
     },
     [setTokenPair, store],
@@ -453,11 +452,10 @@ export const useAuth = () => {
   );
 
   const handleSignOut = useCallback(async () => {
-    // Server-side revocation must run before clearSession: it needs the
-    // refresh token and the navigation there kills in-flight requests.
-    // Sign-out always completes locally even if the server is unreachable,
-    // but the pending marker makes the next boot retry the revocation
-    // instead of resurrecting the still-alive httpOnly session.
+    // Before clearSession: it needs the refresh token, and the navigation
+    // there kills in-flight requests.
+    // Sign-out completes locally even if the server is unreachable; the marker
+    // makes the next boot retry the revocation.
     store.set(isPendingServerSignOutState.atom, true);
 
     try {
@@ -467,9 +465,7 @@ export const useAuth = () => {
         },
       });
       store.set(isPendingServerSignOutState.atom, false);
-    } catch {
-      // Marker stays set; the boot effect finishes the revocation later.
-    }
+    } catch {}
 
     broadcastSignOutToOtherTabs();
     clearSession();

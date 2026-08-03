@@ -4,13 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 
-// Listing the workspaces a user belongs to is harmless and stays available
-// for the whole session, but converting that credential into workspace access
-// without re-authenticating is not: a workspace-agnostic session outlives a
-// sign-out performed on a workspace subdomain (the workspace cannot clear a
-// cookie it does not own), so it would otherwise hand the workspace back.
-// Workspace-scoped credentials are unaffected: signing out of a workspace
-// revokes them, so they cannot outlive the sign-out they would bypass.
+// A workspace-agnostic session outlives a sign-out performed on a workspace
+// subdomain, since the workspace cannot clear a cookie it does not own, so
+// converting it into workspace access would hand the workspace back. Listing
+// workspaces stays available. Workspace-scoped credentials are revoked by that
+// sign-out and so cannot outlive it.
 const DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS = ms(
   DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW,
 );
@@ -38,11 +36,10 @@ export const canCredentialAutoLoginIntoWorkspaces = ({
 
   const parsedWindowMs = ms(autoLoginWindow);
 
-  // ms() yields undefined for a duration it cannot parse, and a negative one
-  // parses into a window nothing can fall inside. Reading either as "always"
-  // would silently drop the boundary this check exists for, and as "never"
-  // would lock everyone out of workspace entry, so both fall back to the
-  // documented default. Zero is kept: it deliberately turns the bridge off.
+  // ms() yields undefined for an unparseable duration, and a negative one
+  // yields a window nothing falls inside. Either would silently drop the
+  // boundary or lock everyone out, so both fall back to the default. Zero is
+  // kept, since it deliberately turns the bridge off.
   const isUsableWindow =
     Number.isFinite(parsedWindowMs) && (parsedWindowMs as number) >= 0;
 

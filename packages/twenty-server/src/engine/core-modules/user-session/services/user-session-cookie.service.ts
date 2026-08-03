@@ -27,31 +27,25 @@ const isHttpsUrl = (url: string | undefined): boolean => {
 export class UserSessionCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  // Whether this deployment can set a Secure cookie at all, which is what
-  // decides between the __Host- prefixed name and the plain one.
   private isSecureDeployment(): boolean {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
     const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
 
-    // Parsed rather than prefix-matched: a SERVER_URL spelled HTTPS:// is
-    // https, and treating it as plain http would silently hand out a cookie
-    // without the __Host- prefix.
+    // Parsed rather than prefix-matched, so a SERVER_URL spelled HTTPS:// is
+    // not mistaken for http and handed a cookie without the __Host- prefix.
     // SameSite=None is rejected by browsers without Secure, so it forces it.
     return isHttpsUrl(serverUrl) || sameSite === 'none';
   }
 
-  // The kill switch lives here rather than at each call site: with it off,
-  // no cookie is read, written or cleared anywhere, and retiring the flag at
-  // cutover is one deletion instead of an audit of every consumer.
+  // The kill switch lives here rather than at each call site, so retiring it
+  // at cutover is one deletion instead of an audit of every consumer.
   private areCookieSessionsEnabled(): boolean {
     return this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED');
   }
 
-  // An https deployment never reads the plain cookie name, so an instance
-  // that enables TLS signs its users out once: the browsers still holding the
-  // old plain-named cookie get a fresh __Host- one on their next sign-in.
-  // That re-login is the deliberate price of the __Host- prefix, which is what
-  // stops a sibling subdomain from tossing a Domain-widened session cookie.
+  // An https deployment never reads the plain cookie name, so enabling TLS
+  // signs users out once. That re-login is the price of the __Host- prefix,
+  // which stops a sibling subdomain tossing a Domain-widened session cookie.
   extractSessionTokenFromRequest(request: Request): string | undefined {
     if (!this.areCookieSessionsEnabled()) {
       return undefined;
@@ -64,10 +58,8 @@ export class UserSessionCookieService {
     });
   }
 
-  // The impersonator's own session token, parked while they impersonate.
-  // Presence alone proves nothing: stopImpersonation re-resolves it and
-  // checks it belongs to the impersonator named by the impersonation
-  // session, so a tossed cookie cannot restore into someone else's account.
+  // Presence proves nothing: stopImpersonation re-resolves it and checks whose
+  // session it is, so a tossed cookie cannot restore into another account.
   extractImpersonatorSessionTokenFromRequest(
     request: Request,
   ): string | undefined {
@@ -120,10 +112,8 @@ export class UserSessionCookieService {
     });
   }
 
-  // Deliberately a session cookie with no expires: without cookie sessions the
-  // impersonator's credential is parked in sessionStorage, which dies with the
-  // tab, and outliving the browser would keep the restore path open longer
-  // than the mechanism it replaces.
+  // No expires, matching the sessionStorage parking it replaces: outliving the
+  // browser would keep the restore path open longer than the old mechanism.
   attachImpersonatorSessionTokenToResponse(
     response: Response,
     sessionToken: string,
@@ -152,9 +142,9 @@ export class UserSessionCookieService {
     response.clearCookie(USER_SESSION_IMPERSONATOR_COOKIE_NAME, options);
   }
 
-  // Looser than extractSessionTokenFromRequest on purpose: it answers "did the
-  // browser send us one of our cookies", including the legacy plain name an
-  // https deployment refuses to authenticate with but should still clear.
+  // Looser than extractSessionTokenFromRequest: it answers "did the browser
+  // send one of ours", including a legacy name we refuse to authenticate but
+  // should still clear.
   hasSessionCookie(request: Request): boolean {
     if (!this.areCookieSessionsEnabled()) {
       return false;
@@ -181,10 +171,8 @@ export class UserSessionCookieService {
 
     const { options } = this.resolveCookieSettings();
 
-    // Both names are cleared so an instance that switched from http to https
-    // drops the cookie it issued under the old name. On a plain-http instance
-    // the __Host- clear is inert, but so is the cookie: __Host- requires
-    // Secure and is never sent over http.
+    // Both names, so an instance that switched to https drops the cookie it
+    // issued under the old one. The __Host- clear is inert over plain http.
     response.clearCookie(USER_SESSION_SECURE_COOKIE_NAME, options);
     response.clearCookie(USER_SESSION_COOKIE_NAME, options);
   }

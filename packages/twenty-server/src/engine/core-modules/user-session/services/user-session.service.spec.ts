@@ -350,8 +350,6 @@ describe('UserSessionService', () => {
       );
     });
 
-    // The touch is throttled, so an idle timeout shorter than the throttle
-    // would expire a continuously active session between two touches.
     it('should touch lastActiveAt within an idle timeout shorter than the throttle', async () => {
       mockConfig.SESSION_IDLE_TIMEOUT = '1m';
 
@@ -469,8 +467,7 @@ describe('UserSessionService', () => {
         }),
       ).rejects.toThrow('Session not found');
 
-      // Without the userId in the filter, one user could revoke another's
-      // session by id, and a null-returning mock alone would not notice.
+      // Without userId in the filter, one user could revoke another's by id.
       expect(findOneBySpy).toHaveBeenCalledWith({ id: sessionId, userId });
     });
 
@@ -559,8 +556,6 @@ describe('UserSessionService', () => {
       ]);
     });
 
-    // The UPDATE carries the predicate itself, so a session created while it
-    // runs is revoked too rather than slipping through a stale id list.
     it('should scope the update to the user rather than to pre-read ids', async () => {
       const userId = randomUUID();
       const queryBuilder = mockRevokingQueryBuilder([
@@ -677,8 +672,6 @@ describe('UserSessionService', () => {
       ).toHaveBeenCalled();
     });
 
-    // A browser elsewhere must not be handed a session for an account it did
-    // not choose, whatever credentials the request managed to carry.
     it('should not set the cookie for a disallowed origin', async () => {
       mockAccessPayload();
 
@@ -752,8 +745,8 @@ describe('UserSessionService', () => {
     it('should not mint a new session on renewal when a valid one is presented', async () => {
       mockAccessPayload();
 
-      // Same scope as the renewed pair, otherwise the guard rejects it and
-      // the test would pass without ever reaching the reuse path.
+      // Same scope as the renewed pair, or the test never reaches the reuse
+      // path it means to exercise.
       const presentedSession = buildActiveSession({
         userId: 'user-id',
         workspaceId: 'workspace-id',

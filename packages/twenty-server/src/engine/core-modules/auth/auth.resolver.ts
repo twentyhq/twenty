@@ -939,9 +939,8 @@ export class AuthResolver {
     );
   }
 
-  // Transparent bridge of the cookie-session migration: every active legacy
-  // client renews within one access-token TTL, and receives a session cookie
-  // here without any interaction.
+  // Every active legacy client renews within one access-token TTL, so it picks
+  // up a session cookie here without any interaction.
   @Mutation(() => AuthTokens)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async renewToken(
@@ -961,10 +960,9 @@ export class AuthResolver {
     return { tokens: tokens };
   }
 
-  // Forgiving about which credentials are presented: an expired or malformed
-  // token is already unusable, so it is not an error. A failed revocation of
-  // a valid one is, and surfaces, because the credential still works; the
-  // cookie is cleared either way.
+  // An expired or malformed token is already unusable, so it is not an error.
+  // A failed revocation of a valid one is, and surfaces, because the credential
+  // still works. The cookie is cleared either way.
   @Mutation(() => Boolean)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async signOut(
@@ -980,15 +978,9 @@ export class AuthResolver {
         refreshToken,
       });
     } finally {
-      // A failed revocation still clears the cookie: leaving the browser
-      // holding a credential it believes is gone is the worse outcome, and
-      // the failure itself still surfaces to the caller.
-      //
-      // Only for a request that actually carried one, though. This mutation is
-      // public and SameSite=Lax keeps the cookie off cross-site POSTs, so the
-      // CSRF middleware waves those through as cookie-less; clearing
-      // unconditionally would still emit a Set-Cookie the browser honours and
-      // let any site sign a visitor out.
+      // Only for a request that actually carried one. This mutation is public
+      // and SameSite=Lax keeps the cookie off cross-site POSTs, so clearing
+      // unconditionally would let any site sign a visitor out.
       if (
         isDefined(context.req.res) &&
         this.userSessionCookieService.hasSessionCookie(context.req)
