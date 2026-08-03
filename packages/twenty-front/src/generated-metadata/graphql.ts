@@ -321,6 +321,19 @@ export type Application = {
   yarnLockFileId?: Maybe<Scalars['UUID']['output']>;
 };
 
+export type ApplicationAuthorization = {
+  __typename?: 'ApplicationAuthorization';
+  applicationId: Scalars['UUID']['output'];
+  applicationName: Scalars['String']['output'];
+  applicationUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
+  lastUsedAt: Scalars['DateTime']['output'];
+  scopes?: Maybe<Array<Scalars['String']['output']>>;
+  workspaceId: Scalars['UUID']['output'];
+};
+
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
@@ -2723,6 +2736,7 @@ export type Mutation = {
   retryChatMessage: SendChatMessageResult;
   revokeAllOtherUserSessions: Scalars['Int']['output'];
   revokeApiKey?: Maybe<ApiKey>;
+  revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
@@ -3498,6 +3512,11 @@ export type MutationRetryChatMessageArgs = {
 
 export type MutationRevokeApiKeyArgs = {
   input: RevokeApiKeyInput;
+};
+
+
+export type MutationRevokeApplicationAuthorizationArgs = {
+  applicationAuthorizationId: Scalars['UUID']['input'];
 };
 
 
@@ -4513,6 +4532,7 @@ export type Query = {
   commandMenuItem?: Maybe<CommandMenuItem>;
   commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
+  currentUserApplicationAuthorizations: Array<ApplicationAuthorization>;
   currentUserSessions: Array<UserSession>;
   currentWorkspace: Workspace;
   enterpriseCheckoutSession?: Maybe<Scalars['String']['output']>;
