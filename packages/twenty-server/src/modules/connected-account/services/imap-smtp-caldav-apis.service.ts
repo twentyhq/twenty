@@ -95,6 +95,7 @@ export class ImapSmtpCalDavAPIService {
       }));
 
     const newOrExistingAccountId = existingAccount?.id ?? v4();
+    const wasArchived = isDefined(existingAccount?.archivedAt);
 
     const existingMessageChannel = existingAccount
       ? await this.messageChannelRepository.findOne({
@@ -134,6 +135,7 @@ export class ImapSmtpCalDavAPIService {
           userWorkspaceId,
           workspaceId,
           authFailedAt: null,
+          archivedAt: null,
         });
 
         if (shouldCreateMessageChannel) {
@@ -152,6 +154,32 @@ export class ImapSmtpCalDavAPIService {
             handle,
             transactionManager,
           });
+        }
+
+        if (
+          wasArchived &&
+          isDefined(existingMessageChannel) &&
+          isDefined(input.connectionParameters.IMAP)
+        ) {
+          await transactionManager
+            .getRepository(MessageChannelEntity)
+            .update(
+              { id: existingMessageChannel.id, workspaceId },
+              { isSyncEnabled: true },
+            );
+        }
+
+        if (
+          wasArchived &&
+          isDefined(existingCalendarChannel) &&
+          isDefined(input.connectionParameters.CALDAV)
+        ) {
+          await transactionManager
+            .getRepository(CalendarChannelEntity)
+            .update(
+              { id: existingCalendarChannel.id, workspaceId },
+              { isSyncEnabled: true },
+            );
         }
       },
     );
