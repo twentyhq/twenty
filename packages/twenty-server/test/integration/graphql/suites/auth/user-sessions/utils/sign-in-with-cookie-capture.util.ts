@@ -1,4 +1,7 @@
+import { print, type ASTNode } from 'graphql';
 import request, { type Response } from 'supertest';
+import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
+import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
 
@@ -16,11 +19,36 @@ export const buildAppleWorkspaceOrigin = (): string => {
   return origin.toString();
 };
 
-type SignInOptions = {
-  email?: string;
-  password?: string;
+type RequestHeaders = {
   originHeader?: string;
   cookieHeader?: string;
+};
+
+const postGraphqlOperation = (
+  graphqlOperation: { query: ASTNode; variables: Record<string, unknown> },
+  { originHeader, cookieHeader }: RequestHeaders,
+) => {
+  const graphqlRequest = request(SERVER_URL).post('/metadata');
+
+  if (originHeader !== undefined) {
+    graphqlRequest.set('Origin', originHeader);
+  }
+
+  if (cookieHeader !== undefined) {
+    graphqlRequest.set('Cookie', cookieHeader);
+  }
+
+  return graphqlRequest
+    .send({
+      query: print(graphqlOperation.query),
+      variables: graphqlOperation.variables,
+    })
+    .expect(200);
+};
+
+type SignInOptions = RequestHeaders & {
+  email?: string;
+  password?: string;
 };
 
 // Runs the full credentials exchange (credentials -> login token -> auth
@@ -34,38 +62,14 @@ export const signInWithCookieCapture = async ({
 }: SignInOptions = {}): Promise<Response> => {
   const workspaceOrigin = buildAppleWorkspaceOrigin();
 
-  const loginTokenRequest = request(SERVER_URL).post('/metadata');
-
-  if (originHeader !== undefined) {
-    loginTokenRequest.set('Origin', originHeader);
-  }
-
-  if (cookieHeader !== undefined) {
-    loginTokenRequest.set('Cookie', cookieHeader);
-  }
-
-  const loginTokenResponse = await loginTokenRequest
-    .send({
-      query: `
-        mutation GetLoginTokenFromCredentials(
-          $email: String!
-          $password: String!
-          $origin: String!
-        ) {
-          getLoginTokenFromCredentials(
-            email: $email
-            password: $password
-            origin: $origin
-          ) {
-            loginToken {
-              token
-            }
-          }
-        }
-      `,
-      variables: { email, password, origin: workspaceOrigin },
-    })
-    .expect(200);
+  const loginTokenResponse = await postGraphqlOperation(
+    getLoginTokenFromCredentialsQueryFactory({
+      email,
+      password,
+      origin: workspaceOrigin,
+    }),
+    { originHeader, cookieHeader },
+  );
 
   const loginToken =
     loginTokenResponse.body.data?.getLoginTokenFromCredentials?.loginToken
@@ -73,40 +77,13 @@ export const signInWithCookieCapture = async ({
 
   expect(loginToken).toBeDefined();
 
-  const authTokensRequest = request(SERVER_URL).post('/metadata');
-
-  if (originHeader !== undefined) {
-    authTokensRequest.set('Origin', originHeader);
-  }
-
-  if (cookieHeader !== undefined) {
-    authTokensRequest.set('Cookie', cookieHeader);
-  }
-
-  return await authTokensRequest
-    .send({
-      query: `
-        mutation GetAuthTokensFromLoginToken(
-          $loginToken: String!
-          $origin: String!
-        ) {
-          getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
-            tokens {
-              accessOrWorkspaceAgnosticToken {
-                token
-                expiresAt
-              }
-              refreshToken {
-                token
-                expiresAt
-              }
-            }
-          }
-        }
-      `,
-      variables: { loginToken, origin: workspaceOrigin },
-    })
-    .expect(200);
+  return await postGraphqlOperation(
+    getAuthTokensFromLoginTokenQueryFactory({
+      loginToken,
+      origin: workspaceOrigin,
+    }),
+    { originHeader, cookieHeader },
+  );
 };
 
 export const extractSessionCookie = (
