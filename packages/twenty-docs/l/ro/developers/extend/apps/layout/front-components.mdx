@@ -6,6 +6,10 @@ icon: window-maximize
 
 Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Acestea rulează într-un **Web Worker** izolat folosind Remote DOM — codul se execută într-un iframe cu origine opacă, într-un mediu izolat (sandboxed), însă interfața sa se redă în continuare nativ în pagină, în loc să fie limitată la acel iframe.
 
+<Warning>
+Componentele Front sunt încă în curs de dezvoltare activă. Codul tău se execută pe un DOM parțial, nu pe o pagină reală a browserului, astfel încât utilizările avansate pot eșua, adesea în tăcere. Vezi [Limitări actuale](#current-limitations).
+</Warning>
+
 ## Unde pot fi utilizate componentele front-end
 
 Componentele front-end pot fi afișate în trei locații în cadrul Twenty:
@@ -696,3 +700,72 @@ const Card = () => {
 Deoarece `useTheme()` este un hook, citești tokenii în interiorul corpului componentei, astfel încât valorile reflectă întotdeauna tema activă în timp real. Aceeași hartă de tokeni este exportată și ca o constantă `themeCssVariables`, dar preferă `useTheme()` în componentele frontend — o constantă la nivel de modul care dereferențiază `themeCssVariables` poate fi nedefinită în timp ce manifestul aplicației este extras.
 
 Pentru a ramifica explicit în funcție de schema activă, citește-o cu `useColorScheme()` din `twenty-sdk/front-component`, care returnează `'light'` sau `'dark'`.
+
+## Limitări actuale
+
+Componentele Front sunt în curs de dezvoltare activă. Redarea, stilizarea și gestionarea evenimentelor funcționează bine. Orice ajunge *dincolo de* redare (măsurarea unui element, apelarea unei metode DOM pe un ref, crearea unui portal în afara arborelui tău, accesarea spațiului de stocare al browserului) lipsește sau este incomplet astăzi, iar majoritatea eșuează în tăcere: fără excepție și fără eroare TypeScript, deoarece scheletul este tipizat pentru întregul DOM al browserului.
+
+Dacă unul dintre aceste lucruri te blochează, [deschide un tichet](https://github.com/twentyhq/twenty/issues/new/choose) ca să fie prioritar.
+
+### Layout și măsurare
+
+Nimic nu se poate măsura singur încă.
+
+| API                                                           | Ce se întâmplă                                                                                                    |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | Aruncă o excepție                                                                                                 |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Este în mod silențios `undefined`, astfel încât `width ?? 0` produce `0`, iar `width > 600` este întotdeauna fals |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (verificările cu `typeof` funcționează)                                                          |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Aruncă o excepție                                                                                                 |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Este în mod silențios `undefined`                                                                                 |
+| `new MutationObserver(fn)`                                    | Se construiește, apoi `.observe()` aruncă o excepție                                                              |
+
+Prin urmare, `ResponsiveContainer` din recharts, Floating UI / Popper, virtualizarea listelor și redimensionarea prin tragere nu funcționează încă. Fă layout-ul în CSS în schimb: fișierul tău de stiluri ajunge la pagina reală, astfel încât flexbox, grid, `aspect-ratio`, `clamp()` și `@container` se comportă toate normal.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` și `queueMicrotask` funcționează fără prefixul `window.`. Numai `window.requestAnimationFrame(...)` și cele similare aruncă o excepție.
+</Note>
+
+### Acces DOM
+
+Un `ref` îți oferă un element din sandbox, nu un `HTMLElement`.
+
+| Ce scrii                                                                                                    | Ce se întâmplă                                            | Folosește în schimb                                                                                 |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Aruncă o excepție                                         | Componente controlate; citește valorile din `event.target`                                          |
+| `element.classList.add(...)`                                                                                | Aruncă o excepție (`classList` este `undefined`)          | Construiește singur șirul `className`                                                               |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Aruncă o excepție                                         | `querySelector()` / `querySelectorAll()`, care funcționează                                         |
+| `document.activeElement`                                                                                    | Întotdeauna `undefined`                                   | Urmărește focusul cu `onFocus` / `onBlur`                                                           |
+| `\<canvas>`                                                                                | Nu redă nimic, fără eroare                                | SVG sau desenează offscreen și afișează un `<img src={dataUrl}>`                                    |
+| `createPortal(node, document.body)`                                                                         | Nu redă nimic, în timp ce `isConnected` raportează succes | Suprapuneri inline cu `position: absolute` sau transmite bibliotecii propriul tău element container |
+
+Golul portalului este motivul pentru care popover-urile Radix, Headless UI, MUI și react-select nu redau nimic în mod implicit. Majoritatea acceptă o proprietate de tip container; indică-i un element pe care l-ai redat.
+
+### Evenimente
+
+Mouse, pointer, touch, drag, tastatură, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` și `animationend`/`transitionend` trec către gazdă, plus câteva per element: `load`/`error` pe `<img>`, clipboard și compoziție pe `<input>`/`\<textarea>`, media pe `\<video>`/`\<audio>`, `toggle` pe `\<details>`/`\<dialog>`. Orice altceva (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` de pe `<img>`) este eliminat fără avertisment.
+
+`document.addEventListener()` și `window.addEventListener()` se înregistrează fără eroare și nu se declanșează niciodată, motiv pentru care un drag se oprește imediat ce pointerul părăsește elementul de pe care a început. `event.preventDefault()` nu trece nici el; trimiterea formularelor, `dragover`/`drop` și clicurile pe linkuri sunt deja protejate pentru tine.
+
+### Atribute și stilizare
+
+Fiecare element își transmite propriile proprietăți către DOM-ul gazdă (`href` pe `\<a>`, `src`/`alt` pe `<img>`, `value`/`placeholder`/`disabled` pe `<input>` și așa mai departe), plus un set comun pe fiecare element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` și orice atribut `aria-*` / `data-*` (cu cratimă, astfel încât `ariaLabel` este ignorat). Orice în afara acestora este ignorat în tăcere, așa că exprimă starea personalizată ca `data-*`.
+
+CSS-ul componentei, fie din `import './styles.css'`, CSS-in-JS sau un element `\<style>`, este injectat în `\<head>` al paginii gazdă **fără scope**. Astfel numele de clase intră în coliziune cu cele ale Twenty (prefixează-le și nu scrie niciodată un selector simplu `div { ... }`), iar `@media` se potrivește cu fereastra browserului, nu cu widgetul tău (folosește `@container` cu propriul tău `container-type`). Proprietățile `style` inline nu sunt afectate.
+
+### Stocare și rețea
+
+`localStorage`, `sessionStorage`, IndexedDB, cookie-urile, Cache API și `BroadcastChannel` nu sunt disponibile, deoarece componenta rulează într-un worker cu o origine opacă. Pentru a păstra starea, apelează o [logic function](/l/ro/developers/extend/apps/logic/logic-functions) și folosește [key-value store-ul](/l/ro/developers/extend/apps/logic/key-value-store) acesteia.
+
+`fetch` funcționează, cu unele rezerve:
+
+* Apelurile către Twenty API și către rutele aplicației tale sunt proxate de gazdă, așa că preferă [`RestApiClient`](#calling-the-twenty-rest-api). La apelurile proxate, `AbortSignal` și celelalte opțiuni `RequestInit` sunt eliminate, iar doar corpurile de tip `string` și `URLSearchParams` sunt acceptate.
+* Alte origini părăsesc sandbox-ul cu `Origin: null`, astfel încât un API terț răspunde doar dacă trimite `Access-Control-Allow-Origin: *`. Apelează-l dintr-o logic function în schimb.
+* `fetch('/rest/people')` nu este niciodată asociat cu Twenty API, deoarece sandbox-ul nu are un URL de pagină față de care să rezolve o cale relativă.
+
+### Alte lacune
+
+* **Conținutul fișierului.** `<input type="file">` oferă handlerului tău doar metadatele fișierului, nu și octeții, astfel încât `FileReader` și încărcările nu sunt încă posibile.
+* **Payload-uri drag-and-drop.** Evenimentele de tip drag sunt declanșate, dar `event.dataTransfer` este `undefined`.
+* **Built-in-uri Node.** `fs`, `path` și `node:crypto` eșuează la build, așa că mută acea logică într-o [logic function](/l/ro/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` și `URL` sunt disponibile.
+* **`\<iframe>`** este întotdeauna pus din nou în sandbox fără `allow-same-origin`, astfel încât un embed care se bazează pe propria sesiune este randat ca delogat. Nu are nici `onLoad`.

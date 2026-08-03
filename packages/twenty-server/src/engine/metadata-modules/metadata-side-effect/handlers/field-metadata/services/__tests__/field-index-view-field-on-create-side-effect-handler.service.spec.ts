@@ -312,26 +312,58 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(result.status).toBe('success');
     });
 
-    it('should noop for a non-displayable field (relation) at object creation', () => {
-      const relationField = buildPendingFieldMetadata(
-        'assignee',
-        FieldMetadataType.RELATION,
-      );
+    // Parity with the existing-object path: a relation created in the same
+    // batch as its object gets a visible INDEX view field too, otherwise the
+    // same manifest yields different views depending on whether the object
+    // pre-existed (twentyhq/core-team-issues#2749).
+    it.each([
+      ['relation', FieldMetadataType.RELATION],
+      ['morph relation', FieldMetadataType.MORPH_RELATION],
+    ])(
+      'should emit a visible view field for a %s field created in the same batch as its object',
+      (_label, fieldMetadataType) => {
+        const relationField = buildPendingFieldMetadata(
+          'assignee',
+          fieldMetadataType,
+        );
 
-      const result = handler.buildSideEffects(
-        buildArgs({
-          triggerFieldMetadata: relationField,
-          pendingFieldMetadatas: [NAME_FIELD, relationField],
-          objectMetadataCreatedInBatch: true,
-        }),
-      );
+        const result = handler.buildSideEffects(
+          buildArgs({
+            triggerFieldMetadata: relationField,
+            pendingFieldMetadatas: [NAME_FIELD, relationField],
+            objectMetadataCreatedInBatch: true,
+          }),
+        );
 
-      expect(result.status).toBe('noop');
-    });
+        expect(result.status).toBe('success');
+
+        if (result.status !== 'success') {
+          throw new Error('expected success');
+        }
+
+        const viewFields = Object.values(
+          result.operations.viewField?.flatEntityToCreate ?? {},
+        );
+
+        expect(viewFields).toHaveLength(1);
+        expect(viewFields[0].universalIdentifier).toBe(
+          computeViewFieldUniversalIdentifier({
+            viewUniversalIdentifier: DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: relationField.universalIdentifier,
+          }),
+        );
+        expect(viewFields[0].viewUniversalIdentifier).toBe(
+          DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+        );
+        expect(viewFields[0].position).toBe(1);
+        expect(viewFields[0].isVisible).toBe(true);
+        expect(viewFields[0].isSystemSideEffect).toBe(true);
+      },
+    );
   });
 
   describe('field created on an existing object (historical createOneField behavior)', () => {
-    it('should append a hidden view field to the INDEX view resolved by its derived identifier', () => {
+    it('should append a visible view field to the INDEX view resolved by its derived identifier', () => {
       const result = handler.buildSideEffects(
         buildArgs({
           triggerFieldMetadata: PRIORITY_FIELD,
@@ -376,7 +408,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
         SYNCED_INDEX_VIEW.universalIdentifier,
       );
       expect(viewFields[0].position).toBe(5);
-      expect(viewFields[0].isVisible).toBe(false);
+      expect(viewFields[0].isVisible).toBe(true);
       expect(viewFields[0].isSystemSideEffect).toBe(true);
     });
 
@@ -487,7 +519,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(viewFields[0].position).toBe(0);
     });
 
-    it('should emit a hidden view field for a relation field', () => {
+    it('should emit a visible view field for a relation field', () => {
       const relationField = buildPendingFieldMetadata(
         'assignee',
         FieldMetadataType.RELATION,
@@ -513,7 +545,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       );
 
       expect(viewFields).toHaveLength(1);
-      expect(viewFields[0].isVisible).toBe(false);
+      expect(viewFields[0].isVisible).toBe(true);
     });
 
     // The emitted view field is engine-owned whatever the view provenance, so
@@ -585,7 +617,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(result.status).toBe('noop');
     });
 
-    it('should noop when the object has no active INDEX view', () => {
+    it('should emit a view field on a deactivated INDEX view', () => {
       const result = handler.buildSideEffects(
         buildArgs({
           triggerFieldMetadata: PRIORITY_FIELD,
@@ -602,7 +634,21 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
         }),
       );
 
-      expect(result.status).toBe('noop');
+      expect(result.status).toBe('success');
+
+      if (result.status !== 'success') {
+        throw new Error('expected success');
+      }
+
+      const viewFields = Object.values(
+        result.operations.viewField?.flatEntityToCreate ?? {},
+      );
+
+      expect(viewFields).toHaveLength(1);
+      expect(viewFields[0].viewUniversalIdentifier).toBe(
+        DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+      );
+      expect(viewFields[0].isVisible).toBe(true);
     });
   });
 

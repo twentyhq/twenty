@@ -44,7 +44,7 @@ KI kann vollständig deaktiviert werden, indem alle KI-Modelle in Einstellungen 
 Alle Daten werden während der Übertragung und im Ruhezustand verschlüsselt. Mandantendaten werden durch ein Schema-pro-Mandant-Setup isoliert, und die Verschlüsselungsschlüssel werden regelmäßig rotiert.
 </Accordion>
 <Accordion title="Welche 20 Mitarbeiter oder Subprozessoren können zu welchen Zwecken auf die Arbeitsbereiche des Kunden zugreifen und wie wird der Zugang genehmigt und protokolliert?">
-Die Engineering- und Support-Teams von Twenty können nur dann auf Kunden-Workspaces zugreifen, wenn der Kunde ein Problem meldet und den Zugriff über Einstellungen → General → Security gewährt.
+Die Engineering- und Support-Teams von 20 können auf die Kunden-Arbeitsbereiche zugreifen, um Probleme zu untersuchen und zu beheben. Arbeitsplatzbesitzer kontrollieren: Support-Zugriff kann jederzeit unter Einstellungen → Allgemein → Sicherheit deaktiviert werden und es bleibt aus, bis Sie es wieder einschalten.
 </Accordion>
 <Accordion title="Was sind Ihre Benachrichtigungen und Zielbenachrichtigungen nach einem bestätigten Sicherheitsfall, der unsere Daten beeinflusst?">
 Im Falle einer bestätigten Verletzung personenbezogener Daten, die Ihre Daten betrifft Wir werden Sie unverzüglich und in jedem Fall innerhalb von 48 Stunden nach Bekanntwerden davon in Kenntnis setzen. Unsere Mitteilung wird in dem Umfang, in dem sie zu dem Zeitpunkt bekannt ist, die Art des Verstoßes beinhalten, die Kategorien und ungefähre Menge von Daten und Einzelpersonen betroffen, wahrscheinliche Folgen, und die Maßnahmen zur Sanierung und Abmilderung ergriffen oder geplant. Wir werden die Aktualisierungen zur Verfügung stellen, sobald die Untersuchung fortschreitet.
@@ -64,7 +64,7 @@ Standardmäßig werden soft gelöschte Datensätze 14 Tage lang aufbewahrt, dana
 Ein entfernter Datensatz bleibt 30 Tage lang in Backups, danach wird er dauerhaft gelöscht.
 </Accordion>
 <Accordion title="Wenn ein Arbeitsbereich geschlossen oder vollständig gelöscht wird, welche Zeitleiste gilt für Produktionsdaten, Anhänge, Protokolle und Backups?">
-Wenn ein Workspace gelöscht wird, werden seine Daten sofort aus aktiven Systemen entfernt. Backups werden 7 Tage lang aufbewahrt, danach werden alle Daten dauerhaft gelöscht.
+Wenn ein Arbeitsbereich gelöscht wird, werden seine Daten innerhalb von etwa 90 Tagen nach Serviceabbruch aus Live-Systemen entfernt und in der Regel viel früher. Sicherungs- und Archivkopien werden dann innerhalb von 90 Tagen überschrieben oder bereinigt, danach werden alle Daten dauerhaft gelöscht. In beiden Perioden werden die Daten von jeglichem operativen Gebrauch isoliert. Auf Anfrage können wir Ihnen eine schriftliche Bescheinigung geben, sobald die Reinigung abgeschlossen ist. Die vollständigen Bedingungen finden Sie unter Klausel 4.9 Ihres Datenverarbeitungsvertrags.
 </Accordion>
 <Accordion title="Wurde während einer Sicherungslaufzeit Daten vom Zugriff und der Nutzung isoliert?">
 Ja, während einer Sicherungslaufzeit werden gelöschte Daten vom operativen Gebrauch isoliert.
@@ -105,6 +105,20 @@ Ja, 20 ist [SOC 2 Compliant](https://trust.twenty.com/?tab=securityControls\&fra
 </Accordion>
 <Accordion title="Sind 20 HIPAA kompatibel?">
 Nein, 20 sind dabei, HIPAA-konform zu werden.
+</Accordion>
+</AccordionGroup>
+
+## Lizenzierung
+
+<AccordionGroup>
+<Accordion title="Wenn ich den Code ändere, um Funktionen hinzuzufügen, die nur intern von meinem Team genutzt werden, muss ich diese Änderungen veröffentlichen?">
+Nein. Die Ausführung einer modifizierten Version nur für Ihr eigenes Team gilt nicht als Verbreitung, sodass keine Veröffentlichungspflicht entsteht. Die Netzwerkklausel der AGPL greift, wenn Personen außerhalb Ihrer Organisation über das Netzwerk mit Ihrer modifizierten Instanz interagieren.
+</Accordion>
+<Accordion title="Wenn ich ein separates Frontend erstelle und Twenty unverändert als Backend verwende, muss ich diese Änderungen dann veröffentlichen?">
+Nein. Ihr Frontend ist Ihr eigenes, separates Werk, und die Kommunikation mit Twenty über dessen APIs ändert daran nichts. Da Twenty selbst nicht verändert wurde, gibt es nichts zu veröffentlichen.
+</Accordion>
+<Accordion title="Wenn ich den Code ändere, um Funktionen hinzuzufügen, damit ich ihn weiterverkaufen kann, muss ich diese Änderungen veröffentlichen?">
+Ja, da Sie den Code ändern, um ihn an andere zu verbreiten, sind Sie verpflichtet, diese Änderungen zu veröffentlichen. Wenn Sie Ihre Änderungen nicht veröffentlichen möchten, können Sie eine Organization-Lizenz erwerben.
 </Accordion>
 </AccordionGroup>
 

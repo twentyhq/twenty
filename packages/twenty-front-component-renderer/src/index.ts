@@ -1,10 +1,8 @@
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
-export { FrontComponentExternalNavigationContext } from './host/contexts/FrontComponentExternalNavigationContext';
 export {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
 } from './host/contexts/FrontComponentInputFocusContext';
-export { type RequestExternalNavigation } from './host/types/RequestExternalNavigation';
 export { componentRegistry } from './host/generated/host-component-registry';
 export { FrontComponentConfirmationModalResultEffect } from './remote/components/FrontComponentConfirmationModalResultEffect';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
@@ -136,6 +134,9 @@ export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
 export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
+export type { ElementGeometrySnapshot } from './types/ElementGeometrySnapshot';
+export type { ViewportGeometrySnapshot } from './types/ViewportGeometrySnapshot';
+export type { GeometryUpdateBatch } from './types/GeometryUpdateBatch';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
 export type { SdkClientUrls } from './types/SdkClientUrls';
 export type { PropertySchema } from './constants/PropertySchema';

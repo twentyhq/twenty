@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
@@ -70,6 +70,22 @@ export class UserWorkspaceService {
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
     return this.userWorkspaceRepository.findOne({ where: { id } });
+  }
+
+  async isWorkspaceCreator({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId },
+      order: { createdAt: 'ASC' },
+      withDeleted: true,
+    });
+
+    return earliestUserWorkspace?.userId === userId;
   }
 
   async updateUserWorkspaceLocaleForUserWorkspace({
@@ -172,6 +188,7 @@ export class UserWorkspaceService {
           lastName: user.lastName,
         },
         colorScheme: 'System',
+        openRecordIn: OpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,
         avatarUrl: userWorkspace.defaultAvatarUrl ?? null,

@@ -343,6 +343,7 @@ type Object {
   isUICreatable: Boolean!
   isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
+  openRecordIn: ObjectOpenRecordIn!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -367,6 +368,12 @@ type Object {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): ObjectIndexMetadatasConnection!
+}
+
+enum ObjectOpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
+  USER_CHOICE
 }
 
 input CursorPaging {
@@ -436,6 +443,7 @@ type WorkspaceMember {
   name: FullName!
   userEmail: String!
   colorScheme: String!
+  openRecordIn: OpenRecordIn!
   avatarUrl: String
   locale: String
   calendarStartDay: Int
@@ -445,6 +453,11 @@ type WorkspaceMember {
   roles: [Role!]
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
+}
+
+enum OpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
 }
 
 """Date format as Month first, Day first, Year first or system as default"""
@@ -793,7 +806,7 @@ type View {
   position: Float!
   isCompact: Boolean!
   isCustom: Boolean!
-  openRecordIn: ViewOpenRecordIn!
+  openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
@@ -1142,6 +1155,7 @@ type PieChartConfiguration {
   showCenterMetric: Boolean
   displayLegend: Boolean
   hideEmptyCategory: Boolean
+  numberFormat: ChartNumberFormat
   splitMultiValueFields: Boolean
   description: String
   color: String
@@ -1195,6 +1209,7 @@ type LineChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   displayDataLabel: Boolean
   displayLegend: Boolean
+  numberFormat: ChartNumberFormat
   rangeMin: Float
   rangeMax: Float
   description: String
@@ -1238,6 +1253,7 @@ type BarChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   displayDataLabel: Boolean
   displayLegend: Boolean
+  numberFormat: ChartNumberFormat
   rangeMin: Float
   rangeMax: Float
   description: String
@@ -1593,6 +1609,12 @@ type BillingEndTrialPeriod {
   Billing portal URL for payment method update (returned when no payment method exists)
   """
   billingPortalUrl: String
+
+  """Updated current billing subscription"""
+  currentBillingSubscription: BillingSubscription
+
+  """All billing subscriptions"""
+  billingSubscriptions: [BillingSubscription!]
 }
 
 type BillingResourceCreditUsage {
@@ -2946,6 +2968,17 @@ type AgentChatEvent {
   event: JSON!
 }
 
+type StartWorkspaceSetupChatResult {
+  outcome: WorkspaceSetupChatOutcome!
+  thread: AgentChatThread
+}
+
+enum WorkspaceSetupChatOutcome {
+  STARTED
+  ALREADY_STARTED
+  UNAVAILABLE
+}
+
 type AgentTurnEvaluation {
   id: UUID!
   turnId: UUID!
@@ -2967,6 +3000,11 @@ type WorkspaceAiStats {
   conversationsCount: Int!
   skillsCount: Int!
   toolsCount: Int!
+}
+
+type EnqueueJobResult {
+  enqueued: Boolean!
+  logicFunctionUniversalIdentifier: String!
 }
 
 type AppKeyValue {
@@ -3523,6 +3561,7 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
+  enqueueJob(input: EnqueueJobInput!): EnqueueJobResult!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -3533,6 +3572,7 @@ type Mutation {
   unarchiveChatThread(id: UUID!): AgentChatThread!
   deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  startWorkspaceSetupChat(companyContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -3557,7 +3597,7 @@ type Mutation {
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
   generatePlaygroundToken: AuthToken!
-  emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
+  emailPasswordResetLink(email: String!, workspaceId: UUID, captchaToken: String): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
   initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
@@ -3722,6 +3762,10 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3740,6 +3784,10 @@ input UpdateViewInput {
   icon: String
   position: Float
   isCompact: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -3782,6 +3830,10 @@ input UpsertViewWidgetViewSettingsInput {
   type: ViewType
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
   openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -4155,6 +4207,7 @@ input UpdateObjectPayload {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
+  openRecordIn: ObjectOpenRecordIn
 }
 
 input CreateOneIndexInput {
@@ -4674,6 +4727,13 @@ input SetAppKeyValueInput {
   key: String!
   value: JSON
   scope: AppKeyValueScope = WORKSPACE
+}
+
+input EnqueueJobInput {
+  logicFunctionUniversalIdentifier: String!
+  payload: JSON
+  retryLimit: Int
+  delayMs: Int
 }
 
 input FileAttachmentInput {
