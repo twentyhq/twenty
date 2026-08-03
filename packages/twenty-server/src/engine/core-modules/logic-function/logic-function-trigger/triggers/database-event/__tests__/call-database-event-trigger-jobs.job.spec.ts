@@ -79,7 +79,11 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         applicationRegistrationId: `${applicationId}-registration`,
       }),
     );
-    transformEventBatchToEventPayloadsMock.mockReturnValue([{ payload: true }]);
+    transformEventBatchToEventPayloadsMock.mockImplementation(
+      ({ logicFunctions }) => [
+        { applicationId: logicFunctions[0].applicationId },
+      ],
+    );
   });
 
   it('should skip the throttled application and still enqueue the others', async () => {
@@ -95,7 +99,23 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     await job.handle(workspaceEventBatch);
 
     expect(throttleOrThrow).toHaveBeenCalledTimes(2);
+    expect(throttleOrThrow).toHaveBeenCalledWith({
+      applicationId: 'app-1',
+      applicationRegistrationId: 'app-1-registration',
+      jobCount: 1,
+    });
+    expect(throttleOrThrow).toHaveBeenCalledWith({
+      applicationId: 'app-2',
+      applicationRegistrationId: 'app-2-registration',
+      jobCount: 1,
+    });
+
     expect(bulkAdd).toHaveBeenCalledTimes(1);
+    expect(bulkAdd).toHaveBeenCalledWith(
+      expect.any(String),
+      [{ applicationId: 'app-2' }],
+      { retryLimit: 3 },
+    );
   });
 
   it('should rethrow non-throttler errors', async () => {
