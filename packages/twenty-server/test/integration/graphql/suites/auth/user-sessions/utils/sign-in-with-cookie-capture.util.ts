@@ -1,7 +1,7 @@
-import { print, type ASTNode } from 'graphql';
-import request, { type Response } from 'supertest';
+import { type Response } from 'supertest';
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
 
@@ -24,11 +24,14 @@ type RequestHeaders = {
   cookieHeader?: string;
 };
 
-const postGraphqlOperation = (
-  graphqlOperation: { query: ASTNode; variables: Record<string, unknown> },
+// Supertest requests dispatch lazily, so Origin and Cookie can be set on the
+// request makeMetadataAPIRequest already built. The explicit undefined token
+// keeps these exchanges public instead of Bearer-authenticated.
+const postPublicMetadataOperation = (
+  graphqlOperation: Parameters<typeof makeMetadataAPIRequest>[0],
   { originHeader, cookieHeader }: RequestHeaders,
 ) => {
-  const graphqlRequest = request(SERVER_URL).post('/metadata');
+  const graphqlRequest = makeMetadataAPIRequest(graphqlOperation, undefined);
 
   if (originHeader !== undefined) {
     graphqlRequest.set('Origin', originHeader);
@@ -38,12 +41,7 @@ const postGraphqlOperation = (
     graphqlRequest.set('Cookie', cookieHeader);
   }
 
-  return graphqlRequest
-    .send({
-      query: print(graphqlOperation.query),
-      variables: graphqlOperation.variables,
-    })
-    .expect(200);
+  return graphqlRequest.expect(200);
 };
 
 type SignInOptions = RequestHeaders & {
@@ -62,7 +60,7 @@ export const signInWithCookieCapture = async ({
 }: SignInOptions = {}): Promise<Response> => {
   const workspaceOrigin = buildAppleWorkspaceOrigin();
 
-  const loginTokenResponse = await postGraphqlOperation(
+  const loginTokenResponse = await postPublicMetadataOperation(
     getLoginTokenFromCredentialsQueryFactory({
       email,
       password,
@@ -77,7 +75,7 @@ export const signInWithCookieCapture = async ({
 
   expect(loginToken).toBeDefined();
 
-  return await postGraphqlOperation(
+  return await postPublicMetadataOperation(
     getAuthTokensFromLoginTokenQueryFactory({
       loginToken,
       origin: workspaceOrigin,
