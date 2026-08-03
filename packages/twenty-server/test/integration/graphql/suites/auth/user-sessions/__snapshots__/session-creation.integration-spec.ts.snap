@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`user session creation on auth exchanges (integration) with cookie sessions enabled should mint a session and set an httpOnly cookie on sign-in from an allowed origin: session-cookie 1`] = `"twenty-session=sess_<redacted>; Path=/; Expires=<redacted>; HttpOnly; SameSite=Lax"`;

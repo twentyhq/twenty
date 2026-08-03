@@ -4,8 +4,11 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 
 import {
   extractSessionCookie,
+  normalizeSessionCookieForSnapshot,
   signInWithCookieCapture,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
+
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
@@ -75,16 +78,14 @@ describe('user session creation on auth exchanges (integration)', () => {
 
       firstSessionToken = sessionCookie.sessionToken;
 
-      expect(sessionCookie.sessionToken).toMatch(/^sess_/);
-      expect(sessionCookie.rawCookie).toContain('HttpOnly');
-      expect(sessionCookie.rawCookie).toContain('Path=/');
-      expect(sessionCookie.rawCookie).toContain('SameSite=Lax');
-      // .env.test serves plain http, so the host-locked secure variant and the
-      // Secure attribute must both be absent.
-      expect(sessionCookie.rawCookie).not.toContain('__Host-');
-      expect(sessionCookie.rawCookie.split(';')).not.toContainEqual(
-        expect.stringMatching(/^\s*Secure\s*$/),
-      );
+      // Pins name, sess_ prefix, attribute list and order in one place. The
+      // absences matter as much as the presences: no Secure and no __Host-
+      // (plain-http test deployment), and no Domain, which is what makes the
+      // cookie host-only so browsers never send it to sibling workspace
+      // subdomains.
+      expect(
+        normalizeSessionCookieForSnapshot(sessionCookie.rawCookie),
+      ).toMatchSnapshot('session-cookie');
 
       const expiresAttribute = sessionCookie.rawCookie
         .split(';')
@@ -127,7 +128,9 @@ describe('user session creation on auth exchanges (integration)', () => {
 
       expect(session).toMatchObject({
         userId: expect.any(String),
-        workspaceId: expect.any(String),
+        // Bound to the workspace the GraphQL origin selected: the server-side
+        // half of workspace scoping, alongside the host-only cookie.
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
         userWorkspaceId: expect.any(String),
         isImpersonating: false,
         revokedAt: null,

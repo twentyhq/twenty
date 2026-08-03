@@ -84,6 +84,14 @@ export const signInWithCookieCapture = async ({
   );
 };
 
+// Redacts the two dynamic parts (token value, expiry timestamp) so the rest of
+// the set-cookie header can be snapshot: name, attribute list and order are
+// deterministic, and the snapshot also pins the absence of Domain and Secure.
+export const normalizeSessionCookieForSnapshot = (rawCookie: string): string =>
+  rawCookie
+    .replace(/=sess_[A-Za-z0-9_-]+/, '=sess_<redacted>')
+    .replace(/Expires=[^;]+/, 'Expires=<redacted>');
+
 export const extractSessionCookie = (
   response: Response,
 ): { rawCookie: string; sessionToken: string } | undefined => {
