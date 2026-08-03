@@ -11,7 +11,10 @@ import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessio
 
 // SameSite=None forces Secure (browsers reject the combination without it),
 // which is the one secure-deployment trigger reachable at runtime: SERVER_URL
-// stays plain http in .env.test.
+// stays plain http in .env.test. The production combination (https SERVER_URL
+// with the SameSite=Lax default) is covered by
+// secure-deployment-session-cookie.integration-spec.ts under a dedicated app
+// boot.
 describe('successful session cookie delivery on a secure deployment (integration)', () => {
   beforeAll(async () => {
     await createConfigVariable({
