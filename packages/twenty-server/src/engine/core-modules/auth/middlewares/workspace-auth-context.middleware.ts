@@ -47,9 +47,6 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
       isDefined(req.workspaceMember) &&
       isDefined(req.user)
     ) {
-      // An application token minted on someone's behalf carries both. It stays
-      // a user context, and the application rides along so permission checks
-      // can bound the request by its role too.
       return buildUserAuthContext({
         workspace: req.workspace!,
         userWorkspaceId: req.userWorkspaceId,

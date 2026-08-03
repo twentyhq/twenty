@@ -668,8 +668,6 @@ describe('PermissionsService', () => {
         rolePermissionFlagIds: [],
       }) as unknown as FlatRole;
 
-    // The user branch resolves a RoleEntity, so it needs the permission flags
-    // the entity-based check reads, not just the id the intersection uses.
     const mockUserRole = (role: FlatRole) => {
       userRoleService.getRolesByUserWorkspaces.mockResolvedValue(
         new Map([
@@ -761,8 +759,6 @@ describe('PermissionsService', () => {
       await expect(check()).resolves.toBe(true);
     });
 
-    // Declaring a role is how an application narrows itself. Declaring none
-    // leaves the person's own role as the only bound.
     it('should fall back to the user role when the application declares none', async () => {
       const userRole = createFlatRole({
         id: 'user-role-id',
@@ -776,8 +772,7 @@ describe('PermissionsService', () => {
       await expect(check()).resolves.toBe(true);
     });
 
-    // Intersecting a role with itself is a no-op, but passing the same id twice
-    // trips the duplicate check inside the intersection and fails closed.
+    // The same id twice trips the intersection's duplicate check and denies.
     it('should grant when the application declares the user own role', async () => {
       const userRole = createFlatRole({
         id: 'user-role-id',

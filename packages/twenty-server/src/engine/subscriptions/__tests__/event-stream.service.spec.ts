@@ -215,8 +215,6 @@ describe('EventStreamService', () => {
       ).resolves.toBe(true);
     });
 
-    // Taking the stream over recreates it with the caller's context, so
-    // dropping the application here would drop the bound it puts on events.
     it('denies the same user when the application is dropped', async () => {
       await expect(
         check(

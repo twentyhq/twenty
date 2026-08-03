@@ -77,9 +77,6 @@ describe('WorkspaceAuthContextMiddleware', () => {
     );
   });
 
-  // The request runs as the person, so it stays a user context, but the
-  // application has to survive or nothing downstream can bound the request by
-  // its role as well.
   it('should keep the application on the user auth context when both are present', () => {
     const req = buildRequest({
       application: mockApplication,

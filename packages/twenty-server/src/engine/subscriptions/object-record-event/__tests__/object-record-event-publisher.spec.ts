@@ -849,8 +849,6 @@ describe('ObjectRecordEventPublisher', () => {
         expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
       });
 
-      // An application's declared role is not a foreign key, so it can outlive
-      // the role it points at.
       it('should not publish when the application role cannot be resolved', async () => {
         mockApplicationStream({
           rolesPermissions: { [roleId]: buildRolePermissions(true) },

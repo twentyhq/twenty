@@ -23,8 +23,7 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
       .map((roleId) => rolesPermissions[roleId])
       .filter(isDefined);
 
-    // A role that cannot be resolved is a bound that cannot be applied, so deny
-    // instead of dropping it and granting whatever the other roles allow.
+    // A bound that cannot be applied denies, rather than being dropped.
     if (
       !isNonEmptyArray(permissionsPerRole) ||
       permissionsPerRole.length !== rolePermissionConfig.intersectionOf.length
@@ -35,8 +34,8 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return computePermissionIntersection(permissionsPerRole);
   }
 
-  // Union across several roles is still unimplemented, and every producer emits
-  // a single role, so taking the first is exact rather than lossy here.
+  // Multi-role union is unimplemented and every producer emits one role, so
+  // taking the first is exact rather than lossy.
   if ('unionOf' in rolePermissionConfig) {
     const roleId = rolePermissionConfig.unionOf[0];
 

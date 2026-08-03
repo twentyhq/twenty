@@ -352,9 +352,6 @@ export class ObjectRecordEventPublisher {
     });
   }
 
-  // A stream opened by an application acting on someone's behalf is bounded by
-  // the application's declared role as well as the subscriber's own, so events
-  // it may not see are filtered out exactly as they would be on a query.
   private resolveStreamRoleIds(
     subscriberAuthContext: SerializableAuthContext,
     permissionsContext: Pick<
@@ -377,9 +374,8 @@ export class ObjectRecordEventPublisher {
     });
   }
 
-  // An application's declared role is not a foreign key, so it can outlive the
-  // role it points at. A bound we cannot resolve must silence the stream rather
-  // than let the remaining roles decide on their own.
+  // defaultRoleId has no foreign key and can dangle. A bound that cannot be
+  // resolved silences the stream rather than letting the rest decide alone.
   private resolveStreamObjectsPermissions(
     roleIds: string[],
     rolesPermissions: ObjectsPermissionsByRoleId,

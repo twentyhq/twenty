@@ -23,9 +23,8 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   user: NonNullable<RawAuthContext['user']>;
   workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
-  // Set when an application is acting on this user's behalf. The request stays
-  // a user context, because it runs as the person, but permissions are bounded
-  // by the application's role as well as theirs.
+  // Set when an application acts on this user's behalf. Still a user context,
+  // because it runs as the person, but bounded by both roles.
   application?: NonNullable<RawAuthContext['application']>;
 }
 

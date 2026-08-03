@@ -74,8 +74,6 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     ).toBe(false);
   });
 
-  // A bound we cannot resolve must not be dropped, or the remaining roles would
-  // decide the outcome on their own.
   it('should deny when one of the intersected roles is missing from the cache', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({

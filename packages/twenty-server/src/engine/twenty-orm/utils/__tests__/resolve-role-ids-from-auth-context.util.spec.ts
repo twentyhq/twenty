@@ -41,8 +41,6 @@ describe('resolveRoleIdsFromAuthContext', () => {
     ).toEqual([USER_ROLE_ID, APPLICATION_ROLE_ID]);
   });
 
-  // Declaring a role is how an application narrows itself. Declaring none must
-  // not widen it beyond the person it is acting for, nor deny it outright.
   it('should add no bound when the application declares no role', () => {
     expect(resolve(buildUserContext({ defaultRoleId: null }))).toEqual([
       USER_ROLE_ID,

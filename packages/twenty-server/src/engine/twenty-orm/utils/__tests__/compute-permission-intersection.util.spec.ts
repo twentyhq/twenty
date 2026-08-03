@@ -384,10 +384,6 @@ describe('computePermissionIntersection', () => {
     });
   });
 
-  // The insert guard reads these to learn which fields a role's own row-level
-  // rule forces a value into, and waives the field-update deny on them. Only
-  // fields every role constrains may be waived, or one role's rule would cancel
-  // another role's deny.
   describe('row-level permission predicates', () => {
     const buildPermissions = (
       roleId: string,
