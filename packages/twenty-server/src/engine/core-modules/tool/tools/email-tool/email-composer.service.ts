@@ -23,6 +23,7 @@ import {
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
+import { renderEmailBodyToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-email-body.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -394,7 +395,8 @@ export class EmailComposerService {
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
 
-    const sanitizedHtmlBody = purify.sanitize(body || '');
+    const htmlBody = await renderEmailBodyToHtml(body ?? '');
+    const sanitizedHtmlBody = purify.sanitize(htmlBody);
     const plainTextBody = toPlainText(sanitizedHtmlBody);
     const sanitizedSubject = purify.sanitize(subject || '');
 

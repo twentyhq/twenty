@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useState } from 'react';
 import {
-  type CampaignVariableName,
+  listCampaignVariablesForFields,
   TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
 import {
@@ -28,7 +28,9 @@ import { Button, LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 const StyledRail = styled.div`
   align-items: center;
@@ -61,7 +63,9 @@ const StyledPopover = styled.div`
     0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
     0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
   left: calc(100% + ${themeCssVariables.spacing[2]});
+  max-height: 320px;
   min-width: 180px;
+  overflow-y: auto;
   padding: ${themeCssVariables.spacing[1]};
   position: absolute;
   top: 0;
@@ -100,18 +104,26 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
 
   const hasVariables = hasEditorExtension(editor, 'variableTag');
 
+  const { objectMetadataItem: personObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Person,
+    });
+
+  // The person's fields drive the list, so custom fields are insertable the
+  // moment they exist. fullName and personId are computed server-side and
+  // have no field of their own.
   const variableItems: Array<{
     label: string;
-    name: CampaignVariableName;
+    name: string;
   }> = [
-    { label: t`First name`, name: 'firstName' },
-    { label: t`Last name`, name: 'lastName' },
+    ...listCampaignVariablesForFields(personObjectMetadataItem.fields).map(
+      ({ label, name }) => ({ label, name }),
+    ),
     { label: t`Full name`, name: 'fullName' },
-    { label: t`Email`, name: 'email' },
     { label: t`Person ID`, name: 'personId' },
   ];
 
-  const insertVariable = (name: CampaignVariableName) => {
+  const insertVariable = (name: string) => {
     editor.chain().focus().insertVariableTag(`{{${name}}}`).run();
     setOpenMenu(null);
   };

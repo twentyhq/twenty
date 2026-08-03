@@ -1,12 +1,11 @@
 import { MessageCampaignStatus } from 'twenty-shared/types';
-import { parseJson } from 'twenty-shared/utils';
+import { emailDocumentSchema, parseJson } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { tipTapDocumentSchema } from 'src/modules/emailing/zod-schemas/tiptap-document.zod-schema';
-
-// Bodies are either serialized TipTap JSON (the composer) or plain HTML
-// strings (legacy campaigns). JSON that is not a valid document would throw
-// inside the renderer mid-send, so it is rejected here instead.
+// Bodies are either serialized email documents (the composer, the AI campaign
+// tool) or plain HTML strings (legacy campaigns). JSON is validated against
+// the strict shared schema: an unknown block type or malformed node would
+// otherwise render as nothing (or throw) mid-send, per recipient.
 const isSendableBodyTemplate = (bodyTemplate: string): boolean => {
   const parsed = parseJson<unknown>(bodyTemplate);
 
@@ -14,14 +13,14 @@ const isSendableBodyTemplate = (bodyTemplate: string): boolean => {
     return true;
   }
 
-  return tipTapDocumentSchema.safeParse(parsed).success;
+  return emailDocumentSchema.safeParse(parsed).success;
 };
 
 export const sendableDraftCampaignSchema = z.object({
   status: z.literal(MessageCampaignStatus.DRAFT),
   subject: z.string().min(1),
   bodyTemplate: z.string().min(1).refine(isSendableBodyTemplate, {
-    message: 'bodyTemplate is not a valid TipTap document',
+    message: 'bodyTemplate is not a valid email document',
   }),
   fromAddress: z.object({ primaryEmail: z.email() }),
   listId: z.string().min(1),

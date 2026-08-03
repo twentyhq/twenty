@@ -116,4 +116,60 @@ describe('sendableDraftCampaignSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('should accept a document using email blocks', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: 1 },
+          content: [
+            {
+              type: 'emailSection',
+              attrs: { style: 'padding: 12px;' },
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'Hello' }],
+                },
+              ],
+            },
+            {
+              type: 'emailButton',
+              attrs: { href: 'https://example.com', style: '' },
+              content: [{ type: 'text', text: 'Open' }],
+            },
+          ],
+        }),
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should reject a document holding an unknown block type', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: JSON.stringify({
+          type: 'doc',
+          content: [{ type: 'countdownTimer', attrs: {} }],
+        }),
+      }).success,
+    ).toBe(false);
+  });
+
+  it('should reject a document from a future schema version', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: 999 },
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
+          ],
+        }),
+      }).success,
+    ).toBe(false);
+  });
 });
