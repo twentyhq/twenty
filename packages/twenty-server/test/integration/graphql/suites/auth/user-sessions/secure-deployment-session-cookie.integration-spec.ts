@@ -65,9 +65,14 @@ describeOnSecureDeployment(
 
       sessionToken = secureSessionCookie.sessionToken;
 
+      // A literal rather than a snapshot: the suite skips on plain-http
+      // boots, and a committed snapshot of skipped tests fails --ci runs as
+      // obsolete.
       expect(
         normalizeSessionCookieForSnapshot(secureSessionCookie.rawCookie),
-      ).toMatchSnapshot('production-session-cookie');
+      ).toBe(
+        '__Host-twenty-session=sess_<redacted>; Path=/; Expires=<redacted>; HttpOnly; Secure; SameSite=Lax',
+      );
     });
 
     it('should authenticate a request presenting the __Host- cookie', async () => {
