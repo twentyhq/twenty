@@ -772,7 +772,6 @@ describe('PermissionsService', () => {
       await expect(check()).resolves.toBe(true);
     });
 
-    // The same id twice trips the intersection's duplicate check and denies.
     it('should grant when the application declares the user own role', async () => {
       const userRole = createFlatRole({
         id: 'user-role-id',

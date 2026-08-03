@@ -231,9 +231,8 @@ type BuildRowLevelPermissionRecordFilterArgs = Omit<
 };
 
 // Each role compiles on its own and the results are ANDed. Merging the raw
-// predicates and groups first would be wrong: compilation honours only the
-// first parentless group, so one role's restrictions would silently vanish
-// and widen access.
+// predicates first would be wrong: compilation honours only the first
+// parentless group, so one role's restrictions would vanish and widen access.
 export const buildRowLevelPermissionRecordFilter = ({
   roleIds,
   ...buildRecordFilterForRoleArgs

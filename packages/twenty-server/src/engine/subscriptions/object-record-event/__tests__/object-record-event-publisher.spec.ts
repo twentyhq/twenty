@@ -875,6 +875,19 @@ describe('ObjectRecordEventPublisher', () => {
           expect.objectContaining({ roleIds: [roleId, applicationRoleId] }),
         );
       });
+
+      it('should not publish when the application no longer exists', async () => {
+        mockApplicationStream({
+          flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+          rolesPermissions: { [roleId]: buildRolePermissions(true) },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
     });
 
     it('should combine query filter with RLS filter', async () => {

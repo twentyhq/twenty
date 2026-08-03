@@ -23,7 +23,6 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
       .map((roleId) => rolesPermissions[roleId])
       .filter(isDefined);
 
-    // A bound that cannot be applied denies, rather than being dropped.
     if (
       !isNonEmptyArray(permissionsPerRole) ||
       permissionsPerRole.length !== rolePermissionConfig.intersectionOf.length

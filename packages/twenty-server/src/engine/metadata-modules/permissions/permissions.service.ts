@@ -269,9 +269,8 @@ export class PermissionsService {
     );
   }
 
-  // Declaring no role adds no bound beyond the user's own. Naming an
-  // application that no longer exists is different, and must not fall back to
-  // the full permissions of the user being acted for.
+  // Naming an application that no longer exists is not the same as declaring
+  // no role, and must not fall back to the full permissions of the user.
   private async findApplicationDefaultRoleIdOrThrow({
     applicationId,
     workspaceId,
