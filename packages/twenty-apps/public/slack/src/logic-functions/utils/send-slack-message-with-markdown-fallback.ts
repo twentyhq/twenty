@@ -1,10 +1,8 @@
+import { type SlackChatMessageBodyFields } from 'src/logic-functions/types/slack-chat-message-body-fields.type';
 import { type SlackMessageBodyFormat } from 'src/logic-functions/types/slack-message-body-format.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { convertMarkdownToSlackMrkdwn } from 'src/logic-functions/utils/convert-markdown-to-slack-mrkdwn';
-import {
-  getSlackChatMessageBodyFields,
-  type SlackChatMessageBodyFields,
-} from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
+import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { isSlackMarkdownFormatError } from 'src/logic-functions/utils/is-slack-markdown-format-error';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
