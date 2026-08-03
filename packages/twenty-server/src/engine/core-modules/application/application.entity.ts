@@ -127,6 +127,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   autoUpgrade: boolean;
 
   @Column({ nullable: false, type: 'boolean', default: false })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.27.0_AddCanActWithoutUserToApplicationFastInstanceCommand_1785742800000',
+  })
+  canActWithoutUser: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
   isSdkLayerStale: boolean;
 
   @Column({ nullable: true, type: 'text' })

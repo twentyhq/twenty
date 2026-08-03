@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Repository } from 'typeorm';
 import { addMilliseconds } from 'date-fns';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import ms from 'ms';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -50,7 +50,7 @@ export class ApplicationTokenService {
     userWorkspaceId?: string;
     userId?: string;
   }): Promise<AuthToken> {
-    await this.validateWorkspaceAndApplication(workspaceId, applicationId);
+    await this.validateTokenRequest({ workspaceId, applicationId, userId });
 
     const expiresIn = this.twentyConfigService.get(
       'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
@@ -80,7 +80,7 @@ export class ApplicationTokenService {
     applicationAccessToken: AuthToken;
     applicationRefreshToken: AuthToken;
   }> {
-    await this.validateWorkspaceAndApplication(workspaceId, applicationId);
+    await this.validateTokenRequest({ workspaceId, applicationId, userId });
 
     const accessTokenExpiresIn = this.twentyConfigService.get(
       'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
@@ -207,10 +207,15 @@ export class ApplicationTokenService {
     });
   }
 
-  private async validateWorkspaceAndApplication(
-    workspaceId: string,
-    applicationId: string,
-  ): Promise<void> {
+  private async validateTokenRequest({
+    workspaceId,
+    applicationId,
+    userId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    userId?: string;
+  }): Promise<void> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -228,6 +233,15 @@ export class ApplicationTokenService {
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       ),
     );
+
+    // The only place an application token is minted, so every way of asking
+    // for the userless identity passes through this check.
+    if (!isDefined(userId) && !application.canActWithoutUser) {
+      throw new ApplicationException(
+        `Application ${applicationId} is not allowed to act without a user`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
   }
 
   private async signApplicationToken({

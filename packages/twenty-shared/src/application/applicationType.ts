@@ -11,6 +11,12 @@ export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
   displayName: string;
   description: string;
+  /**
+   * Whether the application needs to act with no user behind it, as the
+   * workspace itself, for cron triggers and other unattended work. Defaults to
+   * false: an application that only ever acts for a person does not need it.
+   */
+  canActWithoutUser?: boolean;
   applicationVariables?: ApplicationVariables;
   serverVariables?: ServerVariables;
   author?: string;

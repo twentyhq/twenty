@@ -464,6 +464,8 @@ export class ApplicationService {
         applicationRegistrationId: applicationRegistration.id,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
+        // The workspace's own code, and its logic functions run on crons.
+        canActWithoutUser: true,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
         packageJsonFileId: null,
         yarnLockChecksum: defaultPackageFields.yarnLockChecksum,

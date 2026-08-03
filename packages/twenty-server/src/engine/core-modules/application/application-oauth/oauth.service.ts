@@ -287,6 +287,13 @@ export class OAuthService {
 
     const application = applications[0];
 
+    if (!application.canActWithoutUser) {
+      return this.errorResponse(
+        'unauthorized_client',
+        'This application is not allowed to act without a user in this workspace.',
+      );
+    }
+
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId: application.workspaceId,

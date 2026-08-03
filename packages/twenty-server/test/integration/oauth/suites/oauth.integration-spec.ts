@@ -71,20 +71,22 @@ const insertApplication = async (
     name: string;
     workspaceId: string;
     applicationRegistrationId: string;
+    canActWithoutUser?: boolean;
   },
 ): Promise<TestApplication> => {
   const id = crypto.randomUUID();
 
   await ds.query(
     `INSERT INTO core."application"
-      (id, "universalIdentifier", name, "workspaceId", "applicationRegistrationId", "sourceType", "sourcePath", "canBeUninstalled")
-     VALUES ($1, $2, $3, $4, $5, 'local', '', true)`,
+      (id, "universalIdentifier", name, "workspaceId", "applicationRegistrationId", "sourceType", "sourcePath", "canBeUninstalled", "canActWithoutUser")
+     VALUES ($1, $2, $3, $4, $5, 'local', '', true, $6)`,
     [
       id,
       params.universalIdentifier,
       params.name,
       params.workspaceId,
       params.applicationRegistrationId,
+      params.canActWithoutUser ?? true,
     ],
   );
 
@@ -319,6 +321,37 @@ describe('OAuth (integration)', () => {
       expect(res.body.expires_in).toBeGreaterThan(0);
       expect(res.body.scope).toBe('read write');
       expect(res.body.refresh_token).toBeUndefined();
+    });
+
+    it('should refuse an application that may not act without a user', async () => {
+      const clientSecret = crypto.randomBytes(32).toString('hex');
+      const registration = await insertRegistration(ds, {
+        name: 'OAuth User Bound Only App',
+        clientSecretHash: await bcrypt.hash(clientSecret, 10),
+        redirectUris: ['https://example.com/callback'],
+        scopes: ['read'],
+      });
+
+      createdEntityIds.registrations.push(registration.id);
+
+      const application = await insertApplication(ds, {
+        universalIdentifier: registration.universalIdentifier,
+        name: registration.name,
+        workspaceId: TEST_WORKSPACE_ID,
+        applicationRegistrationId: registration.id,
+        canActWithoutUser: false,
+      });
+
+      createdEntityIds.applications.push(application.id);
+
+      const res = await postToken({
+        grant_type: 'client_credentials',
+        client_id: registration.oAuthClientId,
+        client_secret: clientSecret,
+      });
+
+      expect(res.body.error).toBe('unauthorized_client');
+      expect(res.body.access_token).toBeUndefined();
     });
   });
 

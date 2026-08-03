@@ -39,6 +39,7 @@ import { RECALL_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/logic-functions/constant
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: APP_DISPLAY_NAME,
+  canActWithoutUser: true,
   description: APP_DESCRIPTION,
   logo: 'public/logo.svg',
   category: 'Productivity',
