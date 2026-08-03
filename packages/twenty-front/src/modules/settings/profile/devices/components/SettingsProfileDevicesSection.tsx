@@ -28,10 +28,15 @@ type UserSessionListItem =
   CurrentUserSessionsQuery['currentUserSessions'][number];
 
 const StyledContainer = styled.div`
-  align-items: flex-start;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+`;
+
+// A flex row so the button keeps its natural width while the card above it
+// stretches to the section.
+const StyledButtonContainer = styled.div`
+  display: flex;
 `;
 
 export const SettingsProfileDevicesSection = () => {
@@ -125,13 +130,15 @@ export const SettingsProfileDevicesSection = () => {
           )}
         />
         {hasOtherSessions && (
-          <Button
-            accent="danger"
-            variant="secondary"
-            title={t`Log out all other devices`}
-            Icon={IconLogout}
-            onClick={() => void handleRevokeAllOtherSessions()}
-          />
+          <StyledButtonContainer>
+            <Button
+              accent="danger"
+              variant="secondary"
+              title={t`Log out all other devices`}
+              Icon={IconLogout}
+              onClick={() => void handleRevokeAllOtherSessions()}
+            />
+          </StyledButtonContainer>
         )}
       </StyledContainer>
     </Section>
