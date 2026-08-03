@@ -14,6 +14,26 @@ export const currentUserIdentityQueryFactory = () => {
   };
 };
 
+export const currentUserWorkspaceContextQueryFactory = () => {
+  return {
+    query: gql`
+      query CurrentUserWorkspaceContext {
+        currentUser {
+          id
+          email
+          currentWorkspace {
+            id
+          }
+          currentUserWorkspace {
+            id
+          }
+        }
+      }
+    `,
+    variables: {},
+  };
+};
+
 export const currentUserSessionsQueryFactory = () => {
   return {
     query: gql`
