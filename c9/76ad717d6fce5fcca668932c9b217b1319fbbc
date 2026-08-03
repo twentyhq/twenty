@@ -1,0 +1,341 @@
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3341,7023,9235
+packages/twenty-front/src/modules/page-layout/widgets/graph/utils/__tests__/buildAlphabeticalRankByKey.test.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-38
+packages/twenty-server/src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 63
+packages/twenty-front/src/locales/generated/ro-RO.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/nl-NL.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/zh-CN.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3,186-190
+  s_a797c2297db2c8::t_1c7b8aff126c7c 191
+packages/twenty-front/src/locales/generated/no-NO.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/el-GR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-prompt-text.util.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 11,14,35,37-43,47-70,72,74,76,78,80
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 13-14,40,98-103,110-115,210-215,217-222,262-267,276-281,382-386
+  s_a797c2297db2c8::t_55bd6c5064ca9e 387-388
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/sr-Cyrl.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/af-ZA.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/auth/services/google-apis.service.spec.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 50-54,56,306-364
+  s_a797c2297db2c8::t_df29aacdf0ffdc 365
+packages/twenty-front/src/locales/pt-BR.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_70371b0169788d 9568
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ko-KR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 9283-9285
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 98,138,158-183
+packages/twenty-shared/src/workflow/schemas/workflow-variable-reference-schema.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-8
+packages/twenty-front/src/locales/generated/ko-KR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/de-DE.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pt-BR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/el-GR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/sv-SE.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ar-SA.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/it-IT.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ca-ES.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/he-IL.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_bb9514130d9127 9568
+packages/twenty-server/src/engine/core-modules/auth/auth.resolver.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1,45-46,114-116,126,130-131,133,933,938,940-957
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 6,25
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/no-NO.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/pseudo-en.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3506,9536-9538
+  s_a797c2297db2c8::t_56c066679b8dbf 9539-9540
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pt-PT.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-shared/src/workflow/index.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 102
+packages/twenty-front/src/locales/generated/ca-ES.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/cs-CZ.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/ui/utilities/drag-and-drop/constants/DndKitSensors.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3,8
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/fr-FR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/page-layout/widgets/graph/graph-widget-line-chart/hooks/useLineChartData.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 7,31-33,39-41
+packages/twenty-shared/src/workflow/schemas/send-email-action-settings-schema.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 4,10-12
+packages/twenty-front/src/modules/object-record/record-filter/hooks/useGetRecordFilterDisplayValue.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 13,40-43
+  s_a797c2297db2c8::t_46bce1b57df6b4 44-45
+packages/twenty-front/src/locales/generated/vi-VN.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/vi-VN.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/captcha/constants/CaptchaProtectedPaths.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-2,10
+packages/twenty-front/src/locales/generated/pt-PT.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-16
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/hu-HU.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelValueFormInput.tsx
+  s_a797c2297db2c8::t_9522f93ff6e5a4 248
+packages/twenty-front/src/locales/de-DE.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_d4358e4d504c9f 9568
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ru-RU.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-11
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/parse-finite-number-input.util.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-15
+packages/twenty-server/src/engine/core-modules/metrics/types/metrics-keys.type.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 80-85
+packages/twenty-front/src/locales/generated/tr-TR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/auth/sign-in-up/hooks/__tests__/useHandleResetPassword.test.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 9-10,21-22,71-74,95-99,102-103,116-119,122-134,136
+packages/twenty-front/src/modules/page-layout/widgets/graph/graph-widget-bar-chart/hooks/__tests__/useBarChartData.test.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 2,263-341
+packages/twenty-front/src/locales/generated/en.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/ru-RU.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/hu-HU.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_c93afb56ed4007 9568
+packages/twenty-front/src/locales/ja-JP.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_450ddd878e1efa 9568
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/en.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/page-layout/widgets/graph/utils/buildAlphabeticalRankByKey.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-7
+packages/twenty-front/src/locales/generated/es-ES.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.spec.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 63,67,289,369,406-472,746
+packages/twenty-front/src/locales/generated/pt-BR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/en.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3506,9559-9562
+  s_a797c2297db2c8::t_8c1bb0e01e203c 9563
+packages/twenty-server/src/engine/core-modules/auth/services/microsoft-apis.service.spec.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 47-51,53,285-343
+  s_a797c2297db2c8::t_0444173f2271f6 344
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/da-DK.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/auth/services/google-apis.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 163,243-276
+packages/twenty-front/src/locales/es-ES.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_b15f47a4a8f064 9568
+packages/twenty-front/src/locales/generated/da-DK.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/sr-Cyrl.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/nl-NL.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/zh-TW.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/he-IL.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/ar-SA.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_1ef56459cde443 9568
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/sv-SE.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+.github/workflows/pr-review-dispatch.yaml
+  s_a797c2297db2c8::t_9522f93ff6e5a4 6,36,39-40
+packages/twenty-front/src/modules/page-layout/widgets/graph/graph-widget-line-chart/hooks/__tests__/useLineChartData.test.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1,261-348
+  s_a797c2297db2c8::t_8e62cb7ac67ed4 349
+packages/twenty-front/src/locales/generated/he-IL.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/auth/services/reset-password.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1,12,27,33,38-39,52-86,90-95,97,102-105,119-126,128-131,133-143,145-148,150-154,158-164,168,171,173,189-190,195-196,200-201,311,313-314
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/es-ES.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/uk-UA.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/pl-PL.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/auth/auth.module.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 57,88
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 6439
+packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+  s_a797c2297db2c8::t_9522f93ff6e5a4 36-37,70-71,101-110,164-166,323,325,329-342,375,377-390,394
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/__tests__/build-workspace-setup-prompt-text.util.spec.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 42-46,57,78,116,132,136,142-280
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/zh-TW.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/page-layout/widgets/graph/utils/__tests__/getColorScheme.test.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 62-67,73-75,85-87,97-99,107-120,122-124,127-129,132,136-138,141,144-151,153-155,158-169,173-174,178-180,187,191-193,199-201
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/tr-TR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useBarChartData.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 7,41,43,48-50
+packages/twenty-front/src/locales/el-GR.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_eacd5bb3cd69d9 9568
+packages/twenty-front/src/locales/generated/fr-FR.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/ko-KR.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_d902569a657b02 9568
+packages/twenty-server/src/engine/core-modules/auth/services/microsoft-apis.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 129,221-244
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/uk-UA.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/__tests__/system-prompt-builder.service.spec.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 14,23-50,57
+packages/twenty-front/src/modules/ui/utilities/drag-and-drop/utils/__tests__/getDragActivationConstraints.test.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-29
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3600
+packages/twenty-shared/src/workflow/schemas/find-records-action-settings-schema.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3,9-15
+packages/twenty-front/src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 5-6,19-20,34-42,46-47,52,73-74
+packages/twenty-front/src/locales/generated/zh-CN.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ja-JP.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/fr-FR.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_ffc484cfcaa2ad 9568
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 13-14,38,97-102,109-114,211-216,218-223,263-268,277-282,383-387
+  s_a797c2297db2c8::t_ab905722fceded 388-389
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ro-RO.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartData.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 8,31-33,35,39-41
+packages/twenty-server/src/engine/core-modules/auth/services/reset-password.service.spec.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 5,55,70,111-129,139,151,153-158,175,190,192-196,206,216,218-222,227,231,235-240,243-244,246-251,254,258,263-280,282-283,285-349,352-356,382-383
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 26-27,109-110
+packages/twenty-front/src/locales/generated/fi-FI.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/it-IT.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_40eaacb59b8a88 9568
+packages/twenty-front/src/modules/page-layout/widgets/graph/utils/getColorScheme.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 2,7,12-14,18-20,22-28,37,40,48-49
+packages/twenty-front/src/locales/generated/af-ZA.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pseudo-en.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/de-DE.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/pl-PL.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_9abe296113091b 9568
+packages/twenty-front/src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/__tests__/usePieChartData.test.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3,66-75,124,127-131,137-141,240-322
+packages/twenty-server/src/engine/core-modules/auth/auth.resolver.spec.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1,15-21,47-48,117-127,192-194,200-295
+  s_a797c2297db2c8::t_0df295f7f7562a 296
+packages/twenty-front/src/modules/auth/graphql/mutations/emailPasswordResetLink.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 4-13
+packages/twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 18,103
+packages/twenty-front/src/locales/fi-FI.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_1d454507b88797 9568
+packages/twenty-front/src/locales/generated/ar-SA.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-15
+packages/twenty-server/src/engine/core-modules/auth/types/password-reset-token-generation-result.type.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-13
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/fi-FI.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/pseudo-en.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/modules/ui/utilities/drag-and-drop/utils/getDragActivationConstraints.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1-24
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pl-PL.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/ja-JP.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/it-IT.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/nl-NL.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_bc558ebc0ec369 9568
+packages/twenty-server/src/engine/core-modules/auth/dto/email-password-reset-link.input.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3-9,24-28
+packages/twenty-front/src/locales/af-ZA.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_8e0c135bbe5f5d 9568
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/cs-CZ.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/generated/hu-HU.ts
+  s_a797c2297db2c8::t_9522f93ff6e5a4 1
+packages/twenty-front/src/locales/da-DK.po
+  s_a797c2297db2c8::t_9522f93ff6e5a4 3511,9564-9567
+  s_a797c2297db2c8::t_dc46326b9b4df5 9568
+packages/twenty-front/src/locales/ca-ES.po
+  s_a797c2297db2c8::t_6e5b321edbc59a 3511,9564-9568
+packages/twenty-front/src/locales/cs-CZ.po
+  s_a797c2297db2c8::t_1014d5e38556fb 3511,9564-9568
+packages/twenty-front/src/locales/no-NO.po
+  s_a797c2297db2c8::t_6781f2e3c2cea5 3511,9564-9568
+packages/twenty-front/src/locales/pt-PT.po
+  s_a797c2297db2c8::t_667f552cfd8980 3511,9564-9568
+packages/twenty-front/src/locales/ro-RO.po
+  s_a797c2297db2c8::t_95fa35e7d17222 3511,9564-9568
+packages/twenty-front/src/locales/sr-Cyrl.po
+  s_a797c2297db2c8::t_38afd2d53e85da 3511,9564-9568
+packages/twenty-front/src/locales/sv-SE.po
+  s_a797c2297db2c8::t_1321ee33dbee57 3511,9564-9568
+packages/twenty-front/src/locales/tr-TR.po
+  s_a797c2297db2c8::t_fa4be909491228 3511,9564-9568
+packages/twenty-front/src/locales/uk-UA.po
+  s_a797c2297db2c8::t_e7a7863e3c7ea9 3511,9564-9568
+packages/twenty-front/src/locales/vi-VN.po
+  s_a797c2297db2c8::t_53d77bfcfcc8e3 3511,9564-9568
+packages/twenty-front/src/locales/zh-CN.po
+  s_a797c2297db2c8::t_d88ab665a93070 3511,9541-9545
+packages/twenty-front/src/locales/zh-TW.po
+  s_a797c2297db2c8::t_deda00f3a0debd 3511,9541-9545
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "c976ad717d6fce5fcca668932c9b217b1319fbbc",
+  "prompts": {},
+  "sessions": {
+    "s_a797c2297db2c8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c113cdd-b2a2-4d5e-ac2e-06fb6e384d14",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
