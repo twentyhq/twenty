@@ -10,12 +10,14 @@ import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-sessi
 describe('CookieSessionCsrfMiddleware', () => {
   let middleware: CookieSessionCsrfMiddleware;
 
-  const mockConfig: Record<string, unknown> = {
+  const defaultConfig: Record<string, unknown> = {
     AUTH_COOKIE_SESSIONS_ENABLED: true,
     SERVER_URL: 'https://crm.example.com',
     FRONTEND_URL: 'https://front.example.com',
     AUTH_COOKIE_ALLOWED_ORIGINS: '',
   };
+
+  let mockConfig: Record<string, unknown> = { ...defaultConfig };
 
   const buildRequest = (overrides: Partial<Request> = {}): Request =>
     ({
@@ -38,14 +40,10 @@ describe('CookieSessionCsrfMiddleware', () => {
   };
 
   let next: NextFunction;
-  // Restored unconditionally: a failing assertion must not leak a mutated
-  // config into the tests that follow, since mockConfig is describe-scoped.
-  afterEach(() => {
-    mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = true;
-    mockConfig.AUTH_COOKIE_ALLOWED_ORIGINS = '';
-  });
 
   beforeEach(async () => {
+    mockConfig = { ...defaultConfig };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CookieSessionCsrfMiddleware,
@@ -134,8 +132,6 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  // Host absent from SERVER_URL and FRONTEND_URL, so this can only pass through
-  // the same-origin comparison, not the allowlist.
   it('should allow same-origin cookie requests', () => {
     const request = buildRequest({
       get: jest.fn().mockReturnValue('api.example.com'),
@@ -239,5 +235,76 @@ describe('CookieSessionCsrfMiddleware', () => {
 
     expect(next).not.toHaveBeenCalled();
     expect(response.status).toHaveBeenCalledWith(403);
+  });
+
+  // The middleware guards every route, so callers that never hold a session
+  // cookie must pass without needing a per-route exclusion.
+  describe('callers that carry no session cookie', () => {
+    it('should allow a third-party webhook POST sending no Origin', () => {
+      const request = buildRequest({
+        headers: { 'stripe-signature': 'v1=deadbeef' } as Request['headers'],
+      });
+
+      middleware.use(request, buildResponse(), next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should allow a workflow POST trigger authenticated by an api key', () => {
+      const request = buildRequest({
+        headers: {
+          authorization: 'Bearer an-api-key',
+          origin: 'https://partner.example.org',
+        },
+      });
+
+      middleware.use(request, buildResponse(), next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should allow an app-defined route POST from an arbitrary origin', () => {
+      const request = buildRequest({
+        headers: { origin: 'https://partner.example.org' },
+      });
+
+      middleware.use(request, buildResponse(), next);
+
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('deployment topologies', () => {
+    it('should allow a workspace subdomain posting to its own host', () => {
+      const request = buildRequest({
+        get: jest.fn().mockReturnValue('myworkspace.example.com'),
+        headers: {
+          cookie: '__Host-twenty-session=sess_token',
+          origin: 'https://myworkspace.example.com',
+        },
+      });
+
+      middleware.use(request, buildResponse(), next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should allow a front on a separate port from the api', () => {
+      mockConfig.SERVER_URL = 'http://localhost:3000';
+      mockConfig.FRONTEND_URL = 'http://localhost:3001';
+
+      const request = buildRequest({
+        protocol: 'http',
+        get: jest.fn().mockReturnValue('localhost:3000'),
+        headers: {
+          cookie: 'twenty-session=sess_token',
+          origin: 'http://localhost:3001',
+        },
+      });
+
+      middleware.use(request, buildResponse(), next);
+
+      expect(next).toHaveBeenCalled();
+    });
   });
 });

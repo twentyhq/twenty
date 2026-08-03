@@ -128,8 +128,8 @@ export class AppModule {
     // Before any middleware that authenticates from the session cookie.
     consumer
       .apply(CookieSessionCsrfMiddleware)
-      // A cross-origin form post from the identity provider, authenticating on
-      // the assertion rather than the cookie.
+      // A cross-origin form post from the identity provider, authenticated on the
+      // assertion rather than the cookie.
       .exclude({
         path: 'auth/saml/callback/:identityProviderId',
         method: RequestMethod.POST,

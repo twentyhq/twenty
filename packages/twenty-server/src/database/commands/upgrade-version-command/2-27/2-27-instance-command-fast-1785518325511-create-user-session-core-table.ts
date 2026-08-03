@@ -40,8 +40,8 @@ export class CreateUserSessionCoreTableFastInstanceCommand
       )`,
     );
 
-    // The table is created empty in this same transaction, so there is
-    // nothing to lock or scan.
+    // The table is created empty in this same transaction, so there is nothing
+    // to lock or scan.
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_USER_SESSION_TOKEN_HASH_UNIQUE" ON "core"."userSession" ("tokenHash")`,
     );

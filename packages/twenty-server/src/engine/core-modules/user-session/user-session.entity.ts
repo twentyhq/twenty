@@ -11,24 +11,16 @@ import {
 } from 'typeorm';
 
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
-export enum UserSessionRevokedReason {
-  UserSignOut = 'USER_SIGN_OUT',
-  UserRevoked = 'USER_REVOKED',
-  Superseded = 'SUPERSEDED',
-  PasswordChanged = 'PASSWORD_CHANGED',
-  ImpersonationEnded = 'IMPERSONATION_ENDED',
-}
 
 @Entity({ name: 'userSession', schema: 'core' })
 export class UserSessionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // SHA-256 of the opaque session token; the raw token is never stored.
   @Index('IDX_USER_SESSION_TOKEN_HASH_UNIQUE', { unique: true })
   @Column({ type: 'text' })
   tokenHash: string;

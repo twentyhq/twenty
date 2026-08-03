@@ -35,7 +35,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
@@ -43,7 +43,6 @@ import { AuthService } from './auth.service';
 
 jest.mock('bcrypt');
 
-// Rendering the real React email template takes seconds.
 jest.mock('twenty-emails', () => ({
   ...jest.requireActual('twenty-emails'),
   renderEmail: jest.fn().mockResolvedValue('rendered-email'),

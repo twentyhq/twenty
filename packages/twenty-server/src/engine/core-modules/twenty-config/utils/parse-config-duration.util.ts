@@ -1,9 +1,8 @@
 import ms from 'ms';
 
 // Parsed by the same library the consumers call, so the accepted units cannot
-// drift from them: IsDuration allows "1M" and "1Month", which ms reads as one
-// minute and as nothing at all. Returns undefined for anything ms cannot turn
-// into a finite number of milliseconds.
+// drift from them: "1M" and "1Month" look interchangeable but ms reads them as
+// one minute and as nothing at all.
 export const parseConfigDuration = (duration: unknown): number | undefined => {
   if (typeof duration !== 'string') {
     return undefined;

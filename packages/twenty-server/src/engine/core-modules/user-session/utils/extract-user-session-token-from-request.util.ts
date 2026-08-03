@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 
-import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
+import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 
 const readCookieValue = (
   cookieHeader: string,
@@ -29,9 +29,8 @@ const readCookieValue = (
 };
 
 // The plain name is only read on deployments that cannot set a __Host- cookie
-// at all (plain http), because __Host- is precisely what stops a sibling
-// subdomain from widening the cookie: accepting the plain name on an https
-// deployment would let a subdomain toss a session in and fixate the visitor.
+// at all (plain http). Accepting it on an https deployment would let a
+// sibling subdomain toss a session in and fixate the visitor.
 export const extractUserSessionTokenFromRequestCookie = (
   request: Request,
   {

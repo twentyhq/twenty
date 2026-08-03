@@ -46,7 +46,6 @@ import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-confi
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
-import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
 import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
@@ -118,7 +117,7 @@ export class ConfigVariables {
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
 
@@ -127,7 +126,7 @@ export class ConfigVariables {
     description: 'Duration for which the password reset token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
@@ -332,7 +331,7 @@ export class ConfigVariables {
     description: 'Duration for which the access token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
 
@@ -341,7 +340,7 @@ export class ConfigVariables {
     description: 'Duration for which the workspace agnostic token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN = '30m';
 
@@ -359,7 +358,7 @@ export class ConfigVariables {
       'Grace period allowing concurrent refresh token use (e.g. two tabs refreshing simultaneously). Reuse after this window triggers suspicious activity detection.',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsNonNegativeDuration()
   @IsOptional()
   REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
 
@@ -416,8 +415,8 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Comma-separated list of extra origins allowed to send credentialed cross-origin requests (split-origin deployments)',
-    // Env-only: the CORS allowlist is built once at boot, so a value changed
-    // in the database would apply to the CSRF guard but not to CORS.
+    // Env-only: the CORS allowlist is built once at boot, so a value changed in
+    // the database would apply to the CSRF guard but not to CORS.
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
@@ -429,7 +428,7 @@ export class ConfigVariables {
     description: 'Duration for which the login token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN = '15m';
 
@@ -438,7 +437,7 @@ export class ConfigVariables {
     description: 'Duration for which the file token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   FILE_TOKEN_EXPIRES_IN = '1d';
 
@@ -447,7 +446,7 @@ export class ConfigVariables {
     description: 'Duration for which the invitation token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
@@ -463,7 +462,7 @@ export class ConfigVariables {
     description: 'Duration for which an application access token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   APPLICATION_ACCESS_TOKEN_EXPIRES_IN = '30m';
 
@@ -472,7 +471,7 @@ export class ConfigVariables {
     description: 'Duration for which an application refresh token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   APPLICATION_REFRESH_TOKEN_EXPIRES_IN = '60d';
 
@@ -482,7 +481,7 @@ export class ConfigVariables {
       'Duration for which a playground token (in-app REST/GraphQL playground bearer) is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   PLAYGROUND_TOKEN_EXPIRES_IN = '2h';
 

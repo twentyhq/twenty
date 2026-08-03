@@ -6,9 +6,7 @@ import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/aut
 
 // A workspace-agnostic session outlives a sign-out performed on a workspace
 // subdomain, since the workspace cannot clear a cookie it does not own, so
-// converting it into workspace access would hand the workspace back. Listing
-// workspaces stays available. Workspace-scoped credentials are revoked by that
-// sign-out and so cannot outlive it.
+// converting it into workspace access would hand the workspace back.
 const DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS = ms(
   DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW,
 );
@@ -29,17 +27,15 @@ export const canCredentialAutoLoginIntoWorkspaces = ({
   }
 
   // Legacy JWT pairs carry no authentication time, so they keep the
-  // pre-session behavior until the cookie session cutover retires them.
+  // pre-session behavior until the cutover retires them.
   if (!isDefined(authenticatedAt)) {
     return true;
   }
 
   const parsedWindowMs = ms(autoLoginWindow);
 
-  // ms() yields undefined for an unparseable duration, and a negative one
-  // yields a window nothing falls inside. Either would silently drop the
-  // boundary or lock everyone out, so both fall back to the default. Zero is
-  // kept, since it deliberately turns the bridge off.
+  // An unparseable or negative window would silently drop the boundary or lock
+  // everyone out. Zero is kept, since it deliberately turns the bridge off.
   const isUsableWindow =
     Number.isFinite(parsedWindowMs) && (parsedWindowMs as number) >= 0;
 

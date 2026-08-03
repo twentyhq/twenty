@@ -31,7 +31,6 @@ export class UserSessionDTO {
   @Field(() => Date)
   expiresAt: Date;
 
-  // True when this row backs the session cookie of the requesting client.
   @Field(() => Boolean)
   isCurrent: boolean;
 }

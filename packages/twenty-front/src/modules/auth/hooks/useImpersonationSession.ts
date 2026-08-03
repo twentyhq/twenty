@@ -21,8 +21,6 @@ type StoredImpersonationSession = {
 // Token swaps without a full reload would require enumerating every
 // user-scoped atom, localStorage entry, and Apollo cache key — brittle and
 // silently broken every time a new piece of user state is added. Instead,
-// swap the credential (token pair or session cookie) and let the browser
-// re-bootstrap the app.
 const reloadWithSession = (returnPath: string) => {
   window.location.assign(returnPath);
 };
@@ -40,7 +38,6 @@ export const useImpersonationSession = () => {
 
       if (currentTokenPair || isCookieAuthActive) {
         const session: StoredImpersonationSession = {
-          // In cookie mode the server parks and restores the session itself.
           ...(currentTokenPair ? { tokenPair: currentTokenPair } : {}),
           returnPath: targetPath,
         };
@@ -59,8 +56,8 @@ export const useImpersonationSession = () => {
       }
 
       if (isCookieAuthActive) {
-        // Drop the token pair the exchange also returned, so the cookie it set
-        // stays the only credential.
+        // Drop the token pair the exchange also returned, so the cookie it set stays
+        // the only credential.
         store.set(tokenPairState.atom, null);
       }
 
@@ -97,8 +94,7 @@ export const useImpersonationSession = () => {
         }
       } catch {}
 
-      // Cross-workspace: the admin session on its own origin was never
-      // replaced, so just close. Sign out if the browser blocks close().
+      // Cross-workspace: the admin session on its own origin was never replaced.
       window.close();
       await signOut();
 

@@ -25,7 +25,6 @@ const OPERATING_SYSTEM_MATCHERS: UserAgentMatcher[] = [
   { label: 'Linux', pattern: /Linux/ },
 ];
 
-// Returns proper-noun parts only; the caller localizes the surrounding copy.
 export const parseUserAgentDescription = (
   userAgent: string | null | undefined,
 ): { browser?: string; operatingSystem?: string } => {

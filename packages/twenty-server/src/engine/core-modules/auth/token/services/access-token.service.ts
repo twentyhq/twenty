@@ -23,7 +23,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
-import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
+import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceNotFoundDefaultError } from 'src/engine/core-modules/user-workspace/user-workspace.exception';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -201,8 +201,8 @@ export class AccessTokenService {
 
     if (token) {
       if (isUserSessionToken(token)) {
-        // Session tokens are cookie-only by design: accepting them as Bearer
-        // would reopen the XSS-exfiltration surface cookie sessions close.
+        // Session tokens are cookie-only by design: accepting them as Bearer would
+        // reopen the XSS-exfiltration surface cookie sessions close.
         throw new AuthException(
           'Session tokens are only accepted from the session cookie',
           AuthExceptionCode.UNAUTHENTICATED,
@@ -233,8 +233,6 @@ export class AccessTokenService {
 
     const context = await this.jwtStrategy.validate(payload);
 
-    // JWTs carry workspaceMemberId as a claim; sessions resolve it from the
-    // workspace member loaded during validation.
     return {
       ...context,
       workspaceMemberId:

@@ -78,8 +78,6 @@ const bootstrap = async () => {
   });
 
   app.enableCors({
-    // Allowlisted origins are reflected so browsers accept cookies; the rest
-    // keep the public wildcard, which browsers refuse with credentials.
     origin: (
       origin: string | undefined,
       callback: (error: Error | null, allow?: boolean | string) => void,

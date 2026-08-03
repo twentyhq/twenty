@@ -55,8 +55,6 @@ export const CookieSessionBootEffect = () => {
           ? 'authenticated'
           : 'unauthenticated';
       } catch (error) {
-        // Only the server rejecting the credential settles this. A transport
-        // failure, or a resolver failing for its own reasons, says nothing.
         return isUnauthenticatedError(error)
           ? 'unauthenticated'
           : 'unreachable';
@@ -68,8 +66,6 @@ export const CookieSessionBootEffect = () => {
       setTokenPair(null);
     };
 
-    // Returns whether the migration reached a conclusion. Anything transient
-    // returns false, releasing the guard so the next renewal retries.
     const attemptCookieSessionBoot = async (): Promise<boolean> => {
       const probeResult = await probeCookieSession();
 
@@ -99,8 +95,6 @@ export const CookieSessionBootEffect = () => {
         return true;
       }
 
-      // Renewed and still no session: something is refusing the cookie, which
-      // retrying in this tab will not change.
       return probeResultAfterRenewal === 'unauthenticated';
     };
 
@@ -109,22 +103,17 @@ export const CookieSessionBootEffect = () => {
         return;
       }
 
-      // A previous sign-out never reached the server, so finish the revocation
-      // before anything can probe back into a live session.
       if (store.get(isPendingServerSignOutState.atom)) {
         try {
           await apolloClient.mutate({ mutation: SignOutDocument });
           store.set(isPendingServerSignOutState.atom, false);
         } catch {
-          // Still unreachable: keep the marker and retry on the next boot.
         }
 
         return;
       }
 
       if (!isCookieSessionEnabled) {
-        // Server-side rollback: cutover users land on the sign-in screen and
-        // re-authenticate into token-pair mode.
         if (isCookieAuthActive) {
           setIsCookieAuthActive(false);
         }

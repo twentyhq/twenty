@@ -939,8 +939,6 @@ export class AuthResolver {
     );
   }
 
-  // Every active legacy client renews within one access-token TTL, so it picks
-  // up a session cookie here without any interaction.
   @Mutation(() => AuthTokens)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async renewToken(
@@ -960,9 +958,6 @@ export class AuthResolver {
     return { tokens: tokens };
   }
 
-  // An expired or malformed token is already unusable, so it is not an error.
-  // A failed revocation of a valid one is, and surfaces, because the credential
-  // still works. The cookie is cleared either way.
   @Mutation(() => Boolean)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async signOut(
@@ -978,9 +973,8 @@ export class AuthResolver {
         refreshToken,
       });
     } finally {
-      // Only for a request that actually carried one. This mutation is public
-      // and SameSite=Lax keeps the cookie off cross-site POSTs, so clearing
-      // unconditionally would let any site sign a visitor out.
+      // This mutation is public and SameSite=Lax keeps the cookie off cross-site
+      // POSTs, so clearing unconditionally would let any site sign a visitor out.
       if (
         isDefined(context.req.res) &&
         this.userSessionCookieService.hasSessionCookie(context.req)
