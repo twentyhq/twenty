@@ -202,6 +202,26 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  openTaskCount: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'openTaskCount',
+      type: FieldMetadataType.NUMBER,
+      label: i18nLabel(msg`Open tasks`),
+      description: i18nLabel(
+        msg`Number of tasks tied to the contact that are not done`,
+      ),
+      icon: 'IconCheckbox',
+      isNullable: false,
+      isUIEditable: false,
+      defaultValue: 0,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   //deprecated
   avatarUrl: createStandardFieldFlatMetadata({
     objectName,
