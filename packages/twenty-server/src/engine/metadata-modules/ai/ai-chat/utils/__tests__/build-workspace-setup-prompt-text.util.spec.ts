@@ -39,7 +39,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('tailored to their business');
-    expect(result).toContain('Open warmly and by first name');
+    expect(result).toContain('Do not greet them again');
     expect(result).toContain('what you already know about their company');
     expect(result).toContain(
       'say what they do there, since you do not know their role',
