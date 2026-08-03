@@ -20,6 +20,7 @@ import {
   DatabaseEventAction,
   type ObjectRecordEvent,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
   const store = useStore();
@@ -49,6 +50,8 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
+
+      let hasAnyRecordActuallyChanged = false;
 
       for (const updateEvent of updateEvents) {
         const recordFromEvent = updateEvent.properties.after;
@@ -129,7 +132,22 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           !isDefined(cachedRecord) ||
           !isDefined(cachedRecordWithConnection)
         ) {
+          // No cached snapshot to compare against, so we can't rule out an
+          // actual change - keep the aggregate refetch conservative.
+          hasAnyRecordActuallyChanged = true;
           continue;
+        }
+
+        const hasThisEventChangedAnyFieldValue = Object.entries(
+          updatedRecord,
+        ).some(
+          ([fieldName, fieldValue]) =>
+            fieldName !== 'updatedAt' &&
+            !isDeeplyEqual(cachedRecord[fieldName], fieldValue),
+        );
+
+        if (hasThisEventChangedAnyFieldValue) {
+          hasAnyRecordActuallyChanged = true;
         }
 
         upsertRecordsInStore({ partialRecords: [updatedRecord] });
@@ -165,7 +183,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         });
       }
 
-      if (isNonEmptyArray(updateEvents)) {
+      if (hasAnyRecordActuallyChanged) {
         refetchAggregateQueriesForObjectMetadataItem({
           objectMetadataItem,
         });
