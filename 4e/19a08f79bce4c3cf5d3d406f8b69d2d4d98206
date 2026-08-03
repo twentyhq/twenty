@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/connected-account/refresh-tokens-manager/drivers/google/utils/parse-google-oauth-error.util.ts
+  s_558d20a946930a::t_747be4b08e6308 9-20,35,42-46,50-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "4e19a08f79bce4c3cf5d3d406f8b69d2d4d98206",
+  "prompts": {},
+  "sessions": {
+    "s_558d20a946930a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4033fa58-8280-4b51-b50d-f125d277a559",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
