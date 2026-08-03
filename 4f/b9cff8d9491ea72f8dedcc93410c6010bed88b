@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/parse-msal-error.util.ts
+  s_558d20a946930a::t_726552949dcb3d 1,28-35,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "4fb9cff8d9491ea72f8dedcc93410c6010bed88b",
+  "prompts": {},
+  "sessions": {
+    "s_558d20a946930a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4033fa58-8280-4b51-b50d-f125d277a559",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
