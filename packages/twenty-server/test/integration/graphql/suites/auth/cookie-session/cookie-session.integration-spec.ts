@@ -63,6 +63,70 @@ const extractSessionCookie = (
 
 const origin = buildAppleOrigin();
 
+const signInAndGetSessionCookie = async (): Promise<string> => {
+  const loginResponse = await asWorkspaceRequest(
+    request(SERVER_URL).post('/metadata'),
+  )
+    .send({
+      query: `
+        mutation GetLoginTokenFromCredentials(
+          $email: String!
+          $password: String!
+          $origin: String!
+        ) {
+          getLoginTokenFromCredentials(
+            email: $email
+            password: $password
+            origin: $origin
+          ) {
+            loginToken {
+              token
+            }
+          }
+        }
+      `,
+      variables: {
+        email: 'tim@apple.dev',
+        password: 'tim@apple.dev',
+        origin,
+      },
+    })
+    .expect(200);
+
+  const loginToken =
+    loginResponse.body.data.getLoginTokenFromCredentials.loginToken.token;
+
+  const exchangeResponse = await asWorkspaceRequest(
+    request(SERVER_URL).post('/metadata'),
+  )
+    .send({
+      query: `
+        mutation GetAuthTokensFromLoginToken(
+          $loginToken: String!
+          $origin: String!
+        ) {
+          getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
+            tokens {
+              accessOrWorkspaceAgnosticToken {
+                token
+              }
+            }
+          }
+        }
+      `,
+      variables: { loginToken, origin },
+    })
+    .expect(200);
+
+  const sessionCookie = extractSessionCookie(
+    exchangeResponse.headers['set-cookie'],
+  );
+
+  expect(sessionCookie).toBeDefined();
+
+  return sessionCookie as string;
+};
+
 describe('Cookie sessions (integration)', () => {
   let sessionCookie: string;
 
@@ -71,67 +135,7 @@ describe('Cookie sessions (integration)', () => {
       input: { key: AUTH_COOKIE_SESSIONS_ENABLED_KEY, value: true },
     });
 
-    const loginResponse = await asWorkspaceRequest(
-      request(SERVER_URL).post('/metadata'),
-    )
-      .send({
-        query: `
-          mutation GetLoginTokenFromCredentials(
-            $email: String!
-            $password: String!
-            $origin: String!
-          ) {
-            getLoginTokenFromCredentials(
-              email: $email
-              password: $password
-              origin: $origin
-            ) {
-              loginToken {
-                token
-              }
-            }
-          }
-        `,
-        variables: {
-          email: 'tim@apple.dev',
-          password: 'tim@apple.dev',
-          origin,
-        },
-      })
-      .expect(200);
-
-    const loginToken =
-      loginResponse.body.data.getLoginTokenFromCredentials.loginToken.token;
-
-    const exchangeResponse = await asWorkspaceRequest(
-      request(SERVER_URL).post('/metadata'),
-    )
-      .send({
-        query: `
-          mutation GetAuthTokensFromLoginToken(
-            $loginToken: String!
-            $origin: String!
-          ) {
-            getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
-              tokens {
-                accessOrWorkspaceAgnosticToken {
-                  token
-                }
-              }
-            }
-          }
-        `,
-        variables: { loginToken, origin },
-      })
-      .expect(200);
-
-    const extractedCookie = extractSessionCookie(
-      exchangeResponse.headers['set-cookie'],
-    );
-
-    expect(extractedCookie).toBeDefined();
-
-    sessionCookie = extractedCookie as string;
+    sessionCookie = await signInAndGetSessionCookie();
   });
 
   afterAll(async () => {
@@ -179,11 +183,15 @@ describe('Cookie sessions (integration)', () => {
     expect(response.body.error).toBe('CSRF_ORIGIN_MISMATCH');
   });
 
+  // Mints its own session rather than consuming the shared one, so revoking it
+  // cannot break the tests above whatever order they run in.
   it('should stop authenticating the cookie once signed out', async () => {
+    const disposableSessionCookie = await signInAndGetSessionCookie();
+
     const signOutResponse = await asWorkspaceRequest(
       request(SERVER_URL).post('/metadata'),
     )
-      .set('Cookie', sessionCookie)
+      .set('Cookie', disposableSessionCookie)
       .send({ query: SIGN_OUT_MUTATION })
       .expect(200);
 
@@ -192,7 +200,7 @@ describe('Cookie sessions (integration)', () => {
     const afterSignOut = await asWorkspaceRequest(
       request(SERVER_URL).post('/metadata'),
     )
-      .set('Cookie', sessionCookie)
+      .set('Cookie', disposableSessionCookie)
       .send({ query: CURRENT_USER_QUERY });
 
     expect(afterSignOut.body.data?.currentUser).toBeFalsy();
