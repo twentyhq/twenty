@@ -33,12 +33,7 @@ export const sendSlackMessageWithBodyFallbacks = async ({
     } catch (error) {
       lastError = error;
 
-      // Only a rejected body is worth simplifying: anything else (bad channel,
-      // revoked token) fails the same way however the message is encoded.
-      if (
-        index === bodies.length - 1 ||
-        !isSlackMarkdownFormatError(error)
-      ) {
+      if (index === bodies.length - 1 || !isSlackMarkdownFormatError(error)) {
         return slackToolFailure(failureMessage, error);
       }
     }
