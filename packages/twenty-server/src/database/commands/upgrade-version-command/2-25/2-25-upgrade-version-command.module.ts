@@ -8,8 +8,6 @@ import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/command
 import { AddMessageCampaignNameFieldCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229970000-add-message-campaign-name-field.command';
 import { RemoveMessageCampaignNavigationMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785332550000-remove-message-campaign-navigation-menu-item.command';
 import { AlignMessageCampaignViewFieldPositionsCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785332560000-align-message-campaign-view-field-positions.command';
-import { MakeMessageCampaignUserFacingCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785430000000-make-message-campaign-user-facing.command';
-import { MakeMessageListUserFacingCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785430000001-make-message-list-user-facing.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -33,8 +31,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddMessageCampaignNameFieldCommand,
     RemoveMessageCampaignNavigationMenuItemCommand,
     AlignMessageCampaignViewFieldPositionsCommand,
-    MakeMessageCampaignUserFacingCommand,
-    MakeMessageListUserFacingCommand,
   ],
 })
 export class V2_25_UpgradeVersionCommandModule {}

@@ -3687,6 +3687,7 @@ enum FileFolder {
   Dependencies
   Workflow
   EmailAttachment
+  CampaignImage
   AppTarball
   GeneratedSdkClient
   Dpa
