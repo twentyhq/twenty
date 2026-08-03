@@ -1,4 +1,4 @@
-export type SlackTeamClaimPayload = {
+export type SlackRegisterConnectionPayload = {
   connectionProviderId: string;
   connectionProviderName: string;
   connectedAccountId: string;
