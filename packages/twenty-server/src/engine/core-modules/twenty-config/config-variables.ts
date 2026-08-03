@@ -1022,11 +1022,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset to disable the step.',
+      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset or set to 0 to disable the step.',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
+  @IsInt()
   @IsOptional()
   ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT?: number;
 
