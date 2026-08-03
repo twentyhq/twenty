@@ -12,8 +12,10 @@ import {
 
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 
-const ALLOWED_ORIGIN = 'http://localhost:3001';
-const DISALLOWED_ORIGIN = 'https://attacker.example.com';
+import {
+  ALLOWED_ORIGIN,
+  DISALLOWED_ORIGIN,
+} from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 describe('failing user session creation on auth exchanges (integration)', () => {
   describe('with cookie sessions disabled (default)', () => {

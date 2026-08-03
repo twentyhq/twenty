@@ -7,7 +7,7 @@ import {
   signInWithCookieCapture,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
 
-const ALLOWED_ORIGIN = 'http://localhost:3001';
+import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 // SameSite=None forces Secure (browsers reject the combination without it),
 // which is the one secure-deployment trigger reachable at runtime: SERVER_URL

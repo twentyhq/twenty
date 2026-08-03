@@ -16,7 +16,7 @@ import {
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
-const ALLOWED_ORIGIN = 'http://localhost:3001';
+import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 describe('failing user sessions API (integration)', () => {
   let timSessionId: string;

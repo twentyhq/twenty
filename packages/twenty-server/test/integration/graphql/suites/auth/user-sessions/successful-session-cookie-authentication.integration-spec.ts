@@ -10,7 +10,7 @@ import { currentUserIdentityQueryFactory } from 'test/integration/graphql/suites
 
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const ALLOWED_ORIGIN = 'http://localhost:3001';
+import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 describe('successful session cookie authentication (integration)', () => {
   let sessionToken: string;

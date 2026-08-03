@@ -12,8 +12,10 @@ import { currentUserIdentityQueryFactory } from 'test/integration/graphql/suites
 
 import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
 
-const ALLOWED_ORIGIN = 'http://localhost:3001';
-const DISALLOWED_ORIGIN = 'https://attacker.example.com';
+import {
+  ALLOWED_ORIGIN,
+  DISALLOWED_ORIGIN,
+} from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 describe('failing session cookie authentication (integration)', () => {
   let sessionToken: string;

@@ -13,7 +13,7 @@ import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-ses
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
-const ALLOWED_ORIGIN = 'http://localhost:3001';
+import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const SESSION_ABSOLUTE_LIFETIME_MS = 180 * ONE_DAY_MS;
