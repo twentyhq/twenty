@@ -9,6 +9,7 @@ import { buildAlphabeticalRankByKey } from '@/page-layout/widgets/graph/utils/bu
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 type UsePieChartDataProps = {
   data: PieChartDataItemWithColor[];
@@ -28,18 +29,26 @@ export const usePieChartData = ({
   const allEnrichedData = useMemo((): PieChartEnrichedData[] => {
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
-    const gradientRankByKey =
-      colorMode === 'explicitSingleColor'
-        ? buildAlphabeticalRankByKey(data.map((item) => item.key))
-        : undefined;
+    const alphabeticalRankByKey = buildAlphabeticalRankByKey(
+      data.map((item) => item.key),
+    );
 
     return data.map((item) => {
+      const alphabeticalRank = alphabeticalRankByKey.get(item.key);
+
+      assertIsDefinedOrThrow(
+        alphabeticalRank,
+        new Error(`Missing alphabetical rank for color key "${item.key}"`),
+      );
+
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: item.color,
-        colorKey: item.key,
-        groupIndex: gradientRankByKey?.get(item.key),
-        totalGroups: gradientRankByKey?.size,
+        colorIndex: alphabeticalRank,
+        totalGroups:
+          colorMode === 'explicitSingleColor'
+            ? alphabeticalRankByKey.size
+            : undefined,
       });
 
       const percentage = calculatePieChartPercentage(item.value, totalValue);

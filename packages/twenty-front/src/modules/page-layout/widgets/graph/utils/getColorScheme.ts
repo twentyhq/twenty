@@ -3,20 +3,17 @@ import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/Graph
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
-import { hashColorKey } from '@/page-layout/widgets/graph/utils/hashColorKey';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getColorScheme = ({
   registry,
   colorName,
-  colorKey,
-  groupIndex,
+  colorIndex,
   totalGroups,
 }: {
   registry: GraphColorRegistry;
   colorName?: GraphColor;
-  colorKey: string;
-  groupIndex?: number;
+  colorIndex: number;
   totalGroups?: number;
 }): GraphColorScheme => {
   const normalizedColorName = isDefined(colorName)
@@ -27,24 +24,18 @@ export const getColorScheme = ({
     !isDefined(normalizedColorName) ||
     !isDefined(registry[normalizedColorName])
   ) {
-    return getColorSchemeByIndex(registry, hashColorKey(colorKey));
+    return getColorSchemeByIndex(registry, colorIndex);
   }
 
   if (!isDefined(totalGroups)) {
     return registry[normalizedColorName];
   }
 
-  if (!isDefined(groupIndex)) {
-    throw new Error(
-      `Missing groupIndex for color key "${colorKey}" while totalGroups is set`,
-    );
-  }
-
   return {
     ...registry[normalizedColorName],
     solid: generateGroupColor({
       colorScheme: registry[normalizedColorName],
-      groupIndex,
+      groupIndex: colorIndex,
       totalGroups,
     }),
   };

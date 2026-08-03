@@ -121,7 +121,7 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData[0].percentage).toBe(100);
   });
 
-  it('should assign automatic palette colors by key hash', () => {
+  it('should assign automatic palette colors by alphabetical rank', () => {
     const { result } = renderHook(() =>
       usePieChartData({
         data: [
@@ -135,8 +135,8 @@ describe('usePieChartData', () => {
     );
 
     expect(colorsByKey(result.current.enrichedData)).toEqual({
-      gamma: 'blue',
-      delta: 'red',
+      gamma: 'red',
+      delta: 'blue',
       beta: 'red',
     });
   });
@@ -265,8 +265,8 @@ describe('usePieChartData', () => {
 
     const expectedColorsByKey = {
       alpha: 'red',
-      beta: 'red',
-      gamma: 'blue',
+      beta: 'blue',
+      gamma: 'red',
     };
 
     expect(colorsByKey(firstOrderResult.current.enrichedData)).toEqual(

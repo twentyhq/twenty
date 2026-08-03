@@ -292,8 +292,8 @@ describe('useBarChartData', () => {
 
     const expectedColorsByKey = {
       sales: 'green',
-      revenue: 'green',
-      expenses: 'purple',
+      revenue: 'purple',
+      expenses: 'green',
     };
 
     expect(colorsByKey(firstOrderResult.current.enrichedKeys)).toEqual(

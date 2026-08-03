@@ -8,6 +8,7 @@ import { buildAlphabeticalRankByKey } from '@/page-layout/widgets/graph/utils/bu
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 type UseBarChartDataProps = {
   keys: string[];
@@ -38,19 +39,25 @@ export const useBarChartData = ({
   );
 
   const allEnrichedKeys = useMemo((): BarChartEnrichedKey[] => {
-    const gradientRankByKey =
-      colorMode === 'explicitSingleColor'
-        ? buildAlphabeticalRankByKey(keys)
-        : undefined;
+    const alphabeticalRankByKey = buildAlphabeticalRankByKey(keys);
 
     return keys.map((key) => {
+      const alphabeticalRank = alphabeticalRankByKey.get(key);
+
+      assertIsDefinedOrThrow(
+        alphabeticalRank,
+        new Error(`Missing alphabetical rank for color key "${key}"`),
+      );
+
       const seriesConfig = seriesConfigMap.get(key);
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: seriesConfig?.color,
-        colorKey: key,
-        groupIndex: gradientRankByKey?.get(key),
-        totalGroups: gradientRankByKey?.size,
+        colorIndex: alphabeticalRank,
+        totalGroups:
+          colorMode === 'explicitSingleColor'
+            ? alphabeticalRankByKey.size
+            : undefined,
       });
 
       return {

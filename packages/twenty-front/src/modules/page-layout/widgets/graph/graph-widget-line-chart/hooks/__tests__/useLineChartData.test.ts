@@ -290,8 +290,8 @@ describe('useLineChartData', () => {
 
     const expectedColorsByKey = {
       alpha: 'red',
-      beta: 'red',
-      gamma: 'blue',
+      beta: 'blue',
+      gamma: 'red',
     };
 
     expect(colorsByKey(firstOrderResult.current.enrichedSeries)).toEqual(

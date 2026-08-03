@@ -64,7 +64,7 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'blue',
-        colorKey: 'won',
+        colorIndex: 0,
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -74,7 +74,7 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'BLUE' as 'blue',
-        colorKey: 'won',
+        colorIndex: 0,
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -84,7 +84,7 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'Blue' as 'blue',
-        colorKey: 'won',
+        colorIndex: 0,
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -92,40 +92,40 @@ describe('getColorScheme', () => {
   });
 
   describe('with invalid or missing color name', () => {
-    it('should hash the color key into the palette', () => {
-      const wonResult = getColorScheme({
+    it('should return the color scheme at the provided index', () => {
+      const firstResult = getColorScheme({
         registry: mockRegistry,
-        colorKey: 'won',
+        colorIndex: 0,
       });
-      const openResult = getColorScheme({
+      const secondResult = getColorScheme({
         registry: mockRegistry,
-        colorKey: 'open',
+        colorIndex: 1,
       });
-      const lostResult = getColorScheme({
+      const thirdResult = getColorScheme({
         registry: mockRegistry,
-        colorKey: 'lost',
+        colorIndex: 2,
       });
 
-      expect(wonResult.name).toBe('green');
-      expect(openResult.name).toBe('red');
-      expect(lostResult.name).toBe('blue');
+      expect(firstResult.name).toBe('blue');
+      expect(secondResult.name).toBe('green');
+      expect(thirdResult.name).toBe('red');
     });
 
-    it('should hash the color key when color name is not in registry', () => {
+    it('should use the provided index when color name is not in registry', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'invalidColor' as 'blue',
-        colorKey: 'won',
+        colorIndex: 1,
       });
 
       expect(result.name).toBe('green');
     });
 
-    it('should return the same color for the same key on every call', () => {
-      const first = getColorScheme({ registry: mockRegistry, colorKey: 'won' });
+    it('should return the same color for the same index on every call', () => {
+      const first = getColorScheme({ registry: mockRegistry, colorIndex: 1 });
       const second = getColorScheme({
         registry: mockRegistry,
-        colorKey: 'won',
+        colorIndex: 1,
       });
 
       expect(first).toEqual(second);
@@ -137,8 +137,7 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'blue',
-        colorKey: 'won',
-        groupIndex: 0,
+        colorIndex: 0,
         totalGroups: 5,
       });
 
@@ -146,35 +145,22 @@ describe('getColorScheme', () => {
       expect(result.variations).toEqual(mockRegistry.blue.variations);
     });
 
-    it('should use groupIndex for group color generation', () => {
+    it('should use colorIndex for group color generation', () => {
       const result1 = getColorScheme({
         registry: mockRegistry,
         colorName: 'green',
-        colorKey: 'won',
-        groupIndex: 0,
+        colorIndex: 0,
         totalGroups: 3,
       });
 
       const result2 = getColorScheme({
         registry: mockRegistry,
         colorName: 'green',
-        colorKey: 'lost',
-        groupIndex: 2,
+        colorIndex: 2,
         totalGroups: 3,
       });
 
       expect(result1.solid).not.toBe(result2.solid);
-    });
-
-    it('should throw when groupIndex is missing', () => {
-      expect(() =>
-        getColorScheme({
-          registry: mockRegistry,
-          colorName: 'green',
-          colorKey: 'won',
-          totalGroups: 3,
-        }),
-      ).toThrow('Missing groupIndex for color key "won"');
     });
   });
 });

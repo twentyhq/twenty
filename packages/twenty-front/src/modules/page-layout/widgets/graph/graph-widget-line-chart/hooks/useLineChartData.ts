@@ -9,6 +9,7 @@ import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 type UseLineChartDataProps = {
   data: LineChartSeriesWithColor[];
@@ -28,18 +29,26 @@ export const useLineChartData = ({
   );
 
   const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
-    const gradientRankByKey =
-      colorMode === 'explicitSingleColor'
-        ? buildAlphabeticalRankByKey(data.map((series) => series.key))
-        : undefined;
+    const alphabeticalRankByKey = buildAlphabeticalRankByKey(
+      data.map((series) => series.key),
+    );
 
     return data.map((series, index) => {
+      const alphabeticalRank = alphabeticalRankByKey.get(series.key);
+
+      assertIsDefinedOrThrow(
+        alphabeticalRank,
+        new Error(`Missing alphabetical rank for color key "${series.key}"`),
+      );
+
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
-        colorKey: series.key,
-        groupIndex: gradientRankByKey?.get(series.key),
-        totalGroups: gradientRankByKey?.size,
+        colorIndex: alphabeticalRank,
+        totalGroups:
+          colorMode === 'explicitSingleColor'
+            ? alphabeticalRankByKey.size
+            : undefined,
       });
 
       const sanitizedSeriesKey = series.key
