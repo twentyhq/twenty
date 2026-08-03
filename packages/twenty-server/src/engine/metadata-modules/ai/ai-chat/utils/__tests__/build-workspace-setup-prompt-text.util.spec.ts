@@ -200,7 +200,6 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('at most one of them marked recommended');
-    expect(result).toContain('mark none of them recommended');
   });
 
   it('should anchor the proposal on admission tests instead of numeric bands', () => {
@@ -226,7 +225,18 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('workflow-building');
     expect(result).toContain('create_complete_workflow');
     expect(result).toContain('validate_workflow');
-    expect(result).toContain('allowMultiSelect');
+  });
+
+  it('should let the agent choose what to propose instead of following a script', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('Nothing after that is a fixed sequence');
+    expect(result).toContain('propose only that one');
+    expect(result).toContain('Name the thing in their business it improves');
+    expect(result).toContain('say what is ready and stop');
   });
 
   it('should propose a dashboard built with the dashboard tools', () => {
