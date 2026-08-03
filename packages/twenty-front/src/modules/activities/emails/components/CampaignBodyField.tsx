@@ -8,6 +8,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
+import { useUploadCampaignImage } from '@/activities/emails/hooks/useUploadCampaignImage';
 import { InsertRail } from '@/advanced-text-editor/components/InsertRail';
 import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -40,6 +41,8 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   const { openCampaignBlockSettingsInSidePanel } =
     useOpenCampaignBlockSettingsInSidePanel();
 
+  const { uploadCampaignImage } = useUploadCampaignImage();
+
   const [bodyEditor, setBodyEditor] = useState<Editor | null>(null);
 
   const handleEditorReady = useCallback(
@@ -67,8 +70,11 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
         placeholder={t`Type something or press "/" to see commands`}
         preset="campaignBody"
         onEditorReady={handleEditorReady}
+        onImageUpload={uploadCampaignImage}
       />
-      {isDefined(bodyEditor) && <InsertRail editor={bodyEditor} />}
+      {isDefined(bodyEditor) && (
+        <InsertRail editor={bodyEditor} onImageUpload={uploadCampaignImage} />
+      )}
     </StyledContainer>
   );
 };

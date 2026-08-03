@@ -1945,6 +1945,7 @@ export type FileAttachmentInput = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
+  CampaignImage = 'CampaignImage',
   AppTarball = 'AppTarball',
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltLogicFunction = 'BuiltLogicFunction',

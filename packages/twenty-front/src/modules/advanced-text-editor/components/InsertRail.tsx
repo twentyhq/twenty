@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
+  isDefined,
   listCampaignVariablesForFields,
   TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
@@ -91,12 +92,15 @@ const columnJson = () => ({
 
 type InsertRailProps = {
   editor: Editor;
+  onImageUpload?: (file: File) => Promise<string>;
 };
 
 // The floating insert rail on the left of the email canvas: text, image and
 // layout blocks, mirroring the slash menu for pointer-first authoring.
-export const InsertRail = ({ editor }: InsertRailProps) => {
+export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
   const { t } = useLingui();
+  const imageFileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [openMenu, setOpenMenu] = useState<
     'text' | 'image' | 'blocks' | 'variables' | null
   >(null);
@@ -182,6 +186,27 @@ export const InsertRail = ({ editor }: InsertRailProps) => {
     },
   ];
 
+  const handleFilePicked = async (file: File | undefined) => {
+    if (!isDefined(file) || !isDefined(onImageUpload)) {
+      return;
+    }
+
+    setIsUploadingImage(true);
+
+    try {
+      const uploadedUrl = await onImageUpload(file);
+
+      insertAtEnd({
+        type: TIPTAP_NODE_TYPES.IMAGE,
+        attrs: { src: uploadedUrl },
+      });
+    } catch {
+      // onImageUpload surfaces its own error to the user.
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
   const handleInsertImage = () => {
     if (imageUrl.trim() === '') {
       return;
@@ -241,6 +266,16 @@ export const InsertRail = ({ editor }: InsertRailProps) => {
 
   return (
     <StyledRailContainer>
+      <input
+        ref={imageFileInputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(event) => {
+          void handleFilePicked(event.target.files?.[0]);
+          event.target.value = '';
+        }}
+      />
       <StyledRail>
         <LightIconButton
           Icon={IconTypography}
@@ -253,8 +288,19 @@ export const InsertRail = ({ editor }: InsertRailProps) => {
           Icon={IconPhoto}
           size="medium"
           accent={openMenu === 'image' ? 'secondary' : 'tertiary'}
-          title={t`Image`}
-          onClick={() => setOpenMenu(openMenu === 'image' ? null : 'image')}
+          title={isUploadingImage ? t`Uploading...` : t`Image`}
+          disabled={isUploadingImage}
+          onClick={() => {
+            // Uploading is the common case, so the button is the file picker
+            // rather than a menu; the URL form stays for surfaces without an
+            // uploader.
+            if (isDefined(onImageUpload)) {
+              imageFileInputRef.current?.click();
+              return;
+            }
+
+            setOpenMenu(openMenu === 'image' ? null : 'image');
+          }}
         />
         <LightIconButton
           Icon={IconLayoutGrid}
