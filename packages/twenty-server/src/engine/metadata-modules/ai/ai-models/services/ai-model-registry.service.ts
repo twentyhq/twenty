@@ -155,9 +155,11 @@ export class AiModelRegistryService {
       cacheCreationCostPerMillionTokens:
         modelDef.cacheCreationCostPerMillionTokens,
       longContextCost: modelDef.longContextCost,
+      // Limits already stored as 0 by earlier versions of the admin panel would
+      // make the model unusable, so any falsy value falls back to the default.
       contextWindowTokens:
-        modelDef.contextWindowTokens ?? DEFAULT_CONTEXT_WINDOW_TOKENS,
-      maxOutputTokens: modelDef.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
+        modelDef.contextWindowTokens || DEFAULT_CONTEXT_WINDOW_TOKENS,
+      maxOutputTokens: modelDef.maxOutputTokens || DEFAULT_MAX_OUTPUT_TOKENS,
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
       isDeprecated: modelDef.isDeprecated,

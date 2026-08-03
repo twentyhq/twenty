@@ -6,11 +6,14 @@ import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-mod
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
+import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 
 describe('AiModelRegistryService', () => {
   let service: AiModelRegistryService;
   let mockConfigService: jest.Mocked<TwentyConfigService>;
+  let mockProviderConfigService: { getResolvedProviders: jest.Mock };
   let mockPreferencesService: {
     getPreferences: jest.Mock;
     getRecommendedModelIds: jest.Mock;
@@ -21,7 +24,7 @@ describe('AiModelRegistryService', () => {
       get: jest.fn().mockReturnValue({}),
     } as any;
 
-    const mockProviderConfigService = {
+    mockProviderConfigService = {
       getResolvedProviders: jest.fn().mockReturnValue({}),
     };
 
@@ -57,6 +60,27 @@ describe('AiModelRegistryService', () => {
     }).compile();
 
     service = module.get<AiModelRegistryService>(AiModelRegistryService);
+  });
+
+  it('should fall back to default limits when a model is stored with zeroes', () => {
+    mockProviderConfigService.getResolvedProviders.mockReturnValue({
+      custom: {
+        npm: '@ai-sdk/openai-compatible',
+        models: [
+          {
+            name: 'my-model',
+            label: 'My Model',
+            contextWindowTokens: 0,
+            maxOutputTokens: 0,
+          },
+        ],
+      },
+    });
+
+    const result = service.getModelConfig('custom/my-model');
+
+    expect(result?.contextWindowTokens).toBe(DEFAULT_CONTEXT_WINDOW_TOKENS);
+    expect(result?.maxOutputTokens).toBe(DEFAULT_MAX_OUTPUT_TOKENS);
   });
 
   it('should throw when no models are available for AUTO_SELECT_SMART_MODEL_ID', () => {

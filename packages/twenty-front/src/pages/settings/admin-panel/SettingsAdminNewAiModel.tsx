@@ -182,11 +182,20 @@ export const SettingsAdminNewAiModel = () => {
           ? String(suggestion.cacheCreationCostPerMillionTokens)
           : '',
       );
+      // models.dev entries without limits are exposed as 0, which must stay
+      // blank so the user is not offered a value that cannot be saved.
       form.setValue(
         'contextWindowTokens',
-        String(suggestion.contextWindowTokens),
+        suggestion.contextWindowTokens > 0
+          ? String(suggestion.contextWindowTokens)
+          : '',
       );
-      form.setValue('maxOutputTokens', String(suggestion.maxOutputTokens));
+      form.setValue(
+        'maxOutputTokens',
+        suggestion.maxOutputTokens > 0
+          ? String(suggestion.maxOutputTokens)
+          : '',
+      );
       form.setValue('modalities', suggestion.modalities ?? []);
       form.setValue('supportsReasoning', suggestion.supportsReasoning);
     }
@@ -223,6 +232,8 @@ export const SettingsAdminNewAiModel = () => {
     const cacheCreation = parseFloat(
       values.cacheCreationCostPerMillionTokens || '',
     );
+    const contextWindowTokens = parseInt(values.contextWindowTokens, 10);
+    const maxOutputTokens = parseInt(values.maxOutputTokens, 10);
 
     const modelConfig = {
       name: values.name.trim(),
@@ -239,8 +250,10 @@ export const SettingsAdminNewAiModel = () => {
       ...(isFinite(cacheCreation) && {
         cacheCreationCostPerMillionTokens: cacheCreation,
       }),
-      contextWindowTokens: parseInt(values.contextWindowTokens || '0', 10),
-      maxOutputTokens: parseInt(values.maxOutputTokens || '0', 10),
+      // Blank or non-positive limits are left unset so the server applies its
+      // defaults instead of persisting a model that can never be used.
+      ...(contextWindowTokens > 0 && { contextWindowTokens }),
+      ...(maxOutputTokens > 0 && { maxOutputTokens }),
       ...(values.modalities.length > 0 && {
         modalities: values.modalities,
       }),
