@@ -61,6 +61,15 @@ export const SelectFieldInput = () => {
     resetSelectedItem();
   };
 
+  const handleAddSelectOption = async (optionName: string) => {
+    const newOption = await addSelectOption(optionName);
+
+    if (isDefined(newOption)) {
+      onSubmit?.({ newValue: newOption.value });
+      resetSelectedItem();
+    }
+  };
+
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: () => {
@@ -103,7 +112,7 @@ export const SelectFieldInput = () => {
           : undefined
       }
       clearLabel={fieldDefinition.label}
-      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
+      onAddSelectOption={canAddSelectOption ? handleAddSelectOption : undefined}
     />
   );
 };

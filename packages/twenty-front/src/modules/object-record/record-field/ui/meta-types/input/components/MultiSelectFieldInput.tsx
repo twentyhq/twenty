@@ -9,6 +9,7 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const MultiSelectFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
@@ -41,6 +42,14 @@ export const MultiSelectFieldInput = () => {
     onSubmit?.({ newValue: draftValue });
   };
 
+  const handleAddSelectOption = async (optionName: string) => {
+    const newOption = await addSelectOption(optionName);
+
+    if (isDefined(newOption)) {
+      setDraftValue([newOption.value, ...(draftValue ?? [])]);
+    }
+  };
+
   return (
     <MultiSelectInput
       selectableListComponentInstanceId={
@@ -51,7 +60,7 @@ export const MultiSelectFieldInput = () => {
       onCancel={handleCancel}
       onOptionSelected={handleOptionSelected}
       values={draftValue}
-      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
+      onAddSelectOption={canAddSelectOption ? handleAddSelectOption : undefined}
     />
   );
 };

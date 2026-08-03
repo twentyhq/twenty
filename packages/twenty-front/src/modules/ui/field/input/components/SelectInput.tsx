@@ -14,7 +14,7 @@ type SelectInputProps = {
   onFilterChange?: ((filteredOptions: SelectOption[]) => void) | undefined;
   onClear?: (() => void) | undefined;
   clearLabel?: string;
-  onAddSelectOption?: (optionName: string) => void;
+  onAddSelectOption?: (optionName: string) => void | Promise<unknown>;
 };
 
 export const SelectInput = ({

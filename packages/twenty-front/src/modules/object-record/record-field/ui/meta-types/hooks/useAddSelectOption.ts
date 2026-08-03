@@ -1,47 +1,56 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { getNewSelectOptionErrorMessage } from '@/object-record/record-field/ui/meta-types/utils/getNewSelectOptionErrorMessage';
+import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCallback } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useAddSelectOption = (fieldMetadataId: string) => {
   const { fieldMetadataItem, objectMetadataItem } =
     useFieldMetadataItemById(fieldMetadataId);
-  const navigateSettings = useNavigateSettings();
-  const setNavigationMemorizedUrl = useSetAtomState(
-    navigationMemorizedUrlState,
-  );
-
-  const setShouldNavigateBackToMemorizedUrlOnSave = useSetAtomState(
-    shouldNavigateBackToMemorizedUrlOnSaveState,
-  );
-
-  const fieldName = fieldMetadataItem?.name;
-  const objectNamePlural = objectMetadataItem?.namePlural;
+  const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const addSelectOption = useCallback(
-    (optionName: string) => {
-      if (!fieldName || !objectNamePlural) return;
+    async (
+      optionName: string,
+    ): Promise<FieldMetadataItemOption | undefined> => {
+      const currentOptions = fieldMetadataItem?.options;
 
-      setNavigationMemorizedUrl(
-        window.location.pathname + window.location.search,
-      );
-      setShouldNavigateBackToMemorizedUrlOnSave(true);
+      if (!isDefined(currentOptions) || !isDefined(objectMetadataItem)) {
+        return undefined;
+      }
 
-      navigateSettings(
-        SettingsPath.ObjectFieldEdit,
-        { objectNamePlural, fieldName },
-        { newOption: optionName },
-      );
+      const newOption = generateNewSelectOption(currentOptions, optionName);
+
+      const validationErrorMessage = getNewSelectOptionErrorMessage({
+        optionName,
+        newOptionValue: newOption.value,
+        currentOptions,
+      });
+
+      if (isDefined(validationErrorMessage)) {
+        enqueueErrorSnackBar({ message: validationErrorMessage });
+
+        return undefined;
+      }
+
+      const result = await updateOneFieldMetadataItem({
+        objectMetadataId: objectMetadataItem.id,
+        fieldMetadataIdToUpdate: fieldMetadataId,
+        updatePayload: { options: [...currentOptions, newOption] },
+      });
+
+      return result.status === 'successful' ? newOption : undefined;
     },
     [
-      fieldName,
-      objectNamePlural,
-      navigateSettings,
-      setNavigationMemorizedUrl,
-      setShouldNavigateBackToMemorizedUrlOnSave,
+      fieldMetadataId,
+      fieldMetadataItem?.options,
+      objectMetadataItem,
+      updateOneFieldMetadataItem,
+      enqueueErrorSnackBar,
     ],
   );
 

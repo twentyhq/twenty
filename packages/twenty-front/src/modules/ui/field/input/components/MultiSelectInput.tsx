@@ -30,7 +30,7 @@ type MultiSelectInputProps = {
   options: SelectOption[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   dropdownWidth?: number;
-  onAddSelectOption?: (optionName: string) => void;
+  onAddSelectOption?: (optionName: string) => void | Promise<unknown>;
 };
 
 export const MultiSelectInput = ({
