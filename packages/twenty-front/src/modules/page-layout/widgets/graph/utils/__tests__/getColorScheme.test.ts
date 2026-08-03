@@ -64,6 +64,7 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'blue',
+        colorKey: 'won',
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -73,6 +74,7 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'BLUE' as 'blue',
+        colorKey: 'won',
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -82,6 +84,7 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'Blue' as 'blue',
+        colorKey: 'won',
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -89,33 +92,43 @@ describe('getColorScheme', () => {
   });
 
   describe('with invalid or missing color name', () => {
-    it('should return color scheme by fallback index when color name is undefined', () => {
-      const result = getColorScheme({
+    it('should hash the color key into the palette', () => {
+      const wonResult = getColorScheme({
         registry: mockRegistry,
-        colorName: undefined,
-        fallbackIndex: 0,
+        colorKey: 'won',
+      });
+      const openResult = getColorScheme({
+        registry: mockRegistry,
+        colorKey: 'open',
+      });
+      const lostResult = getColorScheme({
+        registry: mockRegistry,
+        colorKey: 'lost',
       });
 
-      expect(result.name).toBeDefined();
+      expect(wonResult.name).toBe('green');
+      expect(openResult.name).toBe('red');
+      expect(lostResult.name).toBe('blue');
     });
 
-    it('should return color scheme by fallback index when color name is not in registry', () => {
+    it('should hash the color key when color name is not in registry', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'invalidColor' as 'blue',
-        fallbackIndex: 1,
+        colorKey: 'won',
       });
 
-      expect(result.name).toBeDefined();
+      expect(result.name).toBe('green');
     });
 
-    it('should use fallback index 0 when not provided', () => {
-      const result = getColorScheme({
+    it('should return the same color for the same key on every call', () => {
+      const first = getColorScheme({ registry: mockRegistry, colorKey: 'won' });
+      const second = getColorScheme({
         registry: mockRegistry,
-        colorName: undefined,
+        colorKey: 'won',
       });
 
-      expect(result.name).toBeDefined();
+      expect(first).toEqual(second);
     });
   });
 
@@ -124,7 +137,8 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'blue',
-        fallbackIndex: 0,
+        colorKey: 'won',
+        groupIndex: 0,
         totalGroups: 5,
       });
 
@@ -132,22 +146,35 @@ describe('getColorScheme', () => {
       expect(result.variations).toEqual(mockRegistry.blue.variations);
     });
 
-    it('should use fallbackIndex for group color generation', () => {
+    it('should use groupIndex for group color generation', () => {
       const result1 = getColorScheme({
         registry: mockRegistry,
         colorName: 'green',
-        fallbackIndex: 0,
+        colorKey: 'won',
+        groupIndex: 0,
         totalGroups: 3,
       });
 
       const result2 = getColorScheme({
         registry: mockRegistry,
         colorName: 'green',
-        fallbackIndex: 2,
+        colorKey: 'lost',
+        groupIndex: 2,
         totalGroups: 3,
       });
 
       expect(result1.solid).not.toBe(result2.solid);
+    });
+
+    it('should throw when groupIndex is missing', () => {
+      expect(() =>
+        getColorScheme({
+          registry: mockRegistry,
+          colorName: 'green',
+          colorKey: 'won',
+          totalGroups: 3,
+        }),
+      ).toThrow('Missing groupIndex for color key "won"');
     });
   });
 });

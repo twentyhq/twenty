@@ -5,7 +5,7 @@ import { calculatePieChartPercentage } from '@/page-layout/widgets/graph/graph-w
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { buildStableColorIndexByKey } from '@/page-layout/widgets/graph/utils/buildStableColorIndexByKey';
+import { buildAlphabeticalRankByKey } from '@/page-layout/widgets/graph/utils/buildAlphabeticalRankByKey';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
@@ -28,19 +28,18 @@ export const usePieChartData = ({
   const allEnrichedData = useMemo((): PieChartEnrichedData[] => {
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
-    const shouldApplyGradient = colorMode === 'explicitSingleColor';
-    const colorIndexByKey = buildStableColorIndexByKey(
-      data.map((item) => item.key),
-    );
+    const gradientRankByKey =
+      colorMode === 'explicitSingleColor'
+        ? buildAlphabeticalRankByKey(data.map((item) => item.key))
+        : undefined;
 
-    return data.map((item, index) => {
+    return data.map((item) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: item.color,
-        fallbackIndex: shouldApplyGradient
-          ? index
-          : colorIndexByKey.get(item.key),
-        totalGroups: shouldApplyGradient ? data.length : undefined,
+        colorKey: item.key,
+        groupIndex: gradientRankByKey?.get(item.key),
+        totalGroups: gradientRankByKey?.size,
       });
 
       const percentage = calculatePieChartPercentage(item.value, totalValue);

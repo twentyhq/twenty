@@ -1,3 +1,4 @@
+import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartEnrichedSeries';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
@@ -264,9 +265,9 @@ describe('useLineChartData', () => {
       data: [{ x: 'Jan', y: 100 }],
     });
 
-    const { result: valueDescResult } = renderHook(() =>
+    const { result: firstOrderResult } = renderHook(() =>
       useLineChartData({
-        data: [series('won'), series('open'), series('lost')],
+        data: [series('gamma'), series('alpha'), series('beta')],
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
         colorMode: 'automaticPalette',
@@ -275,26 +276,33 @@ describe('useLineChartData', () => {
 
     const { result: reorderedResult } = renderHook(() =>
       useLineChartData({
-        data: [series('lost'), series('won'), series('open')],
+        data: [series('beta'), series('gamma'), series('alpha')],
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
         colorMode: 'automaticPalette',
       }),
     );
 
-    const colorsByKey = (
-      enrichedSeries: { key: string; colorScheme: { name: string } }[],
-    ) =>
+    const colorsByKey = (enrichedSeries: LineChartEnrichedSeries[]) =>
       Object.fromEntries(
         enrichedSeries.map((item) => [item.key, item.colorScheme.name]),
       );
 
-    expect(colorsByKey(valueDescResult.current.enrichedSeries)).toEqual(
-      colorsByKey(reorderedResult.current.enrichedSeries),
+    const expectedColorsByKey = {
+      alpha: 'red',
+      beta: 'red',
+      gamma: 'blue',
+    };
+
+    expect(colorsByKey(firstOrderResult.current.enrichedSeries)).toEqual(
+      expectedColorsByKey,
+    );
+    expect(colorsByKey(reorderedResult.current.enrichedSeries)).toEqual(
+      expectedColorsByKey,
     );
   });
 
-  it('should keep gradient shades positional when series order changes in explicitSingleColor mode', () => {
+  it('should keep the same gradient shade per key when series order changes in explicitSingleColor mode', () => {
     const series = (key: string): LineChartSeriesWithColor => ({
       key,
       label: key,
@@ -320,17 +328,22 @@ describe('useLineChartData', () => {
       }),
     );
 
-    const shadesByPosition = (
-      enrichedSeries: { colorScheme: { solid: string } }[],
-    ) => enrichedSeries.map((item) => item.colorScheme.solid);
+    const shadesByKey = (enrichedSeries: LineChartEnrichedSeries[]) =>
+      Object.fromEntries(
+        enrichedSeries.map((item) => [item.key, item.colorScheme.solid]),
+      );
 
-    const firstOrderShades = shadesByPosition(
-      firstOrderResult.current.enrichedSeries,
+    const expectedShadesByKey = {
+      lost: 'red4',
+      open: 'red6',
+      won: 'red8',
+    };
+
+    expect(shadesByKey(firstOrderResult.current.enrichedSeries)).toEqual(
+      expectedShadesByKey,
     );
-
-    expect(new Set(firstOrderShades).size).toBe(firstOrderShades.length);
-    expect(shadesByPosition(reorderedResult.current.enrichedSeries)).toEqual(
-      firstOrderShades,
+    expect(shadesByKey(reorderedResult.current.enrichedSeries)).toEqual(
+      expectedShadesByKey,
     );
   });
 
