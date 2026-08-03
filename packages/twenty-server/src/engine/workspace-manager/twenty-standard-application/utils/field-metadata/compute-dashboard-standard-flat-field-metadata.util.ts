@@ -148,7 +148,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.UUID,
       label: i18nLabel(msg`Page Layout ID`),
       description: i18nLabel(msg`Dashboard page layout`),
-      icon: 'IconLayout',
+      icon: 'IconAppWindow',
       isNullable: true,
       isUIEditable: false,
     },

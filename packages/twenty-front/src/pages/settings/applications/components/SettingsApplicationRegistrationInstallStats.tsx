@@ -1,8 +1,4 @@
-import {
-  IconBrandDocker,
-  IconChartBar,
-  IconStatusChange,
-} from 'twenty-ui/icon';
+import { IconBrandDocker, IconChartBar, IconVersions } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
@@ -43,7 +39,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
       value: stats?.activeInstalls ?? '—',
     },
     {
-      Icon: IconStatusChange,
+      Icon: IconVersions,
       label: t`Most installed version`,
       value: stats?.mostInstalledVersion ?? '—',
     },

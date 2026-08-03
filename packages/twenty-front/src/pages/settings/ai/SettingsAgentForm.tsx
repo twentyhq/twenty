@@ -18,10 +18,10 @@ import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  IconList,
   IconListCheck,
   IconLock,
   IconSettings,
+  IconTerminal,
   useIcons,
 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
@@ -280,7 +280,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     {
       id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS,
       title: t`Logs`,
-      Icon: IconList,
+      Icon: IconTerminal,
     },
   ];
 

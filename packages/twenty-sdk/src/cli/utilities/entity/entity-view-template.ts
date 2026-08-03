@@ -1,7 +1,17 @@
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
-import { type ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+
+const VIEW_TYPE_TO_DEFAULT_ICON: Record<ViewType, string> = {
+  [ViewType.TABLE]: 'IconTable',
+  [ViewType.KANBAN]: 'IconLayoutKanban',
+  [ViewType.CALENDAR]: 'IconCalendar',
+  [ViewType.FIELDS_WIDGET]: 'IconListDetails',
+  [ViewType.TABLE_WIDGET]: 'IconTable',
+  [ViewType.KANBAN_WIDGET]: 'IconLayoutKanban',
+  [ViewType.CALENDAR_WIDGET]: 'IconCalendar',
+};
 
 type ViewFieldTemplateBase = {
   universalIdentifier?: string;
@@ -93,6 +103,8 @@ ${fields
       : defaultFields;
 
   const typeBlock = type !== undefined ? `  type: '${type}',\n` : '';
+  const icon =
+    type === undefined ? 'IconTable' : VIEW_TYPE_TO_DEFAULT_ICON[type];
 
   const imports = `import { defineView } from 'twenty-sdk/define';`;
 
@@ -102,7 +114,7 @@ export default defineView({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
   objectUniversalIdentifier: '${objectUniversalIdentifier}',
-${typeBlock}  icon: 'IconTable',
+${typeBlock}  icon: '${icon}',
   position: 0,
 ${fieldsBlock}
   // filters: [

@@ -16,16 +16,16 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  IconAppWindow,
   IconApps,
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
-  IconCurrencyDollar,
+  IconCreditCard,
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy,
-  IconLayout,
   IconMail,
   IconMessage,
   IconMessageCircle,
@@ -132,7 +132,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Layout`,
           path: SettingsPath.Layout,
-          Icon: IconLayout,
+          Icon: IconAppWindow,
           isHidden: !permissionMap[PermissionFlagType.LAYOUTS],
         },
         {
@@ -144,7 +144,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Billing`,
           path: SettingsPath.Billing,
-          Icon: IconCurrencyDollar,
+          Icon: IconCreditCard,
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },

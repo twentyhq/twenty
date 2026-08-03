@@ -42,7 +42,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   [PermissionFlagType.ROLES]: {
     label: 'Roles',
     description: 'Define user roles and access levels',
-    icon: 'IconLockOpen',
+    icon: 'IconLock',
   },
   [PermissionFlagType.DATA_MODEL]: {
     label: 'Data Model',
@@ -82,7 +82,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   [PermissionFlagType.LAYOUTS]: {
     label: 'Layouts',
     description: 'Customize page layouts and UI structure',
-    icon: 'IconLayout',
+    icon: 'IconAppWindow',
   },
   [PermissionFlagType.BILLING]: {
     label: 'Billing',

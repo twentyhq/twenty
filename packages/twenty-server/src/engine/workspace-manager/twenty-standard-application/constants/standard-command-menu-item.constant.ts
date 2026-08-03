@@ -924,7 +924,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsBilling: {
     universalIdentifier: 'f46a0fb9-14e9-4d48-801d-c33bdd543f74',
     label: 'Go to Billing Settings',
-    icon: 'IconCurrencyDollar',
+    icon: 'IconCreditCard',
     isPinned: false,
     position: 57,
     shortLabel: 'Billing',

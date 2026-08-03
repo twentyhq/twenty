@@ -8,16 +8,8 @@ import {
 const escapeMarkdownTableCell = (value: string) =>
   value.replace(/\|/g, '\\|').replace(/\n/g, ' ');
 
-const getFigmaNodeUrl = (entry: TwentyIconDictionaryEntry) => {
-  const url = new URL(TWENTY_ICON_DICTIONARY_FIGMA_URL);
-
-  url.searchParams.set('node-id', entry.figmaNodeId.replace(':', '-'));
-
-  return url.toString();
-};
-
 const getEntryTableRow = (entry: TwentyIconDictionaryEntry) =>
-  `| [${escapeMarkdownTableCell(entry.label)}](${getFigmaNodeUrl(entry)}) | \`${entry.iconName}\` | \`${entry.tablerName}\` | ${escapeMarkdownTableCell(entry.useWhen)} | ${escapeMarkdownTableCell(entry.avoidWhen)} | ${entry.keywords.map(escapeMarkdownTableCell).join(', ')} |`;
+  `| ${escapeMarkdownTableCell(entry.label)} | \`${entry.iconName}\` | \`${entry.tablerName}\` | ${escapeMarkdownTableCell(entry.useWhen)} | ${escapeMarkdownTableCell(entry.avoidWhen)} | ${entry.keywords.map(escapeMarkdownTableCell).join(', ')} |`;
 
 export const generateTwentyIconDictionaryMarkdown = () => {
   const categorySections = TWENTY_ICON_DICTIONARY_CATEGORIES.map((category) => {

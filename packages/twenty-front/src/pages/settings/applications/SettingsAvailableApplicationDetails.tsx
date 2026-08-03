@@ -29,7 +29,6 @@ import {
   IconLayoutGridAdd,
   IconListDetails,
   IconLock,
-  IconShield,
 } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
@@ -180,7 +179,7 @@ export const SettingsAvailableApplicationDetails = () => {
       many: t`commands`,
     },
     {
-      icon: IconShield,
+      icon: IconLock,
       count: (detail?.roles ?? []).filter(
         (role) =>
           role.universalIdentifier !== detail?.defaultRoleUniversalIdentifier,
