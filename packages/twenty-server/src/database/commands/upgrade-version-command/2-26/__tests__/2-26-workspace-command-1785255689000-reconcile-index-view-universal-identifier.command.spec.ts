@@ -340,7 +340,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     );
   });
 
-  it('skips an engine-attributed INDEX view whose object belongs to another application', async () => {
+  it('demotes an INDEX view attributed to another application than its object', async () => {
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -354,9 +354,43 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
 
     await runOnWorkspace();
 
-    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'drifted-view-id', workspaceId: WORKSPACE_ID },
+      { key: null },
+    );
     expect(viewDeleteMock).not.toHaveBeenCalled();
-    expect(invalidateCacheMock).not.toHaveBeenCalled();
+    expect(viewFieldUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it('demotes a workspace-custom INDEX view on a standard object next to the standard INDEX view', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'standard-view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+        }),
+        // A legacy caller-created view with key INDEX, attributed to the
+        // workspace-custom application but sitting on the standard object.
+        buildFlatView({
+          id: 'legacy-caller-view-id',
+          universalIdentifier: 'legacy-caller-view-uid',
+          key: ViewKey.INDEX,
+          applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'legacy-caller-view-id', workspaceId: WORKSPACE_ID },
+      { key: null },
+    );
+    expect(viewDeleteMock).not.toHaveBeenCalled();
   });
 
   it('deletes a soft-deleted view holding the derived identifier before re-owning the active view', async () => {

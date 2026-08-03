@@ -27,6 +27,7 @@ type ReownUpdate = {
   update: {
     universalIdentifier?: string;
     isSystemSideEffect?: boolean;
+    key?: null;
   };
 };
 
@@ -110,7 +111,6 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       flatViewFieldMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      engineOwnedApplicationUniversalIdentifiers,
     });
 
     if (viewUpdates.length === 0 && viewFieldUpdates.length === 0) {
@@ -181,7 +181,6 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatViewFieldMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    engineOwnedApplicationUniversalIdentifiers,
   }: {
     workspaceId: string;
     flatIndexViews: FlatViewFromMaps[];
@@ -189,7 +188,6 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
-    engineOwnedApplicationUniversalIdentifiers: Set<string>;
   }): ReownPlan {
     const viewIdsToDelete: string[] = [];
     const viewUpdates: ReownUpdate[] = [];
@@ -211,18 +209,19 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         continue;
       }
 
-      // A view left attributed to an engine application after its object
-      // moved into another application is drifted data: re-owning it would
-      // stamp the other application's derived identifier onto an
-      // engine-attributed view. Repair the view's applicationId instead.
+      // An INDEX view belongs to the application of its object. A view
+      // attributed to another application (legacy caller-provided INDEX keys
+      // predating the flat view validator) cannot be the object's INDEX
+      // view: it is demoted to a plain view, leaving the object's own INDEX
+      // view as the only holder of the key.
       if (
-        !engineOwnedApplicationUniversalIdentifiers.has(
-          flatObjectMetadata.applicationUniversalIdentifier,
-        )
+        flatView.applicationUniversalIdentifier !==
+        flatObjectMetadata.applicationUniversalIdentifier
       ) {
         this.logger.warn(
-          `INDEX view ${flatView.id} is attributed to an engine application but its object belongs to application ${flatObjectMetadata.applicationUniversalIdentifier} in workspace ${workspaceId}, skipping`,
+          `INDEX view ${flatView.id} is attributed to application ${flatView.applicationUniversalIdentifier} but its object belongs to application ${flatObjectMetadata.applicationUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
         );
+        viewUpdates.push({ id: flatView.id, update: { key: null } });
         continue;
       }
 
