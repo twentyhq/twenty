@@ -8,6 +8,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -30,10 +31,13 @@ export class AgentRunResolver {
     userWorkspaceId: string | undefined,
     @AuthApplication({ allowUndefined: true })
     callerApplication: FlatApplication | undefined,
+    @AuthWorkspaceMemberId()
+    workspaceMemberId: string | undefined,
   ): Promise<RunAgentResultDTO> {
     return this.agentRunService.run({
       workspace,
       requestUserWorkspaceId: userWorkspaceId ?? null,
+      requestWorkspaceMemberId: workspaceMemberId ?? null,
       callerApplication,
       input,
     });

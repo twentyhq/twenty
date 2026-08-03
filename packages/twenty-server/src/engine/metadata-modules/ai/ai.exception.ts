@@ -61,7 +61,7 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
     case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       return msg`This role cannot be assigned to agents.`;
     case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
-      return msg`Only an app can run an agent on behalf of a workspace member.`;
+      return msg`This action is not available for your request.`;
     case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       return msg`There is no failed message to retry.`;
     case AiExceptionCode.STREAM_INTERRUPTED:

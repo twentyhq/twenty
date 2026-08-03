@@ -92,6 +92,7 @@ describe('AgentRunService', () => {
     const result = await service.run({
       workspace,
       requestUserWorkspaceId: 'user-workspace-1',
+      requestWorkspaceMemberId: null,
       input,
     });
 
@@ -114,6 +115,7 @@ describe('AgentRunService', () => {
     await service.run({
       workspace,
       requestUserWorkspaceId: 'user-workspace-1',
+      requestWorkspaceMemberId: null,
       input,
     });
 
@@ -132,6 +134,7 @@ describe('AgentRunService', () => {
     await service.run({
       workspace,
       requestUserWorkspaceId: 'user-workspace-1',
+      requestWorkspaceMemberId: null,
       input,
     });
 
@@ -150,6 +153,7 @@ describe('AgentRunService', () => {
     await service.run({
       workspace,
       requestUserWorkspaceId: 'user-workspace-1',
+      requestWorkspaceMemberId: null,
       callerApplication,
       input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
     });
@@ -179,6 +183,7 @@ describe('AgentRunService', () => {
       service.run({
         workspace,
         requestUserWorkspaceId: 'user-workspace-1',
+        requestWorkspaceMemberId: null,
         callerApplication,
         input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
       }),
@@ -192,6 +197,7 @@ describe('AgentRunService', () => {
       service.run({
         workspace,
         requestUserWorkspaceId: 'user-workspace-1',
+        requestWorkspaceMemberId: null,
         input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
       }),
     ).rejects.toThrow('requires an application access token');
@@ -202,10 +208,45 @@ describe('AgentRunService', () => {
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });
 
+  it('rejects an application token issued for a user naming a different member', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: 'user-workspace-1',
+        requestWorkspaceMemberId: 'workspace-member-2',
+        callerApplication,
+        input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
+      }),
+    ).rejects.toThrow('can only run an agent as that user');
+
+    expect(
+      agentActorContextService.buildRunAsWorkspaceMemberContext,
+    ).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('allows an application token issued for a user to run as that same user', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      requestWorkspaceMemberId: 'workspace-member-1',
+      callerApplication,
+      input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
+    });
+
+    expect(
+      agentActorContextService.buildRunAsWorkspaceMemberContext,
+    ).toHaveBeenCalledWith({
+      workspaceMemberId: 'workspace-member-1',
+      workspaceId: workspace.id,
+    });
+  });
+
   it('runs the agent with the programmatic base system prompt', async () => {
     await service.run({
       workspace,
       requestUserWorkspaceId: null,
+      requestWorkspaceMemberId: null,
       input,
     });
 
@@ -225,6 +266,7 @@ describe('AgentRunService', () => {
     const result = await service.run({
       workspace,
       requestUserWorkspaceId: 'user-workspace-1',
+      requestWorkspaceMemberId: null,
       input,
     });
 
@@ -243,6 +285,7 @@ describe('AgentRunService', () => {
     const result = await service.run({
       workspace,
       requestUserWorkspaceId: 'user-workspace-1',
+      requestWorkspaceMemberId: null,
       input,
     });
 
@@ -260,6 +303,7 @@ describe('AgentRunService', () => {
       service.run({
         workspace,
         requestUserWorkspaceId: null,
+        requestWorkspaceMemberId: null,
         input,
       }),
     ).rejects.toThrow(/not found/);
@@ -275,6 +319,7 @@ describe('AgentRunService', () => {
       service.run({
         workspace,
         requestUserWorkspaceId: null,
+        requestWorkspaceMemberId: null,
         input,
       }),
     ).rejects.toThrow(/not found/);

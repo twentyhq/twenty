@@ -38,11 +38,13 @@ export class AgentRunService {
   async run({
     workspace,
     requestUserWorkspaceId,
+    requestWorkspaceMemberId,
     callerApplication,
     input,
   }: {
     workspace: FlatWorkspace;
     requestUserWorkspaceId: string | null;
+    requestWorkspaceMemberId: string | null;
     callerApplication?: FlatApplication;
     input: RunAgentInput;
   }): Promise<RunAgentResult> {
@@ -71,6 +73,7 @@ export class AgentRunService {
     const runAsContext = await this.resolveRunAsContext({
       runAsWorkspaceMemberId: input.runAsWorkspaceMemberId,
       callerApplication,
+      requestWorkspaceMemberId,
       workspaceId: workspace.id,
     });
 
@@ -124,10 +127,12 @@ export class AgentRunService {
   private async resolveRunAsContext({
     runAsWorkspaceMemberId,
     callerApplication,
+    requestWorkspaceMemberId,
     workspaceId,
   }: {
     runAsWorkspaceMemberId?: string;
     callerApplication?: FlatApplication;
+    requestWorkspaceMemberId: string | null;
     workspaceId: string;
   }): Promise<RunAsWorkspaceMemberContext | undefined> {
     if (!isDefined(runAsWorkspaceMemberId)) {
@@ -139,6 +144,20 @@ export class AgentRunService {
     if (!isDefined(callerApplication)) {
       throw new AiException(
         'Running an agent as a workspace member requires an application access token',
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
+      );
+    }
+
+    // An application token is not on its own a trust boundary: fetching a front
+    // component mints one for the requesting user, carrying their identity. Such
+    // a token may only name the user it was minted for. Naming anyone is left to
+    // tokens with no user in the loop, which only server-side app code holds.
+    if (
+      isDefined(requestWorkspaceMemberId) &&
+      requestWorkspaceMemberId !== runAsWorkspaceMemberId
+    ) {
+      throw new AiException(
+        'An application token issued for a user can only run an agent as that user',
         AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
       );
     }
