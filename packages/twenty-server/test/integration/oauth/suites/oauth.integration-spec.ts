@@ -1047,5 +1047,132 @@ describe('OAuth (integration)', () => {
 
       expect(res.body.error).toBe('invalid_grant');
     });
+
+    const postMetadataGraphql = (
+      query: string,
+      variables: Record<string, unknown>,
+      token: string,
+    ) =>
+      request(baseUrl)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ query, variables });
+
+    const LIST_AUTHORIZATIONS_QUERY = `
+      query CurrentUserApplicationAuthorizations {
+        currentUserApplicationAuthorizations {
+          id
+          applicationId
+          applicationName
+          scopes
+        }
+      }
+    `;
+
+    const REVOKE_AUTHORIZATION_MUTATION = `
+      mutation RevokeApplicationAuthorization($applicationAuthorizationId: UUID!) {
+        revokeApplicationAuthorization(
+          applicationAuthorizationId: $applicationAuthorizationId
+        )
+      }
+    `;
+
+    const findListedAuthorization = async (
+      token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    ) => {
+      const res = await postMetadataGraphql(
+        LIST_AUTHORIZATIONS_QUERY,
+        {},
+        token,
+      );
+
+      expect(res.body.errors).toBeUndefined();
+
+      return res.body.data.currentUserApplicationAuthorizations.find(
+        (authorization: { applicationId: string }) =>
+          authorization.applicationId === testApplication.id,
+      );
+    };
+
+    const revokeListedAuthorization = (
+      applicationAuthorizationId: string,
+      token: string,
+    ) =>
+      postMetadataGraphql(
+        REVOKE_AUTHORIZATION_MUTATION,
+        { applicationAuthorizationId },
+        token,
+      );
+
+    it('should list the authorization to the user who granted it', async () => {
+      await exchangeForTokens('read');
+
+      const authorization = await findListedAuthorization();
+
+      expect(authorization).toBeDefined();
+      expect(authorization.applicationName).toBe(testRegistration.name);
+      expect(authorization.scopes).toEqual(['read']);
+    });
+
+    it('should stop the refresh token being redeemed when revoked from the list', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      const revokeResponse = await revokeListedAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeUndefined();
+      expect(revokeResponse.body.data.revokeApplicationAuthorization).toBe(
+        true,
+      );
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+      expect(await findListedAuthorization()).toBeUndefined();
+    });
+
+    it('should report a repeated revocation as a no-op', async () => {
+      await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      await revokeListedAuthorization(id, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+
+      const secondRevoke = await revokeListedAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(secondRevoke.body.data.revokeApplicationAuthorization).toBe(false);
+    });
+
+    it('should not let another user see or revoke the authorization', async () => {
+      await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      expect(
+        await findListedAuthorization(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).toBeUndefined();
+
+      const revokeResponse = await revokeListedAuthorization(
+        id,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.data.revokeApplicationAuthorization).toBe(
+        false,
+      );
+      expect((await findAuthorization()).revokedAt).toBeNull();
+    });
   });
 });
