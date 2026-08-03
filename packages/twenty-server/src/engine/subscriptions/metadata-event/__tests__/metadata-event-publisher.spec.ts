@@ -125,6 +125,27 @@ describe('MetadataEventPublisher', () => {
     expect(event.recipientUserWorkspaceIds).toBeUndefined();
   });
 
+  it('does not scope a favorite with an empty-string owner', async () => {
+    const event = await publishAndGetFirstEvent({
+      name: 'metadata.navigationMenuItem.created',
+      workspaceId: 'workspace-1',
+      metadataName: 'navigationMenuItem',
+      type: 'created',
+      events: [
+        {
+          metadataName: 'navigationMenuItem',
+          type: 'created',
+          recordId: 'nav-1',
+          properties: {
+            after: { id: 'nav-1', userWorkspaceId: '' },
+          },
+        },
+      ],
+    });
+
+    expect(event.recipientUserWorkspaceIds).toBeUndefined();
+  });
+
   it('does not scope unrelated metadata even when it carries a userWorkspaceId', async () => {
     const event = await publishAndGetFirstEvent({
       name: 'metadata.view.created',

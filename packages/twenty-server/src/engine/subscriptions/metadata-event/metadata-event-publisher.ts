@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -42,7 +43,7 @@ export class MetadataEventPublisher {
           entityName: event.metadataName,
           recordId: event.recordId,
           properties: event.properties as Record<string, unknown>,
-          recipientUserWorkspaceIds: isDefined(ownerUserWorkspaceId)
+          recipientUserWorkspaceIds: isNonEmptyString(ownerUserWorkspaceId)
             ? [ownerUserWorkspaceId]
             : undefined,
         };
