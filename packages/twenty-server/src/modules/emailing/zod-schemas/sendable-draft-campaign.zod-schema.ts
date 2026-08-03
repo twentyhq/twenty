@@ -2,19 +2,12 @@ import { MessageCampaignStatus } from 'twenty-shared/types';
 import { emailDocumentSchema, parseJson } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-// Bodies are either serialized email documents (the composer, the AI campaign
-// tool) or plain HTML strings (legacy campaigns). JSON is validated against
-// the strict shared schema: an unknown block type or malformed node would
-// otherwise render as nothing (or throw) mid-send, per recipient.
-const isSendableBodyTemplate = (bodyTemplate: string): boolean => {
-  const parsed = parseJson<unknown>(bodyTemplate);
-
-  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    return true;
-  }
-
-  return emailDocumentSchema.safeParse(parsed).success;
-};
+// Bodies are serialized email documents (the composer, the AI campaign
+// tool), validated against the strict shared schema: anything else would
+// render as nothing (or throw) mid-send, per recipient, so it is rejected
+// here instead.
+const isSendableBodyTemplate = (bodyTemplate: string): boolean =>
+  emailDocumentSchema.safeParse(parseJson<unknown>(bodyTemplate)).success;
 
 export const sendableDraftCampaignSchema = z.object({
   status: z.literal(MessageCampaignStatus.DRAFT),

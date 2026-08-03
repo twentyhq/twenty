@@ -5,7 +5,12 @@ describe('sendableDraftCampaignSchema', () => {
   const sendableDraftCampaign = {
     status: MessageCampaignStatus.DRAFT,
     subject: 'Monthly newsletter',
-    bodyTemplate: '<p>Hello {{firstName}}</p>',
+    bodyTemplate: JSON.stringify({
+      type: 'doc',
+      content: [
+        { type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
+      ],
+    }),
     fromAddress: { primaryEmail: 'news@company.com' },
     listId: '20202020-0000-4000-8000-000000000001',
   };
@@ -87,13 +92,13 @@ describe('sendableDraftCampaignSchema', () => {
     ).toBe(true);
   });
 
-  it('should accept a legacy HTML body', () => {
+  it('should reject a body that is not an email document', () => {
     expect(
       sendableDraftCampaignSchema.safeParse({
         ...sendableDraftCampaign,
         bodyTemplate: '<p>Hello {{firstName}}</p>',
       }).success,
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('should reject a body holding JSON that is not a document', () => {

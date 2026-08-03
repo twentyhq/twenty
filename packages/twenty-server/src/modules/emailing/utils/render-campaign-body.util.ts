@@ -12,9 +12,8 @@ import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campai
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 
 // bodyTemplate is a plain text field, so anything can be written to it through
-// the record API. The renderer maps over content without checking it, so a
-// document carrying a non-array content would throw mid-send rather than fall
-// back. A document with no content at all renders as empty and is fine.
+// the record API. A document with no content at all renders as empty and is
+// fine; anything that is not a document is rejected upfront.
 const isRenderableDocument = (
   document: JSONContent | null,
 ): document is JSONContent =>
@@ -91,20 +90,21 @@ const substituteVariables = (
 });
 
 // Bodies authored in the campaign composer are TipTap JSON and go through
-// react-email, which emits the table markup Outlook needs. Bodies authored
-// before the composer moved to JSON are HTML strings and keep the old
-// string-interpolation path. Pass null variables to render the template with
-// its placeholders left in place.
+// react-email, which emits the table markup Outlook needs. Pass null
+// variables to render the template with its placeholders left in place.
 export const renderCampaignBodyToHtml = async (
   bodyTemplate: string,
   variables: Record<string, string> | null,
 ): Promise<string> => {
+  // Drafts start out with no body, and previewing one must not throw.
+  if (bodyTemplate.trim() === '') {
+    return '';
+  }
+
   const tipTapDocument = parseJson<JSONContent>(bodyTemplate);
 
   if (!isRenderableDocument(tipTapDocument)) {
-    return isDefined(variables)
-      ? renderCampaignTemplate(bodyTemplate, variables, { escapeValues: true })
-      : bodyTemplate;
+    throw new Error('Campaign bodyTemplate is not a renderable email document');
   }
 
   // Values are substituted into text nodes rather than into the serialized
