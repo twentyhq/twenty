@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -92,6 +92,8 @@ describe('AdvancedFilterValueInputDropdownButtonClickableSelect', () => {
     );
 
     expect(await findByText('Me')).toBeInTheDocument();
-    expect(queryByText(/isCurrentWorkspaceMemberSelected/)).not.toBeInTheDocument();
+    expect(
+      queryByText(/isCurrentWorkspaceMemberSelected/),
+    ).not.toBeInTheDocument();
   });
 });
