@@ -1,8 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -31,9 +31,11 @@ describe('OnboardingService', () => {
   let messageQueueService: MessageQueueService;
   let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
   let workspaceRepository: Repository<WorkspaceEntity>;
+  let dataSource: DataSource;
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
+  const mockQueryRunner = {} as QueryRunner;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -82,6 +84,14 @@ describe('OnboardingService', () => {
             add: jest.fn(),
           },
         },
+        {
+          provide: getDataSourceToken(),
+          useValue: {
+            transaction: jest.fn((runInTransaction) =>
+              runInTransaction({ queryRunner: mockQueryRunner }),
+            ),
+          },
+        },
       ],
     }).compile();
 
@@ -100,6 +110,7 @@ describe('OnboardingService', () => {
     userWorkspaceRepository = module.get<Repository<UserWorkspaceEntity>>(
       getRepositoryToken(UserWorkspaceEntity),
     );
+    dataSource = module.get<DataSource>(getDataSourceToken());
   });
 
   afterEach(() => {
@@ -444,12 +455,86 @@ describe('OnboardingService', () => {
         employeeCount: 320,
       });
 
-      expect(userVarsService.set).toHaveBeenCalledWith({
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+          value: true,
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should write the offer and the pending step in a single transaction', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+
+      await service.setOnboardingBookCallPendingIfQualified({
         userId,
         workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
-        value: true,
+        employeeCount: 320,
       });
+
+      const [[, offeredQueryRunner], [, pendingQueryRunner]] = jest.mocked(
+        userVarsService.set,
+      ).mock.calls;
+
+      expect(offeredQueryRunner).toBe(mockQueryRunner);
+      expect(pendingQueryRunner).toBe(mockQueryRunner);
+    });
+
+    it('should not record the offer when flagging the step fails', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+      jest
+        .spyOn(dataSource, 'transaction')
+        .mockRejectedValue(new Error('user vars down'));
+
+      await expect(
+        service.setOnboardingBookCallPendingIfQualified({
+          userId,
+          workspaceId,
+          employeeCount: 320,
+        }),
+      ).resolves.not.toThrow();
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should offer the step again after a failed attempt left nothing behind', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+      jest
+        .spyOn(dataSource, 'transaction')
+        .mockRejectedValueOnce(new Error('user vars down'));
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 320,
+      });
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 320,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+          value: true,
+        },
+        mockQueryRunner,
+      );
     });
 
     it('should not throw when the user vars are unavailable', async () => {
@@ -509,7 +594,7 @@ describe('OnboardingService', () => {
             key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
             value: true,
           },
-          undefined,
+          mockQueryRunner,
         );
       },
     );

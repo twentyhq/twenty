@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type QueryRunner, Repository } from 'typeorm';
+import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -57,6 +57,8 @@ export class OnboardingService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
@@ -492,21 +494,33 @@ export class OnboardingService {
         return;
       }
 
-      await this.userVarsService.set({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
-        value: true,
-      });
+      // The offered flag closes the step for good, so it must never outlive the
+      // pending step it guards.
+      await this.dataSource.transaction(async (entityManager) => {
+        const queryRunner = entityManager.queryRunner as QueryRunner;
 
-      await this.setOnboardingBookCallPending({
-        userId,
-        workspaceId,
-        value: true,
+        await this.userVarsService.set(
+          {
+            userId,
+            workspaceId,
+            key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+            value: true,
+          },
+          queryRunner,
+        );
+
+        await this.setOnboardingBookCallPending(
+          {
+            userId,
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
       });
     } catch (error) {
       this.logger.error(
-        `Failed to flag the book-call onboarding step for workspace ${workspaceId}`,
+        `Failed to flag the book-call onboarding step for user ${userId} in workspace ${workspaceId}`,
         error,
       );
     }
