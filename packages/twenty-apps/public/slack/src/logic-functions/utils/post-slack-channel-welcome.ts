@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { SLACK_CHANNEL_WELCOME_THREAD_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-thread-text';
 import { SLACK_CHANNEL_WELCOME_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-text';
+import { SLACK_CHANNEL_WELCOME_THREAD_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-thread-text';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { claimSlackChannelWelcome } from 'src/logic-functions/utils/claim-slack-channel-welcome';
@@ -64,7 +64,6 @@ export const postSlackChannelWelcome = async (
     messageFormat: 'markdown',
   });
 
-  // The channel message is already out, so the claim is kept on purpose: a retry must not post it twice.
   if (!threadMessageResult.success) {
     throw new Error(
       `Failed to post the Slack welcome thread reply in channel ${slackChannelId}: ${threadMessageResult.error ?? threadMessageResult.message}`,
