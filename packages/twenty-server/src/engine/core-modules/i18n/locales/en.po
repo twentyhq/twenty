@@ -5293,11 +5293,6 @@ msgstr "No valid authentication context found."
 msgid "No verified sending domain matches this from address."
 msgstr "No verified sending domain matches this from address."
 
-#. js-lingui-id: AzXrd9
-#: src/engine/core-modules/auth/services/reset-password.service.ts
-msgid "No workspace found with password auth enabled."
-msgstr "No workspace found with password auth enabled."
-
 #. js-lingui-id: PeK0HP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgid "Normalized diarized transcript"
@@ -5971,11 +5966,6 @@ msgstr "Parent view filter group not found"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
 msgstr "Password is too weak."
-
-#. js-lingui-id: cd6AP5
-#: src/engine/core-modules/auth/services/reset-password.service.ts
-msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
-msgstr "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -8732,7 +8722,6 @@ msgstr "User is not a member of the workspace."
 
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/auth/services/reset-password.service.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/user/user.exception.ts
 msgid "User not found."

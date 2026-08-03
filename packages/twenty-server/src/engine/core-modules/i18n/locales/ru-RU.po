@@ -5298,11 +5298,6 @@ msgstr "Не найден действительный контекст ауте
 msgid "No verified sending domain matches this from address."
 msgstr ""
 
-#. js-lingui-id: AzXrd9
-#: src/engine/core-modules/auth/services/reset-password.service.ts
-msgid "No workspace found with password auth enabled."
-msgstr "Не найдено рабочее пространство со включенной аутентификацией по паролю."
-
 #. js-lingui-id: PeK0HP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgid "Normalized diarized transcript"
@@ -5976,11 +5971,6 @@ msgstr "Родительская группа фильтра представл�
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
 msgstr "Пароль слишком слабый."
-
-#. js-lingui-id: cd6AP5
-#: src/engine/core-modules/auth/services/reset-password.service.ts
-msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
-msgstr "Токен для сброса пароля уже был сгенерирован. Пожалуйста, подождите {timeToWait}, чтобы сгенерировать его снова."
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -8737,7 +8727,6 @@ msgstr "Пользователь не является частью рабоче
 
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/auth/services/reset-password.service.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/user/user.exception.ts
 msgid "User not found."
