@@ -22,8 +22,6 @@ const renewTokenMutation = async (
   uri: string | undefined,
   refreshToken: string,
 ) => {
-  // credentials: 'include' lets the renewal response set the httpOnly
-  // session cookie that bridges clients onto cookie sessions.
   const httpLink = new HttpLink({ uri, credentials: 'include' });
 
   const client = new ApolloClient({

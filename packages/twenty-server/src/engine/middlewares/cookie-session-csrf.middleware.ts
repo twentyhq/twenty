@@ -29,8 +29,7 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
     }
 
     // Any other Authorization scheme still falls through to cookie auth, so it
-    // must not skip the check. Extracted the same way the auth pipeline does,
-    // so the two cannot disagree about a request.
+    // must not skip the check.
     if (
       isNonEmptyString(this.jwtWrapperService.extractJwtFromRequest()(request))
     ) {

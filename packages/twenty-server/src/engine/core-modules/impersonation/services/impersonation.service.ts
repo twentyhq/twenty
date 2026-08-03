@@ -20,7 +20,7 @@ import { ImpersonationAuthorizationService } from 'src/engine/core-modules/imper
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -98,9 +98,7 @@ export class ImpersonationService {
   }
 
   // Hands the impersonator back the session parked when impersonation started.
-  // Nothing is minted, so no credential is created on the strength of the
-  // impersonated user's cookie. Cross-workspace impersonation runs on another
-  // host where the cookie is simply absent, and falls through to sign-out.
+  // Nothing is minted on the strength of the impersonated user's cookie.
   async stopImpersonation({
     impersonationContext,
     workspaceId,
@@ -170,8 +168,7 @@ export class ImpersonationService {
   }
 
   // The parked token is evidence of nothing on its own, so it is re-resolved
-  // and checked against the impersonator the impersonation session names. Any
-  // failure returns false and the caller signs the browser out.
+  // and checked against the impersonator the impersonation session names.
   private async restoreImpersonatorSession(
     request: Request,
     impersonatorUserWorkspaceId: string,
@@ -195,8 +192,6 @@ export class ImpersonationService {
       const { payload, expiresAt } =
         await this.userSessionService.resolveSession(impersonatorSessionToken);
 
-      // Restoring into another impersonation would chain them, and a session
-      // belonging to anyone else is not theirs to restore.
       if (
         payload.type !== JwtTokenTypeEnum.ACCESS ||
         payload.isImpersonating === true ||

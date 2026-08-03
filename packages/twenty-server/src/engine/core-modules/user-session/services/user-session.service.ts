@@ -28,21 +28,15 @@ import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/
 import { AUTH_SESSION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/auth-session/auth-session';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  UserSessionEntity,
-  UserSessionRevokedReason,
-} from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
-import {
-  type CachedUserSession,
-  type CreateUserSessionInput,
-  type UserSessionCreationOrigin,
-} from 'src/engine/core-modules/user-session/types/user-session.type';
+import { type CachedUserSession } from 'src/engine/core-modules/user-session/types/cached-user-session.type';
+import { type CreateUserSessionInput } from 'src/engine/core-modules/user-session/types/create-user-session-input.type';
+import { type UserSessionCreationOrigin } from 'src/engine/core-modules/user-session/types/user-session-creation-origin.type';
 import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
-import {
-  generateUserSessionToken,
-  hashUserSessionToken,
-} from 'src/engine/core-modules/user-session/utils/user-session-token.util';
+import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
+import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
 const USER_SESSION_CACHE_TTL_MS = 60 * 1000;
 const USER_SESSION_MAX_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
@@ -93,10 +87,8 @@ export class UserSessionService {
       return;
     }
 
-    // A browser elsewhere must not be handed a session for an account it did
-    // not choose. Only the cookie is withheld, so cross-origin API clients
-    // still get their token pair. It cannot live in the CSRF middleware,
-    // which cannot know a request is about to issue a cookie.
+    // Cannot live in the CSRF middleware, which cannot know a request is about
+    // to issue a cookie.
     if (!this.isRequestAllowedToReceiveSessionCookie(request)) {
       this.logger.warn(
         `Refused to issue a session cookie to origin ${request.headers.origin}`,
@@ -126,9 +118,6 @@ export class UserSessionService {
               presentedSessionToken,
             );
 
-            // Renewals must not mint a row every 30 minutes. Anything scoped
-            // differently is replaced, so the cookie can never resolve to a
-            // workspace the renewed pair does not carry.
             if (
               this.isSessionScopeMatchingRenewal(presentedPayload, sessionInput)
             ) {
@@ -140,7 +129,6 @@ export class UserSessionService {
               UserSessionRevokedReason.Superseded,
             );
           } catch (error) {
-            // Only an unusable session falls through to minting a fresh one.
             if (
               !(error instanceof AuthException) ||
               error.code !== AuthExceptionCode.UNAUTHENTICATED
@@ -150,15 +138,13 @@ export class UserSessionService {
           }
         } else if (sessionInput.isImpersonating === true) {
           // The one sign-in that must not revoke what it replaces: parking the
-          // impersonator's session lets stopImpersonation hand back the
-          // credential they already held. The cookie alone proves nothing, the
-          // restore re-resolves it and checks whose session it is.
+          // impersonator's session lets stopImpersonation hand back the credential
+          // they already held.
           this.userSessionCookieService.attachImpersonatorSessionTokenToResponse(
             response,
             presentedSessionToken,
           );
         } else {
-          // Against fixation, and because the device changes hands.
           await this.revokeSessionByToken(
             presentedSessionToken,
             UserSessionRevokedReason.Superseded,
@@ -174,15 +160,13 @@ export class UserSessionService {
         session.expiresAt,
       );
     } catch (error) {
-      // Sign-in only: the presented cookie may be the previous account's and
-      // must not survive a sign-in that failed to replace it. On renewal it is
-      // this user's own live session, which a transient failure must not kill.
+      // Sign-in only: the presented cookie may be the previous account's. On
+      // renewal it is this user's own live session, which a transient failure
+      // must not kill.
       if (origin === 'sign_in') {
         try {
           this.userSessionCookieService.clearSessionCookie(response);
-        } catch {
-          // Nothing further to do: the error below is what gets reported.
-        }
+        } catch {}
       }
 
       this.logger.error(
@@ -298,7 +282,6 @@ export class UserSessionService {
       );
     }
 
-    // Persists fine but is rejected on every request it authenticates.
     if (
       input.isImpersonating === true &&
       (!isDefined(input.workspaceId) ||
@@ -349,8 +332,6 @@ export class UserSessionService {
     return { sessionToken, session };
   }
 
-  // Same payload shape the equivalent JWT carries, so JwtAuthStrategy.validate
-  // builds the AuthContext unchanged.
   async resolveSession(sessionToken: string): Promise<{
     payload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload;
     authenticatedAt: Date;
@@ -381,8 +362,6 @@ export class UserSessionService {
 
     const refreshedCachedSession = this.toCachedSession(session);
 
-    // A touch already caches and re-checks revocation, so repeating both here
-    // would cost a Redis write and a SELECT on the per-request auth path.
     const wasCachedByTouch = await this.touchSessionIfDue(
       tokenHash,
       refreshedCachedSession,
@@ -502,12 +481,9 @@ export class UserSessionService {
     reason: UserSessionRevokedReason;
     exceptSessionId?: string;
   }): Promise<number> {
-    // The predicate is applied by the UPDATE rather than to ids read
-    // beforehand, shrinking the window a new session can slip through to one
-    // statement. It does not close it: a sign-in committing after this
+    // Applying the predicate in the UPDATE rather than to ids read beforehand
+    // narrows but does not close the window: a sign-in committing after this
     // statement's snapshot survives, which would need a generation counter.
-    // RETURNING names exactly the rows revoked, so the audit cannot
-    // over-report.
     const revokingQuery = this.userSessionRepository
       .createQueryBuilder()
       .update(UserSessionEntity)
@@ -580,7 +556,6 @@ export class UserSessionService {
         { json: true },
       );
     } catch {
-      // An invalid or expired refresh token is already unusable.
       return;
     }
 
@@ -649,8 +624,8 @@ export class UserSessionService {
     return ms(this.twentyConfigService.get('SESSION_IDLE_TIMEOUT'));
   }
 
-  // Throttled to avoid a write per request. Must stay well inside the idle
-  // timeout, or a continuously active user goes idle between two touches.
+  // Must stay well inside the idle timeout, or a continuously active user goes
+  // idle between two touches.
   private getTouchIntervalMs(): number {
     return Math.min(
       USER_SESSION_MAX_TOUCH_INTERVAL_MS,
@@ -658,7 +633,6 @@ export class UserSessionService {
     );
   }
 
-  // Returns whether it wrote the session to cache and re-checked revocation.
   private async touchSessionIfDue(
     tokenHash: string,
     cachedSession: CachedUserSession,
@@ -689,7 +663,6 @@ export class UserSessionService {
       return false;
     }
 
-    // Revoked or deleted since it was cached, so drop the entry.
     if (affected === 0) {
       await this.cacheStorageService.del(tokenHash);
 

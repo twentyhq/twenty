@@ -57,8 +57,6 @@ export const SSEClientEffect = () => {
     useHandleSseClientConnectionRetry();
 
   useEffect(() => {
-    // In cookie mode there is no token pair: the session cookie carried by
-    // credentials: 'include' authenticates the stream instead.
     if (isLogged && !isDefined(sseClient)) {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,

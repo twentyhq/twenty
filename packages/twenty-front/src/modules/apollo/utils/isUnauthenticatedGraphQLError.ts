@@ -1,8 +1,7 @@
 import { type GraphQLFormattedError } from 'graphql';
 
-// A bare "Unauthorized" message reaches the client alongside the UNAUTHENTICATED
-// code, from guards that throw before the code is attached. Recognised in one
-// place so the error link and the session probe cannot disagree.
+// Guards that throw before the UNAUTHENTICATED code is attached reach the
+// client as a bare "Unauthorized" message.
 export const isUnauthenticatedGraphQLError = (
   graphQLError: GraphQLFormattedError,
 ): boolean =>

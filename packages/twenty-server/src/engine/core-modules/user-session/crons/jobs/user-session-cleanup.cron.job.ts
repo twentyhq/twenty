@@ -11,8 +11,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { USER_SESSION_CLEANUP_CRON_PATTERN } from 'src/engine/core-modules/user-session/constants/user-session-cleanup-cron-pattern.constant';
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 
-// Rows are kept for a while after they stop being usable so the sessions UI
-// and audits can still show recently ended sessions.
+// Rows outlive their usability so the sessions UI and audits can still show
+// recently ended sessions.
 const ENDED_SESSION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 
 const DELETE_BATCH_SIZE = 10000;
@@ -53,8 +53,6 @@ export class UserSessionCleanupCronJob {
         .then((result) => result.affected ?? 0),
     );
 
-    // Refresh token rows were never cleaned up before sessions existed, so
-    // this also drains the historical appToken backlog.
     const deletedRefreshTokenCount = await this.deleteInBatches(() =>
       this.appTokenRepository
         .createQueryBuilder()

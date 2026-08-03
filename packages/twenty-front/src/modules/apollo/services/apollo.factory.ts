@@ -113,8 +113,6 @@ export class ApolloFactory implements ApolloManager {
     this.appVersion = appVersion;
 
     const buildApolloLink = (): ApolloLink => {
-      // credentials: 'include' sends the httpOnly session cookie alongside
-      // the Bearer header during the cookie-session migration.
       const uploadLink = new UploadHttpLink({
         uri,
         credentials: 'include',
@@ -201,9 +199,8 @@ export class ApolloFactory implements ApolloManager {
         forward: ApolloLink.ForwardFunction,
         error: ErrorLike,
       ) => {
-        // Operations that deliberately carry no token (e.g. the cookie
-        // session probe) must fail as-is: renewing and replaying them
-        // headerless could loop.
+        // Renewing and replaying a deliberately headerless operation (the cookie
+        // session probe) could loop, so it must fail as-is.
         if (operation.getContext().skipAuthToken === true) {
           return throwError(() => error);
         }

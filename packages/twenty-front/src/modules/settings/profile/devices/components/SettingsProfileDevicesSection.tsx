@@ -41,8 +41,6 @@ export const SettingsProfileDevicesSection = () => {
 
   const isCookieSessionEnabled = useAtomStateValue(isCookieSessionEnabledState);
 
-  // With cookie sessions off the list is always empty, so the request is
-  // guaranteed waste.
   const { data, loading, error, refetch } = useQuery(
     CurrentUserSessionsDocument,
     { fetchPolicy: 'network-only', skip: !isCookieSessionEnabled },

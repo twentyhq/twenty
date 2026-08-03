@@ -133,7 +133,6 @@ export const useAuth = () => {
   const handleSetAuthTokens = useCallback(
     (tokens: AuthTokenPair) => {
       setTokenPair(tokens);
-      // Without this, the boot retry would revoke the session just created.
       store.set(isPendingServerSignOutState.atom, false);
     },
     [setTokenPair, store],
@@ -452,10 +451,8 @@ export const useAuth = () => {
   );
 
   const handleSignOut = useCallback(async () => {
-    // Before clearSession: it needs the refresh token, and the navigation
-    // there kills in-flight requests.
-    // Sign-out completes locally even if the server is unreachable; the marker
-    // makes the next boot retry the revocation.
+    // Before clearSession: it needs the refresh token, and the navigation there
+    // kills in-flight requests.
     store.set(isPendingServerSignOutState.atom, true);
 
     try {

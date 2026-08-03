@@ -11,12 +11,10 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserSessionDTO } from 'src/engine/core-modules/user-session/dtos/user-session.dto';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import {
-  type UserSessionEntity,
-  UserSessionRevokedReason,
-} from 'src/engine/core-modules/user-session/user-session.entity';
+import { type UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
-import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
+import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -59,8 +57,7 @@ export class UserSessionResolver {
     userSessionId: string,
     @Context() context: { req: Request },
   ): Promise<boolean> {
-    // Before revoking: afterwards it is no longer active and would not be
-    // found, so the cookie would never be cleared.
+    // Before revoking: afterwards it is no longer active and would not be found.
     const currentSession = await this.resolveCurrentSession(context.req, user);
 
     const revoked = await this.userSessionService.revokeSessionByIdForUser({

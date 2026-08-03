@@ -14,11 +14,9 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import {
-  UserSessionEntity,
-  UserSessionRevokedReason,
-} from 'src/engine/core-modules/user-session/user-session.entity';
-import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
+import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
+import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 describe('UserSessionService', () => {
@@ -216,8 +214,6 @@ describe('UserSessionService', () => {
   };
 
   describe('resolveSession', () => {
-    // Restored unconditionally: a failing assertion must not leak a shortened
-    // timeout into the tests that follow, since mockConfig is describe-scoped.
     afterEach(() => {
       mockConfig.SESSION_IDLE_TIMEOUT = '30d';
     });
@@ -467,7 +463,6 @@ describe('UserSessionService', () => {
         }),
       ).rejects.toThrow('Session not found');
 
-      // Without userId in the filter, one user could revoke another's by id.
       expect(findOneBySpy).toHaveBeenCalledWith({ id: sessionId, userId });
     });
 
@@ -745,8 +740,6 @@ describe('UserSessionService', () => {
     it('should not mint a new session on renewal when a valid one is presented', async () => {
       mockAccessPayload();
 
-      // Same scope as the renewed pair, or the test never reaches the reuse
-      // path it means to exercise.
       const presentedSession = buildActiveSession({
         userId: 'user-id',
         workspaceId: 'workspace-id',

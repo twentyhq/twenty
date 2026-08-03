@@ -5,8 +5,6 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 
-// URL.origin drops a default port, so the two spellings of the same origin
-// collapse. Returns undefined for anything unparseable, which never matches.
 const toComparableOrigin = (value: string): string | undefined => {
   try {
     return new URL(value).origin.toLowerCase();

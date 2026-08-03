@@ -22,8 +22,6 @@ export const isImpersonatingState = createAtomSelector<boolean>({
       }
     }
 
-    // Cookie mode has no client-readable token: the server resolves the flag
-    // from the session and returns it on currentUserWorkspace.
     return get(currentUserWorkspaceState)?.isImpersonating === true;
   },
 });

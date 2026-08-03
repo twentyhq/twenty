@@ -58,7 +58,6 @@ describe('canCredentialAutoLoginIntoWorkspaces', () => {
       }),
     ).toBe(true);
 
-    // Still bounded: a malformed window must not grant indefinite entry.
     expect(
       canCredentialAutoLoginIntoWorkspaces({
         isWorkspaceScopedCredential: false,
