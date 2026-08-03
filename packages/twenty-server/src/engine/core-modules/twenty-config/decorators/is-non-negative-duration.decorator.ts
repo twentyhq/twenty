@@ -1,6 +1,8 @@
 import { registerDecorator, type ValidationOptions } from 'class-validator';
 
-import { MinimumDurationConstraint } from 'src/engine/core-modules/twenty-config/validators/minimum-duration.validator';
+import { PositiveDurationConstraint } from 'src/engine/core-modules/twenty-config/validators/positive-duration.validator';
+
+const IS_ZERO_ALLOWED = true;
 
 export const IsNonNegativeDuration =
   (validationOptions?: ValidationOptions) =>
@@ -9,7 +11,7 @@ export const IsNonNegativeDuration =
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      constraints: [0],
-      validator: MinimumDurationConstraint,
+      constraints: [IS_ZERO_ALLOWED],
+      validator: PositiveDurationConstraint,
     });
   };
