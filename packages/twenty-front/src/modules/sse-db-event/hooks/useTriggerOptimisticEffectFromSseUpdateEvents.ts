@@ -138,12 +138,13 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           continue;
         }
 
-        const hasThisEventChangedAnyFieldValue = Object.entries(
-          updatedRecord,
-        ).some(
-          ([fieldName, fieldValue]) =>
+        const updatedFieldNames =
+          updateEvent.properties.updatedFields ?? Object.keys(updatedRecord);
+
+        const hasThisEventChangedAnyFieldValue = updatedFieldNames.some(
+          (fieldName) =>
             fieldName !== 'updatedAt' &&
-            !isDeeplyEqual(cachedRecord[fieldName], fieldValue),
+            !isDeeplyEqual(cachedRecord[fieldName], updatedRecord[fieldName]),
         );
 
         if (hasThisEventChangedAnyFieldValue) {
