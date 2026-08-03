@@ -1,23 +1,8 @@
 import { type Response } from 'supertest';
+import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-
-const SERVER_URL = `http://localhost:${APP_PORT}`;
-
-// The GraphQL `origin` variable selects the workspace (multiworkspace resolves
-// it by subdomain); the HTTP Origin header is what the cookie issuance gate
-// and the CSRF middleware read. They are independent inputs.
-export const buildAppleWorkspaceOrigin = (): string => {
-  const origin = new URL(SERVER_URL);
-
-  origin.hostname =
-    process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-      ? `apple.${origin.hostname}`
-      : origin.hostname;
-
-  return origin.toString();
-};
 
 type RequestHeaders = {
   originHeader?: string;

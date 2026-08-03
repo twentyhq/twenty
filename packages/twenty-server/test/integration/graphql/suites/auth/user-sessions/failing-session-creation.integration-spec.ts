@@ -1,0 +1,98 @@
+import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
+import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
+import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+
+import {
+  extractSessionCookie,
+  signInWithCookieCapture,
+} from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
+
+import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
+
+const ALLOWED_ORIGIN = 'http://localhost:3001';
+const DISALLOWED_ORIGIN = 'https://attacker.example.com';
+
+describe('failing user session creation on auth exchanges (integration)', () => {
+  describe('with cookie sessions disabled (default)', () => {
+    it('should return auth tokens without setting a session cookie', async () => {
+      const userSessionRepository =
+        getCoreRepository<UserSessionEntity>(UserSessionEntity);
+      const sessionCountBefore = await userSessionRepository.count();
+
+      const response = await signInWithCookieCapture({
+        originHeader: ALLOWED_ORIGIN,
+      });
+
+      expect(
+        response.body.data.getAuthTokensFromLoginToken.tokens.refreshToken
+          .token,
+      ).toBeDefined();
+      expect(extractSessionCookie(response)).toBeUndefined();
+
+      const sessionCountAfter = await userSessionRepository.count();
+
+      expect(sessionCountAfter).toBe(sessionCountBefore);
+    });
+  });
+
+  describe('with cookie sessions enabled', () => {
+    beforeAll(async () => {
+      await createConfigVariable({
+        input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED', value: true },
+      });
+    });
+
+    afterAll(async () => {
+      await deleteConfigVariable({
+        input: { key: 'AUTH_COOKIE_SESSIONS_ENABLED' },
+      }).catch(() => {});
+    });
+
+    it('should refuse the cookie but still return tokens on a sign-in from a disallowed origin (login-CSRF)', async () => {
+      const userSessionRepository =
+        getCoreRepository<UserSessionEntity>(UserSessionEntity);
+      const sessionCountBefore = await userSessionRepository.count();
+
+      const response = await signInWithCookieCapture({
+        originHeader: DISALLOWED_ORIGIN,
+      });
+
+      expect(
+        response.body.data.getAuthTokensFromLoginToken.tokens.refreshToken
+          .token,
+      ).toBeDefined();
+      expect(extractSessionCookie(response)).toBeUndefined();
+
+      const sessionCountAfter = await userSessionRepository.count();
+
+      expect(sessionCountAfter).toBe(sessionCountBefore);
+    });
+
+    it('should mint nothing when the credentials exchange itself fails', async () => {
+      const userSessionRepository =
+        getCoreRepository<UserSessionEntity>(UserSessionEntity);
+      const sessionCountBefore = await userSessionRepository.count();
+
+      const response = await makeMetadataAPIRequest(
+        getLoginTokenFromCredentialsQueryFactory({
+          email: 'tim@apple.dev',
+          password: 'wrong-password',
+          origin: buildAppleWorkspaceOrigin(),
+        }),
+        undefined,
+      )
+        .set('Origin', ALLOWED_ORIGIN)
+        .expect(200);
+
+      expect(response.body.errors).toBeDefined();
+      expect(extractSessionCookie(response)).toBeUndefined();
+
+      const sessionCountAfter = await userSessionRepository.count();
+
+      expect(sessionCountAfter).toBe(sessionCountBefore);
+    });
+  });
+});
