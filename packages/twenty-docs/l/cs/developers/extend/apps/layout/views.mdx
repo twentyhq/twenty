@@ -110,4 +110,4 @@ Pole `value` je vždy hodnota serializovatelná do JSON, ale její očekávaný 
 
 ## Jak se zobrazení objevují v uživatelském rozhraní
 
-Samotné zobrazení není z postranního panelu dostupné. Aby se tam zobrazilo, spárujte ho s [položkou navigačního menu](/l/cs/developers/extend/apps/layout/navigation-menu-items) typu `VIEW`, která odkazuje na `universalIdentifier` daného zobrazení. To je kanonický vzor: každý vlastní objekt obvykle dodává výchozí zobrazení + položku v postranním panelu, která ho otevírá.
+Samotné zobrazení není z postranního panelu dostupné. Aby se tam zobrazilo, spárujte ho s [položkou navigačního menu](/l/cs/developers/extend/apps/layout/navigation-menu-items) typu `VIEW`, která odkazuje na `universalIdentifier` daného zobrazení. To je kanonický vzor: každý vlastní objekt získá při vytvoření výchozí indexové zobrazení automaticky vygenerované, takže stačí pouze dodat položku v postranním panelu, která jej otevře.

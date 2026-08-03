@@ -110,4 +110,4 @@ Il campo `value` è sempre un valore serializzabile in JSON, ma la forma previst
 
 ## Come le viste vengono visualizzate nell'interfaccia utente
 
-Una vista da sola non è raggiungibile dalla barra laterale. Per farla apparire lì, collegala a una [voce del menu di navigazione](/l/it/developers/extend/apps/layout/navigation-menu-items) di tipo `VIEW` che punti all'`universalIdentifier` della vista. Questo è il pattern canonico: ogni oggetto personalizzato in genere distribuisce una vista predefinita + una voce nella barra laterale che la apre.
+Una vista da sola non è raggiungibile dalla barra laterale. Per farla apparire lì, collegala a una [voce del menu di navigazione](/l/it/developers/extend/apps/layout/navigation-menu-items) di tipo `VIEW` che punti all'`universalIdentifier` della vista. Questo è il modello canonico: ogni oggetto personalizzato riceve una vista indice predefinita generata automaticamente al momento della creazione, quindi devi solo distribuire la voce della barra laterale che la apre.
