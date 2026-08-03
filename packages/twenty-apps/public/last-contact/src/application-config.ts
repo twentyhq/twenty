@@ -19,7 +19,6 @@ export default defineApplication({
   category: 'Productivity',
   screenshots: ['public/gallery/cover.png'],
   displayName: APP_DISPLAY_NAME,
-  canActWithoutUser: true,
   description: APP_DESCRIPTION,
   serverVariables: {
     [BACKFILL_BATCH_SIZE_ENV_VAR_NAME]: {
