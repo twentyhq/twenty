@@ -3,6 +3,10 @@ import { In } from 'typeorm';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
@@ -122,5 +126,91 @@ describe('user session cleanup cron (integration)', () => {
     expectKept('active');
     expectKept('expired within retention');
     expectKept('idle-expired but not absolutely expired');
+  });
+
+  describe('refresh-token half', () => {
+    type SeededAppTokenFixture = {
+      label: string;
+      type: AppTokenType;
+      overrides: Partial<Pick<AppTokenEntity, 'expiresAt' | 'revokedAt'>>;
+    };
+
+    const appTokenFixtures: SeededAppTokenFixture[] = [
+      {
+        label: 'refresh token expired beyond retention',
+        type: AppTokenType.RefreshToken,
+        overrides: { expiresAt: daysAgo(31) },
+      },
+      {
+        label: 'refresh token revoked beyond retention',
+        type: AppTokenType.RefreshToken,
+        overrides: { expiresAt: daysFromNow(30), revokedAt: daysAgo(31) },
+      },
+      {
+        label: 'active refresh token',
+        type: AppTokenType.RefreshToken,
+        overrides: { expiresAt: daysFromNow(30) },
+      },
+      {
+        // The type filter is the safety predicate: appToken is a shared table
+        // and other token types are routinely long-expired. Losing the filter
+        // would silently hard-delete password-reset or invitation history.
+        label: 'long-expired token of another type',
+        type: AppTokenType.PasswordResetToken,
+        overrides: { expiresAt: daysAgo(31) },
+      },
+    ];
+
+    const seededAppTokenIds = new Map<string, string>();
+
+    beforeAll(async () => {
+      const appTokenRepository =
+        getCoreRepository<AppTokenEntity>(AppTokenEntity);
+
+      for (const fixture of appTokenFixtures) {
+        const saved = await appTokenRepository.save(
+          appTokenRepository.create({
+            userId: USER_DATA_SEED_IDS.TIM,
+            type: fixture.type,
+            value: '',
+            ...fixture.overrides,
+          }),
+        );
+
+        seededAppTokenIds.set(fixture.label, saved.id);
+      }
+    });
+
+    afterAll(async () => {
+      await getCoreRepository<AppTokenEntity>(AppTokenEntity).delete({
+        id: In([...seededAppTokenIds.values()]),
+      });
+    });
+
+    it('should delete only refresh tokens ended beyond retention', async () => {
+      const cleanupJob = getAppProviderByClassName<{
+        handle: () => Promise<void>;
+      }>('UserSessionCleanupCronJob');
+
+      await cleanupJob.handle();
+
+      const remainingRows = await getCoreRepository<AppTokenEntity>(
+        AppTokenEntity,
+      ).findBy({ id: In([...seededAppTokenIds.values()]) });
+      const remainingIds = remainingRows.map((row) => row.id);
+
+      expect(remainingIds).not.toContain(
+        seededAppTokenIds.get('refresh token expired beyond retention'),
+      );
+      expect(remainingIds).not.toContain(
+        seededAppTokenIds.get('refresh token revoked beyond retention'),
+      );
+      expect(remainingIds).toContain(
+        seededAppTokenIds.get('active refresh token'),
+      );
+      expect(remainingIds).toContain(
+        seededAppTokenIds.get('long-expired token of another type'),
+      );
+    });
   });
 });
