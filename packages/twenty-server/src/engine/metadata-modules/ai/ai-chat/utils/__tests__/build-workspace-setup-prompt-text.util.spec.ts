@@ -234,9 +234,21 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('Nothing after that is a fixed sequence');
-    expect(result).toContain('propose only that one');
+    expect(result).toContain('which single capability to propose next');
     expect(result).toContain('Name the thing in their business it improves');
-    expect(result).toContain('say what is ready and stop');
+  });
+
+  it('should never close without naming the capabilities it did not build', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain(
+      'never close while they are still unaware of the rest',
+    );
+    expect(result).toContain('offer to set one up');
+    expect(result).toContain('Build only what they accept');
   });
 
   it('should propose a dashboard built with the dashboard tools', () => {
