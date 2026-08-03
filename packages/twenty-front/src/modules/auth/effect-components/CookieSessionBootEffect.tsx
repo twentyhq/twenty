@@ -22,6 +22,12 @@ type CookieSessionProbeResult =
   | 'unauthenticated'
   | 'unreachable';
 
+const isUnauthenticatedError = (error: unknown): boolean =>
+  CombinedGraphQLErrors.is(error) &&
+  error.errors.some(
+    (graphQLError) => graphQLError.extensions?.code === 'UNAUTHENTICATED',
+  );
+
 // Migrates the client from the localStorage token pair onto the httpOnly
 // session cookie: once a cookie-only probe authenticates, the token pair is
 // dropped and the cookie is the sole credential. Legacy clients without a
@@ -52,9 +58,10 @@ export const CookieSessionBootEffect = () => {
           ? 'authenticated'
           : 'unauthenticated';
       } catch (error) {
-        // Only the server answering settles whether there is a session. A
-        // transport failure says nothing, and must not be read as one.
-        return CombinedGraphQLErrors.is(error)
+        // Only the server rejecting the credential settles whether there is a
+        // session. A transport failure, or a resolver blowing up for its own
+        // reasons, says nothing and must not be read as one.
+        return isUnauthenticatedError(error)
           ? 'unauthenticated'
           : 'unreachable';
       }

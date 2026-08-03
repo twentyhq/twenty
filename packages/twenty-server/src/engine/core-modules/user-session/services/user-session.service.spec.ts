@@ -216,6 +216,12 @@ describe('UserSessionService', () => {
   };
 
   describe('resolveSession', () => {
+    // Restored unconditionally: a failing assertion must not leak a shortened
+    // timeout into the tests that follow, since mockConfig is describe-scoped.
+    afterEach(() => {
+      mockConfig.SESSION_IDLE_TIMEOUT = '30d';
+    });
+
     it('should resolve an access payload from the database on cache miss', async () => {
       const session = buildActiveSession();
 
@@ -361,8 +367,6 @@ describe('UserSessionService', () => {
         .mockResolvedValue({ affected: 1 } as never);
 
       await service.resolveSession('sess_token');
-
-      mockConfig.SESSION_IDLE_TIMEOUT = '30d';
 
       expect(updateSpy).toHaveBeenCalledWith(
         expect.objectContaining({ id: session.id }),
