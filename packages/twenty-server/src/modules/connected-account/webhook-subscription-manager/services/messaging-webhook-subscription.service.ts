@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -12,11 +12,22 @@ import { v4 } from 'uuid';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import {
+  WebhookSubscriptionDriverException,
+  WebhookSubscriptionDriverExceptionCode,
+} from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
-import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
+import {
+  type WebhookSubscriptionContext,
+  type WebhookSubscriptionOperation,
+} from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
 @Injectable()
 export class MessagingWebhookSubscriptionService {
+  private readonly logger = new Logger(
+    MessagingWebhookSubscriptionService.name,
+  );
+
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -84,15 +95,17 @@ export class MessagingWebhookSubscriptionService {
     } catch (error) {
       await this.messageChannelRepository.update(messageChannel.id, {
         webhookSubscriptionClientState: clientState,
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
         webhookSubscriptionExpiresAt: null,
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
-      });
+      await this.handleDriverException(
+        error,
+        'CREATE',
+        messageChannel.id,
+        workspaceId,
+      );
 
-      throw error;
+      return;
     }
 
     if (isDefined(previousSubscription)) {
@@ -100,6 +113,25 @@ export class MessagingWebhookSubscriptionService {
         .deleteSubscription(previousSubscription)
         .catch(() => undefined);
     }
+  }
+
+  async recreateSubscription({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageChannelRepository.update(
+      { id: messageChannelId, workspaceId },
+      {
+        webhookSubscriptionExternalId: null,
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+        webhookSubscriptionExpiresAt: null,
+      },
+    );
+
+    await this.createSubscription(messageChannelId, workspaceId);
   }
 
   async renewSubscription({
@@ -148,15 +180,12 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
     } catch (error) {
-      await this.messageChannelRepository.update(messageChannel.id, {
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-      });
-
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: messageChannel.workspaceId },
-      });
-
-      throw error;
+      await this.handleDriverException(
+        error,
+        'RENEW',
+        messageChannel.id,
+        messageChannel.workspaceId,
+      );
     }
   }
 
@@ -190,10 +219,92 @@ export class MessagingWebhookSubscriptionService {
     try {
       await driver.deleteSubscription(this.toContext(messageChannel));
     } catch (error) {
+      if (
+        error instanceof WebhookSubscriptionDriverException &&
+        error.code === WebhookSubscriptionDriverExceptionCode.NOT_FOUND
+      ) {
+        return;
+      }
+
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: messageChannel.workspaceId },
       });
     }
+  }
+
+  private async handleDriverException(
+    exception: unknown,
+    operation: WebhookSubscriptionOperation,
+    messageChannelId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    if (exception instanceof WebhookSubscriptionDriverException) {
+      switch (exception.code) {
+        case WebhookSubscriptionDriverExceptionCode.NOT_FOUND:
+          await this.handleNotFoundException(
+            exception,
+            operation,
+            messageChannelId,
+            workspaceId,
+          );
+
+          return;
+        case WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+          await this.stopWatching(exception, messageChannelId);
+
+          return;
+        case WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR:
+          await this.messageChannelRepository.update(messageChannelId, {
+            webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+          });
+
+          throw exception;
+        case WebhookSubscriptionDriverExceptionCode.PROVIDER_NOT_CONFIGURED:
+        case WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID:
+        case WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER:
+        case WebhookSubscriptionDriverExceptionCode.UNKNOWN:
+        default:
+          break;
+      }
+    }
+
+    await this.messageChannelRepository.update(messageChannelId, {
+      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+    });
+
+    this.exceptionHandlerService.captureExceptions([exception], {
+      workspace: { id: workspaceId },
+    });
+
+    throw exception;
+  }
+
+  private async handleNotFoundException(
+    exception: WebhookSubscriptionDriverException,
+    operation: WebhookSubscriptionOperation,
+    messageChannelId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    if (operation === 'CREATE') {
+      await this.stopWatching(exception, messageChannelId);
+
+      return;
+    }
+
+    await this.recreateSubscription({ messageChannelId, workspaceId });
+  }
+
+  private async stopWatching(
+    exception: WebhookSubscriptionDriverException,
+    messageChannelId: string,
+  ): Promise<void> {
+    await this.messageChannelRepository.update(messageChannelId, {
+      webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED,
+    });
+
+    this.logger.warn(
+      `Stopped watching message channel ${messageChannelId}: ${exception.message}`,
+    );
   }
 
   private toContext(

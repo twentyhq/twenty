@@ -91,21 +91,16 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
         continue;
       }
 
-      if (
-        isNonEmptyString(notification.lifecycleEvent) &&
-        notification.lifecycleEvent !== 'missed'
-      ) {
-        try {
-          await this.messagingWebhookSubscriptionService.renewSubscription({
-            messageChannelId: messageChannel.id,
-            workspaceId: messageChannel.workspaceId,
-          });
-        } catch (error) {
+      if (isNonEmptyString(notification.lifecycleEvent)) {
+        await this.handleLifecycleEvent({
+          lifecycleEvent: notification.lifecycleEvent,
+          messageChannel,
+        }).catch((error) =>
           this.logger.error(
-            `Failed to renew messaging subscription for channel ${messageChannel.id}`,
+            `Failed to handle ${notification.lifecycleEvent} lifecycle event for message channel ${messageChannel.id}`,
             error,
-          );
-        }
+          ),
+        );
         continue;
       }
 
@@ -117,6 +112,43 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
       this.logger.log(
         `Triggered messaging sync for message channel ${messageChannel.id} from Microsoft notification`,
       );
+    }
+  }
+
+  private async handleLifecycleEvent({
+    lifecycleEvent,
+    messageChannel,
+  }: {
+    lifecycleEvent: string;
+    messageChannel: MessageChannelEntity;
+  }): Promise<void> {
+    switch (lifecycleEvent) {
+      case 'subscriptionRemoved':
+        await this.messagingWebhookSubscriptionService.recreateSubscription({
+          messageChannelId: messageChannel.id,
+          workspaceId: messageChannel.workspaceId,
+        });
+        await this.webhookSyncTriggerService.triggerMessagingSync(
+          messageChannel.id,
+          messageChannel.workspaceId,
+        );
+        break;
+      case 'reauthorizationRequired':
+        await this.messagingWebhookSubscriptionService.renewSubscription({
+          messageChannelId: messageChannel.id,
+          workspaceId: messageChannel.workspaceId,
+        });
+        break;
+      case 'missed':
+        await this.webhookSyncTriggerService.triggerMessagingSync(
+          messageChannel.id,
+          messageChannel.workspaceId,
+        );
+        break;
+      default:
+        this.logger.warn(
+          `Ignored unrecognized lifecycle event ${lifecycleEvent} for message channel ${messageChannel.id}`,
+        );
     }
   }
 }

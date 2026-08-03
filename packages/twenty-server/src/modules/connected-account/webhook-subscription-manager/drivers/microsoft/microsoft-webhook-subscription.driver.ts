@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type GraphError } from '@microsoft/microsoft-graph-client';
 import { type Subscription } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,6 +18,7 @@ import {
   type WebhookSubscriptionResult,
 } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
+import { parseMicrosoftWebhookSubscriptionError } from 'src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/utils/parse-microsoft-webhook-subscription-error.util';
 import { MICROSOFT_SUBSCRIPTION_TTL_BUFFER_MS } from './constants/microsoft-subscription-ttl-ms-buffer.constant';
 
 type MicrosoftGraphResourceConfig = Pick<
@@ -77,7 +79,10 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
 
     const subscription: Subscription = await graphClient
       .api('/subscriptions')
-      .post(subscriptionPayload);
+      .post(subscriptionPayload)
+      .catch((error: GraphError) => {
+        throw parseMicrosoftWebhookSubscriptionError(error);
+      });
 
     return this.toResult(subscription);
   }
@@ -100,7 +105,10 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
 
     const renewedSubscription: Subscription = await graphClient
       .api(`/subscriptions/${context.externalSubscriptionId}`)
-      .patch(subscriptionPatch);
+      .patch(subscriptionPatch)
+      .catch((error: GraphError) => {
+        throw parseMicrosoftWebhookSubscriptionError(error);
+      });
 
     return this.toResult(renewedSubscription);
   }
@@ -116,7 +124,10 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
 
     await graphClient
       .api(`/subscriptions/${context.externalSubscriptionId}`)
-      .delete();
+      .delete()
+      .catch((error: GraphError) => {
+        throw parseMicrosoftWebhookSubscriptionError(error);
+      });
   }
 
   private toResult(subscription: Subscription): WebhookSubscriptionResult {

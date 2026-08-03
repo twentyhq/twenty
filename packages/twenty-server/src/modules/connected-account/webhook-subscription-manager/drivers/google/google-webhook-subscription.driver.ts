@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type GaxiosError } from 'gaxios';
 import { type calendar_v3, type gmail_v1, google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -13,6 +14,7 @@ import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
 } from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
+import { parseGoogleWebhookSubscriptionError } from 'src/modules/connected-account/webhook-subscription-manager/drivers/google/utils/parse-google-webhook-subscription-error.util';
 import {
   type WebhookSubscriptionContext,
   type WebhookSubscriptionDriver,
@@ -83,12 +85,16 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
 
     const gmailClient = await this.getGmailClient(connectedAccountId);
 
-    const { data } = await gmailClient.users.watch({
-      userId: 'me',
-      requestBody: {
-        topicName: pubSubTopicName,
-      },
-    });
+    const { data } = await gmailClient.users
+      .watch({
+        userId: 'me',
+        requestBody: {
+          topicName: pubSubTopicName,
+        },
+      })
+      .catch((error: GaxiosError) => {
+        throw parseGoogleWebhookSubscriptionError(error);
+      });
 
     if (!isDefined(data.expiration)) {
       throw new WebhookSubscriptionDriverException(
@@ -109,7 +115,11 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
   ): Promise<void> {
     const gmailClient = await this.getGmailClient(connectedAccountId);
 
-    await gmailClient.users.stop({ userId: 'me' });
+    await gmailClient.users
+      .stop({ userId: 'me' })
+      .catch((error: GaxiosError) => {
+        throw parseGoogleWebhookSubscriptionError(error);
+      });
   }
 
   private async watchPrimaryCalendar(
@@ -121,16 +131,20 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
     const notificationAddress = `${this.twentyConfigService.get('SERVER_URL')}/webhooks/google/calendar`;
     const watchChannelId = v4();
 
-    const { data } = await calendarClient.events.watch({
-      calendarId: 'primary',
-      requestBody: {
-        id: watchChannelId,
-        type: 'web_hook',
-        address: notificationAddress,
-        token: clientState,
-        params: { ttl: String(GOOGLE_CALENDAR_WATCH_TTL_MS / 1000) },
-      },
-    });
+    const { data } = await calendarClient.events
+      .watch({
+        calendarId: 'primary',
+        requestBody: {
+          id: watchChannelId,
+          type: 'web_hook',
+          address: notificationAddress,
+          token: clientState,
+          params: { ttl: String(GOOGLE_CALENDAR_WATCH_TTL_MS / 1000) },
+        },
+      })
+      .catch((error: GaxiosError) => {
+        throw parseGoogleWebhookSubscriptionError(error);
+      });
 
     if (!isDefined(data.resourceId) || !isDefined(data.expiration)) {
       throw new WebhookSubscriptionDriverException(
@@ -160,12 +174,16 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
       context.connectedAccountId,
     );
 
-    await calendarClient.channels.stop({
-      requestBody: {
-        id: context.externalSubscriptionId,
-        resourceId: context.externalResourceId,
-      },
-    });
+    await calendarClient.channels
+      .stop({
+        requestBody: {
+          id: context.externalSubscriptionId,
+          resourceId: context.externalResourceId,
+        },
+      })
+      .catch((error: GaxiosError) => {
+        throw parseGoogleWebhookSubscriptionError(error);
+      });
   }
 
   private async getGmailClient(

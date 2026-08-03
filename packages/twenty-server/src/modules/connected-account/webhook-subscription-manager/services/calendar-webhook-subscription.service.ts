@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -12,11 +12,20 @@ import { v4 } from 'uuid';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  WebhookSubscriptionDriverException,
+  WebhookSubscriptionDriverExceptionCode,
+} from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
-import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
+import {
+  type WebhookSubscriptionContext,
+  type WebhookSubscriptionOperation,
+} from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
 @Injectable()
 export class CalendarWebhookSubscriptionService {
+  private readonly logger = new Logger(CalendarWebhookSubscriptionService.name);
+
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -85,15 +94,17 @@ export class CalendarWebhookSubscriptionService {
     } catch (error) {
       await this.calendarChannelRepository.update(calendarChannel.id, {
         webhookSubscriptionClientState: clientState,
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
         webhookSubscriptionExpiresAt: null,
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
-      });
+      await this.handleDriverException(
+        error,
+        'CREATE',
+        calendarChannel.id,
+        workspaceId,
+      );
 
-      throw error;
+      return;
     }
 
     if (isDefined(previousSubscription)) {
@@ -101,6 +112,26 @@ export class CalendarWebhookSubscriptionService {
         .deleteSubscription(previousSubscription)
         .catch(() => undefined);
     }
+  }
+
+  async recreateSubscription({
+    calendarChannelId,
+    workspaceId,
+  }: {
+    calendarChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.calendarChannelRepository.update(
+      { id: calendarChannelId, workspaceId },
+      {
+        webhookSubscriptionExternalId: null,
+        webhookSubscriptionExternalResourceId: null,
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+        webhookSubscriptionExpiresAt: null,
+      },
+    );
+
+    await this.createSubscription(calendarChannelId, workspaceId);
   }
 
   async renewSubscription({
@@ -150,15 +181,12 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
     } catch (error) {
-      await this.calendarChannelRepository.update(calendarChannel.id, {
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-      });
-
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: calendarChannel.workspaceId },
-      });
-
-      throw error;
+      await this.handleDriverException(
+        error,
+        'RENEW',
+        calendarChannel.id,
+        calendarChannel.workspaceId,
+      );
     }
   }
 
@@ -192,10 +220,92 @@ export class CalendarWebhookSubscriptionService {
     try {
       await driver.deleteSubscription(this.toContext(calendarChannel));
     } catch (error) {
+      if (
+        error instanceof WebhookSubscriptionDriverException &&
+        error.code === WebhookSubscriptionDriverExceptionCode.NOT_FOUND
+      ) {
+        return;
+      }
+
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: calendarChannel.workspaceId },
       });
     }
+  }
+
+  private async handleDriverException(
+    exception: unknown,
+    operation: WebhookSubscriptionOperation,
+    calendarChannelId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    if (exception instanceof WebhookSubscriptionDriverException) {
+      switch (exception.code) {
+        case WebhookSubscriptionDriverExceptionCode.NOT_FOUND:
+          await this.handleNotFoundException(
+            exception,
+            operation,
+            calendarChannelId,
+            workspaceId,
+          );
+
+          return;
+        case WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+          await this.stopWatching(exception, calendarChannelId);
+
+          return;
+        case WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR:
+          await this.calendarChannelRepository.update(calendarChannelId, {
+            webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+          });
+
+          throw exception;
+        case WebhookSubscriptionDriverExceptionCode.PROVIDER_NOT_CONFIGURED:
+        case WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID:
+        case WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER:
+        case WebhookSubscriptionDriverExceptionCode.UNKNOWN:
+        default:
+          break;
+      }
+    }
+
+    await this.calendarChannelRepository.update(calendarChannelId, {
+      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+    });
+
+    this.exceptionHandlerService.captureExceptions([exception], {
+      workspace: { id: workspaceId },
+    });
+
+    throw exception;
+  }
+
+  private async handleNotFoundException(
+    exception: WebhookSubscriptionDriverException,
+    operation: WebhookSubscriptionOperation,
+    calendarChannelId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    if (operation === 'CREATE') {
+      await this.stopWatching(exception, calendarChannelId);
+
+      return;
+    }
+
+    await this.recreateSubscription({ calendarChannelId, workspaceId });
+  }
+
+  private async stopWatching(
+    exception: WebhookSubscriptionDriverException,
+    calendarChannelId: string,
+  ): Promise<void> {
+    await this.calendarChannelRepository.update(calendarChannelId, {
+      webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED,
+    });
+
+    this.logger.warn(
+      `Stopped watching calendar channel ${calendarChannelId}: ${exception.message}`,
+    );
   }
 
   private toContext(

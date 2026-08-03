@@ -92,21 +92,16 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
         continue;
       }
 
-      if (
-        isNonEmptyString(notification.lifecycleEvent) &&
-        notification.lifecycleEvent !== 'missed'
-      ) {
-        try {
-          await this.calendarWebhookSubscriptionService.renewSubscription({
-            calendarChannelId: calendarChannel.id,
-            workspaceId: calendarChannel.workspaceId,
-          });
-        } catch (error) {
+      if (isNonEmptyString(notification.lifecycleEvent)) {
+        await this.handleLifecycleEvent({
+          lifecycleEvent: notification.lifecycleEvent,
+          calendarChannel,
+        }).catch((error) =>
           this.logger.error(
-            `Failed to renew calendar subscription for channel ${calendarChannel.id}`,
+            `Failed to handle ${notification.lifecycleEvent} lifecycle event for calendar channel ${calendarChannel.id}`,
             error,
-          );
-        }
+          ),
+        );
         continue;
       }
 
@@ -118,6 +113,43 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
       this.logger.log(
         `Triggered calendar sync for calendar channel ${calendarChannel.id} from Microsoft notification`,
       );
+    }
+  }
+
+  private async handleLifecycleEvent({
+    lifecycleEvent,
+    calendarChannel,
+  }: {
+    lifecycleEvent: string;
+    calendarChannel: CalendarChannelEntity;
+  }): Promise<void> {
+    switch (lifecycleEvent) {
+      case 'subscriptionRemoved':
+        await this.calendarWebhookSubscriptionService.recreateSubscription({
+          calendarChannelId: calendarChannel.id,
+          workspaceId: calendarChannel.workspaceId,
+        });
+        await this.webhookSyncTriggerService.triggerCalendarSync(
+          calendarChannel.id,
+          calendarChannel.workspaceId,
+        );
+        break;
+      case 'reauthorizationRequired':
+        await this.calendarWebhookSubscriptionService.renewSubscription({
+          calendarChannelId: calendarChannel.id,
+          workspaceId: calendarChannel.workspaceId,
+        });
+        break;
+      case 'missed':
+        await this.webhookSyncTriggerService.triggerCalendarSync(
+          calendarChannel.id,
+          calendarChannel.workspaceId,
+        );
+        break;
+      default:
+        this.logger.warn(
+          `Ignored unrecognized lifecycle event ${lifecycleEvent} for calendar channel ${calendarChannel.id}`,
+        );
     }
   }
 }

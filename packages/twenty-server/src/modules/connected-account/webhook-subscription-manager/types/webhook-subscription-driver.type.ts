@@ -1,5 +1,7 @@
 import { type WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
+export type WebhookSubscriptionOperation = 'CREATE' | 'RENEW';
+
 export type WebhookSubscriptionResult = {
   externalSubscriptionId: string | null;
   externalResourceId: string | null;
