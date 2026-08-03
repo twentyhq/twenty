@@ -440,7 +440,21 @@ describe('ImapSmtpCalDavAPIService', () => {
         userId: 'user-id',
       });
 
-      await service.upsertConnectedAccount(baseInput);
+      const inputWithCalDav = {
+        ...baseInput,
+        connectionParameters: {
+          ...baseInput.connectionParameters,
+          CALDAV: {
+            host: 'caldav.example.com',
+            port: 443,
+            connectionSecurity: 'SSL_TLS',
+            username: 'test@example.com',
+            password: 'password' as PlaintextString,
+          },
+        } as PlaintextImapSmtpCaldavParams,
+      };
+
+      await service.upsertConnectedAccount(inputWithCalDav);
 
       expect(mockTransactionManagerSave).toHaveBeenCalledWith(
         expect.objectContaining({ archivedAt: null }),

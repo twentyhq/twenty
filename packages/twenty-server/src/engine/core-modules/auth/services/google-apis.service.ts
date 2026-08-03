@@ -260,8 +260,8 @@ export class GoogleAPIsService {
 
             if (
               wasArchived &&
-              isMessagingEnabled &&
-              isMessagingAvailable &&
+              isCalendarEnabled &&
+              isCalendarAvailable &&
               existingCalendarChannels.length > 0
             ) {
               await transactionManager
