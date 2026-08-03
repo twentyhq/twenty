@@ -15,7 +15,6 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
 export class GraphqlQueryFilterConditionParser {
-  private flatObjectMetadata: FlatObjectMetadata;
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
 
   constructor(
@@ -24,9 +23,8 @@ export class GraphqlQueryFilterConditionParser {
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
   ) {
-    this.flatObjectMetadata = flatObjectMetadata;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
-      this.flatObjectMetadata,
+      flatObjectMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       depth,
