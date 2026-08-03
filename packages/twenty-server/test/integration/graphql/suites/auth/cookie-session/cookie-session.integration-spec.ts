@@ -49,11 +49,17 @@ const SIGN_OUT_MUTATION = `
 `;
 
 const extractSessionCookie = (
-  setCookieHeader: string[] | undefined,
-): string | undefined =>
-  setCookieHeader
-    ?.find((cookie) => cookie.startsWith(`${USER_SESSION_COOKIE_NAME}=`))
+  setCookieHeader: string | string[] | undefined,
+): string | undefined => {
+  const setCookies =
+    typeof setCookieHeader === 'string'
+      ? [setCookieHeader]
+      : (setCookieHeader ?? []);
+
+  return setCookies
+    .find((cookie) => cookie.startsWith(`${USER_SESSION_COOKIE_NAME}=`))
     ?.split(';')[0];
+};
 
 const origin = buildAppleOrigin();
 
@@ -120,7 +126,7 @@ describe('Cookie sessions (integration)', () => {
       .expect(200);
 
     const extractedCookie = extractSessionCookie(
-      exchangeResponse.headers['set-cookie'] as string[] | undefined,
+      exchangeResponse.headers['set-cookie'],
     );
 
     expect(extractedCookie).toBeDefined();
