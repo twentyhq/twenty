@@ -386,3 +386,22 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 `LOGIC_FUNCTION_TYPE=DISABLED` 또는 `CODE_INTERPRETER_TYPE=DISABLED`를 사용하는 경우, 모든 실행 시도는 오류를 반환합니다. 이러한 기능 없이 Twenty를 실행하려는 경우 유용합니다.
 </Note>
+
+## 별도 호스트에서 동작하는 API와 프런트엔드
+
+백엔드가 프런트엔드를 제공하지 않는 경우에만 해당됩니다. 동일 출처
+배포의 경우 여기에서 추가로 설정할 내용이 없습니다.
+
+API와 통신하는 모든 브라우저 오리진을 쉼표로 구분하여 선언하세요. `SERVER_URL`
+과 `FRONTEND_URL`은 이미 신뢰된 상태입니다.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+쿠키 세션을 사용하는 버전으로 업그레이드하면, 이 설정이 필수입니다. 프런트엔드는
+이제 모든 요청에 자격 증명을 함께 보내고, 브라우저는 선언되지 않은 오리진에서 오는 자격 증명 포함 응답을 거부하므로, 이 값을 설정하기 전까지 앱이 로드되지 않습니다.
+</Warning>
+
+두 호스트가 서로 다른 등록 가능한 도메인(단순히 서로 다른 서브도메인이 아닌 경우)에 있다면, `AUTH_COOKIE_SAME_SITE=none`도 설정해야 하며, 이때는 HTTPS가 필요합니다.
