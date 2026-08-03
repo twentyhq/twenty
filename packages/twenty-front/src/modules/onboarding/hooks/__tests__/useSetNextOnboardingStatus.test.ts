@@ -427,6 +427,7 @@ describe('useSetNextOnboardingStatus', () => {
       jotaiStore.set(currentUserState.atom, (current) => ({
         ...current!,
         userVars: {
+          ...current?.userVars,
           [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]: true,
         },
       }));
