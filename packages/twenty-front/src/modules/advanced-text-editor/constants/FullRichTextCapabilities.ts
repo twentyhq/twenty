@@ -1,7 +1,7 @@
 import { type AdvancedTextEditorCapability } from '@/advanced-text-editor/types/AdvancedTextEditorCapability';
 
-// The historical capability set every rich-text surface had before presets
-// owned capabilities. Narrow a preset deliberately instead of editing this.
+// The capability set for general-purpose rich-text surfaces. Presets that
+// need less declare their own narrower list instead of editing this one.
 export const FULL_RICH_TEXT_CAPABILITIES: readonly AdvancedTextEditorCapability[] =
   [
     'basicMarks',

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAdjustments } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
@@ -49,12 +49,6 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
     },
     [setCampaignBodyEditor],
   );
-
-  // The settings panel is part of the composer, so it opens with it.
-  useEffect(() => {
-    openCampaignBlockSettingsInSidePanel();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <StyledContainer onBlur={() => flush()}>
