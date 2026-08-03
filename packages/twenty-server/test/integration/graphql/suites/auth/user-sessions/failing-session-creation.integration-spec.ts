@@ -82,7 +82,7 @@ describe('failing user session creation on auth exchanges (integration)', () => 
           password: 'wrong-password',
           origin: buildAppleWorkspaceOrigin(),
         }),
-        undefined,
+        null,
       )
         .set('Origin', ALLOWED_ORIGIN)
         .expect(200);

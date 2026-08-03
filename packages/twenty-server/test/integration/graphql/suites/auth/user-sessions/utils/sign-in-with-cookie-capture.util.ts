@@ -10,13 +10,16 @@ type RequestHeaders = {
 };
 
 // Supertest requests dispatch lazily, so Origin and Cookie can be set on the
-// request makeMetadataAPIRequest already built. The explicit undefined token
-// keeps these exchanges public instead of Bearer-authenticated.
-const postPublicMetadataOperation = (
+// request makeMetadataAPIRequest already built. The explicit null token keeps
+// these requests off Bearer authentication, which would bypass both the
+// cookie auth path and the CSRF middleware; undefined would fall back to the
+// util's default admin token.
+export const postMetadataOperationWithHeaders = (
   graphqlOperation: Parameters<typeof makeMetadataAPIRequest>[0],
   { originHeader, cookieHeader }: RequestHeaders,
+  expectedStatus = 200,
 ) => {
-  const graphqlRequest = makeMetadataAPIRequest(graphqlOperation, undefined);
+  const graphqlRequest = makeMetadataAPIRequest(graphqlOperation, null);
 
   if (originHeader !== undefined) {
     graphqlRequest.set('Origin', originHeader);
@@ -26,7 +29,7 @@ const postPublicMetadataOperation = (
     graphqlRequest.set('Cookie', cookieHeader);
   }
 
-  return graphqlRequest.expect(200);
+  return graphqlRequest.expect(expectedStatus);
 };
 
 type SignInOptions = RequestHeaders & {
@@ -45,7 +48,7 @@ export const signInWithCookieCapture = async ({
 }: SignInOptions = {}): Promise<Response> => {
   const workspaceOrigin = buildAppleWorkspaceOrigin();
 
-  const loginTokenResponse = await postPublicMetadataOperation(
+  const loginTokenResponse = await postMetadataOperationWithHeaders(
     getLoginTokenFromCredentialsQueryFactory({
       email,
       password,
@@ -60,7 +63,7 @@ export const signInWithCookieCapture = async ({
 
   expect(loginToken).toBeDefined();
 
-  return await postPublicMetadataOperation(
+  return await postMetadataOperationWithHeaders(
     getAuthTokensFromLoginTokenQueryFactory({
       loginToken,
       origin: workspaceOrigin,
@@ -77,17 +80,19 @@ export const normalizeSessionCookieForSnapshot = (rawCookie: string): string =>
     .replace(/=sess_[A-Za-z0-9_-]+/, '=sess_<redacted>')
     .replace(/Expires=[^;]+/, 'Expires=<redacted>');
 
-export const extractSessionCookie = (
-  response: Response,
-): { rawCookie: string; sessionToken: string } | undefined => {
-  const setCookieHeaders: string[] = Array.isArray(
-    response.headers['set-cookie'],
-  )
+export const getSetCookieHeaders = (response: Response): string[] =>
+  Array.isArray(response.headers['set-cookie'])
     ? response.headers['set-cookie']
     : [];
 
-  const rawCookie = setCookieHeaders.find((cookie) =>
-    cookie.startsWith('twenty-session='),
+// startsWith keeps the plain and __Host- names distinct: the prefixed name
+// does not start with the plain one.
+export const extractSessionCookie = (
+  response: Response,
+  cookieName = 'twenty-session',
+): { rawCookie: string; sessionToken: string } | undefined => {
+  const rawCookie = getSetCookieHeaders(response).find((cookie) =>
+    cookie.startsWith(`${cookieName}=sess_`),
   );
 
   if (rawCookie === undefined) {
@@ -96,6 +101,18 @@ export const extractSessionCookie = (
 
   return {
     rawCookie,
-    sessionToken: rawCookie.split(';')[0].slice('twenty-session='.length),
+    sessionToken: rawCookie.split(';')[0].slice(`${cookieName}=`.length),
   };
 };
+
+// A deletion cookie is the name with an empty value and an epoch expiry; the
+// extractor above will not match it because the value lacks the sess_ prefix.
+export const hasClearingCookie = (
+  response: Response,
+  cookieName = 'twenty-session',
+): boolean =>
+  getSetCookieHeaders(response).some(
+    (cookie) =>
+      cookie.startsWith(`${cookieName}=;`) &&
+      cookie.includes('Expires=Thu, 01 Jan 1970'),
+  );
