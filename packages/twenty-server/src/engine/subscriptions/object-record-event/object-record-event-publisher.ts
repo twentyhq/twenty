@@ -24,6 +24,7 @@ import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fi
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -374,11 +375,14 @@ export class ObjectRecordEventPublisher {
       });
     }
 
-    const application =
-      permissionsContext.flatApplicationMaps.byId[applicationId];
-
+    // The cache keeps soft-deleted applications, so absence is not enough.
     // An application that has gone away is not one declaring no role: falling
     // back to the user alone would widen a stream that is already open.
+    const application = findActiveFlatApplicationById(
+      permissionsContext.flatApplicationMaps,
+      applicationId,
+    );
+
     if (!isDefined(application)) {
       return [];
     }
