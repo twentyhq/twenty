@@ -53,7 +53,8 @@ export default definePageLayout({
 
 * `type` es uno de `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` o `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` para personalizar la vista de detalles de un objeto específico.
 * `objectUniversalIdentifier` especifica a qué objeto se aplica este diseño.
-* Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode` (`VERTICAL_LIST` para páginas de registros, `GRID` para paneles). Una pestaña que contiene un solo widget lo muestra automáticamente a todo lo ancho; con varios widgets, se apilan como tarjetas.
+* Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode`: `VERTICAL_LIST` para páginas de registros y páginas independientes, `GRID` para paneles. En una pestaña `VERTICAL_LIST`, un solo widget se muestra a todo lo ancho y ocupa toda la pestaña; con varios widgets, se apilan como tarjetas. Una pestaña `GRID` siempre distribuye sus widgets como tarjetas en una cuadrícula de 12 columnas, sea cual sea su número, así que elige `VERTICAL_LIST` cuando quieras que un widget llene la página.
+* Establece `layoutMode` explícitamente. Omitirlo te da `VERTICAL_LIST` en una `STANDALONE_PAGE` y `GRID` en todos los demás casos, lo cual rara vez es lo que quieres en una página de registro.
 * Cada `widget` dentro de una pestaña puede renderizar un [componente de frontend](/l/es/developers/extend/apps/layout/front-components), una lista de relaciones u otros tipos de widget integrados.
 * `position` en las pestañas controla su orden. Usa valores más altos (p. ej., 50) para colocar pestañas personalizadas después de las integradas.
 

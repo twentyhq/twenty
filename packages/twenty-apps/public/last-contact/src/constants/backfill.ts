@@ -1,39 +1,41 @@
-export const BACKFILL_ORCHESTRATOR_ROUTE_PATH =
-  '/last-contact/backfill-orchestrator';
-export const BACKFILL_PEOPLE_ROUTE_PATH = '/last-contact/backfill-people';
-export const BACKFILL_OPPORTUNITIES_ROUTE_PATH =
-  '/last-contact/backfill-opportunities';
-export const BACKFILL_COMPANIES_ROUTE_PATH =
-  '/last-contact/backfill-companies';
+import {
+  BACKFILL_COMPANIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  BACKFILL_OPPORTUNITIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  BACKFILL_PEOPLE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 export type BackfillPhase = 'people' | 'opportunities' | 'companies';
 
-// People run first so companies and opportunities can read the freshly
-// computed person last-contact, then opportunities, then companies.
 export const BACKFILL_PHASE_ORDER: BackfillPhase[] = [
   'people',
   'opportunities',
   'companies',
 ];
 
-export const BACKFILL_PHASE_ROUTE_PATHS: Record<BackfillPhase, string> = {
-  people: BACKFILL_PEOPLE_ROUTE_PATH,
-  opportunities: BACKFILL_OPPORTUNITIES_ROUTE_PATH,
-  companies: BACKFILL_COMPANIES_ROUTE_PATH,
+// GraphQL query field exposing the record connection for each phase.
+export const BACKFILL_PHASE_QUERY_FIELD: Record<BackfillPhase, string> = {
+  people: 'people',
+  opportunities: 'opportunities',
+  companies: 'companies',
 };
 
-export type BackfillState = { phase: BackfillPhase; cursor: string | null; iterations: number };
-export type BackfillBatchResult = { nextCursor: string | null; count: number };
+// Logic function each phase's batch jobs are enqueued against.
+export const BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS: Record<
+  BackfillPhase,
+  string
+> = {
+  people: BACKFILL_PEOPLE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  opportunities: BACKFILL_OPPORTUNITIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  companies: BACKFILL_COMPANIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+};
 
-// Presence of this key acts as the backfill lock; it is deleted once every
-// phase has completed.
-export const BACKFILL_STATE_KV_KEY = 'last-contact:backfill-state';
+// A batch job resolves the records it owns from this index and the batch size.
+export type BackfillBatchPayload = { batchId: number };
 
 // Server variables, injected into process.env on every execution.
 export const BACKFILL_BATCH_SIZE_ENV_VAR_NAME =
   'LAST_CONTACT_BACKFILL_BATCH_SIZE';
-export const BACKFILL_SLEEP_MS_ENV_VAR_NAME =
-  'LAST_CONTACT_BACKFILL_SLEEP_MS';
+export const BACKFILL_SLEEP_MS_ENV_VAR_NAME = 'LAST_CONTACT_BACKFILL_SLEEP_MS';
 
 export const DEFAULT_BACKFILL_BATCH_SIZE = 20;
 export const DEFAULT_BACKFILL_SLEEP_MS = 1_000;

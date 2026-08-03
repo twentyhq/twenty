@@ -1,3 +1,4 @@
+import { OpenRecordIn } from 'twenty-shared/types';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -302,6 +303,7 @@ describe('UserWorkspaceService', () => {
           lastName: user.lastName,
         },
         colorScheme: 'System',
+        openRecordIn: OpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,
         locale: 'en',

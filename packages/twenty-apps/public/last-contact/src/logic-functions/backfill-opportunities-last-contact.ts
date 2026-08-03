@@ -1,11 +1,9 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
-import {
-  type BackfillBatchResult,
-  BACKFILL_OPPORTUNITIES_ROUTE_PATH,
-} from 'src/constants/backfill';
+import { type BackfillBatchPayload } from 'src/constants/backfill';
 import { BACKFILL_OPPORTUNITIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { buildBackfillBatchArgs } from 'src/utils/backfill-batch-args';
 import { getBackfillBatchSize } from 'src/utils/backfill-settings';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 import {
@@ -14,21 +12,16 @@ import {
   pickPersonLastContact,
 } from 'src/utils/person-last-contact-aggregation';
 
-type BackfillBody = { cursor?: string };
 type OpportunityNode = { id: string; pointOfContactId: string | null };
 
-const handler = async (
-  payload: RoutePayload<BackfillBody>,
-): Promise<BackfillBatchResult> => {
+const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
   const client = new CoreApiClient();
-  const cursor = payload.body?.cursor;
 
   const { opportunities } = await executeWithRetry(() =>
     client.query({
       opportunities: {
-        __args: { first: getBackfillBatchSize(), after: cursor },
+        __args: buildBackfillBatchArgs(batchId, getBackfillBatchSize()),
         edges: { node: { id: true, pointOfContactId: true } },
-        pageInfo: { hasNextPage: true, endCursor: true },
       },
     }),
   );
@@ -38,7 +31,7 @@ const handler = async (
     .filter((node: OpportunityNode) => Boolean(node.id));
 
   if (nodes.length === 0) {
-    return { nextCursor: null, count: 0 };
+    return { batchId, count: 0 };
   }
 
   const personIds = [
@@ -69,12 +62,7 @@ const handler = async (
     );
   }
 
-  const nextCursor =
-    opportunities?.pageInfo.hasNextPage && opportunities.pageInfo.endCursor
-      ? opportunities.pageInfo.endCursor
-      : null;
-
-  return { nextCursor, count: nodes.length };
+  return { batchId, count: nodes.length };
 };
 
 export default defineLogicFunction({
@@ -82,12 +70,7 @@ export default defineLogicFunction({
     BACKFILL_OPPORTUNITIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-opportunities-last-contact',
   description:
-    'Backfills last-contact fields for one page of opportunities from their point of contact, returning the next cursor to the backfill orchestrator.',
+    'Backfills last-contact fields for one batch of opportunities from their point of contact, resolved from the batch id in its payload.',
   timeoutSeconds: 120,
   handler,
-  httpRouteTriggerSettings: {
-    path: BACKFILL_OPPORTUNITIES_ROUTE_PATH,
-    httpMethod: 'POST',
-    isAuthRequired: true,
-  },
 });

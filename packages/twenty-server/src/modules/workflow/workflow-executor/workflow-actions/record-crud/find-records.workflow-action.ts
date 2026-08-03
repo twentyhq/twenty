@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
+  isEmptyObject,
+  isNonEmptyArray,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -75,20 +77,28 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
-    const gqlOperationFilter =
-      workflowActionInput.filter?.recordFilters &&
-      workflowActionInput.filter?.recordFilterGroups
-        ? computeRecordGqlOperationFilter({
-            fieldMetadataItems: Object.values(
-              flatFieldMetadataMaps.byUniversalIdentifier,
-            ).filter(isDefined),
-            recordFilters: workflowActionInput.filter.recordFilters,
-            recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
-            filterValueDependencies: {
-              timeZone: 'UTC',
-            },
-          })
-        : {};
+    const recordFilters = workflowActionInput.filter?.recordFilters;
+
+    const gqlOperationFilter = isDefined(recordFilters)
+      ? computeRecordGqlOperationFilter({
+          fieldMetadataItems: Object.values(
+            flatFieldMetadataMaps.byUniversalIdentifier,
+          ).filter(isDefined),
+          recordFilters,
+          recordFilterGroups:
+            workflowActionInput.filter?.recordFilterGroups ?? [],
+          filterValueDependencies: {
+            timeZone: 'UTC',
+          },
+        })
+      : {};
+
+    if (isNonEmptyArray(recordFilters) && isEmptyObject(gqlOperationFilter)) {
+      throw new WorkflowStepExecutorException(
+        'Filter could not be resolved to a valid query. Check that filtered fields exist and that grouped filters include their recordFilterGroups.',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
