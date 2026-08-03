@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client/react';
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
@@ -8,10 +9,12 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
+import { getHasAdvancedPastBookCallStep } from '@/onboarding/utils/getHasAdvancedPastBookCallStep';
 import { setIsBookCallOnboardingStepPending } from '@/onboarding/utils/setIsBookCallOnboardingStepPending';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
+  CompleteBookCallOnboardingStepDocument,
   EnrichWorkspaceCompanyDocument,
   OnboardingStatus,
   WorkspaceCompanyEnrichmentOutcome,
@@ -27,10 +30,14 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     setHasAttemptedCompanyEnrichmentFetch,
   ] = useAtomState(hasAttemptedCompanyEnrichmentFetchState);
   const [enrichWorkspaceCompany] = useMutation(EnrichWorkspaceCompanyDocument);
+  const [completeBookCallOnboardingStep] = useMutation(
+    CompleteBookCallOnboardingStepDocument,
+  );
   const setIsCompanyEnrichmentFetchInFlight = useSetAtomState(
     isCompanyEnrichmentFetchInFlightState,
   );
   const setCurrentUser = useSetAtomState(currentUserState);
+  const store = useStore();
 
   const isOnboardingInProgress =
     isDefined(onboardingStatus) &&
@@ -58,25 +65,35 @@ export const CompanyEnrichmentOnboardingEffect = () => {
           return;
         }
 
+        // A response that lands after the settlement timeout must not reopen a
+        // step the user already moved past, so the server is told to drop it.
+        const hasAdvancedPastBookCallStep = getHasAdvancedPastBookCallStep(
+          store.get(currentUserState.atom)?.onboardingStatus,
+        );
+
         setCurrentUser((current) =>
           setIsBookCallOnboardingStepPending(
             current,
-            result.isBookCallOnboardingStepPending,
+            result.isBookCallOnboardingStepPending &&
+              !hasAdvancedPastBookCallStep,
           ),
         );
 
-        if (result.outcome !== WorkspaceCompanyEnrichmentOutcome.matched) {
-          return;
-        }
-
         const enrichment: WorkspaceCompanyEnrichment | null =
-          result.enrichment ?? null;
+          result.outcome === WorkspaceCompanyEnrichmentOutcome.matched
+            ? (result.enrichment ?? null)
+            : null;
 
-        if (!isDefined(enrichment)) {
-          return;
+        if (isDefined(enrichment)) {
+          setCompanyEnrichment(enrichment);
         }
 
-        setCompanyEnrichment(enrichment);
+        if (
+          result.isBookCallOnboardingStepPending &&
+          hasAdvancedPastBookCallStep
+        ) {
+          await completeBookCallOnboardingStep();
+        }
       } catch {
         return;
       } finally {
@@ -93,7 +110,9 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     setIsCompanyEnrichmentFetchInFlight,
     setCompanyEnrichment,
     setCurrentUser,
+    store,
     enrichWorkspaceCompany,
+    completeBookCallOnboardingStep,
   ]);
 
   return null;

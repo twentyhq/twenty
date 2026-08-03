@@ -15,6 +15,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
+  CompleteBookCallOnboardingStepDocument,
   EnrichWorkspaceCompanyDocument,
   OnboardingStatus,
 } from '~/generated-metadata/graphql';
@@ -267,6 +268,76 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     expect(
       getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
     ).toBe(true);
+  });
+
+  it('drops a pending book-call step that lands after the user advanced past it', async () => {
+    mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
+    jotaiStore.set(currentUserState.atom, {
+      id: 'user-id',
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+    } as never);
+
+    let hasClearedBookCallStep = false;
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+      {
+        request: { query: CompleteBookCallOnboardingStepDocument },
+        result: () => {
+          hasClearedBookCallStep = true;
+
+          return {
+            data: {
+              completeBookCallOnboardingStep: {
+                __typename: 'OnboardingStepSuccess',
+                success: true,
+              },
+            },
+          };
+        },
+      },
+    ]);
+
+    await flushMutation();
+
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(false);
+    expect(hasClearedBookCallStep).toBe(true);
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
+      domain: 'acme.com',
+    });
+  });
+
+  it('keeps the enrichment when clearing a superseded book-call step fails', async () => {
+    jotaiStore.set(currentUserState.atom, {
+      id: 'user-id',
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+    } as never);
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+      {
+        request: { query: CompleteBookCallOnboardingStepDocument },
+        result: { errors: [new GraphQLError('Internal server error')] },
+      },
+    ]);
+
+    await flushMutation();
+
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
+      domain: 'acme.com',
+    });
   });
 
   it('stores nothing when the mutation fails', async () => {
