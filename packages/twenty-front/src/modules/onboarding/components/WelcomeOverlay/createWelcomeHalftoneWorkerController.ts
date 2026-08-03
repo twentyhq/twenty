@@ -9,7 +9,6 @@ const WORKER_READY_TIMEOUT_MS = 1500;
 type CreateWelcomeHalftoneWorkerControllerOptions = {
   canvas: HTMLCanvasElement;
   dotColor: string;
-  dotHighlightColor: string;
   prefersReducedMotion: boolean;
   initialCanvasWidth: number;
   initialCanvasHeight: number;
@@ -20,7 +19,6 @@ type CreateWelcomeHalftoneWorkerControllerOptions = {
 export const createWelcomeHalftoneWorkerController = ({
   canvas,
   dotColor,
-  dotHighlightColor,
   prefersReducedMotion,
   initialCanvasWidth,
   initialCanvasHeight,
@@ -80,7 +78,6 @@ export const createWelcomeHalftoneWorkerController = ({
         height: initialCanvasHeight,
         devicePixelRatio,
         color: dotColor,
-        highlightColor: dotHighlightColor,
         reducedMotion: prefersReducedMotion,
       },
       [offscreenCanvas],

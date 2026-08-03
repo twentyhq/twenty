@@ -141,23 +141,6 @@ const StyledTitle = styled.div`
   }
 `;
 
-const StyledTitleSurface = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  inset: 0;
-  position: absolute;
-
-  .is-flying & {
-    animation: welcomeTitleSurfaceOut 0.24s ease-out forwards;
-  }
-
-  @keyframes welcomeTitleSurfaceOut {
-    to {
-      opacity: 0;
-    }
-  }
-`;
-
 const StyledTitleBoldRun = styled.span`
   align-items: center;
   display: inline-flex;
@@ -303,7 +286,6 @@ export const WelcomeOverlay = () => {
         className={titleClassName}
         style={titleStyle}
       >
-        <StyledTitleSurface />
         <StyledTitleBoldRun>
           {welcomeTitleWords.map((word, index) => (
             <StyledWord

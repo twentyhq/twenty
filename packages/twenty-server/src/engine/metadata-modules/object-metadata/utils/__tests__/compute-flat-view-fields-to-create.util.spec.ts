@@ -1,3 +1,4 @@
+import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -39,10 +40,7 @@ const makeFieldMetadata = (
   } as unknown as UniversalFlatFieldMetadata;
 };
 
-const flatApplication = {
-  universalIdentifier: 'app-uid',
-  id: 'app-id',
-} as never;
+const applicationUniversalIdentifier = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 
 const viewUniversalIdentifier = 'view-uid';
 
@@ -62,7 +60,7 @@ describe('computeFlatViewFieldsToCreate', () => {
     const result = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
-      flatApplication,
+      applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier: null,
     });
 
@@ -87,7 +85,7 @@ describe('computeFlatViewFieldsToCreate', () => {
     const result = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
-      flatApplication,
+      applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier: null,
     });
 
@@ -116,7 +114,7 @@ describe('computeFlatViewFieldsToCreate', () => {
     const result = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
-      flatApplication,
+      applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier: null,
     });
 
@@ -141,7 +139,7 @@ describe('computeFlatViewFieldsToCreate', () => {
     const result = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
-      flatApplication,
+      applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier: null,
     });
 
@@ -165,7 +163,7 @@ describe('computeFlatViewFieldsToCreate', () => {
     const result = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
-      flatApplication,
+      applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier:
         labelField.universalIdentifier,
     });
@@ -194,7 +192,7 @@ describe('computeFlatViewFieldsToCreate', () => {
     const result = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: [labelField, otherField],
       viewUniversalIdentifier,
-      flatApplication,
+      applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier:
         labelField.universalIdentifier,
       excludeLabelIdentifier: true,
@@ -204,5 +202,28 @@ describe('computeFlatViewFieldsToCreate', () => {
     expect(result[0].fieldMetadataUniversalIdentifier).toBe(
       otherField.universalIdentifier,
     );
+  });
+
+  it('should derive the view field universal identifier deterministically', () => {
+    const field = makeFieldMetadata({
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+    });
+
+    const result = computeFlatViewFieldsToCreate({
+      objectFlatFieldMetadatas: [field],
+      viewUniversalIdentifier,
+      applicationUniversalIdentifier,
+      labelIdentifierFieldMetadataUniversalIdentifier: null,
+    });
+
+    expect(result[0].universalIdentifier).toBe(
+      getViewFieldUniversalIdentifier({
+        applicationUniversalIdentifier,
+        viewUniversalIdentifier,
+        fieldMetadataUniversalIdentifier: field.universalIdentifier,
+      }),
+    );
+    expect(result[0].isSystemSideEffect).toBe(true);
   });
 });

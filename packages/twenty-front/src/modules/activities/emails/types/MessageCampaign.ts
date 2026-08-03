@@ -1,3 +1,22 @@
+import { type MessageCampaignStatus } from 'twenty-shared/types';
+
+export type MessageCampaign = {
+  __typename: 'MessageCampaign';
+  id: string;
+  name: string;
+  subject: string | null;
+  bodyTemplate: string | null;
+  fromAddress: { primaryEmail: string | null } | null;
+  unsubscribeTopicId: string | null;
+  listId: string | null;
+  status: MessageCampaignStatus;
+  sentAt: string | null;
+  sentCount: number;
+  failedCount: number;
+  bouncedCount: number;
+  complainedCount: number;
+};
+
 export type MessageCampaignSummary = {
   id: string;
   subject: string | null;

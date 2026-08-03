@@ -10,6 +10,7 @@ const StyledLoadingIconContainer = styled.div`
   display: flex;
   justify-content: center;
   padding-inline: ${themeCssVariables.spacing[1]};
+  width: fit-content;
 `;
 
 const StyledLoadingIconWrapper = styled.span`

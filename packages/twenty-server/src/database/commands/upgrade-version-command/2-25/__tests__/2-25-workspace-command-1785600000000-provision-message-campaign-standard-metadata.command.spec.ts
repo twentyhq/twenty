@@ -124,7 +124,7 @@ describe('ProvisionMessageCampaignStandardMetadataCommand', () => {
       ]),
     );
     expect(payload.view.flatEntityToCreate).toHaveLength(2);
-    expect(payload.viewField.flatEntityToCreate).toHaveLength(15);
+    expect(payload.viewField.flatEntityToCreate).toHaveLength(16);
     expect(payload.pageLayout.flatEntityToCreate).toHaveLength(2);
     expect(payload.pageLayoutTab.flatEntityToCreate).toHaveLength(2);
     expect(payload.pageLayoutWidget.flatEntityToCreate).toHaveLength(6);

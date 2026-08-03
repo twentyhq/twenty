@@ -58,7 +58,7 @@ Iterator는 입력으로 **배열**을 필요로 합니다. 그다음:
 
 Iterator 아래에 배치된 액션은 각 항목에 대해 실행됩니다:
 
-1. **Send Email** 액션을 추가합니다(Iterator 내부)
+1. Iterator 내부에 **Send Email** 액션을 추가합니다
 2. 받는 사람: `{{iterator.currentItem.email}}`
 3. 제목: 안녕하세요 `{{iterator.currentItem.firstName}}`!
 4. 본문: 현재 항목의 필드를 사용한 개인화 메시지

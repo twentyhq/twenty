@@ -5,7 +5,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -43,6 +43,24 @@ export const SettingsWorkspaceCommunications = () => {
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
 
+  const tabs = [
+    { id: 'emails', title: t`Emails`, Icon: IconMail },
+    {
+      id: 'whatsapp',
+      title: t`Whatsapp`,
+      Icon: IconBrandWhatsapp,
+      disabled: true,
+      pill: t`Soon`,
+    },
+    {
+      id: 'calls',
+      title: t`Calls`,
+      Icon: IconPhone,
+      disabled: true,
+      pill: t`Soon`,
+    },
+  ];
+
   if (!isEmailGroupFeatureEnabled) {
     return null;
   }
@@ -50,6 +68,12 @@ export const SettingsWorkspaceCommunications = () => {
   return (
     <SettingsPageLayout
       title={t`Communication`}
+      secondaryBar={
+        <SettingsTabBar
+          tabs={tabs}
+          componentInstanceId={COMMUNICATIONS_TABS_INSTANCE_ID}
+        />
+      }
       links={[
         {
           children: t`Workspace`,
@@ -59,26 +83,6 @@ export const SettingsWorkspaceCommunications = () => {
       ]}
     >
       <SettingsPageContainer>
-        <TabList
-          componentInstanceId={COMMUNICATIONS_TABS_INSTANCE_ID}
-          tabs={[
-            { id: 'emails', title: t`Emails`, Icon: IconMail },
-            {
-              id: 'whatsapp',
-              title: t`Whatsapp`,
-              Icon: IconBrandWhatsapp,
-              disabled: true,
-              pill: t`Soon`,
-            },
-            {
-              id: 'calls',
-              title: t`Calls`,
-              Icon: IconPhone,
-              disabled: true,
-              pill: t`Soon`,
-            },
-          ]}
-        />
         <Section>
           <SettingsDiscoveryHeroCard
             lightSrc={coverLight}

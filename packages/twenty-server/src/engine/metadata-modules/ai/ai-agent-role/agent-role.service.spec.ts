@@ -12,6 +12,7 @@ import { RoleTargetService } from 'src/engine/metadata-modules/role-target/servi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AiAgentRoleService } from './ai-agent-role.service';
 
 describe('AiAgentRoleService', () => {
@@ -20,6 +21,7 @@ describe('AiAgentRoleService', () => {
   let roleRepository: WorkspaceScopedRepository<RoleEntity>;
   let roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>;
   let roleTargetService: RoleTargetService;
+  let workspaceCacheService: WorkspaceCacheService;
 
   const testWorkspaceId = 'test-workspace-id';
   let testAgent: AgentEntity;
@@ -43,6 +45,7 @@ describe('AiAgentRoleService', () => {
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
+            delete: jest.fn(),
           },
         },
         {
@@ -62,6 +65,12 @@ describe('AiAgentRoleService', () => {
             delete: jest.fn(),
           },
         },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            invalidateAndRecompute: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -76,6 +85,9 @@ describe('AiAgentRoleService', () => {
       WorkspaceScopedRepository<RoleTargetEntity>
     >(getWorkspaceScopedRepositoryToken(RoleTargetEntity));
     roleTargetService = module.get<RoleTargetService>(RoleTargetService);
+    workspaceCacheService = module.get<WorkspaceCacheService>(
+      WorkspaceCacheService,
+    );
 
     // Setup test data
     testAgent = {
@@ -370,6 +382,69 @@ describe('AiAgentRoleService', () => {
         code: AiExceptionCode.ROLE_NOT_FOUND,
         message: `Role target not found for agent ${testAgent.id}`,
       });
+    });
+  });
+
+  describe('deleteAgentOnlyRoleIfUnused', () => {
+    it('invalidates cached role permissions after deleting the role', async () => {
+      const agentOnlyRole = {
+        ...testRole,
+        canBeAssignedToAgents: true,
+        canBeAssignedToUsers: false,
+        canBeAssignedToApiKeys: false,
+      } as RoleEntity;
+
+      jest.spyOn(roleRepository, 'findOne').mockResolvedValue(agentOnlyRole);
+      jest.spyOn(roleTargetRepository, 'count').mockResolvedValue(0);
+      jest
+        .spyOn(roleRepository, 'delete')
+        .mockResolvedValue({ raw: [], generatedMaps: [] });
+      jest
+        .spyOn(workspaceCacheService, 'invalidateAndRecompute')
+        .mockResolvedValue();
+
+      await service.deleteAgentOnlyRoleIfUnused({
+        roleId: agentOnlyRole.id,
+        roleTargetId: 'deleted-role-target-id',
+        workspaceId: testWorkspaceId,
+      });
+
+      expect(roleRepository.delete).toHaveBeenCalledWith(testWorkspaceId, {
+        id: agentOnlyRole.id,
+      });
+      expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
+        testWorkspaceId,
+        ['flatRoleMaps', 'flatRolePermissionFlagMaps'],
+      );
+      expect(
+        (roleRepository.delete as jest.Mock).mock.invocationCallOrder[0],
+      ).toBeLessThan(
+        (workspaceCacheService.invalidateAndRecompute as jest.Mock).mock
+          .invocationCallOrder[0],
+      );
+    });
+
+    it('keeps the cache unchanged while the role is still assigned', async () => {
+      const agentOnlyRole = {
+        ...testRole,
+        canBeAssignedToAgents: true,
+        canBeAssignedToUsers: false,
+        canBeAssignedToApiKeys: false,
+      } as RoleEntity;
+
+      jest.spyOn(roleRepository, 'findOne').mockResolvedValue(agentOnlyRole);
+      jest.spyOn(roleTargetRepository, 'count').mockResolvedValue(1);
+
+      await service.deleteAgentOnlyRoleIfUnused({
+        roleId: agentOnlyRole.id,
+        roleTargetId: 'deleted-role-target-id',
+        workspaceId: testWorkspaceId,
+      });
+
+      expect(roleRepository.delete).not.toHaveBeenCalled();
+      expect(
+        workspaceCacheService.invalidateAndRecompute,
+      ).not.toHaveBeenCalled();
     });
   });
 });

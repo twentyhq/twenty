@@ -5,6 +5,7 @@ import type {
 } from 'twenty-sdk/define';
 
 import { findPartnerByMember } from 'src/modules/application/graphql/queries/find-partner-by-member';
+import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
 import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
@@ -14,17 +15,28 @@ type ApplicationCreatedProperties = DatabaseEventPayload<
 >['properties'];
 
 // A partner self-applies via the "Apply to brief as partner" workflow: a Create Record action
-// makes an Application with the opportunity set and createdBy = the clicking member, but no
-// partner. Resolve the partner from createdBy and complete the candidacy. Admin-created
-// applications (partner already set, or the creator is not a partner) are left untouched. The
-// name is set by on-application-set-name, which fires on the partnerId update below.
+// makes an Application with the opportunity set, createdBy = the clicking member and
+// partnerUser = that member (mandatory — the Partner role's RLS rejects the insert otherwise),
+// but no partner. Resolve the partner from createdBy and complete the candidacy. The name is
+// set by on-application-set-name, which fires on the partnerId update below.
 export async function resolveCandidacy(
   client: CoreApiClient,
   after: ApplicationCreatedProperties['after'],
 ): Promise<Record<string, unknown>> {
   const applicationId = after?.id;
   if (!applicationId) return {};
-  if (after.partnerId) return {}; // already linked (admin path) — leave it
+
+  // Admin path (invite/import): without partnerUser, RLS hides the row from its own partner.
+  if (after.partnerId) {
+    if (after.partnerUserId) return {};
+
+    const ownerRes = await getPartnerOwner(client, after.partnerId);
+    const partnerUserId = ownerRes.partner?.partnerUserId;
+    if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
+
+    await updateApplication(client, applicationId, { partnerUserId });
+    return { stamped: partnerUserId };
+  }
 
   const memberId = after.createdBy?.workspaceMemberId;
   if (!memberId) return {}; // no member actor (system/import) — not a self-apply

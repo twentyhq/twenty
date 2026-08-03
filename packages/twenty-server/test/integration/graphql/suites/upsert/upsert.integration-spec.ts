@@ -228,6 +228,50 @@ describe('upsert (createMany with upsert:true)', () => {
     );
   });
 
+  it('should restore a soft-deleted record matched on its unique fields only', async () => {
+    const createResponse = await makeGraphqlAPIRequest({
+      query: createRecordsQuery,
+      variables: {
+        data: [
+          {
+            firstUniqueTestField: 'softDeletedByUniqueFields',
+            secondUniqueTestField: 'softDeletedByUniqueFieldsSecond',
+            name: 'originalRecord',
+          },
+        ],
+        upsert: false,
+      },
+    });
+
+    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
+
+    await makeGraphqlAPIRequest({
+      query: deleteRecordsQuery,
+      variables: {
+        filter: { id: { eq: createdRecord.id } },
+      },
+    });
+
+    const upsertResponse = await makeGraphqlAPIRequest({
+      query: createRecordsQuery,
+      variables: {
+        data: [
+          {
+            firstUniqueTestField: 'softDeletedByUniqueFields',
+            secondUniqueTestField: 'softDeletedByUniqueFieldsSecond',
+          },
+        ],
+        upsert: true,
+      },
+    });
+
+    const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
+
+    expect(upsertedRecord.id).toEqual(createdRecord.id);
+    expect(upsertedRecord.deletedAt).toBeNull();
+    expect(upsertedRecord.name).toEqual('originalRecord');
+  });
+
   it('should update and restore updated soft-deleted record', async () => {
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,

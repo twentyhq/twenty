@@ -257,9 +257,8 @@ export const MassEmailComposeCard = ({
               }
             }}
             placeholder={t`Write your email…`}
+            preset="inlineEmailBody"
             minHeight={260}
-            maxWidth={680}
-            contentType="html"
           />
         </StyledBodyContainer>
         {!isDefined(selectedRecipient) && (

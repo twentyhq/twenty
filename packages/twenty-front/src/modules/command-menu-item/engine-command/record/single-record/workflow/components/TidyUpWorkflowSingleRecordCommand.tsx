@@ -12,10 +12,10 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
-  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
   const instanceId = getWorkflowVisualizerComponentInstanceId({
     recordId: recordId ?? '',
   });
+  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion(instanceId);
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
@@ -35,7 +35,14 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
 
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    await tidyUpWorkflowVersion(workflowVersionId, workflowDiagram);
+    const tidiedUpDiagram = await tidyUpWorkflowVersion(
+      workflowVersionId,
+      workflowDiagram,
+    );
+
+    if (isDefined(tidiedUpDiagram)) {
+      store.set(workflowDiagramAtom, tidiedUpDiagram);
+    }
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

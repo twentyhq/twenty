@@ -8,6 +8,7 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const TEXT_FILTER: StepFilter = {
   id: 'filter-1',
@@ -39,6 +40,7 @@ const meta: Meta<typeof WorkflowStepFilterValueInput> = {
     stepFilter: TEXT_FILTER,
   },
   decorators: [
+    MemoryRouterDecorator,
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentDecorator,

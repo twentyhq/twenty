@@ -204,7 +204,13 @@ Microsoft Azure Konsolunda "İzinler" altında aşağıdaki API'leri etkinleşti
 * Microsoft Graph: profil
 * Microsoft Graph: offline_access
 
-Not: "Mail.ReadWrite" ve "Mail.Send" yalnızca iş akışı eylemleri kullanarak e-posta göndermek istiyorsanız gereklidir. Yalnızca e-posta almak istiyorsanız "Mail.Read" kullanabilirsiniz.
+<Note>
+"Mail.ReadWrite" ve "Mail.Send", yalnızca iş akışı eylemlerimizi kullanarak e-posta göndermek istiyorsanız zorunludur. Yalnızca e-posta almak istiyorsanız "Mail.Read" kullanabilirsiniz.
+</Note>
+
+<Note>
+İş akışı eylemlerimizi kullanarak takvim etkinlikleri oluşturmak istiyorsanız "Calendars.ReadWrite" zorunludur. Yalnızca takvim etkinliklerini eşzamanlamak istiyorsanız "Calendars.Read" kullanın.
+</Note>
 
 ### Yetkili yönlendirme URI'leri
 
@@ -271,9 +277,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. **E-posta** bölümünü bulun
 3. SMTP ayarlarınızı yapılandırın:
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   [Uygulama Parolası](https://support.google.com/accounts/answer/185833) sağlamanız gerekecek.
   * EMAIL_DRIVER=smtp
@@ -282,9 +288,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=gmail_e-posta_adresi
   * EMAIL_SMTP_PASSWORD='gmail_uygulama_parolası'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   2FA etkinleştirilmişse, [Uygulama Parolası](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) sağlamanız gerekeceğini unutmayın.
   * EMAIL_DRIVER=smtp
@@ -293,9 +299,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=office365_e-posta_adresi
   * EMAIL_SMTP_PASSWORD='office365_parola'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev**, geliştirme ve test için sahte bir SMTP e-posta sunucusudur.
   * smtp4dev imajını çalıştırın: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -305,9 +311,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.

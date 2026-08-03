@@ -1,6 +1,8 @@
 import request from 'supertest';
+import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
@@ -16,6 +18,8 @@ const APP_UNIVERSAL_IDENTIFIER = '6a6f983f-5c1a-4c60-a3c8-7d0e2a4a66a6';
 const ROLE_UNIVERSAL_IDENTIFIER = '7b7f983f-5c1a-4c60-a3c8-7d0e2a4a77b7';
 const ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER =
   '8c8f983f-5c1a-4c60-a3c8-7d0e2a4a88c8';
+const AUTHENTICATED_ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER =
+  '9d9f983f-5c1a-4c60-a3c8-7d0e2a4a99d9';
 
 const ROUTE_FUNCTION_RESPONSE = { greeting: 'hello from route function' };
 
@@ -58,6 +62,20 @@ const routeFunctionManifest: LogicFunctionManifest = {
   },
 };
 
+const authenticatedRouteFunctionManifest: LogicFunctionManifest = {
+  universalIdentifier: AUTHENTICATED_ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'authenticated-workspace-route',
+  handlerName: 'main',
+  sourceHandlerPath: 'src/authenticated-workspace-route.ts',
+  builtHandlerPath: 'dist/authenticated-workspace-route.mjs',
+  builtHandlerChecksum: 'checksum-authenticated-workspace-route',
+  httpRouteTriggerSettings: {
+    path: '/authenticated-workspace-route',
+    httpMethod: 'GET',
+    isAuthRequired: true,
+  },
+};
+
 const uploadBuiltHandlerFile = async ({
   builtHandlerPath,
   builtHandlerCode,
@@ -82,7 +100,9 @@ const uploadBuiltHandlerFile = async ({
 
 describe('RouteTrigger suspended workspace (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
+  const bareHost = `localhost:${APP_PORT}`;
   const workspaceHost = `apple.localhost:${APP_PORT}`;
+  let applicationAccessToken: string;
 
   beforeAll(async () => {
     await setupApplicationForSync({
@@ -97,16 +117,43 @@ describe('RouteTrigger suspended workspace (integration)', () => {
       builtHandlerCode: ROUTE_BUILT_HANDLER_CODE,
     });
 
+    await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/authenticated-workspace-route.mjs',
+      builtHandlerCode: ROUTE_BUILT_HANDLER_CODE,
+    });
+
     await syncApplication({
       manifest: buildBaseManifest({
         appId: APP_UNIVERSAL_IDENTIFIER,
         roleId: ROLE_UNIVERSAL_IDENTIFIER,
         overrides: {
-          logicFunctions: [routeFunctionManifest],
+          logicFunctions: [
+            routeFunctionManifest,
+            authenticatedRouteFunctionManifest,
+          ],
         },
       }),
       expectToFail: false,
     });
+
+    const { data: applicationsData } = await findManyApplications({
+      expectToFail: false,
+    });
+    const routeTriggerApplication = applicationsData.findManyApplications.find(
+      (application) =>
+        application.universalIdentifier === APP_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(routeTriggerApplication).toBeDefined();
+
+    const { data: applicationTokenData } = await generateApplicationToken({
+      applicationId: routeTriggerApplication!.id,
+      expectToFail: false,
+    });
+
+    applicationAccessToken =
+      applicationTokenData.generateApplicationToken.applicationAccessToken
+        .token;
 
     jest.useRealTimers();
   }, 60000);
@@ -125,7 +172,48 @@ describe('RouteTrigger suspended workspace (integration)', () => {
     });
   }, 60000);
 
+  describe('GET /s/authenticated-workspace-route', () => {
+    it('should serve an authenticated route when the bearer token resolves the workspace', async () => {
+      const response = await request(baseUrl)
+        .get('/s/authenticated-workspace-route')
+        .set('Host', bareHost)
+        .set('Authorization', `Bearer ${applicationAccessToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(ROUTE_FUNCTION_RESPONSE);
+    }, 60000);
+  });
+
   describe('GET /s/suspended-workspace-route', () => {
+    it('should return WORKSPACE_NOT_FOUND when neither host nor token identifies a workspace', async () => {
+      const response = await request(baseUrl)
+        .get('/s/suspended-workspace-route')
+        .set('Host', bareHost);
+
+      expect(response.status).toBe(404);
+      expect(response.body.code).toBe('WORKSPACE_NOT_FOUND');
+    }, 60000);
+
+    it('should return WORKSPACE_NOT_FOUND when the bearer token is invalid on an unresolved host', async () => {
+      const response = await request(baseUrl)
+        .get('/s/suspended-workspace-route')
+        .set('Host', bareHost)
+        .set('Authorization', 'Bearer invalid-token');
+
+      expect(response.status).toBe(404);
+      expect(response.body.code).toBe('WORKSPACE_NOT_FOUND');
+    }, 60000);
+
+    it('should resolve the workspace from the bearer token when the host names none', async () => {
+      const response = await request(baseUrl)
+        .get('/s/suspended-workspace-route')
+        .set('Host', bareHost)
+        .set('Authorization', `Bearer ${applicationAccessToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(ROUTE_FUNCTION_RESPONSE);
+    }, 60000);
+
     it('serves the route trigger while the workspace is active', async () => {
       const response = await request(baseUrl)
         .get('/s/suspended-workspace-route')

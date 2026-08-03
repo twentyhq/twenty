@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNumber, isString } from '@sniptt/guards';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,13 +24,13 @@ export const useCaretPreservingElementRef = (
   useLayoutEffect(() => {
     const attachedElement = attachedElementRef.current;
 
-    if (!isDefined(attachedElement) || !isString(value)) {
+    if (!isDefined(attachedElement) || (!isString(value) && !isNumber(value))) {
       return;
     }
 
     syncValuePreservingCaret(
       attachedElement as HTMLInputElement | HTMLTextAreaElement,
-      value,
+      String(value),
     );
   });
 

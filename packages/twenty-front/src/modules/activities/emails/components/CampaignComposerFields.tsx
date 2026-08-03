@@ -143,9 +143,7 @@ export const CampaignComposerFields = ({
         defaultValue={campaignState.body}
         onChange={campaignState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
-        minHeight={120}
-        maxWidth={600}
-        contentType="html"
+        preset="inlineEmailBody"
       />
     </StyledFieldsContainer>
   );

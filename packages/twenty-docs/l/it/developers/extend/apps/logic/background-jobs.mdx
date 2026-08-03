@@ -1,0 +1,165 @@
+---
+title: Job in background
+description: Affida il lavoro lungo o soggetto a limitazioni di frequenza ai worker di Twenty accodando un'altra esecuzione di una logic function invece di fare tutto in linea.
+icon: layer-group
+---
+
+L'esecuzione di una logic function è limitata dal suo `timeoutSeconds` (massimo 900 secondi). Qualsiasi attività che non può essere completata in tale intervallo — una risincronizzazione completa, un fan-out per record, un'API di terze parti che applica limitazioni di frequenza — deve essere suddivisa in esecuzioni più piccole.
+
+`enqueueJob` fa esattamente questo: chiede ai worker di Twenty di eseguire in un secondo momento una delle logic function della tua app, in un proprio processo, con il proprio budget di timeout. Il chiamante restituisce immediatamente.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Inserire in coda un'esecuzione
+
+Importa `enqueueJob` da `twenty-sdk/logic-function` e puntalo all'`universalIdentifier` della logic function che vuoi eseguire.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+La funzione di destinazione riceve `payload` come argomento del suo handler, esattamente come qualsiasi altro trigger. Deve appartenere alla **stessa applicazione** del chiamante: l'inserimento in coda della funzione di un'altra app viene rifiutato con `Logic function not found`.
+
+<Note>
+`enqueueJob` restituisce non appena il job è stato accettato, non quando è stato eseguito. Non restituisce il risultato della destinazione: fai scrivere alla destinazione ciò che produce nel [key-value store](/l/it/developers/extend/apps/logic/key-value-store) o in un record dello spazio di lavoro se hai bisogno di leggerlo di nuovo.
+</Note>
+
+## Opzioni del job
+
+| Opzione      | Predefinito | Intervallo                 | Cosa fa                                                                                                                                             |
+| ------------ | ----------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`         | `0`–`10`                   | Tentativi extra se l'esecuzione genera un'eccezione. Aumenta questo valore solo per gli handler che possono essere eseguiti due volte in sicurezza. |
+| `delayMs`    | `0`         | `0`–`604800000` (7 giorni) | Attendi questo intervallo prima che l'esecuzione diventi idonea.                                                                                    |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**La priorità non è ancora configurabile.** I job in coda vengono sempre eseguiti alla priorità più bassa, così il lavoro della piattaforma non viene mai ritardato rispetto ai job dell'applicazione. Il controllo sulla priorità sarà disponibile a breve.
+</Note>
+
+L'esecuzione in coda eredita l'utente attivo della funzione che l'ha messa in coda, quindi agisce con le stesse autorizzazioni.
+
+## Usalo per scorrere una lunga sincronizzazione a pagine
+
+La forma classica è una funzione che mette in coda *se stessa* con il cursore successivo. Ogni esecuzione gestisce una pagina di lavoro ben all'interno del proprio timeout, e la catena si interrompe quando non resta più nulla.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Suddivisione per record
+
+Quando il lavoro è naturalmente per elemento, metti in coda un job per elemento e lascia che i worker li elaborino in parallelo invece di ciclare in linea.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## Buone pratiche per il lavoro di lunga durata
+
+Due regole coprono quasi ogni job lungo: **usa la ricorsione invece del ciclo** e **elabora un blocco limitato per esecuzione**.
+
+Un'esecuzione che prova a fare tutto è una modalità di errore: raggiunge il timeout e, con un nuovo tentativo, ricomincia tutto da zero. Invece, dimensiona un blocco in modo che finisca comodamente entro `timeoutSeconds`, conserva la tua posizione e metti in coda l'esecuzione successiva.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Cosa rende tutto questo solido:
+
+* **Dimensiona il blocco a partire dall'elemento più lento, non dalla media.** `CHUNK_SIZE × worst-case item time` deve rientrare in `timeoutSeconds` con un certo margine, altrimenti la parte finale di un blocco va persa quando l'esecuzione viene interrotta.
+* **Rendi esplicita la condizione di terminazione.** Usa la ricorsione solo finché torna un blocco completo. Una catena che si interrompe solo su "nessun risultato" continuerà all'infinito se la fonte restituisce mai una pagina corta a metà percorso.
+* **Conserva i progressi prima di mettere in coda l'esecuzione successiva,** così un anello fallito riparte dall'ultimo blocco completato invece che dall'inizio.
+* **Mantieni ogni blocco idempotente.** Rielaborare un blocco dopo un ritentativo non deve causare scritture duplicate: usa chiavi di scrittura sul record o sull'id esterno che stai elaborando.
+* **Preferisci una catena a blocchi a un'unica enorme suddivisione parallela** quando il lavoro colpisce una terza parte con limitazione di velocità: una catena con `delayMs` si autoregola, mentre migliaia di job messi in coda in una volta sola diventano tutti idonei immediatamente.
+
+<Warning>
+I ritentativi rieseguono l'intero handler. Mantieni gli handler in coda idempotenti prima di impostare `retryLimit` sopra `0`.
+</Warning>

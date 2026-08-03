@@ -145,6 +145,14 @@
               "label": "Como-Tos"
             }
           }
+        },
+        "legal": {
+          "label": "Jurídico",
+          "groups": {
+            "legalHowTos": {
+              "label": "Tutoriais"
+            }
+          }
         }
       }
     },

@@ -236,45 +236,56 @@ export class CacheStorageService {
     } while (cursor !== 0);
   }
 
-  async scanAndCountSetMembers(scanPattern: string): Promise<number> {
+  async sortedSetAdd(
+    key: string,
+    entries: Array<{ score: number; value: string }>,
+  ): Promise<number> {
+    if (entries.length === 0) {
+      return 0;
+    }
+
+    if (!this.isRedisCache(this.cache)) {
+      throw new Error('sortedSetAdd is only supported with Redis cache');
+    }
+
+    return this.cache.store.client.zAdd(this.getKey(key), entries);
+  }
+
+  async sortedSetRemove(key: string, values: string[]): Promise<number> {
+    if (values.length === 0) {
+      return 0;
+    }
+
+    if (!this.isRedisCache(this.cache)) {
+      throw new Error('sortedSetRemove is only supported with Redis cache');
+    }
+
+    return this.cache.store.client.zRem(this.getKey(key), values);
+  }
+
+  async sortedSetRemoveByScoreAndCount(
+    key: string,
+    minScore: number,
+    maxScore: number,
+  ): Promise<number> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error(
-        'scanAndCountSetMembers is only supported with Redis cache',
+        'sortedSetRemoveByScoreAndCount is only supported with Redis cache',
       );
     }
 
-    const redisClient = this.cache.store.client;
-    let cursor = 0;
-    let totalCount = 0;
+    const prefixedKey = this.getKey(key);
+    const [, count] = await this.cache.store.client
+      .multi()
+      .zRemRangeByScore(prefixedKey, minScore, maxScore)
+      .zCard(prefixedKey)
+      .exec();
 
-    do {
-      const result = await redisClient.scan(cursor, {
-        MATCH: `${this.namespace}:${scanPattern}`,
-        COUNT: 100,
-      });
+    if (count instanceof Error) {
+      throw count;
+    }
 
-      cursor = result.cursor;
-      const keys = result.keys;
-
-      if (keys.length > 0) {
-        const pipeline = redisClient.multi();
-
-        for (const key of keys) {
-          pipeline.sCard(key);
-        }
-
-        const results = await pipeline.exec();
-
-        for (const result of results) {
-          if (result instanceof Error) {
-            throw result;
-          }
-          totalCount += result as number;
-        }
-      }
-    } while (cursor !== 0);
-
-    return totalCount;
+    return count as number;
   }
 
   async acquireLock(key: string, ttl = 1000): Promise<boolean> {

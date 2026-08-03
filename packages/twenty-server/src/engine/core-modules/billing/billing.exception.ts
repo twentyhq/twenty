@@ -4,6 +4,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { getBillingExceptionStatusCode } from 'src/engine/core-modules/billing/utils/get-billing-exception-status-code.util';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum BillingExceptionCode {
@@ -107,5 +108,6 @@ export class BillingException extends CustomException<BillingExceptionCode> {
       userFriendlyMessage:
         userFriendlyMessage ?? getBillingExceptionUserFriendlyMessage(code),
     });
+    this.statusCode = getBillingExceptionStatusCode(this);
   }
 }
