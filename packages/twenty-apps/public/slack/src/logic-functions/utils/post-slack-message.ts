@@ -1,4 +1,5 @@
 import { type WebClient } from '@slack/web-api';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
@@ -9,7 +10,9 @@ export const postSlackMessage = async (
   client: WebClient,
   parameters: SlackPostMessageInput,
 ): Promise<SlackToolResult> => {
-  const parentTimestamp = parameters.parentMessageTimestamp;
+  const parentTimestamp = isNonEmptyString(parameters.parentMessageTimestamp)
+    ? parameters.parentMessageTimestamp.trim() || undefined
+    : undefined;
 
   return await sendSlackMessageWithMarkdownFallback({
     messageFormat: parameters.messageFormat,
@@ -22,10 +25,7 @@ export const postSlackMessage = async (
 
       const data = await client.chat.postMessage({
         channel: parameters.slackChannelId,
-        thread_ts:
-          parentTimestamp != null && parentTimestamp.trim().length > 0
-            ? parentTimestamp.trim()
-            : undefined,
+        thread_ts: parentTimestamp,
         ...bodyFields,
       });
 

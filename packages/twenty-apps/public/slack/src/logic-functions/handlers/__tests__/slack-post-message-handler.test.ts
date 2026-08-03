@@ -108,6 +108,21 @@ describe('slackPostMessageHandler', () => {
     );
   });
 
+  it('should treat a runtime non-string parent timestamp as no thread without throwing', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000450' });
+
+    const result = await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'standalone',
+      parentMessageTimestamp: 1700000000 as unknown as string,
+    });
+
+    expect(postMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ thread_ts: undefined }),
+    );
+    expect(result.success).toBe(true);
+  });
+
   it('should return a failure result when the Slack API throws', async () => {
     postMessageMock.mockRejectedValue(new Error('channel_not_found'));
 
