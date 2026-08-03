@@ -24,6 +24,18 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
+const coerceToNumberOrUndefined = (
+  value: number | string | undefined,
+): number | undefined => {
+  if (!isDefined(value)) {
+    return undefined;
+  }
+
+  const parsedValue = Number(value);
+
+  return Number.isFinite(parsedValue) ? parsedValue : undefined;
+};
+
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
   constructor(
@@ -104,8 +116,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       objectName: workflowActionInput.objectName,
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
-      limit: workflowActionInput.limit,
-      offset: workflowActionInput.offset,
+      limit: coerceToNumberOrUndefined(workflowActionInput.limit),
+      offset: coerceToNumberOrUndefined(workflowActionInput.offset),
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
       shouldBuildEffectiveSelectFields: false,

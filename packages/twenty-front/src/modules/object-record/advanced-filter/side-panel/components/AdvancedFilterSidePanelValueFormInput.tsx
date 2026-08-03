@@ -239,14 +239,22 @@ export const AdvancedFilterSidePanelValueFormInput = ({
   const shouldUseUTCTimeZone = isWorkflowFindRecords === true;
   const timeZone = shouldUseUTCTimeZone ? WORKFLOW_TIMEZONE : undefined;
 
+  const dateOperandSupportsVariable =
+    recordFilter.operand === RecordFilterOperand.IS_BEFORE ||
+    recordFilter.operand === RecordFilterOperand.IS_AFTER;
+
+  const shouldDisableVariablePickerForDate =
+    isFilterableByDateValue && !dateOperandSupportsVariable;
+
   return (
     <FormFieldInput
       field={field}
       defaultValue={recordFilter.value}
       onChange={handleChange}
       readonly={readonly}
-      // VariablePicker is not supported for date filters yet
-      VariablePicker={isFilterableByDateValue ? undefined : VariablePicker}
+      VariablePicker={
+        shouldDisableVariablePickerForDate ? undefined : VariablePicker
+      }
       timeZone={timeZone}
     />
   );

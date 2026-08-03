@@ -5,8 +5,8 @@ export const workflowFindRecordsActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       objectName: z.string(),
-      limit: z.number().optional(),
-      offset: z.number().int().nonnegative().optional(),
+      limit: z.union([z.number(), z.string()]).optional(),
+      offset: z.union([z.number().int().nonnegative(), z.string()]).optional(),
       filter: z
         .object({
           recordFilterGroups: z.array(z.any()).optional(),

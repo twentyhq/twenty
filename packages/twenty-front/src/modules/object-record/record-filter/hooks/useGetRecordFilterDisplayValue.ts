@@ -10,6 +10,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
 import { type Nullable } from 'twenty-shared/types';
 import {
@@ -34,6 +35,10 @@ export const useGetRecordFilterDisplayValue = () => {
   ) => {
     if (!isDefined(recordFilter)) {
       return '';
+    }
+
+    if (isStandaloneVariableString(recordFilter.value)) {
+      return recordFilter.value;
     }
 
     const filterType = recordFilter.type;
