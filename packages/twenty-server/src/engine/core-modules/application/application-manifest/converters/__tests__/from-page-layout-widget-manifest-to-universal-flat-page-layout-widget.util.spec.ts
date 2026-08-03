@@ -1,4 +1,5 @@
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -17,6 +18,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgetIndex: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -38,7 +41,10 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       rowSpan: DEFAULT_WIDGET_SIZE.default.h,
       columnSpan: DEFAULT_WIDGET_SIZE.default.w,
     });
-    expect(result.position).toBeNull();
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 0,
+    });
     expect(result.universalConfiguration).toEqual({
       configurationType: 'VIEW',
     });
@@ -57,6 +63,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndex: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -86,6 +94,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndex: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -96,5 +106,51 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       rowSpan: 4,
       columnSpan: 6,
     });
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 2,
+      column: 6,
+      rowSpan: 4,
+      columnSpan: 6,
+    });
+  });
+
+  it('should derive the VERTICAL_LIST position index from the widget order', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-4',
+        title: 'Second Widget',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgetIndex: 1,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 1,
+    });
+  });
+
+  it('should leave position null when the tab layoutMode is not set', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-5',
+        title: 'Unspecified Layout Widget',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: undefined,
+      widgetIndex: 0,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toBeNull();
   });
 });
