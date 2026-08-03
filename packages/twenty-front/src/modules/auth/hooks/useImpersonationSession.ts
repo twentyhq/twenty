@@ -40,8 +40,7 @@ export const useImpersonationSession = () => {
 
       if (currentTokenPair || isCookieAuthActive) {
         const session: StoredImpersonationSession = {
-          // In cookie mode there is nothing to stash: the server replaces
-          // and later restores the session cookie itself.
+          // In cookie mode the server parks and restores the session itself.
           ...(currentTokenPair ? { tokenPair: currentTokenPair } : {}),
           returnPath: targetPath,
         };
@@ -60,8 +59,8 @@ export const useImpersonationSession = () => {
       }
 
       if (isCookieAuthActive) {
-        // The exchange set the impersonation session cookie; drop the token
-        // pair it also returned so the cookie stays the only credential.
+        // Drop the token pair the exchange also returned, so the cookie it set
+        // stays the only credential.
         store.set(tokenPairState.atom, null);
       }
 
@@ -83,9 +82,7 @@ export const useImpersonationSession = () => {
         try {
           returnPath = (JSON.parse(raw) as StoredImpersonationSession)
             .returnPath;
-        } catch {
-          // Fall back to reloading in place.
-        }
+        } catch {}
       }
 
       try {
@@ -98,13 +95,10 @@ export const useImpersonationSession = () => {
 
           return;
         }
-      } catch {
-        // Revocation failed: fall through to closing or signing out.
-      }
+      } catch {}
 
-      // Cross-workspace tab: the admin session on the admin origin was never
-      // replaced, so just close. Fall back to sign out if the browser blocks
-      // window.close().
+      // Cross-workspace: the admin session on its own origin was never
+      // replaced, so just close. Sign out if the browser blocks close().
       window.close();
       await signOut();
 

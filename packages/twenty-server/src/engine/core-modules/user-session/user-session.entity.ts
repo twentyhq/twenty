@@ -55,14 +55,12 @@ export class UserSessionEntity {
   })
   workspace: Relation<WorkspaceEntity> | null;
 
-  // Null for workspace-agnostic sessions (multi-workspace picker).
   @Index('IDX_USER_SESSION_WORKSPACE_ID')
   @Column({ type: 'uuid', nullable: true })
   workspaceId: string | null;
 
   // Removing someone from a workspace deletes the membership, not the
-  // workspace, so without the cascade their session would sit in the devices
-  // list until expiry while already failing every request it carries.
+  // workspace, so without the cascade a dead session lingers until expiry.
   @ManyToOne(() => UserWorkspaceEntity, {
     onDelete: 'CASCADE',
   })
@@ -94,12 +92,10 @@ export class UserSessionEntity {
   @Column({ type: 'text', nullable: true })
   ipAddress: string | null;
 
-  // Absolute expiry, set at creation and never extended.
   @Index('IDX_USER_SESSION_EXPIRES_AT')
   @Column({ type: 'timestamptz' })
   expiresAt: Date;
 
-  // Touched at most once per touch interval to limit write amplification.
   @Column({ type: 'timestamptz' })
   lastActiveAt: Date;
 

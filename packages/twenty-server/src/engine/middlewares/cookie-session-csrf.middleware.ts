@@ -11,11 +11,10 @@ import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/uti
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-// Bearer-authenticated requests are CSRF-immune (headers are never attached
-// cross-site), so this only guards requests that would authenticate through
-// the session cookie. SameSite=Lax already blocks true cross-site POSTs;
-// validating the Origin header additionally closes the sibling-subdomain
-// gap, which is same-site and therefore not covered by Lax.
+// Only guards requests that would authenticate through the session cookie,
+// since Bearer headers are never attached cross-site. SameSite=Lax already
+// blocks cross-site POSTs; checking Origin closes the sibling-subdomain gap,
+// which is same-site and so not covered by Lax.
 @Injectable()
 export class CookieSessionCsrfMiddleware implements NestMiddleware {
   constructor(
@@ -29,10 +28,9 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
       return next();
     }
 
-    // Only a Bearer token authenticates without the cookie. Any other
-    // Authorization scheme still falls through to cookie authentication, so
-    // it must not skip the CSRF check. Extracted the same way the auth
-    // pipeline does it, so the two cannot disagree about a given request.
+    // Any other Authorization scheme still falls through to cookie auth, so it
+    // must not skip the check. Extracted the same way the auth pipeline does,
+    // so the two cannot disagree about a request.
     if (
       isNonEmptyString(this.jwtWrapperService.extractJwtFromRequest()(request))
     ) {
@@ -49,10 +47,9 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
 
     const origin = request.headers.origin;
 
-    // Fails closed on a missing Origin. Browsers send it on every unsafe
-    // request, so its absence means either a non-browser client, which should
-    // be using a Bearer token, or a stripped header we cannot tell apart from
-    // a forged request.
+    // Fails closed on a missing Origin: browsers send it on every unsafe
+    // request, so its absence is either a non-browser client, which belongs on
+    // a Bearer token, or a stripped header we cannot tell from a forgery.
     if (
       isNonEmptyString(origin) &&
       isRequestOriginAllowed({

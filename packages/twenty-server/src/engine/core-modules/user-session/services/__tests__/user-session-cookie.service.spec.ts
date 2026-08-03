@@ -37,8 +37,6 @@ describe('UserSessionCookieService', () => {
       ).toBe(false);
     });
 
-    // A cross-site POST sends no cookie under SameSite=Lax, which is what
-    // stops sign-out from being triggered by an attacker page.
     it('should report no cookie when the request carries none', () => {
       expect(buildService().hasSessionCookie(buildRequest())).toBe(false);
     });

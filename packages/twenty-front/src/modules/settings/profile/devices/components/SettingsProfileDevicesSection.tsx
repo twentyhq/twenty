@@ -41,8 +41,8 @@ export const SettingsProfileDevicesSection = () => {
 
   const isCookieSessionEnabled = useAtomStateValue(isCookieSessionEnabledState);
 
-  // With cookie sessions off the list is always empty and this section
-  // renders nothing, so the request is guaranteed waste.
+  // With cookie sessions off the list is always empty, so the request is
+  // guaranteed waste.
   const { data, loading, error, refetch } = useQuery(
     CurrentUserSessionsDocument,
     { fetchPolicy: 'network-only', skip: !isCookieSessionEnabled },
@@ -55,14 +55,11 @@ export const SettingsProfileDevicesSection = () => {
   );
 
   const sessions = data?.currentUserSessions ?? [];
-  // Without an identified current session, "log out all other devices"
-  // would revoke every session including the one serving this browser.
+  // Without it, "log out all other devices" would revoke this browser too.
   const hasCurrentSession = sessions.some((session) => session.isCurrent);
   const hasOtherSessions =
     hasCurrentSession && sessions.some((session) => !session.isCurrent);
 
-  // Sessions only exist once cookie sessions are enabled server-side: with
-  // an empty list there is nothing to manage, so the section hides itself.
   if (!loading && sessions.length === 0) {
     return null;
   }

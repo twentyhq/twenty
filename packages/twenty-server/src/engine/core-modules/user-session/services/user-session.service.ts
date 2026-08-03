@@ -47,7 +47,6 @@ import {
 const USER_SESSION_CACHE_TTL_MS = 60 * 1000;
 const USER_SESSION_MAX_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
 
-// Impersonation sessions keep today's short impersonation token lifetime.
 const IMPERSONATION_SESSION_LIFETIME = '1d';
 
 const buildInvalidSessionException = () =>
@@ -73,10 +72,8 @@ export class UserSessionService {
     private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
-  // Bridge for the dual-stack migration: mints a session alongside the JWT
-  // pair every exchange point returns, and sets the cookie on the response.
-  // Best effort by design: a session failure must never break an otherwise
-  // successful sign-in while token pairs remain the primary credential.
+  // Best effort by design: while token pairs remain the primary credential, a
+  // session failure must never break an otherwise successful sign-in.
   async issueSessionForTokenPair({
     tokenPair,
     request,
@@ -96,12 +93,10 @@ export class UserSessionService {
       return;
     }
 
-    // A browser somewhere else must not be handed a session for an account it
-    // did not choose. The exchange itself still succeeds and returns the token
-    // pair, so cross-origin API clients are unaffected: only the cookie, the
-    // part that would silently authenticate the browser, is withheld. Checked
-    // here rather than per resolver so every exchange point is covered, and
-    // not in the CSRF middleware, which cannot know a request will issue one.
+    // A browser elsewhere must not be handed a session for an account it did
+    // not choose. Only the cookie is withheld, so cross-origin API clients
+    // still get their token pair. It cannot live in the CSRF middleware,
+    // which cannot know a request is about to issue a cookie.
     if (!this.isRequestAllowedToReceiveSessionCookie(request)) {
       this.logger.warn(
         `Refused to issue a session cookie to origin ${request.headers.origin}`,
@@ -131,10 +126,9 @@ export class UserSessionService {
               presentedSessionToken,
             );
 
-            // The client already holds a valid session for the same scope:
-            // renewals must not mint a new row every 30 minutes. Anything
-            // scoped differently is replaced, never kept, so the cookie can
-            // never resolve to a workspace the renewed pair does not carry.
+            // Renewals must not mint a row every 30 minutes. Anything scoped
+            // differently is replaced, so the cookie can never resolve to a
+            // workspace the renewed pair does not carry.
             if (
               this.isSessionScopeMatchingRenewal(presentedPayload, sessionInput)
             ) {
@@ -147,7 +141,6 @@ export class UserSessionService {
             );
           } catch (error) {
             // Only an unusable session falls through to minting a fresh one.
-            // A cache or database failure must not mint a row per renewal.
             if (
               !(error instanceof AuthException) ||
               error.code !== AuthExceptionCode.UNAUTHENTICATED
@@ -156,19 +149,16 @@ export class UserSessionService {
             }
           }
         } else if (sessionInput.isImpersonating === true) {
-          // The one sign-in that must not revoke what it replaces. Parking
-          // the impersonator's live session lets stopImpersonation hand back
-          // the credential they already held, instead of minting an admin
-          // session from a credential that only authorizes the impersonated
-          // user. Nothing is trusted on the strength of this cookie alone:
-          // the restore re-resolves it and checks whose session it is.
+          // The one sign-in that must not revoke what it replaces: parking the
+          // impersonator's session lets stopImpersonation hand back the
+          // credential they already held. The cookie alone proves nothing, the
+          // restore re-resolves it and checks whose session it is.
           this.userSessionCookieService.attachImpersonatorSessionTokenToResponse(
             response,
             presentedSessionToken,
           );
         } else {
-          // A real sign-in replaces whatever session the browser presented,
-          // both against fixation and because the device changes hands.
+          // Against fixation, and because the device changes hands.
           await this.revokeSessionByToken(
             presentedSessionToken,
             UserSessionRevokedReason.Superseded,
@@ -185,10 +175,8 @@ export class UserSessionService {
       );
     } catch (error) {
       // Sign-in only: the presented cookie may be the previous account's and
-      // still valid, so it must not survive a sign-in that failed to replace
-      // it. On renewal the presented session is this user's own live one, and
-      // a transient failure must not destroy it. Guarded either way, since
-      // issuance stays best effort.
+      // must not survive a sign-in that failed to replace it. On renewal it is
+      // this user's own live session, which a transient failure must not kill.
       if (origin === 'sign_in') {
         try {
           this.userSessionCookieService.clearSessionCookie(response);
@@ -206,8 +194,7 @@ export class UserSessionService {
   }
 
   // No Origin means no browser to plant a cookie in, so scripted sign-ins keep
-  // working. Every browser sends one on the unsafe requests these exchanges
-  // arrive as.
+  // working. Browsers always send one on the unsafe requests these arrive as.
   private isRequestAllowedToReceiveSessionCookie(request: Request): boolean {
     const origin = request.headers.origin;
 
@@ -311,8 +298,7 @@ export class UserSessionService {
       );
     }
 
-    // A half-filled impersonation session persists fine but is rejected on
-    // every request it authenticates, so refuse it at creation instead.
+    // Persists fine but is rejected on every request it authenticates.
     if (
       input.isImpersonating === true &&
       (!isDefined(input.workspaceId) ||
@@ -363,8 +349,8 @@ export class UserSessionService {
     return { sessionToken, session };
   }
 
-  // Returns the same payload shape the equivalent JWT would carry, so the
-  // existing JwtAuthStrategy.validate dispatch builds the AuthContext.
+  // Same payload shape the equivalent JWT carries, so JwtAuthStrategy.validate
+  // builds the AuthContext unchanged.
   async resolveSession(sessionToken: string): Promise<{
     payload: AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload;
     authenticatedAt: Date;
@@ -395,9 +381,8 @@ export class UserSessionService {
 
     const refreshedCachedSession = this.toCachedSession(session);
 
-    // A touch caches the same object and re-checks revocation itself, so
-    // repeating both here would cost an extra Redis write and an extra
-    // SELECT on the per-request auth path.
+    // A touch already caches and re-checks revocation, so repeating both here
+    // would cost a Redis write and a SELECT on the per-request auth path.
     const wasCachedByTouch = await this.touchSessionIfDue(
       tokenHash,
       refreshedCachedSession,
@@ -427,10 +412,9 @@ export class UserSessionService {
     };
   }
 
-  // A revocation racing the cache write above may have had its cache delete
-  // land before our set, silently resurrecting the revoked session for a
-  // full cache TTL. Re-checking after the write closes the race: any
-  // revocation committing later deletes the entry we just wrote.
+  // A revocation racing the write above may have had its cache delete land
+  // first, resurrecting the session for a full TTL. Re-checking afterwards
+  // closes it: anything committing later deletes what we just wrote.
   private async assertNotRevokedAfterCaching(
     sessionId: string,
     tokenHash: string,
@@ -518,12 +502,10 @@ export class UserSessionService {
     reason: UserSessionRevokedReason;
     exceptSessionId?: string;
   }): Promise<number> {
-    // The predicate is applied by the UPDATE itself rather than to a list of
-    // ids read beforehand, which shrinks the window a new session can slip
-    // through from two round trips down to one statement. It does not close
-    // it: a sign-in committing after this statement's snapshot is still not
-    // revoked. Closing that needs a per-user generation counter checked at
-    // session creation, which is a larger change than this migration.
+    // The predicate is applied by the UPDATE rather than to ids read
+    // beforehand, shrinking the window a new session can slip through to one
+    // statement. It does not close it: a sign-in committing after this
+    // statement's snapshot survives, which would need a generation counter.
     // RETURNING names exactly the rows revoked, so the audit cannot
     // over-report.
     const revokingQuery = this.userSessionRepository
@@ -598,8 +580,7 @@ export class UserSessionService {
         { json: true },
       );
     } catch {
-      // Sign-out is forgiving: an invalid or expired refresh token is
-      // already unusable, so there is nothing to revoke.
+      // An invalid or expired refresh token is already unusable.
       return;
     }
 
@@ -610,8 +591,8 @@ export class UserSessionService {
       return;
     }
 
-    // Deliberately outside the catch: a storage failure here leaves a usable
-    // refresh token behind, so it must surface rather than report success.
+    // Outside the catch: a storage failure here leaves a usable refresh token
+    // behind, so it must surface rather than report success.
     await this.appTokenRepository.update(
       {
         id: payload.jti,
@@ -668,10 +649,8 @@ export class UserSessionService {
     return ms(this.twentyConfigService.get('SESSION_IDLE_TIMEOUT'));
   }
 
-  // Writing lastActiveAt on every request would be a write per request, so it
-  // is throttled. The interval has to stay well inside the idle timeout or a
-  // continuously active user goes idle between two touches and is signed out,
-  // which a short SESSION_IDLE_TIMEOUT would otherwise cause.
+  // Throttled to avoid a write per request. Must stay well inside the idle
+  // timeout, or a continuously active user goes idle between two touches.
   private getTouchIntervalMs(): number {
     return Math.min(
       USER_SESSION_MAX_TOUCH_INTERVAL_MS,
@@ -710,8 +689,7 @@ export class UserSessionService {
       return false;
     }
 
-    // Zero rows means the session was revoked or deleted since it was
-    // cached: drop the entry instead of extending a dead session.
+    // Revoked or deleted since it was cached, so drop the entry.
     if (affected === 0) {
       await this.cacheStorageService.del(tokenHash);
 

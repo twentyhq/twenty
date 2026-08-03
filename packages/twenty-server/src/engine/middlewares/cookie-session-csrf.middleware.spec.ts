@@ -59,8 +59,6 @@ describe('CookieSessionCsrfMiddleware', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            // The real extractor reads the Authorization header, which is what
-            // decides whether a request is Bearer-authenticated here.
             extractJwtFromRequest: () => (request: Request) =>
               /^Bearer\s+(\S+)/i.exec(request.headers.authorization ?? '')?.[1],
           },
@@ -114,9 +112,6 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  // Browsers send Origin on every unsafe request, so its absence is either a
-  // non-browser client, which belongs on a Bearer token, or a stripped header
-  // indistinguishable from a forged request.
   it('should reject cookie requests without an Origin header', () => {
     const request = buildRequest({
       headers: {
@@ -139,8 +134,8 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  // Host deliberately absent from SERVER_URL and FRONTEND_URL, so this can
-  // only pass through the same-origin URL comparison, not the allowlist.
+  // Host absent from SERVER_URL and FRONTEND_URL, so this can only pass through
+  // the same-origin comparison, not the allowlist.
   it('should allow same-origin cookie requests', () => {
     const request = buildRequest({
       get: jest.fn().mockReturnValue('api.example.com'),
@@ -183,8 +178,6 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  // Browsers omit :443 from Origin while Host keeps a port the client spelled
-  // out, so comparing the two as strings would 403 a same-origin request.
   it('should treat a default port on the host as the same origin', () => {
     const request = buildRequest({
       get: jest.fn().mockReturnValue('api.example.com:443'),

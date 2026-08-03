@@ -43,8 +43,7 @@ import { AuthService } from './auth.service';
 
 jest.mock('bcrypt');
 
-// Rendering the real React email template takes seconds and has nothing to do
-// with what these tests assert.
+// Rendering the real React email template takes seconds.
 jest.mock('twenty-emails', () => ({
   ...jest.requireActual('twenty-emails'),
   renderEmail: jest.fn().mockResolvedValue('rendered-email'),
