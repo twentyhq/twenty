@@ -1,9 +1,12 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-export const EmailColumn = Node.create({
-  name: TIPTAP_NODE_TYPES.EMAIL_COLUMN,
-  content: 'block+',
+// A horizontal row of equal-width columns, mapping to a react-email
+// <Row>/<Column> table layout at send time.
+export const ColumnsNode = Node.create({
+  name: TIPTAP_NODE_TYPES.COLUMNS,
+  group: 'block',
+  content: `${TIPTAP_NODE_TYPES.COLUMN}{2,4}`,
   defining: true,
   isolating: true,
 
@@ -17,15 +20,15 @@ export const EmailColumn = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-email-column]' }];
+    return [{ tag: 'div[data-block-columns]' }];
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(HTMLAttributes, {
-        'data-email-column': 'true',
-        class: 'email-column',
+        'data-block-columns': 'true',
+        class: 'block-columns',
       }),
       0,
     ];

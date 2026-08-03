@@ -3,9 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import {
-  type EmailTheme,
+  type CanvasTheme,
   isDefined,
-  resolveEmailTheme,
+  resolveCanvasTheme,
 } from 'twenty-shared/utils';
 import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -85,13 +85,13 @@ export const CampaignPageStyleSection = ({
 }: CampaignPageStyleSectionProps) => {
   const { t } = useLingui();
 
-  const emailTheme = useEditorState({
+  const canvasTheme = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) =>
-      resolveEmailTheme(currentEditor.state.doc.attrs.emailTheme),
+      resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
   });
 
-  if (!isDefined(emailTheme)) {
+  if (!isDefined(canvasTheme)) {
     return (
       <StyledHint>
         {t`Select a section, columns, button or divider in the email body to edit its settings.`}
@@ -99,12 +99,12 @@ export const CampaignPageStyleSection = ({
     );
   }
 
-  const setThemeValue = (themeKey: keyof EmailTheme, value: string) => {
+  const setThemeValue = (themeKey: keyof CanvasTheme, value: string) => {
     editor
       .chain()
       .command(({ tr }) => {
-        tr.setDocAttribute('emailTheme', {
-          ...emailTheme,
+        tr.setDocAttribute('canvasTheme', {
+          ...canvasTheme,
           [themeKey]: value,
         });
         return true;
@@ -117,12 +117,12 @@ export const CampaignPageStyleSection = ({
       <StyledGroupTitle>{t`Page style`}</StyledGroupTitle>
       <CampaignColorInput
         label={t`Background`}
-        value={emailTheme.pageBackground}
+        value={canvasTheme.pageBackground}
         onChange={(value) => setThemeValue('pageBackground', value)}
       />
       <CampaignBoxSidesInput
         label={t`Padding`}
-        value={emailTheme.pagePadding}
+        value={canvasTheme.pagePadding}
         onChange={(value) => setThemeValue('pagePadding', value)}
         placeholder="24"
       />
@@ -135,7 +135,7 @@ export const CampaignPageStyleSection = ({
             <StyledAlignButton
               key={align}
               type="button"
-              isActive={emailTheme.textAlign === align}
+              isActive={canvasTheme.textAlign === align}
               onClick={() => setThemeValue('textAlign', align)}
             >
               <Icon size={16} />
@@ -145,41 +145,41 @@ export const CampaignPageStyleSection = ({
       </div>
       <CampaignColorInput
         label={t`Text`}
-        value={emailTheme.textColor}
+        value={canvasTheme.textColor}
         onChange={(value) => setThemeValue('textColor', value)}
       />
       <CampaignColorInput
         label={t`Background`}
-        value={emailTheme.bodyBackground}
+        value={canvasTheme.bodyBackground}
         onChange={(value) => setThemeValue('bodyBackground', value)}
       />
       <CampaignSizeInput
         label={t`Width`}
-        value={emailTheme.width}
+        value={canvasTheme.width}
         onChange={(value) => setThemeValue('width', value)}
         placeholder="600"
       />
       <CampaignBoxSidesInput
         label={t`Padding`}
-        value={emailTheme.padding}
+        value={canvasTheme.padding}
         onChange={(value) => setThemeValue('padding', value)}
         placeholder="24"
       />
       <CampaignBoxSidesInput
         label={t`Corner radius`}
-        value={emailTheme.cornerRadius}
+        value={canvasTheme.cornerRadius}
         onChange={(value) => setThemeValue('cornerRadius', value)}
         placeholder="8"
       />
       <CampaignSizeInput
         label={t`Border`}
-        value={emailTheme.borderWidth}
+        value={canvasTheme.borderWidth}
         onChange={(value) => setThemeValue('borderWidth', value)}
         placeholder="0"
       />
       <CampaignColorInput
         label={t`Border color`}
-        value={emailTheme.borderColor}
+        value={canvasTheme.borderColor}
         onChange={(value) => setThemeValue('borderColor', value)}
       />
     </StyledContainer>

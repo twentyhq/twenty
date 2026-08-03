@@ -1,8 +1,8 @@
-// Document-level styling for campaign emails, stored as the `emailTheme`
+// Document-level styling for campaign emails, stored as the `canvasTheme`
 // attribute on the TipTap doc node. The composer renders it as a centered
 // email page; the server renders it as a Body + centered Container wrapper.
 // Values are literal CSS because emails cannot reference theme variables.
-export type EmailTheme = {
+export type CanvasTheme = {
   pageBackground: string;
   pagePadding: string;
   textAlign: 'left' | 'center' | 'right';
@@ -15,7 +15,7 @@ export type EmailTheme = {
   borderColor: string;
 };
 
-export const EMAIL_THEME_DEFAULTS: EmailTheme = {
+export const CANVAS_THEME_DEFAULTS: CanvasTheme = {
   pageBackground: '#f4f4f5',
   pagePadding: '24px',
   textAlign: 'left',
@@ -28,13 +28,13 @@ export const EMAIL_THEME_DEFAULTS: EmailTheme = {
   borderColor: '#000000',
 };
 
-export const isEmailTheme = (value: unknown): value is Partial<EmailTheme> =>
+export const isCanvasTheme = (value: unknown): value is Partial<CanvasTheme> =>
   typeof value === 'object' &&
   value !== null &&
-  typeof (value as EmailTheme).bodyBackground === 'string' &&
-  typeof (value as EmailTheme).width === 'string';
+  typeof (value as CanvasTheme).bodyBackground === 'string' &&
+  typeof (value as CanvasTheme).width === 'string';
 
 // Stored themes may predate newly added keys; resolving against the defaults
 // is how the theme shape evolves without migrating existing documents.
-export const resolveEmailTheme = (value: unknown): EmailTheme | null =>
-  isEmailTheme(value) ? { ...EMAIL_THEME_DEFAULTS, ...value } : null;
+export const resolveCanvasTheme = (value: unknown): CanvasTheme | null =>
+  isCanvasTheme(value) ? { ...CANVAS_THEME_DEFAULTS, ...value } : null;

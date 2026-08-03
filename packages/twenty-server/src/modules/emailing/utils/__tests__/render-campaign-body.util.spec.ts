@@ -78,9 +78,7 @@ describe('renderCampaignBodyToHtml', () => {
       VARIABLES,
     );
 
-    expect(renderedDocument().content[0].content[1].attrs.variable).toBe(
-      'Ada',
-    );
+    expect(renderedDocument().content[0].content[1].attrs.variable).toBe('Ada');
   });
 
   it('should substitute variables inside button and link URLs', async () => {
@@ -89,7 +87,7 @@ describe('renderCampaignBodyToHtml', () => {
         type: 'doc',
         content: [
           {
-            type: 'emailButton',
+            type: 'button',
             attrs: { href: 'https://example.com/p/{{personId}}' },
             content: [{ type: 'text', text: 'Open' }],
           },
@@ -149,7 +147,7 @@ describe('renderCampaignBodyToHtml', () => {
         type: 'doc',
         content: [
           {
-            type: 'emailHtml',
+            type: 'html',
             attrs: {
               html: '<a href="https://example.com/p/{{personId}}">Hi {{firstName}}</a>',
             },

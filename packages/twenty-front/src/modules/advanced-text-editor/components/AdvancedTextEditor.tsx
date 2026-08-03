@@ -6,7 +6,7 @@ import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtens
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent, type Editor, useEditorState } from '@tiptap/react';
-import { isDefined, resolveEmailTheme } from 'twenty-shared/utils';
+import { isDefined, resolveCanvasTheme } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditorContainer = styled.div<{
@@ -76,9 +76,9 @@ const StyledEditorContainer = styled.div<{
       margin-bottom: ${themeCssVariables.spacing[2]};
     }
 
-    /* Email block nodes: inline styles on the element carry the authored
+    /* Block nodes: inline styles on the element carry the authored
        look; the rules below only add editing affordances. */
-    .email-section {
+    .block-section {
       border-radius: ${themeCssVariables.border.radius.sm};
       box-sizing: border-box;
       margin-bottom: ${themeCssVariables.spacing[2]};
@@ -90,14 +90,14 @@ const StyledEditorContainer = styled.div<{
       }
     }
 
-    .email-columns {
+    .block-columns {
       box-sizing: border-box;
       display: flex;
       gap: ${themeCssVariables.spacing[2]};
       margin-bottom: ${themeCssVariables.spacing[2]};
     }
 
-    .email-column {
+    .block-column {
       box-sizing: border-box;
       flex: 1;
       min-width: 0;
@@ -106,17 +106,17 @@ const StyledEditorContainer = styled.div<{
       border-radius: ${themeCssVariables.border.radius.sm};
     }
 
-    .email-button-wrapper {
+    .block-button-wrapper {
       margin-bottom: ${themeCssVariables.spacing[2]};
     }
 
-    .email-button {
+    .block-button {
       box-sizing: border-box;
       cursor: text;
       width: fit-content;
     }
 
-    .email-divider {
+    .block-divider {
       border-left: none;
       border-right: none;
       border-bottom: none;
@@ -136,7 +136,7 @@ const StyledEditorContainer = styled.div<{
   }
 `;
 
-const StyledEmailCanvasBackdrop = styled.div`
+const StyledCanvasBackdrop = styled.div`
   box-sizing: border-box;
   flex-grow: 1;
   min-height: 100%;
@@ -144,7 +144,7 @@ const StyledEmailCanvasBackdrop = styled.div`
   width: 100%;
 `;
 
-const StyledEmailPage = styled.div`
+const StyledCanvasPage = styled.div`
   box-shadow:
     0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
     0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
@@ -193,41 +193,41 @@ export const AdvancedTextEditor = ({
     (extensionName) => hasEditorExtension(editor, extensionName),
   );
 
-  const emailTheme = useEditorState({
+  const canvasTheme = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) =>
-      resolveEmailTheme(currentEditor.state.doc.attrs.emailTheme),
+      resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
   });
 
-  const hasEmailCanvas = chrome === 'emailCanvas' && isDefined(emailTheme);
+  const hasCanvasChrome = chrome === 'canvas' && isDefined(canvasTheme);
 
   return (
     <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
-      {hasEmailCanvas ? (
-        <StyledEmailCanvasBackdrop
+      {hasCanvasChrome ? (
+        <StyledCanvasBackdrop
           style={{
-            backgroundColor: emailTheme.pageBackground,
-            padding: emailTheme.pagePadding,
+            backgroundColor: canvasTheme.pageBackground,
+            padding: canvasTheme.pagePadding,
           }}
         >
-          <StyledEmailPage
+          <StyledCanvasPage
             style={{
-              backgroundColor: emailTheme.bodyBackground,
+              backgroundColor: canvasTheme.bodyBackground,
               border:
-                emailTheme.borderWidth !== '' &&
-                emailTheme.borderWidth !== '0px'
-                  ? `${emailTheme.borderWidth} solid ${emailTheme.borderColor}`
+                canvasTheme.borderWidth !== '' &&
+                canvasTheme.borderWidth !== '0px'
+                  ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
                   : undefined,
-              borderRadius: emailTheme.cornerRadius,
-              color: emailTheme.textColor,
-              padding: emailTheme.padding,
-              textAlign: emailTheme.textAlign,
-              width: emailTheme.width,
+              borderRadius: canvasTheme.cornerRadius,
+              color: canvasTheme.textColor,
+              padding: canvasTheme.padding,
+              textAlign: canvasTheme.textAlign,
+              width: canvasTheme.width,
             }}
           >
             <EditorContent className="editor-content" editor={editor} />
-          </StyledEmailPage>
-        </StyledEmailCanvasBackdrop>
+          </StyledCanvasPage>
+        </StyledCanvasBackdrop>
       ) : (
         <EditorContent className="editor-content" editor={editor} />
       )}

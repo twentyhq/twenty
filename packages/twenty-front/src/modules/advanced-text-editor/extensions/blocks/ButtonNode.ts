@@ -4,14 +4,14 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-export const DEFAULT_EMAIL_BUTTON_STYLE =
+export const DEFAULT_BUTTON_STYLE =
   'background-color: #1961ed; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-block;';
 
 // A call-to-action button mapping to a react-email <Button> (a styled <a>)
 // at send time. The label is editable inline; href and styles are edited in
 // the block settings side panel.
-export const EmailButton = Node.create({
-  name: TIPTAP_NODE_TYPES.EMAIL_BUTTON,
+export const ButtonNode = Node.create({
+  name: TIPTAP_NODE_TYPES.BUTTON,
   group: 'block',
   content: 'text*',
   marks: '',
@@ -26,25 +26,25 @@ export const EmailButton = Node.create({
         renderHTML: (attributes) => ({ 'data-href': attributes.href }),
       },
       style: {
-        default: DEFAULT_EMAIL_BUTTON_STYLE,
+        default: DEFAULT_BUTTON_STYLE,
         parseHTML: (element) => element.getAttribute('style'),
       },
     };
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-email-button]' }];
+    return [{ tag: 'div[data-button-block]' }];
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
-      { class: 'email-button-wrapper' },
+      { class: 'block-button-wrapper' },
       [
         'div',
         mergeAttributes(HTMLAttributes, {
-          'data-email-button': 'true',
-          class: 'email-button',
+          'data-button-block': 'true',
+          class: 'block-button',
         }),
         0,
       ],

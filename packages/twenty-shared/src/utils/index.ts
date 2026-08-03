@@ -205,6 +205,12 @@ export {
   CAMPAIGN_VARIABLE_NAMES,
   listCampaignVariablesForFields,
 } from './tiptap/campaign-variables';
+export type { CanvasTheme } from './tiptap/canvas-theme';
+export {
+  CANVAS_THEME_DEFAULTS,
+  isCanvasTheme,
+  resolveCanvasTheme,
+} from './tiptap/canvas-theme';
 export type {
   EmailDocumentNode,
   EmailDocument,
@@ -214,12 +220,6 @@ export {
   emailDocumentSchema,
   parseEmailDocument,
 } from './tiptap/email-document-schema';
-export type { EmailTheme } from './tiptap/email-theme';
-export {
-  EMAIL_THEME_DEFAULTS,
-  isEmailTheme,
-  resolveEmailTheme,
-} from './tiptap/email-theme';
 export type {
   TipTapMarkType,
   TipTapNodeType,

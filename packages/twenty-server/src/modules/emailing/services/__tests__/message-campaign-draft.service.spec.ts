@@ -104,7 +104,7 @@ describe('MessageCampaignDraftService', () => {
       const storedDocument = JSON.parse(inserted.bodyTemplate);
 
       expect(storedDocument.attrs.schemaVersion).toBe(1);
-      expect(storedDocument.attrs.emailTheme).toBeDefined();
+      expect(storedDocument.attrs.canvasTheme).toBeDefined();
       expect(campaignRepository.update).not.toHaveBeenCalled();
     });
 
@@ -174,7 +174,7 @@ describe('MessageCampaignDraftService', () => {
       const storedDocument = JSON.parse(update.bodyTemplate);
 
       expect(storedDocument.attrs.schemaVersion).toBe(1);
-      expect(storedDocument.attrs.emailTheme).toBeDefined();
+      expect(storedDocument.attrs.canvasTheme).toBeDefined();
     });
 
     it('should keep an explicit theme instead of stamping defaults', async () => {
@@ -184,14 +184,14 @@ describe('MessageCampaignDraftService', () => {
         campaignId,
         body: {
           ...validDocument,
-          attrs: { emailTheme: { bodyBackground: '#101010', width: '480px' } },
+          attrs: { canvasTheme: { bodyBackground: '#101010', width: '480px' } },
         },
       });
 
       const [, update] = campaignRepository.update.mock.calls[0];
       const storedDocument = JSON.parse(update.bodyTemplate);
 
-      expect(storedDocument.attrs.emailTheme.bodyBackground).toBe('#101010');
+      expect(storedDocument.attrs.canvasTheme.bodyBackground).toBe('#101010');
     });
 
     it('should reject an edit with nothing to update', async () => {

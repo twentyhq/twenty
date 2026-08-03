@@ -10,7 +10,7 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
   // it to email-safe HTML at send time, like the workflow email node.
   campaignBody: {
     contentType: 'json',
-    chrome: 'emailCanvas',
+    chrome: 'canvas',
     minHeight: 0,
     enableFullScreen: false,
     // campaignVariables rather than variables: same node, but the workflow
@@ -23,7 +23,7 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
       'images',
       'campaignVariables',
       'slashCommand',
-      'emailBlocks',
+      'blocks',
     ],
   },
   inlineEmailBody: {

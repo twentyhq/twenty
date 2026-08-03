@@ -52,7 +52,7 @@ const substituteVariables = (
     }),
   // Button and image URLs are where per-recipient values matter most
   // (tracking links, per-person landing pages).
-  ...((node.type === TIPTAP_NODE_TYPES.EMAIL_BUTTON ||
+  ...((node.type === TIPTAP_NODE_TYPES.BUTTON ||
     node.type === TIPTAP_NODE_TYPES.IMAGE) &&
     typeof node.attrs?.href === 'string' && {
       attrs: {
@@ -62,7 +62,7 @@ const substituteVariables = (
     }),
   // Raw HTML blocks are emitted verbatim, so substituted values are escaped
   // to keep record data from injecting markup into the email.
-  ...(node.type === TIPTAP_NODE_TYPES.EMAIL_HTML &&
+  ...(node.type === TIPTAP_NODE_TYPES.HTML &&
     typeof node.attrs?.html === 'string' && {
       attrs: {
         ...node.attrs,

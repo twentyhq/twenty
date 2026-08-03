@@ -23,7 +23,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
   string,
   CampaignBlockSettingsField[]
 > = {
-  [TIPTAP_NODE_TYPES.EMAIL_SECTION]: [
+  [TIPTAP_NODE_TYPES.SECTION]: [
     {
       label: msg`Background`,
       kind: 'style',
@@ -58,7 +58,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       input: 'color',
     },
   ],
-  [TIPTAP_NODE_TYPES.EMAIL_COLUMNS]: [
+  [TIPTAP_NODE_TYPES.COLUMNS]: [
     {
       label: msg`Background`,
       kind: 'style',
@@ -73,7 +73,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       placeholder: '12',
     },
   ],
-  [TIPTAP_NODE_TYPES.EMAIL_COLUMN]: [
+  [TIPTAP_NODE_TYPES.COLUMN]: [
     {
       label: msg`Background`,
       kind: 'style',
@@ -88,7 +88,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       placeholder: '12',
     },
   ],
-  [TIPTAP_NODE_TYPES.EMAIL_BUTTON]: [
+  [TIPTAP_NODE_TYPES.BUTTON]: [
     {
       label: msg`Link URL`,
       kind: 'attribute',
@@ -152,7 +152,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       placeholder: 'auto',
     },
   ],
-  [TIPTAP_NODE_TYPES.EMAIL_HTML]: [
+  [TIPTAP_NODE_TYPES.HTML]: [
     {
       label: msg`HTML`,
       kind: 'attribute',
@@ -161,7 +161,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       placeholder: '<p>Hello</p>',
     },
   ],
-  [TIPTAP_NODE_TYPES.EMAIL_DIVIDER]: [
+  [TIPTAP_NODE_TYPES.DIVIDER]: [
     {
       label: msg`Thickness`,
       kind: 'style',

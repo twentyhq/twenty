@@ -1,9 +1,9 @@
 import { bulletList } from '@/utils/email-renderer/nodes/bullet-list';
-import { emailButton } from '@/utils/email-renderer/nodes/email-button';
-import { emailColumns } from '@/utils/email-renderer/nodes/email-columns';
-import { emailDivider } from '@/utils/email-renderer/nodes/email-divider';
-import { emailHtml } from '@/utils/email-renderer/nodes/email-html';
-import { emailSection } from '@/utils/email-renderer/nodes/email-section';
+import { button } from '@/utils/email-renderer/nodes/button';
+import { columns } from '@/utils/email-renderer/nodes/columns';
+import { divider } from '@/utils/email-renderer/nodes/divider';
+import { html } from '@/utils/email-renderer/nodes/html';
+import { section } from '@/utils/email-renderer/nodes/section';
 import { hardBreak } from '@/utils/email-renderer/nodes/hard-break';
 import { heading } from '@/utils/email-renderer/nodes/heading';
 import { image } from '@/utils/email-renderer/nodes/image';
@@ -26,11 +26,11 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.ORDERED_LIST]: orderedList,
   [TIPTAP_NODE_TYPES.LIST_ITEM]: listItem,
   [TIPTAP_NODE_TYPES.HARD_BREAK]: hardBreak,
-  [TIPTAP_NODE_TYPES.EMAIL_SECTION]: emailSection,
-  [TIPTAP_NODE_TYPES.EMAIL_COLUMNS]: emailColumns,
-  [TIPTAP_NODE_TYPES.EMAIL_BUTTON]: emailButton,
-  [TIPTAP_NODE_TYPES.EMAIL_DIVIDER]: emailDivider,
-  [TIPTAP_NODE_TYPES.EMAIL_HTML]: emailHtml,
+  [TIPTAP_NODE_TYPES.SECTION]: section,
+  [TIPTAP_NODE_TYPES.COLUMNS]: columns,
+  [TIPTAP_NODE_TYPES.BUTTON]: button,
+  [TIPTAP_NODE_TYPES.DIVIDER]: divider,
+  [TIPTAP_NODE_TYPES.HTML]: html,
 };
 
 const renderNode = (node: JSONContent): ReactNode => {

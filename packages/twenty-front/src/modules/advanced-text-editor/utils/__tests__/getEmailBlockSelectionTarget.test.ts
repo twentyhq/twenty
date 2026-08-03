@@ -1,9 +1,9 @@
-import { EmailButton } from '@/advanced-text-editor/extensions/email-blocks/EmailButton';
-import { EmailColumn } from '@/advanced-text-editor/extensions/email-blocks/EmailColumn';
-import { EmailColumns } from '@/advanced-text-editor/extensions/email-blocks/EmailColumns';
-import { EmailDivider } from '@/advanced-text-editor/extensions/email-blocks/EmailDivider';
-import { EmailSection } from '@/advanced-text-editor/extensions/email-blocks/EmailSection';
-import { getEmailBlockSelectionTarget } from '@/advanced-text-editor/utils/getEmailBlockSelectionTarget';
+import { ButtonNode } from '@/advanced-text-editor/extensions/blocks/ButtonNode';
+import { ColumnNode } from '@/advanced-text-editor/extensions/blocks/ColumnNode';
+import { ColumnsNode } from '@/advanced-text-editor/extensions/blocks/ColumnsNode';
+import { DividerNode } from '@/advanced-text-editor/extensions/blocks/DividerNode';
+import { SectionNode } from '@/advanced-text-editor/extensions/blocks/SectionNode';
+import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { Editor } from '@tiptap/core';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -16,16 +16,16 @@ const createEditor = (content: object) =>
       Document,
       Paragraph,
       Text,
-      EmailSection,
-      EmailColumns,
-      EmailColumn,
-      EmailButton,
-      EmailDivider,
+      SectionNode,
+      ColumnsNode,
+      ColumnNode,
+      ButtonNode,
+      DividerNode,
     ],
     content,
   });
 
-describe('getEmailBlockSelectionTarget', () => {
+describe('getBlockSelectionTarget', () => {
   it('should return null when the cursor is in plain content', () => {
     const editor = createEditor({
       type: 'doc',
@@ -34,7 +34,7 @@ describe('getEmailBlockSelectionTarget', () => {
       ],
     });
 
-    expect(getEmailBlockSelectionTarget(editor)).toBeNull();
+    expect(getBlockSelectionTarget(editor)).toBeNull();
     editor.destroy();
   });
 
@@ -43,7 +43,7 @@ describe('getEmailBlockSelectionTarget', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailSection',
+          type: 'section',
           attrs: { style: 'padding: 24px;' },
           content: [
             { type: 'paragraph', content: [{ type: 'text', text: 'inside' }] },
@@ -56,9 +56,9 @@ describe('getEmailBlockSelectionTarget', () => {
       editor.state.tr.setSelection(TextSelection.create(editor.state.doc, 3)),
     );
 
-    const target = getEmailBlockSelectionTarget(editor);
+    const target = getBlockSelectionTarget(editor);
 
-    expect(target?.nodeType).toBe('emailSection');
+    expect(target?.nodeType).toBe('section');
     expect(target?.attrs.style).toBe('padding: 24px;');
     editor.destroy();
   });
@@ -68,10 +68,10 @@ describe('getEmailBlockSelectionTarget', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailSection',
+          type: 'section',
           content: [
             {
-              type: 'emailButton',
+              type: 'button',
               content: [{ type: 'text', text: 'Click' }],
             },
           ],
@@ -83,21 +83,21 @@ describe('getEmailBlockSelectionTarget', () => {
       editor.state.tr.setSelection(TextSelection.create(editor.state.doc, 3)),
     );
 
-    expect(getEmailBlockSelectionTarget(editor)?.nodeType).toBe('emailButton');
+    expect(getBlockSelectionTarget(editor)?.nodeType).toBe('button');
     editor.destroy();
   });
 
   it('should target a node-selected divider', () => {
     const editor = createEditor({
       type: 'doc',
-      content: [{ type: 'paragraph' }, { type: 'emailDivider' }],
+      content: [{ type: 'paragraph' }, { type: 'divider' }],
     });
 
     editor.view.dispatch(
       editor.state.tr.setSelection(NodeSelection.create(editor.state.doc, 2)),
     );
 
-    expect(getEmailBlockSelectionTarget(editor)?.nodeType).toBe('emailDivider');
+    expect(getBlockSelectionTarget(editor)?.nodeType).toBe('divider');
     editor.destroy();
   });
 });

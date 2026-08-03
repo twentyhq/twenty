@@ -3,17 +3,17 @@ import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 export const getCampaignBlockLabel = (nodeType: string): string => {
   switch (nodeType) {
-    case TIPTAP_NODE_TYPES.EMAIL_SECTION:
+    case TIPTAP_NODE_TYPES.SECTION:
       return t`Section`;
-    case TIPTAP_NODE_TYPES.EMAIL_COLUMNS:
+    case TIPTAP_NODE_TYPES.COLUMNS:
       return t`Columns`;
-    case TIPTAP_NODE_TYPES.EMAIL_COLUMN:
+    case TIPTAP_NODE_TYPES.COLUMN:
       return t`Column`;
-    case TIPTAP_NODE_TYPES.EMAIL_BUTTON:
+    case TIPTAP_NODE_TYPES.BUTTON:
       return t`Button`;
-    case TIPTAP_NODE_TYPES.EMAIL_DIVIDER:
+    case TIPTAP_NODE_TYPES.DIVIDER:
       return t`Divider`;
-    case TIPTAP_NODE_TYPES.EMAIL_HTML:
+    case TIPTAP_NODE_TYPES.HTML:
       return t`HTML`;
     case TIPTAP_NODE_TYPES.IMAGE:
       return t`Image`;

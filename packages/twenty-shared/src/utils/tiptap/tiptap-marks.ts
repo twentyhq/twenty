@@ -22,12 +22,12 @@ export const TIPTAP_NODE_TYPES = {
   // email-safe HTML server-side by twenty-emails. Node attributes carry an
   // inline CSS `style` string (pattern borrowed from @react-email/editor, MIT)
   // so per-block styling survives the JSON round-trip without schema changes.
-  EMAIL_SECTION: 'emailSection',
-  EMAIL_COLUMNS: 'emailColumns',
-  EMAIL_COLUMN: 'emailColumn',
-  EMAIL_BUTTON: 'emailButton',
-  EMAIL_DIVIDER: 'emailDivider',
-  EMAIL_HTML: 'emailHtml',
+  SECTION: 'section',
+  COLUMNS: 'columns',
+  COLUMN: 'column',
+  BUTTON: 'button',
+  DIVIDER: 'divider',
+  HTML: 'html',
 } as const;
 
 export type TipTapMarkType =

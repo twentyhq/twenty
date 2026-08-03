@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
 import { inlineCssToJs } from 'src/utils/email-renderer/utils/inline-css-to-js';
 
-export const emailSection = (node: JSONContent): ReactNode => {
+export const section = (node: JSONContent): ReactNode => {
   return (
     <Section style={inlineCssToJs(node.attrs?.style)}>
       {mappedNodeContent(node)}

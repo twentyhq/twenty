@@ -11,7 +11,7 @@ describe('renderRichTextToHtml', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailSection',
+          type: 'section',
           attrs: { style: 'background-color: #f4f4f5; padding: 24px;' },
           content: [
             {
@@ -33,10 +33,10 @@ describe('renderRichTextToHtml', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailColumns',
+          type: 'columns',
           content: [
             {
-              type: 'emailColumn',
+              type: 'column',
               content: [
                 {
                   type: 'paragraph',
@@ -45,7 +45,7 @@ describe('renderRichTextToHtml', () => {
               ],
             },
             {
-              type: 'emailColumn',
+              type: 'column',
               content: [
                 {
                   type: 'paragraph',
@@ -68,7 +68,7 @@ describe('renderRichTextToHtml', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailButton',
+          type: 'button',
           attrs: {
             href: 'https://twenty.com',
             style: 'background-color: #1961ed; color: #ffffff;',
@@ -88,7 +88,7 @@ describe('renderRichTextToHtml', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailDivider',
+          type: 'divider',
           attrs: { style: 'border-top: 2px dashed #ff0000;' },
         },
       ],
@@ -102,7 +102,7 @@ describe('renderRichTextToHtml', () => {
     const html = await renderRichTextToHtml({
       type: 'doc',
       attrs: {
-        emailTheme: {
+        canvasTheme: {
           pageBackground: '#f4f4f5',
           bodyBackground: '#ffffff',
           textColor: '#18181b',
@@ -146,7 +146,7 @@ describe('renderRichTextToHtml', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailHtml',
+          type: 'html',
           attrs: {
             html: '<table role="presentation"><tr><td>custom cell</td></tr></table>',
           },

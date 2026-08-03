@@ -1,7 +1,7 @@
 import { Document } from '@tiptap/extension-document';
 import {
   EMAIL_DOCUMENT_SCHEMA_VERSION,
-  EMAIL_THEME_DEFAULTS,
+  CANVAS_THEME_DEFAULTS,
 } from 'twenty-shared/utils';
 
 // Campaign documents carry their page-level styling (page background, body
@@ -9,11 +9,11 @@ import {
 // and reaches the server-side email renderer. schemaVersion stamps every
 // saved document with the email document contract it was authored against,
 // so future format changes can migrate instead of guessing.
-export const EmailThemeDocument = Document.extend({
+export const ThemedDocument = Document.extend({
   addAttributes() {
     return {
-      emailTheme: {
-        default: EMAIL_THEME_DEFAULTS,
+      canvasTheme: {
+        default: CANVAS_THEME_DEFAULTS,
       },
       schemaVersion: {
         default: EMAIL_DOCUMENT_SCHEMA_VERSION,

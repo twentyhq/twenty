@@ -1,10 +1,10 @@
 import { CampaignVariableTag } from '@/advanced-text-editor/extensions/campaign-variables/CampaignVariableTag';
-import { EmailButton } from '@/advanced-text-editor/extensions/email-blocks/EmailButton';
-import { EmailHtml } from '@/advanced-text-editor/extensions/email-blocks/EmailHtml';
-import { EmailColumn } from '@/advanced-text-editor/extensions/email-blocks/EmailColumn';
-import { EmailColumns } from '@/advanced-text-editor/extensions/email-blocks/EmailColumns';
-import { EmailDivider } from '@/advanced-text-editor/extensions/email-blocks/EmailDivider';
-import { EmailSection } from '@/advanced-text-editor/extensions/email-blocks/EmailSection';
+import { ButtonNode } from '@/advanced-text-editor/extensions/blocks/ButtonNode';
+import { HtmlNode } from '@/advanced-text-editor/extensions/blocks/HtmlNode';
+import { ColumnNode } from '@/advanced-text-editor/extensions/blocks/ColumnNode';
+import { ColumnsNode } from '@/advanced-text-editor/extensions/blocks/ColumnsNode';
+import { DividerNode } from '@/advanced-text-editor/extensions/blocks/DividerNode';
+import { SectionNode } from '@/advanced-text-editor/extensions/blocks/SectionNode';
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
 import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
@@ -60,12 +60,12 @@ export const ADVANCED_TEXT_EDITOR_CAPABILITY_EXTENSIONS: Record<
   campaignVariables: () => [CampaignVariableTag],
   mentions: () => [MentionTag, MentionSuggestion],
   slashCommand: () => [SlashCommand],
-  emailBlocks: () => [
-    EmailSection,
-    EmailColumns,
-    EmailColumn,
-    EmailButton,
-    EmailDivider,
-    EmailHtml,
+  blocks: () => [
+    SectionNode,
+    ColumnsNode,
+    ColumnNode,
+    ButtonNode,
+    DividerNode,
+    HtmlNode,
   ],
 };

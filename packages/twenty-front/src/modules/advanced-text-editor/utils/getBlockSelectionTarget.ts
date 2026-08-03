@@ -3,16 +3,16 @@ import { NodeSelection } from '@tiptap/pm/state';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 const INSPECTABLE_NODE_TYPES: readonly string[] = [
-  TIPTAP_NODE_TYPES.EMAIL_SECTION,
-  TIPTAP_NODE_TYPES.EMAIL_COLUMNS,
-  TIPTAP_NODE_TYPES.EMAIL_COLUMN,
-  TIPTAP_NODE_TYPES.EMAIL_BUTTON,
-  TIPTAP_NODE_TYPES.EMAIL_DIVIDER,
-  TIPTAP_NODE_TYPES.EMAIL_HTML,
+  TIPTAP_NODE_TYPES.SECTION,
+  TIPTAP_NODE_TYPES.COLUMNS,
+  TIPTAP_NODE_TYPES.COLUMN,
+  TIPTAP_NODE_TYPES.BUTTON,
+  TIPTAP_NODE_TYPES.DIVIDER,
+  TIPTAP_NODE_TYPES.HTML,
   TIPTAP_NODE_TYPES.IMAGE,
 ];
 
-export type EmailBlockSelectionTarget = {
+export type BlockSelectionTarget = {
   nodeType: string;
   pos: number;
   attrs: Record<string, unknown>;
@@ -21,9 +21,9 @@ export type EmailBlockSelectionTarget = {
 // Derives the email block the settings panel should edit from the current
 // selection: the selected atom node itself, or the deepest inspectable
 // ancestor of the cursor (a button inside a section targets the button).
-export const getEmailBlockSelectionTarget = (
+export const getBlockSelectionTarget = (
   editor: Editor,
-): EmailBlockSelectionTarget | null => {
+): BlockSelectionTarget | null => {
   const { selection } = editor.state;
 
   if (

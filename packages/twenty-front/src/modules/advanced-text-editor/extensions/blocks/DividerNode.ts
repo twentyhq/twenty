@@ -4,8 +4,8 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-export const EmailDivider = Node.create({
-  name: TIPTAP_NODE_TYPES.EMAIL_DIVIDER,
+export const DividerNode = Node.create({
+  name: TIPTAP_NODE_TYPES.DIVIDER,
   group: 'block',
   atom: true,
 
@@ -22,15 +22,15 @@ export const EmailDivider = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: 'hr[data-email-divider]' }];
+    return [{ tag: 'hr[data-block-divider]' }];
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
       'hr',
       mergeAttributes(HTMLAttributes, {
-        'data-email-divider': 'true',
-        class: 'email-divider',
+        'data-block-divider': 'true',
+        class: 'block-divider',
       }),
     ];
   },

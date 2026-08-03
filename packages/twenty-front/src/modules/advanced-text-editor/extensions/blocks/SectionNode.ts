@@ -4,8 +4,8 @@ import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 // A full-width block container mapping to a react-email <Section> at send
 // time. Styling (background, padding, border...) lives in the inline CSS
 // `style` attribute, edited through the block settings side panel.
-export const EmailSection = Node.create({
-  name: TIPTAP_NODE_TYPES.EMAIL_SECTION,
+export const SectionNode = Node.create({
+  name: TIPTAP_NODE_TYPES.SECTION,
   group: 'block',
   content: 'block+',
   defining: true,
@@ -20,15 +20,15 @@ export const EmailSection = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-email-section]' }];
+    return [{ tag: 'div[data-block-section]' }];
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(HTMLAttributes, {
-        'data-email-section': 'true',
-        class: 'email-section',
+        'data-block-section': 'true',
+        class: 'block-section',
       }),
       0,
     ];

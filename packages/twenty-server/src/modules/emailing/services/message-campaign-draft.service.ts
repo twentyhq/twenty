@@ -3,7 +3,7 @@ import { Injectable, type Type } from '@nestjs/common';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import {
   EMAIL_DOCUMENT_SCHEMA_VERSION,
-  EMAIL_THEME_DEFAULTS,
+  CANVAS_THEME_DEFAULTS,
   type EmailDocument,
   isDefined,
   parseEmailDocument,
@@ -208,9 +208,9 @@ export class MessageCampaignDraftService {
         ...document.attrs,
         schemaVersion:
           document.attrs?.schemaVersion ?? EMAIL_DOCUMENT_SCHEMA_VERSION,
-        emailTheme: isDefined(document.attrs?.emailTheme)
-          ? document.attrs.emailTheme
-          : EMAIL_THEME_DEFAULTS,
+        canvasTheme: isDefined(document.attrs?.canvasTheme)
+          ? document.attrs.canvasTheme
+          : CANVAS_THEME_DEFAULTS,
       },
     };
   }

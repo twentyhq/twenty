@@ -106,7 +106,7 @@ describe('SaveCampaignTool', () => {
     expect(jsonSchema.properties?.subject).toBeDefined();
     expect(jsonSchema.properties?.body).toBeDefined();
     expect(jsonSchema.required ?? []).toEqual([]);
-    expect(JSON.stringify(jsonSchema)).toContain('emailSection');
+    expect(JSON.stringify(jsonSchema)).toContain('section');
   });
 
   it('should surface domain errors as tool output', async () => {

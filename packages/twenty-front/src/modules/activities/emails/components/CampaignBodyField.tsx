@@ -8,7 +8,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
-import { EmailInsertRail } from '@/advanced-text-editor/components/EmailInsertRail';
+import { InsertRail } from '@/advanced-text-editor/components/InsertRail';
 import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
@@ -68,7 +68,7 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
         preset="campaignBody"
         onEditorReady={handleEditorReady}
       />
-      {isDefined(bodyEditor) && <EmailInsertRail editor={bodyEditor} />}
+      {isDefined(bodyEditor) && <InsertRail editor={bodyEditor} />}
     </StyledContainer>
   );
 };

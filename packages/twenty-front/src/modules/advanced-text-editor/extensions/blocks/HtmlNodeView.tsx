@@ -20,7 +20,7 @@ const neutralizeScripts = (html: string): string =>
     .replace(/<script/gi, '&lt;script')
     .replace(/\son[a-z]+\s*=/gi, ' data-blocked-handler=');
 
-export const EmailHtmlView = ({ node }: EmailHtmlViewProps) => {
+export const HtmlNodeView = ({ node }: EmailHtmlViewProps) => {
   const html = typeof node.attrs.html === 'string' ? node.attrs.html : '';
 
   return (

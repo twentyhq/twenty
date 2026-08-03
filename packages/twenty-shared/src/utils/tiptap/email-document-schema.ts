@@ -105,26 +105,26 @@ const imageNodeSchema = z.looseObject({
 });
 
 const emailSectionNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.EMAIL_SECTION),
+  type: z.literal(TIPTAP_NODE_TYPES.SECTION),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: blockContentSchema.min(1),
 });
 
 const emailColumnNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.EMAIL_COLUMN),
+  type: z.literal(TIPTAP_NODE_TYPES.COLUMN),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: blockContentSchema.min(1),
 });
 
 const emailColumnsNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.EMAIL_COLUMNS),
+  type: z.literal(TIPTAP_NODE_TYPES.COLUMNS),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: z.array(emailColumnNodeSchema).min(2).max(4),
 });
 
 // Buttons forbid marks and atoms in the editor schema, so plain text only.
 const emailButtonNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.EMAIL_BUTTON),
+  type: z.literal(TIPTAP_NODE_TYPES.BUTTON),
   attrs: z.looseObject({
     href: z.string().max(4_000).nullable(),
     style: styleAttributeSchema,
@@ -140,12 +140,12 @@ const emailButtonNodeSchema = z.looseObject({
 });
 
 const emailDividerNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.EMAIL_DIVIDER),
+  type: z.literal(TIPTAP_NODE_TYPES.DIVIDER),
   attrs: z.looseObject({ style: styleAttributeSchema }),
 });
 
 const emailHtmlNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.EMAIL_HTML),
+  type: z.literal(TIPTAP_NODE_TYPES.HTML),
   attrs: z.looseObject({ html: z.string().max(100_000) }),
 });
 
@@ -187,7 +187,7 @@ export const emailDocumentSchema = z.looseObject({
         .min(1)
         .max(EMAIL_DOCUMENT_SCHEMA_VERSION)
         .optional(),
-      emailTheme: emailThemeAttributeSchema.nullable().optional(),
+      canvasTheme: emailThemeAttributeSchema.nullable().optional(),
     })
     .optional(),
   content: blockContentSchema.optional(),

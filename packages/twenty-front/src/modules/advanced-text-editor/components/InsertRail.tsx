@@ -84,18 +84,18 @@ const StyledImageHint = styled.div`
   font-size: ${themeCssVariables.font.size.xs};
 `;
 
-const emailColumnJson = () => ({
-  type: TIPTAP_NODE_TYPES.EMAIL_COLUMN,
+const columnJson = () => ({
+  type: TIPTAP_NODE_TYPES.COLUMN,
   content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
 });
 
-type EmailInsertRailProps = {
+type InsertRailProps = {
   editor: Editor;
 };
 
 // The floating insert rail on the left of the email canvas: text, image and
 // layout blocks, mirroring the slash menu for pointer-first authoring.
-export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
+export const InsertRail = ({ editor }: InsertRailProps) => {
   const { t } = useLingui();
   const [openMenu, setOpenMenu] = useState<
     'text' | 'image' | 'blocks' | 'variables' | null
@@ -199,7 +199,7 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
       Icon: IconBox,
       label: t`Section`,
       content: {
-        type: TIPTAP_NODE_TYPES.EMAIL_SECTION,
+        type: TIPTAP_NODE_TYPES.SECTION,
         content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
       },
     },
@@ -207,35 +207,35 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
       Icon: IconColumns,
       label: t`2 Columns`,
       content: {
-        type: TIPTAP_NODE_TYPES.EMAIL_COLUMNS,
-        content: [emailColumnJson(), emailColumnJson()],
+        type: TIPTAP_NODE_TYPES.COLUMNS,
+        content: [columnJson(), columnJson()],
       },
     },
     {
       Icon: IconColumns,
       label: t`3 Columns`,
       content: {
-        type: TIPTAP_NODE_TYPES.EMAIL_COLUMNS,
-        content: [emailColumnJson(), emailColumnJson(), emailColumnJson()],
+        type: TIPTAP_NODE_TYPES.COLUMNS,
+        content: [columnJson(), columnJson(), columnJson()],
       },
     },
     {
       Icon: IconClick,
       label: t`Button`,
       content: {
-        type: TIPTAP_NODE_TYPES.EMAIL_BUTTON,
+        type: TIPTAP_NODE_TYPES.BUTTON,
         content: [{ type: TIPTAP_NODE_TYPES.TEXT, text: t`Click here` }],
       },
     },
     {
       Icon: IconMinus,
       label: t`Divider`,
-      content: { type: TIPTAP_NODE_TYPES.EMAIL_DIVIDER },
+      content: { type: TIPTAP_NODE_TYPES.DIVIDER },
     },
     {
       Icon: IconCode,
       label: t`HTML`,
-      content: { type: TIPTAP_NODE_TYPES.EMAIL_HTML },
+      content: { type: TIPTAP_NODE_TYPES.HTML },
     },
   ];
 

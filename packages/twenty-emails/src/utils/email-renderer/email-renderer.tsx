@@ -1,11 +1,11 @@
 import { Body, Container, Head, Html } from 'react-email';
 import { type JSONContent } from '@tiptap/core';
-import { type EmailTheme, resolveEmailTheme } from 'twenty-shared/utils';
+import { type CanvasTheme, resolveCanvasTheme } from 'twenty-shared/utils';
 import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
 
 const BASE_STYLE_RESET = `blockquote,h1,h2,h3,img,li,ol,p,ul{margin-top:0;margin-bottom:0}`;
 
-const themedBody = (theme: EmailTheme, children: React.ReactNode) => (
+const themedBody = (theme: CanvasTheme, children: React.ReactNode) => (
   <Body
     style={{
       backgroundColor: theme.pageBackground,
@@ -41,7 +41,7 @@ export const reactMarkupFromJSON = (json: JSONContent | string) => {
   const jsxNodes = mappedNodeContent(json);
   // Documents authored in the campaign composer carry a page theme; other
   // rich text (workflow emails, tool emails) keeps the bare body.
-  const emailTheme = resolveEmailTheme(json.attrs?.emailTheme);
+  const canvasTheme = resolveCanvasTheme(json.attrs?.canvasTheme);
 
   return (
     <Html>
@@ -52,8 +52,8 @@ export const reactMarkupFromJSON = (json: JSONContent | string) => {
           }}
         />
       </Head>
-      {emailTheme !== null ? (
-        themedBody(emailTheme, jsxNodes)
+      {canvasTheme !== null ? (
+        themedBody(canvasTheme, jsxNodes)
       ) : (
         <Body>{jsxNodes}</Body>
       )}

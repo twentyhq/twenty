@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
-import { getEmailBlockSelectionTarget } from '@/advanced-text-editor/utils/getEmailBlockSelectionTarget';
+import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { parseInlineStyle } from '@/advanced-text-editor/utils/parseInlineStyle';
 import { serializeInlineStyle } from '@/advanced-text-editor/utils/serializeInlineStyle';
 import { CampaignBlockSettingsFieldInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
@@ -43,7 +43,7 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const target = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) =>
-      getEmailBlockSelectionTarget(currentEditor),
+      getBlockSelectionTarget(currentEditor),
   });
 
   // With no block selected, the panel edits the page itself, like Resend's

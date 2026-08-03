@@ -20,8 +20,8 @@ import {
 const hasSchemaNode = (editor: Editor, nodeName: string) =>
   isDefined(editor.schema.nodes[nodeName]);
 
-const emailColumnJson = () => ({
-  type: TIPTAP_NODE_TYPES.EMAIL_COLUMN,
+const columnJson = () => ({
+  type: TIPTAP_NODE_TYPES.COLUMN,
   content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
 });
 
@@ -83,21 +83,20 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
   },
   {
-    id: 'emailSection',
+    id: 'section',
     title: msg`Section`,
     description: msg`Styled container for email content`,
     icon: IconBox,
     keywords: [msg`section`, msg`container`, msg`block`, msg`background`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.EMAIL_SECTION),
-    getIsVisible: (editor) =>
-      hasSchemaNode(editor, TIPTAP_NODE_TYPES.EMAIL_SECTION),
+    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.SECTION),
+    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.SECTION),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()
         .focus()
         .deleteRange(range)
         .insertContent({
-          type: TIPTAP_NODE_TYPES.EMAIL_SECTION,
+          type: TIPTAP_NODE_TYPES.SECTION,
           content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
         })
         .run(),
@@ -108,17 +107,16 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     description: msg`Two columns side by side`,
     icon: IconColumns,
     keywords: [msg`columns`, msg`two`, msg`layout`, msg`row`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.EMAIL_COLUMNS),
-    getIsVisible: (editor) =>
-      hasSchemaNode(editor, TIPTAP_NODE_TYPES.EMAIL_COLUMNS),
+    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.COLUMNS),
+    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.COLUMNS),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()
         .focus()
         .deleteRange(range)
         .insertContent({
-          type: TIPTAP_NODE_TYPES.EMAIL_COLUMNS,
-          content: [emailColumnJson(), emailColumnJson()],
+          type: TIPTAP_NODE_TYPES.COLUMNS,
+          content: [columnJson(), columnJson()],
         })
         .run(),
   },
@@ -128,72 +126,68 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     description: msg`Three columns side by side`,
     icon: IconColumns,
     keywords: [msg`columns`, msg`three`, msg`layout`, msg`row`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.EMAIL_COLUMNS),
-    getIsVisible: (editor) =>
-      hasSchemaNode(editor, TIPTAP_NODE_TYPES.EMAIL_COLUMNS),
+    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.COLUMNS),
+    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.COLUMNS),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()
         .focus()
         .deleteRange(range)
         .insertContent({
-          type: TIPTAP_NODE_TYPES.EMAIL_COLUMNS,
-          content: [emailColumnJson(), emailColumnJson(), emailColumnJson()],
+          type: TIPTAP_NODE_TYPES.COLUMNS,
+          content: [columnJson(), columnJson(), columnJson()],
         })
         .run(),
   },
   {
-    id: 'emailButton',
+    id: 'button',
     title: msg`Button`,
     description: msg`Call-to-action button`,
     icon: IconClick,
     keywords: [msg`button`, msg`cta`, msg`link`, msg`action`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.EMAIL_BUTTON),
-    getIsVisible: (editor) =>
-      hasSchemaNode(editor, TIPTAP_NODE_TYPES.EMAIL_BUTTON),
+    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.BUTTON),
+    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.BUTTON),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()
         .focus()
         .deleteRange(range)
         .insertContent({
-          type: TIPTAP_NODE_TYPES.EMAIL_BUTTON,
+          type: TIPTAP_NODE_TYPES.BUTTON,
           content: [{ type: TIPTAP_NODE_TYPES.TEXT, text: 'Click here' }],
         })
         .run(),
   },
   {
-    id: 'emailHtml',
+    id: 'html',
     title: msg`HTML`,
     description: msg`Raw HTML embedded in the email`,
     icon: IconCode,
     keywords: [msg`html`, msg`embed`, msg`code`, msg`custom`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.EMAIL_HTML),
-    getIsVisible: (editor) =>
-      hasSchemaNode(editor, TIPTAP_NODE_TYPES.EMAIL_HTML),
+    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.HTML),
+    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.HTML),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()
         .focus()
         .deleteRange(range)
-        .insertContent({ type: TIPTAP_NODE_TYPES.EMAIL_HTML })
+        .insertContent({ type: TIPTAP_NODE_TYPES.HTML })
         .run(),
   },
   {
-    id: 'emailDivider',
+    id: 'divider',
     title: msg`Divider`,
     description: msg`Horizontal separator line`,
     icon: IconMinus,
     keywords: [msg`divider`, msg`separator`, msg`line`, msg`hr`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.EMAIL_DIVIDER),
-    getIsVisible: (editor) =>
-      hasSchemaNode(editor, TIPTAP_NODE_TYPES.EMAIL_DIVIDER),
+    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.DIVIDER),
+    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.DIVIDER),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()
         .focus()
         .deleteRange(range)
-        .insertContent({ type: TIPTAP_NODE_TYPES.EMAIL_DIVIDER })
+        .insertContent({ type: TIPTAP_NODE_TYPES.DIVIDER })
         .run(),
   },
   {

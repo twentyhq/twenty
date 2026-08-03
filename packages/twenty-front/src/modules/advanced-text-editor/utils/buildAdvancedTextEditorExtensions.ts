@@ -3,7 +3,7 @@ import {
   type AdvancedTextEditorExtensionContext,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorCapabilityExtensions';
 import { buildAdvancedTextEditorCoreExtensions } from '@/advanced-text-editor/constants/AdvancedTextEditorCoreExtensions';
-import { EmailThemeDocument } from '@/advanced-text-editor/extensions/email-blocks/EmailThemeDocument';
+import { ThemedDocument } from '@/advanced-text-editor/extensions/blocks/ThemedDocument';
 import { type AdvancedTextEditorCapability } from '@/advanced-text-editor/types/AdvancedTextEditorCapability';
 import { type AnyExtension } from '@tiptap/core';
 
@@ -23,9 +23,9 @@ export const buildAdvancedTextEditorExtensions = ({
   return [
     // Email surfaces store page-level styling on the doc node itself, so
     // their document type replaces the plain one.
-    ...(capabilities.includes('emailBlocks')
+    ...(capabilities.includes('blocks')
       ? coreExtensions.map((extension) =>
-          extension.name === 'doc' ? EmailThemeDocument : extension,
+          extension.name === 'doc' ? ThemedDocument : extension,
         )
       : coreExtensions),
     ...capabilities

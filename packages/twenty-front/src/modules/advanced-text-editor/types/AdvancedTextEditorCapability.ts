@@ -12,4 +12,4 @@ export type AdvancedTextEditorCapability =
   | 'campaignVariables'
   | 'mentions'
   | 'slashCommand'
-  | 'emailBlocks';
+  | 'blocks';

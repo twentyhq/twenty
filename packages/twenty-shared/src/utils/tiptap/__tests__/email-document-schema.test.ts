@@ -14,7 +14,7 @@ describe('parseEmailDocument', () => {
       type: 'doc',
       attrs: {
         schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION,
-        emailTheme: {
+        canvasTheme: {
           pageBackground: '#f4f4f5',
           bodyBackground: '#ffffff',
           width: '600px',
@@ -44,35 +44,35 @@ describe('parseEmailDocument', () => {
           ],
         },
         {
-          type: 'emailSection',
+          type: 'section',
           attrs: { style: 'padding: 12px; background-color: #eeeeee;' },
           content: [
             paragraph('Inside the section'),
             {
-              type: 'emailSection',
+              type: 'section',
               attrs: { style: 'padding: 4px;' },
               content: [paragraph('Nested')],
             },
           ],
         },
         {
-          type: 'emailColumns',
+          type: 'columns',
           attrs: { style: '' },
           content: [
             {
-              type: 'emailColumn',
+              type: 'column',
               attrs: { style: '' },
               content: [paragraph('Left')],
             },
             {
-              type: 'emailColumn',
+              type: 'column',
               attrs: { style: '' },
               content: [paragraph('Right')],
             },
           ],
         },
         {
-          type: 'emailButton',
+          type: 'button',
           attrs: {
             href: 'https://example.com/{{personId}}',
             style: 'color: #fff;',
@@ -92,8 +92,8 @@ describe('parseEmailDocument', () => {
             href: '',
           },
         },
-        { type: 'emailDivider', attrs: { style: 'border-top-width: 1px;' } },
-        { type: 'emailHtml', attrs: { html: '<p>raw</p>' } },
+        { type: 'divider', attrs: { style: 'border-top-width: 1px;' } },
+        { type: 'html', attrs: { html: '<p>raw</p>' } },
       ],
     };
 
@@ -176,11 +176,11 @@ describe('parseEmailDocument', () => {
       type: 'doc',
       content: [
         {
-          type: 'emailColumns',
+          type: 'columns',
           attrs: { style: '' },
           content: [
             {
-              type: 'emailColumn',
+              type: 'column',
               attrs: { style: '' },
               content: [paragraph('Only')],
             },
@@ -195,7 +195,7 @@ describe('parseEmailDocument', () => {
   it('should reject an empty section', () => {
     const result = parseEmailDocument({
       type: 'doc',
-      content: [{ type: 'emailSection', attrs: { style: '' }, content: [] }],
+      content: [{ type: 'section', attrs: { style: '' }, content: [] }],
     });
 
     expect(result.success).toBe(false);

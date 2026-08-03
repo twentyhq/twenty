@@ -126,7 +126,7 @@ describe('sendableDraftCampaignSchema', () => {
           attrs: { schemaVersion: 1 },
           content: [
             {
-              type: 'emailSection',
+              type: 'section',
               attrs: { style: 'padding: 12px;' },
               content: [
                 {
@@ -136,7 +136,7 @@ describe('sendableDraftCampaignSchema', () => {
               ],
             },
             {
-              type: 'emailButton',
+              type: 'button',
               attrs: { href: 'https://example.com', style: '' },
               content: [{ type: 'text', text: 'Open' }],
             },
