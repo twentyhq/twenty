@@ -48,6 +48,23 @@ const SIGN_OUT_MUTATION = `
   }
 `;
 
+// A workspace object rather than currentUser: workspace types only exist in the
+// schema once a workspace is bound, so a request that is allowed to continue
+// unauthenticated fails with "Cannot query field" instead of an auth error.
+const FIND_COMPANIES_QUERY = `
+  query FindCompanies {
+    companies(first: 1) {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }
+`;
+
+const AUTH_ERROR_CODES = ['UNAUTHENTICATED', 'FORBIDDEN'];
+
 const extractSessionCookie = (
   setCookieHeader: string | string[] | undefined,
 ): string | undefined => {
@@ -205,5 +222,43 @@ describe('Cookie sessions (integration)', () => {
 
     expect(afterSignOut.body.data?.currentUser).toBeFalsy();
     expect(afterSignOut.body.errors).toBeDefined();
+    expect(
+      afterSignOut.body.errors.map(
+        (graphQLError: { extensions?: { code?: string } }) =>
+          graphQLError.extensions?.code,
+      ),
+    ).toEqual(expect.arrayContaining([expect.stringMatching(/UNAUTHENTICATED/)]));
+  });
+
+  it('should answer a revoked cookie with an auth error rather than a schema error', async () => {
+    const disposableSessionCookie = await signInAndGetSessionCookie();
+
+    await asWorkspaceRequest(request(SERVER_URL).post('/metadata'))
+      .set('Cookie', disposableSessionCookie)
+      .send({ query: SIGN_OUT_MUTATION })
+      .expect(200);
+
+    const response = await asWorkspaceRequest(
+      request(SERVER_URL).post('/graphql'),
+    )
+      .set('Cookie', disposableSessionCookie)
+      .send({ query: FIND_COMPANIES_QUERY });
+
+    expect(response.body.errors).toBeDefined();
+
+    const messages = response.body.errors.map(
+      (graphQLError: { message: string }) => graphQLError.message,
+    );
+    const codes = response.body.errors.map(
+      (graphQLError: { extensions?: { code?: string } }) =>
+        graphQLError.extensions?.code,
+    );
+
+    // The client only signs out on an auth code. A missing workspace schema
+    // surfaces as "Cannot query field", which it cannot act on.
+    expect(messages.join(' ')).not.toContain('Cannot query field');
+    expect(codes.some((code: string) => AUTH_ERROR_CODES.includes(code))).toBe(
+      true,
+    );
   });
 });

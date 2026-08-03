@@ -134,25 +134,20 @@ export class MiddlewareService {
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
-  private clearDeadSessionCookieOrThrow(request: Request, error: unknown) {
+  private clearDeadSessionCookie(request: Request, error: unknown) {
     const isCookieAuthenticated = !isNonEmptyString(
       this.jwtWrapperService.extractJwtFromRequest()(request),
     );
 
-    // Narrower than "any credential the pipeline refuses": a user removed from
-    // the workspace fails with USER_WORKSPACE_NOT_FOUND, and clearing on that
-    // would lock them out of signing in on that host.
     const isDeadCredential =
       error instanceof AuthException &&
       DEAD_SESSION_COOKIE_EXCEPTION_CODES.has(error.code);
 
-    if (!isCookieAuthenticated || !isDeadCredential) {
-      throw error;
+    if (!isCookieAuthenticated || !isDeadCredential || !isDefined(request.res)) {
+      return;
     }
 
-    if (isDefined(request.res)) {
-      this.userSessionCookieService.clearSessionCookie(request.res);
-    }
+    this.userSessionCookieService.clearSessionCookie(request.res);
   }
 
   public async hydrateGraphqlRequest(request: Request) {
@@ -169,13 +164,13 @@ export class MiddlewareService {
     try {
       data = await this.accessTokenService.validateTokenByRequest(request);
     } catch (error) {
-      this.clearDeadSessionCookieOrThrow(request, error);
+      // Clearing is a response side effect, never a reason to swallow: letting
+      // the request continue unauthenticated builds the schema without the
+      // workspace, so the client gets "Cannot query field" instead of an auth
+      // error and never learns its session was revoked.
+      this.clearDeadSessionCookie(request, error);
 
-      request.locale =
-        (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
-        SOURCE_LOCALE;
-
-      return;
+      throw error;
     }
 
     const metadataVersion = data.workspace
