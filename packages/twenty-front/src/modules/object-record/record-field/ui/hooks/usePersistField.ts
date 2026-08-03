@@ -269,7 +269,7 @@ export const usePersistField = ({
           return;
         }
 
-        updateOneRecord({
+        await updateOneRecord({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
