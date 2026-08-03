@@ -65,6 +65,20 @@ export const HeaderMenuOpen: Story = {
   },
 };
 
+export const HeaderMenuOpenOnRightClick: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
+
+    const headerMenuButton = await canvas.findByText('Domain Name');
+
+    fireEvent.contextMenu(headerMenuButton);
+
+    await body.findByText('Move right');
+  },
+};
+
 export const HeaderMenuStaysOpenAfterMoveRight: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
