@@ -365,17 +365,30 @@ export class ObjectRecordEventPublisher {
       return [];
     }
 
+    const userRoleId = permissionsContext.userWorkspaceRoleMap[userWorkspaceId];
+
+    if (!isDefined(applicationId)) {
+      return resolveRoleIdsForUser({
+        userRoleId,
+        applicationRoleId: undefined,
+      });
+    }
+
+    const application =
+      permissionsContext.flatApplicationMaps.byId[applicationId];
+
+    // An application that has gone away is not one declaring no role: falling
+    // back to the user alone would widen a stream that is already open.
+    if (!isDefined(application)) {
+      return [];
+    }
+
     return resolveRoleIdsForUser({
-      userRoleId: permissionsContext.userWorkspaceRoleMap[userWorkspaceId],
-      applicationRoleId: isDefined(applicationId)
-        ? permissionsContext.flatApplicationMaps.byId[applicationId]
-            ?.defaultRoleId
-        : undefined,
+      userRoleId,
+      applicationRoleId: application.defaultRoleId,
     });
   }
 
-  // defaultRoleId has no foreign key and can dangle. A bound that cannot be
-  // resolved silences the stream rather than letting the rest decide alone.
   private resolveStreamObjectsPermissions(
     roleIds: string[],
     rolesPermissions: ObjectsPermissionsByRoleId,
