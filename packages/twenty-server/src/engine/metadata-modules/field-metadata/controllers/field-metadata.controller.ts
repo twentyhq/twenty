@@ -53,6 +53,7 @@ import {
   toLegacyFieldMetadataListResponse,
   toLegacyFieldMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
+import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
@@ -68,6 +69,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   PermissionsRestApiExceptionFilter,
   FieldMetadataRestApiExceptionFilter,
   ApplicationRestApiExceptionFilter,
+  FlatEntityMapsRestApiExceptionFilter,
 )
 @UsePipes(new ValidationPipe())
 export class FieldMetadataController {

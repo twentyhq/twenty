@@ -874,12 +874,12 @@ msgid "A display name for this provider"
 msgstr "此供應商的顯示名稱"
 
 #. js-lingui-id: keUlu+
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "A draft already exists"
 msgstr "草案已存在"
 
 #. js-lingui-id: OITESn
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "該工作流程已有一份草案。您確定要刪除它嗎？"
 
@@ -1733,7 +1733,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -2121,11 +2121,6 @@ msgstr "依字母順序"
 msgid "Already in navbar"
 msgstr "已在導覽列中"
 
-#. js-lingui-id: 35jGKh
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Always allow links to this domain"
-msgstr ""
-
 #. js-lingui-id: Fc64QW
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Amazon Q Developer CLI"
@@ -2484,7 +2479,7 @@ msgid "Approved Domains"
 msgstr "已批准的網域"
 
 #. js-lingui-id: VDvaN2
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Apps"
@@ -3392,7 +3387,6 @@ msgstr "無法掃描？ 複製"
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -3762,6 +3756,11 @@ msgstr "選擇按一下電話號碼時的動作"
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "選擇按一下電子郵件地址時的動作"
+
+#. js-lingui-id: kTDEu6
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose where records open by default. Some objects may use a workspace setting"
+msgstr ""
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4222,7 +4221,7 @@ msgid "Conditions applied to records before they appear in this view"
 msgstr "在記錄出現在此檢視之前所套用的條件"
 
 #. js-lingui-id: 14PdY0
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Config"
@@ -5468,6 +5467,11 @@ msgstr "自定義字段設置"
 msgid "Customize fields"
 msgstr "自定義字段"
 
+#. js-lingui-id: s60PUr
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+msgid "Customize how your record page looks."
+msgstr ""
+
 #. js-lingui-id: 0lvH/K
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Customize how your workspace looks."
@@ -5488,10 +5492,10 @@ msgstr "自定義頁面佈局和 UI 結構"
 msgid "Customize record page"
 msgstr "自訂記錄頁面"
 
-#. js-lingui-id: 1KIzk7
+#. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-msgid "Customize the layout for this role"
-msgstr "自訂此角色的版面配置"
+msgid "Customize the workspace record page"
+msgstr ""
 
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -5671,6 +5675,7 @@ msgid "Date"
 msgstr "日期"
 
 #. js-lingui-id: QIIAIQ
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -5679,6 +5684,13 @@ msgstr "日期"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Date field"
 msgstr "日期字段"
+
+#. js-lingui-id: rMlHl2
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Date fields"
+msgstr ""
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
@@ -7122,9 +7134,8 @@ msgid "End date"
 msgstr "結束日期"
 
 #. js-lingui-id: DqIce1
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "End date field"
 msgstr ""
@@ -7414,7 +7425,7 @@ msgid "Enter your two-factor authentication code to confirm."
 msgstr "請輸入您的雙重驗證程式碼以完成確認。"
 
 #. js-lingui-id: GpB8YV
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Enterprise"
@@ -8834,6 +8845,12 @@ msgstr "完整"
 msgid "full admin panel access"
 msgstr "完整管理面板存取權"
 
+#. js-lingui-id: i9zh9T
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Full page"
+msgstr ""
+
 #. js-lingui-id: CU/Sq6
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "full server access"
@@ -8879,7 +8896,7 @@ msgstr "Gemini CLI"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -8993,7 +9010,7 @@ msgid "Go to billing portal"
 msgstr "前往帳單入口網站"
 
 #. js-lingui-id: dHvI9O
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "Go to Draft"
 msgstr "前往草稿"
 
@@ -9227,7 +9244,7 @@ msgid "Headless component"
 msgstr "無頭元件"
 
 #. js-lingui-id: UPqS9C
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 msgid "Health"
 msgstr "健康"
 
@@ -10759,6 +10776,11 @@ msgstr ""
 msgid "Less than or equal"
 msgstr "小於或等於"
 
+#. js-lingui-id: aTNzjg
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+msgid "Let each member decide for themselves"
+msgstr ""
+
 #. js-lingui-id: oCHfGC
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 msgid "Level"
@@ -11390,6 +11412,11 @@ msgstr ""
 msgid "Member of"
 msgstr "成員"
 
+#. js-lingui-id: BWupFm
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+msgid "Member preference"
+msgstr ""
+
 #. js-lingui-id: cNIHA/
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Member removed from workspace"
@@ -11891,6 +11918,12 @@ msgstr "已在應用程式中導覽"
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Navigating in the app"
 msgstr "正在應用程式中導覽"
+
+#. js-lingui-id: UxKoFf
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Navigation"
+msgstr ""
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -12956,9 +12989,8 @@ msgstr "節點"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -13022,6 +13054,11 @@ msgstr "未找到"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow.tsx
 msgid "Not included"
 msgstr "未包含"
+
+#. js-lingui-id: iXlml9
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+msgid "Not recorded"
+msgstr ""
 
 #. js-lingui-id: MTqQMG
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -13471,21 +13508,10 @@ msgstr "開啟 Claude，並預先填入 Twenty 連接器名稱與 MCP URL。"
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "使用 Twenty 的遠端伺服器設定開啟 Cursor 的 MCP 安裝程式。"
 
-#. js-lingui-id: YIqGXO
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Open external link?"
-msgstr ""
-
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
 msgstr "打開Gmail"
-
-#. js-lingui-id: C39K59
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
-msgid "Open in"
-msgstr "打開"
 
 #. js-lingui-id: noLjKT
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -13497,20 +13523,27 @@ msgstr "在應用程式中打開"
 msgid "Open in Roles"
 msgstr "在角色中開啟"
 
-#. js-lingui-id: x57cJf
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Open link"
-msgstr ""
-
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
 msgstr "打開Outlook"
 
+#. js-lingui-id: aL6QIz
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Open records alongside the current page"
+msgstr ""
+
 #. js-lingui-id: p9J4lB
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Open records in"
 msgstr "開啟記錄的方式"
+
+#. js-lingui-id: F7UdSk
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Open records on a dedicated page"
+msgstr ""
 
 #. js-lingui-id: q170S2
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -13709,7 +13742,7 @@ msgid "Output tokens"
 msgstr "輸出權杖"
 
 #. js-lingui-id: in6CUw
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "Override Draft"
 msgstr "覆寫草稿"
 
@@ -14784,14 +14817,9 @@ msgid "Record label"
 msgstr "記錄標籤"
 
 #. js-lingui-id: XueM/X
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Record page"
-msgstr "記錄頁面"
-
-#. js-lingui-id: mAHjRd
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
-msgid "Record Page"
 msgstr "記錄頁面"
 
 #. js-lingui-id: NxW0+c
@@ -16716,10 +16744,14 @@ msgstr "在指令選單（⌘K）中顯示此物件的記錄。"
 msgid "Show value in center"
 msgstr ""
 
+#. js-lingui-id: P7rcbf
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Side panel"
+msgstr ""
+
 #. js-lingui-id: uVg8dY
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 msgid "Side Panel"
 msgstr "側邊面板"
 
@@ -17977,7 +18009,7 @@ msgid "There was an error while updating password."
 msgstr "更新密碼時出現錯誤。"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/components/AiChatThinkingRow.tsx
 msgid "Thinking"
 msgstr "思考中"
 
@@ -19123,8 +19155,9 @@ msgstr ""
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 #: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/ai/components/ChatReferenceChipDisplay.tsx
+#: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
-#: src/modules/ai/components/RecordLink.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
@@ -20352,6 +20385,11 @@ msgstr "按鍵何時禁用"
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "Where"
 msgstr "其中"
+
+#. js-lingui-id: AY1Gaf
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+msgid "Where records of this object open"
+msgstr ""
 
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx

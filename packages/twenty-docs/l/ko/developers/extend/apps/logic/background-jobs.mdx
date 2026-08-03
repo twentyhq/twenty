@@ -1,0 +1,165 @@
+---
+title: 백그라운드 작업
+description: 긴 시간이 걸리거나 속도 제한이 걸린 작업은 모두 인라인으로 처리하지 말고, 또 다른 로직 함수 실행을 큐에 넣어 Twenty 워커에 위임하세요.
+icon: layer-group
+---
+
+로직 함수 실행은 `timeoutSeconds`(최대 900초)로 제한됩니다. 해당 시간 안에 끝나지 않는 모든 작업(전체 재동기화, 레코드별 팬아웃, 속도 제한이 걸린 서드파티 API 등)은 더 작은 실행 단위로 나눠야 합니다.
+
+`enqueueJob`은 바로 그 일을 합니다. Twenty 워커에게 나중에 별도 프로세스와 별도의 타임아웃 한도 내에서 앱의 로직 함수 중 하나를 실행해 달라고 요청합니다. 호출은 즉시 반환됩니다.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## 실행 대기열에 추가하기
+
+`twenty-sdk/logic-function`에서 `enqueueJob`을 가져와서, 실행하려는 로직 함수의 `universalIdentifier`를 가리키도록 설정하세요.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+대상 함수는 다른 트리거와 정확히 동일하게, 핸들러 인자로 `payload`를 전달받습니다. 대상 함수는 호출자와 **동일한 애플리케이션**에 속해야 합니다. 다른 앱의 함수를 대기열에 추가하려고 하면 `Logic function not found` 오류와 함께 거부됩니다.
+
+<Note>
+`enqueueJob`은 작업이 실행을 마쳤을 때가 아니라, 작업이 수락되는 즉시 반환됩니다. 대상 함수의 결과를 반환하지는 않습니다. 결과를 다시 읽어와야 한다면, 대상 함수가 생성한 내용을 [키-값 스토어](/l/ko/developers/extend/apps/logic/key-value-store) 또는 워크스페이스 레코드에 기록하도록 하세요.
+</Note>
+
+## 작업 옵션
+
+| 옵션           | 기본값 | 범위                       | 하는 일                                                           |
+| ------------ | --- | ------------------------ | -------------------------------------------------------------- |
+| `retryLimit` | `0` | `0`–`10`                 | 실행이 예외를 던졌을 때의 추가 재시도 횟수입니다. 두 번 실행해도 안전한 핸들러에 대해서만 이 값을 올리세요. |
+| `delayMs`    | `0` | `0`–`604800000` (7 days) | 실행이 가능해지기 전까지 이만큼 대기합니다.                                       |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**우선순위는 아직 설정할 수 없습니다.** 대기열에 추가된 작업은 항상 가장 낮은 우선순위로 실행되므로, 플랫폼 작업이 애플리케이션 작업보다 뒤로 밀려 지연되는 일은 없습니다. 우선순위를 제어하는 기능은 곧 제공될 예정입니다.
+</Note>
+
+대기열에 추가된 실행은 이를 대기열에 추가한 함수의 실행 사용자를 상속하므로, 동일한 권한으로 동작합니다.
+
+## 사용 예: 긴 동기화를 페이지 단위로 처리하기
+
+전형적인 형태는, 다음 커서를 사용해 *자기 자신*을 다시 대기열에 추가하는 함수입니다. 각 실행은 자신의 타임아웃 안에서 한 페이지 분량의 작업만 처리하고, 더 이상 처리할 것이 없으면 이 체인은 멈춥니다.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## 레코드별로 팬아웃하기
+
+작업이 본질적으로 항목 단위일 때는, 항목마다 하나의 작업을 대기열에 추가하고, 워커들이 인라인 루프를 도는 대신 병렬로 처리하도록 하세요.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## 장시간 실행 작업을 위한 모범 사례
+
+대부분의 장시간 작업은 두 가지 규칙으로 다룰 수 있습니다: **루프 대신 재귀를 사용**하고, **실행마다 한정된 크기의 청크를 처리**하세요.
+
+한 번에 모든 것을 처리하려는 실행은 실패 패턴입니다. 타임아웃에 걸리고, 재시도가 발생하면 전체 작업을 다시 처음부터 시작합니다. 대신, 하나의 청크가 `timeoutSeconds` 안에 여유 있게 끝나도록 크기를 잡고, 현재 위치를 저장한 뒤 다음 실행을 대기열에 추가하세요.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+이 접근이 유효한 이유:
+
+* **청크 크기는 평균이 아니라 가장 느린 항목을 기준으로 정하세요.** `CHUNK_SIZE × 최악의 항목 처리 시간`은 여유를 두고 `timeoutSeconds` 안에 들어와야 합니다. 그렇지 않으면 실행이 중단될 때 청크의 끝부분이 유실됩니다.
+* **종료 조건을 명시적으로 만드세요.** 가득 찬 청크가 반환되었을 때만 재귀적으로 호출하세요. "결과 없음"만을 기준으로 멈추는 체인은, 소스가 중간에 짧은 페이지를 한 번이라도 반환하면 영원히 계속될 수 있습니다.
+* **다음 실행을 대기열에 추가하기 전에 진행 상태를 저장**해서, 실패한 링크가 처음부터가 아니라 마지막으로 완료된 청크부터 다시 시작하도록 하세요.
+* **각 청크는 멱등성을 유지하세요.** 재시도 후에 하나의 청크를 다시 처리하더라도 중복 기록이 발생하지 않도록, 처리 중인 레코드나 외부 ID를 기준으로 쓰기를 수행해야 합니다.
+* **거대한 한 번의 팬아웃보다 청크 단위 체인을 우선적으로 사용**하세요. 작업이 호출 한도(rate limit)가 있는 서드파티에 도달하는 경우, `delayMs`가 있는 체인은 스스로 속도를 조절하지만, 수천 개의 작업을 한 번에 대기열에 추가하면 모두 즉시 실행 가능 상태가 됩니다.
+
+<Warning>
+재시도가 발생하면 전체 핸들러가 다시 실행됩니다. `retryLimit`을 `0`보다 크게 설정하기 전에, 대기열에 추가되는 핸들러가 멱등성을 갖추도록 유지하세요.
+</Warning>

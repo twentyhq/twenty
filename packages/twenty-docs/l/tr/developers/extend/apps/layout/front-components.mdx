@@ -6,6 +6,10 @@ icon: window-maximize
 
 Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan **izole bir Web Worker** içinde çalışırlar — kodunuz, korumalı (sandbox) ve opak kökenli bir iframe içinde yürütülür; ancak UI, o iframe ile sınırlanmak yerine sayfada yerel olarak işlenir.
 
+<Warning>
+Front bileşenleri hâlâ aktif geliştirme aşamasındadır. Kodunuz gerçek bir tarayıcı sayfası yerine kısmi bir DOM üzerinde çalışır, bu nedenle ileri düzey kullanımlar çoğu zaman sessizce başarısız olabilir. [Mevcut sınırlamalara](#current-limitations) bakın.
+</Warning>
+
 ## Ön uç bileşenlerinin kullanılabileceği yerler
 
 Ön uç bileşenler, Twenty içinde üç konumda işlenebilir:
@@ -696,3 +700,72 @@ const Card = () => {
 `useTheme()` bir kanca olduğundan, belirteçleri bileşen gövdesinin içinde okursunuz; böylece değerler her zaman etkin temayı yansıtır. Aynı belirteç haritası, `themeCssVariables` sabiti olarak da dışa aktarılır; ancak ön uç bileşenlerinde `useTheme()` kullanmayı tercih edin — `themeCssVariables` öğesini dolaylı olarak kullanan modül düzeyinde bir sabit, uygulama manifesti çıkarılırken tanımsız olabilir.
 
 Etkin şemaya açıkça dallanmak için, `twenty-sdk/front-component` içindeki `useColorScheme()` ile okuyun; bu kanca `'light'` veya `'dark'` döndürür.
+
+## Mevcut sınırlamalar
+
+Front bileşenleri aktif geliştirme aşamasındadır. Render etme, stil verme ve olayları işleme iyi çalışıyor. Render işleminin *ötesine* geçen her şey (bir öğeyi ölçmek, bir ref üzerinde bir DOM yöntemini çağırmak, ağacınızın dışına portal oluşturmak, tarayıcı depolamasına erişmek) bugün eksik ya da tamamlanmamış durumda ve çoğu sessizce başarısız olur: ne bir istisna fırlatılır ne de TypeScript hatası görülür; çünkü iskeletin türleri tam tarayıcı DOM’una göre tanımlanmıştır.
+
+Bunlardan biri sizi engelliyorsa, önceliklendirilmesi için [bir issue açın](https://github.com/twentyhq/twenty/issues/new/choose).
+
+### Yerleşim ve ölçüm
+
+Henüz hiçbir şey kendisini ölçemiyor.
+
+| API                                                           | Ne olur                                                                                      |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | Fırlatır                                                                                     |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Sessizce `undefined`, bu yüzden `width ?? 0` `0` döner ve `width > 600` her zaman false olur |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` kontrolleri çalışır)                                              |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Fırlatır                                                                                     |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Sessizce `undefined`                                                                         |
+| `new MutationObserver(fn)`                                    | Oluşturulur, ardından `.observe()` fırlatır                                                  |
+
+Bu nedenle recharts `ResponsiveContainer`, Floating UI / Popper, liste sanallaştırma ve sürükleyerek yeniden boyutlandırma henüz çalışmıyor. Bunun yerine yerleşimi CSS ile yapın: stil sayfanız gerçek sayfaya erişir, bu nedenle flexbox, grid, `aspect-ratio`, `clamp()` ve `@container` normal şekilde davranır.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` ve `queueMicrotask` `window.` öneki olmadan çalışır. Yalnızca `window.requestAnimationFrame(...)` ve benzerleri fırlatır.
+</Note>
+
+### DOM erişimi
+
+Bir `ref` size bir `HTMLElement` değil, bir sandbox öğesi verir.
+
+| Ne yazarsınız                                                                                               | Ne olur                                                          | Bunun yerine şunu kullanın                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Fırlatır                                                         | Kontrollü bileşenler; değerleri `event.target` üzerinden okuyun                                             |
+| `element.classList.add(...)`                                                                                | Fırlatır (`classList` `undefined` durumundadır)                  | `className` dizgisini kendiniz oluşturun                                                                    |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Fırlatır                                                         | Çalışan `querySelector()` / `querySelectorAll()`                                                            |
+| `document.activeElement`                                                                                    | Her zaman `undefined`                                            | Odağı `onFocus` / `onBlur` ile takip edin                                                                   |
+| `\<canvas>`                                                                                | Hiçbir şey render etmez, hata yoktur                             | SVG kullanın veya ekranda olmayan bir alana çizip bir `<img src={dataUrl}>` ile gösterin                    |
+| `createPortal(node, document.body)`                                                                         | `isConnected` başarı bildirmesine rağmen hiçbir şey render etmez | `position: absolute` ile satır içi yerleştirilmiş bindirmeler veya kitaplığa kendi konteyner öğenizi iletin |
+
+Portal boşluğu, Radix, Headless UI, MUI ve react-select popover’larının varsayılan olarak hiçbir şey render etmemesinin nedenidir. Çoğu bir container prop kabul eder; onu render ettiğiniz bir öğeye yönlendirin.
+
+### Etkinlikler
+
+Mouse, pointer, touch, sürükleme, klavye, odak, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` ve `animationend`/`transitionend` ana bilgisayara iletilir, ayrıca birkaç tane de öğe başına vardır: `<img>` üzerinde `load`/`error`, `<input>`/`\<textarea>` üzerinde panoya ve bileşime ilişkin olaylar, `\<video>`/`\<audio>` üzerinde medya, `\<details>`/`\<dialog>` üzerinde `toggle`. Bunun dışındaki her şey (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `<img>` üzerinde `onLoad`) uyarı verilmeden kaldırılır.
+
+`document.addEventListener()` ve `window.addEventListener()` hatasız olarak kaydolur ancak asla tetiklenmez; bu yüzden bir sürükleme, işaretçi başladığı öğeden ayrılır ayrılmaz durur. `event.preventDefault()` da geçmez; form gönderimi, `dragover`/`drop` ve bağlantı tıklamaları zaten sizin için korunmuştur.
+
+### Öznitelikler ve stillendirme
+
+Her öğe, kendi özelliklerini host DOM’a iletir (`\<a>` üzerinde `href`, `<img>` üzerinde `src`/`alt`, `<input>` üzerinde `value`/`placeholder`/`disabled` vb.), ayrıca her öğede ortak bir küme vardır: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` ve tireli olan tüm `aria-*` / `data-*` öznitelikleri (bu yüzden `ariaLabel` düşürülür). Bunun dışındaki her şey sessizce atılır, bu yüzden özel durumu `data-*` olarak ifade edin.
+
+Bileşen CSS’i, ister `import './styles.css'` ile, ister CSS-in-JS ile ya da bir `\<style>` öğesinden gelsin, host sayfanın `\<head>` kısmına **scope’suz** olarak enjekte edilir. Bu nedenle sınıf adları Twenty’nin kendi sınıf adlarıyla çakışır (onlara önek ekleyin ve asla çıplak `div { ... }` seçicileri yazmayın) ve `@media`, sizin bileşeniniz yerine tarayıcı penceresini hedefler (kendi `container-type` değerinizle `@container` kullanın). Satır içi `style` prop’ları etkilenmez.
+
+### Depolama ve ağ
+
+`localStorage`, `sessionStorage`, IndexedDB, çerezler, Cache API ve `BroadcastChannel`’ın tümü kullanılamaz, çünkü bileşen opak bir origin’e sahip bir worker içinde çalışır. Durumu kalıcı hale getirmek için bir [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çağırın ve onun [anahtar-değer deposunu](/l/tr/developers/extend/apps/logic/key-value-store) kullanın.
+
+`fetch` çalışır, bazı sınırlamalarla:
+
+* Twenty API’sine ve uygulamanızın rotalarına yapılan çağrılar host tarafından proxy’lenir, bu yüzden [`RestApiClient`](#calling-the-twenty-rest-api) kullanmayı tercih edin. Proxy’lenen çağrılarda `AbortSignal` ve diğer `RequestInit` seçenekleri kaldırılır ve yalnızca `string` ve `URLSearchParams` gövdeleri desteklenir.
+* Diğer origin’ler sandbox’tan `Origin: null` ile çıkar, bu yüzden üçüncü taraf bir API yalnızca `Access-Control-Allow-Origin: *` gönderirse yanıt verir. Bunun yerine onu bir mantık fonksiyonundan çağırın.
+* `fetch('/rest/people')` hiçbir zaman Twenty API’siyle eşleştirilmez, çünkü sandbox’un göreli yolu çözecek bir sayfa URL’si yoktur.
+
+### Diğer eksikler
+
+* **Dosya içerikleri.** `<input type="file">` handler’ınıza yalnızca dosya meta verilerini verir, baytları vermez, bu yüzden `FileReader` ve yüklemeler henüz mümkün değildir.
+* **Sürükle-bırak yükleri.** Sürükleme olayları tetiklenir, ancak `event.dataTransfer` `undefined` durumundadır.
+* **Node yerleşikleri.** `fs`, `path` ve `node:crypto` build aşamasında başarısız olur; bu nedenle bu işi bir [mantık fonksiyonuna](/l/tr/developers/extend/apps/logic/logic-functions) taşıyın. Web Crypto, `fetch`, `TextEncoder` ve `URL` kullanılabilir durumdadır.
+* **`\<iframe>`** her zaman `allow-same-origin` olmadan yeniden sandbox’a alınır, bu nedenle kendi oturumuna güvenen bir yerleştirme, oturum kapalı olarak işlenir. `onLoad`’u da yoktur.

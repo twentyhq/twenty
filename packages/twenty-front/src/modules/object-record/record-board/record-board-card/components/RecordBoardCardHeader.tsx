@@ -16,7 +16,7 @@ import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/us
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { OpenRecordIn } from 'twenty-shared/types';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -76,7 +76,7 @@ export const RecordBoardCardHeader = () => {
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
-    openRecordIn === ViewOpenRecordIn.SIDE_PANEL || isTouchDevice
+    openRecordIn === OpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'
       : 'MOUSE_DOWN';
 

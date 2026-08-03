@@ -60,7 +60,7 @@ La fase di build usa esbuild per produrre un singolo file autonomo per ogni funz
 
 **Le funzioni logiche** vengono eseguite in un ambiente Node.js. I moduli integrati di Node (`fs`, `path`, `crypto`, `http`, ecc.) sono disponibili e non necessitano di essere installati.
 
-**I componenti front-end** vengono eseguiti in un Web Worker. I moduli integrati di Node non sono disponibili — solo le API del browser e i pacchetti npm che funzionano in un ambiente browser.
+**I componenti front-end** vengono eseguiti in un Web Worker. I moduli integrati di Node **non** sono disponibili — solo i pacchetti npm che funzionano in un ambiente browser. Nota che la sandbox implementa un DOM *parziale*, quindi un pacchetto può compilarsi correttamente e comunque fallire in fase di esecuzione; vedi [Limitazioni attuali](/l/it/developers/extend/apps/layout/front-components#current-limitations).
 
 Entrambi gli ambienti hanno `twenty-client-sdk/core` e `twenty-client-sdk/metadata` disponibili come moduli preforniti — questi non vengono inclusi nel bundle ma vengono risolti a runtime dal server.
 

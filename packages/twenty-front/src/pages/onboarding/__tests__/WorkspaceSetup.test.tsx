@@ -47,6 +47,15 @@ jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
   WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
 }));
 
+jest.mock(
+  '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect',
+  () => ({
+    WorkspaceSetupChatKickoffEffect: () => (
+      <div data-testid="chat-kickoff-effect" />
+    ),
+  }),
+);
+
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   Navigate: (props: { to: string }) => {
@@ -93,6 +102,23 @@ describe('WorkspaceSetup', () => {
     expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
     expect(queryByTestId('preamble')).not.toBeInTheDocument();
     expect(getByTestId('header-title')).toHaveTextContent('Ask AI');
+  });
+
+  it('should mount the chat kickoff effect when the post-onboarding hint is set', () => {
+    setIsOnboardingAiChatEnabled(true);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+    const { getByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+
+    expect(getByTestId('chat-kickoff-effect')).toBeInTheDocument();
+  });
+
+  it('should not mount the chat kickoff effect when the post-onboarding hint is not set', () => {
+    setIsOnboardingAiChatEnabled(true);
+
+    const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+
+    expect(queryByTestId('chat-kickoff-effect')).not.toBeInTheDocument();
   });
 
   it('should redirect home when the onboarding ai chat is disabled', () => {

@@ -23,10 +23,11 @@ import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/pro
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
+import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
+import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
@@ -35,7 +36,6 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -85,6 +85,7 @@ export class LogicFunctionExecutorService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -116,7 +117,7 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
   }): Promise<LogicFunctionExecuteResult> {
-    const { flatApplication, flatLogicFunction, flatApplicationVariables } =
+    const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
         workspaceId,
         logicFunctionId,
@@ -131,7 +132,7 @@ export class LogicFunctionExecutorService {
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
-      flatApplicationVariables,
+      applicationVariableMaps,
       userId,
       userWorkspaceId,
     });
@@ -314,31 +315,19 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    const flatApplicationVariableUniversalIdentifiers =
-      applicationVariableMaps.universalIdentifiersByApplicationId[
-        flatApplication.id
-      ] ?? [];
-
-    const flatApplicationVariables = flatApplicationVariableUniversalIdentifiers
-      .map(
-        (universalIdentifier) =>
-          applicationVariableMaps.byUniversalIdentifier[universalIdentifier],
-      )
-      .filter(isDefined);
-
-    return { flatApplication, flatLogicFunction, flatApplicationVariables };
+    return { flatApplication, flatLogicFunction, applicationVariableMaps };
   }
 
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
-    flatApplicationVariables,
+    applicationVariableMaps,
     userId,
     userWorkspaceId,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    flatApplicationVariables: FlatApplicationVariable[];
+    applicationVariableMaps: ApplicationVariableCacheMaps;
     userId?: string;
     userWorkspaceId?: string;
   }) {
@@ -359,10 +348,12 @@ export class LogicFunctionExecutorService {
     const serverVariables = await this.buildServerVariableEnvMap(
       flatApplication.applicationRegistrationId,
     );
-    const workspaceVariables = buildEnvVar(
-      flatApplicationVariables,
-      this.secretEncryptionService,
-    );
+    const workspaceVariables =
+      await this.applicationVariableService.getServerEnvVariables({
+        workspaceId,
+        applicationId: flatApplication.id,
+        applicationVariableMaps,
+      });
 
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',

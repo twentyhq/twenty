@@ -9,6 +9,15 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 
+jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
+  useObjectMetadataItems: () => ({
+    objectMetadataItems: [
+      { nameSingular: 'workflow', openRecordIn: 'RECORD_PAGE' },
+      { nameSingular: 'lead', openRecordIn: 'USER_CHOICE' },
+    ],
+  }),
+}));
+
 const mockNavigateApp = jest.fn();
 const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
@@ -486,7 +495,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
     });
 
-    it('should fall back to full-page navigation when the object cannot open in the side panel', async () => {
+    it('should fall back to full-page navigation when the object is pinned to the record page', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });

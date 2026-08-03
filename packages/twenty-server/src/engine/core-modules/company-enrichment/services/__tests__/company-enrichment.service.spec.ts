@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
@@ -12,11 +11,11 @@ import {
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 describe('CompanyEnrichmentService', () => {
   let service: CompanyEnrichmentService;
-  let userWorkspaceRepository: { findOne: jest.Mock };
+  let userWorkspaceService: { isWorkspaceCreator: jest.Mock };
   let peopleDataLabsCompanyClientService: {
     enrichCompanyByDomain: jest.Mock;
     isEnabled: jest.Mock;
@@ -29,8 +28,12 @@ describe('CompanyEnrichmentService', () => {
   const creatorUserId = 'creator-user-id';
 
   beforeEach(async () => {
-    userWorkspaceRepository = {
-      findOne: jest.fn().mockResolvedValue({ userId: creatorUserId }),
+    userWorkspaceService = {
+      isWorkspaceCreator: jest
+        .fn()
+        .mockImplementation(({ userId }) =>
+          Promise.resolve(userId === creatorUserId),
+        ),
     };
     peopleDataLabsCompanyClientService = {
       enrichCompanyByDomain: jest.fn(),
@@ -46,8 +49,8 @@ describe('CompanyEnrichmentService', () => {
       providers: [
         CompanyEnrichmentService,
         {
-          provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: userWorkspaceRepository,
+          provide: UserWorkspaceService,
+          useValue: userWorkspaceService,
         },
         {
           provide: PeopleDataLabsCompanyClientService,
@@ -214,7 +217,7 @@ describe('CompanyEnrichmentService', () => {
     expect(twentyConfigService.get).toHaveBeenCalledWith(
       'IS_ONBOARDING_AI_CHAT_ENABLED',
     );
-    expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
+    expect(userWorkspaceService.isWorkspaceCreator).not.toHaveBeenCalled();
     expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
     expect(
       peopleDataLabsCompanyClientService.enrichCompanyByDomain,

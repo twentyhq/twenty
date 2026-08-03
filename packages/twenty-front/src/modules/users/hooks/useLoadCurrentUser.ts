@@ -15,6 +15,7 @@ import { useCallback } from 'react';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { type ColorScheme } from 'twenty-ui/input';
 import { useApolloClient } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
@@ -88,6 +89,9 @@ export const useLoadCurrentUser = () => {
       workspaceMember = {
         ...user.workspaceMember,
         colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+        openRecordIn: toOpenRecordInPreference(
+          user.workspaceMember?.openRecordIn,
+        ),
         locale: user.workspaceMember?.locale ?? SOURCE_LOCALE,
       };
 
