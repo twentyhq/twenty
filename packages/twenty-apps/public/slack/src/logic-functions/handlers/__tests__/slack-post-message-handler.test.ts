@@ -123,7 +123,7 @@ describe('slackPostMessageHandler', () => {
     });
   });
 
-  it('should retry as plain text when the workspace rejects markdown_text', async () => {
+  it('should retry as converted mrkdwn when the workspace rejects markdown_text', async () => {
     postMessageMock
       .mockRejectedValueOnce(
         Object.assign(new Error('invalid_arguments'), {
@@ -134,13 +134,13 @@ describe('slackPostMessageHandler', () => {
 
     const result = await slackPostMessageHandler({
       slackChannelId: CHANNEL_ID,
-      messageText: '**hello**',
+      messageText: '**hello**\n- item',
       messageFormat: 'markdown',
     });
 
     expect(postMessageMock).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({ text: '**hello**', mrkdwn: false }),
+      expect.objectContaining({ text: '*hello*\n• item' }),
     );
     expect(result.success).toBe(true);
   });

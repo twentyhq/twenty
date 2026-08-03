@@ -1,6 +1,5 @@
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
-import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { sendSlackMessageWithMarkdownFallback } from 'src/logic-functions/utils/send-slack-message-with-markdown-fallback';
 
@@ -22,14 +21,10 @@ export const slackPostMessageHandler = async (
   const parentTimestamp = parameters.parentMessageTimestamp;
 
   return await sendSlackMessageWithMarkdownFallback({
+    messageText: parameters.messageText,
     messageFormat: parameters.messageFormat,
     failureMessage: 'Failed to post Slack message',
-    sendMessage: async (messageFormat) => {
-      const bodyFields = getSlackChatMessageBodyFields(
-        parameters.messageText,
-        messageFormat,
-      );
-
+    sendMessage: async (bodyFields) => {
       const data = await client.chat.postMessage({
         channel: parameters.slackChannelId,
         thread_ts:
