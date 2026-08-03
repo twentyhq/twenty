@@ -68,13 +68,13 @@ const handleRecallStatusEvent = async ({
   webhookEvent: RecallWebhookEvent;
 }): Promise<RecallWebhookHandlerResult> => {
   const { event, statusCode, statusSubCode } = webhookEvent;
-  const callRecordingStatus = mapRecallEventToCallRecordingStatus({
+  const mappedCallRecordingStatus = mapRecallEventToCallRecordingStatus({
     event,
     statusCode,
     statusSubCode,
   });
 
-  if (isUndefined(callRecordingStatus)) {
+  if (isUndefined(mappedCallRecordingStatus)) {
     return {
       status: 'skipped',
       event,
@@ -94,6 +94,13 @@ const handleRecallStatusEvent = async ({
       reason: 'no matching call recording',
     };
   }
+
+  const callRecordingStatus = resolveStatusAgainstKnownRecording({
+    mappedStatus: mappedCallRecordingStatus,
+    statusCode,
+    callRecording,
+    webhookEvent,
+  });
 
   if (
     isCallRecordingStatusDowngrade({
@@ -220,6 +227,34 @@ const findMatchingCallRecording = async ({
       externalBotId: { eq: webhookEvent.externalBotId },
     })
   )[0];
+};
+
+// Mirrors the snapshot extractor: a known recording artifact rules out NOT_RECORDED.
+const resolveStatusAgainstKnownRecording = ({
+  mappedStatus,
+  statusCode,
+  callRecording,
+  webhookEvent,
+}: {
+  mappedStatus: CallRecordingStatus;
+  statusCode: string | undefined;
+  callRecording: CallRecordingRecord;
+  webhookEvent: RecallWebhookEvent;
+}): CallRecordingStatus => {
+  const hasKnownRecording =
+    !isUndefined(callRecording.externalRecordingId) ||
+    !isUndefined(webhookEvent.externalRecordingId);
+
+  if (
+    mappedStatus !== CallRecordingStatus.NOT_RECORDED ||
+    !hasKnownRecording
+  ) {
+    return mappedStatus;
+  }
+
+  return statusCode === 'fatal'
+    ? CallRecordingStatus.FAILED
+    : CallRecordingStatus.PROCESSING;
 };
 
 const mapRecallEventToCallRecordingStatus = ({

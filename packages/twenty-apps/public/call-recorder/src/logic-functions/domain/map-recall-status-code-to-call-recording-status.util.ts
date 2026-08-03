@@ -8,8 +8,11 @@ export const mapRecallStatusCodeToCallRecordingStatus = ({
   statusCode: string | undefined;
   statusSubCode?: string | undefined;
 }): CallRecordingStatus | undefined => {
-  // The sub code wins: Recall reports no-capture outcomes under both call_ended and fatal.
-  if (isNotRecordedRecallSubCode(statusSubCode)) {
+  // Recall defines no-capture sub codes only on call_ended and fatal; other codes may carry a stale bot-level sub code.
+  if (
+    (statusCode === 'call_ended' || statusCode === 'fatal') &&
+    isNotRecordedRecallSubCode(statusSubCode)
+  ) {
     return CallRecordingStatus.NOT_RECORDED;
   }
 

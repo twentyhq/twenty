@@ -148,14 +148,9 @@ const buildSyncStateFieldUpdates = ({
   ) {
     updateData.status = syncState.status;
 
-    if (syncState.status === CallRecordingStatus.FAILED) {
+    if (isUnavailableCallRecordingStatus(syncState.status)) {
       updateData.callRecorderFailureReason =
         syncState.failureReason ?? 'recall_bot_failed';
-    }
-
-    if (syncState.status === CallRecordingStatus.NOT_RECORDED) {
-      updateData.callRecorderFailureReason =
-        syncState.failureReason ?? 'recall_bot_did_not_record';
     }
   }
 
@@ -180,7 +175,7 @@ const buildSyncStateFieldUpdates = ({
   return updateData;
 };
 
-// The bot completed without ever recording; FAILED rather than COMPLETED because completion bills.
+// The bot completed without ever producing a recording, so nothing was captured.
 const buildMissingArtifactsFailureUpdate = ({
   currentStatus,
   pendingStatus,
@@ -194,16 +189,16 @@ const buildMissingArtifactsFailureUpdate = ({
     isUnavailableCallRecordingStatus(pendingStatus) ||
     isCallRecordingStatusDowngrade({
       fromStatus: currentStatus,
-      toStatus: CallRecordingStatus.FAILED,
+      toStatus: CallRecordingStatus.NOT_RECORDED,
     })
   ) {
     return {};
   }
 
   return {
-    status: CallRecordingStatus.FAILED,
+    status: CallRecordingStatus.NOT_RECORDED,
     callRecorderFailureReason:
-      recallFailureReason ?? 'recording_artifacts_unavailable',
+      recallFailureReason ?? 'recall_bot_did_not_record',
   };
 };
 
