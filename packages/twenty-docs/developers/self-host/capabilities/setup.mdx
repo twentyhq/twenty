@@ -75,6 +75,55 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 3. Restart containers for changes to take effect
 4. Admin panel will show current values but cannot modify them
 
+## Serving the API and the front-end from different hosts
+
+By default the back-end serves the front-end, so the browser and the API share
+one origin and no cross-origin rules apply. Nothing below is needed for that
+setup, which covers most self-hosted deployments.
+
+If you serve them from different hosts, the browser sends credentialed requests
+to the API and every browser origin must be declared. An origin is a scheme,
+host and port, so `https://app.example.com` and `https://api.example.com` are
+different origins, and so are `http://` and `https://` on the same host.
+
+Twenty accepts credentialed requests from:
+
+- `SERVER_URL`
+- `FRONTEND_URL`
+- every entry in `AUTH_COOKIE_ALLOWED_ORIGINS`, comma separated
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com,https://admin.example.com
+```
+
+<Warning>
+**Upgrade note.** Before this release the API answered every origin with
+`Access-Control-Allow-Origin: *` and the front-end sent no credentials, so a
+split-origin deployment worked without declaring anything. The front-end now
+sends credentials on every request, and a browser refuses a credentialed
+response carrying the wildcard. Declare your front-end origin before upgrading
+or the app will fail to load, starting with its first request.
+</Warning>
+
+In multi-workspace mode each workspace is its own origin. If those subdomains
+are cross-origin to the API, list each one. There is no wildcard matching, so
+`*.example.com` is not accepted.
+
+Check what a deployment answers for a given origin with:
+
+```bash
+curl -i -X OPTIONS "$SERVER_URL/graphql" \
+  -H "Origin: https://app.example.com" \
+  -H "Access-Control-Request-Method: POST"
+```
+
+A declared origin is echoed back in `Access-Control-Allow-Origin` alongside
+`Access-Control-Allow-Credentials: true`. An undeclared one returns `*`, which
+browsers reject for credentialed requests.
+
+`AUTH_COOKIE_ALLOWED_ORIGINS` is stored in the database, so it can be changed
+from the admin panel and takes effect without a restart.
+
 ## Multi-Workspace Mode
 
 By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
