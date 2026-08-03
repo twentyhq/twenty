@@ -2104,6 +2104,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "noteTargets": {
         "universalIdentifier": "1c0e0dfe-a01f-58d6-8948-08b93164d03c",
       },
+      "openTaskCount": {
+        "universalIdentifier": "20202020-7d4e-4a1f-9c8b-3e2f1a0b5c6d",
+      },
       "phones": {
         "universalIdentifier": "20202020-0638-448e-8825-439134618022",
       },

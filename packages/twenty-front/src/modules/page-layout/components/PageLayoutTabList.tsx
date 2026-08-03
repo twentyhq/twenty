@@ -27,6 +27,8 @@ import { PageLayoutTabListNewTabDropdownContent } from '@/page-layout/components
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useRecordPageOpenTaskCount } from '@/page-layout/hooks/useRecordPageOpenTaskCount';
+import { getPageLayoutTabTitleWithOpenTaskCount } from '@/page-layout/utils/getPageLayoutTabTitleWithOpenTaskCount';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
@@ -103,9 +105,11 @@ export const PageLayoutTabList = ({
   const { getIcon } = useIcons();
   const { t } = useLingui();
 
+  const openTaskCount = useRecordPageOpenTaskCount();
+
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
-    title: tab.title,
+    title: getPageLayoutTabTitleWithOpenTaskCount({ tab, openTaskCount }),
     Icon: isDefined(tab.icon) ? getIcon(tab.icon) : undefined,
   }));
 

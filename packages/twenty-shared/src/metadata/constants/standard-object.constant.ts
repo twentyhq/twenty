@@ -1789,6 +1789,9 @@ export const STANDARD_OBJECTS = {
       },
       jobTitle: { universalIdentifier: '20202020-b0d0-415a-bef9-640a26dacd9b' },
       phones: { universalIdentifier: '20202020-0638-448e-8825-439134618022' },
+      openTaskCount: {
+        universalIdentifier: '20202020-7d4e-4a1f-9c8b-3e2f1a0b5c6d',
+      },
       avatarUrl: {
         universalIdentifier: '20202020-b8a6-40df-961c-373dc5d2ec21',
       },
