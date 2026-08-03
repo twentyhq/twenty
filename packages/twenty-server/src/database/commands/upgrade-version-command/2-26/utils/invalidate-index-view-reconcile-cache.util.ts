@@ -15,6 +15,10 @@ export const invalidateIndexViewReconcileCache = async ({
     'viewField',
     ...getMetadataRelatedMetadataNames('viewField'),
     'pageLayoutWidget',
+    // Not part of view's declared relations but cascade-deleted by the
+    // database when a soft-deleted view holding a reconciled identifier is
+    // hard-deleted (navigationMenuItem.viewId is ON DELETE CASCADE).
+    'navigationMenuItem',
   ] as const;
 
   await workspaceMigrationRunnerService.invalidateCache({
