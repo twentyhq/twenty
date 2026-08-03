@@ -3508,6 +3508,7 @@ msgstr "لا يمكن رفع أكثر من {maxNumberOfValues} ملف"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 #: src/pages/auth/PasswordReset.tsx
@@ -9560,6 +9561,11 @@ msgstr "إذا"
 msgid "If there's no link, no button will appear."
 msgstr "إذا لم يكن هناك رابط، فلن يظهر أي زر."
 
+#. js-lingui-id: X4iihZ
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "If this email is registered, a password reset link has been sent"
+msgstr ""
+
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
@@ -13922,11 +13928,6 @@ msgstr "تم تحديث كلمة السر"
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password must be between 8 and 50 characters"
 msgstr "يجب أن تكون كلمة المرور بين 8 و50 حرفًا"
-
-#. js-lingui-id: mi6Rel
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Password reset link has been sent to the email"
-msgstr "تم إرسال رابط إعادة تعيين كلمة السر إلى البريد الإلكتروني"
 
 #. js-lingui-id: BFjW8X
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
