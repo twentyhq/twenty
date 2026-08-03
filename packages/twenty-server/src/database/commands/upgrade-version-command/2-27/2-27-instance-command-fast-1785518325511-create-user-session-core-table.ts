@@ -32,16 +32,11 @@ export class CreateUserSessionCoreTableFastInstanceCommand
           REFERENCES "core"."user"("id") ON DELETE CASCADE,
         CONSTRAINT "FK_USER_SESSION_WORKSPACE_ID" FOREIGN KEY ("workspaceId")
           REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
-        -- Removing someone from a workspace deletes the membership, not the
-        -- workspace, so without this their session would sit in the devices
-        -- list until expiry while already failing every request it carries.
         CONSTRAINT "FK_USER_SESSION_USER_WORKSPACE_ID" FOREIGN KEY ("userWorkspaceId")
           REFERENCES "core"."userWorkspace"("id") ON DELETE CASCADE
       )`,
     );
 
-    // The table is created empty in this same transaction, so there is nothing
-    // to lock or scan.
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_USER_SESSION_TOKEN_HASH_UNIQUE" ON "core"."userSession" ("tokenHash")`,
     );
