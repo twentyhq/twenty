@@ -8,10 +8,10 @@ const NO_COMPANY_CONTEXT_LINE =
   'No information about the company that owns this workspace is available.';
 
 const FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT =
-  'Do not greet them again, the page above already welcomed them by name. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then a couple of lines on what you already know about their company, tailored to their business and specific enough to show you did your homework rather than reciting data points, written the way a colleague would rather than a form. When their job title is in your user context, say you see them doing that at the company and shape the setup around it; when it is missing, ask what they do there instead of guessing. Invite them to correct anything. End with ask_questions offering to propose a data model from what you know, or to hear first what they want to use Twenty for and anything else worth knowing. Present the data model proposal described below once they answer.';
+  'Do not greet them again, the page above already welcomed them by name. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then a couple of lines on what you already know about their company, tailored to their business and specific enough to show you did your homework rather than reciting data points, written the way a colleague would rather than a form. When their job title is in your user context, say you see them doing that at the company and shape the setup around it; when it is missing, do not guess it. Invite them to correct anything, and present the data model proposal described below once they answer. Close this reply with an ask_questions call offering to propose a data model from what you know, or to hear first what they want to use Twenty for and anything else worth knowing.';
 
 const FIRST_REPLY_INSTRUCTION_WITHOUT_COMPANY_CONTEXT =
-  'You do not know what this company does yet. Do not greet them again, the page above already welcomed them by name. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then call ask_questions to learn what the business does, who its customers are, and what they want to use Twenty for, offering the most likely answers as options. Once the user answers, present the data model proposal described below before doing anything else.';
+  'You do not know what this company does yet. Do not greet them again, the page above already welcomed them by name. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, and present the data model proposal described below once they answer. Close this reply with a call ask_questions to learn what the business does, who its customers are, and what they want to use Twenty for, offering the most likely answers as options.';
 
 export const buildWorkspaceSetupPromptText = ({
   companyEnrichment,
@@ -43,6 +43,8 @@ Set up a real workspace this team will keep using, not a demo, each step showing
 This first reply ends with a required ask_questions call. It needs no skill and no learn_tools step, so call it directly. Before it, do not call load_skills, learn_tools, execute_tool, or web search: write your text first so it starts streaming immediately.
 
 ${firstReplyInstruction}
+
+A written question does not count: this reply is unfinished until the ask_questions call is made, so make it before you stop.
 
 ## The data model proposal
 

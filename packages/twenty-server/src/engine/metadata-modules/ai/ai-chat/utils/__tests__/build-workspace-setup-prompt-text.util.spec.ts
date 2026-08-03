@@ -42,7 +42,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('Do not greet them again');
     expect(result).toContain('what you already know about their company');
     expect(result).toContain('When their job title is in your user context');
-    expect(result).toContain('ask what they do there instead of guessing');
+    expect(result).toContain('when it is missing, do not guess it');
     expect(result).toContain('what they want to use Twenty for');
     expect(result).not.toContain('You do not know what this company does yet');
   });
@@ -54,6 +54,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('required ask_questions call');
+    expect(result).toContain('A written question does not count');
     expect(result).toContain('needs no skill and no learn_tools step');
     expect(result).toContain(
       'do not call load_skills, learn_tools, execute_tool, or web search',
