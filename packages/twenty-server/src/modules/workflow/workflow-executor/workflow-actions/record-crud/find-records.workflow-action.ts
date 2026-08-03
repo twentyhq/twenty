@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -24,7 +25,7 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
-const coerceToNumberOrUndefined = (
+const resolveLimit = (
   value: number | string | undefined,
 ): number | undefined => {
   if (!isDefined(value)) {
@@ -33,7 +34,27 @@ const coerceToNumberOrUndefined = (
 
   const parsedValue = Number(value);
 
-  return Number.isFinite(parsedValue) ? parsedValue : undefined;
+  if (!Number.isFinite(parsedValue)) {
+    return undefined;
+  }
+
+  return Math.min(Math.max(Math.floor(parsedValue), 1), QUERY_MAX_RECORDS);
+};
+
+const resolveOffset = (
+  value: number | string | undefined,
+): number | undefined => {
+  if (!isDefined(value)) {
+    return undefined;
+  }
+
+  const parsedValue = Number(value);
+
+  if (!Number.isFinite(parsedValue)) {
+    return undefined;
+  }
+
+  return Math.max(0, Math.floor(parsedValue));
 };
 
 @Injectable()
@@ -116,8 +137,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       objectName: workflowActionInput.objectName,
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
-      limit: coerceToNumberOrUndefined(workflowActionInput.limit),
-      offset: coerceToNumberOrUndefined(workflowActionInput.offset),
+      limit: resolveLimit(workflowActionInput.limit),
+      offset: resolveOffset(workflowActionInput.offset),
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
       shouldBuildEffectiveSelectFields: false,

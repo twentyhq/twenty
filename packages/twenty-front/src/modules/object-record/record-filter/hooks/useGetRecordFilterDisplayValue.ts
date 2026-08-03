@@ -37,8 +37,10 @@ export const useGetRecordFilterDisplayValue = () => {
       return '';
     }
 
-    if (isStandaloneVariableString(recordFilter.value)) {
-      return recordFilter.value;
+    const filterValue = recordFilter.value;
+
+    if (isStandaloneVariableString(filterValue)) {
+      return filterValue;
     }
 
     const filterType = recordFilter.type;
