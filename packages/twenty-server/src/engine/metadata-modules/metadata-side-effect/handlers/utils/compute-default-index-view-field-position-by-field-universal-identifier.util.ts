@@ -7,12 +7,12 @@ export const computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier = ({
   applicationUniversalIdentifier,
   objectMetadataUniversalIdentifier,
   labelIdentifierFieldMetadataUniversalIdentifier,
-  displayableCallerFlatFieldMetadatas,
+  callerFlatFieldMetadatas,
 }: {
   applicationUniversalIdentifier: string;
   objectMetadataUniversalIdentifier: string;
   labelIdentifierFieldMetadataUniversalIdentifier: string | null;
-  displayableCallerFlatFieldMetadatas: UniversalFlatFieldMetadata[];
+  callerFlatFieldMetadatas: UniversalFlatFieldMetadata[];
 }): Map<string, number> => {
   const displayableSystemFlatFieldMetadatas = Object.values(
     buildReservedSystemFlatFieldMetadatasForCustomObject({
@@ -28,17 +28,16 @@ export const computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier = ({
     }),
   );
 
-  const orderedDisplayableFlatFieldMetadatas =
-    orderFlatFieldMetadatasForSystemIndexView({
-      labelIdentifierFieldMetadataUniversalIdentifier,
-      flatFieldMetadatas: [
-        ...displayableCallerFlatFieldMetadatas,
-        ...displayableSystemFlatFieldMetadatas,
-      ],
-    });
+  const orderedFlatFieldMetadatas = orderFlatFieldMetadatasForSystemIndexView({
+    labelIdentifierFieldMetadataUniversalIdentifier,
+    flatFieldMetadatas: [
+      ...callerFlatFieldMetadatas,
+      ...displayableSystemFlatFieldMetadatas,
+    ],
+  });
 
   return new Map(
-    orderedDisplayableFlatFieldMetadatas.map((flatFieldMetadata, position) => [
+    orderedFlatFieldMetadatas.map((flatFieldMetadata, position) => [
       flatFieldMetadata.universalIdentifier,
       position,
     ]),

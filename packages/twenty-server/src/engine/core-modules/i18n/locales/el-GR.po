@@ -5298,11 +5298,6 @@ msgstr "Δεν βρέθηκε έγκυρο πλαίσιο ελέγχου ταυ�
 msgid "No verified sending domain matches this from address."
 msgstr ""
 
-#. js-lingui-id: AzXrd9
-#: src/engine/core-modules/auth/services/reset-password.service.ts
-msgid "No workspace found with password auth enabled."
-msgstr "Δεν βρέθηκε χώρος εργασίας με ενεργοποιημένο τον έλεγχο ταυτότητας με κωδικό πρόσβασης."
-
 #. js-lingui-id: PeK0HP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgid "Normalized diarized transcript"
@@ -5976,11 +5971,6 @@ msgstr "Δεν βρέθηκε γονική ομάδα φίλτρων προβο�
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
 msgstr "Ο κωδικός πρόσβασης είναι πολύ αδύναμος."
-
-#. js-lingui-id: cd6AP5
-#: src/engine/core-modules/auth/services/reset-password.service.ts
-msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
-msgstr "Το διακριτικό επαναφοράς κωδικού πρόσβασης έχει ήδη δημιουργηθεί. Παρακαλούμε περιμένετε {timeToWait} πριν το δημιουργήσετε ξανά."
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -8737,7 +8727,6 @@ msgstr "Ο χρήστης δεν αποτελεί μέρος του χώρου �
 
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/auth/services/reset-password.service.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/user/user.exception.ts
 msgid "User not found."
