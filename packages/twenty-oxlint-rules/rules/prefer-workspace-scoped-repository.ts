@@ -15,6 +15,8 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   // nullable workspaceId — both rows support instance-level and per-workspace use
   'KeyValuePairEntity',
   'UpgradeMigrationEntity',
+  // user-scoped auth sessions; workspaceId is null for workspace-agnostic sessions
+  'UserSessionEntity',
 
   'ApplicationVariableEntity',
   'BillingMeterEntity',
