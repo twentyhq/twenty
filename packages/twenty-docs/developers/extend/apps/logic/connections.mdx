@@ -180,7 +180,8 @@ Each connection has:
 | `scopes`          | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
 | `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
 | `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
-| `name` / `handle` | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
+| `name`            | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
+| `handle`          | The connecting user's email at the time of connection; refreshed on each reconnect                          |
 | `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
 
 Key points:
