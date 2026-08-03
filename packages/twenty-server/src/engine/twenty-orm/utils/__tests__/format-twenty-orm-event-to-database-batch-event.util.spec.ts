@@ -1,4 +1,7 @@
-import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordDeleteEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -84,6 +87,48 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
     user: { id: 'user-id' },
     workspaceMemberId: 'workspace-member-id',
   } as any;
+
+  describe('DELETED action', () => {
+    it('should create a delete event when the soft-deleted record is included in recordsAfter', () => {
+      const beforeEntities = [
+        {
+          id: 'record-1',
+          name: 'John Doe',
+          deletedAt: null,
+        },
+      ];
+
+      const afterEntities = [
+        {
+          id: 'record-1',
+          name: 'John Doe',
+          deletedAt: new Date(),
+        },
+      ];
+
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DELETED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsAfter: afterEntities,
+        recordsBefore: beforeEntities,
+      });
+
+      expect(result).toBeDefined();
+      expect(result?.action).toBe(DatabaseEventAction.DELETED);
+      expect(result?.events).toHaveLength(1);
+
+      const deleteEvent = result?.events[0] as ObjectRecordDeleteEvent<
+        (typeof afterEntities)[0]
+      >;
+
+      expect(deleteEvent.recordId).toBe('record-1');
+      expect(deleteEvent.properties?.before?.name).toBe('John Doe');
+      expect(deleteEvent.properties?.after?.deletedAt).toBeInstanceOf(Date);
+    });
+  });
 
   describe('UPDATED action', () => {
     it('should throw TwentyORMException when no matching before entity is found in array of beforeEntities', () => {

@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import {
   ObjectRecordCreateEvent,
   ObjectRecordDeleteEvent,
@@ -27,6 +29,10 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+
+const databaseEventLogger = new Logger(
+  'formatTwentyOrmEventToDatabaseBatchEvent',
+);
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
   T extends ObjectLiteral,
@@ -255,6 +261,23 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   }
 
   if (!events.length) {
+    if (
+      (action === DatabaseEventAction.DELETED ||
+        action === DatabaseEventAction.RESTORED) &&
+      isNonEmptyArray(recordsBefore)
+    ) {
+      databaseEventLogger.warn(
+        JSON.stringify({
+          event: 'database_event_batch_empty_after_formatting',
+          action,
+          objectMetadataNameSingular,
+          workspaceId,
+          recordsBeforeCount: recordsBefore.length,
+          recordsAfterCount: recordsAfter?.length ?? 0,
+        }),
+      );
+    }
+
     return;
   }
 
