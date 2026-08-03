@@ -1,23 +1,32 @@
 import { type SlackMessageBodyFormat } from 'src/logic-functions/types/slack-message-body-format.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
+import { convertMarkdownToSlackMrkdwn } from 'src/logic-functions/utils/convert-markdown-to-slack-mrkdwn';
+import {
+  getSlackChatMessageBodyFields,
+  type SlackChatMessageBodyFields,
+} from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { isSlackMarkdownFormatError } from 'src/logic-functions/utils/is-slack-markdown-format-error';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
 type SendSlackMessageWithMarkdownFallbackParams = {
+  messageText: string;
   messageFormat: SlackMessageBodyFormat | undefined;
   failureMessage: string;
   sendMessage: (
-    messageFormat: SlackMessageBodyFormat | undefined,
+    bodyFields: SlackChatMessageBodyFields,
   ) => Promise<SlackToolResult>;
 };
 
 export const sendSlackMessageWithMarkdownFallback = async ({
+  messageText,
   messageFormat,
   failureMessage,
   sendMessage,
 }: SendSlackMessageWithMarkdownFallbackParams): Promise<SlackToolResult> => {
   try {
-    return await sendMessage(messageFormat);
+    return await sendMessage(
+      getSlackChatMessageBodyFields(messageText, messageFormat),
+    );
   } catch (error) {
     if (messageFormat !== 'markdown' || !isSlackMarkdownFormatError(error)) {
       return slackToolFailure(failureMessage, error);
@@ -25,7 +34,9 @@ export const sendSlackMessageWithMarkdownFallback = async ({
   }
 
   try {
-    return await sendMessage('plain');
+    return await sendMessage({
+      text: convertMarkdownToSlackMrkdwn(messageText),
+    });
   } catch (error) {
     return slackToolFailure(failureMessage, error);
   }
