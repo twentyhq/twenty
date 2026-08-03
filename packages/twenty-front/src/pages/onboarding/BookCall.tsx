@@ -50,11 +50,14 @@ export const BookCall = () => {
   const onboardingStatus = useOnboardingStatus();
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
 
-  if (!isNonEmptyString(calendarBookingPageId)) {
+  const isOnboardingStep = onboardingStatus === OnboardingStatus.BOOK_CALL;
+  const hasBookingPage = isNonEmptyString(calendarBookingPageId);
+
+  // Never redirect out of the step itself: the page-change effect routes
+  // BOOK_CALL back here, so the two would bounce off each other.
+  if (!hasBookingPage && !isOnboardingStep) {
     return <Navigate to={AppPath.PlanRequired} replace />;
   }
-
-  const isOnboardingStep = onboardingStatus === OnboardingStatus.BOOK_CALL;
 
   return (
     <StyledPage>
@@ -69,9 +72,11 @@ export const BookCall = () => {
         </OnboardingStepAnimatedItem>
       </StyledOnboardingStepHeading>
 
-      <StyledEmbed index={2}>
-        <BookCallEmbed calendarBookingPageId={calendarBookingPageId} />
-      </StyledEmbed>
+      {hasBookingPage && (
+        <StyledEmbed index={2}>
+          <BookCallEmbed calendarBookingPageId={calendarBookingPageId} />
+        </StyledEmbed>
+      )}
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>

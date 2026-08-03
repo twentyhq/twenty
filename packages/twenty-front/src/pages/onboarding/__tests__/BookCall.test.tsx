@@ -71,9 +71,20 @@ describe('BookCall', () => {
   });
 
   it('should redirect to the plan step rather than render an empty embed', () => {
+    mockOnboardingStatus.mockReturnValue(OnboardingStatus.PLAN_REQUIRED);
+
     renderPage();
 
     expect(screen.getByText('Choose your plan')).toBeInTheDocument();
+    expect(screen.queryByTestId('book-call-embed')).not.toBeInTheDocument();
+  });
+
+  it('should stay on the step without an embed rather than bounce against the redirect engine', () => {
+    renderPage();
+
+    expect(screen.getByText('Talk to our team')).toBeInTheDocument();
+    expect(screen.getByText('Skip')).toBeInTheDocument();
+    expect(screen.queryByText('Choose your plan')).not.toBeInTheDocument();
     expect(screen.queryByTestId('book-call-embed')).not.toBeInTheDocument();
   });
 });
