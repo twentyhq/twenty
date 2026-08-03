@@ -139,7 +139,9 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         }
 
         const updatedFieldNames =
-          updateEvent.properties.updatedFields ?? Object.keys(updatedRecord);
+          (updateEvent.properties.updatedFields ?? Object.keys(updatedRecord)).filter(
+            (fieldName) => fieldName in updatedRecord,
+          );
 
         const hasThisEventChangedAnyFieldValue = updatedFieldNames.some(
           (fieldName) =>
