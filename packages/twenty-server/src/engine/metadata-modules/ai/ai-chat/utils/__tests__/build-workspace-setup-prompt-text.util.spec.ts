@@ -41,9 +41,8 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('tailored to their business');
     expect(result).toContain('Do not greet them again');
     expect(result).toContain('what you already know about their company');
-    expect(result).toContain(
-      'say what they do there, since you do not know their role',
-    );
+    expect(result).toContain('When their job title is in your user context');
+    expect(result).toContain('ask what they do there instead of guessing');
     expect(result).toContain('what they want to use Twenty for');
     expect(result).not.toContain('You do not know what this company does yet');
   });
