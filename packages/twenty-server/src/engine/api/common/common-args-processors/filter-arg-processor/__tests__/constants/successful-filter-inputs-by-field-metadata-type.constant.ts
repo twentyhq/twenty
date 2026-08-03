@@ -128,6 +128,7 @@ export const successfulFilterInputsByFieldMetadataType: {
   ],
   [FieldMetadataType.MULTI_SELECT]: [
     { filter: { multiSelectField: { containsAny: ['OPTION_1'] } } },
+    { filter: { multiSelectField: { containsExactly: ['OPTION_1'] } } },
     { filter: { multiSelectField: { is: 'NULL' } } },
     { filter: { multiSelectField: { is: 'NOT_NULL' } } },
     { filter: { multiSelectField: { isEmptyArray: true } } },

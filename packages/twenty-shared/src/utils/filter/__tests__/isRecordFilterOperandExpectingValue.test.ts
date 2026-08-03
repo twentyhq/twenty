@@ -17,6 +17,8 @@ describe('isRecordFilterOperandExpectingValue', () => {
     ViewFilterOperand.IS_NOT,
     ViewFilterOperand.CONTAINS,
     ViewFilterOperand.DOES_NOT_CONTAIN,
+    ViewFilterOperand.IS_EXACTLY,
+    ViewFilterOperand.IS_NOT_EXACTLY,
     ViewFilterOperand.GREATER_THAN_OR_EQUAL,
     ViewFilterOperand.LESS_THAN_OR_EQUAL,
     ViewFilterOperand.IS_BEFORE,

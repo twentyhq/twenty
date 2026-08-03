@@ -57,6 +57,62 @@ describe('isMatchingMultiSelectFilter', () => {
     });
   });
 
+  describe('containsExactly', () => {
+    it('should return true when value holds exactly the filter options', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsExactly: ['A', 'B'] },
+          value: ['A', 'B'],
+        }),
+      ).toBe(true);
+    });
+
+    it('should ignore option order', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsExactly: ['A', 'B'] },
+          value: ['B', 'A'],
+        }),
+      ).toBe(true);
+    });
+
+    it('should return false when value holds an extra option', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsExactly: ['A', 'B'] },
+          value: ['A', 'B', 'C'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false when value misses one of the filter options', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsExactly: ['A', 'B'] },
+          value: ['A'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false for an empty value array', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsExactly: ['A'] },
+          value: [],
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false for null value', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsExactly: ['A'] },
+          value: null,
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('isEmptyArray', () => {
     it('should return true for empty array', () => {
       expect(

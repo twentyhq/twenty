@@ -14,6 +14,19 @@ export const isMatchingMultiSelectFilter = ({
         multiSelectFilter.containsAny.some((item) => value.includes(item))
       );
     }
+    case multiSelectFilter.containsExactly !== undefined: {
+      if (!Array.isArray(value)) {
+        return false;
+      }
+
+      const expectedOptions = new Set(multiSelectFilter.containsExactly);
+      const actualOptions = new Set(value);
+
+      return (
+        expectedOptions.size === actualOptions.size &&
+        [...expectedOptions].every((option) => actualOptions.has(option))
+      );
+    }
     case multiSelectFilter.isEmptyArray !== undefined: {
       return Array.isArray(value) && value.length === 0;
     }

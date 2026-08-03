@@ -10,6 +10,8 @@ describe('getOperandLabel', () => {
   const testCases = [
     [ViewFilterOperand.CONTAINS, 'Contains'],
     [ViewFilterOperand.DOES_NOT_CONTAIN, "Doesn't contain"],
+    [ViewFilterOperand.IS_EXACTLY, 'Is exactly'],
+    [ViewFilterOperand.IS_NOT_EXACTLY, 'Is not exactly'],
     [ViewFilterOperand.GREATER_THAN_OR_EQUAL, 'Greater than or equal'],
     [ViewFilterOperand.LESS_THAN_OR_EQUAL, 'Less than or equal'],
     [ViewFilterOperand.IS, 'Is'],
@@ -34,6 +36,8 @@ describe('getOperandLabelShort', () => {
     [ViewFilterOperand.CONTAINS, ': '],
     [ViewFilterOperand.IS_NOT, ': Not'],
     [ViewFilterOperand.DOES_NOT_CONTAIN, ': Not'],
+    [ViewFilterOperand.IS_EXACTLY, ': Exactly'],
+    [ViewFilterOperand.IS_NOT_EXACTLY, ': NotExactly'],
     [ViewFilterOperand.IS_NOT_NULL, ': NotNull'],
     [ViewFilterOperand.GREATER_THAN_OR_EQUAL, '\u00A0≥ '],
     [ViewFilterOperand.LESS_THAN_OR_EQUAL, '\u00A0≤ '],

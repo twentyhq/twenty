@@ -162,6 +162,32 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
   return String(leftValue).includes(String(rightValue));
 }
 
+// Multi-select values arrive as an array on the left and a JSON-encoded array on
+// the right, and option order carries no meaning, so compare them as sets.
+function isExactly(leftValue: unknown, rightValue: unknown): boolean {
+  let comparableRightValue = rightValue;
+
+  if (isString(rightValue)) {
+    try {
+      comparableRightValue = JSON.parse(rightValue);
+    } catch {
+      comparableRightValue = rightValue;
+    }
+  }
+
+  if (Array.isArray(leftValue) && Array.isArray(comparableRightValue)) {
+    const leftOptions = new Set(leftValue);
+    const rightOptions = new Set(comparableRightValue);
+
+    return (
+      leftOptions.size === rightOptions.size &&
+      [...rightOptions].every((option) => leftOptions.has(option))
+    );
+  }
+
+  return isEqual(leftValue, rightValue);
+}
+
 function evaluateTextAndArrayFilter(
   filter: ResolvedFilter,
   filterType: string,
@@ -191,6 +217,10 @@ function evaluateTextAndArrayFilter(
       return isEqual(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
       return !isEqual(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IS_EXACTLY:
+      return isExactly(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IS_NOT_EXACTLY:
+      return !isExactly(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
@@ -467,6 +497,10 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
       return leftValue == rightValue;
     case ViewFilterOperand.IS_NOT:
       return leftValue != rightValue;
+    case ViewFilterOperand.IS_EXACTLY:
+      return leftValue === rightValue;
+    case ViewFilterOperand.IS_NOT_EXACTLY:
+      return leftValue !== rightValue;
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(leftValue);
     case ViewFilterOperand.IS_NOT_EMPTY:

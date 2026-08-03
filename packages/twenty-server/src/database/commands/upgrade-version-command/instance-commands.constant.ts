@@ -133,6 +133,7 @@ import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instan
 import { CreatePersonDuplicateReviewTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785466013136-create-person-duplicate-review-tables';
 import { AddConnectedAccountHandleProviderIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785420705255-add-connected-account-handle-provider-index';
 import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785504900000-add-open-record-in-to-object-metadata';
+import { AddIsExactlyViewFilterOperandsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785774996477-add-is-exactly-view-filter-operands';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -268,4 +269,5 @@ export const INSTANCE_COMMANDS = [
   CreatePersonDuplicateReviewTablesFastInstanceCommand,
   AddConnectedAccountHandleProviderIndexFastInstanceCommand,
   AddOpenRecordInToObjectMetadataFastInstanceCommand,
+  AddIsExactlyViewFilterOperandsFastInstanceCommand,
 ];

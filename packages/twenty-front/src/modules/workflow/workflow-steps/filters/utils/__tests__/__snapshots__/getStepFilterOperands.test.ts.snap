@@ -22,6 +22,8 @@ exports[`getStepFilterOperands ACTOR returns TEXT operands when subFieldName is 
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -31,6 +33,8 @@ exports[`getStepFilterOperands ACTOR returns TEXT operands when subFieldName is 
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -71,6 +75,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=ADDR
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -123,6 +129,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=EMAI
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -132,6 +140,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=FULL
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -141,6 +151,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=LINK
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -150,6 +162,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=MULT
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -181,6 +195,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=PHON
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -228,6 +244,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=TEXT
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS_EXACTLY",
+  "IS_NOT_EXACTLY",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]

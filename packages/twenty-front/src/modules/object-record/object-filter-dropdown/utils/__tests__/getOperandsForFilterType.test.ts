@@ -15,6 +15,11 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.DOES_NOT_CONTAIN,
   ];
 
+  const exactOperands = [
+    RecordFilterOperand.IS_EXACTLY,
+    RecordFilterOperand.IS_NOT_EXACTLY,
+  ];
+
   const numberOperands = [
     RecordFilterOperand.IS,
     RecordFilterOperand.IS_NOT,
@@ -52,7 +57,7 @@ describe('getOperandsForFilterType', () => {
   const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
   const testCases = [
-    ['TEXT', [...containsOperands, ...emptyOperands]],
+    ['TEXT', [...containsOperands, ...exactOperands, ...emptyOperands]],
     ['FULL_NAME', [...containsOperands, ...emptyOperands]],
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
     ['LINKS', [...containsOperands, ...emptyOperands]],

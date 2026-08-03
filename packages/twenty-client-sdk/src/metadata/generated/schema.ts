@@ -500,7 +500,7 @@ export interface ViewFilter {
     __typename: 'ViewFilter'
 }
 
-export type ViewFilterOperand = 'IS' | 'IS_NOT_NULL' | 'IS_NOT' | 'LESS_THAN_OR_EQUAL' | 'GREATER_THAN_OR_EQUAL' | 'IS_BEFORE' | 'IS_AFTER' | 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'IS_EMPTY' | 'IS_NOT_EMPTY' | 'IS_RELATIVE' | 'IS_IN_PAST' | 'IS_IN_FUTURE' | 'IS_TODAY' | 'VECTOR_SEARCH'
+export type ViewFilterOperand = 'IS' | 'IS_NOT_NULL' | 'IS_NOT' | 'LESS_THAN_OR_EQUAL' | 'GREATER_THAN_OR_EQUAL' | 'IS_BEFORE' | 'IS_AFTER' | 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'IS_EXACTLY' | 'IS_NOT_EXACTLY' | 'IS_EMPTY' | 'IS_NOT_EMPTY' | 'IS_RELATIVE' | 'IS_IN_PAST' | 'IS_IN_FUTURE' | 'IS_TODAY' | 'VECTOR_SEARCH'
 
 export interface ViewGroup {
     id: Scalars['UUID']
@@ -9252,6 +9252,8 @@ export const enumViewFilterOperand = {
    IS_AFTER: 'IS_AFTER' as const,
    CONTAINS: 'CONTAINS' as const,
    DOES_NOT_CONTAIN: 'DOES_NOT_CONTAIN' as const,
+   IS_EXACTLY: 'IS_EXACTLY' as const,
+   IS_NOT_EXACTLY: 'IS_NOT_EXACTLY' as const,
    IS_EMPTY: 'IS_EMPTY' as const,
    IS_NOT_EMPTY: 'IS_NOT_EMPTY' as const,
    IS_RELATIVE: 'IS_RELATIVE' as const,

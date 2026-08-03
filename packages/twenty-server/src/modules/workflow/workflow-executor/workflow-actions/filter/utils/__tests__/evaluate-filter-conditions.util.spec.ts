@@ -737,6 +737,85 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
       });
 
+      it('should handle IsExactly operand with strings', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IS_EXACTLY,
+          'Hello World',
+          'Hello World',
+          'TEXT',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IS_EXACTLY,
+          'Hello World',
+          'Hello',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
+      it('should handle IsNotExactly operand with strings', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IS_NOT_EXACTLY,
+          'Hello World',
+          'Hello World',
+          'TEXT',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IS_NOT_EXACTLY,
+          'Hello World',
+          'Hello',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+      });
+
+      it('should handle IsExactly operand with multi-select values', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IS_EXACTLY,
+          ['URGENT', 'BUG'],
+          '["BUG","URGENT"]',
+          'MULTI_SELECT',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IS_EXACTLY,
+          ['URGENT', 'BUG', 'LATER'],
+          '["BUG","URGENT"]',
+          'MULTI_SELECT',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.IS_EXACTLY,
+          ['URGENT'],
+          '["BUG","URGENT"]',
+          'MULTI_SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+      });
+
+      it('should handle IsNotExactly operand with multi-select values', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IS_NOT_EXACTLY,
+          ['URGENT', 'BUG'],
+          '["BUG","URGENT"]',
+          'MULTI_SELECT',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IS_NOT_EXACTLY,
+          ['URGENT'],
+          '["BUG","URGENT"]',
+          'MULTI_SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+      });
+
       it('should handle Contains operand with arrays', () => {
         const filter1 = createFilter(
           ViewFilterOperand.CONTAINS,
