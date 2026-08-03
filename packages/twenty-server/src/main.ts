@@ -66,9 +66,6 @@ const bootstrap = async () => {
 
   app.set('trust proxy', trustProxy);
 
-  const allowedCredentialedOrigins =
-    resolveAllowedCredentialedOrigins(twentyConfigService);
-
   // The cors package only emits Vary: Origin when it reflects one, so wildcard
   // and reflected responses would share a cache entry and a credentialed
   // request could be served the wildcard, which browsers reject.
@@ -78,11 +75,20 @@ const bootstrap = async () => {
   });
 
   app.enableCors({
+    // Resolved per request rather than once at boot: the origins derive from
+    // config the admin panel can change, and a snapshot would drift from the
+    // CSRF guard, which resolves them per request and would then disagree with
+    // CORS about the same origin.
     origin: (
       origin: string | undefined,
       callback: (error: Error | null, allow?: boolean | string) => void,
     ) => {
-      if (origin && allowedCredentialedOrigins.has(origin.toLowerCase())) {
+      if (
+        origin &&
+        resolveAllowedCredentialedOrigins(twentyConfigService).has(
+          origin.toLowerCase(),
+        )
+      ) {
         return callback(null, true);
       }
 
