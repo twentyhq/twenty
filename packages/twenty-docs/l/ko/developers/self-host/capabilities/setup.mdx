@@ -204,7 +204,13 @@ Microsoft Azure 콘솔에서 "권한"에서 다음 API를 활성화하세요:
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-참고: "Mail.ReadWrite"와 "Mail.Send"는 워크플로우 작업을 통해 이메일을 보내려면 필수입니다. 수신 이메일만 원하시면 "Mail.Read"를 사용하실 수 있습니다.
+<Note>
+"Mail.ReadWrite"와 "Mail.Send"는 워크플로우 작업을 통해 이메일을 보내려는 경우에만 필수입니다. 이메일 수신만 원하시면 대신 "Mail.Read"를 사용하세요.
+</Note>
+
+<Note>
+워크플로우 작업을 사용하여 캘린더 이벤트를 생성하려면 "Calendars.ReadWrite"가 필수입니다. 캘린더 이벤트만 동기화하려면 "Calendars.Read"를 사용하세요.
+</Note>
 
 ### 인가된 리디렉션 URI
 
