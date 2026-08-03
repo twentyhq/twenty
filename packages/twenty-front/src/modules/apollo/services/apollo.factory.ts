@@ -21,6 +21,7 @@ import { retryWithBackoff } from '~/utils/retryWithBackoff';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 import { i18n } from '@lingui/core';
@@ -308,9 +309,9 @@ export class ApolloFactory implements ApolloManager {
         if (CombinedGraphQLErrors.is(error)) {
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
-            if (graphQLError.message === 'Unauthorized') {
+            if (isUnauthenticatedGraphQLError(graphQLError)) {
               // oxlint-disable-next-line no-console
-              console.log('Unauthorized, triggering token renewal');
+              console.log('Unauthenticated, triggering token renewal');
               return handleTokenRenewal(operation, forward, error);
             }
 
@@ -321,11 +322,6 @@ export class ApolloFactory implements ApolloManager {
                     t`Your app version is out of date. Please refresh the page.`,
                 );
                 return;
-              }
-              case 'UNAUTHENTICATED': {
-                // oxlint-disable-next-line no-console
-                console.log('UNAUTHENTICATED, triggering token renewal');
-                return handleTokenRenewal(operation, forward, error);
               }
               case 'NOT_FOUND':
               case 'BAD_USER_INPUT':
