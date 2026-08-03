@@ -72,6 +72,10 @@ See the [app development guide](https://docs.twenty.com/developers/extend/apps/g
 
 Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.com/developers/self-host/capabilities/docker-compose), or contribute locally via the [local setup guide](https://docs.twenty.com/developers/contribute/capabilities/local-setup).
 
+[![Deploy with Zenith](https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg)](https://zenith.hosting/host/twenty)
+
+One-click managed Twenty, with no infrastructure to run: storage, backups, email and a free subdomain included. A share of every subscription goes back to Twenty.
+
 <br />
 <br />
 
