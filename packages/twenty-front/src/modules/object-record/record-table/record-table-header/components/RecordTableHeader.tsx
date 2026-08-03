@@ -8,8 +8,11 @@ import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeaderContainer = styled.div`
+  background-color: ${themeCssVariables.background.primary};
+  box-shadow: 0 -1px 0 ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: row;
   position: sticky;

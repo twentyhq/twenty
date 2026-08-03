@@ -111,18 +111,13 @@ export const useCampaignComposerState = ({
       ? await saveCurrentDraft()
       : draftCampaignId;
 
-    if (autoSaveDraft && savedCampaignId === undefined) {
+    // The server reads the content it sends from the persisted draft, so there
+    // is nothing to send until the draft exists.
+    if (savedCampaignId === undefined) {
       return;
     }
 
-    const success = await sendMessageCampaign({
-      ...(savedCampaignId === undefined ? {} : { campaignId: savedCampaignId }),
-      listId,
-      unsubscribeTopicId: unsubscribeTopicId ?? undefined,
-      subject,
-      body,
-      fromAddress: fromAddress.trim(),
-    });
+    const success = await sendMessageCampaign({ campaignId: savedCampaignId });
 
     if (success) {
       onSent?.();

@@ -158,6 +158,12 @@ msgstr "Ya hay instalada una versión superior de esta aplicación. No se permit
 msgid "A name conflict occurred."
 msgstr "Se produjo un conflicto de nombres."
 
+#. js-lingui-id: idm+pJ
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for FOLDER type"
+msgstr ""
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -280,6 +286,42 @@ msgstr "Se produjo un error temporal de red."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
 msgstr "Ya existe un usuario con este correo electrónico."
+
+#. js-lingui-id: Dwa/Bm
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid link is required for LINK type"
+msgstr ""
+
+#. js-lingui-id: hfYxN9
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type"
+msgstr ""
+
+#. js-lingui-id: jS+jUv
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type"
+msgstr ""
+
+#. js-lingui-id: KUnzGr
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetObjectMetadataUniversalIdentifier is required for RECORD type"
+msgstr ""
+
+#. js-lingui-id: RfwvVB
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetRecordId is required for RECORD type"
+msgstr ""
+
+#. js-lingui-id: +FHERL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid viewUniversalIdentifier is required for VIEW type"
+msgstr ""
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -1875,6 +1917,11 @@ msgstr ""
 msgid "Could not resolve the existing object \"{0}\" to rename its default relations"
 msgstr ""
 
+#. js-lingui-id: 5rS7nl
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
+msgid "Could not resolve the existing object to reconcile its INDEX label identifier view field"
+msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -2225,6 +2272,11 @@ msgstr "Eliminado en"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgid "Delivery status"
 msgstr "Estado de entrega"
+
+#. js-lingui-id: G768/0
+#: src/filters/__tests__/unhandled-exception.filter.spec.ts
+msgid "denied"
+msgstr ""
 
 #. js-lingui-id: Nu4oKW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -3087,12 +3139,6 @@ msgstr "Primer mensaje amigable"
 msgid "Flow"
 msgstr "Flujo"
 
-#. js-lingui-id: Fzrzfe
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Folder name is required"
-msgstr "El nombre de la carpeta es obligatorio"
-
 #. js-lingui-id: Hxo3YN
 #: src/engine/core-modules/file-storage/utils/validate-folder-path.util.ts
 msgid "Folder path must not contain a file extension — use deleteFile for file paths"
@@ -3488,6 +3534,11 @@ msgstr "Permisos insuficientes para acceder al calendario."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Insufficient permissions."
 msgstr "Permisos insuficientes."
+
+#. js-lingui-id: 4bX5tI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+msgid "Internal name of the campaign"
+msgstr ""
 
 #. js-lingui-id: pSjWxS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
@@ -4572,12 +4623,6 @@ msgstr "El diseño es obligatorio para el gráfico de barras"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "El diseño es obligatorio para el widget de gráfico de barras \"{widgetTitle}\""
 
-#. js-lingui-id: oDC0sf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "link is required for LINK type"
-msgstr "El enlace es obligatorio para el tipo LINK"
-
 #. js-lingui-id: wR9USP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5034,6 +5079,7 @@ msgstr "Se encontraron múltiples suscripciones donde se esperaba una."
 #. js-lingui-id: 6YtxFj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -5137,8 +5183,8 @@ msgid "Navigation menu item not found."
 msgstr "Elemento del menú de navegación no encontrado."
 
 #. js-lingui-id: Ii6d/e
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "Navigation menu item type is required"
 msgstr "El tipo de elemento del menú de navegación es obligatorio"
 
@@ -5247,6 +5293,11 @@ msgstr "No se proporcionó tipo de disparador"
 msgid "No valid authentication context found."
 msgstr "No se encontró un contexto de autenticación válido."
 
+#. js-lingui-id: r+kse7
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "No verified sending domain matches this from address."
+msgstr ""
+
 #. js-lingui-id: AzXrd9
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "No workspace found with password auth enabled."
@@ -5261,6 +5312,11 @@ msgstr "Transcripción diarizada normalizada"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Not authorized to access this OAuth provider."
 msgstr "No está autorizado para acceder a este proveedor de OAuth."
+
+#. js-lingui-id: iXlml9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+msgid "Not recorded"
+msgstr ""
 
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
@@ -5418,6 +5474,11 @@ msgstr "No se encontró el proveedor de OAuth."
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "El objeto ya existe"
+
+#. js-lingui-id: fjXGxN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Object already has an INDEX view"
+msgstr ""
 
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -5607,6 +5668,11 @@ msgstr "Único error"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Solo se permiten restricciones de campo."
+
+#. js-lingui-id: 6mOUi9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Open Records In"
+msgstr ""
 
 #. js-lingui-id: VVBlwg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -5891,12 +5957,6 @@ msgstr "El widget de diseño de página con el identificador universal {flatPage
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "PAGE_LAYOUT navigation menu item must reference a STANDALONE_PAGE page layout"
 msgstr "El elemento de menú de navegación PAGE_LAYOUT debe hacer referencia a un diseño de página STANDALONE_PAGE"
-
-#. js-lingui-id: RDkmYK
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "pageLayoutId is required for PAGE_LAYOUT type"
-msgstr "pageLayoutId es obligatorio para el tipo PAGE_LAYOUT"
 
 #. js-lingui-id: T1gSWA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -7340,18 +7400,6 @@ msgstr "El campo de relación de destino no hace referencia a este campo"
 msgid "Target URL is required"
 msgstr "La URL de destino es obligatoria"
 
-#. js-lingui-id: L3vVWc
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetObjectMetadataId is required for OBJECT type"
-msgstr "targetObjectMetadataId es obligatorio para el tipo OBJECT"
-
-#. js-lingui-id: NGynR3
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetRecordId and targetObjectMetadataId are required for RECORD type"
-msgstr "targetRecordId y targetObjectMetadataId son obligatorios para el tipo RECORD"
-
 #. js-lingui-id: Q3P/4s
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -7661,6 +7709,16 @@ msgstr "El archivo aún no se ha cargado. Cárgalo antes de confirmar."
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "El archivo está vacío o supera el tamaño máximo permitido."
 
+#. js-lingui-id: oeePqy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The INDEX view key is reserved for the default view"
+msgstr ""
+
+#. js-lingui-id: jkNMHQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition"
+msgstr ""
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -7699,6 +7757,11 @@ msgstr "El parámetro de estado de OAuth no es válido o ha caducado."
 #. js-lingui-id: w/9iNJ
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service.ts
 msgid "The object to rename could not be found to update its default relations"
+msgstr ""
+
+#. js-lingui-id: s9DUGk
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
+msgid "The object to update could not be found to reconcile its INDEX view"
 msgstr ""
 
 #. js-lingui-id: hx2IZ4
@@ -7906,6 +7969,11 @@ msgstr "El valor de {fieldLabel} ya está en uso. Por favor, revise sus datos e 
 msgid "This action is currently unavailable."
 msgstr ""
 
+#. js-lingui-id: 4CW4iW
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This address cannot be removed from the suppression list."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -7945,6 +8013,16 @@ msgstr "Esta aplicación requiere una versión más reciente de la que este espa
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
+msgstr ""
+
+#. js-lingui-id: SRnMG0
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
+msgstr ""
+
+#. js-lingui-id: ZyEq3L
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This campaign no longer exists."
 msgstr ""
 
 #. js-lingui-id: 99gsJ/
@@ -8092,6 +8170,11 @@ msgstr "Este nombre no está disponible."
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
 msgstr ""
 
+#. js-lingui-id: /mGcny
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "This object already has a default view"
+msgstr ""
+
 #. js-lingui-id: R8zIJd
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "This object cannot be modified."
@@ -8217,6 +8300,11 @@ msgstr ""
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
 msgstr "Este subdominio ya está en uso."
+
+#. js-lingui-id: dZF5Gw
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This suppressed address no longer exists."
+msgstr ""
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -8476,6 +8564,12 @@ msgstr "El identificador universal está reservado para metadatos gestionados po
 #: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
+msgstr ""
+
+#. js-lingui-id: of4ZuG
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "Unknown navigation menu item type {type}"
 msgstr ""
 
 #. js-lingui-id: tEncxN
@@ -9053,12 +9147,6 @@ msgstr "Vista para actualizar no encontrada"
 msgid "View with same universal identifier already exists"
 msgstr "La vista con el mismo identificador universal ya existe"
 
-#. js-lingui-id: 14WoDD
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "viewId is required for VIEW type"
-msgstr "viewId es obligatorio para el tipo VIEW"
-
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
@@ -9161,6 +9249,11 @@ msgstr "Bienvenido a Twenty: por favor confirma tu correo electrónico"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "When the campaign finished sending"
 msgstr "Cuando terminó de enviarse la campaña"
+
+#. js-lingui-id: bW8f9B
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Where records open for objects that follow the member's preference"
+msgstr ""
 
 #. js-lingui-id: xm/brR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9587,6 +9680,11 @@ msgstr "Los cambios del esquema del espacio de trabajo están bloqueados tempora
 msgid "Workspace schema not found."
 msgstr "Esquema del espacio de trabajo no encontrado."
 
+#. js-lingui-id: 2gzz0t
+#: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
+msgid "Workspace setup"
+msgstr ""
+
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -9679,15 +9777,25 @@ msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/role/role.resolver.ts
+#: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "No puede cambiar su propio rol. Por favor, pídale a otro administrador que actualice su rol."
+
+#. js-lingui-id: xqrB9X
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
+msgstr ""
 
 #. js-lingui-id: y5haJ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
 msgstr "No puedes otorgar permisos de edición sin también otorgar permisos de lectura. Por favor, habilite el acceso de lectura primero."
+
+#. js-lingui-id: KcnT7Q
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
+msgstr ""
 
 #. js-lingui-id: 8wovNr
 #: src/engine/metadata-modules/user-role/user-role.service.ts
@@ -9703,11 +9811,6 @@ msgstr "No puedes revocar el acceso al panel de administración del último admi
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "No puedes establecer permisos de campo en objetos del sistema, ya que son gestionados por la plataforma."
-
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "No puedes establecer permisos en objetos del sistema, ya que son gestionados por la plataforma."
 
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

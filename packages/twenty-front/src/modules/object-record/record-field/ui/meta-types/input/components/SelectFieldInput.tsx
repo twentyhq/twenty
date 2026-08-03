@@ -19,10 +19,10 @@ import { type SelectOption } from 'twenty-ui/input';
 export const SelectFieldInput = () => {
   const { fieldDefinition, fieldValue } = useSelectField();
   const { addSelectOption } = useAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
+    fieldDefinition.fieldMetadataId,
   );
   const { canAddSelectOption } = useCanAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
+    fieldDefinition.fieldMetadataId,
   );
 
   const { onCancel, onSubmit } = useContext(FieldInputEventContext);
@@ -53,13 +53,6 @@ export const SelectFieldInput = () => {
   const handleClearField = () => {
     clearField();
     onCancel?.();
-  };
-
-  const handleAddSelectOption = (optionName: string) => {
-    if (!canAddSelectOption) {
-      return;
-    }
-    addSelectOption(optionName);
   };
 
   const handleSubmit = (option: SelectOption) => {
@@ -110,7 +103,7 @@ export const SelectFieldInput = () => {
           : undefined
       }
       clearLabel={fieldDefinition.label}
-      onAddSelectOption={handleAddSelectOption}
+      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
     />
   );
 };

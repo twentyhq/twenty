@@ -7,7 +7,7 @@ import type {
 import { collectAll } from 'src/modules/shared/utils/paginate.util';
 import { getCompanyPartnerUser } from 'src/modules/opportunity/matching/graphql/queries/get-company-partner-user';
 import { getOpportunityCascadeFields } from 'src/modules/opportunity/matching/graphql/queries/get-opportunity-cascade-fields';
-import { getPartnerPartnerUser } from 'src/modules/opportunity/matching/graphql/queries/get-partner-partner-user';
+import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findOpportunityStillUsingCompany } from 'src/modules/opportunity/matching/graphql/queries/find-opportunity-still-using-company';
 import { listPeopleByFilter } from 'src/modules/opportunity/matching/graphql/queries/list-people-by-filter';
 import { updateCompanyPartnerUser } from 'src/modules/opportunity/matching/graphql/mutations/update-company-partner-user';
@@ -114,7 +114,7 @@ export async function propagatePartnerUser(
   }
 
   // ── Assign / reassign ────────────────────────────────────────────────────────
-  const partnerResult = await getPartnerPartnerUser(client, partnerId);
+  const partnerResult = await getPartnerOwner(client, partnerId);
   const partnerUserId = partnerResult.partner?.partnerUserId;
   if (!partnerUserId) return { cascaded: false, reason: 'partner_has_no_user' };
 

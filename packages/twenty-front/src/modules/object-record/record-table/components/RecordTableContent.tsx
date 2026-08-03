@@ -12,6 +12,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
+import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
@@ -99,12 +100,10 @@ export const RecordTableContent = ({
     }
   }, [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState]);
 
+  const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
+
   const handleDelegatedMouseMove = useCallback(
     (event: React.MouseEvent) => {
-      if (store.get(isSomeCellInEditMode)) {
-        return;
-      }
-
       const target = event.target as HTMLElement;
       const cellElement = target.closest<HTMLElement>(
         '[data-record-table-col]',
@@ -121,15 +120,9 @@ export const RecordTableContent = ({
         return;
       }
 
-      const lastPosition = store.get(recordTableHoverPositionCallbackState);
-
-      if (lastPosition?.column === column && lastPosition?.row === row) {
-        return;
-      }
-
-      store.set(recordTableHoverPositionCallbackState, { column, row });
+      moveHoverToCurrentCell({ column, row });
     },
-    [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState],
+    [moveHoverToCurrentCell],
   );
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(

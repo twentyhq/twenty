@@ -60,7 +60,7 @@ Derleme adımı, her mantık işlevi ve her ön uç bileşeni için tek bir bağ
 
 **Mantık işlevleri**, Node.js ortamında çalışır. Node yerleşik modülleri (`fs`, `path`, `crypto`, `http` vb.) kullanılabilir ve kurulmaları gerekmez.
 
-**Ön uç bileşenleri**, bir Web Worker içinde çalışır. Node'un yerleşik modülleri **kullanılamaz** — yalnızca tarayıcı ortamında çalışan tarayıcı API'leri ve npm paketleri kullanılabilir.
+**Ön uç bileşenleri**, bir Web Worker içinde çalışır. Node'un yerleşik modülleri **kullanılamaz** — yalnızca tarayıcı ortamında çalışan npm paketleri kullanılabilir. Korumalı alanın *kısmi* bir DOM uyguladığını unutmayın; bu nedenle bir paket hatasız derlenip çalışma zamanında yine de başarısız olabilir. Bkz. [Geçerli kısıtlamalar](/l/tr/developers/extend/apps/layout/front-components#current-limitations).
 
 Her iki ortamda da `twenty-client-sdk/core` ve `twenty-client-sdk/metadata` önceden sağlanmış modüller olarak mevcuttur — bunlar paketlenmez, ancak çalışma zamanında sunucu tarafından çözülür.
 

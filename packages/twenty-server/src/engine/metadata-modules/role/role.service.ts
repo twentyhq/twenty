@@ -19,6 +19,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -39,6 +40,10 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
+import {
+  validateRoleDeletionDoesNotLockOutActorOrThrow,
+  validateRoleUpdateDoesNotLockOutActorOrThrow,
+} from 'src/engine/metadata-modules/role/utils/validate-role-mutation-does-not-lock-out-actor.util';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -228,10 +233,12 @@ export class RoleService {
     input,
     workspaceId,
     ownerFlatApplication,
+    actingRoleIds,
   }: {
     input: UpdateRoleInput;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
+    actingRoleIds?: string[];
   }): Promise<RoleDTO> {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ??
@@ -241,11 +248,11 @@ export class RoleService {
         )
       ).workspaceCustomFlatApplication;
 
-    const { flatRoleMaps: existingFlatRoleMaps } =
+    const { flatRoleMaps: existingFlatRoleMaps, flatRolePermissionFlagMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
+          flatMapsKeys: ['flatRoleMaps', 'flatRolePermissionFlagMaps'],
         },
       );
 
@@ -253,6 +260,20 @@ export class RoleService {
       flatRoleMaps: existingFlatRoleMaps,
       updateRoleInput: input,
     });
+
+    const existingFlatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: input.id,
+      flatEntityMaps: existingFlatRoleMaps,
+    });
+
+    if (isDefined(existingFlatRole)) {
+      validateRoleUpdateDoesNotLockOutActorOrThrow({
+        flatRole: existingFlatRole,
+        canUpdateAllSettingsUpdate: input.update.canUpdateAllSettings,
+        actingRoleIds,
+        flatRolePermissionFlagMaps,
+      });
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -298,16 +319,19 @@ export class RoleService {
     roleId,
     workspaceId,
     ownerFlatApplication,
+    actingRoleIds,
   }: {
     roleId: string;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
+    actingRoleIds?: string[];
   }): Promise<RoleDTO> {
     const deletedRoles = await this.deleteManyRoles({
       ids: [roleId],
       workspaceId,
       isSystemBuild: false,
       ownerFlatApplication,
+      actingRoleIds,
     });
 
     const [deletedRole] = deletedRoles;
@@ -320,11 +344,13 @@ export class RoleService {
     workspaceId,
     isSystemBuild = false,
     ownerFlatApplication,
+    actingRoleIds,
   }: {
     ids: string[];
     workspaceId: string;
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
+    actingRoleIds?: string[];
   }): Promise<RoleDTO[]> {
     if (ids.length === 0) {
       return [];
@@ -370,6 +396,11 @@ export class RoleService {
       const flatRoleToDelete = fromDeleteRoleInputToFlatRoleOrThrow({
         flatRoleMaps,
         roleId,
+      });
+
+      validateRoleDeletionDoesNotLockOutActorOrThrow({
+        flatRole: flatRoleToDelete,
+        actingRoleIds,
       });
 
       if (defaultRoleId === roleId) {

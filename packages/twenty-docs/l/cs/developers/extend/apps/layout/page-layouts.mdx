@@ -51,9 +51,10 @@ export default definePageLayout({
 
 ### Hlavní body
 
-* `type` je obvykle `'RECORD_PAGE'` pro úpravu detailního zobrazení konkrétního objektu.
+* `type` je jedním z `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` nebo `'STANDALONE_PAGE'`. Použijte `'RECORD_PAGE'` k přizpůsobení detailního zobrazení konkrétního objektu.
 * `objectUniversalIdentifier` určuje, na který objekt se toto rozvržení vztahuje.
-* Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode` (`VERTICAL_LIST` pro stránky záznamů, `GRID` pro řídicí panely). `tab` s jediným widgetem jej automaticky zobrazí přes celou šířku; pokud je widgetů více, řadí se pod sebe jako karty.
+* Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode`: `VERTICAL_LIST` pro stránky záznamů a samostatné stránky, `GRID` pro řídicí panely. V `VERTICAL_LIST` záložce se jediný widget vykreslí přes celou šířku a zabere celou záložku; pokud je widgetů více, řadí se pod sebe jako karty. `GRID` záložka vždy rozmístí své widgety jako karty v dvanáctisloupcové mřížce, bez ohledu na jejich počet, takže `VERTICAL_LIST` zvolte tehdy, když chcete, aby jeden widget vyplnil celou stránku.
+* Nastavte `layoutMode` explicitně. Pokud jej vynecháte, získáte `VERTICAL_LIST` na `STANDALONE_PAGE` a `GRID` všude jinde, což je na stránce záznamu jen zřídka to, co chcete.
 * Každý `widget` uvnitř karty může vykreslit [front component](/l/cs/developers/extend/apps/layout/front-components), seznam relací nebo jiné vestavěné typy widgetů.
 * `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
 

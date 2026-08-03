@@ -219,6 +219,7 @@ msgstr "{0} ימים"
 #. js-lingui-id: okrK9q
 #. placeholder {0}: preview.duplicateEmails
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "{0} duplicate"
 msgstr "{0} כפילויות"
 
@@ -234,12 +235,25 @@ msgstr "{0} שדות"
 msgid "{0} have no relation to {loadBalancePoolObjectLabel}. Pick a different object to balance by."
 msgstr "ל-{0} אין קשר אל {loadBalancePoolObjectLabel}. בחר אובייקט אחר לאיזון."
 
+#. js-lingui-id: TDB80r
+#. placeholder {0}: preview.totalMembers
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "{0} in this list"
+msgstr ""
+
 #. js-lingui-id: MY0lRK
 #. placeholder {0}: preview.totalMembers
 #. placeholder {1}: preview.sendable
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
 msgid "{0} in this list — {1} sendable"
-msgstr "{0} ברשימה הזו — {1} ניתנים לשליחה"
+msgstr ""
+
+#. js-lingui-id: /PXxEG
+#. placeholder {0}: preview.totalMembers
+#. placeholder {1}: preview.sendable
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "{0} in this list, {1} sendable ({breakdown})"
+msgstr ""
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -269,6 +283,7 @@ msgstr "{0} מתוך {1}"
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: preview.topicUnsubscribed
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "{0} opted out of this topic"
 msgstr "{0} בחרו שלא לקבל נושא זה"
 
@@ -299,6 +314,7 @@ msgstr "{0} מוצגים"
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: preview.globallyUnsubscribed
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "{0} unsubscribed from everything"
 msgstr "{0} הסירו רישום מהכול"
 
@@ -323,6 +339,7 @@ msgstr "{0} וידג'טים"
 #. js-lingui-id: Aixgij
 #. placeholder {0}: preview.withoutEmail
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "{0} without email"
 msgstr "{0} ללא אימייל"
 
@@ -884,12 +901,12 @@ msgid "A display name for this provider"
 msgstr "שם תצוגה עבור ספק זה"
 
 #. js-lingui-id: keUlu+
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "A draft already exists"
 msgstr "טיוטה כבר קיימת"
 
 #. js-lingui-id: OITESn
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "טיוטה כבר קיימת עבור תהליך זרימה זה. האם אתה בטוח שברצונך למחוק אותה?"
 
@@ -1743,7 +1760,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -2489,7 +2506,7 @@ msgid "Approved Domains"
 msgstr "דומיינים מאושרים"
 
 #. js-lingui-id: VDvaN2
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Apps"
@@ -3360,6 +3377,7 @@ msgid "Calendars"
 msgstr "לוחות שנה"
 
 #. js-lingui-id: cHma9m
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 msgid "Call recorder"
 msgstr "מקליט שיחות"
@@ -3401,7 +3419,6 @@ msgstr "לא ניתן לסרוק? העתק את"
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
-#: src/modules/side-panel/pages/compose-campaign/components/SidePanelCampaignComposerPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -3767,6 +3784,11 @@ msgstr "בחרו מה קורה בעת לחיצה על מספר טלפון"
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "בחרו מה קורה בעת לחיצה על כתובת דוא\"ל"
+
+#. js-lingui-id: kTDEu6
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose where records open by default. Some objects may use a workspace setting"
+msgstr ""
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4185,6 +4207,7 @@ msgid "completed"
 msgstr "הושלם"
 
 #. js-lingui-id: qqWcBV
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -4231,7 +4254,7 @@ msgid "Conditions applied to records before they appear in this view"
 msgstr "תנאים המוחלים על רשומות לפני שהן מופיעות בתצוגה זו"
 
 #. js-lingui-id: 14PdY0
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Config"
@@ -4604,7 +4627,6 @@ msgstr "חלון הקשר"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
-#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -5131,6 +5153,7 @@ msgstr "נוצר"
 
 #. js-lingui-id: 4fBuqE
 #: src/modules/side-panel/components/SidePanelRecordInfo.tsx
+#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard.tsx
 msgid "Created {beautifiedCreatedAt}"
 msgstr ""
 
@@ -5498,6 +5521,11 @@ msgstr "התאם אישית הגדרות שדה"
 msgid "Customize fields"
 msgstr "התאם אישית שדות"
 
+#. js-lingui-id: s60PUr
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+msgid "Customize how your record page looks."
+msgstr ""
+
 #. js-lingui-id: 0lvH/K
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Customize how your workspace looks."
@@ -5518,10 +5546,10 @@ msgstr "התאם אישית את פריסות הדף ומבנה ה-UI"
 msgid "Customize record page"
 msgstr "התאמה אישית של דף הרשומה"
 
-#. js-lingui-id: 1KIzk7
+#. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-msgid "Customize the layout for this role"
-msgstr "התאמה אישית של הפריסה עבור תפקיד זה"
+msgid "Customize the workspace record page"
+msgstr ""
 
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -5706,6 +5734,7 @@ msgid "Date"
 msgstr "תאריך"
 
 #. js-lingui-id: QIIAIQ
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -5714,6 +5743,13 @@ msgstr "תאריך"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Date field"
 msgstr "שדה תאריך"
+
+#. js-lingui-id: rMlHl2
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Date fields"
+msgstr ""
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
@@ -6507,11 +6543,6 @@ msgstr "הגדרת דומיין"
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
 msgstr "דומיינים צריכים להיות קטנים מ-256 תווים, לא יכולים להכיל רווחים ולא יכולים להכיל תווים מיוחדים כלשהם."
 
-#. js-lingui-id: u/yTXi
-#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
-msgid "Don't ask again for <0>{origin}</0>"
-msgstr ""
-
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -7179,9 +7210,8 @@ msgid "End date"
 msgstr "תאריך סיום"
 
 #. js-lingui-id: DqIce1
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "End date field"
 msgstr ""
@@ -7471,7 +7501,7 @@ msgid "Enter your two-factor authentication code to confirm."
 msgstr "הכנס את קוד האימות הדו-שלבי כדי לאשר."
 
 #. js-lingui-id: GpB8YV
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Enterprise"
@@ -8033,6 +8063,7 @@ msgid "Extended"
 msgstr "הוארך"
 
 #. js-lingui-id: 7Bj3x9
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8239,13 +8270,17 @@ msgstr "שמירת ההתאמה האישית של הפריסה נכשלה"
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
+#. js-lingui-id: LxqS9I
+#: src/modules/activities/emails/hooks/usePersistedCampaignDraft.ts
+msgid "Failed to save the campaign"
+msgstr ""
+
 #. js-lingui-id: 9ryUyP
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Failed to save workspace instructions"
 msgstr "אירע כשל בשמירת הנחיות סביבת העבודה"
 
 #. js-lingui-id: GpNLad
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "Failed to send campaign"
 msgstr "שליחת הקמפיין נכשלה"
@@ -8259,6 +8294,11 @@ msgstr "שליחת הדוא\"ל נכשלה"
 #. js-lingui-id: B6aF8Q
 #: src/modules/activities/emails/mass-email/hooks/useSendMassEmail.ts
 msgid "Failed to send emails"
+msgstr ""
+
+#. js-lingui-id: aH/q8K
+#: src/modules/activities/emails/hooks/useSendMessageCampaignTest.ts
+msgid "Failed to send test email"
 msgstr ""
 
 #. js-lingui-id: aj02T8
@@ -8857,6 +8897,7 @@ msgstr "צרפתית"
 
 #. js-lingui-id: ejVYRQ
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/mass-email/components/MassEmailComposeCard.tsx
 msgid "From"
@@ -8907,6 +8948,12 @@ msgstr "מלא"
 msgid "full admin panel access"
 msgstr "גישה מלאה ללוח הניהול"
 
+#. js-lingui-id: i9zh9T
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Full page"
+msgstr ""
+
 #. js-lingui-id: CU/Sq6
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "full server access"
@@ -8952,7 +8999,7 @@ msgstr "Gemini CLI"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -9066,7 +9113,7 @@ msgid "Go to billing portal"
 msgstr "עבור לפורטל החיוב"
 
 #. js-lingui-id: dHvI9O
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "Go to Draft"
 msgstr "עבור לטיוטה"
 
@@ -9305,7 +9352,7 @@ msgid "Headless component"
 msgstr "רכיב ללא ממשק"
 
 #. js-lingui-id: UPqS9C
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 msgid "Health"
 msgstr "בריאות"
 
@@ -10450,6 +10497,11 @@ msgstr "הצטרף לדיסקורד שלנו"
 msgid "Join the community"
 msgstr "הצטרף לקהילה"
 
+#. js-lingui-id: ffWso3
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+msgid "Joining"
+msgstr ""
+
 #. js-lingui-id: B2Zb/F
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
 msgid "JSON"
@@ -10886,6 +10938,11 @@ msgstr ""
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
 msgstr "או קטן יותר"
+
+#. js-lingui-id: aTNzjg
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+msgid "Let each member decide for themselves"
+msgstr ""
 
 #. js-lingui-id: oCHfGC
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -11550,6 +11607,11 @@ msgstr ""
 msgid "Member of"
 msgstr "חבר ב"
 
+#. js-lingui-id: BWupFm
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+msgid "Member preference"
+msgstr ""
+
 #. js-lingui-id: cNIHA/
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Member removed from workspace"
@@ -12068,6 +12130,12 @@ msgstr "נווט באפליקציה"
 msgid "Navigating in the app"
 msgstr "מנווט באפליקציה"
 
+#. js-lingui-id: UxKoFf
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Navigation"
+msgstr ""
+
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "navigation menu item"
@@ -12164,11 +12232,6 @@ msgstr "ספק AI חדש"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
 msgstr "דומיין גישה חדש מאושר"
-
-#. js-lingui-id: yGfI61
-#: src/modules/side-panel/hooks/useOpenCampaignComposerInSidePanel.ts
-msgid "New Campaign"
-msgstr "קמפיין חדש"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatThreadsList.tsx
@@ -12563,6 +12626,11 @@ msgstr "אין שדות תואמים"
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
 msgstr "אין משתני הגדרות שתואמים לסינון הנוכחי שלך. נסה לשנות את הקריטריונים או את החיפוש."
+
+#. js-lingui-id: zsslJv
+#: src/modules/activities/emails/components/CampaignSentPreview.tsx
+msgid "No content"
+msgstr ""
 
 #. js-lingui-id: PlVbP6
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -13032,6 +13100,7 @@ msgstr "לא נקראו כלים"
 
 #. js-lingui-id: vK0RL8
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No topic"
 msgstr "אין נושא"
 
@@ -13158,9 +13227,8 @@ msgstr "צומת"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -13224,6 +13292,11 @@ msgstr "לא נמצא"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow.tsx
 msgid "Not included"
 msgstr "לא כלול"
+
+#. js-lingui-id: iXlml9
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+msgid "Not recorded"
+msgstr ""
 
 #. js-lingui-id: MTqQMG
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -13678,12 +13751,6 @@ msgstr "פתח את מתקין MCP של Cursor עם תצורת השרת המרו
 msgid "Open Gmail"
 msgstr "פתח ב-Gmail"
 
-#. js-lingui-id: C39K59
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
-msgid "Open in"
-msgstr "פתח ב"
-
 #. js-lingui-id: noLjKT
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open in app"
@@ -13699,10 +13766,22 @@ msgstr "פתח בתפקידים"
 msgid "Open Outlook"
 msgstr "פתח ב-Outlook"
 
+#. js-lingui-id: aL6QIz
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Open records alongside the current page"
+msgstr ""
+
 #. js-lingui-id: p9J4lB
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Open records in"
 msgstr "פתח רשומות ב"
+
+#. js-lingui-id: F7UdSk
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Open records on a dedicated page"
+msgstr ""
 
 #. js-lingui-id: q170S2
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -13901,7 +13980,7 @@ msgid "Output tokens"
 msgstr "אסימוני פלט"
 
 #. js-lingui-id: in6CUw
-#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "Override Draft"
 msgstr "עקוף טיוטה"
 
@@ -14604,6 +14683,11 @@ msgstr "תוכנית Pro"
 msgid "Pro plan"
 msgstr "תוכנית Pro"
 
+#. js-lingui-id: vrnnn9
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+msgid "Processing"
+msgstr ""
+
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
@@ -14896,11 +14980,26 @@ msgstr "משתמשים אחרונים"
 msgid "Recents"
 msgstr "אחרונים"
 
+#. js-lingui-id: I3QpvQ
+#: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
+msgid "Recipient"
+msgstr ""
+
+#. js-lingui-id: p8GO5h
+#: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
+msgid "recipient@example.com"
+msgstr ""
+
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr "נמענים"
+
+#. js-lingui-id: XNF6El
+#: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
+msgid "Recipients can only unsubscribe from everything. Add a public topic to let them choose what they keep receiving."
+msgstr ""
 
 #. js-lingui-id: WEYdDv
 #: src/modules/ai/components/AiChatQuestionCard.tsx
@@ -14983,15 +15082,10 @@ msgid "Record label"
 msgstr "תווית של רישום"
 
 #. js-lingui-id: XueM/X
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Record page"
 msgstr "דף רשומה"
-
-#. js-lingui-id: mAHjRd
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
-msgid "Record Page"
-msgstr "דף רישום"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -15019,6 +15113,11 @@ msgstr "ברמת הרשומה"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record(s) selected"
 msgstr "רשומות שנבחרו"
+
+#. js-lingui-id: XmKjfh
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+msgid "Recording"
+msgstr ""
 
 #. js-lingui-id: PWlTvh
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemSearchResults.tsx
@@ -15852,6 +15951,7 @@ msgid "Schedule a maintenance window and notify all users"
 msgstr "קבע חלון תחזוקה והודע לכל המשתמשים"
 
 #. js-lingui-id: 4ba0NE
+#: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Scheduled"
 msgstr "מתוזמן"
@@ -16411,6 +16511,7 @@ msgstr "בחר פריט ניווט לעריכה"
 
 #. js-lingui-id: YkYui1
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "Select a sender"
 msgstr "בחר שולח"
 
@@ -16597,11 +16698,6 @@ msgstr ""
 msgid "Send an invite email to your team"
 msgstr "\\"
 
-#. js-lingui-id: WRLt0i
-#: src/modules/side-panel/pages/compose-campaign/components/SidePanelCampaignComposerPage.tsx
-msgid "Send campaign"
-msgstr "שלח קמפיין"
-
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
@@ -16623,7 +16719,18 @@ msgstr "שלח אימיילים דרך חשבונות מחוברים"
 msgid "Send invitations"
 msgstr "שלח הזמנות"
 
+#. js-lingui-id: doZzL7
+#: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
+msgid "Send test email"
+msgstr ""
+
+#. js-lingui-id: 89aQ3n
+#: src/modules/side-panel/hooks/useOpenSendCampaignTestInSidePanel.ts
+msgid "Send Test Email"
+msgstr ""
+
 #. js-lingui-id: LFupHB
+#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Sender name"
 msgstr ""
@@ -16956,10 +17063,14 @@ msgstr "הצג את הרשומות של אובייקט זה בתפריט הפק�
 msgid "Show value in center"
 msgstr ""
 
+#. js-lingui-id: P7rcbf
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
+msgid "Side panel"
+msgstr ""
+
 #. js-lingui-id: uVg8dY
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 msgid "Side Panel"
 msgstr "לוח צדדי"
 
@@ -17543,6 +17654,8 @@ msgstr ""
 #. js-lingui-id: UJmAAK
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/mass-email/components/MassEmailComposeCard.tsx
@@ -17802,6 +17915,8 @@ msgstr "שדות מערכת"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 msgid "System objects"
 msgstr ""
@@ -17944,6 +18059,12 @@ msgstr "\\"
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "\\"
+
+#. js-lingui-id: 1QHjf8
+#. placeholder {0}: params.toAddress
+#: src/modules/activities/emails/hooks/useSendMessageCampaignTest.ts
+msgid "Test email sent to {0}"
+msgstr ""
 
 #. js-lingui-id: 3nWPN6
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -18144,6 +18265,11 @@ msgstr "השם שנמענים רואים עבור נושא זה."
 msgid "The name recipients see next to your address in their inbox, instead of the address alone."
 msgstr ""
 
+#. js-lingui-id: aHFG8a
+#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+msgid "The name recipients see next to your address. It is set when the channel is created."
+msgstr ""
+
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -18186,6 +18312,7 @@ msgstr ""
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it."
 msgstr "נושא ההסרה מרשימה שאליו שייך האימייל הזה. נמענים שהסירו רישום ממנו מדולגים, וקישור ההסרה מרשימה מוגבל אליו."
 
@@ -18265,7 +18392,7 @@ msgid "These people will remain separate unless their identity details change."
 msgstr ""
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/components/AiChatThinkingRow.tsx
 msgid "Thinking"
 msgstr "חושב"
 
@@ -18462,11 +18589,6 @@ msgstr "זהו מפתח החתימה הנוכחי. שלילתו תבטל כל JW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "This key should be set through body input"
 msgstr "יש להגדיר מפתח זה דרך קלט הגוף"
-
-#. js-lingui-id: S9jYAG
-#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
-msgid "This link will take you to an external site: <0>{url}</0>"
-msgstr ""
 
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -18693,6 +18815,7 @@ msgstr ""
 
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/mass-email/components/MassEmailComposeCard.tsx
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
@@ -19131,6 +19254,7 @@ msgid "Type anything..."
 msgstr "הקלד כל דבר..."
 
 #. js-lingui-id: LaEX5I
+#: src/modules/activities/emails/components/CampaignBodyField.tsx
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Type something or press \"/\" to see commands"
@@ -19382,6 +19506,7 @@ msgid "Unpaid"
 msgstr "לא שולם"
 
 #. js-lingui-id: SMaFdc
+#: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
@@ -19403,6 +19528,7 @@ msgstr ""
 
 #. js-lingui-id: BEZcuL
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "Unsubscribe topic"
 msgstr "בטל הרשמה לנושא"
 
@@ -19426,8 +19552,9 @@ msgstr ""
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 #: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/ai/components/ChatReferenceChipDisplay.tsx
+#: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
-#: src/modules/ai/components/RecordLink.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
@@ -19466,6 +19593,7 @@ msgstr "iFrame ללא כותרת"
 
 #. js-lingui-id: PMPun8
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "Untitled list"
 msgstr "רשימה ללא כותרת"
 
@@ -19476,6 +19604,7 @@ msgstr "תפקיד ללא כותרת"
 
 #. js-lingui-id: jxRjAG
 #: src/modules/activities/emails/components/CampaignComposerFields.tsx
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -20661,6 +20790,11 @@ msgstr "מתי ייעולם המפתח"
 msgid "Where"
 msgstr "כאשר"
 
+#. js-lingui-id: AY1Gaf
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+msgid "Where records of this object open"
+msgstr ""
+
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
@@ -21144,15 +21278,15 @@ msgstr "תועבר לעמוד להוספת כרטיס האשראי שלך. לא�
 msgid "You will lose all your mappings."
 msgstr "אתה תפסיד את כל המיפויים שלך."
 
+#. js-lingui-id: gtZrCd
+#: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
+msgid "You will stop receiving these emails."
+msgstr ""
+
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "אתה עומד לשנות את תת-הדומיין של סביבת העבודה שלך. פעולה זו תגרום ליציאת כל המשתמשים."
-
-#. js-lingui-id: qgZCyy
-#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
-msgid "You're leaving Twenty"
-msgstr ""
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx

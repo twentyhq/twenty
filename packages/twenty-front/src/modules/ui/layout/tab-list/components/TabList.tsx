@@ -36,9 +36,11 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledInnerContainer = styled.div`
+const StyledInnerContainer = styled.div<{ $centerTabs: boolean }>`
   display: flex;
   flex: 1;
+  justify-content: ${({ $centerTabs }) =>
+    $centerTabs ? 'center' : 'flex-start'};
   min-width: 0;
 `;
 
@@ -76,6 +78,7 @@ export const TabList = ({
   componentInstanceId,
   onChangeTab,
   rightComponent,
+  centerTabs = false,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const navigate = useNavigate();
@@ -160,7 +163,7 @@ export const TabList = ({
 
         <StyledContainer className={className}>
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
-            <StyledInnerContainer>
+            <StyledInnerContainer $centerTabs={centerTabs}>
               <StyledTabContainer>
                 {visibleTabs.slice(0, visibleTabCount).map((tab) => (
                   <TabButton

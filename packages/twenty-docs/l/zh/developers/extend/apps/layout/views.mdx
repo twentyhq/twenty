@@ -4,10 +4,12 @@ description: 为你的应用中的对象提供预配置的已保存视图——�
 icon: list
 ---
 
-**视图（view）** 是关于对象记录如何显示的已保存配置：包括显示哪些字段、它们的顺序、是否可见，以及应用的任何筛选器或分组。 使用 `defineView()` 为你的应用提供预配置视图——通常是你创建的每个自定义对象的默认索引视图。
+**视图（view）** 是关于对象记录如何显示的已保存配置：包括显示哪些字段、它们的顺序、是否可见，以及应用的任何筛选器或分组。 使用 `defineView()` 随你的应用一起提供预配置的视图。
+
+每个对象都会自动获得其主列表视图（服务器预置的“全部 …”表格，即 `OBJECT` 导航项打开的视图）——包括你的应用创建的对象，其中每个字段对应一列。 你使用 `defineView()` 定义的视图始终是基于该默认视图之上的**附加**视图。
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,8 +34,8 @@ export default defineView({
 ## 关键点
 
 * `objectUniversalIdentifier` 指定此视图适用于哪个对象。 它可以是你定义的自定义对象，也可以是标准的 Twenty 对象。
-* `key: ViewKey.INDEX` 将该视图标记为对象的主列表视图（`OBJECT` 导航项打开的那个）。
-* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。 若要引用自动创建的系统字段（例如 `createdAt`），请参阅[定位系统字段](/l/zh/developers/extend/apps/data/system-fields)。
+* 对象的主列表视图由服务器拥有：`key` 已被弃用并会被忽略，因此清单视图永远无法声明它。 如果你希望你的视图在侧边栏中只需一次点击即可访问，请提供一个 `VIEW` 导航项。
+* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。 若要引用自动创建的系统字段（例如 `createdAt`），请参阅[定位系统元数据](/l/zh/developers/extend/apps/data/system-fields)。
 * 你还可以声明 `filters`、`filterGroups`、`sorts`、`groups` 和 `fieldGroups` 以进行更高级的配置。
 * 当同一对象存在多个视图时，`position` 控制其排序。
 

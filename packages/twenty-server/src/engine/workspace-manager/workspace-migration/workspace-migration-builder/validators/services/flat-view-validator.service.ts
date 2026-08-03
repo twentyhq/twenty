@@ -5,6 +5,7 @@ import {
   FieldMetadataType,
   RelationType,
   ViewCalendarLayout,
+  ViewKey,
   ViewType,
 } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
@@ -457,6 +458,41 @@ export class FlatViewValidatorService {
         message: t`View with same universal identifier already exists`,
         userFriendlyMessage: msg`View already exists`,
       });
+    }
+
+    if (flatViewToValidate.key === ViewKey.INDEX) {
+      if (flatViewToValidate.isSystemSideEffect !== true) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition`,
+          userFriendlyMessage: msg`The INDEX view key is reserved for the default view`,
+        });
+      }
+
+      const objectAlreadyHasIndexFlatView =
+        isDefined(optimisticFlatObjectMetadata) &&
+        optimisticFlatObjectMetadata.viewUniversalIdentifiers.some(
+          (viewUniversalIdentifier) => {
+            const flatView = findFlatEntityByUniversalIdentifier({
+              universalIdentifier: viewUniversalIdentifier,
+              flatEntityMaps: optimisticFlatViewMaps,
+            });
+
+            return (
+              isDefined(flatView) &&
+              flatView.key === ViewKey.INDEX &&
+              !isDefined(flatView.deletedAt)
+            );
+          },
+        );
+
+      if (objectAlreadyHasIndexFlatView) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Object already has an INDEX view`,
+          userFriendlyMessage: msg`This object already has a default view`,
+        });
+      }
     }
 
     if (
