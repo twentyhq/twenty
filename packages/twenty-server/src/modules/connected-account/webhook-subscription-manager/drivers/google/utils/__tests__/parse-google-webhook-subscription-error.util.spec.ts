@@ -45,9 +45,28 @@ describe('parseGoogleWebhookSubscriptionError', () => {
     );
   });
 
-  it('should return TEMPORARY_ERROR when the quota is exhausted', () => {
+  it('should return TEMPORARY_ERROR when concurrent requests are throttled', () => {
     const exception = parseGoogleWebhookSubscriptionError(
-      buildGaxiosError({ status: 403, reason: 'userRateLimitExceeded' }),
+      buildGaxiosError({
+        status: 429,
+        reason: 'rateLimitExceeded',
+        message: 'Too many concurrent requests for user.',
+      }),
+    );
+
+    expect(exception.code).toBe(
+      WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
+  it('should return TEMPORARY_ERROR when the per-minute quota is exhausted', () => {
+    const exception = parseGoogleWebhookSubscriptionError(
+      buildGaxiosError({
+        status: 403,
+        reason: 'rateLimitExceeded',
+        message:
+          "Quota exceeded for quota metric 'Queries' and limit 'Units per minute per user'",
+      }),
     );
 
     expect(exception.code).toBe(

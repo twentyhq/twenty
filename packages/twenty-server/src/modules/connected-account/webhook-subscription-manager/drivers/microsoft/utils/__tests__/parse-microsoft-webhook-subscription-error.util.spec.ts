@@ -84,6 +84,18 @@ describe('parseMicrosoftWebhookSubscriptionError', () => {
     },
   );
 
+  it('should return TEMPORARY_ERROR when the application is throttled', () => {
+    const exception = parseMicrosoftWebhookSubscriptionError({
+      statusCode: 429,
+      code: 'ApplicationThrottled',
+      message: 'Application is over its MailboxConcurrency limit.',
+    });
+
+    expect(exception.code).toBe(
+      WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
   it('should return UNKNOWN on an unhandled status code', () => {
     const exception = parseMicrosoftWebhookSubscriptionError({
       statusCode: 418,
