@@ -204,7 +204,13 @@ Sur la console Microsoft Azure, activez les API suivantes dans "Autorisations" :
 * Microsoft Graph : profile
 * Microsoft Graph : offline_access
 
-Remarque : "Mail.ReadWrite" et "Mail.Send" ne sont obligatoires que si vous souhaitez envoyer des e-mails en utilisant nos actions de flux de travail. Vous pouvez utiliser "Mail.Read" à la place si vous souhaitez uniquement recevoir des e-mails.
+<Note>
+"Mail.ReadWrite" et "Mail.Send" ne sont obligatoires que si vous souhaitez envoyer des e-mails en utilisant nos actions de flux de travail. Vous pouvez utiliser "Mail.Read" à la place si vous souhaitez uniquement recevoir des e-mails.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" est obligatoire si vous souhaitez créer des événements de calendrier en utilisant nos actions de flux de travail. Si vous souhaitez uniquement synchroniser des événements de calendrier, utilisez "Calendars.Read".
+</Note>
 
 ### URI de redirection autorisées
 

@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useLingui } from '@lingui/react/macro';
@@ -14,6 +16,8 @@ export const useHandleResetPassword = () => {
   const [emailPasswordResetLink] = useMutation(EmailPasswordResetLinkDocument);
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const currentUser = useAtomStateValue(currentUserState);
+  const { isCaptchaReady } = useCaptcha();
+  const { readCaptchaToken } = useReadCaptchaToken();
 
   const { t } = useLingui();
 
@@ -27,16 +31,25 @@ export const useHandleResetPassword = () => {
           return;
         }
 
+        if (!isCaptchaReady) {
+          enqueueErrorSnackBar({
+            message: t`Captcha (anti-bot check) is still loading, try again`,
+          });
+          return;
+        }
+
+        const captchaToken = readCaptchaToken();
+
         try {
           const { data } = await emailPasswordResetLink({
             variables: workspacePublicData?.id
-              ? { email, workspaceId: workspacePublicData.id }
-              : { email },
+              ? { email, workspaceId: workspacePublicData.id, captchaToken }
+              : { email, captchaToken },
           });
 
           if (data?.emailPasswordResetLink?.success === true) {
             enqueueSuccessSnackBar({
-              message: t`Password reset link has been sent to the email`,
+              message: t`If this email is registered, a password reset link has been sent`,
             });
           } else {
             enqueueErrorSnackBar({});
@@ -57,6 +70,8 @@ export const useHandleResetPassword = () => {
       enqueueSuccessSnackBar,
       t,
       emailPasswordResetLink,
+      isCaptchaReady,
+      readCaptchaToken,
     ],
   );
 

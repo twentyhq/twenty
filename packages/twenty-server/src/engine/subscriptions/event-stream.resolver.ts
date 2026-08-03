@@ -5,12 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -64,6 +66,8 @@ export class EventStreamResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
@@ -78,6 +82,7 @@ export class EventStreamResolver {
         authContext: {
           userWorkspaceId,
           apiKeyId: apiKey?.id,
+          applicationId: application?.id,
         },
       });
 
@@ -101,6 +106,7 @@ export class EventStreamResolver {
         userId: user?.id,
         userWorkspaceId,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       },
     });
 
@@ -170,6 +176,8 @@ export class EventStreamResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
     const streamData = await this.eventStreamService.getStreamData(
@@ -186,6 +194,7 @@ export class EventStreamResolver {
       authContext: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       },
     });
 
@@ -214,6 +223,8 @@ export class EventStreamResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
 
@@ -231,6 +242,7 @@ export class EventStreamResolver {
       authContext: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       },
     });
 

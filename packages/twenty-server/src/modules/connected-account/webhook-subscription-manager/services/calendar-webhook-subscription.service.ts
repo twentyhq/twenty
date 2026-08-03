@@ -10,6 +10,8 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
@@ -24,6 +26,7 @@ export class CalendarWebhookSubscriptionService {
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async createSubscription(
@@ -82,11 +85,23 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreated,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
     } catch (error) {
       await this.calendarChannelRepository.update(calendarChannel.id, {
         webhookSubscriptionClientState: clientState,
         webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
         webhookSubscriptionExpiresAt: null,
+      });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreationFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
       this.exceptionHandlerService.captureExceptions([error], {
@@ -149,9 +164,21 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionRenewed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
     } catch (error) {
       await this.calendarChannelRepository.update(calendarChannel.id, {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+      });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionRenewalFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
       this.exceptionHandlerService.captureExceptions([error], {
@@ -191,11 +218,30 @@ export class CalendarWebhookSubscriptionService {
 
     try {
       await driver.deleteSubscription(this.toContext(calendarChannel));
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeleted,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
     } catch (error) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeletionFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
+
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: calendarChannel.workspaceId },
       });
     }
+  }
+
+  private buildMetricAttributes(provider: string) {
+    return {
+      channel_type: WebhookSubscriptionChannelType.CALENDAR,
+      provider,
+    };
   }
 
   private toContext(
