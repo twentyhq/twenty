@@ -17,8 +17,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import {
   IconCopyPlus,
+  IconLego,
   IconPencil,
-  IconRobot,
   IconTrash,
   IconUsers,
 } from 'twenty-ui/icon';
@@ -136,7 +136,7 @@ export const WorkflowStepFooter = ({
             focused={selectedItemId === 'view-agent'}
             onClick={handleViewAgent}
             text={t`View Agent`}
-            LeftIcon={IconRobot}
+            LeftIcon={IconLego}
           />
         </SelectableListItem>
       )}

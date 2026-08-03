@@ -20,7 +20,7 @@ import {
   IconBrandGraphql,
   IconPlus,
   IconPlug,
-  IconSparkle2,
+  IconSparkles,
   IconWebhook,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -65,7 +65,7 @@ export const SettingsApiWebhooks = () => {
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP,
       title: t`MCP`,
-      Icon: IconSparkle2,
+      Icon: IconSparkles,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,

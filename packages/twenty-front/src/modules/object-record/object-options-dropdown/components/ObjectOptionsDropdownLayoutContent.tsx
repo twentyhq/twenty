@@ -29,12 +29,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconAddressBook,
   IconBaselineDensitySmall,
   IconCalendar,
   IconCalendarWeek,
   IconChevronLeft,
   IconLayoutList,
-  IconLayoutNavbar,
   IconLayoutSidebarRight,
   IconTable,
 } from 'twenty-ui/icon';
@@ -296,7 +296,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 LeftIcon={
                   currentView?.openRecordIn === ViewOpenRecordIn.SIDE_PANEL
                     ? IconLayoutSidebarRight
-                    : IconLayoutNavbar
+                    : IconAddressBook
                 }
                 text={t`Open in`}
                 onClick={() => {

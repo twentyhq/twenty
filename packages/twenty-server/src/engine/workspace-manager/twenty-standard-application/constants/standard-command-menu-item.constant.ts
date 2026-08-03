@@ -864,7 +864,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsObjects: {
     universalIdentifier: '9302bfeb-f6cd-4858-ab5b-5f70f4d358c4',
     label: 'Go to Data Model Settings',
-    icon: 'IconHierarchy2',
+    icon: 'IconHierarchy',
     isPinned: false,
     position: 53,
     shortLabel: 'Data Model',

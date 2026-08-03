@@ -2,8 +2,8 @@ import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
+  IconAddressBook,
   IconCurrencyDollar,
-  IconDatabase,
   IconHierarchy,
   IconKey,
   IconPlug,
@@ -53,14 +53,14 @@ export const buildPermissionSummaryFromRoleManifest = (
           capabilities[capabilities.length - 1];
 
     items.push({
-      Icon: IconDatabase,
+      Icon: IconAddressBook,
       label: label.charAt(0).toUpperCase() + label.slice(1) + ' records',
     });
   }
 
   if ((defaultRole.objectPermissions ?? []).length > 0 && items.length === 0) {
     items.push({
-      Icon: IconDatabase,
+      Icon: IconAddressBook,
       label: 'Access specific object records',
     });
   }

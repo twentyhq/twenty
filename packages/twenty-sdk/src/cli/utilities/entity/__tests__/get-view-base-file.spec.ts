@@ -29,7 +29,7 @@ describe('getViewBaseFile', () => {
     );
     expect(result).toContain("name: 'my-view'");
     expect(result).toContain("objectUniversalIdentifier: 'obj-abc-123'");
-    expect(result).toContain("icon: 'IconList'");
+    expect(result).toContain("icon: 'IconTable'");
     expect(result).toContain('position: 0');
   });
 

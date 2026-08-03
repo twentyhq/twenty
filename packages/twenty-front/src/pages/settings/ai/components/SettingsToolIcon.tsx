@@ -7,10 +7,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
 import {
-  IconCode,
   IconEdit,
   IconPlus,
   IconSearch,
+  IconTool,
   IconTrash,
   useIcons,
   type IconComponent,
@@ -118,7 +118,7 @@ export const SettingsToolIcon = ({
     );
   }
 
-  const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
+  const MainIcon = isDefined(icon) ? getIcon(icon) : IconTool;
   const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
 
   const objectMetadata = isDefined(objectName)

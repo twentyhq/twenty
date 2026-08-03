@@ -31,6 +31,7 @@ describe('computeFlatIndexViewToCreate', () => {
 
     expect(result.key).toBe(ViewKey.INDEX);
     expect(result.type).toBe(ViewType.TABLE);
+    expect(result.icon).toBe('IconTable');
     expect(result.name).toBe('All {objectLabelPlural}');
     expect(result.isSystemSideEffect).toBe(true);
     expect(result.objectMetadataUniversalIdentifier).toBe(

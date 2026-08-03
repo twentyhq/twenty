@@ -192,6 +192,12 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 - Use **Lingui** for internationalization
 - Apply security first, then formatting (sanitize before format)
 
+### Icons
+
+- When a UI element represents a Twenty product concept, consult `packages/twenty-ui/src/icon/icon-dictionary.md` and use its canonical icon.
+- Import icons from `twenty-ui/icon`; never import directly from `@tabler/icons-react`.
+- Use action or status icons when the element represents an action or status rather than a product concept.
+
 ### Testing Strategy
 - **Test behavior, not implementation** — focus on user perspective
 - **Test pyramid**: 70% unit, 20% integration, 10% E2E

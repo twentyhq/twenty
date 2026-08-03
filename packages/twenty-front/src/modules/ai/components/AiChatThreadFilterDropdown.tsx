@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconAdjustments } from 'twenty-ui/icon';
+import { IconFilter } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
 import { AiChatThreadFilterDropdownContent } from '@/ai/components/AiChatThreadFilterDropdownContent';
@@ -33,7 +33,7 @@ export const AiChatThreadFilterDropdown = ({
       clickableComponent={
         <LightIconButton
           aria-label={t`Filter chats`}
-          Icon={IconAdjustments}
+          Icon={IconFilter}
           accent="tertiary"
           size="small"
         />

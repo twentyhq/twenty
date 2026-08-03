@@ -15,8 +15,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import {
   IconFilter,
   IconKey,
+  IconLego,
   IconPlus,
-  IconRobot,
   IconSearch,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -112,7 +112,7 @@ export const SettingsRolesList = () => {
             <DropdownContent>
               <DropdownMenuItemsContainer>
                 <MenuItemToggle
-                  LeftIcon={IconRobot}
+                  LeftIcon={IconLego}
                   onToggleChange={() => setShowAgentRoles(!showAgentRoles)}
                   toggled={showAgentRoles}
                   text={t`Agent roles`}

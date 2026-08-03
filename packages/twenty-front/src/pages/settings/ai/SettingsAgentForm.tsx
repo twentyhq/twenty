@@ -110,7 +110,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           name: agent.name,
           label: agent.label,
           description: agent.description,
-          icon: agent.icon || 'IconRobot',
+          icon: agent.icon || 'IconLego',
           modelId: agent.modelId,
           role: agent.roleId,
           prompt: agent.prompt,
@@ -384,7 +384,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       ? t`Agent`
       : agent?.label
     : t`New Agent`;
-  const AgentIcon = getIcon(formValues.icon || 'IconRobot');
+  const AgentIcon = getIcon(formValues.icon || 'IconLego');
   const breadcrumbText = !isCreateMode
     ? loading
       ? t`Agent`

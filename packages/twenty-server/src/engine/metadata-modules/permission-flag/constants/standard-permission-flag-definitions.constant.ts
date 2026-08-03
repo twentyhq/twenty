@@ -82,7 +82,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   [PermissionFlagType.LAYOUTS]: {
     label: 'Layouts',
     description: 'Customize page layouts and UI structure',
-    icon: 'IconLayoutSidebarRightCollapse',
+    icon: 'IconLayout',
   },
   [PermissionFlagType.BILLING]: {
     label: 'Billing',

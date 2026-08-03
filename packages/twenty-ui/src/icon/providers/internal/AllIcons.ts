@@ -1,4 +1,6 @@
 /* oxlint-disable no-restricted-imports */
+import { IconAddressBook } from '@ui/icon/components/IconAddressBook';
+
 import {
   IconNumber123 as Icon123,
   IconAB,
@@ -4203,6 +4205,7 @@ export const ALL_ICONS = {
   IconAdCircle,
   IconAdCircleOff,
   IconAdOff,
+  IconAddressBook,
   IconAddressBookOff,
   IconAdjustments,
   IconAdjustmentsAlt,

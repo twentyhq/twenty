@@ -8,10 +8,10 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
+  IconBox,
   IconEye,
-  IconHierarchy2,
   IconLink,
-  IconList,
+  IconListDetails,
   IconPlus,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -34,13 +34,13 @@ export const SettingsObjects = () => {
     {
       id: 'objects',
       title: t`Objects`,
-      Icon: IconHierarchy2,
+      Icon: IconBox,
       vimeoId: '926288174',
     },
     {
       id: 'fields',
       title: t`Fields`,
-      Icon: IconList,
+      Icon: IconListDetails,
       vimeoId: '927628219',
     },
     {

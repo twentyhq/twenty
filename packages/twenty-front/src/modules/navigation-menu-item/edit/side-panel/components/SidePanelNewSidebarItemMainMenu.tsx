@@ -2,12 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, TintedIconTile } from 'twenty-ui/data-display';
-import {
-  IconBuildingSkyscraper,
-  IconFolder,
-  IconLink,
-  IconTable,
-} from 'twenty-ui/icon';
+import { IconBox, IconFolder, IconLink, IconTable } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -68,12 +63,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectObject}
               >
                 <CommandMenuItem
-                  Icon={() => (
-                    <TintedIconTile
-                      Icon={IconBuildingSkyscraper}
-                      color="blue"
-                    />
-                  )}
+                  Icon={() => <TintedIconTile Icon={IconBox} color="blue" />}
                   label={t`Object`}
                   id={NavigationMenuItemType.OBJECT}
                   hasSubMenu={true}

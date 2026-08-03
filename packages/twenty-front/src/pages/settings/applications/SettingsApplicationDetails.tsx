@@ -26,7 +26,7 @@ import { InlineBanner } from 'twenty-ui/feedback';
 import {
   IconAlertTriangle,
   IconBox,
-  IconCommand,
+  IconBrandTypescript,
   IconGraph,
   IconInfoCircle,
   IconLego,
@@ -215,7 +215,7 @@ export const SettingsApplicationDetails = () => {
       many: t`fields`,
     },
     {
-      icon: IconCommand,
+      icon: IconBrandTypescript,
       count: (application?.logicFunctions ?? []).length,
       one: t`logic function`,
       many: t`logic functions`,

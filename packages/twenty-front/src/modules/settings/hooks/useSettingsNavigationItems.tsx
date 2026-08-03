@@ -24,7 +24,7 @@ import {
   IconCurrencyDollar,
   IconDoorEnter,
   IconHelpCircle,
-  IconHierarchy2,
+  IconHierarchy,
   IconLayout,
   IconMail,
   IconMessage,
@@ -126,7 +126,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Data model`,
           path: SettingsPath.Objects,
-          Icon: IconHierarchy2,
+          Icon: IconHierarchy,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {

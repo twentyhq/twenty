@@ -1,0 +1,46 @@
+.dictionary {
+  background: var(--t-background-secondary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-sm);
+  box-sizing: border-box;
+  color: var(--t-font-color-primary);
+  font-family: var(--t-font-family);
+  overflow: hidden;
+  width: 400px;
+}
+
+.category {
+  margin: 0;
+}
+
+.categoryTitle {
+  align-items: center;
+  background: var(--t-background-transparent-lighter);
+  border-bottom: 1px solid var(--t-border-color-light);
+  box-sizing: border-box;
+  color: var(--t-font-color-light);
+  display: flex;
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+  height: 24px;
+  line-height: normal;
+  margin: 0;
+  padding: var(--t-spacing-2);
+}
+
+.item {
+  align-items: center;
+  border-bottom: 1px solid var(--t-border-color-light);
+  box-sizing: border-box;
+  display: flex;
+  font-size: 13px;
+  font-weight: var(--t-font-weight-medium);
+  height: 30px;
+  justify-content: space-between;
+  line-height: 1.4;
+  padding: var(--t-spacing-2);
+}
+
+.category:last-child .item:last-child {
+  border-bottom: 0;
+}

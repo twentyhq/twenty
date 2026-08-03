@@ -26,12 +26,12 @@ import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconArrowsSort,
   IconChevronLeft,
   IconCircleOff,
   IconEyeOff,
   IconLayoutList,
   IconPlus,
-  IconSortDescending,
 } from 'twenty-ui/icon';
 import {
   MenuItem,
@@ -157,7 +157,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 <MenuItem
                   focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
-                  LeftIcon={IconSortDescending}
+                  LeftIcon={IconArrowsSort}
                   text={t`Sort`}
                   contextualText={recordIndexRecordGroupSort}
                   contextualTextPosition="right"

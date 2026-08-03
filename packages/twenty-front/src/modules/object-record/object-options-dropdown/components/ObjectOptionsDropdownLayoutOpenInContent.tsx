@@ -15,8 +15,8 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import {
+  IconAddressBook,
   IconChevronLeft,
-  IconLayoutNavbar,
   IconLayoutSidebarRight,
 } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -100,7 +100,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
             }
           >
             <MenuItemSelect
-              LeftIcon={IconLayoutNavbar}
+              LeftIcon={IconAddressBook}
               text={t`Record Page`}
               selected={
                 currentView?.openRecordIn === ViewOpenRecordIn.RECORD_PAGE

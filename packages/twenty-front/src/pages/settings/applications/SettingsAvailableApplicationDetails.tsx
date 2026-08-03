@@ -21,11 +21,12 @@ import { InlineBanner } from 'twenty-ui/feedback';
 import {
   IconBook,
   IconBox,
+  IconBrandTypescript,
   IconCommand,
   IconEyeOff,
-  IconGraph,
   IconInfoCircle,
   IconLego,
+  IconLayoutGridAdd,
   IconListDetails,
   IconLock,
   IconShield,
@@ -150,13 +151,13 @@ export const SettingsAvailableApplicationDetails = () => {
       many: t`fields`,
     },
     {
-      icon: IconCommand,
+      icon: IconBrandTypescript,
       count: (manifest?.logicFunctions ?? []).length,
       one: t`logic function`,
       many: t`logic functions`,
     },
     {
-      icon: IconGraph,
+      icon: IconLayoutGridAdd,
       count: (manifest?.frontComponents ?? []).filter(
         (fc) =>
           !(manifest?.commandMenuItems ?? [])

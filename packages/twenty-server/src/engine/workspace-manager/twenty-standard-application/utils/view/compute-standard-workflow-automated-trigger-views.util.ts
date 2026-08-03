@@ -19,7 +19,7 @@ export const computeStandardWorkflowAutomatedTriggerViews = (
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconTable',
       },
     }),
     workflowAutomatedTriggerRecordPageFields: createStandardViewFlatMetadata({
@@ -31,7 +31,7 @@ export const computeStandardWorkflowAutomatedTriggerViews = (
         type: ViewType.FIELDS_WIDGET,
         key: null,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconListDetails',
       },
     }),
   };

@@ -102,7 +102,7 @@ export default defineView({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
   objectUniversalIdentifier: '${objectUniversalIdentifier}',
-${typeBlock}  icon: 'IconList',
+${typeBlock}  icon: 'IconTable',
   position: 0,
 ${fieldsBlock}
   // filters: [
