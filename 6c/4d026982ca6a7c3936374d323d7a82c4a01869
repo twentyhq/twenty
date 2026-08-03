@@ -1,0 +1,47 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type.ts
+  s_a797c2297db2c8::t_786d4b19b6a837 3-9
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service.ts
+  s_a797c2297db2c8::t_e5cf73a8416679 1-27,34-46,51-55,60-64,75,83-106,108-120
+  s_a797c2297db2c8::t_dddfba8cb44cf8 28-33,47-50,56-59,65-74,76-82,107
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service.ts
+  s_a797c2297db2c8::t_06824da86953f1 1,11-19,28-34,38-44,46,48-53,59-64,67-68,71-72,74-76,80-83,86-88,91,93,95-106,109-114,116-120,122-130,132-137
+  s_a797c2297db2c8::t_763eb7738d5d9e 2-10,20-27,35-37,45,47,54-58,65-66,69-70,73,77-79,84-85,89-90,92,94,107-108,115,121,131,138-139
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_04db5c9944d871 1
+  s_a797c2297db2c8::t_6a456446d975d7 24
+  s_a797c2297db2c8::t_5101ac4494b9f1 22-23
+  s_a797c2297db2c8::t_c9bd97f978b0be 36-37,89-94,102-106,114-118,120,141-144,146-147,149,196-200,214-220
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_0cd4a586715f79 114-118,120
+  s_a797c2297db2c8::t_f0ecb62aca5b4c 36-37
+  s_a797c2297db2c8::t_c7bde899209752 1
+  s_a797c2297db2c8::t_7b2e5992d6b8be 141-144,146-147,149
+  s_a797c2297db2c8::t_91ea5ca4b08daf 22-23
+  s_a797c2297db2c8::t_a70dfedbccaf4b 90,94,103,106,197,200,214-220
+  s_a797c2297db2c8::t_4f703ecc7fdda2 24
+  s_a797c2297db2c8::t_45727fcac7980c 89
+  s_a797c2297db2c8::t_417706b7e1ea35 91-93
+  s_a797c2297db2c8::t_4d2861f9c09b3c 102
+  s_a797c2297db2c8::t_b98dc20267b4ed 104-105
+  s_a797c2297db2c8::t_3792bddf01cf10 196
+  s_a797c2297db2c8::t_d5d7553ba23bf2 198-199
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_a797c2297db2c8::t_079c0d29e7a843 37-38
+  s_a797c2297db2c8::t_d1e94d293703e2 19-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "6c4d026982ca6a7c3936374d323d7a82c4a01869",
+  "prompts": {},
+  "sessions": {
+    "s_a797c2297db2c8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c113cdd-b2a2-4d5e-ac2e-06fb6e384d14",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
