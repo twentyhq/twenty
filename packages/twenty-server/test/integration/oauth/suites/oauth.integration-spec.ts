@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
+import gql from 'graphql-tag';
 import request from 'supertest';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
@@ -1048,41 +1050,39 @@ describe('OAuth (integration)', () => {
       expect(res.body.error).toBe('invalid_grant');
     });
 
-    const postMetadataGraphql = (
-      query: string,
-      variables: Record<string, unknown>,
-      token: string,
-    ) =>
-      request(baseUrl)
-        .post('/metadata')
-        .set('Authorization', `Bearer ${token}`)
-        .send({ query, variables });
-
-    const LIST_AUTHORIZATIONS_QUERY = `
-      query CurrentUserApplicationAuthorizations {
-        currentUserApplicationAuthorizations {
-          id
-          applicationId
-          applicationName
-          scopes
+    const LIST_AUTHORIZATIONS_OPERATION = {
+      query: gql`
+        query CurrentUserApplicationAuthorizations {
+          currentUserApplicationAuthorizations {
+            id
+            applicationId
+            applicationName
+            scopes
+          }
         }
-      }
-    `;
+      `,
+    };
 
-    const REVOKE_AUTHORIZATION_MUTATION = `
-      mutation RevokeApplicationAuthorization($applicationAuthorizationId: UUID!) {
-        revokeApplicationAuthorization(
-          applicationAuthorizationId: $applicationAuthorizationId
-        )
-      }
-    `;
+    const revokeAuthorizationOperation = (
+      applicationAuthorizationId: string,
+    ) => ({
+      query: gql`
+        mutation RevokeApplicationAuthorization(
+          $applicationAuthorizationId: UUID!
+        ) {
+          revokeApplicationAuthorization(
+            applicationAuthorizationId: $applicationAuthorizationId
+          )
+        }
+      `,
+      variables: { applicationAuthorizationId },
+    });
 
     const findListedAuthorization = async (
       token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
     ) => {
-      const res = await postMetadataGraphql(
-        LIST_AUTHORIZATIONS_QUERY,
-        {},
+      const res = await makeMetadataAPIRequest(
+        LIST_AUTHORIZATIONS_OPERATION,
         token,
       );
 
@@ -1098,9 +1098,8 @@ describe('OAuth (integration)', () => {
       applicationAuthorizationId: string,
       token: string,
     ) =>
-      postMetadataGraphql(
-        REVOKE_AUTHORIZATION_MUTATION,
-        { applicationAuthorizationId },
+      makeMetadataAPIRequest(
+        revokeAuthorizationOperation(applicationAuthorizationId),
         token,
       );
 
@@ -1145,7 +1144,12 @@ describe('OAuth (integration)', () => {
 
       const { id } = await findListedAuthorization();
 
-      await revokeListedAuthorization(id, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+      const firstRevoke = await revokeListedAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(firstRevoke.body.data.revokeApplicationAuthorization).toBe(true);
 
       const secondRevoke = await revokeListedAuthorization(
         id,
