@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { sanitizeHtmlPreview } from '@/advanced-text-editor/utils/sanitizeHtmlPreview';
+
 type HtmlNodeViewProps = Pick<NodeViewProps, 'node'>;
 
 const StyledPreview = styled.div`
@@ -14,12 +16,6 @@ const StyledPreview = styled.div`
   }
 `;
 
-// Email clients never execute scripts, so the preview should not either.
-const neutralizeScripts = (html: string): string =>
-  html
-    .replace(/<script/gi, '&lt;script')
-    .replace(/\son[a-z]+\s*=/gi, ' data-blocked-handler=');
-
 export const HtmlNodeView = ({ node }: HtmlNodeViewProps) => {
   const html = typeof node.attrs.html === 'string' ? node.attrs.html : '';
 
@@ -27,7 +23,7 @@ export const HtmlNodeView = ({ node }: HtmlNodeViewProps) => {
     <NodeViewWrapper>
       <StyledPreview
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: neutralizeScripts(html) }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtmlPreview(html) }}
       />
     </NodeViewWrapper>
   );
