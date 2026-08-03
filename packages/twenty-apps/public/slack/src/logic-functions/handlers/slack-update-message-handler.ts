@@ -1,5 +1,6 @@
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUpdateMessageInput } from 'src/logic-functions/types/slack-update-message-input.type';
+import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { sendSlackMessageWithMarkdownFallback } from 'src/logic-functions/utils/send-slack-message-with-markdown-fallback';
 
@@ -19,10 +20,14 @@ export const slackUpdateMessageHandler = async (
   const { client } = slackClientResult;
 
   return await sendSlackMessageWithMarkdownFallback({
-    messageText: parameters.newMessageText,
     messageFormat: parameters.messageFormat,
     failureMessage: 'Failed to update Slack message',
-    sendMessage: async (bodyFields) => {
+    sendMessage: async (messageFormat) => {
+      const bodyFields = getSlackChatMessageBodyFields(
+        parameters.newMessageText,
+        messageFormat,
+      );
+
       const data = await client.chat.update({
         channel: parameters.slackChannelId,
         ts: parameters.messageTimestamp,
