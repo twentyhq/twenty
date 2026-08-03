@@ -326,7 +326,6 @@ export class ApplicationManifestMigrationService {
     await this.applicationService.update(ownerFlatApplication.id, {
       workspaceId,
       settingsCustomTabFrontComponentId,
-      canActWithoutUser: manifest.application.canActWithoutUser === true,
       ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
     });
   }

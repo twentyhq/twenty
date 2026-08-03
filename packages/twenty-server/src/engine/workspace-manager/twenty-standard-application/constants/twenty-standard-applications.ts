@@ -14,7 +14,7 @@ export const TWENTY_STANDARD_APPLICATION = {
   version: '1.0.1',
   sourcePath: 'cli-sync',
   sourceType: ApplicationRegistrationSourceType.LOCAL,
-  // Workflows and cron triggers run with nobody logged in.
+  // Workspace-owned, so nothing is withheld from it.
   canActWithoutUser: true,
 } as const satisfies Pick<
   ApplicationEntity,

@@ -71,7 +71,7 @@ describe('ApplicationTokenService', () => {
       const workspaceId = 'workspace-id';
       const applicationId = 'application-id';
       const mockWorkspace = { id: workspaceId };
-      const mockApplication = { id: applicationId, canActWithoutUser: true };
+      const mockApplication = { id: applicationId };
       const mockToken = 'mock-token';
 
       jest
@@ -102,55 +102,13 @@ describe('ApplicationTokenService', () => {
       );
     });
 
-    it('should refuse a userless token when the application may not act without a user', async () => {
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest.spyOn(applicationRepository, 'findOne').mockResolvedValue({
-        id: 'application-id',
-        canActWithoutUser: false,
-      } as ApplicationEntity);
-
-      await expect(
-        service.generateApplicationAccessToken({
-          workspaceId: 'workspace-id',
-          applicationId: 'application-id',
-        }),
-      ).rejects.toThrow('is not allowed to act without a user');
-    });
-
-    it('should still issue a token for a user when the application may not act without one', async () => {
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest.spyOn(applicationRepository, 'findOne').mockResolvedValue({
-        id: 'application-id',
-        canActWithoutUser: false,
-      } as ApplicationEntity);
-      jest
-        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
-        .mockResolvedValue('mock-token');
-
-      await expect(
-        service.generateApplicationAccessToken({
-          workspaceId: 'workspace-id',
-          applicationId: 'application-id',
-          userId: 'user-id',
-          userWorkspaceId: 'user-workspace-id',
-        }),
-      ).resolves.toEqual({
-        token: 'mock-token',
-        expiresAt: expect.any(Date),
-      });
-    });
-
     it('should include optional userWorkspaceId and userId in payload', async () => {
       const workspaceId = 'workspace-id';
       const applicationId = 'application-id';
       const userWorkspaceId = 'user-workspace-id';
       const userId = 'user-id';
       const mockWorkspace = { id: workspaceId };
-      const mockApplication = { id: applicationId, canActWithoutUser: true };
+      const mockApplication = { id: applicationId };
       const mockToken = 'mock-token';
 
       jest
@@ -307,7 +265,7 @@ describe('ApplicationTokenService', () => {
       const workspaceId = 'workspace-id';
       const applicationId = 'application-id';
       const mockWorkspace = { id: workspaceId };
-      const mockApplication = { id: applicationId, canActWithoutUser: true };
+      const mockApplication = { id: applicationId };
       const mockToken = 'mock-token';
 
       jest
@@ -342,7 +300,7 @@ describe('ApplicationTokenService', () => {
       const workspaceId = 'workspace-id';
       const applicationId = 'application-id';
       const mockWorkspace = { id: workspaceId };
-      const mockApplication = { id: applicationId, canActWithoutUser: true };
+      const mockApplication = { id: applicationId };
       const mockToken = 'mock-token';
 
       jest
