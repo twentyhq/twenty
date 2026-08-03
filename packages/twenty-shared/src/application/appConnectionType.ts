@@ -29,6 +29,9 @@ export type AppConnection = {
   // for `scope: 'user'` credentials). Match against `event.userWorkspaceId`
   // to resolve the request user's connection.
   userWorkspaceId: string;
+  // The workspace member who created the credential. null when the creating
+  // user is no longer a member of the workspace.
+  workspaceMemberId: string | null;
   accessToken: string;
   // OAuth scopes actually granted by the upstream provider on the most recent
   // token issuance (may be a subset of what the app requested).

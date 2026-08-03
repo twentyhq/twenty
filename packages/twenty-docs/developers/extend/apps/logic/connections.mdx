@@ -179,6 +179,7 @@ Each connection has:
 | `visibility`      | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
 | `scopes`          | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
 | `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
+| `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                        |
 | `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
 | `name` / `handle` | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
 | `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
