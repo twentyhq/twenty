@@ -125,9 +125,9 @@ describe('usePieChartData', () => {
     const { result } = renderHook(() =>
       usePieChartData({
         data: [
+          { key: 'beta', value: 20 },
           { key: 'gamma', value: 30 },
           { key: 'delta', value: 50 },
-          { key: 'beta', value: 20 },
         ],
         colorRegistry: mockColorRegistry,
         colorMode: 'automaticPalette',

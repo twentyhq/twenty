@@ -59,12 +59,20 @@ describe('getColorScheme', () => {
     },
   } as unknown as GraphColorRegistry;
 
+  const alphabeticalRankByKey = new Map([
+    ['alpha', 0],
+    ['beta', 1],
+    ['gamma', 2],
+  ]);
+
   describe('with valid color name', () => {
     it('should return the color scheme for a valid color name', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'blue',
-        colorIndex: 0,
+        colorKey: 'alpha',
+        colorMode: 'selectFieldOptionColors',
+        alphabeticalRankByKey,
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -74,7 +82,9 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'BLUE' as 'blue',
-        colorIndex: 0,
+        colorKey: 'alpha',
+        colorMode: 'selectFieldOptionColors',
+        alphabeticalRankByKey,
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -84,7 +94,9 @@ describe('getColorScheme', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'Blue' as 'blue',
-        colorIndex: 0,
+        colorKey: 'alpha',
+        colorMode: 'selectFieldOptionColors',
+        alphabeticalRankByKey,
       });
 
       expect(result).toEqual(mockRegistry.blue);
@@ -92,18 +104,24 @@ describe('getColorScheme', () => {
   });
 
   describe('with invalid or missing color name', () => {
-    it('should return the color scheme at the provided index', () => {
+    it('should return the color scheme at the alphabetical rank', () => {
       const firstResult = getColorScheme({
         registry: mockRegistry,
-        colorIndex: 0,
+        colorKey: 'alpha',
+        colorMode: 'automaticPalette',
+        alphabeticalRankByKey,
       });
       const secondResult = getColorScheme({
         registry: mockRegistry,
-        colorIndex: 1,
+        colorKey: 'beta',
+        colorMode: 'automaticPalette',
+        alphabeticalRankByKey,
       });
       const thirdResult = getColorScheme({
         registry: mockRegistry,
-        colorIndex: 2,
+        colorKey: 'gamma',
+        colorMode: 'automaticPalette',
+        alphabeticalRankByKey,
       });
 
       expect(firstResult.name).toBe('blue');
@@ -111,53 +129,76 @@ describe('getColorScheme', () => {
       expect(thirdResult.name).toBe('red');
     });
 
-    it('should use the provided index when color name is not in registry', () => {
+    it('should use the alphabetical rank when color name is not in registry', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'invalidColor' as 'blue',
-        colorIndex: 1,
+        colorKey: 'beta',
+        colorMode: 'automaticPalette',
+        alphabeticalRankByKey,
       });
 
       expect(result.name).toBe('green');
     });
 
-    it('should return the same color for the same index on every call', () => {
-      const first = getColorScheme({ registry: mockRegistry, colorIndex: 1 });
+    it('should return the same color for the same key on every call', () => {
+      const first = getColorScheme({
+        registry: mockRegistry,
+        colorKey: 'beta',
+        colorMode: 'automaticPalette',
+        alphabeticalRankByKey,
+      });
       const second = getColorScheme({
         registry: mockRegistry,
-        colorIndex: 1,
+        colorKey: 'beta',
+        colorMode: 'automaticPalette',
+        alphabeticalRankByKey,
       });
 
       expect(first).toEqual(second);
     });
+
+    it('should throw when the color key has no alphabetical rank', () => {
+      expect(() =>
+        getColorScheme({
+          registry: mockRegistry,
+          colorKey: 'missing',
+          colorMode: 'automaticPalette',
+          alphabeticalRankByKey,
+        }),
+      ).toThrow('Missing alphabetical rank for color key "missing"');
+    });
   });
 
-  describe('with totalGroups parameter', () => {
-    it('should generate a group color when totalGroups is provided', () => {
+  describe('with explicit single color mode', () => {
+    it('should generate a group color', () => {
       const result = getColorScheme({
         registry: mockRegistry,
         colorName: 'blue',
-        colorIndex: 0,
-        totalGroups: 5,
+        colorKey: 'alpha',
+        colorMode: 'explicitSingleColor',
+        alphabeticalRankByKey,
       });
 
       expect(result.name).toBe('blue');
       expect(result.variations).toEqual(mockRegistry.blue.variations);
     });
 
-    it('should use colorIndex for group color generation', () => {
+    it('should use alphabetical rank for group color generation', () => {
       const result1 = getColorScheme({
         registry: mockRegistry,
         colorName: 'green',
-        colorIndex: 0,
-        totalGroups: 3,
+        colorKey: 'alpha',
+        colorMode: 'explicitSingleColor',
+        alphabeticalRankByKey,
       });
 
       const result2 = getColorScheme({
         registry: mockRegistry,
         colorName: 'green',
-        colorIndex: 2,
-        totalGroups: 3,
+        colorKey: 'gamma',
+        colorMode: 'explicitSingleColor',
+        alphabeticalRankByKey,
       });
 
       expect(result1.solid).not.toBe(result2.solid);

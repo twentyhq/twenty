@@ -9,7 +9,6 @@ import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 type UseLineChartDataProps = {
   data: LineChartSeriesWithColor[];
@@ -34,21 +33,12 @@ export const useLineChartData = ({
     );
 
     return data.map((series, index) => {
-      const alphabeticalRank = alphabeticalRankByKey.get(series.key);
-
-      assertIsDefinedOrThrow(
-        alphabeticalRank,
-        new Error(`Missing alphabetical rank for color key "${series.key}"`),
-      );
-
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
-        colorIndex: alphabeticalRank,
-        totalGroups:
-          colorMode === 'explicitSingleColor'
-            ? alphabeticalRankByKey.size
-            : undefined,
+        colorKey: series.key,
+        colorMode,
+        alphabeticalRankByKey,
       });
 
       const sanitizedSeriesKey = series.key
