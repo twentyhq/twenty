@@ -1,0 +1,107 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_0054beccf6bdfd 117-128,130-136
+  s_a797c2297db2c8::t_9b8f2be2ad59e1 20-23
+  s_a797c2297db2c8::t_024c5a745e275d 238,245-247,250,254,281-295,298-299,307
+  s_a797c2297db2c8::t_e18d4a5062de5d 107
+  s_a797c2297db2c8::t_3820c18a20a8cb 15-18
+  s_a797c2297db2c8::t_b59ed89bb16261 129
+  s_a797c2297db2c8::t_2cbb19a9ba9ee7 227-229
+  s_a797c2297db2c8::t_a28ad0c0067ec3 1
+  s_a797c2297db2c8::t_3939c7806edde8 223-224,226,236,239-241,270-275,277,304-305
+  s_a797c2297db2c8::t_1229120bfe3f48 27-28
+  s_a797c2297db2c8::t_bf8bb5dee0c6b3 225
+  s_a797c2297db2c8::t_06eeb293d0325f 237,242-244,248-249,251-253,255-269,276,278-280,296-297,300-303,306,308-309
+  s_a797c2297db2c8::t_555f01448a15c4 100-105
+  s_a797c2297db2c8::t_140180fdcbcd49 186
+  s_a797c2297db2c8::t_d529819ac488b9 184-185,187-189
+  s_a797c2297db2c8::t_64705c1f5b8369 310
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/utils/parse-google-webhook-subscription-error.util.ts
+  s_a797c2297db2c8::t_4e4b293e7b516c 1-82
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
+  s_a797c2297db2c8::t_368f997a49fd3d 12-14,23-26,30
+  s_a797c2297db2c8::t_b684602dd93572 11,21-22
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/utils/__tests__/parse-microsoft-webhook-subscription-error.util.spec.ts
+  s_a797c2297db2c8::t_a955ece41d9869 30-42
+  s_a797c2297db2c8::t_5cf2d665d67c14 5-11,14,17-23,25-26,28,43-49,55-56,58,66-69
+  s_a797c2297db2c8::t_c46b82297c546a 2-4,12-13,15-16,24,27,29,50-54,57,59-65,70-73
+  s_a797c2297db2c8::t_ed3b0db3883e40 1
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-webhook-subscription.driver.dev.spec.ts
+  s_a797c2297db2c8::t_07a21f270a3c8b 1-89
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/utils/__tests__/parse-google-webhook-subscription-error.util.spec.ts
+  s_a797c2297db2c8::t_94810873235385 96-99,101
+  s_a797c2297db2c8::t_0df8968c8824a3 1-57,59,65-95,100,102-105
+  s_a797c2297db2c8::t_2d7158843984be 58,60-64
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler.ts
+  s_a797c2297db2c8::t_6bba9050e81de0 123,132-135,149-152
+  s_a797c2297db2c8::t_b2c6323d3cf92f 118-122,124-131,136-148,153-154
+  s_a797c2297db2c8::t_701cdb52a9b64e 95-99,101,103-104
+packages/twenty-server/test/integration/microsoft/webhook/lifecycle-notification.integration-spec.ts
+  s_a797c2297db2c8::t_664810db3faa8f 147
+  s_a797c2297db2c8::t_c94b43277f0123 1-146,148-163
+packages/twenty-server/test/integration/microsoft/mocks/microsoft-webhook-subscription-handlers.util.ts
+  s_a797c2297db2c8::t_5d6524ddf19812 1-84
+packages/twenty-server/test/integration/microsoft/mocks/setup-microsoft-mock.util.ts
+  s_a797c2297db2c8::t_544e02a8c2ca94 24,29
+  s_a797c2297db2c8::t_1c2236bb7c060b 44-45,49,54,59-64
+  s_a797c2297db2c8::t_cf3eba9af0781d 8-11
+  s_a797c2297db2c8::t_99c032f464fb2a 7
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/google-webhook-subscription.driver.dev.spec.ts
+  s_a797c2297db2c8::t_4090991e4a0b04 1-105
+  s_a797c2297db2c8::t_72daa9ddf725d2 106-107
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/utils/parse-microsoft-webhook-subscription-error.util.ts
+  s_a797c2297db2c8::t_57d0adb3691246 6-8,14-19,21-26,28-29,31-32,34,36-40,42-53,55-59
+  s_a797c2297db2c8::t_54f2654d66e29a 12
+  s_a797c2297db2c8::t_7bb1249898a805 9-11,13
+  s_a797c2297db2c8::t_5bf34fb9f741b4 1-5,20,27,30,33,35,41,54,60
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler.ts
+  s_a797c2297db2c8::t_364d7980c27b39 117-121,123-130,135-147,152-153
+  s_a797c2297db2c8::t_ceb45844eb7c75 122,131-134,148-151
+  s_a797c2297db2c8::t_25a0faa8d5d008 94-98,100,102-103
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type.ts
+  s_a797c2297db2c8::t_b36f51082d236a 3-4
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_a797c2297db2c8::t_5bf643c82b6912 1
+  s_a797c2297db2c8::t_164f74e6d98a69 129
+  s_a797c2297db2c8::t_cd1a6134c59b2e 222-223,225,235,238-240,250,269-274,276,303-304
+  s_a797c2297db2c8::t_6c15a27a6c2a45 226-228
+  s_a797c2297db2c8::t_4208eb4e80f01c 236-237,241-249,251-268,275,277-302,305-308
+  s_a797c2297db2c8::t_38814493555a89 15-18
+  s_a797c2297db2c8::t_4e198be60e3a84 183-184,186-188
+  s_a797c2297db2c8::t_fe536fd01f0ff7 224
+  s_a797c2297db2c8::t_61429703040c4f 101-106
+  s_a797c2297db2c8::t_3e5a905096ce3b 108
+  s_a797c2297db2c8::t_d3062ba24ed82f 27-30
+  s_a797c2297db2c8::t_d81ce93632b99c 20-23
+  s_a797c2297db2c8::t_1aab3e3cf233e2 118-128,130-136
+  s_a797c2297db2c8::t_78f35ab7d311a8 185
+  s_a797c2297db2c8::t_347d6704104cc0 309
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/google-webhook-subscription.driver.ts
+  s_a797c2297db2c8::t_90d79c7c4866d3 118-122
+  s_a797c2297db2c8::t_d1966b175c9b21 88-97
+  s_a797c2297db2c8::t_caf7b72c030b2a 4
+  s_a797c2297db2c8::t_6087037a483ab9 177-186
+  s_a797c2297db2c8::t_71a6d511c99048 134-147
+  s_a797c2297db2c8::t_ad744a2ddfdefa 17
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-webhook-subscription.driver.ts
+  s_a797c2297db2c8::t_0709bcde095d37 127-130
+  s_a797c2297db2c8::t_f0666d1057a833 82-85
+  s_a797c2297db2c8::t_7cb4baac90f795 108-111
+  s_a797c2297db2c8::t_a92049af9dc2eb 21
+  s_a797c2297db2c8::t_ef8983df59d3b5 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "c4cf0ce6e18447cff676b63d7c2eb289395c10db",
+  "prompts": {},
+  "sessions": {
+    "s_a797c2297db2c8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c113cdd-b2a2-4d5e-ac2e-06fb6e384d14",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
