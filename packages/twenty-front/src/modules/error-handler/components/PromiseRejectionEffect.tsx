@@ -11,7 +11,10 @@ import {
   ServerParseError,
   UnconventionalError,
 } from '@apollo/client/errors';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { isDefined, type CustomError } from 'twenty-shared/utils';
+
+const STALE_CHUNK_LAZY_LOADING_FINGERPRINT = 'vite-stale-chunk-lazy-loading';
 
 const isApolloError = (error: unknown): boolean =>
   CombinedGraphQLErrors.is(error) ||
@@ -25,7 +28,24 @@ const isApolloError = (error: unknown): boolean =>
 const hasErrorCode = (
   error: CustomError | any,
 ): error is CustomError & { code: string } => {
-  return 'code' in error && isDefined(error.code);
+  return isObject(error) && 'code' in error && isDefined(error.code);
+};
+
+// stale chunk messages embed the content-hashed asset URL, so fingerprinting on
+// them would create a new Sentry issue for every deploy and every chunk
+const getPromiseRejectionFingerprint = (
+  error: unknown,
+  isStaleChunkLazyLoadingError: boolean,
+) => {
+  if (isStaleChunkLazyLoadingError) {
+    return STALE_CHUNK_LAZY_LOADING_FINGERPRINT;
+  }
+
+  if (hasErrorCode(error)) {
+    return error.code;
+  }
+
+  return error instanceof Error ? error.message : undefined;
 };
 
 export const PromiseRejectionEffect = () => {
@@ -60,13 +80,25 @@ export const PromiseRejectionEffect = () => {
         captureException(error, (scope) => {
           scope.setExtras({ mechanism: 'onUnhandle' });
           scope.setTag(
-            'isStaleChunkLazyLoadingError',
+            'errorSink',
+            isStaleChunkLazyLoadingError
+              ? 'promiseRejectionStaleChunk'
+              : 'promiseRejection',
+          );
+
+          const fingerprint = getPromiseRejectionFingerprint(
+            error,
             isStaleChunkLazyLoadingError,
           );
 
-          const fingerprint = hasErrorCode(error) ? error.code : error.message;
-          scope.setFingerprint([fingerprint]);
-          error.name = error.message;
+          if (isNonEmptyString(fingerprint)) {
+            scope.setFingerprint([fingerprint]);
+          }
+
+          if (error instanceof Error) {
+            error.name = error.message;
+          }
+
           return scope;
         });
       } catch (sentryError) {
