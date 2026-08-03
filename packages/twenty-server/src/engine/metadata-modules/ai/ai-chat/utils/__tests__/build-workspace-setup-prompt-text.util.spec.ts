@@ -187,6 +187,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('ask_questions is for new decisions');
+    expect(result).toContain('Load a skill before proposing what it builds');
   });
 
   it('should keep ask_questions options within the single-recommended limit', () => {
