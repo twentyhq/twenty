@@ -88,11 +88,18 @@ const PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
+const MESSAGE_CAMPAIGN_HOME_WIDGETS =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
+    .widgets;
+
 const PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
-  ...getUniversalIdentifiers(
-    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs
-      .home.widgets,
-  ),
+  // Listed one by one rather than enumerated: `messages` still has an
+  // identifier reserved in twenty-shared, but the standard application stopped
+  // building that widget, so asking for it fails the whole provisioning run.
+  MESSAGE_CAMPAIGN_HOME_WIDGETS.fields.universalIdentifier,
+  MESSAGE_CAMPAIGN_HOME_WIDGETS.details.universalIdentifier,
+  MESSAGE_CAMPAIGN_HOME_WIDGETS.recipients.universalIdentifier,
+  MESSAGE_CAMPAIGN_HOME_WIDGETS.list.universalIdentifier,
   ...getUniversalIdentifiers(
     STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs.home
       .widgets,

@@ -60,7 +60,7 @@ The build step uses esbuild to produce a single self-contained file per logic fu
 
 **Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
 
-**Front components** run in a Web Worker. Node built-in modules are **not** available — only browser APIs and npm packages that work in a browser environment.
+**Front components** run in a Web Worker. Node built-in modules are **not** available — only npm packages that work in a browser environment. Note that the sandbox implements a *partial* DOM, so a package can build cleanly and still fail at runtime; see [Current limitations](/developers/extend/apps/layout/front-components#current-limitations).
 
 Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
 

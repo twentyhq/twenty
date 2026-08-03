@@ -1,0 +1,111 @@
+---
+title: 法律常见问题
+description: 常见法律问题。
+---
+
+## 数据驻留和国际传输
+
+<AccordionGroup>
+<Accordion title="我们的工作区数据、附件、日志和备份将存储在哪个国家和地区？">
+Twenty Cloud 运行在位于德国法兰克福的 AWS 服务器上。
+</Accordion>
+<Accordion title="我们的工作区托管区域是否可以在合同中固定？">
+托管区域选择将从 2027 年开始提供，最初仅适用于新的工作区。 用户今后将可以为现有工作区申请变更托管区域。 或者，你也可以联系[我们的合作伙伴](https://twenty.com/partners/list?categories=HOSTING)，帮助你设置你的实例。
+</Accordion>
+<Accordion title="哪些次级处理方可以处理或访问我们的 CRM 数据？它们位于哪些国家？">
+所有次级处理方的列表可在[我们的信任中心](https://trust.twenty.com/?tab=subprocessors)中查看。
+</Accordion>
+<Accordion title="哪些保障措施适用于国际数据传输？">
+欧盟标准合同条款（EU Standard Contractual Clauses），连同英国附录和瑞士修订，适用于向欧盟以外地区进行的数据跨境传输，包括向所有次级处理方的传输。
+</Accordion>
+</AccordionGroup>
+
+## 数据处理协议和法律角色
+
+<AccordionGroup>
+<Accordion title="我们在哪里可以找到当前的数据处理协议（Data Processing Agreement）？">
+你可以在 https://{your-domain}/settings/legal/dpa（例如：https://getting-started.twenty.com/settings/legal/dpa）生成你已签署的 DPA。
+</Accordion>
+<Accordion title="在 CRM 中存储的商户和联系信息方面，Twenty 是否作为数据处理方，而我们公司仍然是数据控制方？">
+根据我们的[隐私政策](https://twenty.com/privacy-policy)，对于在 CRM 中存储的商户和联系信息，Twenty 作为数据处理方，而你的公司仍然是数据控制方。
+</Accordion>
+<Accordion title="CRM 内容是否会被用于训练 Twenty 或第三方的 AI 模型？">
+CRM 内容可在符合次级处理方条款与条件的前提下用于训练 AI 模型。 Twenty 自身没有 AI 模型 —— Twenty Cloud 上可用的所有 AI 模型均由我们的次级处理方提供。
+</Accordion>
+<Accordion title="如果存在可选的 AI 处理，是否可以为我们的工作区完全禁用？">
+可以通过在“设置 → AI → 模型”中关闭所有 AI 模型来完全禁用 AI。 此外，只有当你主动与 AI 聊天或工作流中的 AI 节点交互时，数据才会被发送给 AI。
+</Accordion>
+</AccordionGroup>
+
+## 安全性与访问控制
+
+<AccordionGroup>
+<Accordion title="你们是否在传输和静态存储过程中使用加密？你们的密钥管理实践是什么？以及如何实现租户数据的隔离？">
+所有数据在传输和静态存储过程中都经过加密。 租户数据通过“每个租户单独架构”的方式实现隔离，加密密钥会定期轮换。
+</Accordion>
+<Accordion title="哪些 Twenty 员工或次级处理方可以访问客户工作区？出于什么目的？访问如何获批并记录？">
+Twenty 的工程和支持团队只有在客户报告问题并且客户在“设置 → 常规 → 安全”中同意允许访问工作区时，才能访问客户工作区。
+</Accordion>
+<Accordion title="在确认发生影响我们数据的安全事件后，你们的事件通知流程是什么？目标通知时间是多久？">
+在确认发生影响你方数据的个人数据泄露事件时，我们会在不无故拖延的前提下，并且无论如何会在知悉该事件后的 48 小时内通知你。 在当时已知的范围内，我们的通知将包括：泄露的性质、受影响数据和个人的类别及大致数量、可能产生的后果，以及已采取或计划采取的补救和减缓措施。 我们会在调查进展过程中持续向你提供更新。
+</Accordion>
+</AccordionGroup>
+
+## 数据保留与删除
+
+<AccordionGroup>
+<Accordion title="当删除单条 CRM 记录时，它会在何时从活动系统中移除？">
+当记录被删除时，它首先会被软删除，仍然可以恢复。 一旦保留期结束或用户手动销毁记录，它就会被永久删除并从活动系统中移除。
+</Accordion>
+<Accordion title="软删除记录在系统中会保留多长时间？">
+默认情况下，软删除记录会保留 14 天，之后会从系统中被永久移除。 软删除记录的保留期可以在“设置 → 常规 → 安全”中进行更改。
+</Accordion>
+<Accordion title="该记录在备份或技术日志中最多会保留多长时间？">
+被移除的记录将在备份中保留 30 天，之后将被永久删除。
+</Accordion>
+<Accordion title="当工作区被关闭或请求完全删除时，对于生产数据、附件、日志和备份分别适用怎样的具体时间表？">
+当工作区被删除时，其数据会立即从活动系统中移除。 备份会保留 7 天，之后所有数据将被永久删除。
+</Accordion>
+<Accordion title="在任何备份保留期内，被删除的数据是否与日常运营访问和使用相隔离？">
+是的，在任何备份保留期内，被删除的数据都与运营使用相隔离。
+</Accordion>
+<Accordion title="是否有任何类别的数据会因法律、计费、欺诈防范、安全或审计的目的而被保留更长时间？ 如果有，是哪些类别以及会保留多久？">
+如需了解更多数据保留相关信息，你可以索取我们的数据管理与保留政策，该政策可在[我们的信任中心](https://trust.twenty.com/?tab=documents)中获取。
+</Accordion>
+<Accordion title="当完成全部删除请求后，Twenty 是否可以提供书面确认？">
+我们会确认删除请求，并在删除完成后提供书面确认。
+</Accordion>
+</AccordionGroup>
+
+## 备份与弹性
+
+<AccordionGroup>
+<Accordion title="备份的频率和保留期限是多少？">
+备份会持续创建，并每日生成快照，保留期为 30 天。
+</Accordion>
+<Accordion title="Twenty Cloud 的恢复点目标（RPO）和恢复时间目标（RTO）是多少？">
+RTO 和 RPO 均为 6 小时（如我们的 DPA 所述）。
+</Accordion>
+<Accordion title="请求或执行恢复操作的流程是什么？">
+如需请求恢复，请通过支持聊天与我们的团队联系，或发送邮件至 [contact@twenty.com](mailto:contact@twenty.com)。
+</Accordion>
+<Accordion title="备份是否已加密，并且是否与主工作区数据存储在同一地区？">
+所有备份都经过加密，并存储在同一司法管辖区内但地理位置不同的地点（例如：针对欧盟数据，存储在欧盟境内）。
+</Accordion>
+</AccordionGroup>
+
+## 合规
+
+<AccordionGroup>
+<Accordion title="Twenty 是否符合 GDPR 要求？">
+是的，Twenty [符合 GDPR 要求](https://trust.twenty.com/?tab=securityControls\&frameworks=gdpr_v1)。
+</Accordion>
+<Accordion title="Twenty 是否符合 SOC 2 要求？">
+是的，Twenty [符合 SOC 2 要求](https://trust.twenty.com/?tab=securityControls\&frameworks=soc2_v1)。
+</Accordion>
+<Accordion title="Twenty 是否符合 HIPAA 要求？">
+目前还没有，Twenty 正在推进符合 HIPAA 要求的相关工作。
+</Accordion>
+</AccordionGroup>
+
+如果你还有更多问题，请查阅我们的[条款与条件](https://twenty.com/terms)、[隐私政策](https://twenty.com/privacy-policy)和[信任中心](https://trust.twenty.com/)。 如果你的问题仍未得到解答，请将其发送至 [contact@twenty.com](mailto:contact@twenty.com) 或通过支持聊天联系我们。

@@ -97,7 +97,7 @@ const StyledInstallButton = styled.div`
 `;
 
 type InstallAppsContentProps = {
-  apps: (OnboardingInstallableApp & { logo: string | null })[];
+  apps: (OnboardingInstallableApp & { logoUrl: string | null })[];
   selectedUniversalIdentifiers: string[];
   creditsRewardPerApp?: number;
   isCompleting: boolean;
@@ -160,7 +160,7 @@ export const InstallAppsContent = ({
               return (
                 <StyledAppRow key={app.universalIdentifier}>
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(app.logo)}
+                    avatarUrl={getAbsoluteImageUrl(app.logoUrl)}
                     placeholder={labelText}
                     placeholderColorSeed={app.universalIdentifier}
                     size="lg"

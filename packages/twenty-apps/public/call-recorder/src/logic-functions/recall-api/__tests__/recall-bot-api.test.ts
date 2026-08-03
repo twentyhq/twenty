@@ -16,6 +16,7 @@ import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recal
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
+const MEETING_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const RECALL_ROUTING_METADATA = {
   twentyWorkspaceId: WORKSPACE_ID,
@@ -65,6 +66,7 @@ describe('recall bot api', () => {
   it('creates Recall bot requests with the Token authorization scheme', async () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -84,6 +86,23 @@ describe('recall bot api', () => {
       meeting_url: 'https://meet.google.com/abc-defg-hij',
       join_at: '2026-01-01T13:00:00.000Z',
       bot_name: 'Call Recorder',
+      automatic_leave: {
+        bot_detection: {
+          using_participant_names: {
+            matches: expect.arrayContaining(['Call Recorder', 'notetaker']),
+            activate_after: 300,
+            timeout: 10,
+          },
+          using_participant_events: {
+            activate_after: 300,
+            timeout: 10,
+          },
+        },
+        silence_detection: {
+          activate_after: 1200,
+          timeout: 300,
+        },
+      },
       recording_config: {
         video_mixed_mp4: {},
         audio_mixed_mp3: {},
@@ -98,6 +117,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -118,6 +138,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -141,6 +162,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -163,6 +185,7 @@ describe('recall bot api', () => {
     const result = await rescheduleRecallBot({
       externalBotId: 'recall-bot-gone',
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -187,6 +210,7 @@ describe('recall bot api', () => {
 
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -544,7 +568,9 @@ describe('recall bot api', () => {
       expect.objectContaining({ method: 'POST' }),
     );
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
-      provider: { recallai_async: { language_code: 'auto' } },
+      provider: {
+        gladia_v2_async: { language_config: { code_switching: true } },
+      },
       diarization: { use_separate_streams_when_available: true },
     });
   });
@@ -698,6 +724,7 @@ describe('recall bot api', () => {
       });
       const scheduleArguments = {
         meetingUrl: 'https://meet.google.com/abc-defg-hij',
+        meetingStartsAt: MEETING_STARTS_AT,
         joinAt: '2026-01-01T13:00:00.000Z',
         metadata: RECALL_ROUTING_METADATA,
       };

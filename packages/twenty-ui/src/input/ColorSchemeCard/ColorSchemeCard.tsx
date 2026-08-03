@@ -60,10 +60,11 @@ export const ColorSchemeCard = ({
   variant,
   selected,
   onClick,
+  className,
 }: ColorSchemeCardProps) => {
   if (variant === 'System') {
     return (
-      <div className={styles.container}>
+      <div className={clsx(styles.container, className)}>
         <div
           className={styles.mixedColorSchemeSegment}
           role={isDefined(onClick) ? 'button' : undefined}
@@ -92,7 +93,7 @@ export const ColorSchemeCard = ({
   }
 
   return (
-    <div className={styles.container}>
+    <div className={clsx(styles.container, className)}>
       <ColorSchemeSegment variant={variant} onClick={onClick} />
       <div
         className={styles.checkmarkContainer}

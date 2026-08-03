@@ -77,13 +77,38 @@ describe('useCampaignComposerState', () => {
     expect(result.current.canSend).toBe(false);
   });
 
-  it('should send trimmed values with the selected topic and call onSent on success', async () => {
+  it('should send the existing draft and call onSent on success', async () => {
     sendMessageCampaignMock.mockResolvedValue(true);
     const onSent = jest.fn();
 
     const { result } = renderHook(() =>
-      useCampaignComposerState({ onSent, autoSaveDraft: false }),
+      useCampaignComposerState({
+        campaignId: 'campaign-1',
+        onSent,
+        autoSaveDraft: false,
+      }),
     );
+
+    fillSendableFields(result);
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(sendMessageCampaignMock).toHaveBeenCalledWith({
+      campaignId: 'campaign-1',
+    });
+    expect(onSent).toHaveBeenCalledTimes(1);
+  });
+
+  it('should persist the current values as a draft before sending', async () => {
+    sendMessageCampaignMock.mockResolvedValue(true);
+
+    const { result } = renderHook(() => useCampaignComposerState({}));
+
+    await waitFor(() => {
+      expect(result.current.draftCampaignId).toBe('campaign-1');
+    });
 
     act(() => {
       result.current.setUnsubscribeTopicId('topic-1');
@@ -95,38 +120,40 @@ describe('useCampaignComposerState', () => {
       await result.current.handleSend();
     });
 
-    expect(sendMessageCampaignMock).toHaveBeenCalledWith({
+    expect(saveDraftMock).toHaveBeenLastCalledWith({
+      campaignId: 'campaign-1',
       listId: 'list-1',
       unsubscribeTopicId: 'topic-1',
       subject: 'Hello',
       body: 'Body',
       fromAddress: 'sender@example.com',
     });
-    expect(onSent).toHaveBeenCalledTimes(1);
+    expect(sendMessageCampaignMock).toHaveBeenCalledWith({
+      campaignId: 'campaign-1',
+    });
   });
 
-  it('should pass an undefined topic when none is selected', async () => {
-    sendMessageCampaignMock.mockResolvedValue(true);
-
+  it('should not send when required fields are missing', async () => {
     const { result } = renderHook(() =>
-      useCampaignComposerState({ autoSaveDraft: false }),
+      useCampaignComposerState({
+        campaignId: 'campaign-1',
+        autoSaveDraft: false,
+      }),
     );
-
-    fillSendableFields(result);
 
     await act(async () => {
       await result.current.handleSend();
     });
 
-    expect(sendMessageCampaignMock).toHaveBeenCalledWith(
-      expect.objectContaining({ unsubscribeTopicId: undefined }),
-    );
+    expect(sendMessageCampaignMock).not.toHaveBeenCalled();
   });
 
-  it('should not send when required fields are missing', async () => {
+  it('should not send when no draft exists yet', async () => {
     const { result } = renderHook(() =>
       useCampaignComposerState({ autoSaveDraft: false }),
     );
+
+    fillSendableFields(result);
 
     await act(async () => {
       await result.current.handleSend();
@@ -140,7 +167,11 @@ describe('useCampaignComposerState', () => {
     const onSent = jest.fn();
 
     const { result } = renderHook(() =>
-      useCampaignComposerState({ onSent, autoSaveDraft: false }),
+      useCampaignComposerState({
+        campaignId: 'campaign-1',
+        onSent,
+        autoSaveDraft: false,
+      }),
     );
 
     fillSendableFields(result);

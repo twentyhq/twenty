@@ -5,4 +5,5 @@ export enum CallRecordingStatus {
   PROCESSING = 'PROCESSING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
+  NOT_RECORDED = 'NOT_RECORDED',
 }

@@ -24,6 +24,10 @@ export const WorkflowSSESubscribeEffect = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
+  const requestWorkflowRefetch = useCallback(() => {
+    setShouldWorkflowRefetchRequest(true);
+  }, [setShouldWorkflowRefetchRequest]);
+
   useListenToEventsForQuery({
     queryId,
     operationSignature: {
@@ -34,14 +38,11 @@ export const WorkflowSSESubscribeEffect = ({
         },
       },
     },
+    onSseReconnected: requestWorkflowRefetch,
   });
 
-  const handleWorkflowVersionCreateOne = useCallback(() => {
-    setShouldWorkflowRefetchRequest(true);
-  }, [setShouldWorkflowRefetchRequest]);
-
   useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: handleWorkflowVersionCreateOne,
+    onObjectRecordOperationBrowserEvent: requestWorkflowRefetch,
     objectMetadataItemId: workflowVersionMetadataItem.id,
     operationTypes: ['create-one'],
   });

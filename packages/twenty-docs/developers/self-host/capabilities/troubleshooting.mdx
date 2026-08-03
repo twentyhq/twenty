@@ -22,7 +22,7 @@ The password you set during the first installation becomes permanently stored in
 ⚠️ WARNING: Following steps will PERMANENTLY DELETE all database data! ⚠️
 Only proceed if this is a fresh installation with no important data.
 
-In order to update the `PG_DATABASE_PASSWORD` you need to:
+To update the `PG_DATABASE_PASSWORD`, you need to:
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
 docker compose down --volumes
@@ -31,7 +31,7 @@ docker compose up -d
 
 #### CR line breaks found [Windows]
 
-This is due to the line break characters of Windows and the git configuration. Try running:
+This happens because of Windows line-ending characters combined with your Git configuration. Try running:
 
 ```
 git config --global core.autocrlf false
@@ -43,11 +43,11 @@ Then delete the repository and clone it again.
 
 During Twenty installation, you need to provision your postgres database with the right schemas, extensions, and users.
 If you're successful in running this provisioning, you should have `default` and `metadata` schemas in your database.
-If you don't, make sure you don't have more than one postgres instance running on your computer.
+If you don't, make sure you don't have more than one PostgreSQL instance running on your computer.
 
 #### Cannot find module 'twenty-emails' or its corresponding type declarations.
 
-You have to build the package `twenty-emails` before running the initialization of the database with `npx nx run twenty-emails:build`
+You have to build the `twenty-emails` package (`npx nx run twenty-emails:build`) before running the database initialization.
 
 #### Missing twenty-x package
 
@@ -55,7 +55,7 @@ Make sure to run yarn in the root directory and then run `npx nx server:dev twen
 
 #### Lint on Save not working
 
-This should work out of the box with the Oxc extension (`oxc.oxc-vscode`) installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
+This should work out of the box with the Oxc extension (`oxc.oxc-vscode`) installed. If this doesn't work, try adding this to your VS Code settings (dev container scope):
 
 ```
 "editor.codeActionsOnSave": {
@@ -65,7 +65,7 @@ This should work out of the box with the Oxc extension (`oxc.oxc-vscode`) instal
 }
 ```
 
-#### While running `npx nx start` or `npx nx start twenty-front`, Out of memory error is thrown
+#### While running `npx nx start` or `npx nx start twenty-front`, an out-of-memory error is thrown
 
 Run only the services you need, instead of `npx nx start`. For instance, if you work on the server, run only `npx nx worker twenty-server`
 
@@ -74,7 +74,7 @@ If you tried to run only `npx nx run twenty-server:start` on WSL and it's failin
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
-Workaround is to execute below command in terminal or add it in .bashrc profile to get setup automatically:
+A workaround is to run the following command in your terminal, or add it to your `.bashrc` profile so it's applied automatically:
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
@@ -82,10 +82,10 @@ The --max-old-space-size=8192 flag sets an upper limit of 8GB for the Node.js he
 Reference: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
 **If it does not work:**
-Investigate which processes are taking you most of your machine RAM. At Twenty, we noticed that some VScode extensions were taking a lot of RAM so we temporarily disable them.
+Investigate which processes are taking up most of your machine's RAM. At Twenty, we noticed some VS Code extensions were taking up a lot of RAM, so we temporarily disabled them.
 
 **If it does not work:**
-Restart your machine helps to clean up ghost processes.
+Restarting your machine helps clean up ghost processes.
 
 #### While running `npx nx start` there are weird [0] and [1] in logs
 
@@ -97,19 +97,19 @@ Most of the time, it's because the `worker` is not running in the background. Tr
 npx nx worker twenty-server
 ```
 
-#### Cannot connect my Microsoft 365 account
+#### Cannot connect my Microsoft 365 account to Twenty
 
 Most of the time, it's because your admin has not enabled the Microsoft 365 Licence for your account. Check [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
 
 If you have an error code `AADSTS50020`, it probably means that you are using a personal Microsoft account. This is not supported yet. More info [here](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### While running `yarn` warnings appear in console
+#### While running `yarn`, warnings appear in the console
 
 Warnings are informing about pulling additional dependencies which aren't explicitly stated in `package.json`, so as long as no breaking error appears, everything should work as expected.
 
-#### When user accesses login page, error about unauthorized user trying to access workspace appears in logs
+#### When a user accesses the login page, an error about an unauthorized user trying to access a workspace appears in the logs
 
-That's expected as user is unauthorized when logged out since its identity is not verified.
+That's expected as the user is unauthorized when logged out, since their identity has not been verified.
 
 #### How to check if your worker is running?
 - Go to [webhook-test.com](https://webhook-test.com/) and copy **Your Unique Webhook URL**.
@@ -129,9 +129,9 @@ That's expected as user is unauthorized when logged out since its identity is no
 </div>
 - If a **POST request** is received, your worker is running successfully. Otherwise, you need to troubleshoot your worker.
 
-#### Front-end fails to start and returns error TS5042: Option 'project' cannot be mixed with source files on a command line
+#### Front-end fails to start and returns error TS5042: Option 'project' cannot be mixed with source files on the command line
 
-Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+Comment out the checker plugin in `packages/twenty-ui/vite-config.ts`, as shown in the example below:
 ```
 plugins: [
       react({ jsxImportSource: 'react' }),
@@ -156,13 +156,34 @@ plugins: [
 
 #### Admin panel not accessible
 
-Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` in database container to get access to admin panel.
+Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` in the database container to get access to the admin panel.
 
 #### When running workflow, workflow run fails with "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
 
 In production, logic functions are disabled by default. Set the `LOGIC_FUNCTION_TYPE` environment variable to `LOCAL` or `LAMBDA` to enable them. This can be configured via environment variables or through the admin panel database variables. See the [Logic Functions setup guide](/developers/self-host/capabilities/setup#logic-functions-available-drivers) for details.
 
-### 1-click Docker compose
+#### When I type a message in AI chat, it doesn't answer immediately and I must refresh the page to see the answer
+
+That means your reverse proxy is missing the configuration for stream-based API responses. Below is an example Nginx configuration:
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
+### 1-click Docker Compose
 
 #### Unable to Log In
 
@@ -178,7 +199,7 @@ If you can't log in after setup:
     docker compose up -d
     ```
 
-Note the database:reset command will completely erase your database and recreate it from scratch.
+Note that the `database:reset` command will completely erase your database and recreate it from scratch.
 
 #### Connection Issues Behind a Reverse Proxy
 

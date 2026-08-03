@@ -7,7 +7,6 @@ import { ObjectPermissionService } from 'src/engine/metadata-modules/object-perm
 import {
   PermissionsException,
   PermissionsExceptionCode,
-  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -94,7 +93,7 @@ describe('ObjectPermissionService', () => {
     const systemObjectMetadataId = 'system-object-id';
     const customObjectMetadataId = 'custom-object-id';
 
-    it('should throw PermissionsException when trying to add object permission on system object', async () => {
+    it('should successfully create object permission for system object', async () => {
       const input: UpsertObjectPermissionsInput = {
         roleId,
         objectPermissions: [
@@ -108,8 +107,22 @@ describe('ObjectPermissionService', () => {
         ],
       };
 
-      workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
-        {
+      const permissionUniversalId = 'system-permission-universal-id';
+      const freshFlatObjectPermission = {
+        id: 'system-permission-id',
+        universalIdentifier: permissionUniversalId,
+        roleId,
+        roleUniversalIdentifier: roleId,
+        objectMetadataId: systemObjectMetadataId,
+        objectMetadataUniversalIdentifier: systemObjectMetadataId,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: false,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
+      };
+
+      workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps
+        .mockResolvedValueOnce({
           flatObjectPermissionMaps: {
             byUniversalIdentifier: {},
             universalIdentifierById: {},
@@ -120,24 +133,39 @@ describe('ObjectPermissionService', () => {
             systemObjectMetadataId,
             true,
           ),
-        } as any,
+        } as any)
+        .mockResolvedValueOnce({
+          flatObjectPermissionMaps: {
+            byUniversalIdentifier: {
+              [permissionUniversalId]: freshFlatObjectPermission,
+            },
+            universalIdentifierById: {
+              [freshFlatObjectPermission.id]: permissionUniversalId,
+            },
+            byId: {
+              [freshFlatObjectPermission.id]: freshFlatObjectPermission,
+            },
+          },
+        } as any);
+
+      workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration.mockResolvedValue(
+        { status: 'success' } as any,
       );
 
-      await expect(
-        service.upsertObjectPermissions({
-          workspaceId,
-          input,
-        }),
-      ).rejects.toThrow(
-        new PermissionsException(
-          PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
-          PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
-        ),
-      );
+      const result = await service.upsertObjectPermissions({
+        workspaceId,
+        input,
+      });
 
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        objectMetadataId: systemObjectMetadataId,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: false,
+      });
       expect(
         workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalled();
     });
 
     it('should successfully create object permission for custom (non-system) object', async () => {

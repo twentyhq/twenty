@@ -9,6 +9,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof WorkflowStepFilterBuilder> = {
   title: 'Modules/Workflow/Filters/WorkflowStepFilterBuilder',
@@ -26,6 +27,7 @@ const meta: Meta<typeof WorkflowStepFilterBuilder> = {
     onFilterSettingsUpdate: fn(),
   },
   decorators: [
+    MemoryRouterDecorator,
     (Story) => (
       <WorkflowStepBody rowGap={themeCssVariables.spacing[0]}>
         <Story />

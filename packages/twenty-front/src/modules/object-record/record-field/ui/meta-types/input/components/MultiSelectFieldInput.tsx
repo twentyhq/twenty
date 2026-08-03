@@ -12,16 +12,12 @@ import { useContext } from 'react';
 
 export const MultiSelectFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
-  const { addSelectOption } = useAddSelectOption({
-    fieldName: fieldDefinition?.metadata?.fieldName,
-    objectMetadataNameSingular:
-      fieldDefinition?.metadata?.objectMetadataNameSingular,
-  });
-  const { canAddSelectOption } = useCanAddSelectOption({
-    fieldName: fieldDefinition?.metadata?.fieldName,
-    objectMetadataNameSingular:
-      fieldDefinition?.metadata?.objectMetadataNameSingular,
-  });
+  const { addSelectOption } = useAddSelectOption(
+    fieldDefinition.fieldMetadataId,
+  );
+  const { canAddSelectOption } = useCanAddSelectOption(
+    fieldDefinition.fieldMetadataId,
+  );
 
   const { onSubmit } = useContext(FieldInputEventContext);
 
@@ -45,10 +41,6 @@ export const MultiSelectFieldInput = () => {
     onSubmit?.({ newValue: draftValue });
   };
 
-  const handleAddSelectOption = (optionName: string) => {
-    addSelectOption(optionName);
-  };
-
   return (
     <MultiSelectInput
       selectableListComponentInstanceId={
@@ -59,7 +51,7 @@ export const MultiSelectFieldInput = () => {
       onCancel={handleCancel}
       onOptionSelected={handleOptionSelected}
       values={draftValue}
-      onAddSelectOption={canAddSelectOption ? handleAddSelectOption : undefined}
+      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
     />
   );
 };

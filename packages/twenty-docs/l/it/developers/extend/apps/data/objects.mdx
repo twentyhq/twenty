@@ -79,6 +79,7 @@ export default defineObject({
 * Il `universalIdentifier` deve essere univoco e stabile tra i deployment.
 * Ogni campo richiede un `name`, `type`, `label` e il proprio `universalIdentifier` stabile.
 * L'array `fields` è facoltativo: puoi definire oggetti senza campi personalizzati.
+* `openRecordIn` imposta dove si aprono i record di questo oggetto quando vengono cliccati: `ObjectOpenRecordIn.USER_CHOICE` (l'impostazione predefinita, che segue la preferenza di ciascun membro dell'area di lavoro da Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` oppure `ObjectOpenRecordIn.RECORD_PAGE`. Fissalo su `RECORD_PAGE` per i record che devono occupare un'intera pagina per essere usabili, come avviene per i workflow e le dashboard, oppure su `SIDE_PANEL` per i record che hanno senso solo come pannello rapido, come avviene per gli eventi di calendario.
 * I campi inline definiti qui **non** hanno bisogno di un `objectUniversalIdentifier` — viene ereditato dall'oggetto padre. Usa [`defineField()`](/l/it/developers/extend/apps/data/extending-objects) per aggiungere campi a oggetti che non possiedi.
 * Puoi generare nuovi oggetti con `yarn twenty dev:add object`, che ti guida nella denominazione, nei campi e nelle relazioni. Vedi [Architettura → Scaffolding delle entità](/l/it/developers/extend/apps/getting-started/scaffolding).
 
@@ -138,4 +139,4 @@ Le modifiche a `isNullable` vengono applicate a ogni sincronizzazione, incluse q
 
 * **Collega questo oggetto ad altri** — vedi [Relazioni](/l/it/developers/extend/apps/data/relations) per il pattern di relazione bidirezionale.
 * **Aggiungi campi a oggetti di altre app** — vedi [Estendere gli oggetti](/l/it/developers/extend/apps/data/extending-objects) per `defineField()`.
-* **Mostra questo oggetto nell'interfaccia utente** — vedi [Viste](/l/it/developers/extend/apps/layout/views) e [Elementi del menu di navigazione](/l/it/developers/extend/apps/layout/navigation-menu-items) per inserirlo nella barra laterale.
+* **Visualizza questo oggetto nell'interfaccia utente (UI)** — vedi [Voci del menu di navigazione](/l/it/developers/extend/apps/layout/navigation-menu-items) per aggiungere una voce nella barra laterale; vedi [Viste](/l/it/developers/extend/apps/layout/views) per aggiungere configurazioni di elenco personalizzate.

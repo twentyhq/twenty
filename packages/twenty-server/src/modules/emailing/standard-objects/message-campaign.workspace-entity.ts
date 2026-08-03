@@ -7,6 +7,7 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
+  name: string;
   createdBy: ActorMetadata;
   subject: string | null;
   bodyTemplate: string | null;

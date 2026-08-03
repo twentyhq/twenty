@@ -51,7 +51,7 @@ export default definePageLayout({
 
 ### Pontos-chave
 
-* `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
+* `type` é um dos seguintes: `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` ou `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
 * `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
 * Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`VERTICAL_LIST` para páginas de registro, `GRID` para dashboards). Uma aba contendo um único widget o renderiza automaticamente em largura total; com vários widgets, eles são empilhados como cards.
 * Cada `widget` dentro de uma aba pode renderizar um [front component](/l/pt/developers/extend/apps/layout/front-components), uma lista de relações ou outros tipos de widget nativos.

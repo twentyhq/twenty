@@ -17,7 +17,6 @@ const EditorWrapper = ({
   defaultValue = null,
   onUpdate = fn(),
   minHeight = 200,
-  maxWidth = 800,
   enableSlashCommand = true,
 }: {
   readonly?: boolean;
@@ -25,7 +24,6 @@ const EditorWrapper = ({
   defaultValue?: string | null;
   onUpdate?: (content: string) => void;
   minHeight?: number;
-  maxWidth?: number;
   enableSlashCommand?: boolean;
 }) => {
   const editor = useAdvancedTextEditor({
@@ -55,7 +53,6 @@ const EditorWrapper = ({
       editor={editor}
       readonly={readonly}
       minHeight={minHeight}
-      maxWidth={maxWidth}
     />
   );
 };
@@ -291,7 +288,6 @@ export const Interactive: Story = {
 export const CustomSize: Story = {
   args: {
     minHeight: 300,
-    maxWidth: 600,
     placeholder: 'This editor has custom dimensions...',
   },
 };

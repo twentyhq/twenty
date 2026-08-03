@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
+import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useContext } from 'react';
 
@@ -78,6 +79,13 @@ type EmailThreadPreviewProps = {
   thread: TimelineThread;
 };
 
+type LastAvatar = {
+  displayedName: string | undefined;
+  avatarUrl: string | undefined;
+  isCountIcon: boolean;
+  placeholderColorSeed: string | undefined;
+};
+
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   const { theme } = useContext(ThemeContext);
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -93,14 +101,29 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       ? `, ${thread.lastTwoParticipants?.[1]?.displayName}`
       : '');
 
-  const [finalDisplayedName, finalAvatarUrl, isCountIcon] =
+  const lastParticipant = thread?.lastTwoParticipants?.[1];
+
+  const {
+    displayedName,
+    avatarUrl,
+    isCountIcon,
+    placeholderColorSeed,
+  }: LastAvatar =
     thread.participantCount > 3
-      ? [`${thread.participantCount}`, '', true]
-      : [
-          thread?.lastTwoParticipants?.[1]?.displayName,
-          thread?.lastTwoParticipants?.[1]?.avatarUrl,
-          false,
-        ];
+      ? {
+          displayedName: `${thread.participantCount}`,
+          avatarUrl: '',
+          isCountIcon: true,
+          placeholderColorSeed: undefined,
+        }
+      : {
+          displayedName: lastParticipant?.displayName,
+          avatarUrl: lastParticipant?.avatarUrl,
+          isCountIcon: false,
+          placeholderColorSeed: isDefined(lastParticipant)
+            ? getEmailParticipantAvatarColorSeed(lastParticipant)
+            : undefined,
+        };
 
   const handleThreadClick = () => {
     const canOpen =
@@ -122,10 +145,9 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           <Avatar
             avatarUrl={getAbsoluteImageUrl(thread?.firstParticipant?.avatarUrl)}
             placeholder={thread.firstParticipant.displayName}
-            placeholderColorSeed={
-              thread.firstParticipant.workspaceMemberId ||
-              thread.firstParticipant.personId
-            }
+            placeholderColorSeed={getEmailParticipantAvatarColorSeed(
+              thread.firstParticipant,
+            )}
             type="rounded"
           />
           {isDefined(thread?.lastTwoParticipants?.[0]) && (
@@ -135,19 +157,19 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
                   thread.lastTwoParticipants[0].avatarUrl,
                 )}
                 placeholder={thread.lastTwoParticipants[0].displayName}
-                placeholderColorSeed={
-                  thread.lastTwoParticipants[0].workspaceMemberId ||
-                  thread.lastTwoParticipants[0].personId
-                }
+                placeholderColorSeed={getEmailParticipantAvatarColorSeed(
+                  thread.lastTwoParticipants[0],
+                )}
                 type="rounded"
               />
             </StyledAvatarWrapper>
           )}
-          {finalDisplayedName && (
+          {displayedName && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(finalAvatarUrl)}
-                placeholder={finalDisplayedName}
+                avatarUrl={getAbsoluteImageUrl(avatarUrl)}
+                placeholder={displayedName}
+                placeholderColorSeed={placeholderColorSeed}
                 type="rounded"
                 color={isCountIcon ? theme.grayScale.gray11 : undefined}
                 backgroundColor={

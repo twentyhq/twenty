@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException, type Type } from '@nestjs/common';
 
 import { In, type ObjectLiteral } from 'typeorm';
-import { MessageParticipantRole } from 'twenty-shared/types';
+import {
+  MessageCampaignStatus,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
 
-import { CAMPAIGN_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { MessageCampaignDetailsDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-details.dto';
 import { MessageCampaignSummaryDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-summary.dto';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -80,7 +82,7 @@ export class MessageCampaignQueryService {
         return campaigns.map((campaign) =>
           this.toSummary(
             campaign,
-            campaign.status === CAMPAIGN_STATUS.DRAFT
+            campaign.status === MessageCampaignStatus.DRAFT
               ? (draftAudienceCounts.get(campaign.listId ?? '') ?? 0)
               : (recipientCounts.get(campaign.id) ?? 0),
           ),
@@ -143,7 +145,8 @@ export class MessageCampaignQueryService {
                 (repository) =>
                   repository.find({ where: { id: In(personIds) } }),
               ),
-          campaign.status !== CAMPAIGN_STATUS.DRAFT || campaign.listId === null
+          campaign.status !== MessageCampaignStatus.DRAFT ||
+          campaign.listId === null
             ? []
             : this.getSystemRepository(
                 workspaceId,
@@ -195,7 +198,7 @@ export class MessageCampaignQueryService {
           };
         });
         const recipientCount =
-          campaign.status === CAMPAIGN_STATUS.DRAFT
+          campaign.status === MessageCampaignStatus.DRAFT
             ? draftAudience.length
             : recipients.length;
 
@@ -204,7 +207,7 @@ export class MessageCampaignQueryService {
           body: campaign.bodyTemplate,
           unsubscribeTopicId: campaign.unsubscribeTopicId,
           canEdit:
-            campaign.status === CAMPAIGN_STATUS.DRAFT &&
+            campaign.status === MessageCampaignStatus.DRAFT &&
             campaign.createdBy.workspaceMemberId === workspaceMemberId,
           recipients,
           draftPersonIds: draftAudience.map(({ personId }) => personId),

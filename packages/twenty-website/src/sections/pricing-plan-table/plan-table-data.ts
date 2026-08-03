@@ -9,10 +9,12 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Price`,
       selfHostTiers: {
+        enterprise: { kind: 'text', text: msg`From $50k/year` },
         organization: { kind: 'text', text: msg`$19` },
         pro: { kind: 'text', text: msg`$0` },
       },
       tiers: {
+        enterprise: { kind: 'text', text: msg`From $50k/year` },
         organization: { kind: 'text', text: msg`$19` },
         pro: { kind: 'text', text: msg`$9` },
       },
@@ -270,6 +272,15 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
+      featureLabel: msg`Dedicated support & SLA`,
+      tiers: {
+        enterprise: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'dash' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
       featureLabel: msg`Onboarding Packs`,
       selfHostTiers: {
         organization: { kind: 'yes', label: msg`Yes` },
@@ -353,6 +364,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       appliesTo: 'cloud',
       featureLabel: msg`API calls`,
       tiers: {
+        enterprise: { kind: 'text', text: msg`Custom` },
         organization: { kind: 'text', text: msg`100 per minute` },
         pro: { kind: 'text', text: msg`50 per minute` },
       },
@@ -377,13 +389,79 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       },
       type: 'row',
     },
+    { title: msg`Enterprise`, type: 'category' },
+    {
+      appliesTo: 'cloud',
+      featureLabel: msg`Single-tenant isolation`,
+      tiers: {
+        enterprise: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'dash' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'cloud',
+      featureLabel: msg`IP allow-listing`,
+      tiers: {
+        enterprise: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'dash' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`SCIM provisioning`,
+      tiers: {
+        enterprise: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'dash' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'selfHost',
+      featureLabel: msg`Air-gapped deployment`,
+      tiers: {
+        enterprise: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'dash' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'selfHost',
+      featureLabel: msg`LTS releases`,
+      tiers: {
+        enterprise: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'dash' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`Security review & DPA`,
+      tiers: {
+        enterprise: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'dash' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
   ],
   seeMoreFeaturesCta: {
     collapseLabel: msg`Show less`,
     expandLabel: msg`See more features`,
   },
   tierColumns: [
-    { id: 'pro', label: msg`Pro` },
-    { id: 'organization', label: msg`Organization` },
+    { id: 'pro', label: { cloud: msg`Pro`, selfHost: msg`Pro` } },
+    {
+      id: 'organization',
+      label: { cloud: msg`Organization`, selfHost: msg`Organization` },
+    },
+    {
+      id: 'enterprise',
+      label: { cloud: msg`Enterprise`, selfHost: msg`Enterprise` },
+    },
   ],
 };

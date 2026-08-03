@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.25.0",
+  "version": "2.27.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -64,7 +64,7 @@
       "require": "./dist/front-component-renderer/build.cjs"
     }
   },
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
     "axios": "^1.16.0",

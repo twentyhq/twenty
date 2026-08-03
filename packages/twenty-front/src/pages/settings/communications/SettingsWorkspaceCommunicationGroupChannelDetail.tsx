@@ -239,6 +239,20 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             />
           </StyledForwardingRow>
         </Section>
+        {isNonEmptyString(channel.displayName) && (
+          <Section>
+            <H2Title
+              title={t`Sender name`}
+              description={t`The name recipients see next to your address. It is set when the channel is created.`}
+            />
+            <SettingsTextInput
+              instanceId="message-channel-sender-name"
+              value={channel.displayName}
+              disabled
+              fullWidth
+            />
+          </Section>
+        )}
         {isDefined(emailingDomain) && (
           <Section>
             <H2Title

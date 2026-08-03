@@ -1,18 +1,11 @@
-import { useObjectNamePluralForSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useObjectNamePluralForSelectOption';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { isNonEmptyString } from '@sniptt/guards';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-export const useCanAddSelectOption = ({
-  fieldName,
-  objectMetadataNameSingular,
-}: {
-  fieldName?: string;
-  objectMetadataNameSingular?: string;
-}) => {
-  const { objectNamePlural } = useObjectNamePluralForSelectOption(
-    objectMetadataNameSingular,
-  );
+export const useCanAddSelectOption = (fieldMetadataId: string) => {
+  const { fieldMetadataItem, objectMetadataItem } =
+    useFieldMetadataItemById(fieldMetadataId);
 
   const userHasPermissionToEditDataModel = useHasPermissionFlag(
     PermissionFlagType.DATA_MODEL,
@@ -20,8 +13,8 @@ export const useCanAddSelectOption = ({
 
   const canAddSelectOption =
     userHasPermissionToEditDataModel &&
-    isNonEmptyString(fieldName) &&
-    isNonEmptyString(objectNamePlural);
+    isNonEmptyString(fieldMetadataItem?.name) &&
+    isNonEmptyString(objectMetadataItem?.namePlural);
 
   return { canAddSelectOption };
 };
