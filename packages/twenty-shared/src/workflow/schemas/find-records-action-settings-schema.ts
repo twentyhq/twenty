@@ -8,7 +8,10 @@ export const workflowFindRecordsActionSettingsSchema =
       objectName: z.string(),
       limit: z.union([z.number(), workflowVariableReferenceSchema]).optional(),
       offset: z
-        .union([z.number().int().nonnegative(), workflowVariableReferenceSchema])
+        .union([
+          z.number().int().nonnegative(),
+          workflowVariableReferenceSchema,
+        ])
         .optional(),
       filter: z
         .object({
