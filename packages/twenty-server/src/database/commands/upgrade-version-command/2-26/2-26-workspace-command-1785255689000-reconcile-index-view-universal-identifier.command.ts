@@ -110,6 +110,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       flatViewFieldMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      engineOwnedApplicationUniversalIdentifiers,
     });
 
     if (viewUpdates.length === 0 && viewFieldUpdates.length === 0) {
@@ -180,6 +181,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatViewFieldMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    engineOwnedApplicationUniversalIdentifiers,
   }: {
     workspaceId: string;
     flatIndexViews: FlatViewFromMaps[];
@@ -187,6 +189,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    engineOwnedApplicationUniversalIdentifiers: Set<string>;
   }): ReownPlan {
     const viewIdsToDelete: string[] = [];
     const viewUpdates: ReownUpdate[] = [];
@@ -204,6 +207,21 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       if (!isDefined(flatObjectMetadata)) {
         this.logger.warn(
           `Missing object for INDEX view ${flatView.id} in workspace ${workspaceId}, skipping`,
+        );
+        continue;
+      }
+
+      // A view left attributed to an engine application after its object
+      // moved into another application is drifted data: re-owning it would
+      // stamp the other application's derived identifier onto an
+      // engine-attributed view. Repair the view's applicationId instead.
+      if (
+        !engineOwnedApplicationUniversalIdentifiers.has(
+          flatObjectMetadata.applicationUniversalIdentifier,
+        )
+      ) {
+        this.logger.warn(
+          `INDEX view ${flatView.id} is attributed to an engine application but its object belongs to application ${flatObjectMetadata.applicationUniversalIdentifier} in workspace ${workspaceId}, skipping`,
         );
         continue;
       }

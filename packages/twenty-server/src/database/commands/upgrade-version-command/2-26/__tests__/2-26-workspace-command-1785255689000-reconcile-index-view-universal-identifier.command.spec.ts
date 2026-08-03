@@ -44,6 +44,16 @@ const STANDARD_OBJECT_METADATA = {
   applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 };
 
+const EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000bd';
+
+// An object adopted into another application: its INDEX view can be left
+// behind, still attributed to an engine application.
+const EXTERNAL_OBJECT_METADATA = {
+  universalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
 // A custom object: its INDEX view was historically created with a random v4
 // universal identifier by ObjectMetadataService.createOneObject.
 const CUSTOM_OBJECT_METADATA = {
@@ -189,6 +199,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
       flatObjectMetadataMaps: buildByUniversalIdentifierMap([
         STANDARD_OBJECT_METADATA,
         CUSTOM_OBJECT_METADATA,
+        EXTERNAL_OBJECT_METADATA,
       ]),
       flatFieldMetadataMaps: buildByUniversalIdentifierMap(fieldMetadatas),
     });
@@ -327,6 +338,25 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
         isSystemSideEffect: true,
       },
     );
+  });
+
+  it('skips an engine-attributed INDEX view whose object belongs to another application', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'drifted-view-id',
+          universalIdentifier: 'drifted-view-uid',
+          key: ViewKey.INDEX,
+          objectMetadataUniversalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(viewDeleteMock).not.toHaveBeenCalled();
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
   });
 
   it('deletes a soft-deleted view holding the derived identifier before re-owning the active view', async () => {
