@@ -63,7 +63,15 @@ export const PhonesValueSchema = z.object({
   primaryPhoneNumber: z.string().optional(),
   primaryPhoneCountryCode: z.string().optional(),
   primaryPhoneCallingCode: z.string().optional(),
-  additionalPhones: z.array(z.string()).optional(),
+  additionalPhones: z
+    .array(
+      z.object({
+        number: z.string(),
+        countryCode: z.string(),
+        callingCode: z.string(),
+      }),
+    )
+    .optional(),
 });
 export const PhonesValueOptionalSchema = PhonesValueSchema.optional();
 

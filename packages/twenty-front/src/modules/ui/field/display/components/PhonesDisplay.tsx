@@ -116,18 +116,19 @@ export const PhonesDisplay = ({
   );
 };
 
-const parseAdditionalPhones = (additionalPhones?: any) => {
+const parseAdditionalPhones = (additionalPhones?: unknown) => {
   if (!additionalPhones) {
     return [];
   }
 
-  if (typeof additionalPhones === 'object') {
+  if (Array.isArray(additionalPhones)) {
     return additionalPhones;
   }
 
   if (typeof additionalPhones === 'string') {
     try {
-      return JSON.parse(additionalPhones);
+      const parsed = JSON.parse(additionalPhones);
+      return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
       logError(t`Error parsing additional phones: ${String(error)}`);
     }

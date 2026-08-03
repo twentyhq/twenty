@@ -14,6 +14,8 @@ export const createPhonesFromFieldValue = (fieldValue: FieldPhonesValue) => {
               countryCode: fieldValue.primaryPhoneCountryCode,
             }
           : null,
-        ...(fieldValue.additionalPhones ?? []),
+        ...(Array.isArray(fieldValue.additionalPhones)
+          ? fieldValue.additionalPhones
+          : []),
       ].filter(isDefined);
 };

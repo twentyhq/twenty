@@ -116,6 +116,23 @@ describe('createPhonesFromFieldValue test suite', () => {
     expect(result).toEqual([]);
   });
 
+  it('should return an empty array for additional phones if additionalPhones is a plain object instead of an array', () => {
+    const fieldValue: FieldPhonesValue = {
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
+      additionalPhones: {} as unknown as FieldPhonesValue['additionalPhones'],
+    };
+    const result = createPhonesFromFieldValue(fieldValue);
+    expect(result).toEqual([
+      {
+        number: '123456789',
+        callingCode: '+1',
+        countryCode: 'US',
+      },
+    ]);
+  });
+
   it('should return an empty array if only calling code is defined', () => {
     const fieldValue: FieldPhonesValue = {
       primaryPhoneNumber: '',

@@ -25,6 +25,7 @@ import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 const StyledCustomPhoneInputContainer = styled.div<{
@@ -107,6 +108,11 @@ export const PhonesFieldInput = () => {
     if (parseResponse.success) {
       return parseResponse.data;
     }
+
+    logError(
+      `Failed to parse phones field value: ${parseResponse.error.message}`,
+    );
+    return nextValue;
   };
 
   const handlePhonesChange = (updatedPhones: PhoneRecord[]) => {
