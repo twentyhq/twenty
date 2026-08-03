@@ -23,10 +23,8 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import {
-  resolveLimitInput,
-  resolveOffsetInput,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-pagination-input.util';
+import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
+import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
