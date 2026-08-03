@@ -133,6 +133,27 @@ describe('createPhonesFromFieldValue test suite', () => {
     ]);
   });
 
+  it('should filter out additional phones that are empty objects instead of proper phone records', () => {
+    const fieldValue = {
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
+      additionalPhones: [
+        {},
+        { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+      ],
+    } as unknown as FieldPhonesValue;
+    const result = createPhonesFromFieldValue(fieldValue);
+    expect(result).toEqual([
+      {
+        number: '123456789',
+        callingCode: '+1',
+        countryCode: 'US',
+      },
+      { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+    ]);
+  });
+
   it('should return an empty array if only calling code is defined', () => {
     const fieldValue: FieldPhonesValue = {
       primaryPhoneNumber: '',

@@ -116,19 +116,27 @@ export const PhonesDisplay = ({
   );
 };
 
+const isValidAdditionalPhone = (
+  phone: unknown,
+): phone is { number: string; callingCode?: string; countryCode?: string } =>
+  isDefined(phone) &&
+  typeof phone === 'object' &&
+  typeof (phone as { number?: unknown }).number === 'string' &&
+  (phone as { number: string }).number !== '';
+
 const parseAdditionalPhones = (additionalPhones?: unknown) => {
   if (!additionalPhones) {
     return [];
   }
 
   if (Array.isArray(additionalPhones)) {
-    return additionalPhones;
+    return additionalPhones.filter(isValidAdditionalPhone);
   }
 
   if (typeof additionalPhones === 'string') {
     try {
       const parsed = JSON.parse(additionalPhones);
-      return Array.isArray(parsed) ? parsed : [];
+      return Array.isArray(parsed) ? parsed.filter(isValidAdditionalPhone) : [];
     } catch (error) {
       logError(t`Error parsing additional phones: ${String(error)}`);
     }

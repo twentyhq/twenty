@@ -67,8 +67,8 @@ export const PhonesValueSchema = z.object({
     .array(
       z.object({
         number: z.string(),
-        countryCode: z.string(),
-        callingCode: z.string(),
+        countryCode: z.string().optional(),
+        callingCode: z.string().optional(),
       }),
     )
     .optional(),

@@ -18,6 +18,14 @@ describe('PhonesValueSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('accepts additionalPhones entries with only a number, since the transformer infers country/calling code', () => {
+    const result = PhonesValueSchema.safeParse({
+      additionalPhones: [{ number: '987654321' }],
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   it('rejects additionalPhones as an array of plain strings', () => {
     const result = PhonesValueSchema.safeParse({
       additionalPhones: ['+33612345678'],

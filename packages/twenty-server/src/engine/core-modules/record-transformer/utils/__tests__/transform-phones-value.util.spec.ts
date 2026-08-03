@@ -64,6 +64,35 @@ describe('transformPhonesValue', () => {
     });
   });
 
+  it('should drop additionalPhones entries that are missing a number entirely, unlike an explicit empty string', () => {
+    const result = transformPhonesValue({
+      input: {
+        primaryPhoneNumber: '',
+        additionalPhones: [
+          {},
+          { number: '+442071838750', callingCode: '+44', countryCode: 'GB' },
+        ],
+      },
+    });
+
+    expect(result?.additionalPhones).toBe(
+      JSON.stringify([
+        { countryCode: 'GB', callingCode: '+44', number: '2071838750' },
+      ]),
+    );
+  });
+
+  it('should normalize additionalPhones to null when every entry is missing a number', () => {
+    const result = transformPhonesValue({
+      input: {
+        primaryPhoneNumber: '',
+        additionalPhones: [{}],
+      },
+    });
+
+    expect(result?.additionalPhones).toBeNull();
+  });
+
   it('should accept additionalPhones as an array of phone objects', () => {
     const result = transformPhonesValue({
       input: {
