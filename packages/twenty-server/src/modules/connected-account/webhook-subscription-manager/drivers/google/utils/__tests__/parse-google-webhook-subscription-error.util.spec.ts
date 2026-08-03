@@ -93,6 +93,54 @@ describe('parseGoogleWebhookSubscriptionError', () => {
     expect(exception.code).toBe(WebhookSubscriptionDriverExceptionCode.UNKNOWN);
   });
 
+  it('should return TEMPORARY_ERROR when the request never got a response', () => {
+    const exception = parseGoogleWebhookSubscriptionError({
+      message: 'connect ECONNRESET',
+    } as GaxiosError);
+
+    expect(exception.code).toBe(
+      WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
+  it('should return TEMPORARY_ERROR for a transient failed precondition', () => {
+    const exception = parseGoogleWebhookSubscriptionError(
+      buildGaxiosError({
+        status: 400,
+        reason: 'failedPrecondition',
+        message: 'Precondition check failed.',
+      }),
+    );
+
+    expect(exception.code).toBe(
+      WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
+  it('should return INSUFFICIENT_PERMISSIONS when mail service is not enabled', () => {
+    const exception = parseGoogleWebhookSubscriptionError(
+      buildGaxiosError({
+        status: 400,
+        reason: 'failedPrecondition',
+        message: 'Mail service not enabled for this account.',
+      }),
+    );
+
+    expect(exception.code).toBe(
+      WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+    );
+  });
+
+  it('should keep the provider error as the exception cause', () => {
+    const providerError = buildGaxiosError({ status: 404, reason: 'notFound' });
+
+    const exception = parseGoogleWebhookSubscriptionError(providerError, {
+      cause: providerError,
+    });
+
+    expect(exception.cause).toBe(providerError);
+  });
+
   it('should return INSUFFICIENT_PERMISSIONS when the refresh token was revoked', () => {
     const exception = {
       response: { status: 400, data: { error: 'invalid_grant' } },

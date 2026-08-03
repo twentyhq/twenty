@@ -97,12 +97,13 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: null,
       });
 
-      await this.handleDriverException(
-        error,
-        'CREATE',
-        calendarChannel.id,
+      await this.handleDriverException({
+        exception: error,
+        operation: 'CREATE',
+        calendarChannelId: calendarChannel.id,
         workspaceId,
-      );
+        currentSubscriptionId: calendarChannel.webhookSubscriptionExternalId,
+      });
 
       return;
     }
@@ -117,12 +118,20 @@ export class CalendarWebhookSubscriptionService {
   async recreateSubscription({
     calendarChannelId,
     workspaceId,
+    removedSubscriptionId,
   }: {
     calendarChannelId: string;
     workspaceId: string;
+    removedSubscriptionId: string | null;
   }): Promise<void> {
-    await this.calendarChannelRepository.update(
-      { id: calendarChannelId, workspaceId },
+    const { affected } = await this.calendarChannelRepository.update(
+      {
+        id: calendarChannelId,
+        workspaceId,
+        ...(isDefined(removedSubscriptionId)
+          ? { webhookSubscriptionExternalId: removedSubscriptionId }
+          : {}),
+      },
       {
         webhookSubscriptionExternalId: null,
         webhookSubscriptionExternalResourceId: null,
@@ -130,6 +139,10 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: null,
       },
     );
+
+    if (affected === 0) {
+      return;
+    }
 
     await this.createSubscription(calendarChannelId, workspaceId);
   }
@@ -181,12 +194,13 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
     } catch (error) {
-      await this.handleDriverException(
-        error,
-        'RENEW',
-        calendarChannel.id,
-        calendarChannel.workspaceId,
-      );
+      await this.handleDriverException({
+        exception: error,
+        operation: 'RENEW',
+        calendarChannelId: calendarChannel.id,
+        workspaceId: calendarChannel.workspaceId,
+        currentSubscriptionId: calendarChannel.webhookSubscriptionExternalId,
+      });
     }
   }
 
@@ -233,21 +247,29 @@ export class CalendarWebhookSubscriptionService {
     }
   }
 
-  private async handleDriverException(
-    exception: unknown,
-    operation: WebhookSubscriptionOperation,
-    calendarChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async handleDriverException({
+    exception,
+    operation,
+    calendarChannelId,
+    workspaceId,
+    currentSubscriptionId,
+  }: {
+    exception: unknown;
+    operation: WebhookSubscriptionOperation;
+    calendarChannelId: string;
+    workspaceId: string;
+    currentSubscriptionId: string | null;
+  }): Promise<void> {
     if (exception instanceof WebhookSubscriptionDriverException) {
       switch (exception.code) {
         case WebhookSubscriptionDriverExceptionCode.NOT_FOUND:
-          await this.handleNotFoundException(
+          await this.handleNotFoundException({
             exception,
             operation,
             calendarChannelId,
             workspaceId,
-          );
+            currentSubscriptionId,
+          });
 
           return;
         case WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
@@ -280,19 +302,30 @@ export class CalendarWebhookSubscriptionService {
     throw exception;
   }
 
-  private async handleNotFoundException(
-    exception: WebhookSubscriptionDriverException,
-    operation: WebhookSubscriptionOperation,
-    calendarChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async handleNotFoundException({
+    exception,
+    operation,
+    calendarChannelId,
+    workspaceId,
+    currentSubscriptionId,
+  }: {
+    exception: WebhookSubscriptionDriverException;
+    operation: WebhookSubscriptionOperation;
+    calendarChannelId: string;
+    workspaceId: string;
+    currentSubscriptionId: string | null;
+  }): Promise<void> {
     if (operation === 'CREATE') {
       await this.stopWatching(exception, calendarChannelId);
 
       return;
     }
 
-    await this.recreateSubscription({ calendarChannelId, workspaceId });
+    await this.recreateSubscription({
+      calendarChannelId,
+      workspaceId,
+      removedSubscriptionId: currentSubscriptionId,
+    });
   }
 
   private async stopWatching(

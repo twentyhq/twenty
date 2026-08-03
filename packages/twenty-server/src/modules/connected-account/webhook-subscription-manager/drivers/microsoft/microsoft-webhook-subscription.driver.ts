@@ -81,7 +81,7 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
       .api('/subscriptions')
       .post(subscriptionPayload)
       .catch((error: GraphError) => {
-        throw parseMicrosoftWebhookSubscriptionError(error);
+        throw parseMicrosoftWebhookSubscriptionError(error, { cause: error });
       });
 
     return this.toResult(subscription);
@@ -107,7 +107,7 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
       .api(`/subscriptions/${context.externalSubscriptionId}`)
       .patch(subscriptionPatch)
       .catch((error: GraphError) => {
-        throw parseMicrosoftWebhookSubscriptionError(error);
+        throw parseMicrosoftWebhookSubscriptionError(error, { cause: error });
       });
 
     return this.toResult(renewedSubscription);
@@ -126,7 +126,7 @@ export class MicrosoftWebhookSubscriptionDriver implements WebhookSubscriptionDr
       .api(`/subscriptions/${context.externalSubscriptionId}`)
       .delete()
       .catch((error: GraphError) => {
-        throw parseMicrosoftWebhookSubscriptionError(error);
+        throw parseMicrosoftWebhookSubscriptionError(error, { cause: error });
       });
   }
 

@@ -98,12 +98,13 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: null,
       });
 
-      await this.handleDriverException(
-        error,
-        'CREATE',
-        messageChannel.id,
+      await this.handleDriverException({
+        exception: error,
+        operation: 'CREATE',
+        messageChannelId: messageChannel.id,
         workspaceId,
-      );
+        currentSubscriptionId: messageChannel.webhookSubscriptionExternalId,
+      });
 
       return;
     }
@@ -118,18 +119,30 @@ export class MessagingWebhookSubscriptionService {
   async recreateSubscription({
     messageChannelId,
     workspaceId,
+    removedSubscriptionId,
   }: {
     messageChannelId: string;
     workspaceId: string;
+    removedSubscriptionId: string | null;
   }): Promise<void> {
-    await this.messageChannelRepository.update(
-      { id: messageChannelId, workspaceId },
+    const { affected } = await this.messageChannelRepository.update(
+      {
+        id: messageChannelId,
+        workspaceId,
+        ...(isDefined(removedSubscriptionId)
+          ? { webhookSubscriptionExternalId: removedSubscriptionId }
+          : {}),
+      },
       {
         webhookSubscriptionExternalId: null,
         webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
         webhookSubscriptionExpiresAt: null,
       },
     );
+
+    if (affected === 0) {
+      return;
+    }
 
     await this.createSubscription(messageChannelId, workspaceId);
   }
@@ -180,12 +193,13 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: result.expiresAt,
       });
     } catch (error) {
-      await this.handleDriverException(
-        error,
-        'RENEW',
-        messageChannel.id,
-        messageChannel.workspaceId,
-      );
+      await this.handleDriverException({
+        exception: error,
+        operation: 'RENEW',
+        messageChannelId: messageChannel.id,
+        workspaceId: messageChannel.workspaceId,
+        currentSubscriptionId: messageChannel.webhookSubscriptionExternalId,
+      });
     }
   }
 
@@ -232,21 +246,29 @@ export class MessagingWebhookSubscriptionService {
     }
   }
 
-  private async handleDriverException(
-    exception: unknown,
-    operation: WebhookSubscriptionOperation,
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async handleDriverException({
+    exception,
+    operation,
+    messageChannelId,
+    workspaceId,
+    currentSubscriptionId,
+  }: {
+    exception: unknown;
+    operation: WebhookSubscriptionOperation;
+    messageChannelId: string;
+    workspaceId: string;
+    currentSubscriptionId: string | null;
+  }): Promise<void> {
     if (exception instanceof WebhookSubscriptionDriverException) {
       switch (exception.code) {
         case WebhookSubscriptionDriverExceptionCode.NOT_FOUND:
-          await this.handleNotFoundException(
+          await this.handleNotFoundException({
             exception,
             operation,
             messageChannelId,
             workspaceId,
-          );
+            currentSubscriptionId,
+          });
 
           return;
         case WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
@@ -279,19 +301,30 @@ export class MessagingWebhookSubscriptionService {
     throw exception;
   }
 
-  private async handleNotFoundException(
-    exception: WebhookSubscriptionDriverException,
-    operation: WebhookSubscriptionOperation,
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async handleNotFoundException({
+    exception,
+    operation,
+    messageChannelId,
+    workspaceId,
+    currentSubscriptionId,
+  }: {
+    exception: WebhookSubscriptionDriverException;
+    operation: WebhookSubscriptionOperation;
+    messageChannelId: string;
+    workspaceId: string;
+    currentSubscriptionId: string | null;
+  }): Promise<void> {
     if (operation === 'CREATE') {
       await this.stopWatching(exception, messageChannelId);
 
       return;
     }
 
-    await this.recreateSubscription({ messageChannelId, workspaceId });
+    await this.recreateSubscription({
+      messageChannelId,
+      workspaceId,
+      removedSubscriptionId: currentSubscriptionId,
+    });
   }
 
   private async stopWatching(

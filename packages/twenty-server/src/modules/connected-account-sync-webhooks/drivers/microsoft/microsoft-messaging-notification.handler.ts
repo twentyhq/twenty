@@ -94,6 +94,7 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
       if (isNonEmptyString(notification.lifecycleEvent)) {
         await this.handleLifecycleEvent({
           lifecycleEvent: notification.lifecycleEvent,
+          removedSubscriptionId: notification.subscriptionId,
           messageChannel,
         }).catch((error) =>
           this.logger.error(
@@ -117,9 +118,11 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
 
   private async handleLifecycleEvent({
     lifecycleEvent,
+    removedSubscriptionId,
     messageChannel,
   }: {
     lifecycleEvent: string;
+    removedSubscriptionId: string;
     messageChannel: MessageChannelEntity;
   }): Promise<void> {
     switch (lifecycleEvent) {
@@ -127,6 +130,7 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
         await this.messagingWebhookSubscriptionService.recreateSubscription({
           messageChannelId: messageChannel.id,
           workspaceId: messageChannel.workspaceId,
+          removedSubscriptionId,
         });
         await this.webhookSyncTriggerService.triggerMessagingSync(
           messageChannel.id,

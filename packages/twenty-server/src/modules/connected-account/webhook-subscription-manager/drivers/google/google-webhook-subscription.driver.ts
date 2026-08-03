@@ -93,7 +93,7 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
         },
       })
       .catch((error: GaxiosError) => {
-        throw parseGoogleWebhookSubscriptionError(error);
+        throw parseGoogleWebhookSubscriptionError(error, { cause: error });
       });
 
     if (!isDefined(data.expiration)) {
@@ -118,7 +118,7 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
     await gmailClient.users
       .stop({ userId: 'me' })
       .catch((error: GaxiosError) => {
-        throw parseGoogleWebhookSubscriptionError(error);
+        throw parseGoogleWebhookSubscriptionError(error, { cause: error });
       });
   }
 
@@ -143,7 +143,7 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
         },
       })
       .catch((error: GaxiosError) => {
-        throw parseGoogleWebhookSubscriptionError(error);
+        throw parseGoogleWebhookSubscriptionError(error, { cause: error });
       });
 
     if (!isDefined(data.resourceId) || !isDefined(data.expiration)) {
@@ -182,7 +182,7 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
         },
       })
       .catch((error: GaxiosError) => {
-        throw parseGoogleWebhookSubscriptionError(error);
+        throw parseGoogleWebhookSubscriptionError(error, { cause: error });
       });
   }
 

@@ -40,6 +40,27 @@ describe('parseMicrosoftWebhookSubscriptionError', () => {
     expect(exception.code).toBe(WebhookSubscriptionDriverExceptionCode.UNKNOWN);
   });
 
+  it('should return TEMPORARY_ERROR when a 400 carries no error body', () => {
+    const exception = parseMicrosoftWebhookSubscriptionError({
+      statusCode: 400,
+    });
+
+    expect(exception.code).toBe(
+      WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
+  it('should keep the provider error as the exception cause', () => {
+    const providerError = new Error('graph exploded');
+
+    const exception = parseMicrosoftWebhookSubscriptionError(
+      { statusCode: 404, code: 'ResourceNotFound' },
+      { cause: providerError },
+    );
+
+    expect(exception.cause).toBe(providerError);
+  });
+
   it('should return INSUFFICIENT_PERMISSIONS on 403', () => {
     const exception = parseMicrosoftWebhookSubscriptionError({
       statusCode: 403,

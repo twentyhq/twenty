@@ -95,6 +95,7 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
       if (isNonEmptyString(notification.lifecycleEvent)) {
         await this.handleLifecycleEvent({
           lifecycleEvent: notification.lifecycleEvent,
+          removedSubscriptionId: notification.subscriptionId,
           calendarChannel,
         }).catch((error) =>
           this.logger.error(
@@ -118,9 +119,11 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
 
   private async handleLifecycleEvent({
     lifecycleEvent,
+    removedSubscriptionId,
     calendarChannel,
   }: {
     lifecycleEvent: string;
+    removedSubscriptionId: string;
     calendarChannel: CalendarChannelEntity;
   }): Promise<void> {
     switch (lifecycleEvent) {
@@ -128,6 +131,7 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
         await this.calendarWebhookSubscriptionService.recreateSubscription({
           calendarChannelId: calendarChannel.id,
           workspaceId: calendarChannel.workspaceId,
+          removedSubscriptionId,
         });
         await this.webhookSyncTriggerService.triggerCalendarSync(
           calendarChannel.id,
