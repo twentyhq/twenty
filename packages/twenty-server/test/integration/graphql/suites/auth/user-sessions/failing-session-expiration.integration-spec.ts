@@ -21,7 +21,7 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 // so the read-through cache holds no entry and the checks hit the database.
 describe('failing session expiration (integration)', () => {
   const signInAndTamper = async (
-    tamper: Partial<UserSessionEntity>,
+    tamper: Partial<Pick<UserSessionEntity, 'expiresAt' | 'lastActiveAt'>>,
   ): Promise<string> => {
     const signInResponse = await signInWithCookieCapture({
       originHeader: ALLOWED_ORIGIN,
