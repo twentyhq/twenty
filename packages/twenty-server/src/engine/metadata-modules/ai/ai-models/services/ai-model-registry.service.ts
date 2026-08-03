@@ -29,6 +29,7 @@ import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-mod
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
+import { resolveTokenLimit } from 'src/engine/metadata-modules/ai/ai-models/utils/resolve-token-limit.util';
 import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
@@ -155,11 +156,14 @@ export class AiModelRegistryService {
       cacheCreationCostPerMillionTokens:
         modelDef.cacheCreationCostPerMillionTokens,
       longContextCost: modelDef.longContextCost,
-      // Limits already stored as 0 by earlier versions of the admin panel would
-      // make the model unusable, so any falsy value falls back to the default.
-      contextWindowTokens:
-        modelDef.contextWindowTokens || DEFAULT_CONTEXT_WINDOW_TOKENS,
-      maxOutputTokens: modelDef.maxOutputTokens || DEFAULT_MAX_OUTPUT_TOKENS,
+      contextWindowTokens: resolveTokenLimit(
+        modelDef.contextWindowTokens,
+        DEFAULT_CONTEXT_WINDOW_TOKENS,
+      ),
+      maxOutputTokens: resolveTokenLimit(
+        modelDef.maxOutputTokens,
+        DEFAULT_MAX_OUTPUT_TOKENS,
+      ),
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
       isDeprecated: modelDef.isDeprecated,

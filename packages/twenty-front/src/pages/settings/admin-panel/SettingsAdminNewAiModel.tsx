@@ -66,6 +66,12 @@ type ModelSuggestion = {
   supportsReasoning: boolean;
 };
 
+// A blank limit means "unset" and lets the server apply its default, but a
+// value the admin actually typed has to be usable.
+const isInvalidLimit = (rawValue: string, parsedValue: number) =>
+  rawValue.trim() !== '' &&
+  (!Number.isInteger(parsedValue) || parsedValue <= 0);
+
 type FormValues = {
   name: string;
   label: string;
@@ -226,14 +232,33 @@ export const SettingsAdminNewAiModel = () => {
       return;
     }
 
+    const contextWindowTokens = Number(values.contextWindowTokens);
+    const maxOutputTokens = Number(values.maxOutputTokens);
+
+    if (isInvalidLimit(values.contextWindowTokens, contextWindowTokens)) {
+      form.setError('contextWindowTokens', {
+        type: 'manual',
+        message: t`Context window must be a positive number`,
+      });
+
+      return;
+    }
+
+    if (isInvalidLimit(values.maxOutputTokens, maxOutputTokens)) {
+      form.setError('maxOutputTokens', {
+        type: 'manual',
+        message: t`Max output must be a positive number`,
+      });
+
+      return;
+    }
+
     const cachedInput = parseFloat(
       values.cachedInputCostPerMillionTokens || '',
     );
     const cacheCreation = parseFloat(
       values.cacheCreationCostPerMillionTokens || '',
     );
-    const contextWindowTokens = parseInt(values.contextWindowTokens, 10);
-    const maxOutputTokens = parseInt(values.maxOutputTokens, 10);
 
     const modelConfig = {
       name: values.name.trim(),
@@ -250,8 +275,6 @@ export const SettingsAdminNewAiModel = () => {
       ...(isFinite(cacheCreation) && {
         cacheCreationCostPerMillionTokens: cacheCreation,
       }),
-      // Blank or non-positive limits are left unset so the server applies its
-      // defaults instead of persisting a model that can never be used.
       ...(contextWindowTokens > 0 && { contextWindowTokens }),
       ...(maxOutputTokens > 0 && { maxOutputTokens }),
       ...(values.modalities.length > 0 && {
@@ -465,26 +488,34 @@ export const SettingsAdminNewAiModel = () => {
               <Controller
                 name="contextWindowTokens"
                 control={form.control}
-                render={({ field: { onChange, value } }) => (
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
                   <TextInput
                     label={t`Context window`}
                     value={value}
                     onChange={onChange}
                     placeholder={t`e.g. 128000`}
                     fullWidth
+                    error={error?.message}
                   />
                 )}
               />
               <Controller
                 name="maxOutputTokens"
                 control={form.control}
-                render={({ field: { onChange, value } }) => (
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
                   <TextInput
                     label={t`Max output`}
                     value={value}
                     onChange={onChange}
                     placeholder={t`e.g. 16384`}
                     fullWidth
+                    error={error?.message}
                   />
                 )}
               />

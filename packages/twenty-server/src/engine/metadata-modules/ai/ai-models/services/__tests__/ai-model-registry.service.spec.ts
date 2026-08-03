@@ -62,26 +62,29 @@ describe('AiModelRegistryService', () => {
     service = module.get<AiModelRegistryService>(AiModelRegistryService);
   });
 
-  it('should fall back to default limits when a model is stored with zeroes', () => {
-    mockProviderConfigService.getResolvedProviders.mockReturnValue({
-      custom: {
-        npm: '@ai-sdk/openai-compatible',
-        models: [
-          {
-            name: 'my-model',
-            label: 'My Model',
-            contextWindowTokens: 0,
-            maxOutputTokens: 0,
-          },
-        ],
-      },
-    });
+  it.each([0, -1])(
+    'should fall back to default limits when a model is stored with %s',
+    (storedLimit) => {
+      mockProviderConfigService.getResolvedProviders.mockReturnValue({
+        custom: {
+          npm: '@ai-sdk/openai-compatible',
+          models: [
+            {
+              name: 'my-model',
+              label: 'My Model',
+              contextWindowTokens: storedLimit,
+              maxOutputTokens: storedLimit,
+            },
+          ],
+        },
+      });
 
-    const result = service.getModelConfig('custom/my-model');
+      const result = service.getModelConfig('custom/my-model');
 
-    expect(result?.contextWindowTokens).toBe(DEFAULT_CONTEXT_WINDOW_TOKENS);
-    expect(result?.maxOutputTokens).toBe(DEFAULT_MAX_OUTPUT_TOKENS);
-  });
+      expect(result?.contextWindowTokens).toBe(DEFAULT_CONTEXT_WINDOW_TOKENS);
+      expect(result?.maxOutputTokens).toBe(DEFAULT_MAX_OUTPUT_TOKENS);
+    },
+  );
 
   it('should throw when no models are available for AUTO_SELECT_SMART_MODEL_ID', () => {
     expect(() =>
