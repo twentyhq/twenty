@@ -9352,6 +9352,9 @@ export default {
                     ],
                     "workspaceId": [
                         4
+                    ],
+                    "captchaToken": [
+                        1
                     ]
                 }
             ],

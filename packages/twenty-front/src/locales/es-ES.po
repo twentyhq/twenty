@@ -378,6 +378,11 @@ msgstr "{appName} desea:"
 msgid "{behindCount, plural, one {# workspace behind} other {# workspaces behind}}"
 msgstr "{behindCount, plural, one {# espacio de trabajo desactualizado} other {# espacios de trabajo desactualizados}}"
 
+#. js-lingui-id: SWRSbi
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "{browser} on {operatingSystem}"
+msgstr ""
+
 #. js-lingui-id: SU5Crx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "{cachedPercent}% cached"
@@ -3508,6 +3513,7 @@ msgstr "No se pueden subir más de {maxNumberOfValues} archivos"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 #: src/pages/auth/PasswordReset.tsx
@@ -5452,6 +5458,7 @@ msgstr "Personalización"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditObjectViewBase.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Customize"
 msgstr "Personalizar"
@@ -6330,6 +6337,21 @@ msgstr "Enlaces para desarrolladores"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Development instance"
 msgstr "Instancia de desarrollo"
+
+#. js-lingui-id: le4Hch
+#: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
+msgid "Device logged out"
+msgstr ""
+
+#. js-lingui-id: qavm0B
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Devices"
+msgstr ""
+
+#. js-lingui-id: ol7FMi
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Devices with an active session on your account"
+msgstr ""
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -8115,6 +8137,16 @@ msgstr "No se pudieron cargar los administradores del servidor."
 msgid "Failed to load webhook"
 msgstr "No se pudo cargar el webhook"
 
+#. js-lingui-id: qQiBwb
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Failed to log out other devices"
+msgstr ""
+
+#. js-lingui-id: ERoMSu
+#: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
+msgid "Failed to log out this device"
+msgstr ""
+
 #. js-lingui-id: TZV+Pv
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Failed to merge records. Please try again."
@@ -9559,6 +9591,11 @@ msgstr "si"
 msgid "If there's no link, no button will appear."
 msgstr "Si no hay un enlace, no aparecerá ningún botón."
 
+#. js-lingui-id: X4iihZ
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "If this email is registered, a password reset link has been sent"
+msgstr ""
+
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
@@ -9660,6 +9697,7 @@ msgstr "suplantación"
 #. js-lingui-id: gFoGWm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Impersonation"
 msgstr "Suplantación"
 
@@ -10560,6 +10598,17 @@ msgstr "Últimos 7 Días (del más antiguo → al más nuevo)"
 msgid "Last 90 days"
 msgstr "Últimos 90 días"
 
+#. js-lingui-id: ZdXEWi
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Last active {lastActive}"
+msgstr ""
+
+#. js-lingui-id: vmfZix
+#. placeholder {0}: session.ipAddress
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Last active {lastActive} · {0}"
+msgstr ""
+
 #. js-lingui-id: 4AKv0+
 #: src/modules/ai/components/AiChatThreadFilterDropdownLastActivityMenu.tsx
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
@@ -11064,10 +11113,16 @@ msgstr "Registra una nueva oportunidad (empresa, importe, etapa, fecha de cierre
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Log out"
 msgstr "Cerrar sesión"
+
+#. js-lingui-id: 3guYwv
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Log out all other devices"
+msgstr ""
 
 #. js-lingui-id: qakNlV
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -11078,6 +11133,11 @@ msgstr "Retención de registros"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Logged in as {impersonatedUser}"
 msgstr "Conectado como {impersonatedUser}"
+
+#. js-lingui-id: ILNASD
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Logged out all other devices"
+msgstr ""
 
 #. js-lingui-id: wuCnq1
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -13921,11 +13981,6 @@ msgstr "La contraseña ha sido actualizada"
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password must be between 8 and 50 characters"
 msgstr "La contraseña debe tener entre 8 y 50 caracteres"
-
-#. js-lingui-id: mi6Rel
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Password reset link has been sent to the email"
-msgstr "El enlace de restablecimiento de contraseña ha sido enviado al correo electrónico"
 
 #. js-lingui-id: BFjW8X
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -18201,6 +18256,11 @@ msgstr "Esta conexión no existe o no está disponible para esta aplicación."
 msgid "This database value overrides environment settings. "
 msgstr "Este valor de base de datos anula la configuración del entorno."
 
+#. js-lingui-id: pmDHTY
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "This device"
+msgstr ""
+
 #. js-lingui-id: VQvoBA
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This enterprise key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
@@ -19063,6 +19123,11 @@ msgstr "Desconocido"
 #: src/modules/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
 msgid "Unknown chart configuration type"
 msgstr "Tipo de configuración de gráfico desconocido"
+
+#. js-lingui-id: a14mj8
+#: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
+msgid "Unknown device"
+msgstr ""
 
 #. js-lingui-id: 29VNqC
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx

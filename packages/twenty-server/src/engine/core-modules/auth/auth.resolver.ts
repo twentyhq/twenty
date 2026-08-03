@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -43,6 +43,8 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { VerifyEmailAndGetLoginTokenDTO } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
@@ -112,6 +114,9 @@ import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.d
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 
+const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
+const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseFilters(
@@ -121,10 +126,14 @@ import { AuthService } from './services/auth.service';
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
   WorkspaceGraphqlApiExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
+  private readonly logger = new Logger(AuthResolver.name);
+
   constructor(
+    private readonly throttlerService: ThrottlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
@@ -1022,22 +1031,31 @@ export class AuthResolver {
   }
 
   @Mutation(() => EmailPasswordResetLinkDTO)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLinkDTO> {
-    const resetToken =
-      await this.resetPasswordService.generatePasswordResetToken(
-        emailPasswordResetInput.email,
-        emailPasswordResetInput.workspaceId,
-      );
+    const normalizedEmail = emailPasswordResetInput.email.toLowerCase();
 
-    return await this.resetPasswordService.sendEmailPasswordResetLink({
-      resetToken,
-      email: emailPasswordResetInput.email,
-      locale: context.req.locale,
-    });
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `password-reset-email:${normalizedEmail}`,
+      1,
+      PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX,
+      PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS,
+    );
+
+    void this.resetPasswordService
+      .generateAndSendPasswordResetLink({
+        email: normalizedEmail,
+        workspaceId: emailPasswordResetInput.workspaceId,
+        locale: context.req.locale,
+      })
+      .catch((error) => {
+        this.logger.error('Failed to send the password reset link', error);
+      });
+
+    return { success: true };
   }
 
   @Mutation(() => InvalidatePasswordDTO)

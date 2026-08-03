@@ -110,4 +110,4 @@ Le champ `value` est toujours une valeur sérialisable en JSON, mais sa forme at
 
 ## Comment les vues apparaissent dans l’interface utilisateur
 
-Une vue seule n’est pas accessible à partir de la barre latérale. Pour la faire apparaître là, associez-la à un [élément de menu de navigation](/l/fr/developers/extend/apps/layout/navigation-menu-items) de type `VIEW` qui pointe vers le `universalIdentifier` de la vue. C’est le modèle canonique : chaque objet personnalisé livre généralement une vue par défaut + une entrée de barre latérale qui l’ouvre.
+Une vue seule n’est pas accessible à partir de la barre latérale. Pour la faire apparaître là, associez-la à un [élément de menu de navigation](/l/fr/developers/extend/apps/layout/navigation-menu-items) de type `VIEW` qui pointe vers le `universalIdentifier` de la vue. C’est le schéma canonique : chaque objet personnalisé obtient une vue d’index par défaut générée automatiquement lors de sa création ; il vous suffit donc d’inclure l’élément de la barre latérale qui l’ouvre.

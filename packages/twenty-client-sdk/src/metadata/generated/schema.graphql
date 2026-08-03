@@ -3620,7 +3620,7 @@ type Mutation {
   signOut(refreshToken: String): Boolean!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
   generatePlaygroundToken: AuthToken!
-  emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
+  emailPasswordResetLink(email: String!, workspaceId: UUID, captchaToken: String): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
   initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
