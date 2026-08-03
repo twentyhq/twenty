@@ -92,6 +92,30 @@ describe('CookieSessionBootEffect', () => {
     expect(store.get(tokenPairState.atom)).toBeNull();
   });
 
+  it('should stay retryable when the probe fails for an unrelated reason', async () => {
+    mockQuery.mockRejectedValue(
+      new CombinedGraphQLErrors({
+        data: null,
+        errors: [
+          {
+            message: 'Something broke in a resolver',
+            extensions: { code: 'INTERNAL_SERVER_ERROR' },
+          },
+        ],
+      }),
+    );
+
+    const store = renderBootEffect();
+
+    await waitFor(() => {
+      expect(mockQuery).toHaveBeenCalled();
+    });
+
+    expect(mockEnsureTokenRenewed).not.toHaveBeenCalled();
+    expect(store.get(isCookieAuthActiveState.atom)).toBe(false);
+    expect(store.get(tokenPairState.atom)).not.toBeNull();
+  });
+
   it('should not renew when the server cannot be reached', async () => {
     mockQuery.mockRejectedValue(new Error('Network request failed'));
 

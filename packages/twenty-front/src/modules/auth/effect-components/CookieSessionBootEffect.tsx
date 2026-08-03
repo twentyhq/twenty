@@ -22,6 +22,20 @@ type CookieSessionProbeResult =
   | 'unauthenticated'
   | 'unreachable';
 
+// A request with no credential at all is refused as FORBIDDEN, while an
+// invalid one is UNAUTHENTICATED, and guards that throw before the code is
+// attached surface a bare "Unauthorized". The probe deliberately sends no
+// credential, so it has to recognise all three or the migration never starts.
+const AUTH_REFUSAL_CODES = new Set(['UNAUTHENTICATED', 'FORBIDDEN']);
+
+const isAuthRefusal = (error: unknown): boolean =>
+  CombinedGraphQLErrors.is(error) &&
+  error.errors.some(
+    (graphQLError) =>
+      AUTH_REFUSAL_CODES.has(String(graphQLError.extensions?.code)) ||
+      graphQLError.message === 'Unauthorized',
+  );
+
 // Migrates the client from the localStorage token pair onto the httpOnly
 // session cookie. Clients without a cookie get one through a single token
 // renewal, which the server sets on renewToken, then switch on the next probe.
@@ -50,13 +64,7 @@ export const CookieSessionBootEffect = () => {
           ? 'authenticated'
           : 'unauthenticated';
       } catch (error) {
-        // The probe carries no credential on purpose, so any answer the server
-        // manages to give means "not authenticated by cookie". Keying on the
-        // error code instead would strand the migration: a request with no
-        // credential at all is refused as FORBIDDEN, not UNAUTHENTICATED.
-        return CombinedGraphQLErrors.is(error)
-          ? 'unauthenticated'
-          : 'unreachable';
+        return isAuthRefusal(error) ? 'unauthenticated' : 'unreachable';
       }
     };
 
