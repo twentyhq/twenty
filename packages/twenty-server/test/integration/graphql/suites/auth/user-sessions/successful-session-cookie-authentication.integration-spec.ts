@@ -14,7 +14,7 @@ import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/su
 describe('successful session cookie authentication (integration)', () => {
   setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
 
-  let sessionToken: string;
+  let sessionCookieHeader: string;
 
   beforeAll(async () => {
     const signInResponse = await signInWithCookieCapture({
@@ -26,7 +26,7 @@ describe('successful session cookie authentication (integration)', () => {
       throw new Error('Expected a session cookie from sign-in');
     }
 
-    sessionToken = sessionCookie.sessionToken;
+    sessionCookieHeader = sessionCookie.cookieHeader;
   });
 
   it('should authenticate a request carrying only the session cookie', async () => {
@@ -34,7 +34,7 @@ describe('successful session cookie authentication (integration)', () => {
       currentUserIdentityQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${sessionToken}`,
+        cookieHeader: sessionCookieHeader,
       },
     );
 

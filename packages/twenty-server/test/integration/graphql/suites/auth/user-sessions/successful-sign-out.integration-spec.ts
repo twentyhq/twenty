@@ -38,7 +38,7 @@ describe('successful sign-out (integration)', () => {
       signOutQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${sessionCookie.sessionToken}`,
+        cookieHeader: sessionCookie.cookieHeader,
       },
     );
 
@@ -63,7 +63,7 @@ describe('successful sign-out (integration)', () => {
       currentUserIdentityQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${sessionCookie.sessionToken}`,
+        cookieHeader: sessionCookie.cookieHeader,
       },
     );
 

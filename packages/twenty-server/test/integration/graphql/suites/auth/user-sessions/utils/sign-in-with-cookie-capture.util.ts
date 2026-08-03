@@ -4,6 +4,7 @@ import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphq
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 
 type RequestHeaders = {
   originHeader?: string;
@@ -88,34 +89,64 @@ export const getSetCookieHeaders = (response: Response): string[] =>
     ? response.headers['set-cookie']
     : [];
 
+// Which of the two names the server issues depends on SERVER_URL and
+// AUTH_COOKIE_SAME_SITE, so callers match on both by default and read the name
+// back off the response rather than assuming the insecure deployment. Specs
+// that assert one specific variant pass the name explicitly.
+const SESSION_COOKIE_NAMES = [
+  USER_SESSION_SECURE_COOKIE_NAME,
+  USER_SESSION_COOKIE_NAME,
+];
+
 // startsWith keeps the plain and __Host- names distinct: the prefixed name
 // does not start with the plain one.
 export const extractSessionCookie = (
   response: Response,
-  cookieName: string = USER_SESSION_COOKIE_NAME,
-): { rawCookie: string; sessionToken: string } | undefined => {
-  const rawCookie = getSetCookieHeaders(response).find((cookie) =>
-    cookie.startsWith(`${cookieName}=sess_`),
-  );
+  cookieName?: string,
+):
+  | { rawCookie: string; cookieName: string; cookieHeader: string; sessionToken: string }
+  | undefined => {
+  const candidateNames =
+    cookieName === undefined ? SESSION_COOKIE_NAMES : [cookieName];
 
-  if (rawCookie === undefined) {
-    return undefined;
+  for (const candidateName of candidateNames) {
+    const rawCookie = getSetCookieHeaders(response).find((cookie) =>
+      cookie.startsWith(`${candidateName}=sess_`),
+    );
+
+    if (rawCookie === undefined) {
+      continue;
+    }
+
+    const sessionToken = rawCookie
+      .split(';')[0]
+      .slice(`${candidateName}=`.length);
+
+    return {
+      rawCookie,
+      cookieName: candidateName,
+      cookieHeader: `${candidateName}=${sessionToken}`,
+      sessionToken,
+    };
   }
 
-  return {
-    rawCookie,
-    sessionToken: rawCookie.split(';')[0].slice(`${cookieName}=`.length),
-  };
+  return undefined;
 };
 
 // A deletion cookie is the name with an empty value and an epoch expiry; the
 // extractor above will not match it because the value lacks the sess_ prefix.
 export const hasClearingCookie = (
   response: Response,
-  cookieName: string = USER_SESSION_COOKIE_NAME,
-): boolean =>
-  getSetCookieHeaders(response).some(
-    (cookie) =>
-      cookie.startsWith(`${cookieName}=;`) &&
-      cookie.includes('Expires=Thu, 01 Jan 1970'),
+  cookieName?: string,
+): boolean => {
+  const candidateNames =
+    cookieName === undefined ? SESSION_COOKIE_NAMES : [cookieName];
+
+  return getSetCookieHeaders(response).some((cookie) =>
+    candidateNames.some(
+      (candidateName) =>
+        cookie.startsWith(`${candidateName}=;`) &&
+        cookie.includes('Expires=Thu, 01 Jan 1970'),
+    ),
   );
+};

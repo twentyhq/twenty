@@ -20,6 +20,8 @@ describe('failing session cookie authentication (integration)', () => {
   setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
 
   let sessionToken: string;
+  let sessionCookieName: string;
+  let sessionCookieHeader: string;
 
   beforeAll(async () => {
     const signInResponse = await signInWithCookieCapture({
@@ -32,6 +34,8 @@ describe('failing session cookie authentication (integration)', () => {
     }
 
     sessionToken = sessionCookie.sessionToken;
+    sessionCookieName = sessionCookie.cookieName;
+    sessionCookieHeader = sessionCookie.cookieHeader;
   });
 
   it('should reject a session token presented as a Bearer header', async () => {
@@ -51,7 +55,7 @@ describe('failing session cookie authentication (integration)', () => {
       currentUserIdentityQueryFactory(),
       {
         originHeader: DISALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${sessionToken}`,
+        cookieHeader: sessionCookieHeader,
       },
       403,
     );
@@ -62,7 +66,7 @@ describe('failing session cookie authentication (integration)', () => {
   it('should return 403 on a cookie-authenticated request without an Origin header, failing closed', async () => {
     const response = await postMetadataOperationWithHeaders(
       currentUserIdentityQueryFactory(),
-      { cookieHeader: `twenty-session=${sessionToken}` },
+      { cookieHeader: sessionCookieHeader },
       403,
     );
 
@@ -76,7 +80,7 @@ describe('failing session cookie authentication (integration)', () => {
       currentUserIdentityQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${unknownSessionToken}`,
+        cookieHeader: `${sessionCookieName}=${unknownSessionToken}`,
       },
     );
 

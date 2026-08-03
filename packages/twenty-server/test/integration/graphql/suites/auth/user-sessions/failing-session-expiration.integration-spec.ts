@@ -38,15 +38,17 @@ describe('failing session expiration (integration)', () => {
       tamper,
     );
 
-    return sessionCookie.sessionToken;
+    return sessionCookie.cookieHeader;
   };
 
-  const expectCookieRejected = async (sessionToken: string): Promise<void> => {
+  const expectCookieRejected = async (
+    sessionCookieHeader: string,
+  ): Promise<void> => {
     const response = await postMetadataOperationWithHeaders(
       currentUserIdentityQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${sessionToken}`,
+        cookieHeader: sessionCookieHeader,
       },
     );
 
@@ -55,20 +57,20 @@ describe('failing session expiration (integration)', () => {
   };
 
   it('should reject a session past its absolute lifetime and clear the cookie', async () => {
-    const sessionToken = await signInAndTamper({
+    const sessionCookieHeader = await signInAndTamper({
       expiresAt: new Date(Date.now() - ONE_DAY_MS),
     });
 
-    await expectCookieRejected(sessionToken);
+    await expectCookieRejected(sessionCookieHeader);
   });
 
   it('should reject a session past the idle timeout and clear the cookie', async () => {
     // 31 days idle exceeds the 30d SESSION_IDLE_TIMEOUT while the absolute
     // 180d lifetime is still far in the future.
-    const sessionToken = await signInAndTamper({
+    const sessionCookieHeader = await signInAndTamper({
       lastActiveAt: new Date(Date.now() - 31 * ONE_DAY_MS),
     });
 
-    await expectCookieRejected(sessionToken);
+    await expectCookieRejected(sessionCookieHeader);
   });
 });

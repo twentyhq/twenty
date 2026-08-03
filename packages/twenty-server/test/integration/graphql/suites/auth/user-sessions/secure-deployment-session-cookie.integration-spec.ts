@@ -8,24 +8,18 @@ import {
 import { currentUserIdentityQueryFactory } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-sessions/constants/is-secure-deployment.constant';
 import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-// The secure/insecure cookie branch is decided by configuration, never by the
-// transport: isSecureDeployment() reads SERVER_URL. SERVER_URL is env-only, so
-// unlike the SameSite=None side door this spec cannot flip it at runtime; it
-// requires the app to have booted with an https SERVER_URL and skips
+// This spec requires the app to have booted with an https SERVER_URL and skips
 // otherwise. CI runs it as a dedicated jest invocation with
 // SERVER_URL=https://localhost:3000, which exercises the exact production
 // combination: __Host- name, Secure, and the SameSite=Lax default.
-const isSecureDeployment = (process.env.SERVER_URL ?? '').startsWith(
-  'https://',
-);
-
-const describeOnSecureDeployment = isSecureDeployment
+const describeOnSecureDeployment = IS_SECURE_DEPLOYMENT
   ? describe
   : describe.skip;
 

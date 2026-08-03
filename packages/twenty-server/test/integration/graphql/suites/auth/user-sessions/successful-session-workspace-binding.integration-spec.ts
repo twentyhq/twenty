@@ -28,13 +28,15 @@ describe('successful session workspace binding (integration)', () => {
 
   let appleSessionToken: string;
   let ycSessionToken: string;
+  let appleSessionCookieHeader: string;
+  let ycSessionCookieHeader: string;
 
-  const fetchWorkspaceContext = async (sessionToken: string) => {
+  const fetchWorkspaceContext = async (sessionCookieHeader: string) => {
     const response = await postMetadataOperationWithHeaders(
       currentUserWorkspaceContextQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${sessionToken}`,
+        cookieHeader: sessionCookieHeader,
       },
     );
 
@@ -61,6 +63,8 @@ describe('successful session workspace binding (integration)', () => {
 
     appleSessionToken = appleCookie.sessionToken;
     ycSessionToken = ycCookie.sessionToken;
+    appleSessionCookieHeader = appleCookie.cookieHeader;
+    ycSessionCookieHeader = ycCookie.cookieHeader;
   });
 
   it('should persist each session bound to the workspace its exchange selected', async () => {
@@ -85,8 +89,8 @@ describe('successful session workspace binding (integration)', () => {
   });
 
   it('should resolve the auth context of each cookie to its own workspace, with no cross-workspace pivot', async () => {
-    const appleContext = await fetchWorkspaceContext(appleSessionToken);
-    const ycContext = await fetchWorkspaceContext(ycSessionToken);
+    const appleContext = await fetchWorkspaceContext(appleSessionCookieHeader);
+    const ycContext = await fetchWorkspaceContext(ycSessionCookieHeader);
 
     expect(appleContext.email).toBe('tim@apple.dev');
     expect(appleContext.currentWorkspace.id).toBe(SEED_APPLE_WORKSPACE_ID);

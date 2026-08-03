@@ -12,6 +12,7 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-sessions/constants/is-secure-deployment.constant';
 import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -21,6 +22,7 @@ describe('successful user session creation on auth exchanges (integration)', () 
   setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
 
   let firstSessionToken: string;
+  let firstSessionCookieHeader: string;
 
   it('should mint a session and set an httpOnly cookie on sign-in from an allowed origin', async () => {
     const response = await signInWithCookieCapture({
@@ -41,15 +43,20 @@ describe('successful user session creation on auth exchanges (integration)', () 
     }
 
     firstSessionToken = sessionCookie.sessionToken;
+    firstSessionCookieHeader = sessionCookie.cookieHeader;
 
     // Pins name, sess_ prefix, attribute list and order in one place. The
     // absences matter as much as the presences: no Secure and no __Host-
     // (plain-http test deployment), and no Domain, which is what makes the
     // cookie host-only so browsers never send it to sibling workspace
-    // subdomains.
-    expect(
-      normalizeSessionCookieForSnapshot(sessionCookie.rawCookie),
-    ).toMatchSnapshot('session-cookie');
+    // subdomains. The secure boot pins its own shape in
+    // secure-deployment-session-cookie.integration-spec.ts, so this snapshot
+    // only applies to the insecure one.
+    if (!IS_SECURE_DEPLOYMENT) {
+      expect(
+        normalizeSessionCookieForSnapshot(sessionCookie.rawCookie),
+      ).toMatchSnapshot('session-cookie');
+    }
 
     const expiresAttribute = sessionCookie.rawCookie
       .split(';')
@@ -128,7 +135,7 @@ describe('successful user session creation on auth exchanges (integration)', () 
   it('should revoke the presented session as superseded when signing in over it', async () => {
     const response = await signInWithCookieCapture({
       originHeader: ALLOWED_ORIGIN,
-      cookieHeader: `twenty-session=${firstSessionToken}`,
+      cookieHeader: firstSessionCookieHeader,
     });
 
     const newSessionCookie = extractSessionCookie(response);

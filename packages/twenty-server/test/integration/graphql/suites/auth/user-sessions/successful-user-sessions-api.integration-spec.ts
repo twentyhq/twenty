@@ -28,7 +28,7 @@ type UserSessionApiEntry = {
 describe('successful user sessions API (integration)', () => {
   setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
 
-  let currentSessionToken: string;
+  let currentSessionCookieHeader: string;
   let otherSessionToken: string;
 
   const fetchSessions = async (): Promise<UserSessionApiEntry[]> => {
@@ -36,7 +36,7 @@ describe('successful user sessions API (integration)', () => {
       currentUserSessionsQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${currentSessionToken}`,
+        cookieHeader: currentSessionCookieHeader,
       },
     );
 
@@ -63,7 +63,7 @@ describe('successful user sessions API (integration)', () => {
     }
 
     otherSessionToken = otherCookie.sessionToken;
-    currentSessionToken = currentCookie.sessionToken;
+    currentSessionCookieHeader = currentCookie.cookieHeader;
   });
 
   it('should list active sessions and mark only the presented one as current', async () => {
@@ -91,7 +91,7 @@ describe('successful user sessions API (integration)', () => {
       revokeUserSessionQueryFactory({ userSessionId: otherSessionRow.id }),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${currentSessionToken}`,
+        cookieHeader: currentSessionCookieHeader,
       },
     );
 
@@ -120,7 +120,7 @@ describe('successful user sessions API (integration)', () => {
       revokeAllOtherUserSessionsQueryFactory(),
       {
         originHeader: ALLOWED_ORIGIN,
-        cookieHeader: `twenty-session=${currentSessionToken}`,
+        cookieHeader: currentSessionCookieHeader,
       },
     );
 

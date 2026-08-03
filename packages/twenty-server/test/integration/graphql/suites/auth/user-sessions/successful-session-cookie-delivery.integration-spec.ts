@@ -5,6 +5,9 @@ import {
   signInWithCookieCapture,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
 
+import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
+
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
@@ -24,12 +27,12 @@ describe('successful session cookie delivery on a secure deployment (integration
     });
 
     expect(
-      extractSessionCookie(response, 'twenty-session'),
+      extractSessionCookie(response, USER_SESSION_COOKIE_NAME),
     ).toBeUndefined();
 
     const secureSessionCookie = extractSessionCookie(
       response,
-      '__Host-twenty-session',
+      USER_SESSION_SECURE_COOKIE_NAME,
     );
 
     expect(secureSessionCookie).toBeDefined();
