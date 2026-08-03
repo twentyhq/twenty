@@ -26,7 +26,7 @@ interface SelectInputProps {
   onClear?: () => void;
   clearLabel?: string;
   focusId: string;
-  onAddSelectOption?: (optionName: string) => void;
+  onAddSelectOption?: (optionName: string) => void | Promise<unknown>;
 }
 
 export const SelectInput = ({

@@ -96,6 +96,11 @@ msgstr "· {objectFilterDropdownSearchInput}"
 msgid "· FREE"
 msgstr "· GRATIS"
 
+#. js-lingui-id: +ryuLa
+#: src/modules/object-record/record-field/ui/meta-types/utils/getNewSelectOptionErrorMessage.ts
+msgid "\"{optionName}\" cannot be used as an option name."
+msgstr ""
+
 #. js-lingui-id: TaLmrR
 #. placeholder {0}: formatNumber(currentCreditsByPeriod, { decimals: 2 })
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1581,6 +1586,11 @@ msgstr "Tillagd {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Tillagd i blocklistan"
 
+#. js-lingui-id: BrJ98E
+#: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
+msgid "Adding \"{trimmedName}\"..."
+msgstr ""
+
 #. js-lingui-id: hW/fMg
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -2232,6 +2242,11 @@ msgstr "Ett internt fel inträffade vid validering av dina ändringar. Vänligen
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
 msgstr "Ett objekt med detta namn finns redan"
+
+#. js-lingui-id: oMJTL2
+#: src/modules/object-record/record-field/ui/meta-types/utils/getNewSelectOptionErrorMessage.ts
+msgid "An option matching \"{optionName}\" already exists."
+msgstr ""
 
 #. js-lingui-id: HZFm5R
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -13814,6 +13829,16 @@ msgstr "I drift"
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
 msgid "Option 1"
 msgstr "Alternativ 1"
+
+#. js-lingui-id: WYGNk6
+#: src/modules/object-record/record-field/ui/meta-types/utils/getNewSelectOptionErrorMessage.ts
+msgid "Option names are limited to {OPTION_VALUE_MAXIMUM_LENGTH} characters."
+msgstr ""
+
+#. js-lingui-id: TUkT4u
+#: src/modules/object-record/record-field/ui/meta-types/utils/getNewSelectOptionErrorMessage.ts
+msgid "Option names cannot contain a comma."
+msgstr ""
 
 #. js-lingui-id: gUeG+X
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
