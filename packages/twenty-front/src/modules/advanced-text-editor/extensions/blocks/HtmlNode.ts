@@ -4,7 +4,7 @@ import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 import { HtmlNodeView } from '@/advanced-text-editor/extensions/blocks/HtmlNodeView';
 
-export const DEFAULT_HTML_BLOCK =
+const DEFAULT_HTML_BLOCK =
   '<p style="margin: 0;">Edit this HTML in the block settings panel.</p>';
 
 // A raw HTML snippet embedded verbatim in the email. The canvas shows a

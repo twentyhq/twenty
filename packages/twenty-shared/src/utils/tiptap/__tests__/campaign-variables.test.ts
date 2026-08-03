@@ -1,5 +1,5 @@
 import { FieldMetadataType } from '../../../types/FieldMetadataType';
-import { listCampaignVariablesForFields } from '../campaign-variables';
+import { listCampaignVariablesForFields } from '../list-campaign-variables-for-fields';
 
 describe('listCampaignVariablesForFields', () => {
   it('should expose scalar fields under their own name', () => {

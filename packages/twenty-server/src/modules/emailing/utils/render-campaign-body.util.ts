@@ -8,10 +8,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { renderRichTextToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util';
-import {
-  CAMPAIGN_VARIABLE_PATTERN,
-  renderCampaignTemplate,
-} from 'src/modules/emailing/utils/render-campaign-template.util';
+import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
+import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 
 // bodyTemplate is a plain text field, so anything can be written to it through
 // the record API. The renderer maps over content without checking it, so a

@@ -1,7 +1,5 @@
-import {
-  EMAIL_DOCUMENT_SCHEMA_VERSION,
-  parseEmailDocument,
-} from '../email-document-schema';
+import { EMAIL_DOCUMENT_SCHEMA_VERSION } from '../email-document-schema-version';
+import { parseEmailDocument } from '../parse-email-document';
 
 const paragraph = (text: string) => ({
   type: 'paragraph',

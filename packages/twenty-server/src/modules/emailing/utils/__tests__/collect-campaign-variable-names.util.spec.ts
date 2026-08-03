@@ -1,4 +1,4 @@
-import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variables.util';
+import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variable-names.util';
 
 describe('collectCampaignVariableNames', () => {
   it('should collect variables from every substitution site', () => {

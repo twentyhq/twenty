@@ -27,14 +27,3 @@ export const CANVAS_THEME_DEFAULTS: CanvasTheme = {
   borderWidth: '0px',
   borderColor: '#000000',
 };
-
-export const isCanvasTheme = (value: unknown): value is Partial<CanvasTheme> =>
-  typeof value === 'object' &&
-  value !== null &&
-  typeof (value as CanvasTheme).bodyBackground === 'string' &&
-  typeof (value as CanvasTheme).width === 'string';
-
-// Stored themes may predate newly added keys; resolving against the defaults
-// is how the theme shape evolves without migrating existing documents.
-export const resolveCanvasTheme = (value: unknown): CanvasTheme | null =>
-  isCanvasTheme(value) ? { ...CANVAS_THEME_DEFAULTS, ...value } : null;

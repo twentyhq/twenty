@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import { TIPTAP_MARK_TYPES, TIPTAP_NODE_TYPES } from './tiptap-marks';
+import { type EmailDocumentNode } from './email-document-node';
+import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
+import { TIPTAP_MARK_TYPES } from './tiptap-mark-types';
+import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
 // The versioned contract for campaign email bodies ("Twenty email document").
 // The composer edits it, the AI campaign tool writes it, the server validates
@@ -8,18 +11,6 @@ import { TIPTAP_MARK_TYPES, TIPTAP_NODE_TYPES } from './tiptap-marks';
 // here rather than by the editor: node types are a closed set so an unknown
 // block is rejected upfront instead of silently rendering as nothing, while
 // attribute objects stay open so adding an attribute is not a breaking change.
-export const EMAIL_DOCUMENT_SCHEMA_VERSION = 1;
-
-// Block nodes are recursive (sections nest, columns and list items hold
-// blocks), so the tree type is declared structurally rather than inferred.
-export type EmailDocumentNode = {
-  type: string;
-  text?: string;
-  attrs?: Record<string, unknown>;
-  marks?: unknown[];
-  content?: EmailDocumentNode[];
-};
-
 // Style attributes are structured objects of camelCase CSS properties
 // ({ backgroundColor: '#fff', paddingTop: '12px' }), applied directly to
 // react-email components at render time. No CSS text is ever parsed.
@@ -114,26 +105,26 @@ const imageNodeSchema = z.looseObject({
   }),
 });
 
-const emailSectionNodeSchema = z.looseObject({
+const sectionNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.SECTION),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: blockContentSchema.min(1),
 });
 
-const emailColumnNodeSchema = z.looseObject({
+const columnNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.COLUMN),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: blockContentSchema.min(1),
 });
 
-const emailColumnsNodeSchema = z.looseObject({
+const columnsNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.COLUMNS),
   attrs: z.looseObject({ style: styleAttributeSchema }),
-  content: z.array(emailColumnNodeSchema).min(2).max(4),
+  content: z.array(columnNodeSchema).min(2).max(4),
 });
 
 // Buttons forbid marks and atoms in the editor schema, so plain text only.
-const emailButtonNodeSchema = z.looseObject({
+const buttonNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.BUTTON),
   attrs: z.looseObject({
     href: z.string().max(4_000).nullable(),
@@ -149,12 +140,12 @@ const emailButtonNodeSchema = z.looseObject({
     .optional(),
 });
 
-const emailDividerNodeSchema = z.looseObject({
+const dividerNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.DIVIDER),
   attrs: z.looseObject({ style: styleAttributeSchema }),
 });
 
-const emailHtmlNodeSchema = z.looseObject({
+const htmlNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.HTML),
   attrs: z.looseObject({ html: z.string().max(100_000) }),
 });
@@ -165,14 +156,14 @@ const blockNodeSchema = z.discriminatedUnion('type', [
   bulletListNodeSchema,
   orderedListNodeSchema,
   imageNodeSchema,
-  emailSectionNodeSchema,
-  emailColumnsNodeSchema,
-  emailButtonNodeSchema,
-  emailDividerNodeSchema,
-  emailHtmlNodeSchema,
+  sectionNodeSchema,
+  columnsNodeSchema,
+  buttonNodeSchema,
+  dividerNodeSchema,
+  htmlNodeSchema,
 ]);
 
-const emailThemeAttributeSchema = z.looseObject({
+const canvasThemeAttributeSchema = z.looseObject({
   pageBackground: z.string().optional(),
   pagePadding: z.string().optional(),
   textAlign: z.enum(['left', 'center', 'right']).optional(),
@@ -197,29 +188,10 @@ export const emailDocumentSchema = z.looseObject({
         .min(1)
         .max(EMAIL_DOCUMENT_SCHEMA_VERSION)
         .optional(),
-      canvasTheme: emailThemeAttributeSchema.nullable().optional(),
+      canvasTheme: canvasThemeAttributeSchema.nullable().optional(),
     })
     .optional(),
   content: blockContentSchema.optional(),
 });
 
 export type EmailDocument = z.infer<typeof emailDocumentSchema>;
-
-export const parseEmailDocument = (
-  value: unknown,
-):
-  | { success: true; document: EmailDocument }
-  | { success: false; error: string } => {
-  const result = emailDocumentSchema.safeParse(value);
-
-  if (result.success) {
-    return { success: true, document: result.data };
-  }
-
-  const issues = result.error.issues
-    .slice(0, 10)
-    .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
-    .join('; ');
-
-  return { success: false, error: issues };
-};

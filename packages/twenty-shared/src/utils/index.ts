@@ -197,40 +197,28 @@ export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
-export type {
-  CampaignVariableName,
-  CampaignVariableDefinition,
-} from './tiptap/campaign-variables';
-export {
-  CAMPAIGN_VARIABLE_NAMES,
-  listCampaignVariablesForFields,
-} from './tiptap/campaign-variables';
+export type { CampaignVariableName } from './tiptap/campaign-variables';
+export { CAMPAIGN_VARIABLE_NAMES } from './tiptap/campaign-variables';
 export type { CanvasTheme } from './tiptap/canvas-theme';
-export {
-  CANVAS_THEME_DEFAULTS,
-  isCanvasTheme,
-  resolveCanvasTheme,
-} from './tiptap/canvas-theme';
-export type {
-  EmailDocumentNode,
-  EmailDocument,
-} from './tiptap/email-document-schema';
-export {
-  EMAIL_DOCUMENT_SCHEMA_VERSION,
-  emailDocumentSchema,
-  parseEmailDocument,
-} from './tiptap/email-document-schema';
+export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export type { EmailDocumentNode } from './tiptap/email-document-node';
+export { EMAIL_DOCUMENT_SCHEMA_VERSION } from './tiptap/email-document-schema-version';
+export type { EmailDocument } from './tiptap/email-document-schema';
+export { emailDocumentSchema } from './tiptap/email-document-schema';
+export { isCanvasTheme } from './tiptap/is-canvas-theme';
+export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
+export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
+export { parseEmailDocument } from './tiptap/parse-email-document';
+export { resolveCanvasTheme } from './tiptap/resolve-canvas-theme';
 export type {
   TipTapMarkType,
-  TipTapNodeType,
   LinkMarkAttributes,
   TipTapMark,
-} from './tiptap/tiptap-marks';
-export {
-  TIPTAP_MARK_TYPES,
-  TIPTAP_NODE_TYPES,
-  TIPTAP_MARKS_RENDER_ORDER,
-} from './tiptap/tiptap-marks';
+} from './tiptap/tiptap-mark-types';
+export { TIPTAP_MARK_TYPES } from './tiptap/tiptap-mark-types';
+export { TIPTAP_MARKS_RENDER_ORDER } from './tiptap/tiptap-marks-render-order';
+export type { TipTapNodeType } from './tiptap/tiptap-node-types';
+export { TIPTAP_NODE_TYPES } from './tiptap/tiptap-node-types';
 export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';

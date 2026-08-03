@@ -6,7 +6,7 @@ import { readBlockStyleAttribute } from '@/advanced-text-editor/extensions/block
 import { inlineStyleToCss } from '@/advanced-text-editor/utils/inlineStyleToCss';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-export const DEFAULT_BUTTON_STYLE: Record<string, string> = {
+const DEFAULT_BUTTON_STYLE: Record<string, string> = {
   backgroundColor: '#1961ed',
   color: '#ffffff',
   paddingTop: '10px',

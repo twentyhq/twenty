@@ -19,10 +19,8 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import {
-  collectCampaignVariableNames,
-  collectCampaignVariableNamesFromString,
-} from 'src/modules/emailing/utils/collect-campaign-variables.util';
+import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variable-names.util';
+import { collectCampaignVariableNamesFromString } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string.util';
 
 export type SaveDraftCampaignArgs = {
   workspaceId: string;
