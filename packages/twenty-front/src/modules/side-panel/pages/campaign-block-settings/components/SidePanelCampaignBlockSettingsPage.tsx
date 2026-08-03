@@ -7,9 +7,12 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
-import { parseInlineStyle } from '@/advanced-text-editor/utils/parseInlineStyle';
-import { serializeInlineStyle } from '@/advanced-text-editor/utils/serializeInlineStyle';
+import { getBlockStyle } from '@/advanced-text-editor/utils/getBlockStyle';
 import { CampaignBlockSettingsFieldInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
+import {
+  CampaignBoxSidesInput,
+  type CssBoxSides,
+} from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
 import { CampaignPageStyleSection } from '@/side-panel/pages/campaign-block-settings/components/CampaignPageStyleSection';
 import { CAMPAIGN_BLOCK_SETTINGS_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignBlockSettingsFields';
 import { getCampaignBlockLabel } from '@/side-panel/pages/campaign-block-settings/utils/getCampaignBlockLabel';
@@ -35,11 +38,27 @@ const StyledBlockTitle = styled.div`
 `;
 
 const BORDER_STYLE_COMPANIONS: Record<string, string> = {
-  'border-width': 'border-style',
-  'border-top-width': 'border-top-style',
+  borderWidth: 'borderStyle',
+  borderTopWidth: 'borderTopStyle',
+};
+
+// Box fields group the four longhand properties one control edits together.
+const BOX_FIELD_SIDE_PROPERTIES: Record<
+  string,
+  [string, string, string, string]
+> = {
+  padding: ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'],
+  margin: ['marginTop', 'marginRight', 'marginBottom', 'marginLeft'],
+  borderRadius: [
+    'borderTopLeftRadius',
+    'borderTopRightRadius',
+    'borderBottomRightRadius',
+    'borderBottomLeftRadius',
+  ],
 };
 
 const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
+  const { i18n } = useLingui();
   const target = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) =>
@@ -53,7 +72,7 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   }
 
   const fields = CAMPAIGN_BLOCK_SETTINGS_FIELDS[target.nodeType] ?? [];
-  const styles = parseInlineStyle(target.attrs.style as string | undefined);
+  const styles = getBlockStyle(target.attrs.style);
 
   const updateTargetAttributes = (attrs: Record<string, unknown>) => {
     editor
@@ -105,7 +124,25 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       }
     }
 
-    updateTargetAttributes({ style: serializeInlineStyle(nextStyles) });
+    updateTargetAttributes({ style: nextStyles });
+  };
+
+  const handleBoxFieldChange = (
+    sideProperties: [string, string, string, string],
+    sides: CssBoxSides,
+  ) => {
+    const nextStyles = { ...styles };
+    const sideValues = [sides.top, sides.right, sides.bottom, sides.left];
+
+    sideProperties.forEach((property, index) => {
+      if (sideValues[index].trim() === '') {
+        delete nextStyles[property];
+      } else {
+        nextStyles[property] = sideValues[index];
+      }
+    });
+
+    updateTargetAttributes({ style: nextStyles });
   };
 
   return (
@@ -113,18 +150,44 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       <StyledBlockTitle>
         {getCampaignBlockLabel(target.nodeType)}
       </StyledBlockTitle>
-      {fields.map((field) => (
-        <CampaignBlockSettingsFieldInput
-          key={`${target.nodeType}-${target.pos}-${field.property}`}
-          field={field}
-          value={
-            field.kind === 'attribute'
-              ? String(target.attrs[field.property] ?? '')
-              : (styles[field.property] ?? '')
-          }
-          onChange={(value) => handleFieldChange(field, value)}
-        />
-      ))}
+      {fields.map((field) => {
+        const key = `${target.nodeType}-${target.pos}-${field.property}`;
+        const sideProperties = BOX_FIELD_SIDE_PROPERTIES[field.property];
+
+        if (
+          field.kind === 'style' &&
+          field.input === 'box' &&
+          isDefined(sideProperties)
+        ) {
+          return (
+            <CampaignBoxSidesInput
+              key={key}
+              label={i18n._(field.label)}
+              sides={{
+                top: styles[sideProperties[0]] ?? '',
+                right: styles[sideProperties[1]] ?? '',
+                bottom: styles[sideProperties[2]] ?? '',
+                left: styles[sideProperties[3]] ?? '',
+              }}
+              onChange={(sides) => handleBoxFieldChange(sideProperties, sides)}
+              placeholder={field.placeholder}
+            />
+          );
+        }
+
+        return (
+          <CampaignBlockSettingsFieldInput
+            key={key}
+            field={field}
+            value={
+              field.kind === 'attribute'
+                ? String(target.attrs[field.property] ?? '')
+                : (styles[field.property] ?? '')
+            }
+            onChange={(value) => handleFieldChange(field, value)}
+          />
+        );
+      })}
     </StyledContainer>
   );
 };

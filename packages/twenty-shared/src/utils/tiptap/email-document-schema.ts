@@ -20,8 +20,18 @@ export type EmailDocumentNode = {
   content?: EmailDocumentNode[];
 };
 
-// Style attributes carry inline CSS declarations ("padding: 12px; color: #fff").
-const styleAttributeSchema = z.string().max(4_000);
+// Style attributes are structured objects of camelCase CSS properties
+// ({ backgroundColor: '#fff', paddingTop: '12px' }), applied directly to
+// react-email components at render time. No CSS text is ever parsed.
+const styleAttributeSchema = z
+  .record(
+    z
+      .string()
+      .regex(/^[a-zA-Z]+$/)
+      .max(40),
+    z.string().max(400),
+  )
+  .optional();
 
 const markSchema = z.discriminatedUnion('type', [
   z.looseObject({ type: z.literal(TIPTAP_MARK_TYPES.BOLD) }),

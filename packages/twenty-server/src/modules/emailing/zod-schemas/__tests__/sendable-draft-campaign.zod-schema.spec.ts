@@ -127,7 +127,7 @@ describe('sendableDraftCampaignSchema', () => {
           content: [
             {
               type: 'section',
-              attrs: { style: 'padding: 12px;' },
+              attrs: { style: { padding: '12px' } },
               content: [
                 {
                   type: 'paragraph',
@@ -137,7 +137,7 @@ describe('sendableDraftCampaignSchema', () => {
             },
             {
               type: 'button',
-              attrs: { href: 'https://example.com', style: '' },
+              attrs: { href: 'https://example.com', style: {} },
               content: [{ type: 'text', text: 'Open' }],
             },
           ],

@@ -45,28 +45,28 @@ describe('parseEmailDocument', () => {
         },
         {
           type: 'section',
-          attrs: { style: 'padding: 12px; background-color: #eeeeee;' },
+          attrs: { style: { padding: '12px', backgroundColor: '#eeeeee' } },
           content: [
             paragraph('Inside the section'),
             {
               type: 'section',
-              attrs: { style: 'padding: 4px;' },
+              attrs: { style: { padding: '4px' } },
               content: [paragraph('Nested')],
             },
           ],
         },
         {
           type: 'columns',
-          attrs: { style: '' },
+          attrs: { style: {} },
           content: [
             {
               type: 'column',
-              attrs: { style: '' },
+              attrs: { style: {} },
               content: [paragraph('Left')],
             },
             {
               type: 'column',
-              attrs: { style: '' },
+              attrs: { style: {} },
               content: [paragraph('Right')],
             },
           ],
@@ -75,7 +75,7 @@ describe('parseEmailDocument', () => {
           type: 'button',
           attrs: {
             href: 'https://example.com/{{personId}}',
-            style: 'color: #fff;',
+            style: { color: '#fff' },
           },
           content: [{ type: 'text', text: 'Click me' }],
         },
@@ -92,7 +92,7 @@ describe('parseEmailDocument', () => {
             href: '',
           },
         },
-        { type: 'divider', attrs: { style: 'border-top-width: 1px;' } },
+        { type: 'divider', attrs: { style: { borderTopWidth: '1px' } } },
         { type: 'html', attrs: { html: '<p>raw</p>' } },
       ],
     };
@@ -177,11 +177,11 @@ describe('parseEmailDocument', () => {
       content: [
         {
           type: 'columns',
-          attrs: { style: '' },
+          attrs: { style: {} },
           content: [
             {
               type: 'column',
-              attrs: { style: '' },
+              attrs: { style: {} },
               content: [paragraph('Only')],
             },
           ],
@@ -195,7 +195,7 @@ describe('parseEmailDocument', () => {
   it('should reject an empty section', () => {
     const result = parseEmailDocument({
       type: 'doc',
-      content: [{ type: 'section', attrs: { style: '' }, content: [] }],
+      content: [{ type: 'section', attrs: { style: {} }, content: [] }],
     });
 
     expect(result.success).toBe(false);

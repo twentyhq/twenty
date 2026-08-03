@@ -2,6 +2,8 @@
    default styles are literal inline CSS shipped inside emails, where theme
    variables do not exist */
 import { mergeAttributes, Node } from '@tiptap/core';
+import { readBlockStyleAttribute } from '@/advanced-text-editor/extensions/blocks/readBlockStyleAttribute';
+import { inlineStyleToCss } from '@/advanced-text-editor/utils/inlineStyleToCss';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 export const DividerNode = Node.create({
@@ -12,11 +14,20 @@ export const DividerNode = Node.create({
   addAttributes() {
     return {
       style: {
-        // Longhands rather than the border-top shorthand, so the settings
-        // panel can edit width and color independently.
-        default:
-          'border-top-width: 1px; border-top-style: solid; border-top-color: #e1e1e1; margin: 16px 0;',
-        parseHTML: (element) => element.getAttribute('style'),
+        default: {
+          borderTopWidth: '1px',
+          borderTopStyle: 'solid',
+          borderTopColor: '#e1e1e1',
+          marginTop: '16px',
+          marginRight: '0px',
+          marginBottom: '16px',
+          marginLeft: '0px',
+        },
+        parseHTML: readBlockStyleAttribute,
+        renderHTML: (attributes) => ({
+          style: inlineStyleToCss(attributes.style),
+          'data-style': JSON.stringify(attributes.style ?? {}),
+        }),
       },
     };
   },

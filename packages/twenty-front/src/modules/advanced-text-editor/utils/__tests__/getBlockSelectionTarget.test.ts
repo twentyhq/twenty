@@ -44,7 +44,7 @@ describe('getBlockSelectionTarget', () => {
       content: [
         {
           type: 'section',
-          attrs: { style: 'padding: 24px;' },
+          attrs: { style: { padding: '24px' } },
           content: [
             { type: 'paragraph', content: [{ type: 'text', text: 'inside' }] },
           ],
@@ -59,7 +59,7 @@ describe('getBlockSelectionTarget', () => {
     const target = getBlockSelectionTarget(editor);
 
     expect(target?.nodeType).toBe('section');
-    expect(target?.attrs.style).toBe('padding: 24px;');
+    expect(target?.attrs.style).toEqual({ padding: '24px' });
     editor.destroy();
   });
 

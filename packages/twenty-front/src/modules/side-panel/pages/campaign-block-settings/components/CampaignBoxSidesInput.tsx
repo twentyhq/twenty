@@ -4,11 +4,6 @@ import { IconFrame, IconSquare } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  type CssBoxSides,
-  parseCssBoxValue,
-} from '@/advanced-text-editor/utils/parseCssBoxValue';
-import { serializeCssBoxValue } from '@/advanced-text-editor/utils/serializeCssBoxValue';
 import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -69,35 +64,39 @@ const toCssToken = (input: string): string => {
 const areAllSidesEqual = ({ top, right, bottom, left }: CssBoxSides) =>
   top === right && right === bottom && bottom === left;
 
+export type CssBoxSides = {
+  top: string;
+  right: string;
+  bottom: string;
+  left: string;
+};
+
 type CampaignBoxSidesInputProps = {
   label: string;
-  value: string;
-  onChange: (value: string) => void;
+  sides: CssBoxSides;
+  onChange: (sides: CssBoxSides) => void;
   placeholder?: string;
 };
 
-// A CSS box shorthand (padding, margin, corner radius) edited either as one
-// value for all sides or side by side.
+// A box property (padding, margin, corner radius) edited either as one value
+// for all sides or side by side. Works on the four sides directly; the
+// caller owns how they map to style properties.
 export const CampaignBoxSidesInput = ({
   label,
-  value,
+  sides,
   onChange,
   placeholder,
 }: CampaignBoxSidesInputProps) => {
-  const sides = parseCssBoxValue(value);
   const [isPerSide, setIsPerSide] = useState(!areAllSidesEqual(sides));
 
   const commitAllSides = (input: string) => {
-    if (input.trim() === '') {
-      onChange('');
-      return;
-    }
+    const token = input.trim() === '' ? '' : toCssToken(input);
 
-    onChange(toCssToken(input));
+    onChange({ top: token, right: token, bottom: token, left: token });
   };
 
   const commitSide = (side: (typeof SIDE_KEYS)[number], input: string) => {
-    onChange(serializeCssBoxValue({ ...sides, [side]: toCssToken(input) }));
+    onChange({ ...sides, [side]: toCssToken(input) });
   };
 
   return (

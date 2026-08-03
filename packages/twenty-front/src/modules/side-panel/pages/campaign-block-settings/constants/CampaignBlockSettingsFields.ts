@@ -27,7 +27,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     {
       label: msg`Background`,
       kind: 'style',
-      property: 'background-color',
+      property: 'backgroundColor',
       input: 'color',
     },
     {
@@ -40,21 +40,21 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     {
       label: msg`Corner radius`,
       kind: 'style',
-      property: 'border-radius',
+      property: 'borderRadius',
       input: 'box',
       placeholder: '8',
     },
     {
       label: msg`Border`,
       kind: 'style',
-      property: 'border-width',
+      property: 'borderWidth',
       input: 'size',
       placeholder: '0',
     },
     {
       label: msg`Border color`,
       kind: 'style',
-      property: 'border-color',
+      property: 'borderColor',
       input: 'color',
     },
   ],
@@ -62,7 +62,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     {
       label: msg`Background`,
       kind: 'style',
-      property: 'background-color',
+      property: 'backgroundColor',
       input: 'color',
     },
     {
@@ -77,7 +77,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     {
       label: msg`Background`,
       kind: 'style',
-      property: 'background-color',
+      property: 'backgroundColor',
       input: 'color',
     },
     {
@@ -99,7 +99,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     {
       label: msg`Background`,
       kind: 'style',
-      property: 'background-color',
+      property: 'backgroundColor',
       input: 'color',
     },
     {
@@ -118,7 +118,7 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     {
       label: msg`Corner radius`,
       kind: 'style',
-      property: 'border-radius',
+      property: 'borderRadius',
       input: 'box',
       placeholder: '6',
     },
@@ -165,14 +165,14 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
     {
       label: msg`Thickness`,
       kind: 'style',
-      property: 'border-top-width',
+      property: 'borderTopWidth',
       input: 'size',
       placeholder: '1',
     },
     {
       label: msg`Color`,
       kind: 'style',
-      property: 'border-top-color',
+      property: 'borderTopColor',
       input: 'color',
     },
     {

@@ -27,7 +27,7 @@ export const SaveCampaignToolInputZodSchema = z.object({
     .describe(
       'The full email document that replaces the campaign body. ' +
         'A document is {type: "doc", content: [...blocks]}. Blocks: paragraph and heading (level 1-3) hold inline text, variableTag chips ({attrs: {variable: "{{firstName}}"}}) and hardBreak; section wraps blocks in a styled band; columns holds 2-4 column children; button is a call-to-action with an href; image, divider, bulletList/orderedList and html (raw HTML) complete the set. ' +
-        'Style attributes are inline CSS strings, e.g. "padding: 12px; background-color: #f4f4f5;". ' +
+        'Style attributes are objects of camelCase CSS properties, e.g. {"paddingTop": "12px", "backgroundColor": "#f4f4f5"}. Use longhand box properties (paddingTop/Right/Bottom/Left). ' +
         'Per-recipient variables reference person fields by path, e.g. {{name.firstName}}, {{emails.primaryEmail}}, {{city}} or any custom person field; {{firstName}}, {{lastName}}, {{fullName}}, {{email}} and {{personId}} also work. They apply in text, button and link URLs and raw HTML, and unknown names are rejected with the available list. ' +
         'To modify an existing body, read the record first, edit the parsed document and send the whole result back.',
     ),

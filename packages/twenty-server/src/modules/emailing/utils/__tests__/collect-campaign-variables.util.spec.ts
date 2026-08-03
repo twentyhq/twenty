@@ -24,12 +24,12 @@ describe('collectCampaignVariableNames', () => {
         },
         {
           type: 'button',
-          attrs: { href: 'https://example.com/?email={{email}}', style: '' },
+          attrs: { href: 'https://example.com/?email={{email}}', style: {} },
           content: [{ type: 'text', text: 'Open' }],
         },
         {
           type: 'section',
-          attrs: { style: '' },
+          attrs: { style: {} },
           content: [
             {
               type: 'html',

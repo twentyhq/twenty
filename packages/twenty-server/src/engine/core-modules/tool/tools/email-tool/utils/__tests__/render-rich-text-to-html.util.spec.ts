@@ -12,7 +12,7 @@ describe('renderRichTextToHtml', () => {
       content: [
         {
           type: 'section',
-          attrs: { style: 'background-color: #f4f4f5; padding: 24px;' },
+          attrs: { style: { backgroundColor: '#f4f4f5', padding: '24px' } },
           content: [
             {
               type: 'paragraph',
@@ -71,7 +71,7 @@ describe('renderRichTextToHtml', () => {
           type: 'button',
           attrs: {
             href: 'https://twenty.com',
-            style: 'background-color: #1961ed; color: #ffffff;',
+            style: { backgroundColor: '#1961ed', color: '#ffffff' },
           },
           content: [{ type: 'text', text: 'Visit Twenty' }],
         },
@@ -89,7 +89,7 @@ describe('renderRichTextToHtml', () => {
       content: [
         {
           type: 'divider',
-          attrs: { style: 'border-top: 2px dashed #ff0000;' },
+          attrs: { style: { borderTop: '2px dashed #ff0000' } },
         },
       ],
     });

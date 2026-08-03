@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { type MessageDescriptor } from '@lingui/core';
 
-import { CampaignBoxSidesInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
 import { CampaignColorInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignColorInput';
 import { CampaignSizeInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignSizeInput';
 import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
@@ -37,15 +36,6 @@ export const CampaignBlockSettingsFieldInput = ({
     case 'color':
       return (
         <CampaignColorInput
-          label={label}
-          value={value}
-          onChange={onChange}
-          placeholder={field.placeholder}
-        />
-      );
-    case 'box':
-      return (
-        <CampaignBoxSidesInput
           label={label}
           value={value}
           onChange={onChange}

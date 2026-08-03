@@ -10,7 +10,10 @@ import {
 import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { CampaignBoxSidesInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
+import {
+  CampaignBoxSidesInput,
+  type CssBoxSides,
+} from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
 import { CampaignColorInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignColorInput';
 import { CampaignSizeInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignSizeInput';
 import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
@@ -68,6 +71,28 @@ const StyledHint = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
+// Theme box values are single CSS values ('24px') or four space-separated
+// sides, always written by the counterpart below - no shorthand rules apply.
+const themeBoxValueToSides = (value: string): CssBoxSides => {
+  const tokens = value.trim().split(/\s+/);
+
+  if (tokens.length === 4) {
+    return {
+      top: tokens[0],
+      right: tokens[1],
+      bottom: tokens[2],
+      left: tokens[3],
+    };
+  }
+
+  return { top: value, right: value, bottom: value, left: value };
+};
+
+const sidesToThemeBoxValue = ({ top, right, bottom, left }: CssBoxSides) =>
+  top === right && right === bottom && bottom === left
+    ? top
+    : `${top} ${right} ${bottom} ${left}`;
+
 const BODY_ALIGN_OPTIONS = [
   { align: 'left', Icon: IconAlignLeft },
   { align: 'center', Icon: IconAlignCenter },
@@ -122,8 +147,10 @@ export const CampaignPageStyleSection = ({
       />
       <CampaignBoxSidesInput
         label={t`Padding`}
-        value={canvasTheme.pagePadding}
-        onChange={(value) => setThemeValue('pagePadding', value)}
+        sides={themeBoxValueToSides(canvasTheme.pagePadding)}
+        onChange={(sides) =>
+          setThemeValue('pagePadding', sidesToThemeBoxValue(sides))
+        }
         placeholder="24"
       />
 
@@ -161,14 +188,18 @@ export const CampaignPageStyleSection = ({
       />
       <CampaignBoxSidesInput
         label={t`Padding`}
-        value={canvasTheme.padding}
-        onChange={(value) => setThemeValue('padding', value)}
+        sides={themeBoxValueToSides(canvasTheme.padding)}
+        onChange={(sides) =>
+          setThemeValue('padding', sidesToThemeBoxValue(sides))
+        }
         placeholder="24"
       />
       <CampaignBoxSidesInput
         label={t`Corner radius`}
-        value={canvasTheme.cornerRadius}
-        onChange={(value) => setThemeValue('cornerRadius', value)}
+        sides={themeBoxValueToSides(canvasTheme.cornerRadius)}
+        onChange={(sides) =>
+          setThemeValue('cornerRadius', sidesToThemeBoxValue(sides))
+        }
         placeholder="8"
       />
       <CampaignSizeInput

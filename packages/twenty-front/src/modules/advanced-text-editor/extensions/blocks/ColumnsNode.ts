@@ -1,4 +1,6 @@
 import { mergeAttributes, Node } from '@tiptap/core';
+import { readBlockStyleAttribute } from '@/advanced-text-editor/extensions/blocks/readBlockStyleAttribute';
+import { inlineStyleToCss } from '@/advanced-text-editor/utils/inlineStyleToCss';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 // A horizontal row of equal-width columns, mapping to a react-email
@@ -13,8 +15,12 @@ export const ColumnsNode = Node.create({
   addAttributes() {
     return {
       style: {
-        default: '',
-        parseHTML: (element) => element.getAttribute('style'),
+        default: {},
+        parseHTML: readBlockStyleAttribute,
+        renderHTML: (attributes) => ({
+          style: inlineStyleToCss(attributes.style),
+          'data-style': JSON.stringify(attributes.style ?? {}),
+        }),
       },
     };
   },

@@ -1,4 +1,6 @@
 import { mergeAttributes, Node } from '@tiptap/core';
+import { readBlockStyleAttribute } from '@/advanced-text-editor/extensions/blocks/readBlockStyleAttribute';
+import { inlineStyleToCss } from '@/advanced-text-editor/utils/inlineStyleToCss';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 export const ColumnNode = Node.create({
@@ -10,8 +12,12 @@ export const ColumnNode = Node.create({
   addAttributes() {
     return {
       style: {
-        default: '',
-        parseHTML: (element) => element.getAttribute('style'),
+        default: {},
+        parseHTML: readBlockStyleAttribute,
+        renderHTML: (attributes) => ({
+          style: inlineStyleToCss(attributes.style),
+          'data-style': JSON.stringify(attributes.style ?? {}),
+        }),
       },
     };
   },
