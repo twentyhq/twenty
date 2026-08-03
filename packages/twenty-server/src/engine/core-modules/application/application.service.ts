@@ -408,6 +408,8 @@ export class ApplicationService {
         logicFunctionLayerId: null,
         workspaceId,
         canBeUninstalled: false,
+        // Workspace-owned, so nothing is withheld from it.
+        canActWithoutUser: true,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
         packageJsonFileId: null,
         yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
