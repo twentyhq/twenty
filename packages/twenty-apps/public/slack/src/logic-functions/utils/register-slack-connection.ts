@@ -25,19 +25,20 @@ export const registerSlackConnection = async ({
 
   const connection = await getConnection(connectedAccountId);
   const client = new WebClient(connection.accessToken);
-  const authResult = await client.auth.test();
-  const teamId = authResult.team_id;
+  const { team_id: teamId, user_id: botUserId } = await client.auth.test();
 
   if (!isNonEmptyString(teamId)) {
     throw new Error('Slack auth.test returned no team_id to claim');
   }
 
+  if (!isNonEmptyString(botUserId)) {
+    throw new Error('Slack auth.test returned no user_id for the bot');
+  }
+
   // TODO: release the claim on disconnect once connection providers expose an onDisconnect hook.
   await kv.set(getSlackTeamKvKey(teamId), null, { scope: 'SERVER' });
 
-  if (isNonEmptyString(authResult.user_id)) {
-    await cacheSlackBotUserId(authResult.user_id);
-  }
+  await cacheSlackBotUserId(botUserId);
 
   return { ok: true, teamId };
 };
