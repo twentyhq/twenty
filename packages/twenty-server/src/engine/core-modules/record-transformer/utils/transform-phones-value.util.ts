@@ -211,7 +211,7 @@ export const transformPhonesValue = ({
       : [];
 
   const validatedAdditionalPhones = parsedAdditionalPhones
-    .filter((phone) => isDefined(phone) && isDefined(phone.number))
+    .filter((phone) => isDefined(phone) && isNonEmptyString(phone.number))
     .map(validateAndInferPhoneInput);
 
   return removeUndefinedFields({
