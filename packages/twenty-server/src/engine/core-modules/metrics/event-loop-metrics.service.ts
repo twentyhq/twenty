@@ -1,65 +1,47 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
-import {
-  monitorEventLoopDelay,
-  performance,
-  type EventLoopUtilization,
-  type IntervalHistogram,
-} from 'perf_hooks';
+import { type Histogram } from '@opentelemetry/api';
+import { performance, type EventLoopUtilization } from 'perf_hooks';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
-// Node reports event loop delay in nanoseconds
-const NANOSECONDS_PER_SECOND = 1e9;
+const SAMPLE_INTERVAL_MS = 1_000;
+const MILLISECONDS_PER_SECOND = 1_000;
+const DELAY_BUCKETS_SECONDS = [
+  0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5,
+];
 
-const toSeconds = (nanoseconds: number): number =>
-  Number.isFinite(nanoseconds) ? nanoseconds / NANOSECONDS_PER_SECOND : 0;
-
-// Exports event loop delay to Prometheus to correlate with slow-DB-query Sentry issues: a fast query whose span resolves late means a saturated loop, not a slow DB.
+// Sampled as a histogram (not per-pod percentile gauges) so Grafana can
+// re-aggregate a true fleet-wide quantile across pods.
 @Injectable()
-export class EventLoopMetricsService implements OnModuleInit {
-  private readonly delayHistogram: IntervalHistogram = monitorEventLoopDelay({
-    resolution: 20,
-  });
+export class EventLoopMetricsService implements OnModuleInit, OnModuleDestroy {
+  private readonly delayHistogram: Histogram;
+  private sampler?: NodeJS.Timeout;
+  private lastSampleAt = performance.now();
   private lastEventLoopUtilization: EventLoopUtilization =
     performance.eventLoopUtilization();
 
-  constructor(private readonly metricsService: MetricsService) {}
+  constructor(private readonly metricsService: MetricsService) {
+    this.delayHistogram = this.metricsService
+      .getMeter()
+      .createHistogram('twenty_nodejs_eventloop_delay_seconds', {
+        description: 'Node.js event loop lag, sampled per interval',
+        unit: 's',
+        advice: { explicitBucketBoundaries: DELAY_BUCKETS_SECONDS },
+      });
+  }
 
   onModuleInit(): void {
-    this.delayHistogram.enable();
+    this.lastSampleAt = performance.now();
 
-    this.metricsService.createMultiObservableGauge({
-      metricName: 'twenty_nodejs_eventloop_delay_seconds',
-      options: {
-        description: 'Node.js event loop delay since the previous scrape',
-        unit: 's',
-      },
-      callback: async () => {
-        const observations = [
-          {
-            value: toSeconds(this.delayHistogram.mean),
-            attributes: { quantile: 'mean' },
-          },
-          {
-            value: toSeconds(this.delayHistogram.percentile(50)),
-            attributes: { quantile: 'p50' },
-          },
-          {
-            value: toSeconds(this.delayHistogram.percentile(99)),
-            attributes: { quantile: 'p99' },
-          },
-          {
-            value: toSeconds(this.delayHistogram.max),
-            attributes: { quantile: 'max' },
-          },
-        ];
+    this.sampler = setInterval(() => {
+      const now = performance.now();
+      const lagMs = Math.max(0, now - this.lastSampleAt - SAMPLE_INTERVAL_MS);
 
-        this.delayHistogram.reset();
-
-        return observations;
-      },
-    });
+      this.lastSampleAt = now;
+      this.delayHistogram.record(lagMs / MILLISECONDS_PER_SECOND);
+    }, SAMPLE_INTERVAL_MS);
+    this.sampler.unref();
 
     this.metricsService.createObservableGauge({
       metricName: 'twenty_nodejs_eventloop_utilization',
@@ -80,5 +62,11 @@ export class EventLoopMetricsService implements OnModuleInit {
         return delta.utilization;
       },
     });
+  }
+
+  onModuleDestroy(): void {
+    if (this.sampler) {
+      clearInterval(this.sampler);
+    }
   }
 }
