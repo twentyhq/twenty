@@ -209,20 +209,20 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const hasDraftVersion = workflowVersions.some(
-      (version) => version.status === WorkflowVersionStatus.DRAFT,
-    );
-
-    if (hasDraftVersion) {
-      statuses.push(WorkflowStatus.DRAFT);
-    }
-
     const hasActiveVersion = workflowVersions.some(
       (version) => version.status === WorkflowVersionStatus.ACTIVE,
     );
 
     if (hasActiveVersion) {
       statuses.push(WorkflowStatus.ACTIVE);
+    }
+
+    const hasDraftVersion = workflowVersions.some(
+      (version) => version.status === WorkflowVersionStatus.DRAFT,
+    );
+
+    if (hasDraftVersion) {
+      statuses.push(WorkflowStatus.DRAFT);
     }
 
     const hasDeactivatedVersion = workflowVersions.some(

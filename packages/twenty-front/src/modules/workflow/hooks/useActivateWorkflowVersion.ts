@@ -137,7 +137,7 @@ export const useActivateWorkflowVersion = () => {
         });
 
         const newStatuses = new Set(
-          [...(cachedWorkflow?.statuses ?? []), 'ACTIVE'].filter(
+          ['ACTIVE', ...(cachedWorkflow?.statuses ?? [])].filter(
             (status) => status !== 'DEACTIVATED',
           ),
         );
