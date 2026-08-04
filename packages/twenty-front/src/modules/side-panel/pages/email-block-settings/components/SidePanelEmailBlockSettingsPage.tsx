@@ -11,7 +11,7 @@ import { IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { activeEmailEditorState } from '@/advanced-text-editor/states/activeEmailEditorState';
+import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { getBlockStyle } from '@/advanced-text-editor/utils/getBlockStyle';
 import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';

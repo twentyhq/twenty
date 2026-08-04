@@ -1,4 +1,4 @@
-import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
+import { getInitialAdvancedTextEditorContent } from '@/advanced-text-editor/utils/getInitialAdvancedTextEditorContent';
 
 describe('getInitialAdvancedTextEditorContent', () => {
   it('should return an empty document when the content is blank', () => {

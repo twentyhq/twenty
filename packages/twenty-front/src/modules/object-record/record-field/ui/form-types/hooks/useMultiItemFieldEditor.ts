@@ -1,7 +1,7 @@
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { getMultiItemFieldEditorContent } from '@/workflow/workflow-variables/utils/getMultiItemFieldEditorContent';
 import { TextTag } from '@/workflow/workflow-variables/utils/textTag';
-import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
+import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';
 import { Extension } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';

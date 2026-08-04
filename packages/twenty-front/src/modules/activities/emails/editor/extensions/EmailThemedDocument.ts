@@ -4,7 +4,7 @@ import {
   CANVAS_THEME_DEFAULTS,
 } from 'twenty-shared/utils';
 
-export const ThemedDocument = Document.extend({
+export const EmailThemedDocument = Document.extend({
   addAttributes() {
     return {
       canvasTheme: {

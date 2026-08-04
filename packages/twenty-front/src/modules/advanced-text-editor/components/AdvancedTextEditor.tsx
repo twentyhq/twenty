@@ -1,13 +1,17 @@
 import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
-import { type AdvancedTextEditorChrome } from '@/advanced-text-editor/types/AdvancedTextEditorPreset';
+import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
-import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
-import { EditorContent, type Editor, useEditorState } from '@tiptap/react';
-import { isDefined, resolveCanvasTheme } from 'twenty-shared/utils';
+import { EditorContent } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const PLACEHOLDER_STYLES = `
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
@@ -40,7 +44,7 @@ const StyledEditorContainer = styled.div<{
     padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
     p.is-editor-empty:first-of-type::before {
-      ${FORM_FIELD_PLACEHOLDER_STYLES}
+      ${PLACEHOLDER_STYLES}
       content: attr(data-placeholder);
       float: left;
       height: 0;
@@ -96,12 +100,12 @@ const StyledEditorContainer = styled.div<{
     }
 
     .block-column {
+      border-radius: ${themeCssVariables.border.radius.sm};
       box-sizing: border-box;
       flex: 1;
       min-width: 0;
       outline: 1px dashed ${themeCssVariables.border.color.light};
       outline-offset: 2px;
-      border-radius: ${themeCssVariables.border.radius.sm};
     }
 
     .block-button-wrapper {
@@ -115,9 +119,9 @@ const StyledEditorContainer = styled.div<{
     }
 
     .block-divider {
+      border-bottom: none;
       border-left: none;
       border-right: none;
-      border-bottom: none;
     }
 
     .ProseMirror-selectednode {
@@ -134,38 +138,6 @@ const StyledEditorContainer = styled.div<{
   }
 `;
 
-const StyledCanvasBackdrop = styled.div`
-  box-sizing: border-box;
-  flex-grow: 1;
-  min-height: 100%;
-  padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[4]};
-  width: 100%;
-`;
-
-const StyledCanvasPage = styled.div`
-  box-sizing: border-box;
-  margin: 0 auto;
-  max-width: 100%;
-  min-height: 400px;
-
-  .editor-content {
-    min-height: inherit;
-  }
-
-  .tiptap {
-    color: inherit;
-    min-height: inherit;
-    padding: 0;
-  }
-`;
-
-type AdvancedTextEditorProps = {
-  readonly: boolean | undefined;
-  editor: Editor;
-  minHeight: number;
-  chrome?: AdvancedTextEditorChrome;
-};
-
 const TEXT_BUBBLE_MENU_EXTENSION_NAMES = [
   'bold',
   'italic',
@@ -177,54 +149,20 @@ const TEXT_BUBBLE_MENU_EXTENSION_NAMES = [
   'link',
 ];
 
+type AdvancedTextEditorProps = AdvancedTextEditorComponentProps;
+
 export const AdvancedTextEditor = ({
   readonly,
   editor,
   minHeight,
-  chrome,
 }: AdvancedTextEditorProps) => {
   const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
     (extensionName) => hasEditorExtension(editor, extensionName),
   );
 
-  const canvasTheme = useEditorState({
-    editor,
-    selector: ({ editor: currentEditor }) =>
-      resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
-  });
-
-  const hasCanvasChrome = chrome === 'canvas' && isDefined(canvasTheme);
-
   return (
     <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
-      {hasCanvasChrome ? (
-        <StyledCanvasBackdrop
-          style={{
-            backgroundColor: canvasTheme.pageBackground,
-            padding: canvasTheme.pagePadding,
-          }}
-        >
-          <StyledCanvasPage
-            style={{
-              backgroundColor: canvasTheme.bodyBackground || undefined,
-              border:
-                canvasTheme.borderWidth !== '' &&
-                canvasTheme.borderWidth !== '0px'
-                  ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
-                  : undefined,
-              borderRadius: canvasTheme.cornerRadius,
-              color: canvasTheme.textColor,
-              padding: canvasTheme.padding,
-              textAlign: canvasTheme.textAlign,
-              width: canvasTheme.width,
-            }}
-          >
-            <EditorContent className="editor-content" editor={editor} />
-          </StyledCanvasPage>
-        </StyledCanvasBackdrop>
-      ) : (
-        <EditorContent className="editor-content" editor={editor} />
-      )}
+      <EditorContent className="editor-content" editor={editor} />
       {hasEditorExtension(editor, 'image') &&
         !hasEditorExtension(editor, 'section') && (
           <ImageBubbleMenu editor={editor} />

@@ -1,7 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
-import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -22,6 +21,8 @@ import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { WorkflowSendEmailAttachments } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSendEmailAttachments';
+import { WORKFLOW_EMAIL_BODY_EDITOR_PROFILE } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowEmailBodyEditorProfile';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useQuery } from '@apollo/client/react';
@@ -371,7 +372,7 @@ export const WorkflowEditActionEmailBase = ({
                 children: t`Email Editor`,
               },
             ]}
-            preset="workflowEmailBody"
+            profile={WORKFLOW_EMAIL_BODY_EDITOR_PROFILE}
           />
           <WorkflowSendEmailAttachments
             label={t`Attachments`}

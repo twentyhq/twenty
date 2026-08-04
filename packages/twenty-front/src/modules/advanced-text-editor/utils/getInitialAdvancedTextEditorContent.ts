@@ -1,4 +1,4 @@
-import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
+import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import type { JSONContent } from '@tiptap/react';
 
 // Campaign bodies were stored as the editor's own HTML before they moved to

@@ -91,17 +91,17 @@ const columnJson = () => ({
   content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
 });
 
-type InsertRailProps = {
+type AdvancedTextEditorInsertRailProps = {
   editor: Editor;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
   variables?: Array<{ label: string; value: string }>;
 };
 
-export const InsertRail = ({
+export const AdvancedTextEditorInsertRail = ({
   editor,
   onImageUpload,
   variables = [],
-}: InsertRailProps) => {
+}: AdvancedTextEditorInsertRailProps) => {
   const { t } = useLingui();
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);

@@ -1,4 +1,4 @@
-import { useUploadWorkflowFile } from '@/advanced-text-editor/hooks/useUploadWorkflowFile';
+import { useUploadWorkflowFile } from '@/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile';
 import { AttachmentChip } from '@/file/components/AttachmentChip';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';

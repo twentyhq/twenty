@@ -1,5 +1,7 @@
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
-import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { buildFullRichTextExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -12,13 +14,32 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 
+const STORY_FORM_EDITOR_PROFILE = {
+  contentType: 'json',
+  chrome: 'field',
+  minHeight: 340,
+  enableFullScreen: true,
+  buildExtensions: (context) => [
+    ...buildFullRichTextExtensions(context),
+    VariableTag,
+  ],
+} satisfies AdvancedTextEditorProfile;
+
+const StoryVariablePicker = ({
+  onVariableSelect,
+}: {
+  onVariableSelect: (variableName: string) => void;
+}) => (
+  <button onClick={() => onVariableSelect('{{firstName}}')}>Variable</button>
+);
+
 const DEFAULT_PROPS = {
   label: 'Advanced Text Field',
   placeholder: 'Enter your content...',
   defaultValue: '',
   onChange: fn(),
   readonly: false,
-  preset: 'workflowEmailBody' as const,
+  profile: STORY_FORM_EDITOR_PROFILE,
 };
 
 const RICH_CONTENT_VALUE = JSON.stringify({
@@ -68,8 +89,7 @@ const RICH_CONTENT_VALUE = JSON.stringify({
 });
 
 const meta: Meta<typeof FormAdvancedTextFieldInput> = {
-  title:
-    'Modules/ObjectRecord/RecordField/FormTypes/FormAdvancedTextFieldInput',
+  title: 'Modules/AdvancedTextEditor/FormAdvancedTextFieldInput',
   component: FormAdvancedTextFieldInput,
   parameters: {
     msw: {
@@ -204,7 +224,7 @@ export const WithVariablePicker: Story = {
   args: {
     ...DEFAULT_PROPS,
     label: 'Field with Variable Picker',
-    VariablePicker: WorkflowVariablePicker,
+    VariablePicker: StoryVariablePicker,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

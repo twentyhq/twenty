@@ -1,13 +1,9 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
-import {
-  ADVANCED_TEXT_EDITOR_PRESETS,
-  type AdvancedTextEditorPresetName,
-} from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorContent } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorContent';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -18,7 +14,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { useEffect, useId, useState } from 'react';
+import { type ComponentType, type FC, useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
@@ -33,12 +29,18 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
   flex-grow: 1;
   min-height: 0;
 
-  /* FormFieldInputContainer is shared by every form field and does not carry a
-     height, so the document chrome stretches its one child here instead. */
+  /* Document editors stretch to their available height; field editors keep
+     their intrinsic height so they compose naturally inside forms. */
   & > * {
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
     min-height: 0;
   }
+`;
+
+const StyledFormFieldInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 const StyledAdvancedTextFieldFieldContainer = styled.div`
@@ -91,6 +93,12 @@ const StyledFullScreenEditorContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
+type VariablePickerComponent = FC<{
+  instanceId: string;
+  multiline?: boolean;
+  onVariableSelect: (variableName: string) => void;
+}>;
+
 type FormAdvancedTextFieldInputProps = {
   label?: string;
   error?: string;
@@ -102,8 +110,8 @@ type FormAdvancedTextFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
-  preset: AdvancedTextEditorPresetName;
-  // Escape hatch for surfaces that share a preset but need their own height.
+  profile: AdvancedTextEditorProfile;
+  EditorComponent?: ComponentType<AdvancedTextEditorComponentProps>;
   minHeight?: number;
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
@@ -121,21 +129,17 @@ export const FormAdvancedTextFieldInput = ({
   VariablePicker,
   onImageUpload,
   onImageUploadError,
-  preset,
+  profile,
+  EditorComponent = AdvancedTextEditor,
   minHeight,
   enableFullScreen,
   fullScreenBreadcrumbs,
   onEditorReady,
 }: FormAdvancedTextFieldInputProps) => {
-  const {
-    contentType,
-    chrome,
-    minHeight: presetMinHeight,
-    enableFullScreen: presetEnableFullScreen,
-  } = ADVANCED_TEXT_EDITOR_PRESETS[preset];
+  const { contentType, chrome, minHeight: profileMinHeight } = profile;
 
-  const editorMinHeight = minHeight ?? presetMinHeight;
-  const isFullScreenEnabled = enableFullScreen ?? presetEnableFullScreen;
+  const editorMinHeight = minHeight ?? profileMinHeight;
+  const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
 
   const instanceId = useId();
   const isMobile = useIsMobile();
@@ -148,7 +152,7 @@ export const FormAdvancedTextFieldInput = ({
 
   const editor = useAdvancedTextEditor(
     {
-      preset,
+      profile,
       placeholder: placeholder,
       readonly,
       defaultValue,
@@ -224,11 +228,10 @@ export const FormAdvancedTextFieldInput = ({
     ? renderFullScreenModal(
         <div data-globally-prevent-click-outside="true">
           <StyledFullScreenEditorContainer>
-            <AdvancedTextEditor
+            <EditorComponent
               editor={editor}
               readonly={readonly}
               minHeight={editorMinHeight}
-              chrome={chrome}
             />
           </StyledFullScreenEditorContainer>
         </div>,
@@ -241,7 +244,7 @@ export const FormAdvancedTextFieldInput = ({
       <StyledAdvancedTextFieldContainerWrapper
         hasFieldChrome={chrome === 'field'}
       >
-        <FormFieldInputContainer>
+        <StyledFormFieldInputContainer>
           {label ? <InputLabel>{label}</InputLabel> : null}
 
           <StyledAdvancedTextFieldFieldContainer>
@@ -249,11 +252,10 @@ export const FormAdvancedTextFieldInput = ({
               hasFieldChrome={chrome === 'field'}
             >
               {!isFullScreen && (
-                <AdvancedTextEditor
+                <EditorComponent
                   editor={editor}
                   readonly={readonly}
                   minHeight={editorMinHeight}
-                  chrome={chrome}
                 />
               )}
 
@@ -283,7 +285,7 @@ export const FormAdvancedTextFieldInput = ({
           </StyledAdvancedTextFieldFieldContainer>
           {hint && <InputHint>{hint}</InputHint>}
           {error && <InputHint danger>{error}</InputHint>}
-        </FormFieldInputContainer>
+        </StyledFormFieldInputContainer>
       </StyledAdvancedTextFieldContainerWrapper>
 
       {fullScreenOverlay}

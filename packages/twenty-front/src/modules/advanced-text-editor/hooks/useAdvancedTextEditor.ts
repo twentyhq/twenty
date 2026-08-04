@@ -1,10 +1,7 @@
-import {
-  ADVANCED_TEXT_EDITOR_PRESETS,
-  type AdvancedTextEditorPresetName,
-} from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
-import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
+import { getInitialAdvancedTextEditorContent } from '@/advanced-text-editor/utils/getInitialAdvancedTextEditorContent';
 import { type Content } from '@tiptap/core';
 import { type Editor, type EditorOptions, useEditor } from '@tiptap/react';
 import { marked } from 'marked';
@@ -12,7 +9,7 @@ import { type DependencyList, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseAdvancedTextEditorProps = {
-  preset: AdvancedTextEditorPresetName;
+  profile: AdvancedTextEditorProfile;
   placeholder: string | undefined;
   readonly: boolean | undefined;
   defaultValue: string | undefined | null;
@@ -27,7 +24,7 @@ type UseAdvancedTextEditorProps = {
 
 export const useAdvancedTextEditor = (
   {
-    preset,
+    profile,
     placeholder,
     readonly,
     defaultValue,
@@ -41,12 +38,12 @@ export const useAdvancedTextEditor = (
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
-  const { contentType, capabilities } = ADVANCED_TEXT_EDITOR_PRESETS[preset];
+  const { contentType } = profile;
 
   const extensions = useMemo(
     () =>
       buildAdvancedTextEditorExtensions({
-        capabilities,
+        profile,
         context: {
           onImageUpload,
           onImageUploadError,
@@ -54,7 +51,7 @@ export const useAdvancedTextEditor = (
         placeholder,
         readonly,
       }),
-    [capabilities, placeholder, onImageUpload, onImageUploadError, readonly],
+    [profile, placeholder, onImageUpload, onImageUploadError, readonly],
   );
 
   const getEditorContent = (): Content | undefined => {

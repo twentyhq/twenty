@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import {
@@ -49,7 +50,7 @@ export const useAiChatEditor = () => {
   const initialContent = textToTiptapContent(initialDraft);
 
   const editor = useAdvancedTextEditor({
-    preset: 'aiChat',
+    profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: t`Ask, search or make anything...`,
     readonly: false,
     defaultValue: undefined,

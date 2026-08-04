@@ -1,4 +1,5 @@
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { RECORD_RICH_TEXT_EDITOR_PROFILE } from '@/object-record/record-field/ui/form-types/constants/RecordRichTextEditorProfile';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
@@ -53,7 +54,7 @@ export const FormRichTextFieldInput = ({
       onChange={handleChange}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      preset="recordRichTextField"
+      profile={RECORD_RICH_TEXT_EDITOR_PROFILE}
     />
   );
 };
