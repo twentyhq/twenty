@@ -1,8 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { type EntityManager, type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -33,6 +33,7 @@ describe('OnboardingService', () => {
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
+  const mockQueryRunner = {} as QueryRunner;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -81,6 +82,21 @@ describe('OnboardingService', () => {
             add: jest.fn(),
           },
         },
+        {
+          provide: getDataSourceToken(),
+          useValue: {
+            transaction: jest.fn(
+              async (
+                runInTransaction: (
+                  entityManager: EntityManager,
+                ) => Promise<unknown>,
+              ) =>
+                runInTransaction({
+                  queryRunner: mockQueryRunner,
+                } as EntityManager),
+            ),
+          },
+        },
       ],
     }).compile();
 
@@ -115,11 +131,14 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        },
+        undefined,
+      );
       expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledWith({
         workspaceId,
         amountMicro: 2_000_000,
@@ -135,11 +154,14 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        },
+        undefined,
+      );
       expect(
         billingCreditService.creditWorkspaceBalance,
       ).not.toHaveBeenCalled();
@@ -225,11 +247,14 @@ describe('OnboardingService', () => {
         isAutoSkipped: false,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+        },
+        undefined,
+      );
       expect(messageQueueService.add).toHaveBeenCalledWith(
         INSTALL_ONBOARDING_APPS_JOB_NAME,
         {
@@ -280,12 +305,15 @@ describe('OnboardingService', () => {
         isAutoSkipped: false,
       });
 
-      expect(userVarsService.set).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
-        value: [OnboardingStatus.APPS_INSTALLATION],
-      });
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.APPS_INSTALLATION],
+        },
+        mockQueryRunner,
+      );
     });
 
     it('should not record the step as reversible when it was auto-skipped', async () => {
@@ -325,17 +353,23 @@ describe('OnboardingService', () => {
         isAutoSkipped: false,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      });
-      expect(userVarsService.set).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
-        value: [OnboardingStatus.SYNC_EMAIL],
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.SYNC_EMAIL],
+        },
+        mockQueryRunner,
+      );
     });
 
     it('should not record the step as reversible when it was auto-skipped', async () => {
@@ -386,17 +420,23 @@ describe('OnboardingService', () => {
         firstName: 'Ada',
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
-      });
-      expect(userVarsService.set).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
-        value: [OnboardingStatus.PROFILE_CREATION],
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.PROFILE_CREATION],
+        },
+        mockQueryRunner,
+      );
     });
 
     it('should not record anything when the step was not pending', async () => {
@@ -434,16 +474,22 @@ describe('OnboardingService', () => {
         hasSentInvitations: false,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
-      });
-      expect(userVarsService.set).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
-        value: [OnboardingStatus.INVITE_TEAM],
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.INVITE_TEAM],
+        },
+        mockQueryRunner,
+      );
     });
 
     it('should not record the step as reversible when invitations were sent', async () => {
@@ -523,12 +569,15 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
-      expect(userVarsService.set).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
-        value: [OnboardingStatus.SYNC_EMAIL],
-      });
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.SYNC_EMAIL],
+        },
+        mockQueryRunner,
+      );
       expect(userVarsService.set).toHaveBeenCalledWith(
         {
           userId,
@@ -536,7 +585,7 @@ describe('OnboardingService', () => {
           key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
           value: true,
         },
-        undefined,
+        mockQueryRunner,
       );
       expect(result.onboardingStatus).toBe(OnboardingStatus.APPS_INSTALLATION);
       expect(result.previousOnboardingStatus).toBe(OnboardingStatus.SYNC_EMAIL);
@@ -566,7 +615,7 @@ describe('OnboardingService', () => {
           key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
           value: true,
         },
-        undefined,
+        mockQueryRunner,
       );
       expect(result.onboardingStatus).toBe(OnboardingStatus.INVITE_TEAM);
       expect(result.previousOnboardingStatus).toBeNull();

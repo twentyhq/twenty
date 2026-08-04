@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type QueryRunner, Repository } from 'typeorm';
+import { type QueryRunner, DataSource, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -57,6 +57,8 @@ export class OnboardingService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
@@ -189,16 +191,26 @@ export class OnboardingService {
       );
     }
 
-    await this.setReversibleOnboardingStepHistory({
-      userId,
-      workspaceId,
-      reversibleStepHistory: reversibleStepHistory.slice(0, -1),
-    });
+    await this.dataSource.transaction(async (entityManager) => {
+      const queryRunner = entityManager.queryRunner as QueryRunner;
 
-    await this.setReversibleOnboardingStepPending({
-      userId,
-      workspaceId,
-      step: previousStep,
+      await this.setReversibleOnboardingStepHistory(
+        {
+          userId,
+          workspaceId,
+          reversibleStepHistory: reversibleStepHistory.slice(0, -1),
+        },
+        queryRunner,
+      );
+
+      await this.setReversibleOnboardingStepPending(
+        {
+          userId,
+          workspaceId,
+          step: previousStep,
+        },
+        queryRunner,
+      );
     });
 
     return {
@@ -211,15 +223,18 @@ export class OnboardingService {
     };
   }
 
-  private async pushReversibleOnboardingStep({
-    userId,
-    workspaceId,
-    step,
-  }: {
-    userId: string;
-    workspaceId: string;
-    step: ReversibleOnboardingStep;
-  }) {
+  private async pushReversibleOnboardingStep(
+    {
+      userId,
+      workspaceId,
+      step,
+    }: {
+      userId: string;
+      workspaceId: string;
+      step: ReversibleOnboardingStep;
+    },
+    queryRunner?: QueryRunner,
+  ) {
     const reversibleStepHistory = await this.getReversibleOnboardingStepHistory(
       {
         userId,
@@ -227,11 +242,14 @@ export class OnboardingService {
       },
     );
 
-    await this.setReversibleOnboardingStepHistory({
-      userId,
-      workspaceId,
-      reversibleStepHistory: [...reversibleStepHistory, step],
-    });
+    await this.setReversibleOnboardingStepHistory(
+      {
+        userId,
+        workspaceId,
+        reversibleStepHistory: [...reversibleStepHistory, step],
+      },
+      queryRunner,
+    );
   }
 
   private async getReversibleOnboardingStepHistory({
@@ -250,56 +268,77 @@ export class OnboardingService {
     return Array.isArray(reversibleStepHistory) ? reversibleStepHistory : [];
   }
 
-  private async setReversibleOnboardingStepHistory({
-    userId,
-    workspaceId,
-    reversibleStepHistory,
-  }: {
-    userId: string;
-    workspaceId: string;
-    reversibleStepHistory: ReversibleOnboardingStep[];
-  }) {
-    await this.userVarsService.set({
+  private async setReversibleOnboardingStepHistory(
+    {
       userId,
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
-      value: reversibleStepHistory,
-    });
+      reversibleStepHistory,
+    }: {
+      userId: string;
+      workspaceId: string;
+      reversibleStepHistory: ReversibleOnboardingStep[];
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    await this.userVarsService.set(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+        value: reversibleStepHistory,
+      },
+      queryRunner,
+    );
   }
 
-  private async setReversibleOnboardingStepPending({
-    userId,
-    workspaceId,
-    step,
-  }: {
-    userId: string;
-    workspaceId: string;
-    step: ReversibleOnboardingStep;
-  }) {
+  private async setReversibleOnboardingStepPending(
+    {
+      userId,
+      workspaceId,
+      step,
+    }: {
+      userId: string;
+      workspaceId: string;
+      step: ReversibleOnboardingStep;
+    },
+    queryRunner?: QueryRunner,
+  ) {
     switch (step) {
       case OnboardingStatus.SYNC_EMAIL:
-        return this.setOnboardingConnectAccountPending({
-          userId,
-          workspaceId,
-          value: true,
-        });
+        return this.setOnboardingConnectAccountPending(
+          {
+            userId,
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
       case OnboardingStatus.APPS_INSTALLATION:
-        return this.setOnboardingInstallAppsPending({
-          userId,
-          workspaceId,
-          value: true,
-        });
+        return this.setOnboardingInstallAppsPending(
+          {
+            userId,
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
       case OnboardingStatus.PROFILE_CREATION:
-        return this.setOnboardingCreateProfilePending({
-          userId,
-          workspaceId,
-          value: true,
-        });
+        return this.setOnboardingCreateProfilePending(
+          {
+            userId,
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
       case OnboardingStatus.INVITE_TEAM:
-        return this.setOnboardingInviteTeamPending({
-          workspaceId,
-          value: true,
-        });
+        return this.setOnboardingInviteTeamPending(
+          {
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
       default:
         assertUnreachable(step);
     }
@@ -367,17 +406,27 @@ export class OnboardingService {
     workspaceId: string;
     isAutoSkipped: boolean;
   }) {
-    const hasClaimedConnectAccountStep =
-      await this.claimOnboardingConnectAccountStep({ userId, workspaceId });
+    await this.dataSource.transaction(async (entityManager) => {
+      const queryRunner = entityManager.queryRunner as QueryRunner;
 
-    if (!hasClaimedConnectAccountStep || isAutoSkipped) {
-      return;
-    }
+      const hasClaimedConnectAccountStep =
+        await this.claimOnboardingConnectAccountStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
 
-    await this.pushReversibleOnboardingStep({
-      userId,
-      workspaceId,
-      step: OnboardingStatus.SYNC_EMAIL,
+      if (!hasClaimedConnectAccountStep || isAutoSkipped) {
+        return;
+      }
+
+      await this.pushReversibleOnboardingStep(
+        {
+          userId,
+          workspaceId,
+          step: OnboardingStatus.SYNC_EMAIL,
+        },
+        queryRunner,
+      );
     });
   }
 
@@ -393,18 +442,24 @@ export class OnboardingService {
     return workspaceUserCount === 1;
   }
 
-  private async claimOnboardingConnectAccountStep({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete({
+  private async claimOnboardingConnectAccountStep(
+    {
       userId,
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-    });
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      },
+      queryRunner,
+    );
 
     return isDefined(affectedRows) && affectedRows > 0;
   }
@@ -484,14 +539,6 @@ export class OnboardingService {
     universalIdentifiers: string[];
     isAutoSkipped: boolean;
   }) {
-    const hasClaimedInstallAppsStep = await this.claimInstallAppsOnboardingStep(
-      { userId, workspaceId },
-    );
-
-    if (!hasClaimedInstallAppsStep) {
-      return;
-    }
-
     const installableUniversalIdentifiers = universalIdentifiers.filter(
       (universalIdentifier) =>
         ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS.includes(
@@ -500,14 +547,37 @@ export class OnboardingService {
     );
 
     if (installableUniversalIdentifiers.length === 0) {
-      if (!isAutoSkipped) {
-        await this.pushReversibleOnboardingStep({
-          userId,
-          workspaceId,
-          step: OnboardingStatus.APPS_INSTALLATION,
-        });
-      }
+      await this.dataSource.transaction(async (entityManager) => {
+        const queryRunner = entityManager.queryRunner as QueryRunner;
 
+        const hasClaimedInstallAppsStep =
+          await this.claimInstallAppsOnboardingStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+        if (!hasClaimedInstallAppsStep || isAutoSkipped) {
+          return;
+        }
+
+        await this.pushReversibleOnboardingStep(
+          {
+            userId,
+            workspaceId,
+            step: OnboardingStatus.APPS_INSTALLATION,
+          },
+          queryRunner,
+        );
+      });
+
+      return;
+    }
+
+    const hasClaimedInstallAppsStep = await this.claimInstallAppsOnboardingStep(
+      { userId, workspaceId },
+    );
+
+    if (!hasClaimedInstallAppsStep) {
       return;
     }
 
@@ -518,18 +588,24 @@ export class OnboardingService {
     );
   }
 
-  private async claimInstallAppsOnboardingStep({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete({
+  private async claimInstallAppsOnboardingStep(
+    {
       userId,
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-    });
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+      },
+      queryRunner,
+    );
 
     return isDefined(affectedRows) && affectedRows > 0;
   }
@@ -647,32 +723,48 @@ export class OnboardingService {
       return;
     }
 
-    const hasClaimedCreateProfileStep =
-      await this.claimOnboardingCreateProfileStep({ userId, workspaceId });
+    await this.dataSource.transaction(async (entityManager) => {
+      const queryRunner = entityManager.queryRunner as QueryRunner;
 
-    if (!hasClaimedCreateProfileStep) {
-      return;
-    }
+      const hasClaimedCreateProfileStep =
+        await this.claimOnboardingCreateProfileStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
 
-    await this.pushReversibleOnboardingStep({
-      userId,
-      workspaceId,
-      step: OnboardingStatus.PROFILE_CREATION,
+      if (!hasClaimedCreateProfileStep) {
+        return;
+      }
+
+      await this.pushReversibleOnboardingStep(
+        {
+          userId,
+          workspaceId,
+          step: OnboardingStatus.PROFILE_CREATION,
+        },
+        queryRunner,
+      );
     });
   }
 
-  private async claimOnboardingCreateProfileStep({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete({
+  private async claimOnboardingCreateProfileStep(
+    {
       userId,
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
-    });
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+      },
+      queryRunner,
+    );
 
     return isDefined(affectedRows) && affectedRows > 0;
   }
@@ -686,30 +778,44 @@ export class OnboardingService {
     workspaceId: string;
     hasSentInvitations: boolean;
   }) {
-    const hasClaimedInviteTeamStep = await this.claimOnboardingInviteTeamStep({
-      workspaceId,
-    });
+    await this.dataSource.transaction(async (entityManager) => {
+      const queryRunner = entityManager.queryRunner as QueryRunner;
 
-    if (!hasClaimedInviteTeamStep || hasSentInvitations) {
-      return;
-    }
+      const hasClaimedInviteTeamStep = await this.claimOnboardingInviteTeamStep(
+        { workspaceId },
+        queryRunner,
+      );
 
-    await this.pushReversibleOnboardingStep({
-      userId,
-      workspaceId,
-      step: OnboardingStatus.INVITE_TEAM,
+      if (!hasClaimedInviteTeamStep || hasSentInvitations) {
+        return;
+      }
+
+      await this.pushReversibleOnboardingStep(
+        {
+          userId,
+          workspaceId,
+          step: OnboardingStatus.INVITE_TEAM,
+        },
+        queryRunner,
+      );
     });
   }
 
-  private async claimOnboardingInviteTeamStep({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete({
+  private async claimOnboardingInviteTeamStep(
+    {
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
-    });
+    }: {
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete(
+      {
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+      },
+      queryRunner,
+    );
 
     return isDefined(affectedRows) && affectedRows > 0;
   }
