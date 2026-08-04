@@ -216,6 +216,8 @@ export const FieldWidgetLayoutDropdownContent = () => {
         <RecordTableWidgetViewDraftInitEffect
           widgetId={widgetInEditMode.id}
           viewId={currentViewId}
+          pageLayoutId={pageLayoutId}
+          isPageLayoutInEditMode
         />
       )}
       <SelectableList

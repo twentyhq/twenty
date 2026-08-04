@@ -87,6 +87,7 @@ export const RecordTableWidgetRendererContent = ({
       <RecordTableWidgetViewDraftInitEffect
         widgetId={widgetId}
         viewId={viewId}
+        isPageLayoutInEditMode={isPageLayoutInEditMode}
       />
       <RecordTableWidgetProvider
         objectNameSingular={objectMetadataItem.nameSingular}

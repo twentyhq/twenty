@@ -9,19 +9,23 @@ import { useCallback, useEffect } from 'react';
 type UseInitializeRecordTableWidgetViewDraftParams = {
   widgetId: string;
   view: View | undefined;
+  pageLayoutId?: string;
 };
 
 export const useInitializeRecordTableWidgetViewDraft = ({
   widgetId,
   view,
+  pageLayoutId,
 }: UseInitializeRecordTableWidgetViewDraftParams) => {
   const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
     recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
   );
 
   const recordTableWidgetViewPersistedState =
     useAtomComponentStateCallbackState(
       recordTableWidgetViewPersistedComponentState,
+      pageLayoutId,
     );
 
   const store = useStore();
