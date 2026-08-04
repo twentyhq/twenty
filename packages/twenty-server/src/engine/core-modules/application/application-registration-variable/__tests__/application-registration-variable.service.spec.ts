@@ -23,8 +23,6 @@ describe('ApplicationRegistrationVariableService', () => {
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
-
     variableRepository = {
       find: jest.fn().mockResolvedValue([]),
       update: jest.fn().mockResolvedValue(undefined),
