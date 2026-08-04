@@ -5,9 +5,9 @@ import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slac
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { isSlackTeamClaimedByAnotherConnection } from 'src/logic-functions/utils/is-slack-team-claimed-by-another-connection';
 import {
-  releaseSlackTeam,
+  releaseSlackTeamClaim,
   type ReleaseSlackTeamResult,
-} from 'src/logic-functions/utils/release-slack-team';
+} from 'src/logic-functions/utils/release-slack-team-claim';
 
 type ReleaseSlackTeamOnDisconnectArgs = {
   connectedAccountId: string;
@@ -26,8 +26,13 @@ export const releaseSlackTeamOnDisconnect = async ({
 
   if (isNonEmptyString(teamId)) {
     const isClaimedByAnotherConnection =
-      await isSlackTeamClaimedByAnotherConnection(teamId);
+      await isSlackTeamClaimedByAnotherConnection({
+        teamId,
+        excludedConnectedAccountId: connectedAccountId,
+      });
 
+    // A reconnect that re-claimed the team while this job was queued, or a
+    // second connection to the same Slack workspace, owns the claim now.
     if (isClaimedByAnotherConnection) {
       await kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId));
 
@@ -35,5 +40,5 @@ export const releaseSlackTeamOnDisconnect = async ({
     }
   }
 
-  return releaseSlackTeam({ connectedAccountId });
+  return releaseSlackTeamClaim({ connectedAccountId, teamId });
 };

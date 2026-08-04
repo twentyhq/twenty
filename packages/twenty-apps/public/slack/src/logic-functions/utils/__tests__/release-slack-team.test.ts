@@ -13,7 +13,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
 
 describe('releaseSlackTeam', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should throw when the payload has no connectedAccountId', async () => {
