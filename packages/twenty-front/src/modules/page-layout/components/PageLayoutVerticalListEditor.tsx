@@ -8,6 +8,7 @@ import { PAGE_LAYOUT_WIDGET_DND_TYPE } from '@/page-layout/constants/PageLayoutW
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { styled } from '@linaria/react';
@@ -38,6 +39,11 @@ const StyledEndDropZone = styled(DragDropItemEndDropZone)`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   min-height: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledWidgetSlot = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 type PageLayoutVerticalListEditorProps = {
@@ -80,20 +86,27 @@ export const PageLayoutVerticalListEditor = ({
         };
 
         return (
-          <DragDropItemSortableCell
-            key={widget.id}
-            id={widget.id}
-            index={index}
-            group={tabId}
-            data={widgetDragData}
-            type={PAGE_LAYOUT_WIDGET_DND_TYPE}
-            accept={PAGE_LAYOUT_WIDGET_DND_TYPE}
-            hasTransition={false}
-            highlightWhileDragging={true}
-            dropLine="horizontal"
-          >
-            <WidgetRenderer widget={widget} />
-          </DragDropItemSortableCell>
+          <StyledWidgetSlot key={widget.id}>
+            <DragDropItemDropTarget
+              index={index}
+              droppableId={tabId}
+              orientation="horizontal"
+              compact
+            />
+            <DragDropItemSortableCell
+              id={widget.id}
+              index={index}
+              group={tabId}
+              data={widgetDragData}
+              type={PAGE_LAYOUT_WIDGET_DND_TYPE}
+              accept={PAGE_LAYOUT_WIDGET_DND_TYPE}
+              hasTransition={false}
+              highlightWhileDragging={true}
+              orientation="horizontal"
+            >
+              <WidgetRenderer widget={widget} />
+            </DragDropItemSortableCell>
+          </StyledWidgetSlot>
         );
       })}
       <StyledEndDropZone

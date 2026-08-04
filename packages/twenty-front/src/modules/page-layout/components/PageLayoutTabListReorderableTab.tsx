@@ -13,10 +13,10 @@ type PageLayoutTabListReorderableTabProps = {
   tab: SingleTabProps;
   index: number;
   group: string;
+  nextTabId?: string | null;
   isActive: boolean;
   disabled?: boolean;
   isWidgetDropTarget?: boolean;
-  dropLineOrientation?: 'horizontal' | 'vertical';
   onSelect: () => void;
 };
 
@@ -31,10 +31,10 @@ export const PageLayoutTabListReorderableTab = ({
   tab,
   index,
   group,
+  nextTabId = null,
   isActive,
   disabled,
   isWidgetDropTarget = false,
-  dropLineOrientation = 'vertical',
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
   const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
@@ -46,6 +46,7 @@ export const PageLayoutTabListReorderableTab = ({
   const tabDragData: PageLayoutTabDragData = {
     type: 'tab',
     tabId: tab.id,
+    nextTabId,
   };
 
   const draggableTab = (
@@ -59,7 +60,7 @@ export const PageLayoutTabListReorderableTab = ({
       disabled={disabled}
       fill
       hasTransition={false}
-      dropLine={dropLineOrientation}
+      orientation="vertical"
     >
       <StyledTabContainer
         onClick={onSelect}

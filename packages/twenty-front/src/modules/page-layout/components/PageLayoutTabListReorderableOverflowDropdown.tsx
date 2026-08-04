@@ -9,7 +9,6 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutTabDragData';
-import { type PageLayoutTabListEndDropData } from '@/page-layout/types/PageLayoutTabListEndDropData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -18,14 +17,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useContext } from 'react';
+import { Fragment, useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledOverflowMenuItemWrapper = styled.div`
@@ -37,17 +35,6 @@ const StyledOverflowMenuItemWrapper = styled.div`
     cursor: grabbing;
   }
 `;
-
-// Kept tall enough that appending after the last overflow tab stays an easy
-// target.
-const StyledOverflowEndDropZone = styled(DragDropItemEndDropZone)`
-  min-height: ${themeCssVariables.spacing[4]};
-`;
-
-const OVERFLOW_END_DROP_DATA: PageLayoutTabListEndDropData = {
-  type: 'tab-list-end',
-  beforeTabId: null,
-};
 
 type PageLayoutTabListReorderableOverflowDropdownProps = {
   dropdownId: string;
@@ -144,38 +131,47 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
               const tabDragData: PageLayoutTabDragData = {
                 type: 'tab',
                 tabId: tab.id,
+                nextTabId: hiddenTabs[index + 1]?.id ?? null,
               };
 
               return (
-                <DragDropItemSortableCell
-                  key={tab.id}
-                  id={tab.id}
-                  index={visibleTabCount + index}
-                  group={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
-                  data={tabDragData}
-                  type={PAGE_LAYOUT_TAB_DND_TYPE}
-                  accept={PAGE_LAYOUT_TAB_DND_TYPE}
-                  disabled={disabled}
-                  hasTransition={false}
-                  dropLine="horizontal"
-                >
-                  <StyledOverflowMenuItemWrapper>
-                    <PageLayoutTabMenuItemSelectAvatar
-                      tab={tab}
-                      selected={tab.id === activeTabId}
-                      onClick={() => handleTabSelect(tab.id)}
-                      disabled={disabled}
-                      showEditButton={shouldShowEditButton}
-                      onEditClick={handleEditClick}
-                    />
-                  </StyledOverflowMenuItemWrapper>
-                </DragDropItemSortableCell>
+                <Fragment key={tab.id}>
+                  <DragDropItemDropTarget
+                    index={visibleTabCount + index}
+                    droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+                    orientation="horizontal"
+                    compact
+                  />
+                  <DragDropItemSortableCell
+                    id={tab.id}
+                    index={visibleTabCount + index}
+                    group={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+                    data={tabDragData}
+                    type={PAGE_LAYOUT_TAB_DND_TYPE}
+                    accept={PAGE_LAYOUT_TAB_DND_TYPE}
+                    disabled={disabled}
+                    hasTransition={false}
+                    orientation="horizontal"
+                  >
+                    <StyledOverflowMenuItemWrapper>
+                      <PageLayoutTabMenuItemSelectAvatar
+                        tab={tab}
+                        selected={tab.id === activeTabId}
+                        onClick={() => handleTabSelect(tab.id)}
+                        disabled={disabled}
+                        showEditButton={shouldShowEditButton}
+                        onEditClick={handleEditClick}
+                      />
+                    </StyledOverflowMenuItemWrapper>
+                  </DragDropItemSortableCell>
+                </Fragment>
               );
             })}
-            <StyledOverflowEndDropZone
-              id={`${PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}-end`}
-              accept={PAGE_LAYOUT_TAB_DND_TYPE}
-              data={OVERFLOW_END_DROP_DATA}
+            <DragDropItemDropTarget
+              index={visibleTabCount + hiddenTabs.length}
+              droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+              orientation="horizontal"
+              compact
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>
