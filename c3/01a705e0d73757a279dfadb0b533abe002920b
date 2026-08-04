@@ -1,0 +1,49 @@
+packages/twenty-server/test/integration/microsoft/webhook/lifecycle-notification.integration-spec.ts
+  s_405b3fe1a0ce44::t_0d2502ca5c8d1b 8
+  s_405b3fe1a0ce44::t_cfe96abf7bce13 149-201
+  s_405b3fe1a0ce44::t_2520b765839fd6 53
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1785840409654-add-webhook-subscription-failure-count.ts
+  s_405b3fe1a0ce44::t_7ce9d4c5bba1de 1-17
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service.ts
+  s_405b3fe1a0ce44::t_88f04aa834070e 57
+  s_405b3fe1a0ce44::t_9a4a1216763fb1 119,136,143
+  s_405b3fe1a0ce44::t_9ef49f930813e7 124-135,137-142,144-154
+  s_405b3fe1a0ce44::t_77208189261d12 20
+  s_405b3fe1a0ce44::t_9345fc1ba3d3ab 6
+  s_405b3fe1a0ce44::t_f6f5565b64cfcf 54
+  s_405b3fe1a0ce44::t_0435432026f0d2 155-157
+  s_405b3fe1a0ce44::t_cb07f222f45a87 122,158
+packages/twenty-server/src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity.ts
+  s_405b3fe1a0ce44::t_9140291037429e 125-127
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-attempts.constant.ts
+  s_405b3fe1a0ce44::t_f43a51918d62e6 1
+packages/twenty-server/test/integration/microsoft/mocks/setup-microsoft-mock.util.ts
+  s_405b3fe1a0ce44::t_f2d50ab9d21d82 66-71
+  s_405b3fe1a0ce44::t_247366ca680b5d 30
+packages/twenty-server/src/engine/metadata-modules/message-channel/entities/message-channel.entity.ts
+  s_405b3fe1a0ce44::t_43d742a9b221ae 167-169
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service.ts
+  s_405b3fe1a0ce44::t_63235656c10aa3 38
+  s_405b3fe1a0ce44::t_e14d23907f59b6 57-67
+packages/twenty-server/test/integration/microsoft/mocks/microsoft-webhook-subscription-handlers.util.ts
+  s_405b3fe1a0ce44::t_0cbc4f24585d27 43-53,56-59
+  s_405b3fe1a0ce44::t_efbd969fbd3cea 78-81
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_405b3fe1a0ce44::t_0f46a16607c3ba 138,276
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "c301a705e0d73757a279dfadb0b533abe002920b",
+  "prompts": {},
+  "sessions": {
+    "s_405b3fe1a0ce44": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b153cf-7ae2-4eeb-8601-d00a49a98d9a",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}
