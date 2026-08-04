@@ -22,8 +22,8 @@ import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import {
   getIsCookieAuthActive,
-  setIsCookieAuthActiveInStorage,
-} from '@/apollo/utils/cookieAuthActiveStorage';
+  setIsCookieAuthActive,
+} from '@/apollo/utils/cookieAuthActive';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
@@ -77,7 +77,6 @@ export interface Options {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
-  onCookieAuthDeactivated?: () => void;
   onAppVersionMismatch?: (message: string) => void;
   onPayloadTooLarge?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
@@ -104,7 +103,6 @@ export class ApolloFactory implements ApolloManager {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
-      onCookieAuthDeactivated,
       onAppVersionMismatch,
       onPayloadTooLarge,
       currentWorkspaceMember,
@@ -153,7 +151,9 @@ export class ApolloFactory implements ApolloManager {
               ...headers,
               ...optionHeaders,
               'x-locale': locale,
-              ...(this.appVersion && { 'X-App-Version': this.appVersion }),
+              ...(isDefined(this.appVersion) && {
+                'X-App-Version': this.appVersion,
+              }),
             },
           };
         }
@@ -166,7 +166,9 @@ export class ApolloFactory implements ApolloManager {
             ...optionHeaders,
             authorization: token ? `Bearer ${token}` : '',
             'x-locale': locale,
-            ...(this.appVersion && { 'X-App-Version': this.appVersion }),
+            ...(isDefined(this.appVersion) && {
+              'X-App-Version': this.appVersion,
+            }),
           },
         };
       });
@@ -231,8 +233,7 @@ export class ApolloFactory implements ApolloManager {
           operation.getContext().hasAttemptedCookieAuthFallback !== true &&
           isDefined(getTokenPair()?.refreshToken?.token)
         ) {
-          setIsCookieAuthActiveInStorage(false);
-          onCookieAuthDeactivated?.();
+          setIsCookieAuthActive(false);
           operation.setContext({ hasAttemptedCookieAuthFallback: true });
           // Deactivation is sticky for the rest of the mount by design. Both
           // credentials stay valid, so re-probing after every fallback would

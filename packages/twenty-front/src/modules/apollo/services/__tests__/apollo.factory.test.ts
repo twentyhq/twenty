@@ -4,6 +4,8 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renewToken } from '@/auth/services/AuthService';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
@@ -54,7 +56,6 @@ const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
 const mockOnTokenPairChange = jest.fn();
 const mockOnUnauthenticatedError = jest.fn();
-const mockOnCookieAuthDeactivated = jest.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',
@@ -119,7 +120,6 @@ const createMockOptions = (): Options => ({
   onPayloadTooLarge: mockOnPayloadTooLarge,
   onTokenPairChange: mockOnTokenPairChange,
   onUnauthenticatedError: mockOnUnauthenticatedError,
-  onCookieAuthDeactivated: mockOnCookieAuthDeactivated,
   appVersion: '1.0.0',
 });
 
@@ -156,7 +156,7 @@ describe('ApolloFactory', () => {
     fetchMock.resetMocks();
     jest.mocked(renewToken).mockReset().mockResolvedValue(RENEWED_TOKEN_PAIR);
     jest.mocked(getTokenPair).mockReset().mockReturnValue(CURRENT_TOKEN_PAIR);
-    localStorage.clear();
+    jotaiStore.set(isCookieAuthActiveState.atom, false);
   });
 
   it('should create an instance of ApolloFactory', () => {
@@ -371,7 +371,17 @@ describe('ApolloFactory', () => {
   });
   describe('cookie auth fallback during a mixed-version rollout', () => {
     const setCookieAuthActive = () =>
-      localStorage.setItem('isCookieAuthActiveState', 'true');
+      jotaiStore.set(isCookieAuthActiveState.atom, true);
+
+    // fetch normalises header names, so assert case-insensitively rather than
+    // depending on the casing the mock happens to expose.
+    const readHeader = (
+      headers: Record<string, string>,
+      name: string,
+    ): string | undefined =>
+      Object.entries(headers).find(
+        ([key]) => key.toLowerCase() === name.toLowerCase(),
+      )?.[1];
 
     it('should not attach the Bearer header while cookie auth is active', async () => {
       setCookieAuthActive();
@@ -386,9 +396,9 @@ describe('ApolloFactory', () => {
         string
       >;
 
-      expect(headers.authorization).toBeUndefined();
+      expect(readHeader(headers, 'authorization')).toBeUndefined();
       // Version-mismatch detection must keep working in cookie-auth mode.
-      expect(headers['x-app-version']).toBe('1.0.0');
+      expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
     });
 
     it('should fall back to the token pair instead of signing out when a server ignores the session cookie', async () => {
@@ -399,16 +409,15 @@ describe('ApolloFactory', () => {
 
       await makeRequest();
 
-      expect(mockOnCookieAuthDeactivated).toHaveBeenCalledTimes(1);
       expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-      expect(localStorage.getItem('isCookieAuthActiveState')).toBe('false');
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
 
       const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
         string,
         string
       >;
 
-      expect(retryHeaders.authorization).toBe(
+      expect(readHeader(retryHeaders, 'authorization')).toBe(
         `Bearer ${CURRENT_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
       );
     });
@@ -421,7 +430,7 @@ describe('ApolloFactory', () => {
         await makeRequest();
       } catch {}
 
-      expect(mockOnCookieAuthDeactivated).toHaveBeenCalledTimes(1);
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
       expect(renewToken).toHaveBeenCalled();
     });
   });

@@ -71,9 +71,6 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
-      onCookieAuthDeactivated: () => {
-        setIsCookieAuthActive(false);
-      },
       onUnauthenticatedError: () => {
         setTokenPair(null);
         setIsCookieAuthActive(false);
