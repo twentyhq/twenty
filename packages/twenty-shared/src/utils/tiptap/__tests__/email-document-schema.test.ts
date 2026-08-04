@@ -84,6 +84,7 @@ describe('parseEmailDocument', () => {
         {
           type: 'image',
           attrs: {
+            fileId: '3c5bc42f-e6a8-4a56-a0ca-8b36f3e31db6',
             src: 'https://example.com/a.png',
             alt: null,
             width: 300,
@@ -203,6 +204,20 @@ describe('parseEmailDocument', () => {
     const result = parseEmailDocument({
       type: 'doc',
       content: [{ type: 'image', attrs: { alt: 'no source' } }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject an invalid uploaded image file id', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'image',
+          attrs: { fileId: 'not-a-uuid', src: 'https://example.com/a.png' },
+        },
+      ],
     });
 
     expect(result.success).toBe(false);

@@ -7,6 +7,7 @@ export const getClientConfig = async (): Promise<ClientConfig> => {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {

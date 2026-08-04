@@ -5,12 +5,12 @@ import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
 import { TIPTAP_MARK_TYPES } from './tiptap-mark-types';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
-// The versioned contract for campaign email bodies ("Twenty email document").
-// The composer edits it, the AI campaign tool writes it, the server validates
-// it at the send gate and twenty-emails renders it. It is deliberately owned
-// here rather than by the editor: node types are a closed set so an unknown
-// block is rejected upfront instead of silently rendering as nothing, while
-// attribute objects stay open so adding an attribute is not a breaking change.
+// The versioned contract shared by every structured email surface. Campaigns
+// are the first authoring integration; workflow and one-to-one email can use
+// the same document without forking its schema or renderer. It is deliberately
+// owned here rather than by the editor: node types are a closed set so an
+// unknown block is rejected upfront instead of silently rendering as nothing,
+// while attribute objects stay open so adding an attribute is not breaking.
 // Style attributes are structured objects of camelCase CSS properties
 // ({ backgroundColor: '#fff', paddingTop: '12px' }), applied directly to
 // react-email components at render time. No CSS text is ever parsed.
@@ -96,6 +96,9 @@ const orderedListNodeSchema = z.looseObject({
 const imageNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.IMAGE),
   attrs: z.looseObject({
+    // Uploaded images retain their workspace file identity for ownership,
+    // lifecycle and future URL resolution. External images have no fileId.
+    fileId: z.uuid().nullable().optional(),
     src: z.string().max(4_000),
     alt: z.string().nullable().optional(),
     title: z.string().nullable().optional(),

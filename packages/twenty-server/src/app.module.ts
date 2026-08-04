@@ -26,8 +26,11 @@ import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/mid
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
+import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -72,6 +75,8 @@ const MIGRATED_REST_METHODS = [
     RestApiModule,
     McpModule,
     MiddlewareModule,
+    JwtModule,
+    UserSessionModule,
     WorkspaceMetadataVersionModule,
     // I18n module for translations
     I18nModule,
@@ -120,6 +125,17 @@ export class AppModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    // Before any middleware that authenticates from the session cookie.
+    consumer
+      .apply(CookieSessionCsrfMiddleware)
+      // A cross-origin form post from the identity provider, authenticated on the
+      // assertion rather than the cookie.
+      .exclude({
+        path: 'auth/saml/callback/:identityProviderId',
+        method: RequestMethod.POST,
+      })
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+
     consumer
       .apply(
         GraphQLHydrateRequestFromTokenMiddleware,

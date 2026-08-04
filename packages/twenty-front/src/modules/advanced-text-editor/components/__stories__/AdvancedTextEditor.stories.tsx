@@ -38,7 +38,9 @@ const EditorWrapper = ({
     },
     onImageUpload: async (file: File) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`;
+      return {
+        url: `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`,
+      };
     },
     onImageUploadError: (_error: Error, _file: File) => {
       // Handle image upload error

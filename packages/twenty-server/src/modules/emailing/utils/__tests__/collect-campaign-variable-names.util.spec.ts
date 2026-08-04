@@ -28,6 +28,14 @@ describe('collectCampaignVariableNames', () => {
           content: [{ type: 'text', text: 'Open' }],
         },
         {
+          type: 'image',
+          attrs: {
+            src: 'https://example.com/{{imagePath}}',
+            alt: '{{imageAlt}}',
+            title: '{{imageTitle}}',
+          },
+        },
+        {
           type: 'section',
           attrs: { style: {} },
           content: [
@@ -44,6 +52,9 @@ describe('collectCampaignVariableNames', () => {
       'email',
       'firstName',
       'fullName',
+      'imageAlt',
+      'imagePath',
+      'imageTitle',
       'lastName',
       'personId',
     ]);

@@ -68,6 +68,7 @@ describe('getClientConfig', () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       },
     );
     expect(result).toEqual(mockClientConfig);

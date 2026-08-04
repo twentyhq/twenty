@@ -8,6 +8,9 @@ import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
+// Workflow files become private MIME attachments when the email is sent.
+// Inline editor images use useUploadEmailImage instead because recipients
+// need to fetch those URLs without an authenticated Twenty session.
 export const useUploadWorkflowFile = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

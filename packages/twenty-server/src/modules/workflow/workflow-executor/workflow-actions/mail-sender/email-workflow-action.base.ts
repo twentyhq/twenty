@@ -1,6 +1,10 @@
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isValidUuid,
+  resolveInput as resolveWorkflowInput,
+} from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -47,6 +51,24 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       : rawInput.body;
 
     return { ...rawInput, body, files };
+  }
+
+  // The body has its own structured resolver and HTML-escaping boundary.
+  // Resolve every other input normally, but never run the rendered body
+  // through the generic resolver a second time.
+  protected override resolveInput(
+    input: WorkflowSendEmailActionInput,
+    context: Record<string, unknown>,
+  ): WorkflowSendEmailActionInput {
+    const { body, ...inputWithoutBody } = input;
+
+    return {
+      ...(resolveWorkflowInput(
+        inputWithoutBody,
+        context,
+      ) as typeof inputWithoutBody),
+      body,
+    };
   }
 
   protected override async postprocessInput(

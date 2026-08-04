@@ -31,6 +31,7 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -43,7 +44,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.Workflow,
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
-  FileFolder.CampaignImage,
+  FileFolder.EmailImage,
 ] as const;
 
 @Injectable()
@@ -366,6 +367,8 @@ export class FileUploadService {
       filename: file.path,
     });
 
+    this.assertMimeTypeAllowedForFolder(fileFolder as FileFolder, mimeType);
+
     await this.fileRepository.update(
       workspaceId,
       { id: fileId },
@@ -410,6 +413,25 @@ export class FileUploadService {
     });
 
     return mimeType;
+  }
+
+  private assertMimeTypeAllowedForFolder(
+    fileFolder: FileFolder,
+    mimeType: string,
+  ): void {
+    const { allowedMimeTypes } = fileFolderConfigs[fileFolder];
+
+    if (!allowedMimeTypes || allowedMimeTypes.includes(mimeType)) {
+      return;
+    }
+
+    throw new FileUploadException(
+      `MIME type ${mimeType} is not allowed in file folder ${fileFolder}`,
+      FileUploadExceptionCode.BAD_REQUEST,
+      {
+        userFriendlyMessage: msg`This file format is not supported.`,
+      },
+    );
   }
 
   private async resolveUploadLocation({

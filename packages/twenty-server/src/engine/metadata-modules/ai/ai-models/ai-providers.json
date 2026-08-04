@@ -1200,6 +1200,16 @@
         "supportsReasoning": true
       },
       {
+        "name": "voxtral-small-latest",
+        "label": "Voxtral Small (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.3,
+        "contextWindowTokens": 32000,
+        "maxOutputTokens": 32000,
+        "modalities": ["audio"]
+      },
+      {
         "name": "devstral-latest",
         "label": "Devstral 2",
         "modelFamily": "MISTRAL",

@@ -2,6 +2,7 @@ import {
   ADVANCED_TEXT_EDITOR_PRESETS,
   type AdvancedTextEditorPresetName,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
+import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
 import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
 import { type Content } from '@tiptap/core';
@@ -18,7 +19,7 @@ type UseAdvancedTextEditorProps = {
   onUpdate: (editor: Editor) => void;
   onFocus?: (editor: Editor) => void;
   onBlur?: (editor: Editor) => void;
-  onImageUpload?: (file: File) => Promise<string>;
+  onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
   // Seeds the editor with already-parsed content instead of running
   // defaultValue through the preset's contentType read path.

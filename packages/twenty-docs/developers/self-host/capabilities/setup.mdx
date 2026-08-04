@@ -200,7 +200,13 @@ On Microsoft Azure Console enable the following APIs in "Permissions":
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
 
-Note: "Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+<Note>
+"Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" is mandatory if you want to create calendar events using our workflow actions. If you want to only sync calendar events, use "Calendars.Read".
+</Note>
 
 ### Authorized redirect URIs
 
@@ -369,3 +375,24 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
 </Note>
+
+## API and front-end on separate hosts
+
+Only relevant if you do not let the back-end serve the front-end. Same-origin
+deployments need nothing here.
+
+Declare every browser origin that talks to the API, comma separated. `SERVER_URL`
+and `FRONTEND_URL` are already trusted.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Upgrading to a version with cookie sessions makes this required. The front-end
+now sends credentials on every request, and browsers reject a credentialed
+response from an undeclared origin, so the app fails to load until you set this.
+</Warning>
+
+If the two hosts are on different registrable domains (not just different
+subdomains), also set `AUTH_COOKIE_SAME_SITE=none`, which requires HTTPS.

@@ -17,6 +17,8 @@ Anyone who can message the bot acts with the **Slack Assistant** role, which by 
 
 One Slack workspace answers into one Twenty workspace.
 
+When the bot is added to a channel it introduces itself once, with a short message in the channel and the details (what to ask it, what it reads, and the shared-role caveat above) in a thread reply. It needs the `member_joined_channel` subscription, so leave that one off if you want the bot to arrive quietly.
+
 ## 🧰 The workflow steps
 
 | Step | Slack API |

@@ -8,12 +8,13 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
-import { useUploadCampaignImage } from '@/activities/emails/hooks/useUploadCampaignImage';
+import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
 import { InsertRail } from '@/advanced-text-editor/components/InsertRail';
-import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
+import { useUploadEmailImage } from '@/advanced-text-editor/hooks/useUploadEmailImage';
+import { activeEmailEditorState } from '@/advanced-text-editor/states/activeEmailEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
-import { useOpenCampaignBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenCampaignBlockSettingsInSidePanel';
+import { useOpenEmailBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledContainer = styled.div`
@@ -37,20 +38,21 @@ type CampaignBodyFieldProps = {
 
 export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   const { body, setBody, flush } = useCampaignBodyState({ campaign });
-  const setCampaignBodyEditor = useSetAtomState(campaignBodyEditorState);
-  const { openCampaignBlockSettingsInSidePanel } =
-    useOpenCampaignBlockSettingsInSidePanel();
+  const setActiveEmailEditor = useSetAtomState(activeEmailEditorState);
+  const { openEmailBlockSettingsInSidePanel } =
+    useOpenEmailBlockSettingsInSidePanel();
 
-  const { uploadCampaignImage } = useUploadCampaignImage();
+  const { uploadEmailImage } = useUploadEmailImage();
+  const { variables } = useCampaignEmailEditorVariables();
 
   const [bodyEditor, setBodyEditor] = useState<Editor | null>(null);
 
   const handleEditorReady = useCallback(
     (editor: Editor | null) => {
-      setCampaignBodyEditor(editor);
+      setActiveEmailEditor(editor);
       setBodyEditor(editor);
     },
-    [setCampaignBodyEditor],
+    [setActiveEmailEditor],
   );
 
   return (
@@ -61,7 +63,7 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
           size="small"
           accent="tertiary"
           title={t`Block settings`}
-          onClick={openCampaignBlockSettingsInSidePanel}
+          onClick={openEmailBlockSettingsInSidePanel}
         />
       </StyledBlockSettingsButtonContainer>
       <FormAdvancedTextFieldInput
@@ -70,10 +72,14 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
         placeholder={t`Type something or press "/" to see commands`}
         preset="campaignBody"
         onEditorReady={handleEditorReady}
-        onImageUpload={uploadCampaignImage}
+        onImageUpload={uploadEmailImage}
       />
       {isDefined(bodyEditor) && (
-        <InsertRail editor={bodyEditor} onImageUpload={uploadCampaignImage} />
+        <InsertRail
+          editor={bodyEditor}
+          onImageUpload={uploadEmailImage}
+          variables={variables}
+        />
       )}
     </StyledContainer>
   );

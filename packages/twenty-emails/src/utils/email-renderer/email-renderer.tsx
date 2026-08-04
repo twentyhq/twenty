@@ -39,8 +39,8 @@ export const reactMarkupFromJSON = (json: JSONContent | string) => {
   }
 
   const jsxNodes = mappedNodeContent(json);
-  // Documents authored in the campaign composer carry a page theme; other
-  // rich text (workflow emails, tool emails) keeps the bare body.
+  // Structured email editors may carry a page theme; legacy rich text and
+  // compatibility HTML keep the bare body.
   const canvasTheme = resolveCanvasTheme(json.attrs?.canvasTheme);
 
   return (
