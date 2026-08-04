@@ -11,5 +11,7 @@ export const buildCreatedByFromApplication = ({
   source: FieldActorSource.APPLICATION,
   name: application.name,
   workspaceMemberId: null,
-  context: {},
+  context: {
+    applicationUniversalIdentifier: application.universalIdentifier,
+  },
 });
