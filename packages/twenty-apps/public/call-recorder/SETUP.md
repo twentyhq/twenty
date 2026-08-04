@@ -16,6 +16,7 @@ and to receive recordings back. Two things must be configured:
    update, and cancel bots.
 2. A **webhook** from Recall.ai back to your deployment, so the app learns when
    a recording is ready and can ingest it.
+3. A **Gladia API key** in the Recall.ai dashboard (**Transcription → Gladia**, per region) — transcripts fail without it.
 
 ## Server variables
 

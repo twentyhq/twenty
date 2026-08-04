@@ -86,6 +86,8 @@ export const AiChatAssistantMessageRenderer = ({
   );
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
+  const lastRenderItemIndex = renderItems.length - 1;
+
   if (!renderItems.length && !hasError) {
     return <AiChatInitialLoadingIndicator />;
   }
@@ -107,6 +109,11 @@ export const AiChatAssistantMessageRenderer = ({
                     nextRenderItem.part.type === 'text' &&
                     nextRenderItem.part.text.trim().length > 0,
                 )}
+              isTrailingWhileStreaming={
+                isLastMessageStreaming &&
+                !hasError &&
+                index === lastRenderItemIndex
+              }
             />
           ) : (
             <MessagePartRenderer

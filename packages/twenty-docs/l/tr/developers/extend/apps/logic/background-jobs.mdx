@@ -1,0 +1,165 @@
+---
+title: Arka Plan İşleri
+description: Uzun süren veya hız sınırına takılan işleri, her şeyi satır içi yapmak yerine başka bir mantık fonksiyonu çalıştırmasını kuyruğa alarak Twenty işleyicilerine devredin.
+icon: layer-group
+---
+
+Bir mantık fonksiyonu çalıştırması, `timeoutSeconds` değeriyle sınırlandırılır (en fazla 900 saniye). Bu sürede tamamlanamayan her şey — tam bir yeniden eşitleme, kayıt başına dağıtım, sizi hız sınırına takan üçüncü taraf bir API — daha küçük çalıştırmalara bölünmek zorundadır.
+
+`enqueueJob` tam olarak bunu yapar: Twenty işleyicilerinden, uygulamanızın mantık fonksiyonlarından birini daha sonra, kendi işleminde ve kendi zaman aşımı bütçesiyle çalıştırmasını ister. Çağıran hemen döner.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Bir çalıştırmayı kuyruğa al
+
+`enqueueJob` fonksiyonunu `twenty-sdk/logic-function` içinden içe aktarın ve çalıştırmak istediğiniz mantık fonksiyonunun `universalIdentifier` değerini işaret edin.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+Hedef fonksiyon, tıpkı diğer tetikleyicilerde olduğu gibi işleyici argümanı olarak `payload` alır. Çağrıyı yapanla **aynı uygulamaya** ait olmalıdır — başka bir uygulamanın fonksiyonunu kuyruğa alma girişimi `Logic function not found` hatasıyla reddedilir.
+
+<Note>
+`enqueueJob`, iş kabul edilir edilmez döner; işin çalışması bitince değil. Hedefin sonucunu döndürmez — çıktısını daha sonra okumak istiyorsanız, hedefin ürettiği veriyi [anahtar-değer deposuna](/l/tr/developers/extend/apps/logic/key-value-store) veya bir çalışma alanı kaydına yazmasını sağlayın.
+</Note>
+
+## İş seçenekleri
+
+| Seçenek      | Varsayılan | Aralık                  | Ne yapar                                                                                                                         |
+| ------------ | ---------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`        | `0`–`10`                | Çalıştırma bir hata fırlatırsa ekstra deneme sayısı. Bunu yalnızca iki kez çalıştırılması güvenli olan işleyiciler için artırın. |
+| `delayMs`    | `0`        | `0`–`604800000` (7 gün) | Çalıştırma uygun hale gelmeden önce bu kadar süre bekleyin.                                                                      |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**Öncelik henüz yapılandırılamıyor.** Kuyruğa alınan işler her zaman en düşük öncelikte çalışır, bu nedenle platform işleri asla uygulama işlerinin arkasında gecikmez. Öncelik üzerinde denetim yakında geliyor.
+</Note>
+
+Kuyruğa alınan çalıştırma, onu kuyruğa alan fonksiyonun etkin kullanıcı bilgisini devralır; böylece aynı izinlerle hareket eder.
+
+## Kullanım örneği: uzun bir eşitleme boyunca sayfalama yapma
+
+Klasik biçim, bir sonraki imleçle *kendini* kuyruğa alan bir fonksiyondur. Her çalıştırma, kendi zaman aşımı süresinin oldukça altında bir sayfa işi tamamlar ve hiçbir şey kalmadığında zincir durur.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Kayıt başına fan-out
+
+İş doğal olarak öğe bazındaysa, her öğe için bir iş kuyruğa alın ve döngüyü satır içi çalıştırmak yerine çalışanların bunları paralel olarak işlemesine izin verin.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## Uzun süre çalışan işler için iyi uygulamalar
+
+Hemen hemen tüm uzun işleri kapsayan iki kural: **döngü kurmak yerine özyineleme (recurse) kullanın** ve **her çalıştırmada sınırlı büyüklükte bir parçayı işleyin**.
+
+Her şeyi tek seferde yapmaya çalışan bir çalıştırma, hata senaryosudur — zaman aşımına takılır ve yeniden denemede her şeyi baştan başlatır. Bunun yerine, bir parçayı `timeoutSeconds` süresinin içinde rahatça bitecek şekilde boyutlandırın, konumunuzu kalıcı hale getirin ve sonraki çalıştırmayı kuyruğa alın.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Bunu işe yarar kılanlar:
+
+* **Parça boyutunu ortalamaya değil, en yavaş öğeye göre belirleyin.** `CHUNK_SIZE × en kötü durum öğe süresi` değeri, pay bırakacak şekilde `timeoutSeconds` içine sığmalıdır, yoksa parça kuyruğunun sonundakiler çalıştırma kesildiğinde kaybolur.
+* **Sonlandırma koşulunu açık hale getirin.** Yalnızca tam dolu bir parça döndüğü sürece özyineleme yapın. Yalnızca "sonuç yok" durumunda duran bir zincir, kaynak ortada bir yerde kısa bir sayfa döndürürse sonsuza dek devam eder.
+* **Sonraki çalıştırmayı kuyruğa almadan önce ilerlemeyi kalıcı hale getirin,** böylece başarısız olan bir halka baştan başlamak yerine son tamamlanan parçadan yeniden başlar.
+* **Her parçayı idempotent tutun.** Bir yeniden denemeden sonra aynı parçanın yeniden işlenmesi, iki kez yazma yapmamalıdır — yazma işlemlerini, işlediğiniz kayıt veya harici kimlik üzerinde anahtarlandırın.
+* **Oran sınırlamalı bir üçüncü tarafla çalışırken, tek bir dev fan-out yerine parçalara bölünmüş bir zinciri tercih edin;** `delayMs` içeren bir zincir kendi hızını ayarlar, oysa binlerce işi bir kerede kuyruğa almak, hepsinin aynı anda uygun hale gelmesine neden olur.
+
+<Warning>
+Yeniden denemeler tüm işleyiciyi yeniden çalıştırır. `retryLimit` değerini `0`’ın üzerine çıkarmadan önce kuyruğa alınan işleyicileri idempotent tutun.
+</Warning>

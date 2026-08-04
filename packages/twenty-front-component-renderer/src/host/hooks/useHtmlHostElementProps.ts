@@ -1,17 +1,17 @@
 import { useContext } from 'react';
 
-import { FrontComponentExternalNavigationContext } from '@/host/contexts/FrontComponentExternalNavigationContext';
 import {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
 } from '@/host/contexts/FrontComponentInputFocusContext';
 import { useComposedElementRef } from '@/host/hooks/useComposedElementRef';
+import { useGeometryNodeRef } from '@/host/hooks/useGeometryNodeRef';
 import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
 import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
 import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
-import { createAnchorNavigationClickHandler } from '@/host/utils/createAnchorNavigationClickHandler';
 import { createDropTargetGuardProps } from '@/host/utils/createDropTargetGuardProps';
 import { extractReactUnsupportedEventHandlers } from '@/host/utils/extractReactUnsupportedEventHandlers';
+import { getRemoteElementIdFromProps } from '@/host/utils/getRemoteElementIdFromProps';
 import { preventDefaultThenForwardToRemote } from '@/host/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
@@ -27,9 +27,8 @@ export const useHtmlHostElementProps = (
   htmlTag: string,
 ): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
-  const requestExternalNavigation = useContext(
-    FrontComponentExternalNavigationContext,
-  );
+
+  const remoteElementId = getRemoteElementIdFromProps(props);
 
   const { reactUnsupportedEventHandlers, reactBindableProps } =
     extractReactUnsupportedEventHandlers(
@@ -40,17 +39,12 @@ export const useHtmlHostElementProps = (
     reactUnsupportedEventHandlers,
   );
 
+  const geometryNodeRef = useGeometryNodeRef(remoteElementId);
+
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
+    geometryNodeRef,
   ]);
-
-  const anchorNavigationClickHandler =
-    htmlTag === 'a' &&
-    createAnchorNavigationClickHandler({
-      href: reactBindableProps.href,
-      remoteOnClick: reactBindableProps.onClick,
-      requestExternalNavigation,
-    });
 
   const hostEnforcedProps: Record<string, unknown> = {
     ...createDropTargetGuardProps(reactBindableProps),
@@ -60,10 +54,6 @@ export const useHtmlHostElementProps = (
     // React 19 blocks the previous `action="javascript:void(0)"` guard.
     ...(htmlTag === 'form' && {
       onSubmit: preventDefaultThenForwardToRemote(reactBindableProps.onSubmit),
-    }),
-    ...(anchorNavigationClickHandler && {
-      onClick: anchorNavigationClickHandler,
-      onAuxClick: anchorNavigationClickHandler,
     }),
   };
 

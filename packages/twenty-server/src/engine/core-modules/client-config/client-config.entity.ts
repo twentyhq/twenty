@@ -310,6 +310,9 @@ export class ClientConfig {
   publicFeatureFlags: PublicFeatureFlag[];
 
   @Field(() => Boolean)
+  isCookieSessionEnabled: boolean;
+
+  @Field(() => Boolean)
   isMicrosoftMessagingEnabled: boolean;
 
   @Field(() => Boolean)
@@ -344,6 +347,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isWorkspaceSchemaDDLLocked: boolean;
+
+  @Field(() => Boolean)
+  isOnboardingAiChatEnabled: boolean;
 
   @Field(() => String)
   enterpriseInstanceType: string;

@@ -8,7 +8,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
-import { resolveRoleIdFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-id-from-auth-context.util';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 
 export const resolveRowLevelPermissionRecordFilter = ({
   internalContext,
@@ -19,7 +19,7 @@ export const resolveRowLevelPermissionRecordFilter = ({
   authContext: WorkspaceAuthContext;
   objectMetadata: FlatObjectMetadata;
 }): RecordGqlOperationFilter | null => {
-  const roleId = resolveRoleIdFromAuthContext({
+  const roleIds = resolveRoleIdsFromAuthContext({
     authContext,
     userWorkspaceRoleMap: internalContext.userWorkspaceRoleMap,
     apiKeyRoleMap: internalContext.apiKeyRoleMap,
@@ -32,7 +32,7 @@ export const resolveRowLevelPermissionRecordFilter = ({
       internalContext.flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
     objectMetadata,
-    roleId,
+    roleIds,
     workspaceMember: isUserAuthContext(authContext)
       ? authContext.workspaceMember
       : undefined,

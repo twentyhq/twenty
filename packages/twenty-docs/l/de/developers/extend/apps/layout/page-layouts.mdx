@@ -51,9 +51,10 @@ export default definePageLayout({
 
 ### Hauptpunkte
 
-* `type` ist typischerweise `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
+* `type` ist eines von `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` oder `'STANDALONE_PAGE'`. Verwenden Sie `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
 * `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
-* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`VERTICAL_LIST` für Datensatzseiten, `GRID` für Dashboards). Ein Tab mit einem einzelnen Widget rendert dieses automatisch in voller Breite; bei mehreren Widgets werden diese als Karten gestapelt.
+* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode`: `VERTICAL_LIST` für Datensatzseiten und eigenständige Seiten, `GRID` für Dashboards. In einem `VERTICAL_LIST`-Tab rendert ein einzelnes Widget in voller Breite und belegt den gesamten Tab; bei mehreren Widgets werden diese als Karten gestapelt. Ein `GRID`-Tab ordnet seine Widgets immer als Karten in einem 12-spaltigen Raster an, unabhängig von ihrer Anzahl. Wähle daher `VERTICAL_LIST`, wenn du möchtest, dass ein Widget die gesamte Seite ausfüllt.
+* Setze `layoutMode` explizit. Wenn du es weglässt, erhältst du `VERTICAL_LIST` auf einer `STANDALONE_PAGE` und `GRID` überall sonst, was auf einer Datensatzseite selten gewünscht ist.
 * Jedes `widget` innerhalb eines Tabs kann eine [Frontend-Komponente](/l/de/developers/extend/apps/layout/front-components), eine Relationenliste oder andere eingebaute Widget-Typen rendern.
 * `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
 

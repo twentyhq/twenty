@@ -58,6 +58,7 @@ export const AiChatTabMessageList = () => {
     return (
       <StyledPreambleOutsideScrollContainer>
         {messageListPreamble}
+        <AiChatPendingResponseIndicator />
       </StyledPreambleOutsideScrollContainer>
     );
   }

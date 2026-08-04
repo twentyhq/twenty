@@ -37,7 +37,10 @@
     </script>
     <!-- END: Twenty Config -->
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+    />
     <script type="module">
       const disableInputAutoZoom = () => {
         const viewportMetadata = document.querySelector('meta[name=viewport]');
@@ -45,7 +48,7 @@
         if (viewportMetadata !== null) {
           viewportMetadata.setAttribute(
             'content',
-            'width=device-width, initial-scale=1.0, maximum-scale=1.0',
+            'width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content',
           );
         }
       };

@@ -33,11 +33,13 @@ export type ClientConfig = {
   isMicrosoftCalendarEnabled: boolean;
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
+  isCookieSessionEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
   isEmailingDomainInDemoMode: boolean;
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
+  isOnboardingAiChatEnabled: boolean;
   onboarding: OnboardingConfig;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;

@@ -145,6 +145,14 @@
               "label": "사용 방법"
             }
           }
+        },
+        "legal": {
+          "label": "법무",
+          "groups": {
+            "legalHowTos": {
+              "label": "사용 방법"
+            }
+          }
         }
       }
     },

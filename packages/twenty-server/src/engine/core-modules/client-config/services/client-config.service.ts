@@ -251,6 +251,9 @@ export class ClientConfigService {
           NodeEnvironment.DEVELOPMENT ||
         this.twentyConfigService.get('IS_BILLING_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
+      isCookieSessionEnabled: this.twentyConfigService.get(
+        'AUTH_COOKIE_SESSIONS_ENABLED',
+      ),
       isMicrosoftMessagingEnabled: this.twentyConfigService.get(
         'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
       ),
@@ -280,6 +283,9 @@ export class ClientConfigService {
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(
         'WORKSPACE_SCHEMA_DDL_LOCKED',
+      ),
+      isOnboardingAiChatEnabled: this.twentyConfigService.get(
+        'IS_ONBOARDING_AI_CHAT_ENABLED',
       ),
       enterpriseInstanceType:
         this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??

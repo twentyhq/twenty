@@ -102,13 +102,16 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[7] : themeCssVariables.spacing[6]};
   justify-content: center;
+  max-width: 100%;
+  min-width: ${({ isExpanded }) =>
+    isExpanded ? themeCssVariables.spacing[7] : themeCssVariables.spacing[6]};
   padding: ${({ isExpanded }) =>
     isExpanded ? '3px' : themeCssVariables.spacing[0.5]};
   transition:
     height calc(${themeCssVariables.animation.duration.normal} * 1s) ease,
     padding calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ isExpanded }) =>
-    isExpanded ? '103px' : themeCssVariables.spacing[6]};
+    isExpanded ? 'max-content' : themeCssVariables.spacing[6]};
 `;
 
 const StyledNewChatButton = styled.div`

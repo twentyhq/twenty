@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 
 export const query = gql`
   mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
@@ -13,6 +14,7 @@ export const query = gql`
       color
       isActive
       isSearchable
+      openRecordIn
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -36,6 +38,7 @@ export const responseData = {
   color: null,
   isActive: true,
   isSearchable: false,
+  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   createdAt: '',
   updatedAt: '',
   labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',

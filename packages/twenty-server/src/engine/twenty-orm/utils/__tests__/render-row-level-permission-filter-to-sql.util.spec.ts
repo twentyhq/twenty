@@ -308,7 +308,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     expect(result?.sql).toBe('NOT (1=1)');
   });
 
-  it('merges parameters from every leaf', () => {
+  it('merges parameters from every leaf and conjoins the groups', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
       recordFilter: {
@@ -317,7 +317,12 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     });
 
     const parameters = result?.parameters ?? {};
+    const nameParameterKey = findParameterKeyByValue(parameters, 'a');
+    const employeesParameterKey = findParameterKeyByValue(parameters, 2);
 
+    expect(result?.sql).toBe(
+      `(("company"."name"::text ILIKE :${nameParameterKey}) AND ("company"."employees" = :${employeesParameterKey}))`,
+    );
     expect(Object.keys(parameters)).toHaveLength(2);
     expect(findParameterKeyByValue(parameters, 'a')).toMatch(
       /^name[0-9a-f]{10}$/,

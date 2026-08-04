@@ -144,6 +144,7 @@ export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
               calendarLink={partner.calendarLink}
               links={partner.links}
               linkUrls={partner.linkUrls}
+              slug={partner.slug}
             />
             <PartnerRatesPanel
               hourlyRateUsd={partner.hourlyRateUsd}

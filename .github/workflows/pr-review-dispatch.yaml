@@ -1,0 +1,40 @@
+name: PR Review Dispatch
+run-name: "PR Review Dispatch #${{ github.event.pull_request.number }}"
+
+on:
+  pull_request_target:
+    types: [opened, ready_for_review, synchronize, labeled]
+
+permissions: {}
+
+concurrency:
+  group: pr-review-dispatch-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    if: >
+      github.event.pull_request.draft == false &&
+      (github.event.action != 'labeled' || startsWith(github.event.label.name, 'pr-review-'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Mint ci-privileged dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-privileged
+          permission-actions: write
+
+      - name: Forward to PR review
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT: ${{ github.event.action }}
+        run: |
+          gh workflow run pr-review.yaml --repo twentyhq/ci-privileged --ref main \
+            -f pr_number="$PR_NUMBER" \
+            -f event="$EVENT"

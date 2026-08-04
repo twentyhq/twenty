@@ -20,9 +20,9 @@ jest.mock(
 );
 
 jest.mock(
-  'src/engine/twenty-orm/utils/resolve-role-id-from-auth-context.util',
+  'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util',
   () => ({
-    resolveRoleIdFromAuthContext: jest.fn(() => 'role-id'),
+    resolveRoleIdsFromAuthContext: jest.fn(() => ['role-id']),
   }),
 );
 

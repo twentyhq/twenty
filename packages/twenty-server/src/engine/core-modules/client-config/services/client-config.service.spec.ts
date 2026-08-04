@@ -110,6 +110,7 @@ describe('ClientConfigService', () => {
             CLOUDFLARE_ZONE_ID: undefined,
             ALLOW_REQUESTS_TO_TWENTY_ICONS: false,
             CLICKHOUSE_URL: undefined,
+            IS_ONBOARDING_AI_CHAT_ENABLED: false,
           };
 
           return mockValues[key];
@@ -191,8 +192,33 @@ describe('ClientConfigService', () => {
         calendarBookingPageId: 'team/twenty/talk-to-us',
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
+        isOnboardingAiChatEnabled: false,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
       });
+    });
+
+    it('should advertise cookie sessions when the flag is on', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'AUTH_COOKIE_SESSIONS_ENABLED' ? true : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.isCookieSessionEnabled).toBe(true);
+    });
+
+    it('should not advertise cookie sessions when the flag is off', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'AUTH_COOKIE_SESSIONS_ENABLED' ? false : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.isCookieSessionEnabled).toBe(false);
     });
 
     it('should handle production environment correctly', async () => {

@@ -159,6 +159,18 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         isNullable: true,
       },
     }),
+    name: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'name',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(msg`Name`),
+        description: i18nLabel(msg`Internal name of the campaign`),
+        icon: 'IconAbc',
+        isNullable: false,
+        defaultValue: "''",
+      },
+    }),
     subject: createStandardFieldFlatMetadata({
       ...base,
       context: {

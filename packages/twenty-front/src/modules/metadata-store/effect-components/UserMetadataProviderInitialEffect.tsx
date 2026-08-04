@@ -1,4 +1,5 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -26,7 +27,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserMetadataProviderInitialEffect = () => {
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -63,7 +64,7 @@ export const UserMetadataProviderInitialEffect = () => {
     [store],
   );
 
-  const shouldSkipUserQuery = !hasAccessTokenPair;
+  const shouldSkipUserQuery = !isLogged;
 
   const { data: userQueryData, loading: userQueryLoading } = useQuery(
     GetCurrentUserDocument,
@@ -78,7 +79,7 @@ export const UserMetadataProviderInitialEffect = () => {
       return;
     }
 
-    if (!hasAccessTokenPair) {
+    if (!isLogged) {
       setIsCurrentUserLoaded(true);
       setIsInitialized(true);
       return;
@@ -113,6 +114,9 @@ export const UserMetadataProviderInitialEffect = () => {
             .objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
+        isImpersonating:
+          userQueryData.currentUser.currentUserWorkspace.isImpersonating ??
+          false,
       });
     }
 
@@ -129,6 +133,7 @@ export const UserMetadataProviderInitialEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
+        openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       };
@@ -164,7 +169,7 @@ export const UserMetadataProviderInitialEffect = () => {
     setIsInitialized(true);
   }, [
     isInitialized,
-    hasAccessTokenPair,
+    isLogged,
     userQueryLoading,
     userQueryData?.currentUser,
     setCurrentUser,

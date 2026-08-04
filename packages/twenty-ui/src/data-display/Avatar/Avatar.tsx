@@ -24,6 +24,7 @@ export type AvatarProps = {
   color?: string;
   backgroundColor?: string;
   borderColor?: string;
+  pulsing?: boolean;
   onClick?: () => void;
 };
 
@@ -40,6 +41,7 @@ export const Avatar = ({
   color,
   backgroundColor,
   borderColor,
+  pulsing = false,
 }: AvatarProps) => {
   const theme = useTheme();
 
@@ -112,7 +114,12 @@ export const Avatar = ({
 
   return (
     <div
-      className={clsx(styles.root, styles[size], className)}
+      className={clsx(
+        styles.root,
+        styles[size],
+        pulsing && styles.pulsing,
+        className,
+      )}
       data-type={type ?? undefined}
       data-clickable={!isUndefined(onClick) ? true : undefined}
       role={!isUndefined(onClick) ? 'button' : undefined}

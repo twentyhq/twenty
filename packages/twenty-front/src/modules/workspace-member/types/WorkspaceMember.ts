@@ -1,3 +1,4 @@
+import { type OpenRecordIn } from 'twenty-shared/types';
 import {
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberNumberFormatEnum,
@@ -17,6 +18,7 @@ export type WorkspaceMember = {
   avatarUrl?: string | null;
   locale: string | null;
   colorScheme: ColorScheme;
+  openRecordIn?: OpenRecordIn;
   createdAt: string;
   updatedAt: string;
   userEmail: string;

@@ -207,7 +207,7 @@ describe('save-my-partner-profile', () => {
     expect(partner.hourlyRate).toEqual({ amountMicros: 150000000, currencyCode: 'USD' });
     expect(partner.website?.primaryLinkUrl).toBe('https://updated.example.com');
 
-    // Admin-only fields are never in the editable schema, so they must survive untouched.
+    // Fields absent from the body must survive untouched.
     expect(partner.region).toEqual(['EUROPE']);
     expect(partner.deploymentExpertise).toEqual(['CLOUD']);
   });

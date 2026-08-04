@@ -4,24 +4,26 @@ import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePane
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
+import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
@@ -59,18 +61,17 @@ export const SidePanelWorkflowStepInfo = ({
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
-  const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
-  const { updateOneRecord: updateOneWorkflowVersion } = useUpdateOneRecord();
+  const { updateWorkflowVersionStep } =
+    useUpdateWorkflowVersionStep(instanceId);
+  const { updateTrigger } = useUpdateWorkflowVersionTrigger(instanceId);
 
-  const {
-    trigger,
-    steps,
-    id: workflowVersionId,
-  } = workflowWithCurrentVersion?.currentVersion ?? {
-    trigger: null,
-    steps: null,
-    id: undefined,
-  };
+  const workflowVersionId = workflowWithCurrentVersion?.currentVersion?.id;
+
+  const flow = useAtomComponentStateValue(flowComponentState, instanceId);
+  const { content } = useWorkflowVersionContent(workflowVersionId);
+
+  const trigger = flow?.trigger ?? content?.trigger ?? null;
+  const steps = flow?.steps ?? content?.steps ?? null;
 
   const isTriggerStep = sidePanelWorkflowStepId === TRIGGER_STEP_ID;
 
@@ -156,16 +157,10 @@ export const SidePanelWorkflowStepInfo = ({
     const targetWorkflowVersionId = await getUpdatableWorkflowVersion();
 
     if (isTrigger) {
-      await updateOneWorkflowVersion({
-        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-        idToUpdate: targetWorkflowVersionId,
-        updateOneRecordInput: {
-          trigger: {
-            ...stepDefinition.definition,
-            name: title,
-          } as typeof stepDefinition.definition,
-        },
-      });
+      await updateTrigger({
+        ...stepDefinition.definition,
+        name: title,
+      } as typeof stepDefinition.definition);
     } else {
       await updateWorkflowVersionStep({
         workflowVersionId: targetWorkflowVersionId,

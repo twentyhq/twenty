@@ -1,5 +1,6 @@
 import {
   CalendarChannelVisibility,
+  CallRecordingStatus,
   type TimelineCalendarEvent,
 } from '~/generated/graphql';
 
@@ -42,6 +43,14 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
         handle: 'jane@apple.dev',
       },
     ],
+    callRecordings: [
+      {
+        __typename: 'TimelineCalendarEventCallRecording',
+        id: '20202020-9f2c-4a1a-9c5d-2f6a1b3c4d5e',
+        status: CallRecordingStatus.COMPLETED,
+        applicationId: null,
+      },
+    ],
   },
   {
     __typename: 'TimelineCalendarEvent',
@@ -71,6 +80,7 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
         handle: 'tim@apple.dev',
       },
     ],
+    callRecordings: [],
   },
   {
     __typename: 'TimelineCalendarEvent',
@@ -98,6 +108,14 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
         displayName: 'Tim',
         avatarUrl: '',
         handle: 'tim@apple.dev',
+      },
+    ],
+    callRecordings: [
+      {
+        __typename: 'TimelineCalendarEventCallRecording',
+        id: '20202020-7b1e-4d3a-8f2c-1a9b8c7d6e5f',
+        status: CallRecordingStatus.SCHEDULED,
+        applicationId: null,
       },
     ],
   },

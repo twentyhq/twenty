@@ -269,7 +269,7 @@ const SettingsAdminAppsTableRow = ({
         <ApplicationDisplay
           application={{
             name: registration.name,
-            logo: registration.logoUrl,
+            logoUrl: registration.logoUrl,
           }}
         />
       </StyledNameTableCell>
