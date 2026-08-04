@@ -9,7 +9,7 @@ import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
 import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { In, IsNull, MoreThan, Raw, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -109,15 +109,20 @@ export class WorkspaceInvitationService {
   }
 
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
-    return await this.appTokenRepository.findOne({
-      where: {
+    return await this.appTokenRepository
+      .createQueryBuilder('appToken')
+      .where('"appToken"."workspaceId" = :workspaceId', {
         workspaceId,
-        type: In(INVITATION_APP_TOKEN_TYPES),
-        deletedAt: IsNull(),
-        expiresAt: MoreThan(new Date()),
-        context: Raw((alias) => `${alias} ->> 'email' = :email`, { email }),
-      },
-    });
+      })
+      .andWhere('"appToken".type IN (:...types)', {
+        types: INVITATION_APP_TOKEN_TYPES,
+      })
+      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere('appToken.deletedAt IS NULL')
+      .andWhere('appToken.expiresAt > :now', {
+        now: new Date(),
+      })
+      .getOne();
   }
 
   async getAppTokenByInvitationToken(invitationToken: string) {
