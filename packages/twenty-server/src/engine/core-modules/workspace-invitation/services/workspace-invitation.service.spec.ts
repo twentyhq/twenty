@@ -155,11 +155,7 @@ describe('WorkspaceInvitationService', () => {
       const email = 'test@example.com';
       const workspace = { id: 'workspace-id' } as WorkspaceEntity;
 
-      jest.spyOn(appTokenRepository, 'createQueryBuilder').mockReturnValue({
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue(null),
-      } as any);
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
 
       jest.spyOn(userWorkspaceRepository, 'exists').mockResolvedValue(false);
       jest
@@ -175,11 +171,9 @@ describe('WorkspaceInvitationService', () => {
       const email = 'test@example.com';
       const workspace = { id: 'workspace-id' } as WorkspaceEntity;
 
-      jest.spyOn(appTokenRepository, 'createQueryBuilder').mockReturnValue({
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue({}),
-      } as any);
+      jest
+        .spyOn(appTokenRepository, 'findOne')
+        .mockResolvedValue({} as AppTokenEntity);
 
       await expect(
         service.createWorkspaceInvitation(email, workspace),
