@@ -379,7 +379,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Discard Draft',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "lastPublishedVersionId") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
+      'every(selectedRecords, "lastPublishedVersionId") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
