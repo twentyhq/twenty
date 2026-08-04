@@ -1,10 +1,11 @@
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
 import { SLACK_BOT_USER_ID_KV_KEY } from 'src/logic-functions/constants/slack-bot-user-id-kv-key';
 import { type SlackBotUserIdCacheEntry } from 'src/logic-functions/types/slack-bot-user-id-cache-entry.type';
 import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-user-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { hasKvEntryExpired } from 'src/logic-functions/utils/has-kv-entry-expired';
 
 const readCachedBotUserId = async (): Promise<string | undefined> => {
   const cacheEntry = await kv
@@ -14,8 +15,7 @@ const readCachedBotUserId = async (): Promise<string | undefined> => {
   if (
     cacheEntry === null ||
     !isNonEmptyString(cacheEntry.botUserId) ||
-    !isNumber(cacheEntry.expiresAt) ||
-    cacheEntry.expiresAt <= Date.now()
+    hasKvEntryExpired(cacheEntry)
   ) {
     return undefined;
   }
