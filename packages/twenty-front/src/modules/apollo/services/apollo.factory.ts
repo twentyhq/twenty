@@ -20,6 +20,10 @@ import { retryWithBackoff } from '~/utils/retryWithBackoff';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import {
+  getIsCookieAuthActive,
+  setIsCookieAuthActiveInStorage,
+} from '@/apollo/utils/cookieAuthActiveStorage';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
@@ -73,6 +77,7 @@ export interface Options {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
+  onCookieAuthDeactivated?: () => void;
   onAppVersionMismatch?: (message: string) => void;
   onPayloadTooLarge?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
@@ -99,6 +104,7 @@ export class ApolloFactory implements ApolloManager {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
+      onCookieAuthDeactivated,
       onAppVersionMismatch,
       onPayloadTooLarge,
       currentWorkspaceMember,
@@ -133,7 +139,15 @@ export class ApolloFactory implements ApolloManager {
 
         const locale = this.currentWorkspaceMember?.locale ?? i18n.locale;
 
-        if (isUndefinedOrNull(tokenPair) || skipAuthToken === true) {
+        // The token pair is kept as a dormant fallback once cookie auth is
+        // active, but must not be sent: Bearer takes precedence over the
+        // session cookie server-side, so attaching it would keep the cookie
+        // unused and bypass the CSRF origin check.
+        if (
+          isUndefinedOrNull(tokenPair) ||
+          skipAuthToken === true ||
+          getIsCookieAuthActive()
+        ) {
           return {
             headers: {
               ...headers,
@@ -203,6 +217,26 @@ export class ApolloFactory implements ApolloManager {
         // session probe) could loop, so it must fail as-is.
         if (operation.getContext().skipAuthToken === true) {
           return throwError(() => error);
+        }
+
+        // A server that still has cookie sessions disabled ignores the session
+        // cookie, so a cookie-only client reads as unauthenticated there. That
+        // happens on every request routed to a not-yet-rolled pod, and after a
+        // rollback. Fall back to the retained token pair instead of signing the
+        // user out. Attempted once per operation so a genuinely expired token
+        // still reaches the renewal path below.
+        if (
+          getIsCookieAuthActive() &&
+          operation.getContext().hasAttemptedCookieAuthFallback !== true &&
+          isDefined(getTokenPair()?.refreshToken?.token)
+        ) {
+          setIsCookieAuthActiveInStorage(false);
+          onCookieAuthDeactivated?.();
+          operation.setContext({ hasAttemptedCookieAuthFallback: true });
+          // Deliberately falls through to the renewal below rather than
+          // replaying immediately: the retained access token is likely to have
+          // expired while the client was authenticating by cookie, so the
+          // replay needs a fresh one to succeed on the first try.
         }
 
         if (!getTokenPair()?.refreshToken?.token) {

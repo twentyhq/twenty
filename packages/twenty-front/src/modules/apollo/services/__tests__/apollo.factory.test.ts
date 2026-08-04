@@ -54,6 +54,7 @@ const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
 const mockOnTokenPairChange = jest.fn();
 const mockOnUnauthenticatedError = jest.fn();
+const mockOnCookieAuthDeactivated = jest.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',
@@ -118,6 +119,7 @@ const createMockOptions = (): Options => ({
   onPayloadTooLarge: mockOnPayloadTooLarge,
   onTokenPairChange: mockOnTokenPairChange,
   onUnauthenticatedError: mockOnUnauthenticatedError,
+  onCookieAuthDeactivated: mockOnCookieAuthDeactivated,
   appVersion: '1.0.0',
 });
 
@@ -154,6 +156,7 @@ describe('ApolloFactory', () => {
     fetchMock.resetMocks();
     jest.mocked(renewToken).mockReset().mockResolvedValue(RENEWED_TOKEN_PAIR);
     jest.mocked(getTokenPair).mockReset().mockReturnValue(CURRENT_TOKEN_PAIR);
+    localStorage.clear();
   });
 
   it('should create an instance of ApolloFactory', () => {
@@ -365,5 +368,59 @@ describe('ApolloFactory', () => {
 
     expect(renewToken).not.toHaveBeenCalled();
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+  });
+  describe('cookie auth fallback during a mixed-version rollout', () => {
+    const setCookieAuthActive = () =>
+      localStorage.setItem('isCookieAuthActiveState', 'true');
+
+    it('should not attach the Bearer header while cookie auth is active', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(() =>
+        Promise.resolve({ body: JSON.stringify({ data: {} }) }),
+      );
+
+      await makeRequest();
+
+      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+
+      expect(headers.authorization).toBeUndefined();
+    });
+
+    it('should fall back to the token pair instead of signing out when a server ignores the session cookie', async () => {
+      setCookieAuthActive();
+      fetchMock
+        .mockResponseOnce(UNAUTHENTICATED_RESPONSE)
+        .mockResponseOnce(JSON.stringify({ data: { trackAnalytics: null } }));
+
+      await makeRequest();
+
+      expect(mockOnCookieAuthDeactivated).toHaveBeenCalledTimes(1);
+      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+      expect(localStorage.getItem('isCookieAuthActiveState')).toBe('false');
+
+      const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+
+      expect(retryHeaders.authorization).toBe(
+        `Bearer ${CURRENT_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
+      );
+    });
+
+    it('should only attempt the cookie fallback once, then go through renewal', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
+
+      try {
+        await makeRequest();
+      } catch {}
+
+      expect(mockOnCookieAuthDeactivated).toHaveBeenCalledTimes(1);
+      expect(renewToken).toHaveBeenCalled();
+    });
   });
 });
