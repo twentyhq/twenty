@@ -106,8 +106,10 @@ const validateBranchingStep = (
       });
     }
 
+    const stepFilterGroups = (input as Partial<IfElseStepInput> | undefined)
+      ?.stepFilterGroups;
     const stepFilterGroupIds = new Set(
-      ((input as Partial<IfElseStepInput> | undefined)?.stepFilterGroups ?? [])
+      (Array.isArray(stepFilterGroups) ? stepFilterGroups : [])
         .filter(isDefined)
         .map((filterGroup) => filterGroup.id),
     );
@@ -130,7 +132,7 @@ const validateBranchingStep = (
       ) {
         issues.push({
           severity: 'error',
-          code: 'IF_ELSE_BRANCH_FILTER_GROUP_NOT_FOUND',
+          code: 'INVALID_STEP_PARAMS',
           message: `A branch of If/Else step "${step.name ?? step.id}" references filter group "${branch.filterGroupId}", which does not exist.`,
           stepId: step.id,
         });

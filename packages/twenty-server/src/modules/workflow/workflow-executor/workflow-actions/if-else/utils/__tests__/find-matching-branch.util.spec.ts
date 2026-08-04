@@ -1,7 +1,10 @@
 import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
-import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import {
   findMatchingBranch,
   type ResolvedFilter,
@@ -71,7 +74,34 @@ describe('findMatchingBranch', () => {
         stepFilterGroups: [realGroup],
         resolvedFilters: [matchingFilter('real-group', false)],
       }),
-    ).toThrow(WorkflowStepExecutorException);
+    ).toThrow(
+      expect.objectContaining({
+        code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      }),
+    );
+  });
+
+  it('should throw for a dangling branch even when an earlier branch already matches', () => {
+    const branches: StepIfElseBranch[] = [
+      { id: 'branch-match', filterGroupId: 'real-group', nextStepIds: [] },
+      {
+        id: 'branch-dangling',
+        filterGroupId: 'group-id-not-in-stepFilterGroups',
+        nextStepIds: [],
+      },
+    ];
+
+    expect(() =>
+      findMatchingBranch({
+        branches,
+        stepFilterGroups: [realGroup],
+        resolvedFilters: [matchingFilter('real-group', true)],
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      }),
+    );
   });
 
   it('should throw when no branch matches and there is no else branch', () => {
