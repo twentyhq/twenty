@@ -34,6 +34,15 @@ export const validateCronField = (
     return false;
   }
 
+  // A cron field is a comma-separated list, so split it first and validate each
+  // item on its own. Handling '-'/'/' before ',' meant only the first list item
+  // was checked (e.g. '1-5,99' passed because '99' was never validated).
+  if (value.includes(',')) {
+    return value
+      .split(',')
+      .every((item) => validateCronField(item.trim(), fieldType));
+  }
+
   if (value.includes('/')) {
     const [rangePart, stepPart] = value.split('/');
     const step = parseInt(stepPart, 10);
@@ -65,11 +74,6 @@ export const validateCronField = (
       end <= range.max &&
       start <= end
     );
-  }
-
-  if (value.includes(',')) {
-    const values = value.split(',');
-    return values.every((val) => validateCronField(val.trim(), fieldType));
   }
 
   const numValue = parseInt(value, 10);
