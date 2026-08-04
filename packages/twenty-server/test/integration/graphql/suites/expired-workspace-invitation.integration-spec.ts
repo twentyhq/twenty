@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -48,33 +49,11 @@ describe('expired workspace invitation filtering', () => {
       });
 
       const response = await makeMetadataAPIRequest(
-        {
-          query: gql`
-            mutation SignUpInWorkspace(
-              $email: String!
-              $password: String!
-              $workspaceId: UUID!
-              $workspacePersonalInviteToken: String!
-            ) {
-              signUpInWorkspace(
-                email: $email
-                password: $password
-                workspaceId: $workspaceId
-                workspacePersonalInviteToken: $workspacePersonalInviteToken
-              ) {
-                workspace {
-                  id
-                }
-              }
-            }
-          `,
-          variables: {
-            email,
-            password: 'Test123!@#',
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
-            workspacePersonalInviteToken: token,
-          },
-        },
+        signUpInWorkspaceOperationFactory({
+          email,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspacePersonalInviteToken: token,
+        }),
         undefined,
       );
 
