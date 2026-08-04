@@ -88,6 +88,15 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // takes, so a genuinely in-progress activation is never reclaimed.
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 
+// A workspace pending creation has no roles yet, so permissions cannot be
+// resolved for it. Only the fields needed to set the workspace up may be
+// updated until it is activated.
+const WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION = new Set([
+  'displayName',
+  'subdomain',
+  'logo',
+]);
+
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class WorkspaceService {
@@ -818,12 +827,6 @@ export class WorkspaceService {
     apiKey: ApiKeyEntity | undefined;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
-    if (
-      workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
-    ) {
-      return;
-    }
-
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
 
     const fieldsBeingUpdated = Object.keys(payload).filter(
@@ -831,6 +834,28 @@ export class WorkspaceService {
     );
 
     if (fieldsBeingUpdated.length === 0) {
+      return;
+    }
+
+    if (
+      workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
+    ) {
+      const fieldsRequiringActivation = fieldsBeingUpdated.filter(
+        (field) => !WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION.has(field),
+      );
+
+      if (fieldsRequiringActivation.length > 0) {
+        const fieldsList = fieldsRequiringActivation.join(', ');
+
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`These fields cannot be updated before the workspace is activated: ${fieldsList}.`,
+          },
+        );
+      }
+
       return;
     }
 
