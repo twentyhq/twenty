@@ -346,13 +346,12 @@ jobs:
           tasks: 'test:integration'
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
-      # The secure/insecure session cookie branch is decided by SERVER_URL,
-      # which is env-only, so the production combination (__Host-, Secure,
-      # SameSite=Lax) needs its own app boot. One shard is enough.
-      - name: Server / Run secure-deployment session tests
+      # The secure-deployment suite boots the app as a production https
+      # deployment (SERVER_URL is env-only, forced by its jest config), so it
+      # cannot ride the main run. One shard is enough.
+      - name: Server / Run secure-deployment integration tests
         if: matrix.shard == 1
-        working-directory: packages/twenty-server
-        run: SERVER_URL=https://localhost:3000 NODE_OPTIONS="--max-old-space-size=6144" npx jest --config ./jest-integration.config.ts --ci test/integration/graphql/suites/auth/user-sessions/secure-deployment-session-cookie.integration-spec.ts
+        run: npx nx run twenty-server:test:integration:secure
 
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
