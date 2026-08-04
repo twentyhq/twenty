@@ -2,17 +2,19 @@ import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
-import { DRAGGABLE_LIST_END_DROP_INDEX } from '@/ui/layout/draggable-list/constants/DraggableListEndDropIndex';
 import { DraggableListGroupContext } from '@/ui/layout/draggable-list/contexts/DraggableListGroupContext';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
+import { type DragDropInsertionContextValues } from '@/ui/utilities/drag-and-drop/hooks/useDragDropInsertionIndex';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 
 type DraggableListItemDndData = {
   droppableId: string;
@@ -28,13 +30,6 @@ const StyledDragDropItemsWrapper = styled.div`
   width: 100%;
 `;
 
-// Catches drops after the last item; the negative margin cancels its
-// footprint so the list keeps its height.
-const StyledEndDropZone = styled(DragDropItemEndDropZone)`
-  height: ${themeCssVariables.spacing[2]};
-  margin-bottom: calc(-1 * ${themeCssVariables.spacing[2]});
-`;
-
 export const DraggableList = ({
   draggableItems,
   onDragEnd,
@@ -43,45 +38,80 @@ export const DraggableList = ({
   // land on outer providers' targets (or the other way around).
   const [group] = useState(() => v4());
 
-  // A mutable registry rather than render state: items write their index on
-  // mount so the end drop zone can resolve the append index at drop time.
+  // Items register their index so the list can place the trailing drop target
+  // and resolve the append position in the consumers' own index space, which
+  // may be offset (a non-draggable header can occupy the leading indices).
   const [itemIndexByDraggableId] = useState(() => new Map<string, number>());
+  const [trailingIndex, setTrailingIndex] = useState(0);
+
+  const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
+    number | null
+  >(null);
 
   const groupContextValue = useMemo(
-    () => ({ group, itemIndexByDraggableId }),
+    () => ({
+      group,
+      registerItem: (draggableId: string, index: number) => {
+        itemIndexByDraggableId.set(draggableId, index);
+        setTrailingIndex(Math.max(...itemIndexByDraggableId.values()) + 1);
+      },
+      unregisterItem: (draggableId: string) => {
+        itemIndexByDraggableId.delete(draggableId);
+        setTrailingIndex(
+          itemIndexByDraggableId.size === 0
+            ? 0
+            : Math.max(...itemIndexByDraggableId.values()) + 1,
+        );
+      },
+    }),
     [group, itemIndexByDraggableId],
   );
+
+  const resolveDrop = (
+    event:
+      | DragDropProviderDragMoveEvent<DraggableListItemDndData>
+      | DragDropProviderDragEndEvent<DraggableListItemDndData>,
+  ) =>
+    resolveDropFromPointer({
+      target: event.operation.target,
+      pointer: event.operation.position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount: () => itemIndexByDraggableId.size,
+    });
+
+  const handleDragMove = (
+    event: DragDropProviderDragMoveEvent<DraggableListItemDndData>,
+  ) => {
+    setActiveDropTargetIndex(resolveDrop(event)?.dropTargetIndex ?? null);
+  };
 
   const handleDragEnd = (
     event: DragDropProviderDragEndEvent<DraggableListItemDndData>,
   ) => {
+    setActiveDropTargetIndex(null);
+
     const source = event.operation.source;
     const sourceData = source?.data as DraggableListItemDndData | undefined;
-    const targetData = event.operation.target?.data as
-      | DraggableListItemDndData
-      | undefined;
 
     if (
       event.canceled ||
       !isDefined(source) ||
-      sourceData?.droppableId !== group ||
-      targetData?.droppableId !== group
+      sourceData?.droppableId !== group
     ) {
       return;
     }
 
-    const dropTargetIndex =
-      targetData.index === DRAGGABLE_LIST_END_DROP_INDEX
-        ? itemIndexByDraggableId.size
-        : targetData.index;
+    const resolvedDrop = resolveDrop(event);
 
-    // The drop line renders before the hovered item, so a drop inserts the
-    // dragged item before it; convert that gap index into the final index.
+    if (!isDefined(resolvedDrop) || resolvedDrop.droppableId !== group) {
+      return;
+    }
+
     const destinationIndex = getDestinationIndex({
-      dropTargetIndex,
+      dropTargetIndex: resolvedDrop.dropTargetIndex,
       sourceIndex: sourceData.index,
-      sourceDroppableId: sourceData.droppableId,
-      destinationDroppableId: targetData.droppableId,
+      sourceDroppableId: group,
+      destinationDroppableId: group,
     });
 
     if (destinationIndex === sourceData.index) {
@@ -95,25 +125,32 @@ export const DraggableList = ({
     });
   };
 
+  const contextValues: DragDropInsertionContextValues = {
+    activeDropTargetIndex,
+    activeDroppableId: group,
+  };
+
   return (
-    <DragDropProvider<DraggableListItemDndData>
-      sensors={DND_KIT_SENSORS}
-      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-      onDragEnd={handleDragEnd}
-    >
-      <DraggableListGroupContext.Provider value={groupContextValue}>
-        <StyledDragDropItemsWrapper>
-          {draggableItems}
-          <StyledEndDropZone
-            id={`${group}-end-drop-zone`}
-            accept={group}
-            data={{
-              droppableId: group,
-              index: DRAGGABLE_LIST_END_DROP_INDEX,
-            }}
-          />
-        </StyledDragDropItemsWrapper>
-      </DraggableListGroupContext.Provider>
-    </DragDropProvider>
+    <DragDropItemDndContext.Provider value={contextValues}>
+      <DragDropProvider<DraggableListItemDndData>
+        sensors={DND_KIT_SENSORS}
+        plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEnd}
+      >
+        <DraggableListGroupContext.Provider value={groupContextValue}>
+          <StyledDragDropItemsWrapper>
+            {draggableItems}
+            <DragDropItemDropTarget
+              index={trailingIndex}
+              droppableId={group}
+              orientation="horizontal"
+              compact
+              seamAligned
+            />
+          </StyledDragDropItemsWrapper>
+        </DraggableListGroupContext.Provider>
+      </DragDropProvider>
+    </DragDropItemDndContext.Provider>
   );
 };
