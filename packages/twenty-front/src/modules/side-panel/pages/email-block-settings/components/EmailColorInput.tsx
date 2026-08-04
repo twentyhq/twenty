@@ -37,8 +37,6 @@ const StyledColorSwatchInput = styled.input`
 
 const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
 
-// The native color input needs a concrete hex fallback; email content colors
-// are literal values, not theme variables.
 // oxlint-disable-next-line twenty/no-hardcoded-colors
 const COLOR_SWATCH_FALLBACK = '#ffffff';
 

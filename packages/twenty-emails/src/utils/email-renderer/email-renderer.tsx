@@ -39,8 +39,6 @@ export const reactMarkupFromJSON = (json: JSONContent | string) => {
   }
 
   const jsxNodes = mappedNodeContent(json);
-  // Structured email editors may carry a page theme; legacy rich text and
-  // compatibility HTML keep the bare body.
   const canvasTheme = resolveCanvasTheme(json.attrs?.canvasTheme);
 
   return (

@@ -108,12 +108,10 @@ describe('CampaignVariableService', () => {
       'signupDate',
     ]);
 
-    // Legacy aliases stay resolvable.
     expect(knownVariableNames.has('firstName')).toBe(true);
     expect(knownVariableNames.has('fullName')).toBe(true);
     expect(knownVariableNames.has('personId')).toBe(true);
 
-    // System and relation fields are not personalization variables.
     expect(knownVariableNames.has('searchVector')).toBe(false);
     expect(knownVariableNames.has('company')).toBe(false);
   });

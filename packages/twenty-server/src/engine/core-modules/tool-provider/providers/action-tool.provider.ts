@@ -175,8 +175,6 @@ export class ActionToolProvider implements ToolProvider {
       ),
     );
 
-    // No dedicated permission flag: the underlying write runs through the
-    // caller's role-scoped repository, which enforces campaign permissions.
     descriptors.push(
       this.buildDescriptor(
         'save_campaign',

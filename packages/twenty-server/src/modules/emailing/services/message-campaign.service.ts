@@ -624,8 +624,6 @@ export class MessageCampaignService {
       );
     }
 
-    // A variable that resolves to nothing blanks text for every recipient,
-    // so unknown names block the send instead.
     await this.campaignVariableService.assertKnownVariables(
       workspaceId,
       collectCampaignVariableNamesFromTemplates({

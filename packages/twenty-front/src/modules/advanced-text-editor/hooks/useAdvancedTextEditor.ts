@@ -21,8 +21,6 @@ type UseAdvancedTextEditorProps = {
   onBlur?: (editor: Editor) => void;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
-  // Seeds the editor with already-parsed content instead of running
-  // defaultValue through the preset's contentType read path.
   content?: Content;
   editorProps?: EditorOptions['editorProps'];
 };

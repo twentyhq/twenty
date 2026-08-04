@@ -41,8 +41,6 @@ const StyledHint = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-// Theme box values are single CSS values ('24px') or four space-separated
-// sides, always written by the counterpart below - no shorthand rules apply.
 const themeBoxValueToSides = (value: string): CssBoxSides => {
   const tokens = value.trim().split(/\s+/);
 
@@ -67,10 +65,6 @@ type EmailPageStyleSectionProps = {
   editor: Editor;
 };
 
-// The panel's default state, mirroring Resend's "Page style": the page
-// behind the email, then the email body itself. Both groups render through
-// the same field inputs as a selected block, so a control added for one
-// surface is available to the other.
 export const EmailPageStyleSection = ({
   editor,
 }: EmailPageStyleSectionProps) => {

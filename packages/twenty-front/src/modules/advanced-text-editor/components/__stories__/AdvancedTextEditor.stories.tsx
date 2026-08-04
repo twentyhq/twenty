@@ -281,8 +281,6 @@ export const Empty: Story = {
   },
 };
 
-// The mentions-only preset: no marks, headings, lists or slash command, so
-// no bubble menu mounts.
 export const AiChatPreset: Story = {
   args: {
     preset: 'aiChat',

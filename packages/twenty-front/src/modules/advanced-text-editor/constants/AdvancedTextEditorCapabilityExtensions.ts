@@ -31,9 +31,6 @@ type AdvancedTextEditorExtensionFactory = (
   context: AdvancedTextEditorExtensionContext,
 ) => AnyExtension[];
 
-// Entries are factories rather than extension arrays because some extensions
-// need runtime context (image upload callbacks). Adding a capability to
-// AdvancedTextEditorCapability without registering it here is a compile error.
 export const ADVANCED_TEXT_EDITOR_CAPABILITY_EXTENSIONS: Record<
   AdvancedTextEditorCapability,
   AdvancedTextEditorExtensionFactory

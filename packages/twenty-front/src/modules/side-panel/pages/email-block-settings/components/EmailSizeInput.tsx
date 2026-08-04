@@ -36,7 +36,6 @@ type EmailSizeInputProps = {
   placeholder?: string;
 };
 
-// A "600px"-style value split into a number input and a unit dropdown.
 export const EmailSizeInput = ({
   label,
   value,
@@ -55,7 +54,6 @@ export const EmailSizeInput = ({
     }
 
     if (Number.isNaN(Number(trimmedAmount))) {
-      // Keep non-numeric values ("auto") untouched instead of suffixing them.
       onChange(trimmedAmount);
       return;
     }

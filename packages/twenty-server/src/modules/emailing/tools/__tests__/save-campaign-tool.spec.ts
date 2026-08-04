@@ -94,8 +94,6 @@ describe('SaveCampaignTool', () => {
   });
 
   it('should expose an input schema convertible to JSON schema for the LLM', () => {
-    // The registry converts inputSchema at descriptor build time; the
-    // recursive document schema must survive that conversion.
     const jsonSchema = toToolJsonSchema(SaveCampaignToolInputZodSchema) as {
       properties?: Record<string, unknown>;
       required?: string[];

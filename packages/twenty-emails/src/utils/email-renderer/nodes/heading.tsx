@@ -31,8 +31,6 @@ export const heading = (
   const content = mappedNodeContent(node, inherited);
   const { element, fontSize } = HEADING_STYLES[level as HeadingLevel];
 
-  // A heading keeps its own scale; the section's colour, family and spacing
-  // style it, otherwise every heading would collapse to body size.
   const { fontSize: _inheritedFontSize, ...inheritedWithoutSize } = inherited;
 
   return (

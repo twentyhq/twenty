@@ -59,9 +59,6 @@ export class MessageCampaignDraftService {
     });
   }
 
-  // One path for creating and editing: without a campaignId a fresh draft is
-  // inserted, with one the provided fields update the existing draft. Body
-  // and subject go through the same validation either way.
   async saveDraft({
     workspaceId,
     userWorkspaceId,
@@ -153,7 +150,6 @@ export class MessageCampaignDraftService {
           );
         }
 
-        // Conditional on status so a concurrent send cannot be overwritten.
         const { affected } = await campaignRepository.update(
           { id: campaignId, status: MessageCampaignStatus.DRAFT },
           {
@@ -196,9 +192,6 @@ export class MessageCampaignDraftService {
     return this.stampDocumentDefaults(parseResult.document);
   }
 
-  // Documents written by the AI tool get the same doc-level attributes the
-  // composer stamps: the schema version, and the default theme so the email
-  // renders as a themed page instead of a bare body.
   private stampDocumentDefaults(document: EmailDocument): EmailDocument {
     return {
       ...document,

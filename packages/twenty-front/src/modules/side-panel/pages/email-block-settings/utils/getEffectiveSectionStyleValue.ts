@@ -11,7 +11,6 @@ export const getEffectiveSectionStyleValue = (
       return canvasTheme?.textAlign ?? 'left';
     case 'backgroundColor':
       return canvasTheme?.bodyBackground ?? '';
-    // react-email's Text writes 14px, and our paragraph renderer writes 1.5.
     case 'fontSize':
       return '14px';
     case 'lineHeight':
@@ -19,8 +18,6 @@ export const getEffectiveSectionStyleValue = (
     case 'borderColor':
       return canvasTheme?.borderColor ?? '';
     default:
-      // Box longhands (padding, margin, radius), widths and spacing all
-      // render as zero until overridden.
       return '0px';
   }
 };

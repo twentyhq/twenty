@@ -12,8 +12,6 @@ export const ResizableImage = TiptapImage.extend<ImageOptions>({
       align: {
         default: 'left',
       },
-      // Declared so the resize handle's updateAttributes({ width }) actually
-      // persists; undeclared attributes are silently dropped.
       width: {
         default: null,
       },

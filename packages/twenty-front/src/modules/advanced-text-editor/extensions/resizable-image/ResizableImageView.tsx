@@ -12,8 +12,6 @@ const StyledNodeViewWrapperContainer = styled.div<{
 }>`
   display: flex;
   height: 100%;
-  // The container is full width while the image below it is not, so margins
-  // here never moved anything; the inner wrapper has to be placed instead.
   justify-content: ${({ align }) =>
     align === 'center'
       ? 'center'

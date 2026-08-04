@@ -24,9 +24,6 @@ export const EmailToolInputZodSchema = z.object({
     'Recipients object with to, cc, and bcc fields (comma-separated)',
   ),
   subject: z.string().describe('The email subject line'),
-  // The document is the same format campaign bodies use, so one authoring
-  // format serves 1:1 email and campaigns; it is rendered to email-safe
-  // HTML server-side. The HTML string form is kept for compatibility.
   body: z
     .union([emailDocumentSchema, z.string()])
     .describe(

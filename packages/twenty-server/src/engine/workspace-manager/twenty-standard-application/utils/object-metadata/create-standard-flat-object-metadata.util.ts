@@ -274,9 +274,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
           msg`A bulk email send to an audience, with delivery stats`,
         ),
         icon: 'IconSend',
-        // Campaigns are user-authored records like dashboards and workflows;
-        // system objects get their standard fields locked in the UI, which
-        // would make the campaign title read-only.
         isSystem: true,
         isUICreatable: false,
         labelIdentifierFieldMetadataName: 'name',
@@ -304,9 +301,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelPlural: i18nLabel(msg`Lists`),
         description: i18nLabel(msg`A hand-picked audience of people`),
         icon: 'IconUsersGroup',
-        // User-facing like messageCampaign: system objects get their standard
-        // fields locked in the UI, which would make the list name and the
-        // members relation uneditable.
         isSystem: true,
         isSearchable: true,
         labelIdentifierFieldMetadataName: 'name',

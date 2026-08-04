@@ -8,8 +8,6 @@ import { Placeholder } from '@tiptap/extensions/placeholder';
 import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { type AnyExtension } from '@tiptap/core';
 
-// Always loaded, for every preset: an editor without these is broken rather
-// than configured.
 export const buildAdvancedTextEditorCoreExtensions = ({
   placeholder,
 }: {

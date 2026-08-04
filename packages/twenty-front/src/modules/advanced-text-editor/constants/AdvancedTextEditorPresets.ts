@@ -14,8 +14,6 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
     chrome: 'canvas',
     minHeight: 0,
     enableFullScreen: false,
-    // campaignVariables rather than variables: same node, but the workflow
-    // chip view resolves against workflow context and throws without it.
     capabilities: [...EMAIL_DOCUMENT_CAPABILITIES, 'campaignVariables'],
   },
   inlineEmailBody: {
@@ -48,8 +46,6 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
     enableFullScreen: true,
     capabilities: FULL_RICH_TEXT_CAPABILITIES,
   },
-  // The AI chat composer: a plain-text surface with @-mentions. No marks, no
-  // slash menu, so no bubble menu mounts.
   aiChat: {
     contentType: 'json',
     chrome: 'document',

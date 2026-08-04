@@ -5,15 +5,6 @@ import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
 import { TIPTAP_MARK_TYPES } from './tiptap-mark-types';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
-// The versioned contract shared by every structured email surface. Campaigns
-// are the first authoring integration; workflow and one-to-one email can use
-// the same document without forking its schema or renderer. It is deliberately
-// owned here rather than by the editor: node types are a closed set so an
-// unknown block is rejected upfront instead of silently rendering as nothing,
-// while attribute objects stay open so adding an attribute is not breaking.
-// Style attributes are structured objects of camelCase CSS properties
-// ({ backgroundColor: '#fff', paddingTop: '12px' }), applied directly to
-// react-email components at render time. No CSS text is ever parsed.
 const styleAttributeSchema = z
   .record(
     z
@@ -41,7 +32,6 @@ const textNodeSchema = z.looseObject({
   marks: z.array(markSchema).optional(),
 });
 
-// The variable attribute holds the literal placeholder, e.g. "{{firstName}}".
 const variableTagNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.VARIABLE_TAG),
   attrs: z.looseObject({ variable: z.string().nullable() }),
@@ -96,8 +86,6 @@ const orderedListNodeSchema = z.looseObject({
 const imageNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.IMAGE),
   attrs: z.looseObject({
-    // Uploaded images retain their workspace file identity for ownership,
-    // lifecycle and future URL resolution. External images have no fileId.
     fileId: z.uuid().nullable().optional(),
     src: z.string().max(4_000),
     alt: z.string().nullable().optional(),
@@ -126,7 +114,6 @@ const columnsNodeSchema = z.looseObject({
   content: z.array(columnNodeSchema).min(2).max(4),
 });
 
-// Buttons forbid marks and atoms in the editor schema, so plain text only.
 const buttonNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.BUTTON),
   attrs: z.looseObject({
@@ -179,9 +166,6 @@ const canvasThemeAttributeSchema = z.looseObject({
   borderColor: z.string().optional(),
 });
 
-// schemaVersion is absent on documents saved before versioning was introduced;
-// those are version 1. A document from a future version is rejected rather
-// than rendered wrong.
 export const emailDocumentSchema = z.looseObject({
   type: z.literal('doc'),
   attrs: z

@@ -8,9 +8,6 @@ export const TIPTAP_NODE_TYPES = {
   ORDERED_LIST: 'orderedList',
   LIST_ITEM: 'listItem',
   HARD_BREAK: 'hardBreak',
-  // Block nodes, authored on the editor canvas and rendered to email-safe
-  // HTML server-side by twenty-emails. Their attributes carry a structured
-  // style object of camelCase CSS properties.
   SECTION: 'section',
   COLUMNS: 'columns',
   COLUMN: 'column',

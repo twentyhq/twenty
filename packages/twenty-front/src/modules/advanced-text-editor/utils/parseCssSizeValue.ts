@@ -5,8 +5,6 @@ export type CssSizeValue = {
 
 const CSS_SIZE_PATTERN = /^(-?[\d.]+)(px|%|em)$/;
 
-// Splits "600px" into amount and unit. Non-numeric values ("auto", "") come
-// back with an empty amount so inputs can show their placeholder.
 export const parseCssSizeValue = (value: string | undefined): CssSizeValue => {
   const match = (value ?? '').trim().match(CSS_SIZE_PATTERN);
 

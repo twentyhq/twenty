@@ -1,8 +1,6 @@
 import { FieldMetadataType } from '@/types';
 
 export type CampaignVariableDefinition = {
-  // The placeholder path as written between braces, e.g. "city" or
-  // "name.firstName".
   name: string;
   label: string;
   fieldName: string;
@@ -46,9 +44,6 @@ const COMPOSITE_CAMPAIGN_VARIABLE_SUBFIELDS: Partial<
   ],
 };
 
-// Derives the campaign variables a list of person fields exposes. Shared so
-// the composer picker, the AI tool and the server-side resolver agree on
-// which fields are personalizable and under which paths.
 export const listCampaignVariablesForFields = (
   fields: CampaignVariableEligibleField[],
 ): CampaignVariableDefinition[] => {
@@ -78,9 +73,6 @@ export const listCampaignVariablesForFields = (
     for (const { subFieldName, subFieldLabel } of subFields) {
       definitions.push({
         name: `${field.name}.${subFieldName}`,
-        // A composite exposing one path reads best under the field's own
-        // label ("Emails"); one exposing several needs the subfield spelled
-        // out ("Name · First name").
         label:
           subFields.length === 1
             ? field.label

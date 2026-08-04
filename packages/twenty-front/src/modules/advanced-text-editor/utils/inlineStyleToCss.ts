@@ -1,7 +1,3 @@
-// Serializes a structured style object ({ backgroundColor: '#fff' }) into
-// the style attribute string the canvas DOM needs. One-way by design: the
-// object is the source of truth and round-trips through data-style as JSON,
-// so nothing ever parses CSS text back.
 export const inlineStyleToCss = (style: unknown): string => {
   if (typeof style !== 'object' || style === null) {
     return '';

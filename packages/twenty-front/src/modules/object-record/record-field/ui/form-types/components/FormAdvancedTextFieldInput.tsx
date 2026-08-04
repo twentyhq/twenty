@@ -107,8 +107,6 @@ type FormAdvancedTextFieldInputProps = {
   minHeight?: number;
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
-  // Hands the live editor instance to the caller (null on unmount), so
-  // companion surfaces like the block settings side panel can reach it.
   onEditorReady?: (editor: Editor | null) => void;
 };
 

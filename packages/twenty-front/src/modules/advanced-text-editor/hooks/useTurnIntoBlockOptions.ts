@@ -50,8 +50,6 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
           return editor.isActive('paragraph');
         },
       },
-      // editor.can().setHeading throws when the heading extension is not
-      // loaded, so heading options only exist for presets that load it.
       ...(hasEditorExtension(editor, 'heading')
         ? ([1, 2, 3] as const).map((level) => ({
             id: `heading${level}`,

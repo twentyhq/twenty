@@ -53,9 +53,6 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     return { ...rawInput, body, files };
   }
 
-  // The body has its own structured resolver and HTML-escaping boundary.
-  // Resolve every other input normally, but never run the rendered body
-  // through the generic resolver a second time.
   protected override resolveInput(
     input: WorkflowSendEmailActionInput,
     context: Record<string, unknown>,

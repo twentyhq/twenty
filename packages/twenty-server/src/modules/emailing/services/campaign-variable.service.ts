@@ -22,8 +22,6 @@ export type PersonCampaignVariables = {
   knownVariableNames: Set<string>;
 };
 
-// Aliases from before variables were metadata-driven; they resolve against
-// the standard person fields and stay valid in already-authored templates.
 const LEGACY_ALIAS_PATHS: Record<string, string> = {
   firstName: 'name.firstName',
   lastName: 'name.lastName',
@@ -53,9 +51,6 @@ export class CampaignVariableService {
     return { definitions, knownVariableNames };
   }
 
-  // Unknown variables substitute to an empty string at send time, which on a
-  // campaign means silently blank text for every recipient; a typo or a
-  // hallucinated placeholder is rejected here instead.
   async assertKnownVariables(
     workspaceId: string,
     usedVariableNames: Iterable<string>,

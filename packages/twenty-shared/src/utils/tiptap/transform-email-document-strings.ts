@@ -26,10 +26,6 @@ const transformAttribute = (
   };
 };
 
-// Email surfaces use different variable namespaces, but variables can appear
-// in the same structural locations. Centralizing that traversal keeps text,
-// links, buttons, image metadata and raw HTML consistent across campaigns,
-// workflows and one-to-one email.
 export const transformEmailDocumentStrings = <TNode extends EmailDocumentNode>(
   node: TNode,
   transform: StringTransformer,

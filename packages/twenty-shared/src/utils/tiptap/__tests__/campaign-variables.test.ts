@@ -42,8 +42,6 @@ describe('listCampaignVariablesForFields', () => {
       'linkedinLink.primaryLinkUrl',
     ]);
 
-    // A multi-path composite spells the subfield out; a single-path one
-    // keeps the field's own label.
     expect(definitions[0].label).toBe('Name · First name');
     expect(definitions[2].label).toBe('Emails');
     expect(definitions[3].label).toBe('LinkedIn');

@@ -67,8 +67,6 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
       return false;
     }
 
-    // A selected atom block (image, HTML, divider) holds no text to format;
-    // it is edited from the block settings panel instead.
     const { selection } = editor.state;
     if (selection instanceof NodeSelection && selection.node.isAtom) {
       return false;

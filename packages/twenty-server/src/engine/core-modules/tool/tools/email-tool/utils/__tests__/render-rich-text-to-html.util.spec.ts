@@ -1,8 +1,6 @@
 import { renderRichTextToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util';
 
 describe('renderRichTextToHtml', () => {
-  // react-email's render() awaits real async work; the globally enabled fake
-  // timers would stall it forever.
   beforeAll(() => {
     jest.useRealTimers();
   });

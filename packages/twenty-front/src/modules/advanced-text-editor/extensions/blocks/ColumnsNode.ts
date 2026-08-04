@@ -3,8 +3,6 @@ import { readBlockStyleAttribute } from '@/advanced-text-editor/extensions/block
 import { inlineStyleToCss } from '@/advanced-text-editor/utils/inlineStyleToCss';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-// A horizontal row of equal-width columns, mapping to a react-email
-// <Row>/<Column> table layout at send time.
 export const ColumnsNode = Node.create({
   name: TIPTAP_NODE_TYPES.COLUMNS,
   group: 'block',

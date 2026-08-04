@@ -1,16 +1,9 @@
-// The raw HTML block preview renders author-provided markup into the app's
-// real DOM, where - unlike in an email client - scripts, event handlers and
-// javascript: URLs would execute in the viewer's session. Sanitizing through
-// DOMParser instead of regexes matters: parsing is inert (nothing runs), and
-// entities are decoded first, so tricks like jav&#x61;script: or attributes
-// without leading whitespace cannot slip through a pattern.
 const BLOCKED_ELEMENT_SELECTOR =
   'script, iframe, frame, object, embed, link, meta, base';
 
 const URL_ATTRIBUTE_NAMES = ['href', 'src', 'xlink:href', 'action'];
 
 const isBlockedUrl = (attributeName: string, rawValue: string): boolean => {
-  // Browsers ignore control characters and whitespace inside URL schemes.
   const value = rawValue.replace(/[\u0000-\u0020]/g, '').toLowerCase();
 
   if (attributeName === 'src' && value.startsWith('data:image/')) {

@@ -5,8 +5,6 @@ import {
 
 import { collectCampaignVariableNamesFromString } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string.util';
 
-// Use the same traversal as rendering so adding a templatable document
-// attribute automatically makes it part of campaign variable collection.
 export const collectCampaignVariableNames = (
   node: EmailDocumentNode,
 ): Set<string> => {

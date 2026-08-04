@@ -63,10 +63,6 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
-  // Embedded in outbound emails and fetched by recipients' mail clients,
-  // which never authenticate and may open the email years later, so the token
-  // must not expire. Access control is unguessability only: put email imagery
-  // here, never anything confidential.
   [FileFolder.EmailImage]: {
     ignoreExpirationToken: true,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,

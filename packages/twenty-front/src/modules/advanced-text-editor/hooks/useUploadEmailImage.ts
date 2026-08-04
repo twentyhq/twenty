@@ -9,9 +9,6 @@ import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
-// Inline email images are fetched by recipients' mail clients long after the
-// authoring session, so return both their durable identity and non-expiring
-// delivery URL.
 export const useUploadEmailImage = () => {
   const { uploadFile } = useDirectFileUpload();
   const { enqueueErrorSnackBar } = useSnackBar();

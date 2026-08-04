@@ -8,8 +8,6 @@ import {
   mergeInheritedTypography,
 } from 'src/utils/email-renderer/utils/inherited-typography';
 
-// Renders columns and its column children in one pass, since
-// react-email <Column> must be a direct child of <Row>.
 export const columns = (
   node: JSONContent,
   inherited: InheritedTypography = {},

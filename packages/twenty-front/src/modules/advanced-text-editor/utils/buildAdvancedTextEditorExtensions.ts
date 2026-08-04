@@ -21,8 +21,6 @@ export const buildAdvancedTextEditorExtensions = ({
   const coreExtensions = buildAdvancedTextEditorCoreExtensions({ placeholder });
 
   return [
-    // Email surfaces store page-level styling on the doc node itself, so
-    // their document type replaces the plain one.
     ...(capabilities.includes('blocks')
       ? coreExtensions.map((extension) =>
           extension.name === 'doc' ? ThemedDocument : extension,

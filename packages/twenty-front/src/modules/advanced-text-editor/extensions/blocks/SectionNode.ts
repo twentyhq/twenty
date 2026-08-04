@@ -3,9 +3,6 @@ import { readBlockStyleAttribute } from '@/advanced-text-editor/extensions/block
 import { inlineStyleToCss } from '@/advanced-text-editor/utils/inlineStyleToCss';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-// A full-width block container mapping to a react-email <Section> at send
-// time. Styling (background, padding, border...) lives in the inline CSS
-// `style` attribute, edited through the block settings side panel.
 export const SectionNode = Node.create({
   name: TIPTAP_NODE_TYPES.SECTION,
   group: 'block',

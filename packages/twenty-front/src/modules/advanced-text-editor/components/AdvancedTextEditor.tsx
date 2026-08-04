@@ -76,8 +76,6 @@ const StyledEditorContainer = styled.div<{
       margin-bottom: ${themeCssVariables.spacing[2]};
     }
 
-    /* Block nodes: inline styles on the element carry the authored
-       look; the rules below only add editing affordances. */
     .block-section {
       border-radius: ${themeCssVariables.border.radius.sm};
       box-sizing: border-box;
@@ -167,8 +165,6 @@ type AdvancedTextEditorProps = {
   chrome?: AdvancedTextEditorChrome;
 };
 
-// Marks and nodes the text bubble menu can act on. When a preset loads none
-// of them, the menu has nothing to offer and does not mount at all.
 const TEXT_BUBBLE_MENU_EXTENSION_NAMES = [
   'bold',
   'italic',
@@ -228,9 +224,6 @@ export const AdvancedTextEditor = ({
       ) : (
         <EditorContent className="editor-content" editor={editor} />
       )}
-      {/* Surfaces with block nodes have a settings panel that owns image
-          alignment and deletion, so the floating menu would be a second
-          source of truth. Surfaces without one still need it. */}
       {hasEditorExtension(editor, 'image') &&
         !hasEditorExtension(editor, 'section') && (
           <ImageBubbleMenu editor={editor} />

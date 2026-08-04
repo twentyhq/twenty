@@ -18,9 +18,6 @@ export type BlockSelectionTarget = {
   attrs: Record<string, unknown>;
 };
 
-// Derives the email block the settings panel should edit from the current
-// selection: the selected atom node itself, or the deepest inspectable
-// ancestor of the cursor (a button inside a section targets the button).
 export const getBlockSelectionTarget = (
   editor: Editor,
 ): BlockSelectionTarget | null => {
@@ -33,8 +30,6 @@ export const getBlockSelectionTarget = (
     return {
       nodeType: selection.node.type.name,
       pos: selection.from,
-      // Spread: ProseMirror attrs have a null prototype, which breaks the
-      // deep-equality check useEditorState runs on selector results.
       attrs: { ...selection.node.attrs },
     };
   }

@@ -9,23 +9,17 @@ import { type EmailStyleFieldKind } from '@/side-panel/pages/email-block-setting
 
 export type EmailBlockSettingsField = {
   label: MessageDescriptor;
-  // 'style' fields edit one property of the inline CSS style attribute;
-  // 'attribute' fields edit a plain node attribute (e.g. the button href).
   kind: 'style' | 'attribute';
   property: string;
   input: EmailStyleFieldKind;
   placeholder?: string;
 };
 
-// Which fields the block settings side panel offers per email block node,
-// in display order. The equivalent of @react-email/editor's getDefaultLayout.
 export const EMAIL_BLOCK_SETTINGS_FIELDS: Record<
   string,
   EmailBlockSettingsField[]
 > = {
   [TIPTAP_NODE_TYPES.SECTION]: [
-    // Typography here cascades to every block inside the section, so a
-    // section is how one part of an email gets its own look.
     {
       label: msg`Text color`,
       kind: 'style',

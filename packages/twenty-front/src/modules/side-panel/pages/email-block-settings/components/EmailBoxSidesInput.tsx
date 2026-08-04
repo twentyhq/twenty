@@ -78,9 +78,6 @@ type EmailBoxSidesInputProps = {
   placeholder?: string;
 };
 
-// A box property (padding, margin, corner radius) edited either as one value
-// for all sides or side by side. Works on the four sides directly; the
-// caller owns how they map to style properties.
 export const EmailBoxSidesInput = ({
   label,
   sides,

@@ -97,8 +97,6 @@ type InsertRailProps = {
   variables?: Array<{ label: string; value: string }>;
 };
 
-// The floating insert rail on the left of the email canvas: text, image and
-// layout blocks, mirroring the slash menu for pointer-first authoring.
 export const InsertRail = ({
   editor,
   onImageUpload,

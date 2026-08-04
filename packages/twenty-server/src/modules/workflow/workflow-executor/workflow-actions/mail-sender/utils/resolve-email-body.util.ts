@@ -33,9 +33,6 @@ export const resolveEmailBody = async (
     throw new Error(`Invalid workflow email document: ${parseResult.error}`);
   }
 
-  // Preserve the existing variable-chip behavior, including turning multiline
-  // values into hard breaks, then resolve variables from block attributes via
-  // the same structural traversal campaigns use.
   const bodyWithResolvedVariables = resolveRichTextVariables(body, context);
   const tipTapDocument = isDefined(bodyWithResolvedVariables)
     ? parseJson<EmailDocument>(bodyWithResolvedVariables)

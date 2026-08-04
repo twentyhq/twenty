@@ -21,9 +21,6 @@ const DEFAULT_BUTTON_STYLE: Record<string, string> = {
   display: 'inline-block',
 };
 
-// A call-to-action button mapping to a react-email <Button> (a styled <a>)
-// at send time. The label is editable inline; href and styles are edited in
-// the block settings side panel.
 export const ButtonNode = Node.create({
   name: TIPTAP_NODE_TYPES.BUTTON,
   group: 'block',
@@ -39,8 +36,6 @@ export const ButtonNode = Node.create({
         parseHTML: (element) => element.getAttribute('data-href'),
         renderHTML: (attributes) => ({ 'data-href': attributes.href }),
       },
-      // Placed on the wrapper rather than the button itself, which is an
-      // inline-block anchor and cannot align itself.
       align: {
         default: 'left',
         parseHTML: (element) =>

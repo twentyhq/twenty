@@ -55,7 +55,6 @@ const BORDER_STYLE_COMPANIONS: Record<string, string> = {
   borderTopWidth: 'borderTopStyle',
 };
 
-// Box fields group the four longhand properties one control edits together.
 const BOX_FIELD_SIDE_PROPERTIES: Record<
   string,
   [string, string, string, string]
@@ -78,8 +77,6 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       getBlockSelectionTarget(currentEditor),
   });
 
-  // With no block selected, the panel edits the page itself, like Resend's
-  // "Page style" default state.
   if (!isDefined(target)) {
     return <EmailPageStyleSection editor={editor} />;
   }
@@ -88,9 +85,6 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const styles = getBlockStyle(target.attrs.style);
   const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
 
-  // A section inherits from the body until it overrides, so show what is
-  // actually in effect instead of an empty field. Values are only written
-  // when edited, which keeps the section inheriting.
   const displayedStyleValue = (property: string) =>
     styles[property] ??
     (target.nodeType === TIPTAP_NODE_TYPES.SECTION
@@ -112,8 +106,6 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       .run();
   };
 
-  // The floating image menu does not mount on this surface, so removing a
-  // block has to be reachable from the panel.
   const handleRemoveBlock = () => {
     editor
       .chain()
@@ -132,8 +124,6 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
 
   const handleFieldChange = (field: (typeof fields)[number], value: string) => {
     if (field.kind === 'attribute') {
-      // The image width attribute is numeric (the resize handle writes
-      // pixel numbers); everything else is a plain string.
       if (field.property === 'width') {
         const trimmed = value.trim();
         if (trimmed === '') {
@@ -155,7 +145,6 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       nextStyles[field.property] = value;
     }
 
-    // A border width without a border style renders no border at all.
     const borderStyleProperty = BORDER_STYLE_COMPANIONS[field.property];
     if (isDefined(borderStyleProperty)) {
       if (value.trim() === '' || value.trim() === '0px') {
