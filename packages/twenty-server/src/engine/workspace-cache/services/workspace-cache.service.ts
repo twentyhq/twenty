@@ -230,8 +230,13 @@ export class WorkspaceCacheService implements OnModuleInit {
         const version = entry.versions.get(entry.latestHash);
 
         if (isDefined(version)) {
-          sampledBytes += JSON.stringify(version.data).length;
-          sampledEntries += 1;
+          try {
+            // Some local-only providers hold circular, non-serializable data.
+            sampledBytes += JSON.stringify(version.data).length;
+            sampledEntries += 1;
+          } catch {
+            continue;
+          }
         }
       }
       index += 1;
