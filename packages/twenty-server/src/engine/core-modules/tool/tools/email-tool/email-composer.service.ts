@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
-import { sanitizeOutboundEmailHtml } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
+import { sanitizeOutboundEmailSubject } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
 import { EMAIL_ATTACHMENT_FILE_FOLDERS } from 'src/engine/core-modules/tool/tools/email-tool/constants/email-attachment-file-folders.const';
 import {
   EmailToolException,
@@ -419,7 +419,7 @@ export class EmailComposerService {
 
     const { html: sanitizedHtmlBody, plainText: plainTextBody } =
       await compileOutboundEmailContent(body ?? '');
-    const sanitizedSubject = await sanitizeOutboundEmailHtml(subject || '');
+    const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =
       isDefined(inReplyTo) && isDefined(messageChannel)

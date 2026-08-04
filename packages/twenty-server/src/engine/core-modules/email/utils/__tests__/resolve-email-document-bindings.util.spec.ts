@@ -10,8 +10,12 @@ describe('resolveEmailDocumentBindings', () => {
         {
           type: 'paragraph',
           content: [
-            { type: 'text', text: 'Hello {{name}}' },
-            { type: 'variableTag', attrs: { variable: '{{message}}' } },
+            { type: 'text', text: 'Hello {{name}}: {{message}}' },
+            {
+              type: 'variableTag',
+              attrs: { variable: '{{message}}' },
+              marks: [{ type: 'bold' }],
+            },
             {
               type: 'text',
               text: 'link',
@@ -60,10 +64,12 @@ describe('resolveEmailDocumentBindings', () => {
         {
           type: 'paragraph',
           content: [
-            { type: 'text', text: 'Hello Ada' },
-            { type: 'text', text: 'first' },
+            { type: 'text', text: 'Hello Ada: first' },
             { type: 'hardBreak' },
             { type: 'text', text: 'second' },
+            { type: 'text', text: 'first', marks: [{ type: 'bold' }] },
+            { type: 'hardBreak', marks: [{ type: 'bold' }] },
+            { type: 'text', text: 'second', marks: [{ type: 'bold' }] },
             {
               type: 'text',
               text: 'link',
@@ -112,6 +118,29 @@ describe('resolveEmailDocumentBindings', () => {
 
     expect(resolved.content?.[0].content).toEqual([
       { type: 'text', text: '{{secret}}' },
+    ]);
+  });
+
+  it('should preserve unresolved variable placeholders and omit empty text', () => {
+    const source = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'variableTag', attrs: { variable: null } },
+            { type: 'text', text: '{{empty}}' },
+          ],
+        },
+      ],
+    } satisfies EmailDocument;
+
+    const resolved = resolveEmailDocumentBindings(source, (value) =>
+      value.replace('{{empty}}', ''),
+    );
+
+    expect(resolved.content?.[0].content).toEqual([
+      { type: 'variableTag', attrs: { variable: null } },
     ]);
   });
 });

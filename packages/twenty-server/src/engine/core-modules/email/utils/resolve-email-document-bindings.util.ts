@@ -6,7 +6,10 @@ import {
   transformEmailDocumentStrings,
 } from 'twenty-shared/utils';
 
-const textToInlineNodes = (text: string): EmailDocumentNode[] =>
+const textToInlineNodes = (
+  text: string,
+  marks?: EmailDocumentNode['marks'],
+): EmailDocumentNode[] =>
   text.split('\n').flatMap((line, index, lines) => [
     ...(line === ''
       ? []
@@ -14,10 +17,16 @@ const textToInlineNodes = (text: string): EmailDocumentNode[] =>
           {
             type: TIPTAP_NODE_TYPES.TEXT,
             text: line,
+            ...(marks && { marks }),
           } satisfies EmailDocumentNode,
         ]),
     ...(index < lines.length - 1
-      ? [{ type: TIPTAP_NODE_TYPES.HARD_BREAK } satisfies EmailDocumentNode]
+      ? [
+          {
+            type: TIPTAP_NODE_TYPES.HARD_BREAK,
+            ...(marks && { marks }),
+          } satisfies EmailDocumentNode,
+        ]
       : []),
   ]);
 
@@ -28,9 +37,19 @@ const resolveNode = (
   if (node.type === TIPTAP_NODE_TYPES.VARIABLE_TAG) {
     const variable = node.attrs?.variable;
 
-    return textToInlineNodes(
-      typeof variable === 'string' ? resolve(variable, 'text') : '',
+    if (typeof variable !== 'string') {
+      return [node];
+    }
+
+    return textToInlineNodes(resolve(variable, 'text'), node.marks);
+  }
+
+  if (node.type === TIPTAP_NODE_TYPES.TEXT && typeof node.text === 'string') {
+    const resolvedNode = transformEmailDocumentStrings(node, (value, context) =>
+      context === 'text' ? value : resolve(value, context),
     );
+
+    return textToInlineNodes(resolve(node.text, 'text'), resolvedNode.marks);
   }
 
   const { content, ...nodeWithoutContent } = node;
