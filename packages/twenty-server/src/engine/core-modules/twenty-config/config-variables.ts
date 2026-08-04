@@ -369,7 +369,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  AUTH_COOKIE_SESSIONS_ENABLED = false;
+  AUTH_COOKIE_SESSIONS_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
