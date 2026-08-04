@@ -493,6 +493,25 @@ describe('installMutationObserver', () => {
     expect(deliveries).toHaveLength(0);
   });
 
+  it('stops delivering to an observer disconnected from another callback', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const disconnectedObserver = new MutationObserver(collect);
+
+    new MutationObserver(() => {
+      disconnectedObserver.disconnect();
+    }).observe(container, { childList: true });
+    disconnectedObserver.observe(container, { childList: true });
+
+    container.appendChild(document.createElement('span'));
+
+    await flushMicrotasks();
+
+    expect(deliveries).toHaveLength(0);
+  });
+
   it('drains the queue through takeRecords', async () => {
     const { document, MutationObserver } = createSandbox();
     const { collect, deliveries } = createRecordCollector();
