@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordDeleteEvent,
+  type ObjectRecordDestroyEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,8 +38,11 @@ export class FilesFieldDeletionListener {
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
-  async handleDestroyedEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
+  async handleDestroyedOrDeletedEvent(
+    payload: WorkspaceEventBatch<
+      ObjectRecordDestroyEvent | ObjectRecordDeleteEvent
+    >,
   ) {
     const workspaceId = payload.workspaceId;
     const objectMetadata = payload.objectMetadata;
@@ -100,6 +107,89 @@ export class FilesFieldDeletionListener {
           }
 
           fileIds.add(fileItem.fileId);
+        }
+      }
+    }
+
+    if (fileIds.size > 0) {
+      await this.messageQueueService.add<FilesFieldDeletionJobData>(
+        FilesFieldDeletionJob.name,
+        {
+          workspaceId,
+          fileIds: Array.from(fileIds),
+        },
+      );
+    }
+  }
+
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
+  async handleUpdatedEvent(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
+  ) {
+    const workspaceId = payload.workspaceId;
+    const objectMetadata = payload.objectMetadata;
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
+
+    const objectId = idByNameSingular[objectMetadata.nameSingular];
+
+    if (!isDefined(objectId)) {
+      return;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return;
+    }
+
+    const objectFields = getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const filesFields = objectFields.filter(
+      (field) => field.type === FieldMetadataType.FILES,
+    );
+
+    if (filesFields.length === 0) {
+      return;
+    }
+
+    const fileIds = new Set<string>();
+
+    for (const event of payload.events) {
+      const recordBefore = event.properties.before as Record<string, unknown>;
+      const recordAfter = event.properties.after as Record<string, unknown>;
+
+      for (const filesField of filesFields) {
+        const beforeFiles = (recordBefore[filesField.name] as FileItem[]) ?? [];
+        const afterFiles = (recordAfter[filesField.name] as FileItem[]) ?? [];
+
+        const afterFileIds = new Set(
+          afterFiles.map((fileItem) => fileItem?.fileId).filter(isDefined),
+        );
+
+        for (const beforeFileItem of beforeFiles) {
+          if (
+            isDefined(beforeFileItem?.fileId) &&
+            !afterFileIds.has(beforeFileItem.fileId)
+          ) {
+            fileIds.add(beforeFileItem.fileId);
+          }
         }
       }
     }
