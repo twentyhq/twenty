@@ -11,7 +11,6 @@ export const cacheSlackBotUserId = async (botUserId: string): Promise<void> => {
       expiresAt: Date.now() + SLACK_BOT_USER_ID_TTL_MS,
     } satisfies SlackBotUserIdCacheEntry)
     .catch(async () => {
-      // An absent cache is rebuilt from auth.test, a superseded one is trusted until it expires.
       await kv.delete(SLACK_BOT_USER_ID_KV_KEY).catch(() => undefined);
     });
 };
