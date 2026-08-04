@@ -235,7 +235,7 @@ export class AdminPanelChatService {
       )
       .addSelect('COUNT("message"."id")::int', 'messageCount')
       .addSelect(
-        `(COUNT("message"."id") FILTER (WHERE "message"."role" = 'user'))::int`,
+        `(COUNT("message"."id") FILTER (WHERE "message"."role" = :userMessageRole))::int`,
         'userMessageCount',
       )
       .groupBy('"thread"."id"')

@@ -21,7 +21,10 @@ const StyledTextContent = styled.div<{ isUser?: boolean }>`
     isUser
       ? themeCssVariables.font.color.secondary
       : themeCssVariables.font.color.primary};
-  font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
+  font-weight: ${({ isUser }) =>
+    isUser
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
   line-height: 1.4em;
   max-width: 100%;
   overflow-wrap: break-word;

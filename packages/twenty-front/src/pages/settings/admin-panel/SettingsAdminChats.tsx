@@ -11,17 +11,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
+import { SettingsAdminChatsContent } from '@/settings/admin-panel/chats/components/SettingsAdminChatsContent';
 import { SettingsAdminChatsFilterDropdown } from '@/settings/admin-panel/chats/components/SettingsAdminChatsFilterDropdown';
-import { SettingsAdminChatsTable } from '@/settings/admin-panel/chats/components/SettingsAdminChatsTable';
 import { useAdminChatThreads } from '@/settings/admin-panel/chats/hooks/useAdminChatThreads';
-import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-
-const StyledTableContainer = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  margin-top: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledShowMoreContainer = styled.div`
   display: flex;
@@ -77,20 +71,12 @@ export const SettingsAdminChats = () => {
               />
             )}
           />
-          {isDefined(error) ? (
-            <SettingsEmptyPlaceholder>{t`Failed to load chats. Please try again.`}</SettingsEmptyPlaceholder>
-          ) : loading && threads.length === 0 ? (
-            <SettingsEmptyPlaceholder>{t`Loading chats...`}</SettingsEmptyPlaceholder>
-          ) : threads.length === 0 ? (
-            <SettingsEmptyPlaceholder>{t`No chats found`}</SettingsEmptyPlaceholder>
-          ) : (
-            <StyledTableContainer>
-              <SettingsAdminChatsTable
-                threads={threads}
-                showOnboardingTag={!filters.onboardingOnly}
-              />
-            </StyledTableContainer>
-          )}
+          <SettingsAdminChatsContent
+            threads={threads}
+            showOnboardingTag={!filters.onboardingOnly}
+            loading={loading}
+            error={error}
+          />
           {hasMore && !isDefined(error) && (
             <StyledShowMoreContainer>
               <Button

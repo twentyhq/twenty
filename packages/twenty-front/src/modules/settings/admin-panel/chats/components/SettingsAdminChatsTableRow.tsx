@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
@@ -42,14 +43,22 @@ export const SettingsAdminChatsTableRow = ({
     >
       <TableCell>
         <OverflowingTextWithTooltip
-          text={thread.workspaceDisplayName || thread.workspaceId}
+          text={
+            isNonEmptyString(thread.workspaceDisplayName)
+              ? thread.workspaceDisplayName
+              : thread.workspaceId
+          }
         />
       </TableCell>
       <TableCell>
-        <OverflowingTextWithTooltip text={thread.userEmail || '-'} />
+        <OverflowingTextWithTooltip
+          text={isNonEmptyString(thread.userEmail) ? thread.userEmail : '-'}
+        />
       </TableCell>
       <TableCell color={themeCssVariables.font.color.primary}>
-        <OverflowingTextWithTooltip text={thread.title || t`Untitled`} />
+        <OverflowingTextWithTooltip
+          text={isNonEmptyString(thread.title) ? thread.title : t`Untitled`}
+        />
       </TableCell>
       <TableCell align="right">{thread.messageCount}</TableCell>
       <TableCell align="right">
