@@ -1,3 +1,4 @@
+import { type MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
@@ -36,9 +37,9 @@ const buildGoBackMock = ({
   },
 });
 
-const renderGoBackHook = (mocks: readonly unknown[]) => {
+const renderGoBackHook = (mocks: readonly MockedResponse[]) => {
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <MockedProvider mocks={mocks as never}>
+    <MockedProvider mocks={mocks}>
       <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     </MockedProvider>
   );
