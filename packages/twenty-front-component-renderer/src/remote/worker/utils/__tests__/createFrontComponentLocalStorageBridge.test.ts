@@ -194,4 +194,81 @@ describe('createFrontComponentLocalStorageBridge', () => {
       'host is down',
     );
   });
+
+  it('should roll back a write the host refused to persist', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    bridge.seed({ theme: '"dark"' });
+
+    hostCommunicationApi.localStorageSet.mockRejectedValueOnce(
+      new Error('host is down'),
+    );
+
+    await expect(bridge.setItemAndPersist('theme', '"light"')).rejects.toThrow(
+      'host is down',
+    );
+    expect(bridge.getItem('theme')).toBe('"dark"');
+  });
+
+  it('should drop a refused write of a key that did not exist before', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    hostCommunicationApi.localStorageSet.mockRejectedValueOnce(
+      new Error('host is down'),
+    );
+
+    await expect(bridge.setItemAndPersist('theme', '"dark"')).rejects.toThrow(
+      'host is down',
+    );
+    expect(bridge.getItem('theme')).toBeNull();
+    expect(bridge.getKeys()).toEqual([]);
+  });
+
+  it('should restore an entry the host refused to delete', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    bridge.seed({ theme: '"dark"' });
+
+    hostCommunicationApi.localStorageDelete.mockRejectedValueOnce(
+      new Error('host is down'),
+    );
+
+    await expect(bridge.removeItemAndPersist('theme')).rejects.toThrow(
+      'host is down',
+    );
+    expect(bridge.getItem('theme')).toBe('"dark"');
+  });
+
+  it('should restore every entry when the host refuses to clear', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    bridge.seed({ theme: '"dark"', draft: '"hello"' });
+
+    hostCommunicationApi.localStorageClear.mockRejectedValueOnce(
+      new Error('host is down'),
+    );
+
+    await expect(bridge.clearAndPersist()).rejects.toThrow('host is down');
+    expect(bridge.getKeys()).toEqual(['theme', 'draft']);
+    expect(bridge.getItem('draft')).toBe('"hello"');
+  });
+
+  it('should not let a refused write roll back a newer write of the same key', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    hostCommunicationApi.localStorageSet.mockRejectedValueOnce(
+      new Error('host is down'),
+    );
+
+    const refusedWrite = bridge.setItemAndPersist('theme', '"dark"');
+    const refusedWriteMessage = refusedWrite.then(
+      () => 'resolved',
+      (error: Error) => error.message,
+    );
+
+    await bridge.setItemAndPersist('theme', '"light"');
+
+    expect(await refusedWriteMessage).toBe('host is down');
+    expect(bridge.getItem('theme')).toBe('"light"');
+  });
 });

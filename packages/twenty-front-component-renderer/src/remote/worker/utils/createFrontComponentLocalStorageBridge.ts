@@ -21,6 +21,9 @@ export const createFrontComponentLocalStorageBridge = ({
 }): FrontComponentLocalStorageWorkerBridge => {
   const entries = new Map<string, string>();
   const pendingPersistOperations: (() => void)[] = [];
+  const inFlightMutationIdByKey = new Map<string, number>();
+
+  let lastMutationId = 0;
 
   const getOtherEntriesTotalLength = (excludedKey: string): number => {
     let totalLength = 0;
@@ -34,7 +37,7 @@ export const createFrontComponentLocalStorageBridge = ({
     return totalLength;
   };
 
-  const applyLocalEntry = (key: string, serializedValue: string): void => {
+  const assertCanStore = (key: string, serializedValue: string): void => {
     const violation = getFrontComponentLocalStorageViolation({
       key,
       serializedValue,
@@ -47,8 +50,36 @@ export const createFrontComponentLocalStorageBridge = ({
         violation,
       );
     }
+  };
 
-    entries.set(key, serializedValue);
+  const startMutation = (key: string): number => {
+    lastMutationId += 1;
+    inFlightMutationIdByKey.set(key, lastMutationId);
+
+    return lastMutationId;
+  };
+
+  const endMutation = (key: string, mutationId: number): boolean => {
+    const isLatestMutation = inFlightMutationIdByKey.get(key) === mutationId;
+
+    if (isLatestMutation) {
+      inFlightMutationIdByKey.delete(key);
+    }
+
+    return isLatestMutation;
+  };
+
+  const restoreEntry = (
+    key: string,
+    previousValue: string | undefined,
+  ): void => {
+    if (isDefined(previousValue)) {
+      entries.set(key, previousValue);
+
+      return;
+    }
+
+    entries.delete(key);
   };
 
   const schedulePersist = <TResult>(
@@ -93,29 +124,78 @@ export const createFrontComponentLocalStorageBridge = ({
     key: string,
     serializedValue: string,
   ): Promise<void> => {
-    applyLocalEntry(key, serializedValue);
+    assertCanStore(key, serializedValue);
 
-    await schedulePersist((hostCommunicationApi) =>
-      hostCommunicationApi.localStorageSet?.(key, serializedValue),
-    );
+    const previousValue = entries.get(key);
+
+    entries.set(key, serializedValue);
+
+    const mutationId = startMutation(key);
+
+    try {
+      await schedulePersist((hostCommunicationApi) =>
+        hostCommunicationApi.localStorageSet?.(key, serializedValue),
+      );
+    } catch (error) {
+      if (endMutation(key, mutationId)) {
+        restoreEntry(key, previousValue);
+      }
+
+      throw error;
+    }
+
+    endMutation(key, mutationId);
   };
 
   const removeItemAndPersist = async (key: string): Promise<boolean> => {
+    const previousValue = entries.get(key);
     const wasPresent = entries.delete(key);
+    const mutationId = startMutation(key);
 
-    await schedulePersist((hostCommunicationApi) =>
-      hostCommunicationApi.localStorageDelete?.(key),
-    );
+    try {
+      await schedulePersist((hostCommunicationApi) =>
+        hostCommunicationApi.localStorageDelete?.(key),
+      );
+    } catch (error) {
+      if (endMutation(key, mutationId)) {
+        restoreEntry(key, previousValue);
+      }
+
+      throw error;
+    }
+
+    endMutation(key, mutationId);
 
     return wasPresent;
   };
 
   const clearAndPersist = async (): Promise<void> => {
+    const previousEntries = new Map(entries);
+    const mutationIdByKey = new Map<string, number>();
+
+    for (const key of previousEntries.keys()) {
+      mutationIdByKey.set(key, startMutation(key));
+    }
+
     entries.clear();
 
-    await schedulePersist((hostCommunicationApi) =>
-      hostCommunicationApi.localStorageClear?.(),
-    );
+    try {
+      await schedulePersist((hostCommunicationApi) =>
+        hostCommunicationApi.localStorageClear?.(),
+      );
+    } catch (error) {
+      for (const [key, mutationId] of mutationIdByKey) {
+        if (endMutation(key, mutationId)) {
+          restoreEntry(key, previousEntries.get(key));
+        }
+      }
+
+      throw error;
+    }
+
+    for (const [key, mutationId] of mutationIdByKey) {
+      endMutation(key, mutationId);
+    }
   };
 
   return {
@@ -129,16 +209,12 @@ export const createFrontComponentLocalStorageBridge = ({
 
     setItem: (key, serializedValue) => {
       try {
-        applyLocalEntry(key, serializedValue);
+        assertCanStore(key, serializedValue);
       } catch (error) {
         throw toQuotaExceededDomException(error);
       }
 
-      persistInBackground(
-        schedulePersist((hostCommunicationApi) =>
-          hostCommunicationApi.localStorageSet?.(key, serializedValue),
-        ),
-      );
+      persistInBackground(setItemAndPersist(key, serializedValue));
     },
 
     removeItem: (key) => {
