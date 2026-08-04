@@ -17,8 +17,15 @@ export const getIsCookieAuthActive = (): boolean => {
 };
 
 export const setIsCookieAuthActiveInStorage = (isActive: boolean): void => {
-  localStorage.setItem(
-    IS_COOKIE_AUTH_ACTIVE_LOCAL_STORAGE_KEY,
-    JSON.stringify(isActive),
-  );
+  // Called from the unauthenticated-error path, where a storage exception
+  // would escape into error handling. Blocked storage degrades to keeping the
+  // in-memory atom as the only record of the switch.
+  try {
+    localStorage.setItem(
+      IS_COOKIE_AUTH_ACTIVE_LOCAL_STORAGE_KEY,
+      JSON.stringify(isActive),
+    );
+  } catch {
+    // noop
+  }
 };

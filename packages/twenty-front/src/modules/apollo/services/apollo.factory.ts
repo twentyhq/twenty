@@ -153,6 +153,7 @@ export class ApolloFactory implements ApolloManager {
               ...headers,
               ...optionHeaders,
               'x-locale': locale,
+              ...(this.appVersion && { 'X-App-Version': this.appVersion }),
             },
           };
         }
@@ -233,6 +234,12 @@ export class ApolloFactory implements ApolloManager {
           setIsCookieAuthActiveInStorage(false);
           onCookieAuthDeactivated?.();
           operation.setContext({ hasAttemptedCookieAuthFallback: true });
+          // Deactivation is sticky for the rest of the mount by design. Both
+          // credentials stay valid, so re-probing after every fallback would
+          // thrash between them for the whole rollout: the probe succeeds on a
+          // rolled pod, the next request lands on an old one and falls back
+          // again. CookieSessionBootEffect re-probes on the next mount, which
+          // restores cookie auth once the fleet is uniform.
           // Deliberately falls through to the renewal below rather than
           // replaying immediately: the retained access token is likely to have
           // expired while the client was authenticating by cookie, so the

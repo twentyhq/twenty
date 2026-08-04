@@ -387,6 +387,8 @@ describe('ApolloFactory', () => {
       >;
 
       expect(headers.authorization).toBeUndefined();
+      // Version-mismatch detection must keep working in cookie-auth mode.
+      expect(headers['x-app-version']).toBe('1.0.0');
     });
 
     it('should fall back to the token pair instead of signing out when a server ignores the session cookie', async () => {
