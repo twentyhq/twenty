@@ -11,6 +11,7 @@ describe('SystemPromptBuilderService', () => {
       const result = service.buildUserContextSection({
         firstName: 'John',
         lastName: 'Doe',
+        jobTitle: null,
         locale: 'en',
         timezone: 'system',
       });
@@ -19,12 +20,41 @@ describe('SystemPromptBuilderService', () => {
       expect(result).toContain('Current date:');
     });
 
+    it('omits the job title line when the workspace member has none', () => {
+      const service = buildService();
+
+      const result = service.buildUserContextSection({
+        firstName: 'John',
+        lastName: 'Doe',
+        jobTitle: '',
+        locale: 'en',
+        timezone: 'system',
+      });
+
+      expect(result).not.toContain('Job title:');
+    });
+
+    it('includes the job title line when the workspace member has one', () => {
+      const service = buildService();
+
+      const result = service.buildUserContextSection({
+        firstName: 'John',
+        lastName: 'Doe',
+        jobTitle: 'Head of Marketing',
+        locale: 'en',
+        timezone: 'system',
+      });
+
+      expect(result).toContain('Job title: Head of Marketing');
+    });
+
     it('includes the timezone line for a valid IANA timezone', () => {
       const service = buildService();
 
       const result = service.buildUserContextSection({
         firstName: 'John',
         lastName: 'Doe',
+        jobTitle: null,
         locale: 'en',
         timezone: 'America/New_York',
       });

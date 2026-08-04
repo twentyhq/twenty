@@ -1,3 +1,4 @@
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { faker } from '@faker-js/faker';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
@@ -37,6 +38,7 @@ export const getFlatObjectMetadataMock = (
     isSystem: false,
     isUIEditable: true,
     isUICreatable: true,
+    openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId,
     labelPlural: 'default flat object metadata label plural',
     labelSingular: 'default flat object metadata label singular',

@@ -230,11 +230,13 @@ const buildBotStatusChangeWebhook = ({
   botId,
   metadata,
   statusCode,
+  statusSubCode,
   statusTimestamp,
 }: {
   botId: string;
   metadata: Record<string, string>;
   statusCode: string;
+  statusSubCode?: string;
   statusTimestamp?: string;
 }) => ({
   event: 'bot.status_change',
@@ -242,6 +244,7 @@ const buildBotStatusChangeWebhook = ({
     bot_id: botId,
     status: {
       code: statusCode,
+      ...(statusSubCode === undefined ? {} : { sub_code: statusSubCode }),
       created_at: statusTimestamp ?? new Date().toISOString(),
     },
     bot: { id: botId, metadata },
@@ -702,6 +705,40 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(callRecording.status).toBe('FAILED');
       expect(callRecording.callRecorderFailureReason).toBe('fatal');
+    });
+
+    it('marks the recording NOT_RECORDED when nobody joined the meeting', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'call_ended',
+          statusSubCode: 'timeout_exceeded_noone_joined',
+        }),
+      );
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('NOT_RECORDED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'timeout_exceeded_noone_joined',
+      );
+
+      const lateDoneResult = await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'done',
+        }),
+      );
+
+      expect(lateDoneResult.status).toBe('skipped');
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'NOT_RECORDED',
+      );
     });
 
     it('ignores webhooks that match no known recording', async () => {

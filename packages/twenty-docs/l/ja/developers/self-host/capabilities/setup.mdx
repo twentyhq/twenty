@@ -205,7 +205,13 @@ Microsoft Azureコンソールで"権限"の欄で以下のAPIを有効にしま
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-注: "Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合に必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
+<Note>
+"Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合にのみ必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
+</Note>
+
+<Note>
+ワークフローアクションを使用してカレンダーイベントを作成する場合は、"Calendars.ReadWrite" が必須です。 カレンダーイベントを同期するだけの場合は、"Calendars.Read" を使用してください。
+</Note>
 
 ### 認証されたリダイレクトURI
 
@@ -381,3 +387,21 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 `LOGIC_FUNCTION_TYPE=DISABLED` または `CODE_INTERPRETER_TYPE=DISABLED` を使用している場合、実行しようとするとエラーが返されます。 これは、これらの機能なしで Twenty を実行したい場合に便利です。
 </Note>
+
+## API とフロントエンドが別ホスト上にある場合
+
+バックエンドにフロントエンドを配信させない場合にのみ関連します。 同一オリジンでのデプロイの場合、ここで設定する必要はありません。
+
+API と通信するすべてのブラウザーオリジンを、カンマ区切りで指定してください。 `SERVER_URL`
+および `FRONTEND_URL` は既に信頼済みです。
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Cookie セッションを使用するバージョンにアップグレードすると、これが必須になります。 フロントエンドは
+すべてのリクエストでクレデンシャルを送信し、ブラウザーは宣言されていないオリジンからのクレデンシャル付きレスポンスを拒否するため、この設定を行うまでアプリは読み込めません。
+</Warning>
+
+2 つのホストが異なる登録可能ドメイン（単なる異なるサブドメインではない）の場合は、`AUTH_COOKIE_SAME_SITE=none` も設定してください。これは HTTPS を必須とします。

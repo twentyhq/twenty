@@ -22,7 +22,7 @@ const renewTokenMutation = async (
   uri: string | undefined,
   refreshToken: string,
 ) => {
-  const httpLink = new HttpLink({ uri });
+  const httpLink = new HttpLink({ uri, credentials: 'include' });
 
   const client = new ApolloClient({
     link: ApolloLink.from([...(isDebugMode ? [logger] : []), httpLink]),

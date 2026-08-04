@@ -5,13 +5,17 @@ import { type Request, type Response } from 'express';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
@@ -23,6 +27,14 @@ import {
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { type CustomException } from 'src/utils/custom-exception';
 
+const DEAD_SESSION_COOKIE_EXCEPTION_CODES = new Set<string>([
+  AuthExceptionCode.UNAUTHENTICATED,
+  AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+  AuthExceptionCode.FORBIDDEN_EXCEPTION,
+  AuthExceptionCode.USER_NOT_FOUND,
+  AuthExceptionCode.WORKSPACE_NOT_FOUND,
+]);
+
 @Injectable()
 export class MiddlewareService {
   constructor(
@@ -31,12 +43,19 @@ export class MiddlewareService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
   public isTokenPresent(request: Request): boolean {
     const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
-    return !!token;
+    if (token) {
+      return true;
+    }
+
+    return isDefined(
+      this.userSessionCookieService.extractSessionTokenFromRequest(request),
+    );
   }
 
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -115,6 +134,26 @@ export class MiddlewareService {
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
+  private clearDeadSessionCookie(request: Request, error: unknown) {
+    const isCookieAuthenticated = !isNonEmptyString(
+      this.jwtWrapperService.extractJwtFromRequest()(request),
+    );
+
+    const isDeadCredential =
+      error instanceof AuthException &&
+      DEAD_SESSION_COOKIE_EXCEPTION_CODES.has(error.code);
+
+    if (
+      !isCookieAuthenticated ||
+      !isDeadCredential ||
+      !isDefined(request.res)
+    ) {
+      return;
+    }
+
+    this.userSessionCookieService.clearSessionCookie(request.res);
+  }
+
   public async hydrateGraphqlRequest(request: Request) {
     if (!this.isTokenPresent(request)) {
       request.locale =
@@ -124,7 +163,20 @@ export class MiddlewareService {
       return;
     }
 
-    const data = await this.accessTokenService.validateTokenByRequest(request);
+    let data;
+
+    try {
+      data = await this.accessTokenService.validateTokenByRequest(request);
+    } catch (error) {
+      // Clearing is a response side effect, never a reason to swallow: letting
+      // the request continue unauthenticated builds the schema without the
+      // workspace, so the client gets "Cannot query field" instead of an auth
+      // error and never learns its session was revoked.
+      this.clearDeadSessionCookie(request, error);
+
+      throw error;
+    }
+
     const metadataVersion = data.workspace
       ? await this.getOrSeedMetadataVersion(data.workspace)
       : undefined;
