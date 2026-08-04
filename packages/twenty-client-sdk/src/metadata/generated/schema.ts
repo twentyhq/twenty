@@ -3187,7 +3187,7 @@ export interface Mutation {
     __typename: 'Mutation'
 }
 
-export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'CampaignImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
+export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
@@ -9855,7 +9855,7 @@ export const enumFileFolder = {
    Dependencies: 'Dependencies' as const,
    Workflow: 'Workflow' as const,
    EmailAttachment: 'EmailAttachment' as const,
-   CampaignImage: 'CampaignImage' as const,
+   EmailImage: 'EmailImage' as const,
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const

@@ -27,7 +27,7 @@ describe('buildAdvancedTextEditorExtensions', () => {
     );
   });
 
-  it('should reproduce the historical full rich text set for campaignBody', () => {
+  it('should build the structured email extension set for campaign bodies', () => {
     const extensions = buildAdvancedTextEditorExtensions({
       capabilities: ADVANCED_TEXT_EDITOR_PRESETS.campaignBody.capabilities,
       context: {},
@@ -48,6 +48,12 @@ describe('buildAdvancedTextEditorExtensions', () => {
         'uploadImage',
         'variableTag',
         'slash-command',
+        'section',
+        'columns',
+        'column',
+        'button',
+        'divider',
+        'html',
       ]),
     );
   });

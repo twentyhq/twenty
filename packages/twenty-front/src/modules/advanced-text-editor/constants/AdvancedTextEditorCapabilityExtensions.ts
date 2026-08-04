@@ -9,6 +9,7 @@ import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-imag
 import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 import { type AdvancedTextEditorCapability } from '@/advanced-text-editor/types/AdvancedTextEditorCapability';
+import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
@@ -22,7 +23,7 @@ import { Strike } from '@tiptap/extension-strike';
 import { Underline } from '@tiptap/extension-underline';
 
 export type AdvancedTextEditorExtensionContext = {
-  onImageUpload?: (file: File) => Promise<string>;
+  onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
 };
 

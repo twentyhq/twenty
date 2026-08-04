@@ -9,14 +9,14 @@ import {
 } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { CampaignBlockSettingsFieldInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
+import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
 import {
-  CampaignBoxSidesInput,
+  EmailBoxSidesInput,
   type CssBoxSides,
-} from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
-import { CAMPAIGN_BODY_THEME_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignBodyThemeFields';
-import { CAMPAIGN_PAGE_THEME_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignPageThemeFields';
-import { type CampaignThemeField } from '@/side-panel/pages/campaign-block-settings/types/CampaignThemeField';
+} from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
+import { EMAIL_BODY_THEME_FIELDS } from '@/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields';
+import { EMAIL_PAGE_THEME_FIELDS } from '@/side-panel/pages/email-block-settings/constants/EmailPageThemeFields';
+import { type EmailThemeField } from '@/side-panel/pages/email-block-settings/types/EmailThemeField';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -63,7 +63,7 @@ const sidesToThemeBoxValue = ({ top, right, bottom, left }: CssBoxSides) =>
     ? top
     : `${top} ${right} ${bottom} ${left}`;
 
-type CampaignPageStyleSectionProps = {
+type EmailPageStyleSectionProps = {
   editor: Editor;
 };
 
@@ -71,9 +71,9 @@ type CampaignPageStyleSectionProps = {
 // behind the email, then the email body itself. Both groups render through
 // the same field inputs as a selected block, so a control added for one
 // surface is available to the other.
-export const CampaignPageStyleSection = ({
+export const EmailPageStyleSection = ({
   editor,
-}: CampaignPageStyleSectionProps) => {
+}: EmailPageStyleSectionProps) => {
   const { t, i18n } = useLingui();
 
   const canvasTheme = useEditorState({
@@ -103,10 +103,10 @@ export const CampaignPageStyleSection = ({
       .run();
   };
 
-  const renderThemeField = (field: CampaignThemeField) => {
+  const renderThemeField = (field: EmailThemeField) => {
     if (field.input === 'box') {
       return (
-        <CampaignBoxSidesInput
+        <EmailBoxSidesInput
           key={field.property}
           label={i18n._(field.label)}
           sides={themeBoxValueToSides(canvasTheme[field.property])}
@@ -119,7 +119,7 @@ export const CampaignPageStyleSection = ({
     }
 
     return (
-      <CampaignBlockSettingsFieldInput
+      <EmailBlockSettingsFieldInput
         key={field.property}
         field={field}
         value={canvasTheme[field.property]}
@@ -131,10 +131,10 @@ export const CampaignPageStyleSection = ({
   return (
     <StyledContainer>
       <StyledGroupTitle>{t`Page style`}</StyledGroupTitle>
-      {CAMPAIGN_PAGE_THEME_FIELDS.map(renderThemeField)}
+      {EMAIL_PAGE_THEME_FIELDS.map(renderThemeField)}
 
       <StyledGroupTitle>{t`Body`}</StyledGroupTitle>
-      {CAMPAIGN_BODY_THEME_FIELDS.map(renderThemeField)}
+      {EMAIL_BODY_THEME_FIELDS.map(renderThemeField)}
     </StyledContainer>
   );
 };

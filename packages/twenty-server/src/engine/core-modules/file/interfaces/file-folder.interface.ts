@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
 registerEnumType(FileFolder, {
@@ -9,6 +10,7 @@ registerEnumType(FileFolder, {
 export type FileFolderConfig = {
   ignoreExpirationToken: boolean;
   cacheControl: string | null;
+  allowedMimeTypes?: readonly string[];
 };
 
 export const IMMUTABLE_FILE_CACHE_CONTROL = 'private, max-age=86400, immutable';
@@ -61,13 +63,14 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
-  // Embedded in outbound campaigns and fetched by recipients' mail clients,
+  // Embedded in outbound emails and fetched by recipients' mail clients,
   // which never authenticate and may open the email years later, so the token
-  // must not expire. Access control is unguessability only: put marketing
-  // assets here, never anything confidential.
-  [FileFolder.CampaignImage]: {
+  // must not expire. Access control is unguessability only: put email imagery
+  // here, never anything confidential.
+  [FileFolder.EmailImage]: {
     ignoreExpirationToken: true,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
+    allowedMimeTypes: EMAIL_IMAGE_MIME_TYPES,
   },
   [FileFolder.AppTarball]: {
     ignoreExpirationToken: false,

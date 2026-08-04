@@ -4,7 +4,7 @@ import { IconFrame, IconSquare } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
+import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledRow = styled.div`
@@ -71,7 +71,7 @@ export type CssBoxSides = {
   left: string;
 };
 
-type CampaignBoxSidesInputProps = {
+type EmailBoxSidesInputProps = {
   label: string;
   sides: CssBoxSides;
   onChange: (sides: CssBoxSides) => void;
@@ -81,12 +81,12 @@ type CampaignBoxSidesInputProps = {
 // A box property (padding, margin, corner radius) edited either as one value
 // for all sides or side by side. Works on the four sides directly; the
 // caller owns how they map to style properties.
-export const CampaignBoxSidesInput = ({
+export const EmailBoxSidesInput = ({
   label,
   sides,
   onChange,
   placeholder,
-}: CampaignBoxSidesInputProps) => {
+}: EmailBoxSidesInputProps) => {
   const [isPerSide, setIsPerSide] = useState(!areAllSidesEqual(sides));
 
   const commitAllSides = (input: string) => {
@@ -101,7 +101,7 @@ export const CampaignBoxSidesInput = ({
 
   return (
     <div>
-      <StyledCampaignFieldLabel>{label}</StyledCampaignFieldLabel>
+      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
       <StyledRow>
         {isPerSide ? (
           <StyledSidesGrid>

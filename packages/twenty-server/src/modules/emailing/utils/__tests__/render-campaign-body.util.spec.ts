@@ -127,8 +127,9 @@ describe('renderCampaignBodyToHtml', () => {
           {
             type: 'image',
             attrs: {
-              src: 'https://example.com/banner.png',
+              src: 'https://example.com/{{personId}}/banner.png',
               href: 'https://example.com/promo/{{personId}}',
+              alt: 'Banner for {{firstName}}',
             },
           },
         ],
@@ -139,6 +140,10 @@ describe('renderCampaignBodyToHtml', () => {
     expect(renderedDocument().content[0].attrs.href).toBe(
       'https://example.com/promo/person-123',
     );
+    expect(renderedDocument().content[0].attrs.src).toBe(
+      'https://example.com/person-123/banner.png',
+    );
+    expect(renderedDocument().content[0].attrs.alt).toBe('Banner for Ada');
   });
 
   it('should substitute variables inside raw HTML blocks with escaping', async () => {

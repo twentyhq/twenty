@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 
-import { type CampaignThemeField } from '@/side-panel/pages/campaign-block-settings/types/CampaignThemeField';
+import { type EmailThemeField } from '@/side-panel/pages/email-block-settings/types/EmailThemeField';
 
-export const CAMPAIGN_BODY_THEME_FIELDS: CampaignThemeField[] = [
+export const EMAIL_BODY_THEME_FIELDS: EmailThemeField[] = [
   { label: msg`Alignment`, property: 'textAlign', input: 'alignment' },
   { label: msg`Text`, property: 'textColor', input: 'color' },
   { label: msg`Background`, property: 'bodyBackground', input: 'color' },

@@ -11,18 +11,18 @@ import { IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
+import { activeEmailEditorState } from '@/advanced-text-editor/states/activeEmailEditorState';
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { getBlockStyle } from '@/advanced-text-editor/utils/getBlockStyle';
-import { CampaignBlockSettingsFieldInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
+import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
 import {
-  CampaignBoxSidesInput,
+  EmailBoxSidesInput,
   type CssBoxSides,
-} from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
-import { CampaignPageStyleSection } from '@/side-panel/pages/campaign-block-settings/components/CampaignPageStyleSection';
-import { CAMPAIGN_BLOCK_SETTINGS_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignBlockSettingsFields';
-import { getCampaignBlockLabel } from '@/side-panel/pages/campaign-block-settings/utils/getCampaignBlockLabel';
-import { getEffectiveSectionStyleValue } from '@/side-panel/pages/campaign-block-settings/utils/getEffectiveSectionStyleValue';
+} from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
+import { EmailPageStyleSection } from '@/side-panel/pages/email-block-settings/components/EmailPageStyleSection';
+import { EMAIL_BLOCK_SETTINGS_FIELDS } from '@/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields';
+import { getEmailBlockLabel } from '@/side-panel/pages/email-block-settings/utils/getEmailBlockLabel';
+import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -70,7 +70,7 @@ const BOX_FIELD_SIDE_PROPERTIES: Record<
   ],
 };
 
-const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
+const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const { i18n, t } = useLingui();
   const target = useEditorState({
     editor,
@@ -81,10 +81,10 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   // With no block selected, the panel edits the page itself, like Resend's
   // "Page style" default state.
   if (!isDefined(target)) {
-    return <CampaignPageStyleSection editor={editor} />;
+    return <EmailPageStyleSection editor={editor} />;
   }
 
-  const fields = CAMPAIGN_BLOCK_SETTINGS_FIELDS[target.nodeType] ?? [];
+  const fields = EMAIL_BLOCK_SETTINGS_FIELDS[target.nodeType] ?? [];
   const styles = getBlockStyle(target.attrs.style);
   const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
 
@@ -190,7 +190,7 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
     <StyledContainer>
       <StyledBlockHeader>
         <StyledBlockTitle>
-          {getCampaignBlockLabel(target.nodeType)}
+          {getEmailBlockLabel(target.nodeType)}
         </StyledBlockTitle>
         <LightIconButton
           Icon={IconTrash}
@@ -210,7 +210,7 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
           isDefined(sideProperties)
         ) {
           return (
-            <CampaignBoxSidesInput
+            <EmailBoxSidesInput
               key={key}
               label={i18n._(field.label)}
               sides={{
@@ -226,7 +226,7 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
         }
 
         return (
-          <CampaignBlockSettingsFieldInput
+          <EmailBlockSettingsFieldInput
             key={key}
             field={field}
             value={
@@ -242,17 +242,15 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   );
 };
 
-export const SidePanelCampaignBlockSettingsPage = () => {
+export const SidePanelEmailBlockSettingsPage = () => {
   const { t } = useLingui();
-  const campaignBodyEditor = useAtomStateValue(campaignBodyEditorState);
+  const activeEmailEditor = useAtomStateValue(activeEmailEditorState);
 
-  if (!isDefined(campaignBodyEditor) || campaignBodyEditor.isDestroyed) {
+  if (!isDefined(activeEmailEditor) || activeEmailEditor.isDestroyed) {
     return (
-      <StyledHint>
-        {t`Open a draft campaign composer to edit block settings.`}
-      </StyledHint>
+      <StyledHint>{t`Open an email editor to edit block settings.`}</StyledHint>
     );
   }
 
-  return <CampaignBlockSettingsContent editor={campaignBodyEditor} />;
+  return <EmailBlockSettingsContent editor={activeEmailEditor} />;
 };

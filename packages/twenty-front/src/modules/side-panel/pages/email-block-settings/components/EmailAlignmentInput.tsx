@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
+import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
 
 const StyledAlignRow = styled.div`
   display: flex;
@@ -40,19 +40,19 @@ export const CAMPAIGN_ALIGN_OPTIONS = [
   { align: 'right', Icon: IconAlignRight },
 ] as const;
 
-type CampaignAlignmentInputProps = {
+type EmailAlignmentInputProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
 };
 
-export const CampaignAlignmentInput = ({
+export const EmailAlignmentInput = ({
   label,
   value,
   onChange,
-}: CampaignAlignmentInputProps) => (
+}: EmailAlignmentInputProps) => (
   <div>
-    <StyledCampaignFieldLabel>{label}</StyledCampaignFieldLabel>
+    <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
     <StyledAlignRow>
       {CAMPAIGN_ALIGN_OPTIONS.map(({ align, Icon }) => (
         <StyledAlignButton

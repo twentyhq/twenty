@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
+import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledRow = styled.div`
@@ -42,22 +42,22 @@ const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
 // oxlint-disable-next-line twenty/no-hardcoded-colors
 const COLOR_SWATCH_FALLBACK = '#ffffff';
 
-type CampaignColorInputProps = {
+type EmailColorInputProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
 };
 
-export const CampaignColorInput = ({
+export const EmailColorInput = ({
   label,
   value,
   onChange,
   placeholder,
-}: CampaignColorInputProps) => {
+}: EmailColorInputProps) => {
   return (
     <div>
-      <StyledCampaignFieldLabel>{label}</StyledCampaignFieldLabel>
+      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
       <StyledRow>
         <StyledColorSwatchInput
           type="color"

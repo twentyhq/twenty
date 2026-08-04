@@ -28,5 +28,5 @@ export enum SidePanelPages {
   PageLayoutRecordPageWidgetTypeSelect = 'page-layout-record-page-widget-type-select',
   ComposeEmail = 'compose-email',
   SendCampaignTest = 'send-campaign-test',
-  CampaignBlockSettings = 'campaign-block-settings',
+  EmailBlockSettings = 'email-block-settings',
 }

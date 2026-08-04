@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { parseCssSizeValue } from '@/advanced-text-editor/utils/parseCssSizeValue';
-import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
+import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledRow = styled.div`
@@ -29,7 +29,7 @@ const StyledUnitSelect = styled.select`
 
 const SIZE_UNITS = ['px', '%', 'em'] as const;
 
-type CampaignSizeInputProps = {
+type EmailSizeInputProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -37,12 +37,12 @@ type CampaignSizeInputProps = {
 };
 
 // A "600px"-style value split into a number input and a unit dropdown.
-export const CampaignSizeInput = ({
+export const EmailSizeInput = ({
   label,
   value,
   onChange,
   placeholder,
-}: CampaignSizeInputProps) => {
+}: EmailSizeInputProps) => {
   const { amount, unit } = parseCssSizeValue(value);
   const displayedAmount = amount === '' ? value.trim() : amount;
 
@@ -65,7 +65,7 @@ export const CampaignSizeInput = ({
 
   return (
     <div>
-      <StyledCampaignFieldLabel>{label}</StyledCampaignFieldLabel>
+      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
       <StyledRow>
         <TextInput
           value={displayedAmount}

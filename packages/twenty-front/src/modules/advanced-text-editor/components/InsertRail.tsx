@@ -2,11 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useRef, useState } from 'react';
-import {
-  isDefined,
-  listCampaignVariablesForFields,
-  TIPTAP_NODE_TYPES,
-} from 'twenty-shared/utils';
+import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
+import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
   IconBox,
   IconClick,
@@ -29,9 +26,8 @@ import { Button, LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 const StyledRail = styled.div`
   align-items: center;
@@ -97,12 +93,17 @@ const columnJson = () => ({
 
 type InsertRailProps = {
   editor: Editor;
-  onImageUpload?: (file: File) => Promise<string>;
+  onImageUpload?: (file: File) => Promise<UploadedImage>;
+  variables?: Array<{ label: string; value: string }>;
 };
 
 // The floating insert rail on the left of the email canvas: text, image and
 // layout blocks, mirroring the slash menu for pointer-first authoring.
-export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
+export const InsertRail = ({
+  editor,
+  onImageUpload,
+  variables = [],
+}: InsertRailProps) => {
   const { t } = useLingui();
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -111,26 +112,11 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
   >(null);
   const [imageUrl, setImageUrl] = useState('');
 
-  const hasVariables = hasEditorExtension(editor, 'variableTag');
+  const hasVariables =
+    variables.length > 0 && hasEditorExtension(editor, 'variableTag');
 
-  const { objectMetadataItem: personObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Person,
-    });
-
-  const variableItems: Array<{
-    label: string;
-    name: string;
-  }> = [
-    ...listCampaignVariablesForFields(personObjectMetadataItem.fields).map(
-      ({ label, name }) => ({ label, name }),
-    ),
-    { label: t`Full name`, name: 'fullName' },
-    { label: t`Person ID`, name: 'personId' },
-  ];
-
-  const insertVariable = (name: string) => {
-    editor.chain().focus().insertVariableTag(`{{${name}}}`).run();
+  const insertVariable = (value: string) => {
+    editor.chain().focus().insertVariableTag(value).run();
     setOpenMenu(null);
   };
 
@@ -196,11 +182,14 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
     setIsUploadingImage(true);
 
     try {
-      const uploadedUrl = await onImageUpload(file);
+      const uploadedImage = await onImageUpload(file);
 
       insertAtEnd({
         type: TIPTAP_NODE_TYPES.IMAGE,
-        attrs: { src: uploadedUrl },
+        attrs: {
+          fileId: uploadedImage.fileId ?? null,
+          src: uploadedImage.url,
+        },
       });
     } catch {
     } finally {
@@ -270,7 +259,7 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
       <input
         ref={imageFileInputRef}
         type="file"
-        accept="image/*"
+        accept={EMAIL_IMAGE_MIME_TYPES.join(',')}
         hidden
         onChange={(event) => {
           void handleFilePicked(event.target.files?.[0]);
@@ -321,14 +310,12 @@ export const InsertRail = ({ editor, onImageUpload }: InsertRailProps) => {
       </StyledRail>
       {openMenu === 'variables' && (
         <StyledPopover>
-          {variableItems.map(({ label, name }) => (
+          {variables.map(({ label, value }) => (
             <MenuItem
-              key={name}
-              text={
-                <StyledVariableLiteral>{`{{${name}}}`}</StyledVariableLiteral>
-              }
+              key={value}
+              text={<StyledVariableLiteral>{value}</StyledVariableLiteral>}
               contextualText={label}
-              onClick={() => insertVariable(name)}
+              onClick={() => insertVariable(value)}
             />
           ))}
         </StyledPopover>

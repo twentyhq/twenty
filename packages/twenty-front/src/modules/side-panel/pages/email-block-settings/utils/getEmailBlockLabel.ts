@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-export const getCampaignBlockLabel = (nodeType: string): string => {
+export const getEmailBlockLabel = (nodeType: string): string => {
   switch (nodeType) {
     case TIPTAP_NODE_TYPES.SECTION:
       return t`Section`;

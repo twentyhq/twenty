@@ -5,23 +5,23 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
-import { type CampaignStyleFieldKind } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
+import { type EmailStyleFieldKind } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
 
-export type CampaignBlockSettingsField = {
+export type EmailBlockSettingsField = {
   label: MessageDescriptor;
   // 'style' fields edit one property of the inline CSS style attribute;
   // 'attribute' fields edit a plain node attribute (e.g. the button href).
   kind: 'style' | 'attribute';
   property: string;
-  input: CampaignStyleFieldKind;
+  input: EmailStyleFieldKind;
   placeholder?: string;
 };
 
 // Which fields the block settings side panel offers per email block node,
 // in display order. The equivalent of @react-email/editor's getDefaultLayout.
-export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
+export const EMAIL_BLOCK_SETTINGS_FIELDS: Record<
   string,
-  CampaignBlockSettingsField[]
+  EmailBlockSettingsField[]
 > = {
   [TIPTAP_NODE_TYPES.SECTION]: [
     // Typography here cascades to every block inside the section, so a

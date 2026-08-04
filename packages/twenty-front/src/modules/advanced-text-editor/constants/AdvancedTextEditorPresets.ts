@@ -1,3 +1,4 @@
+import { EMAIL_DOCUMENT_CAPABILITIES } from '@/advanced-text-editor/constants/EmailDocumentCapabilities';
 import { FULL_RICH_TEXT_CAPABILITIES } from '@/advanced-text-editor/constants/FullRichTextCapabilities';
 import { type AdvancedTextEditorPreset } from '@/advanced-text-editor/types/AdvancedTextEditorPreset';
 
@@ -15,16 +16,7 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
     enableFullScreen: false,
     // campaignVariables rather than variables: same node, but the workflow
     // chip view resolves against workflow context and throws without it.
-    capabilities: [
-      'basicMarks',
-      'headings',
-      'lists',
-      'links',
-      'images',
-      'campaignVariables',
-      'slashCommand',
-      'blocks',
-    ],
+    capabilities: [...EMAIL_DOCUMENT_CAPABILITIES, 'campaignVariables'],
   },
   inlineEmailBody: {
     contentType: 'html',

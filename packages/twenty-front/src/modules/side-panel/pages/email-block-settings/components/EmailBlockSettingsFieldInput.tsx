@@ -1,14 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
 import { type MessageDescriptor } from '@lingui/core';
 
-import { CampaignAlignmentInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignAlignmentInput';
-import { CampaignColorInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignColorInput';
-import { CampaignSizeInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignSizeInput';
-import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
+import { EmailAlignmentInput } from '@/side-panel/pages/email-block-settings/components/EmailAlignmentInput';
+import { EmailColorInput } from '@/side-panel/pages/email-block-settings/components/EmailColorInput';
+import { EmailSizeInput } from '@/side-panel/pages/email-block-settings/components/EmailSizeInput';
+import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-export type CampaignStyleFieldKind =
+export type EmailStyleFieldKind =
   | 'text'
   | 'color'
   | 'box'
@@ -16,28 +16,28 @@ export type CampaignStyleFieldKind =
   | 'alignment'
   | 'textarea';
 
-type CampaignBlockSettingsFieldInputProps = {
+type EmailBlockSettingsFieldInputProps = {
   field: {
     label: MessageDescriptor;
-    input: CampaignStyleFieldKind;
+    input: EmailStyleFieldKind;
     placeholder?: string;
   };
   value: string;
   onChange: (value: string) => void;
 };
 
-export const CampaignBlockSettingsFieldInput = ({
+export const EmailBlockSettingsFieldInput = ({
   field,
   value,
   onChange,
-}: CampaignBlockSettingsFieldInputProps) => {
+}: EmailBlockSettingsFieldInputProps) => {
   const { i18n } = useLingui();
   const label = i18n._(field.label);
 
   switch (field.input) {
     case 'color':
       return (
-        <CampaignColorInput
+        <EmailColorInput
           label={label}
           value={value}
           onChange={onChange}
@@ -46,7 +46,7 @@ export const CampaignBlockSettingsFieldInput = ({
       );
     case 'size':
       return (
-        <CampaignSizeInput
+        <EmailSizeInput
           label={label}
           value={value}
           onChange={onChange}
@@ -55,18 +55,14 @@ export const CampaignBlockSettingsFieldInput = ({
       );
     case 'alignment':
       return (
-        <CampaignAlignmentInput
-          label={label}
-          value={value}
-          onChange={onChange}
-        />
+        <EmailAlignmentInput label={label} value={value} onChange={onChange} />
       );
     case 'textarea':
       return (
         <div>
-          <StyledCampaignFieldLabel>{label}</StyledCampaignFieldLabel>
+          <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
           <TextArea
-            textAreaId={`campaign-block-settings-${label}`}
+            textAreaId={`email-block-settings-${label}`}
             value={value}
             onChange={onChange}
             placeholder={field.placeholder ?? ''}
@@ -78,7 +74,7 @@ export const CampaignBlockSettingsFieldInput = ({
     default:
       return (
         <div>
-          <StyledCampaignFieldLabel>{label}</StyledCampaignFieldLabel>
+          <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
           <TextInput
             value={value}
             onChange={onChange}
