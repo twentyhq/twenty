@@ -239,6 +239,7 @@ describe('ClientConfigService', () => {
         .mockImplementation((key: string) => {
           if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'IS_FEATURE_FLAG_MANAGEMENT_ENABLED') return false;
 
           return undefined;
         });
@@ -287,6 +288,22 @@ describe('ClientConfigService', () => {
         .mockImplementation((key: string) => {
           if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return true;
+
+          return undefined;
+        });
+
+      const result = await service.getClientConfig();
+
+      expect(result.canManageFeatureFlags).toBe(true);
+    });
+
+    it('should allow managing feature flags when IS_FEATURE_FLAG_MANAGEMENT_ENABLED is on', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
+          if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'IS_FEATURE_FLAG_MANAGEMENT_ENABLED') return true;
 
           return undefined;
         });
