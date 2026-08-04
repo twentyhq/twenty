@@ -49,6 +49,7 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -87,15 +88,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // PENDING_CREATION) and may be retried. It is far longer than a real activation
 // takes, so a genuinely in-progress activation is never reclaimed.
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
-
-// A workspace pending creation has no roles yet, so permissions cannot be
-// resolved for it. Only the fields needed to set the workspace up may be
-// updated until it is activated.
-const WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION = new Set([
-  'displayName',
-  'subdomain',
-  'logo',
-]);
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -841,7 +833,7 @@ export class WorkspaceService {
       workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
     ) {
       const fieldsRequiringActivation = fieldsBeingUpdated.filter(
-        (field) => !WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION.has(field),
+        (field) => !(field in WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION),
       );
 
       if (fieldsRequiringActivation.length > 0) {
