@@ -95,6 +95,77 @@ describe('getGroupByExpression', () => {
     });
   });
 
+  describe('deprecated timezone alias normalization', () => {
+    // Postgres builds without tzdata's backward links reject these aliases, so
+    // they must be resolved before reaching SQL. Browsers still report them.
+    it.each([
+      ['Asia/Calcutta', 'Asia/Kolkata'],
+      ['Europe/Kiev', 'Europe/Kyiv'],
+      ['Asia/Saigon', 'Asia/Ho_Chi_Minh'],
+      ['America/Buenos_Aires', 'America/Argentina/Buenos_Aires'],
+      ['US/Eastern', 'America/New_York'],
+      ['Japan', 'Asia/Tokyo'],
+    ])(
+      'should normalize the deprecated alias %s to %s',
+      (deprecatedAlias, canonicalTimeZone) => {
+        const groupByField = buildGroupByDateField({
+          timeZone: deprecatedAlias,
+        });
+
+        const result = getGroupByExpression({
+          groupByField,
+          columnNameWithQuotes,
+        });
+
+        expect(result).toContain(`'${canonicalTimeZone}'`);
+        expect(result).not.toContain(`'${deprecatedAlias}'`);
+      },
+    );
+
+    it('should leave canonical timezones untouched', () => {
+      const groupByField = buildGroupByDateField({ timeZone: 'Asia/Kolkata' });
+
+      const result = getGroupByExpression({
+        groupByField,
+        columnNameWithQuotes,
+      });
+
+      expect(result).toContain("'Asia/Kolkata'");
+    });
+
+    // These are aliases too, but base tzdata carries them, so Postgres accepts
+    // them everywhere and rewriting would be gratuitous churn.
+    it.each(['UTC', 'GMT'])(
+      'should not rewrite %s, which base tzdata already provides',
+      (timeZone) => {
+        const groupByField = buildGroupByDateField({ timeZone });
+
+        const result = getGroupByExpression({
+          groupByField,
+          columnNameWithQuotes,
+        });
+
+        expect(result).toContain(`'${timeZone}'`);
+      },
+    );
+
+    it('should normalize both interpolations of the timezone in the WEEK expression', () => {
+      const groupByField = buildGroupByDateField({
+        dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+        timeZone: 'Asia/Calcutta',
+      });
+
+      const result = getGroupByExpression({
+        groupByField,
+        columnNameWithQuotes,
+      });
+
+      expect(result).not.toContain('Asia/Calcutta');
+      expect(result).toContain("'Asia/Kolkata')");
+      expect(result).toContain("AT TIME ZONE 'Asia/Kolkata'");
+    });
+  });
+
   describe('missing timezone handling', () => {
     it('should throw when timezone is required but not provided', () => {
       const groupByField = buildGroupByDateField({
