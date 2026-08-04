@@ -111,6 +111,9 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
               sdkPackage: '@ai-sdk/openai',
               model: {},
             }),
+            getEffectiveModelConfig: jest
+              .fn()
+              .mockReturnValue({ contextWindowTokens: 128_000 }),
           },
         },
         {
@@ -248,6 +251,21 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       { role: 'user', content: 'Status?' },
     ]);
     expect(generateTextArgs).not.toHaveProperty('prompt');
+  });
+
+  it('throws without calling the model when the history cannot fit the context window', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce(null);
+
+    await expect(
+      service.executeAgent({
+        agent: buildAgent(),
+        messages: [{ role: 'user', content: 'a'.repeat(4 * 128_000 + 1) }],
+        baseSystemPrompt: 'base system prompt',
+        workspaceId,
+      }),
+    ).rejects.toThrow(/Input is too long/);
+
+    expect(generateTextMock).not.toHaveBeenCalled();
   });
 
   it('throws without calling the model when messages are empty', async () => {
