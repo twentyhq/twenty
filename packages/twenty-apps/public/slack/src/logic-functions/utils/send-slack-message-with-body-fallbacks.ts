@@ -21,19 +21,25 @@ export const sendSlackMessageWithBodyFallbacks = async ({
   failureMessage,
   sendMessage,
 }: SendSlackMessageWithBodyFallbacksParams): Promise<SlackToolResult> => {
-  const bodies = [messageBody, ...getSlackMessageBodyFallbacks(messageBody)];
+  const messageBodies = [
+    messageBody,
+    ...getSlackMessageBodyFallbacks(messageBody),
+  ];
 
   let lastError: unknown;
 
-  for (const [index, body] of bodies.entries()) {
+  for (const [index, candidateBody] of messageBodies.entries()) {
     try {
       return await sendMessage(
-        getSlackChatMessageBodyFields({ messageText, ...body }),
+        getSlackChatMessageBodyFields({ messageText, ...candidateBody }),
       );
     } catch (error) {
       lastError = error;
 
-      if (index === bodies.length - 1 || !isSlackMarkdownFormatError(error)) {
+      if (
+        index === messageBodies.length - 1 ||
+        !isSlackMarkdownFormatError(error)
+      ) {
         return slackToolFailure(failureMessage, error);
       }
     }
