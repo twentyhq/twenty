@@ -100,9 +100,11 @@ export class WorkspaceSoftDeleteQueryBuilder<
 
       const tableName = computeObjectTargetTable(objectMetadata);
 
-      const before = await beforeEventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      const before = await beforeEventSelectQueryBuilder
+        .withDeleted()
+        .getMany({
+          noFormatting: true,
+        });
 
       this.expressionMap.wheres = applyTableAliasOnWhereCondition({
         condition: this.expressionMap.wheres,
