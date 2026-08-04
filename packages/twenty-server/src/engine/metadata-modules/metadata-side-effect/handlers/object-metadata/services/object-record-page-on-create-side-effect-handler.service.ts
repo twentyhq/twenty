@@ -4,7 +4,6 @@ import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
 import { computeDefaultRecordPageViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-record-page-view-field-position-by-field-universal-identifier.util';
-import { objectCarriesCallerAuthoredRecordPageStack } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/object-carries-caller-authored-record-page-stack.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -23,7 +22,7 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
     metadataName: 'objectMetadata',
     name: 'objectRecordPageOnCreate',
     description:
-      'When an object is created, provision its default record-page stack: the FIELDS_WIDGET record-page view ("{labelSingular} Record Page Fields", keyed on ViewKey.FIELDS_WIDGET) with one view field per displayable SYSTEM field (the label identifier is excluded: the record page displays it in the title), and the RECORD_PAGE page layout with its 5 tabs (Home/Timeline/Tasks/Notes/Files) and 5 widgets, of which the Home FIELDS widget references the record-page view by universal identifier. All entities are isSystemSideEffect with name-free deterministic universal identifiers, so an object rename keeps every identifier. View fields for caller-provided fields are owned by fieldSystemViewFieldsOnCreate; both handlers derive positions from the same caller-input list so the layout is contiguous without ordering dependency. Unlike INDEX, the record page is a surface manifest apps author for their own objects: the handler noops when the same batch already carries a caller-authored FIELDS_WIDGET view or RECORD_PAGE layout for the object (manifest sync runs side-effect expansion, so without this noop every install of such an app would duplicate the stack). twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own curated record-page stack on the same derived identifiers.',
+      'When an object is created, provision its default record-page stack: the FIELDS_WIDGET record-page view ("{labelSingular} Record Page Fields", keyed on ViewKey.FIELDS_WIDGET) with one view field per displayable SYSTEM field (the label identifier is excluded: the record page displays it in the title), and the RECORD_PAGE page layout with its 5 tabs (Home/Timeline/Tasks/Notes/Files) and 5 widgets, of which the Home FIELDS widget references the record-page view by universal identifier. All entities are isSystemSideEffect with name-free deterministic universal identifiers, so an object rename keeps every identifier. View fields for caller-provided fields are owned by fieldSystemViewFieldsOnCreate; both handlers derive positions from the same caller-input list so the layout is contiguous without ordering dependency. The engine always emits the system record-page stack, exactly like INDEX. Caller-defined custom RECORD_PAGE layouts (e.g. manifest apps authoring a record page for their own objects) are legitimate and coexist with it: the frontend displays a custom record page over the system one when defined, and identifier squatting on engine emissions is caught by the side-effect collision detector. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own curated record-page stack on the same derived identifiers.',
   },
 ) {
   buildSideEffects({
@@ -34,15 +33,6 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
       flatObjectMetadata as UniversalFlatObjectMetadata;
     const { applicationUniversalIdentifier, universalIdentifier } =
       sourceFlatObjectMetadata;
-
-    if (
-      objectCarriesCallerAuthoredRecordPageStack({
-        objectMetadataUniversalIdentifier: universalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
-      })
-    ) {
-      return { status: 'noop' };
-    }
 
     const flatRecordPageViewToCreate = computeFlatRecordPageFieldsViewToCreate({
       objectMetadata: sourceFlatObjectMetadata,

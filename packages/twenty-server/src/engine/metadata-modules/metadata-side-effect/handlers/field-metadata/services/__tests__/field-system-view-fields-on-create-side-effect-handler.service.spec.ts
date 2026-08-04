@@ -874,7 +874,9 @@ describe('FieldSystemViewFieldsOnCreateSideEffectHandlerService', () => {
       ).toHaveLength(0);
     });
 
-    it('should not emit a record-page view field when the batch carries a caller-authored record-page stack', () => {
+    // Caller-defined custom record pages coexist with the system stack: the
+    // engine still emits its record-page view field.
+    it('should still emit a record-page view field when the batch carries a caller-authored record-page stack', () => {
       const result = handler.buildSideEffects(
         buildArgs({
           triggerFieldMetadata: PRIORITY_FIELD,
@@ -902,7 +904,7 @@ describe('FieldSystemViewFieldsOnCreateSideEffectHandlerService', () => {
           Object.values(result.operations.viewField?.flatEntityToCreate ?? {}),
           DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
         ),
-      ).toHaveLength(0);
+      ).toHaveLength(1);
     });
 
     it('should follow the FIELDS widget visibility and append after existing view fields on an existing object', () => {

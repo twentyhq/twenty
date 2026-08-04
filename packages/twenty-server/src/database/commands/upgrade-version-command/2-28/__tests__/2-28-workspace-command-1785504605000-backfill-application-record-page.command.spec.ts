@@ -192,7 +192,9 @@ describe('BackfillApplicationRecordPageCommand', () => {
     expect(pageLayoutWidgetOperations.flatEntityToCreate).toHaveLength(5);
   });
 
-  it('skips objects carrying a caller-authored FIELDS_WIDGET view', async () => {
+  // Caller-defined custom record pages coexist with the system stack: the
+  // backfill still provisions the system one.
+  it('still backfills the system stack when the object carries a caller-authored record-page stack', async () => {
     mockWorkspaceCache({
       views: [
         {
@@ -201,17 +203,6 @@ describe('BackfillApplicationRecordPageCommand', () => {
           objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
         },
       ],
-    });
-
-    await runOnWorkspace();
-
-    expect(
-      validateBuildAndRunLegacyWorkspaceMigrationMock,
-    ).not.toHaveBeenCalled();
-  });
-
-  it('skips objects carrying a caller-authored RECORD_PAGE layout', async () => {
-    mockWorkspaceCache({
       pageLayouts: [
         {
           universalIdentifier: 'app-authored-layout-uid',
@@ -223,9 +214,20 @@ describe('BackfillApplicationRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(
-      validateBuildAndRunLegacyWorkspaceMigrationMock,
-    ).not.toHaveBeenCalled();
+    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).toHaveBeenCalledTimes(
+      2,
+    );
+
+    const [viewRun] =
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
+        ([args]) => args,
+      );
+    const [createdView] =
+      viewRun.allFlatEntityOperationByMetadataName.view.flatEntityToCreate;
+
+    expect(createdView.universalIdentifier).toBe(
+      DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+    );
   });
 
   it('skips twenty-standard and workspace-custom objects (reconcile command territory)', async () => {
