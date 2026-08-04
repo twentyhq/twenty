@@ -49,7 +49,7 @@ export class MessageCampaignDraftService {
     private readonly campaignVariableService: CampaignVariableService,
   ) {}
 
-  private getUserRepository<T extends ObjectLiteral>(
+  private getRoleScopedRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
     roleId: string,
@@ -96,7 +96,7 @@ export class MessageCampaignDraftService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const campaignRepository = await this.getUserRepository(
+        const campaignRepository = await this.getRoleScopedRepository(
           workspaceId,
           MessageCampaignWorkspaceEntity,
           roleId,

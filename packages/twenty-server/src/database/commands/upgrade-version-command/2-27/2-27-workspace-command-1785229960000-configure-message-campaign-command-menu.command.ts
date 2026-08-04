@@ -31,9 +31,9 @@ const REALIGNED_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
   STANDARD_COMMAND_MENU_ITEMS.removeFromFavorites.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.25.0', 1785229960000)
+@RegisteredWorkspaceCommand('2.27.0', 1785229960000)
 @Command({
-  name: 'upgrade:2-25:configure-message-campaign-command-menu',
+  name: 'upgrade:2-27:configure-message-campaign-command-menu',
   description:
     'Adds the Send Campaign and Send Test Email record actions and hides the favorite/record-navigation actions on message campaign record pages in existing workspaces',
 })

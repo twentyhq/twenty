@@ -22,12 +22,7 @@ export type PersonCampaignVariables = {
   knownVariableNames: Set<string>;
 };
 
-const LEGACY_ALIAS_PATHS: Record<string, string> = {
-  firstName: 'name.firstName',
-  lastName: 'name.lastName',
-  email: 'emails.primaryEmail',
-  personId: 'id',
-};
+const COMPUTED_VARIABLE_NAMES = ['fullName', 'personId'];
 
 const MAX_VARIABLES_IN_ERROR_MESSAGE = 40;
 
@@ -44,8 +39,7 @@ export class CampaignVariableService {
     const definitions = listCampaignVariablesForFields(fields);
     const knownVariableNames = new Set<string>([
       ...definitions.map((definition) => definition.name),
-      ...Object.keys(LEGACY_ALIAS_PATHS),
-      'fullName',
+      ...COMPUTED_VARIABLE_NAMES,
     ]);
 
     return { definitions, knownVariableNames };
@@ -67,8 +61,7 @@ export class CampaignVariableService {
     }
 
     const availableList = [
-      'fullName',
-      ...Object.keys(LEGACY_ALIAS_PATHS),
+      ...COMPUTED_VARIABLE_NAMES,
       ...definitions.map((definition) => definition.name),
     ]
       .slice(0, MAX_VARIABLES_IN_ERROR_MESSAGE)
@@ -98,11 +91,11 @@ export class CampaignVariableService {
       );
     }
 
-    for (const [alias, path] of Object.entries(LEGACY_ALIAS_PATHS)) {
-      variables[alias] = this.stringify(this.resolveValue(person, path));
-    }
-
-    variables.fullName = [variables.firstName, variables.lastName]
+    variables.personId = this.stringify(this.resolveValue(person, 'id'));
+    variables.fullName = [
+      this.stringify(this.resolveValue(person, 'name.firstName')),
+      this.stringify(this.resolveValue(person, 'name.lastName')),
+    ]
       .filter(Boolean)
       .join(' ');
 

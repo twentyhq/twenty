@@ -108,9 +108,10 @@ describe('CampaignVariableService', () => {
       'signupDate',
     ]);
 
-    expect(knownVariableNames.has('firstName')).toBe(true);
     expect(knownVariableNames.has('fullName')).toBe(true);
     expect(knownVariableNames.has('personId')).toBe(true);
+
+    expect(knownVariableNames.has('firstName')).toBe(false);
 
     expect(knownVariableNames.has('searchVector')).toBe(false);
     expect(knownVariableNames.has('company')).toBe(false);
@@ -138,20 +139,19 @@ describe('CampaignVariableService', () => {
       city: 'London',
       tier: 'Enterprise',
       signupDate: '2026-03-04',
-      firstName: 'Ada',
-      lastName: 'Lovelace',
       fullName: 'Ada Lovelace',
-      email: 'ada@example.com',
       personId: 'person-1',
     });
+
+    expect(variables).not.toHaveProperty('firstName');
   });
 
   it('should resolve every variable to an empty string without a person', async () => {
     const variables = await service.buildVariablesForPerson(workspaceId, null);
 
     expect(variables.city).toBe('');
-    expect(variables.firstName).toBe('');
     expect(variables.fullName).toBe('');
+    expect(variables.personId).toBe('');
   });
 
   it('should accept known variables and reject unknown ones', async () => {

@@ -134,7 +134,7 @@ export class MessageCampaignService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  private getUserRepository<T extends ObjectLiteral>(
+  private getRoleScopedRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
     roleId: string,
@@ -198,7 +198,7 @@ export class MessageCampaignService {
             MAX_CAMPAIGN_RECIPIENTS,
           );
 
-          const campaignRepository = await this.getUserRepository(
+          const campaignRepository = await this.getRoleScopedRepository(
             workspaceId,
             MessageCampaignWorkspaceEntity,
             roleId,
@@ -596,7 +596,7 @@ export class MessageCampaignService {
     campaignId: string,
     roleId: string,
   ): Promise<SendableDraftCampaign> {
-    const campaignRepository = await this.getUserRepository(
+    const campaignRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
       roleId,
@@ -896,7 +896,7 @@ export class MessageCampaignService {
     listId: string,
     roleId: string,
   ): Promise<RawCampaignRecipient[]> {
-    const listMemberRepository = await this.getUserRepository(
+    const listMemberRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageListMemberWorkspaceEntity,
       roleId,
@@ -922,7 +922,7 @@ export class MessageCampaignService {
       return [];
     }
 
-    const personRepository = await this.getUserRepository(
+    const personRepository = await this.getRoleScopedRepository(
       workspaceId,
       PersonWorkspaceEntity,
       roleId,

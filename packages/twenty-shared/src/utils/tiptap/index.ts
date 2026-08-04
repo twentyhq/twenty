@@ -1,4 +1,3 @@
-export * from './campaign-variables';
 export * from './canvas-theme';
 export * from './email-document-node';
 export * from './email-document-schema';

@@ -197,8 +197,6 @@ export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
-export type { CampaignVariableName } from './tiptap/campaign-variables';
-export { CAMPAIGN_VARIABLE_NAMES } from './tiptap/campaign-variables';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
 export type { EmailDocumentNode } from './tiptap/email-document-node';
