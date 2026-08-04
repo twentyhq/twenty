@@ -5,8 +5,8 @@ import {
   type TwentyIconDictionaryEntry,
 } from '../constants/TwentyIconDictionary';
 
-const escapeMarkdownTableCell = (value: string) =>
-  value.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+export const escapeMarkdownTableCell = (value: string) =>
+  value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 
 const getEntryTableRow = (entry: TwentyIconDictionaryEntry) =>
   `| ${escapeMarkdownTableCell(entry.label)} | \`${entry.iconName}\` | \`${entry.tablerName}\` | ${escapeMarkdownTableCell(entry.useWhen)} | ${escapeMarkdownTableCell(entry.avoidWhen)} | ${entry.keywords.map(escapeMarkdownTableCell).join(', ')} |`;

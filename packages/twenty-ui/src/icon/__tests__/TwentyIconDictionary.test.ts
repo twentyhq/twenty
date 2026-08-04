@@ -2,9 +2,18 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { TWENTY_ICON_DICTIONARY } from '@ui/icon/constants/TwentyIconDictionary';
-import { generateTwentyIconDictionaryMarkdown } from '@ui/icon/internal/generateTwentyIconDictionaryMarkdown';
+import {
+  escapeMarkdownTableCell,
+  generateTwentyIconDictionaryMarkdown,
+} from '@ui/icon/internal/generateTwentyIconDictionaryMarkdown';
 
 describe('TwentyIconDictionary', () => {
+  it('escapes Markdown table delimiters without losing backslashes', () => {
+    expect(
+      escapeMarkdownTableCell('Backslash \\ and pipe | and\nnewline'),
+    ).toBe('Backslash \\\\ and pipe \\| and newline');
+  });
+
   it('has a unique key for every concept', () => {
     const keys = TWENTY_ICON_DICTIONARY.map((entry) => entry.key);
 
