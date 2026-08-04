@@ -19,8 +19,6 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// Mirrors how TypeORM renders empty Brackets, so nested empty logical groups
-// behave the same on joined relations as on the main alias
 const ALWAYS_TRUE_CONDITION = '1=1';
 
 type SqlRenderingContext = {

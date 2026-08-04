@@ -39,8 +39,6 @@ type JoinAttributeWithRowLevelPermissionMarker = JoinAttribute & {
   hasRowLevelPermissionPredicateApplied?: true;
 };
 
-// Stored as an own property so it survives TypeORM's JoinAttribute cloning
-// (ObjectUtils.assign copies own properties, condition string included)
 const hasRowLevelPermissionPredicateApplied = (
   joinAttribute: JoinAttribute,
 ): boolean =>
@@ -461,8 +459,6 @@ export class WorkspaceSelectQueryBuilder<
         continue;
       }
 
-      // Only marked on non-throw exits: a rendering failure must not leave the
-      // join marked as enforced if the builder is retried
       const renderedCondition = renderRowLevelPermissionFilterToSql({
         recordFilter,
         tableAlias: joinAttribute.alias.name,

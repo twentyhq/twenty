@@ -200,8 +200,6 @@ export class GroupByWithRecordsService {
       queryBuilder: subQuery,
     });
 
-    // Applied after applyPartitionByToBuilder so the relation joins it adds
-    // for orderByForRecords are covered before the builder is serialized
     subQuery.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
 
     let mainQueryQueryBuilder = repository.createQueryBuilder();
