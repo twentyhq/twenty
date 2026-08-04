@@ -114,7 +114,10 @@ export class ApplicationRegistrationVariableService {
     return true;
   }
 
-  // Syncs variable schemas from manifest: creates missing, updates metadata, removes stale
+  // Syncs variable schemas from manifest: creates missing, updates metadata,
+  // removes stale. Only unfilled stale rows are removed: a manifest that renames
+  // or drops a variable would otherwise destroy the configured secret, and the
+  // catalog sync refreshes manifests without any server-version gate.
   async syncVariableSchemas(
     applicationRegistrationId: string,
     serverVariables: ServerVariables,
@@ -165,9 +168,13 @@ export class ApplicationRegistrationVariableService {
       await variableRepository.delete({
         applicationRegistrationId,
         key: Not(In(declaredKeys)),
+        encryptedValue: '',
       });
     } else {
-      await variableRepository.delete({ applicationRegistrationId });
+      await variableRepository.delete({
+        applicationRegistrationId,
+        encryptedValue: '',
+      });
     }
   }
 
