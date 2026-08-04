@@ -1,5 +1,6 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { type CustomError, isDefined } from 'twenty-shared/utils';
@@ -16,6 +17,8 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
+const nonCriticalErrorCodes = new Set(['INVALID_DATE_TIME_FILTER_VALUE']);
+
 export const AppErrorBoundary = ({
   children,
   FallbackComponent,
@@ -23,12 +26,49 @@ export const AppErrorBoundary = ({
 }: AppErrorBoundaryProps) => {
   const handleError = async (error: Error | CustomError, info: ErrorInfo) => {
     try {
-      const { captureException } = await import('@sentry/react');
+      const { captureException, captureMessage, withScope } = await import(
+        '@sentry/react'
+      );
+
+      if (error instanceof ObjectMetadataItemNotFoundError) {
+        withScope((scope) => {
+          scope.setLevel('warning');
+          scope.setFingerprint(['object-metadata-item-not-found']);
+          scope.setTag('error.category', 'metadata');
+          scope.setTag('error.type', 'object-metadata-item-not-found');
+          scope.setTag('object-name', error.objectNameSingular);
+          scope.setTag(
+            'metadata-store-status',
+            error.metadataStoreStatus ?? 'unknown',
+          );
+          scope.setTag(
+            'metadata-refresh-pending',
+            String(error.isMetadataRefreshPending),
+          );
+          scope.setExtras({
+            info,
+            pathname: window.location.pathname,
+            objectMetadataItemCount: error.objectMetadataItemCount,
+            currentCollectionHash: error.currentCollectionHash,
+            draftCollectionHash: error.draftCollectionHash,
+          });
+          captureMessage(error.message);
+        });
+
+        return;
+      }
+
       captureException(error, (scope) => {
         scope.setExtras({ info });
 
         const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);
+
+        if (hasErrorCode(error) && nonCriticalErrorCodes.has(error.code)) {
+          scope.setLevel('warning');
+          scope.setTag('error-expectedness', 'expected-invalid-filter-value');
+        }
+
         error.name = error.message;
         return scope;
       });

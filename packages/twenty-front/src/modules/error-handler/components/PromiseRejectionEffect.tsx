@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   CombinedGraphQLErrors,
@@ -24,8 +25,18 @@ const isApolloError = (error: unknown): boolean =>
 const hasErrorCode = (
   error: CustomError | any,
 ): error is CustomError & { code: string } => {
-  return 'code' in error && isDefined(error.code);
+  return (
+    isDefined(error) &&
+    typeof error === 'object' &&
+    'code' in error &&
+    isDefined(error.code)
+  );
 };
+
+const nonCriticalErrorCodes = new Set([
+  'INVALID_DATE_TIME_FILTER_VALUE',
+  'FILE_UPLOAD_OPERATION_FAILED',
+]);
 
 export const PromiseRejectionEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -44,20 +55,72 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      if (isAbortError) {
+        return;
       }
 
-      try {
-        const { captureException } = await import('@sentry/react');
-        captureException(error, (scope) => {
-          scope.setExtras({ mechanism: 'onUnhandle' });
+      enqueueErrorSnackBar(
+        error instanceof Error ? { message: error.message } : {},
+      );
 
-          const fingerprint = hasErrorCode(error) ? error.code : error.message;
+      try {
+        const { captureException, captureMessage, withScope } = await import(
+          '@sentry/react'
+        );
+
+        if (error instanceof ObjectMetadataItemNotFoundError) {
+          withScope((scope) => {
+            scope.setLevel('warning');
+            scope.setFingerprint(['object-metadata-item-not-found']);
+            scope.setTag('error-handler', 'promise-rejection');
+            scope.setTag('error.category', 'metadata');
+            scope.setTag('error.type', 'object-metadata-item-not-found');
+            scope.setTag('object-name', error.objectNameSingular);
+            scope.setTag(
+              'metadata-store-status',
+              error.metadataStoreStatus ?? 'unknown',
+            );
+            scope.setTag(
+              'metadata-refresh-pending',
+              String(error.isMetadataRefreshPending),
+            );
+            scope.setExtras({
+              mechanism: 'onUnhandledRejection',
+              pathname: window.location.pathname,
+              objectMetadataItemCount: error.objectMetadataItemCount,
+              currentCollectionHash: error.currentCollectionHash,
+              draftCollectionHash: error.draftCollectionHash,
+            });
+            captureMessage(error.message);
+          });
+
+          return;
+        }
+
+        captureException(error, (scope) => {
+          scope.setExtras({ mechanism: 'onUnhandledRejection' });
+          scope.setTag('error-handler', 'promise-rejection');
+
+          const fingerprint = hasErrorCode(error)
+            ? error.code
+            : error instanceof Error
+              ? error.message
+              : 'non-error-promise-rejection';
+
           scope.setFingerprint([fingerprint]);
-          error.name = error.message;
+
+          if (hasErrorCode(error) && nonCriticalErrorCodes.has(error.code)) {
+            scope.setLevel('warning');
+            scope.setTag(
+              'error-expectedness',
+              error.code === 'FILE_UPLOAD_OPERATION_FAILED'
+                ? 'expected-file-upload-operation-failure'
+                : 'expected-invalid-filter-value',
+            );
+          } else if (!(error instanceof Error)) {
+            scope.setLevel('warning');
+          }
+
           return scope;
         });
       } catch (sentryError) {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -7,6 +8,7 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
@@ -14,7 +16,11 @@ import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/co
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
 
@@ -22,6 +28,7 @@ export const RecordShowPage = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
+  const navigateApp = useNavigateApp();
 
   const parameters = useParams<{
     objectNameSingular: string;
@@ -32,6 +39,27 @@ export const RecordShowPage = () => {
     parameters.objectNameSingular ?? '',
     parameters.objectRecordId ?? '',
   );
+
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
+      objectName: objectNameSingular,
+      objectNameType: 'singular',
+    },
+  );
+
+  useEffect(() => {
+    if (
+      isDefined(parameters.objectNameSingular) &&
+      !isDefined(objectMetadataItem)
+    ) {
+      navigateApp(AppPath.NotFound);
+    }
+  }, [navigateApp, objectMetadataItem, parameters.objectNameSingular]);
+
+  if (!isDefined(objectMetadataItem)) {
+    return null;
+  }
 
   const recordShowComponentInstanceId =
     computeRecordShowComponentInstanceId(objectRecordId);

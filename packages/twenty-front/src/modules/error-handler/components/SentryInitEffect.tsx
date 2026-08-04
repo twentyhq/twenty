@@ -2,11 +2,75 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+
+type SentryEventExceptionValue = {
+  type?: string;
+  value?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  level?: string;
+  logger?: string;
+  message?: string;
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isAbortErrorEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) => exception.type === 'AbortError',
+  );
+};
+
+const isObjectMetadataItemNotFoundEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) => exception.type === ObjectMetadataItemNotFoundError.name,
+  );
+};
+
+const isBubbleMenuDomFromPosErrorEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.type === 'TypeError' &&
+      exception.value?.includes("reading 'domFromPos'"),
+  );
+};
+
+const isOptimisticMatcherWarningEvent = (event: SentryEvent) => {
+  return (
+    event.tags?.['error-handler'] === 'optimistic-filter-matcher' &&
+    event.level === 'warning'
+  );
+};
+
+const isActivityTargetRelationTypeMismatchEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.type === 'TypeError' &&
+      exception.value?.includes('map is not a function'),
+  );
+};
+
+const isObjectRenderedAsReactChildEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.value?.includes('Objects are not valid as a React child') ??
+      false,
+  );
+};
 
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
@@ -54,6 +118,66 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isAbortErrorEvent(event)) {
+                return null;
+              }
+
+              if (isOptimisticMatcherWarningEvent(event)) {
+                return null;
+              }
+
+              if (isObjectMetadataItemNotFoundEvent(event)) {
+                event.fingerprint = ['object-metadata-item-not-found'];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  'error.category': 'metadata',
+                  'error.type': 'object-metadata-item-not-found',
+                };
+              }
+
+              if (isActivityTargetRelationTypeMismatchEvent(event)) {
+                event.fingerprint = [
+                  'activity-target-relation',
+                  'unexpected-targets-shape',
+                ];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  feature: 'activity-target-relation',
+                  cause: 'unexpected-targets-shape',
+                };
+              }
+
+              if (isBubbleMenuDomFromPosErrorEvent(event)) {
+                event.fingerprint = [
+                  'advanced-text-editor',
+                  'bubble-menu',
+                  'dom-from-pos-null',
+                ];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  feature: 'advanced-text-editor',
+                  component: 'bubble-menu',
+                };
+              }
+
+              if (isObjectRenderedAsReactChildEvent(event)) {
+                event.fingerprint = [
+                  'react-render',
+                  'object-rendered-as-child',
+                ];
+                event.tags = {
+                  ...event.tags,
+                  feature: 'react-render',
+                  cause: 'object-rendered-as-child',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);
