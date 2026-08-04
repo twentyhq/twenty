@@ -61,6 +61,22 @@ export class OnboardingService {
     private readonly dataSource: DataSource,
   ) {}
 
+  private async runInTransaction<T>(
+    work: (queryRunner: QueryRunner) => Promise<T>,
+  ): Promise<T> {
+    return this.dataSource.transaction(async (entityManager) => {
+      const queryRunner = entityManager.queryRunner;
+
+      if (!isDefined(queryRunner)) {
+        throw new Error(
+          'Onboarding step transitions require a transaction-scoped entity manager',
+        );
+      }
+
+      return work(queryRunner);
+    });
+  }
+
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
     return (
       workspace.activationStatus ===
@@ -191,9 +207,7 @@ export class OnboardingService {
       );
     }
 
-    await this.dataSource.transaction(async (entityManager) => {
-      const queryRunner = entityManager.queryRunner as QueryRunner;
-
+    await this.runInTransaction(async (queryRunner) => {
       await this.setReversibleOnboardingStepHistory(
         {
           userId,
@@ -406,9 +420,7 @@ export class OnboardingService {
     workspaceId: string;
     isAutoSkipped: boolean;
   }) {
-    await this.dataSource.transaction(async (entityManager) => {
-      const queryRunner = entityManager.queryRunner as QueryRunner;
-
+    await this.runInTransaction(async (queryRunner) => {
       const hasClaimedConnectAccountStep =
         await this.claimOnboardingConnectAccountStep(
           { userId, workspaceId },
@@ -547,9 +559,7 @@ export class OnboardingService {
     );
 
     if (installableUniversalIdentifiers.length === 0) {
-      await this.dataSource.transaction(async (entityManager) => {
-        const queryRunner = entityManager.queryRunner as QueryRunner;
-
+      await this.runInTransaction(async (queryRunner) => {
         const hasClaimedInstallAppsStep =
           await this.claimInstallAppsOnboardingStep(
             { userId, workspaceId },
@@ -723,9 +733,7 @@ export class OnboardingService {
       return;
     }
 
-    await this.dataSource.transaction(async (entityManager) => {
-      const queryRunner = entityManager.queryRunner as QueryRunner;
-
+    await this.runInTransaction(async (queryRunner) => {
       const hasClaimedCreateProfileStep =
         await this.claimOnboardingCreateProfileStep(
           { userId, workspaceId },
@@ -778,9 +786,7 @@ export class OnboardingService {
     workspaceId: string;
     hasSentInvitations: boolean;
   }) {
-    await this.dataSource.transaction(async (entityManager) => {
-      const queryRunner = entityManager.queryRunner as QueryRunner;
-
+    await this.runInTransaction(async (queryRunner) => {
       const hasClaimedInviteTeamStep = await this.claimOnboardingInviteTeamStep(
         { workspaceId },
         queryRunner,
