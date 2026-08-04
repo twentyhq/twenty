@@ -123,8 +123,6 @@ export class AgentRunService {
     }
   }
 
-  // Fails closed: resolution errors propagate instead of falling back to the
-  // agent role, which would grant more than the caller asked for.
   private async resolveRunAsContext({
     runAsWorkspaceMemberId,
     callerApplication,
@@ -142,8 +140,6 @@ export class AgentRunService {
       return undefined;
     }
 
-    // Members are mapped to their chat identity by app code an admin installed.
-    // A user or API key naming an arbitrary member would be impersonation.
     if (!isDefined(callerApplication)) {
       throw new AiException(
         'Running an agent as a workspace member requires an application access token',
@@ -151,12 +147,6 @@ export class AgentRunService {
       );
     }
 
-    // An application token is not on its own a trust boundary: fetching a front
-    // component mints one for the requesting user, carrying their identity. Such
-    // a token may only name the user it was minted for. Naming anyone is left to
-    // tokens with no user in the loop, which only server-side app code holds.
-    // Keyed on the user binding rather than on the member id, so a bound token
-    // whose member never resolved is rejected instead of skipping the check.
     if (
       isDefined(requestUserWorkspaceId) &&
       requestWorkspaceMemberId !== runAsWorkspaceMemberId

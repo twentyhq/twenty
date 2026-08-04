@@ -118,8 +118,6 @@ export class AgentActorContextService {
     };
   }
 
-  // The member's auth context makes row-level permissions and record
-  // attribution follow them rather than the calling application.
   async buildRunAsWorkspaceMemberContext({
     workspaceMemberId,
     workspaceId,

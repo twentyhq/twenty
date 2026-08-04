@@ -9,9 +9,6 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type ToolContext = {
   workspaceId: string;
   roleId: string;
-  // Defaults to the single role in roleId. Set it to compose several roles, for
-  // instance when a run is narrowed to the intersection of an agent role and
-  // the workspace member it runs as.
   rolePermissionConfig?: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;
   actorContext?: ActorMetadata;

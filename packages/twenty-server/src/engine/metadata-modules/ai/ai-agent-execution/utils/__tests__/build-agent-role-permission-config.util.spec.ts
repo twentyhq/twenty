@@ -16,7 +16,6 @@ describe('buildAgentRolePermissionConfig', () => {
     ).toEqual({ intersectionOf: ['agent-role-id', 'run-as-role-id'] });
   });
 
-  // Permission flag checks reject an intersection holding the same role twice
   it('does not repeat the role when the member already has the agent role', () => {
     expect(
       buildAgentRolePermissionConfig({

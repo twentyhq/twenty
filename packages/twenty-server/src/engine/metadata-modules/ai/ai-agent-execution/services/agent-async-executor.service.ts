@@ -191,8 +191,6 @@ export class AgentAsyncExecutorService {
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
-    // Left undefined without a run-as role so the catalog and the meta-tools
-    // keep resolving permissions exactly as they do outside run-as mode.
     const rolePermissionConfig = isDefined(runAsRoleId)
       ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
       : undefined;
