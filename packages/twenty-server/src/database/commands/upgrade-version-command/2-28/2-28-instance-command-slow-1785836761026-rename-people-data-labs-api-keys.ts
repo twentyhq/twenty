@@ -93,10 +93,10 @@ const buildConfigVariableRenameQueries = (
   },
 ];
 
-// people-data-labs 1.0.11 renames its serverVariable, and syncVariableSchemas
-// deletes any stored variable whose key the manifest no longer declares, so the
-// encrypted value is carried over to the new key here. The same pass renames the
-// engine config variable's keyValuePair row.
+// people-data-labs 1.0.11 renames its serverVariable. syncVariableSchemas keeps
+// stale rows that still hold a value, so the encrypted value survives the manifest
+// sync until this carries it over to the new key. The same pass renames the engine
+// config variable's keyValuePair row.
 @RegisteredInstanceCommand('2.28.0', 1785836761026, { type: 'slow' })
 export class RenamePeopleDataLabsApiKeysSlowInstanceCommand
   implements SlowInstanceCommand
