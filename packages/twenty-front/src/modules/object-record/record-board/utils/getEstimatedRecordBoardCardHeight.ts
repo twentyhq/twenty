@@ -1,18 +1,39 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+// RecordCard border (2×1px) + RecordCardHeaderContainer fixed height (32px, border-box)
+const BOARD_CARD_HEADER_AND_BORDER_HEIGHT = 2 + 32;
 
-// RecordCardHeaderContainer: height (32px) + padding top spacing(2) + padding bottom spacing(1)
-const BOARD_CARD_HEADER_HEIGHT = 32 + 8 + 4;
+// StyledLabelAndIconContainer fixed height per field row
+const BOARD_CARD_FIELD_ROW_HEIGHT = 24;
 
-// Per field row: skeleton height + RecordCardBodyContainer padding-bottom spacing(2) + StyledBodyContainer gap spacing(0.5)
-const BOARD_CARD_FIELD_ROW_HEIGHT =
-  SKELETON_LOADER_HEIGHT_SIZES.standard.s + 8 + 2;
+// RecordCardBodyContainer gap spacing(0.5) between field rows
+const BOARD_CARD_FIELD_ROW_GAP = 2;
 
-// StyledBodyContainer padding (4+4) + card border (2×1px) + StyledSkeletonCardContainer margin-bottom spacing(2)
-const BOARD_CARD_CHROME_HEIGHT = 8 + 2 + 8;
+// RecordCardBodyContainer padding-bottom spacing(2)
+const BOARD_CARD_BODY_PADDING_BOTTOM = 8;
 
-export const getEstimatedRecordBoardCardHeight = (
-  numberOfVisibleRecordFields: number,
-) =>
-  BOARD_CARD_HEADER_HEIGHT +
-  numberOfVisibleRecordFields * BOARD_CARD_FIELD_ROW_HEIGHT +
-  BOARD_CARD_CHROME_HEIGHT;
+// StyledBoardCardWrapper padding-bottom spacing(2)
+const BOARD_CARD_WRAPPER_PADDING_BOTTOM = 8;
+
+export const getEstimatedRecordBoardCardHeight = ({
+  numberOfVisibleBodyFields,
+  isCompactModeActive,
+}: {
+  numberOfVisibleBodyFields: number;
+  isCompactModeActive: boolean;
+}) => {
+  if (isCompactModeActive) {
+    return (
+      BOARD_CARD_HEADER_AND_BORDER_HEIGHT + BOARD_CARD_WRAPPER_PADDING_BOTTOM
+    );
+  }
+
+  const bodyHeight =
+    numberOfVisibleBodyFields * BOARD_CARD_FIELD_ROW_HEIGHT +
+    Math.max(numberOfVisibleBodyFields - 1, 0) * BOARD_CARD_FIELD_ROW_GAP +
+    BOARD_CARD_BODY_PADDING_BOTTOM;
+
+  return (
+    BOARD_CARD_HEADER_AND_BORDER_HEIGHT +
+    bodyHeight +
+    BOARD_CARD_WRAPPER_PADDING_BOTTOM
+  );
+};

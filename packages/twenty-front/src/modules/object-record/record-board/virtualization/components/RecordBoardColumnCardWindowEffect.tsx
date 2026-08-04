@@ -1,18 +1,15 @@
 import { type RefObject, useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getEstimatedRecordBoardCardHeight } from '@/object-record/record-board/utils/getEstimatedRecordBoardCardHeight';
+import { useEstimatedRecordBoardCardHeight } from '@/object-record/record-board/hooks/useEstimatedRecordBoardCardHeight';
 import { RECORD_BOARD_VIRTUALIZATION_MINIMUM_CARD_COUNT } from '@/object-record/record-board/virtualization/constants/RecordBoardVirtualizationMinimumCardCount';
 import { RECORD_BOARD_VIRTUALIZATION_OVERSCAN_CARD_COUNT } from '@/object-record/record-board/virtualization/constants/RecordBoardVirtualizationOverscanCardCount';
 import { recordBoardColumnCardWindowComponentFamilyState } from '@/object-record/record-board/virtualization/states/recordBoardColumnCardWindowComponentFamilyState';
 import { getRecordBoardVisibleCardRange } from '@/object-record/record-board/virtualization/utils/getRecordBoardVisibleCardRange';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 type RecordBoardColumnCardWindowEffectProps = {
   recordBoardColumnId: string;
@@ -30,15 +27,7 @@ export const RecordBoardColumnCardWindowEffect = ({
 
   const numberOfCards = recordIndexRecordIdsByGroup.length;
 
-  const visibleRecordFields = useAtomComponentSelectorValue(
-    visibleRecordFieldsComponentSelector,
-  );
-
-  const numberOfVisibleRecordFields = visibleRecordFields.length;
-
-  const { currentView } = useGetCurrentViewOnly();
-
-  const isCompactModeActive = currentView?.isCompact ?? false;
+  const estimatedCardHeight = useEstimatedRecordBoardCardHeight();
 
   const setRecordBoardColumnCardWindow = useSetAtomComponentFamilyState(
     recordBoardColumnCardWindowComponentFamilyState,
@@ -72,9 +61,7 @@ export const RecordBoardColumnCardWindowEffect = ({
       firstRenderedCardElement instanceof HTMLElement &&
       firstRenderedCardElement.offsetHeight > 0
         ? firstRenderedCardElement.offsetHeight
-        : getEstimatedRecordBoardCardHeight(
-            isCompactModeActive ? 0 : numberOfVisibleRecordFields,
-          );
+        : estimatedCardHeight;
 
     const scrollTop = scrollWrapperHTMLElement.scrollTop;
 
@@ -113,8 +100,7 @@ export const RecordBoardColumnCardWindowEffect = ({
     cardsContainerRef,
     scrollWrapperHTMLElement,
     numberOfCards,
-    numberOfVisibleRecordFields,
-    isCompactModeActive,
+    estimatedCardHeight,
     setRecordBoardColumnCardWindow,
   ]);
 
