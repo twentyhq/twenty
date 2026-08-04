@@ -16,7 +16,7 @@ const themedBody = (theme: CanvasTheme, children: React.ReactNode) => (
   >
     <Container
       style={{
-        backgroundColor: theme.bodyBackground,
+        backgroundColor: theme.bodyBackground || undefined,
         border:
           theme.borderWidth !== '' && theme.borderWidth !== '0px'
             ? `${theme.borderWidth} solid ${theme.borderColor}`

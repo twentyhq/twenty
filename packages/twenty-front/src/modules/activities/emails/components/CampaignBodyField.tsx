@@ -3,9 +3,6 @@ import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAdjustments } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
 import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
@@ -14,7 +11,6 @@ import { useUploadEmailImage } from '@/advanced-text-editor/hooks/useUploadEmail
 import { activeEmailEditorState } from '@/advanced-text-editor/states/activeEmailEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
-import { useOpenEmailBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledContainer = styled.div`
@@ -25,13 +21,6 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledBlockSettingsButtonContainer = styled.div`
-  position: absolute;
-  right: ${themeCssVariables.spacing[1]};
-  top: ${themeCssVariables.spacing[1]};
-  z-index: 1;
-`;
-
 type CampaignBodyFieldProps = {
   campaign: MessageCampaign;
 };
@@ -39,9 +28,6 @@ type CampaignBodyFieldProps = {
 export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   const { body, setBody, flush } = useCampaignBodyState({ campaign });
   const setActiveEmailEditor = useSetAtomState(activeEmailEditorState);
-  const { openEmailBlockSettingsInSidePanel } =
-    useOpenEmailBlockSettingsInSidePanel();
-
   const { uploadEmailImage } = useUploadEmailImage();
   const { variables } = useCampaignEmailEditorVariables();
 
@@ -57,15 +43,6 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
 
   return (
     <StyledContainer onBlur={() => flush()}>
-      <StyledBlockSettingsButtonContainer>
-        <LightIconButton
-          Icon={IconAdjustments}
-          size="small"
-          accent="tertiary"
-          title={t`Block settings`}
-          onClick={openEmailBlockSettingsInSidePanel}
-        />
-      </StyledBlockSettingsButtonContainer>
       <FormAdvancedTextFieldInput
         defaultValue={body}
         onChange={setBody}

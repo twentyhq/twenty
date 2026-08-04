@@ -145,9 +145,6 @@ const StyledCanvasBackdrop = styled.div`
 `;
 
 const StyledCanvasPage = styled.div`
-  box-shadow:
-    0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
-    0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
   box-sizing: border-box;
   margin: 0 auto;
   max-width: 100%;
@@ -212,7 +209,7 @@ export const AdvancedTextEditor = ({
         >
           <StyledCanvasPage
             style={{
-              backgroundColor: canvasTheme.bodyBackground,
+              backgroundColor: canvasTheme.bodyBackground || undefined,
               border:
                 canvasTheme.borderWidth !== '' &&
                 canvasTheme.borderWidth !== '0px'

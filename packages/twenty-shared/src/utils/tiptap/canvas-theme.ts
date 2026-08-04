@@ -15,15 +15,16 @@ export type CanvasTheme = {
   borderColor: string;
 };
 
+// Empty string means "no value": no body background, no border colour.
 export const CANVAS_THEME_DEFAULTS: CanvasTheme = {
-  pageBackground: '#f4f4f5',
+  pageBackground: '#ffffff',
   pagePadding: '24px',
   textAlign: 'left',
-  bodyBackground: '#ffffff',
+  bodyBackground: '',
   textColor: '#18181b',
   width: '600px',
   padding: '24px',
-  cornerRadius: '8px',
+  cornerRadius: '0px',
   borderWidth: '0px',
-  borderColor: '#000000',
+  borderColor: '',
 };

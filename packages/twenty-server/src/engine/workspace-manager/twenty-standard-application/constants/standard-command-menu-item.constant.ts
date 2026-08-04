@@ -771,6 +771,22 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.SEND_MESSAGE_CAMPAIGN_TEST,
     hotKeys: null,
   },
+  emailBlockSettings: {
+    universalIdentifier: '5c8a2f41-97be-4f3d-9a46-2f18d17f30a2',
+    label: 'Block Settings',
+    icon: 'IconAdjustments',
+    isPinned: true,
+    position: 70,
+    shortLabel: 'Design',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'pageType == "RECORD_PAGE" and numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EMAIL_BLOCK_SETTINGS,
+    hotKeys: null,
+  },
   goToSettings: {
     universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
     label: 'Go to Settings',
