@@ -31,6 +31,7 @@ import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workfl
 import {
   type WorkflowAction,
   type WorkflowAiAgentAction,
+  type WorkflowIfElseAction,
   type WorkflowIteratorAction,
   type WorkflowLogicFunctionAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -240,6 +241,35 @@ export class WorkflowValidationWorkspaceService {
         case WorkflowActionType.ITERATOR:
           issues.push(...this.validateIteratorStep({ step, steps, trigger }));
           break;
+        case WorkflowActionType.IF_ELSE:
+          issues.push(...this.validateIfElseStep(step));
+          break;
+      }
+    }
+
+    return issues;
+  }
+
+  private validateIfElseStep(
+    step: WorkflowIfElseAction,
+  ): WorkflowValidationIssue[] {
+    const issues: WorkflowValidationIssue[] = [];
+
+    const branches = step.settings?.input?.branches ?? [];
+    const stepFilterGroups = step.settings?.input?.stepFilterGroups ?? [];
+    const validGroupIds = new Set(stepFilterGroups.map((group) => group.id));
+
+    for (const branch of branches) {
+      if (
+        isDefined(branch.filterGroupId) &&
+        !validGroupIds.has(branch.filterGroupId)
+      ) {
+        issues.push({
+          severity: 'error',
+          code: 'IF_ELSE_INVALID_FILTER_GROUP_ID',
+          message: `If/Else step "${step.name ?? step.id}" branch "${branch.id}" references non-existent filter group "${branch.filterGroupId}".`,
+          stepId: step.id,
+        });
       }
     }
 

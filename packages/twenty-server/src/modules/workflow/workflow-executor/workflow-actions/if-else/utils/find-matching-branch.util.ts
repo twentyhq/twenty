@@ -51,6 +51,14 @@ export const findMatchingBranch = ({
       return true;
     }
 
+    const rootGroupExists = stepFilterGroups.some(
+      (group) => group.id === branch.filterGroupId,
+    );
+
+    if (!rootGroupExists) {
+      return false;
+    }
+
     const branchFilterGroups = Array.from(
       collectAllDescendantGroups(branch.filterGroupId, stepFilterGroups),
     );

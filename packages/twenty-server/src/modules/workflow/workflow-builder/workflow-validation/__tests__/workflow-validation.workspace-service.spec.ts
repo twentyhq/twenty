@@ -7,6 +7,7 @@ import {
   type WorkflowCodeAction,
   type WorkflowFindRecordsAction,
   type WorkflowHttpRequestAction,
+  type WorkflowIfElseAction,
   type WorkflowIteratorAction,
   type WorkflowLogicFunctionAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -183,6 +184,24 @@ const buildIteratorStep = (items: string | unknown[]): WorkflowIteratorAction =>
       errorHandlingOptions: ERROR_HANDLING_OPTIONS,
     },
   }) as unknown as WorkflowIteratorAction;
+
+const buildIfElseStep = ({
+  branches,
+  stepFilterGroups,
+}: {
+  branches: Array<{ id: string; filterGroupId?: string; nextStepIds?: string[] }>;
+  stepFilterGroups: Array<{ id: string; logicalOperator: string }>;
+}): WorkflowIfElseAction =>
+  ({
+    id: 'if-else-step',
+    name: 'If/Else',
+    type: WorkflowActionType.IF_ELSE,
+    valid: true,
+    settings: {
+      input: { branches, stepFilterGroups, stepFilters: [] },
+      errorHandlingOptions: ERROR_HANDLING_OPTIONS,
+    },
+  }) as unknown as WorkflowIfElseAction;
 
 const buildLogicFunctionDefinition = (
   properties: Record<string, { type: string; label: string }>,
@@ -529,6 +548,50 @@ describe('WorkflowValidationWorkspaceService', () => {
 
     expect(result.errors.map((issue) => issue.code)).not.toContain(
       'ITERATOR_ITEMS_NOT_ARRAY',
+    );
+  });
+
+  it('should flag an if-else step with a branch referencing a non-existent filterGroupId', async () => {
+    const service = buildService();
+
+    const result = await service.validateWorkflowDefinition({
+      workspaceId: WORKSPACE_ID,
+      trigger: null,
+      steps: [
+        buildIfElseStep({
+          branches: [
+            { id: 'b1', filterGroupId: 'dangling-id', nextStepIds: [] },
+            { id: 'b2', filterGroupId: undefined, nextStepIds: [] },
+          ],
+          stepFilterGroups: [{ id: 'valid-id', logicalOperator: 'AND' }],
+        }),
+      ],
+    });
+
+    expect(result.errors.map((issue) => issue.code)).toContain(
+      'IF_ELSE_INVALID_FILTER_GROUP_ID',
+    );
+  });
+
+  it('should not flag an if-else step when all branch filterGroupIds exist', async () => {
+    const service = buildService();
+
+    const result = await service.validateWorkflowDefinition({
+      workspaceId: WORKSPACE_ID,
+      trigger: null,
+      steps: [
+        buildIfElseStep({
+          branches: [
+            { id: 'b1', filterGroupId: 'valid-id', nextStepIds: [] },
+            { id: 'b2', filterGroupId: undefined, nextStepIds: [] },
+          ],
+          stepFilterGroups: [{ id: 'valid-id', logicalOperator: 'AND' }],
+        }),
+      ],
+    });
+
+    expect(result.errors.map((issue) => issue.code)).not.toContain(
+      'IF_ELSE_INVALID_FILTER_GROUP_ID',
     );
   });
 });
