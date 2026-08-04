@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { AddWorkspaceMemberOpenRecordInCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785505000000-add-workspace-member-open-record-in.command';
 import { SeedObjectOpenRecordInCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785505100000-seed-object-open-record-in.command';
 import { BackfillMissingStandardSkillsCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785499350000-backfill-standard-skills.command';
+import { SyncDiscardDraftWorkflowAvailabilityExpressionCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785900000000-sync-discard-draft-workflow-availability-expression.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddWorkspaceMemberOpenRecordInCommand,
     SeedObjectOpenRecordInCommand,
     BackfillMissingStandardSkillsCommand,
+    SyncDiscardDraftWorkflowAvailabilityExpressionCommand,
   ],
 })
 export class V2_27_UpgradeVersionCommandModule {}
