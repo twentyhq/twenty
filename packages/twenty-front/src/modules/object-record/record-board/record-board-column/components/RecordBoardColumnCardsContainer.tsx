@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Fragment, useContext, useRef } from 'react';
+import { Fragment, useContext, useMemo, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -12,7 +12,9 @@ import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/rec
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { RecordBoardColumnCardWindowEffect } from '@/object-record/record-board/virtualization/components/RecordBoardColumnCardWindowEffect';
 import { RECORD_BOARD_VIRTUALIZATION_MINIMUM_CARD_COUNT } from '@/object-record/record-board/virtualization/constants/RecordBoardVirtualizationMinimumCardCount';
+import { recordBoardColumnCardHeightByRecordIdComponentFamilyState } from '@/object-record/record-board/virtualization/states/recordBoardColumnCardHeightByRecordIdComponentFamilyState';
 import { recordBoardColumnCardWindowComponentFamilyState } from '@/object-record/record-board/virtualization/states/recordBoardColumnCardWindowComponentFamilyState';
+import { getRecordBoardCardOffsets } from '@/object-record/record-board/virtualization/utils/getRecordBoardCardOffsets';
 import { getRecordBoardCardWindowSegments } from '@/object-record/record-board/virtualization/utils/getRecordBoardCardWindowSegments';
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -69,15 +71,32 @@ export const RecordBoardColumnCardsContainer = ({
     focusedRecordBoardCardIndexesComponentState,
   );
 
+  const recordBoardColumnCardHeightByRecordId =
+    useAtomComponentFamilyStateValue(
+      recordBoardColumnCardHeightByRecordIdComponentFamilyState,
+      recordBoardColumnId,
+    );
+
   const estimatedCardHeight = useEstimatedRecordBoardCardHeight();
+
+  const cardOffsets = useMemo(
+    () =>
+      getRecordBoardCardOffsets({
+        recordIds: recordIndexRecordIdsByGroup,
+        cardHeightByRecordId: recordBoardColumnCardHeightByRecordId,
+        estimatedCardHeight,
+      }),
+    [
+      recordIndexRecordIdsByGroup,
+      recordBoardColumnCardHeightByRecordId,
+      estimatedCardHeight,
+    ],
+  );
 
   const numberOfCards = recordIndexRecordIdsByGroup.length;
 
   const isCardWindowingActive =
     numberOfCards >= RECORD_BOARD_VIRTUALIZATION_MINIMUM_CARD_COUNT;
-
-  const cardSlotHeight =
-    recordBoardColumnCardWindow?.cardSlotHeight ?? estimatedCardHeight;
 
   // Dragged cards must stay mounted so dnd-kit keeps its drag source, and the
   // focused card so keyboard navigation can scroll to it.
@@ -121,10 +140,8 @@ export const RecordBoardColumnCardsContainer = ({
               <StyledCardWindowPlaceholder
                 key={`card-window-placeholder-${cardWindowSegment.firstCardIndex}`}
                 height={
-                  (cardWindowSegment.lastCardIndex -
-                    cardWindowSegment.firstCardIndex +
-                    1) *
-                  cardSlotHeight
+                  cardOffsets[cardWindowSegment.lastCardIndex + 1] -
+                  cardOffsets[cardWindowSegment.firstCardIndex]
                 }
               />,
             ]
