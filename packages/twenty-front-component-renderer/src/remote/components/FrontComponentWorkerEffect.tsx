@@ -16,6 +16,7 @@ import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/containsSdkClientImportSpecifier';
+import { containsVendorImportSpecifier } from '@/utils/containsVendorImportSpecifier';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -23,6 +24,7 @@ type FrontComponentWorkerEffectProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  vendorUrl?: string;
   applicationVariables?: Record<string, string>;
   geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -36,6 +38,7 @@ export const FrontComponentWorkerEffect = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  vendorUrl,
   applicationVariables,
   geometryTracker,
   setReceiver,
@@ -63,6 +66,7 @@ export const FrontComponentWorkerEffect = ({
       apiUrl,
       functionsBaseUrl,
       sdkClientUrls,
+      vendorUrl,
     });
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
@@ -113,6 +117,18 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
+        const vendorSource =
+          isDefined(vendorUrl) && containsVendorImportSpecifier(componentSource)
+            ? await fetchComponentSource({
+                url: vendorUrl,
+                headers: authorizationHeaders,
+              })
+            : undefined;
+
+        if (isCancelled) {
+          return;
+        }
+
         await thread.imports.render(newReceiver.connection, {
           componentUrl,
           componentSource,
@@ -120,6 +136,7 @@ export const FrontComponentWorkerEffect = ({
           apiUrl,
           functionsBaseUrl,
           sdkClientSources,
+          vendorSource,
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
@@ -150,6 +167,7 @@ export const FrontComponentWorkerEffect = ({
     apiUrl,
     functionsBaseUrl,
     sdkClientUrls,
+    vendorUrl,
     applicationVariables,
     geometryTracker,
     setError,

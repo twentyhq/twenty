@@ -2,6 +2,7 @@ import { type PostInstallLogicFunctionApplicationManifest } from '@/application/
 import { type PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
 import { type SettingsFrontComponentApplicationManifest } from '@/application/settingsFrontComponentApplicationType';
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
+import { type VendorManifest } from '@/application/vendorManifestType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
 import { type ServerVariables } from './server-variables.type';
@@ -34,6 +35,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
   settingsFrontComponent?: SettingsFrontComponentApplicationManifest;
+  vendor?: VendorManifest;
   /**
    * @deprecated Use `defineSettingsFrontComponent()` (exposed on the manifest
    * as `settingsFrontComponent`) instead. This property is ignored.

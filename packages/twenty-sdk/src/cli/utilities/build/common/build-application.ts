@@ -7,6 +7,7 @@ import {
   type Manifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { copyReadmeToOutput } from '@/cli/utilities/build/common/copy-readme-to-output';
 import { type GeneratedAsset } from '@/cli/utilities/build/cover/generated-asset.type';
@@ -16,6 +17,8 @@ import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { buildVendorBundle } from '@/cli/utilities/build/common/vendor-build/build-vendor-bundle';
+import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/translations/load-front-component-translation-catalogs';
 import {
@@ -40,6 +43,7 @@ export type BuiltFileInfo = {
   sourcePath: string;
   fileFolder: FileFolder;
   usesSdkClient?: boolean;
+  usesVendor?: boolean;
 };
 
 export type AppBuildResult = {
@@ -63,10 +67,12 @@ export const buildApplication = async (
       sourcePath: event.sourcePath,
       fileFolder: event.fileFolder,
       usesSdkClient: event.usesSdkClient,
+      usesVendor: event.usesVendor,
     });
   };
 
   const { logicFunctions, frontComponents } = options.filePaths;
+  const vendor = options.manifest.application.vendor;
 
   // Bake the app's compiled translation catalogs into every front-component
   // bundle so the runtime t()/<Trans> resolves them in the sandboxed worker
@@ -107,6 +113,14 @@ export const buildApplication = async (
     onFileBuilt: collectFileBuilt,
   });
 
+  const vendorBuildContext: VendorBuildContext | null = isDefined(vendor)
+    ? await buildVendorBundle({
+        appPath: options.appPath,
+        vendor,
+        onFileBuilt: collectFileBuilt,
+      })
+    : null;
+
   await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: frontComponents,
@@ -123,7 +137,9 @@ export const buildApplication = async (
         ? { banner: frontComponentTranslationsBanner }
         : {}),
       plugins: [
-        ...getFrontComponentBuildPlugins(),
+        ...getFrontComponentBuildPlugins({
+          getVendorBuildContext: () => vendorBuildContext,
+        }),
         createStubTwentySdkDefinePlugin(),
       ],
     },
@@ -133,7 +149,13 @@ export const buildApplication = async (
   await copyStaticFiles({
     appPath: options.appPath,
     fileFolder: FileFolder.Source,
-    filePaths: [...new Set([...logicFunctions, ...frontComponents])],
+    filePaths: [
+      ...new Set([
+        ...logicFunctions,
+        ...frontComponents,
+        ...(isDefined(vendor) ? [vendor.sourceVendorPath] : []),
+      ]),
+    ],
     collectFileBuilt,
   });
 

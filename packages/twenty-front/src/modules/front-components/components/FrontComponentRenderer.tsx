@@ -3,7 +3,9 @@ import { FrontComponentLoadErrorSnackBarEffect } from '@/front-components/compon
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
+import { useOnApplicationVendorChecksumUpdated } from '@/front-components/hooks/useOnApplicationVendorChecksumUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { getApplicationVendorUrl } from '@/front-components/utils/getApplicationVendorUrl';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
@@ -19,6 +21,7 @@ import {
   FindOneFrontComponentDocument,
   type FindOneFrontComponentQuery,
   GetApplicationSdkClientChecksumsDocument,
+  GetApplicationVendorChecksumDocument,
 } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
@@ -81,7 +84,12 @@ const FrontComponentRendererContent = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
-  const { id: frontComponentId, applicationId, usesSdkClient } = frontComponent;
+  const {
+    id: frontComponentId,
+    applicationId,
+    usesSdkClient,
+    usesVendor,
+  } = frontComponent;
 
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext({
@@ -125,6 +133,26 @@ const FrontComponentRendererContent = ({
     [applicationId, sdkClientChecksums],
   );
 
+  const { data: vendorChecksumData, loading: vendorChecksumLoading } = useQuery(
+    GetApplicationVendorChecksumDocument,
+    {
+      variables: { applicationId },
+      skip: !usesVendor,
+    },
+  );
+
+  useOnApplicationVendorChecksumUpdated({
+    applicationId,
+    skip: !usesVendor,
+  });
+
+  const vendorUrl = usesVendor
+    ? getApplicationVendorUrl({
+        applicationId,
+        checksum: vendorChecksumData?.applicationVendorChecksum ?? undefined,
+      })
+    : undefined;
+
   const componentUrl = getFrontComponentUrl({
     frontComponentId,
     checksum: frontComponent.builtComponentChecksum,
@@ -133,7 +161,9 @@ const FrontComponentRendererContent = ({
   const applicationVariables = frontComponent.applicationVariables ?? undefined;
 
   const isSdkClientReady = !usesSdkClient || !sdkClientChecksumsLoading;
-  const isReadyToRender = isDefined(applicationTokenPair) && isSdkClientReady;
+  const isVendorReady = !usesVendor || !vendorChecksumLoading;
+  const isReadyToRender =
+    isDefined(applicationTokenPair) && isSdkClientReady && isVendorReady;
 
   return (
     <>
@@ -153,6 +183,7 @@ const FrontComponentRendererContent = ({
             apiUrl={REACT_APP_SERVER_BASE_URL}
             functionsBaseUrl={functionsBaseUrl}
             sdkClientUrls={sdkClientUrls}
+            vendorUrl={vendorUrl}
             executionContext={executionContext}
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi

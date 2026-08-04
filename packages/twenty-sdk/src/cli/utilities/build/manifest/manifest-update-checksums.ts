@@ -1,6 +1,7 @@
 import { relative } from 'path';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
@@ -19,6 +20,7 @@ export type UpdateManifestChecksumParams = {
       builtPath: string;
       fileFolder: FileFolder;
       usesSdkClient?: boolean;
+      usesVendor?: boolean;
     }
   >;
 };
@@ -65,6 +67,19 @@ export const manifestUpdateChecksums = ({
     }
 
     if (fileFolder === FileFolder.BuiltFrontComponent) {
+      const vendor = result.application.vendor;
+
+      if (isDefined(vendor) && vendor.builtVendorPath === rootBuiltPath) {
+        result = {
+          ...result,
+          application: {
+            ...result.application,
+            vendor: { ...vendor, builtVendorChecksum: checksum },
+          },
+        };
+        continue;
+      }
+
       const frontComponents = result.frontComponents;
       const componentIndex =
         frontComponents.findIndex(
@@ -83,6 +98,7 @@ export const manifestUpdateChecksums = ({
                 ...component,
                 builtComponentChecksum: checksum,
                 usesSdkClient: builtFileInfo?.usesSdkClient ?? false,
+                usesVendor: builtFileInfo?.usesVendor ?? false,
               }
             : component,
         ),

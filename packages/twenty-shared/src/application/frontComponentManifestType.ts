@@ -26,4 +26,5 @@ export type FrontComponentManifest = {
   componentName: string;
   isHeadless?: boolean;
   usesSdkClient?: boolean;
+  usesVendor?: boolean;
 };

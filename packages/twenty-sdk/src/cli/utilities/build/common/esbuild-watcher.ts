@@ -3,6 +3,7 @@ import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-resul
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
+import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -192,6 +193,11 @@ export type EsbuildWatcherFactoryOptions = RestartableWatcherOptions & {
   shouldSkipTypecheck: () => boolean;
 };
 
+export type FrontComponentsWatcherFactoryOptions =
+  EsbuildWatcherFactoryOptions & {
+    getVendorBuildContext?: () => VendorBuildContext | null;
+  };
+
 export const createLogicFunctionsWatcher = (
   options: EsbuildWatcherFactoryOptions,
 ): EsbuildWatcher =>
@@ -210,7 +216,7 @@ export const createLogicFunctionsWatcher = (
   });
 
 export const createFrontComponentsWatcher = (
-  options: EsbuildWatcherFactoryOptions,
+  options: FrontComponentsWatcherFactoryOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
@@ -220,7 +226,9 @@ export const createFrontComponentsWatcher = (
       jsx: 'automatic',
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
-        ...getFrontComponentBuildPlugins(),
+        ...getFrontComponentBuildPlugins({
+          getVendorBuildContext: options.getVendorBuildContext,
+        }),
         createStubTwentySdkDefinePlugin(),
       ],
     },
