@@ -20,6 +20,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
 import { type AnimationEvent, useCallback, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -72,8 +73,8 @@ const StyledModalContainer = styled.div`
 `;
 
 export const SidePanelForDesktop = () => {
+  const store = useStore();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const isSidePanelClosing = useAtomStateValue(isSidePanelClosingState);
   const [sidePanelWidth, setSidePanelWidth] = useAtomState(sidePanelWidthState);
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
@@ -106,7 +107,8 @@ export const SidePanelForDesktop = () => {
     }
 
     setShouldRenderContent(false);
-    if (isSidePanelClosing) {
+
+    if (store.get(isSidePanelClosingState.atom)) {
       sidePanelCloseAnimationCompleteCleanup();
     }
   };

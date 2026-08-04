@@ -56,6 +56,9 @@ describe('SidePanelForDesktop', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     shouldShrinkFromFullWidthMock.mockReturnValue(false);
+    sidePanelCloseAnimationCompleteCleanupMock.mockImplementation(() => {
+      jotaiStore.set(isSidePanelClosingState.atom, false);
+    });
   });
 
   it('should keep the content mounted while closing after a handoff entrance', () => {
@@ -123,6 +126,29 @@ describe('SidePanelForDesktop', () => {
 
     expect(sidePanelCloseAnimationCompleteCleanupMock).toHaveBeenCalled();
     expect(queryByTestId('side-panel-content')).not.toBeInTheDocument();
+  });
+
+  it('should run the close cleanup once when both the animation and the transition end', () => {
+    shouldShrinkFromFullWidthMock.mockReturnValue(true);
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
+
+    const { container } = render(<SidePanelForDesktop />, { wrapper: Wrapper });
+
+    const wrapperElement = container.querySelector('[data-side-panel]');
+
+    if (wrapperElement === null) {
+      throw new Error('side panel wrapper not found');
+    }
+
+    act(() => {
+      jotaiStore.set(isSidePanelOpenedState.atom, false);
+      jotaiStore.set(isSidePanelClosingState.atom, true);
+    });
+
+    fireEvent.animationEnd(wrapperElement);
+    fireEvent.transitionEnd(wrapperElement);
+
+    expect(sidePanelCloseAnimationCompleteCleanupMock).toHaveBeenCalledTimes(1);
   });
 
   it('should not shrink from full width on a normal open', () => {
