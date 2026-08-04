@@ -382,7 +382,9 @@ export class WorkspaceInvitationService {
     await this.onboardingService.completeOnboardingInviteTeamStep({
       userId: sender.userId,
       workspaceId: workspace.id,
-      hasSentInvitations: emails.length > 0,
+      hasSentInvitations: invitationResults.some(
+        (invitationResult) => invitationResult.status === 'fulfilled',
+      ),
     });
 
     const i18n = this.i18nService.getI18nInstance(sender.locale);

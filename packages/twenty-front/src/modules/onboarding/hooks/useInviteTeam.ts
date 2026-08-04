@@ -136,12 +136,15 @@ export const useInviteTeam = () => {
         throw result.error;
       }
 
+      const sentInvitationsCount =
+        result.data?.sendInvitations.result.length ?? 0;
+
       const creditsRewardPerUser =
         onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
 
       setOnboardingFreeCredits((current) => ({
         ...current,
-        inviteTeam: emails.length * creditsRewardPerUser,
+        inviteTeam: sentInvitationsCount * creditsRewardPerUser,
       }));
 
       if (emails.length > 0) {
@@ -154,7 +157,7 @@ export const useInviteTeam = () => {
       }
 
       setNextOnboardingStatus({
-        isCurrentStepReversible: emails.length === 0,
+        isCurrentStepReversible: sentInvitationsCount === 0,
       });
       setIsNavigating(true);
     },
