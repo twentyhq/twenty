@@ -197,6 +197,18 @@ describe('ClientConfigService', () => {
       });
     });
 
+    it('should not return onboarding credits rewards when billing is disabled', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'IS_BILLING_ENABLED' ? false : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.onboarding).toBeNull();
+    });
+
     it('should advertise cookie sessions when the flag is on', async () => {
       jest
         .spyOn(twentyConfigService, 'get')
