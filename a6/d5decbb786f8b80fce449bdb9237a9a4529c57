@@ -1,0 +1,26 @@
+packages/twenty-server/src/modules/connected-account/utils/is-throttled.ts
+  s_405b3fe1a0ce44::t_012386a63e6ba1 46
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_405b3fe1a0ce44::t_f48919e69e6d3d 9
+  s_405b3fe1a0ce44::t_43d7728faf0e00 30
+  s_405b3fe1a0ce44::t_f6e5b67264dcea 74,81,85,90
+  s_405b3fe1a0ce44::t_358c8e89a50897 102-131,133-134
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-throttle-duration.constant.ts
+  s_405b3fe1a0ce44::t_01d3ca0b4fb350 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "a6d5decbb786f8b80fce449bdb9237a9a4529c57",
+  "prompts": {},
+  "sessions": {
+    "s_405b3fe1a0ce44": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b153cf-7ae2-4eeb-8601-d00a49a98d9a",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
