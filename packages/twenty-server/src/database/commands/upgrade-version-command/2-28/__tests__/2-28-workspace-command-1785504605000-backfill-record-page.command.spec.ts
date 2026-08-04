@@ -1,12 +1,28 @@
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getRecordPageLayoutUniversalIdentifier,
+  getSystemViewFieldUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 import { FieldMetadataType, ViewKey, ViewType } from 'twenty-shared/types';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { BackfillApplicationRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785504605000-backfill-application-record-page.command';
+import { BackfillRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785504605000-backfill-record-page.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+jest.mock(
+  'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
+  () => ({
+    computeTwentyStandardApplicationAllFlatEntityMaps: jest.fn(),
+  }),
+);
+
+const computeStandardMapsMock =
+  computeTwentyStandardApplicationAllFlatEntityMaps as jest.Mock;
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -27,6 +43,20 @@ const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   viewKey: ViewKey.FIELDS_WIDGET,
 });
+
+const STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER =
+  getSystemViewUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
+      STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+    viewKey: ViewKey.FIELDS_WIDGET,
+  });
+
+const STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  getRecordPageLayoutUniversalIdentifier({
+    applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  });
 
 // An external application object with a label identifier and one other field.
 const OBJECT_METADATA = {
@@ -69,20 +99,40 @@ const buildByUniversalIdentifierMap = <
   ),
 });
 
-describe('BackfillApplicationRecordPageCommand', () => {
-  let command: BackfillApplicationRecordPageCommand;
+const buildStandardMaps = ({
+  views = [] as { universalIdentifier: string }[],
+  viewFields = [] as { universalIdentifier: string }[],
+  viewFieldGroups = [] as { universalIdentifier: string }[],
+  pageLayouts = [] as { universalIdentifier: string }[],
+  pageLayoutTabs = [] as { universalIdentifier: string }[],
+  pageLayoutWidgets = [] as { universalIdentifier: string }[],
+} = {}) => ({
+  allFlatEntityMaps: {
+    flatViewMaps: buildByUniversalIdentifierMap(views),
+    flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
+    flatViewFieldGroupMaps: buildByUniversalIdentifierMap(viewFieldGroups),
+    flatPageLayoutMaps: buildByUniversalIdentifierMap(pageLayouts),
+    flatPageLayoutTabMaps: buildByUniversalIdentifierMap(pageLayoutTabs),
+    flatPageLayoutWidgetMaps: buildByUniversalIdentifierMap(pageLayoutWidgets),
+  },
+});
+
+describe('BackfillRecordPageCommand', () => {
+  let command: BackfillRecordPageCommand;
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunLegacyWorkspaceMigrationMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
+    computeStandardMapsMock.mockReturnValue(buildStandardMaps());
+
     getOrRecomputeMock = jest.fn();
     validateBuildAndRunLegacyWorkspaceMigrationMock = jest
       .fn()
       .mockResolvedValue({ status: 'success' });
 
-    command = new BackfillApplicationRecordPageCommand(
+    command = new BackfillRecordPageCommand(
       {} as WorkspaceIteratorService,
       {
         getOrRecompute: getOrRecomputeMock,
@@ -92,6 +142,7 @@ describe('BackfillApplicationRecordPageCommand', () => {
           .fn()
           .mockResolvedValue({
             twentyStandardFlatApplication: {
+              id: '20202020-0000-4000-8000-00000000ad1d',
               universalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
             },
             workspaceCustomFlatApplication: {
@@ -121,6 +172,7 @@ describe('BackfillApplicationRecordPageCommand', () => {
       deletedAt?: string | null;
       objectMetadataUniversalIdentifier: string | null;
     }[],
+    fieldMetadatas = [LABEL_FIELD_METADATA, OTHER_FIELD_METADATA],
   } = {}) => {
     getOrRecomputeMock.mockResolvedValue({
       flatViewMaps: buildByUniversalIdentifierMap(
@@ -128,10 +180,7 @@ describe('BackfillApplicationRecordPageCommand', () => {
       ),
       flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
       flatObjectMetadataMaps: buildByUniversalIdentifierMap(objectMetadatas),
-      flatFieldMetadataMaps: buildByUniversalIdentifierMap([
-        LABEL_FIELD_METADATA,
-        OTHER_FIELD_METADATA,
-      ]),
+      flatFieldMetadataMaps: buildByUniversalIdentifierMap(fieldMetadatas),
       flatPageLayoutMaps: buildByUniversalIdentifierMap(
         pageLayouts.map((pageLayout) => ({ deletedAt: null, ...pageLayout })),
       ),
@@ -151,9 +200,9 @@ describe('BackfillApplicationRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).toHaveBeenCalledTimes(
-      2,
-    );
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).toHaveBeenCalledTimes(2);
 
     const [viewRun, restRun] =
       validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
@@ -214,9 +263,9 @@ describe('BackfillApplicationRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).toHaveBeenCalledTimes(
-      2,
-    );
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).toHaveBeenCalledTimes(2);
 
     const [viewRun] =
       validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
@@ -230,13 +279,170 @@ describe('BackfillApplicationRecordPageCommand', () => {
     );
   });
 
-  it('skips twenty-standard and workspace-custom objects (reconcile command territory)', async () => {
+  it('backfills the engine default stack for a workspace-custom object without one', async () => {
     mockWorkspaceCache({
       objectMetadatas: [
         {
           ...OBJECT_METADATA,
           applicationUniversalIdentifier:
             CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).toHaveBeenCalledTimes(2);
+
+    const [viewRun] =
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
+        ([args]) => args,
+      );
+
+    expect(viewRun.applicationUniversalIdentifier).toBe(
+      CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+  });
+
+  it('backfills the curated standard stack for a standard object without one', async () => {
+    const curatedViewFieldUniversalIdentifier =
+      getSystemViewFieldUniversalIdentifier({
+        fieldMetadataApplicationUniversalIdentifier:
+          STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        viewUniversalIdentifier: STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+        fieldMetadataUniversalIdentifier: OTHER_FIELD_UNIVERSAL_IDENTIFIER,
+      });
+
+    computeStandardMapsMock.mockReturnValue(
+      buildStandardMaps({
+        views: [
+          {
+            universalIdentifier: STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+        viewFields: [
+          {
+            universalIdentifier: curatedViewFieldUniversalIdentifier,
+            viewUniversalIdentifier:
+              STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: OTHER_FIELD_UNIVERSAL_IDENTIFIER,
+          } as never,
+        ],
+        viewFieldGroups: [
+          {
+            universalIdentifier: 'standard-group-uid',
+            viewUniversalIdentifier:
+              STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          } as never,
+        ],
+        pageLayouts: [
+          {
+            universalIdentifier:
+              STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+        pageLayoutTabs: [
+          {
+            universalIdentifier: 'standard-tab-uid',
+            pageLayoutUniversalIdentifier:
+              STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+          } as never,
+        ],
+        pageLayoutWidgets: [
+          {
+            universalIdentifier: 'standard-widget-uid',
+            pageLayoutTabUniversalIdentifier: 'standard-tab-uid',
+            universalConfiguration: {
+              configurationType: WidgetConfigurationType.FIELDS,
+            },
+          } as never,
+          {
+            universalIdentifier: 'standard-orphan-field-widget-uid',
+            pageLayoutTabUniversalIdentifier: 'standard-tab-uid',
+            universalConfiguration: {
+              configurationType: WidgetConfigurationType.FIELD,
+              fieldMetadataId: 'missing-field-uid',
+            },
+          } as never,
+        ],
+      }),
+    );
+
+    mockWorkspaceCache({
+      objectMetadatas: [
+        {
+          ...OBJECT_METADATA,
+          applicationUniversalIdentifier:
+            STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+      fieldMetadatas: [
+        {
+          ...LABEL_FIELD_METADATA,
+          applicationUniversalIdentifier:
+            STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+        {
+          ...OTHER_FIELD_METADATA,
+          applicationUniversalIdentifier:
+            STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).toHaveBeenCalledTimes(2);
+
+    const [viewRun, restRun] =
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
+        ([args]) => args,
+      );
+
+    expect(viewRun.applicationUniversalIdentifier).toBe(
+      STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+    expect(
+      viewRun.allFlatEntityOperationByMetadataName.view.flatEntityToCreate[0]
+        .universalIdentifier,
+    ).toBe(STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER);
+
+    const {
+      viewField: viewFieldOperations,
+      viewFieldGroup: viewFieldGroupOperations,
+      pageLayout: pageLayoutOperations,
+      pageLayoutTab: pageLayoutTabOperations,
+      pageLayoutWidget: pageLayoutWidgetOperations,
+    } = restRun.allFlatEntityOperationByMetadataName;
+
+    // The curated view field covers the only displayable non-label field, so
+    // the generated top-up adds nothing on top of it.
+    expect(viewFieldOperations.flatEntityToCreate).toHaveLength(1);
+    expect(viewFieldOperations.flatEntityToCreate[0].universalIdentifier).toBe(
+      curatedViewFieldUniversalIdentifier,
+    );
+    expect(viewFieldGroupOperations.flatEntityToCreate).toHaveLength(1);
+    expect(pageLayoutOperations.flatEntityToCreate).toHaveLength(1);
+    expect(pageLayoutTabOperations.flatEntityToCreate).toHaveLength(1);
+    // The FIELD widget pointing at a field absent from the workspace is
+    // dropped, like the standard sync does.
+    expect(pageLayoutWidgetOperations.flatEntityToCreate).toHaveLength(1);
+    expect(
+      pageLayoutWidgetOperations.flatEntityToCreate[0].universalIdentifier,
+    ).toBe('standard-widget-uid');
+  });
+
+  it('leaves a standard object without curated record page untouched, like fresh installs', async () => {
+    mockWorkspaceCache({
+      objectMetadatas: [
+        {
+          ...OBJECT_METADATA,
+          applicationUniversalIdentifier:
+            STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       ],
     });
@@ -263,18 +469,16 @@ describe('BackfillApplicationRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).toHaveBeenCalledTimes(
-      1,
-    );
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).toHaveBeenCalledTimes(1);
 
     const [restRun] =
       validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
         ([args]) => args,
       );
 
-    expect(
-      restRun.allFlatEntityOperationByMetadataName.view,
-    ).toBeUndefined();
+    expect(restRun.allFlatEntityOperationByMetadataName.view).toBeUndefined();
     expect(
       restRun.allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
     ).toHaveLength(1);
