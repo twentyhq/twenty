@@ -44,6 +44,8 @@ const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
+const LOCAL_CACHE_STATS_TTL_MS = 5_000;
+const LOCAL_CACHE_BYTES_SAMPLE_SIZE = 20;
 const CACHE_DURATION_BUCKETS_SECONDS = [
   0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
 ];
@@ -149,6 +151,141 @@ export class WorkspaceCacheService implements OnModuleInit {
         }
       }
     }
+
+    this.registerLocalCacheGauges();
+  }
+
+  private localCacheStatsCache?: {
+    computedAt: number;
+    entries: number;
+    workspaces: number;
+    versionsTotal: number;
+    versionsByCount: Record<string, number>;
+    estimatedBytes: number;
+  };
+
+  private computeLocalCacheStats(): NonNullable<
+    WorkspaceCacheService['localCacheStatsCache']
+  > {
+    const now = Date.now();
+
+    if (
+      isDefined(this.localCacheStatsCache) &&
+      now - this.localCacheStatsCache.computedAt < LOCAL_CACHE_STATS_TTL_MS
+    ) {
+      return this.localCacheStatsCache;
+    }
+
+    const workspaceIds = new Set<string>();
+    const versionsByCount: Record<string, number> = {
+      '1': 0,
+      '2': 0,
+      '3': 0,
+      '4': 0,
+      '5+': 0,
+    };
+    let versionsTotal = 0;
+
+    for (const [key, entry] of this.localCache) {
+      workspaceIds.add(key.slice(key.lastIndexOf(':') + 1));
+      const versionCount = entry.versions.size;
+
+      versionsTotal += versionCount;
+      const bucket = versionCount >= 5 ? '5+' : String(versionCount);
+
+      versionsByCount[bucket] = (versionsByCount[bucket] ?? 0) + 1;
+    }
+
+    this.localCacheStatsCache = {
+      computedAt: now,
+      entries: this.localCache.size,
+      workspaces: workspaceIds.size,
+      versionsTotal,
+      versionsByCount,
+      estimatedBytes: this.estimateLocalCacheBytes(),
+    };
+
+    return this.localCacheStatsCache;
+  }
+
+  // Extrapolate total serialized bytes from a small evenly-spaced sample to keep
+  // the per-scrape JSON.stringify cost bounded.
+  private estimateLocalCacheBytes(): number {
+    const entryCount = this.localCache.size;
+
+    if (entryCount === 0) {
+      return 0;
+    }
+
+    const step = Math.max(
+      1,
+      Math.floor(entryCount / LOCAL_CACHE_BYTES_SAMPLE_SIZE),
+    );
+    let sampledBytes = 0;
+    let sampledEntries = 0;
+    let index = 0;
+
+    for (const entry of this.localCache.values()) {
+      if (index % step === 0) {
+        const version = entry.versions.get(entry.latestHash);
+
+        if (isDefined(version)) {
+          sampledBytes += JSON.stringify(version.data).length;
+          sampledEntries += 1;
+        }
+      }
+      index += 1;
+    }
+
+    return sampledEntries === 0
+      ? 0
+      : Math.round((sampledBytes / sampledEntries) * entryCount);
+  }
+
+  private registerLocalCacheGauges(): void {
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_entries',
+      options: {
+        description: 'Entries in the per-pod local workspace metadata cache',
+      },
+      callback: async () => this.computeLocalCacheStats().entries,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_workspaces',
+      options: {
+        description:
+          'Distinct workspaces held in the per-pod local workspace metadata cache',
+      },
+      callback: async () => this.computeLocalCacheStats().workspaces,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_versions_total',
+      options: {
+        description:
+          'Total versions across local workspace metadata cache entries',
+      },
+      callback: async () => this.computeLocalCacheStats().versionsTotal,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_bytes_estimate',
+      options: {
+        description:
+          'Estimated serialized bytes held in the local workspace metadata cache',
+        unit: 'By',
+      },
+      callback: async () => this.computeLocalCacheStats().estimatedBytes,
+    });
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_workspace_cache_local_entries_by_version_count',
+      options: {
+        description:
+          'Local workspace metadata cache entries bucketed by version count',
+      },
+      callback: async () =>
+        Object.entries(this.computeLocalCacheStats().versionsByCount).map(
+          ([versions, value]) => ({ value, attributes: { versions } }),
+        ),
+    });
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
