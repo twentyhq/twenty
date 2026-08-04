@@ -119,10 +119,14 @@ export class GoogleAPIsService {
       );
     }
 
-    const { isMessagingAvailable, isCalendarAvailable } =
-      await this.googleApisServiceAvailabilityService.checkServicesAvailability(
-        input.accessToken,
-      );
+    const {
+      isMessagingAvailable,
+      isCalendarAvailable,
+      isMessagingRateLimited,
+      isCalendarRateLimited,
+    } = await this.googleApisServiceAvailabilityService.checkServicesAvailability(
+      input.accessToken,
+    );
 
     if (!isMessagingAvailable && !isCalendarAvailable) {
       throw new AuthException(
@@ -240,7 +244,11 @@ export class GoogleAPIsService {
           },
         );
 
-        if (isMessagingEnabled && isMessagingAvailable) {
+        if (
+          isMessagingEnabled &&
+          isMessagingAvailable &&
+          !isMessagingRateLimited
+        ) {
           const connectedAccountForAliases =
             await this.connectedAccountRepository.findOne({
               where: { id: newOrExistingConnectedAccountId, workspaceId },
@@ -257,6 +265,7 @@ export class GoogleAPIsService {
         if (
           isMessagingEnabled &&
           isMessagingAvailable &&
+          !isMessagingRateLimited &&
           existingMessageChannels.length === 0
         ) {
           const newMessageChannel = await this.messageChannelRepository.findOne(
@@ -293,7 +302,7 @@ export class GoogleAPIsService {
             );
           }
 
-          if (isMessagingAvailable) {
+          if (isMessagingAvailable && !isMessagingRateLimited) {
             for (const messageChannel of messageChannels) {
               if (
                 messageChannel.syncStage !==
@@ -327,7 +336,7 @@ export class GoogleAPIsService {
             );
           }
 
-          if (isCalendarAvailable) {
+          if (isCalendarAvailable && !isCalendarRateLimited) {
             for (const calendarChannel of calendarChannels) {
               if (
                 calendarChannel.syncStage !==

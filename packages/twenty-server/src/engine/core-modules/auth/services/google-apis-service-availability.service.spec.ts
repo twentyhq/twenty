@@ -317,7 +317,7 @@ describe('GoogleApisServiceAvailabilityService', () => {
       });
     });
 
-    it('should throw error for non-service-availability related errors', async () => {
+    it('should treat Gmail quota exhaustion as temporarily rate limited but available', async () => {
       mockTwentyConfigService.get.mockImplementation((key) => {
         if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'client-id';
         if (key === 'AUTH_GOOGLE_CLIENT_SECRET') return 'client-secret';
@@ -329,19 +329,19 @@ describe('GoogleApisServiceAvailabilityService', () => {
 
       const rateLimitError = {
         response: {
-          status: 429,
+          status: 403,
           data: {
             error: {
-              code: 429,
-              message: 'Rate Limit Exceeded',
+              code: 403,
+              message: 'User rate limit exceeded',
               errors: [
                 {
-                  message: 'Rate Limit Exceeded',
+                  message: 'User rate limit exceeded',
                   domain: 'usageLimits',
-                  reason: 'rateLimitExceeded',
+                  reason: 'userRateLimitExceeded',
                 },
               ],
-              status: 'RESOURCE_EXHAUSTED',
+              status: 'PERMISSION_DENIED',
             },
           },
         },
@@ -364,7 +364,42 @@ describe('GoogleApisServiceAvailabilityService', () => {
 
       await expect(
         service.checkServicesAvailability('access-token'),
-      ).rejects.toMatchObject(rateLimitError);
+      ).resolves.toEqual({
+        isMessagingAvailable: true,
+        isCalendarAvailable: true,
+        isMessagingRateLimited: true,
+      });
+    });
+
+    it('should throw error for non-service-availability related errors', async () => {
+      mockTwentyConfigService.get.mockImplementation((key) => {
+        if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'client-id';
+        if (key === 'AUTH_GOOGLE_CLIENT_SECRET') return 'client-secret';
+        if (key === 'MESSAGING_PROVIDER_GMAIL_ENABLED') return true;
+        if (key === 'CALENDAR_PROVIDER_GOOGLE_ENABLED') return true;
+
+        return undefined;
+      });
+
+      const unexpectedError = new Error('Unexpected API failure');
+      const mockGmailClient = {
+        users: {
+          getProfile: jest.fn().mockRejectedValue(unexpectedError),
+        },
+      };
+
+      const mockCalendarClient = {
+        events: {
+          list: jest.fn().mockResolvedValue({ data: {} }),
+        },
+      };
+
+      (google.gmail as jest.Mock).mockReturnValue(mockGmailClient);
+      (google.calendar as jest.Mock).mockReturnValue(mockCalendarClient);
+
+      await expect(
+        service.checkServicesAvailability('access-token'),
+      ).rejects.toBe(unexpectedError);
     });
   });
 });

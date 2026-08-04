@@ -4,9 +4,16 @@ import { google } from 'googleapis';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+type GoogleApiServiceCheckResult = {
+  isAvailable: boolean;
+  isRateLimited: boolean;
+};
+
 export type GoogleApisServiceAvailability = {
   isMessagingAvailable: boolean;
   isCalendarAvailable: boolean;
+  isMessagingRateLimited?: boolean;
+  isCalendarRateLimited?: boolean;
 };
 
 @Injectable()
@@ -29,22 +36,28 @@ export class GoogleApisServiceAvailabilityService {
       access_token: accessToken,
     });
 
-    const [isMessagingAvailable, isCalendarAvailable] = await Promise.all([
+    const [messagingAvailability, calendarAvailability] = await Promise.all([
       this.checkMessagingAvailability(oAuth2Client),
       this.checkCalendarAvailability(oAuth2Client),
     ]);
 
     return {
-      isMessagingAvailable,
-      isCalendarAvailable,
+      isMessagingAvailable: messagingAvailability.isAvailable,
+      isCalendarAvailable: calendarAvailability.isAvailable,
+      ...(messagingAvailability.isRateLimited && {
+        isMessagingRateLimited: true,
+      }),
+      ...(calendarAvailability.isRateLimited && {
+        isCalendarRateLimited: true,
+      }),
     };
   }
 
   private async checkMessagingAvailability(
     oAuth2Client: InstanceType<typeof google.auth.OAuth2>,
-  ): Promise<boolean> {
+  ): Promise<GoogleApiServiceCheckResult> {
     if (!this.twentyConfigService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      return false;
+      return { isAvailable: false, isRateLimited: false };
     }
 
     try {
@@ -55,14 +68,22 @@ export class GoogleApisServiceAvailabilityService {
 
       await gmailClient.users.getProfile({ userId: 'me' });
 
-      return true;
+      return { isAvailable: true, isRateLimited: false };
     } catch (error) {
       if (this.isServiceNotEnabledError(error)) {
         this.logger.log(
           'Messaging service is not enabled for this Google Workspace account',
         );
 
-        return false;
+        return { isAvailable: false, isRateLimited: false };
+      }
+
+      if (this.isQuotaExceededError(error)) {
+        this.logger.warn(
+          'Gmail quota is exhausted while checking messaging availability',
+        );
+
+        return { isAvailable: true, isRateLimited: true };
       }
 
       this.logger.error('Error checking messaging availability', error);
@@ -73,9 +94,9 @@ export class GoogleApisServiceAvailabilityService {
 
   private async checkCalendarAvailability(
     oAuth2Client: InstanceType<typeof google.auth.OAuth2>,
-  ): Promise<boolean> {
+  ): Promise<GoogleApiServiceCheckResult> {
     if (!this.twentyConfigService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')) {
-      return false;
+      return { isAvailable: false, isRateLimited: false };
     }
 
     try {
@@ -89,14 +110,22 @@ export class GoogleApisServiceAvailabilityService {
         maxResults: 1,
       });
 
-      return true;
+      return { isAvailable: true, isRateLimited: false };
     } catch (error) {
       if (this.isServiceNotEnabledError(error)) {
         this.logger.log(
           'Calendar service is not enabled for this Google Workspace account',
         );
 
-        return false;
+        return { isAvailable: false, isRateLimited: false };
+      }
+
+      if (this.isQuotaExceededError(error)) {
+        this.logger.warn(
+          'Google Calendar quota is exhausted while checking calendar availability',
+        );
+
+        return { isAvailable: true, isRateLimited: true };
       }
 
       this.logger.error('Error checking Calendar availability', error);
@@ -106,19 +135,8 @@ export class GoogleApisServiceAvailabilityService {
   }
 
   private isServiceNotEnabledError(error: unknown): boolean {
-    const errorResponse = (
-      error as { response?: { data?: { error?: unknown } } }
-    )?.response?.data?.error;
-
-    if (!errorResponse || typeof errorResponse !== 'object') {
-      return false;
-    }
-
-    const gmailError = errorResponse as {
-      errors?: Array<{ reason?: string; message?: string }>;
-    };
-
-    const firstError = gmailError.errors?.[0];
+    const errorResponse = this.getGoogleApiError(error);
+    const firstError = errorResponse?.errors?.[0];
 
     if (!firstError) {
       return false;
@@ -138,5 +156,36 @@ export class GoogleApisServiceAvailabilityService {
     return (
       isFailedPrecondition && (isServiceNotEnabled || isPreconditionCheckFailed)
     );
+  }
+
+  private isQuotaExceededError(error: unknown): boolean {
+    const errorResponse = this.getGoogleApiError(error);
+    const firstError = errorResponse?.errors?.[0];
+
+    const isQuotaExceededReason = [
+      'dailyLimitExceeded',
+      'rateLimitExceeded',
+      'userRateLimitExceeded',
+    ].includes(firstError?.reason ?? '');
+
+    return (
+      isQuotaExceededReason || errorResponse?.status === 'RESOURCE_EXHAUSTED'
+    );
+  }
+
+  private getGoogleApiError(error: unknown): {
+    status?: string;
+    errors?: Array<{ reason?: string; message?: string }>;
+  } | null {
+    const errorResponse = (
+      error as { response?: { data?: { error?: unknown } } }
+    )?.response?.data?.error;
+
+    return errorResponse && typeof errorResponse === 'object'
+      ? (errorResponse as {
+          status?: string;
+          errors?: Array<{ reason?: string; message?: string }>;
+        })
+      : null;
   }
 }

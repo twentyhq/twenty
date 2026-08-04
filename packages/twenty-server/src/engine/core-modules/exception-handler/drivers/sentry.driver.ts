@@ -12,6 +12,37 @@ import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/ex
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
+const isGoogleApiQuotaError = (exception: unknown): boolean => {
+  if (typeof exception !== 'object' || exception === null) {
+    return false;
+  }
+
+  const errorResponse = (
+    exception as {
+      response?: { data?: { error?: unknown } };
+    }
+  ).response?.data?.error;
+
+  if (typeof errorResponse !== 'object' || errorResponse === null) {
+    return false;
+  }
+
+  const googleError = errorResponse as {
+    status?: string;
+    errors?: Array<{ reason?: string }>;
+  };
+  const reason = googleError.errors?.[0]?.reason;
+
+  return (
+    [
+      'dailyLimitExceeded',
+      'quotaExceeded',
+      'rateLimitExceeded',
+      'userRateLimitExceeded',
+    ].includes(reason ?? '') || googleError.status === 'RESOURCE_EXHAUSTED'
+  );
+};
+
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -48,6 +79,16 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (isGoogleApiQuotaError(exception)) {
+          scope.addBreadcrumb({
+            category: 'sentry.filter',
+            level: 'warning',
+            message: 'Filtered Google API quota error',
+          });
+
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
