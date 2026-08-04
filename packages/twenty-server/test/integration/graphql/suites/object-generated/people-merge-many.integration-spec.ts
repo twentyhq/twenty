@@ -1,6 +1,9 @@
+import { randomUUID } from 'crypto';
+
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
@@ -12,8 +15,17 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 describe('people merge resolvers (integration)', () => {
   let createdPersonIdsForCleaning: string[] = [];
   let createdOpportunityIdsForCleaning: string[] = [];
+  let createdNoteIdsForCleaning: string[] = [];
+  let createdNoteTargetIdsForCleaning: string[] = [];
+  let createdTimelineActivityIdsForCleaning: string[] = [];
 
   afterEach(async () => {
+    await deleteRecordsByIds(
+      'timelineActivity',
+      createdTimelineActivityIdsForCleaning,
+    );
+    await deleteRecordsByIds('noteTarget', createdNoteTargetIdsForCleaning);
+    await deleteRecordsByIds('note', createdNoteIdsForCleaning);
     await deleteRecordsByIds('opportunity', createdOpportunityIdsForCleaning);
 
     if (createdPersonIdsForCleaning.length > 0) {
@@ -25,6 +37,9 @@ describe('people merge resolvers (integration)', () => {
     }
 
     createdOpportunityIdsForCleaning = [];
+    createdNoteIdsForCleaning = [];
+    createdNoteTargetIdsForCleaning = [];
+    createdTimelineActivityIdsForCleaning = [];
     createdPersonIdsForCleaning = [];
   });
 
@@ -449,6 +464,221 @@ describe('people merge resolvers (integration)', () => {
           additionalEmails: [],
         });
       }
+    });
+
+    it('should only remove source interactions with an exact survivor equivalent', async () => {
+      const personResponse = await makeGraphqlAPIRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: [
+            {
+              name: { firstName: 'Timeline', lastName: 'Survivor' },
+              emails: {
+                primaryEmail: 'timeline-survivor@example.com',
+                additionalEmails: [],
+              },
+            },
+            {
+              name: { firstName: 'Timeline', lastName: 'Absorbed' },
+              emails: {
+                primaryEmail: 'timeline-absorbed@example.com',
+                additionalEmails: [],
+              },
+            },
+          ],
+        }),
+      );
+      const [survivorPersonId, absorbedPersonId] =
+        personResponse.body.data.createPeople.map(
+          ({ id }: { id: string }) => id,
+        );
+
+      createdPersonIdsForCleaning.push(survivorPersonId, absorbedPersonId);
+
+      const duplicatedNoteId = randomUUID();
+      const sourceOnlyNoteId = randomUUID();
+      const survivorNoteTargetId = randomUUID();
+      const redundantSourceNoteTargetId = randomUUID();
+      const retainedSourceNoteTargetId = randomUUID();
+
+      createdNoteIdsForCleaning.push(duplicatedNoteId, sourceOnlyNoteId);
+      createdNoteTargetIdsForCleaning.push(
+        survivorNoteTargetId,
+        redundantSourceNoteTargetId,
+        retainedSourceNoteTargetId,
+      );
+
+      await Promise.all([
+        createOneOperation({
+          objectMetadataSingularName: 'note',
+          input: { id: duplicatedNoteId, title: 'Shared merge test note' },
+        }),
+        createOneOperation({
+          objectMetadataSingularName: 'note',
+          input: { id: sourceOnlyNoteId, title: 'Source-only merge test note' },
+        }),
+      ]);
+
+      await Promise.all([
+        createOneOperation({
+          objectMetadataSingularName: 'noteTarget',
+          input: {
+            id: survivorNoteTargetId,
+            noteId: duplicatedNoteId,
+            targetPersonId: survivorPersonId,
+          },
+        }),
+        createOneOperation({
+          objectMetadataSingularName: 'noteTarget',
+          input: {
+            id: redundantSourceNoteTargetId,
+            noteId: duplicatedNoteId,
+            targetPersonId: absorbedPersonId,
+          },
+        }),
+        createOneOperation({
+          objectMetadataSingularName: 'noteTarget',
+          input: {
+            id: retainedSourceNoteTargetId,
+            noteId: sourceOnlyNoteId,
+            targetPersonId: absorbedPersonId,
+          },
+        }),
+      ]);
+
+      const survivorTimelineActivityId = randomUUID();
+      const redundantSourceTimelineActivityId = randomUUID();
+      const distinctSourceTimelineActivityId = randomUUID();
+      const linkedRecordId = randomUUID();
+      const duplicateHappensAt = '2026-07-01T12:00:00.000Z';
+
+      createdTimelineActivityIdsForCleaning.push(
+        survivorTimelineActivityId,
+        redundantSourceTimelineActivityId,
+        distinctSourceTimelineActivityId,
+      );
+
+      const createTimelineActivity = async ({
+        id,
+        targetPersonId,
+        happensAt,
+      }: {
+        id: string;
+        targetPersonId: string;
+        happensAt: string;
+      }) =>
+        createOneOperation({
+          objectMetadataSingularName: 'timelineActivity',
+          input: {
+            id,
+            targetPersonId,
+            happensAt,
+            name: 'message.linked',
+            properties: {},
+            linkedRecordCachedName: '',
+            linkedRecordId,
+          },
+        });
+
+      await Promise.all([
+        createTimelineActivity({
+          id: survivorTimelineActivityId,
+          targetPersonId: survivorPersonId,
+          happensAt: duplicateHappensAt,
+        }),
+        createTimelineActivity({
+          id: redundantSourceTimelineActivityId,
+          targetPersonId: absorbedPersonId,
+          happensAt: duplicateHappensAt,
+        }),
+        createTimelineActivity({
+          id: distinctSourceTimelineActivityId,
+          targetPersonId: absorbedPersonId,
+          happensAt: '2026-07-01T12:01:00.000Z',
+        }),
+      ]);
+
+      const mergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [survivorPersonId, absorbedPersonId],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const noteTargetsResponse = await makeGraphqlAPIRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'noteTarget',
+          objectMetadataPluralName: 'noteTargets',
+          gqlFields: 'id noteId targetPersonId',
+          filter: {
+            id: {
+              in: [
+                survivorNoteTargetId,
+                redundantSourceNoteTargetId,
+                retainedSourceNoteTargetId,
+              ],
+            },
+          },
+        }),
+      );
+      const noteTargets = noteTargetsResponse.body.data.noteTargets.edges.map(
+        ({ node }: { node: Record<string, string> }) => node,
+      );
+
+      expect(noteTargets).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: survivorNoteTargetId,
+            targetPersonId: survivorPersonId,
+          }),
+          expect.objectContaining({
+            id: retainedSourceNoteTargetId,
+            targetPersonId: survivorPersonId,
+          }),
+        ]),
+      );
+      expect(noteTargets).toHaveLength(2);
+
+      const timelineActivitiesResponse = await makeGraphqlAPIRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'timelineActivity',
+          objectMetadataPluralName: 'timelineActivities',
+          gqlFields: 'id targetPersonId happensAt',
+          filter: {
+            id: {
+              in: [
+                survivorTimelineActivityId,
+                redundantSourceTimelineActivityId,
+                distinctSourceTimelineActivityId,
+              ],
+            },
+          },
+        }),
+      );
+      const timelineActivities =
+        timelineActivitiesResponse.body.data.timelineActivities.edges.map(
+          ({ node }: { node: Record<string, string> }) => node,
+        );
+
+      expect(timelineActivities).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: survivorTimelineActivityId,
+            targetPersonId: survivorPersonId,
+          }),
+          expect.objectContaining({
+            id: distinctSourceTimelineActivityId,
+            targetPersonId: survivorPersonId,
+          }),
+        ]),
+      );
+      expect(timelineActivities).toHaveLength(2);
     });
 
     it('should restore an absorbed person without reclaiming migrated relationships', async () => {
