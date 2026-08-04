@@ -1,4 +1,4 @@
-export type SettingsAgentToolMarketplaceApp = {
-  id: string;
-  logoUrl?: string | null;
-};
+import { type FindManyMarketplaceAppsForToolTableQuery } from '~/generated-metadata/graphql';
+
+export type SettingsAgentToolMarketplaceApp =
+  FindManyMarketplaceAppsForToolTableQuery['findManyMarketplaceApps'][number];

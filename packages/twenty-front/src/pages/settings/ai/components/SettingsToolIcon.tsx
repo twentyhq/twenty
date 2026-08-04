@@ -16,6 +16,8 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
+import { type SettingsAgentToolMarketplaceApp } from '~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp';
 
 type SettingsToolIconProps = {
   icon?: string | null;
@@ -25,13 +27,9 @@ type SettingsToolIconProps = {
   marketplaceApp?: MarketplaceAppInfo;
 };
 
-type ApplicationInfo = {
-  name: string;
-};
+type ApplicationInfo = Pick<SettingsAgentToolApplication, 'name'>;
 
-type MarketplaceAppInfo = {
-  logoUrl?: string | null;
-};
+type MarketplaceAppInfo = Pick<SettingsAgentToolMarketplaceApp, 'logoUrl'>;
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
   if (toolName.startsWith('create_')) return IconPlus;
