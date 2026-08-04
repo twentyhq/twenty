@@ -11,7 +11,7 @@ export default defineApplication({
   author: 'Twenty',
   screenshots: ['public/gallery/cover.png'],
   serverVariables: {
-    PDL_API_KEY: {
+    PEOPLE_DATA_LABS_APP_API_KEY: {
       description: 'People Data Labs API key',
       isSecret: true,
       isRequired: true,

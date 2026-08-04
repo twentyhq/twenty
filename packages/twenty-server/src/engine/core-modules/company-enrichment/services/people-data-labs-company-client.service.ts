@@ -104,7 +104,9 @@ export class PeopleDataLabsCompanyClientService {
   }
 
   private getApiKey(): string | undefined {
-    return this.twentyConfigService.get('PEOPLE_DATA_LABS_API_KEY')?.trim();
+    return this.twentyConfigService
+      .get('PEOPLE_DATA_LABS_ENGINE_API_KEY')
+      ?.trim();
   }
 
   private classifyError({

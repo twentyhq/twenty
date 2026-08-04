@@ -7,31 +7,31 @@ describe('getPdlApiKey', () => {
   let previousApiKey: string | undefined;
 
   beforeEach(() => {
-    previousApiKey = process.env.PDL_API_KEY;
+    previousApiKey = process.env.PEOPLE_DATA_LABS_APP_API_KEY;
   });
 
   afterEach(() => {
     if (previousApiKey === undefined) {
-      delete process.env.PDL_API_KEY;
+      delete process.env.PEOPLE_DATA_LABS_APP_API_KEY;
     } else {
-      process.env.PDL_API_KEY = previousApiKey;
+      process.env.PEOPLE_DATA_LABS_APP_API_KEY = previousApiKey;
     }
   });
 
   it('returns the configured key', () => {
-    process.env.PDL_API_KEY = 'secret-key';
+    process.env.PEOPLE_DATA_LABS_APP_API_KEY = 'secret-key';
 
     expect(getPdlApiKey()).toBe('secret-key');
   });
 
   it('throws a PdlConfigError when the key is missing', () => {
-    delete process.env.PDL_API_KEY;
+    delete process.env.PEOPLE_DATA_LABS_APP_API_KEY;
 
     expect(() => getPdlApiKey()).toThrow(PdlConfigError);
   });
 
   it('throws a PdlConfigError when the key is blank', () => {
-    process.env.PDL_API_KEY = '   ';
+    process.env.PEOPLE_DATA_LABS_APP_API_KEY = '   ';
 
     expect(() => getPdlApiKey()).toThrow(PdlConfigError);
   });

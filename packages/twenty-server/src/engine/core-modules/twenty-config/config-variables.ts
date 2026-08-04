@@ -2031,11 +2031,11 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description:
-      'API key for People Data Labs company enrichment. When unset, workspace company enrichment is skipped.',
+      'API key for the engine-side People Data Labs company enrichment, billed to the instance account. Distinct from the People Data Labs app, which holds its own key. When unset, workspace company enrichment is skipped.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  PEOPLE_DATA_LABS_API_KEY?: string;
+  PEOPLE_DATA_LABS_ENGINE_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

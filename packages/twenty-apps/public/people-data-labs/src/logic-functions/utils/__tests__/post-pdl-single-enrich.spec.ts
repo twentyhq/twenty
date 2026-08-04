@@ -32,12 +32,12 @@ const stubFetch = (response: FetchResponse | Error) => {
 
 describe('postPdlSingleEnrich', () => {
   beforeEach(() => {
-    process.env.PDL_API_KEY = 'secret-key';
+    process.env.PEOPLE_DATA_LABS_APP_API_KEY = 'secret-key';
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    delete process.env.PDL_API_KEY;
+    delete process.env.PEOPLE_DATA_LABS_APP_API_KEY;
   });
 
   it('posts the params directly in the body (not wrapped under requests)', async () => {
