@@ -11,7 +11,7 @@ import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
-import { resolveDropFromPointerX } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerX';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -78,7 +78,6 @@ export const useRecordBoardColumnDndKit = (): {
   );
 
   const totalSize = visibleRecordGroupIds.length * recordIndexKanbanColumnWidth;
-
   const lastIndex = visibleRecordGroupIds.length;
 
   const handleDragStart = (_event: DragStartPayload) => {
@@ -88,12 +87,14 @@ export const useRecordBoardColumnDndKit = (): {
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const dropTargetIndex = resolveDropFromPointerX({
-      target,
-      pointerX: position.current.x,
-      totalSize,
-      lastIndex,
-    });
+    const dropTargetIndex =
+      resolveDropFromPointer({
+        target,
+        pointer: position.current,
+        defaultOrientation: 'vertical',
+        getDroppableItemCount: () => lastIndex,
+      })?.dropTargetIndex ??
+      (position.current.x > totalSize / 2 ? lastIndex : 0);
 
     setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
       currentActiveDropTargetIndex === dropTargetIndex
@@ -114,13 +115,14 @@ export const useRecordBoardColumnDndKit = (): {
 
     const sourceIndex = source.data.index;
 
-    const dropTargetIndex = resolveDropFromPointerX({
-      target,
-      pointerX: position.current.x,
-      totalSize,
-      lastIndex,
-    });
-    if (!isDefined(dropTargetIndex)) return;
+    const dropTargetIndex =
+      resolveDropFromPointer({
+        target,
+        pointer: position.current,
+        defaultOrientation: 'vertical',
+        getDroppableItemCount: () => lastIndex,
+      })?.dropTargetIndex ??
+      (position.current.x > totalSize / 2 ? lastIndex : 0);
 
     const destinationIndex =
       dropTargetIndex > sourceIndex ? dropTargetIndex - 1 : dropTargetIndex;
