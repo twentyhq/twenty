@@ -32,6 +32,6 @@ export const useAskAiHandoffFromWorkspaceSetup = () => {
 
   return {
     shouldShrinkFromFullWidth:
-      isContinuingChatFromWorkspaceSetup && shouldReduceMotion !== true,
+      isContinuingChatFromWorkspaceSetup && !shouldReduceMotion,
   };
 };

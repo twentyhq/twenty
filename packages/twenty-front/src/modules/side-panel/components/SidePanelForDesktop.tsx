@@ -19,7 +19,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
-import { useCallback, useState } from 'react';
+import { type AnimationEvent, useCallback, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSidePanelWrapper = styled.div<{
@@ -47,7 +47,7 @@ const StyledSidePanelWrapper = styled.div<{
   }
 `;
 
-const StyledSidePanel = styled.aside<{ isOpen: boolean }>`
+const StyledSidePanel = styled.aside<{ isShrinkingFromFullWidth: boolean }>`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
@@ -56,7 +56,8 @@ const StyledSidePanel = styled.aside<{ isOpen: boolean }>`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: ${({ isOpen }) => (isOpen ? '100%' : `var(${SIDE_PANEL_WIDTH_VAR})`)};
+  width: ${({ isShrinkingFromFullWidth }) =>
+    isShrinkingFromFullWidth ? '100%' : `var(${SIDE_PANEL_WIDTH_VAR})`};
 `;
 
 const StyledModalContainer = styled.div`
@@ -84,6 +85,9 @@ export const SidePanelForDesktop = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [shouldRenderContent, setShouldRenderContent] =
     useState(isSidePanelOpened);
+  const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] = useState(
+    shouldShrinkFromFullWidth,
+  );
 
   const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
@@ -91,17 +95,31 @@ export const SidePanelForDesktop = () => {
 
   const shouldShowContent = isSidePanelOpened || shouldRenderContent;
 
+  // The panel finishes opening through the width transition or the handoff
+  // entrance animation, so content persistence keys off the open state itself
+  // rather than one of those two completion events.
+  if (isSidePanelOpened && !shouldRenderContent) {
+    setShouldRenderContent(true);
+  }
+
   const handleTransitionEnd = () => {
     if (isSidePanelOpened) {
-      // Open animation completed - ensure content persists for close animation
-      setShouldRenderContent(true);
-    } else {
-      // Close animation completed
-      setShouldRenderContent(false);
-      if (isSidePanelClosing) {
-        sidePanelCloseAnimationCompleteCleanup();
-      }
+      return;
     }
+
+    // Close animation completed
+    setShouldRenderContent(false);
+    if (isSidePanelClosing) {
+      sidePanelCloseAnimationCompleteCleanup();
+    }
+  };
+
+  const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    setIsShrinkingFromFullWidth(false);
   };
 
   const handleModalContainerRef = useCallback(
@@ -149,11 +167,12 @@ export const SidePanelForDesktop = () => {
         isOpen={isSidePanelOpened}
         isResizing={isResizing}
         onTransitionEnd={handleTransitionEnd}
-        data-shrink-from-full-width={shouldShrinkFromFullWidth}
+        onAnimationEnd={handleAnimationEnd}
+        data-shrink-from-full-width={isShrinkingFromFullWidth}
         data-side-panel=""
         data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
       >
-        <StyledSidePanel isOpen={isSidePanelOpened}>
+        <StyledSidePanel isShrinkingFromFullWidth={isShrinkingFromFullWidth}>
           <StyledModalContainer ref={handleModalContainerRef} />
           <ModalContainerContext.Provider value={{ container: modalContainer }}>
             <ParentClickOutsideIdContext.Provider
