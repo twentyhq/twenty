@@ -79,7 +79,6 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
     return (
       <AdvancedFilterRelationValueInputClickableSelect
         recordFilter={recordFilter}
-        isDisabled={isDisabled}
       />
     );
   }

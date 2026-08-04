@@ -18,9 +18,7 @@ type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;
 };
 
-// Computes the value label of a relation filter at runtime ("Me", record
-// names, or "N members") instead of relying on the deprecated stored
-// displayValue, which is empty for filters created without one.
+// The stored displayValue is deprecated and empty for filters created without one, so compute the label at runtime.
 export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
@@ -31,11 +29,14 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
-    throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
+    throw new Error('recordFilter.fieldMetadataId is not defined');
   }
 
+  // Nested relation filters resolve records from the leaf relation's target object, direct filters from the source.
   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow({
-    fieldMetadataId: recordFilter.fieldMetadataId,
+    fieldMetadataId:
+      recordFilter.relationTargetFieldMetadataId ??
+      recordFilter.fieldMetadataId,
     objectMetadataItems,
   });
 

@@ -4,12 +4,10 @@ import { useComputeRecordRelationFilterDisplayValue } from '@/views/hooks/useCom
 
 type AdvancedFilterRelationValueInputClickableSelectProps = {
   recordFilter: RecordFilter;
-  isDisabled: boolean;
 };
 
 export const AdvancedFilterRelationValueInputClickableSelect = ({
   recordFilter,
-  isDisabled,
 }: AdvancedFilterRelationValueInputClickableSelectProps) => {
   const { displayValue } = useComputeRecordRelationFilterDisplayValue({
     recordFilter,
@@ -17,11 +15,7 @@ export const AdvancedFilterRelationValueInputClickableSelect = ({
 
   return (
     <SelectControl
-      selectedOption={{
-        label: displayValue,
-        value: null,
-        disabled: isDisabled,
-      }}
+      selectedOption={{ label: displayValue, value: null }}
       textAccent="default"
       isDisabled={false}
     />
