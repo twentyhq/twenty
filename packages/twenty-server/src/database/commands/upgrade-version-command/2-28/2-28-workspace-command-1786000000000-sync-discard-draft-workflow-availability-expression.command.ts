@@ -3,7 +3,7 @@ import { Command } from 'nest-commander';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations } from 'src/database/commands/upgrade-version-command/2-28/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
+import { buildDiscardDraftWorkflowCommandMenuItemsToUpdate } from 'src/database/commands/upgrade-version-command/2-28/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -36,13 +36,12 @@ export class SyncDiscardDraftWorkflowAvailabilityExpressionCommand extends Provi
         'flatCommandMenuItemMaps',
       ]);
 
-    const commandMenuItemOperations =
-      buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations({
+    const commandMenuItemsToUpdate =
+      buildDiscardDraftWorkflowCommandMenuItemsToUpdate({
         existingFlatCommandMenuItemMaps: flatCommandMenuItemMaps,
-        now: new Date().toISOString(),
       });
 
-    if (commandMenuItemOperations.flatEntityToUpdate.length === 0) {
+    if (commandMenuItemsToUpdate.length === 0) {
       this.logger.log(
         `"Discard Draft" workflow command menu item availability expression already synced for workspace ${workspaceId}, skipping`,
       );
@@ -67,7 +66,11 @@ export class SyncDiscardDraftWorkflowAvailabilityExpressionCommand extends Provi
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
-            commandMenuItem: commandMenuItemOperations,
+            commandMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: commandMenuItemsToUpdate,
+            },
           },
           workspaceId,
           applicationUniversalIdentifier:

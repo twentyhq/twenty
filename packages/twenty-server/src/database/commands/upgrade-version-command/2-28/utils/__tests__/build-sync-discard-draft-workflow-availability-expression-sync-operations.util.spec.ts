@@ -1,7 +1,7 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import {
-  buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations,
+  buildDiscardDraftWorkflowCommandMenuItemsToUpdate,
   LEGACY_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
 } from 'src/database/commands/upgrade-version-command/2-28/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -11,7 +11,6 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 const APPLICATION_ID = 'application-id';
 const WORKSPACE_ID = 'workspace-id';
 const CREATED_AT = '2026-08-01T00:00:00.000Z';
-const NOW = '2026-08-04T00:00:00.000Z';
 
 const DISCARD_DRAFT_WORKFLOW_DEFINITION =
   STANDARD_COMMAND_MENU_ITEMS.discardDraftWorkflow;
@@ -80,7 +79,7 @@ const buildDiscardDraftWorkflowCommandMenuItem = ({
   updatedAt: CREATED_AT,
 });
 
-describe('buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations', () => {
+describe('buildDiscardDraftWorkflowCommandMenuItemsToUpdate', () => {
   it('rewrites the legacy versions.length gate to the lastPublishedVersionId gate', () => {
     const legacyDiscardDraftWorkflowCommandMenuItem =
       buildDiscardDraftWorkflowCommandMenuItem({
@@ -88,22 +87,17 @@ describe('buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations', ()
           LEGACY_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
       });
 
-    const result =
-      buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations({
-        existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
-          legacyDiscardDraftWorkflowCommandMenuItem,
-        ]),
-        now: NOW,
-      });
+    const result = buildDiscardDraftWorkflowCommandMenuItemsToUpdate({
+      existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
+        legacyDiscardDraftWorkflowCommandMenuItem,
+      ]),
+    });
 
-    expect(result.flatEntityToCreate).toHaveLength(0);
-    expect(result.flatEntityToDelete).toHaveLength(0);
-    expect(result.flatEntityToUpdate).toHaveLength(1);
-    expect(result.flatEntityToUpdate[0]).toMatchObject({
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
       id: legacyDiscardDraftWorkflowCommandMenuItem.id,
       conditionalAvailabilityExpression:
         EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
-      updatedAt: NOW,
     });
   });
 
@@ -120,15 +114,13 @@ describe('buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations', ()
           EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
       });
 
-    const result =
-      buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations({
-        existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
-          syncedDiscardDraftWorkflowCommandMenuItem,
-        ]),
-        now: NOW,
-      });
+    const result = buildDiscardDraftWorkflowCommandMenuItemsToUpdate({
+      existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
+        syncedDiscardDraftWorkflowCommandMenuItem,
+      ]),
+    });
 
-    expect(result.flatEntityToUpdate).toHaveLength(0);
+    expect(result).toHaveLength(0);
   });
 
   it('does not update an unrelated custom availability expression', () => {
@@ -138,28 +130,20 @@ describe('buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations', ()
           'everyEquals(selectedRecords, "currentVersion.status", "DRAFT")',
       });
 
-    const result =
-      buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations({
-        existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
-          customDiscardDraftWorkflowCommandMenuItem,
-        ]),
-        now: NOW,
-      });
+    const result = buildDiscardDraftWorkflowCommandMenuItemsToUpdate({
+      existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
+        customDiscardDraftWorkflowCommandMenuItem,
+      ]),
+    });
 
-    expect(result.flatEntityToUpdate).toHaveLength(0);
+    expect(result).toHaveLength(0);
   });
 
   it('does not update when the discard draft workflow command menu item is missing', () => {
-    const result =
-      buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations({
-        existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([]),
-        now: NOW,
-      });
-
-    expect(result).toEqual({
-      flatEntityToCreate: [],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
+    const result = buildDiscardDraftWorkflowCommandMenuItemsToUpdate({
+      existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([]),
     });
+
+    expect(result).toEqual([]);
   });
 });
