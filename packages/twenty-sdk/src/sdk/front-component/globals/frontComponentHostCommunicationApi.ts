@@ -104,6 +104,15 @@ export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
 
+export type LocalStorageSetFunction = (
+  key: string,
+  serializedValue: string,
+) => Promise<void>;
+
+export type LocalStorageDeleteFunction = (key: string) => Promise<boolean>;
+
+export type LocalStorageClearFunction = () => Promise<void>;
+
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
@@ -114,6 +123,9 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  localStorageSet?: LocalStorageSetFunction;
+  localStorageDelete?: LocalStorageDeleteFunction;
+  localStorageClear?: LocalStorageClearFunction;
 };
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from '../constants/front-component-host-communication-api-key';

@@ -6,6 +6,7 @@ import '../generated/remote-elements';
 import { ThreadMessagePort } from '@quilted/threads';
 
 import { isDefined } from 'twenty-shared/utils';
+import { FRONT_COMPONENT_LOCAL_STORAGE_BRIDGE_KEY } from 'twenty-sdk/front-component-renderer';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
@@ -16,9 +17,11 @@ import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLo
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { installStorageShims } from '@/polyfills/storage/utils/installStorageShims';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
+import { frontComponentLocalStorageBridge } from '@/remote/worker/frontComponentLocalStorageBridge';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
 import { installErrorEventBridge } from '@/remote/worker/utils/installErrorEventBridge';
@@ -51,8 +54,14 @@ installWindowGeometryPolyfill({
   geometryStore: workerGeometryStore,
 });
 
+installStorageShims({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  localStorageBridge: frontComponentLocalStorageBridge,
+});
+
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
+  [FRONT_COMPONENT_LOCAL_STORAGE_BRIDGE_KEY]: frontComponentLocalStorageBridge,
 });
 
 let hostThread: FrontComponentHostThread | null = null;
@@ -76,6 +85,8 @@ const workerExports: WorkerExports = {
         hostThread.imports,
       ),
     );
+
+    frontComponentLocalStorageBridge.flushPendingPersistOperations();
   },
   updateContext: async (context) => {
     setFrontComponentExecutionContext(context);

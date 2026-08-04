@@ -2,6 +2,9 @@ import {
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
+  type LocalStorageClearFunction,
+  type LocalStorageDeleteFunction,
+  type LocalStorageSetFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
@@ -20,4 +23,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  localStorageSet?: LocalStorageSetFunction;
+  localStorageDelete?: LocalStorageDeleteFunction;
+  localStorageClear?: LocalStorageClearFunction;
 };

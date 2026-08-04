@@ -83,13 +83,17 @@ const FrontComponentRendererContent = ({
 
   const { id: frontComponentId, applicationId, usesSdkClient } = frontComponent;
 
-  const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext({
-      frontComponentId,
-      commandMenuItemId,
-      selectedRecordIds,
-      colorScheme,
-    });
+  const {
+    executionContext,
+    frontComponentHostCommunicationApi,
+    localStorageNamespace,
+  } = useFrontComponentExecutionContext({
+    frontComponentId,
+    applicationId,
+    commandMenuItemId,
+    selectedRecordIds,
+    colorScheme,
+  });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -158,6 +162,7 @@ const FrontComponentRendererContent = ({
               frontComponentHostCommunicationApi
             }
             applicationVariables={applicationVariables}
+            localStorageNamespace={localStorageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
           />

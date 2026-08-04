@@ -11,4 +11,5 @@ export type HostToWorkerRenderContext = {
   hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
   initialViewportGeometry?: ViewportGeometrySnapshot;
+  localStorageSnapshot?: Record<string, string>;
 };

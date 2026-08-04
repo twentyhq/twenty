@@ -13,4 +13,7 @@ export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostComm
     closeSidePanel: noopAsync,
     updateProgress: noopAsync,
     copyToClipboard: noopAsync,
+    localStorageSet: noopAsync,
+    localStorageDelete: async () => false,
+    localStorageClear: noopAsync,
   };
