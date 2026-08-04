@@ -62,7 +62,6 @@ describe('buildSlackAssistantAnswerBlocks', () => {
       durationMilliseconds: 1000,
     }).filter((block) => block.type === 'markdown');
 
-    // The break stays with the preceding block, so nothing is consumed by the split.
     expect(markdownBlocks.map((block) => block.text)).toEqual([
       `${firstLine}\n`,
       secondLine,
