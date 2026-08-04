@@ -1,0 +1,31 @@
+import { isDefined, parseJson, parseEmailDocument } from 'twenty-shared/utils';
+
+import { type CompiledOutboundEmailContent } from 'src/engine/core-modules/email/types/compiled-outbound-email-content.type';
+import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
+import { resolveEmailDocumentBindings } from 'src/engine/core-modules/email/utils/resolve-email-document-bindings.util';
+import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
+
+export const compileCampaignEmailContent = async (
+  bodyTemplate: string,
+  variables: Record<string, string> | null,
+): Promise<CompiledOutboundEmailContent> => {
+  if (bodyTemplate.trim() === '') {
+    return { html: '', plainText: '' };
+  }
+
+  const parseResult = parseEmailDocument(parseJson<unknown>(bodyTemplate));
+
+  if (!parseResult.success) {
+    throw new Error('Campaign bodyTemplate is not a renderable email document');
+  }
+
+  return compileOutboundEmailContent(
+    isDefined(variables)
+      ? resolveEmailDocumentBindings(parseResult.document, (value, context) =>
+          renderCampaignTemplate(value, variables, {
+            escapeValues: context === 'html',
+          }),
+        )
+      : parseResult.document,
+  );
+};

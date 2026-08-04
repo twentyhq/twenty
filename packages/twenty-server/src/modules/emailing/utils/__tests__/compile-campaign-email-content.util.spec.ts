@@ -1,14 +1,17 @@
-import { renderCampaignBodyToHtml } from 'src/modules/emailing/utils/render-campaign-body.util';
+import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 
 jest.mock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
+  'src/engine/core-modules/email/utils/compile-outbound-email-content.util',
   () => ({
-    renderRichTextToHtml: jest.fn().mockResolvedValue('<p>rendered html</p>'),
+    compileOutboundEmailContent: jest.fn().mockResolvedValue({
+      html: '<p>rendered html</p>',
+      plainText: 'rendered html',
+    }),
   }),
 );
 
-const { renderRichTextToHtml } = jest.requireMock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
+const { compileOutboundEmailContent } = jest.requireMock(
+  'src/engine/core-modules/email/utils/compile-outbound-email-content.util',
 );
 
 const VARIABLES = {
@@ -25,21 +28,24 @@ const buildDocument = (text: string) =>
     content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
   });
 
-const renderedDocument = () => renderRichTextToHtml.mock.calls[0][0];
+const compiledDocument = () => compileOutboundEmailContent.mock.calls[0][0];
 
-describe('renderCampaignBodyToHtml', () => {
+describe('compileCampaignEmailContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should render a TipTap document through the email renderer', async () => {
-    const html = await renderCampaignBodyToHtml(
+    const content = await compileCampaignEmailContent(
       buildDocument('Hello there'),
       VARIABLES,
     );
 
-    expect(html).toBe('<p>rendered html</p>');
-    expect(renderedDocument()).toEqual({
+    expect(content).toEqual({
+      html: '<p>rendered html</p>',
+      plainText: 'rendered html',
+    });
+    expect(compiledDocument()).toEqual({
       type: 'doc',
       content: [
         {
@@ -51,18 +57,18 @@ describe('renderCampaignBodyToHtml', () => {
   });
 
   it('should substitute variables inside text nodes', async () => {
-    await renderCampaignBodyToHtml(
+    await compileCampaignEmailContent(
       buildDocument('Hi {{firstName}}, from {{fullName}}'),
       VARIABLES,
     );
 
-    expect(renderedDocument().content[0].content[0].text).toBe(
+    expect(compiledDocument().content[0].content[0].text).toBe(
       'Hi Ada, from Ada Lovelace',
     );
   });
 
   it('should substitute variables carried by variable chip attributes', async () => {
-    await renderCampaignBodyToHtml(
+    await compileCampaignEmailContent(
       JSON.stringify({
         type: 'doc',
         content: [
@@ -78,11 +84,14 @@ describe('renderCampaignBodyToHtml', () => {
       VARIABLES,
     );
 
-    expect(renderedDocument().content[0].content[1].attrs.variable).toBe('Ada');
+    expect(compiledDocument().content[0].content[1]).toEqual({
+      type: 'text',
+      text: 'Ada',
+    });
   });
 
   it('should substitute variables inside button and link URLs', async () => {
-    await renderCampaignBodyToHtml(
+    await compileCampaignEmailContent(
       JSON.stringify({
         type: 'doc',
         content: [
@@ -111,16 +120,16 @@ describe('renderCampaignBodyToHtml', () => {
       VARIABLES,
     );
 
-    expect(renderedDocument().content[0].attrs.href).toBe(
+    expect(compiledDocument().content[0].attrs.href).toBe(
       'https://example.com/p/person-123',
     );
-    expect(renderedDocument().content[1].content[0].marks[0].attrs.href).toBe(
+    expect(compiledDocument().content[1].content[0].marks[0].attrs.href).toBe(
       'https://example.com/u/person-123',
     );
   });
 
   it('should substitute variables inside image link URLs', async () => {
-    await renderCampaignBodyToHtml(
+    await compileCampaignEmailContent(
       JSON.stringify({
         type: 'doc',
         content: [
@@ -137,17 +146,17 @@ describe('renderCampaignBodyToHtml', () => {
       VARIABLES,
     );
 
-    expect(renderedDocument().content[0].attrs.href).toBe(
+    expect(compiledDocument().content[0].attrs.href).toBe(
       'https://example.com/promo/person-123',
     );
-    expect(renderedDocument().content[0].attrs.src).toBe(
+    expect(compiledDocument().content[0].attrs.src).toBe(
       'https://example.com/person-123/banner.png',
     );
-    expect(renderedDocument().content[0].attrs.alt).toBe('Banner for Ada');
+    expect(compiledDocument().content[0].attrs.alt).toBe('Banner for Ada');
   });
 
   it('should substitute variables inside raw HTML blocks with escaping', async () => {
-    await renderCampaignBodyToHtml(
+    await compileCampaignEmailContent(
       JSON.stringify({
         type: 'doc',
         content: [
@@ -162,7 +171,7 @@ describe('renderCampaignBodyToHtml', () => {
       { ...VARIABLES, firstName: '<b>Ada</b>' },
     );
 
-    expect(renderedDocument().content[0].attrs.html).toBe(
+    expect(compiledDocument().content[0].attrs.html).toBe(
       '<a href="https://example.com/p/person-123">Hi &lt;b&gt;Ada&lt;/b&gt;</a>',
     );
   });
@@ -194,61 +203,70 @@ describe('renderCampaignBodyToHtml', () => {
       ],
     });
 
-    await renderCampaignBodyToHtml(document, VARIABLES);
+    await compileCampaignEmailContent(document, VARIABLES);
 
     const textNode =
-      renderedDocument().content[0].content[0].content[0].content[0];
+      compiledDocument().content[0].content[0].content[0].content[0];
 
     expect(textNode.text).toBe('Dear Ada');
     expect(textNode.marks).toEqual([{ type: 'bold' }]);
   });
 
   it('should replace unknown variables with an empty string', async () => {
-    await renderCampaignBodyToHtml(buildDocument('Hi {{unknown}}!'), VARIABLES);
+    await compileCampaignEmailContent(
+      buildDocument('Hi {{unknown}}!'),
+      VARIABLES,
+    );
 
-    expect(renderedDocument().content[0].content[0].text).toBe('Hi !');
+    expect(compiledDocument().content[0].content[0].text).toBe('Hi !');
   });
 
   it('should leave a value containing markup for the renderer to escape', async () => {
-    await renderCampaignBodyToHtml(buildDocument('{{firstName}}'), {
+    await compileCampaignEmailContent(buildDocument('{{firstName}}'), {
       ...VARIABLES,
       firstName: '<script>alert(1)</script>',
     });
 
-    expect(renderedDocument().content[0].content[0].text).toBe(
+    expect(compiledDocument().content[0].content[0].text).toBe(
       '<script>alert(1)</script>',
     );
   });
 
   it('should keep placeholders in place when no variables are given', async () => {
-    await renderCampaignBodyToHtml(buildDocument('Hi {{firstName}}'), null);
+    await compileCampaignEmailContent(buildDocument('Hi {{firstName}}'), null);
 
-    expect(renderedDocument().content[0].content[0].text).toBe(
+    expect(compiledDocument().content[0].content[0].text).toBe(
       'Hi {{firstName}}',
     );
   });
 
   it('should render an empty body as empty without calling the renderer', async () => {
-    expect(await renderCampaignBodyToHtml('', VARIABLES)).toBe('');
-    expect(await renderCampaignBodyToHtml('   ', VARIABLES)).toBe('');
-    expect(renderRichTextToHtml).not.toHaveBeenCalled();
+    expect(await compileCampaignEmailContent('', VARIABLES)).toEqual({
+      html: '',
+      plainText: '',
+    });
+    expect(await compileCampaignEmailContent('   ', VARIABLES)).toEqual({
+      html: '',
+      plainText: '',
+    });
+    expect(compileOutboundEmailContent).not.toHaveBeenCalled();
   });
 
   it('should reject a body that is not JSON', async () => {
     await expect(
-      renderCampaignBodyToHtml('<p>Hi {{firstName}}</p>', VARIABLES),
+      compileCampaignEmailContent('<p>Hi {{firstName}}</p>', VARIABLES),
     ).rejects.toThrow('not a renderable email document');
   });
 
   it('should reject a JSON value that is not a document', async () => {
     await expect(
-      renderCampaignBodyToHtml('{"foo":"bar"}', VARIABLES),
+      compileCampaignEmailContent('{"foo":"bar"}', VARIABLES),
     ).rejects.toThrow('not a renderable email document');
   });
 
   it('should reject a document with a non-array content', async () => {
     await expect(
-      renderCampaignBodyToHtml(
+      compileCampaignEmailContent(
         '{"type":"doc","content":"not an array"}',
         VARIABLES,
       ),
@@ -256,9 +274,12 @@ describe('renderCampaignBodyToHtml', () => {
   });
 
   it('should render a document with no content at all', async () => {
-    const html = await renderCampaignBodyToHtml('{"type":"doc"}', VARIABLES);
+    const content = await compileCampaignEmailContent(
+      '{"type":"doc"}',
+      VARIABLES,
+    );
 
-    expect(html).toBe('<p>rendered html</p>');
-    expect(renderedDocument()).toEqual({ type: 'doc' });
+    expect(content.html).toBe('<p>rendered html</p>');
+    expect(compiledDocument()).toEqual({ type: 'doc' });
   });
 });

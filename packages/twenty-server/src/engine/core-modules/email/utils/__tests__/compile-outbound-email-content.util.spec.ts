@@ -1,11 +1,16 @@
-import { renderRichTextToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util';
+import { type EmailDocument } from 'twenty-shared/utils';
 
-describe('renderRichTextToHtml', () => {
+import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
+
+const compileDocument = async (document: EmailDocument): Promise<string> =>
+  (await compileOutboundEmailContent(document)).html;
+
+describe('compileOutboundEmailContent', () => {
   beforeAll(() => {
     jest.useRealTimers();
   });
   it('should render an email section with its inline styles', async () => {
-    const html = await renderRichTextToHtml({
+    const html = await compileDocument({
       type: 'doc',
       content: [
         {
@@ -27,14 +32,16 @@ describe('renderRichTextToHtml', () => {
   });
 
   it('should render columns as a table row with one cell per column', async () => {
-    const html = await renderRichTextToHtml({
+    const html = await compileDocument({
       type: 'doc',
       content: [
         {
           type: 'columns',
+          attrs: { style: {} },
           content: [
             {
               type: 'column',
+              attrs: { style: {} },
               content: [
                 {
                   type: 'paragraph',
@@ -44,6 +51,7 @@ describe('renderRichTextToHtml', () => {
             },
             {
               type: 'column',
+              attrs: { style: {} },
               content: [
                 {
                   type: 'paragraph',
@@ -62,7 +70,7 @@ describe('renderRichTextToHtml', () => {
   });
 
   it('should render a button as a styled link', async () => {
-    const html = await renderRichTextToHtml({
+    const html = await compileDocument({
       type: 'doc',
       content: [
         {
@@ -82,7 +90,7 @@ describe('renderRichTextToHtml', () => {
   });
 
   it('should render a divider as an hr with its styles', async () => {
-    const html = await renderRichTextToHtml({
+    const html = await compileDocument({
       type: 'doc',
       content: [
         {
@@ -97,7 +105,7 @@ describe('renderRichTextToHtml', () => {
   });
 
   it('should wrap themed documents in a styled page and centered container', async () => {
-    const html = await renderRichTextToHtml({
+    const html = await compileDocument({
       type: 'doc',
       attrs: {
         canvasTheme: {
@@ -125,7 +133,7 @@ describe('renderRichTextToHtml', () => {
   });
 
   it('should keep the bare body for documents without a theme', async () => {
-    const html = await renderRichTextToHtml({
+    const html = await compileDocument({
       type: 'doc',
       content: [
         {
@@ -139,8 +147,8 @@ describe('renderRichTextToHtml', () => {
     expect(html).not.toContain('max-width:600px');
   });
 
-  it('should embed raw HTML blocks verbatim', async () => {
-    const html = await renderRichTextToHtml({
+  it('should embed safe raw HTML blocks', async () => {
+    const html = await compileDocument({
       type: 'doc',
       content: [
         {
@@ -157,7 +165,7 @@ describe('renderRichTextToHtml', () => {
   });
 
   it('should wrap linked images in an anchor', async () => {
-    const html = await renderRichTextToHtml({
+    const html = await compileDocument({
       type: 'doc',
       content: [
         {
@@ -176,20 +184,51 @@ describe('renderRichTextToHtml', () => {
     expect(html).toContain('alt="Banner"');
   });
 
-  it('should render nothing for unknown node types', async () => {
-    const html = await renderRichTextToHtml({
+  it('should reject unknown structured nodes before rendering', async () => {
+    await expect(
+      compileOutboundEmailContent({
+        type: 'doc',
+        content: [
+          {
+            type: 'someFutureNode',
+            content: [{ type: 'text', text: 'lost' }],
+          },
+        ],
+      } as unknown as EmailDocument),
+    ).rejects.toThrow('Invalid outbound email document');
+  });
+
+  it('should sanitize structured and legacy HTML with the same policy', async () => {
+    const structured = await compileDocument({
       type: 'doc',
       content: [
-        { type: 'someFutureNode', content: [{ type: 'text', text: 'lost' }] },
         {
-          type: 'paragraph',
-          content: [{ type: 'text', text: 'still rendered' }],
+          type: 'html',
+          attrs: {
+            html: '<a href="javascript:alert(1)" onclick="alert(1)">Open</a><script>alert(1)</script>',
+          },
         },
       ],
     });
+    const legacy = await compileOutboundEmailContent(
+      '<a href="javascript:alert(1)" onclick="alert(1)">Open</a><script>alert(1)</script>',
+    );
 
-    expect(html).not.toContain('lost');
-    expect(html).toContain('still rendered');
+    for (const html of [structured, legacy.html]) {
+      expect(html).toContain('Open');
+      expect(html).not.toContain('javascript:');
+      expect(html).not.toContain('onclick');
+      expect(html).not.toContain('<script');
+    }
+  });
+
+  it('should derive plain text from the sanitized HTML', async () => {
+    await expect(
+      compileOutboundEmailContent('<p>Hello <strong>Ada</strong></p>'),
+    ).resolves.toEqual({
+      html: '<p>Hello <strong>Ada</strong></p>',
+      plainText: 'Hello Ada',
+    });
   });
 
   describe('unsafe URL schemes', () => {
