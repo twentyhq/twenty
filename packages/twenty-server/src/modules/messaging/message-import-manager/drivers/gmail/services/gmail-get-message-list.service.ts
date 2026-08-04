@@ -175,6 +175,58 @@ export class GmailGetMessageListService {
       );
     }
 
+    if (
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+    ) {
+      const foldersToSync = messageFolders.filter((folder) => folder.isSynced);
+      let allMessagesAdded: string[] = [];
+      let allMessagesDeleted: string[] = [];
+      let latestNextSyncCursor: string | undefined = undefined;
+
+      for (const folder of foldersToSync) {
+        const labelId = folder.externalId || folder.name;
+        const { history, historyId: nextSyncCursor } =
+          await this.gmailGetHistoryService.getHistory(
+            gmailClient,
+            messageChannel.syncCursor,
+            labelId,
+          );
+
+        const { messagesAdded, messagesDeleted } =
+          await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
+
+        allMessagesAdded.push(...messagesAdded);
+        allMessagesDeleted.push(...messagesDeleted);
+
+        if (
+          nextSyncCursor &&
+          (!latestNextSyncCursor || nextSyncCursor > latestNextSyncCursor)
+        ) {
+          latestNextSyncCursor = nextSyncCursor;
+        }
+      }
+
+      const nextSyncCursor = latestNextSyncCursor ?? messageChannel.syncCursor;
+
+      const uniqueMessagesAdded = [...new Set(allMessagesAdded)].filter(
+        (id) => !allMessagesDeleted.includes(id),
+      );
+      const uniqueMessagesDeleted = [...new Set(allMessagesDeleted)].filter(
+        (id) => !allMessagesAdded.includes(id),
+      );
+
+      return [
+        {
+          messageExternalIds: uniqueMessagesAdded,
+          messageExternalIdsToDelete: uniqueMessagesDeleted,
+          previousSyncCursor: messageChannel.syncCursor,
+          nextSyncCursor,
+          folderId: undefined,
+        },
+      ];
+    }
+
     const { history, historyId: nextSyncCursor } =
       await this.gmailGetHistoryService.getHistory(
         gmailClient,

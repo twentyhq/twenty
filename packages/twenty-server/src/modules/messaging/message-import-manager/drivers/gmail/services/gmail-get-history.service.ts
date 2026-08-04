@@ -15,6 +15,7 @@ export class GmailGetHistoryService {
   public async getHistory(
     gmailClient: gmail_v1.Gmail,
     lastSyncHistoryId: string,
+    labelId?: string,
   ): Promise<{
     history: gmail_v1.Schema$History[];
     historyId?: string | null;
@@ -31,6 +32,7 @@ export class GmailGetHistoryService {
           maxResults: MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT,
           pageToken,
           startHistoryId: lastSyncHistoryId,
+          ...(isNonEmptyString(labelId) ? { labelId } : {}),
           historyTypes: [
             'messageAdded',
             'messageDeleted',
