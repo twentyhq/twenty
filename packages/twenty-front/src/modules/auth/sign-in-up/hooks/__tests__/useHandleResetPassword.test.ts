@@ -6,6 +6,8 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -16,6 +18,8 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
 jest.mock('@apollo/client/react');
+jest.mock('@/captcha/hooks/useReadCaptchaToken');
+jest.mock('@/client-config/hooks/useCaptcha');
 
 dynamicActivate(SOURCE_LOCALE);
 
@@ -64,6 +68,10 @@ describe('useHandleResetPassword', () => {
     (useMutation as unknown as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
     ]);
+    (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: true });
+    (useReadCaptchaToken as jest.Mock).mockReturnValue({
+      readCaptchaToken: () => 'mock-captcha-token',
+    });
   });
 
   it('should show error message if email is invalid', async () => {
@@ -84,10 +92,15 @@ describe('useHandleResetPassword', () => {
     await act(() => result.current.handleResetPassword('test@example.com')());
 
     expect(emailPasswordResetLinkMock).toHaveBeenCalledWith({
-      variables: { email: 'test@example.com', workspaceId: 'workspace-id' },
+      variables: {
+        email: 'test@example.com',
+        workspaceId: 'workspace-id',
+        captchaToken: 'mock-captcha-token',
+      },
     });
     expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
-      message: 'Password reset link has been sent to the email',
+      message:
+        'If this email is registered, a password reset link has been sent',
     });
   });
 
@@ -100,11 +113,27 @@ describe('useHandleResetPassword', () => {
     await act(() => result.current.handleResetPassword('test@example.com')());
 
     expect(emailPasswordResetLinkMock).toHaveBeenCalledWith({
-      variables: { email: 'test@example.com' },
+      variables: {
+        email: 'test@example.com',
+        captchaToken: 'mock-captcha-token',
+      },
     });
     expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
-      message: 'Password reset link has been sent to the email',
+      message:
+        'If this email is registered, a password reset link has been sent',
     });
+  });
+
+  it('should show error message if captcha is not ready', async () => {
+    (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: false });
+
+    const { result } = renderHooks();
+    await act(() => result.current.handleResetPassword('test@example.com')());
+
+    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
+      message: 'Captcha (anti-bot check) is still loading, try again',
+    });
+    expect(emailPasswordResetLinkMock).not.toHaveBeenCalled();
   });
 
   it('should show error message if sending reset link fails', async () => {

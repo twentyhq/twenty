@@ -22,15 +22,20 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     }
 
     // TODO: Check if needed, remove otherwise.
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header(
-      'Access-Control-Allow-Methods',
-      'GET,HEAD,PUT,PATCH,POST,DELETE',
-    );
-    response.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept',
-    );
+    // Only for a response the CORS middleware never reached. Overwriting a
+    // reflected origin with the wildcard would make the browser reject a
+    // credentialed request that hit an exception, hiding the real error.
+    if (!response.getHeader('Access-Control-Allow-Origin')) {
+      response.header('Access-Control-Allow-Origin', '*');
+      response.header(
+        'Access-Control-Allow-Methods',
+        'GET,HEAD,PUT,PATCH,POST,DELETE',
+      );
+      response.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept',
+      );
+    }
 
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;

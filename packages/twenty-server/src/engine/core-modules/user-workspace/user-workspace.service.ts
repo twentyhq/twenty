@@ -630,6 +630,7 @@ export class UserWorkspaceService {
     },
     user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
+    canAutoLoginIntoWorkspaces = true,
   ) {
     const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
       await Promise.all([
@@ -648,18 +649,17 @@ export class UserWorkspaceService {
             async ({ workspace }) => {
               return {
                 ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
-                loginToken: workspaceValidator.isAuthEnabled(
-                  authProvider,
-                  workspace,
-                )
-                  ? (
-                      await this.loginTokenService.generateLoginToken(
-                        user.email,
-                        workspace.id,
-                        AuthProviderEnum.Password,
-                      )
-                    ).token
-                  : undefined,
+                loginToken:
+                  canAutoLoginIntoWorkspaces &&
+                  workspaceValidator.isAuthEnabled(authProvider, workspace)
+                    ? (
+                        await this.loginTokenService.generateLoginToken(
+                          user.email,
+                          workspace.id,
+                          AuthProviderEnum.Password,
+                        )
+                      ).token
+                    : undefined,
               };
             },
           ),

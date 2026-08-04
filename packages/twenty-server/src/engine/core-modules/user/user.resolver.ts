@@ -20,7 +20,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  type AuthContext,
+  type AuthContextUser,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -46,7 +49,10 @@ import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/c
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticated-at.decorator';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
+import { canCredentialAutoLoginIntoWorkspaces } from 'src/engine/core-modules/auth/utils/can-credential-auto-login-into-workspaces.util';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -125,6 +131,8 @@ export class UserResolver {
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace: WorkspaceEntity,
+    @AuthImpersonationContext()
+    impersonationContext: AuthContext['impersonationContext'],
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
@@ -182,6 +190,7 @@ export class UserResolver {
         ...currentUserWorkspace,
         ...userWorkspacePermissions,
         twoFactorAuthenticationMethodSummary,
+        isImpersonating: isDefined(impersonationContext),
       },
       currentWorkspace: refreshedWorkspace,
     };
@@ -598,6 +607,9 @@ export class UserResolver {
   async availableWorkspaces(
     @AuthUser() user: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+    @AuthAuthenticatedAt() authenticatedAt: Date | undefined,
   ): Promise<AvailableWorkspaces> {
     return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
@@ -605,6 +617,14 @@ export class UserResolver {
       ),
       user,
       authProvider,
+      canCredentialAutoLoginIntoWorkspaces({
+        isWorkspaceScopedCredential: isDefined(workspace),
+        authenticatedAt,
+        autoLoginWindow: this.twentyConfigService.get(
+          'WORKSPACE_AUTO_LOGIN_WINDOW',
+        ),
+        now: new Date(),
+      }),
     );
   }
 

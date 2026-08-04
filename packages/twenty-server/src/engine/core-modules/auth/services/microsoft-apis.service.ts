@@ -126,6 +126,7 @@ export class MicrosoftAPIsService {
 
         const existingAccountId = connectedAccount?.id;
         const newOrExistingConnectedAccountId = existingAccountId ?? v4();
+        const wasArchived = isDefined(connectedAccount?.archivedAt);
 
         const existingMessageChannels =
           await this.messageChannelRepository.find({
@@ -216,6 +217,30 @@ export class MicrosoftAPIsService {
                 skipMessageChannelConfiguration,
                 transactionManager,
               });
+            }
+
+            if (wasArchived && existingMessageChannels.length > 0) {
+              await transactionManager
+                .getRepository(MessageChannelEntity)
+                .update(
+                  {
+                    connectedAccountId: newOrExistingConnectedAccountId,
+                    workspaceId,
+                  },
+                  { isSyncEnabled: true },
+                );
+            }
+
+            if (wasArchived && existingCalendarChannels.length > 0) {
+              await transactionManager
+                .getRepository(CalendarChannelEntity)
+                .update(
+                  {
+                    connectedAccountId: newOrExistingConnectedAccountId,
+                    workspaceId,
+                  },
+                  { isSyncEnabled: true },
+                );
             }
           },
         );
