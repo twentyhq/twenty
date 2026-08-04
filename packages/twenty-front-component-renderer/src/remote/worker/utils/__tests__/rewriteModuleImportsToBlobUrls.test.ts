@@ -16,6 +16,26 @@ describe('rewriteModuleImportsToBlobUrls', () => {
     );
   });
 
+  it('should rewrite a deferred import of the vendor bundle', () => {
+    const source = `const vendor = await import('${VENDOR_BUNDLE_IMPORT_SPECIFIER}');`;
+
+    expect(
+      rewriteModuleImportsToBlobUrls(source, {
+        [VENDOR_BUNDLE_IMPORT_SPECIFIER]: 'blob:vendor-url',
+      }),
+    ).toBe("const vendor = await import('blob:vendor-url');");
+  });
+
+  it('should rewrite a side effect only import of the vendor bundle', () => {
+    const source = `import "${VENDOR_BUNDLE_IMPORT_SPECIFIER}";`;
+
+    expect(
+      rewriteModuleImportsToBlobUrls(source, {
+        [VENDOR_BUNDLE_IMPORT_SPECIFIER]: 'blob:vendor-url',
+      }),
+    ).toBe('import "blob:vendor-url";');
+  });
+
   it('should leave a source without any mapped specifier unchanged', () => {
     const source = 'export const answer = 42;';
 

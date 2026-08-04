@@ -104,26 +104,21 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
-        const sdkClientSources =
+        const [sdkClientSources, vendorSource] = await Promise.all([
           isDefined(sdkClientUrls) &&
           containsSdkClientImportSpecifier(componentSource)
-            ? await fetchSdkClientSources({
+            ? fetchSdkClientSources({
                 sdkClientUrls,
                 headers: authorizationHeaders,
               })
-            : undefined;
-
-        if (isCancelled) {
-          return;
-        }
-
-        const vendorSource =
+            : undefined,
           isDefined(vendorUrl) && containsVendorImportSpecifier(componentSource)
-            ? await fetchComponentSource({
+            ? fetchComponentSource({
                 url: vendorUrl,
                 headers: authorizationHeaders,
               })
-            : undefined;
+            : undefined,
+        ]);
 
         if (isCancelled) {
           return;

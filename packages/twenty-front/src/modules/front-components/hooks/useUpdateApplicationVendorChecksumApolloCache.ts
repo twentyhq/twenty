@@ -1,6 +1,7 @@
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { type ApplicationVendorChecksumBroadcastRecord } from '@/front-components/types/ApplicationVendorChecksumBroadcastRecord';
 import { useApolloClient } from '@apollo/client/react';
+import { isUndefined } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -33,7 +34,10 @@ export const useUpdateApplicationVendorChecksumApolloCache = ({
 
       const { vendorChecksum } = updatedRecord;
 
-      if (!isDefined(vendorChecksum)) {
+      // A removed vendor broadcasts a null checksum, which has to reach the
+      // cache; only an application update carrying no checksum at all is
+      // irrelevant here.
+      if (isUndefined(vendorChecksum)) {
         return;
       }
 
