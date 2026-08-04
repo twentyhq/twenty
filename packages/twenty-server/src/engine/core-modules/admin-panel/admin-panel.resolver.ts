@@ -17,6 +17,7 @@ import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/adm
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
+import { PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
 import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
@@ -35,6 +36,9 @@ import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-p
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
+import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
+import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
 import { JobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
@@ -795,6 +799,58 @@ export class AdminPanelResolver {
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
   ): Promise<AdminChatThreadMessagesDTO> {
     return this.adminChatService.getChatThreadMessages(threadId);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => PaginatedAdminChatThreadsDTO)
+  async getAdminChatThreads(
+    @Args('scope', {
+      type: () => AdminChatThreadScope,
+      nullable: true,
+      defaultValue: AdminChatThreadScope.ONBOARDING,
+    })
+    scope: AdminChatThreadScope,
+    @Args('hasErrorOnly', {
+      type: () => Boolean,
+      nullable: true,
+      defaultValue: false,
+    })
+    hasErrorOnly: boolean,
+    @Args('userNeverEngagedOnly', {
+      type: () => Boolean,
+      nullable: true,
+      defaultValue: false,
+    })
+    userNeverEngagedOnly: boolean,
+    @Args('sortBy', {
+      type: () => AdminChatThreadSortField,
+      nullable: true,
+      defaultValue: AdminChatThreadSortField.CREATED_AT,
+    })
+    sortBy: AdminChatThreadSortField,
+    @Args('sortDirection', {
+      type: () => AdminChatThreadSortDirection,
+      nullable: true,
+      defaultValue: AdminChatThreadSortDirection.DESC,
+    })
+    sortDirection: AdminChatThreadSortDirection,
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 25 })
+    limit: number,
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
+    offset: number,
+    @Args('searchTerm', { type: () => String, nullable: true })
+    searchTerm?: string,
+  ): Promise<PaginatedAdminChatThreadsDTO> {
+    return this.adminChatService.getGlobalChatThreads({
+      scope,
+      hasErrorOnly,
+      userNeverEngagedOnly,
+      searchTerm,
+      sortBy,
+      sortDirection,
+      limit,
+      offset,
+    });
   }
 
   @UseGuards(AdminPanelGuard)
