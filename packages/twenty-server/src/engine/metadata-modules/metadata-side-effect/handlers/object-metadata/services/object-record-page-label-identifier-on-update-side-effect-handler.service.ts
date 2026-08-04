@@ -199,8 +199,8 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
     // Pending pair dedup: a caller-authored view field for the previous label
     // identifier can already be part of the same batch (manifest sync).
     const pairAlreadyPending = Object.values(
-      allFlatEntityOperationRecordByMetadataName.viewField?.flatEntityToCreate ??
-        {},
+      allFlatEntityOperationRecordByMetadataName.viewField
+        ?.flatEntityToCreate ?? {},
     ).some(
       (pendingFlatViewField) =>
         (pendingFlatViewField as UniversalFlatViewField)
