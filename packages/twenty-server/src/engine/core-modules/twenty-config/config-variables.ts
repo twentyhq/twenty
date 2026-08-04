@@ -142,6 +142,7 @@ export class ConfigVariables {
     description: 'Callback URL for Google Auth APIs',
     type: ConfigVariableType.STRING,
     isSensitive: false,
+    isEnvOnly: true,
   })
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
@@ -176,6 +177,7 @@ export class ConfigVariables {
     isSensitive: false,
     description: 'Callback URL for Google authentication',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
@@ -276,6 +278,7 @@ export class ConfigVariables {
     isSensitive: false,
     description: 'Callback URL for Microsoft authentication',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
@@ -286,6 +289,7 @@ export class ConfigVariables {
     isSensitive: false,
     description: 'Callback URL for Microsoft APIs',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)

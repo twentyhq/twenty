@@ -36,7 +36,7 @@ export type MicrosoftRequest = Omit<
 
 @Injectable()
 export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
-  constructor(twentyConfigService: TwentyConfigService) {
+  constructor(private readonly twentyConfigService: TwentyConfigService) {
     super({
       clientID: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
@@ -51,6 +51,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
   authenticate(req: Request, options: any) {
     options = {
       ...options,
+      callbackURL: this.twentyConfigService.get('AUTH_MICROSOFT_CALLBACK_URL'),
       state: JSON.stringify({
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,

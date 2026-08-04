@@ -38,7 +38,7 @@ export type GoogleRequest = Omit<
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(twentyConfigService: TwentyConfigService) {
+  constructor(private readonly twentyConfigService: TwentyConfigService) {
     super({
       clientID: twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
       clientSecret: twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET'),
@@ -52,6 +52,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   authenticate(req: Request, options: any) {
     options = {
       ...options,
+      callbackURL: this.twentyConfigService.get('AUTH_GOOGLE_CALLBACK_URL'),
       state: JSON.stringify({
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
