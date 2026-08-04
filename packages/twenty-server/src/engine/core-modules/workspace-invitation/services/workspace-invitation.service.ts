@@ -118,6 +118,10 @@ export class WorkspaceInvitationService {
         types: INVITATION_APP_TOKEN_TYPES,
       })
       .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere('appToken.deletedAt IS NULL')
+      .andWhere('appToken.expiresAt > :now', {
+        now: new Date(),
+      })
       .getOne();
   }
 
