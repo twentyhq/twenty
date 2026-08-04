@@ -23,6 +23,7 @@ import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -335,16 +336,10 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
-    const user = await this.userRepository.findOneBy({ id: userId });
-
-    if (!isDefined(user)) {
-      throw new ConnectionProviderException(
-        'User not found',
-        ConnectionProviderExceptionCode.INVALID_STATE,
-      );
-    }
-
-    const { email: handle } = user;
+    const handle = await this.resolveHandle({
+      tokenResponse,
+      userId,
+    });
 
     const sharedFields = {
       accessToken: encryptedAccessToken,
@@ -388,5 +383,39 @@ export class ConnectionProviderOAuthFlowService {
     });
 
     return this.connectedAccountRepository.save(created);
+  }
+
+  private async resolveHandle({
+    tokenResponse,
+    userId,
+  }: {
+    tokenResponse: TokenExchangeResponse;
+    userId: string;
+  }): Promise<string> {
+    const idTokenEmail = isDefined(tokenResponse.idToken)
+      ? this.extractEmailFromIdTokenClaims(tokenResponse.idToken)
+      : null;
+
+    if (isDefined(idTokenEmail)) {
+      return idTokenEmail;
+    }
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!isDefined(user)) {
+      throw new ConnectionProviderException(
+        'User not found',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
+    return user.email;
+  }
+
+  private extractEmailFromIdTokenClaims(idToken: string): string | null {
+    const claims = decodeJwtPayload<{ email?: string; upn?: string }>(idToken);
+    const email = claims?.email ?? claims?.upn;
+
+    return typeof email === 'string' ? email : null;
   }
 }

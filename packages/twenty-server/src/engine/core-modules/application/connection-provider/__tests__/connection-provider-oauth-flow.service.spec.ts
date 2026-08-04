@@ -12,6 +12,8 @@ jest.mock(
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import * as jwt from 'jsonwebtoken';
+
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -32,6 +34,13 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
+
+type MockFetchResponse = {
+  ok: boolean;
+  status: number;
+  json: () => Promise<unknown>;
+  text: () => Promise<string>;
+};
 
 describe('ConnectionProviderOAuthFlowService', () => {
   let service: ConnectionProviderOAuthFlowService;
@@ -348,7 +357,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       codeVerifier: null,
     };
 
-    const successfulTokenResponse = {
+    const successfulTokenResponse: MockFetchResponse = {
       ok: true,
       status: 200,
       json: async () => ({
@@ -480,6 +489,110 @@ describe('ConnectionProviderOAuthFlowService', () => {
 
       expect(connectedAccountRepository.create).not.toHaveBeenCalled();
       expect(connectedAccountRepository.save).not.toHaveBeenCalled();
+    });
+
+    describe('handle resolution', () => {
+      it('derives the handle from the OIDC id_token claims when the provider returns one', async () => {
+        const idToken = jwt.sign(
+          { email: 'oidc-account@example.com' },
+          'test-secret',
+        );
+
+        secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
+          jest.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => ({
+              access_token: 'new_access',
+              refresh_token: 'new_refresh',
+              scope: 'read write',
+              id_token: idToken,
+            }),
+            text: async () => '',
+          })),
+        );
+
+        await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(connectedAccountRepository.create).toHaveBeenCalledWith(
+          expect.objectContaining({ handle: 'oidc-account@example.com' }),
+        );
+        expect(userRepository.findOneBy).not.toHaveBeenCalled();
+      });
+
+      it('reads the upn claim when the id_token has no email claim', async () => {
+        const idToken = jwt.sign(
+          { upn: 'oidc-account@example.com' },
+          'test-secret',
+        );
+
+        secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
+          jest.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => ({
+              access_token: 'new_access',
+              refresh_token: 'new_refresh',
+              scope: 'read write',
+              id_token: idToken,
+            }),
+            text: async () => '',
+          })),
+        );
+
+        await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(connectedAccountRepository.create).toHaveBeenCalledWith(
+          expect.objectContaining({ handle: 'oidc-account@example.com' }),
+        );
+      });
+
+      it('falls back to the connecting user email when the provider returns no id_token', async () => {
+        await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(connectedAccountRepository.create).toHaveBeenCalledWith(
+          expect.objectContaining({ handle: 'connecting-user@example.com' }),
+        );
+        expect(userRepository.findOneBy).toHaveBeenCalledWith({
+          id: 'user-1',
+        });
+      });
+
+      it('falls back to the connecting user email when the id_token has no email or upn claim', async () => {
+        const idToken = jwt.sign({ sub: 'provider-user-id' }, 'test-secret');
+
+        secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
+          jest.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => ({
+              access_token: 'new_access',
+              refresh_token: 'new_refresh',
+              scope: 'read write',
+              id_token: idToken,
+            }),
+            text: async () => '',
+          })),
+        );
+
+        await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(connectedAccountRepository.create).toHaveBeenCalledWith(
+          expect.objectContaining({ handle: 'connecting-user@example.com' }),
+        );
+      });
     });
 
     it('rejects an invalid state', async () => {
