@@ -5,6 +5,7 @@ import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartab
 import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
 import { enumerateVendorExportNames } from '@/cli/utilities/build/common/vendor-build/utils/enumerate-vendor-export-names';
 import { getVendorEntrySource } from '@/cli/utilities/build/common/vendor-build/utils/get-vendor-entry-source';
+import { getUndeclaredBundledReactPackages } from '@/cli/utilities/build/common/vendor-build/utils/get-undeclared-bundled-react-packages';
 import { getVendorNamespaceCollisions } from '@/cli/utilities/build/common/vendor-build/utils/get-vendor-namespace-collisions';
 import { ensureDir } from '@/cli/utilities/file/fs-utils';
 import crypto from 'crypto';
@@ -14,6 +15,7 @@ import { dirname, join } from 'path';
 import { OUTPUT_DIR, type VendorManifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isNonEmptyArray } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 export const buildVendorBundle = async ({
   appPath,
@@ -39,7 +41,7 @@ export const buildVendorBundle = async ({
 
   await ensureDir(dirname(absoluteBuiltPath));
 
-  await esbuild.build({
+  const buildResult = await esbuild.build({
     stdin: {
       contents: getVendorEntrySource(vendor.dependencies),
       resolveDir: appPath,
@@ -63,6 +65,23 @@ export const buildVendorBundle = async ({
       stripCommentsPlugin,
     ],
   });
+
+  const undeclaredBundledReactPackages = isDefined(buildResult.metafile)
+    ? getUndeclaredBundledReactPackages({
+        metafile: buildResult.metafile,
+        dependencies: vendor.dependencies,
+      })
+    : [];
+
+  if (isNonEmptyArray(undeclaredBundledReactPackages)) {
+    throw new Error(
+      `Vendor dependencies pull in ${undeclaredBundledReactPackages.join(' and ')} without declaring ${undeclaredBundledReactPackages.length > 1 ? 'them' : 'it'}. Add ${undeclaredBundledReactPackages
+        .map((packageName) =>
+          packageName === 'react-dom' ? '"react-dom/client"' : '"react"',
+        )
+        .join(' and ')} to defineVendor dependencies so components and vendored libraries share one instance.`,
+    );
+  }
 
   const content = await readFile(absoluteBuiltPath);
   const checksum = crypto.createHash('sha256').update(content).digest('hex');

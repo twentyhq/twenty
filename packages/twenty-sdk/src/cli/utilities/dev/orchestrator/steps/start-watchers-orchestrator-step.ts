@@ -88,11 +88,7 @@ export class StartWatchersOrchestratorStep {
       return;
     }
 
-    if (this.vendorBundleWatcher?.shouldRestart(vendor) === true) {
-      await this.vendorBundleWatcher.close();
-      this.vendorBundleWatcher = null;
-      await this.startVendorBundleWatcher(vendor);
-    }
+    await this.handleVendorBundleWatcherRestart(vendor);
 
     if (this.logicFunctionsWatcher?.shouldRestart(logicFunctions)) {
       await this.logicFunctionsWatcher.restart(logicFunctions);
@@ -245,6 +241,34 @@ export class StartWatchersOrchestratorStep {
     });
 
     await this.vendorBundleWatcher.start();
+  }
+
+  // A vendor can appear or disappear at any time in dev, and components inline
+  // shims that only resolve when the bundle exists, so both transitions have to
+  // rebuild every component.
+  private async handleVendorBundleWatcherRestart(
+    vendor: VendorManifest | undefined,
+  ): Promise<void> {
+    const hasVendorWatcher = isDefined(this.vendorBundleWatcher);
+    const shouldRestart = isDefined(vendor)
+      ? !hasVendorWatcher ||
+        this.vendorBundleWatcher?.shouldRestart(vendor) === true
+      : hasVendorWatcher;
+
+    if (!shouldRestart) {
+      return;
+    }
+
+    await this.vendorBundleWatcher?.close();
+    this.vendorBundleWatcher = null;
+
+    if (isDefined(vendor)) {
+      await this.startVendorBundleWatcher(vendor);
+
+      return;
+    }
+
+    await this.frontComponentsWatcher?.restart(this.frontComponentSourcePaths);
   }
 
   private async startAssetWatcher(): Promise<void> {

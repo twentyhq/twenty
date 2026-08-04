@@ -43,6 +43,41 @@ const enumerateStatically = async ({
   }
 };
 
+// `export *` never re-exports a default, so the named probe cannot answer this.
+// Re-exporting the default explicitly gives esbuild's own verdict: it resolves
+// for a CommonJS dependency, whose interop always synthesises a default, and
+// for an ES module that declares one.
+const hasDefaultExportStatically = async ({
+  appPath,
+  specifier,
+}: {
+  appPath: string;
+  specifier: string;
+}): Promise<boolean> => {
+  try {
+    await esbuild.build({
+      stdin: {
+        contents: `export { default } from ${JSON.stringify(specifier)};`,
+        resolveDir: appPath,
+        sourcefile: 'vendor-default-export-probe.js',
+        loader: 'js',
+      },
+      bundle: true,
+      write: false,
+      format: 'esm',
+      platform: 'browser',
+      logLevel: 'silent',
+      loader: { '.css': 'empty' },
+      define: { 'process.env.NODE_ENV': '"production"' },
+      outfile: 'vendor-default-export-probe-out.js',
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const enumerateAtRuntime = async ({
   appPath,
   specifier,
@@ -80,13 +115,10 @@ export const enumerateVendorExportNames = async ({
     );
   }
 
-  // esbuild sees the same module the vendor bundle will, so when it resolves a
-  // real ES module its view decides whether a default export exists. For a
-  // CommonJS dependency esbuild reports nothing and its interop always adds a
-  // default export, which is what the runtime enumeration observes.
-  const hasDefaultExport = isNonEmptyArray(staticNames)
-    ? staticNames.includes(DEFAULT_EXPORT_NAME)
-    : runtimeNames.includes(DEFAULT_EXPORT_NAME);
+  const hasDefaultExport = await hasDefaultExportStatically({
+    appPath,
+    specifier,
+  });
 
   const namedExports = [...new Set([...staticNames, ...runtimeNames])]
     .filter((exportName) => exportName !== DEFAULT_EXPORT_NAME)

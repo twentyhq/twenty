@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/application/application-vendor/constants/application-vendor-cache-control.constant';
 import { ApplicationVendorService } from 'src/engine/core-modules/application/application-vendor/application-vendor.service';
 import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/application-vendor/utils/extract-checksum-from-cache-key.util';
+import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -52,6 +53,10 @@ export class ApplicationVendorController {
         workspaceId: workspace.id,
       })
       .catch((error) => {
+        if (error instanceof NotFoundException) {
+          throw error;
+        }
+
         if (
           error instanceof FileStorageException &&
           error.code === FileStorageExceptionCode.FILE_NOT_FOUND
@@ -61,7 +66,19 @@ export class ApplicationVendorController {
           );
         }
 
-        throw error;
+        // An unknown or malformed application id must not surface the
+        // underlying lookup failure to the client.
+        if (error instanceof ApplicationException) {
+          throw new NotFoundException(
+            `Application "${applicationId}" not found`,
+          );
+        }
+
+        this.logger.error('Failed to resolve the vendor bundle', { error });
+
+        throw new NotFoundException(
+          `Vendor bundle not found for application "${applicationId}"`,
+        );
       });
 
     if (fileResponse.type === 'redirect') {
