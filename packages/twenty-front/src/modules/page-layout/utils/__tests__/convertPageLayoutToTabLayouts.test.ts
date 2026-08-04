@@ -17,6 +17,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       id: 'page-layout-1',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
+      isSystemSideEffect: true,
       objectMetadataId: 'object-metadata-1',
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs: [
@@ -102,6 +103,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       id: 'page-layout-1',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
+      isSystemSideEffect: true,
       objectMetadataId: 'object-metadata-1',
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs: [
@@ -162,6 +164,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       id: 'page-layout-1',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
+      isSystemSideEffect: true,
       objectMetadataId: 'object-metadata-1',
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs: [
@@ -218,6 +221,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       id: 'page-layout-1',
       name: 'Page Layout 1',
       type: PageLayoutType.DASHBOARD,
+      isSystemSideEffect: false,
       objectMetadataId: null,
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs: [

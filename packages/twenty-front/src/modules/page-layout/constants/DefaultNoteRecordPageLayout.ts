@@ -12,6 +12,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   id: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
   name: 'Default Note Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isSystemSideEffect: true,
   objectMetadataId: null,
   universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),

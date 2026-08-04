@@ -16,6 +16,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
   id: DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,
   name: 'Default Workflow Version Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isSystemSideEffect: true,
   objectMetadataId: null,
   universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),

@@ -9,6 +9,7 @@ export const PAGE_LAYOUT_FRAGMENT = gql`
     objectMetadataId
     type
     universalIdentifier
+    isSystemSideEffect
     defaultTabToFocusOnMobileAndSidePanelId
     createdAt
     updatedAt

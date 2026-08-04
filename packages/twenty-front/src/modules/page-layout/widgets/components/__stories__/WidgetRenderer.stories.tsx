@@ -138,6 +138,7 @@ const createPageLayoutWithWidget = (
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Mock Page Layout',
   type: pageLayoutType,
+  isSystemSideEffect: false,
   objectMetadataId: companyObjectMetadataItem.id,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
@@ -1672,6 +1673,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       id: PAGE_LAYOUT_TEST_INSTANCE_ID,
       name: 'Mock Page Layout',
       type: pageLayoutType,
+      isSystemSideEffect: false,
       objectMetadataId: companyObjectMetadataItem.id,
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs:

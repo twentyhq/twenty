@@ -17,6 +17,7 @@ const MOCK_DASHBOARD_LAYOUT: PageLayout = {
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Dashboard Layout',
   type: PageLayoutType.DASHBOARD,
+  isSystemSideEffect: false,
   objectMetadataId: 'object-metadata-id',
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
