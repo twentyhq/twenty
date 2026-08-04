@@ -15,6 +15,32 @@ import svgr from 'vite-plugin-svgr';
 
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
 
+// Top-level API route prefixes, proxied to the backend so the dev front is
+// same-origin with the API on every host vite serves (localhost and workspace
+// subdomains like apple.localhost alike), keeping credentialed requests out of
+// CORS. Anchored as regexes so SPA routes sharing a prefix (/authorize,
+// /settings) are not swallowed.
+const API_PROXY_PREFIXES = [
+  'graphql',
+  'metadata',
+  'admin-panel',
+  'auth',
+  'oauth',
+  'client-config',
+  'file',
+  'files',
+  'rest',
+  's',
+  'mcp',
+  'healthz',
+  'webhooks',
+  'apps',
+  'app',
+  'emailing',
+  'application-registration-claim',
+  '\\.well-known',
+];
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
@@ -24,12 +50,27 @@ export default defineConfig(({ mode }) => {
     SSL_CERT_PATH,
     SSL_KEY_PATH,
     REACT_APP_PORT,
+    REACT_APP_SERVER_BASE_URL,
     IS_DEBUG_MODE,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
     ? parseInt(REACT_APP_PORT)
     : 3001;
+
+  const apiProxyTarget = isNonEmptyString(REACT_APP_SERVER_BASE_URL)
+    ? REACT_APP_SERVER_BASE_URL
+    : 'http://localhost:3000';
+
+  const apiProxy = Object.fromEntries(
+    API_PROXY_PREFIXES.map((prefix) => [
+      `^/${prefix}($|[/?])`,
+      // Host is forwarded untouched (no changeOrigin) so the backend sees the
+      // browser's origin: its same-origin checks (CSRF, cookie issuance) and
+      // workspace resolution by subdomain keep working through the proxy.
+      { target: apiProxyTarget },
+    ]),
+  );
 
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
@@ -49,6 +90,7 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: port,
+      proxy: apiProxy,
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
       ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
