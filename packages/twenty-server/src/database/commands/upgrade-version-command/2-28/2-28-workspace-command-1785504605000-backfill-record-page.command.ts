@@ -12,6 +12,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
@@ -208,215 +209,327 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
         continue;
       }
 
-      const applicationUniversalIdentifier =
-        flatObjectMetadata.applicationUniversalIdentifier;
+      const applicationBucket = getApplicationBucket(
+        flatObjectMetadata.applicationUniversalIdentifier,
+      );
+
       const isStandardObject =
-        applicationUniversalIdentifier ===
+        flatObjectMetadata.applicationUniversalIdentifier ===
         twentyStandardApplicationUniversalIdentifier;
 
-      const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier:
-          applicationUniversalIdentifier,
-        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-        viewKey: ViewKey.FIELDS_WIDGET,
-      });
-
-      const derivedPageLayoutUniversalIdentifier =
-        getRecordPageLayoutUniversalIdentifier({
-          applicationUniversalIdentifier,
-          objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-        });
-
-      // The standard definitions hold the derived identifiers post-reconcile,
-      // so curated stacks resolve by direct lookup. Standard objects the
-      // definitions give no record page to stay without one, like fresh
-      // installs.
-      const standardFlatView = isStandardObject
-        ? standardFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
-            derivedViewUniversalIdentifier
-          ]
-        : undefined;
-      const standardFlatPageLayout = isStandardObject
-        ? standardFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier[
-            derivedPageLayoutUniversalIdentifier
-          ]
-        : undefined;
-
-      const applicationBucket = getApplicationBucket(
-        applicationUniversalIdentifier,
-      );
-
-      const viewAlreadyExists = isDefined(
-        flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier],
-      );
-      let viewBackfilled = false;
-
-      if (!viewAlreadyExists) {
-        if (isStandardObject) {
-          if (isDefined(standardFlatView)) {
-            applicationBucket.viewsToCreate.push(standardFlatView);
-            applicationBucket.viewFieldGroupsToCreate.push(
-              ...Object.values(
-                standardFlatEntityMaps.flatViewFieldGroupMaps
-                  .byUniversalIdentifier,
-              )
-                .filter(isDefined)
-                .filter(
-                  (flatViewFieldGroup) =>
-                    flatViewFieldGroup.viewUniversalIdentifier ===
-                    derivedViewUniversalIdentifier,
-                ),
-            );
-            applicationBucket.viewFieldsToCreate.push(
-              ...Object.values(
-                standardFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
-              )
-                .filter(isDefined)
-                .filter(
-                  (flatViewField) =>
-                    flatViewField.viewUniversalIdentifier ===
-                      derivedViewUniversalIdentifier &&
-                    isDefined(
-                      flatFieldMetadataMaps.byUniversalIdentifier[
-                        flatViewField.fieldMetadataUniversalIdentifier
-                      ],
-                    ),
-                ),
-            );
-            viewBackfilled = true;
-          }
-        } else {
-          applicationBucket.viewsToCreate.push(
-            computeFlatRecordPageFieldsViewToCreate({
-              objectMetadata: flatObjectMetadata,
-              applicationUniversalIdentifier,
-            }),
-          );
-          viewBackfilled = true;
-        }
-      }
-
-      // Top up missing view-field rows so every displayable field except the
-      // label identifier has one, the invariant the engine maintains on field
-      // creation. Skipped when the object has no view to attach them to.
-      if (viewAlreadyExists || viewBackfilled) {
-        const alreadyBackfilledViewFieldUniversalIdentifiers = new Set(
-          applicationBucket.viewFieldsToCreate.map(
-            (viewField) => viewField.universalIdentifier,
-          ),
-        );
-
-        const objectFlatFieldMetadatas =
-          flatObjectMetadata.fieldUniversalIdentifiers
-            .map(
-              (fieldUniversalIdentifier) =>
-                flatFieldMetadataMaps.byUniversalIdentifier[
-                  fieldUniversalIdentifier
-                ],
-            )
-            .filter(isDefined);
-
-        applicationBucket.viewFieldsToCreate.push(
-          ...computeFlatViewFieldsToCreate({
-            objectFlatFieldMetadatas,
-            viewUniversalIdentifier: derivedViewUniversalIdentifier,
-            applicationUniversalIdentifier,
-            labelIdentifierFieldMetadataUniversalIdentifier:
-              flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-            excludeLabelIdentifier: true,
-          }).filter(
-            (flatViewFieldToCreate) =>
-              !isDefined(
-                flatViewFieldMaps.byUniversalIdentifier[
-                  flatViewFieldToCreate.universalIdentifier
-                ],
-              ) &&
-              !alreadyBackfilledViewFieldUniversalIdentifiers.has(
-                flatViewFieldToCreate.universalIdentifier,
-              ),
-          ),
-        );
-      }
-
-      if (
-        isDefined(
-          flatPageLayoutMaps.byUniversalIdentifier[
-            derivedPageLayoutUniversalIdentifier
-          ],
-        )
-      ) {
-        continue;
-      }
-
       if (isStandardObject) {
-        if (isDefined(standardFlatPageLayout)) {
-          applicationBucket.pageLayoutsToCreate.push(standardFlatPageLayout);
-
-          const standardFlatPageLayoutTabs = Object.values(
-            standardFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier,
-          )
-            .filter(isDefined)
-            .filter(
-              (flatPageLayoutTab) =>
-                flatPageLayoutTab.pageLayoutUniversalIdentifier ===
-                derivedPageLayoutUniversalIdentifier,
-            );
-
-          applicationBucket.pageLayoutTabsToCreate.push(
-            ...standardFlatPageLayoutTabs,
-          );
-
-          const standardTabUniversalIdentifiers = new Set(
-            standardFlatPageLayoutTabs.map((tab) => tab.universalIdentifier),
-          );
-
-          applicationBucket.pageLayoutWidgetsToCreate.push(
-            ...Object.values(
-              standardFlatEntityMaps.flatPageLayoutWidgetMaps
-                .byUniversalIdentifier,
-            )
-              .filter(isDefined)
-              .filter((flatPageLayoutWidget) => {
-                if (
-                  !standardTabUniversalIdentifiers.has(
-                    flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
-                  )
-                ) {
-                  return false;
-                }
-
-                if (
-                  flatPageLayoutWidget.universalConfiguration
-                    .configurationType === WidgetConfigurationType.FIELD
-                ) {
-                  return isDefined(
-                    flatFieldMetadataMaps.byUniversalIdentifier[
-                      flatPageLayoutWidget.universalConfiguration
-                        .fieldMetadataId
-                    ],
-                  );
-                }
-
-                return true;
-              }),
-          );
-        }
+        this.collectStandardObjectRecordPageOperations({
+          flatObjectMetadata,
+          applicationBucket,
+          standardFlatEntityMaps,
+          flatViewMaps,
+          flatViewFieldMaps,
+          flatFieldMetadataMaps,
+          flatPageLayoutMaps,
+        });
       } else {
-        const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
-          computeFlatDefaultRecordPageLayoutToCreate({
-            objectMetadata: flatObjectMetadata,
-            applicationUniversalIdentifier,
-            recordPageFieldsViewUniversalIdentifier:
-              derivedViewUniversalIdentifier,
-          });
-
-        applicationBucket.pageLayoutsToCreate.push(...pageLayouts);
-        applicationBucket.pageLayoutTabsToCreate.push(...pageLayoutTabs);
-        applicationBucket.pageLayoutWidgetsToCreate.push(...pageLayoutWidgets);
+        this.collectDefaultRecordPageOperations({
+          flatObjectMetadata,
+          applicationBucket,
+          flatViewMaps,
+          flatViewFieldMaps,
+          flatFieldMetadataMaps,
+          flatPageLayoutMaps,
+        });
       }
     }
 
     return backfillOperationsByApplication;
+  }
+
+  // The previously-defaulted population: standard objects whose record page
+  // the deleted frontend fallback used to synthesize client-side. The curated
+  // stack comes from the standard definitions, which hold the derived
+  // identifiers post-reconcile, so lookups are direct. Standard objects the
+  // definitions give no record page to stay without one, like fresh installs.
+  private collectStandardObjectRecordPageOperations({
+    flatObjectMetadata,
+    applicationBucket,
+    standardFlatEntityMaps,
+    flatViewMaps,
+    flatViewFieldMaps,
+    flatFieldMetadataMaps,
+    flatPageLayoutMaps,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    applicationBucket: BackfillOperations;
+    standardFlatEntityMaps: StandardRecordPageFlatEntityMaps;
+  } & Pick<
+    AllFlatEntityMaps,
+    | 'flatViewMaps'
+    | 'flatViewFieldMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatPageLayoutMaps'
+  >): void {
+    const applicationUniversalIdentifier =
+      flatObjectMetadata.applicationUniversalIdentifier;
+
+    const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
+      objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      viewKey: ViewKey.FIELDS_WIDGET,
+    });
+
+    const standardFlatView =
+      standardFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
+        derivedViewUniversalIdentifier
+      ];
+    const viewAlreadyExists = isDefined(
+      flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier],
+    );
+    const curatedViewFieldUniversalIdentifiers = new Set<string>();
+
+    if (!viewAlreadyExists && isDefined(standardFlatView)) {
+      applicationBucket.viewsToCreate.push(standardFlatView);
+
+      applicationBucket.viewFieldGroupsToCreate.push(
+        ...Object.values(
+          standardFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier,
+        )
+          .filter(isDefined)
+          .filter(
+            (flatViewFieldGroup) =>
+              flatViewFieldGroup.viewUniversalIdentifier ===
+              derivedViewUniversalIdentifier,
+          ),
+      );
+
+      const curatedFlatViewFields = Object.values(
+        standardFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter(
+          (flatViewField) =>
+            flatViewField.viewUniversalIdentifier ===
+              derivedViewUniversalIdentifier &&
+            isDefined(
+              flatFieldMetadataMaps.byUniversalIdentifier[
+                flatViewField.fieldMetadataUniversalIdentifier
+              ],
+            ),
+        );
+
+      applicationBucket.viewFieldsToCreate.push(...curatedFlatViewFields);
+      curatedFlatViewFields.forEach((flatViewField) =>
+        curatedViewFieldUniversalIdentifiers.add(
+          flatViewField.universalIdentifier,
+        ),
+      );
+    }
+
+    if (viewAlreadyExists || isDefined(standardFlatView)) {
+      applicationBucket.viewFieldsToCreate.push(
+        ...this.computeMissingFlatViewFieldsToCreate({
+          flatObjectMetadata,
+          derivedViewUniversalIdentifier,
+          flatViewFieldMaps,
+          flatFieldMetadataMaps,
+        }).filter(
+          (flatViewFieldToCreate) =>
+            !curatedViewFieldUniversalIdentifiers.has(
+              flatViewFieldToCreate.universalIdentifier,
+            ),
+        ),
+      );
+    }
+
+    const derivedPageLayoutUniversalIdentifier =
+      getRecordPageLayoutUniversalIdentifier({
+        applicationUniversalIdentifier,
+        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      });
+
+    if (
+      isDefined(
+        flatPageLayoutMaps.byUniversalIdentifier[
+          derivedPageLayoutUniversalIdentifier
+        ],
+      )
+    ) {
+      return;
+    }
+
+    const standardFlatPageLayout =
+      standardFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier[
+        derivedPageLayoutUniversalIdentifier
+      ];
+
+    if (!isDefined(standardFlatPageLayout)) {
+      return;
+    }
+
+    applicationBucket.pageLayoutsToCreate.push(standardFlatPageLayout);
+
+    const standardFlatPageLayoutTabs = Object.values(
+      standardFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatPageLayoutTab) =>
+          flatPageLayoutTab.pageLayoutUniversalIdentifier ===
+          derivedPageLayoutUniversalIdentifier,
+      );
+
+    applicationBucket.pageLayoutTabsToCreate.push(...standardFlatPageLayoutTabs);
+
+    const standardTabUniversalIdentifiers = new Set(
+      standardFlatPageLayoutTabs.map((tab) => tab.universalIdentifier),
+    );
+
+    applicationBucket.pageLayoutWidgetsToCreate.push(
+      ...Object.values(
+        standardFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter((flatPageLayoutWidget) => {
+          if (
+            !standardTabUniversalIdentifiers.has(
+              flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
+            )
+          ) {
+            return false;
+          }
+
+          if (
+            flatPageLayoutWidget.universalConfiguration.configurationType ===
+            WidgetConfigurationType.FIELD
+          ) {
+            return isDefined(
+              flatFieldMetadataMaps.byUniversalIdentifier[
+                flatPageLayoutWidget.universalConfiguration.fieldMetadataId
+              ],
+            );
+          }
+
+          return true;
+        }),
+    );
+  }
+
+  // The application and workspace-custom population: the engine default stack
+  // objectRecordPageOnCreate always emits at object creation, backfilled here
+  // for objects that predate the engine handler.
+  private collectDefaultRecordPageOperations({
+    flatObjectMetadata,
+    applicationBucket,
+    flatViewMaps,
+    flatViewFieldMaps,
+    flatFieldMetadataMaps,
+    flatPageLayoutMaps,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    applicationBucket: BackfillOperations;
+  } & Pick<
+    AllFlatEntityMaps,
+    | 'flatViewMaps'
+    | 'flatViewFieldMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatPageLayoutMaps'
+  >): void {
+    const applicationUniversalIdentifier =
+      flatObjectMetadata.applicationUniversalIdentifier;
+
+    const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
+      objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      viewKey: ViewKey.FIELDS_WIDGET,
+    });
+
+    if (
+      !isDefined(
+        flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier],
+      )
+    ) {
+      applicationBucket.viewsToCreate.push(
+        computeFlatRecordPageFieldsViewToCreate({
+          objectMetadata: flatObjectMetadata,
+          applicationUniversalIdentifier,
+        }),
+      );
+    }
+
+    applicationBucket.viewFieldsToCreate.push(
+      ...this.computeMissingFlatViewFieldsToCreate({
+        flatObjectMetadata,
+        derivedViewUniversalIdentifier,
+        flatViewFieldMaps,
+        flatFieldMetadataMaps,
+      }),
+    );
+
+    const derivedPageLayoutUniversalIdentifier =
+      getRecordPageLayoutUniversalIdentifier({
+        applicationUniversalIdentifier,
+        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      });
+
+    if (
+      isDefined(
+        flatPageLayoutMaps.byUniversalIdentifier[
+          derivedPageLayoutUniversalIdentifier
+        ],
+      )
+    ) {
+      return;
+    }
+
+    const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
+      computeFlatDefaultRecordPageLayoutToCreate({
+        objectMetadata: flatObjectMetadata,
+        applicationUniversalIdentifier,
+        recordPageFieldsViewUniversalIdentifier: derivedViewUniversalIdentifier,
+      });
+
+    applicationBucket.pageLayoutsToCreate.push(...pageLayouts);
+    applicationBucket.pageLayoutTabsToCreate.push(...pageLayoutTabs);
+    applicationBucket.pageLayoutWidgetsToCreate.push(...pageLayoutWidgets);
+  }
+
+  // Missing view-field rows for the object's record-page view, so every
+  // displayable field except the label identifier has one, the invariant the
+  // engine maintains on field creation.
+  private computeMissingFlatViewFieldsToCreate({
+    flatObjectMetadata,
+    derivedViewUniversalIdentifier,
+    flatViewFieldMaps,
+    flatFieldMetadataMaps,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    derivedViewUniversalIdentifier: string;
+  } & Pick<
+    AllFlatEntityMaps,
+    'flatViewFieldMaps' | 'flatFieldMetadataMaps'
+  >): UniversalFlatViewField[] {
+    const objectFlatFieldMetadatas = flatObjectMetadata.fieldUniversalIdentifiers
+      .map(
+        (fieldUniversalIdentifier) =>
+          flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier],
+      )
+      .filter(isDefined);
+
+    return computeFlatViewFieldsToCreate({
+      objectFlatFieldMetadatas,
+      viewUniversalIdentifier: derivedViewUniversalIdentifier,
+      applicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+      excludeLabelIdentifier: true,
+    }).filter(
+      (flatViewFieldToCreate) =>
+        !isDefined(
+          flatViewFieldMaps.byUniversalIdentifier[
+            flatViewFieldToCreate.universalIdentifier
+          ],
+        ),
+    );
   }
 
   private async runBackfillMigrations({
