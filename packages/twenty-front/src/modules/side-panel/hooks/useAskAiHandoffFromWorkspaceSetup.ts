@@ -1,7 +1,6 @@
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useLayoutEffect, useState } from 'react';
 
 import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
@@ -13,8 +12,11 @@ export const useAskAiHandoffFromWorkspaceSetup = () => {
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const shouldReduceMotion = useReducedMotion();
 
-  const [isSidePanelEnteringAtFullWidth, setIsSidePanelEnteringAtFullWidth] =
-    useState(false);
+  // Read during the first render, before the layout effect below consumes the
+  // marker, so the very first paint already carries the entrance animation.
+  const [isContinuingChatFromWorkspaceSetup] = useState(() =>
+    store.get(shouldContinueAiChatInSidePanelState.atom),
+  );
 
   useLayoutEffect(() => {
     if (!store.get(shouldContinueAiChatInSidePanelState.atom)) {
@@ -26,33 +28,10 @@ export const useAskAiHandoffFromWorkspaceSetup = () => {
     store.set(aiChatExpandedReturnLocationState.atom, null);
 
     openAskAiPage({ resetNavigationStack: true });
+  }, [store, openAskAiPage]);
 
-    if (shouldReduceMotion !== true) {
-      setIsSidePanelEnteringAtFullWidth(true);
-    }
-  }, [store, openAskAiPage, shouldReduceMotion]);
-
-  useEffect(() => {
-    if (!isSidePanelEnteringAtFullWidth) {
-      return;
-    }
-
-    let secondFrameId: number | undefined;
-
-    const firstFrameId = requestAnimationFrame(() => {
-      secondFrameId = requestAnimationFrame(() => {
-        setIsSidePanelEnteringAtFullWidth(false);
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(firstFrameId);
-
-      if (isDefined(secondFrameId)) {
-        cancelAnimationFrame(secondFrameId);
-      }
-    };
-  }, [isSidePanelEnteringAtFullWidth]);
-
-  return { isSidePanelEnteringAtFullWidth };
+  return {
+    shouldShrinkFromFullWidth:
+      isContinuingChatFromWorkspaceSetup && shouldReduceMotion !== true,
+  };
 };

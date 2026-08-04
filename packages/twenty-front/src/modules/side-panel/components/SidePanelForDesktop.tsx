@@ -25,22 +25,26 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;
   isResizing: boolean;
-  isEnteringAtFullWidth: boolean;
 }>`
   flex-shrink: 0;
   min-width: 0;
   overflow: hidden;
-  transition: ${({ isResizing, isEnteringAtFullWidth }) =>
-    isResizing || isEnteringAtFullWidth
+  transition: ${({ isResizing }) =>
+    isResizing
       ? 'none'
       : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
-  width: ${({ isOpen, isEnteringAtFullWidth }) => {
-    if (isEnteringAtFullWidth) {
-      return '100%';
-    }
+  width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
 
-    return isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px';
-  }};
+  @keyframes sidePanelShrinkFromFullWidth {
+    from {
+      width: 100%;
+    }
+  }
+
+  &[data-shrink-from-full-width='true'] {
+    animation: sidePanelShrinkFromFullWidth
+      calc(${themeCssVariables.animation.duration.normal} * 1s);
+  }
 `;
 
 const StyledSidePanel = styled.aside<{ isOpen: boolean }>`
@@ -72,8 +76,7 @@ export const SidePanelForDesktop = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
-  const { isSidePanelEnteringAtFullWidth } =
-    useAskAiHandoffFromWorkspaceSetup();
+  const { shouldShrinkFromFullWidth } = useAskAiHandoffFromWorkspaceSetup();
 
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
@@ -145,8 +148,8 @@ export const SidePanelForDesktop = () => {
       <StyledSidePanelWrapper
         isOpen={isSidePanelOpened}
         isResizing={isResizing}
-        isEnteringAtFullWidth={isSidePanelEnteringAtFullWidth}
         onTransitionEnd={handleTransitionEnd}
+        data-shrink-from-full-width={shouldShrinkFromFullWidth}
         data-side-panel=""
         data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
       >
