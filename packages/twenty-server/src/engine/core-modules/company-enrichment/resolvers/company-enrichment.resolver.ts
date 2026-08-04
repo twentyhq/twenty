@@ -1,11 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Mutation } from '@nestjs/graphql';
 
-import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
-
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceCompanyEnrichmentResultDTO } from 'src/engine/core-modules/company-enrichment/dtos/workspace-company-enrichment-result.dto';
+import { WorkspaceCompanyEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-company-enrichment-outcome.enum';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -32,11 +31,7 @@ export class CompanyEnrichmentResolver {
   async enrichWorkspaceCompany(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<
-    WorkspaceCompanyEnrichmentResult & {
-      isBookCallOnboardingStepPending: boolean;
-    }
-  > {
+  ): Promise<WorkspaceCompanyEnrichmentResultDTO> {
     const enrichmentResult =
       await this.companyEnrichmentService.enrichCompanyForWorkspaceCreator({
         userId: user.id,
@@ -58,6 +53,10 @@ export class CompanyEnrichmentResolver {
         workspaceId: workspace.id,
       });
 
-    return { ...enrichmentResult, isBookCallOnboardingStepPending };
+    return {
+      ...enrichmentResult,
+      outcome: WorkspaceCompanyEnrichmentOutcome[enrichmentResult.outcome],
+      isBookCallOnboardingStepPending,
+    };
   }
 }
