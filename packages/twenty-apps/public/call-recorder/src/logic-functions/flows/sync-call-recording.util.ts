@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
+import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
@@ -147,7 +148,7 @@ const buildSyncStateFieldUpdates = ({
   ) {
     updateData.status = syncState.status;
 
-    if (syncState.status === CallRecordingStatus.FAILED) {
+    if (isUnavailableCallRecordingStatus(syncState.status)) {
       updateData.callRecorderFailureReason =
         syncState.failureReason ?? 'recall_bot_failed';
     }
@@ -174,7 +175,7 @@ const buildSyncStateFieldUpdates = ({
   return updateData;
 };
 
-// The bot completed without ever recording; FAILED rather than COMPLETED because completion bills.
+// The bot completed without ever producing a recording, so nothing was captured.
 const buildMissingArtifactsFailureUpdate = ({
   currentStatus,
   pendingStatus,
@@ -185,19 +186,19 @@ const buildMissingArtifactsFailureUpdate = ({
   recallFailureReason: string | undefined;
 }): CallRecordingUpdateFields => {
   if (
-    pendingStatus === CallRecordingStatus.FAILED ||
+    isUnavailableCallRecordingStatus(pendingStatus) ||
     isCallRecordingStatusDowngrade({
       fromStatus: currentStatus,
-      toStatus: CallRecordingStatus.FAILED,
+      toStatus: CallRecordingStatus.NOT_RECORDED,
     })
   ) {
     return {};
   }
 
   return {
-    status: CallRecordingStatus.FAILED,
+    status: CallRecordingStatus.NOT_RECORDED,
     callRecorderFailureReason:
-      recallFailureReason ?? 'recording_artifacts_unavailable',
+      recallFailureReason ?? 'recall_bot_did_not_record',
   };
 };
 
@@ -232,11 +233,11 @@ const resolveMediaImportUpdate = ({
   currentStatus: string | undefined;
   pendingStatus: string | undefined;
 }): CallRecordingUpdateFields => {
-  const isRecordingFailed =
-    currentStatus === CallRecordingStatus.FAILED ||
-    pendingStatus === CallRecordingStatus.FAILED;
+  const hasNoRecording =
+    isUnavailableCallRecordingStatus(currentStatus) ||
+    isUnavailableCallRecordingStatus(pendingStatus);
 
-  if (!isRecordingFailed) {
+  if (!hasNoRecording) {
     return mediaImportUpdate;
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -34,13 +35,36 @@ export class MetadataEventPublisher {
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
-      events: enrichedBatch.events.map((event) => ({
-        type: event.type,
-        entityName: event.metadataName,
-        recordId: event.recordId,
-        properties: event.properties as Record<string, unknown>,
-      })),
+      events: enrichedBatch.events.map((event) => {
+        const ownerUserWorkspaceId = this.resolveOwnerUserWorkspaceId(event);
+
+        return {
+          type: event.type,
+          entityName: event.metadataName,
+          recordId: event.recordId,
+          properties: event.properties as Record<string, unknown>,
+          recipientUserWorkspaceIds: isNonEmptyString(ownerUserWorkspaceId)
+            ? [ownerUserWorkspaceId]
+            : undefined,
+        };
+      }),
     });
+  }
+
+  private resolveOwnerUserWorkspaceId(
+    event: MetadataEventBatch['events'][number],
+  ): string | undefined {
+    if (event.metadataName !== 'navigationMenuItem') {
+      return undefined;
+    }
+
+    const record = (
+      event.type === 'deleted'
+        ? event.properties.before
+        : event.properties.after
+    ) as { userWorkspaceId?: string | null } | undefined;
+
+    return record?.userWorkspaceId ?? undefined;
   }
 
   private async enrichMetadataEventBatch(

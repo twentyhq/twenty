@@ -17,16 +17,22 @@ const StyledRowContainer = styled.div`
     height: ${themeCssVariables.spacing[10]};
     padding: ${themeCssVariables.spacing[2]};
     padding-left: ${themeCssVariables.spacing[3]};
+
+    > svg {
+      flex-shrink: 0;
+    }
   }
 `;
 
 const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledContent = styled.div`
+  align-items: center;
   display: flex;
   flex: 1 1 0;
   gap: ${themeCssVariables.spacing[1]};
@@ -35,16 +41,25 @@ const StyledContent = styled.div`
 `;
 
 const StyledLabel = styled.span`
+  flex: 0 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
+// Rows are a fixed height, so the description has to give way rather than wrap
+// out of the row. A zero basis means it only ever takes the space the label
+// leaves, so the label stays readable and the description truncates first.
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
+  flex: 1 1 0;
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.lg};
+  min-width: 0;
+  overflow: hidden;
   padding-left: ${themeCssVariables.spacing[1]};
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledLinkContainer = styled.div`

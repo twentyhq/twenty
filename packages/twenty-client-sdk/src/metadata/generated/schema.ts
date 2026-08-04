@@ -442,6 +442,7 @@ export interface UserWorkspace {
     objectPermissions?: ObjectPermission[]
     objectsPermissions?: ObjectPermission[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
+    isImpersonating?: Scalars['Boolean']
     __typename: 'UserWorkspace'
 }
 
@@ -1254,6 +1255,98 @@ export interface FileUploadTarget {
     __typename: 'FileUploadTarget'
 }
 
+export interface RecordIdentifier {
+    id: Scalars['UUID']
+    labelIdentifier: Scalars['String']
+    imageIdentifier?: Scalars['String']
+    __typename: 'RecordIdentifier'
+}
+
+export interface NavigationMenuItem {
+    id: Scalars['UUID']
+    userWorkspaceId?: Scalars['UUID']
+    targetRecordId?: Scalars['UUID']
+    targetObjectMetadataId?: Scalars['UUID']
+    viewId?: Scalars['UUID']
+    type: NavigationMenuItemType
+    name?: Scalars['String']
+    link?: Scalars['String']
+    icon?: Scalars['String']
+    color?: Scalars['String']
+    folderId?: Scalars['UUID']
+    pageLayoutId?: Scalars['UUID']
+    position: Scalars['Float']
+    applicationId?: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    targetRecordIdentifier?: RecordIdentifier
+    __typename: 'NavigationMenuItem'
+}
+
+export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT'
+
+export interface ObjectRecordEventProperties {
+    updatedFields?: Scalars['String'][]
+    before?: Scalars['JSON']
+    after?: Scalars['JSON']
+    diff?: Scalars['JSON']
+    __typename: 'ObjectRecordEventProperties'
+}
+
+export interface MetadataEvent {
+    type: MetadataEventAction
+    metadataName: Scalars['String']
+    recordId: Scalars['String']
+    properties: ObjectRecordEventProperties
+    updatedCollectionHash?: Scalars['String']
+    __typename: 'MetadataEvent'
+}
+
+
+/** Metadata Event Action */
+export type MetadataEventAction = 'CREATED' | 'UPDATED' | 'DELETED'
+
+export interface ObjectRecordEvent {
+    action: DatabaseEventAction
+    objectNameSingular: Scalars['String']
+    recordId: Scalars['String']
+    userId?: Scalars['String']
+    workspaceMemberId?: Scalars['String']
+    properties: ObjectRecordEventProperties
+    __typename: 'ObjectRecordEvent'
+}
+
+
+/** Database Event Action */
+export type DatabaseEventAction = 'CREATED' | 'UPDATED' | 'DELETED' | 'DESTROYED' | 'RESTORED' | 'UPSERTED'
+
+export interface ObjectRecordEventWithQueryIds {
+    queryIds: Scalars['String'][]
+    objectRecordEvent: ObjectRecordEvent
+    __typename: 'ObjectRecordEventWithQueryIds'
+}
+
+export interface EventSubscription {
+    eventStreamId: Scalars['String']
+    objectRecordEventsWithQueryIds: ObjectRecordEventWithQueryIds[]
+    metadataEvents: MetadataEvent[]
+    __typename: 'EventSubscription'
+}
+
+export interface UserSession {
+    id: Scalars['UUID']
+    workspaceId?: Scalars['UUID']
+    authProvider: Scalars['String']
+    isImpersonating: Scalars['Boolean']
+    userAgent?: Scalars['String']
+    ipAddress?: Scalars['String']
+    createdAt: Scalars['DateTime']
+    lastActiveAt: Scalars['DateTime']
+    expiresAt: Scalars['DateTime']
+    isCurrent: Scalars['Boolean']
+    __typename: 'UserSession'
+}
+
 export interface BillingEndTrialPeriod {
     /** Updated subscription status */
     status?: SubscriptionStatus
@@ -1333,84 +1426,6 @@ export interface SendInvitations {
     errors: Scalars['String'][]
     result: WorkspaceInvitation[]
     __typename: 'SendInvitations'
-}
-
-export interface RecordIdentifier {
-    id: Scalars['UUID']
-    labelIdentifier: Scalars['String']
-    imageIdentifier?: Scalars['String']
-    __typename: 'RecordIdentifier'
-}
-
-export interface NavigationMenuItem {
-    id: Scalars['UUID']
-    userWorkspaceId?: Scalars['UUID']
-    targetRecordId?: Scalars['UUID']
-    targetObjectMetadataId?: Scalars['UUID']
-    viewId?: Scalars['UUID']
-    type: NavigationMenuItemType
-    name?: Scalars['String']
-    link?: Scalars['String']
-    icon?: Scalars['String']
-    color?: Scalars['String']
-    folderId?: Scalars['UUID']
-    pageLayoutId?: Scalars['UUID']
-    position: Scalars['Float']
-    applicationId?: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    targetRecordIdentifier?: RecordIdentifier
-    __typename: 'NavigationMenuItem'
-}
-
-export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT'
-
-export interface ObjectRecordEventProperties {
-    updatedFields?: Scalars['String'][]
-    before?: Scalars['JSON']
-    after?: Scalars['JSON']
-    diff?: Scalars['JSON']
-    __typename: 'ObjectRecordEventProperties'
-}
-
-export interface MetadataEvent {
-    type: MetadataEventAction
-    metadataName: Scalars['String']
-    recordId: Scalars['String']
-    properties: ObjectRecordEventProperties
-    updatedCollectionHash?: Scalars['String']
-    __typename: 'MetadataEvent'
-}
-
-
-/** Metadata Event Action */
-export type MetadataEventAction = 'CREATED' | 'UPDATED' | 'DELETED'
-
-export interface ObjectRecordEvent {
-    action: DatabaseEventAction
-    objectNameSingular: Scalars['String']
-    recordId: Scalars['String']
-    userId?: Scalars['String']
-    workspaceMemberId?: Scalars['String']
-    properties: ObjectRecordEventProperties
-    __typename: 'ObjectRecordEvent'
-}
-
-
-/** Database Event Action */
-export type DatabaseEventAction = 'CREATED' | 'UPDATED' | 'DELETED' | 'DESTROYED' | 'RESTORED' | 'UPSERTED'
-
-export interface ObjectRecordEventWithQueryIds {
-    queryIds: Scalars['String'][]
-    objectRecordEvent: ObjectRecordEvent
-    __typename: 'ObjectRecordEventWithQueryIds'
-}
-
-export interface EventSubscription {
-    eventStreamId: Scalars['String']
-    objectRecordEventsWithQueryIds: ObjectRecordEventWithQueryIds[]
-    metadataEvents: MetadataEvent[]
-    __typename: 'EventSubscription'
 }
 
 export interface FeatureFlag {
@@ -1609,6 +1624,7 @@ export interface ClientConfig {
     api: ApiConfig
     canManageFeatureFlags: Scalars['Boolean']
     publicFeatureFlags: PublicFeatureFlag[]
+    isCookieSessionEnabled: Scalars['Boolean']
     isMicrosoftMessagingEnabled: Scalars['Boolean']
     isMicrosoftCalendarEnabled: Scalars['Boolean']
     isGoogleMessagingEnabled: Scalars['Boolean']
@@ -2154,6 +2170,11 @@ export interface Impersonate {
     __typename: 'Impersonate'
 }
 
+export interface StopImpersonation {
+    canRestoreImpersonatorSession: Scalars['Boolean']
+    __typename: 'StopImpersonation'
+}
+
 export interface UsageTimeSeries {
     date: Scalars['String']
     creditsUsed: Scalars['Float']
@@ -2175,6 +2196,19 @@ export interface UsageAnalytics {
     periodEnd: Scalars['DateTime']
     userDailyUsage?: UsageUserDaily
     __typename: 'UsageAnalytics'
+}
+
+export interface ApplicationAuthorization {
+    id: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    workspaceId: Scalars['UUID']
+    applicationName: Scalars['String']
+    applicationUniversalIdentifier?: Scalars['String']
+    scopes?: Scalars['String'][]
+    lastAuthorizedAt?: Scalars['DateTime']
+    lastUsedAt: Scalars['DateTime']
+    createdAt: Scalars['DateTime']
+    __typename: 'ApplicationAuthorization'
 }
 
 export interface DevelopmentApplication {
@@ -2808,6 +2842,7 @@ export interface Query {
     apiKeys: ApiKey[]
     getApiKeyRoles: Role[]
     apiKey?: ApiKey
+    currentUserSessions: UserSession[]
     getInviteSuggestions: InviteSuggestion[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
     billingPortalSession: BillingSession
@@ -2900,6 +2935,7 @@ export interface Query {
     getAddressDetails: PlaceDetailsResult
     getUsageAnalytics: UsageAnalytics
     findManyPublicDomains: PublicDomain[]
+    currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
 
@@ -2960,6 +2996,8 @@ export interface Mutation {
     updateApiKey?: ApiKey
     revokeApiKey?: ApiKey
     assignRoleToApiKey: Scalars['Boolean']
+    revokeUserSession: Scalars['Boolean']
+    revokeAllOtherUserSessions: Scalars['Int']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
     updateOneApplicationVariable: Scalars['Boolean']
@@ -3109,6 +3147,7 @@ export interface Mutation {
     getAuthTokensFromSSOExchangeToken: AuthTokens
     authorizeApp: AuthorizeApp
     renewToken: AuthTokens
+    signOut: Scalars['Boolean']
     generateApiKeyToken: ApiKeyToken
     generatePlaygroundToken: AuthToken
     emailPasswordResetLink: EmailPasswordResetLink
@@ -3130,6 +3169,7 @@ export interface Mutation {
     trackAnalytics: Analytics
     duplicateDashboard: DuplicatedDashboard
     impersonate: Impersonate
+    stopImpersonation: StopImpersonation
     createCalendarEvent: CreateCalendarEventOutput
     sendEmail: SendEmailOutput
     startChannelSync: ChannelSyncSuccess
@@ -3141,6 +3181,7 @@ export interface Mutation {
     createDevelopmentApplication: DevelopmentApplication
     syncApplication: WorkspaceMigration
     uploadApplicationFile: File
+    revokeApplicationAuthorization: Scalars['Boolean']
     generateApplicationToken: ApplicationTokenPair
     renewApplicationToken: ApplicationTokenPair
     __typename: 'Mutation'
@@ -3618,6 +3659,7 @@ export interface UserWorkspaceGenqlSelection{
     objectPermissions?: ObjectPermissionGenqlSelection
     objectsPermissions?: ObjectPermissionGenqlSelection
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
+    isImpersonating?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4444,6 +4486,96 @@ export interface FileUploadTargetGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface RecordIdentifierGenqlSelection{
+    id?: boolean | number
+    labelIdentifier?: boolean | number
+    imageIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface NavigationMenuItemGenqlSelection{
+    id?: boolean | number
+    userWorkspaceId?: boolean | number
+    targetRecordId?: boolean | number
+    targetObjectMetadataId?: boolean | number
+    viewId?: boolean | number
+    type?: boolean | number
+    name?: boolean | number
+    link?: boolean | number
+    icon?: boolean | number
+    color?: boolean | number
+    folderId?: boolean | number
+    pageLayoutId?: boolean | number
+    position?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    targetRecordIdentifier?: RecordIdentifierGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectRecordEventPropertiesGenqlSelection{
+    updatedFields?: boolean | number
+    before?: boolean | number
+    after?: boolean | number
+    diff?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MetadataEventGenqlSelection{
+    type?: boolean | number
+    metadataName?: boolean | number
+    recordId?: boolean | number
+    properties?: ObjectRecordEventPropertiesGenqlSelection
+    updatedCollectionHash?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectRecordEventGenqlSelection{
+    action?: boolean | number
+    objectNameSingular?: boolean | number
+    recordId?: boolean | number
+    userId?: boolean | number
+    workspaceMemberId?: boolean | number
+    properties?: ObjectRecordEventPropertiesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectRecordEventWithQueryIdsGenqlSelection{
+    queryIds?: boolean | number
+    objectRecordEvent?: ObjectRecordEventGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EventSubscriptionGenqlSelection{
+    eventStreamId?: boolean | number
+    objectRecordEventsWithQueryIds?: ObjectRecordEventWithQueryIdsGenqlSelection
+    metadataEvents?: MetadataEventGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UserSessionGenqlSelection{
+    id?: boolean | number
+    workspaceId?: boolean | number
+    authProvider?: boolean | number
+    isImpersonating?: boolean | number
+    userAgent?: boolean | number
+    ipAddress?: boolean | number
+    createdAt?: boolean | number
+    lastActiveAt?: boolean | number
+    expiresAt?: boolean | number
+    isCurrent?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingEndTrialPeriodGenqlSelection{
     /** Updated subscription status */
     status?: boolean | number
@@ -4531,81 +4663,6 @@ export interface SendInvitationsGenqlSelection{
     success?: boolean | number
     errors?: boolean | number
     result?: WorkspaceInvitationGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface RecordIdentifierGenqlSelection{
-    id?: boolean | number
-    labelIdentifier?: boolean | number
-    imageIdentifier?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface NavigationMenuItemGenqlSelection{
-    id?: boolean | number
-    userWorkspaceId?: boolean | number
-    targetRecordId?: boolean | number
-    targetObjectMetadataId?: boolean | number
-    viewId?: boolean | number
-    type?: boolean | number
-    name?: boolean | number
-    link?: boolean | number
-    icon?: boolean | number
-    color?: boolean | number
-    folderId?: boolean | number
-    pageLayoutId?: boolean | number
-    position?: boolean | number
-    applicationId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    targetRecordIdentifier?: RecordIdentifierGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectRecordEventPropertiesGenqlSelection{
-    updatedFields?: boolean | number
-    before?: boolean | number
-    after?: boolean | number
-    diff?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MetadataEventGenqlSelection{
-    type?: boolean | number
-    metadataName?: boolean | number
-    recordId?: boolean | number
-    properties?: ObjectRecordEventPropertiesGenqlSelection
-    updatedCollectionHash?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectRecordEventGenqlSelection{
-    action?: boolean | number
-    objectNameSingular?: boolean | number
-    recordId?: boolean | number
-    userId?: boolean | number
-    workspaceMemberId?: boolean | number
-    properties?: ObjectRecordEventPropertiesGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectRecordEventWithQueryIdsGenqlSelection{
-    queryIds?: boolean | number
-    objectRecordEvent?: ObjectRecordEventGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface EventSubscriptionGenqlSelection{
-    eventStreamId?: boolean | number
-    objectRecordEventsWithQueryIds?: ObjectRecordEventWithQueryIdsGenqlSelection
-    metadataEvents?: MetadataEventGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4815,6 +4872,7 @@ export interface ClientConfigGenqlSelection{
     api?: ApiConfigGenqlSelection
     canManageFeatureFlags?: boolean | number
     publicFeatureFlags?: PublicFeatureFlagGenqlSelection
+    isCookieSessionEnabled?: boolean | number
     isMicrosoftMessagingEnabled?: boolean | number
     isMicrosoftCalendarEnabled?: boolean | number
     isGoogleMessagingEnabled?: boolean | number
@@ -5415,6 +5473,12 @@ export interface ImpersonateGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface StopImpersonationGenqlSelection{
+    canRestoreImpersonatorSession?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageTimeSeriesGenqlSelection{
     date?: boolean | number
     creditsUsed?: boolean | number
@@ -5437,6 +5501,20 @@ export interface UsageAnalyticsGenqlSelection{
     periodStart?: boolean | number
     periodEnd?: boolean | number
     userDailyUsage?: UsageUserDailyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationAuthorizationGenqlSelection{
+    id?: boolean | number
+    applicationId?: boolean | number
+    workspaceId?: boolean | number
+    applicationName?: boolean | number
+    applicationUniversalIdentifier?: boolean | number
+    scopes?: boolean | number
+    lastAuthorizedAt?: boolean | number
+    lastUsedAt?: boolean | number
+    createdAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6094,6 +6172,7 @@ export interface QueryGenqlSelection{
     apiKeys?: ApiKeyGenqlSelection
     getApiKeyRoles?: RoleGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
+    currentUserSessions?: UserSessionGenqlSelection
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
@@ -6198,6 +6277,7 @@ export interface QueryGenqlSelection{
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     findManyPublicDomains?: PublicDomainGenqlSelection
+    currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6287,6 +6367,8 @@ export interface MutationGenqlSelection{
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
     revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeAllOtherUserSessions?: boolean | number
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][]} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
@@ -6436,6 +6518,7 @@ export interface MutationGenqlSelection{
     getAuthTokensFromSSOExchangeToken?: (AuthTokensGenqlSelection & { __args: {ssoExchangeToken: Scalars['String']} })
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), redirectUrl: Scalars['String'], state?: (Scalars['String'] | null), scope?: (Scalars['String'] | null)} })
     renewToken?: (AuthTokensGenqlSelection & { __args: {appToken: Scalars['String']} })
+    signOut?: { __args: {refreshToken?: (Scalars['String'] | null)} } | boolean | number
     generateApiKeyToken?: (ApiKeyTokenGenqlSelection & { __args: {apiKeyId: Scalars['UUID'], expiresAt: Scalars['String']} })
     generatePlaygroundToken?: AuthTokenGenqlSelection
     emailPasswordResetLink?: (EmailPasswordResetLinkGenqlSelection & { __args: {email: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), captchaToken?: (Scalars['String'] | null)} })
@@ -6457,6 +6540,7 @@ export interface MutationGenqlSelection{
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
     duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     impersonate?: (ImpersonateGenqlSelection & { __args: {userId: Scalars['UUID'], workspaceId: Scalars['UUID']} })
+    stopImpersonation?: StopImpersonationGenqlSelection
     createCalendarEvent?: (CreateCalendarEventOutputGenqlSelection & { __args: {input: CreateCalendarEventInput} })
     sendEmail?: (SendEmailOutputGenqlSelection & { __args: {input: SendEmailInput} })
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
@@ -6468,6 +6552,7 @@ export interface MutationGenqlSelection{
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null)} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
+    revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
     __typename?: boolean | number
@@ -7648,6 +7733,70 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const RecordIdentifier_possibleTypes: string[] = ['RecordIdentifier']
+    export const isRecordIdentifier = (obj?: { __typename?: any } | null): obj is RecordIdentifier => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordIdentifier"')
+      return RecordIdentifier_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const NavigationMenuItem_possibleTypes: string[] = ['NavigationMenuItem']
+    export const isNavigationMenuItem = (obj?: { __typename?: any } | null): obj is NavigationMenuItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isNavigationMenuItem"')
+      return NavigationMenuItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectRecordEventProperties_possibleTypes: string[] = ['ObjectRecordEventProperties']
+    export const isObjectRecordEventProperties = (obj?: { __typename?: any } | null): obj is ObjectRecordEventProperties => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventProperties"')
+      return ObjectRecordEventProperties_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MetadataEvent_possibleTypes: string[] = ['MetadataEvent']
+    export const isMetadataEvent = (obj?: { __typename?: any } | null): obj is MetadataEvent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataEvent"')
+      return MetadataEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectRecordEvent_possibleTypes: string[] = ['ObjectRecordEvent']
+    export const isObjectRecordEvent = (obj?: { __typename?: any } | null): obj is ObjectRecordEvent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEvent"')
+      return ObjectRecordEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectRecordEventWithQueryIds_possibleTypes: string[] = ['ObjectRecordEventWithQueryIds']
+    export const isObjectRecordEventWithQueryIds = (obj?: { __typename?: any } | null): obj is ObjectRecordEventWithQueryIds => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventWithQueryIds"')
+      return ObjectRecordEventWithQueryIds_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EventSubscription_possibleTypes: string[] = ['EventSubscription']
+    export const isEventSubscription = (obj?: { __typename?: any } | null): obj is EventSubscription => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEventSubscription"')
+      return EventSubscription_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UserSession_possibleTypes: string[] = ['UserSession']
+    export const isUserSession = (obj?: { __typename?: any } | null): obj is UserSession => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
+      return UserSession_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingEndTrialPeriod_possibleTypes: string[] = ['BillingEndTrialPeriod']
     export const isBillingEndTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingEndTrialPeriod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEndTrialPeriod"')
@@ -7724,62 +7873,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isSendInvitations = (obj?: { __typename?: any } | null): obj is SendInvitations => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendInvitations"')
       return SendInvitations_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const RecordIdentifier_possibleTypes: string[] = ['RecordIdentifier']
-    export const isRecordIdentifier = (obj?: { __typename?: any } | null): obj is RecordIdentifier => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordIdentifier"')
-      return RecordIdentifier_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const NavigationMenuItem_possibleTypes: string[] = ['NavigationMenuItem']
-    export const isNavigationMenuItem = (obj?: { __typename?: any } | null): obj is NavigationMenuItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isNavigationMenuItem"')
-      return NavigationMenuItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectRecordEventProperties_possibleTypes: string[] = ['ObjectRecordEventProperties']
-    export const isObjectRecordEventProperties = (obj?: { __typename?: any } | null): obj is ObjectRecordEventProperties => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventProperties"')
-      return ObjectRecordEventProperties_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MetadataEvent_possibleTypes: string[] = ['MetadataEvent']
-    export const isMetadataEvent = (obj?: { __typename?: any } | null): obj is MetadataEvent => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataEvent"')
-      return MetadataEvent_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectRecordEvent_possibleTypes: string[] = ['ObjectRecordEvent']
-    export const isObjectRecordEvent = (obj?: { __typename?: any } | null): obj is ObjectRecordEvent => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEvent"')
-      return ObjectRecordEvent_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectRecordEventWithQueryIds_possibleTypes: string[] = ['ObjectRecordEventWithQueryIds']
-    export const isObjectRecordEventWithQueryIds = (obj?: { __typename?: any } | null): obj is ObjectRecordEventWithQueryIds => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventWithQueryIds"')
-      return ObjectRecordEventWithQueryIds_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EventSubscription_possibleTypes: string[] = ['EventSubscription']
-    export const isEventSubscription = (obj?: { __typename?: any } | null): obj is EventSubscription => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEventSubscription"')
-      return EventSubscription_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8472,6 +8565,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const StopImpersonation_possibleTypes: string[] = ['StopImpersonation']
+    export const isStopImpersonation = (obj?: { __typename?: any } | null): obj is StopImpersonation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isStopImpersonation"')
+      return StopImpersonation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
     export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
@@ -8492,6 +8593,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
       return UsageAnalytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationAuthorization_possibleTypes: string[] = ['ApplicationAuthorization']
+    export const isApplicationAuthorization = (obj?: { __typename?: any } | null): obj is ApplicationAuthorization => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationAuthorization"')
+      return ApplicationAuthorization_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -5,8 +5,9 @@ import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
+import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 
-export const resolveRoleIdFromAuthContext = ({
+export const resolveRoleIdsFromAuthContext = ({
   authContext,
   userWorkspaceRoleMap,
   apiKeyRoleMap,
@@ -14,21 +15,25 @@ export const resolveRoleIdFromAuthContext = ({
   authContext: WorkspaceAuthContext;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
-}): string | undefined => {
+}): string[] => {
   if (isUserAuthContext(authContext)) {
-    return userWorkspaceRoleMap[authContext.userWorkspaceId];
+    return resolveRoleIdsForUser({
+      userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
+      applicationRoleId: authContext.application?.defaultRoleId,
+    });
   }
 
   if (isApiKeyAuthContext(authContext)) {
-    return apiKeyRoleMap[authContext.apiKey.id];
+    const apiKeyRoleId = apiKeyRoleMap[authContext.apiKey.id];
+
+    return isDefined(apiKeyRoleId) ? [apiKeyRoleId] : [];
   }
 
-  if (
-    isApplicationAuthContext(authContext) &&
-    isDefined(authContext.application.defaultRoleId)
-  ) {
-    return authContext.application.defaultRoleId;
+  if (isApplicationAuthContext(authContext)) {
+    const applicationRoleId = authContext.application.defaultRoleId;
+
+    return isDefined(applicationRoleId) ? [applicationRoleId] : [];
   }
 
-  return undefined;
+  return [];
 };

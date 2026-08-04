@@ -386,3 +386,23 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 `LOGIC_FUNCTION_TYPE=DISABLED` veya `CODE_INTERPRETER_TYPE=DISABLED` kullanıldığında, herhangi bir yürütme girişimi bir hata döndürür. Bu, Twenty'yi bu yetenekler olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>
+
+## API ve ön uç ayrı ana makinelerde
+
+Yalnızca arka ucun (back-end) ön ucu (front-end) sunmasına izin vermiyorsanız geçerlidir. Aynı kökene (same-origin) sahip dağıtımlar için burada hiçbir şeye gerek yoktur.
+
+API ile iletişim kuran her tarayıcı kökenini (origin) virgülle ayırarak belirtin. `SERVER_URL`
+ve `FRONTEND_URL` zaten güvenilirdir.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Tanımlama bilgisi oturumlarına sahip bir sürüme yükseltme yapmak, bunun gerekli olmasına neden olur. Ön uç
+artık her istekte kimlik bilgileri gönderiyor ve tarayıcılar, bildirilmemiş bir kökenden gelen kimlik bilgileri içeren
+yanıtı reddediyor; bu nedenle uygulama, bunu ayarlayana kadar yüklenemez.
+</Warning>
+
+İki ana makine farklı kayıt edilebilir etki alanlarındaysa (sadece farklı
+alt etki alanları değilse), ayrıca HTTPS gerektiren `AUTH_COOKIE_SAME_SITE=none` değişkenini de ayarlayın.
