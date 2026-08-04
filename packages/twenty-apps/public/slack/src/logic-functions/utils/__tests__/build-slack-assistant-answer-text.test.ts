@@ -12,7 +12,7 @@ describe('buildSlackAssistantAnswerText', () => {
     expect(text).toBe('ACME has 3 open opportunities.\n\n_Answered in 4s_');
   });
 
-  it('should keep the response body untouched', () => {
+  it('should keep the response body untouched and put the footer after it', () => {
     const responseText = '**bold**\n- item';
 
     expect(
@@ -20,6 +20,6 @@ describe('buildSlackAssistantAnswerText', () => {
         responseText,
         durationMilliseconds: 1000,
       }),
-    ).toContain(responseText);
+    ).toBe('**bold**\n- item\n\n_Answered in 1s_');
   });
 });

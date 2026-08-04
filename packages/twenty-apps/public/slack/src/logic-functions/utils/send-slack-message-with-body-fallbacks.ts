@@ -28,7 +28,7 @@ export const sendSlackMessageWithBodyFallbacks = async ({
 
   let lastError: unknown;
 
-  for (const [index, candidateBody] of messageBodies.entries()) {
+  for (const candidateBody of messageBodies) {
     try {
       return await sendMessage(
         getSlackChatMessageBodyFields({ messageText, ...candidateBody }),
@@ -36,11 +36,8 @@ export const sendSlackMessageWithBodyFallbacks = async ({
     } catch (error) {
       lastError = error;
 
-      if (
-        index === messageBodies.length - 1 ||
-        !isSlackMarkdownFormatError(error)
-      ) {
-        return slackToolFailure(failureMessage, error);
+      if (!isSlackMarkdownFormatError(error)) {
+        break;
       }
     }
   }
