@@ -1,22 +1,26 @@
 import { DragDropProvider } from '@dnd-kit/react';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { Fragment, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconNewSection } from 'twenty-ui/icon';
+import { MenuItem } from 'twenty-ui/navigation';
 
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { FIELDS_CONFIGURATION_FIELD_DND_TYPE } from '@/page-layout/widgets/fields/constants/FieldsConfigurationFieldDndType';
 import { type FieldsConfigurationDndData } from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
 import { type FieldsConfigurationFieldDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldDragData';
-import { type FieldsConfigurationFieldListEndDropData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldListEndDropData';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
+import { type DragDropInsertionContextValues } from '@/ui/utilities/drag-and-drop/hooks/useDragDropInsertionIndex';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { IconNewSection } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 
 const UNGROUPED_FIELDS_DROPPABLE_ID = 'ungrouped-fields';
 
@@ -25,11 +29,6 @@ const StyledFieldsDroppable = styled.div`
   flex-direction: column;
   width: 100%;
 `;
-
-const UNGROUPED_END_DROP_DATA: FieldsConfigurationFieldListEndDropData = {
-  type: 'field-list-end',
-  groupId: UNGROUPED_FIELDS_DROPPABLE_ID,
-};
 
 type FieldsConfigurationUngroupedEditorProps = {
   ungroupedFields: FieldsWidgetGroupField[];
@@ -50,13 +49,34 @@ export const FieldsConfigurationUngroupedEditor = ({
     (a, b) => a.position - b.position,
   );
 
+  const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
+    number | null
+  >(null);
+
+  const resolveDrop = (
+    event:
+      | DragDropProviderDragMoveEvent<FieldsConfigurationDndData>
+      | DragDropProviderDragEndEvent<FieldsConfigurationDndData>,
+  ) =>
+    resolveDropFromPointer({
+      target: event.operation.target,
+      pointer: event.operation.position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount: () => sortedFields.length,
+    });
+
+  const handleDragMove = (
+    event: DragDropProviderDragMoveEvent<FieldsConfigurationDndData>,
+  ) => {
+    setActiveDropTargetIndex(resolveDrop(event)?.dropTargetIndex ?? null);
+  };
+
   const handleDragEnd = (
     event: DragDropProviderDragEndEvent<FieldsConfigurationDndData>,
   ) => {
+    setActiveDropTargetIndex(null);
+
     const sourceData = event.operation.source?.data as
-      | FieldsConfigurationDndData
-      | undefined;
-    const targetData = event.operation.target?.data as
       | FieldsConfigurationDndData
       | undefined;
 
@@ -64,21 +84,14 @@ export const FieldsConfigurationUngroupedEditor = ({
       return;
     }
 
-    // The drop line renders before the hovered field, so field targets insert
-    // the dragged field before them; the end drop zone appends it.
-    const dropTargetIndex =
-      targetData?.type === 'field'
-        ? targetData.index
-        : targetData?.type === 'field-list-end'
-          ? sortedFields.length
-          : null;
+    const resolvedDrop = resolveDrop(event);
 
-    if (!isDefined(dropTargetIndex)) {
+    if (!isDefined(resolvedDrop)) {
       return;
     }
 
     const destinationIndex = getDestinationIndex({
-      dropTargetIndex,
+      dropTargetIndex: resolvedDrop.dropTargetIndex,
       sourceIndex: sourceData.index,
       sourceDroppableId: UNGROUPED_FIELDS_DROPPABLE_ID,
       destinationDroppableId: UNGROUPED_FIELDS_DROPPABLE_ID,
@@ -91,53 +104,69 @@ export const FieldsConfigurationUngroupedEditor = ({
     onMoveField(sourceData.index, destinationIndex);
   };
 
+  const contextValues: DragDropInsertionContextValues = {
+    activeDropTargetIndex,
+    activeDroppableId: UNGROUPED_FIELDS_DROPPABLE_ID,
+  };
+
   return (
-    <DragDropProvider<FieldsConfigurationDndData>
-      sensors={DND_KIT_SENSORS}
-      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-      onDragEnd={handleDragEnd}
-    >
-      <StyledFieldsDroppable>
-        {sortedFields.map((field, fieldIndex) => {
-          const fieldDragData: FieldsConfigurationFieldDragData = {
-            type: 'field',
-            groupId: UNGROUPED_FIELDS_DROPPABLE_ID,
-            index: fieldIndex,
-          };
+    <DragDropItemDndContext.Provider value={contextValues}>
+      <DragDropProvider<FieldsConfigurationDndData>
+        sensors={DND_KIT_SENSORS}
+        plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEnd}
+      >
+        <StyledFieldsDroppable>
+          {sortedFields.map((field, fieldIndex) => {
+            const fieldDragData: FieldsConfigurationFieldDragData = {
+              type: 'field',
+              groupId: UNGROUPED_FIELDS_DROPPABLE_ID,
+              index: fieldIndex,
+            };
 
-          return (
-            <DragDropItemSortableCell
-              key={field.fieldMetadataItem.id}
-              id={field.fieldMetadataItem.id}
-              index={fieldIndex}
-              group={UNGROUPED_FIELDS_DROPPABLE_ID}
-              data={fieldDragData}
-              type={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
-              accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
-              hasTransition={false}
-              highlightWhileDragging
-              dropLine="horizontal"
-            >
-              <FieldsConfigurationFieldEditor
-                field={{
-                  fieldMetadataId: field.fieldMetadataItem.id,
-                  position: field.position,
-                  isVisible: field.isVisible,
-                }}
-                fieldMetadata={field.fieldMetadataItem}
-                onToggleVisibility={() => {
-                  onToggleFieldVisibility(field.fieldMetadataItem.id);
-                }}
-              />
-            </DragDropItemSortableCell>
-          );
-        })}
+            return (
+              <Fragment key={field.fieldMetadataItem.id}>
+                <DragDropItemDropTarget
+                  index={fieldIndex}
+                  droppableId={UNGROUPED_FIELDS_DROPPABLE_ID}
+                  orientation="horizontal"
+                  compact
+                />
+                <DragDropItemSortableCell
+                  id={field.fieldMetadataItem.id}
+                  index={fieldIndex}
+                  group={UNGROUPED_FIELDS_DROPPABLE_ID}
+                  data={fieldDragData}
+                  type={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+                  accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+                  hasTransition={false}
+                  highlightWhileDragging
+                  orientation="horizontal"
+                >
+                  <FieldsConfigurationFieldEditor
+                    field={{
+                      fieldMetadataId: field.fieldMetadataItem.id,
+                      position: field.position,
+                      isVisible: field.isVisible,
+                    }}
+                    fieldMetadata={field.fieldMetadataItem}
+                    onToggleVisibility={() => {
+                      onToggleFieldVisibility(field.fieldMetadataItem.id);
+                    }}
+                  />
+                </DragDropItemSortableCell>
+              </Fragment>
+            );
+          })}
 
-        <DragDropItemEndDropZone
-          id={`${UNGROUPED_FIELDS_DROPPABLE_ID}-end`}
-          accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
-          data={UNGROUPED_END_DROP_DATA}
-        >
+          <DragDropItemDropTarget
+            index={sortedFields.length}
+            droppableId={UNGROUPED_FIELDS_DROPPABLE_ID}
+            orientation="horizontal"
+            compact
+          />
+
           <MenuItem
             LeftIcon={IconNewSection}
             text={t`Add a Group`}
@@ -145,8 +174,8 @@ export const FieldsConfigurationUngroupedEditor = ({
             withIconContainer
             withIconContainerBackground={false}
           />
-        </DragDropItemEndDropZone>
-      </StyledFieldsDroppable>
-    </DragDropProvider>
+        </StyledFieldsDroppable>
+      </DragDropProvider>
+    </DragDropItemDndContext.Provider>
   );
 };
