@@ -6,6 +6,7 @@ import {
   setUpImportMissingFirefliesCallsTest,
 } from 'src/logic-functions/flows/__tests__/import-missing-fireflies-calls.test-support';
 import firefliesBackfillBatchLogicFunction from 'src/logic-functions/fireflies-backfill-batch';
+import { FIREFLIES_BACKFILL_BATCH_SIZE } from 'src/logic-functions/constants/fireflies-backfill-batch-size.constant';
 import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fireflies-meeting';
 
 const queryMock = vi.hoisted(() => vi.fn());
@@ -31,6 +32,7 @@ describe('firefliesBackfillBatchLogicFunction', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
@@ -70,6 +72,12 @@ describe('firefliesBackfillBatchLogicFunction', () => {
       skippedCallCount: 0,
     });
     expect(mutationMock).toHaveBeenCalledTimes(2);
+    expect(
+      mutationMock.mock.calls.map(
+        ([mutation]) =>
+          mutation.createCallRecording.__args.data.externalRecordingId,
+      ),
+    ).toEqual(['call-1', 'call-2']);
   });
 
   it('skips already synced calls without calling Fireflies', async () => {
@@ -133,7 +141,18 @@ describe('firefliesBackfillBatchLogicFunction', () => {
   it('throws on an invalid job payload', async () => {
     await expect(
       firefliesBackfillBatchLogicFunction.config.handler({ transcriptIds: [] }),
-    ).rejects.toThrow('non-empty transcriptIds list');
+    ).rejects.toThrow('requires 1 to 20 non-empty transcript ids');
+  });
+
+  it('throws when a job payload exceeds the configured batch size', async () => {
+    await expect(
+      firefliesBackfillBatchLogicFunction.config.handler({
+        transcriptIds: Array.from(
+          { length: FIREFLIES_BACKFILL_BATCH_SIZE + 1 },
+          (_, transcriptIndex) => `call-${transcriptIndex}`,
+        ),
+      }),
+    ).rejects.toThrow('requires 1 to 20 non-empty transcript ids');
   });
 
   it('throws when the Fireflies api key is missing', async () => {

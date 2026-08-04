@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type RoutePayload } from 'twenty-sdk/define';
 
 import { FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { FIREFLIES_BACKFILL_WORKER_RETRY_LIMIT } from 'src/logic-functions/constants/fireflies-backfill-worker-retry-limit.constant';
 import firefliesBackfillLogicFunction from 'src/logic-functions/fireflies-backfill';
 
 const enqueueJobMock = vi.hoisted(() => vi.fn());
@@ -63,6 +64,7 @@ describe('firefliesBackfillLogicFunction', () => {
       logicFunctionUniversalIdentifier:
         FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payload: { days: 30 },
+      retryLimit: FIREFLIES_BACKFILL_WORKER_RETRY_LIMIT,
     });
   });
 });

@@ -92,7 +92,7 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
     );
   });
 
-  it('reports partial enqueue progress without retrying completed batches', async () => {
+  it('fails discovery with partial enqueue progress so the queue retries it', async () => {
     const transcripts = Array.from({ length: 25 }, (_, callIndex) =>
       buildListedTranscript(
         `call-${callIndex}`,
@@ -105,30 +105,18 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
       .mockResolvedValueOnce({ enqueued: true })
       .mockRejectedValueOnce(new Error('Network failed'));
 
-    const result = await firefliesBackfillWorkerLogicFunction.config.handler({
-      days: 30,
-    });
-
-    expect(result).toEqual(
-      expect.objectContaining({
-        outcome: 'enqueue-failed',
-        batchCount: 2,
-        enqueuedBatchCount: 1,
-        error: 'Network failed',
-      }),
+    await expect(
+      firefliesBackfillWorkerLogicFunction.config.handler({ days: 30 }),
+    ).rejects.toThrow(
+      'Fireflies backfill enqueued 1 of 2 batches before enqueue failed: Network failed',
     );
-    expect(console.log).toHaveBeenCalledWith(
-      '[fireflies] Backfill discovery finished',
-      expect.objectContaining({ enqueuedBatchCount: 1 }),
-    );
+    expect(enqueueJobMock).toHaveBeenCalledTimes(2);
   });
 
-  it('reports a Fireflies listing failure', async () => {
-    const result = await firefliesBackfillWorkerLogicFunction.config.handler({
-      days: 30,
-    });
-
-    expect(result).toEqual(expect.objectContaining({ outcome: 'list-failed' }));
+  it('fails discovery when Fireflies listing fails', async () => {
+    await expect(
+      firefliesBackfillWorkerLogicFunction.config.handler({ days: 30 }),
+    ).rejects.toThrow('Fireflies backfill listing failed');
     expect(enqueueJobMock).not.toHaveBeenCalled();
   });
 

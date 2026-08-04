@@ -29,7 +29,7 @@ describe('enqueueFirefliesBackfillBatches', () => {
   });
 
   it('enqueues one staggered job per batch', async () => {
-    const result = await enqueueFirefliesBackfillBatches({
+    await enqueueFirefliesBackfillBatches({
       transcriptIdBatches: [
         ['call-1', 'call-2'],
         ['call-3'],
@@ -37,8 +37,6 @@ describe('enqueueFirefliesBackfillBatches', () => {
         ['call-5'],
       ],
     });
-
-    expect(result).toEqual({ success: true, enqueuedBatchCount: 4 });
 
     expect(enqueueJobMock).toHaveBeenNthCalledWith(1, {
       logicFunctionUniversalIdentifier:
@@ -70,7 +68,7 @@ describe('enqueueFirefliesBackfillBatches', () => {
     });
   });
 
-  it('reports an enqueue failure without enqueueing later batches', async () => {
+  it('throws partial progress without enqueueing later batches', async () => {
     enqueueJobMock
       .mockResolvedValueOnce({
         enqueued: true,
@@ -79,15 +77,13 @@ describe('enqueueFirefliesBackfillBatches', () => {
       })
       .mockRejectedValueOnce(new Error('Network failed'));
 
-    const result = await enqueueFirefliesBackfillBatches({
-      transcriptIdBatches: [['call-1'], ['call-2'], ['call-3']],
-    });
-
-    expect(result).toEqual({
-      success: false,
-      enqueuedBatchCount: 1,
-      errorMessage: 'Network failed',
-    });
+    await expect(
+      enqueueFirefliesBackfillBatches({
+        transcriptIdBatches: [['call-1'], ['call-2'], ['call-3']],
+      }),
+    ).rejects.toThrow(
+      'Fireflies backfill enqueued 1 of 3 batches before enqueue failed: Network failed',
+    );
     expect(enqueueJobMock).toHaveBeenCalledTimes(2);
   });
 });

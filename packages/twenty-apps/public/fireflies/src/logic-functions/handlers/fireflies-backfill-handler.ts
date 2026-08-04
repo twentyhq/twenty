@@ -33,33 +33,16 @@ export const firefliesBackfillHandler = async ({
   });
 
   if (!listFirefliesTranscriptIdsResult.ok) {
-    return {
-      outcome: FIREFLIES_BACKFILL_OUTCOME.LIST_FAILED,
-      fromDate,
-      toDate,
-      error: listFirefliesTranscriptIdsResult.errorMessage,
-    };
+    throw new Error(
+      `Fireflies backfill listing failed: ${listFirefliesTranscriptIdsResult.errorMessage}`,
+    );
   }
 
   const transcriptIdBatches = chunkIntoBatches(
     listFirefliesTranscriptIdsResult.transcriptIds,
     FIREFLIES_BACKFILL_BATCH_SIZE,
   );
-  const enqueueFirefliesBackfillBatchesResult =
-    await enqueueFirefliesBackfillBatches({ transcriptIdBatches });
-
-  if (!enqueueFirefliesBackfillBatchesResult.success) {
-    return {
-      outcome: FIREFLIES_BACKFILL_OUTCOME.ENQUEUE_FAILED,
-      fromDate,
-      toDate,
-      transcriptCount: listFirefliesTranscriptIdsResult.transcriptIds.length,
-      batchCount: transcriptIdBatches.length,
-      enqueuedBatchCount:
-        enqueueFirefliesBackfillBatchesResult.enqueuedBatchCount,
-      error: enqueueFirefliesBackfillBatchesResult.errorMessage,
-    };
-  }
+  await enqueueFirefliesBackfillBatches({ transcriptIdBatches });
 
   return {
     outcome: FIREFLIES_BACKFILL_OUTCOME.COMPLETED,
@@ -67,7 +50,6 @@ export const firefliesBackfillHandler = async ({
     toDate,
     transcriptCount: listFirefliesTranscriptIdsResult.transcriptIds.length,
     batchCount: transcriptIdBatches.length,
-    enqueuedBatchCount:
-      enqueueFirefliesBackfillBatchesResult.enqueuedBatchCount,
+    enqueuedBatchCount: transcriptIdBatches.length,
   };
 };

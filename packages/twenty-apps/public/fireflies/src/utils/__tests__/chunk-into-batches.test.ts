@@ -18,4 +18,10 @@ describe('chunkIntoBatches', () => {
   it('returns a single batch when the list fits the batch size', () => {
     expect(chunkIntoBatches(['a', 'b'], 20)).toEqual([['a', 'b']]);
   });
+
+  it.each([0, -1, 1.5])('rejects an invalid batch size of %s', (batchSize) => {
+    expect(() => chunkIntoBatches(['a'], batchSize)).toThrow(
+      'Batch size must be a positive integer',
+    );
+  });
 });

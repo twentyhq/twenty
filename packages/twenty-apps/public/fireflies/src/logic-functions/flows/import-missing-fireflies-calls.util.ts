@@ -20,9 +20,10 @@ export const importMissingFirefliesCalls = async ({
   transcriptIds,
   sleep = sleepForMilliseconds,
 }: ImportMissingFirefliesCallsParams): Promise<ImportMissingFirefliesCallsResult> => {
+  const uniqueTranscriptIds = [...new Set(transcriptIds)];
   const callRecordingFieldStates = await findCallRecordingFieldStatesOrThrow({
     coreApiClient,
-    callRecordingIds: transcriptIds.map(
+    callRecordingIds: uniqueTranscriptIds.map(
       computeCallRecordingIdForFirefliesMeeting,
     ),
   });
@@ -30,7 +31,7 @@ export const importMissingFirefliesCalls = async ({
   return syncFirefliesTranscriptBatch({
     apiKey,
     coreApiClient,
-    transcriptIds,
+    transcriptIds: uniqueTranscriptIds,
     callRecordingFieldStates,
     sleep,
   });

@@ -4,13 +4,12 @@ import { FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'sr
 import { FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT } from 'src/logic-functions/constants/fireflies-backfill-batch-retry-limit.constant';
 import { FIREFLIES_BACKFILL_MAX_BATCH_DELAY_MILLISECONDS } from 'src/logic-functions/constants/fireflies-backfill-max-batch-delay-milliseconds.constant';
 import { FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS } from 'src/logic-functions/constants/fireflies-backfill-batch-stagger-milliseconds.constant';
-import { type EnqueueFirefliesBackfillBatchesResult } from 'src/logic-functions/types/enqueue-fireflies-backfill-batches-result.type';
 
 export const enqueueFirefliesBackfillBatches = async ({
   transcriptIdBatches,
 }: {
   transcriptIdBatches: string[][];
-}): Promise<EnqueueFirefliesBackfillBatchesResult> => {
+}): Promise<void> => {
   for (const [batchIndex, transcriptIds] of transcriptIdBatches.entries()) {
     try {
       await enqueueJob({
@@ -24,16 +23,11 @@ export const enqueueFirefliesBackfillBatches = async ({
         ),
       });
     } catch (error) {
-      return {
-        success: false,
-        enqueuedBatchCount: batchIndex,
-        errorMessage: error instanceof Error ? error.message : String(error),
-      };
+      throw new Error(
+        `Fireflies backfill enqueued ${batchIndex} of ${transcriptIdBatches.length} batches before enqueue failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   }
-
-  return {
-    success: true,
-    enqueuedBatchCount: transcriptIdBatches.length,
-  };
 };

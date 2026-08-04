@@ -22,9 +22,11 @@ describe('firefliesDailyHealerLogicFunction', () => {
       async () => new Response('invalid request', { status: 400 }),
     );
     enqueueJobMock.mockResolvedValue({ enqueued: true });
+    vi.spyOn(console, 'log').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });
@@ -42,7 +44,13 @@ describe('firefliesDailyHealerLogicFunction', () => {
   });
 
   it('lists a fixed seven-day healing window', async () => {
-    await firefliesDailyHealerLogicFunction.config.handler();
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ data: { transcripts: [] } }), {
+        status: 200,
+      }),
+    );
+
+    const result = await firefliesDailyHealerLogicFunction.config.handler();
 
     const [, request] = fetchMock.mock.calls[0];
     const { variables } = JSON.parse(String((request as RequestInit).body)) as {
@@ -53,5 +61,9 @@ describe('firefliesDailyHealerLogicFunction', () => {
       7 * 24 * 60 * 60 * 1_000,
     );
     expect(variables.skip).toBe(0);
+    expect(console.log).toHaveBeenCalledWith(
+      '[fireflies] Daily healing discovery finished',
+      result,
+    );
   });
 });

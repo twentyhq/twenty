@@ -1,5 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { FIREFLIES_BACKFILL_BATCH_SIZE } from 'src/logic-functions/constants/fireflies-backfill-batch-size.constant';
 import { importMissingFirefliesCalls } from 'src/logic-functions/flows/import-missing-fireflies-calls.util';
 import { firefliesBackfillBatchPayloadSchema } from 'src/logic-functions/schemas/fireflies-backfill-batch-payload.schema';
 import { type ImportMissingFirefliesCallsResult } from 'src/logic-functions/types/import-missing-fireflies-calls-result.type';
@@ -13,7 +14,7 @@ export const firefliesBackfillBatchHandler = async (
 
   if (!payloadParseResult.success) {
     throw new Error(
-      'Fireflies backfill batch requires a non-empty transcriptIds list',
+      `Fireflies backfill batch requires 1 to ${FIREFLIES_BACKFILL_BATCH_SIZE} non-empty transcript ids`,
     );
   }
 

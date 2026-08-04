@@ -41,7 +41,10 @@ export const serveFirefliesApi = (
   let listRequestIndex = 0;
 
   fetchMock.mockImplementation(async (_url: string, init: RequestInit) => {
-    const body = JSON.parse(String(init.body)) as { query: string };
+    const body = JSON.parse(String(init.body)) as {
+      query: string;
+      variables?: { transcriptId?: string };
+    };
 
     if (body.query.includes('query Transcripts(')) {
       const page = pages[listRequestIndex] ?? [];
@@ -53,7 +56,7 @@ export const serveFirefliesApi = (
 
     return buildGraphqlResponse({
       transcript: {
-        id: 'detail',
+        id: body.variables?.transcriptId ?? 'detail',
         title: 'Call detail',
         date: Date.parse(FIREFLIES_BACKFILL_FROM_DATE),
         duration: 30,

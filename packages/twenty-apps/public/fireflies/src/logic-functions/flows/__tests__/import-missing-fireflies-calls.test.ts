@@ -55,6 +55,33 @@ describe('importMissingFirefliesCalls synchronization', () => {
       skippedCallCount: 0,
     });
     expect(mutationMock).toHaveBeenCalledTimes(2);
+    expect(
+      mutationMock.mock.calls.map(
+        ([mutation]) =>
+          mutation.createCallRecording.__args.data.externalRecordingId,
+      ),
+    ).toEqual(['call-1', 'call-2']);
+  });
+
+  it('imports duplicate transcript ids only once', async () => {
+    serveFirefliesApi([], fetchMock);
+
+    const { CoreApiClient } = await import('twenty-client-sdk/core');
+    const result = await importMissingFirefliesCalls({
+      apiKey: FIREFLIES_API_KEY,
+      coreApiClient: new CoreApiClient(),
+      transcriptIds: ['call-1', 'call-1'],
+      sleep: skipSleep,
+    });
+
+    expect(result).toEqual({
+      status: 'completed',
+      importedCallCount: 1,
+      erroredCallCount: 0,
+      skippedCallCount: 0,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(mutationMock).toHaveBeenCalledTimes(1);
   });
 
   it('keeps a call recording processing while its Fireflies summary is pending', async () => {
@@ -188,7 +215,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
     });
   });
 
-  it('moves a completed legacy recording back to processing while its summary is pending', async () => {
+  it('moves a completed legacy recording back to processing while its summary is unavailable', async () => {
     const callId = 'legacy-transcript-only-call';
     const callRecordingId = computeCallRecordingIdForFirefliesMeeting(callId);
     const callDateMilliseconds = Date.parse('2026-06-02T10:00:00.000Z');
@@ -207,7 +234,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
           cal_id: null,
           calendar_type: null,
           summary: null,
-          meeting_info: { summary_status: 'processing' },
         },
       }),
     );
@@ -246,7 +272,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
     });
   });
 
-  it('keeps a transcript processing when Fireflies skips summary generation', async () => {
+  it('keeps a transcript processing when its summary remains unavailable', async () => {
     const callId = 'call-with-skipped-summary';
     const callRecordingId = computeCallRecordingIdForFirefliesMeeting(callId);
     const callDateMilliseconds = Date.parse('2026-06-02T10:00:00.000Z');
@@ -265,7 +291,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
           cal_id: null,
           calendar_type: null,
           summary: null,
-          meeting_info: { summary_status: 'skipped' },
         },
       }),
     );

@@ -8,8 +8,18 @@ import { firefliesBackfillHandler } from 'src/logic-functions/handlers/fireflies
 import { type FirefliesBackfillResult } from 'src/logic-functions/types/fireflies-backfill-result.type';
 
 const firefliesDailyHealerCronHandler =
-  async (): Promise<FirefliesBackfillResult> =>
-    firefliesBackfillHandler({ windowDays: FIREFLIES_HEALING_WINDOW_DAYS });
+  async (): Promise<FirefliesBackfillResult> => {
+    const firefliesBackfillResult = await firefliesBackfillHandler({
+      windowDays: FIREFLIES_HEALING_WINDOW_DAYS,
+    });
+
+    console.log(
+      '[fireflies] Daily healing discovery finished',
+      firefliesBackfillResult,
+    );
+
+    return firefliesBackfillResult;
+  };
 
 export default defineLogicFunction({
   universalIdentifier:
