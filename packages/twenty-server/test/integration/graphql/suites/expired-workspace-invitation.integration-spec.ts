@@ -1,11 +1,10 @@
-import request from 'supertest';
+import gql from 'graphql-tag';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
-
-const client = request(`http://localhost:${APP_PORT}`);
 
 const seedInvitation = ({
   email,
@@ -48,16 +47,20 @@ describe('expired workspace invitation filtering', () => {
         expiresAt: new Date(Date.now() - ONE_HOUR_IN_MS),
       });
 
-      await client
-        .post('/metadata')
-        .send({
-          query: `
-            mutation SignUpInWorkspace {
+      const response = await makeMetadataAPIRequest(
+        {
+          query: gql`
+            mutation SignUpInWorkspace(
+              $email: String!
+              $password: String!
+              $workspaceId: UUID!
+              $workspacePersonalInviteToken: String!
+            ) {
               signUpInWorkspace(
-                email: "${email}"
-                password: "Test123!@#"
-                workspaceId: "${SEED_APPLE_WORKSPACE_ID}"
-                workspacePersonalInviteToken: "${token}"
+                email: $email
+                password: $password
+                workspaceId: $workspaceId
+                workspacePersonalInviteToken: $workspacePersonalInviteToken
               ) {
                 workspace {
                   id
@@ -65,29 +68,33 @@ describe('expired workspace invitation filtering', () => {
               }
             }
           `,
-        })
-        .expect(200)
-        .expect((res) => {
-          expect(res.body.data?.signUpInWorkspace).toBeFalsy();
-          expect(res.body.errors).toBeDefined();
-        });
+          variables: {
+            email,
+            password: 'Test123!@#',
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            workspacePersonalInviteToken: token,
+          },
+        },
+        undefined,
+      );
+
+      expect(response.body.data?.signUpInWorkspace).toBeFalsy();
+      expect(response.body.errors).toBeDefined();
     });
   });
 
   describe('sendInvitations re-invite behaviour', () => {
     const sendInvitations = (email: string) =>
-      client
-        .post('/metadata')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation SendInvitations {
-              sendInvitations(emails: ["${email}"]) {
-                success
-              }
+      makeMetadataAPIRequest({
+        query: gql`
+          mutation SendInvitations($emails: [String!]!) {
+            sendInvitations(emails: $emails) {
+              success
             }
-          `,
-        });
+          }
+        `,
+        variables: { emails: [email] },
+      });
 
     it('re-invites an email whose only existing invitation is expired', async () => {
       const email = `expired-invite-resend-${Date.now()}@example.com`;
@@ -99,12 +106,10 @@ describe('expired workspace invitation filtering', () => {
       });
 
       try {
-        await sendInvitations(email)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.sendInvitations.success).toBe(true);
-          });
+        const response = await sendInvitations(email);
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.sendInvitations.success).toBe(true);
       } finally {
         await removeSeededInvitations(email);
       }
@@ -120,11 +125,9 @@ describe('expired workspace invitation filtering', () => {
       });
 
       try {
-        await sendInvitations(email)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data.sendInvitations.success).toBe(false);
-          });
+        const response = await sendInvitations(email);
+
+        expect(response.body.data.sendInvitations.success).toBe(false);
       } finally {
         await removeSeededInvitations(email);
       }
