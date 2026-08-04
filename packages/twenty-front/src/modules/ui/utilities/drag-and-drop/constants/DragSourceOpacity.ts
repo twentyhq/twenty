@@ -1,1 +1,1 @@
-export const DRAG_SOURCE_OPACITY = 0.3;
+export const DRAG_SOURCE_OPACITY = 'var(--dnd-drag-source-opacity)';
