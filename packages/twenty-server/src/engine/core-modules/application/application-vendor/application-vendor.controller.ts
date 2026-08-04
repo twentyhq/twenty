@@ -19,7 +19,10 @@ import {
 } from 'src/engine/core-modules/application/application-vendor/constants/application-vendor-cache-control.constant';
 import { ApplicationVendorService } from 'src/engine/core-modules/application/application-vendor/application-vendor.service';
 import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/application-vendor/utils/extract-checksum-from-cache-key.util';
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -70,7 +73,9 @@ export class ApplicationVendorController {
         // underlying lookup failure to the client.
         if (error instanceof ApplicationException) {
           throw new NotFoundException(
-            `Application "${applicationId}" not found`,
+            error.code === ApplicationExceptionCode.ENTITY_NOT_FOUND
+              ? `Application "${applicationId}" does not declare a vendor bundle`
+              : `Application "${applicationId}" not found`,
           );
         }
 

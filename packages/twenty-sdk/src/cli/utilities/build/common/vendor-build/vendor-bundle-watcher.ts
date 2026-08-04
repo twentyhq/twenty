@@ -29,6 +29,7 @@ export class VendorBundleWatcher {
   private watcher: FSWatcher | null = null;
   private context: VendorBuildContext | null = null;
   private lastChecksum: string | null = null;
+  private isClosed = false;
 
   constructor(options: VendorBundleWatcherOptions) {
     this.appPath = options.appPath;
@@ -58,7 +59,11 @@ export class VendorBundleWatcher {
     await this.startDependencyWatcher();
   }
 
+  // A build already in flight cannot be cancelled, so it is disowned instead:
+  // its bundle belongs to a vendor configuration that no longer exists and must
+  // not be uploaded or published as the current one.
   async close(): Promise<void> {
+    this.isClosed = true;
     await this.watcher?.close();
     this.watcher = null;
   }
@@ -73,17 +78,27 @@ export class VendorBundleWatcher {
         onFileBuilt: async (event) => {
           builtChecksum = event.checksum;
 
-          if (event.checksum !== this.lastChecksum) {
-            await this.handleFileBuilt(event);
+          if (this.isClosed || event.checksum === this.lastChecksum) {
+            return;
           }
+
+          await this.handleFileBuilt(event);
         },
       });
+
+      if (this.isClosed) {
+        return;
+      }
 
       if (builtChecksum !== this.lastChecksum) {
         this.lastChecksum = builtChecksum;
         await this.handleVendorRebuilt();
       }
     } catch (error) {
+      if (this.isClosed) {
+        return;
+      }
+
       await this.handleBuildError([
         {
           error: error instanceof Error ? error.message : String(error),

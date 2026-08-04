@@ -41,6 +41,25 @@ export const useUpdateApplicationVendorChecksumApolloCache = ({
         return;
       }
 
+      const cachedData =
+        apolloClient.cache.readQuery<GetApplicationVendorChecksumQuery>({
+          query: GetApplicationVendorChecksumDocument,
+          variables: { applicationId },
+        });
+
+      // Writing into a cache the initial query has not populated yet would be
+      // overwritten by that in-flight response, so the value is refetched
+      // instead.
+      if (!isDefined(cachedData)) {
+        void apolloClient.query({
+          query: GetApplicationVendorChecksumDocument,
+          variables: { applicationId },
+          fetchPolicy: 'network-only',
+        });
+
+        return;
+      }
+
       apolloClient.cache.updateQuery<GetApplicationVendorChecksumQuery>(
         {
           query: GetApplicationVendorChecksumDocument,

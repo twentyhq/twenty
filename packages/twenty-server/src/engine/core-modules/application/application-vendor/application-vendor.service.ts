@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
@@ -34,8 +38,9 @@ export class ApplicationVendorService {
     );
 
     if (!isDefined(application.vendorBuiltPath)) {
-      throw new NotFoundException(
+      throw new ApplicationException(
         `Application "${applicationId}" does not declare a vendor bundle`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
       );
     }
 

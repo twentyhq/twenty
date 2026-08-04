@@ -20,6 +20,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 const WORKSPACE_ID = 'workspace-1';
 const APPLICATION_ID = 'application-1';
 const VENDOR_CHECKSUM = 'a'.repeat(64);
+const VENDOR_BUNDLE_CONTENT = 'export const vendor = 1;';
 
 const workspace = { id: WORKSPACE_ID } as WorkspaceEntity;
 
@@ -32,11 +33,12 @@ describe('ApplicationVendorController', () => {
     setHeader: jest.Mock;
     json: jest.Mock;
   };
+  let writtenChunks: string[];
 
   const buildStreamResponse = () => ({
     fileResponse: {
       type: 'stream' as const,
-      stream: Readable.from(['export const vendor = 1;']),
+      stream: Readable.from([VENDOR_BUNDLE_CONTENT]),
       mimeType: 'application/javascript',
     },
     vendorChecksum: VENDOR_CHECKSUM,
@@ -49,9 +51,14 @@ describe('ApplicationVendorController', () => {
       getBuiltVendorPresignedUrlOrStream: jest.fn(),
     };
 
+    writtenChunks = [];
+
     response = Object.assign(
       new Writable({
-        write: (_chunk, _encoding, callback) => callback(),
+        write: (chunk, _encoding, callback) => {
+          writtenChunks.push(String(chunk));
+          callback();
+        },
       }),
       {
         setHeader: jest.fn(),
@@ -88,6 +95,7 @@ describe('ApplicationVendorController', () => {
       'Cache-Control',
       APPLICATION_VENDOR_CACHE_CONTROL,
     );
+    expect(writtenChunks.join('')).toBe(VENDOR_BUNDLE_CONTENT);
   });
 
   it('refuses to cache a response requested with a stale checksum', async () => {
@@ -146,6 +154,21 @@ describe('ApplicationVendorController', () => {
     expect(response.json).toHaveBeenCalledWith({
       url: 'https://storage.twenty.test/vendor.mjs?signature',
     });
+  });
+
+  it('answers with a not found error when the application declares no vendor', async () => {
+    applicationVendorService.getBuiltVendorPresignedUrlOrStream.mockRejectedValue(
+      new ApplicationException(
+        'Application "application-1" does not declare a vendor bundle',
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      ),
+    );
+
+    await expect(
+      controller.getBuiltVendor(response, APPLICATION_ID, workspace),
+    ).rejects.toThrow(
+      `Application "${APPLICATION_ID}" does not declare a vendor bundle`,
+    );
   });
 
   it('answers with a not found error when the application does not exist', async () => {
