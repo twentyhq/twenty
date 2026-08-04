@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 
+import { type Histogram } from '@opentelemetry/api';
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 
@@ -43,6 +44,9 @@ const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
+const RECOMPUTE_DURATION_BUCKETS_SECONDS = [
+  0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
+];
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 
@@ -76,6 +80,9 @@ export class WorkspaceCacheService implements OnModuleInit {
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
 
+  private readonly recomputeDurationHistogram: Histogram;
+  private readonly redisWriteDurationHistogram: Histogram;
+
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly cacheStorage: CacheStorageService,
@@ -83,7 +90,32 @@ export class WorkspaceCacheService implements OnModuleInit {
     private readonly reflector: Reflector,
     private readonly metricsService: MetricsService,
     private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  ) {
+    const meter = this.metricsService.getMeter();
+
+    this.recomputeDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_recompute_duration_seconds',
+      {
+        description:
+          'Wall-clock time to compute one workspace metadata cache entry from its provider',
+        unit: 's',
+        advice: {
+          explicitBucketBoundaries: RECOMPUTE_DURATION_BUCKETS_SECONDS,
+        },
+      },
+    );
+    this.redisWriteDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_redis_write_duration_seconds',
+      {
+        description:
+          'Wall-clock time to serialize and write recomputed cache entries to Redis',
+        unit: 's',
+        advice: {
+          explicitBucketBoundaries: RECOMPUTE_DURATION_BUCKETS_SECONDS,
+        },
+      },
+    );
+  }
 
   async onModuleInit() {
     const providers = this.discoveryService.getProviders();
@@ -442,6 +474,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
+      const computeStartedAt = performance.now();
       const data = await Sentry.startSpan(
         {
           name: 'compute workspace metadata cache entry from provider',
@@ -454,6 +487,11 @@ export class WorkspaceCacheService implements OnModuleInit {
           },
         },
         () => provider.computeForCache(workspaceId),
+      );
+
+      this.recomputeDurationHistogram.record(
+        (performance.now() - computeStartedAt) / 1000,
+        { cache_key: keyName },
       );
 
       if (hashResolution.strategy === 'mint') {
@@ -498,7 +536,13 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
 
     if (redisEntries.length > 0) {
+      const redisWriteStartedAt = performance.now();
+
       await this.cacheStorage.mset(redisEntries);
+
+      this.redisWriteDurationHistogram.record(
+        (performance.now() - redisWriteStartedAt) / 1000,
+      );
     }
 
     if (bootstrapHashEntries.length > 0) {
