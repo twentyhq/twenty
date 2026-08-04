@@ -98,6 +98,15 @@ const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
   transition: background-color 0.1s ease;
 `;
 
+const StyledMoreRecords = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.light};
+  display: flex;
+  flex: 0 0 20px;
+  font-size: ${themeCssVariables.font.size.xs};
+  padding: 0 ${themeCssVariables.spacing[1]};
+`;
+
 type RecordCalendarMonthBodyDayProps = {
   day: Temporal.PlainDate;
 };
@@ -146,6 +155,7 @@ export const RecordCalendarMonthBodyDay = ({
     0,
     RECORD_CALENDAR_MONTH_VISIBLE_RECORD_LIMIT,
   );
+  const hiddenRecordCount = recordIds.length - visibleRecordIds.length;
 
   return (
     <StyledContainer
@@ -176,6 +186,9 @@ export const RecordCalendarMonthBodyDay = ({
             />
           </Fragment>
         ))}
+        {hiddenRecordCount > 0 && (
+          <StyledMoreRecords>+{hiddenRecordCount}</StyledMoreRecords>
+        )}
         <DragDropItemDropTarget
           index={visibleRecordIds.length}
           droppableId={dayKey}
