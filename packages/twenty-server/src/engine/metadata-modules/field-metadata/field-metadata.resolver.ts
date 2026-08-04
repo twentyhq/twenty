@@ -26,6 +26,7 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -75,6 +76,7 @@ export class FieldMetadataResolver {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
+  @UseGuards(NoPermissionGuard)
   @Query(() => FieldConnectionDTO)
   async fields(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -106,6 +108,7 @@ export class FieldMetadataResolver {
     });
   }
 
+  @UseGuards(NoPermissionGuard)
   @Query(() => FieldMetadataDTO)
   async field(
     @Args('id', { type: () => UUIDScalarType }) id: string,
