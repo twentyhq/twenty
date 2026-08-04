@@ -15,26 +15,10 @@ import svgr from 'vite-plugin-svgr';
 
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
 
-const API_PROXY_PREFIXES = [
-  'graphql',
-  'metadata',
-  'admin-panel',
-  'auth',
-  'oauth',
-  'client-config',
-  'file',
-  'files',
-  'rest',
-  's',
-  'mcp',
-  'healthz',
-  'webhooks',
-  'apps',
-  'app',
-  'emailing',
-  'application-registration-claim',
-  '\\.well-known',
-];
+import {
+  API_PROXY_PREFIXES,
+  buildApiProxyMatcher,
+} from './src/config/apiProxyPrefixes';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
@@ -59,7 +43,7 @@ export default defineConfig(({ mode }) => {
 
   const apiProxy = Object.fromEntries(
     API_PROXY_PREFIXES.map((prefix) => [
-      `^/${prefix}($|[/?])`,
+      buildApiProxyMatcher(prefix),
       { target: apiProxyTarget },
     ]),
   );
