@@ -1,13 +1,34 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
 import { SLACK_BOT_USER_ID_KV_KEY } from 'src/logic-functions/constants/slack-bot-user-id-kv-key';
+import { type SlackBotUserIdCacheEntry } from 'src/logic-functions/types/slack-bot-user-id-cache-entry.type';
+import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-user-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 
-export const resolveSlackBotUserId = async (): Promise<string> => {
-  const cachedBotUserId = await kv.get<string>(SLACK_BOT_USER_ID_KV_KEY);
+const readCachedBotUserId = async (): Promise<string | undefined> => {
+  // A kv outage should not stop us answering "was that the bot?", which
+  // auth.test can still tell us.
+  const cacheEntry = await kv
+    .get<SlackBotUserIdCacheEntry>(SLACK_BOT_USER_ID_KV_KEY)
+    .catch(() => null);
 
-  if (isNonEmptyString(cachedBotUserId)) {
+  if (
+    cacheEntry === null ||
+    !isNonEmptyString(cacheEntry.botUserId) ||
+    !isNumber(cacheEntry.expiresAt) ||
+    cacheEntry.expiresAt <= Date.now()
+  ) {
+    return undefined;
+  }
+
+  return cacheEntry.botUserId;
+};
+
+export const resolveSlackBotUserId = async (): Promise<string> => {
+  const cachedBotUserId = await readCachedBotUserId();
+
+  if (cachedBotUserId !== undefined) {
     return cachedBotUserId;
   }
 
@@ -23,9 +44,7 @@ export const resolveSlackBotUserId = async (): Promise<string> => {
     throw new Error('Slack auth.test returned no user_id for the bot');
   }
 
-  await kv
-    .set(SLACK_BOT_USER_ID_KV_KEY, authResult.user_id)
-    .catch(() => undefined);
+  await cacheSlackBotUserId(authResult.user_id);
 
   return authResult.user_id;
 };

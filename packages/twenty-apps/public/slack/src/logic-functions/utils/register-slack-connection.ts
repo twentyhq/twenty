@@ -2,7 +2,7 @@ import { WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 
-import { SLACK_BOT_USER_ID_KV_KEY } from 'src/logic-functions/constants/slack-bot-user-id-kv-key';
+import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-user-id';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 
 type RegisterSlackConnectionArgs = {
@@ -36,9 +36,7 @@ export const registerSlackConnection = async ({
   await kv.set(getSlackTeamKvKey(teamId), null, { scope: 'SERVER' });
 
   if (isNonEmptyString(authResult.user_id)) {
-    await kv
-      .set(SLACK_BOT_USER_ID_KV_KEY, authResult.user_id)
-      .catch(() => undefined);
+    await cacheSlackBotUserId(authResult.user_id);
   }
 
   return { ok: true, teamId };
