@@ -17,6 +17,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const SEND_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
   STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign.universalIdentifier,
   STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaignTest.universalIdentifier,
+  STANDARD_COMMAND_MENU_ITEMS.emailBlockSettings.universalIdentifier,
 ];
 
 const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
