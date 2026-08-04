@@ -25,6 +25,10 @@ const listenForErrorEvents = (
 };
 
 describe('reportErrorToPolyfillWindow', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('dispatches a cancelable error event carrying the reported value', () => {
     const polyfillWindow = createPolyfillWindow();
     const errorEvents: ReportedErrorEvent[] = [];
@@ -58,14 +62,10 @@ describe('reportErrorToPolyfillWindow', () => {
       expect.stringContaining('was not handled'),
       error,
     );
-
-    consoleErrorSpy.mockRestore();
   });
 
   it('still returns when a listener throws while handling the error event', () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     const polyfillWindow = createPolyfillWindow();
     const error = new Error('guest failure');
 
@@ -76,8 +76,6 @@ describe('reportErrorToPolyfillWindow', () => {
     expect(() =>
       reportErrorToPolyfillWindow({ polyfillWindow, error }),
     ).not.toThrow();
-
-    consoleErrorSpy.mockRestore();
   });
 
   it('reports a value that cannot be converted to a string', () => {
@@ -109,7 +107,5 @@ describe('reportErrorToPolyfillWindow', () => {
     reportErrorToPolyfillWindow({ polyfillWindow: {}, error });
 
     expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
-
-    consoleErrorSpy.mockRestore();
   });
 });

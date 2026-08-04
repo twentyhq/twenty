@@ -68,6 +68,10 @@ const flushMicrotasks = async () => {
 };
 
 describe('installMutationObserver', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('installs the implementation on the global scope and on the polyfill window', () => {
     const { globalScope, polyfillWindow, MutationObserver } = createSandbox();
 
@@ -546,9 +550,7 @@ describe('installMutationObserver', () => {
 
   it('keeps other observers alive when a callback throws an unstringifiable value', async () => {
     const { document, MutationObserver } = createSandbox();
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     const { collect, deliveries } = createRecordCollector();
 
     const container = document.createElement('div');
@@ -563,8 +565,6 @@ describe('installMutationObserver', () => {
     await flushMicrotasks();
 
     expect(deliveries).toHaveLength(1);
-
-    consoleErrorSpy.mockRestore();
   });
 
   it('rejects a callback that is not a function', () => {
@@ -597,8 +597,6 @@ describe('installMutationObserver', () => {
       expect.stringContaining('was not handled'),
       callbackError,
     );
-
-    consoleErrorSpy.mockRestore();
   });
 
   it('observes document.body the way AppTooltip does', async () => {
@@ -774,7 +772,5 @@ describe('installMutationObserver', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       MUTATION_OBSERVER_HOOKS_UNAVAILABLE_ERROR,
     );
-
-    consoleErrorSpy.mockRestore();
   });
 });

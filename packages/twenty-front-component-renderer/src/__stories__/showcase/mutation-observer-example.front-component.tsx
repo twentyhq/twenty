@@ -10,13 +10,8 @@ type ObservedMutationEntry = {
   hasNextSibling: boolean;
 };
 
-const readItemName = (node: Node): string | null => {
-  const element = node as Element & { getAttribute?: unknown };
-
-  return typeof element.getAttribute === 'function'
-    ? element.getAttribute('data-item')
-    : null;
-};
+const readItemName = (node: Node): string | null =>
+  node instanceof Element ? node.getAttribute('data-item') : null;
 
 const readItemNames = (nodes: NodeList): string[] =>
   Array.from(nodes).map(readItemName).filter(isDefined);
