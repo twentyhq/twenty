@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { In, Not } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -62,12 +63,11 @@ describe('ApplicationRegistrationVariableService', () => {
         },
       });
 
-      expect(variableRepository.delete).toHaveBeenCalledWith(
-        expect.objectContaining({
-          applicationRegistrationId: APPLICATION_REGISTRATION_ID,
-          encryptedValue: '',
-        }),
-      );
+      expect(variableRepository.delete).toHaveBeenCalledWith({
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+        key: Not(In(['PEOPLE_DATA_LABS_APP_API_KEY'])),
+        encryptedValue: '',
+      });
     });
 
     it('should only delete unfilled variables when the manifest declares none', async () => {
@@ -107,10 +107,13 @@ describe('ApplicationRegistrationVariableService', () => {
       });
 
       expect(variableRepository.save).not.toHaveBeenCalled();
-      expect(variableRepository.update).toHaveBeenCalledWith(
-        'variable-id',
-        expect.not.objectContaining({ encryptedValue: expect.anything() }),
-      );
+      expect(variableRepository.update).toHaveBeenCalledWith('variable-id', {
+        description: 'key',
+        isSecret: true,
+        isRequired: false,
+        type: FieldMetadataType.TEXT,
+        options: null,
+      });
     });
   });
 });

@@ -3,10 +3,14 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-// packages/twenty-apps/public/people-data-labs APPLICATION_UNIVERSAL_IDENTIFIER
+// Mirrors APPLICATION_UNIVERSAL_IDENTIFIER in
+// packages/twenty-apps/public/people-data-labs/src/constants/universal-identifiers.ts
 const PEOPLE_DATA_LABS_APPLICATION_UNIVERSAL_IDENTIFIER =
   '4a1178c1-3535-4a47-b592-231d3216b36f';
 
+// Mirrors the serverVariables key in
+// packages/twenty-apps/public/people-data-labs/src/application-config.ts,
+// which declares RENAMED_APP_KEY as of app version 1.0.11
 const LEGACY_APP_KEY = 'PDL_API_KEY';
 const RENAMED_APP_KEY = 'PEOPLE_DATA_LABS_APP_API_KEY';
 
