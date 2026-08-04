@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`expired workspace invitation filtering signUpInWorkspace with a personal invite token denies access when the personal invitation is expired 1`] = `
+exports[`signUpInWorkspace with an expired personal invitation (integration) denies access when the personal invitation is expired 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
