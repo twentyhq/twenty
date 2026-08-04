@@ -18,14 +18,11 @@ export type InheritedTypography = Pick<
 export const pickInheritedTypography = (
   style: CSSProperties,
 ): InheritedTypography =>
-  INHERITED_TYPOGRAPHY_PROPERTIES.reduce<Record<string, unknown>>(
-    (typography, property) => {
-      if (style[property] !== undefined) {
-        typography[property] = style[property];
-      }
-
-      return typography;
-    },
+  INHERITED_TYPOGRAPHY_PROPERTIES.reduce<InheritedTypography>(
+    (typography, property) =>
+      style[property] === undefined
+        ? typography
+        : { ...typography, [property]: style[property] },
     {},
   );
 
