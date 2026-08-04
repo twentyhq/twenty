@@ -15,9 +15,7 @@ const NANOSECONDS_PER_SECOND = 1e9;
 const toSeconds = (nanoseconds: number): number =>
   Number.isFinite(nanoseconds) ? nanoseconds / NANOSECONDS_PER_SECOND : 0;
 
-// Surfaces Node.js event loop delay to Prometheus so it can be correlated with
-// slow-DB-query Sentry issues: a span that awaits a fast query but resolves
-// late points at a saturated loop rather than a slow database.
+// Exports event loop delay to Prometheus to correlate with slow-DB-query Sentry issues: a fast query whose span resolves late means a saturated loop, not a slow DB.
 @Injectable()
 export class EventLoopMetricsService implements OnModuleInit {
   private readonly delayHistogram: IntervalHistogram = monitorEventLoopDelay({
@@ -39,10 +37,22 @@ export class EventLoopMetricsService implements OnModuleInit {
       },
       callback: async () => {
         const observations = [
-          { value: toSeconds(this.delayHistogram.mean), attributes: { quantile: 'mean' } },
-          { value: toSeconds(this.delayHistogram.percentile(50)), attributes: { quantile: 'p50' } },
-          { value: toSeconds(this.delayHistogram.percentile(99)), attributes: { quantile: 'p99' } },
-          { value: toSeconds(this.delayHistogram.max), attributes: { quantile: 'max' } },
+          {
+            value: toSeconds(this.delayHistogram.mean),
+            attributes: { quantile: 'mean' },
+          },
+          {
+            value: toSeconds(this.delayHistogram.percentile(50)),
+            attributes: { quantile: 'p50' },
+          },
+          {
+            value: toSeconds(this.delayHistogram.percentile(99)),
+            attributes: { quantile: 'p99' },
+          },
+          {
+            value: toSeconds(this.delayHistogram.max),
+            attributes: { quantile: 'max' },
+          },
         ];
 
         this.delayHistogram.reset();
