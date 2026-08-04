@@ -90,12 +90,19 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     unpinnedCommandMenuItems,
   );
 
-  const noResults = !matchingPinnedItems.length && !matchingOtherItems.length;
+  const isSearchActive = sidePanelSearch.trim().length > 0;
+  const hasMatchingItems =
+    matchingPinnedItems.length > 0 || matchingOtherItems.length > 0;
+  const showFallbackItems =
+    isSearchActive && !hasMatchingItems && fallbackCommandMenuItems.length > 0;
+
+  const noResults =
+    isSearchActive && !hasMatchingItems && !showFallbackItems;
 
   const selectableItemIds = [
     ...matchingPinnedItems,
     ...matchingOtherItems,
-    ...(noResults ? fallbackCommandMenuItems : []),
+    ...(showFallbackItems ? fallbackCommandMenuItems : []),
   ].map((item) => item.id);
 
   return (
@@ -114,7 +121,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
         </SidePanelGroup>
       )}
-      {noResults && fallbackCommandMenuItems.length > 0 && (
+      {showFallbackItems && (
         <SidePanelGroup heading={t`Fallback`}>
           {fallbackCommandMenuItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
