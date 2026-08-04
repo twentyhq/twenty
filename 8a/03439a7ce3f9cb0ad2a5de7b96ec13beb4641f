@@ -1,0 +1,26 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type.ts
+  s_defbc8ec05e030::t_6888abbef4b438 12-13
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service.ts
+  s_defbc8ec05e030::t_ee602197019d80 14
+  s_defbc8ec05e030::t_839e58ee33cc92 35,39,46,51-55,61,70,83,85-88,91-99,105,110-111,118,132
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_defbc8ec05e030::t_22894e1c09ba98 214-225
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_defbc8ec05e030::t_fd9b0e81061316 214-225
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "8a03439a7ce3f9cb0ad2a5de7b96ec13beb4641f",
+  "prompts": {},
+  "sessions": {
+    "s_defbc8ec05e030": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "58a78a56-4381-47db-8209-f034374f0489",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
