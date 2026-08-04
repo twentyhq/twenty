@@ -102,6 +102,58 @@ describe('validateWorkflowGraph', () => {
     expect(getCodes(workflow)).toContain('IF_ELSE_BRANCH_HAS_NO_NEXT_STEP');
   });
 
+  it('should flag an if-else branch whose filterGroupId does not exist', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['if'] },
+      steps: [
+        {
+          id: 'if',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {
+            input: {
+              stepFilterGroups: [{ id: 'real-group' }],
+              branches: [
+                { nextStepIds: ['end'], filterGroupId: 'ghost-group' },
+                { nextStepIds: ['end'] },
+              ],
+            },
+          },
+        },
+        { id: 'end', type: 'CODE' },
+      ],
+    };
+
+    expect(getCodes(workflow)).toContain(
+      'IF_ELSE_BRANCH_FILTER_GROUP_NOT_FOUND',
+    );
+  });
+
+  it('should not flag an if-else branch whose filterGroupId exists', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['if'] },
+      steps: [
+        {
+          id: 'if',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {
+            input: {
+              stepFilterGroups: [{ id: 'real-group' }],
+              branches: [
+                { nextStepIds: ['end'], filterGroupId: 'real-group' },
+                { nextStepIds: ['end'] },
+              ],
+            },
+          },
+        },
+        { id: 'end', type: 'CODE' },
+      ],
+    };
+
+    expect(getCodes(workflow)).not.toContain(
+      'IF_ELSE_BRANCH_FILTER_GROUP_NOT_FOUND',
+    );
+  });
+
   it('should flag an iterator with items but no loop body', () => {
     const workflow: ValidatableWorkflow = {
       trigger: { type: 'MANUAL', nextStepIds: ['iterator'] },

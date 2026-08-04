@@ -55,6 +55,13 @@ export const findMatchingBranch = ({
       collectAllDescendantGroups(branch.filterGroupId, stepFilterGroups),
     );
 
+    if (branchFilterGroups.length === 0) {
+      throw new WorkflowStepExecutorException(
+        `Branch "${branch.id}" references filter group "${branch.filterGroupId}", which does not exist in stepFilterGroups`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
     const branchFilterGroupIds = new Set(branchFilterGroups.map((g) => g.id));
     const branchFilters = resolvedFilters.filter((filter) =>
       branchFilterGroupIds.has(filter.stepFilterGroupId),
