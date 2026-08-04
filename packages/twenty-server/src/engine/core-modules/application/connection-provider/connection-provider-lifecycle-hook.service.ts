@@ -50,20 +50,16 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId: string;
     connectedAccountId: string;
   }): Promise<void> {
-    try {
-      await this.dispatchOrThrow({
+    await this.captureFailures(workspaceId, () =>
+      this.enqueueLogicFunction({
         hook: 'onConnect',
         logicFunctionUniversalIdentifier:
           provider.onConnectLogicFunctionUniversalIdentifier,
         provider,
         workspaceId,
         connectedAccountId,
-      });
-    } catch (error) {
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
-      });
-    }
+      }),
+    );
   }
 
   async dispatchOnDisconnect({
@@ -75,13 +71,13 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId: string;
     connectedAccountId: string;
   }): Promise<void> {
-    try {
+    await this.captureFailures(workspaceId, async () => {
       const provider =
         await this.connectionProviderService.findOneByIdOrThrow(
           connectionProviderId,
         );
 
-      await this.dispatchOrThrow({
+      await this.enqueueLogicFunction({
         hook: 'onDisconnect',
         logicFunctionUniversalIdentifier:
           provider.onDisconnectLogicFunctionUniversalIdentifier,
@@ -89,6 +85,17 @@ export class ConnectionProviderLifecycleHookService {
         workspaceId,
         connectedAccountId,
       });
+    });
+  }
+
+  // Lifecycle hooks are best effort: a failing hook must never surface to the
+  // user connecting or disconnecting their account.
+  private async captureFailures(
+    workspaceId: string,
+    dispatch: () => Promise<void>,
+  ): Promise<void> {
+    try {
+      await dispatch();
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
@@ -96,7 +103,7 @@ export class ConnectionProviderLifecycleHookService {
     }
   }
 
-  private async dispatchOrThrow({
+  private async enqueueLogicFunction({
     hook,
     logicFunctionUniversalIdentifier,
     provider,

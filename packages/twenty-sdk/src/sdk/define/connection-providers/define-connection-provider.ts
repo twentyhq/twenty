@@ -1,6 +1,7 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
 // Matches UUID v1–v5 (and the `00000000-…` Nil UUID). Mirrors the server-side
@@ -10,6 +11,16 @@ const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SUPPORTED_TYPES = ['oauth'] as const;
+
+type ConnectionProviderLifecycleHookKey = Extract<
+  keyof ConnectionProviderManifest,
+  `on${string}LogicFunction`
+>;
+
+const LIFECYCLE_HOOK_KEYS = [
+  'onConnectLogicFunction',
+  'onDisconnectLogicFunction',
+] as const satisfies readonly ConnectionProviderLifecycleHookKey[];
 
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
@@ -36,15 +47,12 @@ export const defineConnectionProvider: DefineEntity<
     errors.push('Connection provider must have a displayName');
   }
 
-  const lifecycleHooks = [
-    ['onConnectLogicFunction', config.onConnectLogicFunction],
-    ['onDisconnectLogicFunction', config.onDisconnectLogicFunction],
-  ] as const;
+  for (const hookKey of LIFECYCLE_HOOK_KEYS) {
+    const hook = config[hookKey];
 
-  for (const [hookName, hook] of lifecycleHooks) {
-    if (hook && !UUID_PATTERN.test(hook.universalIdentifier)) {
+    if (isDefined(hook) && !UUID_PATTERN.test(hook.universalIdentifier)) {
       errors.push(
-        `Connection provider ${hookName}.universalIdentifier "${hook.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+        `Connection provider ${hookKey}.universalIdentifier "${hook.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
       );
     }
   }
