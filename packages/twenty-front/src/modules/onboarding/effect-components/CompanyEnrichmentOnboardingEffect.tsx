@@ -71,11 +71,27 @@ export const CompanyEnrichmentOnboardingEffect = () => {
           store.get(currentUserState.atom)?.onboardingStatus,
         );
 
+        const dropBookCallStep = async () => {
+          try {
+            await completeBookCallOnboardingStep();
+
+            return true;
+          } catch {
+            return false;
+          }
+        };
+
+        // The local flag mirrors what the server ended up with: a failed drop
+        // leaves the step pending on both sides instead of silently diverging.
+        const hasDroppedBookCallStep =
+          result.isBookCallOnboardingStepPending && hasAdvancedPastBookCallStep
+            ? await dropBookCallStep()
+            : false;
+
         setCurrentUser((current) =>
           setIsBookCallOnboardingStepPending(
             current,
-            result.isBookCallOnboardingStepPending &&
-              !hasAdvancedPastBookCallStep,
+            result.isBookCallOnboardingStepPending && !hasDroppedBookCallStep,
           ),
         );
 
@@ -86,13 +102,6 @@ export const CompanyEnrichmentOnboardingEffect = () => {
 
         if (isDefined(enrichment)) {
           setCompanyEnrichment(enrichment);
-        }
-
-        if (
-          result.isBookCallOnboardingStepPending &&
-          hasAdvancedPastBookCallStep
-        ) {
-          await completeBookCallOnboardingStep();
         }
       } catch {
         return;

@@ -314,7 +314,7 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     });
   });
 
-  it('keeps the enrichment when clearing a superseded book-call step fails', async () => {
+  it('keeps the step pending locally when clearing it on the server fails', async () => {
     jotaiStore.set(currentUserState.atom, {
       id: 'user-id',
       onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
@@ -335,6 +335,10 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
 
     await flushMutation();
 
+    // The server still has the offer, so local state must not claim otherwise.
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(true);
     expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
       domain: 'acme.com',
     });
