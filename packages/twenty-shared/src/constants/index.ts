@@ -26,6 +26,7 @@ export { DEFAULT_SELECT_OPTION_COLOR } from './DefaultSelectOptionColor';
 export { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from './DefaultViewGroupLoadLimit';
 export { DEFAULT_VISIBLE_ADDRESS_SUBFIELDS } from './DefaultVisibleAddressSubfields';
 export { DEFAULT_WIDGET_SIZE } from './DefaultWidgetSize';
+export { DEPRECATED_IANA_TIME_ZONE_ALIASES } from './DeprecatedIanaTimeZoneAliases';
 export { DOCUMENTATION_BASE_URL } from './DocumentationBaseUrl';
 export { DOCUMENTATION_DEFAULT_LANGUAGE } from './DocumentationDefaultLanguage';
 export { DOCUMENTATION_DEFAULT_PATH } from './DocumentationDefaultPath';
