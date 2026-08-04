@@ -4,20 +4,9 @@ permissions: {}
 
 on:
   pull_request_target:
-    # Draft PRs are included on purpose: a preview env is most useful while the
-    # work is still in progress. `ready_for_review` is here because a draft can
-    # sit for days, and the env it got on `opened` expires after 5h — flipping
-    # it out of draft mints a fresh one without needing a dummy push.
     types: [opened, synchronize, reopened, ready_for_review, labeled]
-    paths:
-      - packages/twenty-docker/**
-      - packages/twenty-server/**
-      - packages/twenty-front/**
-      - .github/workflows/preview-env-dispatch.yaml
 
 concurrency:
-  # Keyed on PR number so independent PRs don't cancel each other. `github.ref`
-  # resolves to the base branch under pull_request_target and would collide.
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
