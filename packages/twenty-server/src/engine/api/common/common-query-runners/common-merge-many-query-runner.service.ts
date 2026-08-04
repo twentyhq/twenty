@@ -21,6 +21,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { getRedundantSourceRecordIds } from 'src/engine/api/common/common-query-runners/utils/get-redundant-source-record-ids.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -159,6 +160,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       queryRunnerContext.rolePermissionConfig,
       queryRunnerContext.authContext,
     );
+
+    if (this.isPersonObject(flatObjectMetadata)) {
+      // Keep ambiguous source-to-source collisions; only remove a source row
+      // when the survivor already has an otherwise identical interaction.
+      await this.deleteClearlyRedundantPersonRelationRecords(
+        transactionManager,
+        queryRunnerContext,
+        idsToDelete,
+        priorityRecordId,
+      );
+    }
 
     await this.migrateRelatedRecords(
       transactionManager,
@@ -542,6 +554,94 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         .returning('*')
         .execute();
     }
+  }
+
+  private async deleteClearlyRedundantPersonRelationRecords(
+    transactionManager: WorkspaceEntityManager,
+    context: CommonExtendedQueryRunnerContext,
+    sourcePersonIds: string[],
+    survivorPersonId: string,
+  ): Promise<void> {
+    await this.deleteSourceRecordsWithSurvivorEquivalent({
+      transactionManager,
+      context,
+      objectNameSingular: 'noteTarget',
+      personRelationIdFieldName: 'targetPersonId',
+      sourcePersonIds,
+      survivorPersonId,
+    });
+
+    await this.deleteSourceRecordsWithSurvivorEquivalent({
+      transactionManager,
+      context,
+      objectNameSingular: 'taskTarget',
+      personRelationIdFieldName: 'targetPersonId',
+      sourcePersonIds,
+      survivorPersonId,
+    });
+
+    await this.deleteSourceRecordsWithSurvivorEquivalent({
+      transactionManager,
+      context,
+      objectNameSingular: 'timelineActivity',
+      personRelationIdFieldName: 'targetPersonId',
+      sourcePersonIds,
+      survivorPersonId,
+      canBeDeduplicated: (record) =>
+        isDefined(record.linkedRecordId) &&
+        (record.name === 'message.linked' ||
+          record.name === 'calendarEvent.linked' ||
+          record.name?.startsWith('linked-note.') ||
+          record.name?.startsWith('linked-task.')),
+    });
+  }
+
+  private async deleteSourceRecordsWithSurvivorEquivalent({
+    transactionManager,
+    context,
+    objectNameSingular,
+    personRelationIdFieldName,
+    sourcePersonIds,
+    survivorPersonId,
+    canBeDeduplicated,
+  }: {
+    transactionManager: WorkspaceEntityManager;
+    context: CommonExtendedQueryRunnerContext;
+    objectNameSingular: 'noteTarget' | 'taskTarget' | 'timelineActivity';
+    personRelationIdFieldName: string;
+    sourcePersonIds: string[];
+    survivorPersonId: string;
+    canBeDeduplicated?: (record: ObjectLiteral) => boolean;
+  }): Promise<void> {
+    const repository = transactionManager.getRepository(
+      objectNameSingular,
+      context.rolePermissionConfig,
+      context.authContext,
+    );
+
+    const records = await repository.find({
+      where: {
+        [personRelationIdFieldName]: In([survivorPersonId, ...sourcePersonIds]),
+      },
+    });
+
+    const redundantSourceRecordIds = getRedundantSourceRecordIds({
+      records,
+      sourcePersonIds,
+      survivorPersonId,
+      personRelationIdFieldName,
+      canBeDeduplicated,
+    });
+
+    if (redundantSourceRecordIds.length === 0) {
+      return;
+    }
+
+    await repository
+      .createQueryBuilder(objectNameSingular)
+      .delete()
+      .whereInIds(redundantSourceRecordIds)
+      .execute();
   }
 
   private async processNestedRelations({
