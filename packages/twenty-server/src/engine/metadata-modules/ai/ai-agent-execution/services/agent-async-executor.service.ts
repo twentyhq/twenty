@@ -14,7 +14,7 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -232,28 +232,33 @@ export class AgentAsyncExecutorService {
     return { tools, catalogSection: buildToolCatalogSection(catalog, []) };
   }
 
-  async executeAgent(
-    args: {
-      agent: AgentEntity | null;
-      baseSystemPrompt: string;
-      actorContext?: ActorMetadata;
-      authContext?: WorkspaceAuthContext;
-      workspaceId: string;
-      userWorkspaceId?: string | null;
-      operationType?: UsageOperationType;
-      toolLoadingStrategy?: AgentToolLoadingStrategy;
-    } & ({ userPrompt: string } | { messages: RunAgentMessage[] }),
-  ): Promise<AgentExecutionResult> {
-    const {
-      agent,
-      baseSystemPrompt,
-      actorContext,
-      authContext,
-      workspaceId,
-      userWorkspaceId,
-      operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
-      toolLoadingStrategy = 'preload',
-    } = args;
+  async executeAgent({
+    agent,
+    messages,
+    baseSystemPrompt,
+    actorContext,
+    authContext,
+    workspaceId,
+    userWorkspaceId,
+    operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
+    toolLoadingStrategy = 'preload',
+  }: {
+    agent: AgentEntity | null;
+    messages: RunAgentMessage[];
+    baseSystemPrompt: string;
+    actorContext?: ActorMetadata;
+    authContext?: WorkspaceAuthContext;
+    workspaceId: string;
+    userWorkspaceId?: string | null;
+    operationType?: UsageOperationType;
+    toolLoadingStrategy?: AgentToolLoadingStrategy;
+  }): Promise<AgentExecutionResult> {
+    if (!isNonEmptyArray(messages)) {
+      throw new AiException(
+        'Provide at least one message to run an agent',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
 
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
 
@@ -348,23 +353,16 @@ export class AgentAsyncExecutorService {
 
       let hasNoMoreAvailableCredits = false;
 
-      const promptOrMessages =
-        'messages' in args
-          ? {
-              messages: args.messages.map(
-                (message): ModelMessage => ({
-                  role: message.role,
-                  content: message.content,
-                }),
-              ),
-            }
-          : { prompt: args.userPrompt };
-
       const textResponse = await generateText({
         system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
-        ...promptOrMessages,
+        messages: messages.map(
+          (message): ModelMessage => ({
+            role: message.role,
+            content: message.content,
+          }),
+        ),
         stopWhen: (step) =>
           stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,

@@ -12,7 +12,6 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
@@ -49,15 +48,18 @@ export class AgentRunService {
     input: RunAgentServiceInput;
   }): Promise<RunAgentResult> {
     const prompt = input.prompt;
-    const messages = input.messages;
 
     // GraphQL cannot express XOR; enforce exactly one of prompt or messages
-    if (isNonEmptyArray(messages) === isNonEmptyString(prompt)) {
+    if (isNonEmptyArray(input.messages) === isNonEmptyString(prompt)) {
       throw new AiException(
         'Provide exactly one of prompt or messages',
         AiExceptionCode.INVALID_AGENT_INPUT,
       );
     }
+
+    const messages: RunAgentMessage[] = isNonEmptyString(prompt)
+      ? [{ role: 'user', content: prompt }]
+      : (input.messages ?? []);
 
     const agent = await this.agentRepository.findOne(workspace.id, {
       where: {
@@ -87,35 +89,19 @@ export class AgentRunService {
       application,
     };
 
-    const sharedExecuteAgentArgs = {
-      agent,
-      baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
-      authContext,
-      workspaceId: workspace.id,
-      userWorkspaceId: requestUserWorkspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      toolLoadingStrategy: 'lazy' as const,
-    };
-
     try {
-      let executionResult: AgentExecutionResult;
-
-      if (isNonEmptyArray(messages)) {
-        executionResult = await this.agentAsyncExecutorService.executeAgent({
-          ...sharedExecuteAgentArgs,
+      const executionResult = await this.agentAsyncExecutorService.executeAgent(
+        {
+          agent,
           messages,
-        });
-      } else if (isNonEmptyString(prompt)) {
-        executionResult = await this.agentAsyncExecutorService.executeAgent({
-          ...sharedExecuteAgentArgs,
-          userPrompt: prompt,
-        });
-      } else {
-        throw new AiException(
-          'Provide exactly one of prompt or messages',
-          AiExceptionCode.INVALID_AGENT_INPUT,
-        );
-      }
+          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+          authContext,
+          workspaceId: workspace.id,
+          userWorkspaceId: requestUserWorkspaceId,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          toolLoadingStrategy: 'lazy',
+        },
+      );
 
       if (executionResult.hasNoMoreAvailableCredits) {
         return {

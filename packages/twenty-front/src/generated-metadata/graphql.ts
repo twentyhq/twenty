@@ -5187,8 +5187,13 @@ export type RunAgentInput = {
 
 export type RunAgentMessageInput = {
   content: Scalars['String']['input'];
-  role: Scalars['String']['input'];
+  role: RunAgentMessageRole;
 };
+
+export enum RunAgentMessageRole {
+  assistant = 'assistant',
+  user = 'user'
+}
 
 export type RunAgentResult = {
   __typename?: 'RunAgentResult';

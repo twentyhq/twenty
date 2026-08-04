@@ -87,7 +87,7 @@ describe('AgentRunService', () => {
 
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({
-        userPrompt: input.prompt,
+        messages: [{ role: 'user', content: input.prompt }],
         authContext: {
           type: 'application',
           workspace,
@@ -95,6 +95,18 @@ describe('AgentRunService', () => {
         },
       }),
     );
+  });
+
+  it('converts a prompt into a single user message', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: null,
+      input,
+    });
+
+    expect(
+      agentAsyncExecutorService.executeAgent.mock.calls[0][0].messages,
+    ).toEqual([{ role: 'user', content: input.prompt }]);
   });
 
   it('passes messages to the executor when messages are provided instead of prompt', async () => {
@@ -117,7 +129,6 @@ describe('AgentRunService', () => {
       agentAsyncExecutorService.executeAgent.mock.calls[0][0];
 
     expect(executeAgentArgs.messages).toEqual(messages);
-    expect(executeAgentArgs.userPrompt).toBeUndefined();
     expect(executeAgentArgs.baseSystemPrompt).toBe(
       AGENT_RUN_BASE_SYSTEM_PROMPT,
     );

@@ -131,8 +131,8 @@ const { result, error, success } = await runAgent({
 ```
 
 Key points:
-- Provide **exactly one** of `prompt` (string) or `messages` (array of
-  `{ role: 'user' | 'assistant', content: string }`).
+- Provide **exactly one** of `prompt` (string) or `messages` (1 to 100 entries
+  of `{ role: 'user' | 'assistant', content: string }`).
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
 - An app can only run its own agents.

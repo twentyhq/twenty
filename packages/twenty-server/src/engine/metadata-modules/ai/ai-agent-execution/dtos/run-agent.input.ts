@@ -2,6 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  ArrayNotEmpty,
   IsArray,
   IsNotEmpty,
   IsOptional,
@@ -26,6 +28,8 @@ export class RunAgentInputDTO {
 
   @IsOptional()
   @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMaxSize(100)
   @ValidateNested({ each: true })
   @Type(() => RunAgentMessageInputDTO)
   @Field(() => [RunAgentMessageInputDTO], { nullable: true })

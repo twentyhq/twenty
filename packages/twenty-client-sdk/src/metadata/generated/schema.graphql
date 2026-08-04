@@ -4670,8 +4670,13 @@ input RunAgentInput {
 }
 
 input RunAgentMessageInput {
-  role: String!
+  role: RunAgentMessageRole!
   content: String!
+}
+
+enum RunAgentMessageRole {
+  user
+  assistant
 }
 
 input CreateWebhookInput {
