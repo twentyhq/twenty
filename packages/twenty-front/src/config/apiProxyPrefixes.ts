@@ -1,22 +1,9 @@
-export const API_PROXY_PREFIXES = [
-  'graphql',
-  'metadata',
-  'admin-panel',
-  'auth',
-  'oauth',
-  'client-config',
-  'file',
-  'files',
-  'rest',
-  's',
-  'mcp',
-  'healthz',
-  'webhooks',
-  'apps',
-  'app',
-  'emailing',
-  'application-registration-claim',
-  '\\.well-known',
-];
+import { ApiPath } from 'twenty-shared/types';
 
-export const buildApiProxyMatcher = (prefix: string) => `^/${prefix}($|[/?])`;
+export const API_PROXY_PATHS = Object.values(ApiPath);
+
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+export const buildApiProxyMatcher = (apiPath: ApiPath) =>
+  `^/${escapeRegExp(apiPath)}($|[/?])`;

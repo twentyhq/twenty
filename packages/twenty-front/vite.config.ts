@@ -16,7 +16,7 @@ import svgr from 'vite-plugin-svgr';
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
 
 import {
-  API_PROXY_PREFIXES,
+  API_PROXY_PATHS,
   buildApiProxyMatcher,
 } from './src/config/apiProxyPrefixes';
 
@@ -42,8 +42,8 @@ export default defineConfig(({ mode }) => {
     : 'http://localhost:3000';
 
   const apiProxy = Object.fromEntries(
-    API_PROXY_PREFIXES.map((prefix) => [
-      buildApiProxyMatcher(prefix),
+    API_PROXY_PATHS.map((apiPath) => [
+      buildApiProxyMatcher(apiPath),
       { target: apiProxyTarget },
     ]),
   );
@@ -278,9 +278,15 @@ export default defineConfig(({ mode }) => {
         // wyw-in-js 1.x resolves modules in its CSS evaluator via vite's
         // resolve.alias (not resolve.tsconfigPaths), so the `@/` and `~/`
         // tsconfig path aliases must be mirrored here.
-        { find: /^@\//, replacement: path.resolve(__dirname, 'src/modules') + '/' },
+        {
+          find: /^@\//,
+          replacement: path.resolve(__dirname, 'src/modules') + '/',
+        },
         { find: /^~\//, replacement: path.resolve(__dirname, 'src') + '/' },
-        { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
+        {
+          find: 'path',
+          replacement: 'rollup-plugin-node-polyfills/polyfills/path',
+        },
       ],
     },
   };

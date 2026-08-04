@@ -1,45 +1,22 @@
-import { AppPath } from 'twenty-shared/types';
+import { ApiPath, AppPath } from 'twenty-shared/types';
 
 import {
-  API_PROXY_PREFIXES,
+  API_PROXY_PATHS,
   buildApiProxyMatcher,
 } from '~/config/apiProxyPrefixes';
 
-const matchers = API_PROXY_PREFIXES.map(
-  (prefix) => new RegExp(buildApiProxyMatcher(prefix)),
+const matchers = API_PROXY_PATHS.map(
+  (apiPath) => new RegExp(buildApiProxyMatcher(apiPath)),
 );
 
 const isProxiedPath = (path: string) =>
   matchers.some((matcher) => matcher.test(path));
 
 describe('apiProxyPrefixes', () => {
-  const backendPaths = [
-    '/graphql',
-    '/graphql?op=query',
-    '/metadata',
-    '/metadata?query=%7B__typename%7D',
-    '/admin-panel',
-    '/auth/google/redirect',
-    '/auth/verify',
-    '/oauth/token',
-    '/client-config',
-    '/file/profile-picture/some-id/image.png',
-    '/files/application-registrations/some-id/logo.png',
-    '/rest/companies',
-    '/rest/metadata/objects',
-    '/s/short-id',
-    '/mcp',
-    '/healthz',
-    '/webhooks/server',
-    '/apps/connections',
-    '/app/billing',
-    '/emailing/unsubscribe/some-token',
-    '/application-registration-claim',
-    '/.well-known/oauth-authorization-server',
-  ];
-
-  it.each(backendPaths)('should proxy the backend path %s', (backendPath) => {
-    expect(isProxiedPath(backendPath)).toBe(true);
+  it.each(Object.values(ApiPath))('should proxy the API path %s', (apiPath) => {
+    expect(isProxiedPath(`/${apiPath}`)).toBe(true);
+    expect(isProxiedPath(`/${apiPath}/nested-path`)).toBe(true);
+    expect(isProxiedPath(`/${apiPath}?query=value`)).toBe(true);
   });
 
   it.each(Object.values(AppPath))(

@@ -8,6 +8,7 @@ import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import session from 'express-session';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
+import { ApiPath } from 'twenty-shared/types';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -84,7 +85,7 @@ const bootstrap = async () => {
 
   // Graphql file upload
   app.use(
-    '/graphql',
+    `/${ApiPath.GraphQL}`,
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.storage.maxFileSize)!,
       maxFiles: 10,
@@ -92,7 +93,7 @@ const bootstrap = async () => {
   );
 
   app.use(
-    '/metadata',
+    `/${ApiPath.Metadata}`,
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.storage.maxFileSize)!,
       maxFiles: 10,
