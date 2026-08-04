@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type DeleteResult, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -156,6 +156,9 @@ describe('WorkspaceInvitationService', () => {
       const workspace = { id: 'workspace-id' } as WorkspaceEntity;
 
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(appTokenRepository, 'delete')
+        .mockResolvedValue({} as DeleteResult);
 
       jest.spyOn(userWorkspaceRepository, 'exists').mockResolvedValue(false);
       jest

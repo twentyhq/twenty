@@ -24,6 +24,18 @@ export const seedWorkspaceInvitation = ({
     ],
   );
 
+export const findWorkspaceInvitationsByEmail = ({
+  email,
+  workspaceId = SEED_APPLE_WORKSPACE_ID,
+}: {
+  email: string;
+  workspaceId?: string;
+}): Promise<{ value: string; expiresAt: string }[]> =>
+  testDataSource.query(
+    `SELECT "value", "expiresAt" FROM core."appToken" WHERE "workspaceId" = $1 AND context->>'email' = $2`,
+    [workspaceId, email],
+  );
+
 export const deleteWorkspaceInvitationsByEmail = ({
   email,
   workspaceId = SEED_APPLE_WORKSPACE_ID,

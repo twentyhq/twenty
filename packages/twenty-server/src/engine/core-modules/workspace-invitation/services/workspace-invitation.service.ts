@@ -9,7 +9,14 @@ import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
 import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { In, IsNull, MoreThan, Raw, Repository } from 'typeorm';
+import {
+  In,
+  IsNull,
+  LessThanOrEqual,
+  MoreThan,
+  Raw,
+  Repository,
+} from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -190,6 +197,17 @@ export class WorkspaceInvitationService {
         WorkspaceInvitationExceptionCode.USER_ALREADY_EXIST,
       );
     }
+
+    // Expired invitations are ignored by getOneWorkspaceInvitation, so without
+    // this they would pile up in the database on every re-invite.
+    await this.appTokenRepository.delete({
+      workspaceId: workspace.id,
+      type: In(INVITATION_APP_TOKEN_TYPES),
+      expiresAt: LessThanOrEqual(new Date()),
+      context: Raw((alias) => `${alias} ->> 'email' = :email`, {
+        email: email.toLowerCase(),
+      }),
+    });
 
     return this.generateInvitationToken(
       workspace.id,

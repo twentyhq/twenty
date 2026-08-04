@@ -1,5 +1,6 @@
 import {
   deleteWorkspaceInvitationsByEmail,
+  findWorkspaceInvitationsByEmail,
   seedWorkspaceInvitation,
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { sendInvitationsOperationFactory } from 'test/integration/graphql/utils/send-invitations-operation-factory.util';
@@ -15,10 +16,11 @@ describe('sendInvitations expired invitation handling (integration)', () => {
 
   it('re-invites an email whose only existing invitation is expired', async () => {
     const email = `expired-invite-resend-${Date.now()}@example.com`;
+    const staleToken = `expired-invite-resend-token-${Date.now()}`;
 
     await seedWorkspaceInvitation({
       email,
-      value: `expired-invite-resend-token-${Date.now()}`,
+      value: staleToken,
       expiresAt: new Date(Date.now() - ONE_HOUR_IN_MS),
     });
 
@@ -27,6 +29,15 @@ describe('sendInvitations expired invitation handling (integration)', () => {
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.sendInvitations.success).toBe(true);
+
+      // The expired token must be replaced, not accumulated alongside the new one.
+      const remainingTokens = await findWorkspaceInvitationsByEmail({ email });
+
+      expect(remainingTokens).toHaveLength(1);
+      expect(remainingTokens[0].value).not.toBe(staleToken);
+      expect(new Date(remainingTokens[0].expiresAt).getTime()).toBeGreaterThan(
+        Date.now(),
+      );
     } finally {
       await deleteWorkspaceInvitationsByEmail({ email });
     }
