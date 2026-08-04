@@ -15,7 +15,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
-import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
@@ -141,7 +141,7 @@ export const ViewPickerContentCreateMode = () => {
     ],
   });
 
-  const defaultIcon = viewTypeIconMapping(viewPickerType).displayName;
+  const defaultIcon = viewTypeIconKeyMapping(viewPickerType);
 
   const selectedIcon = useMemo(() => {
     if (hasManuallySelectedIcon) {
@@ -199,6 +199,12 @@ export const ViewPickerContentCreateMode = () => {
             onChange={(value) => {
               setViewPickerIsDirty(true);
               setViewPickerType(value);
+              if (
+                viewPickerMode === 'create-empty' &&
+                !hasManuallySelectedIcon
+              ) {
+                setViewPickerSelectedIcon(viewTypeIconKeyMapping(value));
+              }
             }}
             options={VIEW_PICKER_TYPE_SELECT_OPTIONS.map((option) => ({
               ...option,

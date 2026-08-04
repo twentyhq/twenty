@@ -28,11 +28,16 @@ export const getViewTypeLabel = (
   VIEW_TYPE_LABELS[viewType] ?? VIEW_TYPE_LABELS[ViewType.TABLE];
 
 const VIEW_TYPE_ICON_MAPPING = [
-  { icon: IconLayoutKanban, value: ViewType.KANBAN },
-  { icon: IconTable, value: ViewType.TABLE },
-  { icon: IconCalendar, value: ViewType.CALENDAR },
+  {
+    icon: IconLayoutKanban,
+    iconKey: 'IconLayoutKanban',
+    value: ViewType.KANBAN,
+  },
+  { icon: IconTable, iconKey: 'IconTable', value: ViewType.TABLE },
+  { icon: IconCalendar, iconKey: 'IconCalendar', value: ViewType.CALENDAR },
 ] as const satisfies {
   icon: IconComponent;
+  iconKey: string;
   value: ViewType;
 }[];
 
@@ -40,5 +45,12 @@ export const viewTypeIconMapping = (viewType?: ViewType) => {
   return (
     VIEW_TYPE_ICON_MAPPING.find((type) => type.value === viewType)?.icon ??
     IconTable
+  );
+};
+
+export const viewTypeIconKeyMapping = (viewType?: ViewType) => {
+  return (
+    VIEW_TYPE_ICON_MAPPING.find((type) => type.value === viewType)?.iconKey ??
+    'IconTable'
   );
 };
