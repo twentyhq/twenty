@@ -495,7 +495,11 @@ export class OnboardingService {
 
     try {
       return await this.dataSource.transaction(async (entityManager) => {
-        const queryRunner = entityManager.queryRunner as QueryRunner;
+        const { queryRunner } = entityManager;
+
+        if (!isDefined(queryRunner)) {
+          throw new Error('Transaction entity manager has no query runner');
+        }
 
         // Claiming the offer is the single-winner gate: a concurrent enrichment
         // loses the insert and must not resurrect a step the user already skipped.

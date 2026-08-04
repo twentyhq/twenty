@@ -37,7 +37,11 @@ describe('OnboardingService', () => {
   const workspaceId = 'workspace-id';
   const mockQueryRunner = {} as QueryRunner;
 
+  let transactionQueryRunner: QueryRunner | undefined = mockQueryRunner;
+
   beforeEach(async () => {
+    transactionQueryRunner = mockQueryRunner;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OnboardingService,
@@ -89,7 +93,7 @@ describe('OnboardingService', () => {
           provide: getDataSourceToken(),
           useValue: {
             transaction: jest.fn((runInTransaction) =>
-              runInTransaction({ queryRunner: mockQueryRunner }),
+              runInTransaction({ queryRunner: transactionQueryRunner }),
             ),
           },
         },
@@ -579,6 +583,24 @@ describe('OnboardingService', () => {
           employeeCount: 320,
         }),
       ).resolves.toBe(false);
+    });
+
+    it('should not flag the step when the transaction exposes no query runner', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+      transactionQueryRunner = undefined;
+
+      await expect(
+        service.setOnboardingBookCallPendingIfQualified({
+          userId,
+          workspaceId,
+          employeeCount: 320,
+        }),
+      ).resolves.toBe(false);
+
+      expect(userVarsService.setIfNotExists).not.toHaveBeenCalled();
     });
 
     it('should clear the pending var when the step is completed', async () => {
