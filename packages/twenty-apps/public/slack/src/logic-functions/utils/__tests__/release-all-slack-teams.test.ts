@@ -15,7 +15,8 @@ vi.mock('twenty-sdk/logic-function', () => ({
 
 describe('releaseAllSlackTeams', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
+    kvDeleteMock.mockResolvedValue(true);
   });
 
   it('should release the claim of every remaining Slack connection', async () => {

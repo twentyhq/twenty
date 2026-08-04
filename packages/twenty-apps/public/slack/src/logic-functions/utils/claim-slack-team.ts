@@ -1,9 +1,9 @@
-import { WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
+import { resolveSlackTeamId } from 'src/logic-functions/utils/resolve-slack-team-id';
 
 type ClaimSlackTeamArgs = {
   connectedAccountId: string;
@@ -24,9 +24,7 @@ export const claimSlackTeam = async ({
   }
 
   const connection = await getConnection(connectedAccountId);
-  const client = new WebClient(connection.accessToken);
-  const authResult = await client.auth.test();
-  const teamId = authResult.team_id;
+  const teamId = await resolveSlackTeamId(connection.accessToken);
 
   if (!isNonEmptyString(teamId)) {
     throw new Error('Slack auth.test returned no team_id to claim');

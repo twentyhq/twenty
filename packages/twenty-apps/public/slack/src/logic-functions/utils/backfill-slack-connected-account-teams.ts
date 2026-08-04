@@ -1,20 +1,14 @@
-import { WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { kv, listConnections } from 'twenty-sdk/logic-function';
 
 import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slack-connected-account-team';
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
+import { resolveSlackTeamId } from 'src/logic-functions/utils/resolve-slack-team-id';
 
 type BackfillSlackConnectedAccountTeamsResult = {
   ok: true;
   backfilledConnectedAccountIds: string[];
   failedConnectedAccountIds: string[];
-};
-
-const resolveTeamId = async (accessToken: string): Promise<string | null> => {
-  const authResult = await new WebClient(accessToken).auth.test();
-
-  return isNonEmptyString(authResult.team_id) ? authResult.team_id : null;
 };
 
 // Connections claimed before the app recorded a connected account to team
@@ -29,14 +23,18 @@ export const backfillSlackConnectedAccountTeams =
     const failedConnectedAccountIds: string[] = [];
 
     for (const connection of connections) {
-      const recordedTeamId = await getSlackConnectedAccountTeam(connection.id);
-
-      if (isNonEmptyString(recordedTeamId)) {
-        continue;
-      }
-
+      // Per connection, so one unreachable account or failed read cannot stop
+      // the others from being recorded.
       try {
-        const teamId = await resolveTeamId(connection.accessToken);
+        const recordedTeamId = await getSlackConnectedAccountTeam(
+          connection.id,
+        );
+
+        if (isNonEmptyString(recordedTeamId)) {
+          continue;
+        }
+
+        const teamId = await resolveSlackTeamId(connection.accessToken);
 
         if (!isNonEmptyString(teamId)) {
           failedConnectedAccountIds.push(connection.id);
@@ -47,7 +45,6 @@ export const backfillSlackConnectedAccountTeams =
 
         backfilledConnectedAccountIds.push(connection.id);
       } catch {
-        // One unreachable or revoked connection must not stop the others.
         failedConnectedAccountIds.push(connection.id);
       }
     }

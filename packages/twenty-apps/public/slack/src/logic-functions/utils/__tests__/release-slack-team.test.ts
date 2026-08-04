@@ -14,6 +14,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
 describe('releaseSlackTeam', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    kvDeleteMock.mockResolvedValue(true);
   });
 
   it('should throw when the payload has no connectedAccountId', async () => {
@@ -39,6 +40,20 @@ describe('releaseSlackTeam', () => {
       'slack-connected-account-team:connected-account-1',
     );
     expect(result).toEqual({ ok: true, releasedTeamId: 'T123' });
+  });
+
+  it('should report no release when the claim belongs to another workspace', async () => {
+    kvGetMock.mockResolvedValue('T123');
+    kvDeleteMock.mockResolvedValueOnce(false);
+
+    const result = await releaseSlackTeam({
+      connectedAccountId: 'connected-account-1',
+    });
+
+    expect(kvDeleteMock).toHaveBeenCalledWith(
+      'slack-connected-account-team:connected-account-1',
+    );
+    expect(result).toEqual({ ok: true, releasedTeamId: null });
   });
 
   it('should do nothing when the connection never recorded a team', async () => {

@@ -82,6 +82,29 @@ describe('backfillSlackConnectedAccountTeams', () => {
     });
   });
 
+  it('should report a connection whose recorded team could not be read and keep going', async () => {
+    listConnectionsMock.mockResolvedValue([
+      { id: 'connected-account-1', accessToken: 'token-1' },
+      { id: 'connected-account-2', accessToken: 'token-2' },
+    ]);
+    kvGetMock
+      .mockRejectedValueOnce(new Error('key value store unavailable'))
+      .mockResolvedValueOnce(null);
+    authTestMock.mockResolvedValue({ team_id: 'T456' });
+
+    const result = await backfillSlackConnectedAccountTeams();
+
+    expect(kvSetMock).toHaveBeenCalledWith(
+      'slack-connected-account-team:connected-account-2',
+      'T456',
+    );
+    expect(result).toEqual({
+      ok: true,
+      backfilledConnectedAccountIds: ['connected-account-2'],
+      failedConnectedAccountIds: ['connected-account-1'],
+    });
+  });
+
   it('should do nothing when there is no Slack connection', async () => {
     listConnectionsMock.mockResolvedValue([]);
 

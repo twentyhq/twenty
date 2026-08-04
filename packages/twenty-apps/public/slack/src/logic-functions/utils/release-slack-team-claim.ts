@@ -22,11 +22,15 @@ export const releaseSlackTeamClaim = async ({
     return { ok: true, releasedTeamId: null };
   }
 
-  // A SERVER key only clears for the workspace holding it, so a team another
-  // workspace has since claimed stays routed where it is. The claim goes first:
-  // failing here keeps the mapping around for the next attempt.
-  await kv.delete(getSlackTeamKvKey(teamId), { scope: 'SERVER' });
+  // A SERVER key only clears for the workspace holding it, so this is a no-op
+  // when a team was since claimed elsewhere, and the result says so rather than
+  // reporting a release that did not happen. The claim goes first: failing here
+  // keeps the mapping around for the next attempt.
+  const hasReleasedClaim = await kv.delete(getSlackTeamKvKey(teamId), {
+    scope: 'SERVER',
+  });
+
   await kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId));
 
-  return { ok: true, releasedTeamId: teamId };
+  return { ok: true, releasedTeamId: hasReleasedClaim ? teamId : null };
 };

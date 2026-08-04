@@ -34,6 +34,7 @@ describe('releaseSlackTeamOnDisconnect', () => {
     vi.resetAllMocks();
     listConnectionsMock.mockResolvedValue([]);
     kvGetMock.mockResolvedValue(null);
+    kvDeleteMock.mockResolvedValue(true);
   });
 
   it('should release the claim when no connection is left on that team', async () => {
