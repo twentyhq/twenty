@@ -3,7 +3,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import {
   buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations,
   LEGACY_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
-} from 'src/database/commands/upgrade-version-command/2-27/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
+} from 'src/database/commands/upgrade-version-command/2-28/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -16,8 +16,10 @@ const NOW = '2026-08-04T00:00:00.000Z';
 const DISCARD_DRAFT_WORKFLOW_DEFINITION =
   STANDARD_COMMAND_MENU_ITEMS.discardDraftWorkflow;
 
-const DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION =
-  DISCARD_DRAFT_WORKFLOW_DEFINITION.conditionalAvailabilityExpression;
+// Independent literal so a regression in the standard definition is caught here
+// rather than silently accepted by asserting the value against itself.
+const EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION =
+  'everyDefined(selectedRecords, "lastPublishedVersionId") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")';
 
 const buildFlatCommandMenuItemMaps = (
   flatCommandMenuItems: FlatCommandMenuItem[],
@@ -100,16 +102,22 @@ describe('buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations', ()
     expect(result.flatEntityToUpdate[0]).toMatchObject({
       id: legacyDiscardDraftWorkflowCommandMenuItem.id,
       conditionalAvailabilityExpression:
-        DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
+        EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
       updatedAt: NOW,
     });
+  });
+
+  it('syncs to the lastPublishedVersionId gate defined in the standard command menu item', () => {
+    expect(
+      DISCARD_DRAFT_WORKFLOW_DEFINITION.conditionalAvailabilityExpression,
+    ).toBe(EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION);
   });
 
   it('does not update the command menu item when the expression is already synced', () => {
     const syncedDiscardDraftWorkflowCommandMenuItem =
       buildDiscardDraftWorkflowCommandMenuItem({
         conditionalAvailabilityExpression:
-          DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
+          EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
       });
 
     const result =

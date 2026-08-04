@@ -3,15 +3,15 @@ import { Command } from 'nest-commander';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations } from 'src/database/commands/upgrade-version-command/2-27/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
+import { buildSyncDiscardDraftWorkflowAvailabilityExpressionSyncOperations } from 'src/database/commands/upgrade-version-command/2-28/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.27.0', 1785900000000)
+@RegisteredWorkspaceCommand('2.28.0', 1786000000000)
 @Command({
-  name: 'upgrade:2-27:sync-discard-draft-workflow-availability-expression',
+  name: 'upgrade:2-28:sync-discard-draft-workflow-availability-expression',
   description:
     'Gate the "Discard Draft" workflow command menu item on lastPublishedVersionId so it is hidden when the draft is the only version in existing workspaces',
 })
@@ -64,15 +64,14 @@ export class SyncDiscardDraftWorkflowAvailabilityExpressionCommand extends Provi
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: commandMenuItemOperations,
           },
+          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
         },
       );
 
