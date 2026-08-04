@@ -30,7 +30,6 @@ describe('sendInvitations expired invitation handling (integration)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.sendInvitations.success).toBe(true);
 
-      // The expired token must be replaced, not accumulated alongside the new one.
       const remainingTokens = await findWorkspaceInvitationsByEmail({ email });
 
       expect(remainingTokens).toHaveLength(1);

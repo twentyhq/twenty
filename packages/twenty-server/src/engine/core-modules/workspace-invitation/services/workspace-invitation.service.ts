@@ -198,8 +198,6 @@ export class WorkspaceInvitationService {
       );
     }
 
-    // Expired invitations are ignored by getOneWorkspaceInvitation, so without
-    // this they would pile up in the database on every re-invite.
     await this.appTokenRepository.delete({
       workspaceId: workspace.id,
       type: In(INVITATION_APP_TOKEN_TYPES),

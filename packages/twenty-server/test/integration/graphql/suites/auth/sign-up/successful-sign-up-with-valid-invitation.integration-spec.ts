@@ -11,8 +11,6 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
-// Counterpart to failing-sign-up-with-expired-invitation: proves the expiry
-// filter only rejects expired invitations and still admits valid ones.
 describe('signUpInWorkspace with a valid personal invitation (integration)', () => {
   const email = `valid-invite-signup-${Date.now()}@example.com`;
   const token = `valid-invite-signup-token-${Date.now()}`;
