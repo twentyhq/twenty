@@ -1,4 +1,7 @@
-import { createWhereExpressionRecorder } from 'test/utils/create-where-expression-recorder.util';
+import {
+  createWhereExpressionRecorder,
+  type RecordedWhereCall,
+} from 'test/utils/create-where-expression-recorder.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -73,6 +76,21 @@ const recordFilterEntries = (filter: Record<string, unknown>) => {
 
   return recorder.calls;
 };
+
+const withNormalizedParameterKeys = (calls: RecordedWhereCall[]): unknown[] =>
+  calls.map(({ method, node }) =>
+    node.kind === 'sql'
+      ? {
+          method,
+          sql: node.sql.replace(/(?<!:):[A-Za-z0-9_]+/g, ':parameter'),
+          parameterValues: Object.values(node.parameters ?? {}),
+        }
+      : {
+          method,
+          kind: node.kind,
+          children: withNormalizedParameterKeys(node.children),
+        },
+  );
 
 describe('GraphqlQueryFilterConditionParser', () => {
   describe('applyFilterEntriesToWhereBrackets', () => {
@@ -163,6 +181,38 @@ describe('GraphqlQueryFilterConditionParser', () => {
               {
                 method: 'orWhere',
                 node: expect.objectContaining({ kind: 'brackets' }),
+              },
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('applies an or group that is not wrapped in an array', () => {
+      const calls = recordFilterEntries({ or: { name: { ilike: '%acme%' } } });
+
+      expect(withNormalizedParameterKeys(calls)).toEqual(
+        withNormalizedParameterKeys(
+          recordFilterEntries({ or: [{ name: { ilike: '%acme%' } }] }),
+        ),
+      );
+      expect(calls).toEqual([
+        {
+          method: 'where',
+          node: {
+            kind: 'brackets',
+            children: [
+              {
+                method: 'where',
+                node: {
+                  kind: 'brackets',
+                  children: [
+                    {
+                      method: 'where',
+                      node: expect.objectContaining({ kind: 'sql' }),
+                    },
+                  ],
+                },
               },
             ],
           },
