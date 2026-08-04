@@ -3,6 +3,7 @@ import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
 import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
+import { useAskAiHandoffFromWorkspaceSetup } from '@/side-panel/hooks/useAskAiHandoffFromWorkspaceSetup';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
@@ -24,18 +25,25 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;
   isResizing: boolean;
+  isEnteringAtFullWidth: boolean;
 }>`
   flex-shrink: 0;
   min-width: 0;
   overflow: hidden;
-  transition: ${({ isResizing }) =>
-    isResizing
+  transition: ${({ isResizing, isEnteringAtFullWidth }) =>
+    isResizing || isEnteringAtFullWidth
       ? 'none'
       : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
-  width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
+  width: ${({ isOpen, isEnteringAtFullWidth }) => {
+    if (isEnteringAtFullWidth) {
+      return '100%';
+    }
+
+    return isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px';
+  }};
 `;
 
-const StyledSidePanel = styled.aside`
+const StyledSidePanel = styled.aside<{ isOpen: boolean }>`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
@@ -44,7 +52,7 @@ const StyledSidePanel = styled.aside`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: var(${SIDE_PANEL_WIDTH_VAR});
+  width: ${({ isOpen }) => (isOpen ? '100%' : `var(${SIDE_PANEL_WIDTH_VAR})`)};
 `;
 
 const StyledModalContainer = styled.div`
@@ -64,6 +72,8 @@ export const SidePanelForDesktop = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
+  const { isSidePanelEnteringAtFullWidth } =
+    useAskAiHandoffFromWorkspaceSetup();
 
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
@@ -135,11 +145,12 @@ export const SidePanelForDesktop = () => {
       <StyledSidePanelWrapper
         isOpen={isSidePanelOpened}
         isResizing={isResizing}
+        isEnteringAtFullWidth={isSidePanelEnteringAtFullWidth}
         onTransitionEnd={handleTransitionEnd}
         data-side-panel=""
         data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
       >
-        <StyledSidePanel>
+        <StyledSidePanel isOpen={isSidePanelOpened}>
           <StyledModalContainer ref={handleModalContainerRef} />
           <ModalContainerContext.Provider value={{ container: modalContainer }}>
             <ParentClickOutsideIdContext.Provider
