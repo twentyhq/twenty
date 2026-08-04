@@ -19,7 +19,7 @@ export const registerSlackConnection = async ({
 }: RegisterSlackConnectionArgs): Promise<RegisterSlackConnectionResult> => {
   if (!isNonEmptyString(connectedAccountId)) {
     throw new Error(
-      'Slack team claim failed: onConnect payload is missing connectedAccountId',
+      'Slack connection registration failed: onConnect payload is missing connectedAccountId',
     );
   }
 
