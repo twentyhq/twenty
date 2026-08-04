@@ -1,6 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { updateWorkspaceOperationFactory } from 'test/integration/graphql/utils/update-workspace-operation-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -37,14 +36,13 @@ describe('updateWorkspace while the workspace is pending creation', () => {
   });
 
   it('rejects security sensitive fields', async () => {
-    const response = await makeMetadataAPIRequest(
-      updateWorkspaceOperationFactory({
-        data: { allowImpersonation: !originalAllowImpersonation },
-      }),
-    );
+    const { data, errors } = await updateWorkspace({
+      data: { allowImpersonation: !originalAllowImpersonation },
+      expectToFail: true,
+    });
 
-    expect(response.body.data?.updateWorkspace).toBeFalsy();
-    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
+    expect(data?.updateWorkspace).toBeFalsy();
+    expectOneNotInternalServerErrorSnapshot({ errors });
 
     const [workspace] = await testDataSource.query(
       'SELECT "allowImpersonation" FROM core.workspace WHERE id = $1',
@@ -55,17 +53,16 @@ describe('updateWorkspace while the workspace is pending creation', () => {
   });
 
   it('rejects the whole update when a setup field is mixed with a security sensitive one', async () => {
-    const response = await makeMetadataAPIRequest(
-      updateWorkspaceOperationFactory({
-        data: {
-          displayName: 'Should not be applied',
-          isPublicInviteLinkEnabled: true,
-        },
-      }),
-    );
+    const { data, errors } = await updateWorkspace({
+      data: {
+        displayName: 'Should not be applied',
+        isPublicInviteLinkEnabled: true,
+      },
+      expectToFail: true,
+    });
 
-    expect(response.body.data?.updateWorkspace).toBeFalsy();
-    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
+    expect(data?.updateWorkspace).toBeFalsy();
+    expectOneNotInternalServerErrorSnapshot({ errors });
 
     const [workspace] = await testDataSource.query(
       'SELECT "displayName" FROM core.workspace WHERE id = $1',
@@ -78,12 +75,13 @@ describe('updateWorkspace while the workspace is pending creation', () => {
   it('still allows the fields needed to set the workspace up', async () => {
     const displayName = `Pending setup ${Date.now()}`;
 
-    const response = await makeMetadataAPIRequest(
-      updateWorkspaceOperationFactory({ data: { displayName } }),
-    );
+    const { data, errors } = await updateWorkspace({
+      data: { displayName },
+      expectToFail: false,
+    });
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkspace.id).toBe(SEED_APPLE_WORKSPACE_ID);
+    expect(errors).toBeUndefined();
+    expect(data.updateWorkspace.id).toBe(SEED_APPLE_WORKSPACE_ID);
 
     const [workspace] = await testDataSource.query(
       'SELECT "displayName" FROM core.workspace WHERE id = $1',
