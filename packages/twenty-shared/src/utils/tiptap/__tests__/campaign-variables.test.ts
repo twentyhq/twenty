@@ -24,7 +24,7 @@ describe('listCampaignVariablesForFields', () => {
     ]);
   });
 
-  it('should expand composites into subfield paths', () => {
+  it('should expand the name composite and skip contact-detail composites', () => {
     const definitions = listCampaignVariablesForFields([
       { name: 'name', label: 'Name', type: FieldMetadataType.FULL_NAME },
       { name: 'emails', label: 'Emails', type: FieldMetadataType.EMAILS },
@@ -33,18 +33,15 @@ describe('listCampaignVariablesForFields', () => {
         label: 'LinkedIn',
         type: FieldMetadataType.LINKS,
       },
+      { name: 'phones', label: 'Phones', type: FieldMetadataType.PHONES },
     ]);
 
     expect(definitions.map((definition) => definition.name)).toEqual([
       'name.firstName',
       'name.lastName',
-      'emails.primaryEmail',
-      'linkedinLink.primaryLinkUrl',
     ]);
 
     expect(definitions[0].label).toBe('Name · First name');
-    expect(definitions[2].label).toBe('Emails');
-    expect(definitions[3].label).toBe('LinkedIn');
   });
 
   it('should skip system, inactive and unsupported fields', () => {

@@ -102,7 +102,6 @@ describe('CampaignVariableService', () => {
     expect(definitions.map((definition) => definition.name)).toEqual([
       'name.firstName',
       'name.lastName',
-      'emails.primaryEmail',
       'city',
       'tier',
       'signupDate',
@@ -135,7 +134,6 @@ describe('CampaignVariableService', () => {
     expect(variables).toMatchObject({
       'name.firstName': 'Ada',
       'name.lastName': 'Lovelace',
-      'emails.primaryEmail': 'ada@example.com',
       city: 'London',
       tier: 'Enterprise',
       signupDate: '2026-03-04',

@@ -33,15 +33,6 @@ const COMPOSITE_CAMPAIGN_VARIABLE_SUBFIELDS: Partial<
     { subFieldName: 'firstName', subFieldLabel: 'First name' },
     { subFieldName: 'lastName', subFieldLabel: 'Last name' },
   ],
-  [FieldMetadataType.EMAILS]: [
-    { subFieldName: 'primaryEmail', subFieldLabel: 'Email' },
-  ],
-  [FieldMetadataType.PHONES]: [
-    { subFieldName: 'primaryPhoneNumber', subFieldLabel: 'Phone' },
-  ],
-  [FieldMetadataType.LINKS]: [
-    { subFieldName: 'primaryLinkUrl', subFieldLabel: 'URL' },
-  ],
 };
 
 export const listCampaignVariablesForFields = (
