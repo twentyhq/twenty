@@ -1,21 +1,26 @@
 import { styled } from '@linaria/react';
-import { Fragment, useRef } from 'react';
+import { Fragment, useContext, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardCardContextProvider } from '@/object-record/record-board/record-board-card/components/RecordBoardCardContextProvider';
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { getEstimatedRecordBoardCardHeight } from '@/object-record/record-board/utils/getEstimatedRecordBoardCardHeight';
 import { RecordBoardColumnCardWindowEffect } from '@/object-record/record-board/virtualization/components/RecordBoardColumnCardWindowEffect';
 import { RECORD_BOARD_VIRTUALIZATION_MINIMUM_CARD_COUNT } from '@/object-record/record-board/virtualization/constants/RecordBoardVirtualizationMinimumCardCount';
 import { recordBoardColumnCardWindowComponentFamilyState } from '@/object-record/record-board/virtualization/states/recordBoardColumnCardWindowComponentFamilyState';
 import { getRecordBoardCardWindowSegments } from '@/object-record/record-board/virtualization/utils/getRecordBoardCardWindowSegments';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -41,6 +46,8 @@ export const RecordBoardColumnCardsContainer = ({
 }: RecordBoardColumnCardsContainerProps) => {
   const cardsContainerRef = useRef<HTMLDivElement>(null);
 
+  const { columnIndex } = useContext(RecordBoardColumnContext);
+
   const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
@@ -56,6 +63,14 @@ export const RecordBoardColumnCardsContainer = ({
     recordBoardColumnId,
   );
 
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
+  );
+
+  const focusedRecordBoardCardIndexes = useAtomComponentStateValue(
+    focusedRecordBoardCardIndexesComponentState,
+  );
+
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
@@ -69,6 +84,21 @@ export const RecordBoardColumnCardsContainer = ({
     recordBoardColumnCardWindow?.cardSlotHeight ??
     getEstimatedRecordBoardCardHeight(visibleRecordFields.length);
 
+  // Dragged cards must stay mounted so dnd-kit keeps its drag source, and the
+  // focused card so keyboard navigation can scroll to it.
+  const forcedCardIndexes = draggedRecordIds
+    .map((draggedRecordId) =>
+      recordIndexRecordIdsByGroup.indexOf(draggedRecordId),
+    )
+    .filter((draggedCardIndex) => draggedCardIndex !== -1);
+
+  if (
+    isDefined(focusedRecordBoardCardIndexes) &&
+    focusedRecordBoardCardIndexes.columnIndex === columnIndex
+  ) {
+    forcedCardIndexes.push(focusedRecordBoardCardIndexes.rowIndex);
+  }
+
   const cardWindowSegments = getRecordBoardCardWindowSegments({
     numberOfCards,
     firstCardIndexInWindow: isCardWindowingActive
@@ -78,6 +108,7 @@ export const RecordBoardColumnCardsContainer = ({
       ? (recordBoardColumnCardWindow?.lastCardIndexInWindow ??
         RECORD_BOARD_VIRTUALIZATION_MINIMUM_CARD_COUNT - 1)
       : numberOfCards - 1,
+    forcedCardIndexes,
   });
 
   return (
