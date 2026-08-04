@@ -68,8 +68,9 @@ export class OnboardingService {
       const queryRunner = entityManager.queryRunner;
 
       if (!isDefined(queryRunner)) {
-        throw new Error(
+        throw new OnboardingException(
           'Onboarding step transitions require a transaction-scoped entity manager',
+          OnboardingExceptionCode.MISSING_TRANSACTION_QUERY_RUNNER,
         );
       }
 
