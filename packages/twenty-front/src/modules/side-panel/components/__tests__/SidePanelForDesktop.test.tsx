@@ -3,6 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
+import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
   jotaiStore,
@@ -10,6 +11,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const shouldShrinkFromFullWidthMock = jest.fn();
+const sidePanelCloseAnimationCompleteCleanupMock = jest.fn();
 
 jest.mock('@/side-panel/hooks/useAskAiHandoffFromWorkspaceSetup', () => ({
   useAskAiHandoffFromWorkspaceSetup: () => ({
@@ -33,7 +35,8 @@ jest.mock(
   '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup',
   () => ({
     useSidePanelCloseAnimationCompleteCleanup: () => ({
-      sidePanelCloseAnimationCompleteCleanup: jest.fn(),
+      sidePanelCloseAnimationCompleteCleanup:
+        sidePanelCloseAnimationCompleteCleanupMock,
     }),
   }),
 );
@@ -80,14 +83,14 @@ describe('SidePanelForDesktop', () => {
 
     const wrapperElement = container.querySelector('[data-side-panel]');
 
+    if (wrapperElement === null) {
+      throw new Error('side panel wrapper not found');
+    }
+
     expect(wrapperElement).toHaveAttribute(
       'data-shrink-from-full-width',
       'true',
     );
-
-    if (wrapperElement === null) {
-      throw new Error('side panel wrapper not found');
-    }
 
     fireEvent.animationEnd(wrapperElement);
 
@@ -95,6 +98,31 @@ describe('SidePanelForDesktop', () => {
       'data-shrink-from-full-width',
       'false',
     );
+  });
+
+  it('should complete the close lifecycle when closed while the entrance animation is still running', () => {
+    shouldShrinkFromFullWidthMock.mockReturnValue(true);
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
+
+    const { container, queryByTestId } = render(<SidePanelForDesktop />, {
+      wrapper: Wrapper,
+    });
+
+    const wrapperElement = container.querySelector('[data-side-panel]');
+
+    if (wrapperElement === null) {
+      throw new Error('side panel wrapper not found');
+    }
+
+    act(() => {
+      jotaiStore.set(isSidePanelOpenedState.atom, false);
+      jotaiStore.set(isSidePanelClosingState.atom, true);
+    });
+
+    fireEvent.animationEnd(wrapperElement);
+
+    expect(sidePanelCloseAnimationCompleteCleanupMock).toHaveBeenCalled();
+    expect(queryByTestId('side-panel-content')).not.toBeInTheDocument();
   });
 
   it('should not shrink from full width on a normal open', () => {

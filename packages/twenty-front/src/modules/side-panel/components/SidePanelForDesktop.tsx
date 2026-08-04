@@ -120,6 +120,10 @@ export const SidePanelForDesktop = () => {
     }
 
     setIsShrinkingFromFullWidth(false);
+
+    // The entrance animation owns the width while it runs, so a close started
+    // during it never produces a transition to complete the close lifecycle.
+    handleTransitionEnd();
   };
 
   const handleModalContainerRef = useCallback(
