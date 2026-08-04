@@ -71,35 +71,6 @@ export const useNavigationMenuItemFolderOpenState = ({
       );
       setIsManuallyClosed(isOpen);
     }
-
-    if (!isOpen) {
-      const firstNonLinkItem = folderChildrenNavigationMenuItems.find(
-        (item) => {
-          if (item.type === NavigationMenuItemType.LINK) {
-            return false;
-          }
-          const computedLink = getNavigationMenuItemComputedLink({
-            item,
-            objectMetadataItems,
-            views,
-            lastVisitedViewPerObjectMetadataItem,
-          });
-          return isNonEmptyString(computedLink);
-        },
-      );
-      if (isDefined(firstNonLinkItem)) {
-        const link = getNavigationMenuItemComputedLink({
-          item: firstNonLinkItem,
-          objectMetadataItems,
-          views,
-          lastVisitedViewPerObjectMetadataItem,
-        });
-        if (isNonEmptyString(link)) {
-          setLastClickedNavigationMenuItemId(firstNonLinkItem.id);
-          navigate(link);
-        }
-      }
-    }
   };
 
   return {
