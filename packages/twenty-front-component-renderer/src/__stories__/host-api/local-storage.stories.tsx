@@ -120,6 +120,26 @@ export const LocalStorageValueTooLarge: Story = runFrontComponentStory({
   },
 });
 
+export const LocalStorageReadsRawDependencyValue: Story =
+  runFrontComponentStory({
+    frontComponentBundleName: 'host-api-local-storage',
+    play: async ({ canvasElement }) => {
+      const canvas = within(canvasElement);
+
+      await expectFrontComponentMounted(canvas);
+
+      await userEvent.click(await canvas.findByTestId('raw-dependency'));
+
+      expect(
+        await canvas.findByText(
+          'storage:raw:plain text',
+          {},
+          { timeout: INTERACTION_TIMEOUT },
+        ),
+      ).toBeVisible();
+    },
+  });
+
 const persistedStory = runFrontComponentStory({
   frontComponentBundleName: 'host-api-local-storage',
   play: async ({ canvasElement }) => {
@@ -139,13 +159,20 @@ const persistedStory = runFrontComponentStory({
       },
       { timeout: HOST_API_TIMEOUT },
     );
-
-    await frontComponentLocalStorageService.clear(PERSISTED_STORAGE_NAMESPACE);
   },
 });
 
 export const LocalStoragePersistsToIndexedDb: Story = {
   ...persistedStory,
+  beforeEach: async () => {
+    await frontComponentLocalStorageService.clear(PERSISTED_STORAGE_NAMESPACE);
+
+    return async () => {
+      await frontComponentLocalStorageService.clear(
+        PERSISTED_STORAGE_NAMESPACE,
+      );
+    };
+  },
   args: {
     ...persistedStory.args,
     localStorageNamespace: PERSISTED_STORAGE_NAMESPACE,

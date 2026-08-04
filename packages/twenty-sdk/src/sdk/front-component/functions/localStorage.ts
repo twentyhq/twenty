@@ -25,6 +25,14 @@ const serializeLocalStorageValue = (value: unknown): string => {
   return serializedValue;
 };
 
+const parseLocalStorageValue = <TValue>(serializedValue: string): TValue => {
+  try {
+    return JSON.parse(serializedValue) as TValue;
+  } catch {
+    return serializedValue as TValue;
+  }
+};
+
 export const localStorage = {
   async get<TValue = unknown>(key: string): Promise<TValue | null> {
     const serializedValue = getLocalStorageBridge().getItem(key);
@@ -33,7 +41,7 @@ export const localStorage = {
       return null;
     }
 
-    return JSON.parse(serializedValue) as TValue;
+    return parseLocalStorageValue<TValue>(serializedValue);
   },
 
   async set<TValue>(key: string, value: TValue): Promise<void> {

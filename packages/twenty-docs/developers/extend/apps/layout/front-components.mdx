@@ -565,9 +565,11 @@ export default defineFrontComponent({
 });
 ```
 
-Writes are capped: keys are at most 512 characters, a single serialized value at most 256 KB, and your app's whole store at most 1 MB per user. A write that breaks a limit rejects with an error whose `code` is one of `FRONT_COMPONENT_STORAGE_KEY_TOO_LONG`, `FRONT_COMPONENT_STORAGE_VALUE_TOO_LARGE`, `FRONT_COMPONENT_STORAGE_QUOTA_EXCEEDED` or `FRONT_COMPONENT_STORAGE_UNAVAILABLE`. Use `keys()` and `delete()` to make room.
+Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single serialized value at most 262,144 characters, and your app's whole store at most 1,048,576 characters per user. A write that breaks a limit rejects with an error whose `code` is one of `FRONT_COMPONENT_STORAGE_KEY_TOO_LONG`, `FRONT_COMPONENT_STORAGE_VALUE_TOO_LARGE`, `FRONT_COMPONENT_STORAGE_QUOTA_EXCEEDED` or `FRONT_COMPONENT_STORAGE_UNAVAILABLE`. Use `keys()` and `delete()` to make room.
 
-The global `window.localStorage` is backed by the same store, so a dependency that reads or writes it keeps working and its data persists too. It stays synchronous like the browser API, which means a write is applied locally right away and saved in the background; use the SDK methods when you need to know the write reached the host.
+The global `window.localStorage` is backed by the same store, so a dependency that reads or writes it keeps working and its data persists too. It stays synchronous like the browser API, which means a write is applied locally right away and saved in the background; use the SDK methods when you need to know the write reached the host. Because that store is shared, `get()` returns the raw string for a value a dependency wrote as plain text instead of JSON.
+
+`window.sessionStorage` is also available, but it stays in memory for the lifetime of the component and is never written to the device.
 
 ### Working with multiple records
 

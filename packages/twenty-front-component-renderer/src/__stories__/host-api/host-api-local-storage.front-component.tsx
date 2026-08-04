@@ -13,10 +13,17 @@ const STATUS_STYLE = {
 
 const OVERSIZED_VALUE = 'x'.repeat(300 * 1024);
 
-const getErrorCode = (error: unknown): string =>
-  typeof (error as { code?: unknown }).code === 'string'
-    ? String((error as { code: string }).code)
-    : String(error);
+const getErrorCode = (error: unknown): string => {
+  if (typeof error === 'object' && error !== null) {
+    const { code } = error as { code?: unknown };
+
+    if (typeof code === 'string') {
+      return code;
+    }
+  }
+
+  return String(error);
+};
 
 const HostApiLocalStorageFrontComponent = () => {
   const [status, setStatus] = useState('idle');
@@ -49,6 +56,18 @@ const HostApiLocalStorageFrontComponent = () => {
     }
   };
 
+  const runRawDependencyRead = async () => {
+    try {
+      window.localStorage.setItem('raw-dependency', 'plain text');
+
+      const storedValue = await localStorage.get<string>('raw-dependency');
+
+      setStatus(`storage:raw:${storedValue}`);
+    } catch (error) {
+      setStatus(`storage:error:${getErrorCode(error)}`);
+    }
+  };
+
   const runOversizedWrite = async () => {
     try {
       await localStorage.set('oversized', OVERSIZED_VALUE);
@@ -76,6 +95,14 @@ const HostApiLocalStorageFrontComponent = () => {
         style={BUTTON_STYLE}
       >
         Write through window.localStorage
+      </button>
+      <button
+        data-testid="raw-dependency"
+        type="button"
+        onClick={runRawDependencyRead}
+        style={BUTTON_STYLE}
+      >
+        Read a raw dependency value
       </button>
       <button
         data-testid="oversized"
