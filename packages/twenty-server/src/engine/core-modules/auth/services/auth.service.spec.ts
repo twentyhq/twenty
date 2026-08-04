@@ -34,12 +34,19 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { AuthService } from './auth.service';
 
 jest.mock('bcrypt');
+
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
+  renderEmail: jest.fn().mockResolvedValue('rendered-email'),
+}));
 
 const twentyConfigServiceGetMock = jest.fn();
 
@@ -53,6 +60,7 @@ describe('AuthService', () => {
   let workspaceInvitationService: WorkspaceInvitationService;
   let permissionsService: PermissionsService;
   let refreshTokenService: RefreshTokenService;
+  let userSessionService: UserSessionService;
   let signInUpServiceMock: jest.Mocked<
     Pick<SignInUpService, 'validatePassword' | 'signUpWithoutWorkspace'>
   >;
@@ -71,6 +79,7 @@ describe('AuthService', () => {
           provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
+            update: jest.fn(),
           },
         },
         {
@@ -82,6 +91,7 @@ describe('AuthService', () => {
               where: jest.fn().mockReturnThis(),
               getOne: jest.fn().mockImplementation(() => null),
             }),
+            update: jest.fn(),
           },
         },
         {
@@ -95,6 +105,7 @@ describe('AuthService', () => {
         {
           provide: DomainServerConfigService,
           useValue: {
+            getBaseUrl: jest.fn(() => new URL('https://app.twenty.com')),
             buildBaseUrl: jest.fn(({ pathname, searchParams, hash }) =>
               buildUrlWithPathnameAndSearchParams({
                 baseUrl: new URL('https://app.twenty.com'),
@@ -134,7 +145,9 @@ describe('AuthService', () => {
         },
         {
           provide: EmailService,
-          useValue: {},
+          useValue: {
+            send: jest.fn(),
+          },
         },
         {
           provide: AccessTokenService,
@@ -212,6 +225,12 @@ describe('AuthService', () => {
               .mockResolvedValue(undefined),
           },
         },
+        {
+          provide: UserSessionService,
+          useValue: {
+            revokeAllSessionsForUser: jest.fn().mockResolvedValue(0),
+          },
+        },
       ],
     }).compile();
 
@@ -234,6 +253,7 @@ describe('AuthService', () => {
     signInUpServiceMock = module.get(SignInUpService) as jest.Mocked<
       Pick<SignInUpService, 'validatePassword' | 'signUpWithoutWorkspace'>
     >;
+    userSessionService = module.get<UserSessionService>(UserSessionService);
   });
 
   beforeEach(() => {
@@ -747,6 +767,47 @@ describe('AuthService', () => {
       );
 
       expect(signInUpServiceMock.signUpWithoutWorkspace).not.toHaveBeenCalled();
+    });
+  });
+  describe('updatePassword', () => {
+    const buildUserWithWorkspace = (userId: string) =>
+      ({
+        id: userId,
+        email: 'tim@twenty.com',
+        firstName: 'Tim',
+        lastName: 'Apple',
+        userWorkspaces: [{ locale: 'en' }],
+      }) as unknown as UserEntity;
+
+    it('should revoke every session for the user after a password change', async () => {
+      const userId = 'e2c1a1a2-0000-4000-8000-000000000001';
+
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(buildUserWithWorkspace(userId));
+
+      await service.updatePassword(userId, 'Str0ngPassw0rd!');
+
+      expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
+        userId,
+        reason: UserSessionRevokedReason.PasswordChanged,
+      });
+    });
+
+    it('should not revoke sessions when the new password is rejected', async () => {
+      const userId = 'e2c1a1a2-0000-4000-8000-000000000002';
+
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(buildUserWithWorkspace(userId));
+
+      await expect(service.updatePassword(userId, 'weak')).rejects.toThrow(
+        AuthException,
+      );
+
+      expect(
+        userSessionService.revokeAllSessionsForUser,
+      ).not.toHaveBeenCalled();
     });
   });
 });

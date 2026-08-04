@@ -36,6 +36,7 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       id
       permissionFlags
+      isImpersonating
       objectsPermissions {
         ...ObjectPermissionFragment
       }

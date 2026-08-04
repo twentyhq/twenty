@@ -301,13 +301,16 @@ export class ClientConfig {
   @Field(() => ApiConfig)
   api: ApiConfig;
 
-  onboarding: OnboardingConfig;
+  onboarding: OnboardingConfig | null;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
 
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
+
+  @Field(() => Boolean)
+  isCookieSessionEnabled: boolean;
 
   @Field(() => Boolean)
   isMicrosoftMessagingEnabled: boolean;
