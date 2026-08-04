@@ -1,0 +1,22 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service.ts
+  s_405b3fe1a0ce44::t_357fd527591f2e 78,88
+  s_405b3fe1a0ce44::t_8117f282d4527d 132,142-144
+  s_405b3fe1a0ce44::t_67bf0c22a53f5f 153
+  s_405b3fe1a0ce44::t_d2c374d9c4b8a5 186,195-201
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "dfc97cb840ce64dd73f84864e6231212735debd3",
+  "prompts": {},
+  "sessions": {
+    "s_405b3fe1a0ce44": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b153cf-7ae2-4eeb-8601-d00a49a98d9a",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
