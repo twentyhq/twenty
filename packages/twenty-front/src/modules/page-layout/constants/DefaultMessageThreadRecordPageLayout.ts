@@ -12,6 +12,7 @@ export const DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT: PageLayout = {
   id: DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT_ID,
   name: 'Default Message Thread Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isSystemSideEffect: true,
   objectMetadataId: null,
   universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),
