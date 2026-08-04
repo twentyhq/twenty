@@ -47,7 +47,7 @@ export const CookieSessionBootEffect = () => {
   const [isCookieAuthActive, setIsCookieAuthActive] = useAtomState(
     isCookieAuthActiveState,
   );
-  const [tokenPair, setTokenPair] = useAtomState(tokenPairState);
+  const tokenPair = useAtomStateValue(tokenPairState);
   // oxlint-disable-next-line twenty/no-state-useref
   const hasProbeRunRef = useRef(false);
 
@@ -68,9 +68,15 @@ export const CookieSessionBootEffect = () => {
       }
     };
 
+    // The token pair is deliberately retained rather than cleared. A server
+    // that still has cookie sessions disabled ignores the session cookie, so a
+    // cookie-only client is unauthenticated against it — which is every request
+    // routed to a not-yet-rolled pod during a deploy, and every request after a
+    // rollback. Keeping the pair lets those fall back instead of signing the
+    // user out. It stops being sent while cookie auth is active, so the cookie
+    // is still the credential in use.
     const switchToCookieAuth = () => {
       setIsCookieAuthActive(true);
-      setTokenPair(null);
     };
 
     const attemptCookieSessionBoot = async (): Promise<boolean> => {
@@ -145,7 +151,6 @@ export const CookieSessionBootEffect = () => {
     isCookieSessionEnabled,
     isLoadedOnce,
     setIsCookieAuthActive,
-    setTokenPair,
     store,
     tokenPair,
   ]);

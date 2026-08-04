@@ -88,6 +88,9 @@ describe('WorkspaceCacheService', () => {
           provide: MetricsService,
           useValue: {
             incrementCounterBy: jest.fn(),
+            getMeter: jest.fn().mockReturnValue({
+              createHistogram: jest.fn().mockReturnValue({ record: jest.fn() }),
+            }),
           },
         },
         {
