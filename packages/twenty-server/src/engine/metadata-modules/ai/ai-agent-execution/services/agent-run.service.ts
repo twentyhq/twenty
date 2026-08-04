@@ -73,6 +73,7 @@ export class AgentRunService {
     const runAsContext = await this.resolveRunAsContext({
       runAsWorkspaceMemberId: input.runAsWorkspaceMemberId,
       callerApplication,
+      requestUserWorkspaceId,
       requestWorkspaceMemberId,
       workspaceId: workspace.id,
     });
@@ -127,11 +128,13 @@ export class AgentRunService {
   private async resolveRunAsContext({
     runAsWorkspaceMemberId,
     callerApplication,
+    requestUserWorkspaceId,
     requestWorkspaceMemberId,
     workspaceId,
   }: {
     runAsWorkspaceMemberId?: string;
     callerApplication?: FlatApplication;
+    requestUserWorkspaceId: string | null;
     requestWorkspaceMemberId: string | null;
     workspaceId: string;
   }): Promise<RunAsWorkspaceMemberContext | undefined> {
@@ -152,8 +155,10 @@ export class AgentRunService {
     // component mints one for the requesting user, carrying their identity. Such
     // a token may only name the user it was minted for. Naming anyone is left to
     // tokens with no user in the loop, which only server-side app code holds.
+    // Keyed on the user binding rather than on the member id, so a bound token
+    // whose member never resolved is rejected instead of skipping the check.
     if (
-      isDefined(requestWorkspaceMemberId) &&
+      isDefined(requestUserWorkspaceId) &&
       requestWorkspaceMemberId !== runAsWorkspaceMemberId
     ) {
       throw new AiException(

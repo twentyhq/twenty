@@ -152,7 +152,7 @@ describe('AgentRunService', () => {
   it('runs as the requested workspace member with their auth context and role', async () => {
     await service.run({
       workspace,
-      requestUserWorkspaceId: 'user-workspace-1',
+      requestUserWorkspaceId: null,
       requestWorkspaceMemberId: null,
       callerApplication,
       input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
@@ -182,7 +182,7 @@ describe('AgentRunService', () => {
     await expect(
       service.run({
         workspace,
-        requestUserWorkspaceId: 'user-workspace-1',
+        requestUserWorkspaceId: null,
         requestWorkspaceMemberId: null,
         callerApplication,
         input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
@@ -214,6 +214,23 @@ describe('AgentRunService', () => {
         workspace,
         requestUserWorkspaceId: 'user-workspace-1',
         requestWorkspaceMemberId: 'workspace-member-2',
+        callerApplication,
+        input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
+      }),
+    ).rejects.toThrow('can only run an agent as that user');
+
+    expect(
+      agentActorContextService.buildRunAsWorkspaceMemberContext,
+    ).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('rejects a user-bound application token whose member identity never resolved', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: 'user-workspace-1',
+        requestWorkspaceMemberId: null,
         callerApplication,
         input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
       }),
