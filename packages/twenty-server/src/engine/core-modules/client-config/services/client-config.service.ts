@@ -252,7 +252,9 @@ export class ClientConfigService {
       analyticsEnabled: this.twentyConfigService.get('ANALYTICS_ENABLED'),
       canManageFeatureFlags:
         this.twentyConfigService.get('NODE_ENV') ===
-          NodeEnvironment.DEVELOPMENT || isBillingEnabled,
+          NodeEnvironment.DEVELOPMENT ||
+        isBillingEnabled ||
+        this.twentyConfigService.get('IS_FEATURE_FLAG_MANAGEMENT_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
       isCookieSessionEnabled: this.twentyConfigService.get(
         'AUTH_COOKIE_SESSIONS_ENABLED',
