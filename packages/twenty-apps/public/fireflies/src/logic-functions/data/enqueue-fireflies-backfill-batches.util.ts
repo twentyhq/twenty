@@ -23,10 +23,13 @@ export const enqueueFirefliesBackfillBatches = async ({
         ),
       });
     } catch (error) {
-      throw new Error(
-        `Fireflies backfill enqueued ${batchIndex} of ${transcriptIdBatches.length} batches before enqueue failed: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+      throw Object.assign(
+        new Error(
+          `Fireflies backfill enqueued ${batchIndex} of ${transcriptIdBatches.length} batches before enqueue failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        ),
+        { cause: error },
       );
     }
   }

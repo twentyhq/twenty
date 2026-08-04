@@ -9,7 +9,6 @@ import { FIREFLIES_BACKFILL_ROUTE_PATH } from 'src/constants/fireflies-backfill-
 import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/logic-functions/constants/fireflies-backfill-max-window-days.constant';
 import { FIREFLIES_BACKFILL_OUTCOME } from 'src/logic-functions/constants/fireflies-backfill-outcome.constant';
 import { FIREFLIES_BACKFILL_TIMEOUT_SECONDS } from 'src/logic-functions/constants/fireflies-backfill-timeout-seconds.constant';
-import { FIREFLIES_BACKFILL_WORKER_RETRY_LIMIT } from 'src/logic-functions/constants/fireflies-backfill-worker-retry-limit.constant';
 import { firefliesBackfillRequestBodySchema } from 'src/logic-functions/schemas/fireflies-backfill-request-body.schema';
 
 const firefliesBackfillRequestHandler = async (
@@ -30,7 +29,6 @@ const firefliesBackfillRequestHandler = async (
     logicFunctionUniversalIdentifier:
       FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     payload: { days: requestBodyParseResult.data.days },
-    retryLimit: FIREFLIES_BACKFILL_WORKER_RETRY_LIMIT,
   });
 
   return { outcome: FIREFLIES_BACKFILL_OUTCOME.STARTED };

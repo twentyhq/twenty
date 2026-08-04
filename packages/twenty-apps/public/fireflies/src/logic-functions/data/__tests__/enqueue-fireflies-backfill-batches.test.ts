@@ -69,21 +69,25 @@ describe('enqueueFirefliesBackfillBatches', () => {
   });
 
   it('throws partial progress without enqueueing later batches', async () => {
+    const enqueueError = new Error('Network failed');
+
     enqueueJobMock
       .mockResolvedValueOnce({
         enqueued: true,
         logicFunctionUniversalIdentifier:
           FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       })
-      .mockRejectedValueOnce(new Error('Network failed'));
+      .mockRejectedValueOnce(enqueueError);
 
     await expect(
       enqueueFirefliesBackfillBatches({
         transcriptIdBatches: [['call-1'], ['call-2'], ['call-3']],
       }),
-    ).rejects.toThrow(
-      'Fireflies backfill enqueued 1 of 3 batches before enqueue failed: Network failed',
-    );
+    ).rejects.toMatchObject({
+      message:
+        'Fireflies backfill enqueued 1 of 3 batches before enqueue failed: Network failed',
+      cause: enqueueError,
+    });
     expect(enqueueJobMock).toHaveBeenCalledTimes(2);
   });
 });
