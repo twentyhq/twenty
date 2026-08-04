@@ -62,7 +62,6 @@ import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/s
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
-import { estimateTextTokens } from 'src/engine/metadata-modules/ai/ai-models/utils/estimate-text-tokens.util';
 import {
   AiException,
   AiExceptionCode,
@@ -354,28 +353,8 @@ export class AgentAsyncExecutorService {
 
       let hasNoMoreAvailableCredits = false;
 
-      const system = `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}${toolCatalogSection}`;
-
-      const { contextWindowTokens } =
-        this.aiModelRegistryService.getEffectiveModelConfig(
-          agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
-        );
-      const estimatedInputTokens = estimateTextTokens(
-        system,
-        ...messages.map((message) => message.content),
-      );
-
-      // Caller-supplied histories are unbounded in size, so reject what cannot
-      // fit instead of letting the provider fail the whole run.
-      if (estimatedInputTokens > contextWindowTokens) {
-        throw new AiException(
-          `Input is too long for ${registeredModel.modelId}: ~${estimatedInputTokens} tokens estimated for a ${contextWindowTokens} token context window.`,
-          AiExceptionCode.CONTEXT_WINDOW_EXCEEDED,
-        );
-      }
-
       const textResponse = await generateText({
-        system,
+        system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
         messages: messages.map(
