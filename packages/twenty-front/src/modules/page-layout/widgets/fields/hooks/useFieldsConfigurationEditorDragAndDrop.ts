@@ -6,7 +6,7 @@ import { FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID } from '@/page-layout/widgets/
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
 import { type FieldsConfigurationDndData } from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
-import { type DragDropInsertionContextValues } from '@/ui/utilities/drag-and-drop/hooks/useDragDropInsertionIndex';
+import { type DragDropItemDndContextValue } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
@@ -14,7 +14,8 @@ import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDesti
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-type DragStartEvent = DragDropProviderDragStartEvent<FieldsConfigurationDndData>;
+type DragStartEvent =
+  DragDropProviderDragStartEvent<FieldsConfigurationDndData>;
 type DragMoveEvent = DragDropProviderDragMoveEvent<FieldsConfigurationDndData>;
 type DragEndEvent = DragDropProviderDragEndEvent<FieldsConfigurationDndData>;
 
@@ -197,7 +198,7 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
     }
   };
 
-  const contextValues: DragDropInsertionContextValues = {
+  const contextValues: DragDropItemDndContextValue = {
     activeDropTargetIndex,
     activeDroppableId,
   };

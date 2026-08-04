@@ -10,7 +10,7 @@ import { moveWidgetToTabInDraft } from '@/page-layout/utils/moveWidgetToTabInDra
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { reorderTabInDraft } from '@/page-layout/utils/reorderTabInDraft';
 import { resolveBeforeTabId } from '@/page-layout/utils/resolveBeforeTabId';
-import { type DragDropInsertionContextValues } from '@/ui/utilities/drag-and-drop/hooks/useDragDropInsertionIndex';
+import { type DragDropItemDndContextValue } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
@@ -211,7 +211,7 @@ export const usePageLayoutWidgetDragAndDrop = (
     ],
   );
 
-  const contextValues: DragDropInsertionContextValues = {
+  const contextValues: DragDropItemDndContextValue = {
     activeDropTargetIndex,
     activeDroppableId,
   };

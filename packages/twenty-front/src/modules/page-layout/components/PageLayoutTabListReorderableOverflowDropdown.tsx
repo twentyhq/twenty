@@ -138,7 +138,9 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                 <Fragment key={tab.id}>
                   <DragDropItemDropTarget
                     index={visibleTabCount + index}
-                    droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+                    droppableId={
+                      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS
+                    }
                     orientation="horizontal"
                     compact
                   />
