@@ -19,3 +19,20 @@ const resolveAllowedOrigin = (): string => {
 export const ALLOWED_ORIGIN = resolveAllowedOrigin();
 
 export const DISALLOWED_ORIGIN = 'https://attacker.example.com';
+
+// .env.test enables IS_MULTIWORKSPACE_ENABLED, so workspaces are served on
+// subdomains of FRONTEND_URL. Origins of existing workspaces (the apple seed)
+// are allowed via the workspace registry; unknown siblings stay denied.
+const buildFrontSubdomainOrigin = (subdomain: string): string => {
+  const url = new URL(ALLOWED_ORIGIN);
+
+  url.hostname = `${subdomain}.${url.hostname}`;
+
+  return url.origin;
+};
+
+export const SEEDED_WORKSPACE_SUBDOMAIN_ORIGIN =
+  buildFrontSubdomainOrigin('apple');
+
+export const UNKNOWN_WORKSPACE_SUBDOMAIN_ORIGIN =
+  buildFrontSubdomainOrigin('not-a-workspace');

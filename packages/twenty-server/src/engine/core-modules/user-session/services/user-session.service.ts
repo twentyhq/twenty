@@ -30,11 +30,11 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
+import { CredentialedOriginService } from 'src/engine/core-modules/user-session/services/credentialed-origin.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { type CachedUserSession } from 'src/engine/core-modules/user-session/types/cached-user-session.type';
 import { type CreateUserSessionInput } from 'src/engine/core-modules/user-session/types/create-user-session-input.type';
 import { type UserSessionCreationOrigin } from 'src/engine/core-modules/user-session/types/user-session-creation-origin.type';
-import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
@@ -64,6 +64,7 @@ export class UserSessionService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly credentialedOriginService: CredentialedOriginService,
   ) {}
 
   // Best effort by design: while token pairs remain the primary credential, a
@@ -89,7 +90,7 @@ export class UserSessionService {
 
     // Cannot live in the CSRF middleware, which cannot know a request is about
     // to issue a cookie.
-    if (!this.isRequestAllowedToReceiveSessionCookie(request)) {
+    if (!(await this.isRequestAllowedToReceiveSessionCookie(request))) {
       this.logger.warn(
         `Refused to issue a session cookie to origin ${request.headers.origin}`,
       );
@@ -179,17 +180,18 @@ export class UserSessionService {
 
   // No Origin means no browser to plant a cookie in, so scripted sign-ins keep
   // working. Browsers always send one on the unsafe requests these arrive as.
-  private isRequestAllowedToReceiveSessionCookie(request: Request): boolean {
+  private async isRequestAllowedToReceiveSessionCookie(
+    request: Request,
+  ): Promise<boolean> {
     const origin = request.headers.origin;
 
     if (!isNonEmptyString(origin)) {
       return true;
     }
 
-    return isRequestOriginAllowed({
+    return this.credentialedOriginService.isRequestOriginAllowed({
       origin,
       request,
-      twentyConfigService: this.twentyConfigService,
     });
   }
 

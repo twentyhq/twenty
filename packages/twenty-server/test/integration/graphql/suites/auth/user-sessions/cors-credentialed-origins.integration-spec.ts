@@ -3,6 +3,8 @@ import request from 'supertest';
 import {
   ALLOWED_ORIGIN,
   DISALLOWED_ORIGIN,
+  SEEDED_WORKSPACE_SUBDOMAIN_ORIGIN,
+  UNKNOWN_WORKSPACE_SUBDOMAIN_ORIGIN,
 } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
@@ -53,5 +55,26 @@ describe('credentialed CORS origins (integration)', () => {
 
     expect(response.headers['access-control-allow-origin']).toBe('*');
     expect(response.headers.vary).toContain('Origin');
+  });
+
+  it('should reflect the subdomain origin of an existing workspace with credentials', async () => {
+    const response = await request(SERVER_URL)
+      .get('/client-config')
+      .set('Origin', SEEDED_WORKSPACE_SUBDOMAIN_ORIGIN)
+      .expect(200);
+
+    expect(response.headers['access-control-allow-origin']).toBe(
+      SEEDED_WORKSPACE_SUBDOMAIN_ORIGIN,
+    );
+    expect(response.headers['access-control-allow-credentials']).toBe('true');
+  });
+
+  it('should fall back to the public wildcard for a front-domain sibling that is not a workspace', async () => {
+    const response = await request(SERVER_URL)
+      .get('/client-config')
+      .set('Origin', UNKNOWN_WORKSPACE_SUBDOMAIN_ORIGIN)
+      .expect(200);
+
+    expect(response.headers['access-control-allow-origin']).toBe('*');
   });
 });

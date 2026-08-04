@@ -17,6 +17,7 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
+import { CredentialedOriginService } from 'src/engine/core-modules/user-session/services/credentialed-origin.service';
 import { applyCredentialedCors } from 'src/engine/core-modules/user-session/utils/apply-credentialed-cors.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
@@ -65,7 +66,7 @@ const bootstrap = async () => {
 
   app.set('trust proxy', trustProxy);
 
-  applyCredentialedCors(app, twentyConfigService);
+  applyCredentialedCors(app, app.get(CredentialedOriginService));
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 

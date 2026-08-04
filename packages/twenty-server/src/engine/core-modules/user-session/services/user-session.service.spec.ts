@@ -9,9 +9,11 @@ import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.enti
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { CredentialedOriginService } from 'src/engine/core-modules/user-session/services/credentialed-origin.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
@@ -73,6 +75,18 @@ describe('UserSessionService', () => {
       providers: [
         UserSessionService,
         UserSessionCookieService,
+        CredentialedOriginService,
+        {
+          provide: WorkspaceDomainsService,
+          useValue: {
+            resolveWorkspaceAndPublicDomain: jest.fn().mockResolvedValue({
+              workspace: undefined,
+              publicDomain: null,
+              isIsolatedOrigin: false,
+            }),
+            getWorkspaceUrls: jest.fn(),
+          },
+        },
         {
           provide: getRepositoryToken(UserSessionEntity),
           useClass: Repository,

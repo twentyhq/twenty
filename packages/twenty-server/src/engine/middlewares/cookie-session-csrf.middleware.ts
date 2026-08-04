@@ -5,9 +5,8 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { CredentialedOriginService } from 'src/engine/core-modules/user-session/services/credentialed-origin.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
-import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
@@ -18,12 +17,16 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 @Injectable()
 export class CookieSessionCsrfMiddleware implements NestMiddleware {
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly credentialedOriginService: CredentialedOriginService,
     private readonly userSessionCookieService: UserSessionCookieService,
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
-  use(request: Request, response: Response, next: NextFunction): void {
+  async use(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ): Promise<void> {
     if (SAFE_METHODS.has(request.method)) {
       return next();
     }
@@ -51,11 +54,10 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
     // a Bearer token, or a stripped header we cannot tell from a forgery.
     if (
       isNonEmptyString(origin) &&
-      isRequestOriginAllowed({
+      (await this.credentialedOriginService.isRequestOriginAllowed({
         origin,
         request,
-        twentyConfigService: this.twentyConfigService,
-      })
+      }))
     ) {
       return next();
     }
