@@ -58,7 +58,9 @@ export const RecordBoardColumnCardWindowEffect = ({
     const numberOfCards = recordIndexRecordIdsByGroup.length;
 
     if (numberOfCards < RECORD_BOARD_VIRTUALIZATION_MINIMUM_CARD_COUNT) {
-      setRecordBoardColumnCardWindow(null);
+      setRecordBoardColumnCardWindow((currentCardWindow) =>
+        currentCardWindow === null ? currentCardWindow : null,
+      );
       return;
     }
 
