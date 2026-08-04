@@ -1,4 +1,7 @@
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { sendInvitationsOperationFactory } from 'test/integration/graphql/utils/send-invitations-operation-factory.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 
@@ -36,19 +39,14 @@ const removeSeededInvitations = (email: string) =>
 
 describe('expired workspace invitation filtering', () => {
   describe('signUpInWorkspace with a personal invite token', () => {
-    const email = `expired-invite-signup-${Date.now()}@example.com`;
-    const token = `expired-invite-signup-token-${Date.now()}`;
-
-    afterAll(() => removeSeededInvitations(email));
-
-    it('denies access when the personal invitation is expired', async () => {
-      await seedInvitation({
-        email,
-        value: token,
-        expiresAt: new Date(Date.now() - ONE_HOUR_IN_MS),
-      });
-
-      const response = await makeMetadataAPIRequest(
+    const signUpWithInviteToken = ({
+      email,
+      token,
+    }: {
+      email: string;
+      token: string;
+    }) =>
+      makeMetadataAPIRequest(
         signUpInWorkspaceOperationFactory({
           email,
           workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -57,8 +55,75 @@ describe('expired workspace invitation filtering', () => {
         undefined,
       );
 
-      expect(response.body.data?.signUpInWorkspace).toBeFalsy();
-      expect(response.body.errors).toBeDefined();
+    it('denies access when the personal invitation is expired', async () => {
+      const email = `expired-invite-signup-${Date.now()}@example.com`;
+      const token = `expired-invite-signup-token-${Date.now()}`;
+
+      await seedInvitation({
+        email,
+        value: token,
+        expiresAt: new Date(Date.now() - ONE_HOUR_IN_MS),
+      });
+
+      try {
+        const response = await signUpWithInviteToken({ email, token });
+
+        expect(response.body.data?.signUpInWorkspace).toBeFalsy();
+        expectOneNotInternalServerErrorSnapshot({
+          errors: response.body.errors,
+        });
+      } finally {
+        await removeSeededInvitations(email);
+      }
+    });
+
+    // Positive control: the denial above must come from the expiry filter, not
+    // from an unrelated rejection of the sign-up request itself.
+    it('grants access when the personal invitation is still valid', async () => {
+      const email = `valid-invite-signup-${Date.now()}@example.com`;
+      const token = `valid-invite-signup-token-${Date.now()}`;
+
+      await seedInvitation({
+        email,
+        value: token,
+        expiresAt: new Date(Date.now() + ONE_HOUR_IN_MS),
+      });
+
+      let accessToken: string | undefined;
+
+      try {
+        const response = await signUpWithInviteToken({ email, token });
+
+        expect(response.body.errors).toBeUndefined();
+
+        const signUpPayload = response.body.data.signUpInWorkspace;
+
+        expect(signUpPayload.workspace.id).toBe(SEED_APPLE_WORKSPACE_ID);
+        expect(signUpPayload.loginToken.token).toBeDefined();
+
+        await testDataSource.query(
+          'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+          [email],
+        );
+
+        const {
+          data: { getAuthTokensFromLoginToken: authTokensData },
+        } = await getAuthTokensFromLoginToken({
+          loginToken: signUpPayload.loginToken.token,
+          origin:
+            signUpPayload.workspace.workspaceUrls?.subdomainUrl ??
+            'http://localhost:3001',
+          expectToFail: false,
+        });
+
+        accessToken =
+          authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+      } finally {
+        if (accessToken) {
+          await deleteUser({ accessToken, expectToFail: false });
+        }
+        await removeSeededInvitations(email);
+      }
     });
   });
 

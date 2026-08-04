@@ -28,8 +28,14 @@ export const signUpInWorkspaceOperationFactory = ({
         workspaceInviteHash: $workspaceInviteHash
         workspacePersonalInviteToken: $workspacePersonalInviteToken
       ) {
+        loginToken {
+          token
+        }
         workspace {
           id
+          workspaceUrls {
+            subdomainUrl
+          }
         }
       }
     }
