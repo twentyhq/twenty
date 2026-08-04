@@ -94,13 +94,15 @@ const applyFilterEntry = (
 
 const applyLogicalGroup = (
   whereExpression: WhereExpressionBuilder,
-  filters: Record<string, unknown>[],
+  filters: Record<string, unknown>[] | Record<string, unknown>,
   logicalOperator: 'and' | 'or',
   isFirst: boolean,
   context: FilterWalkContext,
 ): void => {
+  const filterList = Array.isArray(filters) ? filters : [filters];
+
   const groupCondition = new Brackets((groupWhereExpression) => {
-    filters.forEach((filter, index) => {
+    filterList.forEach((filter, index) => {
       const elementCondition = new Brackets((elementWhereExpression) => {
         applyFilterEntries(elementWhereExpression, filter, context);
       });
