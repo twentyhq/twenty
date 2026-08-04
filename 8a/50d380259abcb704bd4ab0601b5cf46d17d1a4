@@ -1,0 +1,23 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010000000-add-webhook-subscription-failure-count.ts
+  s_405b3fe1a0ce44::t_abebcd4e80add1 6
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010100000-add-webhook-subscription-failed-at.ts
+  s_405b3fe1a0ce44::t_02f7cca5f6265c 6
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_405b3fe1a0ce44::t_51916c9b795b31 138-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "8a50d380259abcb704bd4ab0601b5cf46d17d1a4",
+  "prompts": {},
+  "sessions": {
+    "s_405b3fe1a0ce44": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b153cf-7ae2-4eeb-8601-d00a49a98d9a",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
