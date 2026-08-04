@@ -15,6 +15,7 @@ const TRANSCRIPTS_QUERY = `
     $fromDate: DateTime
     $toDate: DateTime
     $limit: Int
+    $skip: Int
   ) {
     transcripts(
       keyword: $keyword
@@ -23,6 +24,7 @@ const TRANSCRIPTS_QUERY = `
       fromDate: $fromDate
       toDate: $toDate
       limit: $limit
+      skip: $skip
     ) {
       id
       title
@@ -40,9 +42,9 @@ type TranscriptsResponse = {
   transcripts: FirefliesTranscript[] | null;
 };
 
-export type FirefliesKeywordScope = 'title' | 'sentences' | 'all';
+type FirefliesKeywordScope = 'title' | 'sentences' | 'all';
 
-export type ListFirefliesTranscriptsArgs = {
+type ListFirefliesTranscriptsArgs = {
   apiKey: string;
   keyword?: string;
   keywordScope?: FirefliesKeywordScope;
@@ -50,12 +52,17 @@ export type ListFirefliesTranscriptsArgs = {
   fromDate?: string;
   toDate?: string;
   limit?: number;
+  skip?: number;
 };
 
-const toCallSummary = (transcript: FirefliesTranscript): FirefliesCallSummary => ({
+const toCallSummary = (
+  transcript: FirefliesTranscript,
+): FirefliesCallSummary => ({
   id: transcript.id,
   title: transcript.title,
-  date: isDefined(transcript.date) ? new Date(transcript.date).toISOString() : null,
+  date: isDefined(transcript.date)
+    ? new Date(transcript.date).toISOString()
+    : null,
   durationMinutes: transcript.duration,
   participants: transcript.participants,
   hostEmail: transcript.host_email ?? transcript.organizer_email ?? null,
@@ -71,6 +78,7 @@ export const listFirefliesTranscripts = async ({
   fromDate,
   toDate,
   limit,
+  skip,
 }: ListFirefliesTranscriptsArgs): Promise<
   FirefliesApiResult<FirefliesCallSummary[]>
 > => {
@@ -84,6 +92,7 @@ export const listFirefliesTranscripts = async ({
       fromDate,
       toDate,
       limit,
+      skip,
     },
   });
 

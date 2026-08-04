@@ -1,15 +1,20 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type EntityTarget,
   type ObjectLiteral,
   SelectQueryBuilder,
 } from 'typeorm';
+import { type JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -27,6 +32,34 @@ import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
+import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
+
+type JoinAttributeWithRowLevelPermissionMarker = JoinAttribute & {
+  hasRowLevelPermissionPredicateApplied?: true;
+};
+
+const hasRowLevelPermissionPredicateApplied = (
+  joinAttribute: JoinAttribute,
+): boolean =>
+  (joinAttribute as JoinAttributeWithRowLevelPermissionMarker)
+    .hasRowLevelPermissionPredicateApplied === true;
+
+const markRowLevelPermissionPredicateApplied = (
+  joinAttribute: JoinAttribute,
+): void => {
+  (
+    joinAttribute as JoinAttributeWithRowLevelPermissionMarker
+  ).hasRowLevelPermissionPredicateApplied = true;
+};
+
+const andWithExistingJoinCondition = (
+  existingJoinCondition: string | undefined,
+  rowLevelPermissionCondition: string,
+): string =>
+  isNonEmptyString(existingJoinCondition)
+    ? `(${existingJoinCondition}) AND (${rowLevelPermissionCondition})`
+    : rowLevelPermissionCondition;
 
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
@@ -340,7 +373,7 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private validatePermissions(): void {
-    this.applyRowLevelPermissionPredicates();
+    this.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
@@ -349,6 +382,11 @@ export class WorkspaceSelectQueryBuilder<
       objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
     });
+  }
+
+  applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations(): void {
+    this.applyRowLevelPermissionPredicates();
+    this.applyRowLevelPermissionPredicatesToJoinedRelations();
   }
 
   private getMainAliasTarget(): EntityTarget<T> {
@@ -390,6 +428,87 @@ export class WorkspaceSelectQueryBuilder<
       internalContext: this.internalContext,
       authContext: this.authContext,
       featureFlagMap: this.featureFlagMap,
+    });
+  }
+
+  private applyRowLevelPermissionPredicatesToJoinedRelations(): void {
+    if (this.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    for (const joinAttribute of this.expressionMap.joinAttributes) {
+      if (hasRowLevelPermissionPredicateApplied(joinAttribute)) {
+        continue;
+      }
+
+      const joinedObjectMetadata =
+        this.getJoinedObjectMetadataOrUndefined(joinAttribute);
+
+      if (!isDefined(joinedObjectMetadata)) {
+        continue;
+      }
+
+      const recordFilter = resolveRowLevelPermissionRecordFilter({
+        internalContext: this.internalContext,
+        authContext: this.authContext,
+        objectMetadata: joinedObjectMetadata,
+      });
+
+      if (!isDefined(recordFilter)) {
+        markRowLevelPermissionPredicateApplied(joinAttribute);
+        continue;
+      }
+
+      const renderedCondition = renderRowLevelPermissionFilterToSql({
+        recordFilter,
+        tableAlias: joinAttribute.alias.name,
+        objectMetadata: joinedObjectMetadata,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(renderedCondition)) {
+        markRowLevelPermissionPredicateApplied(joinAttribute);
+        continue;
+      }
+
+      joinAttribute.condition = andWithExistingJoinCondition(
+        joinAttribute.condition,
+        renderedCondition.sql,
+      );
+
+      this.setParameters(renderedCondition.parameters);
+      markRowLevelPermissionPredicateApplied(joinAttribute);
+    }
+  }
+
+  private getJoinedObjectMetadataOrUndefined(
+    joinAttribute: JoinAttribute,
+  ): FlatObjectMetadata | undefined {
+    const joinedEntityMetadata = joinAttribute.metadata;
+    const isJoinOnSubQueryOrCustomTable =
+      isDefined(joinAttribute.alias?.subQuery) ||
+      !isDefined(joinedEntityMetadata);
+
+    if (isJoinOnSubQueryOrCustomTable) {
+      return undefined;
+    }
+
+    const joinedEntityTarget = joinedEntityMetadata.target;
+
+    if (typeof joinedEntityTarget !== 'string') {
+      return undefined;
+    }
+
+    const joinedObjectMetadataId =
+      this.internalContext.objectIdByNameSingular[joinedEntityTarget];
+
+    if (!isDefined(joinedObjectMetadataId)) {
+      return undefined;
+    }
+
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: joinedObjectMetadataId,
+      flatEntityMaps: this.internalContext.flatObjectMetadataMaps,
     });
   }
 }
