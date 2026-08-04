@@ -1,5 +1,5 @@
-import gql from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { sendInvitationsOperationFactory } from 'test/integration/graphql/utils/send-invitations-operation-factory.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -64,16 +64,9 @@ describe('expired workspace invitation filtering', () => {
 
   describe('sendInvitations re-invite behaviour', () => {
     const sendInvitations = (email: string) =>
-      makeMetadataAPIRequest({
-        query: gql`
-          mutation SendInvitations($emails: [String!]!) {
-            sendInvitations(emails: $emails) {
-              success
-            }
-          }
-        `,
-        variables: { emails: [email] },
-      });
+      makeMetadataAPIRequest(
+        sendInvitationsOperationFactory({ emails: [email] }),
+      );
 
     it('re-invites an email whose only existing invitation is expired', async () => {
       const email = `expired-invite-resend-${Date.now()}@example.com`;
