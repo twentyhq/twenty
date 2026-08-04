@@ -14,7 +14,7 @@ export class FieldSystemViewFieldsOnDeleteSideEffectHandlerService extends Metad
     metadataName: 'fieldMetadata',
     name: 'fieldSystemViewFieldsOnDelete',
     description:
-      'When a field is deleted, cascade-delete every engine-owned view field displaying it, wherever it lives: the INDEX view fields emitted by fieldIndexViewFieldOnCreate, and the record-page ones. Counterpart of fieldIndexViewFieldOnCreate: the engine authored those view fields, so it owns their deletion. Manifest deletion inference excludes isSystemSideEffect entities, so without this cascade they would only ever disappear through the viewField -> fieldMetadata foreign key, behind the engine back. Caller-authored view fields are NOT touched: they are deleted through normal deletion inference / the field delete transpiler.',
+      'When a field is deleted, cascade-delete every engine-owned view field displaying it, wherever it lives: the INDEX view fields emitted by fieldSystemViewFieldsOnCreate, and the record-page ones. Counterpart of fieldSystemViewFieldsOnCreate: the engine authored those view fields, so it owns their deletion. Manifest deletion inference excludes isSystemSideEffect entities, so without this cascade they would only ever disappear through the viewField -> fieldMetadata foreign key, behind the engine back. Caller-authored view fields are NOT touched: they are deleted through normal deletion inference / the field delete transpiler.',
   },
 ) {
   buildSideEffects({

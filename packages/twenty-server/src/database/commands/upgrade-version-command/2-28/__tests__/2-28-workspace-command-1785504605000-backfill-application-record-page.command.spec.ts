@@ -1,0 +1,294 @@
+import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
+import { FieldMetadataType, ViewKey, ViewType } from 'twenty-shared/types';
+
+import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { BackfillApplicationRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785504605000-backfill-application-record-page.command';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
+const STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000ad';
+const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000aa';
+const EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000ae';
+const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
+const LABEL_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000cc';
+const OTHER_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000cd';
+
+const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier:
+    EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.FIELDS_WIDGET,
+});
+
+// An external application object with a label identifier and one other field.
+const OBJECT_METADATA = {
+  universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    LABEL_FIELD_UNIVERSAL_IDENTIFIER,
+  fieldUniversalIdentifiers: [
+    LABEL_FIELD_UNIVERSAL_IDENTIFIER,
+    OTHER_FIELD_UNIVERSAL_IDENTIFIER,
+  ],
+  labelSingular: 'Listing',
+  isRemote: false,
+};
+
+const LABEL_FIELD_METADATA = {
+  universalIdentifier: LABEL_FIELD_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+  name: 'name',
+  type: FieldMetadataType.TEXT,
+};
+
+const OTHER_FIELD_METADATA = {
+  universalIdentifier: OTHER_FIELD_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+  name: 'price',
+  type: FieldMetadataType.NUMBER,
+};
+
+const buildByUniversalIdentifierMap = <
+  T extends { universalIdentifier: string },
+>(
+  flatEntities: T[],
+) => ({
+  byUniversalIdentifier: Object.fromEntries(
+    flatEntities.map((flatEntity) => [
+      flatEntity.universalIdentifier,
+      flatEntity,
+    ]),
+  ),
+});
+
+describe('BackfillApplicationRecordPageCommand', () => {
+  let command: BackfillApplicationRecordPageCommand;
+  let getOrRecomputeMock: jest.Mock;
+  let validateBuildAndRunLegacyWorkspaceMigrationMock: jest.Mock;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    getOrRecomputeMock = jest.fn();
+    validateBuildAndRunLegacyWorkspaceMigrationMock = jest
+      .fn()
+      .mockResolvedValue({ status: 'success' });
+
+    command = new BackfillApplicationRecordPageCommand(
+      {} as WorkspaceIteratorService,
+      {
+        getOrRecompute: getOrRecomputeMock,
+      } as unknown as WorkspaceCacheService,
+      {
+        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+          .fn()
+          .mockResolvedValue({
+            twentyStandardFlatApplication: {
+              universalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
+            workspaceCustomFlatApplication: {
+              universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
+          }),
+      } as unknown as ApplicationService,
+      {
+        validateBuildAndRunLegacyWorkspaceMigration:
+          validateBuildAndRunLegacyWorkspaceMigrationMock,
+      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
+    );
+  });
+
+  const mockWorkspaceCache = ({
+    objectMetadatas = [OBJECT_METADATA],
+    views = [] as {
+      universalIdentifier: string;
+      type: ViewType;
+      deletedAt?: string | null;
+      objectMetadataUniversalIdentifier: string;
+    }[],
+    viewFields = [] as { universalIdentifier: string }[],
+    pageLayouts = [] as {
+      universalIdentifier: string;
+      type: PageLayoutType;
+      deletedAt?: string | null;
+      objectMetadataUniversalIdentifier: string | null;
+    }[],
+  } = {}) => {
+    getOrRecomputeMock.mockResolvedValue({
+      flatViewMaps: buildByUniversalIdentifierMap(
+        views.map((view) => ({ deletedAt: null, ...view })),
+      ),
+      flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
+      flatObjectMetadataMaps: buildByUniversalIdentifierMap(objectMetadatas),
+      flatFieldMetadataMaps: buildByUniversalIdentifierMap([
+        LABEL_FIELD_METADATA,
+        OTHER_FIELD_METADATA,
+      ]),
+      flatPageLayoutMaps: buildByUniversalIdentifierMap(
+        pageLayouts.map((pageLayout) => ({ deletedAt: null, ...pageLayout })),
+      ),
+    });
+  };
+
+  const runOnWorkspace = (dryRun = false) =>
+    command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      options: { dryRun },
+      index: 0,
+      total: 1,
+    });
+
+  it('backfills the full record-page stack for an application object without one', async () => {
+    mockWorkspaceCache();
+
+    await runOnWorkspace();
+
+    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).toHaveBeenCalledTimes(
+      2,
+    );
+
+    const [viewRun, restRun] =
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
+        ([args]) => args,
+      );
+
+    expect(viewRun.applicationUniversalIdentifier).toBe(
+      EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+    const [createdView] =
+      viewRun.allFlatEntityOperationByMetadataName.view.flatEntityToCreate;
+
+    expect(createdView).toMatchObject({
+      universalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+      key: ViewKey.FIELDS_WIDGET,
+      type: ViewType.FIELDS_WIDGET,
+      isSystemSideEffect: true,
+    });
+
+    const {
+      viewField: viewFieldOperations,
+      pageLayout: pageLayoutOperations,
+      pageLayoutTab: pageLayoutTabOperations,
+      pageLayoutWidget: pageLayoutWidgetOperations,
+    } = restRun.allFlatEntityOperationByMetadataName;
+
+    // The label identifier is excluded from the record page.
+    expect(viewFieldOperations.flatEntityToCreate).toHaveLength(1);
+    expect(viewFieldOperations.flatEntityToCreate[0]).toMatchObject({
+      fieldMetadataUniversalIdentifier: OTHER_FIELD_UNIVERSAL_IDENTIFIER,
+      viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+      isSystemSideEffect: true,
+    });
+    expect(pageLayoutOperations.flatEntityToCreate).toHaveLength(1);
+    expect(pageLayoutTabOperations.flatEntityToCreate).toHaveLength(5);
+    expect(pageLayoutWidgetOperations.flatEntityToCreate).toHaveLength(5);
+  });
+
+  it('skips objects carrying a caller-authored FIELDS_WIDGET view', async () => {
+    mockWorkspaceCache({
+      views: [
+        {
+          universalIdentifier: 'app-authored-view-uid',
+          type: ViewType.FIELDS_WIDGET,
+          objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('skips objects carrying a caller-authored RECORD_PAGE layout', async () => {
+    mockWorkspaceCache({
+      pageLayouts: [
+        {
+          universalIdentifier: 'app-authored-layout-uid',
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('skips twenty-standard and workspace-custom objects (reconcile command territory)', async () => {
+    mockWorkspaceCache({
+      objectMetadatas: [
+        {
+          ...OBJECT_METADATA,
+          applicationUniversalIdentifier:
+            CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('still backfills the missing view fields and layout of an already-committed view (retry safety)', async () => {
+    // A view under the DERIVED identifier is a partial artifact of a previous
+    // (partially failed) run, not a caller-authored stack.
+    mockWorkspaceCache({
+      views: [
+        {
+          universalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          type: ViewType.FIELDS_WIDGET,
+          objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).toHaveBeenCalledTimes(
+      1,
+    );
+
+    const [restRun] =
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls.map(
+        ([args]) => args,
+      );
+
+    expect(
+      restRun.allFlatEntityOperationByMetadataName.view,
+    ).toBeUndefined();
+    expect(
+      restRun.allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
+    ).toHaveLength(1);
+    expect(
+      restRun.allFlatEntityOperationByMetadataName.pageLayout
+        .flatEntityToCreate,
+    ).toHaveLength(1);
+  });
+
+  it('performs no write in dry-run mode', async () => {
+    mockWorkspaceCache();
+
+    await runOnWorkspace(true);
+
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+});

@@ -33,7 +33,7 @@ export const computeStandardCalendarChannelEventAssociationViews = (
           viewName: 'calendarChannelEventAssociationRecordPageFields',
           name: 'Calendar Channel Event Association Record Page Fields',
           type: ViewType.FIELDS_WIDGET,
-          key: null,
+          key: ViewKey.FIELDS_WIDGET,
           position: 0,
           icon: 'IconList',
         },

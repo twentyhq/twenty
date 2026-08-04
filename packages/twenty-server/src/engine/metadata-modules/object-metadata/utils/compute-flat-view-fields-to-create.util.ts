@@ -1,4 +1,4 @@
-import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-shared/application';
 
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { isFlatFieldMetadataDisplayableInDefaultView } from 'src/engine/metadata-modules/object-metadata/utils/is-flat-field-metadata-displayable-in-default-view.util';
@@ -42,8 +42,10 @@ export const computeFlatViewFieldsToCreate = ({
     createdAt,
     updatedAt: createdAt,
     deletedAt: null,
-    universalIdentifier: getViewFieldUniversalIdentifier({
-      applicationUniversalIdentifier,
+    // Keyed on the displayed field's application, per the engine convention.
+    universalIdentifier: getSystemViewFieldUniversalIdentifier({
+      fieldMetadataApplicationUniversalIdentifier:
+        field.applicationUniversalIdentifier,
       viewUniversalIdentifier,
       fieldMetadataUniversalIdentifier: field.universalIdentifier,
     }),

@@ -17,7 +17,7 @@ const makeFieldMetadata = (
   return {
     universalIdentifier,
     objectMetadataUniversalIdentifier: 'object-uid',
-    applicationUniversalIdentifier: 'app-uid',
+    applicationUniversalIdentifier: 'a1a2a3a4-a5a6-4000-8000-000000000001',
     name: overrides.name,
     label: overrides.label ?? overrides.name,
     type: overrides.type,

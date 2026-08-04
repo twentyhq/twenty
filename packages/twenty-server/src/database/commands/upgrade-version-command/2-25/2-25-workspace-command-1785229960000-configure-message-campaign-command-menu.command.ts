@@ -6,6 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import {
+  remapRecordPageUniversalIdentifiersToPre228,
+  toPre228RecordPageUniversalIdentifier,
+} from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -20,8 +24,10 @@ const SEND_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
 ];
 
 const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
-    .universalIdentifier;
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
+      .universalIdentifier,
+  );
 
 const REALIGNED_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
   STANDARD_COMMAND_MENU_ITEMS.navigateToNextRecord.universalIdentifier,
@@ -78,12 +84,19 @@ export class ConfigureMessageCampaignCommandMenuCommand extends ProvisionedWorks
       return;
     }
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+    const { allFlatEntityMaps: derivedStandardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
+
+    // This command predates the 2-28 record-page reconcile: workspace rows
+    // still hold the pre-derivation universal identifiers.
+    const standardAllFlatEntityMaps =
+      remapRecordPageUniversalIdentifiersToPre228(
+        derivedStandardAllFlatEntityMaps,
+      );
 
     const itemsToCreate = SEND_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>

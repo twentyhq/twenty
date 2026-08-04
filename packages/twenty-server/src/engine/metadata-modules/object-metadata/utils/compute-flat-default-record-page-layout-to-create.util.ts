@@ -1,9 +1,9 @@
-import { v4 } from 'uuid';
+import {
+  getPageLayoutTabUniversalIdentifier,
+  getPageLayoutWidgetUniversalIdentifier,
+  getRecordPageLayoutUniversalIdentifier,
+} from 'twenty-shared/application';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -11,57 +11,63 @@ import {
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
+import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
+
+const DEFAULT_RECORD_PAGE_TAB_DEFINITIONS = [
+  { key: 'home', widgetKey: 'fields' },
+  { key: 'timeline', widgetKey: 'timeline' },
+  { key: 'tasks', widgetKey: 'tasks' },
+  { key: 'notes', widgetKey: 'notes' },
+  { key: 'files', widgetKey: 'files' },
+] as const;
 
 export const computeFlatDefaultRecordPageLayoutToCreate = ({
   objectMetadata,
-  flatApplication,
-  recordPageFieldsView,
-  workspaceId,
+  applicationUniversalIdentifier,
+  recordPageFieldsViewUniversalIdentifier,
 }: {
-  flatApplication: FlatApplication;
-  objectMetadata: UniversalFlatObjectMetadata & { id: string };
-  recordPageFieldsView: UniversalFlatView & { id: string };
-  workspaceId: string;
+  applicationUniversalIdentifier: string;
+  objectMetadata: Pick<
+    UniversalFlatObjectMetadata,
+    'universalIdentifier' | 'labelSingular'
+  >;
+  recordPageFieldsViewUniversalIdentifier: string;
 }): {
-  pageLayouts: FlatPageLayout[];
-  pageLayoutTabs: FlatPageLayoutTab[];
-  pageLayoutWidgets: FlatPageLayoutWidget[];
+  pageLayouts: UniversalFlatPageLayout[];
+  pageLayoutTabs: UniversalFlatPageLayoutTab[];
+  pageLayoutWidgets: UniversalFlatPageLayoutWidget[];
 } => {
   const now = new Date().toISOString();
-  const pageLayoutId = v4();
-  const pageLayoutUniversalIdentifier = v4();
+  const pageLayoutUniversalIdentifier = getRecordPageLayoutUniversalIdentifier({
+    applicationUniversalIdentifier,
+    objectUniversalIdentifier: objectMetadata.universalIdentifier,
+  });
 
-  const tabDefinitions = [
-    { key: 'home' as const, widgetKey: 'fields' as const },
-    { key: 'timeline' as const, widgetKey: 'timeline' as const },
-    { key: 'tasks' as const, widgetKey: 'tasks' as const },
-    { key: 'notes' as const, widgetKey: 'notes' as const },
-    { key: 'files' as const, widgetKey: 'files' as const },
-  ];
+  const pageLayoutTabs: UniversalFlatPageLayoutTab[] = [];
+  const pageLayoutWidgets: UniversalFlatPageLayoutWidget[] = [];
 
-  const pageLayoutTabs: FlatPageLayoutTab[] = [];
-  const pageLayoutWidgets: FlatPageLayoutWidget[] = [];
-
-  for (const { key, widgetKey } of tabDefinitions) {
+  for (const { key, widgetKey } of DEFAULT_RECORD_PAGE_TAB_DEFINITIONS) {
     const tabProps = TAB_PROPS[key];
     const widgetProps = WIDGET_PROPS[widgetKey];
-    const tabId = v4();
-    const tabUniversalIdentifier = v4();
-    const widgetId = v4();
-    const widgetUniversalIdentifier = v4();
+    const tabUniversalIdentifier = getPageLayoutTabUniversalIdentifier({
+      applicationUniversalIdentifier,
+      pageLayoutUniversalIdentifier,
+      title: tabProps.title,
+    });
+    const widgetUniversalIdentifier = getPageLayoutWidgetUniversalIdentifier({
+      applicationUniversalIdentifier,
+      pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
+      title: widgetProps.title,
+    });
 
     pageLayoutTabs.push({
-      id: tabId,
       universalIdentifier: tabUniversalIdentifier,
-      applicationId: flatApplication.id,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      workspaceId,
+      applicationUniversalIdentifier,
       title: tabProps.title,
       position: tabProps.position,
-      pageLayoutId,
       pageLayoutUniversalIdentifier,
-      widgetIds: [widgetId],
       widgetUniversalIdentifiers: [widgetUniversalIdentifier],
       isActive: true,
       isSystemSideEffect: true,
@@ -75,23 +81,10 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
 
     const isFieldsWidget = widgetKey === 'fields';
 
-    const configuration = isFieldsWidget
-      ? {
-          configurationType: WidgetConfigurationType.FIELDS,
-          viewId: recordPageFieldsView.id,
-          newFieldDefaultVisibility: true,
-        }
-      : {
-          configurationType:
-            WidgetConfigurationType[
-              widgetKey.toUpperCase() as keyof typeof WidgetConfigurationType
-            ],
-        };
-
     const universalConfiguration = isFieldsWidget
       ? {
           configurationType: WidgetConfigurationType.FIELDS,
-          viewUniversalIdentifier: recordPageFieldsView.universalIdentifier,
+          viewUniversalIdentifier: recordPageFieldsViewUniversalIdentifier,
           newFieldDefaultVisibility: true,
         }
       : {
@@ -102,22 +95,15 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
         };
 
     pageLayoutWidgets.push({
-      id: widgetId,
       universalIdentifier: widgetUniversalIdentifier,
-      applicationId: flatApplication.id,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      workspaceId,
-      pageLayoutTabId: tabId,
+      applicationUniversalIdentifier,
       pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
       title: widgetProps.title,
       type: widgetProps.type,
       gridPosition: widgetProps.gridPosition,
       position: widgetProps.position,
       // @ts-expect-error - configurationType is validated but TS can't match to discriminated union
-      configuration,
-      // @ts-expect-error - configurationType is validated but TS can't match to discriminated union
       universalConfiguration,
-      objectMetadataId: objectMetadata.id,
       objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
       isActive: true,
       isSystemSideEffect: true,
@@ -125,21 +111,16 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       updatedAt: now,
       deletedAt: null,
       conditionalDisplay: null,
-      overrides: null,
+      universalOverrides: null,
     });
   }
 
-  const pageLayout: FlatPageLayout = {
-    id: pageLayoutId,
+  const pageLayout: UniversalFlatPageLayout = {
     universalIdentifier: pageLayoutUniversalIdentifier,
-    applicationId: flatApplication.id,
-    applicationUniversalIdentifier: flatApplication.universalIdentifier,
-    workspaceId,
+    applicationUniversalIdentifier,
     name: `Default ${objectMetadata.labelSingular} Layout`,
     type: PageLayoutType.RECORD_PAGE,
-    objectMetadataId: objectMetadata.id,
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
-    tabIds: pageLayoutTabs.map((tab) => tab.id),
     tabUniversalIdentifiers: pageLayoutTabs.map(
       (tab) => tab.universalIdentifier,
     ),
@@ -147,7 +128,6 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
-    defaultTabToFocusOnMobileAndSidePanelId: null,
     defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: null,
   };
 

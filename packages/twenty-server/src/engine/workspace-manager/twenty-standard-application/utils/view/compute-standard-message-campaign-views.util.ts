@@ -29,7 +29,7 @@ export const computeStandardMessageCampaignViews = (
         viewName: 'messageCampaignRecordPageFields',
         name: 'Message Campaign Record Page Fields',
         type: ViewType.FIELDS_WIDGET,
-        key: null,
+        key: ViewKey.FIELDS_WIDGET,
         position: 0,
         icon: 'IconList',
       },
