@@ -55,15 +55,20 @@ describe('buildSlackAssistantAnswerBlocks', () => {
   it('should split on a line break so formatting is not cut mid-line', () => {
     const firstLine = 'a'.repeat(SLACK_MARKDOWN_BLOCK_MAX_LENGTH - 10);
     const secondLine = 'b'.repeat(100);
+    const responseText = `${firstLine}\n${secondLine}`;
 
     const markdownBlocks = buildSlackAssistantAnswerBlocks({
-      responseText: `${firstLine}\n${secondLine}`,
+      responseText,
       durationMilliseconds: 1000,
     }).filter((block) => block.type === 'markdown');
 
+    // The break stays with the preceding block, so nothing is consumed by the split.
     expect(markdownBlocks.map((block) => block.text)).toEqual([
-      firstLine,
+      `${firstLine}\n`,
       secondLine,
     ]);
+    expect(markdownBlocks.map((block) => block.text).join('')).toBe(
+      responseText,
+    );
   });
 });

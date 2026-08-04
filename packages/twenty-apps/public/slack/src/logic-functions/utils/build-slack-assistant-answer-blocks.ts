@@ -12,11 +12,13 @@ const splitIntoMarkdownBlockTexts = (text: string): string[] => {
   while (remainingText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH) {
     const window = remainingText.slice(0, SLACK_MARKDOWN_BLOCK_MAX_LENGTH);
     const lastLineBreakIndex = window.lastIndexOf('\n');
+    // Splitting after the break keeps it in the preceding block, so the blocks
+    // still concatenate back to exactly what the agent wrote.
     const splitIndex =
-      lastLineBreakIndex > 0 ? lastLineBreakIndex : window.length;
+      lastLineBreakIndex > 0 ? lastLineBreakIndex + 1 : window.length;
 
     blockTexts.push(remainingText.slice(0, splitIndex));
-    remainingText = remainingText.slice(splitIndex).replace(/^\n/, '');
+    remainingText = remainingText.slice(splitIndex);
   }
 
   if (remainingText.length > 0) {
