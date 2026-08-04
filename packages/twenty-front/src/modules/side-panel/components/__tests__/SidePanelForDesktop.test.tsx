@@ -13,10 +13,12 @@ import {
 const shouldShrinkFromFullWidthMock = jest.fn();
 const sidePanelCloseAnimationCompleteCleanupMock = jest.fn();
 
-jest.mock('@/side-panel/hooks/useAskAiHandoffFromWorkspaceSetup', () => ({
-  useAskAiHandoffFromWorkspaceSetup: () => ({
-    shouldShrinkFromFullWidth: shouldShrinkFromFullWidthMock(),
-  }),
+jest.mock('@/side-panel/hooks/useShouldShrinkSidePanelFromFullWidth', () => ({
+  useShouldShrinkSidePanelFromFullWidth: () => shouldShrinkFromFullWidthMock(),
+}));
+
+jest.mock('@/side-panel/components/SidePanelAskAiHandoffEffect', () => ({
+  SidePanelAskAiHandoffEffect: () => null,
 }));
 
 jest.mock('@/side-panel/components/SidePanelRouter', () => ({
@@ -56,8 +58,6 @@ describe('SidePanelForDesktop', () => {
     shouldShrinkFromFullWidthMock.mockReturnValue(false);
   });
 
-  // The handoff entrance is a CSS animation, which never fires transitionend,
-  // so content persistence must not depend on that event.
   it('should keep the content mounted while closing after a handoff entrance', () => {
     shouldShrinkFromFullWidthMock.mockReturnValue(true);
     jotaiStore.set(isSidePanelOpenedState.atom, true);

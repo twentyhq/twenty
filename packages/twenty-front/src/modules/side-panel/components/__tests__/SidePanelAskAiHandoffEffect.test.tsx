@@ -2,9 +2,12 @@ import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 
+import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { WorkspaceSetupChatSidePanelHandoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelHandoffEffect';
-import { useAskAiHandoffFromWorkspaceSetup } from '@/side-panel/hooks/useAskAiHandoffFromWorkspaceSetup';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
+import { useShouldShrinkSidePanelFromFullWidth } from '@/side-panel/hooks/useShouldShrinkSidePanelFromFullWidth';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -31,16 +34,16 @@ const WorkspaceSetupRoute = () => {
 };
 
 const SidePanelRoute = () => {
-  const { shouldShrinkFromFullWidth } = useAskAiHandoffFromWorkspaceSetup();
+  const shouldShrinkFromFullWidth = useShouldShrinkSidePanelFromFullWidth();
 
   return (
-    <div data-testid="side-panel">{String(shouldShrinkFromFullWidth)}</div>
+    <>
+      <SidePanelAskAiHandoffEffect />
+      <div data-testid="side-panel">{String(shouldShrinkFromFullWidth)}</div>
+    </>
   );
 };
 
-// Mirrors the real router: the workspace setup page is a sibling of the layout
-// owning the side panel, so leaving it unmounts one subtree and mounts the
-// other in a single commit.
 const RouterUnderTest = () => (
   <JotaiProvider store={jotaiStore}>
     <MemoryRouter initialEntries={['/workspace-setup']}>
@@ -52,7 +55,7 @@ const RouterUnderTest = () => (
   </JotaiProvider>
 );
 
-describe('useAskAiHandoffFromWorkspaceSetup on route change', () => {
+describe('SidePanelAskAiHandoffEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     sessionStorage.clear();
@@ -60,7 +63,10 @@ describe('useAskAiHandoffFromWorkspaceSetup on route change', () => {
     navigateAwayFromWorkspaceSetup = undefined;
   });
 
-  it('should still read the handoff marker when the workspace setup page unmounts in the same commit', () => {
+  it('should consume the marker and open the ask ai page when the workspace setup page unmounts in the same commit', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(aiChatExpandedReturnLocationState.atom, '/objects/people');
+
     const { getByTestId } = render(<RouterUnderTest />);
 
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
@@ -78,5 +84,19 @@ describe('useAskAiHandoffFromWorkspaceSetup on route change', () => {
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       false,
     );
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      false,
+    );
+    expect(jotaiStore.get(aiChatExpandedReturnLocationState.atom)).toBeNull();
+  });
+
+  it('should do nothing when the marker is not set', () => {
+    render(
+      <JotaiProvider store={jotaiStore}>
+        <SidePanelAskAiHandoffEffect />
+      </JotaiProvider>,
+    );
+
+    expect(openAskAiPageMock).not.toHaveBeenCalled();
   });
 });

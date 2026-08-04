@@ -1,9 +1,10 @@
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
+import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
 import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
-import { useAskAiHandoffFromWorkspaceSetup } from '@/side-panel/hooks/useAskAiHandoffFromWorkspaceSetup';
+import { useShouldShrinkSidePanelFromFullWidth } from '@/side-panel/hooks/useShouldShrinkSidePanelFromFullWidth';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
@@ -77,7 +78,7 @@ export const SidePanelForDesktop = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
-  const { shouldShrinkFromFullWidth } = useAskAiHandoffFromWorkspaceSetup();
+  const shouldShrinkFromFullWidth = useShouldShrinkSidePanelFromFullWidth();
 
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
@@ -95,9 +96,6 @@ export const SidePanelForDesktop = () => {
 
   const shouldShowContent = isSidePanelOpened || shouldRenderContent;
 
-  // The panel finishes opening through the width transition or the handoff
-  // entrance animation, so content persistence keys off the open state itself
-  // rather than one of those two completion events.
   if (isSidePanelOpened && !shouldRenderContent) {
     setShouldRenderContent(true);
   }
@@ -107,7 +105,6 @@ export const SidePanelForDesktop = () => {
       return;
     }
 
-    // Close animation completed
     setShouldRenderContent(false);
     if (isSidePanelClosing) {
       sidePanelCloseAnimationCompleteCleanup();
@@ -120,9 +117,6 @@ export const SidePanelForDesktop = () => {
     }
 
     setIsShrinkingFromFullWidth(false);
-
-    // The entrance animation owns the width while it runs, so a close started
-    // during it never produces a transition to complete the close lifecycle.
     handleTransitionEnd();
   };
 
@@ -156,6 +150,7 @@ export const SidePanelForDesktop = () => {
   return (
     <>
       <SidePanelWidthEffect />
+      <SidePanelAskAiHandoffEffect />
       <ResizablePanelGap
         side="left"
         constraints={SIDE_PANEL_CONSTRAINTS}
