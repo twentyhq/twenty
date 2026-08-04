@@ -475,37 +475,40 @@ export class WorkspaceCacheService implements OnModuleInit {
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
       const computeStartedAt = performance.now();
-      const data = await Sentry.startSpan(
-        {
-          name: 'compute workspace metadata cache entry from provider',
-          op: 'cache.recompute',
-          onlyIfParent: true,
-          attributes: {
-            'cache.key_name': keyName,
-            'cache.recompute.strategy': hashResolution.strategy,
-            'cache.local_data_only': isLocalDataOnly,
+
+      try {
+        const data = await Sentry.startSpan(
+          {
+            name: 'compute workspace metadata cache entry from provider',
+            op: 'cache.recompute',
+            onlyIfParent: true,
+            attributes: {
+              'cache.key_name': keyName,
+              'cache.recompute.strategy': hashResolution.strategy,
+              'cache.local_data_only': isLocalDataOnly,
+            },
           },
-        },
-        () => provider.computeForCache(workspaceId),
-      );
+          () => provider.computeForCache(workspaceId),
+        );
 
-      this.recomputeDurationHistogram.record(
-        (performance.now() - computeStartedAt) / 1000,
-        { cache_key: keyName },
-      );
+        if (hashResolution.strategy === 'mint') {
+          return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };
+        }
 
-      if (hashResolution.strategy === 'mint') {
-        return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };
+        const adoptableHash = hashResolution.adoptableHashes[keyName];
+
+        return {
+          keyName,
+          data,
+          hash: adoptableHash ?? crypto.randomUUID(),
+          isAdopted: isDefined(adoptableHash),
+        };
+      } finally {
+        this.recomputeDurationHistogram.record(
+          (performance.now() - computeStartedAt) / 1000,
+          { cache_key: keyName },
+        );
       }
-
-      const adoptableHash = hashResolution.adoptableHashes[keyName];
-
-      return {
-        keyName,
-        data,
-        hash: adoptableHash ?? crypto.randomUUID(),
-        isAdopted: isDefined(adoptableHash),
-      };
     });
 
     const computed = await Promise.all(computePromises);
@@ -538,11 +541,13 @@ export class WorkspaceCacheService implements OnModuleInit {
     if (redisEntries.length > 0) {
       const redisWriteStartedAt = performance.now();
 
-      await this.cacheStorage.mset(redisEntries);
-
-      this.redisWriteDurationHistogram.record(
-        (performance.now() - redisWriteStartedAt) / 1000,
-      );
+      try {
+        await this.cacheStorage.mset(redisEntries);
+      } finally {
+        this.redisWriteDurationHistogram.record(
+          (performance.now() - redisWriteStartedAt) / 1000,
+        );
+      }
     }
 
     if (bootstrapHashEntries.length > 0) {
