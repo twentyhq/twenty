@@ -211,13 +211,18 @@ export class CalendarWebhookSubscriptionService {
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
-        error,
-        'RENEW',
-        WebhookSubscriptionChannelType.CALENDAR,
-        calendarChannel,
-        calendarChannel.workspaceId,
-      );
+      const recoveryAction =
+        await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
+          error,
+          'RENEW',
+          WebhookSubscriptionChannelType.CALENDAR,
+          calendarChannel,
+          calendarChannel.workspaceId,
+        );
+
+      if (recoveryAction === 'RECREATE') {
+        await this.createSubscription(calendarChannelId, workspaceId);
+      }
     }
   }
 
