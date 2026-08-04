@@ -30,7 +30,7 @@ type ApplicationInfo = {
 };
 
 type MarketplaceAppInfo = {
-  logo?: string | null;
+  logoUrl?: string | null;
 };
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
@@ -95,10 +95,10 @@ export const SettingsToolIcon = ({
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
+  if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {
     return (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logo)}
+        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
         placeholder={application.name}
         placeholderColorSeed={application.name}
         type="squared"

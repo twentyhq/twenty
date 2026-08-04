@@ -1,4 +1,4 @@
 export type SettingsAgentToolMarketplaceApp = {
   id: string;
-  logo?: string | null;
+  logoUrl?: string | null;
 };
