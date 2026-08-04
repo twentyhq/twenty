@@ -282,7 +282,14 @@ export const useUpdateJunctionRelationFromCell = ({
                 ? junctionRecordsWithoutOptimistic
                 : [
                     ...junctionRecordsWithoutOptimistic,
-                    { ...junctionRecordForStore, ...persistedJunctionRecord },
+                    {
+                      ...junctionRecordForStore,
+                      ...persistedJunctionRecord,
+                      [targetFieldName]:
+                        (persistedJunctionRecord as Record<string, unknown>)[
+                          targetFieldName
+                        ] ?? targetRecord,
+                    },
                   ],
             } as ObjectRecord;
           },
