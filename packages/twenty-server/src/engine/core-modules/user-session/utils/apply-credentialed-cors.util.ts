@@ -3,7 +3,7 @@ import { type INestApplication } from '@nestjs/common';
 import { type NextFunction, type Request, type Response } from 'express';
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
+import { isOriginAllowedForCredentials } from 'src/engine/core-modules/user-session/utils/is-origin-allowed-for-credentials.util';
 
 // Shared between the production bootstrap and the integration test harness so
 // the CORS behavior under test is the deployed one.
@@ -30,9 +30,7 @@ export const applyCredentialedCors = (
     ) => {
       if (
         origin &&
-        resolveAllowedCredentialedOrigins(twentyConfigService).has(
-          origin.toLowerCase(),
-        )
+        isOriginAllowedForCredentials({ origin, twentyConfigService })
       ) {
         return callback(null, true);
       }

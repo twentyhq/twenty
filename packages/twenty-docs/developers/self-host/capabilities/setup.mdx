@@ -382,7 +382,8 @@ Only relevant if you do not let the back-end serve the front-end. Same-origin
 deployments need nothing here.
 
 Declare every browser origin that talks to the API, comma separated. `SERVER_URL`
-and `FRONTEND_URL` are already trusted.
+and `FRONTEND_URL` are already trusted, as are subdomains of `FRONTEND_URL` when
+`IS_MULTIWORKSPACE_ENABLED=true`, so workspace subdomains need no entry here.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com

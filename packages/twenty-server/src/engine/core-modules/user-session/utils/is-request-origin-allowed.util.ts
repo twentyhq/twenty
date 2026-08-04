@@ -2,16 +2,9 @@ import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
+import { isOriginAllowedForCredentials } from 'src/engine/core-modules/user-session/utils/is-origin-allowed-for-credentials.util';
+import { toComparableOrigin } from 'src/engine/core-modules/user-session/utils/to-comparable-origin.util';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
-
-const toComparableOrigin = (value: string): string | undefined => {
-  try {
-    return new URL(value).origin.toLowerCase();
-  } catch {
-    return undefined;
-  }
-};
 
 export const isRequestOriginAllowed = ({
   origin,
@@ -39,7 +32,8 @@ export const isRequestOriginAllowed = ({
     return true;
   }
 
-  return resolveAllowedCredentialedOrigins(twentyConfigService).has(
-    normalizedOrigin,
-  );
+  return isOriginAllowedForCredentials({
+    origin: normalizedOrigin,
+    twentyConfigService,
+  });
 };

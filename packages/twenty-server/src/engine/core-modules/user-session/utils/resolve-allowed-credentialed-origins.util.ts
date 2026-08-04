@@ -2,22 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-// Opaque schemes (file:, data:) serialise to the literal "null" origin, which
-// would otherwise allowlist every sandboxed document that sends Origin: null.
-const toOrigin = (url: string): string | undefined => {
-  try {
-    const parsedUrl = new URL(url);
-
-    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-      return undefined;
-    }
-
-    return parsedUrl.origin.toLowerCase();
-  } catch {
-    return undefined;
-  }
-};
+import { toComparableOrigin } from 'src/engine/core-modules/user-session/utils/to-comparable-origin.util';
 
 // URL canonicalises [::ffff:127.0.0.1] to [::ffff:7f00:1], so only the hex
 // spelling reaches here. All of 127.0.0.0/8 is loopback.
@@ -79,7 +64,7 @@ export const resolveAllowedCredentialedOrigins = (
       continue;
     }
 
-    const origin = toOrigin(candidateUrl);
+    const origin = toComparableOrigin(candidateUrl);
 
     if (!isNonEmptyString(origin)) {
       continue;
