@@ -6,6 +6,7 @@ import { inspect } from 'util';
 
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
+import { type NextFunction, type Request, type Response } from 'express';
 import session from 'express-session';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
@@ -17,6 +18,7 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
+import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 import { AppModule } from './app.module';
@@ -30,9 +32,6 @@ const bootstrap = async () => {
   setPgDateTypeParser();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    // Expose WWW-Authenticate so browser-based MCP clients can read the
-    // resource_metadata pointer on 401. Required by MCP authorization spec.
-    cors: { exposedHeaders: ['WWW-Authenticate'] },
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
@@ -66,6 +65,40 @@ const bootstrap = async () => {
     : (configTransformers.boolean(trustProxyRaw) ?? trustProxyRaw);
 
   app.set('trust proxy', trustProxy);
+
+  // The cors package only emits Vary: Origin when it reflects one, so wildcard
+  // and reflected responses would share a cache entry and a credentialed
+  // request could be served the wildcard, which browsers reject.
+  app.use((_request: Request, response: Response, next: NextFunction) => {
+    response.vary('Origin');
+    next();
+  });
+
+  app.enableCors({
+    // Resolved per request rather than once at boot: the origins derive from
+    // config the admin panel can change, and a snapshot would drift from the
+    // CSRF guard, which resolves them per request and would then disagree with
+    // CORS about the same origin.
+    origin: (
+      origin: string | undefined,
+      callback: (error: Error | null, allow?: boolean | string) => void,
+    ) => {
+      if (
+        origin &&
+        resolveAllowedCredentialedOrigins(twentyConfigService).has(
+          origin.toLowerCase(),
+        )
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(null, '*');
+    },
+    credentials: true,
+    // Expose WWW-Authenticate so browser-based MCP clients can read the
+    // resource_metadata pointer on 401. Required by MCP authorization spec.
+    exposedHeaders: ['WWW-Authenticate'],
+  });
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 

@@ -3,6 +3,7 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
 import {
+  SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
   SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
   SLACK_EVENTS_ROUTE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -58,7 +59,9 @@ export const slackEventsResolverHandler = async (
   return {
     workspaceId: await resolveTargetWorkspaceId(body),
     targetLogicFunctionUniversalIdentifier:
-      SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+      body.event?.type === 'member_joined_channel'
+        ? SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER
+        : SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
     payload: body,
   };
 };
@@ -67,7 +70,7 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_EVENTS_ROUTE_UNIVERSAL_IDENTIFIER,
   name: 'slack-events-resolver',
   description:
-    'Receives Slack Events API callbacks, verifies the request signature in the owner workspace, answers the url_verification handshake, and resolves the target workspace + enqueue function for the assistant.',
+    'Receives Slack Events API callbacks, verifies the request signature in the owner workspace, answers the url_verification handshake, and resolves the target workspace plus the function that handles the event (assistant enqueue, or the channel welcome on member_joined_channel).',
   timeoutSeconds: 15,
   handler: slackEventsResolverHandler,
   serverRouteTriggerSettings: {
