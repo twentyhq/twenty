@@ -93,18 +93,33 @@ const openDatabase = (): Promise<IDBDatabase> => {
       }
     };
 
-    openRequest.onblocked = () =>
+    let isOpenRequestSettled = false;
+
+    openRequest.onblocked = () => {
+      isOpenRequestSettled = true;
+
       reject(
         new FrontComponentStorageError(
           'The device storage database upgrade is blocked by another tab',
           'FRONT_COMPONENT_STORAGE_UNAVAILABLE',
         ),
       );
+    };
 
-    openRequest.onerror = () => reject(openRequest.error);
+    openRequest.onerror = () => {
+      isOpenRequestSettled = true;
+
+      reject(openRequest.error);
+    };
 
     openRequest.onsuccess = () => {
       const database = openRequest.result;
+
+      if (isOpenRequestSettled) {
+        database.close();
+
+        return;
+      }
 
       database.onversionchange = () => {
         database.close();

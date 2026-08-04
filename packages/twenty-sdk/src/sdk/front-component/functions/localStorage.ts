@@ -15,8 +15,16 @@ const getLocalStorageBridge = (): FrontComponentLocalStorageBridge => {
   return bridge;
 };
 
+const stringifyLocalStorageValue = (value: unknown): string | undefined => {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return undefined;
+  }
+};
+
 const serializeLocalStorageValue = (value: unknown): string => {
-  const serializedValue = JSON.stringify(value);
+  const serializedValue = stringifyLocalStorageValue(value);
 
   if (!isDefined(serializedValue)) {
     throw new Error('localStorage.set requires a JSON-serializable value');

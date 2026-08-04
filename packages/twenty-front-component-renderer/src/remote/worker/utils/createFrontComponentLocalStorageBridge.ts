@@ -20,10 +20,9 @@ export const createFrontComponentLocalStorageBridge = ({
   getHostCommunicationApi: () => FrontComponentHostCommunicationApiStore;
 }): FrontComponentLocalStorageWorkerBridge => {
   const entries = new Map<string, string>();
+  const committedEntries = new Map<string, string>();
+  const pendingMutationCountByKey = new Map<string, number>();
   const pendingPersistOperations: (() => void)[] = [];
-  const inFlightMutationIdByKey = new Map<string, number>();
-
-  let lastMutationId = 0;
 
   const getOtherEntriesTotalLength = (excludedKey: string): number => {
     let totalLength = 0;
@@ -52,34 +51,45 @@ export const createFrontComponentLocalStorageBridge = ({
     }
   };
 
-  const startMutation = (key: string): number => {
-    lastMutationId += 1;
-    inFlightMutationIdByKey.set(key, lastMutationId);
-
-    return lastMutationId;
+  const startKeyMutations = (keys: string[]): void => {
+    for (const key of keys) {
+      pendingMutationCountByKey.set(
+        key,
+        (pendingMutationCountByKey.get(key) ?? 0) + 1,
+      );
+    }
   };
 
-  const endMutation = (key: string, mutationId: number): boolean => {
-    const isLatestMutation = inFlightMutationIdByKey.get(key) === mutationId;
+  const endKeyMutations = (keys: string[]): void => {
+    for (const key of keys) {
+      const remainingCount = (pendingMutationCountByKey.get(key) ?? 1) - 1;
 
-    if (isLatestMutation) {
-      inFlightMutationIdByKey.delete(key);
+      if (remainingCount <= 0) {
+        pendingMutationCountByKey.delete(key);
+
+        continue;
+      }
+
+      pendingMutationCountByKey.set(key, remainingCount);
     }
-
-    return isLatestMutation;
   };
 
-  const restoreEntry = (
-    key: string,
-    previousValue: string | undefined,
-  ): void => {
-    if (isDefined(previousValue)) {
-      entries.set(key, previousValue);
+  const revertSettledKeysToCommitted = (keys: string[]): void => {
+    for (const key of keys) {
+      if (pendingMutationCountByKey.has(key)) {
+        continue;
+      }
 
-      return;
+      const committedValue = committedEntries.get(key);
+
+      if (isDefined(committedValue)) {
+        entries.set(key, committedValue);
+
+        continue;
+      }
+
+      entries.delete(key);
     }
-
-    entries.delete(key);
   };
 
   const schedulePersist = <TResult>(
@@ -126,76 +136,66 @@ export const createFrontComponentLocalStorageBridge = ({
   ): Promise<void> => {
     assertCanStore(key, serializedValue);
 
-    const previousValue = entries.get(key);
-
     entries.set(key, serializedValue);
-
-    const mutationId = startMutation(key);
+    startKeyMutations([key]);
 
     try {
       await schedulePersist((hostCommunicationApi) =>
         hostCommunicationApi.localStorageSet?.(key, serializedValue),
       );
     } catch (error) {
-      if (endMutation(key, mutationId)) {
-        restoreEntry(key, previousValue);
-      }
+      endKeyMutations([key]);
+      revertSettledKeysToCommitted([key]);
 
       throw error;
     }
 
-    endMutation(key, mutationId);
+    committedEntries.set(key, serializedValue);
+    endKeyMutations([key]);
   };
 
   const removeItemAndPersist = async (key: string): Promise<boolean> => {
-    const previousValue = entries.get(key);
     const wasPresent = entries.delete(key);
-    const mutationId = startMutation(key);
+    startKeyMutations([key]);
 
     try {
       await schedulePersist((hostCommunicationApi) =>
         hostCommunicationApi.localStorageDelete?.(key),
       );
     } catch (error) {
-      if (endMutation(key, mutationId)) {
-        restoreEntry(key, previousValue);
-      }
+      endKeyMutations([key]);
+      revertSettledKeysToCommitted([key]);
 
       throw error;
     }
 
-    endMutation(key, mutationId);
+    committedEntries.delete(key);
+    endKeyMutations([key]);
 
     return wasPresent;
   };
 
   const clearAndPersist = async (): Promise<void> => {
-    const previousEntries = new Map(entries);
-    const mutationIdByKey = new Map<string, number>();
-
-    for (const key of previousEntries.keys()) {
-      mutationIdByKey.set(key, startMutation(key));
-    }
+    const affectedKeys = Array.from(
+      new Set([...entries.keys(), ...committedEntries.keys()]),
+    );
 
     entries.clear();
+    startKeyMutations(affectedKeys);
 
     try {
       await schedulePersist((hostCommunicationApi) =>
         hostCommunicationApi.localStorageClear?.(),
       );
     } catch (error) {
-      for (const [key, mutationId] of mutationIdByKey) {
-        if (endMutation(key, mutationId)) {
-          restoreEntry(key, previousEntries.get(key));
-        }
-      }
+      endKeyMutations(affectedKeys);
+      revertSettledKeysToCommitted(affectedKeys);
 
       throw error;
     }
 
-    for (const [key, mutationId] of mutationIdByKey) {
-      endMutation(key, mutationId);
-    }
+    committedEntries.clear();
+    endKeyMutations(affectedKeys);
   };
 
   return {
@@ -227,9 +227,11 @@ export const createFrontComponentLocalStorageBridge = ({
 
     seed: (seededEntries) => {
       entries.clear();
+      committedEntries.clear();
 
       for (const [key, value] of Object.entries(seededEntries)) {
         entries.set(key, value);
+        committedEntries.set(key, value);
       }
     },
 

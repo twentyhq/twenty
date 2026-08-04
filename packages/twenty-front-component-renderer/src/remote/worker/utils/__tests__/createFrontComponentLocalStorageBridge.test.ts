@@ -253,6 +253,53 @@ describe('createFrontComponentLocalStorageBridge', () => {
     expect(bridge.getItem('draft')).toBe('"hello"');
   });
 
+  it('should restore the committed value when a refused clear overlaps a refused write', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    bridge.seed({ theme: '"dark"' });
+
+    hostCommunicationApi.localStorageClear.mockRejectedValueOnce(
+      new Error('clear refused'),
+    );
+    hostCommunicationApi.localStorageSet.mockRejectedValueOnce(
+      new Error('write refused'),
+    );
+
+    const refusedClear = bridge.clearAndPersist();
+    const refusedClearMessage = refusedClear.then(
+      () => 'resolved',
+      (error: Error) => error.message,
+    );
+
+    await expect(bridge.setItemAndPersist('theme', '"light"')).rejects.toThrow(
+      'write refused',
+    );
+
+    expect(await refusedClearMessage).toBe('clear refused');
+    expect(bridge.getItem('theme')).toBe('"dark"');
+  });
+
+  it('should drop the entry when a refused clear overlaps a successful delete', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    bridge.seed({ theme: '"dark"' });
+
+    hostCommunicationApi.localStorageClear.mockRejectedValueOnce(
+      new Error('clear refused'),
+    );
+
+    const refusedClear = bridge.clearAndPersist();
+    const refusedClearMessage = refusedClear.then(
+      () => 'resolved',
+      (error: Error) => error.message,
+    );
+
+    await bridge.removeItemAndPersist('theme');
+
+    expect(await refusedClearMessage).toBe('clear refused');
+    expect(bridge.getItem('theme')).toBeNull();
+  });
+
   it('should not let a refused write roll back a newer write of the same key', async () => {
     const { bridge, hostCommunicationApi } = createConnectedBridge();
 
