@@ -876,6 +876,7 @@ export class FieldsWidgetUpsertService {
       viewId,
       viewUniversalIdentifier,
       isActive: true,
+      isSystemSideEffect: false,
       overrides: null,
       createdAt: now,
       updatedAt: now,

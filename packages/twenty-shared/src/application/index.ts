@@ -54,7 +54,6 @@ export {
 export { getConnectionProviderUniversalIdentifier } from './deterministic-identifier/get-connection-provider-universal-identifier.util';
 export { getFieldPermissionUniversalIdentifier } from './deterministic-identifier/get-field-permission-universal-identifier.util';
 export { getFieldUniversalIdentifier } from './deterministic-identifier/get-field-universal-identifier.util';
-export { getFieldsWidgetViewUniversalIdentifier } from './deterministic-identifier/get-fields-widget-view-universal-identifier.util';
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';

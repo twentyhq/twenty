@@ -21,6 +21,10 @@ import {
   getExistingOrStandardFlatEntityOrThrow,
   getStandardFlatEntitiesToCreateOrThrow,
 } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import {
+  remapRecordPageUniversalIdentifiersToPre228,
+  toPre228RecordPageUniversalIdentifier,
+} from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -39,7 +43,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const getUniversalIdentifiers = (
   entitiesByName: Record<string, { universalIdentifier: string }>,
 ): string[] =>
-  Object.values(entitiesByName).map((entity) => entity.universalIdentifier);
+  Object.values(entitiesByName).map((entity) =>
+    toPre228RecordPageUniversalIdentifier(entity.universalIdentifier),
+  );
 
 const CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.universalIdentifier,
@@ -56,8 +62,10 @@ const CALL_RECORDING_INDEX_UNIVERSAL_IDENTIFIERS = getUniversalIdentifiers(
 
 const CALL_RECORDING_VIEW_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.universalIdentifier,
-  STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
-    .universalIdentifier,
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
+      .universalIdentifier,
+  ),
 ];
 
 const CALL_RECORDING_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS =
@@ -77,22 +85,32 @@ const CALL_RECORDING_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
 ];
 
 const CALL_RECORDING_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
-    .universalIdentifier,
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
+      .universalIdentifier,
+  ),
 ];
 
 const CALL_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs.home
-    .universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
-    .timeline.universalIdentifier,
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs.home
+      .universalIdentifier,
+  ),
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+      .timeline.universalIdentifier,
+  ),
 ];
 
 const CALL_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs.home
-    .widgets.fields.universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
-    .timeline.widgets.timeline.universalIdentifier,
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs.home
+      .widgets.fields.universalIdentifier,
+  ),
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+      .timeline.widgets.timeline.universalIdentifier,
+  ),
 ];
 
 // Preserves the shipped 2.10 upgrade path after recordingPreference moved out of
@@ -251,12 +269,19 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
 
     const now = new Date().toISOString();
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+    const { allFlatEntityMaps: derivedStandardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now,
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
+
+    // This command predates the 2-28 record-page reconcile: workspace rows
+    // still hold the pre-derivation universal identifiers.
+    const standardAllFlatEntityMaps =
+      remapRecordPageUniversalIdentifiersToPre228(
+        derivedStandardAllFlatEntityMaps,
+      );
 
     const objectMetadataRenameUpdates = buildCallRecordingObjectRenameUpdates({
       flatObjectMetadataMaps,

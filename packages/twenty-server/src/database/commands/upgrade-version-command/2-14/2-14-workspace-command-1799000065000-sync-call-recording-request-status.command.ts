@@ -7,6 +7,10 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import {
+  remapRecordPageUniversalIdentifiersToPre228,
+  toPre228RecordPageUniversalIdentifier,
+} from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -24,8 +28,10 @@ const CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
 const CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.viewFields
     .recordingRequestStatus.universalIdentifier,
-  STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields.viewFields
-    .recordingRequestStatus.universalIdentifier,
+  toPre228RecordPageUniversalIdentifier(
+    STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
+      .viewFields.recordingRequestStatus.universalIdentifier,
+  ),
 ];
 const CALL_RECORDING_REQUEST_STATUS_FIELD_NAME = 'recordingRequestStatus';
 
@@ -97,12 +103,19 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
       return;
     }
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+    const { allFlatEntityMaps: derivedStandardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
+
+    // This command predates the 2-28 record-page reconcile: workspace rows
+    // still hold the pre-derivation universal identifiers.
+    const standardAllFlatEntityMaps =
+      remapRecordPageUniversalIdentifiersToPre228(
+        derivedStandardAllFlatEntityMaps,
+      );
 
     const recordingRequestStatusFieldsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
