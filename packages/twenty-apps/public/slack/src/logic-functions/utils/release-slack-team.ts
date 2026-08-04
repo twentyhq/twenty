@@ -29,9 +29,6 @@ export const releaseSlackTeam = async ({
     return { ok: true, releasedTeamId: null };
   }
 
-  // Only clears the claim when this workspace still owns it, so a team another
-  // workspace has since claimed stays routed where it is. The claim goes first
-  // so a failure here leaves the mapping behind for the next attempt.
   await kv.delete(getSlackTeamKvKey(teamId), { scope: 'SERVER' });
   await kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId));
 

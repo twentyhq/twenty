@@ -32,12 +32,7 @@ export const claimSlackTeam = async ({
     throw new Error('Slack auth.test returned no team_id to claim');
   }
 
-  // The connection is already gone by the time the onDisconnect hook runs, so
-  // the team it claimed has to be resolvable from the connectedAccountId alone.
-  // Recorded before the claim: a mapping without a claim releases nothing,
-  // while a claim without a mapping could never be released at all.
   await kv.set(getSlackConnectedAccountTeamKvKey(connectedAccountId), teamId);
-
   await kv.set(getSlackTeamKvKey(teamId), null, { scope: 'SERVER' });
 
   return { ok: true, teamId };

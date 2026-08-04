@@ -24,10 +24,6 @@ export const releaseSlackTeamOnDisconnect = async ({
 
   const teamId = await getSlackConnectedAccountTeam(connectedAccountId);
 
-  // The disconnected connection is already deleted by the time the hook runs,
-  // so anything still listed against the same team is live: a reconnect that
-  // re-claimed it while this job was queued, or a second connection to the
-  // same Slack workspace. The claim is theirs now.
   if (
     isNonEmptyString(teamId) &&
     (await isSlackTeamClaimedByAnotherConnection(teamId))
