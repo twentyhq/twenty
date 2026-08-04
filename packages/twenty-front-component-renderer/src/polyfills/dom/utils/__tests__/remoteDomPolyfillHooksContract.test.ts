@@ -1,8 +1,5 @@
 import { HOOKS, type Hooks, Window } from '@remote-dom/polyfill';
 
-// The worker MutationObserver is built by wrapping the hooks @remote-dom/polyfill
-// already calls on every DOM operation. A remote-dom upgrade that renames or
-// stops calling one of them must fail here instead of silently going quiet.
 const createHookRecorder = () => {
   const polyfillWindow = new Window();
   const calls: { name: keyof Hooks; args: unknown[] }[] = [];
@@ -27,14 +24,13 @@ const createHookRecorder = () => {
   }
 
   return {
-    calls,
     document: polyfillWindow.document as unknown as Document,
     callsNamed: (hookName: keyof Hooks) =>
       calls.filter((call) => call.name === hookName),
   };
 };
 
-describe('@remote-dom/polyfill mutation hooks contract', () => {
+describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserver is built on, which a remote-dom upgrade must not silently break', () => {
   it('exports HOOKS as a symbol keying a mutable hooks object', () => {
     const polyfillWindow = new Window();
 
@@ -107,5 +103,45 @@ describe('@remote-dom/polyfill mutation hooks contract', () => {
     expect(callsNamed('removeChild')[0].args[0]).toBe(parent);
     expect(callsNamed('removeChild')[0].args[1]).toBe(secondChild);
     expect(callsNamed('removeChild')[0].args[2]).toBe(1);
+  });
+
+  it('skips insertChild and removeChild when the parent is not an element node', () => {
+    const { document, callsNamed } = createHookRecorder();
+
+    const fragment = document.createDocumentFragment();
+    const child = document.createElement('span');
+
+    fragment.appendChild(child);
+    fragment.removeChild(child);
+
+    expect(callsNamed('insertChild')).toHaveLength(0);
+    expect(callsNamed('removeChild')).toHaveLength(0);
+  });
+
+  it('does not call createText for a comment but does call setText when its data changes', () => {
+    const { document, callsNamed } = createHookRecorder();
+
+    const comment = document.createComment('first');
+
+    expect(callsNamed('createText')).toHaveLength(0);
+
+    comment.data = 'second';
+
+    expect(callsNamed('setText')).toHaveLength(1);
+    expect(callsNamed('setText')[0].args[0]).toBe(comment);
+    expect(callsNamed('setText')[0].args[1]).toBe('second');
+  });
+
+  it('exposes childNodes as a list whose item returns undefined out of range', () => {
+    const { document } = createHookRecorder();
+
+    const parent = document.createElement('div');
+    const child = document.createElement('span');
+
+    parent.appendChild(child);
+
+    expect(parent.childNodes.item(0)).toBe(child);
+    expect(parent.childNodes.item(-1)).toBeUndefined();
+    expect(parent.childNodes.item(1)).toBeUndefined();
   });
 });

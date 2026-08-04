@@ -3,8 +3,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MutationObserverRegistration } from '@/polyfills/dom/types/MutationObserverRegistration';
 import { type MutationObserverRegistry } from '@/polyfills/dom/types/MutationObserverRegistry';
 import { type MutationRecordSink } from '@/polyfills/dom/types/MutationRecordSink';
+import { createWorkerNodeList } from '@/polyfills/dom/utils/createWorkerNodeList';
+import { hasTransientRegistrationForObservation } from '@/polyfills/dom/utils/hasTransientRegistrationForObservation';
 import { isMutationOldValueRequested } from '@/polyfills/dom/utils/isMutationOldValueRequested';
 import { isMutationRecordTypeObserved } from '@/polyfills/dom/utils/isMutationRecordTypeObserved';
+
+const NO_REGISTRATIONS: MutationObserverRegistration[] = [];
 
 export const createMutationObserverRegistry = (): MutationObserverRegistry => {
   const registrationsByTarget = new WeakMap<
@@ -12,22 +16,14 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
     MutationObserverRegistration[]
   >();
   const transientTargetsBySink = new Map<MutationRecordSink, Set<Node>>();
-  let registrationCount = 0;
-
-  const replaceRegistrations = (
-    target: Node,
-    registrations: MutationObserverRegistration[],
-    nextRegistrations: MutationObserverRegistration[],
-  ) => {
-    registrationCount += nextRegistrations.length - registrations.length;
-    registrationsByTarget.set(target, nextRegistrations);
-  };
+  const oldValueRequestedBySink = new Map<MutationRecordSink, boolean>();
 
   return {
     registerObservation: ({ target, sink, options }) => {
-      const registrations = registrationsByTarget.get(target) ?? [];
+      const registrations =
+        registrationsByTarget.get(target) ?? NO_REGISTRATIONS;
 
-      replaceRegistrations(target, registrations, [
+      registrationsByTarget.set(target, [
         ...registrations.filter((registration) => registration.sink !== sink),
         { sink, options },
       ]);
@@ -41,50 +37,55 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
           continue;
         }
 
-        replaceRegistrations(
+        registrationsByTarget.set(
           target,
-          registrations,
           registrations.filter((registration) => registration.sink !== sink),
         );
       }
     },
 
     registerTransientObservations: ({ detachedNode, formerParent }) => {
-      if (registrationCount === 0) {
-        return;
-      }
+      const nextRegistrations = [
+        ...(registrationsByTarget.get(detachedNode) ?? NO_REGISTRATIONS),
+      ];
+      const addedRegistrations: MutationObserverRegistration[] = [];
 
-      const transientRegistrations: MutationObserverRegistration[] = [];
       let ancestor: Node | null = formerParent;
 
       while (isDefined(ancestor)) {
-        for (const registration of registrationsByTarget.get(ancestor) ?? []) {
-          if (registration.options.subtree !== true) {
+        for (const registration of registrationsByTarget.get(ancestor) ??
+          NO_REGISTRATIONS) {
+          if (
+            registration.options.subtree !== true ||
+            hasTransientRegistrationForObservation({
+              registrations: nextRegistrations,
+              sink: registration.sink,
+              options: registration.options,
+            })
+          ) {
             continue;
           }
 
-          transientRegistrations.push({
+          const transientRegistration: MutationObserverRegistration = {
             sink: registration.sink,
             options: registration.options,
             isTransient: true,
-          });
+          };
+
+          nextRegistrations.push(transientRegistration);
+          addedRegistrations.push(transientRegistration);
         }
 
         ancestor = ancestor.parentNode;
       }
 
-      if (transientRegistrations.length === 0) {
+      if (addedRegistrations.length === 0) {
         return;
       }
 
-      const registrations = registrationsByTarget.get(detachedNode) ?? [];
+      registrationsByTarget.set(detachedNode, nextRegistrations);
 
-      replaceRegistrations(detachedNode, registrations, [
-        ...registrations,
-        ...transientRegistrations,
-      ]);
-
-      for (const { sink } of transientRegistrations) {
+      for (const { sink } of addedRegistrations) {
         const transientTargets = transientTargetsBySink.get(sink) ?? new Set();
 
         transientTargets.add(detachedNode);
@@ -110,9 +111,8 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
           continue;
         }
 
-        replaceRegistrations(
+        registrationsByTarget.set(
           target,
-          registrations,
           registrations.filter(
             (registration) =>
               registration.isTransient !== true || registration.sink !== sink,
@@ -122,18 +122,14 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
     },
 
     broadcastMutationRecord: ({ record, oldValue }) => {
-      if (registrationCount === 0) {
-        return;
-      }
-
-      const oldValueRequestedBySink = new Map<MutationRecordSink, boolean>();
+      oldValueRequestedBySink.clear();
 
       let observedNode: Node | null = record.target;
       let isMutationTarget = true;
 
       while (isDefined(observedNode)) {
         for (const registration of registrationsByTarget.get(observedNode) ??
-          []) {
+          NO_REGISTRATIONS) {
           const isObservedFromThisNode =
             isMutationTarget || registration.options.subtree === true;
 
@@ -165,6 +161,8 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
       for (const [sink, oldValueRequested] of oldValueRequestedBySink) {
         sink.enqueueMutationRecord({
           ...record,
+          addedNodes: createWorkerNodeList(record.addedNodes),
+          removedNodes: createWorkerNodeList(record.removedNodes),
           oldValue: oldValueRequested ? oldValue : null,
         });
       }

@@ -7,10 +7,12 @@ import { normalizeMutationObserverInit } from '@/polyfills/dom/utils/normalizeMu
 
 type CreateMutationObserverClassInput = {
   registry: MutationObserverRegistry;
+  reportCallbackError: (error: unknown) => void;
 };
 
 export const createMutationObserverClass = ({
   registry,
+  reportCallbackError,
 }: CreateMutationObserverClassInput) => {
   const pendingDeliveries = new Set<() => void>();
   let isDeliveryScheduled = false;
@@ -54,7 +56,7 @@ export const createMutationObserverClass = ({
       try {
         this.#callback(records, this);
       } catch (error) {
-        console.error('MutationObserver callback failed:', error);
+        reportCallbackError(error);
       }
     };
 

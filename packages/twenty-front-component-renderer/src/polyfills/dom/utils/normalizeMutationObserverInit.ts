@@ -3,30 +3,44 @@ import { isDefined } from 'twenty-shared/utils';
 export const normalizeMutationObserverInit = (
   options: MutationObserverInit,
 ): MutationObserverInit => {
-  const hasAttributeRefinement =
-    isDefined(options.attributeOldValue) || isDefined(options.attributeFilter);
-  const hasCharacterDataRefinement = isDefined(options.characterDataOldValue);
+  const { attributeFilter } = options;
 
-  const attributes = options.attributes ?? hasAttributeRefinement;
-  const characterData = options.characterData ?? hasCharacterDataRefinement;
+  const attributes =
+    options.attributes ??
+    (isDefined(options.attributeOldValue) || isDefined(attributeFilter));
+  const characterData =
+    options.characterData ?? isDefined(options.characterDataOldValue);
 
-  if (hasAttributeRefinement && !attributes) {
-    throw new TypeError(
-      "MutationObserver.observe: 'attributeOldValue' and 'attributeFilter' require 'attributes' to be true",
-    );
-  }
-
-  if (hasCharacterDataRefinement && !characterData) {
-    throw new TypeError(
-      "MutationObserver.observe: 'characterDataOldValue' requires 'characterData' to be true",
-    );
-  }
-
-  if (!attributes && !characterData && options.childList !== true) {
+  if (options.childList !== true && !attributes && !characterData) {
     throw new TypeError(
       "MutationObserver.observe: at least one of 'childList', 'attributes' or 'characterData' must be true",
     );
   }
 
-  return { ...options, attributes, characterData };
+  if (options.attributeOldValue === true && !attributes) {
+    throw new TypeError(
+      "MutationObserver.observe: 'attributeOldValue' requires 'attributes' to be true",
+    );
+  }
+
+  if (isDefined(attributeFilter) && !attributes) {
+    throw new TypeError(
+      "MutationObserver.observe: 'attributeFilter' requires 'attributes' to be true",
+    );
+  }
+
+  if (options.characterDataOldValue === true && !characterData) {
+    throw new TypeError(
+      "MutationObserver.observe: 'characterDataOldValue' requires 'characterData' to be true",
+    );
+  }
+
+  return {
+    ...options,
+    attributes,
+    characterData,
+    ...(isDefined(attributeFilter) && {
+      attributeFilter: [...attributeFilter],
+    }),
+  };
 };

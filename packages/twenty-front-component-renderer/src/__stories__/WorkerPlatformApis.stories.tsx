@@ -6,6 +6,7 @@ import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -22,28 +23,46 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
+const EXPECTED_OBSERVED_MUTATIONS = [
+  {
+    type: 'childList',
+    addedItems: ['item-0'],
+    removedItems: [],
+    hasPreviousSibling: false,
+    hasNextSibling: false,
+  },
+  {
+    type: 'childList',
+    addedItems: ['item-1'],
+    removedItems: [],
+    hasPreviousSibling: true,
+    hasNextSibling: false,
+  },
+];
+
 const mutationObserverTest: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
   const addItemButton = await canvas.findByTestId(
     'mutation-observer-add',
     {},
-    { timeout: 30000 },
+    { timeout: MOUNT_TIMEOUT },
   );
 
+  await userEvent.click(addItemButton);
   await userEvent.click(addItemButton);
 
   await waitFor(
     () => {
       expect(
-        Number(
+        JSON.parse(
           canvas
-            .getByTestId('mutation-observer-count')
-            .getAttribute('data-observed'),
+            .getByTestId('mutation-observer-status')
+            .getAttribute('data-observed-records') ?? '[]',
         ),
-      ).toBeGreaterThan(0);
+      ).toEqual(EXPECTED_OBSERVED_MUTATIONS);
     },
-    { timeout: 30000 },
+    { timeout: MOUNT_TIMEOUT },
   );
 
   expect(errorHandler).not.toHaveBeenCalled();

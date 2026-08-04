@@ -1,23 +1,28 @@
 import { type Hooks } from '@remote-dom/polyfill';
+import { isFunction } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MutationObserverRegistry } from '@/polyfills/dom/types/MutationObserverRegistry';
 import { buildAttributeCacheKey } from '@/polyfills/dom/utils/buildAttributeCacheKey';
 import { createMutationRecord } from '@/polyfills/dom/utils/createMutationRecord';
+import { resolveChildNodeAtIndex } from '@/polyfills/dom/utils/resolveChildNodeAtIndex';
 
 type InstallMutationRecordHooksInput = {
   hooks: Partial<Hooks>;
   registry: MutationObserverRegistry;
+  documentTarget: Record<string, unknown> | null;
 };
 
 export const installMutationRecordHooks = ({
   hooks,
   registry,
+  documentTarget,
 }: InstallMutationRecordHooksInput): void => {
   const attributeValuesByElement = new WeakMap<
     Element,
     Map<string, string | null>
   >();
-  const dataByTextNode = new WeakMap<Text, string>();
+  const dataByCharacterDataNode = new WeakMap<CharacterData, string>();
 
   const swapCachedAttributeValue = (
     element: Element,
@@ -67,14 +72,29 @@ export const installMutationRecordHooks = ({
 
   hooks.createText = (text, data) => {
     createTextHook?.(text, data);
-    dataByTextNode.set(text, data);
+    dataByCharacterDataNode.set(text, text.data);
   };
+
+  const createCommentMethod = documentTarget?.createComment;
+
+  if (isDefined(documentTarget) && isFunction(createCommentMethod)) {
+    documentTarget.createComment = (data: unknown) => {
+      const comment = createCommentMethod.call(
+        documentTarget,
+        data,
+      ) as CharacterData;
+
+      dataByCharacterDataNode.set(comment, comment.data);
+
+      return comment;
+    };
+  }
 
   hooks.setText = (text, data) => {
     setTextHook?.(text, data);
 
-    const oldValue = dataByTextNode.get(text) ?? '';
-    dataByTextNode.set(text, data);
+    const oldValue = dataByCharacterDataNode.get(text) ?? '';
+    dataByCharacterDataNode.set(text, text.data);
 
     registry.broadcastMutationRecord({
       record: createMutationRecord({ type: 'characterData', target: text }),
@@ -100,8 +120,8 @@ export const installMutationRecordHooks = ({
         type: 'childList',
         target: parent,
         addedNodes: [node],
-        previousSibling: parent.childNodes.item(index - 1),
-        nextSibling: parent.childNodes.item(index + 1),
+        previousSibling: resolveChildNodeAtIndex({ parent, index: index - 1 }),
+        nextSibling: resolveChildNodeAtIndex({ parent, index: index + 1 }),
       }),
       oldValue: null,
     });
@@ -120,8 +140,8 @@ export const installMutationRecordHooks = ({
         type: 'childList',
         target: parent,
         removedNodes: [node],
-        previousSibling: parent.childNodes.item(index - 1),
-        nextSibling: parent.childNodes.item(index),
+        previousSibling: resolveChildNodeAtIndex({ parent, index: index - 1 }),
+        nextSibling: resolveChildNodeAtIndex({ parent, index }),
       }),
       oldValue: null,
     });

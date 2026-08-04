@@ -1,5 +1,6 @@
 import { HOOKS, type Hooks, Window } from '@remote-dom/polyfill';
 
+import { MUTATION_OBSERVER_HOOKS_UNAVAILABLE_ERROR } from '@/polyfills/dom/constants/MutationObserverHooksUnavailableError';
 import { type WorkerMutationObserver } from '@/polyfills/dom/types/WorkerMutationObserver';
 import { type WorkerMutationObserverCallback } from '@/polyfills/dom/types/WorkerMutationObserverCallback';
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
@@ -40,10 +41,31 @@ const createRecordCollector = () => {
   return { collect, deliveries, observers };
 };
 
-const flushDelivery = () =>
-  new Promise<void>((resolve) => {
-    setTimeout(resolve, 0);
+type ReportedErrorEvent = {
+  error: unknown;
+  preventDefault: () => void;
+};
+
+const collectReportedErrors = (polyfillWindow: Record<string, unknown>) => {
+  const reportedErrors: unknown[] = [];
+
+  (
+    polyfillWindow.addEventListener as (
+      type: string,
+      listener: (event: ReportedErrorEvent) => void,
+    ) => void
+  )('error', (event) => {
+    event.preventDefault();
+    reportedErrors.push(event.error);
   });
+
+  return reportedErrors;
+};
+
+const flushMicrotasks = async () => {
+  await Promise.resolve();
+  await Promise.resolve();
+};
 
 describe('installMutationObserver', () => {
   it('installs the implementation on the global scope and on the polyfill window', () => {
@@ -96,7 +118,7 @@ describe('installMutationObserver', () => {
     const child = document.createElement('span');
     container.appendChild(child);
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(1);
     expect(deliveries[0]).toHaveLength(1);
@@ -126,7 +148,7 @@ describe('installMutationObserver', () => {
     const insertedChild = document.createElement('span');
     container.insertBefore(insertedChild, lastChild);
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     const [record] = deliveries[0];
     expect(record.addedNodes).toEqual([insertedChild]);
@@ -150,7 +172,7 @@ describe('installMutationObserver', () => {
 
     container.removeChild(removedChild);
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     const [record] = deliveries[0];
     expect(record.type).toBe('childList');
@@ -179,7 +201,7 @@ describe('installMutationObserver', () => {
     const lateChild = document.createElement('span');
     branch.appendChild(lateChild);
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries[0]).toHaveLength(2);
     expect(deliveries[0][0].removedNodes).toEqual([branch]);
@@ -202,11 +224,11 @@ describe('installMutationObserver', () => {
 
     container.removeChild(branch);
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     branch.appendChild(document.createElement('span'));
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(1);
     expect(deliveries[0]).toHaveLength(1);
@@ -228,7 +250,7 @@ describe('installMutationObserver', () => {
     container.removeChild(branch);
     branch.setAttribute('data-open', 'true');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(1);
     expect(deliveries[0]).toHaveLength(1);
@@ -236,7 +258,7 @@ describe('installMutationObserver', () => {
 
     branch.setAttribute('data-open', 'false');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(1);
   });
@@ -258,7 +280,7 @@ describe('installMutationObserver', () => {
     container.appendChild(branch);
     branch.appendChild(document.createElement('span'));
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     const childListOnBranch = deliveries[0].filter(
       (record) => record.target === branch,
@@ -279,7 +301,7 @@ describe('installMutationObserver', () => {
 
     nestedContainer.appendChild(document.createElement('span'));
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(0);
   });
@@ -300,7 +322,7 @@ describe('installMutationObserver', () => {
     const child = document.createElement('span');
     nestedContainer.appendChild(child);
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     const [record] = deliveries[0];
     expect(record.type).toBe('childList');
@@ -322,7 +344,7 @@ describe('installMutationObserver', () => {
 
     element.setAttribute('title', 'second');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     const [record] = deliveries[0];
     expect(record.type).toBe('attributes');
@@ -343,7 +365,7 @@ describe('installMutationObserver', () => {
 
     element.setAttribute('title', 'second');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries[0][0].oldValue).toBeNull();
   });
@@ -362,7 +384,7 @@ describe('installMutationObserver', () => {
 
     element.removeAttribute('title');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     const [record] = deliveries[0];
     expect(record.type).toBe('attributes');
@@ -384,7 +406,7 @@ describe('installMutationObserver', () => {
     element.setAttribute('title', 'ignored');
     element.setAttribute('data-starting-style', '');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries[0]).toHaveLength(1);
     expect(deliveries[0][0].attributeName).toBe('data-starting-style');
@@ -403,7 +425,7 @@ describe('installMutationObserver', () => {
 
     text.data = 'second';
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     const [record] = deliveries[0];
     expect(record.type).toBe('characterData');
@@ -426,7 +448,7 @@ describe('installMutationObserver', () => {
     container.appendChild(document.createElement('span'));
     container.setAttribute('title', 'batched');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(1);
     expect(deliveries[0]).toHaveLength(3);
@@ -442,7 +464,7 @@ describe('installMutationObserver', () => {
 
     container.appendChild(document.createElement('span'));
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(observers[0]).toBe(observer);
   });
@@ -458,11 +480,11 @@ describe('installMutationObserver', () => {
     container.appendChild(document.createElement('span'));
     observer.disconnect();
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     container.appendChild(document.createElement('span'));
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(0);
   });
@@ -480,7 +502,7 @@ describe('installMutationObserver', () => {
     expect(observer.takeRecords()).toHaveLength(1);
     expect(observer.takeRecords()).toHaveLength(0);
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(0);
   });
@@ -496,31 +518,53 @@ describe('installMutationObserver', () => {
 
     container.appendChild(document.createElement('span'));
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries).toHaveLength(0);
   });
 
-  it('keeps other observers alive when a callback throws', async () => {
-    const { document, MutationObserver } = createSandbox();
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+  it('reports a throwing callback on the polyfill window and keeps other observers alive', async () => {
+    const { document, polyfillWindow, MutationObserver } = createSandbox();
     const { collect, deliveries } = createRecordCollector();
+    const reportedErrors = collectReportedErrors(polyfillWindow);
+    const callbackError = new Error('guest failure');
 
     const container = document.createElement('div');
 
     new MutationObserver(() => {
-      throw new Error('guest failure');
+      throw callbackError;
     }).observe(container, { childList: true });
     new MutationObserver(collect).observe(container, { childList: true });
 
     container.appendChild(document.createElement('span'));
 
-    await flushDelivery();
+    await flushMicrotasks();
 
+    expect(reportedErrors).toEqual([callbackError]);
     expect(deliveries).toHaveLength(1);
-    expect(consoleErrorSpy).toHaveBeenCalled();
+  });
+
+  it('logs a throwing callback that no error listener handled', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const callbackError = new Error('guest failure');
+
+    const container = document.createElement('div');
+
+    new MutationObserver(() => {
+      throw callbackError;
+    }).observe(container, { childList: true });
+
+    container.appendChild(document.createElement('span'));
+
+    await flushMicrotasks();
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('was not handled'),
+      callbackError,
+    );
 
     consoleErrorSpy.mockRestore();
   });
@@ -541,7 +585,7 @@ describe('installMutationObserver', () => {
     anchor.setAttribute('data-tooltip-id', 'tooltip');
     anchor.setAttribute('class', 'ignored');
 
-    await flushDelivery();
+    await flushMicrotasks();
 
     expect(deliveries[0]).toHaveLength(2);
     expect(deliveries[0][0].type).toBe('childList');
@@ -558,5 +602,147 @@ describe('installMutationObserver', () => {
     expect(() => observer.observe(document.body, { subtree: true })).toThrow(
       TypeError,
     );
+  });
+
+  it('accepts an options object that switches a refinement off', () => {
+    const { document, MutationObserver } = createSandbox();
+
+    const observer = new MutationObserver(() => {});
+
+    expect(() =>
+      observer.observe(document.body, {
+        childList: true,
+        attributes: false,
+        attributeOldValue: false,
+      }),
+    ).not.toThrow();
+  });
+
+  it('exposes added and removed nodes as a node list', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+
+    new MutationObserver(collect).observe(container, { childList: true });
+
+    const child = document.createElement('span');
+    container.appendChild(child);
+
+    await flushMicrotasks();
+
+    const [record] = deliveries[0];
+    expect(record.addedNodes).toHaveLength(1);
+    expect(record.addedNodes.item(0)).toBe(child);
+    expect(record.addedNodes.item(1)).toBeNull();
+    expect(record.addedNodes.item(-1)).toBeNull();
+    expect(record.removedNodes.item(0)).toBeNull();
+  });
+
+  it('gives every observer its own record and its own node lists', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const firstCollector = createRecordCollector();
+    const secondCollector = createRecordCollector();
+
+    const container = document.createElement('div');
+
+    new MutationObserver(firstCollector.collect).observe(container, {
+      childList: true,
+    });
+    new MutationObserver(secondCollector.collect).observe(container, {
+      childList: true,
+    });
+
+    container.appendChild(document.createElement('span'));
+
+    await flushMicrotasks();
+
+    const firstRecord = firstCollector.deliveries[0][0];
+    const secondRecord = secondCollector.deliveries[0][0];
+
+    expect(firstRecord).not.toBe(secondRecord);
+    expect(firstRecord.addedNodes).not.toBe(secondRecord.addedNodes);
+
+    firstRecord.addedNodes.length = 0;
+
+    expect(secondRecord.addedNodes).toHaveLength(1);
+  });
+
+  it('does not leak an observer from one mutation into the next', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const firstCollector = createRecordCollector();
+    const secondCollector = createRecordCollector();
+
+    const firstElement = document.createElement('div');
+    const secondElement = document.createElement('div');
+
+    new MutationObserver(firstCollector.collect).observe(firstElement, {
+      attributes: true,
+    });
+    new MutationObserver(secondCollector.collect).observe(secondElement, {
+      attributes: true,
+    });
+
+    firstElement.setAttribute('title', 'first');
+    secondElement.setAttribute('title', 'second');
+
+    await flushMicrotasks();
+
+    expect(firstCollector.deliveries[0]).toHaveLength(1);
+    expect(firstCollector.deliveries[0][0].target).toBe(firstElement);
+    expect(secondCollector.deliveries[0]).toHaveLength(1);
+    expect(secondCollector.deliveries[0][0].target).toBe(secondElement);
+  });
+
+  it('reports the old value of a comment node', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const comment = document.createComment('first');
+
+    new MutationObserver(collect).observe(comment, {
+      characterData: true,
+      characterDataOldValue: true,
+    });
+
+    comment.data = 'second';
+
+    await flushMicrotasks();
+
+    expect(deliveries[0][0].oldValue).toBe('first');
+  });
+
+  it('reports null siblings at the edges of the child list', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const onlyChild = document.createElement('span');
+    container.appendChild(onlyChild);
+
+    new MutationObserver(collect).observe(container, { childList: true });
+
+    container.removeChild(onlyChild);
+
+    await flushMicrotasks();
+
+    expect(deliveries[0][0].previousSibling).toBeNull();
+    expect(deliveries[0][0].nextSibling).toBeNull();
+  });
+
+  it('reports that it could not install without the polyfill hooks', () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const globalScope: Record<string, unknown> = {};
+
+    installMutationObserver({ globalScope });
+
+    expect(globalScope.MutationObserver).toBeUndefined();
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      MUTATION_OBSERVER_HOOKS_UNAVAILABLE_ERROR,
+    );
+
+    consoleErrorSpy.mockRestore();
   });
 });

@@ -1,4 +1,5 @@
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
+import { createWorkerNodeList } from '@/polyfills/dom/utils/createWorkerNodeList';
 
 type CreateMutationRecordInput = {
   type: MutationRecordType;
@@ -23,8 +24,8 @@ export const createMutationRecord = ({
 }: CreateMutationRecordInput): WorkerMutationRecord => ({
   type,
   target,
-  addedNodes: addedNodes ?? [],
-  removedNodes: removedNodes ?? [],
+  addedNodes: createWorkerNodeList(addedNodes ?? []),
+  removedNodes: createWorkerNodeList(removedNodes ?? []),
   previousSibling: previousSibling ?? null,
   nextSibling: nextSibling ?? null,
   attributeName: attributeName ?? null,
