@@ -9,6 +9,7 @@ import { AgentMessageRole } from '~/generated-admin/graphql';
 
 import { SettingsAdminChatMessage } from '@/settings/admin-panel/components/SettingsAdminChatMessage';
 import { type AdminChatThreadMessage } from '@/settings/admin-panel/types/AdminChatThreadMessage';
+import { isRenderableAdminChatMessagePart } from '@/settings/admin-panel/utils/isRenderableAdminChatMessagePart';
 
 type SettingsAdminChatThreadMessageListProps = {
   messages: AdminChatThreadMessage[];
@@ -24,7 +25,9 @@ export const SettingsAdminChatThreadMessageList = ({
   messages,
 }: SettingsAdminChatThreadMessageListProps) => {
   const visibleMessages = messages.filter(
-    (message) => message.role !== AgentMessageRole.SYSTEM,
+    (message) =>
+      message.role !== AgentMessageRole.SYSTEM &&
+      message.parts.some(isRenderableAdminChatMessagePart),
   );
 
   if (visibleMessages.length === 0) {

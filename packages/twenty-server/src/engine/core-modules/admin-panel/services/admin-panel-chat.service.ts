@@ -38,6 +38,13 @@ const USER_NEVER_ENGAGED_PREDICATE = `NOT EXISTS (
     AND "userMessage"."role" = 'user'
 )`;
 
+const ORDER_EXPRESSION_BY_SORT_FIELD: Record<AdminChatThreadSortField, string> =
+  {
+    [AdminChatThreadSortField.MESSAGE_COUNT]: '"messageCount"',
+    [AdminChatThreadSortField.CREATED_AT]: '"thread"."createdAt"',
+    [AdminChatThreadSortField.UPDATED_AT]: '"thread"."updatedAt"',
+  };
+
 type GlobalChatThreadsArgs = {
   scope: AdminChatThreadScope;
   hasErrorOnly: boolean;
@@ -179,12 +186,7 @@ export class AdminPanelChatService {
       searchTerm,
     };
 
-    const orderExpression =
-      sortBy === AdminChatThreadSortField.MESSAGE_COUNT
-        ? '"messageCount"'
-        : sortBy === AdminChatThreadSortField.CREATED_AT
-          ? '"thread"."createdAt"'
-          : '"thread"."updatedAt"';
+    const orderExpression = ORDER_EXPRESSION_BY_SORT_FIELD[sortBy];
 
     const orderDirection: 'ASC' | 'DESC' =
       sortDirection === AdminChatThreadSortDirection.ASC ? 'ASC' : 'DESC';

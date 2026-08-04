@@ -42,6 +42,7 @@ export const SettingsAdminChatCollapsibleSection = ({
   return (
     <StyledContainer>
       <StyledToggleButton
+        aria-expanded={isExpanded}
         onClick={() =>
           setIsExpanded((previousIsExpanded) => !previousIsExpanded)
         }

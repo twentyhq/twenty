@@ -45,9 +45,9 @@ export const SettingsAdminChatMessage = ({
   const messageBody = (
     <StyledMessageBubble isUser={isUser && !message.isHidden}>
       {!message.isHidden && <StyledRoleLabel>{message.role}</StyledRoleLabel>}
-      {renderableParts.map((part, index) => (
+      {renderableParts.map((part) => (
         <SettingsAdminChatMessagePartRenderer
-          key={index}
+          key={part.orderIndex}
           part={part}
           isUserMessage={isUser}
         />

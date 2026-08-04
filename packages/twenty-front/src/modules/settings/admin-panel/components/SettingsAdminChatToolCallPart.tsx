@@ -90,6 +90,12 @@ const StyledErrorMessage = styled.div`
   white-space: pre-wrap;
 `;
 
+const StyledEmptyTabLabel = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
 export const SettingsAdminChatToolCallPart = ({
   part,
 }: SettingsAdminChatToolCallPartProps) => {
@@ -115,6 +121,7 @@ export const SettingsAdminChatToolCallPart = ({
   return (
     <StyledContainer>
       <StyledToggleRow
+        aria-expanded={isExpanded}
         onClick={() =>
           setIsExpanded((previousIsExpanded) => !previousIsExpanded)
         }
@@ -147,7 +154,7 @@ export const SettingsAdminChatToolCallPart = ({
             {t`Input`}
           </StyledTab>
         </StyledTabContainer>
-        {isDefined(activeJsonValue) && (
+        {isDefined(activeJsonValue) ? (
           <StyledJsonTreeContainer>
             <JsonTree
               value={activeJsonValue}
@@ -160,6 +167,10 @@ export const SettingsAdminChatToolCallPart = ({
               onNodeValueClick={copyToClipboard}
             />
           </StyledJsonTreeContainer>
+        ) : (
+          <StyledEmptyTabLabel>
+            {activeTab === 'output' ? t`No output` : t`No input`}
+          </StyledEmptyTabLabel>
         )}
         {isNonEmptyString(part.errorMessage) && (
           <StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>

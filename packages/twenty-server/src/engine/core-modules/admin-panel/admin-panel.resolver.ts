@@ -809,47 +809,47 @@ export class AdminPanelResolver {
       nullable: true,
       defaultValue: AdminChatThreadScope.ONBOARDING,
     })
-    scope: AdminChatThreadScope,
+    scope: AdminChatThreadScope | null,
     @Args('hasErrorOnly', {
       type: () => Boolean,
       nullable: true,
       defaultValue: false,
     })
-    hasErrorOnly: boolean,
+    hasErrorOnly: boolean | null,
     @Args('userNeverEngagedOnly', {
       type: () => Boolean,
       nullable: true,
       defaultValue: false,
     })
-    userNeverEngagedOnly: boolean,
+    userNeverEngagedOnly: boolean | null,
     @Args('sortBy', {
       type: () => AdminChatThreadSortField,
       nullable: true,
       defaultValue: AdminChatThreadSortField.CREATED_AT,
     })
-    sortBy: AdminChatThreadSortField,
+    sortBy: AdminChatThreadSortField | null,
     @Args('sortDirection', {
       type: () => AdminChatThreadSortDirection,
       nullable: true,
       defaultValue: AdminChatThreadSortDirection.DESC,
     })
-    sortDirection: AdminChatThreadSortDirection,
+    sortDirection: AdminChatThreadSortDirection | null,
     @Args('limit', { type: () => Int, nullable: true, defaultValue: 25 })
-    limit: number,
+    limit: number | null,
     @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
-    offset: number,
+    offset: number | null,
     @Args('searchTerm', { type: () => String, nullable: true })
-    searchTerm?: string,
+    searchTerm?: string | null,
   ): Promise<PaginatedAdminChatThreadsDTO> {
     return this.adminChatService.getGlobalChatThreads({
-      scope,
-      hasErrorOnly,
-      userNeverEngagedOnly,
-      searchTerm,
-      sortBy,
-      sortDirection,
-      limit,
-      offset,
+      scope: scope ?? AdminChatThreadScope.ONBOARDING,
+      hasErrorOnly: hasErrorOnly ?? false,
+      userNeverEngagedOnly: userNeverEngagedOnly ?? false,
+      searchTerm: searchTerm ?? undefined,
+      sortBy: sortBy ?? AdminChatThreadSortField.CREATED_AT,
+      sortDirection: sortDirection ?? AdminChatThreadSortDirection.DESC,
+      limit: limit ?? 25,
+      offset: offset ?? 0,
     });
   }
 
