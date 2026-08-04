@@ -227,14 +227,13 @@ export class FieldMetadataToolsFactory {
                 )
               : undefined);
 
-          const rawResults = await this.fieldMetadataService.findManyWithinWorkspace(
-            {
+          const rawResults =
+            await this.fieldMetadataService.findManyWithinWorkspace({
               workspaceId,
               fieldMetadataId: parameters.id,
               objectMetadataId,
               limit: parameters.limit ?? 100,
-            },
-          );
+            });
 
           const compactedFields = (
             rawResults as unknown as Record<string, unknown>[]

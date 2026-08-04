@@ -119,7 +119,9 @@ export class FieldMetadataResolver {
     });
 
     if (!isDefined(fieldMetadata)) {
-      throw new NotFoundError(`Unable to find FieldMetadataEntity with id: ${id}`);
+      throw new NotFoundError(
+        `Unable to find FieldMetadataEntity with id: ${id}`,
+      );
     }
 
     return fieldMetadata;
