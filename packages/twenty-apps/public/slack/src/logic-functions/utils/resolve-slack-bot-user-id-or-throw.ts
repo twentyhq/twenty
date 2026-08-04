@@ -7,7 +7,6 @@ import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-u
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 
 const readCachedBotUserId = async (): Promise<string | undefined> => {
-  // A kv outage must not stop us answering "was that the bot?"; auth.test still can.
   const cacheEntry = await kv
     .get<SlackBotUserIdCacheEntry>(SLACK_BOT_USER_ID_KV_KEY)
     .catch(() => null);
