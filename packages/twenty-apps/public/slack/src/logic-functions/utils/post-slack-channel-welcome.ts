@@ -8,7 +8,7 @@ import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { parseSlackChannelWelcomeEvent } from 'src/logic-functions/utils/parse-slack-channel-welcome-event';
 import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
 import { releaseSlackChannelWelcome } from 'src/logic-functions/utils/release-slack-channel-welcome';
-import { resolveSlackBotUserId } from 'src/logic-functions/utils/resolve-slack-bot-user-id';
+import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 
 type SlackChannelWelcomeResult = { ok: boolean; skipped?: string };
 
@@ -23,7 +23,7 @@ export const postSlackChannelWelcome = async (
 
   const { slackChannelId, slackUserId } = parsed.channelJoin;
 
-  const botUserId = await resolveSlackBotUserId();
+  const botUserId = await resolveSlackBotUserIdOrThrow();
 
   if (botUserId !== slackUserId) {
     return { ok: true, skipped: 'Someone other than the bot joined' };
