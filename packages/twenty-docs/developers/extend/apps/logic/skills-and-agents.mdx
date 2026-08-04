@@ -148,7 +148,9 @@ jobs, database-event triggers): those keep the agent's own role.
 
 Your app is responsible for mapping the person who triggered the run to a
 workspace member. Only calls authenticated with an app access token — which is
-what `runAgent()` uses from a logic function — may name a member.
+what `runAgent()` uses from a logic function — may name a member. A token
+issued on behalf of a specific user, as a front component receives, may only
+name that user's own member.
 
 <Warning>
   `runAgent()` throws when the workspace member cannot be resolved — an
