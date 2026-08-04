@@ -24,13 +24,15 @@ export const releaseSlackTeamOnDisconnect = async ({
 
   const teamId = await getSlackConnectedAccountTeam(connectedAccountId);
 
-  if (
-    isNonEmptyString(teamId) &&
-    (await isSlackTeamClaimedByAnotherConnection(teamId))
-  ) {
-    await kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId));
+  if (isNonEmptyString(teamId)) {
+    const isClaimedByAnotherConnection =
+      await isSlackTeamClaimedByAnotherConnection(teamId);
 
-    return { ok: true, releasedTeamId: null };
+    if (isClaimedByAnotherConnection) {
+      await kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId));
+
+      return { ok: true, releasedTeamId: null };
+    }
   }
 
   return releaseSlackTeam({ connectedAccountId });
