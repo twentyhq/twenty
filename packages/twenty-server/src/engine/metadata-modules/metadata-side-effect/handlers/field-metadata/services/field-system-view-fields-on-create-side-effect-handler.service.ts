@@ -14,7 +14,6 @@ import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-mo
 import { computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-index-view-field-position-by-field-universal-identifier.util';
 import { computeDefaultRecordPageViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-record-page-view-field-position-by-field-universal-identifier.util';
 import { computeRecordPageViewFieldForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-page-view-field-for-existing-object.util';
-import { objectCarriesCallerAuthoredRecordPageStack } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/object-carries-caller-authored-record-page-stack.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -36,7 +35,7 @@ export class FieldSystemViewFieldsOnCreateSideEffectHandlerService extends Metad
     metadataName: 'fieldMetadata',
     name: 'fieldSystemViewFieldsOnCreate',
     description:
-      'When a field is created, provision its engine-owned view fields: a visible one on the parent object INDEX table view (every caller-provided field, relations included), and one on the engine-owned FIELDS_WIDGET record-page view. Owns the view fields of every caller-provided field; engine-emitted fields get theirs from the handler that emits them. The record-page emission is narrowed to the engine-owned record-page view, resolved strictly by its derived universal identifier: visibility follows the FIELDS widget newFieldDefaultVisibility and the view field appends into the last active view field group, degrading to no group (the common case: custom objects are created with zero groups). It noops when the object has no engine record-page view, when no active FIELDS widget references it, when the widget does not declare newFieldDefaultVisibility, when the field is the object label identifier (the record page excludes it), or when the (view, field) pair already exists pending or synced, whatever its identifier. On same-batch object+field creation no widget map exists yet, so the default widget configuration is derived statelessly from the constant (visible, no group, deterministic caller-then-system position), unless the batch carries a caller-authored record-page stack, in which case the record-page emission noops together with objectRecordPageOnCreate.',
+      'When a field is created, provision its engine-owned view fields: a visible one on the parent object INDEX table view (every caller-provided field, relations included), and one on the engine-owned FIELDS_WIDGET record-page view. Owns the view fields of every caller-provided field; engine-emitted fields get theirs from the handler that emits them. The record-page emission is narrowed to the engine-owned record-page view, resolved strictly by its derived universal identifier: visibility follows the FIELDS widget newFieldDefaultVisibility and the view field appends into the last active view field group, degrading to no group (the common case: custom objects are created with zero groups). It noops when the object has no engine record-page view, when no active FIELDS widget references it, when the widget does not declare newFieldDefaultVisibility, when the field is the object label identifier (the record page excludes it), or when the (view, field) pair already exists pending or synced, whatever its identifier. On same-batch object+field creation no widget map exists yet, so the default widget configuration is derived statelessly from the constant (visible, no group, deterministic caller-then-system position).',
   },
 ) {
   buildSideEffects({
@@ -187,19 +186,6 @@ export class FieldSystemViewFieldsOnCreateSideEffectHandlerService extends Metad
       !isFlatFieldMetadataDisplayableInDefaultView({
         flatFieldMetadata: sourceFlatFieldMetadata,
         labelIdentifierFieldMetadataUniversalIdentifier,
-      })
-    ) {
-      return undefined;
-    }
-
-    // Field handlers run before object handlers, so the engine record-page
-    // view is never pending yet; noop only when the caller authored its own
-    // stack, in which case objectRecordPageOnCreate will not emit the view.
-    if (
-      objectCarriesCallerAuthoredRecordPageStack({
-        objectMetadataUniversalIdentifier:
-          sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
       })
     ) {
       return undefined;

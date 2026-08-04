@@ -181,7 +181,9 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
     });
   });
 
-  it('should noop when the batch carries a caller-authored FIELDS_WIDGET view for the object', () => {
+  // Caller-defined custom record pages coexist with the system stack: the
+  // engine emits its own whatever the batch carries.
+  it('should still emit when the batch carries a caller-authored record-page stack for the object', () => {
     const result = handler.buildSideEffects(
       buildArgs({
         pendingViews: [
@@ -192,15 +194,6 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
             objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
           },
         ],
-      }),
-    );
-
-    expect(result.status).toBe('noop');
-  });
-
-  it('should noop when the batch carries a caller-authored RECORD_PAGE layout for the object', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({
         pendingPageLayouts: [
           {
             universalIdentifier: 'app-authored-layout-uid',
@@ -212,48 +205,17 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
       }),
     );
 
-    expect(result.status).toBe('noop');
-  });
-
-  it('should still emit when the caller-authored record-page surface targets another object', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({
-        pendingViews: [
-          {
-            universalIdentifier: 'app-authored-view-uid',
-            isSystemSideEffect: false,
-            type: ViewType.FIELDS_WIDGET,
-            objectMetadataUniversalIdentifier: 'another-object-uid',
-          },
-        ],
-        pendingPageLayouts: [
-          {
-            universalIdentifier: 'app-authored-layout-uid',
-            isSystemSideEffect: false,
-            type: PageLayoutType.RECORD_PAGE,
-            objectMetadataUniversalIdentifier: 'another-object-uid',
-          },
-        ],
-      }),
-    );
-
     expect(result.status).toBe('success');
-  });
 
-  it('should still emit when the pending record-page surface is engine-emitted (isSystemSideEffect)', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({
-        pendingViews: [
-          {
-            universalIdentifier: DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
-            isSystemSideEffect: true,
-            type: ViewType.FIELDS_WIDGET,
-            objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-          },
-        ],
-      }),
-    );
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
 
-    expect(result.status).toBe('success');
+    expect(
+      Object.values(result.operations.view?.flatEntityToCreate ?? {}),
+    ).toHaveLength(1);
+    expect(
+      Object.values(result.operations.pageLayout?.flatEntityToCreate ?? {}),
+    ).toHaveLength(1);
   });
 });

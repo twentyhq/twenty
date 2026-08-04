@@ -3,7 +3,7 @@ import {
   getRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { ViewKey, ViewType } from 'twenty-shared/types';
+import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -15,7 +15,6 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
@@ -38,7 +37,7 @@ type BackfillOperationsByApplication = Map<string, BackfillOperations>;
 @Command({
   name: 'upgrade:2-28:backfill-application-record-page',
   description:
-    'Manifest-installed applications either author their own record-page stack (kept caller-owned: the engine create handler noops on them) or never had one provisioned. Every application object with neither a FIELDS_WIDGET view nor a RECORD_PAGE layout gets the engine default record-page stack backfilled through the workspace migration pipeline: the FIELDS_WIDGET view (derived identifier, reserved key), its view fields for every displayable field except the label identifier, and the default layout with its 5 tabs and widgets, converging upgraded installs with fresh installs. The backfill runs through the legacy pipeline path (no side-effect expansion: it replays a state the engine convention already defines) and is idempotent and retry-safe: objects carrying any record-page surface are skipped, and view creation and view-field creation are gated independently, so a retry after a partial failure still backfills the missing view fields of an already-committed view. The analogue for the twenty-standard and workspace-custom populations is the reconcile-record-page-universal-identifier command.',
+    'Every object carries a system record-page stack; app-declared custom record-page layouts coexist with it (the frontend displays a custom layout over the system one when defined). This command backfills the system record-page stack for every application object missing it, converging upgraded installs with fresh installs where objectRecordPageOnCreate always emits it through the workspace migration pipeline: the FIELDS_WIDGET view (derived identifier, reserved key), its view fields for every displayable field except the label identifier, and the default layout with its 5 tabs and widgets. The backfill runs through the legacy pipeline path (no side-effect expansion: it replays a state the engine convention already defines) and is idempotent and retry-safe: view, view-field and layout creation are gated independently on their derived identifiers, so a retry after a partial failure still backfills the missing view fields of an already-committed view. The analogue for the twenty-standard and workspace-custom populations is the reconcile-record-page-universal-identifier command.',
 })
 export class BackfillApplicationRecordPageCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -173,55 +172,6 @@ export class BackfillApplicationRecordPageCommand extends ProvisionedWorkspaceCo
       return newBucket;
     };
 
-    const objectUniversalIdentifiersWithCallerFieldsWidgetView =
-      new Map<string, Set<string>>();
-
-    for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
-      if (
-        isDefined(flatView) &&
-        flatView.type === ViewType.FIELDS_WIDGET &&
-        !isDefined(flatView.deletedAt)
-      ) {
-        const viewUniversalIdentifiers =
-          objectUniversalIdentifiersWithCallerFieldsWidgetView.get(
-            flatView.objectMetadataUniversalIdentifier,
-          ) ?? new Set<string>();
-
-        viewUniversalIdentifiers.add(flatView.universalIdentifier);
-        objectUniversalIdentifiersWithCallerFieldsWidgetView.set(
-          flatView.objectMetadataUniversalIdentifier,
-          viewUniversalIdentifiers,
-        );
-      }
-    }
-
-    const recordPageLayoutUniversalIdentifiersByObject = new Map<
-      string,
-      Set<string>
-    >();
-
-    for (const flatPageLayout of Object.values(
-      flatPageLayoutMaps.byUniversalIdentifier,
-    )) {
-      if (
-        isDefined(flatPageLayout) &&
-        flatPageLayout.type === PageLayoutType.RECORD_PAGE &&
-        !isDefined(flatPageLayout.deletedAt) &&
-        isDefined(flatPageLayout.objectMetadataUniversalIdentifier)
-      ) {
-        const pageLayoutUniversalIdentifiers =
-          recordPageLayoutUniversalIdentifiersByObject.get(
-            flatPageLayout.objectMetadataUniversalIdentifier,
-          ) ?? new Set<string>();
-
-        pageLayoutUniversalIdentifiers.add(flatPageLayout.universalIdentifier);
-        recordPageLayoutUniversalIdentifiersByObject.set(
-          flatPageLayout.objectMetadataUniversalIdentifier,
-          pageLayoutUniversalIdentifiers,
-        );
-      }
-    }
-
     for (const flatObjectMetadata of Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )) {
@@ -250,33 +200,6 @@ export class BackfillApplicationRecordPageCommand extends ProvisionedWorkspaceCo
           applicationUniversalIdentifier,
           objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         });
-
-      // Objects carrying a caller-authored record-page surface keep it. A
-      // surface under the derived identifier is a partial artifact of a
-      // previous (partially failed) run of this command, not a caller stack,
-      // so it does not disable the remaining gates (retry safety).
-      const callerAuthoredSurface =
-        [
-          ...(objectUniversalIdentifiersWithCallerFieldsWidgetView.get(
-            flatObjectMetadata.universalIdentifier,
-          ) ?? []),
-        ].some(
-          (viewUniversalIdentifier) =>
-            viewUniversalIdentifier !== derivedViewUniversalIdentifier,
-        ) ||
-        [
-          ...(recordPageLayoutUniversalIdentifiersByObject.get(
-            flatObjectMetadata.universalIdentifier,
-          ) ?? []),
-        ].some(
-          (pageLayoutUniversalIdentifier) =>
-            pageLayoutUniversalIdentifier !==
-            derivedPageLayoutUniversalIdentifier,
-        );
-
-      if (callerAuthoredSurface) {
-        continue;
-      }
 
       const applicationBucket = getApplicationBucket(
         applicationUniversalIdentifier,
