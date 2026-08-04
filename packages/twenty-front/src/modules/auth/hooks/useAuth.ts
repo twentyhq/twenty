@@ -16,6 +16,7 @@ import {
   GetLoginTokenFromCredentialsDocument,
   GetWorkspaceCreationDefaultsDocument,
   SignInDocument,
+  SignOutDocument,
   SignUpInWorkspaceDocument,
   SignUpDocument,
   VerifyEmailAndGetLoginTokenDocument,
@@ -23,6 +24,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -100,6 +103,7 @@ export const useAuth = () => {
     VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
   );
   const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
+  const [signOutMutation] = useMutation(SignOutDocument);
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
@@ -116,6 +120,7 @@ export const useAuth = () => {
   const clearSession = useCallback(() => {
     sessionStorage.clear();
     store.set(tokenPairState.atom, null);
+    store.set(isCookieAuthActiveState.atom, false);
     store.set(currentUserState.atom, null);
     store.set(currentWorkspaceState.atom, null);
     store.set(currentWorkspaceMemberState.atom, null);
@@ -128,8 +133,9 @@ export const useAuth = () => {
   const handleSetAuthTokens = useCallback(
     (tokens: AuthTokenPair) => {
       setTokenPair(tokens);
+      store.set(isPendingServerSignOutState.atom, false);
     },
-    [setTokenPair],
+    [setTokenPair, store],
   );
 
   const navigateAfterMultiWorkspaceSignInUp = useCallback(
@@ -444,10 +450,23 @@ export const useAuth = () => {
     [handleGetLoginTokenFromCredentials, handleGetAuthTokensFromLoginToken],
   );
 
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = useCallback(async () => {
+    // Before clearSession: it needs the refresh token, and the navigation there
+    // kills in-flight requests.
+    store.set(isPendingServerSignOutState.atom, true);
+
+    try {
+      await signOutMutation({
+        variables: {
+          refreshToken: store.get(tokenPairState.atom)?.refreshToken?.token,
+        },
+      });
+      store.set(isPendingServerSignOutState.atom, false);
+    } catch {}
+
     broadcastSignOutToOtherTabs();
     clearSession();
-  }, [clearSession]);
+  }, [clearSession, signOutMutation, store]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({

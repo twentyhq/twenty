@@ -197,6 +197,42 @@ describe('ClientConfigService', () => {
       });
     });
 
+    it('should not return onboarding credits rewards when billing is disabled', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'IS_BILLING_ENABLED' ? false : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.onboarding).toBeNull();
+    });
+
+    it('should advertise cookie sessions when the flag is on', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'AUTH_COOKIE_SESSIONS_ENABLED' ? true : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.isCookieSessionEnabled).toBe(true);
+    });
+
+    it('should not advertise cookie sessions when the flag is off', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'AUTH_COOKIE_SESSIONS_ENABLED' ? false : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.isCookieSessionEnabled).toBe(false);
+    });
+
     it('should handle production environment correctly', async () => {
       jest
         .spyOn(twentyConfigService, 'get')

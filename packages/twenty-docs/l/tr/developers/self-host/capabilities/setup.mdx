@@ -204,7 +204,13 @@ Microsoft Azure Konsolunda "İzinler" altında aşağıdaki API'leri etkinleşti
 * Microsoft Graph: profil
 * Microsoft Graph: offline_access
 
-Not: "Mail.ReadWrite" ve "Mail.Send" yalnızca iş akışı eylemleri kullanarak e-posta göndermek istiyorsanız gereklidir. Yalnızca e-posta almak istiyorsanız "Mail.Read" kullanabilirsiniz.
+<Note>
+"Mail.ReadWrite" ve "Mail.Send", yalnızca iş akışı eylemlerimizi kullanarak e-posta göndermek istiyorsanız zorunludur. Yalnızca e-posta almak istiyorsanız "Mail.Read" kullanabilirsiniz.
+</Note>
+
+<Note>
+İş akışı eylemlerimizi kullanarak takvim etkinlikleri oluşturmak istiyorsanız "Calendars.ReadWrite" zorunludur. Yalnızca takvim etkinliklerini eşzamanlamak istiyorsanız "Calendars.Read" kullanın.
+</Note>
 
 ### Yetkili yönlendirme URI'leri
 
@@ -380,3 +386,23 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 `LOGIC_FUNCTION_TYPE=DISABLED` veya `CODE_INTERPRETER_TYPE=DISABLED` kullanıldığında, herhangi bir yürütme girişimi bir hata döndürür. Bu, Twenty'yi bu yetenekler olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>
+
+## API ve ön uç ayrı ana makinelerde
+
+Yalnızca arka ucun (back-end) ön ucu (front-end) sunmasına izin vermiyorsanız geçerlidir. Aynı kökene (same-origin) sahip dağıtımlar için burada hiçbir şeye gerek yoktur.
+
+API ile iletişim kuran her tarayıcı kökenini (origin) virgülle ayırarak belirtin. `SERVER_URL`
+ve `FRONTEND_URL` zaten güvenilirdir.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Tanımlama bilgisi oturumlarına sahip bir sürüme yükseltme yapmak, bunun gerekli olmasına neden olur. Ön uç
+artık her istekte kimlik bilgileri gönderiyor ve tarayıcılar, bildirilmemiş bir kökenden gelen kimlik bilgileri içeren
+yanıtı reddediyor; bu nedenle uygulama, bunu ayarlayana kadar yüklenemez.
+</Warning>
+
+İki ana makine farklı kayıt edilebilir etki alanlarındaysa (sadece farklı
+alt etki alanları değilse), ayrıca HTTPS gerektiren `AUTH_COOKIE_SAME_SITE=none` değişkenini de ayarlayın.

@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 De acolo folosește `getConnection(connectedAccountId)` pentru a citi tokenul de acces proaspăt și a apela API-ul furnizorului (de ex. Slack `auth.test`) sau pentru a stoca o mapare în [magazinul cheie–valoare](/l/ro/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="Rulează o funcție logică la deconectare" description="Curăță resursele atunci când o conexiune este eliminată">
+
+Orice revendică o aplicație la momentul conectării trebuie eliberat atunci când conexiunea este eliminată. O integrare Slack care revendică un `team_id` la conectare, de exemplu, trebuie să elibereze acea revendicare astfel încât un alt spațiu de lucru să poată conecta aceeași echipă Slack. Setează `onDisconnectLogicFunction` pentru a face referire la o funcție logică din aceeași aplicație, iar aceasta rulează imediat după ce `ConnectedAccount` este șters.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+La fel ca hook-ul on-connect, acesta rulează **asincron în spațiul de lucru care se deconectează** și nu blochează niciodată deconectarea. Handler-ul primește aceeași structură de payload:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+`ConnectedAccount` nu mai există atunci când rulează hook-ul, astfel încât `getConnection(connectedAccountId)` nu se mai rezolvă. Tot ceea ce îi este necesar procesului de curățare (un `team_id`, un ID extern de abonament) trebuie să fi fost scris în [key-value store](/l/ro/developers/extend/apps/logic/key-value-store) la momentul conectării, indexat după `connectedAccountId`.
+
+Hook-ul este declanșat atunci când o conexiune este eliminată în mod direct. Dezinstalarea aplicației elimină conexiunile acesteia printr-un mecanism în cascadă în baza de date, astfel încât hook-ul nu rulează în acest caz. Declară un `uninstallLogicFunction` pe `defineApplication` pentru acel flux: acesta rulează înainte ca metadatele aplicației să fie șterse, astfel încât poate apela în continuare `listConnections` și poate curăța tot ce a mai rămas.
 
 </Accordion>
 

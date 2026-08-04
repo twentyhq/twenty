@@ -2,8 +2,7 @@ import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-resul
 import { type SlackUpdateMessageInput } from 'src/logic-functions/types/slack-update-message-input.type';
 import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { isSlackMarkdownFormatError } from 'src/logic-functions/utils/is-slack-markdown-format-error';
-import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
+import { sendSlackMessageWithMarkdownFallback } from 'src/logic-functions/utils/send-slack-message-with-markdown-fallback';
 
 export const slackUpdateMessageHandler = async (
   parameters: SlackUpdateMessageInput,
@@ -20,42 +19,27 @@ export const slackUpdateMessageHandler = async (
 
   const { client } = slackClientResult;
 
-  const updateWithFormat = async (
-    messageFormat: SlackUpdateMessageInput['messageFormat'],
-  ): Promise<SlackToolResult> => {
-    const bodyFields = getSlackChatMessageBodyFields(
-      parameters.newMessageText,
-      messageFormat,
-    );
+  return await sendSlackMessageWithMarkdownFallback({
+    messageFormat: parameters.messageFormat,
+    failureMessage: 'Failed to update Slack message',
+    sendMessage: async (messageFormat) => {
+      const bodyFields = getSlackChatMessageBodyFields(
+        parameters.newMessageText,
+        messageFormat,
+      );
 
-    const data = await client.chat.update({
-      channel: parameters.slackChannelId,
-      ts: parameters.messageTimestamp,
-      ...bodyFields,
-    });
+      const data = await client.chat.update({
+        channel: parameters.slackChannelId,
+        ts: parameters.messageTimestamp,
+        ...bodyFields,
+      });
 
-    return {
-      success: true,
-      message: 'Slack message updated.',
-      slackTs: data.ts,
-      channel: parameters.slackChannelId,
-    };
-  };
-
-  try {
-    return await updateWithFormat(parameters.messageFormat);
-  } catch (error) {
-    if (
-      parameters.messageFormat !== 'markdown' ||
-      !isSlackMarkdownFormatError(error)
-    ) {
-      return slackToolFailure('Failed to update Slack message', error);
-    }
-  }
-
-  try {
-    return await updateWithFormat('plain');
-  } catch (error) {
-    return slackToolFailure('Failed to update Slack message', error);
-  }
+      return {
+        success: true,
+        message: 'Slack message updated.',
+        slackTs: data.ts,
+        channel: parameters.slackChannelId,
+      };
+    },
+  });
 };
