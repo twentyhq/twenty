@@ -8,6 +8,7 @@ import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
+import { z } from 'zod';
 import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
@@ -116,13 +117,17 @@ export const PhonesDisplay = ({
   );
 };
 
-const isValidAdditionalPhone = (
-  phone: unknown,
-): phone is { number: string; callingCode?: string; countryCode?: string } =>
-  isDefined(phone) &&
-  typeof phone === 'object' &&
-  typeof (phone as { number?: unknown }).number === 'string' &&
-  (phone as { number: string }).number !== '';
+const additionalPhoneSchema = z.object({
+  number: z.string().min(1),
+  callingCode: z.string().optional(),
+  countryCode: z.string().optional(),
+});
+
+const parseAdditionalPhonesArray = (additionalPhones: unknown[]) =>
+  additionalPhones
+    .map((phone) => additionalPhoneSchema.safeParse(phone))
+    .filter((result) => result.success)
+    .map((result) => result.data);
 
 const parseAdditionalPhones = (additionalPhones?: unknown) => {
   if (!additionalPhones) {
@@ -130,13 +135,13 @@ const parseAdditionalPhones = (additionalPhones?: unknown) => {
   }
 
   if (Array.isArray(additionalPhones)) {
-    return additionalPhones.filter(isValidAdditionalPhone);
+    return parseAdditionalPhonesArray(additionalPhones);
   }
 
   if (typeof additionalPhones === 'string') {
     try {
       const parsed = JSON.parse(additionalPhones);
-      return Array.isArray(parsed) ? parsed.filter(isValidAdditionalPhone) : [];
+      return Array.isArray(parsed) ? parseAdditionalPhonesArray(parsed) : [];
     } catch (error) {
       logError(t`Error parsing additional phones: ${String(error)}`);
     }

@@ -82,6 +82,25 @@ describe('transformPhonesValue', () => {
     );
   });
 
+  it('should drop null entries inside additionalPhones instead of throwing', () => {
+    const result = transformPhonesValue({
+      input: {
+        primaryPhoneNumber: '',
+        additionalPhones: [
+          // @ts-expect-error null is not a valid AdditionalPhoneMetadata entry, but the API must tolerate it
+          null,
+          { number: '+442071838750', callingCode: '+44', countryCode: 'GB' },
+        ],
+      },
+    });
+
+    expect(result?.additionalPhones).toBe(
+      JSON.stringify([
+        { countryCode: 'GB', callingCode: '+44', number: '2071838750' },
+      ]),
+    );
+  });
+
   it('should normalize additionalPhones to null when every entry is missing a number', () => {
     const result = transformPhonesValue({
       input: {
