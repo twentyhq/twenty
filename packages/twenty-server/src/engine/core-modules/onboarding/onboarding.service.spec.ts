@@ -317,6 +317,7 @@ describe('OnboardingService', () => {
         universalIdentifiers: [callRecorderId],
       });
 
+      expect(messageQueueService.add).toHaveBeenCalledTimes(2);
       expect(messageQueueService.add).toHaveBeenLastCalledWith(
         INSTALL_ONBOARDING_APPS_JOB_NAME,
         { workspaceId, universalIdentifiers: [callRecorderId] },
