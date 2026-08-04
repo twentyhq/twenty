@@ -45,11 +45,11 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      const isStaleChunkLazyLoadingError =
+      const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&
         checkIfItsAViteStaleChunkLazyLoadingError(error);
 
-      if (!isAbortError && !isStaleChunkLazyLoadingError) {
+      if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
         enqueueErrorSnackBar(
           error instanceof Error ? { message: error.message } : {},
         );

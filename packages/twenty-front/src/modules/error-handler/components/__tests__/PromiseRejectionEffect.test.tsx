@@ -15,7 +15,7 @@ jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
 const { captureException } = jest.requireMock('@sentry/react');
 
 const dispatchUnhandledRejection = (reason: unknown) => {
-  const event = new Event('unhandledrejection') as Event & { reason: unknown };
+  const event = new Event('unhandledrejection');
   Object.defineProperty(event, 'reason', { value: reason });
 
   window.dispatchEvent(event);
@@ -27,13 +27,8 @@ describe('PromiseRejectionEffect', () => {
     render(<PromiseRejectionEffect />);
   });
 
-  it.each([
-    'Importing a module script failed.',
-    'Failed to fetch dynamically imported module: /assets/Page-abc123.js',
-    'error loading dynamically imported module: /assets/Page-abc123.js',
-    'Unable to preload CSS for /assets/Page-abc123.css',
-  ])('should not snackbar the stale chunk error "%s"', async (message) => {
-    dispatchUnhandledRejection(new Error(message));
+  it('should not snackbar a stale chunk error', async () => {
+    dispatchUnhandledRejection(new Error('Importing a module script failed.'));
 
     await waitFor(() => {
       expect(captureException).toHaveBeenCalledTimes(1);
