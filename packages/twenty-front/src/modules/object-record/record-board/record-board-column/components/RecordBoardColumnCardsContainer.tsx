@@ -128,6 +128,7 @@ export const RecordBoardColumnCardsContainer = ({
   return (
     <StyledColumnCardsContainer
       ref={cardsContainerRef}
+      data-record-board-column-cards-id={recordBoardColumnId}
       data-replay-ignore-mutations="true"
     >
       <RecordBoardColumnCardWindowEffect

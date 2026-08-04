@@ -16,10 +16,15 @@ export const resolveDropFromPointerY = ({
   target,
   pointerY,
   getDroppableItemCount,
+  resolveDroppableDropTargetIndex,
 }: {
   target: DropTarget;
   pointerY: number;
   getDroppableItemCount: (droppableId: string) => number;
+  resolveDroppableDropTargetIndex?: (args: {
+    droppableId: string;
+    pointerY: number;
+  }) => number | null;
 }): ResolvedDrop | null => {
   if (!isDefined(target)) {
     return null;
@@ -42,8 +47,18 @@ export const resolveDropFromPointerY = ({
     return { droppableId: targetData.droppableId, dropTargetIndex };
   }
 
-  // Dropped over an empty droppable or the empty space below the cards
+  // Dropped over the droppable itself, e.g. an empty column, a virtualization
+  // placeholder or the empty space below the cards
   const droppableId = String(target.id);
+
+  const resolvedDropTargetIndex = resolveDroppableDropTargetIndex?.({
+    droppableId,
+    pointerY,
+  });
+
+  if (isDefined(resolvedDropTargetIndex)) {
+    return { droppableId, dropTargetIndex: resolvedDropTargetIndex };
+  }
 
   return { droppableId, dropTargetIndex: getDroppableItemCount(droppableId) };
 };
