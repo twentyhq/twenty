@@ -9,7 +9,7 @@ import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
 import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Repository } from 'typeorm';
+import { In, IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -469,6 +469,7 @@ export class WorkspaceInvitationService {
         workspaceId,
         type: AppTokenType.OnboardingInvitationToken,
         deletedAt: IsNull(),
+        expiresAt: MoreThan(new Date()),
       },
     });
 
