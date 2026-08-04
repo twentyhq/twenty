@@ -1,8 +1,14 @@
+import { getIsDevelopmentEnvironment } from '~/utils/getIsDevelopmentEnvironment';
+
 const getDefaultUrl = () => {
   if (
     window.location.hostname.endsWith('localhost') ||
     window.location.hostname.endsWith('127.0.0.1')
   ) {
+    if (getIsDevelopmentEnvironment()) {
+      return window.location.origin;
+    }
+
     // In development environment front and backend usually run on separate ports
     // we set the default value to localhost:3000.
     // In dev context, we use env vars to overwrite it
