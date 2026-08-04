@@ -410,25 +410,28 @@ export class WorkflowDatabaseEventTriggerListener {
 
     const automatedTriggerTableName = 'workflowAutomatedTrigger';
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowAutomatedTriggerRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-          workspaceId,
-          automatedTriggerTableName,
-          { shouldBypassPermissionChecks: true },
-        );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workflowAutomatedTriggerRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+            workspaceId,
+            automatedTriggerTableName,
+            { shouldBypassPermissionChecks: true },
+          );
 
-      return workflowAutomatedTriggerRepository.find({
-        where: {
-          type: AutomatedTriggerType.DATABASE_EVENT,
-          settings: Raw(
-            () =>
-              `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
-            { eventName: databaseEventName },
-          ),
-        },
-      });
-    }, buildSystemAuthContext(workspaceId));
+        return workflowAutomatedTriggerRepository.find({
+          where: {
+            type: AutomatedTriggerType.DATABASE_EVENT,
+            settings: Raw(
+              () =>
+                `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
+              { eventName: databaseEventName },
+            ),
+          },
+        });
+      },
+      buildSystemAuthContext(workspaceId),
+    );
   }
 
   private shouldTriggerJob({

@@ -220,6 +220,11 @@ export class WorkflowCronTriggerCronJob {
     }
   }
 
+  // The dispatch source is only read on a cron-cache rebuild (cache miss), so
+  // flipping the flag takes effect on the next rebuild: bounded by the cache TTL,
+  // or immediately when a workflow is (de)activated, which invalidates the cache.
+  // Both sources emit the same {workflowId, pattern} for a synced workspace, so
+  // the switch is a no-op in dispatch output.
   private async getWorkspaceCronTriggers(
     workspaceId: string,
   ): Promise<Array<{ workflowId: string; pattern?: string }>> {
