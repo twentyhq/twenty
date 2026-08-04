@@ -21,6 +21,10 @@ form {
   display: contents;
 }
 
+[data-dnd-dragging='true'] {
+  opacity: 0.6;
+}
+
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */
 .grecaptcha-badge {
   visibility: hidden !important;
