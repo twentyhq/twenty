@@ -34,10 +34,39 @@ const QUERY_BUILDER_CHAINABLE_METHODS = [
   'offset',
 ] as const;
 
+const SUB_QUERY_BUILDER_CHAINABLE_METHODS = [
+  'select',
+  'from',
+  'where',
+  'andWhere',
+] as const;
+
+type SubQueryBuilderMock = Record<
+  (typeof SUB_QUERY_BUILDER_CHAINABLE_METHODS)[number],
+  jest.Mock
+> & {
+  getQuery: jest.Mock;
+};
+
+const createSubQueryBuilderMock = (): SubQueryBuilderMock => {
+  const subQueryBuilderMock = {} as SubQueryBuilderMock;
+
+  for (const method of SUB_QUERY_BUILDER_CHAINABLE_METHODS) {
+    subQueryBuilderMock[method] = jest
+      .fn()
+      .mockReturnValue(subQueryBuilderMock);
+  }
+
+  subQueryBuilderMock.getQuery = jest.fn().mockReturnValue('SUBQUERY');
+
+  return subQueryBuilderMock;
+};
+
 type QueryBuilderMock = Record<
   (typeof QUERY_BUILDER_CHAINABLE_METHODS)[number],
   jest.Mock
 > & {
+  subQuery: jest.Mock;
   getRawMany: jest.Mock;
   getCount: jest.Mock;
 };
@@ -45,6 +74,7 @@ type QueryBuilderMock = Record<
 const createQueryBuilderMock = (
   getRawManyResult: () => unknown[],
   getCountResult: () => number,
+  onSubQueryCreated?: (subQueryBuilderMock: SubQueryBuilderMock) => void,
 ): QueryBuilderMock => {
   const queryBuilderMock = {} as QueryBuilderMock;
 
@@ -52,6 +82,13 @@ const createQueryBuilderMock = (
     queryBuilderMock[method] = jest.fn().mockReturnValue(queryBuilderMock);
   }
 
+  queryBuilderMock.subQuery = jest.fn().mockImplementation(() => {
+    const subQueryBuilderMock = createSubQueryBuilderMock();
+
+    onSubQueryCreated?.(subQueryBuilderMock);
+
+    return subQueryBuilderMock;
+  });
   queryBuilderMock.getRawMany = jest
     .fn()
     .mockImplementation(() => Promise.resolve(getRawManyResult()));
@@ -101,6 +138,7 @@ describe('AdminPanelChatService', () => {
   let threadRepositoryFindMock: jest.Mock;
   let threadRepositoryFindOneMock: jest.Mock;
   let threadQueryBuilderMocks: QueryBuilderMock[];
+  let subQueryBuilderMocks: SubQueryBuilderMock[];
   let threadRawManyResult: unknown[];
   let threadCountResult: number;
   let messageRepositoryFindMock: jest.Mock;
@@ -112,6 +150,7 @@ describe('AdminPanelChatService', () => {
     threadRepositoryFindMock = jest.fn();
     threadRepositoryFindOneMock = jest.fn();
     threadQueryBuilderMocks = [];
+    subQueryBuilderMocks = [];
     threadRawManyResult = [];
     threadCountResult = 0;
     messageRepositoryFindMock = jest.fn();
@@ -137,6 +176,8 @@ describe('AdminPanelChatService', () => {
               const queryBuilderMock = createQueryBuilderMock(
                 () => threadRawManyResult,
                 () => threadCountResult,
+                (subQueryBuilderMock) =>
+                  subQueryBuilderMocks.push(subQueryBuilderMock),
               );
 
               threadQueryBuilderMocks.push(queryBuilderMock);
@@ -175,7 +216,7 @@ describe('AdminPanelChatService', () => {
           conditions.some(
             (condition) =>
               condition.includes('uuid_generate_v5') &&
-              condition.includes('"isHidden" = true'),
+              condition.includes('EXISTS (SUBQUERY)'),
           ),
         ).toBe(true);
         expect(queryBuilder.setParameter).toHaveBeenCalledWith(
@@ -183,6 +224,16 @@ describe('AdminPanelChatService', () => {
           WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
         );
       }
+
+      const hiddenKickoffSubQueryBuilder = subQueryBuilderMocks[0];
+
+      expect(hiddenKickoffSubQueryBuilder.from).toHaveBeenCalledWith(
+        AgentMessageEntity,
+        'hiddenMessage',
+      );
+      expect(hiddenKickoffSubQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'hiddenMessage.isHidden = true',
+      );
     });
 
     it('should not apply the onboarding fingerprint predicate for the ALL scope', async () => {
@@ -227,12 +278,25 @@ describe('AdminPanelChatService', () => {
         ),
       ).toBe(true);
       expect(
-        conditions.some(
-          (condition) =>
-            condition.includes('NOT EXISTS') &&
-            condition.includes(`"role" = 'user'`),
+        conditions.some((condition) =>
+          condition.includes('NOT EXISTS (SUBQUERY)'),
         ),
       ).toBe(true);
+      expect(threadQueryBuilderMocks[0].setParameter).toHaveBeenCalledWith(
+        'userMessageRole',
+        AgentMessageRole.USER,
+      );
+
+      const visibleUserMessageSubQueryBuilder =
+        subQueryBuilderMocks[subQueryBuilderMocks.length - 1];
+
+      expect(visibleUserMessageSubQueryBuilder.from).toHaveBeenCalledWith(
+        AgentMessageEntity,
+        'userMessage',
+      );
+      expect(visibleUserMessageSubQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'userMessage.role = :userMessageRole',
+      );
     });
 
     it('should apply the trimmed search term as an ILIKE pattern', async () => {

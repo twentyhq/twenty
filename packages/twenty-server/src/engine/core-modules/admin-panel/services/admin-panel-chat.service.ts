@@ -13,29 +13,18 @@ import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-pane
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import {
+  AgentMessageEntity,
+  AgentMessageRole,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-const ONBOARDING_THREAD_PREDICATE = `(
-  EXISTS (
-    SELECT 1 FROM "core"."agentMessage" "hiddenMessage"
-    WHERE "hiddenMessage"."threadId" = "thread"."id"
-      AND "hiddenMessage"."isHidden" = true
-  )
-  OR "thread"."id" = public.uuid_generate_v5(
-    :setupThreadNamespace::uuid,
-    "thread"."workspaceId"::text || ':' || "thread"."userWorkspaceId"::text
-  )
-)`;
-
-const USER_NEVER_ENGAGED_PREDICATE = `NOT EXISTS (
-  SELECT 1 FROM "core"."agentMessage" "userMessage"
-  WHERE "userMessage"."threadId" = "thread"."id"
-    AND "userMessage"."isHidden" = false
-    AND "userMessage"."role" = 'user'
+const WORKSPACE_SETUP_THREAD_ID_EXPRESSION = `public.uuid_generate_v5(
+  :setupThreadNamespace::uuid,
+  "thread"."workspaceId"::text || ':' || "thread"."userWorkspaceId"::text
 )`;
 
 const ORDER_EXPRESSION_BY_SORT_FIELD: Record<AdminChatThreadSortField, string> =
@@ -106,6 +95,35 @@ export class AdminPanelChatService {
     }
   }
 
+  private buildOnboardingThreadPredicate(
+    queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
+  ): string {
+    const hiddenKickoffMessageSubQuery = queryBuilder
+      .subQuery()
+      .select('1')
+      .from(AgentMessageEntity, 'hiddenMessage')
+      .where('hiddenMessage.threadId = thread.id')
+      .andWhere('hiddenMessage.isHidden = true')
+      .getQuery();
+
+    return `(EXISTS (${hiddenKickoffMessageSubQuery}) OR "thread"."id" = ${WORKSPACE_SETUP_THREAD_ID_EXPRESSION})`;
+  }
+
+  private buildUserNeverEngagedPredicate(
+    queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
+  ): string {
+    const visibleUserMessageSubQuery = queryBuilder
+      .subQuery()
+      .select('1')
+      .from(AgentMessageEntity, 'userMessage')
+      .where('userMessage.threadId = thread.id')
+      .andWhere('userMessage.isHidden = false')
+      .andWhere('userMessage.role = :userMessageRole')
+      .getQuery();
+
+    return `NOT EXISTS (${visibleUserMessageSubQuery})`;
+  }
+
   private applyGlobalChatThreadFilters(
     queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
     {
@@ -130,10 +148,11 @@ export class AdminPanelChatService {
       .setParameter(
         'setupThreadNamespace',
         WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-      );
+      )
+      .setParameter('userMessageRole', AgentMessageRole.USER);
 
     if (scope === AdminChatThreadScope.ONBOARDING) {
-      queryBuilder.andWhere(ONBOARDING_THREAD_PREDICATE);
+      queryBuilder.andWhere(this.buildOnboardingThreadPredicate(queryBuilder));
     }
 
     if (hasErrorOnly) {
@@ -141,7 +160,7 @@ export class AdminPanelChatService {
     }
 
     if (userNeverEngagedOnly) {
-      queryBuilder.andWhere(USER_NEVER_ENGAGED_PREDICATE);
+      queryBuilder.andWhere(this.buildUserNeverEngagedPredicate(queryBuilder));
     }
 
     const trimmedSearchTerm = searchTerm?.trim();
@@ -191,10 +210,12 @@ export class AdminPanelChatService {
     const orderDirection: 'ASC' | 'DESC' =
       sortDirection === AdminChatThreadSortDirection.ASC ? 'ASC' : 'DESC';
 
-    const rows = await this.applyGlobalChatThreadFilters(
+    const listQueryBuilder = this.applyGlobalChatThreadFilters(
       this.agentChatThreadRepository.createQueryBuilder('thread'),
       filterArgs,
-    )
+    );
+
+    const rows = await listQueryBuilder
       .leftJoin('thread.messages', 'message', '"message"."isHidden" = false')
       .select('thread.id', 'id')
       .addSelect('thread.title', 'title')
@@ -208,7 +229,10 @@ export class AdminPanelChatService {
       .addSelect('user.firstName', 'userFirstName')
       .addSelect('user.lastName', 'userLastName')
       .addSelect('"thread"."lastStreamError" IS NOT NULL', 'hasError')
-      .addSelect(ONBOARDING_THREAD_PREDICATE, 'isOnboardingThread')
+      .addSelect(
+        this.buildOnboardingThreadPredicate(listQueryBuilder),
+        'isOnboardingThread',
+      )
       .addSelect('COUNT("message"."id")::int', 'messageCount')
       .addSelect(
         `(COUNT("message"."id") FILTER (WHERE "message"."role" = 'user'))::int`,
