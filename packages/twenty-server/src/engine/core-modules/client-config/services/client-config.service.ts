@@ -245,7 +245,7 @@ export class ClientConfigService {
               ),
             ),
           }
-        : undefined,
+        : null,
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',
       ),

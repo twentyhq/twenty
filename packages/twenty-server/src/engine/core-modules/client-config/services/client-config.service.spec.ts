@@ -206,7 +206,7 @@ describe('ClientConfigService', () => {
 
       const result = await service.getClientConfig();
 
-      expect(result.onboarding).toBeUndefined();
+      expect(result.onboarding).toBeNull();
     });
 
     it('should handle production environment correctly', async () => {
