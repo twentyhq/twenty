@@ -1,3 +1,5 @@
+import { isFunction } from '@sniptt/guards';
+
 import { type MutationObserverRegistry } from '@/polyfills/dom/types/MutationObserverRegistry';
 import { type MutationRecordSink } from '@/polyfills/dom/types/MutationRecordSink';
 import { type WorkerMutationObserver } from '@/polyfills/dom/types/WorkerMutationObserver';
@@ -71,6 +73,12 @@ export const createMutationObserverClass = ({
     };
 
     constructor(callback: WorkerMutationObserverCallback) {
+      if (!isFunction(callback)) {
+        throw new TypeError(
+          "Failed to construct 'MutationObserver': parameter 1 is not of type 'Function'.",
+        );
+      }
+
       this.#callback = callback;
     }
 

@@ -80,6 +80,25 @@ describe('reportErrorToPolyfillWindow', () => {
     consoleErrorSpy.mockRestore();
   });
 
+  it('reports a value that cannot be converted to a string', () => {
+    const polyfillWindow = createPolyfillWindow();
+    const errorEvents: ReportedErrorEvent[] = [];
+    const error = Object.create(null);
+
+    listenForErrorEvents(polyfillWindow, (event) => {
+      event.preventDefault();
+      errorEvents.push(event);
+    });
+
+    expect(() =>
+      reportErrorToPolyfillWindow({ polyfillWindow, error }),
+    ).not.toThrow();
+
+    expect(errorEvents).toHaveLength(1);
+    expect(errorEvents[0].error).toBe(error);
+    expect(errorEvents[0].message).toContain('could not be converted');
+  });
+
   it('logs when there is no polyfill window to report to', () => {
     const consoleErrorSpy = jest
       .spyOn(console, 'error')

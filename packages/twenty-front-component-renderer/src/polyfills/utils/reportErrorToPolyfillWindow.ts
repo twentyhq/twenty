@@ -4,6 +4,17 @@ import { isDefined } from 'twenty-shared/utils';
 const UNHANDLED_SANDBOX_ERROR_MESSAGE =
   '[twenty-front-component] An error reported inside the front component sandbox was not handled.';
 
+const UNRESOLVABLE_ERROR_MESSAGE =
+  '[twenty-front-component] The reported value could not be converted to a message.';
+
+const resolveErrorMessage = (error: unknown): string => {
+  try {
+    return error instanceof Error ? error.message : String(error);
+  } catch {
+    return UNRESOLVABLE_ERROR_MESSAGE;
+  }
+};
+
 type PolyfillErrorEvent = {
   defaultPrevented: boolean;
 };
@@ -36,7 +47,7 @@ export const reportErrorToPolyfillWindow = ({
   ) {
     const errorEvent =
       new (ErrorEventConstructor as PolyfillErrorEventConstructor)('error', {
-        message: error instanceof Error ? error.message : String(error),
+        message: resolveErrorMessage(error),
         error,
         cancelable: true,
       });

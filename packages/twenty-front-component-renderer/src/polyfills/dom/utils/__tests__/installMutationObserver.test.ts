@@ -544,6 +544,38 @@ describe('installMutationObserver', () => {
     expect(deliveries).toHaveLength(1);
   });
 
+  it('keeps other observers alive when a callback throws an unstringifiable value', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+
+    new MutationObserver(() => {
+      throw Object.create(null);
+    }).observe(container, { childList: true });
+    new MutationObserver(collect).observe(container, { childList: true });
+
+    container.appendChild(document.createElement('span'));
+
+    await flushMicrotasks();
+
+    expect(deliveries).toHaveLength(1);
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('rejects a callback that is not a function', () => {
+    const { MutationObserver } = createSandbox();
+
+    expect(
+      () =>
+        new MutationObserver(123 as unknown as WorkerMutationObserverCallback),
+    ).toThrow(TypeError);
+  });
+
   it('logs a throwing callback that no error listener handled', async () => {
     const { document, MutationObserver } = createSandbox();
     const consoleErrorSpy = jest
