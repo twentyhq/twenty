@@ -3,7 +3,12 @@ import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingM
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type Variants,
+} from 'framer-motion';
 import { useLocation, useOutlet } from 'react-router-dom';
 
 const StyledTransitionContainer = styled.div`
@@ -23,6 +28,16 @@ const StyledTransitionPage = styled(motion.div)`
   position: absolute;
 `;
 
+const transitionPageVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: (exitSlideOffset: number) => ({
+    opacity: 0,
+    y: exitSlideOffset,
+    pointerEvents: 'none',
+  }),
+};
+
 export const OnboardingTransitionOutlet = () => {
   const { pathname } = useLocation();
   const outlet = useOutlet();
@@ -37,18 +52,18 @@ export const OnboardingTransitionOutlet = () => {
       ? ONBOARDING_MOTION_SLIDE_OFFSET
       : -ONBOARDING_MOTION_SLIDE_OFFSET;
 
+  const exitCustom = shouldReduceMotion ? 0 : exitSlideOffset;
+
   return (
     <StyledTransitionContainer>
-      <AnimatePresence>
+      <AnimatePresence custom={exitCustom}>
         <StyledTransitionPage
           key={pathname}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{
-            opacity: 0,
-            y: shouldReduceMotion ? 0 : exitSlideOffset,
-            pointerEvents: 'none',
-          }}
+          custom={exitCustom}
+          variants={transitionPageVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
           transition={transition}
         >
           {outlet}
