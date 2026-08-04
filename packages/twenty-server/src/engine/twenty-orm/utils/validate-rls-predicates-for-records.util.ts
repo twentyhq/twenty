@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -14,7 +15,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
-import { resolveRoleIdFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-id-from-auth-context.util';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 
 type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   records: T[];
@@ -37,13 +38,13 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     return;
   }
 
-  const roleId = resolveRoleIdFromAuthContext({
+  const roleIds = resolveRoleIdsFromAuthContext({
     authContext,
     userWorkspaceRoleMap: internalContext.userWorkspaceRoleMap,
     apiKeyRoleMap: internalContext.apiKeyRoleMap,
   });
 
-  if (!roleId) {
+  if (!isNonEmptyArray(roleIds)) {
     return;
   }
 
@@ -54,7 +55,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
       internalContext.flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
     objectMetadata,
-    roleId,
+    roleIds,
     workspaceMember: isUserAuthContext(authContext)
       ? authContext.workspaceMember
       : undefined,

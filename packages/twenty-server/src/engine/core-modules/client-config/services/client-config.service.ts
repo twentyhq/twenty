@@ -254,6 +254,9 @@ export class ClientConfigService {
         this.twentyConfigService.get('NODE_ENV') ===
           NodeEnvironment.DEVELOPMENT || isBillingEnabled,
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
+      isCookieSessionEnabled: this.twentyConfigService.get(
+        'AUTH_COOKIE_SESSIONS_ENABLED',
+      ),
       isMicrosoftMessagingEnabled: this.twentyConfigService.get(
         'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
       ),
