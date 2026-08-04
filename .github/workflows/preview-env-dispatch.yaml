@@ -12,10 +12,7 @@ concurrency:
 
 jobs:
   trigger-preview:
-    if: |
-      github.event.action != 'closed' && (
-        github.event.action != 'labeled' || github.event.label.name == 'preview-app'
-      )
+    if: github.event.action != 'labeled' || github.event.label.name == 'preview-app'
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -34,6 +31,7 @@ jobs:
           permission-actions: write
 
       - name: Dispatch preview-env-prepare to ci-privileged
+        if: github.event.action != 'closed'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -45,22 +43,8 @@ jobs:
             -f pr_head_sha="$PR_HEAD_SHA" \
             -f repo="$REPOSITORY"
 
-  trigger-cleanup:
-    if: github.event.action == 'closed'
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Mint ci-privileged dispatch token
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
-          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
-          owner: twentyhq
-          repositories: ci-privileged
-          permission-actions: write
-
       - name: Dispatch preview-env-cleanup to ci-privileged
+        if: github.event.action == 'closed'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
