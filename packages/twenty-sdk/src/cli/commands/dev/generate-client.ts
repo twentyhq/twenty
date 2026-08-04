@@ -29,9 +29,10 @@ export class AppGenerateClientCommand {
     }
 
     let reportedOutputPath = outputPath;
+    let clientSdkPackageRoot: string | undefined;
 
     if (!isDefined(outputPath)) {
-      const clientSdkPackageRoot = await resolveClientSdkPackageRoot(appPath);
+      clientSdkPackageRoot = await resolveClientSdkPackageRoot(appPath);
 
       if (!isDefined(clientSdkPackageRoot)) {
         console.error(
@@ -42,6 +43,14 @@ export class AppGenerateClientCommand {
           ),
         );
         process.exit(1);
+      }
+
+      if (!clientSdkPackageRoot.startsWith(resolve(appPath, 'node_modules'))) {
+        console.log(
+          chalk.gray(
+            `Using hoisted twenty-client-sdk at ${clientSdkPackageRoot} (shared across the workspace).`,
+          ),
+        );
       }
 
       reportedOutputPath = join(
@@ -95,7 +104,10 @@ export class AppGenerateClientCommand {
           remoteUrl: remoteConfig.apiUrl,
         });
       } else {
-        await clientService.generateCoreClient({ appPath });
+        await clientService.generateCoreClient({
+          appPath,
+          packageRoot: clientSdkPackageRoot,
+        });
       }
     } catch (error) {
       console.error(

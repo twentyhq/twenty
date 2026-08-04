@@ -182,14 +182,21 @@ describe('generateCoreClientSource', () => {
       ).rejects.toThrow('Refusing to overwrite');
     });
 
-    it('overwrites a previous generation', async () => {
+    it('refuses a directory mixing a schema.ts with unrelated files', async () => {
+      const outputPath = join(temporaryDir, 'mixed');
+      await mkdir(outputPath, { recursive: true });
+      await writeFile(join(outputPath, 'schema.ts'), 'export {};\n');
+      await writeFile(join(outputPath, 'my-source-file.ts'), 'export {};\n');
+
+      await expect(
+        generateCoreClientSource({ schema: SCHEMA, outputPath }),
+      ).rejects.toThrow('Refusing to overwrite');
+    });
+
+    it('replaces a previous full generation, leaving no stale files', async () => {
       const outputPath = join(temporaryDir, 'regenerated');
 
-      await generateCoreClientSource({
-        schema: SCHEMA,
-        outputPath,
-        typesOnly: true,
-      });
+      await generateCoreClientSource({ schema: SCHEMA, outputPath });
       await generateCoreClientSource({
         schema: SCHEMA,
         outputPath,
@@ -199,6 +206,23 @@ describe('generateCoreClientSource', () => {
       const entries = await readdir(outputPath);
 
       expect(entries).toEqual(['schema.ts']);
+    }, 60000);
+
+    it('does not touch an unrelated sibling <output>.tmp directory', async () => {
+      const outputPath = join(temporaryDir, 'guarded');
+      const siblingPath = `${outputPath}.tmp`;
+      await mkdir(siblingPath, { recursive: true });
+      await writeFile(join(siblingPath, 'keep-me.txt'), 'important\n');
+
+      await generateCoreClientSource({
+        schema: SCHEMA,
+        outputPath,
+        typesOnly: true,
+      });
+
+      await expect(
+        readFile(join(siblingPath, 'keep-me.txt'), 'utf-8'),
+      ).resolves.toBe('important\n');
     });
   });
 });

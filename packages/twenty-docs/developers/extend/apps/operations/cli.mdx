@@ -132,7 +132,7 @@ The emitted client is the genql runtime, which gives you three hooks, in increas
 There is **no built-in token refresh**. Error semantics: a non-2xx response throws a plain `Error`; a 200 response carrying GraphQL errors throws `GenqlError` (exported from the generated `index.ts`), so an `UNAUTHENTICATED` extension code surfaces there rather than as a 401. Two patterns:
 
 - **Proactive (recommended)**: refresh inside the async `headers` callback. If `getValidAccessToken()` checks expiry and refreshes before returning, every request carries a valid token and you never handle 401s in the normal path.
-- **Reactive**: retry on 401 with a custom `fetcher`, which is the only hook that sees the response before the client throws:
+- **Reactive**: retry on 401 with a custom `fetcher` — the only hook that lets you act on the response and control the retry before the client throws (a custom `fetch` also sees the raw response, but returns straight into genql's error handling):
 
 ```typescript
 const client = createClient({

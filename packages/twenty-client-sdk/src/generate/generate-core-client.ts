@@ -1,17 +1,18 @@
 import {
   appendFile,
   copyFile,
+  mkdtemp,
   readdir,
   readFile,
   writeFile,
 } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { build } from 'esbuild';
 import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 
 import { buildClientWrapperSource } from './client-wrapper';
-import { emptyDir, ensureDir, move, remove } from './fs-utils';
+import { ensureDir, move, remove } from './fs-utils';
 import { generate } from './genql';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
 
@@ -22,6 +23,43 @@ const COMMON_SCALAR_TYPES = {
 };
 
 export const GENERATED_CORE_DIR = 'core/generated';
+
+// Generates into a unique sibling temp directory (so a pre-existing,
+// unrelated `<output>.tmp` is never touched), lets the caller finalize the
+// temp output, then atomically swaps it into place. The temp directory is
+// removed on failure.
+const generateIntoOutputPath = async ({
+  schema,
+  outputPath,
+  typesOnly = false,
+  finalizeTempOutput,
+}: {
+  schema: string;
+  outputPath: string;
+  typesOnly?: boolean;
+  finalizeTempOutput?: (tempPath: string) => Promise<void>;
+}): Promise<void> => {
+  await ensureDir(dirname(outputPath));
+
+  const tempPath = await mkdtemp(`${outputPath}.tmp-`);
+
+  try {
+    await generate({
+      schema,
+      output: tempPath,
+      scalarTypes: COMMON_SCALAR_TYPES,
+      typesOnly,
+    });
+
+    await finalizeTempOutput?.(tempPath);
+
+    await remove(outputPath);
+    await move(tempPath, outputPath);
+  } catch (error) {
+    await remove(tempPath);
+    throw error;
+  }
+};
 
 // Generates the core API client from a GraphQL schema string.
 // Produces both TypeScript source and compiled ESM/CJS bundles.
@@ -36,36 +74,24 @@ export const generateCoreClientFromSchema = async ({
 }): Promise<void> => {
   const templateSource =
     clientWrapperTemplateSource ?? twentyClientTemplateSource;
-  const tempPath = `${outputPath}.tmp`;
 
-  await ensureDir(tempPath);
-  await emptyDir(tempPath);
+  await generateIntoOutputPath({
+    schema,
+    outputPath,
+    finalizeTempOutput: async (tempPath) => {
+      const clientContent = buildClientWrapperSource(templateSource, {
+        apiClientName: 'CoreApiClient',
+        // Read through the template's safe accessor: a bare `process.env` at
+        // module scope throws in browsers before any client is constructed.
+        defaultUrl: `\`\${getProcessEnvironment().${DEFAULT_API_URL_NAME}}/graphql\``,
+        includeUploadFile: true,
+      });
 
-  try {
-    await generate({
-      schema,
-      output: tempPath,
-      scalarTypes: COMMON_SCALAR_TYPES,
-    });
+      await appendFile(join(tempPath, 'index.ts'), clientContent);
+    },
+  });
 
-    const clientContent = buildClientWrapperSource(templateSource, {
-      apiClientName: 'CoreApiClient',
-      // Read through the template's safe accessor: a bare `process.env` at
-      // module scope throws in browsers before any client is constructed.
-      defaultUrl: `\`\${getProcessEnvironment().${DEFAULT_API_URL_NAME}}/graphql\``,
-      includeUploadFile: true,
-    });
-
-    await appendFile(join(tempPath, 'index.ts'), clientContent);
-
-    await remove(outputPath);
-    await move(tempPath, outputPath);
-
-    await compileGeneratedClient(outputPath);
-  } catch (error) {
-    await remove(tempPath);
-    throw error;
-  }
+  await compileGeneratedClient(outputPath);
 };
 
 // Generates the core client as committable TypeScript source: no esbuild
@@ -89,34 +115,30 @@ export const generateCoreClientSource = async ({
 }): Promise<void> => {
   await assertOutputPathSafeToOverwrite(outputPath);
 
-  const tempPath = `${outputPath}.tmp`;
-
-  await ensureDir(tempPath);
-  await emptyDir(tempPath);
-
-  try {
-    await generate({
-      schema,
-      output: tempPath,
-      scalarTypes: COMMON_SCALAR_TYPES,
-      typesOnly,
-    });
-
-    if (provenanceHeader !== undefined) {
-      await prependHeaderToTypescriptFiles(tempPath, provenanceHeader);
-    }
-
-    await remove(outputPath);
-    await move(tempPath, outputPath);
-  } catch (error) {
-    await remove(tempPath);
-    throw error;
-  }
+  await generateIntoOutputPath({
+    schema,
+    outputPath,
+    typesOnly,
+    finalizeTempOutput:
+      provenanceHeader !== undefined
+        ? (tempPath) =>
+            prependHeaderToTypescriptFiles(tempPath, provenanceHeader)
+        : undefined,
+  });
 };
 
-// The output path is recursively replaced on regeneration, so refuse anything
-// that is not empty and does not look like a previous generation (a caller
-// passing e.g. `--output .` must not wipe their project).
+const GENERATED_OUTPUT_ENTRIES = new Set([
+  'schema.ts',
+  'schema.graphql',
+  'types.ts',
+  'index.ts',
+  'runtime',
+]);
+
+// The output path is recursively replaced on regeneration, so only overwrite
+// a directory whose every entry is a known generated file (a caller passing
+// e.g. `--output .`, or a directory that merely happens to contain a
+// schema.ts among real sources, must not be wiped).
 const assertOutputPathSafeToOverwrite = async (
   outputPath: string,
 ): Promise<void> => {
@@ -131,12 +153,12 @@ const assertOutputPathSafeToOverwrite = async (
     throw error;
   }
 
-  if (entries.length === 0 || entries.includes('schema.ts')) {
+  if (entries.every((entry) => GENERATED_OUTPUT_ENTRIES.has(entry))) {
     return;
   }
 
   throw new Error(
-    `Refusing to overwrite ${outputPath}: it is not empty and does not look like a previously generated client (no schema.ts). Use an empty or dedicated directory.`,
+    `Refusing to overwrite ${outputPath}: it contains files that are not part of a previously generated client. Use an empty or dedicated directory.`,
   );
 };
 

@@ -25,13 +25,18 @@ export class ClientService {
   async generateCoreClient({
     appPath,
     appAccessToken,
+    packageRoot,
   }: {
     appPath: string;
     appAccessToken?: string;
+    // Pass when already resolved (e.g. by the CLI command) to avoid a second
+    // walk-up; resolved from appPath otherwise.
+    packageRoot?: string;
   }): Promise<void> {
-    const packageRoot = await resolveClientSdkPackageRoot(appPath);
+    const resolvedPackageRoot =
+      packageRoot ?? (await resolveClientSdkPackageRoot(appPath));
 
-    if (!isDefined(packageRoot)) {
+    if (!isDefined(resolvedPackageRoot)) {
       throw new Error(
         `Cannot find twenty-client-sdk in ${appPath} or any parent directory. Install it first: yarn add twenty-client-sdk`,
       );
@@ -39,7 +44,7 @@ export class ClientService {
 
     const schema = await this.introspectCoreSchema({ appAccessToken });
 
-    await replaceCoreClient({ packageRoot, schema });
+    await replaceCoreClient({ packageRoot: resolvedPackageRoot, schema });
   }
 
   async generateCoreClientToPath({
