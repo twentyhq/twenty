@@ -44,7 +44,7 @@ const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
-const RECOMPUTE_DURATION_BUCKETS_SECONDS = [
+const CACHE_DURATION_BUCKETS_SECONDS = [
   0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
 ];
 
@@ -100,7 +100,7 @@ export class WorkspaceCacheService implements OnModuleInit {
           'Wall-clock time to compute one workspace metadata cache entry from its provider',
         unit: 's',
         advice: {
-          explicitBucketBoundaries: RECOMPUTE_DURATION_BUCKETS_SECONDS,
+          explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS,
         },
       },
     );
@@ -111,7 +111,7 @@ export class WorkspaceCacheService implements OnModuleInit {
           'Wall-clock time to serialize and write recomputed cache entries to Redis',
         unit: 's',
         advice: {
-          explicitBucketBoundaries: RECOMPUTE_DURATION_BUCKETS_SECONDS,
+          explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS,
         },
       },
     );
