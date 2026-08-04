@@ -1,21 +1,9 @@
-import gql from 'graphql-tag';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { updateWorkspaceOperationFactory } from 'test/integration/graphql/utils/update-workspace-operation-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
-const updateWorkspaceOperation = (data: Record<string, unknown>) => ({
-  query: gql`
-    mutation UpdateWorkspace($data: UpdateWorkspaceInput!) {
-      updateWorkspace(data: $data) {
-        id
-      }
-    }
-  `,
-  variables: { data },
-});
 
 const setActivationStatus = (activationStatus: WorkspaceActivationStatus) =>
   testDataSource.query(
@@ -50,16 +38,13 @@ describe('updateWorkspace while the workspace is pending creation', () => {
 
   it('rejects security sensitive fields', async () => {
     const response = await makeMetadataAPIRequest(
-      updateWorkspaceOperation({
-        allowImpersonation: !originalAllowImpersonation,
+      updateWorkspaceOperationFactory({
+        data: { allowImpersonation: !originalAllowImpersonation },
       }),
     );
 
     expect(response.body.data?.updateWorkspace).toBeFalsy();
-    expect(response.body.errors[0].message).toBe(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-    );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
 
     const [workspace] = await testDataSource.query(
       'SELECT "allowImpersonation" FROM core.workspace WHERE id = $1',
@@ -71,14 +56,16 @@ describe('updateWorkspace while the workspace is pending creation', () => {
 
   it('rejects the whole update when a setup field is mixed with a security sensitive one', async () => {
     const response = await makeMetadataAPIRequest(
-      updateWorkspaceOperation({
-        displayName: 'Should not be applied',
-        isPublicInviteLinkEnabled: true,
+      updateWorkspaceOperationFactory({
+        data: {
+          displayName: 'Should not be applied',
+          isPublicInviteLinkEnabled: true,
+        },
       }),
     );
 
     expect(response.body.data?.updateWorkspace).toBeFalsy();
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
 
     const [workspace] = await testDataSource.query(
       'SELECT "displayName" FROM core.workspace WHERE id = $1',
@@ -92,7 +79,7 @@ describe('updateWorkspace while the workspace is pending creation', () => {
     const displayName = `Pending setup ${Date.now()}`;
 
     const response = await makeMetadataAPIRequest(
-      updateWorkspaceOperation({ displayName }),
+      updateWorkspaceOperationFactory({ data: { displayName } }),
     );
 
     expect(response.body.errors).toBeUndefined();
