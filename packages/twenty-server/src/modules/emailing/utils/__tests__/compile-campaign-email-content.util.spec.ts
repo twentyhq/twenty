@@ -1,5 +1,10 @@
-import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
+
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 
 jest.mock(
   'src/engine/core-modules/email/utils/compile-outbound-email-content.util',
@@ -252,7 +257,13 @@ describe('compileCampaignEmailContent', () => {
   it('should reject a JSON value that is not a document', async () => {
     await expect(
       compileCampaignEmailContent('{"foo":"bar"}', VARIABLES),
-    ).rejects.toThrow('not a renderable email document');
+    ).rejects.toMatchObject({
+      code: EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+    });
+
+    await expect(
+      compileCampaignEmailContent('{"foo":"bar"}', VARIABLES),
+    ).rejects.toBeInstanceOf(EmailingDomainException);
   });
 
   it('should reject a document with a non-array content', async () => {

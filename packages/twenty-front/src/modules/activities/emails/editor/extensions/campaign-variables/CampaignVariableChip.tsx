@@ -1,13 +1,5 @@
-import { BaseChip } from '@/ui/input/components/BaseChip';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledWrapper = styled.span`
-  display: inline-block;
-  padding-inline: ${themeCssVariables.spacing[0.5]};
-`;
+import { VariableChip } from '@/advanced-text-editor/extensions/variable-tag/VariableChip';
+import { type NodeViewProps } from '@tiptap/react';
 
 type CampaignVariableChipProps = NodeViewProps;
 
@@ -20,12 +12,6 @@ export const CampaignVariableChip = ({
     typeof node.attrs.variable === 'string' ? node.attrs.variable : '';
 
   return (
-    <NodeViewWrapper as={StyledWrapper} style={{ whiteSpace: 'nowrap' }}>
-      <BaseChip
-        label={variable}
-        onRemove={editor.isEditable ? deleteNode : undefined}
-        removeAriaLabel={t`Remove variable`}
-      />
-    </NodeViewWrapper>
+    <VariableChip deleteNode={deleteNode} editor={editor} label={variable} />
   );
 };
