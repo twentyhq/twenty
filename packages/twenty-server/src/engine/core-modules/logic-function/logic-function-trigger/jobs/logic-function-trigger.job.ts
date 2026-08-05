@@ -54,8 +54,7 @@ export class LogicFunctionTriggerJob {
           continue;
         }
 
-        // An oversized dependency tree cannot succeed until the user changes
-        // their application, so retrying the job would loop forever.
+        // Retrying cannot succeed until the user trims their dependencies
         if (
           error instanceof LogicFunctionException &&
           error.code ===

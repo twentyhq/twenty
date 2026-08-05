@@ -19,8 +19,7 @@ const computeDirectorySizeBytes = async (
         return computeDirectorySizeBytes(fullPath);
       }
 
-      // Count symlinked file targets (e.g. node_modules/.bin entries) but do
-      // not recurse into symlinked directories to avoid cycles.
+      // Symlinked directories are not traversed to avoid cycles
       if (entry.isSymbolicLink()) {
         try {
           const targetStat = await fs.stat(fullPath);

@@ -8,12 +8,10 @@ import { pipeline } from 'stream/promises';
 const YARN_INSTALL_TIMEOUT_MS = 240_000;
 const YARN_ENGINE_DIR = resolve('yarn-engine');
 const YARN_ENGINE_PATH = join(YARN_ENGINE_DIR, '.yarn/releases/yarn-4.9.2.cjs');
-// A Lambda function and all its layers must stay under 250MB unzipped; the
-// budget leaves room for the executor code and the SDK layer.
+// AWS caps a function plus all its layers at 250MB unzipped
 const MAX_UNZIPPED_DEPENDENCIES_MB = 200;
 
-// The class name is reported as the invocation errorType and matched by
-// DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME on the server.
+// The class name is matched server-side as the invocation errorType
 class DependenciesSizeExceededError extends Error {
   constructor(message) {
     super(message);
@@ -88,8 +86,7 @@ const computeDirectorySizeBytes = async (directory) => {
         return computeDirectorySizeBytes(fullPath);
       }
 
-      // Count symlinked file targets (e.g. node_modules/.bin entries) but do
-      // not recurse into symlinked directories to avoid cycles.
+      // Symlinked directories are not traversed to avoid cycles
       if (entry.isSymbolicLink()) {
         try {
           const targetStat = await fs.stat(fullPath);

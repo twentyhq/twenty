@@ -311,8 +311,7 @@ export class LambdaExecutorManagerService {
         applicationUniversalIdentifier,
       });
     } catch (error) {
-      // An oversized dependency tree is a user error, not a build failure:
-      // keep its code and message intact for the user.
+      // User error: keep its code and message intact
       if (
         error instanceof LogicFunctionException &&
         error.code ===

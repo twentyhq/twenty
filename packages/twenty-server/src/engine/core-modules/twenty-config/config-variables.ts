@@ -717,8 +717,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   LOGIC_FUNCTION_EXEC_THROTTLE_TTL = 60_000;
 
-  // A Lambda function and all its layers cannot exceed 250MB unzipped; the
-  // default leaves room for the executor code and the SDK layer.
+  // AWS caps a function plus all its layers at 250MB unzipped
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description:

@@ -23,7 +23,6 @@ import {
   BUILDER_LAMBDA_MEMORY_MB,
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
   COMMON_LAYER_NAME_PREFIX,
-  DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME,
   LAMBDA_EPHEMERAL_STORAGE_MB,
   TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS,
   YARN_INSTALL_FUNCTION_NAME_PREFIX,
@@ -38,7 +37,9 @@ import {
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
+import { isToolFunctionConfigurationUpToDate } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/is-tool-function-configuration-up-to-date.util';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
@@ -155,32 +156,7 @@ export class LambdaToolFunctionsService {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
-      const isDependenciesSizeExceeded =
-        parsedResult?.errorType === DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME &&
-        isNonEmptyString(parsedResult?.errorMessage);
-
-      if (isDependenciesSizeExceeded) {
-        throw new LogicFunctionException(
-          parsedResult.errorMessage,
-          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
-        );
-      }
-
-      // The sandbox gets OOM-killed before the size check can run only when
-      // the dependency tree is far beyond what a layer can hold anyway.
-      const isOutOfMemory = parsedResult?.errorType === 'Runtime.OutOfMemory';
-
-      if (isOutOfMemory) {
-        throw new LogicFunctionException(
-          `Yarn install Lambda ran out of memory: the dependency tree is too large to install`,
-          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
-        );
-      }
-
-      throw new LogicFunctionException(
-        `Yarn install Lambda failed: ${JSON.stringify(parsedResult)}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
-      );
+      throw buildYarnInstallFailureException(parsedResult);
     }
 
     const parsedResult: YarnInstallLambdaResult = result.Payload
@@ -349,22 +325,6 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(builderFunctionName);
   }
 
-  private isToolFunctionConfigurationMatching({
-    configuration,
-    memorySize,
-    timeoutSeconds,
-  }: {
-    configuration: FunctionConfiguration | undefined;
-    memorySize: number;
-    timeoutSeconds: number;
-  }): boolean {
-    return (
-      configuration?.MemorySize === memorySize &&
-      configuration?.Timeout === timeoutSeconds &&
-      configuration?.EphemeralStorage?.Size === LAMBDA_EPHEMERAL_STORAGE_MB
-    );
-  }
-
   // Tool function names only hash the handler content, so memory/timeout
   // changes never produce a new function and must be applied in place.
   private async reconcileToolFunctionConfiguration({
@@ -379,10 +339,11 @@ export class LambdaToolFunctionsService {
     timeoutSeconds: number;
   }): Promise<void> {
     if (
-      this.isToolFunctionConfigurationMatching({
+      isToolFunctionConfigurationUpToDate({
         configuration: existingConfiguration,
         memorySize,
         timeoutSeconds,
+        ephemeralStorageMb: LAMBDA_EPHEMERAL_STORAGE_MB,
       })
     ) {
       if (existingConfiguration?.State !== 'Active') {
@@ -413,8 +374,7 @@ export class LambdaToolFunctionsService {
           }),
         );
       } catch (error) {
-        // Another worker is applying an update concurrently; verify the
-        // outcome below instead of failing.
+        // Concurrent update from another worker; the outcome is verified below.
         if (!(error instanceof ResourceConflictException)) {
           throw error;
         }
@@ -427,10 +387,11 @@ export class LambdaToolFunctionsService {
       );
 
       if (
-        this.isToolFunctionConfigurationMatching({
+        isToolFunctionConfigurationUpToDate({
           configuration: refreshedFunction.Configuration,
           memorySize,
           timeoutSeconds,
+          ephemeralStorageMb: LAMBDA_EPHEMERAL_STORAGE_MB,
         })
       ) {
         return;
