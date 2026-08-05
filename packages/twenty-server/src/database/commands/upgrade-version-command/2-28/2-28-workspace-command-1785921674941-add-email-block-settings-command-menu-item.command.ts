@@ -15,7 +15,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const EMAIL_BLOCK_SETTINGS_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.emailBlockSettings.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.28.0', 1785510000000)
+@RegisteredWorkspaceCommand('2.28.0', 1785921674941)
 @Command({
   name: 'upgrade:2-28:add-email-block-settings-command-menu-item',
   description:
