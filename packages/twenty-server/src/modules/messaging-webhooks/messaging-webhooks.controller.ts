@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { MessagingWebhookApiExceptionFilter } from 'src/modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
@@ -27,7 +28,7 @@ export class MessagingWebhooksController {
     private readonly sesOutboundWebhookRouterService: SesOutboundWebhookRouterService,
   ) {}
 
-  @Post(['webhooks/messaging/ses/inbound'])
+  @Post(`${ApiPath.Webhooks}/messaging/ses/inbound`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HttpCode(200)
   async handleSesInboundWebhook(
@@ -43,7 +44,7 @@ export class MessagingWebhooksController {
     await this.sesInboundWebhookRouterService.route(request.rawBody);
   }
 
-  @Post(['webhooks/messaging/ses/outbound'])
+  @Post(`${ApiPath.Webhooks}/messaging/ses/outbound`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HttpCode(200)
   async handleSesOutboundWebhook(
