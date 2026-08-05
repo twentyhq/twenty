@@ -376,10 +376,9 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       return EmailingDomainStatus.VERIFIED;
     }
 
-    if (
-      identityResponse.VerifiedForSendingStatus === false ||
-      dkimStatus === 'FAILED'
-    ) {
+    // SES reports VerifiedForSendingStatus false for the whole time it is
+    // waiting on the DKIM records, so only a FAILED DKIM status is terminal.
+    if (dkimStatus === 'FAILED') {
       return EmailingDomainStatus.FAILED;
     }
 
