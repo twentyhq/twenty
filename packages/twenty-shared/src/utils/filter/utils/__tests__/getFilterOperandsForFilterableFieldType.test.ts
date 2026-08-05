@@ -43,6 +43,19 @@ describe('getFilterOperandsForFilterableFieldType', () => {
     ]);
   });
 
+  it('should preserve actor application subfield operands', () => {
+    expect(
+      getFilterOperandsForFilterableFieldType({
+        filterType: 'ACTOR',
+        subFieldName: 'applicationUniversalIdentifier',
+      }),
+    ).toEqual([
+      ViewFilterOperand.IS,
+      ViewFilterOperand.IS_NOT,
+      ...emptyOperands,
+    ]);
+  });
+
   it('should default currency to amount operands', () => {
     expect(
       getFilterOperandsForFilterableFieldType({ filterType: 'CURRENCY' }),

@@ -313,6 +313,7 @@ const FieldActorSourceSchema = z.union([
 export const FieldActorValueSchema = z.object({
   source: FieldActorSourceSchema,
   workspaceMemberId: z.string().nullable(),
+  applicationUniversalIdentifier: z.string().nullable(),
   name: z.string(),
   context: z
     .object({

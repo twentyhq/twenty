@@ -470,6 +470,17 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
+            .applicationUniversalIdentifier,
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR]
+            .applicationUniversalIdentifier,
+        isImportable: false,
+        isFilterable: true,
+        isIncludedInUniqueConstraint: false,
+      },
+      {
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
             .context,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].context,
@@ -483,18 +494,21 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         source: 'IMPORT',
         name: 'name',
         workspaceMemberId: 'id',
+        applicationUniversalIdentifier: null,
         context: { provider: ConnectedAccountProvider.GOOGLE },
       },
       {
         source: 'MANUAL',
         name: 'name',
         workspaceMemberId: 'id',
+        applicationUniversalIdentifier: null,
         context: { provider: ConnectedAccountProvider.MICROSOFT },
       },
       {
         source: 'WEBHOOK',
         name: 'name',
         workspaceMemberId: 'id',
+        applicationUniversalIdentifier: null,
         context: {},
       },
     ],

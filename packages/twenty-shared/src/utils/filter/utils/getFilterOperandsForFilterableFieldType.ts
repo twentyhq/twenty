@@ -30,7 +30,9 @@ export const getFilterOperandsForFilterableFieldType = ({
 
   if (
     filterType === 'ACTOR' &&
-    (subFieldName === 'source' || subFieldName === 'workspaceMemberId')
+    (subFieldName === 'source' ||
+      subFieldName === 'workspaceMemberId' ||
+      subFieldName === 'applicationUniversalIdentifier')
   ) {
     return actorSubFieldOperands;
   }

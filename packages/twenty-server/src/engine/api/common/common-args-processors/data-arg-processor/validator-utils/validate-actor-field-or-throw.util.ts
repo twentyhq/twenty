@@ -35,6 +35,7 @@ export const validateActorFieldOrThrow = (
         validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       case 'workspaceMemberId':
+      case 'applicationUniversalIdentifier':
         validateUUIDFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       default:

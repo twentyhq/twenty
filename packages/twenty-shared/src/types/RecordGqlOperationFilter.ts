@@ -112,6 +112,7 @@ export type ActorFilter = {
   name?: StringFilter;
   source?: SelectFilter;
   workspaceMemberId?: UUIDFilter;
+  applicationUniversalIdentifier?: UUIDFilter;
 };
 
 export type EmailsFilter = {

@@ -44,6 +44,12 @@ export const actorCompositeType: CompositeType = {
       isRequired: false,
     },
     {
+      name: 'applicationUniversalIdentifier',
+      type: FieldMetadataType.UUID,
+      hidden: 'input',
+      isRequired: false,
+    },
+    {
       name: 'name',
       type: FieldMetadataType.TEXT,
       hidden: 'input',
@@ -61,6 +67,7 @@ export const actorCompositeType: CompositeType = {
 export type ActorMetadata = {
   source: FieldActorSource;
   workspaceMemberId: string | null;
+  applicationUniversalIdentifier: string | null;
   name: string;
   context: {
     provider?: ConnectedAccountProvider;

@@ -32,6 +32,18 @@ describe('validateActorFieldOrThrow', () => {
 
       expect(result).toEqual(validActor);
     });
+
+    it('should accept a valid application universal identifier', () => {
+      const validActor = {
+        source: FieldActorSource.APPLICATION,
+        applicationUniversalIdentifier: '20202020-136c-4d90-954a-fc6a4f186063',
+        context: {},
+      };
+
+      const result = validateActorFieldOrThrow(validActor, 'testField');
+
+      expect(result).toEqual(validActor);
+    });
   });
 
   describe('invalid inputs', () => {
@@ -62,6 +74,18 @@ describe('validateActorFieldOrThrow', () => {
       const invalidActor = {
         source: FieldActorSource.EMAIL,
         context: 'invalid',
+      };
+
+      expect(() =>
+        validateActorFieldOrThrow(invalidActor, 'testField'),
+      ).toThrow(CommonQueryRunnerException);
+    });
+
+    it('should throw when application universal identifier is not a UUID', () => {
+      const invalidActor = {
+        source: FieldActorSource.APPLICATION,
+        applicationUniversalIdentifier: 'not-a-uuid',
+        context: {},
       };
 
       expect(() =>

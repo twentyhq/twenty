@@ -93,6 +93,7 @@ export class WorkflowTriggerJob {
               : DEFAULT_WORKFLOW_NAME,
           context: {},
           workspaceMemberId: null,
+          applicationUniversalIdentifier: null,
         },
       });
     }, authContext);

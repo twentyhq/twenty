@@ -463,6 +463,7 @@ export class CreateCompanyAndPersonService {
         createdBy: {
           source: createdBy.source,
           workspaceMemberId: createdBy.workspaceMember?.id ?? null,
+          applicationUniversalIdentifier: null,
           name: createdByName,
           context: createdBy.context,
         },

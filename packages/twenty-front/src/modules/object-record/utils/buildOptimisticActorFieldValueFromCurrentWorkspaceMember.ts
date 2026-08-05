@@ -10,6 +10,7 @@ export const buildOptimisticActorFieldValueFromCurrentWorkspaceMember = (
     name: '',
     source: 'MANUAL',
     workspaceMemberId: null,
+    applicationUniversalIdentifier: null,
   };
 
   if (!isDefined(currentWorkspaceMember)) {

@@ -100,6 +100,7 @@ const context: ToolProviderContext = {
   actorContext: {
     source: FieldActorSource.MANUAL,
     workspaceMemberId: 'caller-workspace-member-id',
+    applicationUniversalIdentifier: null,
     name: 'Caller',
     context: {},
   },

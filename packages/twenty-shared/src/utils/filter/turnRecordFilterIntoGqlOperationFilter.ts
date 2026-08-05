@@ -1272,25 +1272,36 @@ const buildDirectFieldGqlOperationFilter = ({
         }
       }
 
-      if (subFieldName === 'workspaceMemberId') {
-        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-          jsonRelationFilterValueSchema
-            .catch({
-              isCurrentWorkspaceMemberSelected: false,
-              selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
-                recordFilter.value,
-              ),
-            })
-            .parse(recordFilter.value);
+      if (
+        subFieldName === 'workspaceMemberId' ||
+        subFieldName === 'applicationUniversalIdentifier'
+      ) {
+        let selectedActorSubFieldIdentifiers: string[];
 
-        const workspaceMemberIds = isCurrentWorkspaceMemberSelected
-          ? [
-              ...selectedRecordIds,
-              filterValueDependencies?.currentWorkspaceMemberId,
-            ].filter(isDefined)
-          : selectedRecordIds;
+        if (subFieldName === 'applicationUniversalIdentifier') {
+          selectedActorSubFieldIdentifiers = arrayOfUuidOrVariableSchema.parse(
+            recordFilter.value,
+          );
+        } else {
+          const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+            jsonRelationFilterValueSchema
+              .catch({
+                isCurrentWorkspaceMemberSelected: false,
+                selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
+                  recordFilter.value,
+                ),
+              })
+              .parse(recordFilter.value);
 
-        if (!isDefined(workspaceMemberIds) || workspaceMemberIds.length === 0) {
+          selectedActorSubFieldIdentifiers = isCurrentWorkspaceMemberSelected
+            ? [
+                ...selectedRecordIds,
+                filterValueDependencies?.currentWorkspaceMemberId,
+              ].filter(isDefined)
+            : selectedRecordIds;
+        }
+
+        if (selectedActorSubFieldIdentifiers.length === 0) {
           return;
         }
 
@@ -1298,10 +1309,10 @@ const buildDirectFieldGqlOperationFilter = ({
           case RecordFilterOperand.IS:
             return {
               [fieldMetadataItem.name]: {
-                workspaceMemberId: {
-                  in: workspaceMemberIds,
+                [subFieldName]: {
+                  in: selectedActorSubFieldIdentifiers,
                 } satisfies UUIDFilter,
-              },
+              } as ActorFilter,
             };
           case RecordFilterOperand.IS_NOT: {
             return {
@@ -1309,18 +1320,18 @@ const buildDirectFieldGqlOperationFilter = ({
                 {
                   not: {
                     [fieldMetadataItem.name]: {
-                      workspaceMemberId: {
-                        in: workspaceMemberIds,
+                      [subFieldName]: {
+                        in: selectedActorSubFieldIdentifiers,
                       } satisfies UUIDFilter,
-                    },
+                    } as ActorFilter,
                   },
                 },
                 {
                   [fieldMetadataItem.name]: {
-                    workspaceMemberId: {
+                    [subFieldName]: {
                       is: 'NULL',
                     } satisfies UUIDFilter,
-                  },
+                  } as ActorFilter,
                 },
               ],
             };

@@ -241,5 +241,10 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { actorField: { name: { like: '%John%' } } } },
     { filter: { actorField: { workspaceMemberId: { eq: TEST_UUID } } } },
     { filter: { actorField: { workspaceMemberId: { is: 'NULL' } } } },
+    {
+      filter: {
+        actorField: { applicationUniversalIdentifier: { eq: TEST_UUID } },
+      },
+    },
   ],
 };

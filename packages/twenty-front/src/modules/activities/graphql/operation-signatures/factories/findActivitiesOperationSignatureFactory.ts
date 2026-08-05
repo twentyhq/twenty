@@ -39,6 +39,7 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
       createdBy: {
         source: true,
         workspaceMemberId: true,
+        applicationUniversalIdentifier: true,
         name: true,
       },
       assigneeId: true,

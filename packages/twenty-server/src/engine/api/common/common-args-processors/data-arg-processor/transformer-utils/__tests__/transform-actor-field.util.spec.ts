@@ -31,6 +31,18 @@ describe('transformActorField', () => {
     });
   });
 
+  it('should preserve application universal identifier', () => {
+    const result = transformActorField({
+      source: FieldActorSource.APPLICATION,
+      applicationUniversalIdentifier: '20202020-136c-4d90-954a-fc6a4f186063',
+    });
+
+    expect(result).toEqual({
+      source: FieldActorSource.APPLICATION,
+      applicationUniversalIdentifier: '20202020-136c-4d90-954a-fc6a4f186063',
+    });
+  });
+
   it('should transform actor with null source', () => {
     const result = transformActorField({
       source: null,

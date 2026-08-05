@@ -41,6 +41,7 @@ export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {
     source: 'Source',
     name: 'Name',
     workspaceMemberId: 'Workspace Member',
+    applicationUniversalIdentifier: 'Application',
     context: 'Context',
   },
   [FieldMetadataType.RICH_TEXT]: {

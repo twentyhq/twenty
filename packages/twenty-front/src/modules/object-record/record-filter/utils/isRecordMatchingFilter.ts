@@ -371,6 +371,13 @@ export const isRecordMatchingFilter = ({
           });
         }
 
+        if (isDefined(actorFilter.applicationUniversalIdentifier)) {
+          return isMatchingUUIDFilter({
+            uuidFilter: actorFilter.applicationUniversalIdentifier,
+            value: record[filterKey]?.applicationUniversalIdentifier,
+          });
+        }
+
         if (isDefined(actorFilter.source)) {
           return isMatchingSelectFilter({
             selectFilter: actorFilter.source,

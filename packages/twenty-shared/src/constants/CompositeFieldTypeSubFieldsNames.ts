@@ -38,6 +38,7 @@ export const COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES = {
     source: 'source',
     name: 'name',
     workspaceMemberId: 'workspaceMemberId',
+    applicationUniversalIdentifier: 'applicationUniversalIdentifier',
     context: 'context',
   },
   [FieldMetadataType.RICH_TEXT]: {

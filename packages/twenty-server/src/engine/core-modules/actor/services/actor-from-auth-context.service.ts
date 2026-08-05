@@ -134,10 +134,16 @@ export class ActorFromAuthContextService {
     const existingValue = record[fieldName] as ActorMetadata | undefined;
 
     if (fieldName === 'createdBy') {
-      if (actorMetadata && (!existingValue || !existingValue.name)) {
+      if (!existingValue || !existingValue.name) {
         record[fieldName] = {
           ...actorMetadata,
           source: existingValue?.source ?? actorMetadata.source,
+        };
+      } else {
+        record[fieldName] = {
+          ...existingValue,
+          applicationUniversalIdentifier:
+            actorMetadata.applicationUniversalIdentifier,
         };
       }
     } else {
@@ -150,6 +156,8 @@ export class ActorFromAuthContextService {
       return buildCreatedByFromFullNameMetadata({
         fullNameMetadata: authContext.workspaceMember.name,
         workspaceMemberId: authContext.workspaceMemberId,
+        applicationUniversalIdentifier:
+          authContext.application?.universalIdentifier,
       });
     }
 

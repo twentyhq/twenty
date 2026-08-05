@@ -160,5 +160,12 @@ export const failingFilterInputsByFieldMetadataType: {
     { filter: { actorField: { invalidSubField: { eq: 'test' } } } },
     { filter: { actorField: { source: { invalidOperator: 'test' } } } },
     { filter: { actorField: { workspaceMemberId: { eq: 'invalid-uuid' } } } },
+    {
+      filter: {
+        actorField: {
+          applicationUniversalIdentifier: { eq: 'invalid-uuid' },
+        },
+      },
+    },
   ],
 };

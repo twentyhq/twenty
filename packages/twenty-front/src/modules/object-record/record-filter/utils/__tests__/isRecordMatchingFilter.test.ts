@@ -93,6 +93,49 @@ describe('isRecordMatchingFilter', () => {
   });
 
   describe('Simple Filters', () => {
+    it('matches an actor application universal identifier filter', () => {
+      const applicationUniversalIdentifier =
+        '11111111-1111-4111-8111-111111111111';
+      const companyCreatedByApplication = {
+        ...companiesMock[0],
+        createdBy: {
+          source: 'APPLICATION',
+          workspaceMemberId: null,
+          applicationUniversalIdentifier,
+          name: 'Call Recorder',
+          context: {},
+        },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyCreatedByApplication,
+          filter: {
+            createdBy: {
+              applicationUniversalIdentifier: {
+                eq: applicationUniversalIdentifier,
+              },
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyCreatedByApplication,
+          filter: {
+            createdBy: {
+              applicationUniversalIdentifier: {
+                eq: '22222222-2222-4222-8222-222222222222',
+              },
+            },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
     it('matches a record with a simple equality filter on name', () => {
       const companyMockInFilter = {
         ...companiesMock[0],

@@ -11,5 +11,6 @@ export const buildCreatedByFromApiKey = ({
   source: FieldActorSource.API,
   name: apiKey.name,
   workspaceMemberId: null,
+  applicationUniversalIdentifier: null,
   context: {},
 });

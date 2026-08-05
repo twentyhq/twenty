@@ -13,6 +13,7 @@ export const buildWorkflowActorMetadata = (
     source: FieldActorSource.WORKFLOW,
     name: 'Workflow',
     workspaceMemberId: null,
+    applicationUniversalIdentifier: null,
     context: {},
   };
 };

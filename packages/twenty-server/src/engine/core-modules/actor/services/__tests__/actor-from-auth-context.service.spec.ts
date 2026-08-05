@@ -113,6 +113,45 @@ describe('ActorFromAuthContextService', () => {
             context: {},
             name: fromFullNameMetadataToName(workspaceMemberName),
             workspaceMemberId: '20202020-0b5c-4178-bed7-d371f6411eaa',
+            applicationUniversalIdentifier: null,
+            source: FieldActorSource.MANUAL,
+          },
+        },
+      ]);
+    });
+
+    it('should include application identity when a user acts through an application', async () => {
+      const authContext = {
+        type: 'user',
+        workspaceMemberId: '20202020-0b5c-4178-bed7-d371f6411eaa',
+        userWorkspaceId: '20202020-1234-5678-9012-345678901234',
+        user: {
+          id: '20202020-9aae-49a8-bafc-ac44bae62d6d',
+        },
+        workspaceMember: {
+          id: '20202020-0b5c-4178-bed7-d371f6411eaa',
+          name: { firstName: 'John', lastName: 'Doe' },
+        },
+        application: {
+          universalIdentifier: '20202020-136c-4d90-954a-fc6a4f186063',
+        },
+        workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
+      } as unknown as WorkspaceAuthContext;
+
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext,
+      });
+
+      expect(result).toEqual([
+        {
+          createdBy: {
+            context: {},
+            name: 'John Doe',
+            workspaceMemberId: '20202020-0b5c-4178-bed7-d371f6411eaa',
+            applicationUniversalIdentifier:
+              '20202020-136c-4d90-954a-fc6a4f186063',
             source: FieldActorSource.MANUAL,
           },
         },
@@ -140,7 +179,77 @@ describe('ActorFromAuthContextService', () => {
           createdBy: {
             source: FieldActorSource.API,
             workspaceMemberId: null,
+            applicationUniversalIdentifier: null,
             name: 'API Key Name',
+            context: {},
+          },
+        },
+      ]);
+    });
+
+    it('should build metadata with application identity when application auth context', async () => {
+      const authContext = {
+        type: 'application',
+        application: {
+          name: 'Call Recorder',
+          universalIdentifier: '20202020-136c-4d90-954a-fc6a4f186063',
+        },
+        workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
+      } as unknown as WorkspaceAuthContext;
+
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext,
+      });
+
+      expect(result).toEqual([
+        {
+          createdBy: {
+            source: FieldActorSource.APPLICATION,
+            workspaceMemberId: null,
+            applicationUniversalIdentifier:
+              '20202020-136c-4d90-954a-fc6a4f186063',
+            name: 'Call Recorder',
+            context: {},
+          },
+        },
+      ]);
+    });
+
+    it('should stamp trusted application identity when createdBy name and source are provided', async () => {
+      const authContext = {
+        type: 'application',
+        application: {
+          name: 'Call Recorder',
+          universalIdentifier: '20202020-136c-4d90-954a-fc6a4f186063',
+        },
+        workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
+      } as unknown as WorkspaceAuthContext;
+
+      const result = await service.injectCreatedBy({
+        records: [
+          {
+            createdBy: {
+              source: FieldActorSource.WORKFLOW,
+              workspaceMemberId: null,
+              name: 'Created by workflow',
+              context: {},
+            },
+          },
+        ],
+        objectMetadataNameSingular: 'person',
+        authContext,
+      });
+
+      expect(result).toEqual([
+        {
+          createdBy: {
+            source: FieldActorSource.WORKFLOW,
+            workspaceMemberId: null,
+            applicationUniversalIdentifier:
+              '20202020-136c-4d90-954a-fc6a4f186063',
+            name: 'Created by workflow',
             context: {},
           },
         },

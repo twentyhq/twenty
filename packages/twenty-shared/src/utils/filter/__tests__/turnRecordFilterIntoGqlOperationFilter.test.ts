@@ -813,6 +813,87 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
   });
 
   describe('ACTOR filter', () => {
+    it('should filter an actor by application universal identifier', () => {
+      const applicationUniversalIdentifier =
+        '11111111-1111-4111-8111-111111111111';
+
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-actor',
+          RecordFilterOperand.IS,
+          applicationUniversalIdentifier,
+          'ACTOR',
+          'applicationUniversalIdentifier',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        actor: {
+          applicationUniversalIdentifier: {
+            in: [applicationUniversalIdentifier],
+          },
+        },
+      });
+    });
+
+    it('should include actors without an application when excluding an application universal identifier', () => {
+      const applicationUniversalIdentifier =
+        '11111111-1111-4111-8111-111111111111';
+
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-actor',
+          RecordFilterOperand.IS_NOT,
+          applicationUniversalIdentifier,
+          'ACTOR',
+          'applicationUniversalIdentifier',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        or: [
+          {
+            not: {
+              actor: {
+                applicationUniversalIdentifier: {
+                  in: [applicationUniversalIdentifier],
+                },
+              },
+            },
+          },
+          {
+            actor: {
+              applicationUniversalIdentifier: { is: 'NULL' },
+            },
+          },
+        ],
+      });
+    });
+
+    it('should filter for actors without an application universal identifier', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-actor',
+          RecordFilterOperand.IS_EMPTY,
+          '',
+          'ACTOR',
+          'applicationUniversalIdentifier',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        actor: {
+          applicationUniversalIdentifier: { is: 'NULL' },
+        },
+      });
+    });
+
     it('should handle CONTAINS with a value matching a source - includes source in filter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,

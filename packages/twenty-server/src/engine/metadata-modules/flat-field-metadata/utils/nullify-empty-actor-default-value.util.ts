@@ -13,12 +13,15 @@ export const nullifyEmptyActorDefaultValue = (
   const v = defaultValue as {
     source?: string | null;
     workspaceMemberId?: string | null;
+    applicationUniversalIdentifier?: string | null;
     name?: string | null;
     context?: object | null;
   };
 
   const source = v.source ?? null;
   const workspaceMemberId = v.workspaceMemberId ?? null;
+  const applicationUniversalIdentifier =
+    v.applicationUniversalIdentifier ?? null;
   const name = isNullEquivalentTextDefaultValue(v.name)
     ? null
     : (v.name ?? null);
@@ -27,11 +30,18 @@ export const nullifyEmptyActorDefaultValue = (
   if (
     source === null &&
     workspaceMemberId === null &&
+    applicationUniversalIdentifier === null &&
     name === null &&
     context === null
   ) {
     return null;
   }
 
-  return { source, workspaceMemberId, name, context };
+  return {
+    source,
+    workspaceMemberId,
+    applicationUniversalIdentifier,
+    name,
+    context,
+  };
 };

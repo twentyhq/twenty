@@ -6,6 +6,8 @@ exports[`FilterArgProcessorService failing filter inputs validation ACTOR should
 
 exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #3: {"actorField":{"workspaceMemberId":{"eq":"invalid-uuid"}}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "actorField.workspaceMemberId""`;
 
+exports[`FilterArgProcessorService failing filter inputs validation ACTOR should throw for invalid filter #4: {"actorField":{"applicationUniversalIdentifier":{"eq":"invalid-uuid"}}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "actorField.applicationUniversalIdentifier""`;
+
 exports[`FilterArgProcessorService failing filter inputs validation ADDRESS should throw for invalid filter #1: {"addressField":{"invalidSubField":{"eq":"test"}}} 1`] = `"Sub field "invalidSubField" not found for composite type: ADDRESS"`;
 
 exports[`FilterArgProcessorService failing filter inputs validation ADDRESS should throw for invalid filter #2: {"addressField":{"addressCity":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "addressField.addressCity" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;

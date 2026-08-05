@@ -155,6 +155,7 @@ export class McpProtocolService {
     let actorContext: ActorMetadata = {
       source: FieldActorSource.AGENT,
       workspaceMemberId: null,
+      applicationUniversalIdentifier: null,
       name: 'Agent',
       context: {},
     };
@@ -163,6 +164,7 @@ export class McpProtocolService {
       actorContext = {
         source: FieldActorSource.AGENT,
         workspaceMemberId: null,
+        applicationUniversalIdentifier: null,
         name: apiKey.name,
         context: {},
       };
@@ -180,6 +182,7 @@ export class McpProtocolService {
         actorContext = {
           source: FieldActorSource.AGENT,
           workspaceMemberId: workspaceMember.id,
+          applicationUniversalIdentifier: null,
           name:
             `${workspaceMember.name?.firstName ?? ''} ${workspaceMember.name?.lastName ?? ''}`.trim() ||
             'Agent',

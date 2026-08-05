@@ -334,20 +334,26 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'ACTOR':
-      emptyRecordFilter = {
-        or: [
-          {
+      emptyRecordFilter = isSubFieldFilter
+        ? {
             [correspondingField.name]: {
-              name: { ilike: '' },
+              [compositeFieldName]: { is: 'NULL' },
             } as ActorFilter,
-          },
-          {
-            [correspondingField.name]: {
-              name: { is: 'NULL' },
-            } as ActorFilter,
-          },
-        ],
-      };
+          }
+        : {
+            or: [
+              {
+                [correspondingField.name]: {
+                  name: { ilike: '' },
+                } as ActorFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  name: { is: 'NULL' },
+                } as ActorFilter,
+              },
+            ],
+          };
       break;
     case 'ARRAY':
       emptyRecordFilter = {

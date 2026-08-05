@@ -8,6 +8,7 @@ export const ICON_NAME_BY_SUB_FIELD: Partial<
   name: 'IconTextSize',
   source: 'IconTransferIn',
   workspaceMemberId: 'IconUserCircle',
+  applicationUniversalIdentifier: 'IconApps',
   primaryEmail: 'IconMail',
   additionalEmails: 'IconMailPlus',
   primaryLinkLabel: 'IconTextSize',
