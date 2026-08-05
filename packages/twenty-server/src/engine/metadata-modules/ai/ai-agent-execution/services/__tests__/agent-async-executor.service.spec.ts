@@ -158,7 +158,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
     await service.executeAgent({
       agent: buildAgent(),
-      userPrompt: 'test',
+      messages: [{ role: 'user', content: 'test' }],
       baseSystemPrompt: 'base system prompt',
       workspaceId,
     });
@@ -190,7 +190,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
     await service.executeAgent({
       agent: buildAgent(),
-      userPrompt: 'test',
+      messages: [{ role: 'user', content: 'test' }],
       baseSystemPrompt: 'base system prompt',
       workspaceId,
       toolLoadingStrategy: 'lazy',
@@ -259,7 +259,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
     await service.executeAgent({
       agent: buildAgent(),
-      userPrompt: 'test',
+      messages: [{ role: 'user', content: 'test' }],
       baseSystemPrompt: 'base system prompt',
       workspaceId,
     });
@@ -267,12 +267,51 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
   });
 
+  it('passes messages to generateText when messages are provided', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+
+    const messages = [
+      { role: 'user' as const, content: 'Hello' },
+      { role: 'assistant' as const, content: 'Hi' },
+      { role: 'user' as const, content: 'Status?' },
+    ];
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      messages,
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+    });
+
+    const generateTextArgs = generateTextMock.mock.calls[0][0];
+
+    expect(generateTextArgs.messages).toEqual([
+      { role: 'user', content: 'Hello' },
+      { role: 'assistant', content: 'Hi' },
+      { role: 'user', content: 'Status?' },
+    ]);
+    expect(generateTextArgs).not.toHaveProperty('prompt');
+  });
+
+  it('throws without calling the model when messages are empty', async () => {
+    await expect(
+      service.executeAgent({
+        agent: buildAgent(),
+        messages: [],
+        baseSystemPrompt: 'base system prompt',
+        workspaceId,
+      }),
+    ).rejects.toThrow(/at least one message/);
+
+    expect(generateTextMock).not.toHaveBeenCalled();
+  });
+
   it('prefixes the system prompt with the caller-supplied base prompt', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce(null);
 
     await service.executeAgent({
       agent: buildAgent(),
-      userPrompt: 'test',
+      messages: [{ role: 'user', content: 'test' }],
       baseSystemPrompt: 'caller base prompt',
       workspaceId,
     });
@@ -307,7 +346,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
           schema: { type: 'object', properties: {} },
         },
       } as AgentEntity,
-      userPrompt: 'test',
+      messages: [{ role: 'user', content: 'test' }],
       baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
       workspaceId,
     });
@@ -345,7 +384,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
       const result = await service.executeAgent({
         agent: buildAgent(),
-        userPrompt: 'test',
+        messages: [{ role: 'user', content: 'test' }],
         baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
@@ -385,7 +424,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
       await service.executeAgent({
         agent: buildAgent(),
-        userPrompt: 'test',
+        messages: [{ role: 'user', content: 'test' }],
         baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
@@ -420,7 +459,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
       const result = await service.executeAgent({
         agent: buildAgent(),
-        userPrompt: 'test',
+        messages: [{ role: 'user', content: 'test' }],
         baseSystemPrompt: 'base system prompt',
         workspaceId,
       });

@@ -110,11 +110,21 @@ describe('select fields collectively', () => {
 const UUID_V4_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
+const hasUniversalIdentifier = (
+  value: object,
+): value is { universalIdentifier: string } =>
+  'universalIdentifier' in value &&
+  typeof (value as { universalIdentifier: unknown }).universalIdentifier ===
+    'string';
+
 const collectUuids = (value: unknown): string[] => {
   if (typeof value === 'string') {
     return [value];
   }
   if (value !== null && typeof value === 'object') {
+    if (!Array.isArray(value) && hasUniversalIdentifier(value)) {
+      return [value.universalIdentifier];
+    }
     return Object.values(value).flatMap(collectUuids);
   }
   return [];

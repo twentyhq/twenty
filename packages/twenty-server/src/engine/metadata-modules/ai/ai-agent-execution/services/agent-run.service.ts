@@ -1,10 +1,12 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
-  type RunAgentInput,
+  type RunAgentMessage,
   type RunAgentResult,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -22,6 +24,12 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+type RunAgentServiceInput = {
+  agentUniversalIdentifier: string;
+  prompt?: string | null;
+  messages?: RunAgentMessage[] | null;
+};
 
 @Injectable()
 export class AgentRunService {
@@ -46,8 +54,22 @@ export class AgentRunService {
     requestUserWorkspaceId: string | null;
     requestWorkspaceMemberId: string | null;
     callerApplication?: FlatApplication;
-    input: RunAgentInput;
+    input: RunAgentServiceInput;
   }): Promise<RunAgentResult> {
+    const prompt = input.prompt;
+
+    // GraphQL cannot express XOR; enforce exactly one of prompt or messages
+    if (isNonEmptyArray(input.messages) === isNonEmptyString(prompt)) {
+      throw new AiException(
+        'Provide exactly one of prompt or messages',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    const messages: RunAgentMessage[] = isNonEmptyString(prompt)
+      ? [{ role: 'user', content: prompt }]
+      : (input.messages ?? []);
+
     const agent = await this.agentRepository.findOne(workspace.id, {
       where: {
         universalIdentifier: input.agentUniversalIdentifier,
@@ -85,10 +107,10 @@ export class AgentRunService {
     };
 
     try {
-      const { result, hasNoMoreAvailableCredits } =
-        await this.agentAsyncExecutorService.executeAgent({
+      const executionResult = await this.agentAsyncExecutorService.executeAgent(
+        {
           agent,
-          userPrompt: input.prompt,
+          messages,
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
           actorContext: runAsContext?.actorContext,
           authContext,
@@ -98,9 +120,10 @@ export class AgentRunService {
           runAsRoleId: runAsContext?.roleId,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
-        });
+        },
+      );
 
-      if (hasNoMoreAvailableCredits) {
+      if (executionResult.hasNoMoreAvailableCredits) {
         return {
           result: null,
           error: 'AI agent stopped: no more available credits.',
@@ -108,7 +131,11 @@ export class AgentRunService {
         };
       }
 
-      return { result, error: null, success: true };
+      return {
+        result: executionResult.result,
+        error: null,
+        success: true,
+      };
     } catch (error) {
       this.logger.error(
         `Agent execution failed for ${input.agentUniversalIdentifier}`,

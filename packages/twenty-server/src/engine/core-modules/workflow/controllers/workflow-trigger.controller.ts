@@ -10,7 +10,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
-import { FieldActorSource } from 'twenty-shared/types';
+import { ApiPath, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -37,7 +37,7 @@ import {
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
-@Controller('webhooks')
+@Controller(ApiPath.Webhooks)
 @UseFilters(
   WorkflowTriggerRestApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,

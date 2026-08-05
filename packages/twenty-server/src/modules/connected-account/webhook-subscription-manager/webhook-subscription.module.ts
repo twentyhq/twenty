@@ -16,6 +16,8 @@ import { WebhookSubscriptionRenewalCronJob } from 'src/modules/connected-account
 import { WebhookSubscriptionChannelDeletedListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-channel-deleted.listener';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
+import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
+import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
 
 @Module({
@@ -32,6 +34,8 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     ]),
   ],
   providers: [
+    WebhookSubscriptionStatusService,
+    WebhookSubscriptionExceptionHandlerService,
     MessagingWebhookSubscriptionService,
     CalendarWebhookSubscriptionService,
     WebhookSubscriptionChannelDeletedListener,
