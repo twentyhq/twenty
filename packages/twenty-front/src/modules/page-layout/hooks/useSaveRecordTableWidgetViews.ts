@@ -137,6 +137,8 @@ export const useSaveRecordTableWidgetViews = () => {
                 positionInViewFilterGroup:
                   filter.positionInViewFilterGroup ?? undefined,
                 subFieldName: filter.subFieldName ?? undefined,
+                relationTargetFieldMetadataId:
+                  filter.relationTargetFieldMetadataId ?? undefined,
               })),
               viewFilterGroups: widgetViewDraft.viewFilterGroups.map(
                 (group) => ({

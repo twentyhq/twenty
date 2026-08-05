@@ -99,7 +99,7 @@ const PaymentSuccess = lazy(() =>
   })),
 );
 
-const BookCall = lazy(() =>
+const BookCall = lazyWithPreload(() =>
   import('~/pages/onboarding/BookCall').then((module) => ({
     default: module.BookCall,
   })),
@@ -129,6 +129,7 @@ const preloadOnboardingPages = () => {
   SyncEmails.preload();
   InstallApps.preload();
   InviteTeam.preload();
+  BookCall.preload();
   ChooseYourPlan.preload();
   WorkspaceSetup.preload();
 
@@ -231,14 +232,6 @@ const createWorkspaceAppRouter = (
               </LazyRoute>
             }
           />
-          <Route
-            path={AppPath.BookCall}
-            element={
-              <LazyRoute fallback={<OnboardingPageLoader />}>
-                <BookCall />
-              </LazyRoute>
-            }
-          />
         </Route>
         <Route element={<BlankLayout />}>
           <Route
@@ -309,6 +302,14 @@ const createWorkspaceAppRouter = (
               element={
                 <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <InviteTeam />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.BookCall}
+              element={
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                  <BookCall />
                 </LazyRoute>
               }
             />
