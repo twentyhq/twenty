@@ -83,16 +83,6 @@ export const buildVendorBundle = async ({
     );
   }
 
-  const content = await readFile(absoluteBuiltPath);
-  const checksum = crypto.createHash('sha256').update(content).digest('hex');
-
-  await onFileBuilt({
-    fileFolder: FileFolder.BuiltFrontComponent,
-    builtPath,
-    sourcePath: vendor.sourceVendorPath,
-    checksum,
-  });
-
   const exportNamesBySpecifier = new Map(
     await Promise.all(
       vendor.dependencies.map(
@@ -104,6 +94,16 @@ export const buildVendorBundle = async ({
       ),
     ),
   );
+
+  const content = await readFile(absoluteBuiltPath);
+  const checksum = crypto.createHash('sha256').update(content).digest('hex');
+
+  await onFileBuilt({
+    fileFolder: FileFolder.BuiltFrontComponent,
+    builtPath,
+    sourcePath: vendor.sourceVendorPath,
+    checksum,
+  });
 
   return { exportNamesBySpecifier };
 };
