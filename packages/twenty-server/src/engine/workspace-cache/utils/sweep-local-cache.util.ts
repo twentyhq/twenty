@@ -10,12 +10,17 @@ export type LocalCacheSweepConfig = {
 const lastReadAtOf = <T>(entry: WorkspaceLocalCacheEntry<T>): number =>
   entry.versions.get(entry.latestHash)?.lastReadAt ?? 0;
 
-const evictLeastRecentlyRead = <T>(
-  localCache: Map<string, WorkspaceLocalCacheEntry<T>>,
-  matches: (key: string) => boolean,
-  maxEntries: number,
-  minEvict: number,
-): number => {
+const evictLeastRecentlyRead = <T>({
+  localCache,
+  matches,
+  maxEntries,
+  minEvict,
+}: {
+  localCache: Map<string, WorkspaceLocalCacheEntry<T>>;
+  matches: (key: string) => boolean;
+  maxEntries: number;
+  minEvict: number;
+}): number => {
   const matching: [string, WorkspaceLocalCacheEntry<T>][] = [];
 
   for (const keyEntry of localCache) {
@@ -66,20 +71,20 @@ export const sweepLocalCache = <T>(
   }
 
   for (const [prefix, maxEntries] of config.maxEntriesByPrefix) {
-    evicted += evictLeastRecentlyRead(
+    evicted += evictLeastRecentlyRead({
       localCache,
-      (key) => key.startsWith(`${prefix}:`),
+      matches: (key) => key.startsWith(`${prefix}:`),
       maxEntries,
-      0,
-    );
+      minEvict: 0,
+    });
   }
 
-  evicted += evictLeastRecentlyRead(
+  evicted += evictLeastRecentlyRead({
     localCache,
-    () => true,
-    config.globalMaxEntries,
-    config.minEvict,
-  );
+    matches: () => true,
+    maxEntries: config.globalMaxEntries,
+    minEvict: config.minEvict,
+  });
 
   return evicted;
 };
