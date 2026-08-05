@@ -1,6 +1,7 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
-import { type AdvancedTextEditorPresetName } from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,23 +13,40 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+const STORY_RICH_TEXT_PROFILE = {
+  chrome: 'document',
+  minHeight: 200,
+  enableFullScreen: false,
+  buildExtensions: buildFullRichTextWithVariableTagExtensions,
+} satisfies AdvancedTextEditorProfile;
+
+const STORY_MINIMAL_PROFILE = {
+  chrome: 'document',
+  minHeight: 200,
+  enableFullScreen: false,
+  buildExtensions: () => [],
+} satisfies AdvancedTextEditorProfile;
+
 const EditorWrapper = ({
   readonly = false,
   placeholder = 'Enter text content...',
   defaultValue = null,
   onUpdate = fn(),
   minHeight = 200,
-  preset = 'recordRichTextField',
+  extensionSet = 'richText',
 }: {
   readonly?: boolean;
   placeholder?: string;
   defaultValue?: string | null;
   onUpdate?: (content: string) => void;
   minHeight?: number;
-  preset?: AdvancedTextEditorPresetName;
+  extensionSet?: 'richText' | 'minimal';
 }) => {
   const editor = useAdvancedTextEditor({
-    preset,
+    profile:
+      extensionSet === 'richText'
+        ? STORY_RICH_TEXT_PROFILE
+        : STORY_MINIMAL_PROFILE,
     placeholder,
     readonly,
     defaultValue,
@@ -281,9 +299,9 @@ export const Empty: Story = {
   },
 };
 
-export const AiChatPreset: Story = {
+export const MinimalDocument: Story = {
   args: {
-    preset: 'aiChat',
+    extensionSet: 'minimal',
     placeholder: 'Ask, search or make anything...',
   },
 };

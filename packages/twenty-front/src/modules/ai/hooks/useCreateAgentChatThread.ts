@@ -15,6 +15,7 @@ import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDr
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
 import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
@@ -72,15 +73,10 @@ export const useCreateAgentChatThread = () => {
         store.set(shouldFocusChatEditorState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
         store.set(threadIdCreatedFromDraftState.atom, newThreadId);
-      } else {
-        setAgentChatDraftsByThreadId((previousDrafts) => ({
-          ...previousDrafts,
-          [previousDraftKey]: store.get(agentChatInputState.atom),
-        }));
       }
 
       setCurrentAiChatThread(newThreadId);
-      setAgentChatInput(newDraft);
+      setAgentChatInput(tipTapDocumentToMarkdown(newDraft));
     },
     onError: () => {
       setIsCreatingChatThread(false);
