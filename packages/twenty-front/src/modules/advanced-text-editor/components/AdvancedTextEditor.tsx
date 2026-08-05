@@ -3,15 +3,10 @@ import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
+import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const PLACEHOLDER_STYLES = `
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
@@ -44,7 +39,7 @@ const StyledEditorContainer = styled.div<{
     padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
     p.is-editor-empty:first-of-type::before {
-      ${PLACEHOLDER_STYLES}
+      ${FORM_FIELD_PLACEHOLDER_STYLES}
       content: attr(data-placeholder);
       float: left;
       height: 0;

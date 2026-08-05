@@ -6,6 +6,7 @@ import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorContent } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorContent';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -14,7 +15,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { type ComponentType, type FC, useEffect, useId, useState } from 'react';
+import { type ComponentType, useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
@@ -92,12 +93,6 @@ const StyledFullScreenEditorContainer = styled.div`
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[2]};
 `;
-
-type VariablePickerComponent = FC<{
-  instanceId: string;
-  multiline?: boolean;
-  onVariableSelect: (variableName: string) => void;
-}>;
 
 type FormAdvancedTextFieldInputProps = {
   label?: string;

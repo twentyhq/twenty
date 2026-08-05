@@ -1,8 +1,7 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
-import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
-import { buildFullRichTextExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
+import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,10 +18,7 @@ const STORY_RICH_TEXT_PROFILE = {
   chrome: 'document',
   minHeight: 200,
   enableFullScreen: false,
-  buildExtensions: (context) => [
-    ...buildFullRichTextExtensions(context),
-    VariableTag,
-  ],
+  buildExtensions: buildFullRichTextWithVariableTagExtensions,
 } satisfies AdvancedTextEditorProfile;
 
 const STORY_MINIMAL_PROFILE = {

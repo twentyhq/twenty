@@ -1,7 +1,6 @@
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
-import { buildFullRichTextExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
+import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -19,10 +18,7 @@ const STORY_FORM_EDITOR_PROFILE = {
   chrome: 'field',
   minHeight: 340,
   enableFullScreen: true,
-  buildExtensions: (context) => [
-    ...buildFullRichTextExtensions(context),
-    VariableTag,
-  ],
+  buildExtensions: buildFullRichTextWithVariableTagExtensions,
 } satisfies AdvancedTextEditorProfile;
 
 const StoryVariablePicker = ({

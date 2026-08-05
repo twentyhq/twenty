@@ -1,6 +1,7 @@
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
 import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';
 import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
 import { type AnyExtension } from '@tiptap/core';
 import { Bold } from '@tiptap/extension-bold';
@@ -25,3 +26,7 @@ export const buildFullRichTextExtensions = (
   UploadImageExtension.configure(context),
   SlashCommand,
 ];
+
+export const buildFullRichTextWithVariableTagExtensions = (
+  context: AdvancedTextEditorExtensionContext,
+): AnyExtension[] => [...buildFullRichTextExtensions(context), VariableTag];
