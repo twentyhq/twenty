@@ -199,6 +199,22 @@ export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
+export {
+  EMAIL_DOCUMENT_MARK_TYPES,
+  EMAIL_DOCUMENT_MARK_CATALOG,
+  isEmailDocumentMarkType,
+} from './tiptap/email-document-mark-catalog';
+export type {
+  EmailDocumentNodeType,
+  RenderedEmailDocumentNodeType,
+} from './tiptap/email-document-node-catalog';
+export {
+  EMAIL_DOCUMENT_NODE_TYPES,
+  EMAIL_DOCUMENT_NODE_CATALOG,
+  isEmailDocumentNodeType,
+  isRenderedEmailDocumentNodeType,
+} from './tiptap/email-document-node-catalog';
 export type { EmailDocumentNode } from './tiptap/email-document-node';
 export { EMAIL_DOCUMENT_SCHEMA_VERSION } from './tiptap/email-document-schema-version';
 export type { EmailDocument } from './tiptap/email-document-schema';

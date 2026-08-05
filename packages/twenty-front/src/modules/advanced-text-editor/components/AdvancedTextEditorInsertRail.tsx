@@ -5,28 +5,23 @@ import { useRef, useState } from 'react';
 import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
-  IconBox,
-  IconClick,
-  IconCode,
-  IconColumns,
   IconH1,
   IconH2,
   IconH3,
   IconLayoutGrid,
   IconList,
   IconListNumbers,
-  IconMinus,
   IconPhoto,
   IconTypography,
   IconVariable,
 } from 'twenty-ui/icon';
-
-import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
+import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledRail = styled.div`
@@ -86,11 +81,6 @@ const StyledImageHint = styled.div`
   font-size: ${themeCssVariables.font.size.xs};
 `;
 
-const columnJson = () => ({
-  type: TIPTAP_NODE_TYPES.COLUMN,
-  content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
-});
-
 type AdvancedTextEditorInsertRailProps = {
   editor: Editor;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
@@ -102,7 +92,7 @@ export const AdvancedTextEditorInsertRail = ({
   onImageUpload,
   variables = [],
 }: AdvancedTextEditorInsertRailProps) => {
-  const { t } = useLingui();
+  const { i18n, t } = useLingui();
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [openMenu, setOpenMenu] = useState<
@@ -207,50 +197,14 @@ export const AdvancedTextEditorInsertRail = ({
     setImageUrl('');
   };
 
-  const blockItems = [
-    {
-      Icon: IconBox,
-      label: t`Section`,
-      content: {
-        type: TIPTAP_NODE_TYPES.SECTION,
-        content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
-      },
-    },
-    {
-      Icon: IconColumns,
-      label: t`2 Columns`,
-      content: {
-        type: TIPTAP_NODE_TYPES.COLUMNS,
-        content: [columnJson(), columnJson()],
-      },
-    },
-    {
-      Icon: IconColumns,
-      label: t`3 Columns`,
-      content: {
-        type: TIPTAP_NODE_TYPES.COLUMNS,
-        content: [columnJson(), columnJson(), columnJson()],
-      },
-    },
-    {
-      Icon: IconClick,
-      label: t`Button`,
-      content: {
-        type: TIPTAP_NODE_TYPES.BUTTON,
-        content: [{ type: TIPTAP_NODE_TYPES.TEXT, text: t`Click here` }],
-      },
-    },
-    {
-      Icon: IconMinus,
-      label: t`Divider`,
-      content: { type: TIPTAP_NODE_TYPES.DIVIDER },
-    },
-    {
-      Icon: IconCode,
-      label: t`HTML`,
-      content: { type: TIPTAP_NODE_TYPES.HTML },
-    },
-  ];
+  const blockItems = ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.map(
+    ({ createContent, icon, id, title }) => ({
+      id,
+      Icon: icon,
+      label: i18n._(title),
+      content: createContent((message) => i18n._(message)),
+    }),
+  );
 
   return (
     <StyledRailContainer>
@@ -332,9 +286,9 @@ export const AdvancedTextEditorInsertRail = ({
       )}
       {openMenu === 'blocks' && (
         <StyledPopover>
-          {blockItems.map(({ Icon, label, content }) => (
+          {blockItems.map(({ Icon, id, label, content }) => (
             <MenuItem
-              key={label}
+              key={id}
               LeftIcon={Icon}
               text={label}
               onClick={() => insertAtEnd(content)}
