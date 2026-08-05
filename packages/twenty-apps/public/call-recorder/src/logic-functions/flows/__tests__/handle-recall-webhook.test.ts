@@ -323,6 +323,44 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
+  it('treats a bot-detection timeout as a normal call ending', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'RECORDING',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'call_ended',
+            sub_code:
+              'timeout_exceeded_only_bots_detected_using_participant_names',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'PROCESSING',
+    });
+  });
+
   it('ignores a no-capture sub code on a non-terminal status code', async () => {
     const client = new FakeCoreApiClient([
       {
