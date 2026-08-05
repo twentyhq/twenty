@@ -46,6 +46,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   icon: icon ?? null,
   color: 'orange',
   position,
+  isSystemSideEffect: false,
   createdAt: now,
   updatedAt: now,
 });
@@ -110,6 +111,7 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     icon: null,
     color: 'gray',
     position,
+    isSystemSideEffect: true,
     createdAt: now,
     updatedAt: now,
   };

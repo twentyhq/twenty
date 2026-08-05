@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { getObjectNavigationMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
@@ -18,6 +19,7 @@ type FlatEntityToDelete<
   TMetadataName extends
     | 'fieldMetadata'
     | 'index'
+    | 'navigationMenuItem'
     | 'searchFieldMetadata'
     | 'view'
     | 'viewField',
@@ -30,7 +32,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectSystemSideEffectsOnDelete',
     description:
-      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, and its engine-owned views (the INDEX table view provisioned by objectSystemFieldsAndIndexViewOnCreate) with their view fields. View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields) and indexes into the flat entity maps, so the work is proportional to what the object owns and never to the size of the workspace. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes, and manifest deletion inference excludes these entities entirely. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
+      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, its engine-owned views (the INDEX table view provisioned by objectSystemFieldsAndIndexViewOnCreate) with their view fields, and its engine-owned OBJECT navigation menu item (the sidebar row provisioned by objectNavigationMenuItemOnCreate, resolved by its derived identifier since the object carries no navigation menu item aggregator). View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields) and indexes into the flat entity maps, so the work is proportional to what the object owns and never to the size of the workspace. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes, and manifest deletion inference excludes these entities entirely. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
   },
 ) {
   buildSideEffects({
@@ -64,6 +66,10 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
         relatedFlatEntityMaps,
         flatViewsToDelete: Object.values(viewToDelete),
         flatFieldMetadatasToDelete,
+      }),
+      navigationMenuItem: this.computeNavigationMenuItemToDelete({
+        flatObjectMetadata,
+        relatedFlatEntityMaps,
       }),
     };
 
@@ -262,6 +268,41 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     }
 
     return viewToDelete;
+  }
+
+  // The object carries no navigation menu item aggregator, so the engine-owned
+  // sidebar row is resolved by its derived identifier rather than by walking
+  // down a foreign key: a workspace not yet reconciled still holds an
+  // underived identifier and is left to the FK cascade until the command runs.
+  private computeNavigationMenuItemToDelete({
+    flatObjectMetadata,
+    relatedFlatEntityMaps,
+  }: {
+    flatObjectMetadata: MetadataUniversalFlatEntity<'objectMetadata'>;
+    relatedFlatEntityMaps: RelatedFlatEntityMaps;
+  }): FlatEntityToDelete<'navigationMenuItem'> {
+    const navigationMenuItemUniversalIdentifier =
+      getObjectNavigationMenuItemUniversalIdentifier({
+        applicationUniversalIdentifier:
+          flatObjectMetadata.applicationUniversalIdentifier,
+        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      });
+
+    const flatNavigationMenuItem =
+      relatedFlatEntityMaps.flatNavigationMenuItemMaps.byUniversalIdentifier[
+        navigationMenuItemUniversalIdentifier
+      ];
+
+    if (
+      !isDefined(flatNavigationMenuItem) ||
+      flatNavigationMenuItem.isSystemSideEffect !== true
+    ) {
+      return {};
+    }
+
+    return {
+      [flatNavigationMenuItem.universalIdentifier]: flatNavigationMenuItem,
+    };
   }
 
   private computeViewFieldToDelete({

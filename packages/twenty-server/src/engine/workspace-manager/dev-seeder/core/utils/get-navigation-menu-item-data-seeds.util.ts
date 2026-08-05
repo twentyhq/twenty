@@ -32,6 +32,7 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       icon: 'IconStar',
       color: 'yellow',
       position: 9999,
+      isSystemSideEffect: false,
       link: null,
       userWorkspaceId: null,
       targetRecordId: null,

@@ -5,6 +5,7 @@ export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
   objectMetadata: [
     'fieldMetadata',
     'index',
+    'navigationMenuItem',
     'searchFieldMetadata',
     'view',
     'viewField',

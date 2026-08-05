@@ -1,52 +1,77 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { getObjectNavigationMenuItemUniversalIdentifier } from 'twenty-shared/application';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+
+// OBJECT items converge on the engine convention: the identifier is derived
+// from (application, object) by objectNavigationMenuItemOnCreate, so a standard
+// item and the item the engine would emit for the same object are the same row.
+const getStandardObjectNavigationMenuItemUniversalIdentifier = (
+  objectName: keyof typeof STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+): string =>
+  getObjectNavigationMenuItemUniversalIdentifier({
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS[objectName],
+  });
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
   allCompanies: {
-    universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('company'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier,
     position: 0,
   },
   allPeople: {
-    universalIdentifier: '20202020-b005-4b05-8b05-c0aba11c0005',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('person'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.person.views.allPeople.universalIdentifier,
     position: 1,
   },
   allOpportunities: {
-    universalIdentifier: '20202020-b004-4b04-8b04-c0aba11c0004',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('opportunity'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.opportunity.views.allOpportunities.universalIdentifier,
     position: 2,
   },
   allTasks: {
-    universalIdentifier: '20202020-b006-4b06-8b06-c0aba11c0006',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('task'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.task.views.allTasks.universalIdentifier,
     position: 3,
   },
   allNotes: {
-    universalIdentifier: '20202020-b003-4b03-8b03-c0aba11c0003',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('note'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.note.views.allNotes.universalIdentifier,
     position: 4,
   },
   allDashboards: {
-    universalIdentifier: '20202020-b002-4b02-8b02-c0aba11c0002',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('dashboard'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
     position: 5,
   },
   allMessageCampaigns: {
-    universalIdentifier: '20202020-b00b-4b0b-8b0b-c0aba11c000b',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('messageCampaign'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.views.allMessageCampaigns
@@ -61,7 +86,8 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 6,
   },
   workflowsFolderAllWorkflows: {
-    universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('workflow'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.workflow.views.allWorkflows.universalIdentifier,
@@ -69,7 +95,8 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 0,
   },
   workflowsFolderAllWorkflowRuns: {
-    universalIdentifier: '20202020-b009-4b09-8b09-c0aba11c0009',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('workflowRun'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.universalIdentifier,
@@ -77,7 +104,8 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 1,
   },
   workflowsFolderAllWorkflowVersions: {
-    universalIdentifier: '20202020-b00a-4b0a-8b0a-c0aba11c000a',
+    universalIdentifier:
+      getStandardObjectNavigationMenuItemUniversalIdentifier('workflowVersion'),
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.workflowVersion.views.allWorkflowVersions

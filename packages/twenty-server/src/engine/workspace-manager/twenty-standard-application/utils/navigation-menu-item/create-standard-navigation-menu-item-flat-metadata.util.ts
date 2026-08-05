@@ -82,6 +82,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??
       null,
     position,
+    isSystemSideEffect: isObjectType,
     createdAt: now,
     updatedAt: now,
   };

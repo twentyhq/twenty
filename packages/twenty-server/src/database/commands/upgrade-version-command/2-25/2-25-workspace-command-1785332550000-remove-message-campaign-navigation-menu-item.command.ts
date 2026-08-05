@@ -8,11 +8,13 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+// Pinned to the literal the constant held when this command shipped: standard
+// OBJECT navigation menu items have since converged on the derived engine
+// identifier, and a workspace upgrading through 2-25 still holds the old one.
 const ALL_MESSAGE_CAMPAIGNS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
-  STANDARD_NAVIGATION_MENU_ITEMS.allMessageCampaigns.universalIdentifier;
+  '20202020-b00b-4b0b-8b0b-c0aba11c000b';
 
 @RegisteredWorkspaceCommand('2.25.0', 1785332550000)
 @Command({

@@ -25,7 +25,7 @@ export const defineManifestTests = (appPath: string): void => {
       expect(manifest.roles).toHaveLength(2);
       expect(manifest.fields).toHaveLength(7);
       expect(manifest.views).toHaveLength(5);
-      expect(manifest.navigationMenuItems).toHaveLength(3);
+      expect(manifest.navigationMenuItems).toHaveLength(1);
       expect(manifest.pageLayoutTabs).toHaveLength(1);
 
       expect(normalizeManifestForComparison(manifest)).toEqual(
@@ -35,14 +35,16 @@ export const defineManifestTests = (appPath: string): void => {
   });
 
   describe('navigationMenuItems', () => {
+    // OBJECT items are provisioned by the metadata side-effect engine, so an
+    // app manifest only declares the variants it owns.
     it('should include all navigation menu items with correct types', () => {
-      expect(manifest.navigationMenuItems).toHaveLength(3);
+      expect(manifest.navigationMenuItems).toHaveLength(1);
 
       for (const item of manifest.navigationMenuItems) {
-        expect(item.type).toBe(NavigationMenuItemType.OBJECT);
+        expect(item.type).toBe(NavigationMenuItemType.LINK);
         expect(item.universalIdentifier).toBeDefined();
         expect(typeof item.position).toBe('number');
-        expect(item.targetObjectUniversalIdentifier).toBeDefined();
+        expect(item.link).toBeDefined();
       }
     });
 
@@ -60,18 +62,6 @@ export const defineManifestTests = (appPath: string): void => {
       );
 
       expect(new Set(identifiers).size).toBe(identifiers.length);
-    });
-
-    it('should reference valid object universal identifiers', () => {
-      const objectIdentifiers = new Set(
-        manifest.objects.map((obj) => obj.universalIdentifier),
-      );
-
-      for (const item of manifest.navigationMenuItems) {
-        expect(objectIdentifiers).toContain(
-          item.targetObjectUniversalIdentifier,
-        );
-      }
     });
   });
 };

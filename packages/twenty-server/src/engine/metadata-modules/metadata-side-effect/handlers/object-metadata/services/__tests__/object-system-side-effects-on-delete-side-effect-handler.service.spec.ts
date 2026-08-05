@@ -1,6 +1,9 @@
+import { getObjectNavigationMenuItemUniversalIdentifier } from 'twenty-shared/application';
+
 import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-side-effects-on-delete-side-effect-handler.service';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000009';
 const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000001';
 const OTHER_OBJECT_UNIVERSAL_IDENTIFIER =
   'c1c2c3c4-c5c6-4000-8000-000000000001';
@@ -69,6 +72,7 @@ const buildArgs = ({
   ({
     flatEntity: {
       universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifiers,
       indexMetadataUniversalIdentifiers,
       searchFieldMetadataUniversalIdentifiers,
@@ -82,6 +86,7 @@ const buildArgs = ({
       flatSearchFieldMetadataMaps: { byUniversalIdentifier: {} },
       flatViewMaps: { byUniversalIdentifier: {} },
       flatViewFieldMaps: { byUniversalIdentifier: {} },
+      flatNavigationMenuItemMaps: { byUniversalIdentifier: {} },
       ...relatedFlatEntityMaps,
     },
     context: {},
@@ -353,5 +358,67 @@ describe('ObjectSystemSideEffectsOnDeleteSideEffectHandlerService', () => {
     expect(
       Object.keys(result.operations.viewField?.flatEntityToDelete ?? {}),
     ).toEqual([OTHER_OBJECT_VIEW_FIELD_UNIVERSAL_IDENTIFIER]);
+  });
+
+  describe('navigation menu item', () => {
+    const derivedNavigationMenuItemUniversalIdentifier =
+      getObjectNavigationMenuItemUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      });
+
+    const buildNavigationMenuItemArgs = (
+      flatNavigationMenuItem: object | undefined,
+    ) =>
+      buildArgs({
+        relatedFlatEntityMaps: {
+          flatNavigationMenuItemMaps: {
+            byUniversalIdentifier: flatNavigationMenuItem
+              ? {
+                  [derivedNavigationMenuItemUniversalIdentifier]:
+                    flatNavigationMenuItem,
+                }
+              : {},
+          },
+        },
+      });
+
+    it('should delete the engine-owned item resolved by its derived identifier', () => {
+      const result = handler.buildSideEffects(
+        buildNavigationMenuItemArgs({
+          universalIdentifier: derivedNavigationMenuItemUniversalIdentifier,
+          isSystemSideEffect: true,
+        }),
+      );
+
+      if (result.status !== 'success') {
+        throw new Error('expected success');
+      }
+
+      expect(
+        Object.keys(
+          result.operations.navigationMenuItem?.flatEntityToDelete ?? {},
+        ),
+      ).toEqual([derivedNavigationMenuItemUniversalIdentifier]);
+    });
+
+    it('should leave a caller row holding the derived identifier alone', () => {
+      const result = handler.buildSideEffects(
+        buildNavigationMenuItemArgs({
+          universalIdentifier: derivedNavigationMenuItemUniversalIdentifier,
+          isSystemSideEffect: false,
+        }),
+      );
+
+      expect(result.status).toBe('noop');
+    });
+
+    it('should noop on a workspace not yet reconciled', () => {
+      const result = handler.buildSideEffects(
+        buildNavigationMenuItemArgs(undefined),
+      );
+
+      expect(result.status).toBe('noop');
+    });
   });
 });

@@ -31,6 +31,9 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
         navigationMenuItemManifest.pageLayoutUniversalIdentifier ?? null,
       targetRecordId: null,
       userWorkspaceId: null,
+      // Manifest-authored items are caller rows: the engine claims its own
+      // OBJECT items through objectNavigationMenuItemOnCreate.
+      isSystemSideEffect: false,
       createdAt: now,
       updatedAt: now,
     };

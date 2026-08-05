@@ -131,6 +131,9 @@ export class NavigationMenuItemEntity
   @Column({ nullable: false, type: 'double precision' })
   position: number;
 
+  @Column({ nullable: false, type: 'boolean', default: false })
+  isSystemSideEffect: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

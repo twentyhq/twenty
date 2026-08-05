@@ -9,6 +9,7 @@ import { FieldUniqueBackingIndexOnUpdateSideEffectHandlerService } from 'src/eng
 import { ObjectSearchVectorOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-search-vector-on-create-side-effect-handler.service';
 import { ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service';
 import { ObjectSearchVectorOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-search-vector-on-update-side-effect-handler.service';
+import { ObjectNavigationMenuItemOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-menu-item-on-create-side-effect-handler.service';
 import { ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-fields-and-index-view-on-create-side-effect-handler.service';
 import { ObjectSystemRelationsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service';
 import { ObjectSystemRelationsOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service';
@@ -23,6 +24,7 @@ import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/eng
     FieldIndexViewFieldOnCreateSideEffectHandlerService,
     FieldSystemViewFieldsOnDeleteSideEffectHandlerService,
     ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService,
+    ObjectNavigationMenuItemOnCreateSideEffectHandlerService,
     ObjectSystemRelationsOnCreateSideEffectHandlerService,
     ObjectSystemRelationsOnUpdateSideEffectHandlerService,
     ObjectSearchVectorOnCreateSideEffectHandlerService,

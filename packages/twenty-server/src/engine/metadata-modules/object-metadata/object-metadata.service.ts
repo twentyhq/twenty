@@ -19,7 +19,6 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
@@ -27,7 +26,6 @@ import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -504,15 +502,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         ),
       ];
 
-    const flatNavigationMenuItemToCreate =
-      await this.computeFlatNavigationMenuItemToCreate({
-        objectMetadata: flatObjectMetadataToCreate,
-        workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-        workspaceCustomApplicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-      });
-
     const { flatCommandMenuItemMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -610,15 +599,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
-            ...(isDefined(flatNavigationMenuItemToCreate)
-              ? {
-                  navigationMenuItem: {
-                    flatEntityToCreate: [flatNavigationMenuItemToCreate],
-                    flatEntityToDelete: [],
-                    flatEntityToUpdate: [],
-                  },
-                }
-              : {}),
           },
           workspaceId,
           isSystemBuild: false,
@@ -691,65 +671,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       recordPageFieldsView,
       workspaceId,
     });
-  }
-
-  private async computeFlatNavigationMenuItemToCreate({
-    objectMetadata,
-    workspaceId,
-    workspaceCustomApplicationId,
-    workspaceCustomApplicationUniversalIdentifier,
-  }: {
-    objectMetadata: { id: string; universalIdentifier: string };
-    workspaceId: string;
-    workspaceCustomApplicationId: string;
-    workspaceCustomApplicationUniversalIdentifier: string;
-  }): Promise<FlatNavigationMenuItem> {
-    const { flatNavigationMenuItemMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatNavigationMenuItemMaps',
-      ]);
-
-    const workspaceLevelItems = Object.values(
-      flatNavigationMenuItemMaps.byUniversalIdentifier,
-    ).filter(
-      (item): item is FlatNavigationMenuItem =>
-        isDefined(item) && !isDefined(item.userWorkspaceId),
-    );
-    const nextPosition =
-      workspaceLevelItems.length > 0
-        ? Math.max(...workspaceLevelItems.map((item) => item.position)) + 1
-        : 0;
-
-    const newId = v4();
-    const now = new Date().toISOString();
-
-    return {
-      id: newId,
-      type: NavigationMenuItemType.OBJECT,
-      universalIdentifier: newId,
-      userWorkspaceId: null,
-      targetRecordId: null,
-      targetObjectMetadataId: objectMetadata.id,
-      targetObjectMetadataUniversalIdentifier:
-        objectMetadata.universalIdentifier,
-      viewId: null,
-      viewUniversalIdentifier: null,
-      folderId: null,
-      folderUniversalIdentifier: null,
-      pageLayoutId: null,
-      pageLayoutUniversalIdentifier: null,
-      name: null,
-      link: null,
-      icon: null,
-      color: null,
-      position: nextPosition,
-      workspaceId,
-      applicationId: workspaceCustomApplicationId,
-      applicationUniversalIdentifier:
-        workspaceCustomApplicationUniversalIdentifier,
-      createdAt: now,
-      updatedAt: now,
-    };
   }
 
   private buildFlatNavigationCommandMenuItem({
