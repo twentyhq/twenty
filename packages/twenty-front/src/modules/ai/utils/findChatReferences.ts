@@ -7,6 +7,10 @@ import { getSurplusCloseBracketLength } from '@/ai/utils/getSurplusCloseBracketL
 import { isDefined } from 'twenty-shared/utils';
 
 export const findChatReferences = (text: string): ChatReferenceMatch[] => {
+  if (!text.includes('[[')) {
+    return [];
+  }
+
   const starts: ChatReferenceStart[] = [];
 
   CHAT_REFERENCE_START_REGEX.lastIndex = 0;
