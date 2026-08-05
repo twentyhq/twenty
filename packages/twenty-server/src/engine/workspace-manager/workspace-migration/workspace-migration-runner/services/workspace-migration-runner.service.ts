@@ -153,6 +153,28 @@ export class WorkspaceMigrationRunnerService {
     );
   }
 
+  private recordRunPhaseMetric({
+    phase,
+    status,
+    value,
+  }: {
+    phase:
+      | 'initial-cache-retrieval'
+      | 'action-execution'
+      | 'commit'
+      | 'cache-invalidation';
+    status: 'success' | 'fail';
+    value: number;
+  }): void {
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      value,
+      unit: 'ms',
+      attributes: { phase, status },
+      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
+  }
+
   private async logBlockingDbActivity(): Promise<void> {
     try {
       // Metadata only (no query text) to avoid logging literals from other sessions.
@@ -285,12 +307,10 @@ export class WorkspaceMigrationRunnerService {
     const initialCacheRetrievalMs =
       performance.now() - initialCacheRetrievalStart;
 
-    this.metricsService.recordHistogram({
-      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+    this.recordRunPhaseMetric({
+      phase: 'initial-cache-retrieval',
+      status: 'success',
       value: initialCacheRetrievalMs,
-      unit: 'ms',
-      attributes: { phase: 'initial-cache-retrieval', status: 'success' },
-      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
     });
 
     this.logger.perf(
@@ -403,20 +423,16 @@ export class WorkspaceMigrationRunnerService {
 
       // Commit is recorded as its own phase; subtract it so phases stay
       // disjoint
-      this.metricsService.recordHistogram({
-        key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      this.recordRunPhaseMetric({
+        phase: 'action-execution',
+        status: 'success',
         value: transactionMs - commitMs,
-        unit: 'ms',
-        attributes: { phase: 'action-execution', status: 'success' },
-        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
-      this.metricsService.recordHistogram({
-        key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      this.recordRunPhaseMetric({
+        phase: 'commit',
+        status: 'success',
         value: commitMs,
-        unit: 'ms',
-        attributes: { phase: 'commit', status: 'success' },
-        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
       this.logger.perf(
@@ -428,12 +444,10 @@ export class WorkspaceMigrationRunnerService {
     } catch (error) {
       // The action/commit split is unknowable mid-failure; the whole elapsed
       // transaction time goes to action-execution, segregated by status
-      this.metricsService.recordHistogram({
-        key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      this.recordRunPhaseMetric({
+        phase: 'action-execution',
+        status: 'fail',
         value: performance.now() - transactionStart,
-        unit: 'ms',
-        attributes: { phase: 'action-execution', status: 'fail' },
-        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
       this.logger.error(
@@ -503,12 +517,28 @@ export class WorkspaceMigrationRunnerService {
 
     const postCommitInvalidateStart = performance.now();
 
+    // Recorded here rather than in invalidateCache, which standalone callers
+    // (upgrade backfills, FlatCacheInvalidateCommand) invoke outside any run.
+    // A fail sample is the only metric trace of a swallowed post-commit
+    // invalidation failure, since the run itself still reports success
     try {
       await this.invalidateCache({
         allFlatEntityMapsKeys,
         workspaceId,
       });
+
+      this.recordRunPhaseMetric({
+        phase: 'cache-invalidation',
+        status: 'success',
+        value: performance.now() - postCommitInvalidateStart,
+      });
     } catch (cacheError) {
+      this.recordRunPhaseMetric({
+        phase: 'cache-invalidation',
+        status: 'fail',
+        value: performance.now() - postCommitInvalidateStart,
+      });
+
       this.logger.error(
         `Cache invalidation failed after committed transaction: ${cacheError}`,
         'Runner',
@@ -517,16 +547,6 @@ export class WorkspaceMigrationRunnerService {
 
     const postCommitInvalidateMs =
       performance.now() - postCommitInvalidateStart;
-
-    // Recorded here rather than in invalidateCache, which standalone callers
-    // (upgrade backfills, FlatCacheInvalidateCommand) invoke outside any run
-    this.metricsService.recordHistogram({
-      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
-      value: postCommitInvalidateMs,
-      unit: 'ms',
-      attributes: { phase: 'cache-invalidation', status: 'success' },
-      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
-    });
 
     this.logger.perf(
       `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
