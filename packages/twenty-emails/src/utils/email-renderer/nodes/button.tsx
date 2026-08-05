@@ -14,10 +14,7 @@ export const button = (node: JSONContent): ReactNode => {
   return (
     <Row>
       <Column align={align}>
-        <Button
-          href={safeUrl(href)}
-          style={blockStyle(node.attrs?.style)}
-        >
+        <Button href={safeUrl(href)} style={blockStyle(node.attrs?.style)}>
           {label}
         </Button>
       </Column>
