@@ -70,6 +70,49 @@ gh_deploy() {
   fi
 }
 
+# Every deployed image pins about 1.3GB of layers that nothing else reclaims,
+# because each build rewrites the node_modules layer even when its contents are
+# identical. A full Docker volume fails the next deploy partway through
+# unpacking, and that failure is not something retries can clear, so the trim
+# runs before the pull rather than after a successful deploy.
+prune_old_images() {
+  local repo="$1" serving="$2" incoming="$3" retain kept=0 pruned=0 ref
+  retain="${STAGING_IMAGE_RETAIN:-3}"
+
+  # Newest first, so what falls past the retention budget is the oldest.
+  while IFS= read -r ref; do
+    [ -n "$ref" ] || continue
+
+    # The serving image is the rollback target and the incoming one is about to
+    # start, so both survive even when they sit outside the budget. They still
+    # spend it while inside, which keeps the count a bound on what is kept
+    # rather than a floor.
+    if [ "$ref" = "$serving" ] || [ "$ref" = "$incoming" ]; then
+      if [ "$kept" -lt "$retain" ]; then
+        kept=$((kept + 1))
+      fi
+      continue
+    fi
+
+    if [ "$kept" -lt "$retain" ]; then
+      kept=$((kept + 1))
+      continue
+    fi
+
+    # A failure here is not fatal: an image still referenced by a stopped
+    # container just stays, and the deploy has no reason to stop for it.
+    if docker rmi "$ref" >/dev/null 2>&1; then
+      pruned=$((pruned + 1))
+    fi
+  done < <(
+    docker images --format '{{.CreatedAt}}	{{.Repository}}:{{.Tag}}' "$repo" 2>/dev/null |
+      sort -r | cut -f2
+  )
+
+  [ "$pruned" -eq 0 ] ||
+    log "pruned ${pruned} old image(s), keeping the ${retain} most recent"
+}
+
 report() {
   local state="$1" description="$2" deployment_id
   deployment_id="$(
@@ -174,6 +217,8 @@ before deploying ${target_sha}"
     fail "cannot check out ${target_sha} in the staging checkout"
 
   write_image "$target_image"
+
+  prune_old_images "$image_repo" "$current_image" "$target_image"
 
   # Order matters. A server image newer than the database cannot pass its
   # healthcheck, so containers start without the health gate, the schema is

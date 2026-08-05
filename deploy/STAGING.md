@@ -214,6 +214,13 @@ production, and it is why there is no self-hosted runner here.
 If the deploy fails, the converger restores the image that was serving before
 rather than leaving staging down.
 
+Before pulling, the converger deletes old images for the staging repo, keeping
+the three most recent plus whatever is serving and whatever is incoming. Set
+`STAGING_IMAGE_RETAIN` to keep a different number. Each deploy adds roughly
+1.3GB of layers that nothing else reclaims, and once the Docker volume fills,
+deploys fail partway through unpacking with `no space left on device` and retry
+forever, so this trim is what keeps the host deployable.
+
 Install the converger with:
 
 ```bash
