@@ -100,7 +100,7 @@ Schema-Hinweise:
 </Accordion>
 <Accordion title="runAgent" description="Einen Agenten aus einer Logikfunktion ausführen">
 
-`runAgent()` ermöglicht es einer Logikfunktion, einen der Agenten Ihrer App auszuführen (mit seinen Fähigkeiten und Tools). Identifizieren Sie den Agenten über den `universalIdentifier`, den Sie an `defineAgent()` übergeben haben:
+`runAgent()` ermöglicht es einer Logikfunktion, einen der Agenten Ihrer App auszuführen (mit seinen Fähigkeiten und Tools). Identifizieren Sie den Agenten über den `universalIdentifier`, den Sie an `defineAgent()` übergeben haben. Übergeben Sie entweder einen `prompt`-String oder einen `messages`-Konversationsverlauf – nicht beides:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,24 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Für Multi-Turn-Bots (Slack, Discord, Teams, …) übergeben Sie den Thread-Verlauf als `messages` anstelle eines einzelnen `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Hauptpunkte:
+* Geben Sie **genau eines** von `prompt` (string) oder `messages` (1 bis 100 Einträge
+  von `{ role: 'user' | 'assistant', content: string }`) an.
 * Der Agent wird **synchron** ausgeführt und kann selbst Datensätze über seine eigenen Tools lesen/aktualisieren — `runAgent()` wird aufgelöst, sobald die Ausführung abgeschlossen ist.
 * Eine App kann nur ihre eigenen Agenten ausführen.
 * Die [Standardrolle](/l/de/developers/extend/apps/config/roles) der App muss das Berechtigungsflag `AI` gewähren — fügen Sie `SystemPermissionFlag.AI` zu ihren `permissionFlagUniversalIdentifiers` hinzu (oder setzen Sie `canAccessAllTools: true`).
