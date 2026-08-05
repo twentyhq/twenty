@@ -1,9 +1,11 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
-  type RunAgentInput,
+  type RunAgentMessage,
   type RunAgentResult,
 } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -12,8 +14,18 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+type RunAgentServiceInput = {
+  agentUniversalIdentifier: string;
+  prompt?: string | null;
+  messages?: RunAgentMessage[] | null;
+};
 
 @Injectable()
 export class AgentRunService {
@@ -33,8 +45,22 @@ export class AgentRunService {
   }: {
     workspace: FlatWorkspace;
     requestUserWorkspaceId: string | null;
-    input: RunAgentInput;
+    input: RunAgentServiceInput;
   }): Promise<RunAgentResult> {
+    const prompt = input.prompt;
+
+    // GraphQL cannot express XOR; enforce exactly one of prompt or messages
+    if (isNonEmptyArray(input.messages) === isNonEmptyString(prompt)) {
+      throw new AiException(
+        'Provide exactly one of prompt or messages',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    const messages: RunAgentMessage[] = isNonEmptyString(prompt)
+      ? [{ role: 'user', content: prompt }]
+      : (input.messages ?? []);
+
     const agent = await this.agentRepository.findOne(workspace.id, {
       where: {
         universalIdentifier: input.agentUniversalIdentifier,
@@ -64,19 +90,20 @@ export class AgentRunService {
     };
 
     try {
-      const { result, hasNoMoreAvailableCredits } =
-        await this.agentAsyncExecutorService.executeAgent({
+      const executionResult = await this.agentAsyncExecutorService.executeAgent(
+        {
           agent,
-          userPrompt: input.prompt,
+          messages,
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
           authContext,
           workspaceId: workspace.id,
           userWorkspaceId: requestUserWorkspaceId,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
-        });
+        },
+      );
 
-      if (hasNoMoreAvailableCredits) {
+      if (executionResult.hasNoMoreAvailableCredits) {
         return {
           result: null,
           error: 'AI agent stopped: no more available credits.',
@@ -84,7 +111,11 @@ export class AgentRunService {
         };
       }
 
-      return { result, error: null, success: true };
+      return {
+        result: executionResult.result,
+        error: null,
+        success: true,
+      };
     } catch (error) {
       this.logger.error(
         `Agent execution failed for ${input.agentUniversalIdentifier}`,

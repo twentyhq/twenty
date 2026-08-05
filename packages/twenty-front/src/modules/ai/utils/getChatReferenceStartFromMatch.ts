@@ -1,6 +1,8 @@
 import { type ChatReferenceStart } from '@/ai/types/ChatReferenceStart';
 import { isDefined } from 'twenty-shared/utils';
 
+const OPEN_BRACKETS_REGEX = /^\[+/;
+
 export const getChatReferenceStartFromMatch = (
   match: RegExpExecArray,
 ): ChatReferenceStart => {
@@ -12,7 +14,15 @@ export const getChatReferenceStartFromMatch = (
     recordId,
   } = match.groups ?? {};
 
-  const position = { index: match.index, prefixLength: match[0].length };
+  const openBracketsMatch = OPEN_BRACKETS_REGEX.exec(match[0]);
+
+  const position = {
+    index: match.index,
+    prefixLength: match[0].length,
+    openBracketLength: isDefined(openBracketsMatch)
+      ? openBracketsMatch[0].length
+      : 0,
+  };
 
   if (isDefined(objectNameSingular)) {
     return { ...position, identity: { kind: 'object', objectNameSingular } };
