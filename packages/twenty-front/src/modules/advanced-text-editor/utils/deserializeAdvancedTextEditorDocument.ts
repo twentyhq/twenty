@@ -1,7 +1,10 @@
 import { type AdvancedTextEditorLegacyDocumentParser } from '@/advanced-text-editor/types/AdvancedTextEditorLegacyDocumentParser';
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import { type Content } from '@tiptap/core';
-import { parseTipTapJsonDocument } from 'twenty-shared/utils';
+import {
+  parseTipTapJsonDocument,
+  TIPTAP_DOCUMENT_SCHEMA_VERSION,
+} from 'twenty-shared/utils';
 
 export const deserializeAdvancedTextEditorDocument = ({
   serializedDocument,
@@ -16,7 +19,10 @@ export const deserializeAdvancedTextEditorDocument = ({
 
   const document = parseTipTapJsonDocument(serializedDocument);
 
-  if (document !== undefined) {
+  if (
+    document !== undefined &&
+    document.attrs?.schemaVersion === TIPTAP_DOCUMENT_SCHEMA_VERSION
+  ) {
     return document;
   }
 

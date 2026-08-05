@@ -1,7 +1,10 @@
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
+import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
+import { parseLegacyHtmlOrPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyHtmlOrPlainTextDocument';
 import { parseLegacyPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyPlainTextDocument';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { withLegacyVersionlessTipTapDocuments } from '@/advanced-text-editor/utils/withLegacyVersionlessTipTapDocuments';
 import { type Editor } from '@tiptap/core';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
@@ -52,6 +55,71 @@ describe('advanced text editor document persistence', () => {
             { type: 'text', text: 'Line one' },
             { type: 'hardBreak' },
             { type: 'text', text: 'Line two' },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('uses the schema version to distinguish canonical documents from legacy text', () => {
+    const versionlessDocument = JSON.stringify({ type: 'doc', content });
+
+    expect(
+      deserializeAdvancedTextEditorDocument({
+        serializedDocument: versionlessDocument,
+        parseLegacyDocument: parseLegacyPlainTextDocument,
+      }),
+    ).toEqual(parseLegacyPlainTextDocument(versionlessDocument));
+  });
+
+  it('supports versionless TipTap documents only through an explicit legacy adapter', () => {
+    const versionlessDocument = JSON.stringify({ type: 'doc', content });
+
+    expect(
+      deserializeAdvancedTextEditorDocument({
+        serializedDocument: versionlessDocument,
+        parseLegacyDocument: withLegacyVersionlessTipTapDocuments(
+          parseLegacyPlainTextDocument,
+        ),
+      }),
+    ).toEqual(JSON.parse(versionlessDocument));
+  });
+
+  it('recognizes structured and self-closing legacy HTML fragments', () => {
+    const documents = [
+      '<p>Hello</p>',
+      '<br/>Hello',
+      '<img src="https://example.com/image.png"/>',
+      '<!-- greeting --><div>Hello</div>',
+    ];
+
+    for (const document of documents) {
+      expect(parseLegacyHtmlOrPlainTextDocument(document)).toBe(document);
+    }
+  });
+
+  it('keeps a leading tag-like token as legacy plain text', () => {
+    const document = '<support> {{contact.name}}';
+
+    expect(parseLegacyHtmlOrPlainTextDocument(document)).toEqual(
+      getInitialEditorContent(document),
+    );
+  });
+
+  it('normalizes legacy plain-text line endings', () => {
+    expect(
+      parseLegacyPlainTextDocument('Line one\r\nLine two\rLine three'),
+    ).toEqual({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'Line one' },
+            { type: 'hardBreak' },
+            { type: 'text', text: 'Line two' },
+            { type: 'hardBreak' },
+            { type: 'text', text: 'Line three' },
           ],
         },
       ],

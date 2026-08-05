@@ -97,6 +97,84 @@ describe('TipTap document primitives', () => {
     );
   });
 
+  it('preserves nested list hierarchy in Markdown projections', () => {
+    expect(
+      tipTapDocumentToMarkdown({
+        type: 'doc',
+        content: [
+          {
+            type: 'bulletList',
+            content: [
+              {
+                type: 'listItem',
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: 'Parent' }],
+                  },
+                  {
+                    type: 'orderedList',
+                    attrs: { start: 3 },
+                    content: [
+                      {
+                        type: 'listItem',
+                        content: [
+                          {
+                            type: 'paragraph',
+                            content: [{ type: 'text', text: 'Child' }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+    ).toBe(['- Parent', '', '  3. Child'].join('\n'));
+  });
+
+  it('escapes literal Markdown text and link destinations', () => {
+    expect(
+      tipTapDocumentToMarkdown({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: '1. Literal *stars* [brackets] ' },
+              {
+                type: 'text',
+                text: 'linked',
+                marks: [
+                  {
+                    type: 'link',
+                    attrs: { href: 'https://example.com/a_(b c)' },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'image',
+            attrs: {
+              alt: '[diagram]',
+              src: 'https://example.com/a(b c).png',
+            },
+          },
+        ],
+      }),
+    ).toBe(
+      [
+        '1\\. Literal \\*stars\\* \\[brackets\\] [linked](https://example.com/a_%28b%20c%29)',
+        '',
+        '![\\[diagram\\]](https://example.com/a%28b%20c%29.png)',
+      ].join('\n'),
+    );
+  });
+
   it('passes legacy text through unchanged', () => {
     expect(tipTapDocumentToMarkdown('Legacy **Markdown**')).toBe(
       'Legacy **Markdown**',

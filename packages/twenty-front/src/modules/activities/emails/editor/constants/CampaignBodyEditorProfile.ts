@@ -4,13 +4,16 @@ import { ADVANCED_TEXT_EDITOR_BLOCK_EXTENSIONS } from '@/advanced-text-editor/co
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { buildFullRichTextExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { parseLegacyHtmlOrPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyHtmlOrPlainTextDocument';
+import { withLegacyVersionlessTipTapDocuments } from '@/advanced-text-editor/utils/withLegacyVersionlessTipTapDocuments';
 
 export const CAMPAIGN_BODY_EDITOR_PROFILE = {
   chrome: 'document',
   minHeight: 0,
   enableFullScreen: false,
   documentExtension: EmailThemedDocument,
-  parseLegacyDocument: parseLegacyHtmlOrPlainTextDocument,
+  parseLegacyDocument: withLegacyVersionlessTipTapDocuments(
+    parseLegacyHtmlOrPlainTextDocument,
+  ),
   buildExtensions: (context) => [
     ...buildFullRichTextExtensions(context),
     CampaignVariableTag,
