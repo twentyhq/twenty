@@ -1,4 +1,4 @@
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { getMultiItemFieldEditorContent } from '@/workflow/workflow-variables/utils/getMultiItemFieldEditorContent';
 import { TextTag } from '@/workflow/workflow-variables/utils/textTag';
 import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';

@@ -8,7 +8,6 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumSelectOptions';
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import { t } from '@lingui/core/macro';
@@ -21,7 +20,10 @@ import {
   isString,
 } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type InputSchemaProperty } from 'twenty-shared/workflow';
+import {
+  type InputSchemaProperty,
+  isStandaloneVariableString,
+} from 'twenty-shared/workflow';
 
 type WorkflowEditActionCodeFieldLeafProps = {
   label: string;

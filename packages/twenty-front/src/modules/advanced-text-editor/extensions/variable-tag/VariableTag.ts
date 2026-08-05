@@ -1,5 +1,6 @@
+import { VariableTagChip } from '@/advanced-text-editor/extensions/variable-tag/VariableTagChip';
 import { Node } from '@tiptap/core';
-import { mergeAttributes } from '@tiptap/react';
+import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 
 declare module '@tiptap/core' {
@@ -15,6 +16,10 @@ export const VariableTag = Node.create({
   group: 'inline',
   inline: true,
   atom: true,
+
+  addNodeView() {
+    return ReactNodeViewRenderer(VariableTagChip);
+  },
 
   addAttributes: () => ({
     variable: {

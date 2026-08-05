@@ -6,7 +6,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
 import { useId, useState } from 'react';
