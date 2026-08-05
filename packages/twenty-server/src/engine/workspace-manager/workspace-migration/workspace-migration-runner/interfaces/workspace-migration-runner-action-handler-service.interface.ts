@@ -326,7 +326,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     label,
     method,
   }: {
-    label: string;
+    label: 'executeForMetadata' | 'executeForWorkspaceSchema';
     method: () => Promise<void>;
   }): Promise<void> {
     const startedAt = performance.now();
