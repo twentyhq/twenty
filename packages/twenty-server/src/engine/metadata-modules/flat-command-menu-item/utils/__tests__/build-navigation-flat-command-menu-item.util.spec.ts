@@ -1,5 +1,5 @@
+import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -11,8 +11,9 @@ import {
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 
-const NAVIGATION_COMMAND_UUID_NAMESPACE =
-  'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
+const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'a1a2a3a4-a5a6-4000-8000-000000000002';
 
 const baseObjectMetadata = {
   id: 'obj-id-1',
@@ -25,22 +26,36 @@ const baseArgs = {
   objectMetadata: baseObjectMetadata,
   commandMenuItemId: 'cmd-id-1',
   applicationId: 'app-id-1',
-  applicationUniversalIdentifier: 'app-universal-1',
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   workspaceId: 'ws-id-1',
   position: 5,
   now: '2026-01-01T00:00:00.000Z',
 };
 
 describe('buildNavigationFlatCommandMenuItem', () => {
-  it('should produce a deterministic universalIdentifier via UUID v5', () => {
+  it('should derive the universalIdentifier from the application and the object', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
-    const expectedUniversalIdentifier = v5(
-      baseObjectMetadata.universalIdentifier,
-      NAVIGATION_COMMAND_UUID_NAMESPACE,
+    const expectedUniversalIdentifier = getNavigationCommandUniversalIdentifier(
+      {
+        applicationUniversalIdentifier: baseArgs.applicationUniversalIdentifier,
+        objectUniversalIdentifier: baseObjectMetadata.universalIdentifier,
+      },
     );
 
     expect(result.universalIdentifier).toBe(expectedUniversalIdentifier);
+  });
+
+  it('should derive different universalIdentifiers for different applications', () => {
+    const result = buildNavigationFlatCommandMenuItem(baseArgs);
+    const otherApplicationResult = buildNavigationFlatCommandMenuItem({
+      ...baseArgs,
+      applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(result.universalIdentifier).not.toBe(
+      otherApplicationResult.universalIdentifier,
+    );
   });
 
   it('should set label and shortLabel as interpolation templates', () => {
@@ -89,7 +104,9 @@ describe('buildNavigationFlatCommandMenuItem', () => {
   it('should set applicationUniversalIdentifier from the provided argument', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.applicationUniversalIdentifier).toBe('app-universal-1');
+    expect(result.applicationUniversalIdentifier).toBe(
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
   });
 
   it('should set engineComponentKey to NAVIGATION', () => {

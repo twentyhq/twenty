@@ -92,6 +92,9 @@ export const prefillFrontComponentCommandMenuItems = async ({
         pageLayoutId: definition.pageLayoutId ?? null,
         pageLayoutUniversalIdentifier: definition.pageLayoutId ?? null,
         isActive: true,
+        // Deliberately not isSystemSideEffect: these rows are derived from
+        // prefilled app front components, not from a metadata operation, so
+        // the side-effect engine does not own their lifecycle.
         isSystemSideEffect: false,
         overrides: null,
         universalOverrides: null,

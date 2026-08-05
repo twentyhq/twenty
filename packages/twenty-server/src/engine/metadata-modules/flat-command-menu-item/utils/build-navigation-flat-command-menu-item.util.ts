@@ -1,14 +1,12 @@
+import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-
-export const NAVIGATION_COMMAND_UUID_NAMESPACE =
-  'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
+import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 export const NAVIGATION_INTERPOLATED_LABEL =
   'Go to ${navigateToObjectMetadataItem.labelPlural}';
@@ -44,6 +42,60 @@ export const buildNavigationConditionalAvailabilityExpression = ({
     : targetObjectReadPermissionExpression;
 };
 
+export const buildNavigationUniversalFlatCommandMenuItem = ({
+  objectMetadata,
+  applicationUniversalIdentifier,
+  position,
+  now,
+}: {
+  objectMetadata: {
+    id: string;
+    universalIdentifier: string;
+    nameSingular: string;
+    shortcut: string | null;
+  };
+  applicationUniversalIdentifier: string;
+  position: number;
+  now: string;
+}): UniversalFlatCommandMenuItem => {
+  const universalIdentifier = getNavigationCommandUniversalIdentifier({
+    applicationUniversalIdentifier,
+    objectUniversalIdentifier: objectMetadata.universalIdentifier,
+  });
+
+  const conditionalAvailabilityExpression =
+    buildNavigationConditionalAvailabilityExpression({
+      universalIdentifier: objectMetadata.universalIdentifier,
+      nameSingular: objectMetadata.nameSingular,
+    });
+
+  return {
+    universalIdentifier,
+    applicationUniversalIdentifier,
+    label: NAVIGATION_INTERPOLATED_LABEL,
+    shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
+    icon: NAVIGATION_INTERPOLATED_ICON,
+    position,
+    isPinned: false,
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    payload: { objectMetadataItemId: objectMetadata.id },
+    hotKeys: isDefined(objectMetadata.shortcut)
+      ? ['G', objectMetadata.shortcut]
+      : null,
+    workflowVersionId: null,
+    availabilityObjectMetadataUniversalIdentifier: null,
+    pageLayoutUniversalIdentifier: null,
+    isActive: true,
+    isSystemSideEffect: true,
+    universalOverrides: null,
+    createdAt: now,
+    updatedAt: now,
+  };
+};
+
 export const buildNavigationFlatCommandMenuItem = ({
   objectMetadata,
   commandMenuItemId,
@@ -65,48 +117,18 @@ export const buildNavigationFlatCommandMenuItem = ({
   workspaceId: string;
   position: number;
   now: string;
-}): FlatCommandMenuItem => {
-  const universalIdentifier = v5(
-    objectMetadata.universalIdentifier,
-    NAVIGATION_COMMAND_UUID_NAMESPACE,
-  );
-
-  const conditionalAvailabilityExpression =
-    buildNavigationConditionalAvailabilityExpression({
-      universalIdentifier: objectMetadata.universalIdentifier,
-      nameSingular: objectMetadata.nameSingular,
-    });
-
-  return {
-    id: commandMenuItemId,
-    universalIdentifier,
-    applicationId,
+}): FlatCommandMenuItem => ({
+  ...buildNavigationUniversalFlatCommandMenuItem({
+    objectMetadata,
     applicationUniversalIdentifier,
-    workspaceId,
-    label: NAVIGATION_INTERPOLATED_LABEL,
-    shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
-    icon: NAVIGATION_INTERPOLATED_ICON,
     position,
-    isPinned: false,
-    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression,
-    frontComponentId: null,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.NAVIGATION,
-    payload: { objectMetadataItemId: objectMetadata.id },
-    hotKeys: isDefined(objectMetadata.shortcut)
-      ? ['G', objectMetadata.shortcut]
-      : null,
-    workflowVersionId: null,
-    availabilityObjectMetadataId: null,
-    availabilityObjectMetadataUniversalIdentifier: null,
-    pageLayoutId: null,
-    pageLayoutUniversalIdentifier: null,
-    isActive: true,
-    isSystemSideEffect: true,
-    overrides: null,
-    universalOverrides: null,
-    createdAt: now,
-    updatedAt: now,
-  };
-};
+    now,
+  }),
+  id: commandMenuItemId,
+  applicationId,
+  workspaceId,
+  frontComponentId: null,
+  availabilityObjectMetadataId: null,
+  pageLayoutId: null,
+  overrides: null,
+});

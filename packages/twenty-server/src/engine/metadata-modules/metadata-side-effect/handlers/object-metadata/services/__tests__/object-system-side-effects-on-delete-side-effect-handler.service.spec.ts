@@ -1,6 +1,11 @@
+import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-side-effects-on-delete-side-effect-handler.service';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'a0a0a0a0-a0a0-4000-8000-000000000001';
+const OBJECT_ID = 'b0b0b0b0-b0b0-4000-8000-000000000001';
 const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000001';
 const OTHER_OBJECT_UNIVERSAL_IDENTIFIER =
   'c1c2c3c4-c5c6-4000-8000-000000000001';
@@ -68,7 +73,9 @@ const buildArgs = ({
 }): BuildSideEffectsArgs<'objectMetadata'> =>
   ({
     flatEntity: {
+      id: OBJECT_ID,
       universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifiers,
       indexMetadataUniversalIdentifiers,
       searchFieldMetadataUniversalIdentifiers,
@@ -82,6 +89,7 @@ const buildArgs = ({
       flatSearchFieldMetadataMaps: { byUniversalIdentifier: {} },
       flatViewMaps: { byUniversalIdentifier: {} },
       flatViewFieldMaps: { byUniversalIdentifier: {} },
+      flatCommandMenuItemMaps: { byUniversalIdentifier: {} },
       ...relatedFlatEntityMaps,
     },
     context: {},
@@ -353,5 +361,91 @@ describe('ObjectSystemSideEffectsOnDeleteSideEffectHandlerService', () => {
     expect(
       Object.keys(result.operations.viewField?.flatEntityToDelete ?? {}),
     ).toEqual([OTHER_OBJECT_VIEW_FIELD_UNIVERSAL_IDENTIFIER]);
+  });
+
+  it('should cascade-delete the engine-owned navigation command, whatever its identifier, and spare path-based and non-system rows', () => {
+    const DERIVED_NAVIGATION_COMMAND_UNIVERSAL_IDENTIFIER =
+      getNavigationCommandUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      });
+
+    const result = handler.buildSideEffects(
+      buildArgs({
+        relatedFlatEntityMaps: {
+          flatCommandMenuItemMaps: {
+            byUniversalIdentifier: {
+              'legacy-navigation-command-identifier': {
+                universalIdentifier: 'legacy-navigation-command-identifier',
+                isSystemSideEffect: true,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { objectMetadataItemId: OBJECT_ID },
+              },
+              'path-based-navigation-identifier': {
+                universalIdentifier: 'path-based-navigation-identifier',
+                isSystemSideEffect: true,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { path: '/settings/profile' },
+              },
+              'caller-authored-navigation-identifier': {
+                universalIdentifier: 'caller-authored-navigation-identifier',
+                isSystemSideEffect: false,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { objectMetadataItemId: OBJECT_ID },
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.keys(result.operations.commandMenuItem?.flatEntityToDelete ?? {}),
+    ).toEqual(['legacy-navigation-command-identifier']);
+    expect(DERIVED_NAVIGATION_COMMAND_UNIVERSAL_IDENTIFIER).not.toBe(
+      'legacy-navigation-command-identifier',
+    );
+  });
+
+  it('should cascade-delete a navigation command matched by its derived identifier when the payload cannot be matched', () => {
+    const DERIVED_NAVIGATION_COMMAND_UNIVERSAL_IDENTIFIER =
+      getNavigationCommandUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      });
+
+    const result = handler.buildSideEffects(
+      buildArgs({
+        relatedFlatEntityMaps: {
+          flatCommandMenuItemMaps: {
+            byUniversalIdentifier: {
+              [DERIVED_NAVIGATION_COMMAND_UNIVERSAL_IDENTIFIER]: {
+                universalIdentifier:
+                  DERIVED_NAVIGATION_COMMAND_UNIVERSAL_IDENTIFIER,
+                isSystemSideEffect: true,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { objectMetadataItemId: 'stale-object-id' },
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.keys(result.operations.commandMenuItem?.flatEntityToDelete ?? {}),
+    ).toEqual([DERIVED_NAVIGATION_COMMAND_UNIVERSAL_IDENTIFIER]);
   });
 });

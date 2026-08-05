@@ -3,6 +3,13 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
+// The universal identifiers stay literal on purpose: the deterministic
+// derivation helpers key on (availabilityType, engineComponentKey[, object]),
+// and that keying does not hold here — the 17 path-based GLOBAL NAVIGATION
+// entries (goToSettings and friends) would all collapse onto one identifier,
+// and FALLBACK has no helper. The rows are protected by isSystemSideEffect
+// instead: deletion inference spares them and the flat command menu item
+// validator rejects a non-system row claiming one of these identifiers.
 export const STANDARD_COMMAND_MENU_ITEMS = {
   navigateToNextRecord: {
     universalIdentifier: '3db2457d-8e96-4b8e-94c9-ed95d3f95738',
