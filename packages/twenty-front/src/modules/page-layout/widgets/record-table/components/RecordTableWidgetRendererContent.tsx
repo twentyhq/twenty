@@ -6,7 +6,6 @@ import { RecordTableWidget } from '@/object-record/record-table-widget/component
 import { RecordTableWidgetProvider } from '@/object-record/record-table-widget/components/RecordTableWidgetProvider';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { recordTableWidgetViewDraftByWidgetIdComponentFamilySelector } from '@/page-layout/states/selectors/recordTableWidgetViewDraftByWidgetIdComponentFamilySelector';
-import { RecordTableWidgetViewDraftInitEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftInitEffect';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useViewById } from '@/views/hooks/useViewById';
@@ -83,36 +82,30 @@ export const RecordTableWidgetRendererContent = ({
   const calendarIsReadOnly = !canEditCalendar;
 
   return (
-    <>
-      <RecordTableWidgetViewDraftInitEffect
-        widgetId={widgetId}
-        viewId={viewId}
-      />
-      <RecordTableWidgetProvider
-        objectNameSingular={objectMetadataItem.nameSingular}
-        viewId={viewId}
-        widgetId={widgetId}
-        recordLimit={recordLimit}
-        instanceIdSuffix={instanceIdSuffix}
-        contextStoreViewType={
-          isKanbanLayout
-            ? ContextStoreViewType.Kanban
-            : isCalendarLayout
-              ? ContextStoreViewType.Calendar
-              : ContextStoreViewType.Table
-        }
-      >
-        {isKanbanLayout ? (
-          <RecordBoardWidget isReadOnly={isReadOnly} />
-        ) : isCalendarLayout ? (
-          <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />
-        ) : (
-          <RecordTableWidget
-            isReadOnly={isReadOnly}
-            isEmptyStateHidden={isEmptyStateHidden}
-          />
-        )}
-      </RecordTableWidgetProvider>
-    </>
+    <RecordTableWidgetProvider
+      objectNameSingular={objectMetadataItem.nameSingular}
+      viewId={viewId}
+      widgetId={widgetId}
+      recordLimit={recordLimit}
+      instanceIdSuffix={instanceIdSuffix}
+      contextStoreViewType={
+        isKanbanLayout
+          ? ContextStoreViewType.Kanban
+          : isCalendarLayout
+            ? ContextStoreViewType.Calendar
+            : ContextStoreViewType.Table
+      }
+    >
+      {isKanbanLayout ? (
+        <RecordBoardWidget isReadOnly={isReadOnly} />
+      ) : isCalendarLayout ? (
+        <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />
+      ) : (
+        <RecordTableWidget
+          isReadOnly={isReadOnly}
+          isEmptyStateHidden={isEmptyStateHidden}
+        />
+      )}
+    </RecordTableWidgetProvider>
   );
 };

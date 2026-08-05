@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { FileUploadApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-api-exception.filter';
 import { FileUploadTokenGuard } from 'src/engine/core-modules/file/file-upload/guards/file-upload-token.guard';
@@ -23,7 +24,7 @@ export class FileUploadController {
   // Streaming target for direct uploads when storage has no presigned upload
   // support (local driver, or S3 without presign enabled). The body is piped
   // to the storage driver without ever being buffered in memory.
-  @Put('file-upload/:id')
+  @Put(`${ApiPath.FileUpload}/:id`)
   @UseGuards(FileUploadTokenGuard, NoPermissionGuard)
   async uploadFileById(
     @Req() req: Request,

@@ -1,4 +1,5 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
+import { ApiPath } from 'twenty-shared/types';
 
 import { computeOpenApiPath } from 'src/engine/core-modules/open-api/utils/path.utils';
 
@@ -121,7 +122,7 @@ hand the file to your tool — never paste a tokenized URL into a chat:
 
 \`\`\`bash
 curl -H 'Authorization: Bearer <token>' \\
-  ${serverUrl}/rest/open-api/${schemaName} > twenty-${schemaName}.json
+  ${serverUrl}/${ApiPath.Rest}/open-api/${schemaName} > twenty-${schemaName}.json
 \`\`\`
 `,
       termsOfService:
@@ -138,7 +139,7 @@ curl -H 'Authorization: Bearer <token>' \\
     // Testing purposes
     servers: [
       {
-        url: `${serverUrl}/rest/${schemaName !== 'core' ? schemaName : ''}`,
+        url: `${serverUrl}/${ApiPath.Rest}/${schemaName !== 'core' ? schemaName : ''}`,
         description: 'Production Development',
       },
     ],

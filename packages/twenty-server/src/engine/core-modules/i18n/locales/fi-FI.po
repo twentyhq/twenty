@@ -7957,6 +7957,11 @@ msgstr "Tunnisteessa on ongelma. Yritä uudelleen."
 msgid "There is no failed message to retry."
 msgstr "Ei ole yhtään epäonnistunutta viestiä, jota voisi yrittää uudelleen."
 
+#. js-lingui-id: Yi0Q/T
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
+msgstr ""
+
 #. js-lingui-id: Iy9pZw
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
