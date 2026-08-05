@@ -42,6 +42,20 @@ import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cac
 
 const LOCAL_TTL_MS = 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
+// Heavy localDataOnly providers evict sooner: a single stale read otherwise pins a 5 MB
+// ORM graph for 30 min (the pod's dominant RAM cost), while rebuilding it is cheap (6-16 ms).
+const LOCAL_ENTRY_TTL_OVERRIDES: {
+  keyName: WorkspaceCacheKeyName;
+  ttlMs: number;
+}[] = [{ keyName: 'ORMEntityMetadatas', ttlMs: 5 * 60 * 1000 }];
+// Resolved against the local key prefix (`${WORKSPACE_CACHE_KEYS_V2[keyName]}:${workspaceId}`)
+// so the expiration sweep can look up a per-provider TTL without storing the key on each entry.
+const LOCAL_ENTRY_TTL_MS_BY_PREFIX = new Map<string, number>(
+  LOCAL_ENTRY_TTL_OVERRIDES.map(({ keyName, ttlMs }) => [
+    WORKSPACE_CACHE_KEYS_V2[keyName],
+    ttlMs,
+  ]),
+);
 const LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS = 60 * 1000;
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
@@ -990,10 +1004,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.lastLocalCacheExpirationSweepAt = now;
   }
 
+  private resolveLocalEntryTtlMs(localKey: string): number {
+    const prefix = localKey.slice(0, localKey.lastIndexOf(':'));
+
+    return LOCAL_ENTRY_TTL_MS_BY_PREFIX.get(prefix) ?? LOCAL_ENTRY_TTL_MS;
+  }
+
   private evictExpiredLocalEntries(now: number): void {
     for (const [localKey, entry] of this.localCache) {
+      const entryTtlMs = this.resolveLocalEntryTtlMs(localKey);
+
       for (const [hash, version] of entry.versions) {
-        if (now - version.lastReadAt > LOCAL_ENTRY_TTL_MS) {
+        if (now - version.lastReadAt > entryTtlMs) {
           entry.versions.delete(hash);
         }
       }

@@ -88,6 +88,8 @@ describe('WorkspaceCacheService', () => {
           provide: MetricsService,
           useValue: {
             incrementCounterBy: jest.fn(),
+            createObservableGauge: jest.fn(),
+            createMultiObservableGauge: jest.fn(),
             getMeter: jest.fn().mockReturnValue({
               createHistogram: jest.fn().mockReturnValue({ record: jest.fn() }),
             }),
@@ -731,6 +733,39 @@ describe('WorkspaceCacheService', () => {
       expect(cacheStorageService.mset).toHaveBeenCalledWith([
         { key: ormHashKey, value: expect.any(String) },
       ]);
+    });
+
+    it('should keep the ORM entry until its shortened per-provider TTL elapses', async () => {
+      cacheStorageService.mget.mockResolvedValue(['stable-hash']);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      const computeSpy = jest.spyOn(localDataOnlyProvider, 'computeForCache');
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+      expect(computeSpy).toHaveBeenCalledTimes(1);
+
+      // Just under the 5-minute ORM override: the sweep keeps the entry, so the read revalidates.
+      jest.advanceTimersByTime(4 * 60 * 1000);
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+
+      expect(computeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should evict the ORM entry after its shortened per-provider TTL, forcing a recompute', async () => {
+      cacheStorageService.mget.mockResolvedValue(['stable-hash']);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      const computeSpy = jest.spyOn(localDataOnlyProvider, 'computeForCache');
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+      expect(computeSpy).toHaveBeenCalledTimes(1);
+
+      // Past the 5-minute override (and the 1-minute sweep interval): the idle entry is swept,
+      // so the next read recomputes instead of adopting the still-warm redis hash.
+      jest.advanceTimersByTime(5 * 60 * 1000 + 1_000);
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+
+      expect(computeSpy).toHaveBeenCalledTimes(2);
     });
   });
 });
