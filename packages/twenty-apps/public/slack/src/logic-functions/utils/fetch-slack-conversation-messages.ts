@@ -15,7 +15,7 @@ type SlackContextMessage = {
   text?: string;
 };
 
-const toAgentMessages = ({
+const mapSlackMessagesToAgentMessages = ({
   messages,
   assistantBotUserId,
   excludeMessageTimestamps,
@@ -93,7 +93,7 @@ export const fetchSlackConversationMessages = async ({
         limit: THREAD_REPLIES_FETCH_LIMIT,
       });
 
-      return toAgentMessages({
+      return mapSlackMessagesToAgentMessages({
         messages: replies.messages ?? [],
         assistantBotUserId,
         excludeMessageTimestamps: excludedTimestamps,
@@ -107,7 +107,7 @@ export const fetchSlackConversationMessages = async ({
         limit: CONTEXT_MESSAGE_LIMIT,
       });
 
-      return toAgentMessages({
+      return mapSlackMessagesToAgentMessages({
         messages: [...(history.messages ?? [])].reverse(),
         assistantBotUserId,
         excludeMessageTimestamps: excludedTimestamps,
