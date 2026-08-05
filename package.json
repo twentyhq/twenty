@@ -26,7 +26,8 @@
   "name": "twenty",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
-    "@module-federation/dts-plugin/undici": "^7.28.0",
+    "undici": "^8.9.0",
+    "next/sharp": "^0.35.3",
     "nx/form-data": "4.0.6",
     "zapier-platform-core/form-data": "4.0.6",
     "@nestjs/platform-express/multer": "2.2.0",
