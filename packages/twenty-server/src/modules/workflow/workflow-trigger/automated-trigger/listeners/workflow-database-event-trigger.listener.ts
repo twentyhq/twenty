@@ -27,6 +27,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import {
@@ -402,9 +403,8 @@ export class WorkflowDatabaseEventTriggerListener {
 
       return Object.values(workflowAutomatedTriggerMaps.byWorkflowId).filter(
         (trigger) =>
-          trigger.type === AutomatedTriggerType.DATABASE_EVENT &&
-          (trigger.settings as BaseDatabaseEventTriggerSettings).eventName ===
-            databaseEventName,
+          isCachedDatabaseEventTrigger(trigger) &&
+          trigger.settings.eventName === databaseEventName,
       );
     }
 

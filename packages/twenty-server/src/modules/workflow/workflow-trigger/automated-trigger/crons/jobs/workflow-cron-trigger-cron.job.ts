@@ -19,6 +19,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -220,11 +221,6 @@ export class WorkflowCronTriggerCronJob {
     }
   }
 
-  // The dispatch source is only read on a cron-cache rebuild (cache miss), so
-  // flipping the flag takes effect on the next rebuild: bounded by the cache TTL,
-  // or immediately when a workflow is (de)activated, which invalidates the cache.
-  // Both sources emit the same {workflowId, pattern} for a synced workspace, so
-  // the switch is a no-op in dispatch output.
   private async getWorkspaceCronTriggers(
     workspaceId: string,
   ): Promise<Array<{ workflowId: string; pattern?: string }>> {
@@ -241,10 +237,10 @@ export class WorkflowCronTriggerCronJob {
         ]);
 
       return Object.values(workflowAutomatedTriggerMaps.byWorkflowId)
-        .filter((trigger) => trigger.type === AutomatedTriggerType.CRON)
+        .filter(isCachedCronTrigger)
         .map((trigger) => ({
           workflowId: trigger.workflowId,
-          pattern: (trigger.settings as CronTriggerSettings).pattern,
+          pattern: trigger.settings.pattern,
         }));
     }
 
