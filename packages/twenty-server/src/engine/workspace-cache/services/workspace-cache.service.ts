@@ -47,8 +47,7 @@ const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
-// An idle ORM graph is ~5 MB, so a pod that served many workspaces would pin gigabytes;
-// rebuilding on a miss is cheap (6-16 ms). No override falls back to the global cap.
+// ORM graphs are ~5 MB, so cap residency rather than pin gigabytes across many workspaces.
 const LOCAL_ENTRY_COUNT_OVERRIDES: {
   keyName: WorkspaceCacheKeyName;
   maxEntries: number;
@@ -247,8 +246,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       );
     };
 
-    // Prime the byte gauges shortly after startup so they reflect a warming cache
-    // within the minute instead of reporting 0 until the first full interval.
+    // Prime once after startup so the gauges aren't 0 until the first 5-minute interval.
     this.cacheSizeStartupTimer = setTimeout(
       sample,
       LOCAL_CACHE_SIZE_STARTUP_DELAY_MS,
@@ -259,10 +257,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.cacheSizeSampler.unref();
   }
 
-  // Estimates per-provider bytes by deep-walking a few entries per provider
-  // (circular-safe, so it also covers local-only providers like ORMEntityMetadatas
-  // that JSON.stringify can't). Runs on a timer and yields between walks to keep
-  // it off the request hot path.
   private async refreshCacheSizeBreakdown(): Promise<void> {
     const perProvider: Record<
       string,
@@ -313,8 +307,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.cacheSizeTotalBytes = total;
   }
 
-  // Approximate retained bytes of an object graph; handles cycles and Map/Set,
-  // and is node-capped to bound cost.
   private deepSizeBytes(root: unknown): number {
     const seen = new WeakSet<object>();
     const stack: unknown[] = [root];
@@ -932,7 +924,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.evictOverBudgetEntries(keyName);
   }
 
-  // LRU key for eviction: the latest version's read time.
   private entryLastReadAt(
     entry: WorkspaceLocalCacheEntry<CacheDataType>,
   ): number {
@@ -943,7 +934,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const prefix = WORKSPACE_CACHE_KEYS_V2[writtenKeyName];
     const providerCap = LOCAL_ENTRY_COUNT_BY_PREFIX.get(prefix);
 
-    // Tighter per-provider cap for the provider we just grew.
     if (isDefined(providerCap)) {
       this.evictLeastRecentlyRead(
         (key) => key.slice(0, key.lastIndexOf(':')) === prefix,

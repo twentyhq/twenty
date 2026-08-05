@@ -718,7 +718,6 @@ describe('WorkspaceCacheService', () => {
       const workspaceId = (index: number) =>
         `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
 
-      // Fill one past the ORM budget, each with a distinct workspace and read time.
       for (let index = 0; index <= ormBudget; index += 1) {
         await service.getOrRecompute(workspaceId(index), [
           'ORMEntityMetadatas',
@@ -731,7 +730,6 @@ describe('WorkspaceCacheService', () => {
       );
 
       expect(ormKeys.length).toBe(ormBudget);
-      // The first (least-recently-read) workspace was evicted; the newest is retained.
       expect(localCache.has(`orm:entity-metadatas:${workspaceId(0)}`)).toBe(
         false,
       );
