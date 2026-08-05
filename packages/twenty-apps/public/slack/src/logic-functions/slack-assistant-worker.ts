@@ -14,6 +14,7 @@ import { SLACK_ASSISTANT_PLACEHOLDER_TEXT } from 'src/logic-functions/constants/
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_THINKING_REACTION_EMOJI } from 'src/logic-functions/constants/slack-assistant-thinking-reaction-emoji';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
+import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
@@ -166,10 +167,14 @@ export const slackAssistantWorkerHandler = async (
         responseText,
         durationMilliseconds,
       }),
-      messageBlocks: buildSlackAssistantAnswerBlocks({
-        responseText,
-        durationMilliseconds,
-      }),
+      messageFormat: 'markdown',
+      messageBlocks:
+        responseText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH
+          ? undefined
+          : buildSlackAssistantAnswerBlocks({
+              responseText,
+              durationMilliseconds,
+            }),
     });
 
     if (!updateResult.success) {
