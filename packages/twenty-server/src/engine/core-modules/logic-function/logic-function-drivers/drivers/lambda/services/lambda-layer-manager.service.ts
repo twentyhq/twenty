@@ -34,7 +34,7 @@ export class LambdaLayerManagerService {
   constructor(
     private readonly options: Pick<
       LambdaDriverOptions,
-      'layerBucket' | 'resourceNamespace'
+      'layerBucket' | 'resourceNamespace' | 'twentyConfigService'
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly toolFunctions: LambdaToolFunctionsService,
@@ -173,6 +173,9 @@ export class LambdaLayerManagerService {
       packageJson,
       yarnLock,
       presignedUploadUrl,
+      maxUnzippedSizeMb: this.options.twentyConfigService.get(
+        'LOGIC_FUNCTION_MAX_DEPS_SIZE_MB',
+      ),
     });
 
     const lambdaClient = await this.awsClient.getLambdaClient();

@@ -56,6 +56,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           sdkClientArchiveService: this.sdkClientArchiveService,
           cacheLockService: this.cacheLockService,
           workspaceCacheService: this.workspaceCacheService,
+          twentyConfigService: this.twentyConfigService,
         });
 
       case LogicFunctionDriverType.LAMBDA: {
@@ -101,6 +102,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           layerBucketRegion,
           resourceNamespace,
           sdkClientArchiveService: this.sdkClientArchiveService,
+          twentyConfigService: this.twentyConfigService,
         });
       }
 

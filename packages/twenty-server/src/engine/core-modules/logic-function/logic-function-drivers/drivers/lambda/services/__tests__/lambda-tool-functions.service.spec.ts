@@ -1,7 +1,4 @@
-import {
-  GetFunctionCommand,
-  InvokeCommand,
-} from '@aws-sdk/client-lambda';
+import { GetFunctionCommand, InvokeCommand } from '@aws-sdk/client-lambda';
 
 import {
   YARN_INSTALL_LAMBDA_MEMORY_MB,
@@ -69,6 +66,7 @@ describe('LambdaToolFunctionsService', () => {
       packageJson: '{}',
       yarnLock: '',
       presignedUploadUrl: 'https://example.com/upload',
+      maxUnzippedSizeMb: 200,
     };
 
     it('should return the parsed result when the Lambda succeeds', async () => {
@@ -145,6 +143,7 @@ describe('LambdaToolFunctionsService', () => {
         packageJson: '{}',
         yarnLock: '',
         presignedUploadUrl: 'https://example.com/upload',
+        maxUnzippedSizeMb: 200,
       });
 
       const commandNames = lambdaClientSend.mock.calls.map(
@@ -186,6 +185,7 @@ describe('LambdaToolFunctionsService', () => {
         packageJson: '{}',
         yarnLock: '',
         presignedUploadUrl: 'https://example.com/upload',
+        maxUnzippedSizeMb: 200,
       });
 
       const commandNames = lambdaClientSend.mock.calls.map(

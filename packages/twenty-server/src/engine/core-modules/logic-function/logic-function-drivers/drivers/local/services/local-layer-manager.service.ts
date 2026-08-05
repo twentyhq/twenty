@@ -13,8 +13,10 @@ import {
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { pathExists } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/path-exists.util';
+import { assertDependenciesSizeWithinLimit } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/assert-dependencies-size-within-limit.util';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type LayerAppContext = {
@@ -28,6 +30,7 @@ export class LocalLayerManagerService {
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async ensureDepsLayer({
@@ -60,6 +63,12 @@ export class LocalLayerManagerService {
           inMemoryFolderPath: depsLayerPath,
         });
         await copyYarnEngineAndBuildDependencies(depsLayerPath);
+        await assertDependenciesSizeWithinLimit({
+          directory: depsLayerPath,
+          maxSizeMb: this.twentyConfigService.get(
+            'LOGIC_FUNCTION_MAX_DEPS_SIZE_MB',
+          ),
+        });
         await fs.writeFile(depsReadySentinelPath, '');
       },
       lockKey,

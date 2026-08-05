@@ -92,13 +92,13 @@ const computeDirectorySizeBytes = async (directory) => {
   return sizes.reduce((total, size) => total + size, 0);
 };
 
-const assertDependenciesSizeWithinLimit = async (buildDir) => {
+const assertDependenciesSizeWithinLimit = async (buildDir, maxSizeMb) => {
   const sizeBytes = await computeDirectorySizeBytes(buildDir);
   const sizeMb = Math.ceil(sizeBytes / (1024 * 1024));
 
-  if (sizeMb > MAX_UNZIPPED_DEPENDENCIES_MB) {
+  if (sizeMb > maxSizeMb) {
     throw new Error(
-      `Dependencies size exceeded: production dependencies unpack to ${sizeMb}MB, the maximum is ${MAX_UNZIPPED_DEPENDENCIES_MB}MB. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".`,
+      `Dependencies size exceeded: production dependencies unpack to ${sizeMb}MB, the maximum is ${maxSizeMb}MB. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".`,
     );
   }
 };
@@ -132,7 +132,8 @@ const uploadToPresignedUrl = async (zipPath, presignedUploadUrl) => {
 };
 
 export const handler = async (event) => {
-  const { action, packageJson, yarnLock, presignedUploadUrl } = event;
+  const { action, packageJson, yarnLock, presignedUploadUrl, maxUnzippedSizeMb } =
+    event;
 
   if (action !== 'createLayer') {
     throw new Error(`Unknown action: ${action}`);
@@ -155,7 +156,10 @@ export const handler = async (event) => {
     await writePackageFiles(nodejsDir, packageJson, yarnLock);
     await copyYarnEngine(nodejsDir);
     await runYarnInstall(nodejsDir);
-    await assertDependenciesSizeWithinLimit(buildDir);
+    await assertDependenciesSizeWithinLimit(
+      buildDir,
+      maxUnzippedSizeMb ?? MAX_UNZIPPED_DEPENDENCIES_MB,
+    );
     await createZip(buildDir, zipPath);
 
     await uploadToPresignedUrl(zipPath, presignedUploadUrl);

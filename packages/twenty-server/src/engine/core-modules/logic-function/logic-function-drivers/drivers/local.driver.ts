@@ -44,6 +44,7 @@ export class LocalDriver implements LogicFunctionDriver {
       options.logicFunctionResourceService,
       options.sdkClientArchiveService,
       options.workspaceCacheService,
+      options.twentyConfigService,
     );
     this.childProcessRunner = new LocalChildProcessRunnerService();
     this.prebuiltBundle = new LocalPrebuiltBundleService(
