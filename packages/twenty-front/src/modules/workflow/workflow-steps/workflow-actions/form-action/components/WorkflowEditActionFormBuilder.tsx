@@ -5,6 +5,7 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import {
   type WorkflowFormAction,
@@ -298,10 +299,12 @@ export const WorkflowEditActionFormBuilder = ({
 
                         {showButtons && (
                           <StyledGripButtonContainer>
-                            <LightIconButton
-                              Icon={IconGripVertical}
-                              aria-label={t`Reorder field`}
-                            />
+                            <DragDropItemSortableHandle>
+                              <LightIconButton
+                                Icon={IconGripVertical}
+                                aria-label={t`Reorder field`}
+                              />
+                            </DragDropItemSortableHandle>
                           </StyledGripButtonContainer>
                         )}
 
