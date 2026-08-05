@@ -4,6 +4,7 @@ import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/ty
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorContent } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorContent';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
@@ -36,12 +37,6 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
     min-height: 0;
   }
-`;
-
-const StyledFormFieldInputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 `;
 
 const StyledAdvancedTextFieldFieldContainer = styled.div`
@@ -239,7 +234,7 @@ export const FormAdvancedTextFieldInput = ({
       <StyledAdvancedTextFieldContainerWrapper
         hasFieldChrome={chrome === 'field'}
       >
-        <StyledFormFieldInputContainer>
+        <FormFieldInputContainer>
           {label ? <InputLabel>{label}</InputLabel> : null}
 
           <StyledAdvancedTextFieldFieldContainer>
@@ -280,7 +275,7 @@ export const FormAdvancedTextFieldInput = ({
           </StyledAdvancedTextFieldFieldContainer>
           {hint && <InputHint>{hint}</InputHint>}
           {error && <InputHint danger>{error}</InputHint>}
-        </StyledFormFieldInputContainer>
+        </FormFieldInputContainer>
       </StyledAdvancedTextFieldContainerWrapper>
 
       {fullScreenOverlay}
