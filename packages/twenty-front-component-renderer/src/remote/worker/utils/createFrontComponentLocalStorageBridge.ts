@@ -74,7 +74,16 @@ export const createFrontComponentLocalStorageBridge = ({
     }
   };
 
-  const revertSettledKeysToCommitted = (keys: string[]): void => {
+  const getTrackedKeys = (): string[] =>
+    Array.from(
+      new Set([
+        ...entries.keys(),
+        ...committedEntries.keys(),
+        ...pendingMutationCountByKey.keys(),
+      ]),
+    );
+
+  const reconcileSettledKeys = (keys: string[]): void => {
     for (const key of keys) {
       if (pendingMutationCountByKey.has(key)) {
         continue;
@@ -145,13 +154,14 @@ export const createFrontComponentLocalStorageBridge = ({
       );
     } catch (error) {
       endKeyMutations([key]);
-      revertSettledKeysToCommitted([key]);
+      reconcileSettledKeys([key]);
 
       throw error;
     }
 
     committedEntries.set(key, serializedValue);
     endKeyMutations([key]);
+    reconcileSettledKeys([key]);
   };
 
   const removeItemAndPersist = async (key: string): Promise<boolean> => {
@@ -164,21 +174,20 @@ export const createFrontComponentLocalStorageBridge = ({
       );
     } catch (error) {
       endKeyMutations([key]);
-      revertSettledKeysToCommitted([key]);
+      reconcileSettledKeys([key]);
 
       throw error;
     }
 
     committedEntries.delete(key);
     endKeyMutations([key]);
+    reconcileSettledKeys([key]);
 
     return wasPresent;
   };
 
   const clearAndPersist = async (): Promise<void> => {
-    const affectedKeys = Array.from(
-      new Set([...entries.keys(), ...committedEntries.keys()]),
-    );
+    const affectedKeys = getTrackedKeys();
 
     entries.clear();
     startKeyMutations(affectedKeys);
@@ -189,13 +198,14 @@ export const createFrontComponentLocalStorageBridge = ({
       );
     } catch (error) {
       endKeyMutations(affectedKeys);
-      revertSettledKeysToCommitted(affectedKeys);
+      reconcileSettledKeys(getTrackedKeys());
 
       throw error;
     }
 
     committedEntries.clear();
     endKeyMutations(affectedKeys);
+    reconcileSettledKeys(getTrackedKeys());
   };
 
   return {

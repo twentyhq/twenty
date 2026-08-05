@@ -300,6 +300,55 @@ describe('createFrontComponentLocalStorageBridge', () => {
     expect(bridge.getItem('theme')).toBeNull();
   });
 
+  it('should drop a refused write once an older write of the same key succeeds', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    let completeFirstWrite = () => {};
+
+    hostCommunicationApi.localStorageSet
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            completeFirstWrite = () => resolve();
+          }),
+      )
+      .mockRejectedValueOnce(new Error('write refused'));
+
+    const firstWrite = bridge.setItemAndPersist('theme', '"dark"');
+
+    await expect(bridge.setItemAndPersist('theme', '"light"')).rejects.toThrow(
+      'write refused',
+    );
+
+    completeFirstWrite();
+    await firstWrite;
+
+    expect(bridge.getItem('theme')).toBe('"dark"');
+  });
+
+  it('should drop a key written while a successful clear was in flight', async () => {
+    const { bridge, hostCommunicationApi } = createConnectedBridge();
+
+    let completeClear = () => {};
+
+    hostCommunicationApi.localStorageClear.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          completeClear = () => resolve();
+        }),
+    );
+
+    const clearOperation = bridge.clearAndPersist();
+
+    await bridge.setItemAndPersist('new-key', '"value"');
+
+    completeClear();
+    await clearOperation;
+
+    expect(bridge.getItem('new-key')).toBeNull();
+    expect(bridge.getKeys()).toEqual([]);
+  });
+
   it('should not let a refused write roll back a newer write of the same key', async () => {
     const { bridge, hostCommunicationApi } = createConnectedBridge();
 
