@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
@@ -6,18 +6,15 @@ import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useRe
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
@@ -62,9 +59,6 @@ export const useRecordBoardColumnDndKit = (): {
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.KANBAN,
   );
-  const recordIndexKanbanColumnWidth = useAtomComponentStateValue(
-    recordIndexKanbanColumnWidthComponentState,
-  );
 
   const [, setRecordIndexRecordGroupSort] = useAtomComponentState(
     recordIndexRecordGroupSortComponentState,
@@ -78,37 +72,37 @@ export const useRecordBoardColumnDndKit = (): {
     null,
   );
 
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
-    `scroll-wrapper-record-board-${recordIndexId}`,
-  );
+  // The pointer can leave every sortable (column bodies, trailing empty
+  // space); the last resolved boundary is kept so the drop always lands where
+  // the insertion indicator was last shown. A ref because it is
+  // gesture-scoped bookkeeping read back inside drag callbacks.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const lastDropTargetIndexRef = useRef<number | null>(null);
 
-  const totalSize = visibleRecordGroupIds.length * recordIndexKanbanColumnWidth;
   const lastIndex = visibleRecordGroupIds.length;
 
-  const getFallbackDropTargetIndex = (pointerX: number) => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
-    const scrollLeft = scrollWrapperElement?.scrollLeft ?? 0;
-    const containerLeft =
-      scrollWrapperElement?.getBoundingClientRect().left ?? 0;
-    const pointerContentX = scrollLeft + pointerX - containerLeft;
-
-    return pointerContentX > totalSize / 2 ? lastIndex : 0;
-  };
-
   const handleDragStart = (_event: DragStartPayload) => {
+    lastDropTargetIndexRef.current = null;
     setActiveDropTargetIndex(null);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const dropTargetIndex =
+    const resolvedDropTargetIndex =
       resolveDropFromPointer({
         target,
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
+      })?.dropTargetIndex ?? null;
+
+    if (isDefined(resolvedDropTargetIndex)) {
+      lastDropTargetIndexRef.current = resolvedDropTargetIndex;
+    }
+
+    const dropTargetIndex =
+      resolvedDropTargetIndex ?? lastDropTargetIndexRef.current;
 
     setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
       currentActiveDropTargetIndex === dropTargetIndex
@@ -119,6 +113,9 @@ export const useRecordBoardColumnDndKit = (): {
 
   const handleDragEnd = (event: DragEndPayload) => {
     const { source, target, position } = event.operation;
+
+    const lastDropTargetIndex = lastDropTargetIndexRef.current;
+    lastDropTargetIndexRef.current = null;
 
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
@@ -135,7 +132,11 @@ export const useRecordBoardColumnDndKit = (): {
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
+      })?.dropTargetIndex ?? lastDropTargetIndex;
+
+    if (!isDefined(dropTargetIndex)) {
+      return;
+    }
 
     const destinationIndex =
       dropTargetIndex > sourceIndex ? dropTargetIndex - 1 : dropTargetIndex;

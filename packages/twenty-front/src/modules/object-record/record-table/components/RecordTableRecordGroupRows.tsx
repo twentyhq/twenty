@@ -83,11 +83,13 @@ export const RecordTableRecordGroupRows = () => {
         );
       })}
       <StyledRecordGroupDropTarget ref={endDropZoneRef}>
+        {/* An empty group may render neither action row below, so the target
+            keeps its full height there to preserve a droppable hit area. */}
         <DragDropItemDropTarget
           index={recordIndexRecordIdsByGroup.length}
           droppableId={currentRecordGroupId}
           orientation="horizontal"
-          compact
+          compact={recordIndexRecordIdsByGroup.length > 0}
           seamAligned
         />
         <RecordTableRecordGroupSectionLoadMore />

@@ -167,16 +167,11 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
       >
         {children}
         <DragOverlay>
-          {(source) => {
-            const sourceData = source?.data;
-            return (
-              <RecordTableRecordGroupBodyContextProvider
-                recordGroupId={sourceData?.droppableId ?? ''}
-              >
-                <RecordTableRowDragOverlayContent source={source} />
-              </RecordTableRecordGroupBodyContextProvider>
-            );
-          }}
+          {(source) => (
+            <RecordTableRecordGroupBodyContextProvider>
+              <RecordTableRowDragOverlayContent source={source} />
+            </RecordTableRecordGroupBodyContextProvider>
+          )}
         </DragOverlay>
       </DragDropProvider>
     </DragDropItemDndContext.Provider>

@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
 import { RecordBoardAddGroupColumn } from '@/object-record/record-board/components/RecordBoardAddGroupColumn';
@@ -8,19 +7,10 @@ import { RecordBoardColumnDndKitProvider } from '@/object-record/record-board/re
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
+import { DragDropItemDropTargetSlot } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTargetSlot';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { ViewType } from '@/views/types/ViewType';
-
-const StyledDropTargetSlot = styled.div`
-  align-self: stretch;
-  flex: 0 0 2px;
-  margin-left: -1px;
-  margin-right: -1px;
-  min-height: 0;
-  position: relative;
-  z-index: 100;
-`;
 
 export const RecordBoardColumnDnd = () => {
   const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
@@ -30,9 +20,9 @@ export const RecordBoardColumnDnd = () => {
 
   return (
     <RecordBoardColumnDndKitProvider>
-      <StyledDropTargetSlot>
+      <DragDropItemDropTargetSlot>
         <DragDropItemDropTarget index={0} orientation="vertical" overlay />
-      </StyledDropTargetSlot>
+      </DragDropItemDropTargetSlot>
       {visibleRecordGroupIds.map((recordGroupId, index) => (
         <Fragment key={recordGroupId}>
           <DragDropItemSortableCell
@@ -49,13 +39,13 @@ export const RecordBoardColumnDnd = () => {
               />
             </RecordGroupContext.Provider>
           </DragDropItemSortableCell>
-          <StyledDropTargetSlot>
+          <DragDropItemDropTargetSlot>
             <DragDropItemDropTarget
               index={index + 1}
               orientation="vertical"
               overlay
             />
-          </StyledDropTargetSlot>
+          </DragDropItemDropTargetSlot>
         </Fragment>
       ))}
       <RecordBoardAddGroupColumn />

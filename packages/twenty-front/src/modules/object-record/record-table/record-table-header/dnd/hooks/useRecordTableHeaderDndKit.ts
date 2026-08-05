@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
@@ -11,7 +11,6 @@ import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resol
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 
 type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
 type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
@@ -39,40 +38,37 @@ export const useRecordTableHeaderDndKit = (): {
     number | null
   >(null);
 
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
-    `record-table-scroll-${recordTableId}`,
-  );
+  // The pointer can leave every sortable (sticky pinned column, table body,
+  // trailing empty space); the last resolved boundary is kept so the drop
+  // always lands where the insertion indicator was last shown. A ref because
+  // it is gesture-scoped bookkeeping read back inside drag callbacks.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const lastDropTargetIndexRef = useRef<number | null>(null);
 
-  const totalSize = visibleRecordFields.reduce(
-    (accumulatedSize, recordField) => accumulatedSize + recordField.size,
-    0,
-  );
   const lastIndex = visibleRecordFields.length - 1;
 
-  const getFallbackDropTargetIndex = (pointerX: number) => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
-    const scrollLeft = scrollWrapperElement?.scrollLeft ?? 0;
-    const containerLeft =
-      scrollWrapperElement?.getBoundingClientRect().left ?? 0;
-    const pointerContentX = scrollLeft + pointerX - containerLeft;
-
-    return pointerContentX > totalSize / 2 ? lastIndex : 0;
-  };
-
   const handleDragStart = (_event: DragStartPayload) => {
+    lastDropTargetIndexRef.current = null;
     setActiveDropTargetIndex(null);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const dropTargetIndex =
+    const resolvedDropTargetIndex =
       resolveDropFromPointer({
         target,
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
+      })?.dropTargetIndex ?? null;
+
+    if (isDefined(resolvedDropTargetIndex)) {
+      lastDropTargetIndexRef.current = resolvedDropTargetIndex;
+    }
+
+    const dropTargetIndex =
+      resolvedDropTargetIndex ?? lastDropTargetIndexRef.current;
 
     setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
       currentActiveDropTargetIndex === dropTargetIndex
@@ -83,6 +79,9 @@ export const useRecordTableHeaderDndKit = (): {
 
   const handleDragEnd = (event: DragEndPayload) => {
     const { source, target, position } = event.operation;
+
+    const lastDropTargetIndex = lastDropTargetIndexRef.current;
+    lastDropTargetIndexRef.current = null;
 
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
@@ -99,7 +98,11 @@ export const useRecordTableHeaderDndKit = (): {
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
+      })?.dropTargetIndex ?? lastDropTargetIndex;
+
+    if (!isDefined(dropTargetIndex)) {
+      return;
+    }
 
     const destinationIndex =
       dropTargetIndex <= sourceIndex ? dropTargetIndex + 1 : dropTargetIndex;
