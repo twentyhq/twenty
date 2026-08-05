@@ -1,0 +1,27 @@
+packages/twenty-server/test/integration/google/messaging/connected-account-custody.integration-spec.ts
+  s_32f55f850d942f::t_1feedf5210c70e 101-113,118-121,133-146
+  s_32f55f850d942f::t_74e1c4313ba4b1 179-202
+  s_32f55f850d942f::t_78ed99cafe3354 73,75,81
+  s_32f55f850d942f::t_1ff63c0148fa06 249-267
+  s_32f55f850d942f::t_ab0da50063da16 1-2,6,14,26,29-30
+  s_32f55f850d942f::t_d33d6956a6139f 147
+packages/twenty-server/test/integration/utils/query-messaging.util.ts
+  s_32f55f850d942f::t_b7d23d8e49477c 4
+  s_32f55f850d942f::t_4a354fd7a40619 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "f4d52a0a1d7362a81adc1727eabba166a71141b4",
+  "prompts": {},
+  "sessions": {
+    "s_32f55f850d942f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9232941-c129-4d97-a592-82c7922e6c58",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
