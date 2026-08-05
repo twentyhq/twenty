@@ -10,7 +10,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.28.0', 1785915867000)
+@RegisteredWorkspaceCommand('2.28.0', 1785943810000)
 @Command({
   name: 'upgrade:2-28:add-application-universal-identifier-to-actor',
   description:
