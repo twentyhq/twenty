@@ -19,6 +19,26 @@ describe('normalizeMutationObserverInit', () => {
     });
   });
 
+  it('turns attributes on when attributeOldValue is present but false', () => {
+    expect(normalizeMutationObserverInit({ attributeOldValue: false })).toEqual(
+      {
+        attributes: true,
+        characterData: false,
+        attributeOldValue: false,
+      },
+    );
+  });
+
+  it('turns characterData on when characterDataOldValue is present but false', () => {
+    expect(
+      normalizeMutationObserverInit({ characterDataOldValue: false }),
+    ).toEqual({
+      attributes: false,
+      characterData: true,
+      characterDataOldValue: false,
+    });
+  });
+
   it('turns characterData on when only characterDataOldValue is given', () => {
     expect(
       normalizeMutationObserverInit({ characterDataOldValue: true }),
