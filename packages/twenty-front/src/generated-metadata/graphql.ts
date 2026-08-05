@@ -1808,6 +1808,7 @@ export enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_SETTINGS_DISCOVERY_HERO_ENABLED = 'IS_SETTINGS_DISCOVERY_HERO_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED = 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED',
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED = 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED'
 }
 
@@ -5224,8 +5225,19 @@ export enum RowLevelPermissionPredicateOperand {
 
 export type RunAgentInput = {
   agentUniversalIdentifier: Scalars['String']['input'];
-  prompt: Scalars['String']['input'];
+  messages?: InputMaybe<Array<RunAgentMessageInput>>;
+  prompt?: InputMaybe<Scalars['String']['input']>;
 };
+
+export type RunAgentMessageInput = {
+  content: Scalars['String']['input'];
+  role: RunAgentMessageRole;
+};
+
+export enum RunAgentMessageRole {
+  assistant = 'assistant',
+  user = 'user'
+}
 
 export type RunAgentResult = {
   __typename?: 'RunAgentResult';

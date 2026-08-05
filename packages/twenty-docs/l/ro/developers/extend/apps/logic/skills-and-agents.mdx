@@ -100,7 +100,8 @@ Note despre schemă:
 </Accordion>
 <Accordion title="runAgent" description="Rulează un agent dintr-o funcție logică">
 
-`runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis către `defineAgent()`:
+`runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis către `defineAgent()`. Transmite fie un șir `prompt`, fie un istoric de conversație `messages`,
+nu ambele:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +112,25 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Pentru boți multi-turn (Slack, Discord, Teams, …), transmite istoricul firului de discuție ca
+`messages` în loc de un singur `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Puncte cheie:
+* Furnizează **exact unul** dintre `prompt` (șir) sau `messages` (1 până la 100 de intrări
+  de `{ role: 'user' | 'assistant', content: string }`).
 * Agentul rulează **sincron** și poate citi/actualiza direct înregistrări prin propriile sale instrumente — `runAgent()` este rezolvat după ce rularea se încheie.
 * O aplicație poate rula doar propriii săi agenți.
 * [Rolul implicit](/l/ro/developers/extend/apps/config/roles) al aplicației trebuie să acorde indicatorul de permisiune `AI` — adaugă `SystemPermissionFlag.AI` la `permissionFlagUniversalIdentifiers` (sau setează `canAccessAllTools: true`).
