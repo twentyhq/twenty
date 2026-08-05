@@ -119,8 +119,6 @@ export class WorkspaceMigrationRunnerService {
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
 
-    const cacheInvalidationStart = performance.now();
-
     await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
       workspaceId,
       flatMapsKeys: allFlatEntityMapsKeys,
@@ -148,14 +146,6 @@ export class WorkspaceMigrationRunnerService {
         `Failed to invalidate ${invalidationFailures.length} cache operations`,
       );
     }
-
-    this.metricsService.recordHistogram({
-      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
-      value: performance.now() - cacheInvalidationStart,
-      unit: 'ms',
-      attributes: { phase: 'cache-invalidation' },
-      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
-    });
 
     this.logger.perfTimeEnd(
       'Runner',
@@ -299,7 +289,7 @@ export class WorkspaceMigrationRunnerService {
       key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
       value: initialCacheRetrievalMs,
       unit: 'ms',
-      attributes: { phase: 'initial-cache-retrieval' },
+      attributes: { phase: 'initial-cache-retrieval', status: 'success' },
       bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
     });
 
@@ -412,12 +402,12 @@ export class WorkspaceMigrationRunnerService {
       const transactionMs = performance.now() - transactionStart;
 
       // Commit is recorded as its own phase; subtract it so phases stay
-      // disjoint and summing them approximates the total run duration
+      // disjoint
       this.metricsService.recordHistogram({
         key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
         value: transactionMs - commitMs,
         unit: 'ms',
-        attributes: { phase: 'action-execution' },
+        attributes: { phase: 'action-execution', status: 'success' },
         bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
@@ -425,7 +415,7 @@ export class WorkspaceMigrationRunnerService {
         key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
         value: commitMs,
         unit: 'ms',
-        attributes: { phase: 'commit' },
+        attributes: { phase: 'commit', status: 'success' },
         bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
@@ -436,6 +426,16 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.perfTimeEnd('Runner', 'Transaction execution');
     } catch (error) {
+      // The action/commit split is unknowable mid-failure; the whole elapsed
+      // transaction time goes to action-execution, segregated by status
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+        value: performance.now() - transactionStart,
+        unit: 'ms',
+        attributes: { phase: 'action-execution', status: 'fail' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
       this.logger.error(
         `[install-perf] migration failed after ${actionCount} action(s): ${
           error instanceof Error ? error.message : String(error)
@@ -517,6 +517,16 @@ export class WorkspaceMigrationRunnerService {
 
     const postCommitInvalidateMs =
       performance.now() - postCommitInvalidateStart;
+
+    // Recorded here rather than in invalidateCache, which standalone callers
+    // (upgrade backfills, FlatCacheInvalidateCommand) invoke outside any run
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      value: postCommitInvalidateMs,
+      unit: 'ms',
+      attributes: { phase: 'cache-invalidation', status: 'success' },
+      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
 
     this.logger.perf(
       `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,

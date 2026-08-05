@@ -446,7 +446,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     phase,
     startedAt,
   }: {
-    phase: string;
+    phase:
+      | 'matrix-computation'
+      | 'deletion-validation'
+      | 'creation-validation'
+      | 'update-validation';
     startedAt: number;
   }): void {
     this.metricsService.recordHistogram({
