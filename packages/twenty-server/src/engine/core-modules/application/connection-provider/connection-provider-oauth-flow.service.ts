@@ -18,8 +18,8 @@ import {
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
+import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
 import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
-import { resolveConnectedAccountHandle } from 'src/engine/core-modules/application/connection-provider/utils/resolve-connected-account-handle.util';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -310,6 +310,19 @@ export class ConnectionProviderOAuthFlowService {
     return this.twentyConfigService.get('SERVER_URL');
   }
 
+  private async getConnectingUserEmail(userId: string): Promise<string> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!isDefined(user)) {
+      throw new ConnectionProviderException(
+        'User not found',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
+    return user.email;
+  }
+
   private async persistConnectedAccount({
     provider,
     tokenResponse,
@@ -336,21 +349,9 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
-    const handle = await resolveConnectedAccountHandle({
-      tokenResponse,
-      getFallbackHandle: async () => {
-        const user = await this.userRepository.findOneBy({ id: userId });
-
-        if (!isDefined(user)) {
-          throw new ConnectionProviderException(
-            'User not found',
-            ConnectionProviderExceptionCode.INVALID_STATE,
-          );
-        }
-
-        return user.email;
-      },
-    });
+    const handle =
+      extractEmailFromIdTokenClaims(tokenResponse.idToken) ??
+      (await this.getConnectingUserEmail(userId));
 
     const sharedFields = {
       accessToken: encryptedAccessToken,

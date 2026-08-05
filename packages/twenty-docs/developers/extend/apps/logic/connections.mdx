@@ -181,7 +181,7 @@ Each connection has:
 | `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
 | `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
 | `name`            | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
-| `handle`          | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
+| `handle`          | The connected upstream account's email, refreshed on each reconnect; read from the `email`, `upn` or `preferred_username` claim of the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider returns none of them |
 | `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
 
 Key points:

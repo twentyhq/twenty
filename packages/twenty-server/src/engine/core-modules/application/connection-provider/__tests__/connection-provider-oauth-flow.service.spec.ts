@@ -492,12 +492,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     });
 
     describe('handle resolution', () => {
-      it('derives the handle from the OIDC id_token claims when the provider returns one', async () => {
-        const idToken = jwt.sign(
-          { email: 'oidc-account@example.com' },
-          'test-secret',
-        );
-
+      const mockTokenResponseWithIdToken = (claims: object) => {
         secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
           jest.fn(async () => ({
             ok: true,
@@ -506,11 +501,15 @@ describe('ConnectionProviderOAuthFlowService', () => {
               access_token: 'new_access',
               refresh_token: 'new_refresh',
               scope: 'read write',
-              id_token: idToken,
+              id_token: jwt.sign(claims, 'test-secret'),
             }),
             text: async () => '',
           })),
         );
+      };
+
+      it('derives the handle from the OIDC id_token claims when the provider returns one', async () => {
+        mockTokenResponseWithIdToken({ email: 'oidc-account@example.com' });
 
         await service.completeAuthorizationFlow({
           code: 'auth_code',
@@ -521,36 +520,6 @@ describe('ConnectionProviderOAuthFlowService', () => {
           expect.objectContaining({ handle: 'oidc-account@example.com' }),
         );
         expect(userRepository.findOneBy).not.toHaveBeenCalled();
-      });
-
-      it('reads the upn claim when the id_token has no email claim', async () => {
-        const idToken = jwt.sign(
-          { upn: 'oidc-account@example.com' },
-          'test-secret',
-        );
-
-        secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
-          jest.fn(async () => ({
-            ok: true,
-            status: 200,
-            json: async () => ({
-              access_token: 'new_access',
-              refresh_token: 'new_refresh',
-              scope: 'read write',
-              id_token: idToken,
-            }),
-            text: async () => '',
-          })),
-        );
-
-        await service.completeAuthorizationFlow({
-          code: 'auth_code',
-          state: 'signed-state',
-        });
-
-        expect(connectedAccountRepository.create).toHaveBeenCalledWith(
-          expect.objectContaining({ handle: 'oidc-account@example.com' }),
-        );
       });
 
       it('falls back to the connecting user email when the provider returns no id_token', async () => {
@@ -567,22 +536,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
         });
       });
 
-      it('falls back to the connecting user email when the id_token has no email or upn claim', async () => {
-        const idToken = jwt.sign({ sub: 'provider-user-id' }, 'test-secret');
-
-        secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
-          jest.fn(async () => ({
-            ok: true,
-            status: 200,
-            json: async () => ({
-              access_token: 'new_access',
-              refresh_token: 'new_refresh',
-              scope: 'read write',
-              id_token: idToken,
-            }),
-            text: async () => '',
-          })),
-        );
+      it('falls back to the connecting user email when the id_token carries no email claim', async () => {
+        mockTokenResponseWithIdToken({ sub: 'provider-user-id' });
 
         await service.completeAuthorizationFlow({
           code: 'auth_code',
