@@ -26,8 +26,8 @@ export class RunAgentInputDTO {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @Field()
-  prompt: string;
+  @Field({ nullable: true })
+  prompt?: string;
 
   @IsUUID()
   @IsOptional()

@@ -5,8 +5,7 @@ import {
   type RunAgentMessage,
   type RunAgentResult,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -29,6 +28,7 @@ type RunAgentServiceInput = {
   agentUniversalIdentifier: string;
   prompt?: string | null;
   messages?: RunAgentMessage[] | null;
+  runAsWorkspaceMemberId?: string;
 };
 
 @Injectable()

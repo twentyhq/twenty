@@ -217,7 +217,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
     await service.executeAgent({
       agent: buildAgent(),
-      userPrompt: 'test',
+      messages: [{ role: 'user', content: 'test' }],
       baseSystemPrompt: 'base system prompt',
       workspaceId,
       runAsRoleId: 'run-as-role-id',
@@ -241,7 +241,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
     await service.executeAgent({
       agent: buildAgent(),
-      userPrompt: 'test',
+      messages: [{ role: 'user', content: 'test' }],
       baseSystemPrompt: 'base system prompt',
       workspaceId,
       toolLoadingStrategy: 'lazy',

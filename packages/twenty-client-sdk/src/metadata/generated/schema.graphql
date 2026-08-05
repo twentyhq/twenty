@@ -4703,7 +4703,7 @@ input CreateEmailingDomainInput {
 
 input RunAgentInput {
   agentUniversalIdentifier: String!
-  prompt: String!
+  prompt: String
   runAsWorkspaceMemberId: UUID
   messages: [RunAgentMessageInput!]
 }
