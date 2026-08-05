@@ -38,13 +38,16 @@ export const buildRequiredToolAuthContext = async ({
   });
 
   if (!isDefined(user)) {
-    throw new AuthException('User not found', AuthExceptionCode.UNAUTHENTICATED);
+    throw new AuthException(
+      'User not found',
+      AuthExceptionCode.UNAUTHENTICATED,
+    );
   }
 
-  const { flatWorkspaceMemberMaps } = await workspaceCacheService.getOrRecompute(
-    context.workspaceId,
-    ['flatWorkspaceMemberMaps'],
-  );
+  const { flatWorkspaceMemberMaps } =
+    await workspaceCacheService.getOrRecompute(context.workspaceId, [
+      'flatWorkspaceMemberMaps',
+    ]);
 
   const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
 
@@ -96,7 +99,7 @@ export const withResolvedToolAuthContext = async <T>(
     return dispatch(context);
   }
 
-  return withWorkspaceAuthContext(authContext, () =>
+  return await withWorkspaceAuthContext(authContext, () =>
     dispatch({ ...context, authContext }),
-  ) as Promise<T>;
+  );
 };
