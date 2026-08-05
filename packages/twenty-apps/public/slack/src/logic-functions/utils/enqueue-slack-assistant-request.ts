@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
+import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { clearSlackThreadSubscription } from 'src/logic-functions/utils/clear-slack-thread-subscription';
 import { getSlackThreadSubscriptionState } from 'src/logic-functions/utils/get-slack-thread-subscription-state';
@@ -12,8 +13,6 @@ import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slac
 import { replyToEmptySlackAssistantRequest } from 'src/logic-functions/utils/reply-to-empty-slack-assistant-request';
 
 const ALREADY_QUEUED_SKIP_REASON = 'Slack message is already queued';
-
-type SlackEventsEnqueueResult = { ok: boolean; skipped?: string };
 
 export const enqueueSlackAssistantRequest = async (
   body: SlackEventsRequestBody,

@@ -2,17 +2,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { SLACK_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-request-text';
 import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack-assistant-empty-request.type';
+import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { claimSlackEmptyRequestReply } from 'src/logic-functions/utils/claim-slack-empty-request-reply';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
 import { releaseSlackEmptyRequestReply } from 'src/logic-functions/utils/release-slack-empty-request-reply';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
-type SlackEmptyRequestReplyResult = { ok: boolean; skipped?: string };
-
 export const replyToEmptySlackAssistantRequest = async (
   emptyRequest: SlackAssistantEmptyRequest,
-): Promise<SlackEmptyRequestReplyResult> => {
+): Promise<SlackEventsEnqueueResult> => {
   const claimReference = {
     slackChannelId: emptyRequest.slackChannelId,
     slackMessageTimestamp: emptyRequest.slackMessageTimestamp,
