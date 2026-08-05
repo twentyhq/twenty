@@ -113,6 +113,22 @@ export const ExistingMetadata: Story = {
   },
 };
 
+export const SurplusClosingBrackets: Story = {
+  args: {
+    text: `I created the ${formatChatReference({
+      kind: 'object',
+      objectNameSingular: 'company',
+      displayName: 'Companies',
+    })}] object.`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Companies')).toBeVisible();
+    expect(canvasElement).toHaveTextContent('I created the Companies object.');
+  },
+};
+
 export const ProposedObject: Story = {
   args: {
     text: `As a Head of Partnerships, you seem to work across partner companies, key contacts, and commercial follow-ups, so I suggest creating a ${formatChatReference(
