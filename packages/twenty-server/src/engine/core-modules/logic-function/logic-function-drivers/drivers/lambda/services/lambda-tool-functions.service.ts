@@ -153,6 +153,28 @@ export class LambdaToolFunctionsService {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
+      const isDependenciesSizeExceeded =
+        isNonEmptyString(parsedResult?.errorMessage) &&
+        parsedResult.errorMessage.startsWith('Dependencies size exceeded');
+
+      if (isDependenciesSizeExceeded) {
+        throw new LogicFunctionException(
+          parsedResult.errorMessage,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
+        );
+      }
+
+      // The sandbox gets OOM-killed before the size check can run only when
+      // the dependency tree is far beyond what a layer can hold anyway.
+      const isOutOfMemory = parsedResult?.errorType === 'Runtime.OutOfMemory';
+
+      if (isOutOfMemory) {
+        throw new LogicFunctionException(
+          `Yarn install Lambda ran out of memory: the dependency tree is too large to install`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
+        );
+      }
+
       throw new LogicFunctionException(
         `Yarn install Lambda failed: ${JSON.stringify(parsedResult)}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
