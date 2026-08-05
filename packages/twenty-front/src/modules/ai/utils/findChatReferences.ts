@@ -3,6 +3,7 @@ import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { type ChatReferenceStart } from '@/ai/types/ChatReferenceStart';
 import { findChatReferenceClosing } from '@/ai/utils/findChatReferenceClosing';
 import { getChatReferenceStartFromMatch } from '@/ai/utils/getChatReferenceStartFromMatch';
+import { getSurplusCloseBracketLength } from '@/ai/utils/getSurplusCloseBracketLength';
 import { isDefined } from 'twenty-shared/utils';
 
 export const findChatReferences = (text: string): ChatReferenceMatch[] => {
@@ -33,12 +34,18 @@ export const findChatReferences = (text: string): ChatReferenceMatch[] => {
       return [];
     }
 
+    const closingEnd = closing.index + closing.length;
+    const surplusCloseBracketLength = getSurplusCloseBracketLength({
+      textAfterClosing: displayNameWindow.slice(closingEnd),
+      openBracketLength: start.openBracketLength,
+    });
+
     return [
       {
         ...start.identity,
         fullMatch: text.slice(
           start.index,
-          displayNameStart + closing.index + closing.length,
+          displayNameStart + closingEnd + surplusCloseBracketLength,
         ),
         index: start.index,
         displayName: displayNameWindow.slice(0, closing.index),

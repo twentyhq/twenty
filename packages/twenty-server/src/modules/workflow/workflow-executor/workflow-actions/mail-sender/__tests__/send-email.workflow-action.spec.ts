@@ -167,6 +167,117 @@ describe('SendEmailWorkflowAction', () => {
       });
     });
 
+    it('should resolve workflow variables throughout email blocks', async () => {
+      await executeWithBody(
+        JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'button',
+              attrs: { href: 'https://example.com/{{trigger.name}}' },
+              content: [{ type: 'text', text: 'Open' }],
+            },
+            {
+              type: 'image',
+              attrs: {
+                src: 'https://example.com/{{trigger.name}}.png',
+                alt: 'Portrait of {{trigger.name}}',
+              },
+            },
+            {
+              type: 'html',
+              attrs: { html: '<p>{{trigger.name}}</p>' },
+            },
+          ],
+        }),
+      );
+
+      expect(renderRichTextToHtml).toHaveBeenCalledWith({
+        type: 'doc',
+        content: [
+          {
+            type: 'button',
+            attrs: { href: 'https://example.com/John' },
+            content: [{ type: 'text', text: 'Open' }],
+          },
+          {
+            type: 'image',
+            attrs: {
+              src: 'https://example.com/John.png',
+              alt: 'Portrait of John',
+            },
+          },
+          { type: 'html', attrs: { html: '<p>John</p>' } },
+        ],
+      });
+    });
+
+    it('should escape workflow values inserted into raw HTML blocks', async () => {
+      const rawHtmlBody = JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'html',
+            attrs: { html: '<p>{{trigger.name}}</p>' },
+          },
+        ],
+      });
+
+      await action.execute({
+        currentStepId: 'step-1',
+        steps: [buildSendEmailStep({ ...emailInput, body: rawHtmlBody })],
+        context: { trigger: { name: '<b>John</b>' } },
+        runInfo: {
+          workspaceId: 'workspace-1',
+          workflowRunId: 'run-1',
+        },
+      });
+
+      expect(renderRichTextToHtml).toHaveBeenCalledWith({
+        type: 'doc',
+        content: [
+          {
+            type: 'html',
+            attrs: { html: '<p>&lt;b&gt;John&lt;/b&gt;</p>' },
+          },
+        ],
+      });
+    });
+
+    it('should not resolve an already-rendered email body a second time', async () => {
+      renderRichTextToHtml.mockResolvedValueOnce('<p>{{trigger.email}}</p>');
+
+      await executeWithBody(
+        JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: '{{trigger.name}}' }],
+            },
+          ],
+        }),
+      );
+
+      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ body: '<p>{{trigger.email}}</p>' }),
+        expect.any(Object),
+      );
+    });
+
+    it('should reject an invalid structured email document', async () => {
+      await expect(
+        executeWithBody(
+          JSON.stringify({
+            type: 'doc',
+            content: [{ type: 'unknownBlock' }],
+          }),
+        ),
+      ).rejects.toThrow('Invalid workflow email document');
+
+      expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
+    });
+
     it('should pass plain text body through without rendering', async () => {
       await executeWithBody('{{trigger.name}}\n{{trigger.email}}');
 

@@ -1,18 +1,18 @@
 import { type JSX } from 'react';
 import { Text } from 'react-email';
 
-import { emailTheme } from 'src/common-style';
+import { canvasTheme } from 'src/common-style';
 
 type MainTextProps = {
   children: JSX.Element | JSX.Element[] | string;
 };
 
 const mainTextStyle = {
-  fontFamily: emailTheme.font.family,
-  fontSize: emailTheme.font.size.md,
-  fontWeight: emailTheme.font.weight.regular,
-  color: emailTheme.font.colors.primary,
-  lineHeight: emailTheme.font.lineHeight,
+  fontFamily: canvasTheme.font.family,
+  fontSize: canvasTheme.font.size.md,
+  fontWeight: canvasTheme.font.weight.regular,
+  color: canvasTheme.font.colors.primary,
+  lineHeight: canvasTheme.font.lineHeight,
 };
 
 export const MainText = ({ children }: MainTextProps) => {

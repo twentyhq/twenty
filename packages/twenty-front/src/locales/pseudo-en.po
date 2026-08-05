@@ -802,6 +802,12 @@ msgstr ""
 msgid "1d"
 msgstr ""
 
+#. js-lingui-id: Wf1ux6
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "2 Columns"
+msgstr ""
+
 #. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -835,6 +841,12 @@ msgstr ""
 #. js-lingui-id: cNBo/E
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "2FA Method Reset"
+msgstr ""
+
+#. js-lingui-id: SiBsG2
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "3 Columns"
 msgstr ""
 
 #. js-lingui-id: 7SJhyh
@@ -1030,6 +1042,11 @@ msgstr ""
 #. js-lingui-id: GGcxJO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "ACS Url copied to clipboard"
+msgstr ""
+
+#. js-lingui-id: r6Y4GL
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "action"
 msgstr ""
 
 #. js-lingui-id: bwRvnp
@@ -1883,6 +1900,16 @@ msgstr ""
 msgid "Alert"
 msgstr ""
 
+#. js-lingui-id: ukH0aS
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+msgid "Alignment"
+msgstr ""
+
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -2119,6 +2146,11 @@ msgstr ""
 #. js-lingui-id: eO7HSp
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectMenuItem.tsx
 msgid "Already in navbar"
+msgstr ""
+
+#. js-lingui-id: u/DP73
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Alt text"
 msgstr ""
 
 #. js-lingui-id: Fc64QW
@@ -2957,8 +2989,19 @@ msgstr ""
 msgid "Back to settings"
 msgstr ""
 
+#. js-lingui-id: i8ZVQU
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "background"
+msgstr ""
+
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
 msgid "Background"
 msgstr ""
 
@@ -3096,9 +3139,24 @@ msgstr ""
 msgid "Billing portal session error. Please retry or contact Twenty team"
 msgstr ""
 
+#. js-lingui-id: 8kIU+G
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "block"
+msgstr ""
+
+#. js-lingui-id: JEzhsu
+#: src/modules/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel.ts
+msgid "Block Settings"
+msgstr ""
+
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Blocklist"
+msgstr ""
+
+#. js-lingui-id: 7s3WlU
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Blocks"
 msgstr ""
 
 #. js-lingui-id: Zn5crm
@@ -3107,6 +3165,7 @@ msgid "Blue"
 msgstr ""
 
 #. js-lingui-id: bGQplw
+#: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Body"
@@ -3117,6 +3176,11 @@ msgstr ""
 msgid "Body Input"
 msgstr ""
 
+#. js-lingui-id: SkYx9p
+#: src/pages/onboarding/BookCall.tsx
+msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
+msgstr ""
+
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Book a Call"
@@ -3125,6 +3189,22 @@ msgstr ""
 #. js-lingui-id: bOwPjT
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
+msgstr ""
+
+#. js-lingui-id: dCIGNG
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+msgid "Border"
+msgstr ""
+
+#. js-lingui-id: o/S4BG
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+msgid "Border color"
 msgstr ""
 
 #. js-lingui-id: njBeMm
@@ -3208,6 +3288,11 @@ msgstr ""
 msgid "bullet"
 msgstr ""
 
+#. js-lingui-id: ijLc3m
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Bullet list"
+msgstr ""
+
 #. js-lingui-id: s1c0ja
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
@@ -3216,6 +3301,18 @@ msgstr ""
 #. js-lingui-id: 9emr42
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Bundled with {applicationName}"
+msgstr ""
+
+#. js-lingui-id: yjeERL
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "button"
+msgstr ""
+
+#. js-lingui-id: hxBFty
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+msgid "Button"
 msgstr ""
 
 #. js-lingui-id: 8ds4Hj
@@ -3353,6 +3450,11 @@ msgstr ""
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 msgid "Call recorder"
+msgstr ""
+
+#. js-lingui-id: +Kx1Id
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Call-to-action button"
 msgstr ""
 
 #. js-lingui-id: qIlodj
@@ -3847,6 +3949,11 @@ msgstr ""
 msgid "Click a user to see their daily breakdown."
 msgstr ""
 
+#. js-lingui-id: uWe4QF
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Click here"
+msgstr ""
+
 #. js-lingui-id: HevGC0
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
@@ -3947,6 +4054,11 @@ msgstr ""
 msgid "Close side panel"
 msgstr ""
 
+#. js-lingui-id: 1Lxtdt
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "code"
+msgstr ""
+
 #. js-lingui-id: EWPtMO
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -4014,6 +4126,7 @@ msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 msgid "Color"
 msgstr ""
 
@@ -4027,9 +4140,25 @@ msgstr ""
 msgid "Colors"
 msgstr ""
 
+#. js-lingui-id: WtgDbl
+#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+msgid "Column"
+msgstr ""
+
 #. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
 msgid "column data is not compatible with Multi-Select. Format required is '[\"option1\", \"option2\"]' or option1,option2."
+msgstr ""
+
+#. js-lingui-id: /xTbaM
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "columns"
+msgstr ""
+
+#. js-lingui-id: jEu4bB
+#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+msgid "Columns"
 msgstr ""
 
 #. js-lingui-id: 93hd3e
@@ -4529,6 +4658,11 @@ msgstr ""
 msgid "Contact your admin to continue using Workflow or AI features."
 msgstr ""
 
+#. js-lingui-id: vrs6yX
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "container"
+msgstr ""
+
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
@@ -4746,6 +4880,15 @@ msgstr ""
 #. js-lingui-id: u9zl2y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Core Objects"
+msgstr ""
+
+#. js-lingui-id: Fnq2K7
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+msgid "Corner radius"
 msgstr ""
 
 #. js-lingui-id: I99Miw
@@ -5273,6 +5416,11 @@ msgstr ""
 msgid "CSV import & export"
 msgstr ""
 
+#. js-lingui-id: uSVq1a
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "cta"
+msgstr ""
+
 #. js-lingui-id: J1QT+3
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Cumulative"
@@ -5336,6 +5484,11 @@ msgstr ""
 #. js-lingui-id: mO0Peh
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Cursor"
+msgstr ""
+
+#. js-lingui-id: bfu5HZ
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "custom"
 msgstr ""
 
 #. js-lingui-id: 8Tg/JR
@@ -6437,6 +6590,18 @@ msgstr ""
 msgid "Distribution"
 msgstr ""
 
+#. js-lingui-id: XqIcDF
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "divider"
+msgstr ""
+
+#. js-lingui-id: R8AthW
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+msgid "Divider"
+msgstr ""
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
@@ -6792,6 +6957,11 @@ msgstr ""
 msgid "Edit data structure and fields"
 msgstr ""
 
+#. js-lingui-id: ZwR0Vd
+#: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
+msgid "Edit each side"
+msgstr ""
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
@@ -7052,6 +7222,11 @@ msgstr ""
 #. js-lingui-id: n0+EqE
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Emails should not be empty"
+msgstr ""
+
+#. js-lingui-id: 5gxbuc
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "embed"
 msgstr ""
 
 #. js-lingui-id: eXoH4Q
@@ -7394,7 +7569,7 @@ msgid "Enter text or type '/' for commands"
 msgstr ""
 
 #. js-lingui-id: yZMXC2
-#: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorCoreExtensions.ts
 msgid "Enter text or Type '/' for commands"
 msgstr ""
 
@@ -8319,6 +8494,11 @@ msgstr ""
 msgid "Failed to upgrade the application."
 msgstr ""
 
+#. js-lingui-id: eh+uU5
+#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+msgid "Failed to upload \"{fileName}\""
+msgstr ""
+
 #. js-lingui-id: jU/HbX
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
@@ -8737,6 +8917,13 @@ msgstr ""
 msgid "Follow us on X"
 msgstr ""
 
+#. js-lingui-id: q3il6U
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Font size"
+msgstr ""
+
 #. js-lingui-id: Ghistm
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 msgid "for {objectLabel}"
@@ -8869,6 +9056,11 @@ msgstr ""
 #. js-lingui-id: aerYcp
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "full admin panel access"
+msgstr ""
+
+#. js-lingui-id: 0W0FHK
+#: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
+msgid "Full name"
 msgstr ""
 
 #. js-lingui-id: i9zh9T
@@ -9241,6 +9433,11 @@ msgstr ""
 msgid "heading"
 msgstr ""
 
+#. js-lingui-id: zgPjoD
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Heading"
+msgstr ""
+
 #. js-lingui-id: lXKZGw
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
@@ -9378,6 +9575,11 @@ msgstr ""
 msgid "Horizontal Bar Chart"
 msgstr ""
 
+#. js-lingui-id: 8e0cQ8
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Horizontal separator line"
+msgstr ""
+
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
 msgid ""
@@ -9434,6 +9636,24 @@ msgstr ""
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
+msgstr ""
+
+#. js-lingui-id: agP50o
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "hr"
+msgstr ""
+
+#. js-lingui-id: We4l8Y
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "html"
+msgstr ""
+
+#. js-lingui-id: FBknns
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+msgid "HTML"
 msgstr ""
 
 #. js-lingui-id: LUTGt0
@@ -9604,8 +9824,20 @@ msgid "iFrame Widget"
 msgstr ""
 
 #. js-lingui-id: hG89Ed
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Image"
+msgstr ""
+
+#. js-lingui-id: TtdnUc
+#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
+msgstr ""
+
+#. js-lingui-id: VyUuZb
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Image URL"
 msgstr ""
 
 #. js-lingui-id: ijW9MW
@@ -9887,6 +10119,11 @@ msgstr ""
 #. js-lingui-id: Dlxuac
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Insert a JSON input, then press \"Run Function\"."
+msgstr ""
+
+#. js-lingui-id: mia08l
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Insert image"
 msgstr ""
 
 #. js-lingui-id: iBhl8W
@@ -10698,6 +10935,12 @@ msgstr ""
 msgid "Launch manually"
 msgstr ""
 
+#. js-lingui-id: pNPdL3
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "layout"
+msgstr ""
+
 #. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -10824,6 +11067,13 @@ msgstr ""
 msgid "Let each member decide for themselves"
 msgstr ""
 
+#. js-lingui-id: vhRvfF
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Letter spacing"
+msgstr ""
+
 #. js-lingui-id: oCHfGC
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 msgid "Level"
@@ -10882,10 +11132,27 @@ msgstr ""
 msgid "Limits"
 msgstr ""
 
+#. js-lingui-id: DXCDta
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "line"
+msgstr ""
+
 #. js-lingui-id: pFkLY3
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
+msgstr ""
+
+#. js-lingui-id: Wqh8xb
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Line height"
+msgstr ""
+
+#. js-lingui-id: LdyooL
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "link"
 msgstr ""
 
 #. js-lingui-id: yzF66j
@@ -10914,6 +11181,12 @@ msgstr ""
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 msgid "Link label"
+msgstr ""
+
+#. js-lingui-id: roAe2K
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Link URL"
 msgstr ""
 
 #. js-lingui-id: fKQhnY
@@ -11325,6 +11598,11 @@ msgstr ""
 #. js-lingui-id: cDbmRz
 #: src/modules/settings/mcp-and-apis/components/SettingsMcpSetup.tsx
 msgid "Manual configuration"
+msgstr ""
+
+#. js-lingui-id: lkcAoj
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Margin"
 msgstr ""
 
 #. js-lingui-id: fI1Tll
@@ -13213,6 +13491,7 @@ msgid "numbered"
 msgstr ""
 
 #. js-lingui-id: M3G9ZD
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Numbered list"
 msgstr ""
@@ -13548,6 +13827,11 @@ msgstr ""
 msgid "Open a maintained integration or prefill clients that accept MCP install links."
 msgstr ""
 
+#. js-lingui-id: 650kGT
+#: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
+msgid "Open an email editor to edit block settings."
+msgstr ""
+
 #. js-lingui-id: JG4LoU
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open as link"
@@ -13852,6 +14136,16 @@ msgstr ""
 msgid "Package name or universal identifier"
 msgstr ""
 
+#. js-lingui-id: fdjq4c
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
+msgid "Padding"
+msgstr ""
+
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
@@ -13899,6 +14193,11 @@ msgstr ""
 #. js-lingui-id: NRvxzv
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found | Twenty"
+msgstr ""
+
+#. js-lingui-id: oIhFvf
+#: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
+msgid "Page style"
 msgstr ""
 
 #. js-lingui-id: sF+Xp9
@@ -13958,6 +14257,11 @@ msgstr ""
 #. js-lingui-id: BFjW8X
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Past due"
+msgstr ""
+
+#. js-lingui-id: Hfiz9B
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Paste a link to a hosted image"
 msgstr ""
 
 #. js-lingui-id: cpStVq
@@ -14099,6 +14403,11 @@ msgstr ""
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 msgid "Person created"
+msgstr ""
+
+#. js-lingui-id: 9Ch1Ry
+#: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
+msgid "Person ID"
 msgstr ""
 
 #. js-lingui-id: zmwvG2
@@ -14663,6 +14972,11 @@ msgstr ""
 msgid "Ratio"
 msgstr ""
 
+#. js-lingui-id: +eZqq+
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Raw HTML embedded in the email"
+msgstr ""
+
 #. js-lingui-id: kdLBDj
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Raw JSON"
@@ -15097,6 +15411,11 @@ msgstr ""
 #. js-lingui-id: Q2u5E9
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
+msgstr ""
+
+#. js-lingui-id: P1tI9p
+#: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
+msgid "Remove block"
 msgstr ""
 
 #. js-lingui-id: 2HpFUd
@@ -15593,6 +15912,12 @@ msgstr ""
 msgid "Routing tokens"
 msgstr ""
 
+#. js-lingui-id: Q7BPyr
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "row"
+msgstr ""
+
 #. js-lingui-id: Wzo1yG
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission predicate"
@@ -15661,6 +15986,11 @@ msgstr ""
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
+msgstr ""
+
+#. js-lingui-id: QeF0zb
+#: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
+msgid "Same value on every side"
 msgstr ""
 
 #. js-lingui-id: 3hNFUc
@@ -16123,6 +16453,18 @@ msgstr ""
 msgid "Secret Access Key"
 msgstr ""
 
+#. js-lingui-id: YTsmM8
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "section"
+msgstr ""
+
+#. js-lingui-id: BhZ5PL
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+msgid "Section"
+msgstr ""
+
 #. js-lingui-id: a3LDKx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -16261,6 +16603,11 @@ msgstr ""
 #. js-lingui-id: dtAvBz
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Select a navigation item to edit"
+msgstr ""
+
+#. js-lingui-id: dE5jOH
+#: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
+msgid "Select a section, columns, button or divider in the email body to edit its settings."
 msgstr ""
 
 #. js-lingui-id: YkYui1
@@ -16513,6 +16860,11 @@ msgstr ""
 #. js-lingui-id: PW100g
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Sent email"
+msgstr ""
+
+#. js-lingui-id: b/sg59
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "separator"
 msgstr ""
 
 #. js-lingui-id: 6oxz/y
@@ -17118,6 +17470,7 @@ msgstr ""
 #. js-lingui-id: wdxz7K
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -17333,6 +17686,11 @@ msgstr ""
 msgid "Style"
 msgstr ""
 
+#. js-lingui-id: I1rOJ9
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Styled container for email content"
+msgstr ""
+
 #. js-lingui-id: WIUeUf
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Sub-Fields"
@@ -17481,6 +17839,11 @@ msgstr ""
 #. js-lingui-id: pEToQK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "subtitle"
+msgstr ""
+
+#. js-lingui-id: a0w0iQ
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Subtitle"
 msgstr ""
 
 #. js-lingui-id: zzDlyQ
@@ -17723,6 +18086,11 @@ msgstr ""
 msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
 msgstr ""
 
+#. js-lingui-id: gNSS33
+#: src/pages/onboarding/BookCall.tsx
+msgid "Talk to our team"
+msgstr ""
+
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
@@ -17800,10 +18168,21 @@ msgid "text"
 msgstr ""
 
 #. js-lingui-id: xeiujy
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Text"
+msgstr ""
+
+#. js-lingui-id: MapzEo
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Text color"
 msgstr ""
 
 #. js-lingui-id: fq+5a1
@@ -18056,6 +18435,11 @@ msgstr ""
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
+msgstr ""
+
+#. js-lingui-id: 5Ml5Nr
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+msgid "Thickness"
 msgstr ""
 
 #. js-lingui-id: AUV+TY
@@ -18413,6 +18797,16 @@ msgstr ""
 msgid "Thought"
 msgstr ""
 
+#. js-lingui-id: pAlfed
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "three"
+msgstr ""
+
+#. js-lingui-id: nRnNXK
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Three columns side by side"
+msgstr ""
+
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
 msgid "Tidy up workflow"
@@ -18475,6 +18869,7 @@ msgid "title"
 msgstr ""
 
 #. js-lingui-id: MHrjPM
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Title"
@@ -18850,6 +19245,16 @@ msgstr ""
 msgid "Twitter/X Search"
 msgstr ""
 
+#. js-lingui-id: 6HI/Yp
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "two"
+msgstr ""
+
+#. js-lingui-id: vo+eKm
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Two columns side by side"
+msgstr ""
+
 #. js-lingui-id: tuvLv1
 #: src/modules/settings/security/components/Toggle2FA.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -19211,6 +19616,11 @@ msgstr ""
 msgid "Unsubscribers"
 msgstr ""
 
+#. js-lingui-id: uxfv+n
+#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+msgid "Unsupported image format"
+msgstr ""
+
 #. js-lingui-id: wja8aL
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -19541,6 +19951,7 @@ msgid "Uploaded content is too large."
 msgstr ""
 
 #. js-lingui-id: GxkJXS
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."
 msgstr ""
@@ -19858,6 +20269,11 @@ msgstr ""
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Variable not found"
+msgstr ""
+
+#. js-lingui-id: gpmbqk
+#: src/modules/advanced-text-editor/components/InsertRail.tsx
+msgid "Variables"
 msgstr ""
 
 #. js-lingui-id: QDEWii
@@ -20485,6 +20901,13 @@ msgstr ""
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Widgets"
+msgstr ""
+
+#. js-lingui-id: aFWU1n
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+msgid "Width"
 msgstr ""
 
 #. js-lingui-id: j6ncOZ

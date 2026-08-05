@@ -3872,6 +3872,12 @@ export default {
             "calendarBookingPageId": [
                 1
             ],
+            "isBookCallOnboardingStepEnabled": [
+                3
+            ],
+            "isCompanyEnrichmentEnabled": [
+                3
+            ],
             "isCloudflareIntegrationEnabled": [
                 3
             ],
@@ -4372,6 +4378,9 @@ export default {
             ],
             "enrichment": [
                 5
+            ],
+            "isBookCallOnboardingStepPending": [
+                3
             ],
             "__typename": [
                 1
@@ -7891,6 +7900,9 @@ export default {
                         "Boolean!"
                     ]
                 }
+            ],
+            "completeBookCallOnboardingStep": [
+                170
             ],
             "triggerInstallAppsOnboardingStep": [
                 171,

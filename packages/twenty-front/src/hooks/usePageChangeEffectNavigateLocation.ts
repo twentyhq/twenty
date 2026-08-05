@@ -164,6 +164,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.InviteTeam;
   }
 
+  if (
+    onboardingStatus === OnboardingStatus.BOOK_CALL &&
+    !isMatchingLocation(location, AppPath.BookCall)
+  ) {
+    return AppPath.BookCall;
+  }
+
   if (isBillingEnabled && onboardingStatus === OnboardingStatus.COMPLETED) {
     if (isMatchingLocation(location, AppPath.InviteTeam)) {
       return AppPath.PlanRequired;

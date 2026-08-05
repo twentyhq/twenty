@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { isNumber } from '@sniptt/guards';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type QueryRunner, DataSource, Repository } from 'typeorm';
+import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -22,6 +23,7 @@ import {
   OnboardingExceptionCode,
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
+import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -32,6 +34,8 @@ export enum OnboardingStepKeys {
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
+  ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
+  ONBOARDING_BOOK_CALL_OFFERED = 'ONBOARDING_BOOK_CALL_OFFERED',
   ONBOARDING_REVERSIBLE_STEP_HISTORY = 'ONBOARDING_REVERSIBLE_STEP_HISTORY',
 }
 
@@ -40,6 +44,8 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED]: boolean;
   [OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY]: ReversibleOnboardingStep[];
 };
 
@@ -141,6 +147,9 @@ export class OnboardingService {
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
+    const isBookCallPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING) === true;
+
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
@@ -157,11 +166,20 @@ export class OnboardingService {
       return OnboardingStatus.INVITE_TEAM;
     }
 
-    if (
+    const isPlanRequired =
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspace.id,
-      )
+      );
+
+    if (
+      isBookCallPending &&
+      isPlanRequired &&
+      isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
     ) {
+      return OnboardingStatus.BOOK_CALL;
+    }
+
+    if (isPlanRequired) {
       return OnboardingStatus.PLAN_REQUIRED;
     }
 
@@ -695,6 +713,131 @@ export class OnboardingService {
       },
       queryRunner,
     );
+  }
+
+  async isOnboardingBookCallPending({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (
+      !isDefined(readBookCallStepMinEmployeeCount(this.twentyConfigService))
+    ) {
+      return false;
+    }
+
+    return (
+      (await this.userVarsService.get({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+      })) === true
+    );
+  }
+
+  async setOnboardingBookCallPending(
+    {
+      userId,
+      workspaceId,
+      value,
+    }: {
+      userId: string;
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    if (!value) {
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        },
+        queryRunner,
+      );
+
+      return;
+    }
+
+    await this.userVarsService.set(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        value: true,
+      },
+      queryRunner,
+    );
+  }
+
+  async setOnboardingBookCallPendingIfQualified({
+    userId,
+    workspaceId,
+    employeeCount,
+  }: {
+    userId: string;
+    workspaceId: string;
+    employeeCount: number | null;
+  }): Promise<boolean> {
+    const minEmployeeCount = readBookCallStepMinEmployeeCount(
+      this.twentyConfigService,
+    );
+
+    if (
+      !isDefined(minEmployeeCount) ||
+      !isNumber(employeeCount) ||
+      employeeCount < minEmployeeCount
+    ) {
+      return false;
+    }
+
+    try {
+      return await this.dataSource.transaction(async (entityManager) => {
+        const { queryRunner } = entityManager;
+
+        if (!isDefined(queryRunner)) {
+          throw new Error('Transaction entity manager has no query runner');
+        }
+
+        // Claiming the offer is the single-winner gate: a concurrent enrichment
+        // loses the insert and must not resurrect a step the user already skipped.
+        const hasClaimedBookCallOffer =
+          await this.userVarsService.setIfNotExists(
+            {
+              userId,
+              workspaceId,
+              key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+              value: true,
+            },
+            queryRunner,
+          );
+
+        if (!hasClaimedBookCallOffer) {
+          return false;
+        }
+
+        await this.setOnboardingBookCallPending(
+          {
+            userId,
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
+
+        return true;
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to flag the book-call onboarding step for user ${userId} in workspace ${workspaceId}`,
+        error,
+      );
+
+      return false;
+    }
   }
 
   async setOnboardingCreateProfilePending(
