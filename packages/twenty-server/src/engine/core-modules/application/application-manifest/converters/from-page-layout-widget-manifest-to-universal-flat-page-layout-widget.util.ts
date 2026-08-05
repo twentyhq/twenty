@@ -37,6 +37,8 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     gridPosition: getPageLayoutWidgetManifestGridPosition(
       pageLayoutWidgetManifest,
     ),
+    // The build resolves the position, but manifests published by earlier SDK versions
+    // carry none: resolving it here as well heals those apps on their next install
     position: getPageLayoutWidgetManifestPosition({
       pageLayoutWidgetManifest,
       pageLayoutTabLayoutMode,
