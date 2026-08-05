@@ -26,6 +26,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -107,7 +108,32 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
+  const { setSelectedItemId, resetSelectedItem } =
+    useSelectableList(dropdownId);
+
   const { getIcon } = useIcons();
+
+  // Keyboard focus carries over between the browse list and the drill-in
+  // submenu since both share the dropdown's selectable list instance. Align
+  // it on the checked option when entering the submenu, and back on the
+  // parent row when leaving, so Enter never activates a stale row.
+  const handleDrillIn = (fieldMetadataItem: FieldMetadataItem) => {
+    setDrillInFieldMetadataItem(fieldMetadataItem);
+
+    if (
+      currentFieldMetadataId === fieldMetadataItem.id &&
+      isDefined(currentNestedRelationFieldMetadataId)
+    ) {
+      setSelectedItemId(currentNestedRelationFieldMetadataId);
+    } else {
+      resetSelectedItem();
+    }
+  };
+
+  const handleDrillOut = (fieldMetadataItem: FieldMetadataItem) => {
+    setDrillInFieldMetadataItem(null);
+    setSelectedItemId(fieldMetadataItem.id);
+  };
 
   const searchableFieldMetadataItems = [
     ...regularFieldMetadataItems,
@@ -253,7 +279,7 @@ export const FieldWidgetFieldDropdownContent = () => {
         currentNestedRelationFieldMetadataId={
           currentNestedRelationFieldMetadataId
         }
-        onBack={() => setDrillInFieldMetadataItem(null)}
+        onBack={() => handleDrillOut(drillInFieldMetadataItem)}
         onSelectField={handleSelectField}
         onSelectNestedField={handleSelectNestedField}
       />
@@ -282,7 +308,7 @@ export const FieldWidgetFieldDropdownContent = () => {
             );
 
             const handleClick = hasNestedFieldCandidates
-              ? () => setDrillInFieldMetadataItem(fieldMetadataItem)
+              ? () => handleDrillIn(fieldMetadataItem)
               : () => handleSelectField(fieldMetadataItem.id);
 
             return (
