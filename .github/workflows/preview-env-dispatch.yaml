@@ -5,6 +5,11 @@ permissions: {}
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review, labeled, closed]
+    paths:
+      - packages/twenty-docker/**
+      - packages/twenty-server/**
+      - packages/twenty-front/**
+      - .github/workflows/preview-env-dispatch.yaml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
