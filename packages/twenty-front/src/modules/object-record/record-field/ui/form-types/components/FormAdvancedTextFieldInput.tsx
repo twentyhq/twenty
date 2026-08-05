@@ -4,6 +4,8 @@ import {
   type AdvancedTextEditorPresetName,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
+import { serializeAdvancedTextEditorContent } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorContent';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputHint } from '@/ui/input/components/InputHint';
@@ -15,7 +17,8 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useState } from 'react';
+import { type Editor } from '@tiptap/core';
+import { useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
@@ -97,13 +100,14 @@ type FormAdvancedTextFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
-  onImageUpload?: (file: File) => Promise<string>;
+  onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
   preset: AdvancedTextEditorPresetName;
   // Escape hatch for surfaces that share a preset but need their own height.
   minHeight?: number;
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
+  onEditorReady?: (editor: Editor | null) => void;
 };
 
 export const FormAdvancedTextFieldInput = ({
@@ -121,6 +125,7 @@ export const FormAdvancedTextFieldInput = ({
   minHeight,
   enableFullScreen,
   fullScreenBreadcrumbs,
+  onEditorReady,
 }: FormAdvancedTextFieldInputProps) => {
   const {
     contentType,
@@ -143,17 +148,12 @@ export const FormAdvancedTextFieldInput = ({
 
   const editor = useAdvancedTextEditor(
     {
+      preset,
       placeholder: placeholder,
       readonly,
       defaultValue,
-      contentType,
       onUpdate: (editor) => {
-        if (contentType === 'markdown' || contentType === 'html') {
-          onChange?.(editor.getHTML());
-        } else {
-          const jsonContent = editor.getJSON();
-          onChange?.(JSON.stringify(jsonContent));
-        }
+        onChange?.(serializeAdvancedTextEditorContent({ editor, contentType }));
       },
       onFocus: () => {
         pushFocusItemToFocusStack({
@@ -172,10 +172,17 @@ export const FormAdvancedTextFieldInput = ({
       },
       onImageUpload,
       onImageUploadError,
-      enableSlashCommand: true,
     },
     [isFullScreen],
   );
+
+  useEffect(() => {
+    onEditorReady?.(editor);
+
+    return () => {
+      onEditorReady?.(null);
+    };
+  }, [editor, onEditorReady]);
 
   const handleEnterFullScreen = () => {
     setIsFullScreen(true);
@@ -209,6 +216,10 @@ export const FormAdvancedTextFieldInput = ({
     hasClosePageButton: !isMobile,
   });
 
+  if (!isDefined(editor)) {
+    return null;
+  }
+
   const fullScreenOverlay = isFullScreenEnabled
     ? renderFullScreenModal(
         <div data-globally-prevent-click-outside="true">
@@ -217,16 +228,13 @@ export const FormAdvancedTextFieldInput = ({
               editor={editor}
               readonly={readonly}
               minHeight={editorMinHeight}
+              chrome={chrome}
             />
           </StyledFullScreenEditorContainer>
         </div>,
         isFullScreen,
       )
     : null;
-
-  if (!isDefined(editor)) {
-    return null;
-  }
 
   return (
     <>
@@ -245,6 +253,7 @@ export const FormAdvancedTextFieldInput = ({
                   editor={editor}
                   readonly={readonly}
                   minHeight={editorMinHeight}
+                  chrome={chrome}
                 />
               )}
 

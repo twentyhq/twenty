@@ -9,7 +9,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.28.0', 1786000000000)
+@RegisteredWorkspaceCommand('2.28.0', 1785858486000)
 @Command({
   name: 'upgrade:2-28:sync-discard-draft-workflow-availability-expression',
   description:
