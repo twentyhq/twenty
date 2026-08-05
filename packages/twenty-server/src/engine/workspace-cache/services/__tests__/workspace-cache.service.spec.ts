@@ -706,43 +706,89 @@ describe('WorkspaceCacheService', () => {
       ]);
     });
 
-    it('should cap ORM entries at the per-provider budget, evicting the least-recently-read', async () => {
+    const localCacheOf = () =>
+      (service as unknown as { localCache: Map<string, unknown> }).localCache;
+    const runSweep = () =>
+      (
+        service as unknown as {
+          evictExpiredAndOverBudgetLocalEntries: (now: number) => void;
+        }
+      ).evictExpiredAndOverBudgetLocalEntries(Date.now());
+    const ormWorkspaceId = (index: number) =>
+      `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
+
+    it('should trim ORM entries to the per-provider cap in the periodic sweep, not on write', async () => {
       cacheStorageService.mget.mockResolvedValue(['stable-hash']);
       cacheStorageService.mset.mockResolvedValue(undefined);
 
-      const localCache = (
-        service as unknown as { localCache: Map<string, unknown> }
-      ).localCache;
+      const localCache = localCacheOf();
       const ormBudget = 128;
       const overflow = 5;
-      const workspaceId = (index: number) =>
-        `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
+      const ormKeyCount = () =>
+        [...localCache.keys()].filter((key) =>
+          key.startsWith('orm:entity-metadatas:'),
+        ).length;
 
-      // Write well past the budget so eviction fires across several rounds — this only
-      // holds at ormBudget if the per-provider count stays consistent as entries are dropped.
       for (let index = 0; index < ormBudget + overflow; index += 1) {
-        await service.getOrRecompute(workspaceId(index), [
+        await service.getOrRecompute(ormWorkspaceId(index), [
           'ORMEntityMetadatas',
         ]);
         jest.advanceTimersByTime(1);
       }
 
-      const ormKeys = [...localCache.keys()].filter((key) =>
-        key.startsWith('orm:entity-metadatas:'),
-      );
+      // Writes don't evict — all of them are held until the throttled sweep runs.
+      expect(ormKeyCount()).toBe(ormBudget + overflow);
 
-      expect(ormKeys.length).toBe(ormBudget);
-      // The first `overflow` workspaces (least-recently-read) were evicted; the newest is kept.
+      runSweep();
+
+      expect(ormKeyCount()).toBe(ormBudget);
       for (let index = 0; index < overflow; index += 1) {
         expect(
-          localCache.has(`orm:entity-metadatas:${workspaceId(index)}`),
+          localCache.has(`orm:entity-metadatas:${ormWorkspaceId(index)}`),
         ).toBe(false);
       }
       expect(
         localCache.has(
-          `orm:entity-metadatas:${workspaceId(ormBudget + overflow - 1)}`,
+          `orm:entity-metadatas:${ormWorkspaceId(ormBudget + overflow - 1)}`,
         ),
       ).toBe(true);
+    });
+
+    it('should drop entries idle past the TTL in the periodic sweep', async () => {
+      cacheStorageService.mget.mockResolvedValue(['stable-hash']);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      const localCache = localCacheOf();
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+      expect(localCache.has(`orm:entity-metadatas:${WORKSPACE_ID}`)).toBe(true);
+
+      jest.advanceTimersByTime(31 * 60 * 1000);
+      runSweep();
+
+      expect(localCache.has(`orm:entity-metadatas:${WORKSPACE_ID}`)).toBe(
+        false,
+      );
+    });
+
+    it('should run the periodic sweep at most once per minute', async () => {
+      const sweepSpy = jest.spyOn(
+        service as unknown as {
+          evictExpiredAndOverBudgetLocalEntries: (now: number) => void;
+        },
+        'evictExpiredAndOverBudgetLocalEntries',
+      );
+
+      cacheStorageService.mget.mockResolvedValue(['stable-hash']);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+      expect(sweepSpy).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(60_000);
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+      expect(sweepSpy).toHaveBeenCalledTimes(2);
     });
   });
 });
