@@ -767,6 +767,63 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(false);
     });
 
+    it('keeps a record with an unloaded relation out of a negated nested filter', () => {
+      const filter = {
+        not: { pointOfContact: { companyId: { in: [companyId] } } },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: { id: opportunityWithPointOfContact.id },
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
+    it('evaluates a negated nested filter truthfully on a loaded relation', () => {
+      const filter = {
+        not: { pointOfContact: { companyId: { in: [companyId] } } },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: opportunityWithPointOfContact,
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...opportunityWithPointOfContact,
+            pointOfContact: {
+              id: personId,
+              companyId: '20202020-0000-4000-8000-000000000000',
+            },
+          },
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...opportunityWithPointOfContact,
+            pointOfContact: null,
+          },
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+    });
+
     it('does not match a nested filter on a list of related records', () => {
       const filter = {
         people: { id: { eq: personId } },

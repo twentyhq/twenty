@@ -120,14 +120,24 @@ const isRecordMatchingNestedRelationFilter = ({
   nestedFilter,
   relationFieldMetadataItem,
   objectMetadataItems,
+  isWithinNegatedFilter,
 }: {
   relationRecord: unknown;
   nestedFilter: RecordGqlOperationFilter;
-  relationFieldMetadataItem: FieldMetadataItem;
+  relationFieldMetadataItem: Pick<FieldMetadataItem, 'relation'>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
+  isWithinNegatedFilter: boolean;
 }): boolean => {
-  if (!isObject(relationRecord) || Array.isArray(relationRecord)) {
+  // A null related record truthfully fails the nested predicate, matching
+  // the backend NOT EXISTS semantics. A related record that was not loaded
+  // leaves the outcome unknown: returning the negation parity keeps the
+  // record excluded whether or not a surrounding not flips the result.
+  if (relationRecord === null) {
     return false;
+  }
+
+  if (!isObject(relationRecord) || Array.isArray(relationRecord)) {
+    return isWithinNegatedFilter;
   }
 
   const relationTargetObjectMetadataItem = objectMetadataItems.find(
@@ -137,7 +147,7 @@ const isRecordMatchingNestedRelationFilter = ({
   );
 
   if (!isDefined(relationTargetObjectMetadataItem)) {
-    return false;
+    return isWithinNegatedFilter;
   }
 
   return isRecordMatchingFilter({
@@ -145,6 +155,7 @@ const isRecordMatchingNestedRelationFilter = ({
     filter: nestedFilter,
     objectMetadataItem: relationTargetObjectMetadataItem,
     objectMetadataItems,
+    isWithinNegatedFilter,
   });
 };
 
@@ -153,11 +164,13 @@ export const isRecordMatchingFilter = ({
   filter,
   objectMetadataItem,
   objectMetadataItems,
+  isWithinNegatedFilter = false,
 }: {
   record: any;
   filter: RecordGqlOperationFilter;
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
+  isWithinNegatedFilter?: boolean;
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
@@ -170,6 +183,7 @@ export const isRecordMatchingFilter = ({
         filter: { [filterKey]: value },
         objectMetadataItem,
         objectMetadataItems,
+        isWithinNegatedFilter,
       }),
     );
   }
@@ -191,6 +205,7 @@ export const isRecordMatchingFilter = ({
           filter: andFilter,
           objectMetadataItem,
           objectMetadataItems,
+          isWithinNegatedFilter,
         }),
       )
     );
@@ -208,6 +223,7 @@ export const isRecordMatchingFilter = ({
             filter: orFilter,
             objectMetadataItem,
             objectMetadataItems,
+            isWithinNegatedFilter,
           }),
         )
       );
@@ -220,6 +236,7 @@ export const isRecordMatchingFilter = ({
         filter: filterValue,
         objectMetadataItem,
         objectMetadataItems,
+        isWithinNegatedFilter,
       });
     }
 
@@ -240,6 +257,7 @@ export const isRecordMatchingFilter = ({
         filter: filterValue,
         objectMetadataItem,
         objectMetadataItems,
+        isWithinNegatedFilter: !isWithinNegatedFilter,
       })
     );
   }
@@ -504,6 +522,7 @@ export const isRecordMatchingFilter = ({
             nestedFilter: filterValue,
             relationFieldMetadataItem: objectMetadataField,
             objectMetadataItems,
+            isWithinNegatedFilter,
           });
         }
 
