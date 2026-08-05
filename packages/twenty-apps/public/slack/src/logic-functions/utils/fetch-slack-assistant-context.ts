@@ -1,9 +1,9 @@
 import { SLACK_ASSISTANT_TRANSIENT_TEXTS } from 'src/logic-functions/constants/slack-assistant-transient-texts';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
-import { fetchSlackAssistantBotId } from 'src/logic-functions/utils/fetch-slack-assistant-bot-id';
 import { fetchSlackConversationMessages } from 'src/logic-functions/utils/fetch-slack-conversation-messages';
 import { fetchSlackRequesterName } from 'src/logic-functions/utils/fetch-slack-requester-name';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 
 type SlackAssistantContext = {
   conversationMessages: SlackAssistantAgentMessage[] | undefined;
@@ -32,17 +32,21 @@ export const fetchSlackAssistantContext = async ({
   const { client } = slackClientResult;
 
   const [conversationMessages, requesterName] = await Promise.all([
-    fetchSlackAssistantBotId(client).then((assistantBotId) =>
-      fetchSlackConversationMessages({
-        client,
-        channelId: slackChannelId,
-        threadTimestamp: parentMessageTimestamp,
-        isDirectMessage,
-        assistantBotId,
-        excludeMessageTimestamps,
-        excludeMessageTexts: SLACK_ASSISTANT_TRANSIENT_TEXTS,
-      }),
-    ),
+    // Without the bot user id, no history turn gets the assistant role, so a
+    // failed resolution degrades the context instead of failing the request
+    resolveSlackBotUserIdOrThrow()
+      .catch(() => undefined)
+      .then((assistantBotUserId) =>
+        fetchSlackConversationMessages({
+          client,
+          channelId: slackChannelId,
+          threadTimestamp: parentMessageTimestamp,
+          isDirectMessage,
+          assistantBotUserId,
+          excludeMessageTimestamps,
+          excludeMessageTexts: SLACK_ASSISTANT_TRANSIENT_TEXTS,
+        }),
+      ),
     fetchSlackRequesterName({ client, slackUserId }),
   ]);
 

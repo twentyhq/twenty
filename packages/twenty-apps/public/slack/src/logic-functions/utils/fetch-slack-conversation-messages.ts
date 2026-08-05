@@ -17,12 +17,12 @@ type SlackContextMessage = {
 
 const toAgentMessages = ({
   messages,
-  assistantBotId,
+  assistantBotUserId,
   excludeMessageTimestamps,
   excludeMessageTexts,
 }: {
   messages: ReadonlyArray<SlackContextMessage>;
-  assistantBotId: string | undefined;
+  assistantBotUserId: string | undefined;
   excludeMessageTimestamps: Set<string>;
   excludeMessageTexts: Set<string>;
 }): SlackAssistantAgentMessage[] =>
@@ -50,8 +50,8 @@ const toAgentMessages = ({
       // participant, bots included, stays attributed user content so the model
       // never mistakes third-party output for its own
       if (
-        isNonEmptyString(message.bot_id) &&
-        message.bot_id === assistantBotId
+        isNonEmptyString(message.user) &&
+        message.user === assistantBotUserId
       ) {
         return { role: 'assistant', content: message.text ?? '' };
       }
@@ -68,7 +68,7 @@ export const fetchSlackConversationMessages = async ({
   channelId,
   threadTimestamp,
   isDirectMessage,
-  assistantBotId,
+  assistantBotUserId,
   excludeMessageTimestamps = [],
   excludeMessageTexts = [],
 }: {
@@ -76,7 +76,7 @@ export const fetchSlackConversationMessages = async ({
   channelId: string;
   threadTimestamp: string | undefined;
   isDirectMessage: boolean;
-  assistantBotId: string | undefined;
+  assistantBotUserId: string | undefined;
   excludeMessageTimestamps?: string[];
   excludeMessageTexts?: string[];
 }): Promise<SlackAssistantAgentMessage[] | undefined> => {
@@ -95,7 +95,7 @@ export const fetchSlackConversationMessages = async ({
 
       return toAgentMessages({
         messages: replies.messages ?? [],
-        assistantBotId,
+        assistantBotUserId,
         excludeMessageTimestamps: excludedTimestamps,
         excludeMessageTexts: excludedTexts,
       });
@@ -109,7 +109,7 @@ export const fetchSlackConversationMessages = async ({
 
       return toAgentMessages({
         messages: [...(history.messages ?? [])].reverse(),
-        assistantBotId,
+        assistantBotUserId,
         excludeMessageTimestamps: excludedTimestamps,
         excludeMessageTexts: excludedTexts,
       });
