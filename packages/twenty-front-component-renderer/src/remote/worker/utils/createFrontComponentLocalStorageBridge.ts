@@ -1,137 +1,30 @@
-import { isDefined } from 'twenty-shared/utils';
-
+import { createFrontComponentLocalStorageCache } from '@/remote/worker/utils/createFrontComponentLocalStorageCache';
+import { createFrontComponentLocalStoragePersistQueue } from '@/remote/worker/utils/createFrontComponentLocalStoragePersistQueue';
+import { toQuotaExceededDomException } from '@/remote/worker/utils/toQuotaExceededDomException';
 import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
 import { type FrontComponentLocalStorageWorkerBridge } from '@/types/FrontComponentLocalStorageWorkerBridge';
-import { FrontComponentStorageError } from '@/utils/FrontComponentStorageError';
-import { getFrontComponentLocalStorageViolation } from '@/utils/getFrontComponentLocalStorageViolation';
-import { getFrontComponentLocalStorageViolationMessage } from '@/utils/getFrontComponentLocalStorageViolationMessage';
+import { assertNoFrontComponentLocalStorageViolation } from '@/utils/assertNoFrontComponentLocalStorageViolation';
 
 const LOCAL_STORAGE_PERSISTENCE_FAILURE_WARNING =
   'A front component local storage write could not be persisted';
-
-const toQuotaExceededDomException = (error: unknown): unknown =>
-  error instanceof FrontComponentStorageError
-    ? new DOMException(error.message, 'QuotaExceededError')
-    : error;
 
 export const createFrontComponentLocalStorageBridge = ({
   getHostCommunicationApi,
 }: {
   getHostCommunicationApi: () => FrontComponentHostCommunicationApiStore;
 }): FrontComponentLocalStorageWorkerBridge => {
-  const entries = new Map<string, string>();
-  const committedEntries = new Map<string, string>();
-  const pendingMutationCountByKey = new Map<string, number>();
-  const pendingPersistOperations: (() => void)[] = [];
-
-  const getOtherEntriesTotalLength = (excludedKey: string): number => {
-    let totalLength = 0;
-
-    for (const [key, value] of entries) {
-      if (key !== excludedKey) {
-        totalLength += value.length;
-      }
-    }
-
-    return totalLength;
-  };
+  const cache = createFrontComponentLocalStorageCache();
+  const persistQueue = createFrontComponentLocalStoragePersistQueue({
+    getHostCommunicationApi,
+  });
 
   const assertCanStore = (key: string, serializedValue: string): void => {
-    const violation = getFrontComponentLocalStorageViolation({
+    assertNoFrontComponentLocalStorageViolation({
       key,
       serializedValue,
-      otherEntriesTotalLength: getOtherEntriesTotalLength(key),
+      otherEntriesTotalLength: cache.getOtherEntriesTotalLength(key),
     });
-
-    if (isDefined(violation)) {
-      throw new FrontComponentStorageError(
-        getFrontComponentLocalStorageViolationMessage(violation),
-        violation,
-      );
-    }
   };
-
-  const startKeyMutations = (keys: string[]): void => {
-    for (const key of keys) {
-      pendingMutationCountByKey.set(
-        key,
-        (pendingMutationCountByKey.get(key) ?? 0) + 1,
-      );
-    }
-  };
-
-  const endKeyMutations = (keys: string[]): void => {
-    for (const key of keys) {
-      const remainingCount = (pendingMutationCountByKey.get(key) ?? 1) - 1;
-
-      if (remainingCount <= 0) {
-        pendingMutationCountByKey.delete(key);
-
-        continue;
-      }
-
-      pendingMutationCountByKey.set(key, remainingCount);
-    }
-  };
-
-  const getTrackedKeys = (): string[] =>
-    Array.from(
-      new Set([
-        ...entries.keys(),
-        ...committedEntries.keys(),
-        ...pendingMutationCountByKey.keys(),
-      ]),
-    );
-
-  const reconcileSettledKeys = (keys: string[]): void => {
-    for (const key of keys) {
-      if (pendingMutationCountByKey.has(key)) {
-        continue;
-      }
-
-      const committedValue = committedEntries.get(key);
-
-      if (isDefined(committedValue)) {
-        entries.set(key, committedValue);
-
-        continue;
-      }
-
-      entries.delete(key);
-    }
-  };
-
-  const schedulePersist = <TResult>(
-    runPersist: (
-      hostCommunicationApi: FrontComponentHostCommunicationApiStore,
-    ) => Promise<TResult> | undefined,
-  ): Promise<TResult> =>
-    new Promise<TResult>((resolve, reject) => {
-      const executePersist = () => {
-        const persistResult = runPersist(getHostCommunicationApi());
-
-        if (!isDefined(persistResult)) {
-          reject(
-            new FrontComponentStorageError(
-              'Device storage is unavailable',
-              'FRONT_COMPONENT_STORAGE_UNAVAILABLE',
-            ),
-          );
-
-          return;
-        }
-
-        persistResult.then(resolve, reject);
-      };
-
-      if (isDefined(getHostCommunicationApi().localStorageSet)) {
-        executePersist();
-
-        return;
-      }
-
-      pendingPersistOperations.push(executePersist);
-    });
 
   const persistInBackground = (persistOperation: Promise<unknown>): void => {
     persistOperation.catch(() => {
@@ -145,74 +38,61 @@ export const createFrontComponentLocalStorageBridge = ({
   ): Promise<void> => {
     assertCanStore(key, serializedValue);
 
-    entries.set(key, serializedValue);
-    startKeyMutations([key]);
+    const mutation = cache.beginWrite(key, serializedValue);
 
     try {
-      await schedulePersist((hostCommunicationApi) =>
+      await persistQueue.schedule((hostCommunicationApi) =>
         hostCommunicationApi.localStorageSet?.(key, serializedValue),
       );
     } catch (error) {
-      endKeyMutations([key]);
-      reconcileSettledKeys([key]);
+      mutation.rollback();
 
       throw error;
     }
 
-    committedEntries.set(key, serializedValue);
-    endKeyMutations([key]);
-    reconcileSettledKeys([key]);
+    mutation.commit();
   };
 
   const removeItemAndPersist = async (key: string): Promise<boolean> => {
-    const wasPresent = entries.delete(key);
-    startKeyMutations([key]);
+    const mutation = cache.beginDelete(key);
 
     try {
-      await schedulePersist((hostCommunicationApi) =>
+      await persistQueue.schedule((hostCommunicationApi) =>
         hostCommunicationApi.localStorageDelete?.(key),
       );
     } catch (error) {
-      endKeyMutations([key]);
-      reconcileSettledKeys([key]);
+      mutation.rollback();
 
       throw error;
     }
 
-    committedEntries.delete(key);
-    endKeyMutations([key]);
-    reconcileSettledKeys([key]);
+    mutation.commit();
 
-    return wasPresent;
+    return mutation.wasPresent;
   };
 
   const clearAndPersist = async (): Promise<void> => {
-    const affectedKeys = getTrackedKeys();
-
-    entries.clear();
-    startKeyMutations(affectedKeys);
+    const mutation = cache.beginClear();
 
     try {
-      await schedulePersist((hostCommunicationApi) =>
+      await persistQueue.schedule((hostCommunicationApi) =>
         hostCommunicationApi.localStorageClear?.(),
       );
     } catch (error) {
-      endKeyMutations(affectedKeys);
-      reconcileSettledKeys(getTrackedKeys());
+      mutation.rollback();
 
       throw error;
     }
 
-    committedEntries.clear();
-    endKeyMutations(affectedKeys);
-    reconcileSettledKeys(getTrackedKeys());
+    mutation.commit();
   };
 
   return {
-    getItem: (key) => entries.get(key) ?? null,
-    getKeys: () => Array.from(entries.keys()),
-    getKeyAtIndex: (index) => Array.from(entries.keys())[index] ?? null,
-    getLength: () => entries.size,
+    getItem: cache.getItem,
+    getKeys: cache.getKeys,
+    getKeyAtIndex: cache.getKeyAtIndex,
+    getLength: cache.getLength,
+    seed: cache.seed,
     setItemAndPersist,
     removeItemAndPersist,
     clearAndPersist,
@@ -235,22 +115,6 @@ export const createFrontComponentLocalStorageBridge = ({
       persistInBackground(clearAndPersist());
     },
 
-    seed: (seededEntries) => {
-      entries.clear();
-      committedEntries.clear();
-
-      for (const [key, value] of Object.entries(seededEntries)) {
-        entries.set(key, value);
-        committedEntries.set(key, value);
-      }
-    },
-
-    flushPendingPersistOperations: () => {
-      const operationsToFlush = pendingPersistOperations.splice(0);
-
-      for (const operation of operationsToFlush) {
-        operation();
-      }
-    },
+    flushPendingPersistOperations: persistQueue.flush,
   };
 };
