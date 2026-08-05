@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtom, useStore } from 'jotai';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
@@ -180,13 +180,26 @@ export const RichTextFieldEditor = ({
   const [lastAppliedResyncKey, setLastAppliedResyncKey] =
     useState(draftResyncKey);
 
+  // The editor reports programmatic replacements through the same change
+  // callback as typing, so latch around the adoption: without it the adopted
+  // body would be treated as a local edit, marked dirty and written straight
+  // back, blocking the next remote update from being adopted.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const isApplyingUpstreamBodyRef = useRef(false);
+
   useEffect(() => {
     if (draftResyncKey === lastAppliedResyncKey) {
       return;
     }
 
     setLastAppliedResyncKey(draftResyncKey);
-    replaceBlockEditorContent(recordId);
+
+    isApplyingUpstreamBodyRef.current = true;
+    try {
+      replaceBlockEditorContent(recordId);
+    } finally {
+      isApplyingUpstreamBodyRef.current = false;
+    }
   }, [
     draftResyncKey,
     lastAppliedResyncKey,
@@ -238,6 +251,10 @@ export const RichTextFieldEditor = ({
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
   const handleEditorChange = () => {
+    if (isApplyingUpstreamBodyRef.current) {
+      return;
+    }
+
     // Serialization is debounced, so mark the draft dirty synchronously: a
     // remote adoption arriving in that window would otherwise replace content
     // the user is actively typing.
