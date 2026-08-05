@@ -16,6 +16,8 @@ import { In, Raw } from 'typeorm';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -72,6 +74,7 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -357,10 +360,19 @@ export class WorkflowDatabaseEventTriggerListener {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
 
+    const isDispatchFromCoreEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED,
+        workspaceId,
+      );
+
     const eventListeners = await this.getDatabaseEventListeners(
       workspaceId,
       databaseEventName,
+      isDispatchFromCoreEnabled,
     );
+
+    let enqueuedCount = 0;
 
     for (const eventListener of eventListeners) {
       for (const eventPayload of payload.events) {
@@ -380,21 +392,27 @@ export class WorkflowDatabaseEventTriggerListener {
             },
             { retryLimit: 3 },
           );
+          enqueuedCount++;
         }
       }
+    }
+
+    if (enqueuedCount > 0) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.WorkflowDispatchDatabaseEventTrigger,
+        amount: enqueuedCount,
+        attributes: {
+          source: isDispatchFromCoreEnabled ? 'core-map' : 'entity',
+        },
+      });
     }
   }
 
   private async getDatabaseEventListeners(
     workspaceId: string,
     databaseEventName: string,
+    isDispatchFromCoreEnabled: boolean,
   ): Promise<DatabaseEventTriggerListener[]> {
-    const isDispatchFromCoreEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED,
-        workspaceId,
-      );
-
     if (isDispatchFromCoreEnabled) {
       const { workflowAutomatedTriggerMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [

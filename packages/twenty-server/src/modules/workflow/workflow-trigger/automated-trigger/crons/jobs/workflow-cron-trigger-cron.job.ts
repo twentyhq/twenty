@@ -17,6 +17,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
@@ -51,6 +53,7 @@ export class WorkflowCronTriggerCronJob {
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Process(WorkflowCronTriggerCronJob.name)
@@ -230,25 +233,40 @@ export class WorkflowCronTriggerCronJob {
         workspaceId,
       );
 
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
     if (isDispatchFromCoreEnabled) {
       const { workflowAutomatedTriggerMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'workflowAutomatedTriggerMaps',
         ]);
 
-      return Object.values(workflowAutomatedTriggerMaps.byWorkflowId)
+      const cronTriggers = Object.values(
+        workflowAutomatedTriggerMaps.byWorkflowId,
+      )
         .filter(isCachedCronTrigger)
         .map((trigger) => ({
           workflowId: trigger.workflowId,
           pattern: trigger.settings.pattern,
         }));
-    }
 
-    const schemaName = getWorkspaceSchemaName(workspaceId);
+      if (cronTriggers.length === 0) {
+        await this.warnOnCronTriggersMissingFromCoreMap(
+          workspaceId,
+          schemaName,
+        );
+      }
+
+      this.emitCacheRebuildMetric('core-map', cronTriggers.length);
+
+      return cronTriggers;
+    }
 
     const rows = await this.coreDataSource.query(
       `SELECT "workflowId", settings FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}'`,
     );
+
+    this.emitCacheRebuildMetric('entity', rows.length);
 
     return rows.map(
       (row: { workflowId: string; settings: CronTriggerSettings }) => ({
@@ -256,5 +274,33 @@ export class WorkflowCronTriggerCronJob {
         pattern: row.settings?.pattern,
       }),
     );
+  }
+
+  private async warnOnCronTriggersMissingFromCoreMap(
+    workspaceId: string,
+    schemaName: string,
+  ): Promise<void> {
+    const [{ count }] = await this.coreDataSource.query(
+      `SELECT count(*)::int AS count FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}' AND "deletedAt" IS NULL`,
+    );
+
+    if (count > 0) {
+      this.logger.warn(
+        `Workspace ${workspaceId}: dispatch-from-core is enabled but the core trigger map has no CRON triggers while the workspace table has ${count} - core rows are likely missing, cron workflows will not dispatch`,
+      );
+    }
+  }
+
+  private emitCacheRebuildMetric(
+    source: 'core-map' | 'entity',
+    amount: number,
+  ): void {
+    if (amount > 0) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.WorkflowCronTriggerCacheRebuild,
+        amount,
+        attributes: { source },
+      });
+    }
   }
 }

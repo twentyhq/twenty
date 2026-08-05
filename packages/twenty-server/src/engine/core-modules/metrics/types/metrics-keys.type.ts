@@ -28,6 +28,8 @@ export enum MetricsKeys {
   WorkflowCoreConsistencyWorkflowDrift = 'workflow-core-consistency/workflow/drift',
   WorkflowCoreConsistencyVersionDrift = 'workflow-core-consistency/version/drift',
   WorkflowCoreConsistencyAutomatedTriggerDrift = 'workflow-core-consistency/automated-trigger/drift',
+  WorkflowDispatchDatabaseEventTrigger = 'workflow-dispatch/database-event-trigger',
+  WorkflowCronTriggerCacheRebuild = 'workflow-cron-trigger/cache-rebuild',
   AiChatToolExecutionSucceeded = 'ai-chat/tool-execution-succeeded',
   AiChatToolExecutionFailed = 'ai-chat/tool-execution-failed',
   AiChatToolExecutionDurationMs = 'ai-chat/tool-execution-duration-ms',

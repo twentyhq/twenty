@@ -5,6 +5,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
@@ -48,6 +49,10 @@ const mockFeatureFlagService = {
 
 const mockWorkspaceCacheService = {
   getOrRecompute: jest.fn(),
+};
+
+const mockMetricsService = {
+  incrementCounterBy: jest.fn(),
 };
 
 describe('WorkflowCronTriggerCronJob', () => {
@@ -95,6 +100,10 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           provide: WorkspaceCacheService,
           useValue: mockWorkspaceCacheService,
+        },
+        {
+          provide: MetricsService,
+          useValue: mockMetricsService,
         },
       ],
     }).compile();
@@ -309,6 +318,29 @@ describe('WorkflowCronTriggerCronJob', () => {
         { workspaceId: WORKSPACE_1, workflowId: 'workflow-1', payload: {} },
         { retryLimit: 3 },
       );
+      expect(mockMetricsService.incrementCounterBy).toHaveBeenCalledWith(
+        expect.objectContaining({ attributes: { source: 'core-map' } }),
+      );
+    });
+
+    it('warns when dispatch-from-core is enabled but the core map has no cron triggers while the table does', async () => {
+      mockFeatureFlagService.isFeatureEnabled.mockResolvedValue(true);
+      mockCacheStorageService.hashGetValues.mockResolvedValue([]);
+      mockWorkspaceRepository.find.mockResolvedValue([{ id: WORKSPACE_1 }]);
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        workflowAutomatedTriggerMaps: { byWorkflowId: {} },
+      } as any);
+      mockCoreDataSource.query.mockResolvedValue([{ count: 2 }]);
+      const warnSpy = jest
+        .spyOn(job['logger'], 'warn')
+        .mockImplementation(() => undefined);
+
+      await job.handle();
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('core rows are likely missing'),
+      );
+      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
     });
   });
 

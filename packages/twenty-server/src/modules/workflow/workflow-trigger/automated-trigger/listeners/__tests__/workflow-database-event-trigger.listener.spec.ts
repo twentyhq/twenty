@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -17,6 +18,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let featureFlagService: jest.Mocked<FeatureFlagService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
+
+  const metricsService = {
+    incrementCounterBy: jest.fn(),
+  };
 
   const mockRepository = {
     find: jest.fn(),
@@ -91,6 +96,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           useValue: workspaceCacheService,
         },
         {
+          provide: MetricsService,
+          useValue: metricsService,
+        },
+        {
           provide: 'MESSAGE_QUEUE_workflow-queue',
           useValue: messageQueueService,
         },
@@ -159,6 +168,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         },
         { retryLimit: 3 },
       );
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledWith(
+        expect.objectContaining({ attributes: { source: 'entity' } }),
+      );
     });
 
     it('reads listeners from the core trigger map when dispatch-from-core is enabled', async () => {
@@ -173,6 +185,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
       // Dispatch is driven by the core map, not the workspace entity.
       expect(mockRepository.find).not.toHaveBeenCalled();
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledWith(
+        expect.objectContaining({ attributes: { source: 'core-map' } }),
+      );
       expect(messageQueueService.add).toHaveBeenCalledWith(
         WorkflowTriggerJob.name,
         {
