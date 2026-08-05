@@ -6,7 +6,9 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
-const computeDirectorySizeBytes = async (directory: string): Promise<number> => {
+const computeDirectorySizeBytes = async (
+  directory: string,
+): Promise<number> => {
   const entries = await fs.readdir(directory, { withFileTypes: true });
 
   const sizes = await Promise.all(
@@ -15,6 +17,18 @@ const computeDirectorySizeBytes = async (directory: string): Promise<number> => 
 
       if (entry.isDirectory()) {
         return computeDirectorySizeBytes(fullPath);
+      }
+
+      // Count symlinked file targets (e.g. node_modules/.bin entries) but do
+      // not recurse into symlinked directories to avoid cycles.
+      if (entry.isSymbolicLink()) {
+        try {
+          const targetStat = await fs.stat(fullPath);
+
+          return targetStat.isFile() ? targetStat.size : 0;
+        } catch {
+          return 0;
+        }
       }
 
       if (!entry.isFile()) {

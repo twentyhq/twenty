@@ -10,6 +10,12 @@ export const LAMBDA_CLIENT_RETRY_MODE = 'adaptive' as const;
 
 export const YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS = 300;
 export const YARN_INSTALL_LAMBDA_MEMORY_MB = 4096;
+// Must match the error class name thrown by the yarn-install handler
+// (constants/yarn-install/index.mjs): the Lambda runtime reports it as the
+// errorType of the invocation payload.
+export const DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME =
+  'DependenciesSizeExceededError';
+export const TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS = 3;
 export const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 export const BUILDER_LAMBDA_MEMORY_MB = 512;
 export const EXECUTOR_LAMBDA_MEMORY_MB = 512;

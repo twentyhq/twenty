@@ -12,6 +12,15 @@ const YARN_ENGINE_PATH = join(YARN_ENGINE_DIR, '.yarn/releases/yarn-4.9.2.cjs');
 // budget leaves room for the executor code and the SDK layer.
 const MAX_UNZIPPED_DEPENDENCIES_MB = 200;
 
+// The class name is reported as the invocation errorType and matched by
+// DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME on the server.
+class DependenciesSizeExceededError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'DependenciesSizeExceededError';
+  }
+}
+
 const writePackageFiles = async (nodejsDir, packageJson, yarnLock) => {
   await fs.mkdir(nodejsDir, { recursive: true });
   await Promise.all([
@@ -79,6 +88,18 @@ const computeDirectorySizeBytes = async (directory) => {
         return computeDirectorySizeBytes(fullPath);
       }
 
+      // Count symlinked file targets (e.g. node_modules/.bin entries) but do
+      // not recurse into symlinked directories to avoid cycles.
+      if (entry.isSymbolicLink()) {
+        try {
+          const targetStat = await fs.stat(fullPath);
+
+          return targetStat.isFile() ? targetStat.size : 0;
+        } catch {
+          return 0;
+        }
+      }
+
       if (!entry.isFile()) {
         return 0;
       }
@@ -93,12 +114,16 @@ const computeDirectorySizeBytes = async (directory) => {
 };
 
 const assertDependenciesSizeWithinLimit = async (buildDir, maxSizeMb) => {
+  const effectiveMaxSizeMb =
+    Number.isFinite(maxSizeMb) && maxSizeMb > 0
+      ? maxSizeMb
+      : MAX_UNZIPPED_DEPENDENCIES_MB;
   const sizeBytes = await computeDirectorySizeBytes(buildDir);
   const sizeMb = Math.ceil(sizeBytes / (1024 * 1024));
 
-  if (sizeMb > maxSizeMb) {
-    throw new Error(
-      `Dependencies size exceeded: production dependencies unpack to ${sizeMb}MB, the maximum is ${maxSizeMb}MB. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".`,
+  if (sizeMb > effectiveMaxSizeMb) {
+    throw new DependenciesSizeExceededError(
+      `Dependencies size exceeded: production dependencies unpack to ${sizeMb}MB, the maximum is ${effectiveMaxSizeMb}MB. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".`,
     );
   }
 };
@@ -156,10 +181,7 @@ export const handler = async (event) => {
     await writePackageFiles(nodejsDir, packageJson, yarnLock);
     await copyYarnEngine(nodejsDir);
     await runYarnInstall(nodejsDir);
-    await assertDependenciesSizeWithinLimit(
-      buildDir,
-      maxUnzippedSizeMb ?? MAX_UNZIPPED_DEPENDENCIES_MB,
-    );
+    await assertDependenciesSizeWithinLimit(buildDir, maxUnzippedSizeMb);
     await createZip(buildDir, zipPath);
 
     await uploadToPresignedUrl(zipPath, presignedUploadUrl);

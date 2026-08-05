@@ -23,7 +23,9 @@ import {
   BUILDER_LAMBDA_MEMORY_MB,
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
   COMMON_LAYER_NAME_PREFIX,
+  DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME,
   LAMBDA_EPHEMERAL_STORAGE_MB,
+  TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS,
   YARN_INSTALL_FUNCTION_NAME_PREFIX,
   YARN_INSTALL_HANDLER_PATH,
   YARN_INSTALL_LAMBDA_MEMORY_MB,
@@ -154,8 +156,8 @@ export class LambdaToolFunctionsService {
         : {};
 
       const isDependenciesSizeExceeded =
-        isNonEmptyString(parsedResult?.errorMessage) &&
-        parsedResult.errorMessage.startsWith('Dependencies size exceeded');
+        parsedResult?.errorType === DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME &&
+        isNonEmptyString(parsedResult?.errorMessage);
 
       if (isDependenciesSizeExceeded) {
         throw new LogicFunctionException(
@@ -347,6 +349,22 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(builderFunctionName);
   }
 
+  private isToolFunctionConfigurationMatching({
+    configuration,
+    memorySize,
+    timeoutSeconds,
+  }: {
+    configuration: FunctionConfiguration | undefined;
+    memorySize: number;
+    timeoutSeconds: number;
+  }): boolean {
+    return (
+      configuration?.MemorySize === memorySize &&
+      configuration?.Timeout === timeoutSeconds &&
+      configuration?.EphemeralStorage?.Size === LAMBDA_EPHEMERAL_STORAGE_MB
+    );
+  }
+
   // Tool function names only hash the handler content, so memory/timeout
   // changes never produce a new function and must be applied in place.
   private async reconcileToolFunctionConfiguration({
@@ -361,30 +379,67 @@ export class LambdaToolFunctionsService {
     timeoutSeconds: number;
   }): Promise<void> {
     if (
-      existingConfiguration?.MemorySize === memorySize &&
-      existingConfiguration?.Timeout === timeoutSeconds
+      this.isToolFunctionConfigurationMatching({
+        configuration: existingConfiguration,
+        memorySize,
+        timeoutSeconds,
+      })
     ) {
+      if (existingConfiguration?.State !== 'Active') {
+        await this.awsClient.waitFunctionActive(functionName);
+      }
+
+      if (existingConfiguration?.LastUpdateStatus === 'InProgress') {
+        await this.awsClient.waitFunctionUpdated(functionName);
+      }
+
       return;
     }
 
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new UpdateFunctionConfigurationCommand({
-          FunctionName: functionName,
-          MemorySize: memorySize,
-          Timeout: timeoutSeconds,
-        }),
+    for (
+      let attempt = 0;
+      attempt < TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS;
+      attempt++
+    ) {
+      try {
+        await lambdaClient.send(
+          new UpdateFunctionConfigurationCommand({
+            FunctionName: functionName,
+            MemorySize: memorySize,
+            Timeout: timeoutSeconds,
+            EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+          }),
+        );
+      } catch (error) {
+        // Another worker is applying an update concurrently; verify the
+        // outcome below instead of failing.
+        if (!(error instanceof ResourceConflictException)) {
+          throw error;
+        }
+      }
+
+      await this.awsClient.waitFunctionUpdated(functionName);
+
+      const refreshedFunction = await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: functionName }),
       );
-    } catch (error) {
-      // Another worker is applying the same update concurrently.
-      if (!(error instanceof ResourceConflictException)) {
-        throw error;
+
+      if (
+        this.isToolFunctionConfigurationMatching({
+          configuration: refreshedFunction.Configuration,
+          memorySize,
+          timeoutSeconds,
+        })
+      ) {
+        return;
       }
     }
 
-    await this.awsClient.waitFunctionUpdated(functionName);
+    throw new Error(
+      `Configuration of tool function '${functionName}' could not be reconciled after ${TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS} attempts`,
+    );
   }
 
   private async getCommonLayerName(): Promise<string> {
