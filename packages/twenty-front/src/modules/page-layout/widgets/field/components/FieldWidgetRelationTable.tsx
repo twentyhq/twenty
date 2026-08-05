@@ -56,11 +56,21 @@ export const FieldWidgetRelationTable = ({
   const recordPageObjectMetadataNameSingular =
     fieldDefinition.metadata.objectMetadataNameSingular;
 
-  const resolvedNestedRelation = resolveFieldWidgetNestedRelation({
-    objectMetadataItems,
-    relationTargetObjectMetadataId: relationObjectMetadataId,
-    nestedRelationFieldMetadataId,
-  });
+  // Memoized so the derived picker parameters below keep a stable identity
+  // and do not churn the widget provider's context value on every render.
+  const resolvedNestedRelation = useMemo(
+    () =>
+      resolveFieldWidgetNestedRelation({
+        objectMetadataItems,
+        relationTargetObjectMetadataId: relationObjectMetadataId,
+        nestedRelationFieldMetadataId,
+      }),
+    [
+      objectMetadataItems,
+      relationObjectMetadataId,
+      nestedRelationFieldMetadataId,
+    ],
+  );
 
   // A widget with a broken nested relation (deleted or deactivated second hop)
   // resolves to no object and so renders nothing, rather than falling back to
@@ -70,19 +80,28 @@ export const FieldWidgetRelationTable = ({
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : relationObjectMetadataId;
 
-  const fieldRelationMetadata = fieldDefinition.metadata;
+  const { targetFieldMetadataName, relationObjectMetadataNameSingular } =
+    fieldDefinition.metadata;
 
   const nestedRelationCreateThrough = useMemo(
     () =>
       isDefined(resolvedNestedRelation)
         ? getFieldWidgetNestedRelationCreateThrough({
-            fieldRelationMetadata,
+            fieldRelationMetadata: {
+              targetFieldMetadataName,
+              relationObjectMetadataNameSingular,
+            },
             nestedRelationFieldMetadataItem:
               resolvedNestedRelation.nestedRelationFieldMetadataItem,
             recordId,
           })
         : undefined,
-    [resolvedNestedRelation, fieldRelationMetadata, recordId],
+    [
+      resolvedNestedRelation,
+      targetFieldMetadataName,
+      relationObjectMetadataNameSingular,
+      recordId,
+    ],
   );
 
   if (
