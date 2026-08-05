@@ -107,7 +107,10 @@ export const CampaignDetailsFields = ({
   );
 
   return (
-    <StyledFieldsContainer onBlur={() => detailsState.flush()}>
+    <StyledFieldsContainer
+      key={detailsState.draftResyncKey}
+      onBlur={() => detailsState.flush()}
+    >
       <FormTextFieldInput
         label={t`Subject`}
         defaultValue={detailsState.subject}
