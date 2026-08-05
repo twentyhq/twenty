@@ -13,6 +13,7 @@ import { join } from 'path';
 
 import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { SentryModule } from '@sentry/nestjs/setup';
+import { ApiPath } from 'twenty-shared/types';
 
 import { AdminPanelGraphQLApiModule } from 'src/engine/api/graphql/admin-panel-graphql-api.module';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
@@ -131,7 +132,7 @@ export class AppModule {
       // A cross-origin form post from the identity provider, authenticated on the
       // assertion rather than the cookie.
       .exclude({
-        path: 'auth/saml/callback/:identityProviderId',
+        path: `${ApiPath.Auth}/saml/callback/:identityProviderId`,
         method: RequestMethod.POST,
       })
       .forRoutes({ path: '*path', method: RequestMethod.ALL });
@@ -141,30 +142,30 @@ export class AppModule {
         GraphQLHydrateRequestFromTokenMiddleware,
         WorkspaceAuthContextMiddleware,
       )
-      .forRoutes({ path: 'graphql', method: RequestMethod.ALL });
+      .forRoutes({ path: ApiPath.GraphQL, method: RequestMethod.ALL });
 
     consumer
       .apply(
         GraphQLHydrateRequestFromTokenMiddleware,
         WorkspaceAuthContextMiddleware,
       )
-      .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
+      .forRoutes({ path: ApiPath.Metadata, method: RequestMethod.ALL });
 
     consumer
       .apply(
         GraphQLHydrateRequestFromTokenMiddleware,
         WorkspaceAuthContextMiddleware,
       )
-      .forRoutes({ path: 'admin-panel', method: RequestMethod.ALL });
+      .forRoutes({ path: ApiPath.AdminPanel, method: RequestMethod.ALL });
 
     consumer
       .apply(McpMethodGuardMiddleware)
-      .forRoutes({ path: 'mcp', method: RequestMethod.ALL });
+      .forRoutes({ path: ApiPath.Mcp, method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {
       consumer
         .apply(RestCoreMiddleware, WorkspaceAuthContextMiddleware)
-        .forRoutes({ path: 'rest/*path', method });
+        .forRoutes({ path: `${ApiPath.Rest}/*path`, method });
     }
   }
 }

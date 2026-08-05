@@ -3199,6 +3199,8 @@ export interface Mutation {
 
 export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
+export type RunAgentMessageRole = 'user' | 'assistant'
+
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
 export interface Subscription {
@@ -6918,7 +6920,9 @@ export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?:
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
-export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt: Scalars['String']}
+export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),messages?: (RunAgentMessageInput[] | null)}
+
+export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String']}
 
 export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
@@ -9887,6 +9891,11 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const
+}
+
+export const enumRunAgentMessageRole = {
+   user: 'user' as const,
+   assistant: 'assistant' as const
 }
 
 export const enumAnalyticsType = {

@@ -9,7 +9,14 @@ import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
 import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Repository } from 'typeorm';
+import {
+  In,
+  IsNull,
+  LessThanOrEqual,
+  MoreThan,
+  Raw,
+  Repository,
+} from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -109,16 +116,15 @@ export class WorkspaceInvitationService {
   }
 
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
-    return await this.appTokenRepository
-      .createQueryBuilder('appToken')
-      .where('"appToken"."workspaceId" = :workspaceId', {
+    return await this.appTokenRepository.findOne({
+      where: {
         workspaceId,
-      })
-      .andWhere('"appToken".type IN (:...types)', {
-        types: INVITATION_APP_TOKEN_TYPES,
-      })
-      .andWhere('"appToken".context->>\'email\' = :email', { email })
-      .getOne();
+        type: In(INVITATION_APP_TOKEN_TYPES),
+        deletedAt: IsNull(),
+        expiresAt: MoreThan(new Date()),
+        context: Raw((alias) => `${alias} ->> 'email' = :email`, { email }),
+      },
+    });
   }
 
   async getAppTokenByInvitationToken(invitationToken: string) {
@@ -191,6 +197,15 @@ export class WorkspaceInvitationService {
         WorkspaceInvitationExceptionCode.USER_ALREADY_EXIST,
       );
     }
+
+    await this.appTokenRepository.delete({
+      workspaceId: workspace.id,
+      type: In(INVITATION_APP_TOKEN_TYPES),
+      expiresAt: LessThanOrEqual(new Date()),
+      context: Raw((alias) => `${alias} ->> 'email' = :email`, {
+        email: email.toLowerCase(),
+      }),
+    });
 
     return this.generateInvitationToken(
       workspace.id,
@@ -468,6 +483,7 @@ export class WorkspaceInvitationService {
         workspaceId,
         type: AppTokenType.OnboardingInvitationToken,
         deletedAt: IsNull(),
+        expiresAt: MoreThan(new Date()),
       },
     });
 

@@ -1,3 +1,4 @@
+import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -11,7 +12,7 @@ const StyledBoardCard = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  opacity: ${({ isDragging }) => (isDragging ? '0.3' : '1')};
+  opacity: ${({ isDragging }) => (isDragging ? DRAG_SOURCE_OPACITY : 1)};
 
   width: 100%;
 
