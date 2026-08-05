@@ -25,32 +25,6 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
-const processChildrenForChatReferences = (
-  children: React.ReactNode,
-): React.ReactNode => {
-  if (typeof children === 'string') {
-    return <ChatReferencePlaceholderText text={children} />;
-  }
-
-  if (Array.isArray(children)) {
-    return children.map((child, index) => (
-      <span key={index}>{processChildrenForChatReferences(child)}</span>
-    ));
-  }
-
-  if (isValidElement<{ children?: React.ReactNode }>(children)) {
-    const childProps = children.props;
-
-    if (isDefined(childProps.children)) {
-      return cloneElement(children, {
-        children: processChildrenForChatReferences(childProps.children),
-      });
-    }
-  }
-
-  return children;
-};
-
 const restoreChatReferenceDisplayNames = ({
   children,
   references,
@@ -88,6 +62,70 @@ const MarkdownCode = ({
       {restoreChatReferenceDisplayNames({ children, references })}
     </code>
   );
+};
+
+// A linked chip is an anchor, so a reference inside a link label would nest one
+// anchor in another. Render its display name instead.
+const MarkdownLink = ({
+  children,
+  href,
+  title,
+}: {
+  children?: React.ReactNode;
+  href?: string;
+  title?: string;
+}) => {
+  const references = useContext(ChatReferencesContext);
+
+  return (
+    <a
+      className="markdown-link"
+      href={getSafeUrl(href)}
+      title={title}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {restoreChatReferenceDisplayNames({ children, references })}
+    </a>
+  );
+};
+
+// Both restore their own placeholders, so the walk below must leave their
+// children alone instead of turning them back into chips.
+const PLACEHOLDER_OWNING_COMPONENTS = [MarkdownCode, MarkdownLink];
+
+const processChildrenForChatReferences = (
+  children: React.ReactNode,
+): React.ReactNode => {
+  if (typeof children === 'string') {
+    return <ChatReferencePlaceholderText text={children} />;
+  }
+
+  if (Array.isArray(children)) {
+    return children.map((child, index) => (
+      <span key={index}>{processChildrenForChatReferences(child)}</span>
+    ));
+  }
+
+  if (isValidElement<{ children?: React.ReactNode }>(children)) {
+    if (
+      PLACEHOLDER_OWNING_COMPONENTS.some(
+        (component) => children.type === component,
+      )
+    ) {
+      return children;
+    }
+
+    const childProps = children.props;
+
+    if (isDefined(childProps.children)) {
+      return cloneElement(children, {
+        children: processChildrenForChatReferences(childProps.children),
+      });
+    }
+  }
+
+  return children;
 };
 
 // react-markdown uses each entry as the JSX element type, so rebuilding this map
@@ -130,25 +168,7 @@ const MARKDOWN_COMPONENTS = {
   h6: ({ children }: { children?: React.ReactNode }) => (
     <h6>{processChildrenForChatReferences(children)}</h6>
   ),
-  a: ({
-    children,
-    href,
-    title,
-  }: {
-    children?: React.ReactNode;
-    href?: string;
-    title?: string;
-  }) => (
-    <a
-      className="markdown-link"
-      href={getSafeUrl(href)}
-      title={title}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {processChildrenForChatReferences(children)}
-    </a>
-  ),
+  a: MarkdownLink,
   code: MarkdownCode,
   pre: ({ children }: { children?: React.ReactNode }) => (
     <MarkdownCodeBlock>{children}</MarkdownCodeBlock>

@@ -141,6 +141,36 @@ export const DisplayNameContainingAUrl: Story = {
   },
 };
 
+export const ReferenceInsideALink: Story = {
+  args: {
+    text: `See [the [[object:company:Companies[[/object]] list](https://twenty.com) for details.`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const link = await canvas.findByRole('link', {
+      name: 'the Companies list',
+    });
+
+    expect(link).toHaveAttribute('href', 'https://twenty.com');
+    expect(link.querySelector('a')).toBeNull();
+  },
+};
+
+export const ReferenceInsideInlineCode: Story = {
+  args: {
+    text: `Write it as \`[[object:company:Companies[[/object]]\` in your prompt.`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const code = await canvas.findByText('Companies');
+
+    expect(code.tagName).toBe('CODE');
+    expect(code.querySelector('a')).toBeNull();
+  },
+};
+
 export const ProposedObject: Story = {
   args: {
     text: `As a Head of Partnerships, you seem to work across partner companies, key contacts, and commercial follow-ups, so I suggest creating a [[object:partner:Partners[[/object]] object to track relationship status, partner type, owner, and next step. Should I create it?`,
