@@ -1,3 +1,5 @@
+// Adding or renaming a value here also requires updating the nginx ingress rules
+// in the infra repo, which route these prefixes to the server instead of the front.
 export enum ApiPath {
   AdminPanel = 'admin-panel',
   App = 'app',
