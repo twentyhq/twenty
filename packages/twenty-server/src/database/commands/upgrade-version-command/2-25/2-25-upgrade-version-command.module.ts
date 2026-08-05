@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229960000-configure-message-campaign-command-menu.command';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillMessageListMembersJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1784567000000-backfill-message-list-members-junction-target.command';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
   ],
   providers: [
+    ConfigureMessageCampaignCommandMenuCommand,
     BackfillMessageListMembersJunctionTargetCommand,
     AddMessageCampaignComposerTabCommand,
     AddMessageCampaignNameFieldCommand,
