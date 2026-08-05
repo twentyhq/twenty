@@ -91,8 +91,6 @@ export const slackAssistantWorkerHandler = async (
     !placeholderResult.success ||
     !isNonEmptyString(placeholderResult.slackTs)
   ) {
-    // no placeholder to carry the failure text, so the request message's
-    // reactions are the only visible signal left
     await runSlackReaction({
       operation: 'add',
       slackChannelId,

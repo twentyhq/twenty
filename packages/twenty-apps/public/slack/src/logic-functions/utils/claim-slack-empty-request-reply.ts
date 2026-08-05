@@ -3,8 +3,6 @@ import { kv } from 'twenty-sdk/logic-function';
 
 import { getSlackEmptyRequestReplyKvKey } from 'src/logic-functions/utils/get-slack-empty-request-reply-kv-key';
 
-// Slack redelivers an event for a few minutes when it is not acknowledged in
-// time; an hour comfortably covers every retry of the same message
 const SLACK_EMPTY_REQUEST_REPLY_TTL_MS = 60 * 60 * 1000;
 
 type SlackEmptyRequestReplyClaim = {

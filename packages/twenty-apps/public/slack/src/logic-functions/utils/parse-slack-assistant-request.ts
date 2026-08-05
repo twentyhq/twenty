@@ -66,8 +66,6 @@ export const parseSlackAssistantRequest = (
     : rawText.replace(/\s+/g, ' ').trim();
 
   if (!isNonEmptyString(requestText)) {
-    // a mention or DM with no text is a visible dead-end without a reply, while
-    // an empty unmentioned thread follow-up can stay silent
     if (isMention || isDirectMessage) {
       return {
         request: null,

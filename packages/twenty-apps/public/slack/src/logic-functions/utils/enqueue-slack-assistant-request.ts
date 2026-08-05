@@ -40,8 +40,6 @@ export const enqueueSlackAssistantRequest = async (
         threadTimestamp: parsed.request.slackThreadTimestamp,
       });
 
-      // the lapsed subscription is only cleared once the nudge reached the
-      // member, so a failed nudge is retried on the next follow-up
       if (nudgeResult.success) {
         await clearSlackThreadSubscription({
           channelId: parsed.request.slackChannelId,
