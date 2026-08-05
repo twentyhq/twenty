@@ -26,15 +26,4 @@ describe('ApiPath and front route collisions', () => {
       expect(apiPaths.has(firstPathSegment)).toBe(false);
     },
   );
-
-  it.each(Object.values(ApiPath))(
-    'should keep the api path %s free of a front route claiming its first segment',
-    (apiPath) => {
-      expect(
-        frontRoutesWithSegment.filter(
-          ({ firstPathSegment }) => firstPathSegment === apiPath,
-        ),
-      ).toEqual([]);
-    },
-  );
 });
