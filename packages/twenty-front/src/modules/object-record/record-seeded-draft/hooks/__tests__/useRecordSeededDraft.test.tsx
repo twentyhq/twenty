@@ -141,6 +141,53 @@ describe('useRecordSeededDraft', () => {
     expect(mockPersist).not.toHaveBeenCalled();
   });
 
+  it('should drop a pending persist when the reset key cycles back within the debounce', () => {
+    const { result, rerender } = renderDraftHook({
+      subject: 'Record A body',
+      resetKey: 'record-a',
+    });
+
+    act(() => {
+      result.current.updateDraft({ subject: 'Edited on record A' });
+    });
+
+    rerender({ subject: 'Record B body', resetKey: 'record-b' });
+    rerender({ subject: 'Record A body', resetKey: 'record-a' });
+
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+
+    expect(mockPersist).not.toHaveBeenCalled();
+    expect(result.current.draft.subject).toBe('Record A body');
+  });
+
+  it('should hold off adoption between markDirty and the serialized update', () => {
+    const { result, rerender } = renderDraftHook({ subject: 'Initial' });
+
+    act(() => {
+      result.current.markDirty();
+    });
+
+    expect(result.current.isDirty).toBe(true);
+
+    rerender({ subject: 'Remote change during serialization' });
+
+    expect(result.current.draft.subject).toBe('Initial');
+
+    act(() => {
+      result.current.updateDraft({ subject: 'Serialized local edit' });
+    });
+
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+
+    expect(mockPersist).toHaveBeenCalledWith({
+      subject: 'Serialized local edit',
+    });
+  });
+
   it('should report a pristine draft as not dirty', () => {
     const { result, rerender } = renderDraftHook({ subject: 'Initial' });
 

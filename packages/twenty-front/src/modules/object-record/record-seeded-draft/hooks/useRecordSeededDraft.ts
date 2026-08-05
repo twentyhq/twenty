@@ -19,7 +19,7 @@ type UseRecordSeededDraftArgs<TDraft extends object> = {
 
 type ScheduledPersist<TDraft> = {
   draftToPersist: TDraft;
-  scheduledResetKey: string | undefined;
+  scheduledResetGeneration: number;
 };
 
 // Editing state seeded from a record, kept live against remote changes.
@@ -35,9 +35,10 @@ type ScheduledPersist<TDraft> = {
 //   only mark the draft pristine again, never disrupting typing.
 //
 // Controlled inputs re-render from `draft`. Uncontrolled inputs remount via
-// `draftResyncKey`. Imperative editors (BlockNote) watch `draftResyncKey`
-// and replace their content when it changes, and must call `updateDraft`
-// synchronously on change so no window is mistaken for pristine.
+// `draftResyncKey`. Imperative editors (BlockNote) watch `draftResyncKey` and
+// replace their content when it changes; those that debounce their own
+// serialization call `markDirty` on the raw change so the gap before the
+// serialized value reaches `updateDraft` is never mistaken for pristine.
 export const useRecordSeededDraft = <TDraft extends object>({
   upstreamDraft,
   onPersist,
@@ -49,14 +50,21 @@ export const useRecordSeededDraft = <TDraft extends object>({
     useState<TDraft>(upstreamDraft);
   const [lastResetKey, setLastResetKey] = useState(resetKey);
   const [resyncCount, setResyncCount] = useState(0);
+  const [resetGeneration, setResetGeneration] = useState(0);
+  const [hasUncommittedEdit, setHasUncommittedEdit] = useState(false);
 
   // The reset check below runs during render, where cancelling the timer
   // would be an unsafe side effect; instead each scheduled persist remembers
-  // the resetKey it was scheduled under and is dropped if a reset happened
-  // in between, so it can never target the previous record.
+  // the reset generation it was scheduled under and is dropped once that
+  // generation is over. A counter rather than the key itself, so returning to
+  // a previously edited record (A to B back to A) still drops A's first
+  // pending persist instead of letting it land on the reseeded draft.
   const persistDebounced = useDebouncedCallback(
-    ({ draftToPersist, scheduledResetKey }: ScheduledPersist<TDraft>) => {
-      if (scheduledResetKey !== resetKey) {
+    ({
+      draftToPersist,
+      scheduledResetGeneration,
+    }: ScheduledPersist<TDraft>) => {
+      if (scheduledResetGeneration !== resetGeneration) {
         return;
       }
 
@@ -70,9 +78,13 @@ export const useRecordSeededDraft = <TDraft extends object>({
     setLastUpstreamDraft(upstreamDraft);
     setDraft(upstreamDraft);
     setResyncCount((count) => count + 1);
+    setResetGeneration((generation) => generation + 1);
+    setHasUncommittedEdit(false);
   } else if (!isDeeplyEqual(upstreamDraft, lastUpstreamDraft)) {
     const isDraftPristine =
-      !persistDebounced.isPending() && isDeeplyEqual(draft, lastUpstreamDraft);
+      !hasUncommittedEdit &&
+      !persistDebounced.isPending() &&
+      isDeeplyEqual(draft, lastUpstreamDraft);
 
     setLastUpstreamDraft(upstreamDraft);
 
@@ -89,18 +101,28 @@ export const useRecordSeededDraft = <TDraft extends object>({
     const nextDraft = { ...draft, ...partialDraft };
 
     setDraft(nextDraft);
+    setHasUncommittedEdit(false);
     persistDebounced({
       draftToPersist: nextDraft,
-      scheduledResetKey: resetKey,
+      scheduledResetGeneration: resetGeneration,
     });
+  };
+
+  // Holds off adoption for editors whose serialized value only arrives later,
+  // without scheduling a persist of a value we do not have yet.
+  const markDirty = () => {
+    setHasUncommittedEdit(true);
   };
 
   return {
     draft,
     updateDraft,
+    markDirty,
     flush: persistDebounced.flush,
     isDirty:
-      persistDebounced.isPending() || !isDeeplyEqual(draft, lastUpstreamDraft),
+      hasUncommittedEdit ||
+      persistDebounced.isPending() ||
+      !isDeeplyEqual(draft, lastUpstreamDraft),
     draftResyncKey: resyncCount,
   };
 };

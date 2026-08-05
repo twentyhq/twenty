@@ -147,32 +147,33 @@ export const RichTextFieldEditor = ({
     fieldName,
   );
 
-  const { updateDraft, flush, draftResyncKey } = useRecordSeededDraft({
-    upstreamDraft: { blocknote: fieldValue?.blocknote ?? '' },
-    persistDebounceMs: 300,
-    resetKey: recordId,
-    onPersist: ({ blocknote }) => {
-      if (isRecordFieldReadOnly === true) return;
+  const { updateDraft, markDirty, flush, draftResyncKey } =
+    useRecordSeededDraft({
+      upstreamDraft: { blocknote: fieldValue?.blocknote ?? '' },
+      persistDebounceMs: 300,
+      resetKey: recordId,
+      onPersist: ({ blocknote }) => {
+        if (isRecordFieldReadOnly === true) return;
 
-      const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
+        const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
 
-      if (onPersistBody) {
-        onPersistBody(preparedBlocknote);
-        return;
-      }
+        if (onPersistBody) {
+          onPersistBody(preparedBlocknote);
+          return;
+        }
 
-      updateOneRecord({
-        idToUpdate: recordId,
-        objectNameSingular,
-        updateOneRecordInput: {
-          [fieldName]: {
-            blocknote: preparedBlocknote,
-            markdown: null,
+        updateOneRecord({
+          idToUpdate: recordId,
+          objectNameSingular,
+          updateOneRecordInput: {
+            [fieldName]: {
+              blocknote: preparedBlocknote,
+              markdown: null,
+            },
           },
-        },
-      });
-    },
-  });
+        });
+      },
+    });
 
   // The BlockNote editor is uncontrolled; when a remote value is adopted,
   // replace its content in place instead of remounting to keep the instance.
@@ -225,20 +226,24 @@ export const RichTextFieldEditor = ({
       | { blocknote?: string | null }
       | undefined;
 
+    // Only schedule the persist once the pre-edit body is captured above:
+    // persisting optimistically rewrites the record, and doing that earlier
+    // would make the attachment diff below compare the new body with itself,
+    // leaving attachments removed from the body undeleted.
+    updateDraft({ blocknote: newStringifiedBody });
+
     await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
   };
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
   const handleEditorChange = () => {
-    const newStringifiedBody = JSON.stringify(editor.document) ?? '';
+    // Serialization is debounced, so mark the draft dirty synchronously: a
+    // remote adoption arriving in that window would otherwise replace content
+    // the user is actively typing.
+    markDirty();
 
-    // The draft must turn dirty synchronously: store, cache and attachment
-    // work is debounced, and a remote adoption arriving in that window would
-    // otherwise replace content the user is actively typing.
-    updateDraft({ blocknote: newStringifiedBody });
-
-    handleBodyChangeDebounced(newStringifiedBody);
+    handleBodyChangeDebounced(JSON.stringify(editor.document) ?? '');
   };
 
   useHotkeysOnFocusedElement({
