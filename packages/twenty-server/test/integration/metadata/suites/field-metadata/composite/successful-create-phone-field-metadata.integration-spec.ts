@@ -212,7 +212,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneCallingCode: '',
           primaryPhoneCountryCode: '' as CountryCode,
           primaryPhoneNumber: '',
-          additionalPhones: [{}],
+          additionalPhones: [],
         },
       },
     },
