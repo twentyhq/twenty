@@ -1,8 +1,8 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { findApplicationPageLayoutTabs } from 'test/integration/metadata/suites/application/utils/find-application-page-layout-tabs.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout-tab/utils/find-page-layout-tabs.util';
 import { type Manifest } from 'twenty-shared/application';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,14 +14,6 @@ const TEST_TAB_ID = uuidv4();
 const STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID =
   '20202020-a102-4002-8002-ae0a1ea11002';
 
-const PAGE_LAYOUT_TAB_GQL_FIELDS = `
-  id
-  title
-  position
-  pageLayoutId
-  applicationId
-`;
-
 let testApplicationId: string;
 let standardPersonPageLayoutId: string;
 
@@ -32,17 +24,11 @@ const buildManifest = (overrides?: Partial<Pick<Manifest, 'pageLayoutTabs'>>) =>
     overrides,
   });
 
-const findStandardPersonPageLayoutTabs = async () => {
-  const { data } = await findPageLayoutTabs({
-    gqlFields: PAGE_LAYOUT_TAB_GQL_FIELDS,
-    expectToFail: false,
-    input: { pageLayoutId: standardPersonPageLayoutId },
+const findStandardPersonPageLayoutTabs = async () =>
+  await findApplicationPageLayoutTabs({
+    pageLayoutId: standardPersonPageLayoutId,
+    applicationId: testApplicationId,
   });
-
-  return data.getPageLayoutTabs.filter(
-    (tab) => tab.applicationId === testApplicationId,
-  );
-};
 
 describe('Manifest update - page layout tabs (standalone)', () => {
   beforeEach(async () => {

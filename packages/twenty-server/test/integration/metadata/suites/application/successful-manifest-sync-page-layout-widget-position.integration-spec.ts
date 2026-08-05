@@ -1,8 +1,9 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { findApplicationPageLayoutTabs } from 'test/integration/metadata/suites/application/utils/find-application-page-layout-tabs.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout-tab/utils/find-page-layout-tabs.util';
+import { WIDGET_POSITION_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout-widget/constants/widget-position-gql-fields.constant';
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -24,35 +25,11 @@ const SECOND_WIDGET_ID = uuidv4();
 const STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID =
   '20202020-a102-4002-8002-ae0a1ea11002';
 
-const PAGE_LAYOUT_TAB_GQL_FIELDS = `
-  id
-  applicationId
-`;
-
 const PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
   id
   title
-  gridPosition {
-    row
-    column
-    rowSpan
-    columnSpan
-  }
   position {
-    ... on PageLayoutWidgetVerticalListPosition {
-      layoutMode
-      index
-    }
-    ... on PageLayoutWidgetGridPosition {
-      layoutMode
-      row
-      column
-      rowSpan
-      columnSpan
-    }
-    ... on PageLayoutWidgetCanvasPosition {
-      layoutMode
-    }
+    ${WIDGET_POSITION_GQL_FIELDS}
   }
 `;
 
@@ -82,15 +59,10 @@ const buildManifest = (pageLayoutTabs: Manifest['pageLayoutTabs']): Manifest =>
   });
 
 const findTestApplicationTabId = async () => {
-  const { data } = await findPageLayoutTabs({
-    gqlFields: PAGE_LAYOUT_TAB_GQL_FIELDS,
-    expectToFail: false,
-    input: { pageLayoutId: standardPersonPageLayoutId },
+  const [tab] = await findApplicationPageLayoutTabs({
+    pageLayoutId: standardPersonPageLayoutId,
+    applicationId: testApplicationId,
   });
-
-  const tab = data.getPageLayoutTabs.find(
-    (pageLayoutTab) => pageLayoutTab.applicationId === testApplicationId,
-  );
 
   return tab?.id;
 };
