@@ -5,7 +5,7 @@ import { createSlackAssistantRequest } from 'src/logic-functions/data/create-sla
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { clearSlackThreadSubscription } from 'src/logic-functions/utils/clear-slack-thread-subscription';
+import { clearLapsedSlackThreadSubscription } from 'src/logic-functions/utils/clear-lapsed-slack-thread-subscription';
 import { getSlackThreadSubscriptionState } from 'src/logic-functions/utils/get-slack-thread-subscription-state';
 import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
 import { nudgeExpiredSlackThread } from 'src/logic-functions/utils/nudge-expired-slack-thread';
@@ -41,7 +41,7 @@ export const enqueueSlackAssistantRequest = async (
       });
 
       if (nudgeResult.success) {
-        await clearSlackThreadSubscription({
+        await clearLapsedSlackThreadSubscription({
           channelId: parsed.request.slackChannelId,
           threadTimestamp: parsed.request.slackThreadTimestamp,
         });
