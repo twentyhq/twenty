@@ -7,7 +7,6 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
-import { addMissingPageLayoutWidgetPositions } from '@/cli/utilities/build/manifest/utils/add-missing-page-layout-widget-positions';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
@@ -639,11 +638,6 @@ export const buildManifest = async (
         })()
       : undefined;
 
-  const {
-    pageLayouts: pageLayoutsWithWidgetPositions,
-    pageLayoutTabs: pageLayoutTabsWithWidgetPositions,
-  } = addMissingPageLayoutWidgetPositions({ pageLayouts, pageLayoutTabs });
-
   const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>
     a.universalIdentifier.localeCompare(b.universalIdentifier);
 
@@ -668,8 +662,8 @@ export const buildManifest = async (
         views: views.sort(byId),
         viewFields: viewFields.sort(byId),
         navigationMenuItems: navigationMenuItems.sort(byId),
-        pageLayouts: pageLayoutsWithWidgetPositions.sort(byId),
-        pageLayoutTabs: pageLayoutTabsWithWidgetPositions.sort(byId),
+        pageLayouts: pageLayouts.sort(byId),
+        pageLayoutTabs: pageLayoutTabs.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
       };
 

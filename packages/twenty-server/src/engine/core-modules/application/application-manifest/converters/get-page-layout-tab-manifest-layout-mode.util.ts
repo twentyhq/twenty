@@ -1,8 +1,8 @@
 import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
-} from '@/application/pageLayoutManifestType';
-import { PageLayoutTabLayoutMode, PageLayoutType } from '@/types';
+} from 'twenty-shared/application';
+import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
 export const getPageLayoutTabManifestLayoutMode = ({
   pageLayoutTabManifest,
