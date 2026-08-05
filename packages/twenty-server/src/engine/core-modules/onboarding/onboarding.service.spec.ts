@@ -458,6 +458,24 @@ describe('OnboardingService', () => {
         mockQueryRunner,
       );
     });
+
+    it('should keep the steps to go back to when the install job could not be enqueued', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest
+        .spyOn(messageQueueService, 'add')
+        .mockRejectedValue(new Error('queue unavailable'));
+
+      await expect(
+        service.triggerInstallAppsOnboardingStep({
+          userId,
+          workspaceId,
+          universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
+        }),
+      ).rejects.toThrow('queue unavailable');
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
   });
 
   describe('skipOnboardingConnectAccountStep', () => {

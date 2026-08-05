@@ -666,23 +666,11 @@ export class OnboardingService {
     const hasClaimedInstallAppsStep =
       await this.runStepTransitionInLockedTransaction(
         { userId, workspaceId },
-        async (queryRunner) => {
-          const hasClaimedStep = await this.claimInstallAppsOnboardingStep(
+        async (queryRunner) =>
+          this.claimInstallAppsOnboardingStep(
             { userId, workspaceId },
             queryRunner,
-          );
-
-          if (!hasClaimedStep) {
-            return false;
-          }
-
-          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-            { userId, workspaceId },
-            queryRunner,
-          );
-
-          return true;
-        },
+          ),
       );
 
     if (!hasClaimedInstallAppsStep) {
@@ -693,6 +681,15 @@ export class OnboardingService {
       INSTALL_ONBOARDING_APPS_JOB_NAME,
       { workspaceId, universalIdentifiers: installableUniversalIdentifiers },
       { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
+    );
+
+    await this.runStepTransitionInLockedTransaction(
+      { userId, workspaceId },
+      async (queryRunner) =>
+        this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+          { userId, workspaceId },
+          queryRunner,
+        ),
     );
   }
 
