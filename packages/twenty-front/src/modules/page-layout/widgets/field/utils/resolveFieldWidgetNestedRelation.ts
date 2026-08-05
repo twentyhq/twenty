@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isFieldWidgetEligibleNestedField } from '@/page-layout/widgets/field/utils/getFieldWidgetEligibleNestedFields';
+import { isFieldWidgetEligibleNestedField } from '@/page-layout/widgets/field/utils/isFieldWidgetEligibleNestedField';
 import { isDefined } from 'twenty-shared/utils';
 
 type ResolveFieldWidgetNestedRelationArgs = {
