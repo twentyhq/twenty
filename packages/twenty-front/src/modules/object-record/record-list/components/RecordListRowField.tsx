@@ -5,7 +5,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME } from '@/object-record/record-list/constants/RecordListRowFieldAnchorClassName';
 import { RECORD_LIST_ROW_INPUT_ID_PREFIX } from '@/object-record/record-list/constants/RecordListRowInputIdPrefix';
-import { recordListHoveredFieldLabelComponentState } from '@/object-record/record-list/states/recordListHoveredFieldLabelComponentState';
+import { recordListHoveredFieldMetadataItemIdComponentState } from '@/object-record/record-list/states/recordListHoveredFieldMetadataItemIdComponentState';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
@@ -34,8 +34,8 @@ export const RecordListRowField = ({
   const { fieldDefinitionByFieldMetadataItemId } =
     useRecordIndexContextOrThrow();
 
-  const setRecordListHoveredFieldLabel = useSetAtomComponentState(
-    recordListHoveredFieldLabelComponentState,
+  const setRecordListHoveredFieldMetadataItemId = useSetAtomComponentState(
+    recordListHoveredFieldMetadataItemIdComponentState,
   );
 
   const fieldDefinition =
@@ -44,7 +44,9 @@ export const RecordListRowField = ({
   return (
     <StyledFieldContainer
       className={RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME}
-      onMouseEnter={() => setRecordListHoveredFieldLabel(fieldDefinition.label)}
+      onMouseEnter={() =>
+        setRecordListHoveredFieldMetadataItemId(recordField.fieldMetadataItemId)
+      }
     >
       <FieldContext.Provider
         value={{
