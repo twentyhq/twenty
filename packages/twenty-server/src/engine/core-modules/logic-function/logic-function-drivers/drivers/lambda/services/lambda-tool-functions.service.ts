@@ -325,8 +325,6 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(builderFunctionName);
   }
 
-  // Tool function names only hash the handler content, so memory/timeout
-  // changes never produce a new function and must be applied in place.
   private async reconcileToolFunctionConfiguration({
     functionName,
     existingConfiguration,
@@ -374,7 +372,6 @@ export class LambdaToolFunctionsService {
           }),
         );
       } catch (error) {
-        // Concurrent update from another worker; the outcome is verified below.
         if (!(error instanceof ResourceConflictException)) {
           throw error;
         }

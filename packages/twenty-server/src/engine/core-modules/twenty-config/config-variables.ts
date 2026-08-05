@@ -717,7 +717,6 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   LOGIC_FUNCTION_EXEC_THROTTLE_TTL = 60_000;
 
-  // AWS caps a function plus all its layers at 250MB unzipped
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description:

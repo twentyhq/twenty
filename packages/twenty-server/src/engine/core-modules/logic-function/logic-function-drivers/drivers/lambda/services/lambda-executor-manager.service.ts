@@ -311,7 +311,6 @@ export class LambdaExecutorManagerService {
         applicationUniversalIdentifier,
       });
     } catch (error) {
-      // User error: keep its code and message intact
       if (
         error instanceof LogicFunctionException &&
         error.code ===

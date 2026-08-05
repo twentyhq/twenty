@@ -13,7 +13,6 @@ import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// The local yarn install spawns real child processes
 jest.useRealTimers();
 
 jest.setTimeout(120000);
@@ -22,7 +21,6 @@ const APP_UNIVERSAL_IDENTIFIER = '1e2f983f-5c1a-4c60-a3c8-7d0e2a4a11e2';
 const ROLE_UNIVERSAL_IDENTIFIER = '2f3f983f-5c1a-4c60-a3c8-7d0e2a4a22f3';
 const FUNCTION_UNIVERSAL_IDENTIFIER = '3a4f983f-5c1a-4c60-a3c8-7d0e2a4a33a4';
 
-// Unique checksum so the layer build (and the size gate) runs for this suite
 const YARN_LOCK_CHECKSUM = 'deps-size-limit-spec-checksum-1e2f983f';
 
 const BUILT_HANDLER_CODE = `export const main = async () => ({ status: 'ok' });
@@ -50,7 +48,6 @@ describe('Logic function dependencies size limit (integration)', () => {
 
     jest.useRealTimers();
 
-    // A real dependency so the installed tree exceeds the 1MB limit set below
     await uploadApplicationFile({
       applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
       fileFolder: 'Dependencies',
@@ -107,7 +104,6 @@ describe('Logic function dependencies size limit (integration)', () => {
         expectToFail: true,
       });
     } catch {
-      // Already deleted by the test itself.
     }
 
     await cleanupApplicationAndAppRegistration({

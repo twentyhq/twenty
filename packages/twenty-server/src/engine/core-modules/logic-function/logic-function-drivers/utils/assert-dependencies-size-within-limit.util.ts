@@ -19,7 +19,6 @@ const computeDirectorySizeBytes = async (
         return computeDirectorySizeBytes(fullPath);
       }
 
-      // Symlinked directories are not traversed to avoid cycles
       if (entry.isSymbolicLink()) {
         try {
           const targetStat = await fs.stat(fullPath);

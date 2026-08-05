@@ -24,7 +24,6 @@ export const buildYarnInstallFailureException = (
     );
   }
 
-  // An OOM kill means the tree is far beyond what a layer can hold
   if (payload.errorType === 'Runtime.OutOfMemory') {
     return new LogicFunctionException(
       `Yarn install Lambda ran out of memory: the dependency tree is too large to install`,

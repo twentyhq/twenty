@@ -54,7 +54,6 @@ export class LogicFunctionTriggerJob {
           continue;
         }
 
-        // Retrying cannot succeed until the user trims their dependencies
         if (
           error instanceof LogicFunctionException &&
           error.code ===
