@@ -4,9 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { useEstimatedRecordBoardCardHeight } from '@/object-record/record-board/hooks/useEstimatedRecordBoardCardHeight';
 import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { getBoardCardDropBehavior } from '@/object-record/record-board/utils/getBoardCardDropBehavior';
+import { recordBoardColumnCardHeightByRecordIdComponentFamilyState } from '@/object-record/record-board/virtualization/states/recordBoardColumnCardHeightByRecordIdComponentFamilyState';
+import { getRecordBoardCardOffsets } from '@/object-record/record-board/virtualization/utils/getRecordBoardCardOffsets';
+import { getRecordBoardDropTargetIndex } from '@/object-record/record-board/virtualization/utils/getRecordBoardDropTargetIndex';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -65,6 +69,14 @@ export const useRecordBoardDndKit = (): {
       recordBoardId,
     );
 
+  const recordBoardColumnCardHeightByRecordIdCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordBoardColumnCardHeightByRecordIdComponentFamilyState,
+      recordBoardId,
+    );
+
+  const estimatedCardHeight = useEstimatedRecordBoardCardHeight();
+
   const { startRecordDrag } = useStartRecordDrag();
   const { endRecordDrag } = useEndRecordDrag();
 
@@ -87,6 +99,39 @@ export const useRecordBoardDndKit = (): {
 
   const getDroppableItemCount = (droppableId: string) =>
     store.get(recordIdsByGroupCallbackState(droppableId)).length;
+
+  // Virtualized columns replace off-window cards with placeholder spacers
+  // that are not sortable targets, so drops landing on them resolve from the
+  // pointer position over the measured card offsets.
+  const resolveDroppableDropTargetIndex = ({
+    droppableId,
+    pointerY,
+  }: {
+    droppableId: string;
+    pointerY: number;
+  }) => {
+    const cardsContainerElement = document.querySelector(
+      `[data-record-board-column-cards-id="${droppableId}"]`,
+    );
+
+    if (!(cardsContainerElement instanceof HTMLElement)) {
+      return null;
+    }
+
+    const cardOffsets = getRecordBoardCardOffsets({
+      recordIds: store.get(recordIdsByGroupCallbackState(droppableId)),
+      cardHeightByRecordId: store.get(
+        recordBoardColumnCardHeightByRecordIdCallbackState(droppableId),
+      ),
+      estimatedCardHeight,
+    });
+
+    return getRecordBoardDropTargetIndex({
+      pointerY,
+      cardsContainerTop: cardsContainerElement.getBoundingClientRect().top,
+      cardOffsets,
+    });
+  };
 
   const clearDragState = () => {
     endRecordDrag();
@@ -118,6 +163,7 @@ export const useRecordBoardDndKit = (): {
       target,
       pointerY: position.current.y,
       getDroppableItemCount,
+      resolveDroppableDropTargetIndex,
     });
 
     if (!isDefined(resolvedDrop)) {
@@ -146,6 +192,7 @@ export const useRecordBoardDndKit = (): {
       target,
       pointerY: position.current.y,
       getDroppableItemCount,
+      resolveDroppableDropTargetIndex,
     });
     if (!isDefined(resolvedDrop)) {
       resetDragState();
