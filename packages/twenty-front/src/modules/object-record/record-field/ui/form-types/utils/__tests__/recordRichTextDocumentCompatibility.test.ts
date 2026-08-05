@@ -37,4 +37,15 @@ describe('record rich-text document compatibility', () => {
       content,
     });
   });
+
+  it('preserves permissive legacy BlockNote arrays', () => {
+    const content = [
+      { type: 'paragraph', content: 'Legacy BlockNote plain content' },
+    ];
+
+    expect(parseLegacyRecordRichTextDocument(JSON.stringify(content))).toEqual({
+      type: 'doc',
+      content,
+    });
+  });
 });
