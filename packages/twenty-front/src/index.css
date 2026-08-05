@@ -21,6 +21,17 @@ form {
   display: contents;
 }
 
+:root {
+  --dnd-drag-feedback-opacity: 0.6;
+  --dnd-drag-source-opacity: 0.3;
+}
+
+[data-dnd-dragging='true'] {
+  /* dnd-kit can reuse the source node as its moving feedback. In that case,
+     feedback opacity must win over the source fade applied by the component. */
+  opacity: var(--dnd-drag-feedback-opacity) !important;
+}
+
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */
 .grecaptcha-badge {
   visibility: hidden !important;

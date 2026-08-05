@@ -45,12 +45,14 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
+import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
 import { renderCampaignBodyToHtml } from 'src/modules/emailing/utils/render-campaign-body.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
@@ -127,11 +129,12 @@ export class MessageCampaignService {
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly emailBillingService: EmailBillingService,
+    private readonly campaignVariableService: CampaignVariableService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  private getUserRepository<T extends ObjectLiteral>(
+  private getRoleScopedRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
     roleId: string,
@@ -195,7 +198,7 @@ export class MessageCampaignService {
             MAX_CAMPAIGN_RECIPIENTS,
           );
 
-          const campaignRepository = await this.getUserRepository(
+          const campaignRepository = await this.getRoleScopedRepository(
             workspaceId,
             MessageCampaignWorkspaceEntity,
             roleId,
@@ -256,7 +259,11 @@ export class MessageCampaignService {
       fromAddress,
     );
 
-    const variables = this.buildTemplateVariables(null);
+    const variables =
+      await this.campaignVariableService.buildVariablesForPerson(
+        workspaceId,
+        null,
+      );
     const renderedSubject = renderCampaignTemplate(subject, variables, {
       escapeValues: false,
     });
@@ -433,7 +440,11 @@ export class MessageCampaignService {
         where: { id: personId },
       });
 
-      const variables = this.buildTemplateVariables(person);
+      const variables =
+        await this.campaignVariableService.buildVariablesForPerson(
+          workspaceId,
+          person,
+        );
       const subject = renderCampaignTemplate(
         campaign.subject ?? '',
         variables,
@@ -585,7 +596,7 @@ export class MessageCampaignService {
     campaignId: string,
     roleId: string,
   ): Promise<SendableDraftCampaign> {
-    const campaignRepository = await this.getUserRepository(
+    const campaignRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
       roleId,
@@ -612,6 +623,14 @@ export class MessageCampaignService {
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
       );
     }
+
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      collectCampaignVariableNamesFromTemplates({
+        subject: sendableCampaign.data.subject,
+        bodyTemplate: sendableCampaign.data.bodyTemplate,
+      }),
+    );
 
     return sendableCampaign.data;
   }
@@ -877,7 +896,7 @@ export class MessageCampaignService {
     listId: string,
     roleId: string,
   ): Promise<RawCampaignRecipient[]> {
-    const listMemberRepository = await this.getUserRepository(
+    const listMemberRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageListMemberWorkspaceEntity,
       roleId,
@@ -903,7 +922,7 @@ export class MessageCampaignService {
       return [];
     }
 
-    const personRepository = await this.getUserRepository(
+    const personRepository = await this.getRoleScopedRepository(
       workspaceId,
       PersonWorkspaceEntity,
       roleId,
@@ -914,20 +933,6 @@ export class MessageCampaignService {
     });
 
     return people.map(toRawRecipient);
-  }
-
-  private buildTemplateVariables(
-    person: PersonWorkspaceEntity | null,
-  ): Record<string, string> {
-    const firstName = person?.name?.firstName ?? '';
-    const lastName = person?.name?.lastName ?? '';
-
-    return {
-      firstName,
-      lastName,
-      fullName: [firstName, lastName].filter(Boolean).join(' '),
-      email: person?.emails?.primaryEmail ?? '',
-    };
   }
 
   private campaignMessageId(campaignId: string, personId: string): string {

@@ -100,7 +100,8 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="تشغيل وكيل من دالة منطقية">
 
-تتيح `runAgent()` لدالة منطقية تشغيل أحد وكلاء تطبيقك (مع مهاراته وأدواته). عرِّف الوكيل عن طريق `universalIdentifier` الذي مررته إلى `defineAgent()`:
+تتيح `runAgent()` لدالة منطقية تشغيل أحد وكلاء تطبيقك (مع مهاراته وأدواته). حدِّد الوكيل بواسطة `universalIdentifier` الذي مررته إلى `defineAgent()`. مرر إما سلسلة `prompt` أو سجل المحادثة `messages`
+— وليس كليهما معًا:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +112,24 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+لبوتات المحادثة متعددة الجولات (Slack, Discord, Teams, …)، مرر سجل سلسلة المحادثة كـ
+`messages` بدلًا من استخدام `prompt` واحد فقط:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 النقاط الرئيسية:
+* قدِّم **واحدًا فقط** من `prompt` (سلسلة نصية) أو `messages` (من 1 إلى 100 عنصر من `{ role: 'user' | 'assistant', content: string }`).
 * يعمل الوكيل **بشكل متزامن** ويمكنه قراءة/تحديث السجلات بنفسه عبر أدواته الخاصة — يتم حل `runAgent()` بمجرد اكتمال التشغيل.
 * لا يمكن للتطبيق تشغيل سوى وكلائه الخاصين.
 * يجب أن يمنح [الدور الافتراضي](/l/ar/developers/extend/apps/config/roles) للتطبيق علامة الإذن `AI` — أضِف `SystemPermissionFlag.AI` إلى `permissionFlagUniversalIdentifiers` الخاصة به (أو عيِّن `canAccessAllTools: true`).

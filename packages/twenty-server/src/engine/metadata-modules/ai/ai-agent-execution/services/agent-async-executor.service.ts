@@ -5,14 +5,16 @@ import {
   generateText,
   jsonSchema,
   type LanguageModelUsage,
+  type ModelMessage,
   Output,
   stepCountIs,
   type StepResult,
   type ToolSet,
 } from 'ai';
+import { type RunAgentMessage } from 'twenty-shared/application';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -232,7 +234,7 @@ export class AgentAsyncExecutorService {
 
   async executeAgent({
     agent,
-    userPrompt,
+    messages,
     baseSystemPrompt,
     actorContext,
     authContext,
@@ -242,7 +244,7 @@ export class AgentAsyncExecutorService {
     toolLoadingStrategy = 'preload',
   }: {
     agent: AgentEntity | null;
-    userPrompt: string;
+    messages: RunAgentMessage[];
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
@@ -251,6 +253,13 @@ export class AgentAsyncExecutorService {
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
+    if (!isNonEmptyArray(messages)) {
+      throw new AiException(
+        'Provide at least one message to run an agent',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
 
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
@@ -348,7 +357,12 @@ export class AgentAsyncExecutorService {
         system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
-        prompt: userPrompt,
+        messages: messages.map(
+          (message): ModelMessage => ({
+            role: message.role,
+            content: message.content,
+          }),
+        ),
         stopWhen: (step) =>
           stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,
