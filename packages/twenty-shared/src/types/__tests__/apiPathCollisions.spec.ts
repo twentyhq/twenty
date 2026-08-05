@@ -1,6 +1,6 @@
-import { ApiPath } from 'src/types/ApiPath';
-import { AppBasePath } from 'src/types/AppBasePath';
-import { AppPath } from 'src/types/AppPath';
+import { ApiPath } from '@/types/ApiPath';
+import { AppBasePath } from '@/types/AppBasePath';
+import { AppPath } from '@/types/AppPath';
 
 const apiPaths = new Set<string>(Object.values(ApiPath));
 
