@@ -262,6 +262,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           strategy: 'mint',
         });
 
+        // Invalidation writes entries too, so run the sweep here as well — otherwise an
+        // invalidate-only workload never enforces the per-provider caps.
+        this.sweepLocalCacheIfDue();
+
         // Clear memoizer again after recomputation to evict any stale entries
         // cached by concurrent getOrRecompute calls during the flush window.
         await this.memoizer.clearKeys(`${workspaceId}-`);
