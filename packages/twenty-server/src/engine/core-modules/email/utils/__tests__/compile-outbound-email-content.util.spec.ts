@@ -31,6 +31,30 @@ describe('compileOutboundEmailContent', () => {
     expect(html).toContain('padding:24px');
   });
 
+  it('should preserve the rendered email document preamble', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Standards mode' }],
+        },
+      ],
+    });
+
+    expect(
+      html.startsWith(
+        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"',
+      ),
+    ).toBe(true);
+    expect(html).toContain(
+      '<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">',
+    );
+    expect(html).toContain(
+      '<meta name="x-apple-disable-message-reformatting">',
+    );
+  });
+
   it('should render columns as a table row with one cell per column', async () => {
     const html = await compileDocument({
       type: 'doc',
