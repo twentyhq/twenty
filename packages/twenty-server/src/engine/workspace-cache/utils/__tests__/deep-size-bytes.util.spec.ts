@@ -42,4 +42,13 @@ describe('deepSizeBytes', () => {
 
     expect(capped).toBeLessThan(full);
   });
+
+  it('counts primitive nodes toward the cap, so a huge flat array is bounded too', () => {
+    const manyNumbers = Array.from({ length: 10_000 }, (_, index) => index);
+
+    const capped = deepSizeBytes(manyNumbers, 10);
+    const full = deepSizeBytes(manyNumbers, CAP);
+
+    expect(capped).toBeLessThan(full);
+  });
 });

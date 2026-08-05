@@ -5,6 +5,8 @@ export const deepSizeBytes = (root: unknown, nodeCap: number): number => {
   let visited = 0;
 
   while (stack.length > 0 && visited < nodeCap) {
+    visited += 1;
+
     const value = stack.pop();
 
     if (typeof value === 'string') {
@@ -29,7 +31,6 @@ export const deepSizeBytes = (root: unknown, nodeCap: number): number => {
       continue;
     }
     seen.add(value);
-    visited += 1;
 
     if (Array.isArray(value)) {
       bytes += 16 + value.length * 8;

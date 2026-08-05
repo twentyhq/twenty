@@ -31,10 +31,7 @@ const SIZE_STARTUP_DELAY_MS = 30 * 1000;
 const SIZE_SAMPLE_PER_PROVIDER = 3;
 const SIZE_WALK_NODE_CAP = 300_000;
 
-// Owns every metric emitted for the per-pod local metadata cache: the recompute and
-// Redis-write duration histograms, the eviction counter, and the occupancy/byte gauges
-// (with a background deep-size sampler). WorkspaceCacheService drives its lifecycle via
-// start()/stop() and hands it timings; it never touches MetricsService directly.
+// Cache observability, split from WorkspaceCacheService (which drives it via start()/stop()).
 @Injectable()
 export class WorkspaceCacheMetricsService {
   private readonly logger = new Logger(WorkspaceCacheMetricsService.name);
@@ -47,6 +44,7 @@ export class WorkspaceCacheMetricsService {
   private sizeSampler?: ReturnType<typeof setInterval>;
   private sizeStartupTimer?: ReturnType<typeof setTimeout>;
   private statsCache?: { computedAt: number } & LocalCacheStats;
+  private sizeSampleInFlight = false;
 
   constructor(private readonly metricsService: MetricsService) {
     const meter = this.metricsService.getMeter();
@@ -120,9 +118,18 @@ export class WorkspaceCacheMetricsService {
 
   private scheduleSizeSampler(): void {
     const sample = (): void => {
-      this.refreshSizeBreakdown().catch((error) =>
-        this.logger.error('Failed to sample local cache size', error),
-      );
+      if (this.sizeSampleInFlight) {
+        return;
+      }
+
+      this.sizeSampleInFlight = true;
+      this.refreshSizeBreakdown()
+        .catch((error) =>
+          this.logger.error('Failed to sample local cache size', error),
+        )
+        .finally(() => {
+          this.sizeSampleInFlight = false;
+        });
     };
 
     // Prime once after startup so the gauges aren't 0 until the first 5-minute interval.
