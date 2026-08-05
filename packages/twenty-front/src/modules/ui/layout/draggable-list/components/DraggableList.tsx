@@ -69,22 +69,17 @@ export const DraggableList = ({
     [group, itemIndexByDraggableId],
   );
 
-  const resolveDrop = (
-    event:
-      | DragDropProviderDragMoveEvent<DraggableListItemDndData>
-      | DragDropProviderDragEndEvent<DraggableListItemDndData>,
-  ) =>
-    resolveDropFromPointer({
-      target: event.operation.target,
-      pointer: event.operation.position.current,
-      defaultOrientation: 'horizontal',
-      getDroppableItemCount: () => itemIndexByDraggableId.size,
-    });
-
   const handleDragMove = (
     event: DragDropProviderDragMoveEvent<DraggableListItemDndData>,
   ) => {
-    setActiveDropTargetIndex(resolveDrop(event)?.dropTargetIndex ?? null);
+    const resolvedDrop = resolveDropFromPointer({
+      target: event.operation.target,
+      pointer: event.operation.position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount: () => trailingIndex,
+    });
+
+    setActiveDropTargetIndex(resolvedDrop?.dropTargetIndex ?? null);
   };
 
   const handleDragEnd = (
@@ -103,7 +98,12 @@ export const DraggableList = ({
       return;
     }
 
-    const resolvedDrop = resolveDrop(event);
+    const resolvedDrop = resolveDropFromPointer({
+      target: event.operation.target,
+      pointer: event.operation.position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount: () => trailingIndex,
+    });
 
     if (!isDefined(resolvedDrop) || resolvedDrop.droppableId !== group) {
       return;

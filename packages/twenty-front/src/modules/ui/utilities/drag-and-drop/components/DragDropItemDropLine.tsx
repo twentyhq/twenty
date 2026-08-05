@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type DragDropItemDropLineOrientation = 'horizontal' | 'vertical';
+import { type DragDropItemDropTargetOrientation } from '@/ui/utilities/drag-and-drop/types/DragDropItemDropTargetOrientation';
 
 // Absolutely positioned over the leading edge of its (position: relative)
 // parent so activating the drop target does not reflow the list. Horizontal
 // straddles the item's top boundary (vertical lists); vertical draws on its
 // left (horizontal lists).
 const StyledDropLineContainer = styled.div<{
-  $orientation: DragDropItemDropLineOrientation;
+  $orientation: DragDropItemDropTargetOrientation;
 }>`
   bottom: ${({ $orientation }) => ($orientation === 'vertical' ? '0' : 'auto')};
   left: ${({ $orientation }) =>
@@ -21,7 +21,7 @@ const StyledDropLineContainer = styled.div<{
 `;
 
 const StyledDropLine = styled.div<{
-  $orientation: DragDropItemDropLineOrientation;
+  $orientation: DragDropItemDropTargetOrientation;
 }>`
   background-color: ${themeCssVariables.color.blue};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -32,7 +32,7 @@ const StyledDropLine = styled.div<{
 `;
 
 type DragDropItemDropLineProps = {
-  orientation?: DragDropItemDropLineOrientation;
+  orientation?: DragDropItemDropTargetOrientation;
   className?: string;
 };
 

@@ -12,6 +12,7 @@ import { recordIndexRecordGroupSortComponentState } from '@/object-record/record
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -77,8 +78,22 @@ export const useRecordBoardColumnDndKit = (): {
     null,
   );
 
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
+    `scroll-wrapper-record-board-${recordIndexId}`,
+  );
+
   const totalSize = visibleRecordGroupIds.length * recordIndexKanbanColumnWidth;
   const lastIndex = visibleRecordGroupIds.length;
+
+  const getFallbackDropTargetIndex = (pointerX: number) => {
+    const { scrollWrapperElement } = getScrollWrapperElement();
+    const scrollLeft = scrollWrapperElement?.scrollLeft ?? 0;
+    const containerLeft =
+      scrollWrapperElement?.getBoundingClientRect().left ?? 0;
+    const pointerContentX = scrollLeft + pointerX - containerLeft;
+
+    return pointerContentX > totalSize / 2 ? lastIndex : 0;
+  };
 
   const handleDragStart = (_event: DragStartPayload) => {
     setActiveDropTargetIndex(null);
@@ -93,8 +108,7 @@ export const useRecordBoardColumnDndKit = (): {
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ??
-      (position.current.x > totalSize / 2 ? lastIndex : 0);
+      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
 
     setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
       currentActiveDropTargetIndex === dropTargetIndex
@@ -121,8 +135,7 @@ export const useRecordBoardColumnDndKit = (): {
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ??
-      (position.current.x > totalSize / 2 ? lastIndex : 0);
+      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
 
     const destinationIndex =
       dropTargetIndex > sourceIndex ? dropTargetIndex - 1 : dropTargetIndex;

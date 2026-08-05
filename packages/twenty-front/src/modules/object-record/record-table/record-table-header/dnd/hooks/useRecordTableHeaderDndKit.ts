@@ -11,6 +11,7 @@ import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resol
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 
 type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
 type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
@@ -38,11 +39,25 @@ export const useRecordTableHeaderDndKit = (): {
     number | null
   >(null);
 
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
+    `record-table-scroll-${recordTableId}`,
+  );
+
   const totalSize = visibleRecordFields.reduce(
     (accumulatedSize, recordField) => accumulatedSize + recordField.size,
     0,
   );
   const lastIndex = visibleRecordFields.length - 1;
+
+  const getFallbackDropTargetIndex = (pointerX: number) => {
+    const { scrollWrapperElement } = getScrollWrapperElement();
+    const scrollLeft = scrollWrapperElement?.scrollLeft ?? 0;
+    const containerLeft =
+      scrollWrapperElement?.getBoundingClientRect().left ?? 0;
+    const pointerContentX = scrollLeft + pointerX - containerLeft;
+
+    return pointerContentX > totalSize / 2 ? lastIndex : 0;
+  };
 
   const handleDragStart = (_event: DragStartPayload) => {
     setActiveDropTargetIndex(null);
@@ -57,8 +72,7 @@ export const useRecordTableHeaderDndKit = (): {
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ??
-      (position.current.x > totalSize / 2 ? lastIndex : 0);
+      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
 
     setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
       currentActiveDropTargetIndex === dropTargetIndex
@@ -85,11 +99,10 @@ export const useRecordTableHeaderDndKit = (): {
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ??
-      (position.current.x > totalSize / 2 ? lastIndex : 0);
+      })?.dropTargetIndex ?? getFallbackDropTargetIndex(position.current.x);
 
     const destinationIndex =
-      dropTargetIndex < sourceIndex ? dropTargetIndex + 1 : dropTargetIndex;
+      dropTargetIndex <= sourceIndex ? dropTargetIndex + 1 : dropTargetIndex;
 
     // Sortable indices exclude the pinned label-identifier column at visibleRecordFields[0],
     // so shift by one to address the full visible field list.

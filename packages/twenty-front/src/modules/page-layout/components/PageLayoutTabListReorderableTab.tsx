@@ -13,7 +13,7 @@ type PageLayoutTabListReorderableTabProps = {
   tab: SingleTabProps;
   index: number;
   group: string;
-  nextTabId?: string | null;
+  nextTabId: string | null;
   isActive: boolean;
   disabled?: boolean;
   isWidgetDropTarget?: boolean;
@@ -31,7 +31,7 @@ export const PageLayoutTabListReorderableTab = ({
   tab,
   index,
   group,
-  nextTabId = null,
+  nextTabId,
   isActive,
   disabled,
   isWidgetDropTarget = false,
