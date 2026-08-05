@@ -10,7 +10,7 @@ import { join } from 'path';
 import { type VendorManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-const DEPENDENCY_WATCH_PATHS = ['package.json', 'yarn.lock'];
+const INSTALLED_DEPENDENCY_VERSION_PATHS = ['package.json', 'yarn.lock'];
 
 export type VendorBundleWatcherOptions = {
   appPath: string;
@@ -29,7 +29,7 @@ export class VendorBundleWatcher {
   private watcher: FSWatcher | null = null;
   private context: VendorBuildContext | null = null;
   private lastChecksum: string | null = null;
-  private isClosed = false;
+  private isDisowned = false;
 
   constructor(options: VendorBundleWatcherOptions) {
     this.appPath = options.appPath;
@@ -59,11 +59,8 @@ export class VendorBundleWatcher {
     await this.startDependencyWatcher();
   }
 
-  // A build already in flight cannot be cancelled, so it is disowned instead:
-  // its bundle belongs to a vendor configuration that no longer exists and must
-  // not be uploaded or published as the current one.
   async close(): Promise<void> {
-    this.isClosed = true;
+    this.isDisowned = true;
     await this.watcher?.close();
     this.watcher = null;
   }
@@ -78,7 +75,7 @@ export class VendorBundleWatcher {
         onFileBuilt: async (event) => {
           builtChecksum = event.checksum;
 
-          if (this.isClosed || event.checksum === this.lastChecksum) {
+          if (this.isDisowned || event.checksum === this.lastChecksum) {
             return;
           }
 
@@ -86,7 +83,7 @@ export class VendorBundleWatcher {
         },
       });
 
-      if (this.isClosed) {
+      if (this.isDisowned) {
         return;
       }
 
@@ -95,7 +92,7 @@ export class VendorBundleWatcher {
         await this.handleVendorRebuilt();
       }
     } catch (error) {
-      if (this.isClosed) {
+      if (this.isDisowned) {
         return;
       }
 
@@ -108,12 +105,10 @@ export class VendorBundleWatcher {
     }
   }
 
-  // The bundle content depends on the installed dependency versions, not only
-  // on the vendor source file, so an install or upgrade has to rebuild it.
   private async startDependencyWatcher(): Promise<void> {
     const watchedPaths = (
       await Promise.all(
-        DEPENDENCY_WATCH_PATHS.map(async (watchPath) => {
+        INSTALLED_DEPENDENCY_VERSION_PATHS.map(async (watchPath) => {
           const absolutePath = join(this.appPath, watchPath);
 
           return (await pathExists(absolutePath)) ? absolutePath : null;

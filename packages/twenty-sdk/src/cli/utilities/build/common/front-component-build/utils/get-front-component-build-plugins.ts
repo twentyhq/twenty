@@ -1,4 +1,5 @@
 import type * as esbuild from 'esbuild';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createVendorShimPlugin } from '@/cli/utilities/build/common/vendor-build/create-vendor-shim-plugin';
 import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
@@ -13,20 +14,23 @@ type GetFrontComponentBuildPluginsOptions = {
   getVendorBuildContext?: () => VendorBuildContext | null;
 };
 
-// The vendor shim plugin resolves vendored specifiers before the jsx wrapper
-// gets a chance to intercept them, so a vendored react is served by the vendor
-// bundle instead of being wrapped and bundled again into every component.
 export const getFrontComponentBuildPlugins = (
   options?: GetFrontComponentBuildPluginsOptions,
-): esbuild.Plugin[] => [
-  ...(options?.getVendorBuildContext
+): esbuild.Plugin[] => {
+  const pluginsResolvingVendoredSpecifiersBeforeTheJsxWrapper = isDefined(
+    options?.getVendorBuildContext,
+  )
     ? [createVendorShimPlugin(options.getVendorBuildContext)]
-    : []),
-  createJsxRuntimeRemoteWrapperPlugin(
-    options?.usePreact ? { usePreact: true } : undefined,
-  ),
-  ...(options?.usePreact ? [createPreactAliasPlugin()] : []),
-  jsxTransformToRemoteDomWorkerFormatPlugin,
-  cssInjectionPlugin,
-  stripCommentsPlugin,
-];
+    : [];
+
+  return [
+    ...pluginsResolvingVendoredSpecifiersBeforeTheJsxWrapper,
+    createJsxRuntimeRemoteWrapperPlugin(
+      options?.usePreact ? { usePreact: true } : undefined,
+    ),
+    ...(options?.usePreact ? [createPreactAliasPlugin()] : []),
+    jsxTransformToRemoteDomWorkerFormatPlugin,
+    cssInjectionPlugin,
+    stripCommentsPlugin,
+  ];
+};

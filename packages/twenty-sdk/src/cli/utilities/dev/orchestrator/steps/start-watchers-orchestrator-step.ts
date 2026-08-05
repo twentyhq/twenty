@@ -219,8 +219,10 @@ export class StartWatchersOrchestratorStep {
     await this.frontComponentsWatcher.start();
   }
 
-  // Components inline a shim per vendored dependency, so they have to be
-  // rebuilt whenever the vendor bundle changes.
+  private async rebuildFrontComponentsAgainstCurrentVendor(): Promise<void> {
+    await this.frontComponentsWatcher?.restart(this.frontComponentSourcePaths);
+  }
+
   private async startVendorBundleWatcher(
     vendor: VendorManifest | undefined,
   ): Promise<void> {
@@ -233,29 +235,23 @@ export class StartWatchersOrchestratorStep {
       vendor,
       handleBuildError: this.handleFileBuildError.bind(this),
       handleFileBuilt: this.handleFileBuilt.bind(this),
-      handleVendorRebuilt: async () => {
-        await this.frontComponentsWatcher?.restart(
-          this.frontComponentSourcePaths,
-        );
-      },
+      handleVendorRebuilt: () =>
+        this.rebuildFrontComponentsAgainstCurrentVendor(),
     });
 
     await this.vendorBundleWatcher.start();
   }
 
-  // A vendor can appear or disappear at any time in dev, and components inline
-  // shims that only resolve when the bundle exists, so both transitions have to
-  // rebuild every component.
   private async handleVendorBundleWatcherRestart(
     vendor: VendorManifest | undefined,
   ): Promise<void> {
     const hasVendorWatcher = isDefined(this.vendorBundleWatcher);
-    const shouldRestart = isDefined(vendor)
-      ? !hasVendorWatcher ||
-        this.vendorBundleWatcher?.shouldRestart(vendor) === true
-      : hasVendorWatcher;
+    const isVendorAdded = isDefined(vendor) && !hasVendorWatcher;
+    const isVendorRemoved = !isDefined(vendor) && hasVendorWatcher;
+    const isVendorDependenciesChanged =
+      isDefined(vendor) && this.vendorBundleWatcher?.shouldRestart(vendor);
 
-    if (!shouldRestart) {
+    if (!isVendorAdded && !isVendorRemoved && !isVendorDependenciesChanged) {
       return;
     }
 
@@ -268,7 +264,7 @@ export class StartWatchersOrchestratorStep {
       return;
     }
 
-    await this.frontComponentsWatcher?.restart(this.frontComponentSourcePaths);
+    await this.rebuildFrontComponentsAgainstCurrentVendor();
   }
 
   private async startAssetWatcher(): Promise<void> {

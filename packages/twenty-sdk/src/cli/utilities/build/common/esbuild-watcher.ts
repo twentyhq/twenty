@@ -95,9 +95,6 @@ export class EsbuildWatcher implements RestartableWatcher {
   }
 
   async restart(sourcePaths: string[]): Promise<void> {
-    // Restarts come from independent sources (a manifest change, a vendor
-    // rebuild), so a request landing mid-restart is queued instead of dropped:
-    // dropping it would leave the outputs built against the previous state.
     if (this.isRestarting) {
       this.pendingRestartSourcePaths = sourcePaths;
 

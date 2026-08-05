@@ -1,6 +1,3 @@
-// React DOM resolves the hook dispatcher from the react copy it was bundled
-// with, so vendoring it without react leaves components rendering against a
-// second react copy and every hook throws at runtime.
 export const getVendorDependenciesErrors = (
   dependencies: string[],
 ): string[] => {

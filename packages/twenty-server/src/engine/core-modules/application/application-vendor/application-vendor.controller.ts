@@ -69,8 +69,6 @@ export class ApplicationVendorController {
           );
         }
 
-        // An unknown or malformed application id must not surface the
-        // underlying lookup failure to the client.
         if (error instanceof ApplicationException) {
           throw new NotFoundException(
             error.code === ApplicationExceptionCode.ENTITY_NOT_FOUND

@@ -1,5 +1,6 @@
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { type ApplicationVendorChecksumBroadcastRecord } from '@/front-components/types/ApplicationVendorChecksumBroadcastRecord';
+import { refetchApplicationVendorChecksumBypassingDeduplication } from '@/front-components/utils/refetchApplicationVendorChecksumBypassingDeduplication';
 import { useApolloClient } from '@apollo/client/react';
 import { isUndefined } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -34,29 +35,21 @@ export const useUpdateApplicationVendorChecksumApolloCache = ({
 
       const { vendorChecksum } = updatedRecord;
 
-      // A removed vendor broadcasts a null checksum, which has to reach the
-      // cache; only an application update carrying no checksum at all is
-      // irrelevant here.
       if (isUndefined(vendorChecksum)) {
         return;
       }
 
-      const cachedData =
+      const cachedChecksumQuery =
         apolloClient.cache.readQuery<GetApplicationVendorChecksumQuery>({
           query: GetApplicationVendorChecksumDocument,
           variables: { applicationId },
         });
+      const isChecksumQueryStillInFlight = !isDefined(cachedChecksumQuery);
 
-      // Writing into a cache the initial query has not populated yet would be
-      // overwritten by that in-flight response, so the value is refetched
-      // instead. Deduplication is disabled for that refetch, otherwise it is
-      // served by the very request that predates this update.
-      if (!isDefined(cachedData)) {
-        void apolloClient.query({
-          query: GetApplicationVendorChecksumDocument,
-          variables: { applicationId },
-          fetchPolicy: 'network-only',
-          context: { queryDeduplication: false },
+      if (isChecksumQueryStillInFlight) {
+        void refetchApplicationVendorChecksumBypassingDeduplication({
+          apolloClient,
+          applicationId,
         });
 
         return;

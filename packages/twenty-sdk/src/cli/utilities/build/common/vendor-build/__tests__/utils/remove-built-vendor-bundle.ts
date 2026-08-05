@@ -3,9 +3,6 @@ import { join } from 'path';
 
 import { OUTPUT_DIR } from 'twenty-shared/application';
 
-// Specs share the fixture application, so each one removes only the bundle it
-// built: emptying the whole output directory would delete artifacts a spec
-// running in parallel still depends on.
 export const removeBuiltVendorBundle = async ({
   appPath,
   builtVendorPath,
