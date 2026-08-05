@@ -114,6 +114,7 @@ export class ApplicationRegistrationVariableService {
     return true;
   }
 
+  // Syncs variable schemas from manifest: creates missing, updates metadata, removes stale
   async syncVariableSchemas(
     applicationRegistrationId: string,
     serverVariables: ServerVariables,
@@ -160,11 +161,14 @@ export class ApplicationRegistrationVariableService {
       }
     }
 
-    await variableRepository.delete({
-      applicationRegistrationId,
-      encryptedValue: '',
-      ...(declaredKeys.length > 0 ? { key: Not(In(declaredKeys)) } : {}),
-    });
+    if (declaredKeys.length > 0) {
+      await variableRepository.delete({
+        applicationRegistrationId,
+        key: Not(In(declaredKeys)),
+      });
+    } else {
+      await variableRepository.delete({ applicationRegistrationId });
+    }
   }
 
   async isConfiguredBatch(
