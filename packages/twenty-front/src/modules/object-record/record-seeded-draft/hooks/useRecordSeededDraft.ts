@@ -17,6 +17,11 @@ type UseRecordSeededDraftArgs<TDraft extends object> = {
   resetKey?: string;
 };
 
+type ScheduledPersist<TDraft> = {
+  draftToPersist: TDraft;
+  scheduledResetKey: string | undefined;
+};
+
 // Editing state seeded from a record, kept live against remote changes.
 //
 // Record data flows into local editing state exactly once per seed, so
@@ -31,7 +36,8 @@ type UseRecordSeededDraftArgs<TDraft extends object> = {
 //
 // Controlled inputs re-render from `draft`. Uncontrolled inputs remount via
 // `draftResyncKey`. Imperative editors (BlockNote) watch `draftResyncKey`
-// and replace their content when it changes.
+// and replace their content when it changes, and must call `updateDraft`
+// synchronously on change so no window is mistaken for pristine.
 export const useRecordSeededDraft = <TDraft extends object>({
   upstreamDraft,
   onPersist,
@@ -44,12 +50,22 @@ export const useRecordSeededDraft = <TDraft extends object>({
   const [lastResetKey, setLastResetKey] = useState(resetKey);
   const [resyncCount, setResyncCount] = useState(0);
 
-  const persistDebounced = useDebouncedCallback((nextDraft: TDraft) => {
-    onPersist(nextDraft);
-  }, persistDebounceMs);
+  // The reset check below runs during render, where cancelling the timer
+  // would be an unsafe side effect; instead each scheduled persist remembers
+  // the resetKey it was scheduled under and is dropped if a reset happened
+  // in between, so it can never target the previous record.
+  const persistDebounced = useDebouncedCallback(
+    ({ draftToPersist, scheduledResetKey }: ScheduledPersist<TDraft>) => {
+      if (scheduledResetKey !== resetKey) {
+        return;
+      }
+
+      onPersist(draftToPersist);
+    },
+    persistDebounceMs,
+  );
 
   if (resetKey !== lastResetKey) {
-    persistDebounced.cancel();
     setLastResetKey(resetKey);
     setLastUpstreamDraft(upstreamDraft);
     setDraft(upstreamDraft);
@@ -73,14 +89,16 @@ export const useRecordSeededDraft = <TDraft extends object>({
     const nextDraft = { ...draft, ...partialDraft };
 
     setDraft(nextDraft);
-    persistDebounced(nextDraft);
+    persistDebounced({
+      draftToPersist: nextDraft,
+      scheduledResetKey: resetKey,
+    });
   };
 
   return {
     draft,
     updateDraft,
     flush: persistDebounced.flush,
-    cancel: persistDebounced.cancel,
     isDirty:
       persistDebounced.isPending() || !isDeeplyEqual(draft, lastUpstreamDraft),
     draftResyncKey: resyncCount,

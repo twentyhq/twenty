@@ -52,6 +52,7 @@ export const FieldWidgetTextEditor = ({
   const { draft, updateDraft, flush } = useRecordSeededDraft({
     upstreamDraft: { text: fieldTextValue },
     persistDebounceMs: PERSIST_DEBOUNCE_MS,
+    resetKey: `${recordId}-${fieldMetadataItem.id}`,
     onPersist: ({ text }) => {
       if (isRecordFieldReadOnly === true) {
         return;

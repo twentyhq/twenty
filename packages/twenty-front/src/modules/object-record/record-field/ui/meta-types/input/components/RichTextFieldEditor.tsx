@@ -221,8 +221,6 @@ export const RichTextFieldEditor = ({
       objectMetadataItem,
     });
 
-    updateDraft({ blocknote: newStringifiedBody });
-
     const oldFieldValue = oldRecord?.[fieldName] as
       | { blocknote?: string | null }
       | undefined;
@@ -234,6 +232,11 @@ export const RichTextFieldEditor = ({
 
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
+
+    // The draft must turn dirty synchronously: store, cache and attachment
+    // work is debounced, and a remote adoption arriving in that window would
+    // otherwise replace content the user is actively typing.
+    updateDraft({ blocknote: newStringifiedBody });
 
     handleBodyChangeDebounced(newStringifiedBody);
   };
