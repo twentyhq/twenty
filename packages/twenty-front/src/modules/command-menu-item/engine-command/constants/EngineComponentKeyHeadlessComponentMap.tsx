@@ -5,6 +5,7 @@ import { NavigationEngineCommand } from '@/command-menu-item/engine-command/comp
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
 import { SendMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignSingleRecordCommand';
 import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignTestSingleRecordCommand';
+import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
@@ -261,6 +262,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.SEND_MESSAGE_CAMPAIGN_TEST]: (
     <SendMessageCampaignTestSingleRecordCommand />
+  ),
+  [EngineComponentKey.EMAIL_BLOCK_SETTINGS]: (
+    <OpenEmailBlockSettingsSingleRecordCommand />
   ),
 
   // Deprecated keys kept for backward compatibility until migration runs

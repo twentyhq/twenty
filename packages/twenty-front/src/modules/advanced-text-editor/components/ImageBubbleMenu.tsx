@@ -1,5 +1,5 @@
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
-import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/TextBubbleMenu';
+import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';

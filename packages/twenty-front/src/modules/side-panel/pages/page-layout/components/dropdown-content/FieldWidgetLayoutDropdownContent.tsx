@@ -2,7 +2,6 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { RecordTableWidgetViewDraftInitEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftInitEffect';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import {
   type RecordTableWidgetLayoutViewType,
@@ -208,16 +207,6 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
   return (
     <DropdownMenuItemsContainer>
-      {/* The widget's draft snapshot is normally seeded by the table-family
-          renderer; while displayed as Field/Card that renderer isn't mounted,
-          so seed the draft here (idempotent) for direct e.g. Card -> Kanban
-          switches. */}
-      {isDefined(currentViewId) && isDefined(widgetInEditMode) && (
-        <RecordTableWidgetViewDraftInitEffect
-          widgetId={widgetInEditMode.id}
-          viewId={currentViewId}
-        />
-      )}
       <SelectableList
         selectableListInstanceId={dropdownId}
         focusId={dropdownId}
