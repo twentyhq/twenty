@@ -1,6 +1,8 @@
 import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
+
 const CONTEXT_MESSAGE_LIMIT = 15;
 // conversations.replies pages from the start of the thread, so fetch a wider
 // window and keep the tail to stay on the most recent turns
@@ -13,7 +15,7 @@ type SlackContextMessage = {
   text?: string;
 };
 
-const formatContextMessages = ({
+const toAgentMessages = ({
   messages,
   excludeMessageTimestamps,
   excludeMessageTexts,
@@ -21,7 +23,7 @@ const formatContextMessages = ({
   messages: ReadonlyArray<SlackContextMessage>;
   excludeMessageTimestamps: Set<string>;
   excludeMessageTexts: Set<string>;
-}): string =>
+}): SlackAssistantAgentMessage[] =>
   messages
     .filter((message) => {
       if (
@@ -41,16 +43,18 @@ const formatContextMessages = ({
       return isNonEmptyString(message.text);
     })
     .slice(-CONTEXT_MESSAGE_LIMIT)
-    .map((message) => {
-      const author = isNonEmptyString(message.bot_id)
-        ? 'assistant'
-        : `<@${message.user ?? 'unknown'}>`;
+    .map((message): SlackAssistantAgentMessage => {
+      if (isNonEmptyString(message.bot_id)) {
+        return { role: 'assistant', content: message.text ?? '' };
+      }
 
-      return `${author}: ${message.text}`;
-    })
-    .join('\n');
+      return {
+        role: 'user',
+        content: `<@${message.user ?? 'unknown'}>: ${message.text}`,
+      };
+    });
 
-export const fetchSlackConversationContext = async ({
+export const fetchSlackConversationMessages = async ({
   client,
   channelId,
   threadTimestamp,
@@ -64,7 +68,7 @@ export const fetchSlackConversationContext = async ({
   isDirectMessage: boolean;
   excludeMessageTimestamps?: string[];
   excludeMessageTexts?: string[];
-}): Promise<string | undefined> => {
+}): Promise<SlackAssistantAgentMessage[] | undefined> => {
   const excludedTimestamps = new Set(
     excludeMessageTimestamps.filter(isNonEmptyString),
   );
@@ -78,7 +82,7 @@ export const fetchSlackConversationContext = async ({
         limit: THREAD_REPLIES_FETCH_LIMIT,
       });
 
-      return formatContextMessages({
+      return toAgentMessages({
         messages: replies.messages ?? [],
         excludeMessageTimestamps: excludedTimestamps,
         excludeMessageTexts: excludedTexts,
@@ -91,7 +95,7 @@ export const fetchSlackConversationContext = async ({
         limit: CONTEXT_MESSAGE_LIMIT,
       });
 
-      return formatContextMessages({
+      return toAgentMessages({
         messages: [...(history.messages ?? [])].reverse(),
         excludeMessageTimestamps: excludedTimestamps,
         excludeMessageTexts: excludedTexts,
