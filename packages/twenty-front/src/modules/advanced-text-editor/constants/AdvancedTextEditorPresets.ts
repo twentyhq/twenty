@@ -26,7 +26,7 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
   workflowEmailBody: {
     contentType: 'json',
     chrome: 'field',
-    minHeight: 340,
+    minHeight: 120,
     enableFullScreen: true,
     capabilities: FULL_RICH_TEXT_CAPABILITIES,
   },
