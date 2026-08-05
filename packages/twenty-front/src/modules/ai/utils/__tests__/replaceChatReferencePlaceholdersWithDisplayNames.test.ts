@@ -17,12 +17,25 @@ describe('replaceChatReferencePlaceholdersWithDisplayNames', () => {
     ).toBe('Open Partners and Companies');
   });
 
-  it('should keep a placeholder without a matching reference', () => {
+  it('should keep a placeholder whose index is out of range', () => {
+    const { references } = replaceChatReferencesWithPlaceholders(
+      'Open [[object:partner:Partners[[/object]]',
+    );
+
     expect(
       replaceChatReferencePlaceholdersWithDisplayNames({
-        text: `Open ${getChatReferencePlaceholder(3)}`,
+        text: `${getChatReferencePlaceholder(0)} then ${getChatReferencePlaceholder(3)}`,
+        references,
+      }),
+    ).toBe(`Partners then ${getChatReferencePlaceholder(3)}`);
+  });
+
+  it('should leave text untouched when there is no reference', () => {
+    expect(
+      replaceChatReferencePlaceholdersWithDisplayNames({
+        text: 'Open the partners list',
         references: [],
       }),
-    ).toBe(`Open ${getChatReferencePlaceholder(3)}`);
+    ).toBe('Open the partners list');
   });
 });
