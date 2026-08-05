@@ -1,4 +1,9 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 
 import { type Histogram } from '@opentelemetry/api';
@@ -45,7 +50,9 @@ const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_CACHE_STATS_TTL_MS = 5_000;
-const LOCAL_CACHE_BYTES_SAMPLE_SIZE = 20;
+const LOCAL_CACHE_SIZE_REFRESH_MS = 5 * 60 * 1000;
+const LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER = 3;
+const LOCAL_CACHE_SIZE_WALK_NODE_CAP = 300_000;
 const CACHE_DURATION_BUCKETS_SECONDS = [
   0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
 ];
@@ -65,7 +72,7 @@ type RecomputeHashResolution =
     };
 
 @Injectable()
-export class WorkspaceCacheService implements OnModuleInit {
+export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private readonly localCache = new Map<
     string,
     WorkspaceLocalCacheEntry<CacheDataType>
@@ -153,7 +160,18 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
 
     this.registerLocalCacheGauges();
+    this.scheduleCacheSizeSampler();
   }
+
+  onModuleDestroy(): void {
+    if (isDefined(this.cacheSizeSampler)) {
+      clearInterval(this.cacheSizeSampler);
+    }
+  }
+
+  private cacheSizeByProvider: Record<string, number> = {};
+  private cacheSizeTotalBytes = 0;
+  private cacheSizeSampler?: ReturnType<typeof setInterval>;
 
   private localCacheStatsCache?: {
     computedAt: number;
@@ -202,49 +220,160 @@ export class WorkspaceCacheService implements OnModuleInit {
       workspaces: workspaceIds.size,
       versionsTotal,
       versionsByCount,
-      estimatedBytes: this.estimateLocalCacheBytes(),
+      estimatedBytes: this.cacheSizeTotalBytes,
     };
 
     return this.localCacheStatsCache;
   }
 
-  // Extrapolate total serialized bytes from a small evenly-spaced sample to keep
-  // the per-scrape JSON.stringify cost bounded.
-  private estimateLocalCacheBytes(): number {
-    const entryCount = this.localCache.size;
+  private scheduleCacheSizeSampler(): void {
+    this.cacheSizeSampler = setInterval(() => {
+      this.refreshCacheSizeBreakdown().catch((error) =>
+        this.logger.error('Failed to sample local cache size', error),
+      );
+    }, LOCAL_CACHE_SIZE_REFRESH_MS);
+    this.cacheSizeSampler.unref();
+  }
 
-    if (entryCount === 0) {
-      return 0;
-    }
+  // Estimates per-provider bytes by deep-walking a few entries per provider
+  // (circular-safe, so it also covers local-only providers like ORMEntityMetadatas
+  // that JSON.stringify can't). Runs on a timer and yields between walks to keep
+  // it off the request hot path.
+  private async refreshCacheSizeBreakdown(): Promise<void> {
+    const perProvider: Record<
+      string,
+      { count: number; sampledBytes: number; sampled: number }
+    > = {};
 
-    const step = Math.max(
-      1,
-      Math.floor(entryCount / LOCAL_CACHE_BYTES_SAMPLE_SIZE),
-    );
-    let sampledBytes = 0;
-    let sampledEntries = 0;
-    let index = 0;
+    for (const [key, entry] of this.localCache) {
+      const provider = key.slice(0, key.lastIndexOf(':'));
+      const stats = (perProvider[provider] ??= {
+        count: 0,
+        sampledBytes: 0,
+        sampled: 0,
+      });
 
-    for (const entry of this.localCache.values()) {
-      if (index % step === 0) {
+      stats.count += 1;
+
+      if (stats.sampled < LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER) {
         const version = entry.versions.get(entry.latestHash);
 
         if (isDefined(version)) {
-          try {
-            // Some local-only providers hold circular, non-serializable data.
-            sampledBytes += JSON.stringify(version.data).length;
-            sampledEntries += 1;
-          } catch {
-            continue;
-          }
+          stats.sampledBytes += this.deepSizeBytes(version.data);
+          stats.sampled += 1;
+          await new Promise((resolve) => setImmediate(resolve));
         }
       }
-      index += 1;
     }
 
-    return sampledEntries === 0
-      ? 0
-      : Math.round((sampledBytes / sampledEntries) * entryCount);
+    const byProvider: Record<string, number> = {};
+    let total = 0;
+
+    for (const [provider, stats] of Object.entries(perProvider)) {
+      const estimate =
+        stats.sampled === 0
+          ? 0
+          : Math.round((stats.sampledBytes / stats.sampled) * stats.count);
+
+      byProvider[provider] = estimate;
+      total += estimate;
+    }
+
+    this.cacheSizeByProvider = byProvider;
+    this.cacheSizeTotalBytes = total;
+  }
+
+  // Approximate retained bytes of an object graph; handles cycles and Map/Set,
+  // and is node-capped to bound cost.
+  private deepSizeBytes(root: unknown): number {
+    const seen = new WeakSet<object>();
+    const stack: unknown[] = [root];
+    let bytes = 0;
+    let visited = 0;
+
+    while (stack.length > 0 && visited < LOCAL_CACHE_SIZE_WALK_NODE_CAP) {
+      const value = stack.pop();
+
+      if (typeof value === 'string') {
+        bytes += 12 + value.length * 2;
+        continue;
+      }
+      if (typeof value === 'number') {
+        bytes += 8;
+        continue;
+      }
+      if (typeof value === 'boolean') {
+        bytes += 4;
+        continue;
+      }
+      if (
+        value === null ||
+        (typeof value !== 'object' && typeof value !== 'function')
+      ) {
+        continue;
+      }
+      if (seen.has(value)) {
+        continue;
+      }
+      seen.add(value);
+      visited += 1;
+
+      if (Array.isArray(value)) {
+        bytes += 16 + value.length * 8;
+        for (const item of value) {
+          stack.push(item);
+        }
+        continue;
+      }
+
+      let handled = false;
+
+      try {
+        if (value instanceof Map) {
+          bytes += 48 + value.size * 16;
+          for (const [mapKey, mapValue] of value) {
+            stack.push(mapKey);
+            stack.push(mapValue);
+          }
+          handled = true;
+        }
+      } catch {
+        handled = false;
+      }
+      if (handled) {
+        continue;
+      }
+
+      try {
+        if (value instanceof Set) {
+          bytes += 48 + value.size * 8;
+          for (const item of value) {
+            stack.push(item);
+          }
+          handled = true;
+        }
+      } catch {
+        handled = false;
+      }
+      if (handled) {
+        continue;
+      }
+
+      bytes += 32;
+      let entries: [string, unknown][] = [];
+
+      try {
+        entries = Object.entries(value);
+      } catch {
+        entries = [];
+      }
+      for (const [entryKey, child] of entries) {
+        bytes += entryKey.length * 2 + 8;
+        stack.push(child);
+      }
+    }
+
+    return bytes;
   }
 
   private registerLocalCacheGauges(): void {
@@ -275,7 +404,7 @@ export class WorkspaceCacheService implements OnModuleInit {
       metricName: 'twenty_workspace_cache_local_bytes_estimate',
       options: {
         description:
-          'Estimated serialized bytes held in the local workspace metadata cache',
+          'Estimated retained bytes (deep-size, includes local-only providers) in the local workspace metadata cache',
         unit: 'By',
       },
       callback: async () => this.computeLocalCacheStats().estimatedBytes,
@@ -290,6 +419,19 @@ export class WorkspaceCacheService implements OnModuleInit {
         Object.entries(this.computeLocalCacheStats().versionsByCount).map(
           ([versions, value]) => ({ value, attributes: { versions } }),
         ),
+    });
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_workspace_cache_local_bytes_by_provider',
+      options: {
+        description:
+          'Estimated retained bytes in the local workspace metadata cache per provider',
+        unit: 'By',
+      },
+      callback: async () =>
+        Object.entries(this.cacheSizeByProvider).map(([provider, value]) => ({
+          value,
+          attributes: { provider },
+        })),
     });
   }
 
