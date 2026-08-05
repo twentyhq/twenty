@@ -6,6 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -36,6 +39,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -115,6 +119,8 @@ export class WorkspaceMigrationRunnerService {
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
 
+    const cacheInvalidationStart = performance.now();
+
     await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
       workspaceId,
       flatMapsKeys: allFlatEntityMapsKeys,
@@ -142,6 +148,14 @@ export class WorkspaceMigrationRunnerService {
         `Failed to invalidate ${invalidationFailures.length} cache operations`,
       );
     }
+
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      value: performance.now() - cacheInvalidationStart,
+      unit: 'ms',
+      attributes: { phase: 'cache-invalidation' },
+      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
 
     this.logger.perfTimeEnd(
       'Runner',
@@ -200,6 +214,7 @@ export class WorkspaceMigrationRunnerService {
     this.logger.perfTime('Runner', 'Total execution');
     this.logger.perfTime('Runner', 'Initial cache retrieval');
 
+    const runStart = performance.now();
     const initialCacheRetrievalStart = performance.now();
 
     const queryRunner = this.coreDataSource.createQueryRunner();
@@ -245,6 +260,14 @@ export class WorkspaceMigrationRunnerService {
 
     const initialCacheRetrievalMs =
       performance.now() - initialCacheRetrievalStart;
+
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      value: initialCacheRetrievalMs,
+      unit: 'ms',
+      attributes: { phase: 'initial-cache-retrieval' },
+      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
 
     this.logger.perf(
       `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
@@ -354,6 +377,22 @@ export class WorkspaceMigrationRunnerService {
       const commitMs = performance.now() - commitStart;
       const transactionMs = performance.now() - transactionStart;
 
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+        value: transactionMs,
+        unit: 'ms',
+        attributes: { phase: 'transaction' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+        value: commitMs,
+        unit: 'ms',
+        attributes: { phase: 'commit' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
       this.logger.perf(
         `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
         'Runner',
@@ -413,6 +452,14 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+        value: performance.now() - runStart,
+        unit: 'ms',
+        attributes: { status: 'fail' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
       if (error instanceof WorkspaceMigrationRunnerException) {
         throw error;
       }
@@ -470,6 +517,14 @@ export class WorkspaceMigrationRunnerService {
     const hasSchemaMetadataChanged =
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
       allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
+
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+      value: performance.now() - runStart,
+      unit: 'ms',
+      attributes: { status: 'success' },
+      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
 
     this.logger.perfTimeEnd('Runner', 'Total execution');
 
