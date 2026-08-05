@@ -14,6 +14,7 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 export const buildRequiredToolAuthContext = async ({
   context,
   userRepository,
+  userWorkspaceRepository,
   workspaceCacheService,
 }: {
   context: ToolProviderContext;
@@ -21,6 +22,24 @@ export const buildRequiredToolAuthContext = async ({
   if (!isDefined(context.userId) || !isDefined(context.userWorkspaceId)) {
     throw new AuthException(
       'userId and userWorkspaceId are required for database operations',
+      AuthExceptionCode.UNAUTHENTICATED,
+    );
+  }
+
+  // The identity triple arrives as separate fields, so validate that the
+  // userWorkspace actually binds this user to this workspace, exactly like
+  // token-based auth does, before building an auth context from it.
+  const userWorkspace = await userWorkspaceRepository.findOne({
+    where: {
+      id: context.userWorkspaceId,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+    },
+  });
+
+  if (!isDefined(userWorkspace)) {
+    throw new AuthException(
+      'User workspace not found',
       AuthExceptionCode.UNAUTHENTICATED,
     );
   }

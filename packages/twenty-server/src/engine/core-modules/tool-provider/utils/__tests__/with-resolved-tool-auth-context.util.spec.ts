@@ -38,6 +38,13 @@ describe('withResolvedToolAuthContext', () => {
         deletedAt: null,
       }),
     },
+    userWorkspaceRepository: {
+      findOne: jest.fn().mockResolvedValue({
+        id: userWorkspaceId,
+        userId,
+        workspaceId,
+      }),
+    },
     workspaceCacheService: {
       getOrRecompute: jest.fn().mockResolvedValue({
         flatWorkspaceMemberMaps: {

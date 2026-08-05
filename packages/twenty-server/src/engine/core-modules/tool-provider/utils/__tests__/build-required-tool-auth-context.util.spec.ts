@@ -21,40 +21,56 @@ describe('buildRequiredToolAuthContext', () => {
     jest.clearAllMocks();
   });
 
-  it('should build a user auth context from the tool identity', async () => {
-    const authContext = await buildRequiredToolAuthContext({
-      context: buildContext({ userId, userWorkspaceId }),
-      userRepository: {
-        findOne: jest.fn().mockResolvedValue({
-          id: userId,
-          firstName: 'Jane',
-          lastName: 'Doe',
-          email: 'jane@example.com',
-          isEmailVerified: true,
-          disabled: false,
-          canImpersonate: false,
-          canAccessFullAdminPanel: false,
-          locale: 'en',
-          createdAt: new Date('2024-01-01T00:00:00Z'),
-          updatedAt: new Date('2024-01-01T00:00:00Z'),
-          deletedAt: null,
-        }),
-      },
-      workspaceCacheService: {
-        getOrRecompute: jest.fn().mockResolvedValue({
-          flatWorkspaceMemberMaps: {
-            idByUserId: { [userId]: workspaceMemberId },
-            byId: {
-              [workspaceMemberId]: {
-                id: workspaceMemberId,
-                userId,
-              },
+  const buildDependencies = () => ({
+    userRepository: {
+      findOne: jest.fn().mockResolvedValue({
+        id: userId,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        email: 'jane@example.com',
+        isEmailVerified: true,
+        disabled: false,
+        canImpersonate: false,
+        canAccessFullAdminPanel: false,
+        locale: 'en',
+        createdAt: new Date('2024-01-01T00:00:00Z'),
+        updatedAt: new Date('2024-01-01T00:00:00Z'),
+        deletedAt: null,
+      }),
+    },
+    userWorkspaceRepository: {
+      findOne: jest.fn().mockResolvedValue({
+        id: userWorkspaceId,
+        userId,
+        workspaceId,
+      }),
+    },
+    workspaceCacheService: {
+      getOrRecompute: jest.fn().mockResolvedValue({
+        flatWorkspaceMemberMaps: {
+          idByUserId: { [userId]: workspaceMemberId },
+          byId: {
+            [workspaceMemberId]: {
+              id: workspaceMemberId,
+              userId,
             },
           },
-        }),
-      },
+        },
+      }),
+    },
+  });
+
+  it('should build a user auth context from the tool identity', async () => {
+    const dependencies = buildDependencies();
+
+    const authContext = await buildRequiredToolAuthContext({
+      context: buildContext({ userId, userWorkspaceId }),
+      ...dependencies,
     });
 
+    expect(dependencies.userWorkspaceRepository.findOne).toHaveBeenCalledWith({
+      where: { id: userWorkspaceId, userId, workspaceId },
+    });
     expect(authContext).toMatchObject({
       type: 'user',
       userWorkspaceId,
@@ -67,38 +83,49 @@ describe('buildRequiredToolAuthContext', () => {
     await expect(
       buildRequiredToolAuthContext({
         context: buildContext(),
-        userRepository: { findOne: jest.fn() },
-        workspaceCacheService: { getOrRecompute: jest.fn() },
+        ...buildDependencies(),
       }),
     ).rejects.toThrow(AuthException);
   });
 
-  it('should throw when the user cannot be found', async () => {
+  it('should throw when the userWorkspace does not bind this user to this workspace', async () => {
+    const dependencies = buildDependencies();
+
+    dependencies.userWorkspaceRepository.findOne.mockResolvedValue(null);
+
     await expect(
       buildRequiredToolAuthContext({
         context: buildContext({ userId, userWorkspaceId }),
-        userRepository: { findOne: jest.fn().mockResolvedValue(null) },
-        workspaceCacheService: { getOrRecompute: jest.fn() },
+        ...dependencies,
+      }),
+    ).rejects.toThrow('User workspace not found');
+    expect(dependencies.userRepository.findOne).not.toHaveBeenCalled();
+  });
+
+  it('should throw when the user cannot be found', async () => {
+    const dependencies = buildDependencies();
+
+    dependencies.userRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      buildRequiredToolAuthContext({
+        context: buildContext({ userId, userWorkspaceId }),
+        ...dependencies,
       }),
     ).rejects.toThrow('User not found');
   });
 
   it('should throw when the user has no workspace member', async () => {
+    const dependencies = buildDependencies();
+
+    dependencies.workspaceCacheService.getOrRecompute.mockResolvedValue({
+      flatWorkspaceMemberMaps: { idByUserId: {}, byId: {} },
+    });
+
     await expect(
       buildRequiredToolAuthContext({
         context: buildContext({ userId, userWorkspaceId }),
-        userRepository: {
-          findOne: jest.fn().mockResolvedValue({
-            id: userId,
-            createdAt: new Date('2024-01-01T00:00:00Z'),
-            updatedAt: new Date('2024-01-01T00:00:00Z'),
-          }),
-        },
-        workspaceCacheService: {
-          getOrRecompute: jest.fn().mockResolvedValue({
-            flatWorkspaceMemberMaps: { idByUserId: {}, byId: {} },
-          }),
-        },
+        ...dependencies,
       }),
     ).rejects.toThrow('Workspace member not found');
   });
