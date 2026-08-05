@@ -1,5 +1,5 @@
 import { type EmailDocumentStringContext } from './email-document-string-context';
-import { TIPTAP_MARK_TYPES } from './tiptap-mark-types';
+import { TIPTAP_MARK_TYPES, type TipTapMarkType } from './tiptap-mark-types';
 
 type EmailDocumentMarkDefinition = {
   stringAttributes: Readonly<
@@ -15,7 +15,9 @@ export const EMAIL_DOCUMENT_MARK_CATALOG = {
   [TIPTAP_MARK_TYPES.LINK]: {
     stringAttributes: { href: 'url' },
   },
-} as const satisfies Record<string, EmailDocumentMarkDefinition>;
+} as const satisfies Partial<
+  Record<TipTapMarkType, EmailDocumentMarkDefinition>
+>;
 
 export type EmailDocumentMarkType = keyof typeof EMAIL_DOCUMENT_MARK_CATALOG;
 
