@@ -9,6 +9,7 @@ import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { buildVendorBundle } from '@/cli/utilities/build/common/vendor-build/build-vendor-bundle';
+import { removeBuiltVendorBundle } from '@/cli/utilities/build/common/vendor-build/__tests__/utils/remove-built-vendor-bundle';
 import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
 
 const REACT_BUNDLED_MARKER = '@license React';
@@ -59,9 +60,9 @@ describe('vendor build', () => {
   }, 120000);
 
   afterAll(async () => {
-    await rm(join(MINIMAL_APP_PATH, OUTPUT_DIR), {
-      recursive: true,
-      force: true,
+    await removeBuiltVendorBundle({
+      appPath: MINIMAL_APP_PATH,
+      builtVendorPath: VENDOR_MANIFEST.builtVendorPath,
     });
   });
 

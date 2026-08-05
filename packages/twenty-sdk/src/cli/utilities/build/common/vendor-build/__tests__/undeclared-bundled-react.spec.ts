@@ -1,11 +1,7 @@
-import { rm } from 'node:fs/promises';
-import { join } from 'path';
-
-import { OUTPUT_DIR } from 'twenty-shared/application';
-
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { buildVendorBundle } from '@/cli/utilities/build/common/vendor-build/build-vendor-bundle';
 import { getUndeclaredBundledReactPackages } from '@/cli/utilities/build/common/vendor-build/utils/get-undeclared-bundled-react-packages';
+import { removeBuiltVendorBundle } from '@/cli/utilities/build/common/vendor-build/__tests__/utils/remove-built-vendor-bundle';
 
 const buildMetafile = (inputPaths: string[]) => ({
   inputs: Object.fromEntries(
@@ -57,9 +53,9 @@ describe('getUndeclaredBundledReactPackages', () => {
 
 describe('buildVendorBundle react duplication guard', () => {
   afterAll(async () => {
-    await rm(join(MINIMAL_APP_PATH, OUTPUT_DIR), {
-      recursive: true,
-      force: true,
+    await removeBuiltVendorBundle({
+      appPath: MINIMAL_APP_PATH,
+      builtVendorPath: 'undeclared-react-vendor.mjs',
     });
   });
 

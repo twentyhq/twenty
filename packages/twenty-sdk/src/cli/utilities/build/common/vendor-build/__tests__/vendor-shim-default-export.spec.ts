@@ -2,12 +2,13 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'path';
 
 import * as esbuild from 'esbuild';
-import { OUTPUT_DIR, VENDOR_BUNDLE_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { VENDOR_BUNDLE_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { buildVendorBundle } from '@/cli/utilities/build/common/vendor-build/build-vendor-bundle';
+import { removeBuiltVendorBundle } from '@/cli/utilities/build/common/vendor-build/__tests__/utils/remove-built-vendor-bundle';
 
 const VENDOR_MANIFEST = {
   dependencies: ['axios'],
@@ -56,9 +57,9 @@ describe('vendor shims for a dependency with a default export', () => {
       ).toBe(true);
     } finally {
       await rm(outputDir, { recursive: true, force: true });
-      await rm(join(MINIMAL_APP_PATH, OUTPUT_DIR), {
-        recursive: true,
-        force: true,
+      await removeBuiltVendorBundle({
+        appPath: MINIMAL_APP_PATH,
+        builtVendorPath: VENDOR_MANIFEST.builtVendorPath,
       });
     }
   }, 120000);
