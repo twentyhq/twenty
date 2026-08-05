@@ -17,6 +17,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -109,83 +110,6 @@ export const RichTextFieldEditor = ({
     return attachmentAbsoluteURL;
   };
 
-  const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
-    if (isRecordFieldReadOnly === true) return;
-
-    if (onPersistBody) {
-      onPersistBody(blocknote);
-      return;
-    }
-
-    updateOneRecord({
-      idToUpdate: recordId,
-      objectNameSingular,
-      updateOneRecordInput: {
-        [fieldName]: {
-          blocknote,
-          markdown: null,
-        },
-      },
-    });
-  }, 300);
-
-  const handleBodyChange = useCallback(
-    async (newStringifiedBody: string) => {
-      const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
-
-      store.set(
-        recordStoreFamilyState.atomFamily(recordId),
-        (prev: typeof oldRecord) => ({
-          ...prev,
-          id: recordId,
-          [fieldName]: {
-            blocknote: newStringifiedBody,
-            markdown: null,
-          },
-          __typename: prev?.__typename ?? objectNameSingular,
-        }),
-      );
-
-      modifyRecordFromCache({
-        recordId,
-        fieldModifiers: {
-          [fieldName]: () => ({
-            blocknote: newStringifiedBody,
-            markdown: null,
-          }),
-        },
-        cache,
-        objectMetadataItem,
-      });
-
-      persistBodyDebounced(prepareBodyWithSignedUrls(newStringifiedBody));
-
-      const oldFieldValue = oldRecord?.[fieldName] as
-        | { blocknote?: string | null }
-        | undefined;
-
-      await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
-    },
-    [
-      store,
-      recordId,
-      fieldName,
-      objectNameSingular,
-      cache,
-      objectMetadataItem,
-      persistBodyDebounced,
-      syncAttachments,
-    ],
-  );
-
-  const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
-
-  const handleEditorChange = () => {
-    const newStringifiedBody = JSON.stringify(editor.document) ?? '';
-
-    handleBodyChangeDebounced(newStringifiedBody);
-  };
-
   const fieldValue = isDefined(recordInStore)
     ? (recordInStore as Record<string, { blocknote?: string | null }>)?.[
         fieldName
@@ -223,14 +147,96 @@ export const RichTextFieldEditor = ({
     fieldName,
   );
 
-  const [currentRecordId, setCurrentRecordId] = useState(recordId);
+  const { updateDraft, flush, draftResyncKey } = useRecordSeededDraft({
+    upstreamDraft: { blocknote: fieldValue?.blocknote ?? '' },
+    persistDebounceMs: 300,
+    resetKey: recordId,
+    onPersist: ({ blocknote }) => {
+      if (isRecordFieldReadOnly === true) return;
+
+      const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
+
+      if (onPersistBody) {
+        onPersistBody(preparedBlocknote);
+        return;
+      }
+
+      updateOneRecord({
+        idToUpdate: recordId,
+        objectNameSingular,
+        updateOneRecordInput: {
+          [fieldName]: {
+            blocknote: preparedBlocknote,
+            markdown: null,
+          },
+        },
+      });
+    },
+  });
+
+  // The BlockNote editor is uncontrolled; when a remote value is adopted,
+  // replace its content in place instead of remounting to keep the instance.
+  const [lastAppliedResyncKey, setLastAppliedResyncKey] =
+    useState(draftResyncKey);
 
   useEffect(() => {
-    if (currentRecordId !== recordId) {
-      replaceBlockEditorContent(recordId);
-      setCurrentRecordId(recordId);
+    if (draftResyncKey === lastAppliedResyncKey) {
+      return;
     }
-  }, [recordId, currentRecordId, replaceBlockEditorContent]);
+
+    setLastAppliedResyncKey(draftResyncKey);
+    replaceBlockEditorContent(recordId);
+  }, [
+    draftResyncKey,
+    lastAppliedResyncKey,
+    replaceBlockEditorContent,
+    recordId,
+  ]);
+
+  const handleBodyChange = async (newStringifiedBody: string) => {
+    const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
+
+    store.set(
+      recordStoreFamilyState.atomFamily(recordId),
+      (prev: typeof oldRecord) => ({
+        ...prev,
+        id: recordId,
+        [fieldName]: {
+          blocknote: newStringifiedBody,
+          markdown: null,
+        },
+        __typename: prev?.__typename ?? objectNameSingular,
+      }),
+    );
+
+    modifyRecordFromCache({
+      recordId,
+      fieldModifiers: {
+        [fieldName]: () => ({
+          blocknote: newStringifiedBody,
+          markdown: null,
+        }),
+      },
+      cache,
+      objectMetadataItem,
+    });
+
+    updateDraft({ blocknote: newStringifiedBody });
+
+    const oldFieldValue = oldRecord?.[fieldName] as
+      | { blocknote?: string | null }
+      | undefined;
+
+    await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
+  };
+
+  const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
+
+  const handleEditorChange = () => {
+    const newStringifiedBody = JSON.stringify(editor.document) ?? '';
+
+    handleBodyChangeDebounced(newStringifiedBody);
+  };
 
   useHotkeysOnFocusedElement({
     keys: Key.Escape,
@@ -257,14 +263,17 @@ export const RichTextFieldEditor = ({
     });
   }, [focusId, pushFocusItemToFocusStack, onFocusOverride]);
 
-  const handleBlockEditorBlur = useCallback(() => {
+  const handleBlockEditorBlur = () => {
+    handleBodyChangeDebounced.flush();
+    flush();
+
     if (onBlurOverride) {
       onBlurOverride();
       return;
     }
 
     removeFocusItemFromFocusStackById({ focusId });
-  }, [focusId, removeFocusItemFromFocusStackById, onBlurOverride]);
+  };
 
   return (
     <BlockEditor
