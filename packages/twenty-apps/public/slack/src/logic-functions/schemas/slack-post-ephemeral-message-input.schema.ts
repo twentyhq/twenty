@@ -22,6 +22,12 @@ export const slackPostEphemeralMessageInputSchema: InputJsonSchema = {
       description:
         'Short note shown only to the recipient above — for example a private hint, validation result, or next step.',
     },
+    parentMessageTimestamp: {
+      type: 'string',
+      label: 'Thread timestamp (optional)',
+      description:
+        'Optional. Show the note inside a thread: the `messageTimestamp` of the thread’s first message, same as **Send Slack Message**.',
+    },
     messageFormat: {
       type: 'string',
       label: 'Message format',

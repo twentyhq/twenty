@@ -141,12 +141,79 @@ describe('parseSlackAssistantRequest', () => {
     expect(result.request).toBeNull();
   });
 
-  it('should skip a mention with no remaining text', () => {
+  it('should flag a mention with no remaining text for a hint reply', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({ text: '<@UBOT>' }),
     );
 
-    expect(result.request).toBeNull();
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Empty request text',
+      emptyRequest: {
+        slackChannelId: 'C123',
+        slackMessageTimestamp: '1700000000.000100',
+        parentMessageTimestamp: '1700000000.000100',
+      },
+    });
+  });
+
+  it('should target the existing thread when an empty mention is inside one', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({ text: '<@UBOT>', thread_ts: '1699999999.000001' }),
+    );
+
+    expect(result).toMatchObject({
+      request: null,
+      emptyRequest: {
+        parentMessageTimestamp: '1699999999.000001',
+      },
+    });
+  });
+
+  it('should flag an empty direct message without a thread target', () => {
+    const result = parseSlackAssistantRequest({
+      type: 'event_callback',
+      event_id: 'Ev456',
+      event: {
+        type: 'message',
+        channel_type: 'im',
+        user: 'U123',
+        text: '   ',
+        ts: '1700000000.000200',
+        channel: 'D123',
+      },
+    });
+
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Empty request text',
+      emptyRequest: {
+        slackChannelId: 'D123',
+        slackMessageTimestamp: '1700000000.000200',
+        parentMessageTimestamp: undefined,
+      },
+    });
+  });
+
+  it('should skip an empty unmentioned thread follow-up without a hint reply', () => {
+    const result = parseSlackAssistantRequest({
+      type: 'event_callback',
+      event_id: 'EvEmptyFollowUp',
+      event: {
+        type: 'message',
+        channel_type: 'channel',
+        user: 'U123',
+        text: '',
+        ts: '1700000000.000500',
+        thread_ts: '1699999999.000001',
+        channel: 'C123',
+      },
+    });
+
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Empty request text',
+    });
   });
 
   it('should skip non event_callback bodies', () => {

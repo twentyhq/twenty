@@ -3,9 +3,11 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { getSlackThreadSubscriptionState } from 'src/logic-functions/utils/get-slack-thread-subscription-state';
 import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
-import { isSlackThreadActive } from 'src/logic-functions/utils/is-slack-thread-active';
+import { nudgeExpiredSlackThread } from 'src/logic-functions/utils/nudge-expired-slack-thread';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
+import { replyToEmptySlackAssistantRequest } from 'src/logic-functions/utils/reply-to-empty-slack-assistant-request';
 
 const ALREADY_QUEUED_SKIP_REASON = 'Slack message is already queued';
 
@@ -17,16 +19,33 @@ export const enqueueSlackAssistantRequest = async (
   const parsed = parseSlackAssistantRequest(body);
 
   if (parsed.request === null) {
+    if (parsed.emptyRequest !== undefined) {
+      return await replyToEmptySlackAssistantRequest(parsed.emptyRequest);
+    }
+
     return { ok: true, skipped: parsed.skipReason };
   }
 
   if (parsed.requiresActiveThreadSubscription) {
-    const isActive = await isSlackThreadActive({
+    const subscriptionState = await getSlackThreadSubscriptionState({
       channelId: parsed.request.slackChannelId,
       threadTimestamp: parsed.request.slackThreadTimestamp,
     });
 
-    if (!isActive) {
+    if (subscriptionState === 'expired') {
+      await nudgeExpiredSlackThread({
+        slackChannelId: parsed.request.slackChannelId,
+        slackUserId: parsed.request.slackUserId,
+        threadTimestamp: parsed.request.slackThreadTimestamp,
+      });
+
+      return {
+        ok: true,
+        skipped: 'Thread subscription expired; nudged the requester',
+      };
+    }
+
+    if (subscriptionState === 'none') {
       return {
         ok: true,
         skipped: 'Thread is not subscribed for unmentioned follow-ups',

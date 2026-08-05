@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type SlackPostEphemeralMessageInput } from 'src/logic-functions/types/slack-post-ephemeral-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
@@ -19,6 +21,10 @@ export const slackPostEphemeralMessageHandler = async (
 
   const { client } = slackClientResult;
 
+  const parentTimestamp = isNonEmptyString(parameters.parentMessageTimestamp)
+    ? parameters.parentMessageTimestamp.trim() || undefined
+    : undefined;
+
   try {
     const bodyFields = getSlackChatMessageBodyFields({
       messageText: parameters.messageText,
@@ -28,6 +34,7 @@ export const slackPostEphemeralMessageHandler = async (
     const postEphemeralPayload = {
       channel: parameters.slackChannelId,
       user: parameters.recipientSlackUserId,
+      thread_ts: parentTimestamp,
       ...bodyFields,
     };
 

@@ -1,7 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack-assistant-empty-request.type';
 import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-assistant-request-draft.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 
 const LEADING_BOT_MENTION_PATTERN = /^<@[A-Z0-9]+(\|[^>]*)?>\s*/;
 
@@ -10,7 +12,11 @@ type ParsedSlackAssistantRequest =
       request: SlackAssistantRequestDraft;
       requiresActiveThreadSubscription: boolean;
     }
-  | { request: null; skipReason: string };
+  | {
+      request: null;
+      skipReason: string;
+      emptyRequest?: SlackAssistantEmptyRequest;
+    };
 
 const stripLeadingBotMention = (text: string): string =>
   text.replace(LEADING_BOT_MENTION_PATTERN, '').replace(/\s+/g, ' ').trim();
@@ -60,6 +66,24 @@ export const parseSlackAssistantRequest = (
     : rawText.replace(/\s+/g, ' ').trim();
 
   if (!isNonEmptyString(requestText)) {
+    // a mention or DM with no text is a visible dead-end without a reply, while
+    // an empty unmentioned thread follow-up can stay silent
+    if (isMention || isDirectMessage) {
+      return {
+        request: null,
+        skipReason: 'Empty request text',
+        emptyRequest: {
+          slackChannelId: event.channel,
+          slackMessageTimestamp: event.ts,
+          parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
+            slackThreadTimestamp: event.thread_ts,
+            slackMessageTimestamp: event.ts,
+            isDirectMessage,
+          }),
+        },
+      };
+    }
+
     return { request: null, skipReason: 'Empty request text' };
   }
 
