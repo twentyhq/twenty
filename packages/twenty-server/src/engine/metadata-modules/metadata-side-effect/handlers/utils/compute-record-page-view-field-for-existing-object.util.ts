@@ -7,10 +7,6 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-// Widget-driven view-field builder for the engine-owned record-page view of a
-// pre-existing object. Returns undefined (noop) when the engine view is absent,
-// when no active FIELDS widget targets it, or when the widget does not opt into
-// default visibility for new fields (newFieldDefaultVisibility null or absent).
 export const computeRecordPageViewFieldForExistingObject = ({
   sourceFlatFieldMetadata,
   recordPageViewUniversalIdentifier,
@@ -67,8 +63,6 @@ export const computeRecordPageViewFieldForExistingObject = ({
     return undefined;
   }
 
-  // New fields append into the last active group; custom objects are created
-  // with zero view field groups, so this degrades to no group.
   const activeFlatViewFieldGroups =
     recordPageFlatView.viewFieldGroupUniversalIdentifiers
       .map(
