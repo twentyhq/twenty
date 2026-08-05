@@ -46,9 +46,6 @@ const mapSlackMessagesToAgentMessages = ({
     })
     .slice(-CONTEXT_MESSAGE_LIMIT)
     .map((message): SlackAssistantAgentMessage => {
-      // Only this assistant's own replies become assistant turns; every other
-      // participant, bots included, stays attributed user content so the model
-      // never mistakes third-party output for its own
       if (
         isNonEmptyString(message.user) &&
         message.user === assistantBotUserId
