@@ -4,7 +4,11 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isValidUuid,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
@@ -61,14 +65,12 @@ export const useAgentChat = (
     const draftKey =
       store.get(currentAiChatThreadState.atom) ??
       AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-    const contentToSend =
-      draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-        ? (
-            store.get(agentChatDraftsByThreadIdState.atom)[
-              AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-            ] ?? store.get(agentChatInputState.atom)
-          ).trim()
-        : store.get(agentChatInputState.atom).trim();
+    const serializedContentToSend =
+      store.get(agentChatDraftsByThreadIdState.atom)[draftKey] ??
+      store.get(agentChatInputState.atom);
+    const contentToSend = tipTapDocumentToMarkdown(
+      serializedContentToSend,
+    ).trim();
 
     if (contentToSend === '') {
       return;
@@ -210,7 +212,7 @@ export const useAgentChat = (
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
-        [restoredDraftKey]: contentToSend,
+        [restoredDraftKey]: serializedContentToSend,
         ...(draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
           ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
           : {}),
@@ -233,7 +235,7 @@ export const useAgentChat = (
       );
 
       dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-        content: contentToSend,
+        content: serializedContentToSend,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

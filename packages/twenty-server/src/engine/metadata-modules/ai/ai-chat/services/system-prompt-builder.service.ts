@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { getValidTimeZoneOrUndefined } from 'twenty-shared/utils';
+import {
+  getValidTimeZoneOrUndefined,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -75,11 +78,11 @@ export class SystemPromptBuilderService {
       estimatedTokenCount: estimateTokenCount(responseFormatContent),
     });
 
-    if (workspaceInstructions) {
-      const workspaceSection = this.buildWorkspaceInstructionsSection(
-        workspaceInstructions,
-      );
+    const workspaceSection = this.buildWorkspaceInstructionsSection(
+      workspaceInstructions ?? '',
+    );
 
+    if (isNonEmptyString(workspaceSection)) {
       sections.push({
         title: 'Workspace Instructions',
         content: workspaceSection,
@@ -146,8 +149,12 @@ export class SystemPromptBuilderService {
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
 
-    if (workspaceInstructions) {
-      parts.push(this.buildWorkspaceInstructionsSection(workspaceInstructions));
+    const workspaceInstructionsSection = this.buildWorkspaceInstructionsSection(
+      workspaceInstructions ?? '',
+    );
+
+    if (isNonEmptyString(workspaceInstructionsSection)) {
+      parts.push(workspaceInstructionsSection);
     }
 
     if (userContext) {
@@ -170,12 +177,18 @@ export class SystemPromptBuilderService {
   }
 
   buildWorkspaceInstructionsSection(instructions: string): string {
+    const projectedInstructions = tipTapDocumentToMarkdown(instructions).trim();
+
+    if (!isNonEmptyString(projectedInstructions)) {
+      return '';
+    }
+
     return `
 ## Workspace Instructions
 
 The following are custom instructions provided by the workspace administrator:
 
-${instructions}`;
+${projectedInstructions}`;
   }
 
   buildUserContextSection(userContext: UserContext): string {
