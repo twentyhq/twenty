@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 
-import { type Histogram } from '@opentelemetry/api';
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 
@@ -17,10 +16,9 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
+import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
@@ -58,15 +56,6 @@ const LOCAL_ENTRY_COUNT_BY_PREFIX = new Map<string, number>(
     maxEntries,
   ]),
 );
-const LOCAL_CACHE_STATS_TTL_MS = 5_000;
-const LOCAL_CACHE_SIZE_REFRESH_MS = 5 * 60 * 1000;
-const LOCAL_CACHE_SIZE_STARTUP_DELAY_MS = 30 * 1000;
-const LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER = 3;
-const LOCAL_CACHE_SIZE_WALK_NODE_CAP = 300_000;
-const CACHE_DURATION_BUCKETS_SECONDS = [
-  0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
-];
-
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 
 type CacheEntriesResult = {
@@ -98,42 +87,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
 
-  private readonly recomputeDurationHistogram: Histogram;
-  private readonly redisWriteDurationHistogram: Histogram;
-
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly cacheStorage: CacheStorageService,
     private readonly discoveryService: DiscoveryService,
     private readonly reflector: Reflector,
-    private readonly metricsService: MetricsService,
+    private readonly cacheMetricsService: WorkspaceCacheMetricsService,
     private readonly twentyConfigService: TwentyConfigService,
-  ) {
-    const meter = this.metricsService.getMeter();
-
-    this.recomputeDurationHistogram = meter.createHistogram(
-      'twenty_workspace_cache_recompute_duration_seconds',
-      {
-        description:
-          'Wall-clock time to compute one workspace metadata cache entry from its provider',
-        unit: 's',
-        advice: {
-          explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS,
-        },
-      },
-    );
-    this.redisWriteDurationHistogram = meter.createHistogram(
-      'twenty_workspace_cache_redis_write_duration_seconds',
-      {
-        description:
-          'Wall-clock time to serialize and write recomputed cache entries to Redis',
-        unit: 's',
-        advice: {
-          explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS,
-        },
-      },
-    );
-  }
+  ) {}
 
   async onModuleInit() {
     const providers = this.discoveryService.getProviders();
@@ -168,277 +129,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
     }
 
-    this.registerLocalCacheGauges();
-    this.scheduleCacheSizeSampler();
+    this.cacheMetricsService.start(this.localCache);
   }
 
   onModuleDestroy(): void {
-    if (isDefined(this.cacheSizeStartupTimer)) {
-      clearTimeout(this.cacheSizeStartupTimer);
-    }
-    if (isDefined(this.cacheSizeSampler)) {
-      clearInterval(this.cacheSizeSampler);
-    }
-  }
-
-  private cacheSizeByProvider: Record<string, number> = {};
-  private cacheSizeTotalBytes = 0;
-  private cacheSizeSampler?: ReturnType<typeof setInterval>;
-  private cacheSizeStartupTimer?: ReturnType<typeof setTimeout>;
-
-  private localCacheStatsCache?: {
-    computedAt: number;
-    entries: number;
-    workspaces: number;
-    versionsTotal: number;
-    versionsByCount: Record<string, number>;
-    estimatedBytes: number;
-  };
-
-  private computeLocalCacheStats(): NonNullable<
-    WorkspaceCacheService['localCacheStatsCache']
-  > {
-    const now = Date.now();
-
-    if (
-      isDefined(this.localCacheStatsCache) &&
-      now - this.localCacheStatsCache.computedAt < LOCAL_CACHE_STATS_TTL_MS
-    ) {
-      return this.localCacheStatsCache;
-    }
-
-    const workspaceIds = new Set<string>();
-    const versionsByCount: Record<string, number> = {
-      '1': 0,
-      '2': 0,
-      '3': 0,
-      '4': 0,
-      '5+': 0,
-    };
-    let versionsTotal = 0;
-
-    for (const [key, entry] of this.localCache) {
-      workspaceIds.add(key.slice(key.lastIndexOf(':') + 1));
-      const versionCount = entry.versions.size;
-
-      versionsTotal += versionCount;
-      const bucket = versionCount >= 5 ? '5+' : String(versionCount);
-
-      versionsByCount[bucket] = (versionsByCount[bucket] ?? 0) + 1;
-    }
-
-    this.localCacheStatsCache = {
-      computedAt: now,
-      entries: this.localCache.size,
-      workspaces: workspaceIds.size,
-      versionsTotal,
-      versionsByCount,
-      estimatedBytes: this.cacheSizeTotalBytes,
-    };
-
-    return this.localCacheStatsCache;
-  }
-
-  private scheduleCacheSizeSampler(): void {
-    const sample = (): void => {
-      this.refreshCacheSizeBreakdown().catch((error) =>
-        this.logger.error('Failed to sample local cache size', error),
-      );
-    };
-
-    // Prime once after startup so the gauges aren't 0 until the first 5-minute interval.
-    this.cacheSizeStartupTimer = setTimeout(
-      sample,
-      LOCAL_CACHE_SIZE_STARTUP_DELAY_MS,
-    );
-    this.cacheSizeStartupTimer.unref();
-
-    this.cacheSizeSampler = setInterval(sample, LOCAL_CACHE_SIZE_REFRESH_MS);
-    this.cacheSizeSampler.unref();
-  }
-
-  private async refreshCacheSizeBreakdown(): Promise<void> {
-    const perProvider: Record<
-      string,
-      { count: number; sampledBytes: number; sampled: number }
-    > = {};
-
-    for (const [key, entry] of this.localCache) {
-      const provider = key.slice(0, key.lastIndexOf(':'));
-      const stats = (perProvider[provider] ??= {
-        count: 0,
-        sampledBytes: 0,
-        sampled: 0,
-      });
-
-      stats.count += 1;
-
-      if (
-        stats.sampled < LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER &&
-        entry.versions.size > 0
-      ) {
-        // Size every retained version, not just the latest — stale versions still occupy heap.
-        let entryBytes = 0;
-
-        for (const version of entry.versions.values()) {
-          entryBytes += this.deepSizeBytes(version.data);
-        }
-
-        stats.sampledBytes += entryBytes;
-        stats.sampled += 1;
-        await new Promise((resolve) => setImmediate(resolve));
-      }
-    }
-
-    const byProvider: Record<string, number> = {};
-    let total = 0;
-
-    for (const [provider, stats] of Object.entries(perProvider)) {
-      const estimate =
-        stats.sampled === 0
-          ? 0
-          : Math.round((stats.sampledBytes / stats.sampled) * stats.count);
-
-      byProvider[provider] = estimate;
-      total += estimate;
-    }
-
-    this.cacheSizeByProvider = byProvider;
-    this.cacheSizeTotalBytes = total;
-  }
-
-  private deepSizeBytes(root: unknown): number {
-    const seen = new WeakSet<object>();
-    const stack: unknown[] = [root];
-    let bytes = 0;
-    let visited = 0;
-
-    while (stack.length > 0 && visited < LOCAL_CACHE_SIZE_WALK_NODE_CAP) {
-      const value = stack.pop();
-
-      if (typeof value === 'string') {
-        bytes += 12 + value.length * 2;
-        continue;
-      }
-      if (typeof value === 'number') {
-        bytes += 8;
-        continue;
-      }
-      if (typeof value === 'boolean') {
-        bytes += 4;
-        continue;
-      }
-      if (
-        value === null ||
-        (typeof value !== 'object' && typeof value !== 'function')
-      ) {
-        continue;
-      }
-      if (seen.has(value)) {
-        continue;
-      }
-      seen.add(value);
-      visited += 1;
-
-      if (Array.isArray(value)) {
-        bytes += 16 + value.length * 8;
-        for (const item of value) {
-          stack.push(item);
-        }
-        continue;
-      }
-
-      if (value instanceof Map) {
-        bytes += 48 + value.size * 16;
-        for (const [mapKey, mapValue] of value) {
-          stack.push(mapKey);
-          stack.push(mapValue);
-        }
-        continue;
-      }
-
-      if (value instanceof Set) {
-        bytes += 48 + value.size * 8;
-        for (const item of value) {
-          stack.push(item);
-        }
-        continue;
-      }
-
-      bytes += 32;
-      let entries: [string, unknown][] = [];
-
-      try {
-        entries = Object.entries(value);
-      } catch {
-        entries = [];
-      }
-      for (const [entryKey, child] of entries) {
-        bytes += entryKey.length * 2 + 8;
-        stack.push(child);
-      }
-    }
-
-    return bytes;
-  }
-
-  private registerLocalCacheGauges(): void {
-    this.metricsService.createObservableGauge({
-      metricName: 'twenty_workspace_cache_local_entries',
-      options: {
-        description: 'Entries in the per-pod local workspace metadata cache',
-      },
-      callback: async () => this.computeLocalCacheStats().entries,
-    });
-    this.metricsService.createObservableGauge({
-      metricName: 'twenty_workspace_cache_local_workspaces',
-      options: {
-        description:
-          'Distinct workspaces held in the per-pod local workspace metadata cache',
-      },
-      callback: async () => this.computeLocalCacheStats().workspaces,
-    });
-    this.metricsService.createObservableGauge({
-      metricName: 'twenty_workspace_cache_local_versions_total',
-      options: {
-        description:
-          'Total versions across local workspace metadata cache entries',
-      },
-      callback: async () => this.computeLocalCacheStats().versionsTotal,
-    });
-    this.metricsService.createObservableGauge({
-      metricName: 'twenty_workspace_cache_local_bytes_estimate',
-      options: {
-        description:
-          'Estimated retained bytes (deep-size, includes local-only providers) in the local workspace metadata cache',
-        unit: 'By',
-      },
-      callback: async () => this.computeLocalCacheStats().estimatedBytes,
-    });
-    this.metricsService.createMultiObservableGauge({
-      metricName: 'twenty_workspace_cache_local_entries_by_version_count',
-      options: {
-        description:
-          'Local workspace metadata cache entries bucketed by version count',
-      },
-      callback: async () =>
-        Object.entries(this.computeLocalCacheStats().versionsByCount).map(
-          ([versions, value]) => ({ value, attributes: { versions } }),
-        ),
-    });
-    this.metricsService.createMultiObservableGauge({
-      metricName: 'twenty_workspace_cache_local_bytes_by_provider',
-      options: {
-        description:
-          'Estimated retained bytes in the local workspace metadata cache per provider',
-        unit: 'By',
-      },
-      callback: async () =>
-        Object.entries(this.cacheSizeByProvider).map(([provider, value]) => ({
-          value,
-          attributes: { provider },
-        })),
-    });
+    this.cacheMetricsService.stop();
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
@@ -793,9 +488,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           isAdopted: isDefined(adoptableHash),
         };
       } finally {
-        this.recomputeDurationHistogram.record(
+        this.cacheMetricsService.recordRecompute(
           (performance.now() - computeStartedAt) / 1000,
-          { cache_key: keyName },
+          keyName,
         );
       }
     });
@@ -833,7 +528,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       try {
         await this.cacheStorage.mset(redisEntries);
       } finally {
-        this.redisWriteDurationHistogram.record(
+        this.cacheMetricsService.recordRedisWrite(
           (performance.now() - redisWriteStartedAt) / 1000,
         );
       }
@@ -976,10 +671,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       this.localCache.delete(matching[index][0]);
     }
 
-    this.metricsService.incrementCounterBy({
-      key: MetricsKeys.WorkspaceMetadataCacheLocalEviction,
-      amount: evictCount,
-    });
+    this.cacheMetricsService.recordEviction(evictCount);
   }
 
   private cleanupStaleVersions(

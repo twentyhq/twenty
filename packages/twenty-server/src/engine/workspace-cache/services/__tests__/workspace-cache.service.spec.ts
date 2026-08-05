@@ -7,12 +7,12 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
 } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.mock('@sentry/node', () => ({
@@ -85,14 +85,13 @@ describe('WorkspaceCacheService', () => {
           },
         },
         {
-          provide: MetricsService,
+          provide: WorkspaceCacheMetricsService,
           useValue: {
-            incrementCounterBy: jest.fn(),
-            createObservableGauge: jest.fn(),
-            createMultiObservableGauge: jest.fn(),
-            getMeter: jest.fn().mockReturnValue({
-              createHistogram: jest.fn().mockReturnValue({ record: jest.fn() }),
-            }),
+            start: jest.fn(),
+            stop: jest.fn(),
+            recordRecompute: jest.fn(),
+            recordRedisWrite: jest.fn(),
+            recordEviction: jest.fn(),
           },
         },
         {
