@@ -12,7 +12,7 @@ describe('readIsCompanyEnrichmentEnabled', () => {
       readIsCompanyEnrichmentEnabled(
         buildConfigService({
           IS_ONBOARDING_AI_CHAT_ENABLED: true,
-          PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+          PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
         }),
       ),
     ).toBe(true);
@@ -25,7 +25,7 @@ describe('readIsCompanyEnrichmentEnabled', () => {
           IS_ONBOARDING_AI_CHAT_ENABLED: false,
           CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
           ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 20,
-          PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+          PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
         }),
       ),
     ).toBe(true);
@@ -36,7 +36,7 @@ describe('readIsCompanyEnrichmentEnabled', () => {
       readIsCompanyEnrichmentEnabled(
         buildConfigService({
           IS_ONBOARDING_AI_CHAT_ENABLED: false,
-          PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+          PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
         }),
       ),
     ).toBe(false);
@@ -47,7 +47,7 @@ describe('readIsCompanyEnrichmentEnabled', () => {
       readIsCompanyEnrichmentEnabled(
         buildConfigService({
           IS_ONBOARDING_AI_CHAT_ENABLED: true,
-          PEOPLE_DATA_LABS_API_KEY: undefined,
+          PEOPLE_DATA_LABS_ENGINE_API_KEY: undefined,
         }),
       ),
     ).toBe(false);
@@ -63,7 +63,7 @@ describe('readIsCompanyEnrichmentEnabled', () => {
         buildConfigService({
           IS_ONBOARDING_AI_CHAT_ENABLED: false,
           CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
-          PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+          PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
         }),
       ),
     ).toBe(false);

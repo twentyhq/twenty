@@ -15,6 +15,6 @@ export const readIsCompanyEnrichmentEnabled = (
 
   return (
     hasConsumer &&
-    isNonEmptyString(twentyConfigService.get('PEOPLE_DATA_LABS_API_KEY'))
+    isNonEmptyString(twentyConfigService.get('PEOPLE_DATA_LABS_ENGINE_API_KEY'))
   );
 };

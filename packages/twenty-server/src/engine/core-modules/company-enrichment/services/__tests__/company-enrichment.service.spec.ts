@@ -43,7 +43,7 @@ describe('CompanyEnrichmentService', () => {
     keyValuePairService = { set: jest.fn() };
     configValues = {
       IS_ONBOARDING_AI_CHAT_ENABLED: true,
-      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+      PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -334,7 +334,7 @@ describe('CompanyEnrichmentService', () => {
   it('should not call the client when no consumer of the enrichment is configured', async () => {
     configValues = {
       IS_ONBOARDING_AI_CHAT_ENABLED: false,
-      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+      PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
     };
 
     const result = await service.enrichCompanyForWorkspaceCreator({
@@ -362,7 +362,7 @@ describe('CompanyEnrichmentService', () => {
     async (bookCallConfig) => {
       configValues = {
         IS_ONBOARDING_AI_CHAT_ENABLED: false,
-        PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+        PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
         ...bookCallConfig,
       };
 
@@ -383,7 +383,7 @@ describe('CompanyEnrichmentService', () => {
       IS_ONBOARDING_AI_CHAT_ENABLED: false,
       CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
       ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 50,
-      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+      PEOPLE_DATA_LABS_ENGINE_API_KEY: 'pdl-key',
     };
     peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
       outcome: 'matched',
