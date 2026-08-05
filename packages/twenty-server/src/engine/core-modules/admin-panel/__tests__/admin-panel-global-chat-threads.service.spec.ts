@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { Brackets } from 'typeorm';
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
@@ -33,6 +34,7 @@ const QUERY_BUILDER_CHAINABLE_METHODS = [
 const SUB_QUERY_BUILDER_CHAINABLE_METHODS = [
   'select',
   'from',
+  'innerJoin',
   'where',
   'andWhere',
 ] as const;
@@ -95,6 +97,16 @@ const createQueryBuilderMock = (
   return queryBuilderMock;
 };
 
+const findSubQueryBuilderByAlias = (
+  subQueryBuilderMocks: SubQueryBuilderMock[],
+  alias: string,
+): SubQueryBuilderMock | undefined =>
+  subQueryBuilderMocks.find((subQueryBuilderMock) =>
+    subQueryBuilderMock.from.mock.calls.some(
+      ([, fromAlias]) => fromAlias === alias,
+    ),
+  );
+
 const getAndWhereConditions = (queryBuilderMock: QueryBuilderMock): string[] =>
   queryBuilderMock.andWhere.mock.calls
     .map(([condition]) => condition)
@@ -110,7 +122,7 @@ const RAW_ROW = {
   userFirstName: 'Jane',
   userLastName: 'Doe',
   messageCount: 4,
-  userMessageCount: 2,
+  userReplyCount: 2,
   hasError: false,
   isOnboardingThread: true,
   deletedAt: null,
@@ -285,15 +297,73 @@ describe('AdminPanelGlobalChatThreadsService', () => {
         AgentMessageRole.USER,
       );
 
-      const visibleUserMessageSubQueryBuilder =
-        subQueryBuilderMocks[subQueryBuilderMocks.length - 1];
+      const visibleUserMessageSubQueryBuilder = findSubQueryBuilderByAlias(
+        subQueryBuilderMocks,
+        'userMessage',
+      );
 
-      expect(visibleUserMessageSubQueryBuilder.from).toHaveBeenCalledWith(
+      expect(visibleUserMessageSubQueryBuilder?.from).toHaveBeenCalledWith(
         AgentMessageEntity,
         'userMessage',
       );
-      expect(visibleUserMessageSubQueryBuilder.andWhere).toHaveBeenCalledWith(
+      expect(visibleUserMessageSubQueryBuilder?.andWhere).toHaveBeenCalledWith(
         'userMessage.role = :userMessageRole',
+      );
+    });
+
+    it('should treat an answered question card as engagement', async () => {
+      await service.getGlobalChatThreads({
+        ...DEFAULT_ARGS,
+        userNeverEngagedOnly: true,
+      });
+
+      for (const queryBuilder of threadQueryBuilderMocks) {
+        expect(
+          getAndWhereConditions(queryBuilder).some(
+            (condition) =>
+              condition === '(NOT EXISTS (SUBQUERY) AND NOT EXISTS (SUBQUERY))',
+          ),
+        ).toBe(true);
+      }
+
+      const answeredQuestionSubQueryBuilder = findSubQueryBuilderByAlias(
+        subQueryBuilderMocks,
+        'answeredQuestionPart',
+      );
+
+      expect(answeredQuestionSubQueryBuilder?.innerJoin).toHaveBeenCalledWith(
+        AgentMessageEntity,
+        'questionMessage',
+        'questionMessage.id = answeredQuestionPart.messageId',
+      );
+      expect(answeredQuestionSubQueryBuilder?.andWhere).toHaveBeenCalledWith(
+        'answeredQuestionPart.toolName = :askQuestionsToolName',
+      );
+      expect(answeredQuestionSubQueryBuilder?.andWhere).toHaveBeenCalledWith(
+        expect.stringContaining(`-> 'result' ->> 'status'`),
+      );
+    });
+
+    it('should count answered question cards as user replies', async () => {
+      await service.getGlobalChatThreads(DEFAULT_ARGS);
+
+      const [listQueryBuilder] = threadQueryBuilderMocks;
+
+      const userReplyCountSelect = listQueryBuilder.addSelect.mock.calls.find(
+        ([, alias]) => alias === 'userReplyCount',
+      )?.[0];
+
+      expect(userReplyCountSelect).toContain(
+        'FILTER (WHERE "message"."role" = :userMessageRole)',
+      );
+      expect(userReplyCountSelect).toContain('+ (SUBQUERY)');
+      expect(listQueryBuilder.setParameter).toHaveBeenCalledWith(
+        'askQuestionsToolName',
+        ASK_QUESTIONS_TOOL_NAME,
+      );
+      expect(listQueryBuilder.setParameter).toHaveBeenCalledWith(
+        'answeredQuestionStatus',
+        'answered',
       );
     });
 
@@ -406,7 +476,7 @@ describe('AdminPanelGlobalChatThreadsService', () => {
           hasError: true,
           isOnboardingThread: true,
           messageCount: 4,
-          userMessageCount: 2,
+          userReplyCount: 2,
         }),
       ]);
       expect(result.hasMore).toBe(false);

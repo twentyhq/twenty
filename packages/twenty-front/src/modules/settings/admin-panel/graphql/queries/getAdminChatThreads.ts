@@ -33,7 +33,7 @@ export const GET_ADMIN_CHAT_THREADS = gql`
         userFirstName
         userLastName
         messageCount
-        userMessageCount
+        userReplyCount
         hasError
         isOnboardingThread
         deletedAt

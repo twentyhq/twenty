@@ -41,7 +41,7 @@ const GET_ADMIN_CHAT_THREADS = gql`
         userWorkspaceId
         userEmail
         messageCount
-        userMessageCount
+        userReplyCount
         hasError
         isOnboardingThread
         deletedAt
@@ -87,7 +87,7 @@ type ThreadsResult = {
   threads: {
     id: string;
     messageCount: number;
-    userMessageCount: number;
+    userReplyCount: number;
     hasError: boolean;
     isOnboardingThread: boolean;
     userEmail: string | null;
@@ -101,6 +101,8 @@ describe('Admin panel global chat threads (integration)', () => {
   let kickoffThreadId: string;
   let deterministicThreadId: string;
   let regularThreadId: string;
+  let answeredQuestionThreadId: string;
+  let pendingQuestionThreadId: string;
   const seededThreadIds: string[] = [];
   const seededMessageIds: string[] = [];
   const seededPartIds: string[] = [];
@@ -311,6 +313,84 @@ describe('Admin panel global chat threads (integration)', () => {
       type: 'text',
       textContent: 'assistant reply',
     });
+
+    const questionItems = [
+      {
+        header: 'Email type',
+        question: 'Which mailbox should we sync?',
+        options: [{ label: 'Work' }, { label: 'Personal' }],
+      },
+    ];
+
+    answeredQuestionThreadId = await insertThread({
+      id: randomUUID(),
+      title: 'integration-answered-question-thread',
+    });
+    await insertMessage({
+      threadId: answeredQuestionThreadId,
+      role: 'user',
+      isHidden: true,
+      createdAt: '2026-01-01T00:04:00Z',
+    });
+
+    const answeredQuestionMessageId = await insertMessage({
+      threadId: answeredQuestionThreadId,
+      role: 'assistant',
+      createdAt: '2026-01-01T00:05:00Z',
+    });
+
+    // Mirrors the in-place toolOutput update done by resolvePendingQuestion;
+    // answering leaves `state` untouched and creates no user message.
+    await insertPart({
+      messageId: answeredQuestionMessageId,
+      orderIndex: 0,
+      type: 'tool-ask_questions',
+      toolName: 'ask_questions',
+      toolCallId: 'call-answered-questions',
+      toolInput: { questions: questionItems },
+      toolOutput: {
+        success: true,
+        message: 'User answered the questions.',
+        result: {
+          questions: questionItems,
+          status: 'answered',
+          answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        },
+      },
+      state: 'output-available',
+    });
+
+    pendingQuestionThreadId = await insertThread({
+      id: randomUUID(),
+      title: 'integration-pending-question-thread',
+    });
+    await insertMessage({
+      threadId: pendingQuestionThreadId,
+      role: 'user',
+      isHidden: true,
+      createdAt: '2026-01-01T00:06:00Z',
+    });
+
+    const pendingQuestionMessageId = await insertMessage({
+      threadId: pendingQuestionThreadId,
+      role: 'assistant',
+      createdAt: '2026-01-01T00:07:00Z',
+    });
+
+    await insertPart({
+      messageId: pendingQuestionMessageId,
+      orderIndex: 0,
+      type: 'tool-ask_questions',
+      toolName: 'ask_questions',
+      toolCallId: 'call-pending-questions',
+      toolInput: { questions: questionItems },
+      toolOutput: {
+        success: true,
+        message: 'Questions presented to the user; awaiting their answer.',
+        result: { questions: questionItems, status: 'pending' },
+      },
+      state: 'output-available',
+    });
   });
 
   afterAll(async () => {
@@ -369,7 +449,7 @@ describe('Admin panel global chat threads (integration)', () => {
         isOnboardingThread: false,
         hasError: true,
         messageCount: 1,
-        userMessageCount: 0,
+        userReplyCount: 0,
         userEmail,
       });
     });
@@ -384,7 +464,7 @@ describe('Admin panel global chat threads (integration)', () => {
         id: kickoffThreadId,
         isOnboardingThread: true,
         messageCount: 2,
-        userMessageCount: 1,
+        userReplyCount: 1,
         hasError: false,
       });
     });
@@ -411,7 +491,35 @@ describe('Admin panel global chat threads (integration)', () => {
       const threadIds = result.threads.map((thread) => thread.id);
 
       expect(threadIds).toContain(deterministicThreadId);
+      expect(threadIds).toContain(pendingQuestionThreadId);
       expect(threadIds).not.toContain(kickoffThreadId);
+      expect(threadIds).not.toContain(answeredQuestionThreadId);
+    });
+
+    it('counts an answered question card as a user reply', async () => {
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: answeredQuestionThreadId,
+      });
+
+      expect(result.threads[0]).toMatchObject({
+        id: answeredQuestionThreadId,
+        messageCount: 1,
+        userReplyCount: 1,
+      });
+    });
+
+    it('does not count a pending question card as a user reply', async () => {
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: pendingQuestionThreadId,
+      });
+
+      expect(result.threads[0]).toMatchObject({
+        id: pendingQuestionThreadId,
+        messageCount: 1,
+        userReplyCount: 0,
+      });
     });
 
     it('sorts by message count', async () => {

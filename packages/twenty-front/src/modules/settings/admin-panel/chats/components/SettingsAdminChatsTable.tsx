@@ -13,12 +13,10 @@ import { AdminChatThreadSortField } from '~/generated-admin/graphql';
 
 type SettingsAdminChatsTableProps = {
   threads: AdminChatThreadListItem[];
-  showOnboardingTag: boolean;
 };
 
 export const SettingsAdminChatsTable = ({
   threads,
-  showOnboardingTag,
 }: SettingsAdminChatsTableProps) => {
   return (
     <Table>
@@ -47,11 +45,7 @@ export const SettingsAdminChatsTable = ({
       </TableRow>
       <TableBody>
         {threads.map((thread) => (
-          <SettingsAdminChatsTableRow
-            key={thread.id}
-            thread={thread}
-            showOnboardingTag={showOnboardingTag}
-          />
+          <SettingsAdminChatsTableRow key={thread.id} thread={thread} />
         ))}
       </TableBody>
     </Table>

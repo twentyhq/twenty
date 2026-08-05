@@ -15,7 +15,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsAdminChatsTableRowProps = {
   thread: AdminChatThreadListItem;
-  showOnboardingTag: boolean;
 };
 
 const StyledFlagsContainer = styled.div`
@@ -30,7 +29,6 @@ const StyledZeroReplies = styled.span`
 
 export const SettingsAdminChatsTableRow = ({
   thread,
-  showOnboardingTag,
 }: SettingsAdminChatsTableRowProps) => {
   return (
     <TableRow
@@ -62,10 +60,10 @@ export const SettingsAdminChatsTableRow = ({
       </TableCell>
       <TableCell align="right">{thread.messageCount}</TableCell>
       <TableCell align="right">
-        {thread.userMessageCount === 0 ? (
-          <StyledZeroReplies>{thread.userMessageCount}</StyledZeroReplies>
+        {thread.userReplyCount === 0 ? (
+          <StyledZeroReplies>{thread.userReplyCount}</StyledZeroReplies>
         ) : (
-          thread.userMessageCount
+          thread.userReplyCount
         )}
       </TableCell>
       <TableCell>
@@ -74,7 +72,7 @@ export const SettingsAdminChatsTableRow = ({
           {isDefined(thread.deletedAt) && (
             <Tag color="gray" text={t`Archived`} />
           )}
-          {showOnboardingTag && thread.isOnboardingThread && (
+          {thread.isOnboardingThread && (
             <Tag color="blue" text={t`Onboarding`} />
           )}
         </StyledFlagsContainer>

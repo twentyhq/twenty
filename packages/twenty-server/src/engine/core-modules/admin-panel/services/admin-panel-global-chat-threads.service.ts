@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  type AskQuestionsToolStatus,
+} from 'twenty-shared/ai';
 import { Brackets, Repository, type SelectQueryBuilder } from 'typeorm';
 
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
@@ -9,6 +13,7 @@ import { type PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
+import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
   AgentMessageEntity,
   AgentMessageRole,
@@ -20,6 +25,15 @@ const WORKSPACE_SETUP_THREAD_ID_EXPRESSION = `public.uuid_generate_v5(
   :setupThreadNamespace::uuid,
   "thread"."workspaceId"::text || ':' || "thread"."userWorkspaceId"::text
 )`;
+
+const ANSWERED_ASK_QUESTIONS_STATUS: AskQuestionsToolStatus = 'answered';
+
+// Answering an ask_questions card creates no agentMessage row: the answer is an
+// in-place update of the assistant part's toolOutput, and the part's state is
+// left untouched, so the JSONB status is the only discriminator. Identifiers
+// are pre-quoted because TypeORM's alias replacer would otherwise swallow the
+// JSON operators and leave the alias unquoted.
+const ANSWERED_ASK_QUESTIONS_PART_EXPRESSION = `"answeredQuestionPart"."toolOutput" -> 'result' ->> 'status' = :answeredQuestionStatus`;
 
 const ORDER_EXPRESSION_BY_SORT_FIELD: Record<AdminChatThreadSortField, string> =
   {
@@ -49,7 +63,7 @@ type GlobalChatThreadRawRow = {
   userFirstName: string | null;
   userLastName: string | null;
   messageCount: number;
-  userMessageCount: number;
+  userReplyCount: number;
   hasError: boolean;
   isOnboardingThread: boolean;
   deletedAt: Date | null;
@@ -81,6 +95,26 @@ export class AdminPanelGlobalChatThreadsService {
     return `(EXISTS (${hiddenKickoffMessageSubQuery}) OR "thread"."id" = ${WORKSPACE_SETUP_THREAD_ID_EXPRESSION})`;
   }
 
+  private buildAnsweredQuestionSubQuery(
+    queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
+    selection: string,
+  ): string {
+    return queryBuilder
+      .subQuery()
+      .select(selection)
+      .from(AgentMessagePartEntity, 'answeredQuestionPart')
+      .innerJoin(
+        AgentMessageEntity,
+        'questionMessage',
+        'questionMessage.id = answeredQuestionPart.messageId',
+      )
+      .where('questionMessage.threadId = thread.id')
+      .andWhere('questionMessage.isHidden = false')
+      .andWhere('answeredQuestionPart.toolName = :askQuestionsToolName')
+      .andWhere(ANSWERED_ASK_QUESTIONS_PART_EXPRESSION)
+      .getQuery();
+  }
+
   private buildUserNeverEngagedPredicate(
     queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
   ): string {
@@ -93,7 +127,12 @@ export class AdminPanelGlobalChatThreadsService {
       .andWhere('userMessage.role = :userMessageRole')
       .getQuery();
 
-    return `NOT EXISTS (${visibleUserMessageSubQuery})`;
+    const answeredQuestionSubQuery = this.buildAnsweredQuestionSubQuery(
+      queryBuilder,
+      '1',
+    );
+
+    return `(NOT EXISTS (${visibleUserMessageSubQuery}) AND NOT EXISTS (${answeredQuestionSubQuery}))`;
   }
 
   private applyFilters(
@@ -121,7 +160,9 @@ export class AdminPanelGlobalChatThreadsService {
         'setupThreadNamespace',
         WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
       )
-      .setParameter('userMessageRole', AgentMessageRole.USER);
+      .setParameter('userMessageRole', AgentMessageRole.USER)
+      .setParameter('askQuestionsToolName', ASK_QUESTIONS_TOOL_NAME)
+      .setParameter('answeredQuestionStatus', ANSWERED_ASK_QUESTIONS_STATUS);
 
     if (scope === AdminChatThreadScope.ONBOARDING) {
       queryBuilder.andWhere(this.buildOnboardingThreadPredicate(queryBuilder));
@@ -207,8 +248,11 @@ export class AdminPanelGlobalChatThreadsService {
       )
       .addSelect('COUNT("message"."id")::int', 'messageCount')
       .addSelect(
-        `(COUNT("message"."id") FILTER (WHERE "message"."role" = :userMessageRole))::int`,
-        'userMessageCount',
+        `(
+          (COUNT("message"."id") FILTER (WHERE "message"."role" = :userMessageRole))
+          + (${this.buildAnsweredQuestionSubQuery(listQueryBuilder, 'COUNT(*)')})
+        )::int`,
+        'userReplyCount',
       )
       .groupBy('"thread"."id"')
       .addGroupBy('"workspace"."id"')
@@ -235,7 +279,7 @@ export class AdminPanelGlobalChatThreadsService {
       userFirstName: row.userFirstName,
       userLastName: row.userLastName,
       messageCount: row.messageCount,
-      userMessageCount: row.userMessageCount,
+      userReplyCount: row.userReplyCount,
       hasError: row.hasError,
       isOnboardingThread: row.isOnboardingThread,
       deletedAt: row.deletedAt,

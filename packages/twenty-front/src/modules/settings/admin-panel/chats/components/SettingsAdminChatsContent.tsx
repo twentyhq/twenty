@@ -10,7 +10,6 @@ import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPla
 
 type SettingsAdminChatsContentProps = {
   threads: AdminChatThreadListItem[];
-  showOnboardingTag: boolean;
   loading: boolean;
   error?: Error;
 };
@@ -22,7 +21,6 @@ const StyledTableContainer = styled.div`
 
 export const SettingsAdminChatsContent = ({
   threads,
-  showOnboardingTag,
   loading,
   error,
 }: SettingsAdminChatsContentProps) => {
@@ -46,10 +44,7 @@ export const SettingsAdminChatsContent = ({
 
   return (
     <StyledTableContainer>
-      <SettingsAdminChatsTable
-        threads={threads}
-        showOnboardingTag={showOnboardingTag}
-      />
+      <SettingsAdminChatsTable threads={threads} />
     </StyledTableContainer>
   );
 };

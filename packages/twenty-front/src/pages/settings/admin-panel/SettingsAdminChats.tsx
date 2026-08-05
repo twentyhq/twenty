@@ -73,7 +73,6 @@ export const SettingsAdminChats = () => {
           />
           <SettingsAdminChatsContent
             threads={threads}
-            showOnboardingTag={!filters.onboardingOnly}
             loading={loading}
             error={error}
           />
