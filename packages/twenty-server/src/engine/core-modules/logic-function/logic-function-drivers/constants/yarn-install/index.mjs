@@ -154,8 +154,13 @@ const uploadToPresignedUrl = async (zipPath, presignedUploadUrl) => {
 };
 
 export const handler = async (event) => {
-  const { action, packageJson, yarnLock, presignedUploadUrl, maxUnzippedSizeMb } =
-    event;
+  const {
+    action,
+    packageJson,
+    yarnLock,
+    presignedUploadUrl,
+    maxUnzippedSizeMb,
+  } = event;
 
   if (action !== 'createLayer') {
     throw new Error(`Unknown action: ${action}`);
