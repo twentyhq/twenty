@@ -1,10 +1,10 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdForRecord = ({
@@ -38,8 +38,6 @@ export const usePageLayoutIdForRecord = ({
     };
   }
 
-  // Every object carries a system-provided record page layout; a missing one
-  // only means the page layouts are not loaded in the store yet.
   const pageLayoutId = isDefined(recordPageLayout) ? recordPageLayout.id : null;
 
   return {
