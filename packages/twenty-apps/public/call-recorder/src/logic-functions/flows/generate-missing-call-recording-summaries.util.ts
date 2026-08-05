@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { requestCallRecordingSummariesContinuation } from 'src/logic-functions/data/request-call-recording-summaries-continuation.util';
+import { enqueueCallRecordingSummaryJobs } from 'src/logic-functions/data/enqueue-call-recording-summary-jobs.util';
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate-call-recording-summary.util';
 import { type GenerateCallRecordingSummaryResult } from 'src/logic-functions/flows/generate-call-recording-summary-result.type';
 import { type GenerateMissingCallRecordingSummariesResult } from 'src/logic-functions/flows/generate-missing-call-recording-summaries-result.type';
@@ -76,9 +76,7 @@ export const generateMissingCallRecordingSummaries = async ({
 
   const continuationRequested =
     remainingCallRecordingIds.length > 0
-      ? await requestCallRecordingSummariesContinuation({
-          callRecordingIds: remainingCallRecordingIds,
-        })
+      ? await enqueueSummaryContinuationJobs(remainingCallRecordingIds)
       : false;
 
   return {
@@ -89,4 +87,26 @@ export const generateMissingCallRecordingSummaries = async ({
     remainingCallRecordingIds,
     continuationRequested,
   };
+};
+
+// A dropped continuation is not fatal: the ids already processed stay
+// persisted and a later backfill re-discovers the remainder.
+const enqueueSummaryContinuationJobs = async (
+  callRecordingIds: string[],
+): Promise<boolean> => {
+  try {
+    await enqueueCallRecordingSummaryJobs({ callRecordingIds });
+
+    return true;
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'test') {
+      console.error(
+        `[call-recorder] failed to enqueue summary continuation jobs: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+
+    return false;
+  }
 };

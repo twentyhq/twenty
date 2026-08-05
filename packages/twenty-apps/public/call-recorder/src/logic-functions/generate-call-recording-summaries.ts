@@ -3,8 +3,8 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summaries-logic-function-universal-identifier';
 import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
+import { enqueueCallRecordingSummariesBackfill } from 'src/logic-functions/data/enqueue-call-recording-summaries-backfill.util';
 import { findCallRecordingIdsForCalendarEvents } from 'src/logic-functions/data/find-call-recording-ids-for-calendar-events.util';
-import { findCallRecordingIdsMissingSummary } from 'src/logic-functions/data/find-call-recording-ids-missing-summary.util';
 import { generateMissingCallRecordingSummaries } from 'src/logic-functions/flows/generate-missing-call-recording-summaries.util';
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call-recording-summary-enabled.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -51,10 +51,18 @@ export const generateCallRecordingSummariesHandler = async (
   const hasRequestedIds =
     hasRequestedCallRecordingIds || hasRequestedCalendarEventIds;
 
+  // Explicit ids come from the UI, which awaits the generated summaries for
+  // its snackbar, so they process inline; a sweep is unbounded and runs as an
+  // enqueued backfill worker instead.
+  if (!hasRequestedIds) {
+    await enqueueCallRecordingSummariesBackfill();
+
+    return { outcome: 'backfill-enqueued' };
+  }
+
   let callRecordingIds = requestedCallRecordingIds;
 
   if (
-    hasRequestedIds &&
     requestedCallRecordingIds.length === 0 &&
     requestedCalendarEventIds.length === 0
   ) {
@@ -68,16 +76,6 @@ export const generateCallRecordingSummariesHandler = async (
 
     if (callRecordingIds.length === 0) {
       return { outcome: 'no-call-recordings-for-calendar-events' };
-    }
-  }
-
-  const isSweep = !hasRequestedIds;
-
-  if (isSweep) {
-    callRecordingIds = await findCallRecordingIdsMissingSummary(client);
-
-    if (callRecordingIds.length === 0) {
-      return { outcome: 'nothing-to-summarize' };
     }
   }
 
@@ -96,7 +94,7 @@ export default defineLogicFunction({
     GENERATE_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'generate-call-recording-summaries',
   description:
-    'Generates missing AI summaries for call recordings. Called with explicit call recording or calendar event ids for on-demand generation, or with no ids to sweep this app’s recordings that have a transcript but no summary; re-invokes itself with the remaining ids when a batch approaches the timeout.',
+    'Generates missing AI summaries for call recordings. Called with explicit call recording or calendar event ids for on-demand generation, or with no ids to enqueue the backfill worker for this app’s recordings that have a transcript but no summary; enqueues jobs for the remaining ids when a batch approaches the timeout.',
   timeoutSeconds: TIMEOUT_SECONDS,
   handler: generateCallRecordingSummariesHandler,
   httpRouteTriggerSettings: {

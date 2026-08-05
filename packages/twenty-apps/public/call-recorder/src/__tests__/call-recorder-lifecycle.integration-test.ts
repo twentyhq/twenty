@@ -31,7 +31,6 @@ import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-
 const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
 const FUNCTIONS_URL = 'https://call-recorder-functions.test';
-const ARTIFACT_IMPORT_ROUTE = '/call-recorder/import-call-recording-artifacts';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
@@ -140,10 +139,33 @@ class FakeRecallApi {
   handle(requestUrl: string, requestInit?: any): Response | undefined {
     const method: string = requestInit?.method ?? 'GET';
 
-    if (requestUrl.startsWith(`${FUNCTIONS_URL}${ARTIFACT_IMPORT_ROUTE}`)) {
-      this.artifactImportRequests.push(JSON.parse(requestInit?.body ?? '{}'));
+    // The webhook flow enqueues the artifact import job through the metadata
+    // API; intercepting the mutation keeps the suite hermetic like the old
+    // fire-and-forget route interception did.
+    if (
+      requestUrl.endsWith('/metadata') &&
+      typeof requestInit?.body === 'string' &&
+      requestInit.body.includes('enqueueJob')
+    ) {
+      const enqueueInput = Object.values(
+        JSON.parse(requestInit.body).variables ?? {},
+      ).find(
+        (variableValue): variableValue is { payload?: object } =>
+          typeof variableValue === 'object' &&
+          variableValue !== null &&
+          'payload' in variableValue,
+      );
 
-      return jsonResponse(200, {});
+      this.artifactImportRequests.push(enqueueInput?.payload ?? {});
+
+      return jsonResponse(200, {
+        data: {
+          enqueueJob: {
+            enqueued: true,
+            logicFunctionUniversalIdentifier: '',
+          },
+        },
+      });
     }
 
     if (!requestUrl.startsWith(RECALL_BASE_URL)) {
@@ -636,8 +658,8 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-recording-1',
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
-      // recording.done hands media and transcript work to the artifact
-      // import route.
+      // recording.done hands media and transcript work to the enqueued
+      // artifact import job.
       expect(recall.artifactImportRequests).toHaveLength(1);
       expect(recall.artifactImportRequests[0]).toMatchObject({
         callRecordingId,

@@ -1,11 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type RoutePayload } from 'twenty-sdk/define';
 
+import { BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/backfill-call-recording-summaries-logic-function-universal-identifier';
+import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { generateCallRecordingSummariesHandler } from 'src/logic-functions/generate-call-recording-summaries';
 
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
 const runAgentMock = vi.hoisted(() => vi.fn());
+const enqueueJobMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
@@ -16,6 +19,7 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 vi.mock('twenty-sdk/logic-function', () => ({
   runAgent: runAgentMock,
+  enqueueJob: enqueueJobMock,
 }));
 
 const fetchMock = vi.fn();
@@ -130,6 +134,12 @@ describe('generateCallRecordingSummariesHandler', () => {
       error: null,
       result: { response: '## Overview\nGood call.' },
     });
+    enqueueJobMock.mockImplementation(
+      async ({ logicFunctionUniversalIdentifier }) => ({
+        enqueued: true,
+        logicFunctionUniversalIdentifier,
+      }),
+    );
     seedCallRecordingQueries();
   });
 
@@ -147,6 +157,7 @@ describe('generateCallRecordingSummariesHandler', () => {
 
     expect(result).toEqual({ outcome: 'disabled' });
     expect(queryMock).not.toHaveBeenCalled();
+    expect(enqueueJobMock).not.toHaveBeenCalled();
     expect(runAgentMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
   });
@@ -221,47 +232,21 @@ describe('generateCallRecordingSummariesHandler', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it('sweeps recordings missing a summary when no ids are given', async () => {
-    seedCallRecordingQueries({
-      sweepNodes: [
-        buildSummarizableCallRecordingNode(
-          'call-recording-1',
-          '2026-01-02T00:00:00.000Z',
-        ),
-        buildSummarizableCallRecordingNode(
-          'call-recording-2',
-          '2026-01-01T00:00:00.000Z',
-        ),
-      ],
-      callRecordingsById: {
-        'call-recording-1':
-          buildSummarizableCallRecordingNode('call-recording-1'),
-        'call-recording-2':
-          buildSummarizableCallRecordingNode('call-recording-2'),
-      },
-    });
-
+  it('enqueues the backfill worker instead of sweeping inline when no ids are given', async () => {
     const result = await generateCallRecordingSummariesHandler(
       buildRoutePayload(null),
     );
 
-    expect(queriedCallRecordingFilters()).toEqual([
-      {
-        status: { eq: 'COMPLETED' },
-        transcript: { is: 'NOT_NULL' },
-        createdBy: {
-          source: { eq: 'APPLICATION' },
-          name: { eq: 'Call Recorder' },
-        },
-      },
-      { id: { eq: 'call-recording-1' } },
-      { id: { eq: 'call-recording-2' } },
-    ]);
-    expect(result).toEqual({
-      outcome: 'processed',
-      ...BATCH_RESULT,
-      generatedCallRecordingIds: ['call-recording-1', 'call-recording-2'],
+    expect(result).toEqual({ outcome: 'backfill-enqueued' });
+    expect(enqueueJobMock).toHaveBeenCalledTimes(1);
+    expect(enqueueJobMock).toHaveBeenCalledWith({
+      logicFunctionUniversalIdentifier:
+        BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
     });
+    expect(queryMock).not.toHaveBeenCalled();
+    expect(runAgentMock).not.toHaveBeenCalled();
+    expect(mutationMock).not.toHaveBeenCalled();
   });
 
   it('does not sweep when an empty calendar event selection is sent', async () => {
@@ -275,15 +260,18 @@ describe('generateCallRecordingSummariesHandler', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it('short-circuits an empty sweep without running the batch', async () => {
+  it('treats an empty body object as a backfill request', async () => {
     const result = await generateCallRecordingSummariesHandler(
       buildRoutePayload({}),
     );
 
-    expect(result).toEqual({ outcome: 'nothing-to-summarize' });
-    expect(queriedCallRecordingFilters()).toEqual([
-      expect.objectContaining({ status: { eq: 'COMPLETED' } }),
-    ]);
+    expect(result).toEqual({ outcome: 'backfill-enqueued' });
+    expect(enqueueJobMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        logicFunctionUniversalIdentifier:
+          BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      }),
+    );
     expect(runAgentMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
   });

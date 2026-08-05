@@ -6,7 +6,7 @@ import processRecallWebhookLogicFunction, {
 
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
-const requestArtifactImportMock = vi.hoisted(() => vi.fn());
+const enqueueArtifactImportMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
@@ -16,9 +16,9 @@ vi.mock('twenty-client-sdk/core', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/data/request-call-recording-artifacts-import.util',
+  'src/logic-functions/data/enqueue-call-recording-artifacts-import.util',
   () => ({
-    requestCallRecordingArtifactsImport: requestArtifactImportMock,
+    enqueueCallRecordingArtifactsImport: enqueueArtifactImportMock,
   }),
 );
 
@@ -68,8 +68,8 @@ describe('process-recall-webhook', () => {
     mutationMock.mockResolvedValue({
       updateCallRecording: { id: 'call-recording-1' },
     });
-    requestArtifactImportMock.mockReset();
-    requestArtifactImportMock.mockResolvedValue(true);
+    enqueueArtifactImportMock.mockReset();
+    enqueueArtifactImportMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -115,7 +115,7 @@ describe('process-recall-webhook', () => {
         id: true,
       },
     });
-    expect(requestArtifactImportMock).toHaveBeenCalledWith(
+    expect(enqueueArtifactImportMock).toHaveBeenCalledWith(
       expect.objectContaining({ callRecordingId: 'call-recording-1' }),
     );
     expect(result).toEqual({

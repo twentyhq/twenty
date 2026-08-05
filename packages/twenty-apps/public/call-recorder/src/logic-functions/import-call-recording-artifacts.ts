@@ -1,4 +1,4 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
@@ -10,6 +10,7 @@ import {
 } from 'src/logic-functions/flows/import-call-recording-artifacts.util';
 import { type CallRecordingArtifactsImportRequest } from 'src/logic-functions/types/call-recording-artifacts-import-request.type';
 import { getString } from 'src/logic-functions/utils/get-string.util';
+import { parseCallRecordingArtifactsImportRequest } from 'src/logic-functions/utils/parse-call-recording-artifacts-import-request.util';
 
 export const importCallRecordingArtifactsHandler = async (
   payload: RoutePayload<Partial<CallRecordingArtifactsImportRequest>>,
@@ -30,29 +31,12 @@ export const importCallRecordingArtifactsHandler = async (
   });
 };
 
-const parseCallRecordingArtifactsImportRequest = (
-  body: Partial<CallRecordingArtifactsImportRequest> | null | undefined,
-): CallRecordingArtifactsImportRequest | undefined => {
-  if (isNull(body) || isUndefined(body)) {
-    return undefined;
-  }
-
-  const callRecordingId = getString(body.callRecordingId);
-  const requestedAt = getString(body.requestedAt);
-
-  if (isUndefined(callRecordingId) || isUndefined(requestedAt)) {
-    return undefined;
-  }
-
-  return { callRecordingId, requestedAt };
-};
-
 export default defineLogicFunction({
   universalIdentifier:
     IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'import-call-recording-artifacts',
   description:
-    'Imports recording media and transcript artifacts after a verified Recall webhook resolves the owning CallRecording.',
+    'Imports recording media and transcript artifacts on demand; webhook-driven imports run through the enqueued job instead.',
   timeoutSeconds: 250,
   handler: importCallRecordingArtifactsHandler,
   httpRouteTriggerSettings: {

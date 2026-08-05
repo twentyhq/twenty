@@ -1,16 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
+import { GENERATE_CALL_RECORDING_SUMMARY_JOB_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summary-job-logic-function-universal-identifier';
+import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
+import { SUMMARY_JOB_STAGGER_MILLISECONDS } from 'src/logic-functions/constants/summary-job-stagger-milliseconds';
 import { generateMissingCallRecordingSummaries } from 'src/logic-functions/flows/generate-missing-call-recording-summaries.util';
 
 const runAgentMock = vi.hoisted(() => vi.fn());
+const enqueueJobMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/logic-function', () => ({
   runAgent: runAgentMock,
+  enqueueJob: enqueueJobMock,
 }));
-
-const FUNCTIONS_BASE_URL = 'https://acme.functions.example.com';
 
 const TRANSCRIPT = [
   {
@@ -19,7 +21,6 @@ const TRANSCRIPT = [
   },
 ];
 
-const fetchMock = vi.fn();
 const queryMock = vi.fn();
 const mutationMock = vi.fn();
 
@@ -71,12 +72,14 @@ const buildClock = (itemMs: number) => {
 describe('generateMissingCallRecordingSummaries', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubGlobal('fetch', fetchMock);
-    vi.stubEnv('TWENTY_FUNCTIONS_URL', FUNCTIONS_BASE_URL);
-    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
     vi.stubEnv('CALL_RECORDER_SUMMARY_ENABLED', 'true');
     vi.stubEnv('CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT', '');
-    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
+    enqueueJobMock.mockImplementation(
+      async ({ logicFunctionUniversalIdentifier }) => ({
+        enqueued: true,
+        logicFunctionUniversalIdentifier,
+      }),
+    );
     mutationMock.mockResolvedValue({});
     runAgentMock.mockResolvedValue({
       success: true,
@@ -92,7 +95,6 @@ describe('generateMissingCallRecordingSummaries', () => {
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });
 
@@ -112,7 +114,7 @@ describe('generateMissingCallRecordingSummaries', () => {
       remainingCallRecordingIds: [],
       continuationRequested: false,
     });
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(enqueueJobMock).not.toHaveBeenCalled();
   });
 
   it('always processes at least one id even when the deadline already passed', async () => {
@@ -126,15 +128,14 @@ describe('generateMissingCallRecordingSummaries', () => {
     expect(result.generatedCallRecordingIds).toEqual(['call-recording-1']);
     expect(result.remainingCallRecordingIds).toEqual(['call-recording-2']);
     expect(result.continuationRequested).toBe(true);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [requestUrl, requestInit] = fetchMock.mock.calls[0];
-    expect(requestUrl).toBe(
-      `${FUNCTIONS_BASE_URL}${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
-    );
-    expect(requestInit.method).toBe('POST');
-    expect(requestInit.body).toBe(
-      JSON.stringify({ callRecordingIds: ['call-recording-2'] }),
-    );
+    expect(enqueueJobMock).toHaveBeenCalledTimes(1);
+    expect(enqueueJobMock).toHaveBeenCalledWith({
+      logicFunctionUniversalIdentifier:
+        GENERATE_CALL_RECORDING_SUMMARY_JOB_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: { callRecordingId: 'call-recording-2' },
+      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+      delayMs: 0,
+    });
   });
 
   it('stops when the next item would overrun the deadline and hands off the rest', async () => {
@@ -160,16 +161,21 @@ describe('generateMissingCallRecordingSummaries', () => {
       'call-recording-3',
       'call-recording-4',
     ]);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [requestUrl, requestInit] = fetchMock.mock.calls[0];
-    expect(requestUrl).toBe(
-      `${FUNCTIONS_BASE_URL}${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
-    );
-    expect(requestInit.body).toBe(
-      JSON.stringify({
-        callRecordingIds: ['call-recording-3', 'call-recording-4'],
-      }),
-    );
+    expect(enqueueJobMock).toHaveBeenCalledTimes(2);
+    expect(enqueueJobMock).toHaveBeenNthCalledWith(1, {
+      logicFunctionUniversalIdentifier:
+        GENERATE_CALL_RECORDING_SUMMARY_JOB_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: { callRecordingId: 'call-recording-3' },
+      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+      delayMs: 0,
+    });
+    expect(enqueueJobMock).toHaveBeenNthCalledWith(2, {
+      logicFunctionUniversalIdentifier:
+        GENERATE_CALL_RECORDING_SUMMARY_JOB_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: { callRecordingId: 'call-recording-4' },
+      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+      delayMs: SUMMARY_JOB_STAGGER_MILLISECONDS,
+    });
   });
 
   it('separates empty summaries from thrown generation errors', async () => {
@@ -255,7 +261,7 @@ describe('generateMissingCallRecordingSummaries', () => {
     expect(result.generatedCallRecordingIds).toEqual(['call-recording-1']);
     expect(result.remainingCallRecordingIds).toEqual(['call-recording-3']);
     expect(result.continuationRequested).toBe(false);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(enqueueJobMock).not.toHaveBeenCalled();
     expect(queryMock).toHaveBeenCalledTimes(1);
     expect(runAgentMock).toHaveBeenCalledTimes(1);
   });

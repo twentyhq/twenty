@@ -1,32 +1,31 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
-import { RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH } from 'src/constants/reconcile-upcoming-calendar-events-route-path';
+import { BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/backfill-call-recording-summaries-logic-function-universal-identifier';
+import { SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/sweep-upcoming-calendar-events-logic-function-universal-identifier';
 import postInstallLogicFunction, {
   startPostInstallBackfillsHandler,
 } from 'src/logic-functions/start-post-install-backfills';
 
-const FUNCTIONS_BASE_URL = 'https://acme.functions.example.com';
+const enqueueJobMock = vi.hoisted(() => vi.fn());
 
-const fetchMock = vi.fn();
+vi.mock('twenty-sdk/logic-function', () => ({
+  enqueueJob: enqueueJobMock,
+}));
 
-const fetchedRoutePaths = (): string[] =>
-  fetchMock.mock.calls.map(([requestUrl]) =>
-    String(requestUrl).replace(FUNCTIONS_BASE_URL, ''),
+const enqueuedLogicFunctionIdentifiers = (): string[] =>
+  enqueueJobMock.mock.calls.map(
+    ([input]) => input.logicFunctionUniversalIdentifier,
   );
 
 describe('start-post-install-backfills', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubGlobal('fetch', fetchMock);
-    vi.stubEnv('TWENTY_FUNCTIONS_URL', FUNCTIONS_BASE_URL);
-    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
-    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
+    enqueueJobMock.mockImplementation(
+      async ({ logicFunctionUniversalIdentifier }) => ({
+        enqueued: true,
+        logicFunctionUniversalIdentifier,
+      }),
+    );
   });
 
   it('is configured to run on app version upgrades', () => {
@@ -39,21 +38,21 @@ describe('start-post-install-backfills', () => {
     );
   });
 
-  it('seeds the sweep and skips summaries on a fresh install', async () => {
+  it('enqueues the sweep and skips summaries on a fresh install', async () => {
     const result = await startPostInstallBackfillsHandler({
       newVersion: '1.0.7',
     });
 
     expect(result).toEqual({
-      calendarEventSweepOutcome: 'sweep-requested',
+      calendarEventSweepOutcome: 'sweep-enqueued',
       summaryBackfillOutcome: 'skipped-initial-install',
     });
-    expect(fetchedRoutePaths()).toEqual([
-      RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH,
+    expect(enqueuedLogicFunctionIdentifiers()).toEqual([
+      SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     ]);
   });
 
-  it('backfills summaries and skips the sweep on an upgrade', async () => {
+  it('enqueues the summary backfill and skips the sweep on an upgrade', async () => {
     const result = await startPostInstallBackfillsHandler({
       previousVersion: '1.0.6',
       newVersion: '1.0.7',
@@ -61,28 +60,28 @@ describe('start-post-install-backfills', () => {
 
     expect(result).toEqual({
       calendarEventSweepOutcome: 'skipped-upgrade',
-      summaryBackfillOutcome: 'backfill-requested',
+      summaryBackfillOutcome: 'backfill-enqueued',
     });
-    expect(fetchedRoutePaths()).toEqual([
-      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+    expect(enqueuedLogicFunctionIdentifiers()).toEqual([
+      BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     ]);
   });
 
-  it('throws when the fresh-install sweep kickoff fails', async () => {
-    fetchMock.mockRejectedValue(new Error('Network failed'));
+  it('throws when the fresh-install sweep enqueue fails', async () => {
+    enqueueJobMock.mockRejectedValue(new Error('Network failed'));
 
     await expect(
       startPostInstallBackfillsHandler({ newVersion: '1.0.7' }),
     ).rejects.toThrow(
       'Failed to start post-install backfills: upcoming calendar event sweep',
     );
-    expect(fetchedRoutePaths()).not.toContain(
-      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+    expect(enqueuedLogicFunctionIdentifiers()).not.toContain(
+      BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     );
   });
 
-  it('throws when the upgrade summary backfill kickoff fails', async () => {
-    fetchMock.mockRejectedValue(new Error('Network failed'));
+  it('throws when the upgrade summary backfill enqueue fails', async () => {
+    enqueueJobMock.mockRejectedValue(new Error('Network failed'));
 
     await expect(
       startPostInstallBackfillsHandler({
@@ -92,8 +91,8 @@ describe('start-post-install-backfills', () => {
     ).rejects.toThrow(
       'Failed to start post-install backfills: call recording summary backfill',
     );
-    expect(fetchedRoutePaths()).not.toContain(
-      RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH,
+    expect(enqueuedLogicFunctionIdentifiers()).not.toContain(
+      SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     );
   });
 });

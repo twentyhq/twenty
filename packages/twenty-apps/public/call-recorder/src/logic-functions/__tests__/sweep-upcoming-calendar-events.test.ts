@@ -1,136 +1,105 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { RECONCILE_CALENDAR_EVENTS_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/reconcile-calendar-events-batch-logic-function-universal-identifier';
+import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
+import { RECONCILIATION_BATCH_STAGGER_MILLISECONDS } from 'src/logic-functions/constants/reconciliation-batch-stagger-milliseconds';
+import { UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE } from 'src/logic-functions/constants/upcoming-calendar-event-reconciliation-batch-size';
 import sweepLogicFunction, {
   sweepUpcomingCalendarEventsHandler,
 } from 'src/logic-functions/sweep-upcoming-calendar-events';
 
 const queryMock = vi.hoisted(() => vi.fn());
-const mutationMock = vi.hoisted(() => vi.fn());
+const enqueueJobMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
     query = queryMock;
-    mutation = mutationMock;
   },
 }));
 
-const fetchMock = vi.fn();
+vi.mock('twenty-sdk/logic-function', () => ({
+  enqueueJob: enqueueJobMock,
+}));
 
-type CalendarEventNode = {
-  id: string;
-  title: string;
-  isCanceled: boolean;
-  startsAt: string;
-  endsAt: string;
-};
-
-type RecordsQuery = {
-  calendarEvents?: {
-    __args: {
-      filter: {
-        id?: { in: string[] };
-        startsAt?: { in: string[] };
-        isCanceled?: { eq: boolean };
-      };
-    };
-  };
-  callRecordings?: { __args: { filter: Record<string, unknown> } };
-};
-
-const UPCOMING_STARTS_AT = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-const UPCOMING_ENDS_AT = new Date(
-  Date.now() + 2 * 60 * 60 * 1000,
-).toISOString();
-
-// Without a conference link the policy deterministically skips each meeting.
-const buildUpcomingCalendarEventNode = (id: string): CalendarEventNode => ({
-  id,
-  title: 'Upcoming Sync',
-  isCanceled: false,
-  startsAt: UPCOMING_STARTS_AT,
-  endsAt: UPCOMING_ENDS_AT,
+const buildConnection = (calendarEventIds: string[]) => ({
+  calendarEvents: {
+    pageInfo: { hasNextPage: false, endCursor: null },
+    edges: calendarEventIds.map((id) => ({ node: { id } })),
+  },
 });
 
-const buildConnection = <TNode>(nodes: TNode[]) => ({
-  pageInfo: { hasNextPage: false, endCursor: null },
-  edges: nodes.map((node) => ({ node })),
-});
-
-let upcomingCalendarEventNodes: CalendarEventNode[];
+// Zero-padded so the util's lexicographic id sort preserves this order.
+const buildCalendarEventIds = (count: number): string[] =>
+  Array.from(
+    { length: count },
+    (_, index) => `calendar-event-${String(index + 1).padStart(2, '0')}`,
+  );
 
 describe('sweepUpcomingCalendarEventsHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubGlobal('fetch', fetchMock);
-    vi.stubEnv('TWENTY_FUNCTIONS_URL', 'https://acme.functions.example.com');
-    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
-    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
-    upcomingCalendarEventNodes = [];
-    queryMock.mockImplementation(async (query: RecordsQuery) => {
-      if (query.calendarEvents !== undefined) {
-        const filter = query.calendarEvents.__args.filter;
-
-        if (filter.id !== undefined) {
-          const requestedIds = filter.id.in;
-
-          return {
-            calendarEvents: buildConnection(
-              upcomingCalendarEventNodes.filter((node) =>
-                requestedIds.includes(node.id),
-              ),
-            ),
-          };
-        }
-
-        if (filter.startsAt !== undefined) {
-          const requestedStartsAtValues = filter.startsAt.in;
-
-          return {
-            calendarEvents: buildConnection(
-              upcomingCalendarEventNodes.filter((node) =>
-                requestedStartsAtValues.includes(node.startsAt),
-              ),
-            ),
-          };
-        }
-
-        return {
-          calendarEvents: buildConnection(
-            upcomingCalendarEventNodes.map(({ id }) => ({ id })),
-          ),
-        };
-      }
-
-      if (query.callRecordings !== undefined) {
-        return { callRecordings: buildConnection([]) };
-      }
-
-      throw new Error(`Unhandled query: ${JSON.stringify(query)}`);
+    queryMock.mockResolvedValue(buildConnection([]));
+    enqueueJobMock.mockResolvedValue({
+      enqueued: true,
+      logicFunctionUniversalIdentifier:
+        RECONCILE_CALENDAR_EVENTS_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     });
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
-  });
-
-  it('is configured as a daily cron with a self-invokable timeout', () => {
+  it('is configured as a daily cron dispatcher', () => {
     expect(sweepLogicFunction.config).toEqual(
       expect.objectContaining({
         name: 'sweep-upcoming-calendar-events',
-        timeoutSeconds: 900,
+        timeoutSeconds: 250,
         cronTriggerSettings: { pattern: '0 4 * * *' },
       }),
     );
   });
 
-  it('reconciles every upcoming calendar event within the horizon', async () => {
-    upcomingCalendarEventNodes = [
-      buildUpcomingCalendarEventNode('calendar-event-1'),
-      buildUpcomingCalendarEventNode('calendar-event-2'),
-    ];
+  it('enqueues one staggered reconciliation job per batch of upcoming events', async () => {
+    const calendarEventIds = buildCalendarEventIds(
+      UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE + 1,
+    );
+
+    queryMock.mockResolvedValue(buildConnection(calendarEventIds));
 
     const result = await sweepUpcomingCalendarEventsHandler();
+
+    expect(result).toEqual({
+      outcome: 'batches-enqueued',
+      calendarEventCount: calendarEventIds.length,
+      enqueuedBatchCount: 2,
+    });
+    expect(enqueueJobMock).toHaveBeenCalledTimes(2);
+    expect(enqueueJobMock).toHaveBeenNthCalledWith(1, {
+      logicFunctionUniversalIdentifier:
+        RECONCILE_CALENDAR_EVENTS_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: {
+        calendarEventIds: calendarEventIds.slice(
+          0,
+          UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
+        ),
+      },
+      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+      delayMs: 0,
+    });
+    expect(enqueueJobMock).toHaveBeenNthCalledWith(2, {
+      logicFunctionUniversalIdentifier:
+        RECONCILE_CALENDAR_EVENTS_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payload: {
+        calendarEventIds: calendarEventIds.slice(
+          UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
+        ),
+      },
+      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+      delayMs: RECONCILIATION_BATCH_STAGGER_MILLISECONDS,
+    });
+  });
+
+  it('queries only non-canceled events inside the scheduling horizon', async () => {
+    queryMock.mockResolvedValue(buildConnection(['calendar-event-1']));
+
+    await sweepUpcomingCalendarEventsHandler();
 
     expect(queryMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -141,52 +110,12 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
         }),
       }),
     );
-    expect(queryMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        calendarEvents: expect.objectContaining({
-          __args: expect.objectContaining({
-            filter: { id: { in: ['calendar-event-1', 'calendar-event-2'] } },
-          }),
-        }),
-      }),
-    );
-    expect(result).toEqual({
-      outcome: 'processed',
-      reconciledCalendarEventIds: ['calendar-event-1', 'calendar-event-2'],
-      failedCalendarEventIds: [],
-      remainingCalendarEventIds: [],
-      actionCounts: {
-        created: 0,
-        updated: 0,
-        canceled: 0,
-        skipped: 2,
-        failed: 0,
-      },
-      continuationRequested: false,
-    });
   });
 
-  it('short-circuits without running batches when nothing is upcoming', async () => {
+  it('short-circuits without enqueueing when nothing is upcoming', async () => {
     const result = await sweepUpcomingCalendarEventsHandler();
 
     expect(result).toEqual({ outcome: 'nothing-to-reconcile' });
-    expect(queryMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('passes a deadline that reserves time for the continuation request', async () => {
-    upcomingCalendarEventNodes = [
-      buildUpcomingCalendarEventNode('calendar-event-1'),
-    ];
-
-    const result = await sweepUpcomingCalendarEventsHandler();
-
-    expect(result).toEqual(
-      expect.objectContaining({
-        outcome: 'processed',
-        remainingCalendarEventIds: [],
-        continuationRequested: false,
-      }),
-    );
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(enqueueJobMock).not.toHaveBeenCalled();
   });
 });

@@ -2,8 +2,8 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
-import { requestCallRecordingArtifactsImport } from 'src/logic-functions/data/request-call-recording-artifacts-import.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -138,9 +138,7 @@ const handleRecallStatusEvent = async ({
       statusCode,
     })
   ) {
-    await requestCallRecordingArtifactsImportOrThrow({
-      callRecordingId: callRecording.id,
-    });
+    await enqueueArtifactsImportForCallRecording(callRecording.id);
   }
 
   return {
@@ -175,9 +173,7 @@ const queueCallRecordingArtifactsImport = async ({
     };
   }
 
-  await requestCallRecordingArtifactsImportOrThrow({
-    callRecordingId: callRecording.id,
-  });
+  await enqueueArtifactsImportForCallRecording(callRecording.id);
 
   return {
     status: 'queued',
@@ -186,22 +182,13 @@ const queueCallRecordingArtifactsImport = async ({
   };
 };
 
-const requestCallRecordingArtifactsImportOrThrow = async ({
-  callRecordingId,
-}: {
-  callRecordingId: string;
-}): Promise<void> => {
-  const importRequested = await requestCallRecordingArtifactsImport({
+const enqueueArtifactsImportForCallRecording = async (
+  callRecordingId: string,
+): Promise<void> =>
+  enqueueCallRecordingArtifactsImport({
     callRecordingId,
     requestedAt: new Date().toISOString(),
   });
-
-  if (!importRequested) {
-    throw new Error(
-      `failed to request artifact import for call recording ${callRecordingId}`,
-    );
-  }
-};
 
 const findMatchingCallRecording = async ({
   client,

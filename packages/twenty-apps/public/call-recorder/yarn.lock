@@ -1376,8 +1376,8 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     sharp: "npm:^0.34.5"
-    twenty-client-sdk: "npm:2.23.0-alpha.2"
-    twenty-sdk: "npm:2.23.0-alpha.2"
+    twenty-client-sdk: "npm:2.26.0"
+    twenty-sdk: "npm:2.26.0"
     twenty-ui: "npm:^1.0.0-alpha.1"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
@@ -3588,22 +3588,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.23.0-alpha.2":
-  version: 2.23.0-alpha.2
-  resolution: "twenty-client-sdk@npm:2.23.0-alpha.2"
+"twenty-client-sdk@npm:2.26.0":
+  version: 2.26.0
+  resolution: "twenty-client-sdk@npm:2.26.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/9bdee21c07c3a3369199289e16860213c9dde995e62bbdbce20ad0aa4490d8a664cd3c9a1c654bc6291189c8941616dda38df359828472330b15efdf9f4c089f
+  checksum: 10c0/f5d184567877d10175f887e5ee81510d43c8c5c4d98ad73fbc757a28547da8299ccbe3072d9de33f8c9e9a41eafe06f335b3706196f4a92fd33b0cdcc5d47acf
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.23.0-alpha.2":
-  version: 2.23.0-alpha.2
-  resolution: "twenty-sdk@npm:2.23.0-alpha.2"
+"twenty-sdk@npm:2.26.0":
+  version: 2.26.0
+  resolution: "twenty-sdk@npm:2.26.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3622,12 +3622,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.34.5"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.23.0-alpha.2"
+    twenty-client-sdk: "npm:2.26.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/82f820a23bc84fb45b6ca06e237b02d71cb9c5fddc98bcdaa4838e1268a7c687242ff89f429ae7c5b30c211325de8f8d349d57f18acdb8130c1d2f677c1db913
+  checksum: 10c0/e3edaced59a93bfa3579dc863f799693c9361fc4993eec6942f711a394a678dff21a9c790a3ad6b1683f71ed3f80ec7e6bcc4172d123f538912f88ff7ca32cfa
   languageName: node
   linkType: hard
 
