@@ -182,6 +182,36 @@ const getRelationFilterJoinColumnName = ({
   });
 };
 
+type ActorIdentifierSubFieldName =
+  | 'workspaceMemberId'
+  | 'applicationUniversalIdentifier';
+
+const getSelectedActorSubFieldIdentifiers = ({
+  actorIdentifierSubFieldName,
+  recordFilterValue,
+  currentWorkspaceMemberId,
+}: {
+  actorIdentifierSubFieldName: ActorIdentifierSubFieldName;
+  recordFilterValue: string;
+  currentWorkspaceMemberId?: string;
+}): string[] => {
+  if (actorIdentifierSubFieldName === 'applicationUniversalIdentifier') {
+    return arrayOfUuidOrVariableSchema.parse(recordFilterValue);
+  }
+
+  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+    jsonRelationFilterValueSchema
+      .catch({
+        isCurrentWorkspaceMemberSelected: false,
+        selectedRecordIds: arrayOfUuidOrVariableSchema.parse(recordFilterValue),
+      })
+      .parse(recordFilterValue);
+
+  return isCurrentWorkspaceMemberSelected
+    ? [...selectedRecordIds, currentWorkspaceMemberId].filter(isDefined)
+    : selectedRecordIds;
+};
+
 const buildDirectFieldGqlOperationFilter = ({
   recordFilter,
   fieldMetadataItem,
@@ -1276,30 +1306,13 @@ const buildDirectFieldGqlOperationFilter = ({
         subFieldName === 'workspaceMemberId' ||
         subFieldName === 'applicationUniversalIdentifier'
       ) {
-        let selectedActorSubFieldIdentifiers: string[];
-
-        if (subFieldName === 'applicationUniversalIdentifier') {
-          selectedActorSubFieldIdentifiers = arrayOfUuidOrVariableSchema.parse(
-            recordFilter.value,
-          );
-        } else {
-          const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-            jsonRelationFilterValueSchema
-              .catch({
-                isCurrentWorkspaceMemberSelected: false,
-                selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
-                  recordFilter.value,
-                ),
-              })
-              .parse(recordFilter.value);
-
-          selectedActorSubFieldIdentifiers = isCurrentWorkspaceMemberSelected
-            ? [
-                ...selectedRecordIds,
-                filterValueDependencies?.currentWorkspaceMemberId,
-              ].filter(isDefined)
-            : selectedRecordIds;
-        }
+        const selectedActorSubFieldIdentifiers =
+          getSelectedActorSubFieldIdentifiers({
+            actorIdentifierSubFieldName: subFieldName,
+            recordFilterValue: recordFilter.value,
+            currentWorkspaceMemberId:
+              filterValueDependencies.currentWorkspaceMemberId,
+          });
 
         if (selectedActorSubFieldIdentifiers.length === 0) {
           return;

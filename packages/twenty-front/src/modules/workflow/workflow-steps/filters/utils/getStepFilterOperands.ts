@@ -68,6 +68,8 @@ export const getStepFilterOperands = ({
         return FILTER_OPERANDS_MAP.SELECT;
       } else if (subFieldName === 'workspaceMemberId') {
         return FILTER_OPERANDS_MAP.RELATION;
+      } else if (subFieldName === 'applicationUniversalIdentifier') {
+        return FILTER_OPERANDS_MAP.UUID;
       }
       return FILTER_OPERANDS_MAP.TEXT;
     }

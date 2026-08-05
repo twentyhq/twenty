@@ -10,14 +10,20 @@ import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const buildFlatEntityMaps = <T extends SyncableFlatEntity>(
-  entities: T[],
-): FlatEntityMaps<T> => ({
+const buildFlatEntityMaps = <TFlatEntity extends SyncableFlatEntity>(
+  flatEntities: TFlatEntity[],
+): FlatEntityMaps<TFlatEntity> => ({
   byUniversalIdentifier: Object.fromEntries(
-    entities.map((entity) => [entity.universalIdentifier, entity]),
+    flatEntities.map((flatEntity) => [
+      flatEntity.universalIdentifier,
+      flatEntity,
+    ]),
   ),
   universalIdentifierById: Object.fromEntries(
-    entities.map((entity) => [entity.id, entity.universalIdentifier]),
+    flatEntities.map((flatEntity) => [
+      flatEntity.id,
+      flatEntity.universalIdentifier,
+    ]),
   ),
   universalIdentifiersByApplicationId: {},
 });
@@ -39,7 +45,7 @@ describe('add application universal identifier to actor workspace command', () =
       applicationUniversalIdentifier: '22222222-2222-4222-8222-222222222222',
       isRemote: true,
     } as FlatObjectMetadata;
-    const fields = [
+    const flatFieldMetadataItems = [
       {
         id: 'created-by-id',
         universalIdentifier: 'created-by-universal-identifier',
@@ -76,7 +82,7 @@ describe('add application universal identifier to actor workspace command', () =
           personObject,
           remoteObject,
         ]),
-        flatFieldMetadataMaps: buildFlatEntityMaps(fields),
+        flatFieldMetadataMaps: buildFlatEntityMaps(flatFieldMetadataItems),
       }),
     ).toEqual([
       {
@@ -92,7 +98,7 @@ describe('add application universal identifier to actor workspace command', () =
   it('builds idempotent DDL without a default or row backfill', () => {
     const sql = buildAddActorApplicationUniversalIdentifierColumnsSql({
       schemaName: 'workspace_test',
-      target: {
+      actorApplicationUniversalIdentifierColumnTarget: {
         tableName: 'person',
         columnNames: ['createdByApplicationUniversalIdentifier'],
       },

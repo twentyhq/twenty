@@ -515,6 +515,10 @@ function evaluateActorFilter(filter: ResolvedFilter): boolean {
     return evaluateRelationFilter(filter);
   }
 
+  if (compositeFieldSubFieldName === 'applicationUniversalIdentifier') {
+    return evaluateUuidFilter(filter);
+  }
+
   return evaluateTextAndArrayFilter(filter, 'TEXT', compositeFieldSubFieldName);
 }
 

@@ -1,4 +1,5 @@
 import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 const filterTypesWithoutSubField = [
   'TEXT',
@@ -85,6 +86,20 @@ describe('getStepFilterOperands', () => {
       });
 
       expect(operands).toMatchSnapshot();
+    });
+
+    it('returns UUID operands when subFieldName is applicationUniversalIdentifier', () => {
+      const applicationUniversalIdentifierOperands = getStepFilterOperands({
+        filterType: 'ACTOR',
+        subFieldName: 'applicationUniversalIdentifier',
+      });
+
+      expect(applicationUniversalIdentifierOperands).toEqual([
+        ViewFilterOperand.IS,
+        ViewFilterOperand.IS_NOT,
+        ViewFilterOperand.IS_EMPTY,
+        ViewFilterOperand.IS_NOT_EMPTY,
+      ]);
     });
 
     it('returns TEXT operands when subFieldName is unknown', () => {

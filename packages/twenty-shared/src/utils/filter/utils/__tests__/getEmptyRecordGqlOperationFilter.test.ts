@@ -123,6 +123,19 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       expect(result).toHaveProperty('or');
     });
 
+    it('should treat empty actor names as empty', () => {
+      const emptyActorNameFilter = getEmptyRecordGqlOperationFilter(
+        makeParams(FieldMetadataType.ACTOR, ViewFilterOperand.IS_EMPTY, 'name'),
+      );
+
+      expect(emptyActorNameFilter).toEqual({
+        or: [
+          { testField: { name: { ilike: '' } } },
+          { testField: { name: { is: 'NULL' } } },
+        ],
+      });
+    });
+
     it('should handle ARRAY type', () => {
       const result = getEmptyRecordGqlOperationFilter(
         makeParams(FieldMetadataType.ARRAY),
@@ -244,6 +257,25 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       );
 
       expect(result).toHaveProperty('not');
+    });
+
+    it('should treat empty actor names as not populated', () => {
+      const nonEmptyActorNameFilter = getEmptyRecordGqlOperationFilter(
+        makeParams(
+          FieldMetadataType.ACTOR,
+          ViewFilterOperand.IS_NOT_EMPTY,
+          'name',
+        ),
+      );
+
+      expect(nonEmptyActorNameFilter).toEqual({
+        not: {
+          or: [
+            { testField: { name: { ilike: '' } } },
+            { testField: { name: { is: 'NULL' } } },
+          ],
+        },
+      });
     });
   });
 });

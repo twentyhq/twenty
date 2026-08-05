@@ -3,6 +3,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRelationToOneFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { FormUuidFieldInput } from '@/object-record/record-field/ui/form-types/components/FormUuidFieldInput';
 import {
   type FieldRelationToOneValue,
   type FieldRelationValue,
@@ -109,6 +110,13 @@ export const WorkflowStepFilterValueCompositeInput = ({
             }
             onChange={onChange}
             onClear={onClear}
+            VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
+          />
+        ) : subFieldName === 'applicationUniversalIdentifier' ? (
+          <FormUuidFieldInput
+            defaultValue={stepFilter.value}
+            onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
             readonly={readonly}
           />

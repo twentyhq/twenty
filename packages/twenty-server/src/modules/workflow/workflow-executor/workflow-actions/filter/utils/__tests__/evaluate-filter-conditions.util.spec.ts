@@ -364,6 +364,28 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
+    describe('ACTOR application filter operands', () => {
+      it('should reject text operands for application universal identifiers', () => {
+        const applicationUniversalIdentifier =
+          '550e8400-e29b-41d4-a716-446655440000';
+        const applicationUniversalIdentifierFilter = {
+          ...createFilter(
+            ViewFilterOperand.CONTAINS,
+            applicationUniversalIdentifier,
+            '550e8400',
+            'ACTOR',
+          ),
+          compositeFieldSubFieldName: 'applicationUniversalIdentifier',
+        };
+
+        expect(() =>
+          evaluateFilterConditions({
+            filters: [applicationUniversalIdentifierFilter],
+          }),
+        ).toThrow('Operand CONTAINS not supported for uuid filter');
+      });
+    });
+
     describe('Rating filter operands', () => {
       it('should compare RATING_n strings by numeric rank for IS', () => {
         const filterMatch = createFilter(

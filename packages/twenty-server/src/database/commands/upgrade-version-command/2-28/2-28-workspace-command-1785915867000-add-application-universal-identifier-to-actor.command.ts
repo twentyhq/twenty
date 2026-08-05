@@ -69,10 +69,7 @@ export const buildActorApplicationUniversalIdentifierColumnTargets = ({
     );
     const existingColumnNames = columnNamesByTableName.get(tableName) ?? [];
 
-    columnNamesByTableName.set(tableName, [
-      ...existingColumnNames,
-      columnName,
-    ]);
+    columnNamesByTableName.set(tableName, [...existingColumnNames, columnName]);
   }
 
   return [...columnNamesByTableName.entries()].map(
@@ -82,12 +79,12 @@ export const buildActorApplicationUniversalIdentifierColumnTargets = ({
 
 export const buildAddActorApplicationUniversalIdentifierColumnsSql = ({
   schemaName,
-  target,
+  actorApplicationUniversalIdentifierColumnTarget,
 }: {
   schemaName: string;
-  target: ActorApplicationUniversalIdentifierColumnTarget;
+  actorApplicationUniversalIdentifierColumnTarget: ActorApplicationUniversalIdentifierColumnTarget;
 }): string =>
-  `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(target.tableName)} ${target.columnNames
+  `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(actorApplicationUniversalIdentifierColumnTarget.tableName)} ${actorApplicationUniversalIdentifierColumnTarget.columnNames
     .map(
       (columnName) =>
         `ADD COLUMN IF NOT EXISTS ${escapeIdentifier(columnName)} uuid`,
@@ -124,12 +121,13 @@ export class AddApplicationUniversalIdentifierToActorCommand extends Provisioned
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
       ]);
-    const targets = buildActorApplicationUniversalIdentifierColumnTargets({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+    const actorApplicationUniversalIdentifierColumnTargets =
+      buildActorApplicationUniversalIdentifierColumnTargets({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
 
-    if (targets.length === 0) {
+    if (actorApplicationUniversalIdentifierColumnTargets.length === 0) {
       this.logger.log(
         `No local ACTOR fields found for workspace ${workspaceId}, skipping`,
       );
@@ -140,13 +138,19 @@ export class AddApplicationUniversalIdentifierToActorCommand extends Provisioned
     const isDryRun = options.dryRun ?? false;
 
     if (isDryRun) {
-      const columnCount = targets.reduce(
-        (count, target) => count + target.columnNames.length,
-        0,
-      );
+      const actorApplicationUniversalIdentifierColumnCount =
+        actorApplicationUniversalIdentifierColumnTargets.reduce(
+          (
+            accumulatedActorApplicationUniversalIdentifierColumnCount,
+            actorApplicationUniversalIdentifierColumnTarget,
+          ) =>
+            accumulatedActorApplicationUniversalIdentifierColumnCount +
+            actorApplicationUniversalIdentifierColumnTarget.columnNames.length,
+          0,
+        );
 
       this.logger.log(
-        `[DRY RUN] Would add ${columnCount} nullable ACTOR application identity columns across ${targets.length} tables for workspace ${workspaceId}`,
+        `[DRY RUN] Would add ${actorApplicationUniversalIdentifierColumnCount} nullable ACTOR application identity columns across ${actorApplicationUniversalIdentifierColumnTargets.length} tables for workspace ${workspaceId}`,
       );
 
       return;
@@ -159,11 +163,11 @@ export class AddApplicationUniversalIdentifierToActorCommand extends Provisioned
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      for (const target of targets) {
+      for (const actorApplicationUniversalIdentifierColumnTarget of actorApplicationUniversalIdentifierColumnTargets) {
         await queryRunner.query(
           buildAddActorApplicationUniversalIdentifierColumnsSql({
             schemaName,
-            target,
+            actorApplicationUniversalIdentifierColumnTarget,
           }),
         );
       }
@@ -180,7 +184,7 @@ export class AddApplicationUniversalIdentifierToActorCommand extends Provisioned
     }
 
     this.logger.log(
-      `Added nullable ACTOR application identity columns across ${targets.length} tables for workspace ${workspaceId}`,
+      `Added nullable ACTOR application identity columns across ${actorApplicationUniversalIdentifierColumnTargets.length} tables for workspace ${workspaceId}`,
     );
   }
 }
