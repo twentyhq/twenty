@@ -80,9 +80,12 @@ export const AdvancedFilterValueInput = ({
       ? ({ y: -33, x: 0 } satisfies DropdownOffset)
       : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
 
+  // The row instance is only hydrated on dropdown open, so fall back to the
+  // persisted subFieldName for the first render of a freshly loaded filter.
   const showFilterTextInputInsteadOfDropdown = shouldShowFilterTextInput({
     recordFilter,
-    subFieldNameUsedInDropdown,
+    subFieldNameUsedInDropdown:
+      subFieldNameUsedInDropdown ?? recordFilter.subFieldName,
   });
 
   return (
