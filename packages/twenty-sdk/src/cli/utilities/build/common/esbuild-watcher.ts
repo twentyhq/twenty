@@ -115,14 +115,14 @@ export class EsbuildWatcher implements RestartableWatcher {
       }
     } finally {
       this.isRestarting = false;
-    }
 
-    const pendingRestartSourcePaths = this.pendingRestartSourcePaths;
+      const pendingRestartSourcePaths = this.pendingRestartSourcePaths;
 
-    if (isDefined(pendingRestartSourcePaths)) {
-      this.pendingRestartSourcePaths = null;
+      if (isDefined(pendingRestartSourcePaths)) {
+        this.pendingRestartSourcePaths = null;
 
-      await this.restart(pendingRestartSourcePaths);
+        await this.restart(pendingRestartSourcePaths);
+      }
     }
   }
 

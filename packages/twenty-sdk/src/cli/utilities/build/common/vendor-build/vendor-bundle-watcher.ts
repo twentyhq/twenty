@@ -31,6 +31,8 @@ export class VendorBundleWatcher {
   private context: VendorBuildContext | null = null;
   private lastChecksum: string | null = null;
   private isDisowned = false;
+  private inFlightBuildPromise: Promise<void> | null = null;
+  private hasBuildRequestedDuringInFlightBuild = false;
 
   constructor(options: VendorBundleWatcherOptions) {
     this.appPath = options.appPath;
@@ -67,6 +69,28 @@ export class VendorBundleWatcher {
   }
 
   private async build(): Promise<void> {
+    if (isDefined(this.inFlightBuildPromise)) {
+      this.hasBuildRequestedDuringInFlightBuild = true;
+
+      return;
+    }
+
+    this.inFlightBuildPromise = this.runBuild();
+
+    try {
+      await this.inFlightBuildPromise;
+    } finally {
+      this.inFlightBuildPromise = null;
+
+      if (this.hasBuildRequestedDuringInFlightBuild) {
+        this.hasBuildRequestedDuringInFlightBuild = false;
+
+        await this.build();
+      }
+    }
+  }
+
+  private async runBuild(): Promise<void> {
     try {
       let builtChecksum: string | null = null;
 
