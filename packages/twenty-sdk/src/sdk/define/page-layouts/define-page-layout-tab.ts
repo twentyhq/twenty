@@ -1,6 +1,7 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+import { validatePageLayoutTabWidgets } from '@/sdk/define/page-layouts/validate-page-layout-tab-widgets';
 
 export const definePageLayoutTab: DefineEntity<PageLayoutTabConfig> = (
   config,
@@ -21,19 +22,7 @@ export const definePageLayoutTab: DefineEntity<PageLayoutTabConfig> = (
     );
   }
 
-  if (config.widgets) {
-    for (const widget of config.widgets) {
-      if (!widget.universalIdentifier) {
-        errors.push('PageLayoutWidget must have a universalIdentifier');
-      }
-      if (!widget.title) {
-        errors.push('PageLayoutWidget must have a title');
-      }
-      if (!widget.type) {
-        errors.push('PageLayoutWidget must have a type');
-      }
-    }
-  }
+  errors.push(...validatePageLayoutTabWidgets(config));
 
   return createValidationResult({ config, errors });
 };

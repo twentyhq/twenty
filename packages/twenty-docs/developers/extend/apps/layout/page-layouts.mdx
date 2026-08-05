@@ -57,6 +57,7 @@ export default definePageLayout({
 - Set `layoutMode` explicitly. Omitting it gives you `VERTICAL_LIST` on a `STANDALONE_PAGE` and `GRID` everywhere else, which is rarely what you want on a record page.
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+- Widgets are ordered by their declaration order in the `widgets` array, which install turns into a `position` matching the tab `layoutMode` (`{ layoutMode: 'VERTICAL_LIST', index }` for vertical lists, the widget `gridPosition` for grids). Set `position` on a widget explicitly if you need to override that, keeping its `layoutMode` in sync with the tab's.
 
 ## definePageLayoutTab
 

@@ -23,6 +23,7 @@ import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
+import { getPageLayoutTabManifestLayoutMode } from 'src/engine/core-modules/application/application-manifest/converters/get-page-layout-tab-manifest-layout-mode.util';
 import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
@@ -534,8 +535,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
         });
 
-        for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-          []) {
+        for (const [widgetIndex, pageLayoutWidgetManifest] of (
+          pageLayoutTabManifest.widgets ?? []
+        ).entries()) {
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
               universalFlatEntity:
@@ -543,6 +545,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
                   pageLayoutWidgetManifest,
                   pageLayoutTabUniversalIdentifier:
                     pageLayoutTabManifest.universalIdentifier,
+                  pageLayoutTabLayoutMode: getPageLayoutTabManifestLayoutMode({
+                    pageLayoutTabManifest,
+                    pageLayoutType: pageLayoutManifest.type,
+                  }),
+                  widgetIndex,
                   applicationUniversalIdentifier,
                   now,
                 }),
@@ -581,14 +588,20 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
       });
 
-      for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-        []) {
+      for (const [widgetIndex, pageLayoutWidgetManifest] of (
+        pageLayoutTabManifest.widgets ?? []
+      ).entries()) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity:
             fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
               pageLayoutWidgetManifest,
               pageLayoutTabUniversalIdentifier:
                 pageLayoutTabManifest.universalIdentifier,
+              pageLayoutTabLayoutMode: getPageLayoutTabManifestLayoutMode({
+                pageLayoutTabManifest,
+                pageLayoutType: referencedPageLayoutManifest?.type,
+              }),
+              widgetIndex,
               applicationUniversalIdentifier,
               now,
             }),

@@ -4,6 +4,7 @@ import {
   type PageLayoutTabLayoutMode,
   type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
+  type PageLayoutWidgetPosition,
   type PageLayoutWidgetUniversalConfiguration,
 } from '@/types';
 
@@ -13,6 +14,7 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
   gridPosition?: GridPosition;
+  position?: PageLayoutWidgetPosition;
   configuration: PageLayoutWidgetUniversalConfiguration;
 };
 
