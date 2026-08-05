@@ -6,7 +6,7 @@ import {
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
-import { ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-fields-and-index-view-on-create-side-effect-handler.service';
+import { ObjectIndexViewOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-on-create-side-effect-handler.service';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
@@ -22,19 +22,6 @@ const computeFieldUniversalIdentifier = (name: string) =>
   });
 
 const NAME_FIELD_UNIVERSAL_IDENTIFIER = computeFieldUniversalIdentifier('name');
-const SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER =
-  computeFieldUniversalIdentifier('searchVector');
-
-const ALL_SYSTEM_FIELD_NAMES = [
-  'id',
-  'createdAt',
-  'updatedAt',
-  'deletedAt',
-  'createdBy',
-  'updatedBy',
-  'position',
-] as const;
-
 // The subset of system fields the INDEX view displays: id/deletedAt/position are
 // filtered out by the view-field builder.
 const DISPLAYABLE_SYSTEM_FIELD_NAMES = [
@@ -110,39 +97,9 @@ const buildArgs = ({
     context: {},
   }) as unknown as BuildSideEffectsArgs<'objectMetadata'>;
 
-describe('ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService', () => {
+describe('ObjectIndexViewOnCreateSideEffectHandlerService', () => {
   const handler =
-    new (ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService as unknown as new () => ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService)();
-
-  it('should synthesize exactly the 7 reserved system fields, never the caller name nor searchVector', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({ pendingFieldMetadatas: [NAME_FIELD] }),
-    );
-
-    expect(result.status).toBe('success');
-
-    if (result.status !== 'success') {
-      throw new Error('expected success');
-    }
-
-    const createdUniversalIdentifiers = Object.keys(
-      result.operations.fieldMetadata?.flatEntityToCreate ?? {},
-    );
-
-    expect(createdUniversalIdentifiers).toHaveLength(7);
-    expect(createdUniversalIdentifiers).not.toContain(
-      NAME_FIELD_UNIVERSAL_IDENTIFIER,
-    );
-    expect(createdUniversalIdentifiers).not.toContain(
-      SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
-    );
-
-    for (const name of ALL_SYSTEM_FIELD_NAMES) {
-      expect(createdUniversalIdentifiers).toContain(
-        computeFieldUniversalIdentifier(name),
-      );
-    }
-  });
+    new (ObjectIndexViewOnCreateSideEffectHandlerService as unknown as new () => ObjectIndexViewOnCreateSideEffectHandlerService)();
 
   it('should provision the INDEX view and the system-field view fields only, positioned after the displayable caller fields', () => {
     const result = handler.buildSideEffects(
@@ -244,9 +201,6 @@ describe('ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService', () =>
       throw new Error('expected success');
     }
 
-    expect(
-      Object.keys(result.operations.fieldMetadata?.flatEntityToCreate ?? {}),
-    ).toHaveLength(7);
     expect(
       Object.keys(result.operations.view?.flatEntityToCreate ?? {}),
     ).toEqual([DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER]);

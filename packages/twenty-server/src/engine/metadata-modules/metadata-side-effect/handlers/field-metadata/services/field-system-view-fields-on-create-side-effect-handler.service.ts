@@ -11,9 +11,12 @@ import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-f
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
-import { computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-index-view-field-position-by-field-universal-identifier.util';
-import { computeDefaultRecordPageViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-record-page-view-field-position-by-field-universal-identifier.util';
+import {
+  computeDefaultViewFieldPositionByFieldUniversalIdentifier,
+  type ViewFieldLabelIdentifierPolicy,
+} from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-view-field-position-by-field-universal-identifier.util';
 import { computeRecordPageViewFieldForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-page-view-field-for-existing-object.util';
+import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -191,21 +194,12 @@ export class FieldSystemViewFieldsOnCreateSideEffectHandlerService extends Metad
       return undefined;
     }
 
-    const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
-      objectMetadataUniversalIdentifier:
-        sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier,
-      allFlatEntityOperationRecordByMetadataName,
-    });
-
     const positionByFieldUniversalIdentifier =
-      computeDefaultRecordPageViewFieldPositionByFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          parentFlatObjectMetadata.applicationUniversalIdentifier,
-        objectMetadataUniversalIdentifier:
-          sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier,
-        callerFlatFieldMetadatas,
+      this.computeSameBatchPositionByFieldUniversalIdentifier({
+        sourceFlatFieldMetadata,
+        parentFlatObjectMetadata,
+        allFlatEntityOperationRecordByMetadataName,
+        labelIdentifierPolicy: 'excluded',
       });
 
     const createdAt = new Date().toISOString();
@@ -308,24 +302,12 @@ export class FieldSystemViewFieldsOnCreateSideEffectHandlerService extends Metad
     indexViewUniversalIdentifier: string;
     allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'fieldMetadata'>['allFlatEntityOperationRecordByMetadataName'];
   }): UniversalFlatViewField {
-    const { labelIdentifierFieldMetadataUniversalIdentifier } =
-      parentFlatObjectMetadata;
-
-    const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
-      objectMetadataUniversalIdentifier:
-        sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier,
-      allFlatEntityOperationRecordByMetadataName,
-    });
-
     const positionByFieldUniversalIdentifier =
-      computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          parentFlatObjectMetadata.applicationUniversalIdentifier,
-        objectMetadataUniversalIdentifier:
-          sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier,
-        callerFlatFieldMetadatas,
+      this.computeSameBatchPositionByFieldUniversalIdentifier({
+        sourceFlatFieldMetadata,
+        parentFlatObjectMetadata,
+        allFlatEntityOperationRecordByMetadataName,
+        labelIdentifierPolicy: 'displayedFirst',
       });
 
     const position =
@@ -337,6 +319,48 @@ export class FieldSystemViewFieldsOnCreateSideEffectHandlerService extends Metad
       sourceFlatFieldMetadata,
       indexViewUniversalIdentifier,
       position,
+    });
+  }
+
+  // Same-batch object+field creation: the position contract shared with the
+  // object-creation handlers, derived statelessly from the batch input.
+  private computeSameBatchPositionByFieldUniversalIdentifier({
+    sourceFlatFieldMetadata,
+    parentFlatObjectMetadata,
+    allFlatEntityOperationRecordByMetadataName,
+    labelIdentifierPolicy,
+  }: {
+    sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
+    parentFlatObjectMetadata: ParentFlatObjectMetadataForViewFields;
+    allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'fieldMetadata'>['allFlatEntityOperationRecordByMetadataName'];
+    labelIdentifierPolicy: ViewFieldLabelIdentifierPolicy;
+  }): Map<string, number> {
+    const { labelIdentifierFieldMetadataUniversalIdentifier } =
+      parentFlatObjectMetadata;
+
+    const systemFlatFieldMetadatas = Object.values(
+      buildReservedSystemFlatFieldMetadatasForCustomObject({
+        flatObjectMetadata: {
+          applicationUniversalIdentifier:
+            parentFlatObjectMetadata.applicationUniversalIdentifier,
+          universalIdentifier:
+            sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
+        },
+      }),
+    );
+
+    const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
+      objectMetadataUniversalIdentifier:
+        sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
+      labelIdentifierFieldMetadataUniversalIdentifier,
+      allFlatEntityOperationRecordByMetadataName,
+    });
+
+    return computeDefaultViewFieldPositionByFieldUniversalIdentifier({
+      systemFlatFieldMetadatas,
+      callerFlatFieldMetadatas,
+      labelIdentifierFieldMetadataUniversalIdentifier,
+      labelIdentifierPolicy,
     });
   }
 
