@@ -256,7 +256,7 @@ export class ReconcileStandardAndCustomRecordPageUniversalIdentifierCommand exte
         derivedUniversalIdentifier: derivedPageLayoutUniversalIdentifier,
       });
 
-      this.computeTabAndWidgetReownUpdates({
+      this.computeTabReownUpdates({
         workspaceId,
         reownUpdates,
         flatPageLayout,
@@ -276,7 +276,7 @@ export class ReconcileStandardAndCustomRecordPageUniversalIdentifierCommand exte
     return reownUpdates;
   }
 
-  private computeTabAndWidgetReownUpdates({
+  private computeTabReownUpdates({
     workspaceId,
     reownUpdates,
     flatPageLayout,
@@ -351,68 +351,117 @@ export class ReconcileStandardAndCustomRecordPageUniversalIdentifierCommand exte
         derivedUniversalIdentifier: derivedTabUniversalIdentifier,
       });
 
-      const seenDerivedWidgetUniversalIdentifiers = new Set<string>();
+      this.computeWidgetReownUpdates({
+        workspaceId,
+        reownUpdates,
+        flatPageLayoutTab,
+        derivedTabUniversalIdentifier,
+        engineOwnedApplicationUniversalIdentifiers,
+        flatObjectMetadata,
+        flatViewMaps,
+        flatViewFieldMaps,
+        flatViewFieldGroupMaps,
+        flatFieldMetadataMaps,
+        flatPageLayoutWidgetMaps,
+        twentyStandardApplicationUniversalIdentifier,
+      });
+    }
+  }
 
-      for (const widgetUniversalIdentifier of flatPageLayoutTab.widgetUniversalIdentifiers) {
-        const flatPageLayoutWidget =
-          flatPageLayoutWidgetMaps.byUniversalIdentifier[
-            widgetUniversalIdentifier
-          ];
+  private computeWidgetReownUpdates({
+    workspaceId,
+    reownUpdates,
+    flatPageLayoutTab,
+    derivedTabUniversalIdentifier,
+    engineOwnedApplicationUniversalIdentifiers,
+    flatObjectMetadata,
+    flatViewMaps,
+    flatViewFieldMaps,
+    flatViewFieldGroupMaps,
+    flatFieldMetadataMaps,
+    flatPageLayoutWidgetMaps,
+    twentyStandardApplicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    reownUpdates: ReownUpdates;
+    flatPageLayoutTab: NonNullable<
+      AllFlatEntityMaps['flatPageLayoutTabMaps']['byUniversalIdentifier'][string]
+    >;
+    derivedTabUniversalIdentifier: string;
+    engineOwnedApplicationUniversalIdentifiers: Set<string>;
+    flatObjectMetadata: NonNullable<
+      AllFlatEntityMaps['flatObjectMetadataMaps']['byUniversalIdentifier'][string]
+    >;
+    twentyStandardApplicationUniversalIdentifier: string;
+  } & Pick<
+    AllFlatEntityMaps,
+    | 'flatViewMaps'
+    | 'flatViewFieldMaps'
+    | 'flatViewFieldGroupMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatPageLayoutWidgetMaps'
+  >): void {
+    const seenDerivedWidgetUniversalIdentifiers = new Set<string>();
 
-        if (
-          !isDefined(flatPageLayoutWidget) ||
-          isDefined(flatPageLayoutWidget.deletedAt) ||
-          !engineOwnedApplicationUniversalIdentifiers.has(
-            flatPageLayoutWidget.applicationUniversalIdentifier,
-          )
-        ) {
-          continue;
-        }
+    for (const widgetUniversalIdentifier of flatPageLayoutTab.widgetUniversalIdentifiers) {
+      const flatPageLayoutWidget =
+        flatPageLayoutWidgetMaps.byUniversalIdentifier[
+          widgetUniversalIdentifier
+        ];
 
-        const derivedWidgetUniversalIdentifier =
-          getPageLayoutWidgetUniversalIdentifier({
-            applicationUniversalIdentifier:
-              flatObjectMetadata.applicationUniversalIdentifier,
-            pageLayoutTabUniversalIdentifier: derivedTabUniversalIdentifier,
-            title: flatPageLayoutWidget.title,
-          });
+      if (
+        !isDefined(flatPageLayoutWidget) ||
+        isDefined(flatPageLayoutWidget.deletedAt) ||
+        !engineOwnedApplicationUniversalIdentifiers.has(
+          flatPageLayoutWidget.applicationUniversalIdentifier,
+        )
+      ) {
+        continue;
+      }
 
-        if (
-          seenDerivedWidgetUniversalIdentifiers.has(
-            derivedWidgetUniversalIdentifier,
-          )
-        ) {
-          this.logger.warn(
-            `Duplicate widget title "${flatPageLayoutWidget.title}" on tab ${flatPageLayoutTab.id} in workspace ${workspaceId}, skipping widget ${flatPageLayoutWidget.id}`,
-          );
-          continue;
-        }
-        seenDerivedWidgetUniversalIdentifiers.add(
-          derivedWidgetUniversalIdentifier,
-        );
-
-        this.pushReownUpdate({
-          updates: reownUpdates.pageLayoutWidgetUpdates,
-          flatEntity: flatPageLayoutWidget,
-          derivedUniversalIdentifier: derivedWidgetUniversalIdentifier,
+      const derivedWidgetUniversalIdentifier =
+        getPageLayoutWidgetUniversalIdentifier({
+          applicationUniversalIdentifier:
+            flatObjectMetadata.applicationUniversalIdentifier,
+          pageLayoutTabUniversalIdentifier: derivedTabUniversalIdentifier,
+          title: flatPageLayoutWidget.title,
         });
 
-        if (
-          flatPageLayoutWidget.configuration?.configurationType ===
-          WidgetConfigurationType.FIELDS
-        ) {
-          this.computeRecordPageViewReownUpdates({
-            workspaceId,
-            reownUpdates,
-            fieldsWidgetViewId: flatPageLayoutWidget.configuration.viewId,
-            flatObjectMetadata,
-            flatViewMaps,
-            flatViewFieldMaps,
-            flatViewFieldGroupMaps,
-            flatFieldMetadataMaps,
-            twentyStandardApplicationUniversalIdentifier,
-          });
-        }
+      if (
+        seenDerivedWidgetUniversalIdentifiers.has(
+          derivedWidgetUniversalIdentifier,
+        )
+      ) {
+        this.logger.warn(
+          `Duplicate widget title "${flatPageLayoutWidget.title}" on tab ${flatPageLayoutTab.id} in workspace ${workspaceId}, skipping widget ${flatPageLayoutWidget.id}`,
+        );
+        continue;
+      }
+      seenDerivedWidgetUniversalIdentifiers.add(
+        derivedWidgetUniversalIdentifier,
+      );
+
+      this.pushReownUpdate({
+        updates: reownUpdates.pageLayoutWidgetUpdates,
+        flatEntity: flatPageLayoutWidget,
+        derivedUniversalIdentifier: derivedWidgetUniversalIdentifier,
+      });
+
+      if (
+        flatPageLayoutWidget.configuration?.configurationType ===
+        WidgetConfigurationType.FIELDS
+      ) {
+        this.computeRecordPageViewReownUpdates({
+          workspaceId,
+          reownUpdates,
+          fieldsWidgetViewId: flatPageLayoutWidget.configuration.viewId,
+          flatObjectMetadata,
+          flatViewMaps,
+          flatViewFieldMaps,
+          flatViewFieldGroupMaps,
+          flatFieldMetadataMaps,
+          twentyStandardApplicationUniversalIdentifier,
+        });
       }
     }
   }
@@ -517,6 +566,34 @@ export class ReconcileStandardAndCustomRecordPageUniversalIdentifierCommand exte
       });
     }
 
+    this.computeViewFieldGroupReownUpdates({
+      reownUpdates,
+      flatView,
+      derivedViewUniversalIdentifier,
+      flatObjectMetadata,
+      flatViewFieldGroupMaps,
+      twentyStandardApplicationUniversalIdentifier,
+    });
+  }
+
+  private computeViewFieldGroupReownUpdates({
+    reownUpdates,
+    flatView,
+    derivedViewUniversalIdentifier,
+    flatObjectMetadata,
+    flatViewFieldGroupMaps,
+    twentyStandardApplicationUniversalIdentifier,
+  }: {
+    reownUpdates: ReownUpdates;
+    flatView: NonNullable<
+      AllFlatEntityMaps['flatViewMaps']['byUniversalIdentifier'][string]
+    >;
+    derivedViewUniversalIdentifier: string;
+    flatObjectMetadata: NonNullable<
+      AllFlatEntityMaps['flatObjectMetadataMaps']['byUniversalIdentifier'][string]
+    >;
+    twentyStandardApplicationUniversalIdentifier: string;
+  } & Pick<AllFlatEntityMaps, 'flatViewFieldGroupMaps'>): void {
     for (const viewFieldGroupUniversalIdentifier of flatView.viewFieldGroupUniversalIdentifiers) {
       const flatViewFieldGroup =
         flatViewFieldGroupMaps.byUniversalIdentifier[
