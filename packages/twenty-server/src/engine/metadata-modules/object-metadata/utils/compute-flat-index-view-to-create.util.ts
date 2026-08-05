@@ -43,7 +43,8 @@ export const computeFlatIndexViewToCreate = ({
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     position: 0,
     universalIdentifier: getSystemViewUniversalIdentifier({
-      applicationUniversalIdentifier,
+      objectMetadataApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadata.universalIdentifier,
       viewKey: ViewKey.INDEX,
     }),

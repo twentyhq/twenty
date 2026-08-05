@@ -15,6 +15,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 export type UserContext = {
   firstName: string;
   lastName: string;
+  jobTitle: string | null;
   locale: string;
   timezone: string | null;
 };
@@ -99,6 +100,7 @@ export class AgentActorContextService {
     const userContext: UserContext = {
       firstName: workspaceMember.name?.firstName ?? '',
       lastName: workspaceMember.name?.lastName ?? '',
+      jobTitle: workspaceMember.jobTitle,
       locale: userWorkspace.locale,
       timezone: workspaceMember.timeZone ?? null,
     };

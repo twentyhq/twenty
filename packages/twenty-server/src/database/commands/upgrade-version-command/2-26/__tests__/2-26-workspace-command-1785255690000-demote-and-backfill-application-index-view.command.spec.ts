@@ -1,6 +1,6 @@
 import {
   getSystemViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
+  getSystemViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 import { In } from 'typeorm';
@@ -23,7 +23,7 @@ const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
 const FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000cc';
 
 const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
-  applicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectMetadataApplicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   viewKey: ViewKey.INDEX,
 });
@@ -205,8 +205,8 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
         .flatEntityToCreate,
     ).toEqual([
       expect.objectContaining({
-        universalIdentifier: getViewFieldUniversalIdentifier({
-          applicationUniversalIdentifier:
+        universalIdentifier: getSystemViewFieldUniversalIdentifier({
+          fieldMetadataApplicationUniversalIdentifier:
             EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
           viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
           fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
@@ -241,8 +241,8 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
       ],
       viewFields: [
         {
-          universalIdentifier: getViewFieldUniversalIdentifier({
-            applicationUniversalIdentifier:
+          universalIdentifier: getSystemViewFieldUniversalIdentifier({
+            fieldMetadataApplicationUniversalIdentifier:
               EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
             viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
             fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
@@ -282,8 +282,8 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
       payload.allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
     ).toEqual([
       expect.objectContaining({
-        universalIdentifier: getViewFieldUniversalIdentifier({
-          applicationUniversalIdentifier:
+        universalIdentifier: getSystemViewFieldUniversalIdentifier({
+          fieldMetadataApplicationUniversalIdentifier:
             EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
           viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
           fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,

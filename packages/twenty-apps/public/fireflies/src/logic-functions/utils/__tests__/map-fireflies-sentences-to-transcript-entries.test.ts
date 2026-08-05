@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { mapFirefliesSentencesToTranscriptEntries } from 'src/logic-functions/utils/map-fireflies-sentences-to-transcript-entries';
+import { mapFirefliesSentencesToTranscriptEntries } from 'src/logic-functions/utils/map-fireflies-sentences-to-transcript-entries.util';
 
 describe('mapFirefliesSentencesToTranscriptEntries', () => {
   it('should map sentences to diarized entries with relative timestamps', () => {

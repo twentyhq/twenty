@@ -15,6 +15,8 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   // nullable workspaceId — both rows support instance-level and per-workspace use
   'KeyValuePairEntity',
   'UpgradeMigrationEntity',
+  // user-scoped auth sessions; workspaceId is null for workspace-agnostic sessions
+  'UserSessionEntity',
 
   'ApplicationVariableEntity',
   'BillingMeterEntity',
@@ -41,6 +43,10 @@ const WORKSPACE_SCOPED_EXEMPTIONS = new Set<string>([
   // Resolved by id alone at auth/request-routing time and inside file-storage
   // transactions; very few of the ~50 call sites carry a workspaceId.
   'ApplicationEntity',
+  // Read by user across every workspace they belong to (the "apps you
+  // authorized" screen) and from the OAuth token endpoint, which has no
+  // request workspace to scope by.
+  'ApplicationAuthorizationEntity',
   // 20+ call sites across calendar/messaging modules; staged for a dedicated PR.
   'CalendarChannelEntity',
   'MessageChannelEntity',

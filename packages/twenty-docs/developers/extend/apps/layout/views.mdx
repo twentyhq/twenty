@@ -35,7 +35,7 @@ export default defineView({
 
 - `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
 - The object's main list view is server-owned: `key` is deprecated and ignored, so a manifest view can never claim it. Ship a `VIEW` navigation item if you want your view one click away in the sidebar.
-- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Fields](/developers/extend/apps/data/system-fields).
+- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Metadata](/developers/extend/apps/data/system-fields).
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 
@@ -45,7 +45,7 @@ export default defineView({
 |----------|--------|-------------|
 | `type` | `ViewType.TABLE` (default), `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
 | `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
-| `openRecordIn` | `ViewOpenRecordIn.SIDE_PANEL` (default), `ViewOpenRecordIn.RECORD_PAGE` | Where clicking a record opens it. |
+| `openRecordIn` | deprecated | No longer read: where records open is now a property of the [object](/developers/extend/apps/data/objects) (`openRecordIn` on `defineObject()`), falling back to each member's own preference. |
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
 | `isCompact` | `boolean` | Compact row display. |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups` | — | Group records (e.g. kanban columns) by a field. |
@@ -110,4 +110,4 @@ The `value` field is always a JSON-serializable value, but its expected shape de
 
 ## How views show up in the UI
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object gets a default index view auto-generated at creation, so you only need to ship the sidebar entry that opens it.

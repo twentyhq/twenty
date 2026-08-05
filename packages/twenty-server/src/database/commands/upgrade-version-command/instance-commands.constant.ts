@@ -130,7 +130,12 @@ import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-inst
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
 import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
-import { AddWorkspaceMessageCampaignDailySendLimitFastInstanceCommand } from './2-26/2-26-instance-command-fast-1785336300000-add-workspace-message-campaign-daily-send-limit';
+import { AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785810340935-add-on-disconnect-logic-function-to-connection-provider';
+import { AddConnectedAccountHandleProviderIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785420705255-add-connected-account-handle-provider-index';
+import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785504900000-add-open-record-in-to-object-metadata';
+import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785518325511-create-user-session-core-table';
+import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
+import { AddWorkspaceMessageCampaignDailySendLimitFastInstanceCommand } from './2-28/2-28-instance-command-fast-1786010000000-add-workspace-message-campaign-daily-send-limit';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -263,5 +268,10 @@ export const INSTANCE_COMMANDS = [
   AddPageLayoutCascadeDeleteIndexesFastInstanceCommand,
   AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand,
   AddIsHiddenToAgentMessageFastInstanceCommand,
+  AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand,
+  AddConnectedAccountHandleProviderIndexFastInstanceCommand,
+  AddOpenRecordInToObjectMetadataFastInstanceCommand,
+  CreateUserSessionCoreTableFastInstanceCommand,
+  CreateApplicationAuthorizationCoreTableFastInstanceCommand,
   AddWorkspaceMessageCampaignDailySendLimitFastInstanceCommand,
 ];

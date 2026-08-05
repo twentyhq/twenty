@@ -35,6 +35,7 @@ export type PieChartConfiguration = BaseChartConfiguration & {
   showCenterMetric?: boolean;
   displayLegend?: boolean;
   hideEmptyCategory?: boolean;
+  numberFormat?: string;
   splitMultiValueFields?: boolean;
 };
 
@@ -54,6 +55,7 @@ export type BarChartConfiguration = BaseChartConfiguration & {
   splitMultiValueFields?: boolean;
   axisNameDisplay?: string;
   displayLegend?: boolean;
+  numberFormat?: string;
   rangeMin?: number;
   rangeMax?: number;
   groupMode?: string;
@@ -77,6 +79,7 @@ export type LineChartConfiguration = BaseChartConfiguration & {
   splitMultiValueFields?: boolean;
   axisNameDisplay?: string;
   displayLegend?: boolean;
+  numberFormat?: string;
   rangeMin?: number;
   rangeMax?: number;
   isStacked?: boolean;

@@ -88,6 +88,9 @@ describe('WorkspaceCacheService', () => {
           provide: MetricsService,
           useValue: {
             incrementCounterBy: jest.fn(),
+            getMeter: jest.fn().mockReturnValue({
+              createHistogram: jest.fn().mockReturnValue({ record: jest.fn() }),
+            }),
           },
         },
         {
@@ -279,6 +282,34 @@ describe('WorkspaceCacheService', () => {
       // Each getOrRecompute triggers: 1 hash check + 1 atomic data/hash fetch = 2 mget calls
       // Total: 4 mget calls (2 per getOrRecompute)
       expect(cacheStorageService.mget).toHaveBeenCalledTimes(4);
+    });
+  });
+
+  describe('local cache expiration sweep', () => {
+    it('should run at most once per minute', async () => {
+      const expirationSweepSpy = jest.spyOn(
+        service as unknown as {
+          evictExpiredLocalEntries: (now: number) => void;
+        },
+        'evictExpiredLocalEntries',
+      );
+
+      await expect(
+        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
+      ).rejects.toThrow();
+      await expect(
+        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
+      ).rejects.toThrow();
+
+      expect(expirationSweepSpy).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(60_000);
+
+      await expect(
+        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
+      ).rejects.toThrow();
+
+      expect(expirationSweepSpy).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -80,6 +80,7 @@ export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/ge
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
+export { getSystemViewFieldUniversalIdentifier } from './deterministic-identifier/get-system-view-field-universal-identifier.util';
 export { getSystemViewUniversalIdentifier } from './deterministic-identifier/get-system-view-universal-identifier.util';
 export { getViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-view-field-group-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';
@@ -87,6 +88,11 @@ export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
+export type {
+  EnqueueJobOptions,
+  EnqueueJobInput,
+  EnqueueJobResult,
+} from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
   RegularFieldManifest,
@@ -129,7 +135,12 @@ export type {
   RowLevelPermissionPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
-export type { RunAgentInput, RunAgentResult } from './runAgentType';
+export type {
+  RunAgentMessageRole,
+  RunAgentMessage,
+  RunAgentInput,
+  RunAgentResult,
+} from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';

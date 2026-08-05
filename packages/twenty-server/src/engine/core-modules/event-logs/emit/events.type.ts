@@ -27,6 +27,10 @@ import {
   type LogicFunctionExecutedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import {
+  type AUTH_SESSION_EVENT,
+  type AuthSessionTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/auth-session/auth-session';
+import {
   type IMPERSONATION_EVENT,
   type ImpersonationTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
@@ -52,6 +56,7 @@ import {
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
 
 export type TrackEventName =
+  | typeof AUTH_SESSION_EVENT
   | typeof CUSTOM_DOMAIN_ACTIVATED_EVENT
   | typeof CUSTOM_DOMAIN_DEACTIVATED_EVENT
   | typeof LOGIC_FUNCTION_EXECUTED_EVENT
@@ -67,6 +72,7 @@ export type TrackEventName =
   | typeof SERVER_ADMIN_ACCESS_CHANGED_EVENT;
 
 export interface TrackEvents {
+  [AUTH_SESSION_EVENT]: AuthSessionTrackEvent;
   [CUSTOM_DOMAIN_ACTIVATED_EVENT]: CustomDomainActivatedTrackEvent;
   [CUSTOM_DOMAIN_DEACTIVATED_EVENT]: CustomDomainDeactivatedTrackEvent;
   [LOGIC_FUNCTION_EXECUTED_EVENT]: LogicFunctionExecutedTrackEvent;

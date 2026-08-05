@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 
+import { type Histogram } from '@opentelemetry/api';
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 
@@ -36,12 +37,16 @@ import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cac
 
 const LOCAL_TTL_MS = 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS = 60 * 1000;
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
+const CACHE_DURATION_BUCKETS_SECONDS = [
+  0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
+];
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 
@@ -71,8 +76,12 @@ export class WorkspaceCacheService implements OnModuleInit {
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
+  private lastLocalCacheExpirationSweepAt: number | undefined;
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
+
+  private readonly recomputeDurationHistogram: Histogram;
+  private readonly redisWriteDurationHistogram: Histogram;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
@@ -81,7 +90,32 @@ export class WorkspaceCacheService implements OnModuleInit {
     private readonly reflector: Reflector,
     private readonly metricsService: MetricsService,
     private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  ) {
+    const meter = this.metricsService.getMeter();
+
+    this.recomputeDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_recompute_duration_seconds',
+      {
+        description:
+          'Wall-clock time to compute one workspace metadata cache entry from its provider',
+        unit: 's',
+        advice: {
+          explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS,
+        },
+      },
+    );
+    this.redisWriteDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_redis_write_duration_seconds',
+      {
+        description:
+          'Wall-clock time to serialize and write recomputed cache entries to Redis',
+        unit: 's',
+        advice: {
+          explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS,
+        },
+      },
+    );
+  }
 
   async onModuleInit() {
     const providers = this.discoveryService.getProviders();
@@ -135,7 +169,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
-    this.evictExpiredLocalEntries();
+    this.evictExpiredLocalEntriesIfNeeded();
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const memoKey =
@@ -440,32 +474,41 @@ export class WorkspaceCacheService implements OnModuleInit {
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
-      const data = await Sentry.startSpan(
-        {
-          name: 'compute workspace metadata cache entry from provider',
-          op: 'cache.recompute',
-          onlyIfParent: true,
-          attributes: {
-            'cache.key_name': keyName,
-            'cache.recompute.strategy': hashResolution.strategy,
-            'cache.local_data_only': isLocalDataOnly,
+      const computeStartedAt = performance.now();
+
+      try {
+        const data = await Sentry.startSpan(
+          {
+            name: 'compute workspace metadata cache entry from provider',
+            op: 'cache.recompute',
+            onlyIfParent: true,
+            attributes: {
+              'cache.key_name': keyName,
+              'cache.recompute.strategy': hashResolution.strategy,
+              'cache.local_data_only': isLocalDataOnly,
+            },
           },
-        },
-        () => provider.computeForCache(workspaceId),
-      );
+          () => provider.computeForCache(workspaceId),
+        );
 
-      if (hashResolution.strategy === 'mint') {
-        return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };
+        if (hashResolution.strategy === 'mint') {
+          return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };
+        }
+
+        const adoptableHash = hashResolution.adoptableHashes[keyName];
+
+        return {
+          keyName,
+          data,
+          hash: adoptableHash ?? crypto.randomUUID(),
+          isAdopted: isDefined(adoptableHash),
+        };
+      } finally {
+        this.recomputeDurationHistogram.record(
+          (performance.now() - computeStartedAt) / 1000,
+          { cache_key: keyName },
+        );
       }
-
-      const adoptableHash = hashResolution.adoptableHashes[keyName];
-
-      return {
-        keyName,
-        data,
-        hash: adoptableHash ?? crypto.randomUUID(),
-        isAdopted: isDefined(adoptableHash),
-      };
     });
 
     const computed = await Promise.all(computePromises);
@@ -496,7 +539,15 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
 
     if (redisEntries.length > 0) {
-      await this.cacheStorage.mset(redisEntries);
+      const redisWriteStartedAt = performance.now();
+
+      try {
+        await this.cacheStorage.mset(redisEntries);
+      } finally {
+        this.redisWriteDurationHistogram.record(
+          (performance.now() - redisWriteStartedAt) / 1000,
+        );
+      }
     }
 
     if (bootstrapHashEntries.length > 0) {
@@ -640,9 +691,22 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
   }
 
-  private evictExpiredLocalEntries(): void {
+  private evictExpiredLocalEntriesIfNeeded(): void {
     const now = Date.now();
 
+    if (
+      isDefined(this.lastLocalCacheExpirationSweepAt) &&
+      now - this.lastLocalCacheExpirationSweepAt <
+        LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS
+    ) {
+      return;
+    }
+
+    this.evictExpiredLocalEntries(now);
+    this.lastLocalCacheExpirationSweepAt = now;
+  }
+
+  private evictExpiredLocalEntries(now: number): void {
     for (const [localKey, entry] of this.localCache) {
       for (const [hash, version] of entry.versions) {
         if (now - version.lastReadAt > LOCAL_ENTRY_TTL_MS) {

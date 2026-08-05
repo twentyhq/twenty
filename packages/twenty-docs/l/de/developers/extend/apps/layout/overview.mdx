@@ -55,3 +55,5 @@ Die **Layout-Ebene** einer Twenty-App umfasst alles, was der Benutzer sieht: wo 
 | **Befehlsmenü (Cmd+K)**                         | Eine angeheftete Schnellaktion oder ein versteckter Befehl                                                                                | `defineCommandMenuItem`                   |
 
 Frontend-Komponenten laufen in einem isolierten Web Worker unter Verwendung von Remote DOM – sie werden nativ auf der Seite gerendert (nicht in einem iframe), können aber die Hostseite oder das DOM nicht direkt erreichen. Die Kommunikation mit Twenty erfolgt über eine Message-Passing-Host-API.
+
+Sie befinden sich noch in aktiver Entwicklung: Die Sandbox implementiert ein partielles DOM, daher können fortgeschrittene Anwendungsfälle fehlschlagen. Siehe [Aktuelle Einschränkungen](/l/de/developers/extend/apps/layout/front-components#current-limitations).

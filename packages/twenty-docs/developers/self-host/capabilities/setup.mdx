@@ -200,7 +200,13 @@ On Microsoft Azure Console enable the following APIs in "Permissions":
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
 
-Note: "Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+<Note>
+"Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" is mandatory if you want to create calendar events using our workflow actions. If you want to only sync calendar events, use "Calendars.Read".
+</Note>
 
 ### Authorized redirect URIs
 
@@ -263,9 +269,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. Find the **Email** section
 3. Configure your SMTP settings:
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
   - EMAIL_DRIVER=smtp
@@ -274,9 +280,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   - EMAIL_SMTP_USER=gmail_email_address
   - EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
   - EMAIL_DRIVER=smtp
@@ -285,9 +291,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   - EMAIL_SMTP_USER=office365_email_address
   - EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev** is a fake SMTP email server for development and testing.
   - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -297,9 +303,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     - EMAIL_SMTP_HOST=localhost
     - EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
@@ -369,3 +375,24 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
 </Note>
+
+## API and front-end on separate hosts
+
+Only relevant if you do not let the back-end serve the front-end. Same-origin
+deployments need nothing here.
+
+Declare every browser origin that talks to the API, comma separated. `SERVER_URL`
+and `FRONTEND_URL` are already trusted.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Upgrading to a version with cookie sessions makes this required. The front-end
+now sends credentials on every request, and browsers reject a credentialed
+response from an undeclared origin, so the app fails to load until you set this.
+</Warning>
+
+If the two hosts are on different registrable domains (not just different
+subdomains), also set `AUTH_COOKIE_SAME_SITE=none`, which requires HTTPS.

@@ -12,7 +12,7 @@ import { buildStandardObjectIndexView } from '@/metadata/utils/internal/build-st
 //   keyed on ViewKey.INDEX) and their view-field universal identifiers are
 //   deterministically derived by buildStandardObjectIndexView
 //   (getSystemViewUniversalIdentifier for the view,
-//   getViewFieldUniversalIdentifier for each view field).
+//   getSystemViewFieldUniversalIdentifier for each view field).
 export const STANDARD_OBJECTS = {
   attachment: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,

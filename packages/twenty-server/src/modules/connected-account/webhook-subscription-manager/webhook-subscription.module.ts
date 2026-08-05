@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -15,12 +16,15 @@ import { WebhookSubscriptionRenewalCronJob } from 'src/modules/connected-account
 import { WebhookSubscriptionChannelDeletedListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-channel-deleted.listener';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
+import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
+import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
 
 @Module({
   imports: [
     WebhookSubscriptionManagerModule,
     FeatureFlagModule,
+    MetricsModule,
     WorkspaceIteratorModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
@@ -30,6 +34,8 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     ]),
   ],
   providers: [
+    WebhookSubscriptionStatusService,
+    WebhookSubscriptionExceptionHandlerService,
     MessagingWebhookSubscriptionService,
     CalendarWebhookSubscriptionService,
     WebhookSubscriptionChannelDeletedListener,

@@ -15,6 +15,7 @@ import {
 } from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -27,12 +28,51 @@ import { formatCompositeFieldValue } from 'src/engine/twenty-orm/utils/format-co
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
+type CompositeFieldMetadataWithRequiredProperties = {
+  fieldMetadata: FlatFieldMetadata;
+  requiredPropertyNames: string[];
+};
+
+type FormatResultObjectCache = {
+  fieldMaps: FieldMapsForObject;
+  compositeFieldMetadataMap: ReturnType<
+    typeof getCompositeFieldMetadataMapFromCollection
+  >;
+  compositeFieldMetadataWithRequiredProperties: CompositeFieldMetadataWithRequiredProperties[];
+  dateTimeFieldMetadataItems: FlatFieldMetadata[];
+};
+
+type FormatResultCache = {
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectCacheByObjectMetadataId: Map<string, FormatResultObjectCache>;
+};
+
 export function formatResult<T>(
   // oxlint-disable-next-line typescript/no-explicit-any
   data: any,
   flatObjectMetadata: FlatObjectMetadata | undefined,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldMapsForObject?: FieldMapsForObject,
+): T {
+  return formatResultRecursively(
+    data,
+    flatObjectMetadata,
+    {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectCacheByObjectMetadataId: new Map(),
+    },
+    fieldMapsForObject,
+  );
+}
+
+function formatResultRecursively<T>(
+  // oxlint-disable-next-line typescript/no-explicit-any
+  data: any,
+  flatObjectMetadata: FlatObjectMetadata | undefined,
+  cache: FormatResultCache,
   fieldMapsForObject?: FieldMapsForObject,
 ): T {
   if (!isDefined(data)) {
@@ -42,11 +82,10 @@ export function formatResult<T>(
   if (!isPlainObject(data)) {
     if (Array.isArray(data)) {
       return data.map((item) =>
-        formatResult(
+        formatResultRecursively(
           item,
           flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
+          cache,
           fieldMapsForObject,
         ),
       ) as T;
@@ -59,24 +98,19 @@ export function formatResult<T>(
     throw new Error('Object metadata is missing');
   }
 
-  const fieldMaps =
-    fieldMapsForObject ??
-    buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
-
-  const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
-
-  const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
+  const objectCache = getOrCreateFormatResultObjectCache({
+    cache,
     flatObjectMetadata,
-    flatFieldMetadataMaps,
-  );
+    fieldMapsForObject,
+  });
+
+  const { fieldIdByName, fieldIdByJoinColumnName } = objectCache.fieldMaps;
 
   const newData: object = {};
 
   for (const [key, value] of Object.entries(data)) {
-    const compositePropertyArgs = compositeFieldMetadataMap.get(key);
+    const compositePropertyArgs =
+      objectCache.compositeFieldMetadataMap.get(key);
 
     const fieldMetadataId =
       fieldIdByName[key] ||
@@ -85,7 +119,7 @@ export function formatResult<T>(
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityMaps: cache.flatFieldMetadataMaps,
     });
 
     if (!isDefined(fieldMetadata)) {
@@ -105,7 +139,7 @@ export function formatResult<T>(
 
       const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
-        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityMaps: cache.flatObjectMetadataMaps,
       });
 
       if (!targetObjectMetadata) {
@@ -115,11 +149,10 @@ export function formatResult<T>(
       }
 
       // @ts-expect-error legacy noImplicitAny
-      newData[key] = formatResult(
+      newData[key] = formatResultRecursively(
         value,
         targetObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
+        cache,
       );
       continue;
     }
@@ -160,34 +193,10 @@ export function formatResult<T>(
   // After assembling composite fields, handle those with missing required subfields
   handleEmptyCompositeFields(
     newData,
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
+    objectCache.compositeFieldMetadataWithRequiredProperties,
   );
 
-  const fieldMetadataItemsOfTypeDateOnly = getFlatFieldsFromFlatObjectMetadata(
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-  ).filter((field) => field.type === FieldMetadataType.DATE);
-
-  for (const dateField of fieldMetadataItemsOfTypeDateOnly) {
-    // @ts-expect-error legacy noImplicitAny
-    const rawUpdatedDate = newData[dateField.name] as string | null | undefined;
-
-    if (!isDefined(rawUpdatedDate)) {
-      continue;
-    }
-
-    // @ts-expect-error legacy noImplicitAny
-    newData[dateField.name] = rawUpdatedDate;
-  }
-
-  const fieldMetadataItemsOfTypeDateTimeOnly =
-    getFlatFieldsFromFlatObjectMetadata(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    ).filter((field) => field.type === FieldMetadataType.DATE_TIME);
-
-  for (const dateTimeField of fieldMetadataItemsOfTypeDateTimeOnly) {
+  for (const dateTimeField of objectCache.dateTimeFieldMetadataItems) {
     // @ts-expect-error legacy noImplicitAny
     const rawUpdatedDateTime = newData[dateTimeField.name] as
       | string
@@ -219,6 +228,63 @@ export function formatResult<T>(
   return newData as T;
 }
 
+function getOrCreateFormatResultObjectCache({
+  cache,
+  flatObjectMetadata,
+  fieldMapsForObject,
+}: {
+  cache: FormatResultCache;
+  flatObjectMetadata: FlatObjectMetadata;
+  fieldMapsForObject?: FieldMapsForObject;
+}): FormatResultObjectCache {
+  const cachedObjectCache = cache.objectCacheByObjectMetadataId.get(
+    flatObjectMetadata.id,
+  );
+
+  if (isDefined(cachedObjectCache)) {
+    return cachedObjectCache;
+  }
+
+  const flatFieldMetadataItems = getFlatFieldsFromFlatObjectMetadata(
+    flatObjectMetadata,
+    cache.flatFieldMetadataMaps,
+  );
+  const compositeFieldMetadataCollection = flatFieldMetadataItems.filter(
+    (fieldMetadata) => isCompositeFieldMetadataType(fieldMetadata.type),
+  );
+
+  const objectCache = {
+    fieldMaps:
+      fieldMapsForObject ??
+      buildFieldMapsFromFlatObjectMetadata(
+        cache.flatFieldMetadataMaps,
+        flatObjectMetadata,
+      ),
+    compositeFieldMetadataMap: getCompositeFieldMetadataMapFromCollection(
+      compositeFieldMetadataCollection,
+    ),
+    compositeFieldMetadataWithRequiredProperties:
+      compositeFieldMetadataCollection.map((fieldMetadata) => {
+        const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
+
+        return {
+          fieldMetadata,
+          requiredPropertyNames:
+            compositeType?.properties
+              .filter((property) => property.isRequired)
+              .map((property) => property.name) ?? [],
+        };
+      }),
+    dateTimeFieldMetadataItems: flatFieldMetadataItems.filter(
+      (fieldMetadata) => fieldMetadata.type === FieldMetadataType.DATE_TIME,
+    ),
+  } satisfies FormatResultObjectCache;
+
+  cache.objectCacheByObjectMetadataId.set(flatObjectMetadata.id, objectCache);
+
+  return objectCache;
+}
+
 export function getCompositeFieldMetadataMap(
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -228,6 +294,14 @@ export function getCompositeFieldMetadataMap(
     flatFieldMetadataMaps,
   );
 
+  return getCompositeFieldMetadataMapFromCollection(
+    compositeFieldMetadataCollection,
+  );
+}
+
+function getCompositeFieldMetadataMapFromCollection(
+  compositeFieldMetadataCollection: FlatFieldMetadata[],
+) {
   return new Map(
     compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
       const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
@@ -304,42 +378,28 @@ function transformCompositeFieldNullValue(
 function handleEmptyCompositeFields(
   // oxlint-disable-next-line typescript/no-explicit-any
   data: Record<string, any>,
-  flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  compositeFieldMetadataWithRequiredProperties: CompositeFieldMetadataWithRequiredProperties[],
 ) {
-  const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-  );
-
-  for (const fieldMetadata of compositeFieldMetadataCollection) {
+  for (const {
+    fieldMetadata,
+    requiredPropertyNames,
+  } of compositeFieldMetadataWithRequiredProperties) {
     const fieldValue = data[fieldMetadata.name];
 
     if (!isDefined(fieldValue) || !isPlainObject(fieldValue)) {
       continue;
     }
 
-    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
-
-    if (!compositeType) {
-      continue;
-    }
-
     // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
-    // Check if all required properties are null/undefined
-    const requiredProperties = compositeType.properties.filter(
-      (prop) => prop.isRequired,
+    const allRequiredPropertiesAreNull = requiredPropertyNames.every(
+      (propertyName) =>
+        !isDefined(typedFieldValue[propertyName]) ||
+        isNull(typedFieldValue[propertyName]),
     );
 
-    const allRequiredPropertiesAreNull = requiredProperties.every(
-      (prop) =>
-        !isDefined(typedFieldValue[prop.name]) ||
-        isNull(typedFieldValue[prop.name]),
-    );
-
-    if (allRequiredPropertiesAreNull && requiredProperties.length > 0) {
+    if (allRequiredPropertiesAreNull && requiredPropertyNames.length > 0) {
       if (fieldMetadata.isNullable) {
         // Field is nullable, set to null
         data[fieldMetadata.name] = null;
