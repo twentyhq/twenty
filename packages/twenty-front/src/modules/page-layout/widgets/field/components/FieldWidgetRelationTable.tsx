@@ -5,11 +5,13 @@ import { type FieldRelationMetadata } from '@/object-record/record-field/ui/type
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
+import { getFieldWidgetNestedRelationCreateThrough } from '@/page-layout/widgets/field/utils/getFieldWidgetNestedRelationCreateThrough';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const FIELD_WIDGET_RELATION_TABLE_MAX_VISIBLE_RECORDS = 20;
@@ -68,6 +70,21 @@ export const FieldWidgetRelationTable = ({
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : relationObjectMetadataId;
 
+  const fieldRelationMetadata = fieldDefinition.metadata;
+
+  const nestedRelationCreateThrough = useMemo(
+    () =>
+      isDefined(resolvedNestedRelation)
+        ? getFieldWidgetNestedRelationCreateThrough({
+            fieldRelationMetadata,
+            nestedRelationFieldMetadataItem:
+              resolvedNestedRelation.nestedRelationFieldMetadataItem,
+            recordId,
+          })
+        : undefined,
+    [resolvedNestedRelation, fieldRelationMetadata, recordId],
+  );
+
   if (
     !isDefined(viewId) ||
     !isDefined(tableObjectMetadataId) ||
@@ -93,6 +110,7 @@ export const FieldWidgetRelationTable = ({
           isReadOnly={isPageLayoutInEditMode}
           isEmptyStateHidden
           instanceIdSuffix={`${recordId}${isInSidePanel ? '-side-panel' : ''}`}
+          nestedRelationCreateThrough={nestedRelationCreateThrough}
         />
       </StyledContainer>
     </RecordFilterValueDependenciesContext.Provider>
