@@ -35,13 +35,12 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
       applicationUniversalIdentifier,
     });
 
-    const { flatViewFieldsToCreate } =
-      computeSystemViewFieldsForCreatedObjectView({
-        sourceFlatObjectMetadata,
-        viewUniversalIdentifier: flatRecordPageViewToCreate.universalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
-        labelIdentifierPolicy: 'excluded',
-      });
+    const flatViewFieldsToCreate = computeSystemViewFieldsForCreatedObjectView({
+      sourceFlatObjectMetadata,
+      viewUniversalIdentifier: flatRecordPageViewToCreate.universalIdentifier,
+      allFlatEntityOperationRecordByMetadataName,
+      labelIdentifierPolicy: 'excluded',
+    });
 
     const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
       computeFlatDefaultRecordPageLayoutToCreate({
