@@ -126,9 +126,9 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
     if (field.kind === 'attribute') {
       if (field.property === 'width') {
         const trimmed = value.trim();
-        if (trimmed === '') {
+        if (trimmed === '' || trimmed === 'auto') {
           updateTargetAttributes({ width: null });
-        } else if (!Number.isNaN(Number(trimmed))) {
+        } else if (Number.isFinite(Number(trimmed)) && Number(trimmed) >= 0) {
           updateTargetAttributes({ width: Number(trimmed) });
         }
         return;

@@ -7,7 +7,8 @@ export const blockStyle = (value: unknown): CSSProperties => {
 
   return Object.fromEntries(
     Object.entries(value).filter(
-      (entry): entry is [string, string] => typeof entry[1] === 'string',
+      (entry): entry is [string, string | number] =>
+        typeof entry[1] === 'string' || typeof entry[1] === 'number',
     ),
   ) as CSSProperties;
 };

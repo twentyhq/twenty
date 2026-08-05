@@ -8,6 +8,7 @@ export const SectionNode = Node.create({
   group: 'block',
   content: 'block+',
   defining: true,
+  isolating: true,
 
   addAttributes() {
     return {

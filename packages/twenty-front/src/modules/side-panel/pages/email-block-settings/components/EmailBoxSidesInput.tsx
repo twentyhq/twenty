@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconFrame, IconSquare } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
@@ -84,6 +85,7 @@ export const EmailBoxSidesInput = ({
   onChange,
   placeholder,
 }: EmailBoxSidesInputProps) => {
+  const { t } = useLingui();
   const [isPerSide, setIsPerSide] = useState(!areAllSidesEqual(sides));
 
   const commitAllSides = (input: string) => {
@@ -93,7 +95,10 @@ export const EmailBoxSidesInput = ({
   };
 
   const commitSide = (side: (typeof SIDE_KEYS)[number], input: string) => {
-    onChange({ ...sides, [side]: toCssToken(input) });
+    onChange({
+      ...sides,
+      [side]: input.trim() === '' ? '' : toCssToken(input),
+    });
   };
 
   return (
@@ -125,6 +130,8 @@ export const EmailBoxSidesInput = ({
           Icon={IconSquare}
           size="small"
           accent={isPerSide ? 'tertiary' : 'secondary'}
+          title={t`Same value on every side`}
+          aria-pressed={!isPerSide}
           onClick={() => {
             setIsPerSide(false);
             commitAllSides(toDisplayAmount(sides.top));
@@ -134,6 +141,8 @@ export const EmailBoxSidesInput = ({
           Icon={IconFrame}
           size="small"
           accent={isPerSide ? 'secondary' : 'tertiary'}
+          title={t`Edit each side`}
+          aria-pressed={isPerSide}
           onClick={() => setIsPerSide(true)}
         />
       </StyledRow>

@@ -3,7 +3,7 @@ export type CssSizeValue = {
   unit: 'px' | '%' | 'em';
 };
 
-const CSS_SIZE_PATTERN = /^(-?[\d.]+)(px|%|em)$/;
+const CSS_SIZE_PATTERN = /^(-?(?:\d+|\d*\.\d+))(px|%|em)$/;
 
 export const parseCssSizeValue = (value: string | undefined): CssSizeValue => {
   const match = (value ?? '').trim().match(CSS_SIZE_PATTERN);

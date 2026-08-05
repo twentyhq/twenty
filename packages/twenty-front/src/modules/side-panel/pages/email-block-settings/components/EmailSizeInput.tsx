@@ -53,7 +53,7 @@ export const EmailSizeInput = ({
       return;
     }
 
-    if (Number.isNaN(Number(trimmedAmount))) {
+    if (!/^-?(\d+|\d*\.\d+)$/.test(trimmedAmount)) {
       onChange(trimmedAmount);
       return;
     }

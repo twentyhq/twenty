@@ -1,5 +1,5 @@
 export const appendHtmlFooter = (html: string, footer: string): string => {
-  const closingBodyIndex = html.toLowerCase().lastIndexOf('</body>');
+  const closingBodyIndex = html.search(/<\/body>(?![\s\S]*<\/body>)/i);
 
   if (closingBodyIndex !== -1) {
     return (
@@ -7,7 +7,7 @@ export const appendHtmlFooter = (html: string, footer: string): string => {
     );
   }
 
-  const closingHtmlIndex = html.toLowerCase().lastIndexOf('</html>');
+  const closingHtmlIndex = html.search(/<\/html>(?![\s\S]*<\/html>)/i);
 
   if (closingHtmlIndex !== -1) {
     return (

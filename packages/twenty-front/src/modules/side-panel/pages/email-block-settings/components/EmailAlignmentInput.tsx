@@ -59,6 +59,7 @@ export const EmailAlignmentInput = ({
           key={align}
           type="button"
           aria-label={align}
+          aria-pressed={value === align}
           title={align}
           isActive={value === align}
           onClick={() => onChange(align)}
