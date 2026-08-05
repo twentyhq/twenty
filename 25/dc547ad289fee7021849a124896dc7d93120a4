@@ -1,0 +1,136 @@
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListFieldTooltip.tsx
+  s_78d9b82a19ccf1::t_73183096f01abc 1,4,13-20,23
+  s_f2d273a7d4f9b9::t_d2982de106c34b 9
+  s_f2d273a7d4f9b9::t_64cd589cfd5886 25
+  s_f2d273a7d4f9b9::t_43bc56d5d55283 2-3,5-8,10-12,21-22,24,26-32
+packages/twenty-front/src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+  s_f2d273a7d4f9b9::t_b4a1f3dd6222e7 139-142
+  s_f2d273a7d4f9b9::t_66c1c75615ba88 334,338-355
+  s_f2d273a7d4f9b9::t_1f0b90337e5210 189-201
+  s_f2d273a7d4f9b9::t_4891c91c0df206 127
+  s_f2d273a7d4f9b9::t_3e5b021793f647 330-333
+  s_f2d273a7d4f9b9::t_58af02741b8dbf 188,202-205
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_f2d273a7d4f9b9::t_dc039ee573ac2a 6468
+packages/twenty-shared/src/types/ViewType.ts
+  s_f2d273a7d4f9b9::t_564c3173227729 5
+packages/twenty-front/src/modules/object-record/record-index/components/RecordIndexContainer.tsx
+  s_f2d273a7d4f9b9::t_306bae7f381c8a 11
+  s_f2d273a7d4f9b9::t_6b7b34a607868b 71-74
+  s_f2d273a7d4f9b9::t_70faf6a6f974a5 75-77
+  s_f2d273a7d4f9b9::t_12e68bc3dfdf0b 78
+packages/twenty-front/src/modules/object-record/record-list/contexts/RecordListContext.ts
+  s_f2d273a7d4f9b9::t_64e691ed1a3c6b 1-13
+packages/twenty-front/src/modules/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu.ts
+  s_f2d273a7d4f9b9::t_794e4bf8196365 162-164
+  s_f2d273a7d4f9b9::t_b6238ba7419791 76-77
+  s_f2d273a7d4f9b9::t_0e6abd8639c316 165-167
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListSSESubscribeEffect.tsx
+  s_f2d273a7d4f9b9::t_7e45cf72b45e8b 1-32
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRow.tsx
+  s_f2d273a7d4f9b9::t_3e72c015524d0e 62
+  s_f2d273a7d4f9b9::t_fcaf954e957d6f 92
+  s_78d9b82a19ccf1::t_6ec2c2bdf3bb7e 4
+  s_f2d273a7d4f9b9::t_ffcd3cedc4b36b 1-3,5-17,31-37,39-61,63-78,83,85-91,93-100,114-118,120-121,151-152
+  s_f2d273a7d4f9b9::t_4a43a3ecef4fec 18-30,84,122-150
+  s_78d9b82a19ccf1::t_d1181b195a66da 79-82
+  s_f2d273a7d4f9b9::t_0a0ffec3bcf8ba 38
+  s_78d9b82a19ccf1::t_25b020799c8543 101-113,119
+packages/twenty-front/src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
+  s_f2d273a7d4f9b9::t_8f07f75025162e 23-27
+packages/twenty-front/src/modules/object-record/record-list/constants/RecordListRowVisibleFieldLimit.ts
+  s_f2d273a7d4f9b9::t_f55f5cdc066043 1
+packages/twenty-front/src/modules/object-record/record-list/states/recordListHoveredFieldLabelComponentState.ts
+  s_f2d273a7d4f9b9::t_40324ecedd614a 1-9
+packages/twenty-shared/src/utils/views/getViewLayoutFromViewType.ts
+  s_f2d273a7d4f9b9::t_b0307fef2b6251 9
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRecordGroupSection.tsx
+  s_78d9b82a19ccf1::t_0b5258b7e87f6e 26
+  s_78d9b82a19ccf1::t_459e063ec4220f 87
+  s_78d9b82a19ccf1::t_b84ac635cee78b 2-4,7,9-10,12-23,25,27-28,33-34,37-48,64-70,74-78,80,94-96
+  s_78d9b82a19ccf1::t_d77bd54effc94d 1
+  s_78d9b82a19ccf1::t_dcd323e64a046f 71-73,79
+  s_78d9b82a19ccf1::t_10da80ca19b761 5-6,8,11,24,29-32,35-36,49-58,81-86,88-93
+  s_78d9b82a19ccf1::t_7dbcbf81eac04b 59-63
+packages/twenty-front/src/modules/object-record/record-list/components/RecordList.tsx
+  s_f2d273a7d4f9b9::t_73ea7af75e70d6 2,5-7,9-25,30-33,35,37,39-41
+  s_78d9b82a19ccf1::t_7cba7a0b3bc3c8 26-29,36,38
+  s_f2d273a7d4f9b9::t_76e7822fcdbe0a 34
+  s_78d9b82a19ccf1::t_572d3113ae55cd 1,3-4,8
+packages/twenty-front/src/modules/views/types/ViewType.ts
+  s_f2d273a7d4f9b9::t_91e940dd305dcf 36
+  s_f2d273a7d4f9b9::t_986f9e16656441 7
+  s_f2d273a7d4f9b9::t_47f13e174d4d9b 20
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListBody.tsx
+  s_f2d273a7d4f9b9::t_66c1c75615ba88 44
+  s_f2d273a7d4f9b9::t_586f15f6012721 1-43,45-48
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRecordGroup.tsx
+  s_78d9b82a19ccf1::t_468dcfe2c5cd61 43,50,52,54
+  s_78d9b82a19ccf1::t_cae3cf044abb49 73
+  s_78d9b82a19ccf1::t_589ebda3725761 20
+  s_78d9b82a19ccf1::t_1c3f5cb0e70d4c 74
+  s_78d9b82a19ccf1::t_2e9ed41a385650 34
+  s_78d9b82a19ccf1::t_e7060764c40e38 1-19,21-33,35-42,44-49,51,53,55-72,75-87
+packages/twenty-front/src/modules/object-record/record-list/states/isRecordListGroupSectionToggledComponentState.ts
+  s_78d9b82a19ccf1::t_ff329ac5f5293b 1-10
+packages/twenty-front/src/modules/object-record/record-list/constants/RecordListRowInputIdPrefix.ts
+  s_f2d273a7d4f9b9::t_5415cfd053f3eb 1
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListAddNew.tsx
+  s_78d9b82a19ccf1::t_43198c5637ab25 27
+  s_78d9b82a19ccf1::t_d0f14bc1e1c25a 42-51
+  s_78d9b82a19ccf1::t_137169e32ca872 78-84
+  s_f2d273a7d4f9b9::t_ed6737f60ccb05 2-3,6-9,12-26,28-41,52-77,85-96
+  s_78d9b82a19ccf1::t_096ba72cfae8e3 1,4-5,10-11
+packages/twenty-front/src/modules/metadata-store/hooks/useLoadStaleMetadataEntities.ts
+  s_f2d273a7d4f9b9::t_4d2f8039c39bec 46-51
+packages/twenty-front/src/modules/object-record/record-list/states/contexts/RecordListComponentInstanceContext.ts
+  s_f2d273a7d4f9b9::t_b7d48038b734ea 1-4
+packages/twenty-front/src/modules/object-record/components/RecordComponentInstanceContextsWrapper.tsx
+  s_f2d273a7d4f9b9::t_b0bcdc089a45de 33-37
+  s_f2d273a7d4f9b9::t_202dc6aac482df 3
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1785929606728-add-list-view-type.ts
+  s_f2d273a7d4f9b9::t_90bde0176c4f6a 1-30
+  s_f2d273a7d4f9b9::t_486889962eb0eb 31-32
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRowField.tsx
+  s_f2d273a7d4f9b9::t_e239a2101d75f3 47
+  s_f2d273a7d4f9b9::t_1247ded632abad 1-5,9,11-14,16-18,23-36,41-42,44,49-56,58-75
+  s_f2d273a7d4f9b9::t_618caba7bfccbd 43
+  s_f2d273a7d4f9b9::t_ed38316da0287a 15
+  s_f2d273a7d4f9b9::t_8c36c23c16b3b9 7,19-22,45,48,57
+  s_f2d273a7d4f9b9::t_cd567dedd59271 37
+  s_f2d273a7d4f9b9::t_74a29e3cea40fb 6,8,10,38-40,46
+packages/twenty-front/src/modules/object-record/record-list/constants/RecordListRowFieldAnchorClassName.ts
+  s_f2d273a7d4f9b9::t_6955064f531742 1-2
+packages/twenty-front/src/modules/object-record/record-index/components/RecordIndexListContainer.tsx
+  s_f2d273a7d4f9b9::t_24757042c87337 1-45
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRecordGroupsBody.tsx
+  s_78d9b82a19ccf1::t_2055a73fc64d97 3
+  s_78d9b82a19ccf1::t_09a63fb5417d8b 1-2,4-23,25-27
+  s_78d9b82a19ccf1::t_84d45973008b20 24
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_f2d273a7d4f9b9::t_022ad919e74149 138,276
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "25dc547ad289fee7021849a124896dc7d93120a4",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    },
+    "s_f2d273a7d4f9b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6afc7207-6ea7-4d1b-9eb7-c2dfe44ac5f5",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
