@@ -9,11 +9,22 @@ describe('getLocalDepsLayerPath', () => {
     ).toBe(`${LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER}/deps/abc123`);
   });
 
-  it('falls back to default when yarnLockChecksum is undefined', () => {
+  it('falls back to the packageJsonChecksum when yarnLockChecksum is undefined', () => {
     expect(
       getLocalDepsLayerPath({
         yarnLockChecksum: undefined,
+        packageJsonChecksum: 'pkg456',
       } as unknown as FlatApplication),
-    ).toBe(`${LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER}/deps/default`);
+    ).toBe(`${LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER}/deps/pkg456`);
+  });
+
+  it('falls back to the application id when both checksums are missing', () => {
+    expect(
+      getLocalDepsLayerPath({
+        id: 'app-id-1',
+        yarnLockChecksum: undefined,
+        packageJsonChecksum: undefined,
+      } as unknown as FlatApplication),
+    ).toBe(`${LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER}/deps/app-id-1`);
   });
 });

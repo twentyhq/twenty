@@ -13,5 +13,11 @@ export const getLambdaDepsLayerName = ({
   buildLambdaResourceName({
     resourceNamePrefix: DEPS_LAYER_NAME_PREFIX,
     namespace,
-    checksum: flatApplication.yarnLockChecksum ?? 'default',
+    // A shared fallback like 'default' would make every application without
+    // a lockfile resolve to the same layer and receive whichever
+    // dependencies were built first.
+    checksum:
+      flatApplication.yarnLockChecksum ??
+      flatApplication.packageJsonChecksum ??
+      flatApplication.id,
   });

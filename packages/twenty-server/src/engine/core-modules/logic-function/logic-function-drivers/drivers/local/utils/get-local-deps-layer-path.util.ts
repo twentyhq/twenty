@@ -6,7 +6,13 @@ import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/l
 export const getLocalDepsLayerPath = (
   flatApplication: FlatApplication,
 ): string => {
-  const checksum = flatApplication.yarnLockChecksum ?? 'default';
+  // A shared fallback like 'default' would make every application without
+  // a lockfile resolve to the same layer and receive whichever dependencies
+  // were built first.
+  const checksum =
+    flatApplication.yarnLockChecksum ??
+    flatApplication.packageJsonChecksum ??
+    flatApplication.id;
 
   return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, 'deps', checksum);
 };

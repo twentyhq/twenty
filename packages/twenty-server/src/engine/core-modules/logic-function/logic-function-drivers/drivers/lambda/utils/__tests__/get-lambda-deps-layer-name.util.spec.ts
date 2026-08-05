@@ -5,7 +5,9 @@ const buildFlatApplication = (
   overrides: Partial<FlatApplication> = {},
 ): FlatApplication =>
   ({
+    id: 'app-id-1',
     yarnLockChecksum: 'abc123',
+    packageJsonChecksum: 'pkg456',
     ...overrides,
   }) as FlatApplication;
 
@@ -16,22 +18,33 @@ describe('getLambdaDepsLayerName', () => {
     ).toBe('deps-abc123');
   });
 
-  it('falls back to deps-default when yarnLockChecksum is undefined', () => {
+  it('falls back to the packageJsonChecksum when yarnLockChecksum is undefined', () => {
     expect(
       getLambdaDepsLayerName({
         flatApplication: buildFlatApplication({ yarnLockChecksum: undefined }),
       }),
-    ).toBe('deps-default');
+    ).toBe('deps-pkg456');
   });
 
-  it('falls back to deps-default when yarnLockChecksum is null', () => {
+  it('falls back to the packageJsonChecksum when yarnLockChecksum is null', () => {
     expect(
       getLambdaDepsLayerName({
         flatApplication: buildFlatApplication({
           yarnLockChecksum: null as unknown as string,
         }),
       }),
-    ).toBe('deps-default');
+    ).toBe('deps-pkg456');
+  });
+
+  it('falls back to the application id when both checksums are missing', () => {
+    expect(
+      getLambdaDepsLayerName({
+        flatApplication: buildFlatApplication({
+          yarnLockChecksum: null as unknown as string,
+          packageJsonChecksum: null as unknown as string,
+        }),
+      }),
+    ).toBe('deps-app-id-1');
   });
 
   it('inserts the namespace segment when provided', () => {
