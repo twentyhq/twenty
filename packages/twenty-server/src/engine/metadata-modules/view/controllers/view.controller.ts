@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -45,7 +46,7 @@ import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-module
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
-@Controller('rest/metadata/views')
+@Controller(`${ApiPath.Rest}/metadata/views`)
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
