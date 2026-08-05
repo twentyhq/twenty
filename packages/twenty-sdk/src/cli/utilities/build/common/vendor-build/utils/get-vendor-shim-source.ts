@@ -15,12 +15,12 @@ export const getVendorShimSource = ({
     `import { ${namespaceIdentifier} } from ${JSON.stringify(VENDOR_BUNDLE_IMPORT_SPECIFIER)};`,
   ];
 
-  exportNames.namedExports.forEach((exportName, index) => {
+  for (const [index, exportName] of exportNames.namedExports.entries()) {
     lines.push(
       `const __vendorExport${index} = ${namespaceIdentifier}[${JSON.stringify(exportName)}];`,
       `export { __vendorExport${index} as ${JSON.stringify(exportName)} };`,
     );
-  });
+  }
 
   if (exportNames.hasDefaultExport) {
     lines.push(`export default ${namespaceIdentifier}.default;`);
