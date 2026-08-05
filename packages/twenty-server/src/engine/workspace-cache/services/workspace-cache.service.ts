@@ -41,28 +41,27 @@ import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
-const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
-// Heavy localDataOnly providers evict sooner: a single stale read otherwise pins a 5 MB
-// ORM graph for 30 min (the pod's dominant RAM cost), while rebuilding it is cheap (6-16 ms).
-const LOCAL_ENTRY_TTL_OVERRIDES: {
-  keyName: WorkspaceCacheKeyName;
-  ttlMs: number;
-}[] = [{ keyName: 'ORMEntityMetadatas', ttlMs: 5 * 60 * 1000 }];
-// Resolved against the local key prefix (`${WORKSPACE_CACHE_KEYS_V2[keyName]}:${workspaceId}`)
-// so the expiration sweep can look up a per-provider TTL without storing the key on each entry.
-const LOCAL_ENTRY_TTL_MS_BY_PREFIX = new Map<string, number>(
-  LOCAL_ENTRY_TTL_OVERRIDES.map(({ keyName, ttlMs }) => [
-    WORKSPACE_CACHE_KEYS_V2[keyName],
-    ttlMs,
-  ]),
-);
-const LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS = 60 * 1000;
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
-// Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
+// Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
+// Byte-blind total backstop; heavy providers get a tighter per-provider cap below.
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
+// Per-provider entry caps for providers whose payloads are large. An idle ORM graph is
+// ~5 MB, so a pod that has served many workspaces would otherwise pin gigabytes; rebuilding
+// on a later miss is cheap (6-16 ms). Providers without an override fall back to the global
+// cap. Conservative first value — tune against twenty_workspace_cache_recompute_duration.
+const LOCAL_ENTRY_COUNT_OVERRIDES: {
+  keyName: WorkspaceCacheKeyName;
+  maxEntries: number;
+}[] = [{ keyName: 'ORMEntityMetadatas', maxEntries: 128 }];
+const LOCAL_ENTRY_COUNT_BY_PREFIX = new Map<string, number>(
+  LOCAL_ENTRY_COUNT_OVERRIDES.map(({ keyName, maxEntries }) => [
+    WORKSPACE_CACHE_KEYS_V2[keyName],
+    maxEntries,
+  ]),
+);
 const LOCAL_CACHE_STATS_TTL_MS = 5_000;
 const LOCAL_CACHE_SIZE_REFRESH_MS = 5 * 60 * 1000;
 const LOCAL_CACHE_SIZE_STARTUP_DELAY_MS = 30 * 1000;
@@ -100,7 +99,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
-  private lastLocalCacheExpirationSweepAt: number | undefined;
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
 
@@ -473,7 +471,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
-    this.evictExpiredLocalEntriesIfNeeded();
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const memoKey =
@@ -936,30 +933,68 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     entry.lastHashCheckedAt = Date.now();
 
     this.cleanupStaleVersions(entry);
-    this.evictLRUEntriesIfNeeded();
+    this.evictOverBudgetEntries(keyName);
   }
 
-  private evictLRUEntriesIfNeeded(): void {
-    if (this.localCache.size <= MAX_LOCAL_CACHE_ENTRIES) {
+  // Last time this entry was served (the latest version's read time). Used as the LRU key
+  // so eviction drops the genuinely least-recently-read entry.
+  private entryLastReadAt(
+    entry: WorkspaceLocalCacheEntry<CacheDataType>,
+  ): number {
+    return entry.versions.get(entry.latestHash)?.lastReadAt ?? 0;
+  }
+
+  private evictOverBudgetEntries(writtenKeyName: WorkspaceCacheKeyName): void {
+    const prefix = WORKSPACE_CACHE_KEYS_V2[writtenKeyName];
+    const providerCap = LOCAL_ENTRY_COUNT_BY_PREFIX.get(prefix);
+
+    // Tighter per-provider cap for the provider we just grew.
+    if (isDefined(providerCap)) {
+      this.evictLeastRecentlyRead(
+        (key) => key.slice(0, key.lastIndexOf(':')) === prefix,
+        providerCap,
+      );
+    }
+
+    // Byte-blind total backstop across every provider.
+    if (this.localCache.size > MAX_LOCAL_CACHE_ENTRIES) {
+      this.evictLeastRecentlyRead(
+        () => true,
+        MAX_LOCAL_CACHE_ENTRIES,
+        MIN_EVICT_KEYS,
+      );
+    }
+  }
+
+  private evictLeastRecentlyRead(
+    matches: (key: string) => boolean,
+    maxEntries: number,
+    minEvict = 0,
+  ): void {
+    const matching = [...this.localCache.entries()].filter(([key]) =>
+      matches(key),
+    );
+
+    if (matching.length <= maxEntries) {
       return;
     }
 
-    const entries = [...this.localCache.entries()].sort(
-      (a, b) => a[1].lastHashCheckedAt - b[1].lastHashCheckedAt,
+    matching.sort(
+      (a, b) => this.entryLastReadAt(a[1]) - this.entryLastReadAt(b[1]),
     );
 
-    const toEvict = entries.slice(
-      0,
-      Math.max(MIN_EVICT_KEYS, this.localCache.size - MAX_LOCAL_CACHE_ENTRIES),
+    const evictCount = Math.min(
+      matching.length,
+      Math.max(minEvict, matching.length - maxEntries),
     );
 
-    for (const [key] of toEvict) {
-      this.localCache.delete(key);
+    for (let index = 0; index < evictCount; index += 1) {
+      this.localCache.delete(matching[index][0]);
     }
 
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.WorkspaceMetadataCacheLocalEviction,
-      amount: toEvict.length,
+      amount: evictCount,
     });
   }
 
@@ -991,49 +1026,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         if (isDefined(oldestEntry)) {
           entry.versions.delete(oldestEntry[0]);
         }
-      }
-    }
-  }
-
-  private evictExpiredLocalEntriesIfNeeded(): void {
-    const now = Date.now();
-
-    if (
-      isDefined(this.lastLocalCacheExpirationSweepAt) &&
-      now - this.lastLocalCacheExpirationSweepAt <
-        LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS
-    ) {
-      return;
-    }
-
-    this.evictExpiredLocalEntries(now);
-    this.lastLocalCacheExpirationSweepAt = now;
-  }
-
-  private resolveLocalEntryTtlMs(localKey: string): number {
-    const prefix = localKey.slice(0, localKey.lastIndexOf(':'));
-
-    return LOCAL_ENTRY_TTL_MS_BY_PREFIX.get(prefix) ?? LOCAL_ENTRY_TTL_MS;
-  }
-
-  private evictExpiredLocalEntries(now: number): void {
-    for (const [localKey, entry] of this.localCache) {
-      const entryTtlMs = this.resolveLocalEntryTtlMs(localKey);
-
-      for (const [hash, version] of entry.versions) {
-        if (now - version.lastReadAt > entryTtlMs) {
-          entry.versions.delete(hash);
-        }
-      }
-
-      if (entry.versions.size === 0) {
-        this.localCache.delete(localKey);
-        continue;
-      }
-
-      if (!entry.versions.has(entry.latestHash)) {
-        // Latest was evicted; drop the entire entry to avoid serving stale data.
-        this.localCache.delete(localKey);
       }
     }
   }

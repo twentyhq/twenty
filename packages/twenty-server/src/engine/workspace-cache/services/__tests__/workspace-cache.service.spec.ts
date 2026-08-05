@@ -287,34 +287,6 @@ describe('WorkspaceCacheService', () => {
     });
   });
 
-  describe('local cache expiration sweep', () => {
-    it('should run at most once per minute', async () => {
-      const expirationSweepSpy = jest.spyOn(
-        service as unknown as {
-          evictExpiredLocalEntries: (now: number) => void;
-        },
-        'evictExpiredLocalEntries',
-      );
-
-      await expect(
-        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
-      ).rejects.toThrow();
-      await expect(
-        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
-      ).rejects.toThrow();
-
-      expect(expirationSweepSpy).toHaveBeenCalledTimes(1);
-
-      jest.advanceTimersByTime(60_000);
-
-      await expect(
-        service.getOrRecompute('invalid-workspace-id', ['featureFlagsMap']),
-      ).rejects.toThrow();
-
-      expect(expirationSweepSpy).toHaveBeenCalledTimes(2);
-    });
-  });
-
   describe('invalidateAndRecompute', () => {
     beforeEach(async () => {
       discoveryService.getProviders.mockReturnValue([
@@ -735,37 +707,37 @@ describe('WorkspaceCacheService', () => {
       ]);
     });
 
-    it('should keep the ORM entry until its shortened per-provider TTL elapses', async () => {
+    it('should cap ORM entries at the per-provider budget, evicting the least-recently-read', async () => {
       cacheStorageService.mget.mockResolvedValue(['stable-hash']);
       cacheStorageService.mset.mockResolvedValue(undefined);
 
-      const computeSpy = jest.spyOn(localDataOnlyProvider, 'computeForCache');
+      const localCache = (
+        service as unknown as { localCache: Map<string, unknown> }
+      ).localCache;
+      const ormBudget = 128;
+      const workspaceId = (index: number) =>
+        `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
 
-      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
-      expect(computeSpy).toHaveBeenCalledTimes(1);
+      // Fill one past the ORM budget, each with a distinct workspace and read time.
+      for (let index = 0; index <= ormBudget; index += 1) {
+        await service.getOrRecompute(workspaceId(index), [
+          'ORMEntityMetadatas',
+        ]);
+        jest.advanceTimersByTime(1);
+      }
 
-      // Just under the 5-minute ORM override: the sweep keeps the entry, so the read revalidates.
-      jest.advanceTimersByTime(4 * 60 * 1000);
-      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+      const ormKeys = [...localCache.keys()].filter((key) =>
+        key.startsWith('orm:entity-metadatas:'),
+      );
 
-      expect(computeSpy).toHaveBeenCalledTimes(1);
-    });
-
-    it('should evict the ORM entry after its shortened per-provider TTL, forcing a recompute', async () => {
-      cacheStorageService.mget.mockResolvedValue(['stable-hash']);
-      cacheStorageService.mset.mockResolvedValue(undefined);
-
-      const computeSpy = jest.spyOn(localDataOnlyProvider, 'computeForCache');
-
-      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
-      expect(computeSpy).toHaveBeenCalledTimes(1);
-
-      // Past the 5-minute override (and the 1-minute sweep interval): the idle entry is swept,
-      // so the next read recomputes instead of adopting the still-warm redis hash.
-      jest.advanceTimersByTime(5 * 60 * 1000 + 1_000);
-      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
-
-      expect(computeSpy).toHaveBeenCalledTimes(2);
+      expect(ormKeys.length).toBe(ormBudget);
+      // The first (least-recently-read) workspace was evicted; the newest is retained.
+      expect(localCache.has(`orm:entity-metadatas:${workspaceId(0)}`)).toBe(
+        false,
+      );
+      expect(
+        localCache.has(`orm:entity-metadatas:${workspaceId(ormBudget)}`),
+      ).toBe(true);
     });
   });
 });
