@@ -46,8 +46,9 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   );
 
   return (
-    <StyledContainer key={draftResyncKey} onBlur={() => flush()}>
+    <StyledContainer onBlur={() => flush()}>
       <FormAdvancedTextFieldInput
+        key={draftResyncKey}
         defaultValue={body}
         onChange={setBody}
         placeholder={t`Type something or press "/" to see commands`}
