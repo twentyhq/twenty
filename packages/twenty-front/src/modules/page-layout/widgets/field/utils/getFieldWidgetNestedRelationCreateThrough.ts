@@ -12,7 +12,9 @@ export const getFieldWidgetNestedRelationCreateThrough = ({
 }: {
   fieldRelationMetadata: Pick<
     FieldRelationMetadata,
-    'targetFieldMetadataName' | 'relationObjectMetadataNameSingular'
+    | 'targetFieldMetadataName'
+    | 'relationObjectMetadataNameSingular'
+    | 'relationType'
   >;
   nestedRelationFieldMetadataItem: FieldMetadataItem;
   recordId: string;

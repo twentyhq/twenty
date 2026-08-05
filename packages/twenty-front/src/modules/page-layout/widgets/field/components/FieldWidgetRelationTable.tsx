@@ -87,8 +87,12 @@ export const FieldWidgetRelationTable = ({
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : relationObjectMetadataId;
 
-  const { targetFieldMetadataName, relationObjectMetadataNameSingular } =
-    fieldDefinition.metadata;
+  const {
+    targetFieldMetadataName,
+    relationObjectMetadataNameSingular,
+    relationType,
+    fieldName,
+  } = fieldDefinition.metadata;
 
   const nestedRelationCreateThrough = useMemo(
     () =>
@@ -97,6 +101,7 @@ export const FieldWidgetRelationTable = ({
             fieldRelationMetadata: {
               targetFieldMetadataName,
               relationObjectMetadataNameSingular,
+              relationType,
             },
             nestedRelationFieldMetadataItem:
               resolvedNestedRelation.nestedRelationFieldMetadataItem,
@@ -107,6 +112,7 @@ export const FieldWidgetRelationTable = ({
       resolvedNestedRelation,
       targetFieldMetadataName,
       relationObjectMetadataNameSingular,
+      relationType,
       recordId,
     ],
   );
@@ -116,15 +122,13 @@ export const FieldWidgetRelationTable = ({
   // filter's current record, read from the current record's join column.
   const isManyToOneNestedChain =
     isDefined(nestedRelationFieldMetadataId) &&
-    fieldRelationMetadata.relationType === RelationType.MANY_TO_ONE;
+    relationType === RelationType.MANY_TO_ONE;
 
   const intermediateRecordId = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     {
       recordId,
-      fieldName: computeRelationGqlFieldJoinColumnName({
-        name: fieldRelationMetadata.fieldName,
-      }),
+      fieldName: computeRelationGqlFieldJoinColumnName({ name: fieldName }),
     },
   );
 
@@ -141,8 +145,7 @@ export const FieldWidgetRelationTable = ({
     return isNonEmptyString(intermediateRecordId)
       ? {
           id: intermediateRecordId,
-          objectMetadataNameSingular:
-            fieldRelationMetadata.relationObjectMetadataNameSingular,
+          objectMetadataNameSingular: relationObjectMetadataNameSingular,
         }
       : undefined;
   }, [
@@ -150,7 +153,7 @@ export const FieldWidgetRelationTable = ({
     recordId,
     recordPageObjectMetadataNameSingular,
     intermediateRecordId,
-    fieldRelationMetadata.relationObjectMetadataNameSingular,
+    relationObjectMetadataNameSingular,
   ]);
 
   if (
