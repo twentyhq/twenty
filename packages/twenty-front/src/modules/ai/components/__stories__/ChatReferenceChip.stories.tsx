@@ -2,7 +2,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { formatChatReference } from '@/ai/utils/formatChatReference';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
@@ -79,19 +78,7 @@ type Story = StoryObj<typeof LazyMarkdownRenderer>;
 
 export const ExistingMetadata: Story = {
   args: {
-    text: `Your ${formatChatReference({
-      kind: 'object',
-      objectNameSingular: 'company',
-      displayName: 'Companies',
-    })} object is sorted by ${formatChatReference({
-      kind: 'field',
-      fieldMetadataItemId: employeesFieldMetadataItem.id,
-      displayName: 'Employees',
-    })} in the ${formatChatReference({
-      kind: 'view',
-      viewId: allCompaniesView.id,
-      displayName: allCompaniesView.name,
-    })} view.`,
+    text: `Your [[object:company:Companies[[/object]] object is sorted by [[field:${employeesFieldMetadataItem.id}:Employees[[/field]] in the [[view:${allCompaniesView.id}:${allCompaniesView.name}[[/view]] view.`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -115,11 +102,7 @@ export const ExistingMetadata: Story = {
 
 export const SurplusClosingBrackets: Story = {
   args: {
-    text: `I created the ${formatChatReference({
-      kind: 'object',
-      objectNameSingular: 'company',
-      displayName: 'Companies',
-    })}] object.`,
+    text: `I created the [[object:company:Companies[[/object]]] object.`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -129,15 +112,38 @@ export const SurplusClosingBrackets: Story = {
   },
 };
 
+export const LegacyClosingTerminator: Story = {
+  args: {
+    text: `## [[object:project:Project]] object created\n\n| Relation | Links to |\n| --- | --- |\n| Owner | [[object:workspaceMember:Workspace Member]] |\n| Company | [[object:company:Companies]] |`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Project')).toBeVisible();
+    expect(await canvas.findByText('Workspace Member')).toBeVisible();
+    expect((await canvas.findByText('Companies')).closest('a')).toHaveAttribute(
+      'href',
+      `/objects/${companyObjectMetadataItem.namePlural}`,
+    );
+    expect(canvasElement).not.toHaveTextContent('[[object:');
+  },
+};
+
+export const DisplayNameContainingAUrl: Story = {
+  args: {
+    text: `I created the [[object:company:Acme www.acme.com[[/object]] object.`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Acme www.acme.com')).toBeVisible();
+    expect(canvasElement).not.toHaveTextContent('[[/object]]');
+  },
+};
+
 export const ProposedObject: Story = {
   args: {
-    text: `As a Head of Partnerships, you seem to work across partner companies, key contacts, and commercial follow-ups, so I suggest creating a ${formatChatReference(
-      {
-        kind: 'object',
-        objectNameSingular: 'partner',
-        displayName: 'Partners',
-      },
-    )} object to track relationship status, partner type, owner, and next step. Should I create it?`,
+    text: `As a Head of Partnerships, you seem to work across partner companies, key contacts, and commercial follow-ups, so I suggest creating a [[object:partner:Partners[[/object]] object to track relationship status, partner type, owner, and next step. Should I create it?`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

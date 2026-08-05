@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNumber, isString } from '@sniptt/guards';
-import { Children, isValidElement } from 'react';
+import { useRef } from 'react';
 import { IconCopy } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -35,24 +34,6 @@ const StyledCopyButtonContainer = styled.div`
   }
 `;
 
-const extractTextFromNode = (node: React.ReactNode): string => {
-  if (isString(node) || isNumber(node)) {
-    return node.toString();
-  }
-
-  if (Array.isArray(node)) {
-    return node.map(extractTextFromNode).join('');
-  }
-
-  if (isValidElement<{ children?: React.ReactNode }>(node)) {
-    return Children.toArray(node.props.children)
-      .map(extractTextFromNode)
-      .join('');
-  }
-
-  return '';
-};
-
 export const MarkdownCodeBlock = ({
   children,
 }: {
@@ -61,20 +42,27 @@ export const MarkdownCodeBlock = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const codeText = extractTextFromNode(children);
+  const codeRef = useRef<HTMLPreElement>(null);
 
   return (
     <StyledContainer className="markdown-code-outer-container">
       <StyledCopyButtonContainer>
         <LightIconButton
           Icon={IconCopy}
-          onClick={() => copyToClipboard(codeText, t`Code copied to clipboard`)}
+          onClick={() =>
+            copyToClipboard(
+              codeRef.current?.textContent ?? '',
+              t`Code copied to clipboard`,
+            )
+          }
           title={t`Copy code`}
           size="small"
           accent="tertiary"
         />
       </StyledCopyButtonContainer>
-      <pre className="markdown-block-code">{children}</pre>
+      <pre ref={codeRef} className="markdown-block-code">
+        {children}
+      </pre>
     </StyledContainer>
   );
 };

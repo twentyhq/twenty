@@ -4,7 +4,7 @@ import { type ChatReferenceKind } from '@/ai/types/ChatReferenceKind';
 import { getChatReferenceCloseTag } from '@/ai/utils/getChatReferenceCloseTag';
 import { isDefined } from 'twenty-shared/utils';
 
-const LEGACY_RECORD_REFERENCE_CLOSE_TAG = ']]';
+const LEGACY_REFERENCE_CLOSE_TAG = ']]';
 
 export const findChatReferenceClosing = ({
   displayNameWindow,
@@ -20,17 +20,13 @@ export const findChatReferenceClosing = ({
     return { index: closeTagIndex, length: closeTag.length };
   }
 
-  if (kind !== 'record') {
-    return undefined;
-  }
-
   const foreignCloseTagMatch =
     ANY_CHAT_REFERENCE_CLOSE_TAG_REGEX.exec(displayNameWindow);
   const legacySearchSpace = isDefined(foreignCloseTagMatch)
     ? displayNameWindow.slice(0, foreignCloseTagMatch.index)
     : displayNameWindow;
   const legacyCloseIndex = legacySearchSpace.lastIndexOf(
-    LEGACY_RECORD_REFERENCE_CLOSE_TAG,
+    LEGACY_REFERENCE_CLOSE_TAG,
   );
 
   if (legacyCloseIndex === -1) {
@@ -39,6 +35,6 @@ export const findChatReferenceClosing = ({
 
   return {
     index: legacyCloseIndex,
-    length: LEGACY_RECORD_REFERENCE_CLOSE_TAG.length,
+    length: LEGACY_REFERENCE_CLOSE_TAG.length,
   };
 };

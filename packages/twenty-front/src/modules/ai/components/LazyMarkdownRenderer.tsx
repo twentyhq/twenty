@@ -1,4 +1,5 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { ChatReferencePlaceholderText } from '@/ai/components/ChatReferencePlaceholderText';
 import {
   StyledMarkdownContainer,
   StyledParagraph,
@@ -6,8 +7,10 @@ import {
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
-import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
+import { ChatReferencesContext } from '@/ai/contexts/ChatReferencesContext';
+import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
+import { replaceChatReferencePlaceholdersWithDisplayNames } from '@/ai/utils/replaceChatReferencePlaceholdersWithDisplayNames';
+import { replaceChatReferencesWithPlaceholders } from '@/ai/utils/replaceChatReferencesWithPlaceholders';
 import { marked } from 'marked';
 import {
   cloneElement,
@@ -26,7 +29,7 @@ const processChildrenForChatReferences = (
   children: React.ReactNode,
 ): React.ReactNode => {
   if (typeof children === 'string') {
-    return <TextWithChatReferences text={children} />;
+    return <ChatReferencePlaceholderText text={children} />;
   }
 
   if (Array.isArray(children)) {
@@ -46,6 +49,45 @@ const processChildrenForChatReferences = (
   }
 
   return children;
+};
+
+const restoreChatReferenceDisplayNames = ({
+  children,
+  references,
+}: {
+  children: React.ReactNode;
+  references: ChatReferenceMatch[];
+}): React.ReactNode => {
+  if (typeof children === 'string') {
+    return replaceChatReferencePlaceholdersWithDisplayNames({
+      text: children,
+      references,
+    });
+  }
+
+  if (Array.isArray(children)) {
+    return children.map((child) =>
+      restoreChatReferenceDisplayNames({ children: child, references }),
+    );
+  }
+
+  return children;
+};
+
+const MarkdownCode = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) => {
+  const references = useContext(ChatReferencesContext);
+
+  return (
+    <code className={className}>
+      {restoreChatReferenceDisplayNames({ children, references })}
+    </code>
+  );
 };
 
 // react-markdown uses each entry as the JSX element type, so rebuilding this map
@@ -107,13 +149,7 @@ const MARKDOWN_COMPONENTS = {
       {processChildrenForChatReferences(children)}
     </a>
   ),
-  code: ({
-    className,
-    children,
-  }: {
-    className?: string;
-    children?: React.ReactNode;
-  }) => <code className={className}>{children}</code>,
+  code: MarkdownCode,
   pre: ({ children }: { children?: React.ReactNode }) => (
     <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
   ),
@@ -170,22 +206,32 @@ const LoadingSkeleton = () => {
   );
 };
 
+// Equal block text implies equal placeholder indices, so references is left out
+// of the comparison to keep an unchanged block from re-rendering on every chunk.
 const MemoizedMarkdownBlock = memo(
-  ({ blockText }: { blockText: string }) => (
-    <MarkdownRenderer>{blockText}</MarkdownRenderer>
+  ({
+    blockText,
+    references,
+  }: {
+    blockText: string;
+    references: ChatReferenceMatch[];
+  }) => (
+    <ChatReferencesContext.Provider value={references}>
+      <MarkdownRenderer>{blockText}</MarkdownRenderer>
+    </ChatReferencesContext.Provider>
   ),
   (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
 );
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
-  const protectedText = useMemo(
-    () => protectChatReferencesForMarkdown(text),
+  const { textWithPlaceholders, references } = useMemo(
+    () => replaceChatReferencesWithPlaceholders(text),
     [text],
   );
 
   const markdownBlocks = useMemo(
-    () => marked.lexer(protectedText).map((token) => token.raw),
-    [protectedText],
+    () => marked.lexer(textWithPlaceholders).map((token) => token.raw),
+    [textWithPlaceholders],
   );
 
   return (
@@ -195,7 +241,11 @@ export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
     >
       <Suspense fallback={<LoadingSkeleton />}>
         {markdownBlocks.map((blockText, blockIndex) => (
-          <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
+          <MemoizedMarkdownBlock
+            key={blockIndex}
+            blockText={blockText}
+            references={references}
+          />
         ))}
       </Suspense>
     </StyledMarkdownContainer>
