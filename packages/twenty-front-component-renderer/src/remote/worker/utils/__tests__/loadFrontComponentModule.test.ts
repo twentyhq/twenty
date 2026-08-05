@@ -8,8 +8,8 @@ describe('loadFrontComponentModule', () => {
       loadFrontComponentModule({
         componentSource: `import { __vendor_react__ } from "${VENDOR_BUNDLE_IMPORT_SPECIFIER}";\nexport default () => {};`,
       }),
-    ).rejects.toThrow(
-      'The front component imports its vendor bundle, but no vendor bundle was provided',
-    );
+    ).rejects.toMatchObject({
+      code: 'FRONT_COMPONENT_VENDOR_BUNDLE_MISSING',
+    });
   });
 });

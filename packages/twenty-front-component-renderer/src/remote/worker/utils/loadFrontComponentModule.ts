@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
 import { createSdkClientModuleBlobUrls } from '@/remote/worker/utils/createSdkClientModuleBlobUrls';
@@ -26,8 +26,9 @@ export const loadFrontComponentModule = async ({
   const requiresVendor = containsVendorImportSpecifier(componentSource);
 
   if (requiresVendor && !isDefined(vendorSource)) {
-    throw new Error(
+    throw new CustomError(
       'The front component imports its vendor bundle, but no vendor bundle was provided',
+      'FRONT_COMPONENT_VENDOR_BUNDLE_MISSING',
     );
   }
 
