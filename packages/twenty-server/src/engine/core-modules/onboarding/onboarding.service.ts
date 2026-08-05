@@ -11,6 +11,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
+import { ONBOARDING_STEP_TRANSITION_LOCK_PREFIX } from 'src/engine/core-modules/onboarding/constants/onboarding-step-transition-lock-prefix';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   INSTALL_ONBOARDING_APPS_JOB_NAME,
@@ -62,6 +63,13 @@ export class OnboardingService {
   ) {}
 
   private async runInTransaction<T>(
+    {
+      userId,
+      workspaceId,
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
     work: (queryRunner: QueryRunner) => Promise<T>,
   ): Promise<T> {
     return this.dataSource.transaction(async (entityManager) => {
@@ -73,6 +81,11 @@ export class OnboardingService {
           OnboardingExceptionCode.MISSING_TRANSACTION_QUERY_RUNNER,
         );
       }
+
+      await queryRunner.query(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+        [`${ONBOARDING_STEP_TRANSITION_LOCK_PREFIX}:${userId}:${workspaceId}`],
+      );
 
       return work(queryRunner);
     });
@@ -192,41 +205,43 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    const reversibleStepHistory = await this.getReversibleOnboardingStepHistory(
-      {
-        userId,
-        workspaceId,
+    await this.runInTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const reversibleStepHistory =
+          await this.getReversibleOnboardingStepHistory({
+            userId,
+            workspaceId,
+          });
+        const previousStep =
+          reversibleStepHistory[reversibleStepHistory.length - 1];
+
+        if (!isDefined(previousStep)) {
+          throw new OnboardingException(
+            `No previous onboarding step to go back to for user ${userId} in workspace ${workspaceId}`,
+            OnboardingExceptionCode.NO_PREVIOUS_ONBOARDING_STEP,
+          );
+        }
+
+        await this.setReversibleOnboardingStepHistory(
+          {
+            userId,
+            workspaceId,
+            reversibleStepHistory: reversibleStepHistory.slice(0, -1),
+          },
+          queryRunner,
+        );
+
+        await this.setReversibleOnboardingStepPending(
+          {
+            userId,
+            workspaceId,
+            step: previousStep,
+          },
+          queryRunner,
+        );
       },
     );
-    const previousStep =
-      reversibleStepHistory[reversibleStepHistory.length - 1];
-
-    if (!isDefined(previousStep)) {
-      throw new OnboardingException(
-        `No previous onboarding step to go back to for user ${userId} in workspace ${workspaceId}`,
-        OnboardingExceptionCode.NO_PREVIOUS_ONBOARDING_STEP,
-      );
-    }
-
-    await this.runInTransaction(async (queryRunner) => {
-      await this.setReversibleOnboardingStepHistory(
-        {
-          userId,
-          workspaceId,
-          reversibleStepHistory: reversibleStepHistory.slice(0, -1),
-        },
-        queryRunner,
-      );
-
-      await this.setReversibleOnboardingStepPending(
-        {
-          userId,
-          workspaceId,
-          step: previousStep,
-        },
-        queryRunner,
-      );
-    });
 
     return {
       onboardingStatus: await this.getOnboardingStatus({ userId, workspaceId }),
@@ -421,26 +436,29 @@ export class OnboardingService {
     workspaceId: string;
     isAutoSkipped: boolean;
   }) {
-    await this.runInTransaction(async (queryRunner) => {
-      const hasClaimedConnectAccountStep =
-        await this.claimOnboardingConnectAccountStep(
-          { userId, workspaceId },
+    await this.runInTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedConnectAccountStep =
+          await this.claimOnboardingConnectAccountStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+        if (!hasClaimedConnectAccountStep || isAutoSkipped) {
+          return;
+        }
+
+        await this.pushReversibleOnboardingStep(
+          {
+            userId,
+            workspaceId,
+            step: OnboardingStatus.SYNC_EMAIL,
+          },
           queryRunner,
         );
-
-      if (!hasClaimedConnectAccountStep || isAutoSkipped) {
-        return;
-      }
-
-      await this.pushReversibleOnboardingStep(
-        {
-          userId,
-          workspaceId,
-          step: OnboardingStatus.SYNC_EMAIL,
-        },
-        queryRunner,
-      );
-    });
+      },
+    );
   }
 
   private async isFirstWorkspaceUser({
@@ -560,26 +578,29 @@ export class OnboardingService {
     );
 
     if (installableUniversalIdentifiers.length === 0) {
-      await this.runInTransaction(async (queryRunner) => {
-        const hasClaimedInstallAppsStep =
-          await this.claimInstallAppsOnboardingStep(
-            { userId, workspaceId },
+      await this.runInTransaction(
+        { userId, workspaceId },
+        async (queryRunner) => {
+          const hasClaimedInstallAppsStep =
+            await this.claimInstallAppsOnboardingStep(
+              { userId, workspaceId },
+              queryRunner,
+            );
+
+          if (!hasClaimedInstallAppsStep || isAutoSkipped) {
+            return;
+          }
+
+          await this.pushReversibleOnboardingStep(
+            {
+              userId,
+              workspaceId,
+              step: OnboardingStatus.APPS_INSTALLATION,
+            },
             queryRunner,
           );
-
-        if (!hasClaimedInstallAppsStep || isAutoSkipped) {
-          return;
-        }
-
-        await this.pushReversibleOnboardingStep(
-          {
-            userId,
-            workspaceId,
-            step: OnboardingStatus.APPS_INSTALLATION,
-          },
-          queryRunner,
-        );
-      });
+        },
+      );
 
       return;
     }
@@ -734,26 +755,29 @@ export class OnboardingService {
       return;
     }
 
-    await this.runInTransaction(async (queryRunner) => {
-      const hasClaimedCreateProfileStep =
-        await this.claimOnboardingCreateProfileStep(
-          { userId, workspaceId },
+    await this.runInTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedCreateProfileStep =
+          await this.claimOnboardingCreateProfileStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+        if (!hasClaimedCreateProfileStep) {
+          return;
+        }
+
+        await this.pushReversibleOnboardingStep(
+          {
+            userId,
+            workspaceId,
+            step: OnboardingStatus.PROFILE_CREATION,
+          },
           queryRunner,
         );
-
-      if (!hasClaimedCreateProfileStep) {
-        return;
-      }
-
-      await this.pushReversibleOnboardingStep(
-        {
-          userId,
-          workspaceId,
-          step: OnboardingStatus.PROFILE_CREATION,
-        },
-        queryRunner,
-      );
-    });
+      },
+    );
   }
 
   private async claimOnboardingCreateProfileStep(
@@ -787,25 +811,29 @@ export class OnboardingService {
     workspaceId: string;
     hasSentInvitations: boolean;
   }) {
-    await this.runInTransaction(async (queryRunner) => {
-      const hasClaimedInviteTeamStep = await this.claimOnboardingInviteTeamStep(
-        { workspaceId },
-        queryRunner,
-      );
+    await this.runInTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedInviteTeamStep =
+          await this.claimOnboardingInviteTeamStep(
+            { workspaceId },
+            queryRunner,
+          );
 
-      if (!hasClaimedInviteTeamStep || hasSentInvitations) {
-        return;
-      }
+        if (!hasClaimedInviteTeamStep || hasSentInvitations) {
+          return;
+        }
 
-      await this.pushReversibleOnboardingStep(
-        {
-          userId,
-          workspaceId,
-          step: OnboardingStatus.INVITE_TEAM,
-        },
-        queryRunner,
-      );
-    });
+        await this.pushReversibleOnboardingStep(
+          {
+            userId,
+            workspaceId,
+            step: OnboardingStatus.INVITE_TEAM,
+          },
+          queryRunner,
+        );
+      },
+    );
   }
 
   private async claimOnboardingInviteTeamStep(

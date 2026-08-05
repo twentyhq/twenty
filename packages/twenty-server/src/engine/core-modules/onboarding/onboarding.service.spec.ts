@@ -33,7 +33,7 @@ describe('OnboardingService', () => {
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
-  const mockQueryRunner = {} as QueryRunner;
+  const mockQueryRunner = { query: jest.fn() } as unknown as QueryRunner;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -589,6 +589,41 @@ describe('OnboardingService', () => {
       );
       expect(result.onboardingStatus).toBe(OnboardingStatus.APPS_INSTALLATION);
       expect(result.previousOnboardingStatus).toBe(OnboardingStatus.SYNC_EMAIL);
+    });
+
+    it('should take the step transition lock before reading the history', async () => {
+      const callOrder: string[] = [];
+
+      jest
+        .spyOn(mockQueryRunner, 'query')
+        .mockImplementation(async (statement: string) => {
+          callOrder.push(`query:${statement}`);
+
+          return [];
+        });
+      jest.spyOn(userVarsService, 'get').mockImplementation(async () => {
+        callOrder.push('readHistory');
+
+        return [OnboardingStatus.SYNC_EMAIL];
+      });
+      jest
+        .spyOn(userVarsService, 'getAll')
+        .mockResolvedValue(
+          new Map<string, boolean>([
+            [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING, true],
+          ]),
+        );
+
+      await service.goBackToPreviousOnboardingStep({ userId, workspaceId });
+
+      expect(mockQueryRunner.query).toHaveBeenCalledWith(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+        [`onboarding-step-transition:${userId}:${workspaceId}`],
+      );
+      expect(callOrder[0]).toBe(
+        'query:SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+      );
+      expect(callOrder[1]).toBe('readHistory');
     });
 
     it('should re-arm the workspace-scoped flag when going back to invite team', async () => {
