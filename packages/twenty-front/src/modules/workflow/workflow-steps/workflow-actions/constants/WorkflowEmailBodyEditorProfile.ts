@@ -5,7 +5,7 @@ import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/Wo
 
 export const WORKFLOW_EMAIL_BODY_EDITOR_PROFILE = {
   chrome: 'field',
-  minHeight: 340,
+  minHeight: 200,
   enableFullScreen: true,
   parseLegacyDocument: parseLegacyWorkflowEmailBodyDocument,
   buildExtensions: (context) => [

@@ -28,14 +28,14 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  min-height: 0;
+  flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
+  min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
 
   /* Document editors stretch to their available height; field editors keep
      their intrinsic height so they compose naturally inside forms. */
   & > * {
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
-    min-height: 0;
+    min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
   }
 `;
 
