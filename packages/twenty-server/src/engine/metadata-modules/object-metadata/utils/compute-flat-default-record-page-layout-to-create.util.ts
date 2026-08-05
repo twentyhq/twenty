@@ -16,12 +16,36 @@ import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 
 const DEFAULT_RECORD_PAGE_TAB_DEFINITIONS = [
-  { key: 'home', widgetKey: 'fields' },
-  { key: 'timeline', widgetKey: 'timeline' },
-  { key: 'tasks', widgetKey: 'tasks' },
-  { key: 'notes', widgetKey: 'notes' },
-  { key: 'files', widgetKey: 'files' },
-] as const;
+  {
+    key: 'home',
+    widgetKey: 'fields',
+    widgetConfigurationType: WidgetConfigurationType.FIELDS,
+  },
+  {
+    key: 'timeline',
+    widgetKey: 'timeline',
+    widgetConfigurationType: WidgetConfigurationType.TIMELINE,
+  },
+  {
+    key: 'tasks',
+    widgetKey: 'tasks',
+    widgetConfigurationType: WidgetConfigurationType.TASKS,
+  },
+  {
+    key: 'notes',
+    widgetKey: 'notes',
+    widgetConfigurationType: WidgetConfigurationType.NOTES,
+  },
+  {
+    key: 'files',
+    widgetKey: 'files',
+    widgetConfigurationType: WidgetConfigurationType.FILES,
+  },
+] as const satisfies readonly {
+  key: keyof typeof TAB_PROPS;
+  widgetKey: keyof typeof WIDGET_PROPS;
+  widgetConfigurationType: WidgetConfigurationType;
+}[];
 
 export const computeFlatDefaultRecordPageLayoutToCreate = ({
   objectMetadata,
@@ -48,7 +72,11 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
   const pageLayoutTabs: UniversalFlatPageLayoutTab[] = [];
   const pageLayoutWidgets: UniversalFlatPageLayoutWidget[] = [];
 
-  for (const { key, widgetKey } of DEFAULT_RECORD_PAGE_TAB_DEFINITIONS) {
+  for (const {
+    key,
+    widgetKey,
+    widgetConfigurationType,
+  } of DEFAULT_RECORD_PAGE_TAB_DEFINITIONS) {
     const tabProps = TAB_PROPS[key];
     const widgetProps = WIDGET_PROPS[widgetKey];
     const tabUniversalIdentifier = getPageLayoutTabUniversalIdentifier({
@@ -79,20 +107,14 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       overrides: null,
     });
 
-    const isFieldsWidget = widgetKey === 'fields';
-
-    const universalConfiguration = isFieldsWidget
-      ? {
-          configurationType: WidgetConfigurationType.FIELDS,
-          viewUniversalIdentifier: recordPageFieldsViewUniversalIdentifier,
-          newFieldDefaultVisibility: true,
-        }
-      : {
-          configurationType:
-            WidgetConfigurationType[
-              widgetKey.toUpperCase() as keyof typeof WidgetConfigurationType
-            ],
-        };
+    const universalConfiguration =
+      widgetConfigurationType === WidgetConfigurationType.FIELDS
+        ? {
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewUniversalIdentifier: recordPageFieldsViewUniversalIdentifier,
+            newFieldDefaultVisibility: true,
+          }
+        : { configurationType: widgetConfigurationType };
 
     pageLayoutWidgets.push({
       universalIdentifier: widgetUniversalIdentifier,
