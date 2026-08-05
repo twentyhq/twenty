@@ -11,10 +11,11 @@ const companiesMock = mockedCompanyRecords.map((record) =>
   getRecordFromRecordNode<Company>({ recordNode: record }),
 );
 
-const companyMockObjectMetadataItem =
-  getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'company',
-  )!;
+const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+
+const companyMockObjectMetadataItem = objectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+)!;
 
 describe('isRecordMatchingFilter', () => {
   describe('Empty Filters', () => {
@@ -27,6 +28,7 @@ describe('isRecordMatchingFilter', () => {
             record: company,
             filter: emptyFilter,
             objectMetadataItem: companyMockObjectMetadataItem,
+            objectMetadataItems,
           }),
         ).toBe(true);
       });
@@ -44,6 +46,7 @@ describe('isRecordMatchingFilter', () => {
             record: company,
             filter: filterWithEmptyFields,
             objectMetadataItem: companyMockObjectMetadataItem,
+            objectMetadataItems,
           }),
         ).toBe(true);
       });
@@ -58,6 +61,7 @@ describe('isRecordMatchingFilter', () => {
             record: company,
             filter,
             objectMetadataItem: companyMockObjectMetadataItem,
+            objectMetadataItems,
           }),
         ).toBe(true);
       });
@@ -72,6 +76,7 @@ describe('isRecordMatchingFilter', () => {
             record: company,
             filter,
             objectMetadataItem: companyMockObjectMetadataItem,
+            objectMetadataItems,
           }),
         ).toBe(true);
       });
@@ -86,6 +91,7 @@ describe('isRecordMatchingFilter', () => {
             record: company,
             filter,
             objectMetadataItem: companyMockObjectMetadataItem,
+            objectMetadataItems,
           }),
         ).toBe(true);
       });
@@ -110,6 +116,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -118,6 +125,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -148,6 +156,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
       expect(
@@ -155,6 +164,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -179,6 +189,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -187,6 +198,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -213,6 +225,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyIdealCustomerProfileTrue,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(companyIdealCustomerProfileTrue.idealCustomerProfile);
       expect(
@@ -220,6 +233,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyIdealCustomerProfileFalse,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(companyIdealCustomerProfileFalse.idealCustomerProfile);
     });
@@ -270,6 +284,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -278,6 +293,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -313,6 +329,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
 
@@ -321,6 +338,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
     });
@@ -365,6 +383,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -373,6 +392,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -405,6 +425,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -413,6 +434,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -443,6 +465,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -451,6 +474,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -484,6 +508,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true); // Matches as Airbnb's employee count is between 10 and 100000
 
@@ -492,6 +517,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false); // Does not match as Aircall's employee count is not within the range
     });
@@ -523,6 +549,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -531,6 +558,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyMockNotInFilter,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -561,6 +589,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyWithAccountOwner,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -569,6 +598,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyWithoutAccountOwner,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -583,6 +613,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyWithoutAccountOwner,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -591,6 +622,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyWithAccountOwner,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -601,6 +633,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyWithAccountOwner,
           filter: { accountOwner: { in: [accountOwnerId] } },
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
 
@@ -609,6 +642,7 @@ describe('isRecordMatchingFilter', () => {
           record: companyWithAccountOwner,
           filter: { accountOwner: { in: ['unknown-id'] } },
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(false);
     });
@@ -623,8 +657,132 @@ describe('isRecordMatchingFilter', () => {
           record: companyWithAccountOwner,
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
         }),
       ).toBe(true);
+    });
+  });
+
+  describe('Nested Relation Filters', () => {
+    const opportunityMockObjectMetadataItem = objectMetadataItems.find(
+      (item) => item.nameSingular === 'opportunity',
+    )!;
+
+    const companyId = '20202020-171e-4bcc-9cf7-43448d6fb278';
+    const personId = '20202020-2d40-4e49-8df4-9c6a049190ef';
+
+    const opportunityWithPointOfContact = {
+      id: '20202020-83f4-4c4f-95c1-b7be9f2d36d1',
+      pointOfContact: { id: personId, companyId },
+    };
+
+    it('matches when the related record satisfies the nested filter', () => {
+      const filter = {
+        pointOfContact: { companyId: { in: [companyId] } },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: opportunityWithPointOfContact,
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+    });
+
+    it('does not match when the related record fails the nested filter', () => {
+      const filter = {
+        pointOfContact: {
+          companyId: { in: ['20202020-0000-4000-8000-000000000000'] },
+        },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: opportunityWithPointOfContact,
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
+    it('does not match when the related record is not loaded', () => {
+      const filter = {
+        pointOfContact: { companyId: { in: [companyId] } },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...opportunityWithPointOfContact,
+            pointOfContact: null,
+          },
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+
+      expect(
+        isRecordMatchingFilter({
+          record: { id: opportunityWithPointOfContact.id },
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
+    it('evaluates composite conditions against the related record', () => {
+      const filter = {
+        pointOfContact: {
+          and: [{ companyId: { in: [companyId] } }, { id: { eq: personId } }],
+        },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: opportunityWithPointOfContact,
+          filter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      const nonMatchingFilter = {
+        pointOfContact: {
+          and: [{ companyId: { in: [companyId] } }, { id: { neq: personId } }],
+        },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: opportunityWithPointOfContact,
+          filter: nonMatchingFilter,
+          objectMetadataItem: opportunityMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
+    it('does not match a nested filter on a list of related records', () => {
+      const filter = {
+        people: { id: { eq: personId } },
+      } as RecordGqlOperationFilter;
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...companiesMock[0],
+            people: [{ id: personId }],
+          },
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
     });
   });
 });

@@ -26,6 +26,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,
       objectMetadataItem: mockObjectMetadataItem,
+      objectMetadataItems: [mockObjectMetadataItem],
       operation: 'create',
       records: [mockRecord],
       shouldMatchRootQueryFilter: false,
@@ -48,6 +49,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,
       objectMetadataItem: mockObjectMetadataItem,
+      objectMetadataItems: [mockObjectMetadataItem],
       operation: 'update',
       records: [mockRecord],
       shouldMatchRootQueryFilter: false,
@@ -65,6 +67,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,
       objectMetadataItem: mockObjectMetadataItem,
+      objectMetadataItems: [mockObjectMetadataItem],
       operation: 'delete',
       records: [mockRecord],
       shouldMatchRootQueryFilter: false,
@@ -82,6 +85,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,
       objectMetadataItem: mockObjectMetadataItem,
+      objectMetadataItems: [mockObjectMetadataItem],
       operation: 'create',
       records: [],
       shouldMatchRootQueryFilter: false,
