@@ -19,6 +19,17 @@ describe('outbound email sanitization', () => {
     expect(sanitized).toContain('<body>');
   });
 
+  it('should scan repeated leading comments without regex backtracking', async () => {
+    const comments = '<!---->'.repeat(2_000);
+
+    const sanitized = await sanitizeOutboundEmailHtml(
+      `${comments}<html><body><p>Hello</p></body></html>`,
+    );
+
+    expect(sanitized).toContain('<html>');
+    expect(sanitized).toContain('<p>Hello</p>');
+  });
+
   it('should not mistake similarly prefixed elements for an HTML document', async () => {
     await expect(
       sanitizeOutboundEmailHtml('<html-preview>Hello</html-preview>'),
