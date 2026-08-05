@@ -39,22 +39,26 @@ jest.mock('@/views/states/selectors/viewsSelector', () => {
 });
 
 const WIDGET_ID = 'widget-1';
+const OTHER_WIDGET_ID = 'widget-2';
 
-const makeViewBackedDraftLayout = () => {
-  const widget = makeWidget(WIDGET_ID, 0);
+const makeViewBackedWidget = (widgetId: string, index: number) => {
+  const widget = makeWidget(widgetId, index);
 
   return {
-    ...makeDraft([
-      makeTab('tab-1', [
-        {
-          ...widget,
-          configuration: { ...widget.configuration, viewId: view.id },
-        } as PageLayoutWidget,
-      ]),
-    ]),
-    id: PAGE_LAYOUT_TEST_INSTANCE_ID,
-  };
+    ...widget,
+    configuration: { ...widget.configuration, viewId: view.id },
+  } as PageLayoutWidget;
 };
+
+const makeViewBackedDraftLayout = (widgetIds: string[] = [WIDGET_ID]) => ({
+  ...makeDraft([
+    makeTab(
+      'tab-1',
+      widgetIds.map((widgetId, index) => makeViewBackedWidget(widgetId, index)),
+    ),
+  ]),
+  id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+});
 
 const getWrapper =
   (store: ReturnType<typeof createStore>) =>
@@ -124,7 +128,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     expect(draftSnapshots[WIDGET_ID]).toBeUndefined();
   });
 
-  it('should keep an existing snapshot over the freshly built one', () => {
+  it('should keep an existing snapshot over the freshly built one while seeding the missing ones', () => {
     const store = createStore();
 
     const existingSnapshot = buildRecordTableWidgetViewSnapshot(
@@ -136,7 +140,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
-      makeViewBackedDraftLayout(),
+      makeViewBackedDraftLayout([WIDGET_ID, OTHER_WIDGET_ID]),
     );
     store.set(
       recordTableWidgetViewDraftComponentState.atomFamily({
@@ -155,6 +159,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
       }),
     );
 
+    expect(draftSnapshots[OTHER_WIDGET_ID]).toBeDefined();
     expect(draftSnapshots[WIDGET_ID]).toBe(existingSnapshot);
   });
 });
