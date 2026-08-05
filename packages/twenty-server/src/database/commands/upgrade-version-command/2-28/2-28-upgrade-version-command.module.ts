@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { ReconcileRecordPageUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785504604000-reconcile-record-page-universal-identifier.command';
+import { ReconcileStandardAndCustomRecordPageUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785504604000-reconcile-standard-and-custom-record-page-universal-identifier.command';
 import { BackfillRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785504605000-backfill-record-page.command';
 import { RepairOrphanCoreWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785600000000-repair-orphan-core-workflow-versions.command';
 import { SyncDiscardDraftWorkflowAvailabilityExpressionCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785858486000-sync-discard-draft-workflow-availability-expression.command';
@@ -24,7 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AddEmailBlockSettingsCommandMenuItemCommand,
-    ReconcileRecordPageUniversalIdentifierCommand,
+    ReconcileStandardAndCustomRecordPageUniversalIdentifierCommand,
     BackfillRecordPageCommand,
     RepairOrphanCoreWorkflowVersionsCommand,
     SyncDiscardDraftWorkflowAvailabilityExpressionCommand,
