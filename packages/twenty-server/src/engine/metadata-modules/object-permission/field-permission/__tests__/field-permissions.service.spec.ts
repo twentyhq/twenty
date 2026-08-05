@@ -523,6 +523,141 @@ describe('FieldPermissionService', () => {
             .flatEntityToCreate,
         ).toHaveLength(2);
       });
+
+      it('should delete the mirrored inverse field permission when a relation field permission is granted back', async () => {
+        const relationPermissionUniversalId = 'relation-fp-universal-id';
+        const mirroredPermissionUniversalId = 'mirrored-fp-universal-id';
+        const mapsWithRelationAndMirror = {
+          ...emptyFlatFieldPermissionMaps,
+          byUniversalIdentifier: {
+            [relationPermissionUniversalId]: {
+              id: 'relation-fp-id',
+              universalIdentifier: relationPermissionUniversalId,
+              roleUniversalIdentifier: testRoleId,
+              objectMetadataId: fieldRelationMock.objectMetadataId,
+              fieldMetadataId: fieldRelationMock.id,
+              canReadFieldValue: null,
+              canUpdateFieldValue: false,
+              applicationUniversalIdentifier: 'app-ui',
+              objectMetadataUniversalIdentifier:
+                fieldRelationMock.objectMetadataId,
+              fieldMetadataUniversalIdentifier: fieldRelationMock.id,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+            [mirroredPermissionUniversalId]: {
+              id: 'mirrored-fp-id',
+              universalIdentifier: mirroredPermissionUniversalId,
+              roleUniversalIdentifier: testRoleId,
+              objectMetadataId:
+                fieldRelationMock.relationTargetObjectMetadataId,
+              fieldMetadataId: fieldRelationMock.relationTargetFieldMetadataId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: false,
+              applicationUniversalIdentifier: 'app-ui',
+              objectMetadataUniversalIdentifier:
+                fieldRelationMock.relationTargetObjectMetadataId,
+              fieldMetadataUniversalIdentifier:
+                fieldRelationMock.relationTargetFieldMetadataId,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          },
+          universalIdentifierById: {
+            'relation-fp-id': relationPermissionUniversalId,
+            'mirrored-fp-id': mirroredPermissionUniversalId,
+          },
+        };
+        let flatMapsCallCount = 0;
+        (workspaceCacheService.getOrRecompute as jest.Mock).mockImplementation(
+          (_w: string, keys: string[]) => {
+            if (keys?.includes('flatFieldPermissionMaps')) {
+              flatMapsCallCount += 1;
+              return Promise.resolve({
+                flatFieldPermissionMaps:
+                  flatMapsCallCount === 1
+                    ? mapsWithRelationAndMirror
+                    : emptyFlatFieldPermissionMaps,
+              });
+            }
+            if (keys?.includes('rolesPermissions')) {
+              return Promise.resolve({
+                rolesPermissions: mockRolesPermissions,
+              });
+            }
+            return Promise.resolve({});
+          },
+        );
+        workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration.mockResolvedValue(
+          { status: 'success' } as any,
+        );
+
+        const input = createUpsertInput([
+          {
+            canReadFieldValue: null,
+            canUpdateFieldValue: null,
+            fieldMetadataId: fieldRelationMock.id,
+            objectMetadataId: fieldRelationMock.objectMetadataId,
+          },
+        ]);
+
+        await service.upsertFieldPermissions({
+          workspaceId: testWorkspaceId,
+          input,
+        });
+
+        const callArg = workspaceMigrationValidateBuildAndRunService
+          .validateBuildAndRunWorkspaceMigration.mock
+          .calls[0][0] as unknown as {
+          allFlatEntityOperationByMetadataName: {
+            fieldPermission: {
+              flatEntityToCreate: unknown[];
+              flatEntityToUpdate: unknown[];
+              flatEntityToDelete: { universalIdentifier: string }[];
+            };
+          };
+        };
+        const { flatEntityToCreate, flatEntityToUpdate, flatEntityToDelete } =
+          callArg.allFlatEntityOperationByMetadataName.fieldPermission;
+
+        expect(flatEntityToCreate).toHaveLength(0);
+        expect(flatEntityToUpdate).toHaveLength(0);
+        expect(
+          flatEntityToDelete.map(
+            (flatEntity) => flatEntity.universalIdentifier,
+          ),
+        ).toEqual(
+          expect.arrayContaining([
+            relationPermissionUniversalId,
+            mirroredPermissionUniversalId,
+          ]),
+        );
+        expect(flatEntityToDelete).toHaveLength(2);
+      });
+
+      it('should not create an empty mirrored permission when granting back a relation field permission that has no rows', async () => {
+        workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration.mockResolvedValue(
+          { status: 'success' } as any,
+        );
+
+        const input = createUpsertInput([
+          {
+            canReadFieldValue: null,
+            canUpdateFieldValue: null,
+            fieldMetadataId: fieldRelationMock.id,
+            objectMetadataId: fieldRelationMock.objectMetadataId,
+          },
+        ]);
+
+        await service.upsertFieldPermissions({
+          workspaceId: testWorkspaceId,
+          input,
+        });
+
+        expect(
+          workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
+        ).not.toHaveBeenCalled();
+      });
     });
 
     describe('validation errors', () => {
