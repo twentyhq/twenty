@@ -9,8 +9,9 @@ import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer'
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { pointerIntersection } from '@dnd-kit/collision';
+import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -33,12 +34,13 @@ const StyledVerticalListContainer = styled.div<{
       : themeCssVariables.spacing[2]};
 `;
 
-const StyledEndDropZone = styled(DragDropItemEndDropZone)`
+const StyledDropTarget = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   min-height: ${themeCssVariables.spacing[6]};
+  position: relative;
 `;
 
 const StyledWidgetSlot = styled.div`
@@ -70,7 +72,15 @@ export const PageLayoutVerticalListEditor = ({
   const endDropData: PageLayoutWidgetListDropData = {
     type: 'widget-list',
     tabId,
+    itemCount: widgets.length,
   };
+
+  const { ref: endDropZoneRef } = useDroppable({
+    id: `page-layout-widget-list-${tabId}`,
+    accept: PAGE_LAYOUT_WIDGET_DND_TYPE,
+    collisionDetector: pointerIntersection,
+    data: endDropData,
+  });
 
   return (
     <StyledVerticalListContainer
@@ -109,13 +119,15 @@ export const PageLayoutVerticalListEditor = ({
           </StyledWidgetSlot>
         );
       })}
-      <StyledEndDropZone
-        id={`page-layout-widget-list-${tabId}`}
-        accept={PAGE_LAYOUT_WIDGET_DND_TYPE}
-        data={endDropData}
-      >
+      <StyledDropTarget ref={endDropZoneRef}>
+        <DragDropItemDropTarget
+          index={widgets.length}
+          droppableId={tabId}
+          orientation="horizontal"
+          compact
+        />
         {trailingElement}
-      </StyledEndDropZone>
+      </StyledDropTarget>
     </StyledVerticalListContainer>
   );
 };

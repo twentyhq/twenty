@@ -1,3 +1,6 @@
+import { pointerIntersection } from '@dnd-kit/collision';
+import { useDroppable } from '@dnd-kit/react';
+
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -8,14 +11,16 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
 import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
+import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledRecordGroupEndDropZone = styled(DragDropItemEndDropZone)`
+const StyledRecordGroupDropTarget = styled.div`
+  position: relative;
   width: 100%;
 `;
 
@@ -43,6 +48,14 @@ export const RecordTableRecordGroupRows = () => {
     [allRecordIds],
   );
 
+  const { ref: endDropZoneRef } = useDroppable({
+    id: currentRecordGroupId,
+    accept: RECORD_TABLE_ROW_DND_TYPE,
+    collisionPriority: DND_KIT_COLLISION_PRIORITY,
+    collisionDetector: pointerIntersection,
+    data: { droppableId: currentRecordGroupId },
+  });
+
   if (shouldHide) {
     return null;
   }
@@ -69,17 +82,17 @@ export const RecordTableRecordGroupRows = () => {
           />
         );
       })}
-      <StyledRecordGroupEndDropZone
-        id={`record-group-end-drop-zone-${currentRecordGroupId}`}
-        accept={RECORD_TABLE_ROW_DND_TYPE}
-        data={{
-          droppableId: currentRecordGroupId,
-          index: recordIndexRecordIdsByGroup.length,
-        }}
-      >
+      <StyledRecordGroupDropTarget ref={endDropZoneRef}>
+        <DragDropItemDropTarget
+          index={recordIndexRecordIdsByGroup.length}
+          droppableId={currentRecordGroupId}
+          orientation="horizontal"
+          compact
+          seamAligned
+        />
         <RecordTableRecordGroupSectionLoadMore />
         <RecordTableRecordGroupSectionAddNew />
-      </StyledRecordGroupEndDropZone>
+      </StyledRecordGroupDropTarget>
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}

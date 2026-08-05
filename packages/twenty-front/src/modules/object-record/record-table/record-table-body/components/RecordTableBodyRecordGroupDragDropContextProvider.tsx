@@ -1,11 +1,12 @@
 import { DragDropProvider, DragOverlay } from '@dnd-kit/react';
 import { useStore } from 'jotai';
-import { type ReactNode, useCallback } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessTableWithGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithGroupRecordDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -14,10 +15,14 @@ import { selectedRowIdsComponentSelector } from '@/object-record/record-table/st
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 
 export const RecordTableBodyRecordGroupDragDropContextProvider = ({
@@ -33,6 +38,11 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     recordTableId,
   );
 
+  const recordIdsByGroupCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
+
   const store = useStore();
 
   const { startRecordDrag } = useStartRecordDrag(recordIndexId);
@@ -41,96 +51,134 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
   const { processTableWithGroupRecordDrop } =
     useProcessTableWithGroupRecordDrop();
 
-  const handleDragStart = useCallback(
-    (event: DragDropProviderDragStartEvent<DragDropItemData>) => {
-      const source = event.operation.source;
-      const sourceData = source?.data as RecordTableRowDragData | undefined;
-
-      if (!isDefined(source) || !isDefined(sourceData)) {
-        return;
-      }
-
-      const currentSelectedRecordIds = store.get(selectedRowIds) as string[];
-
-      startRecordDrag(sourceData.recordId, currentSelectedRecordIds);
-    },
-    [selectedRowIds, startRecordDrag, store],
+  const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
+    number | null
+  >(null);
+  const [activeDroppableId, setActiveDroppableId] = useState<string | null>(
+    null,
   );
 
-  const handleDragEnd = useCallback(
-    (event: DragDropProviderDragEndEvent<DragDropItemData>) => {
-      const source = event.operation.source;
-      const sourceData = source?.data as RecordTableRowDragData | undefined;
-      const targetData = event.operation.target?.data as
-        | DragDropItemData
-        | undefined;
+  const clearDragState = () => {
+    endRecordDrag();
+    setActiveDropTargetIndex(null);
+    setActiveDroppableId(null);
+  };
 
-      if (
-        event.canceled ||
-        !isDefined(source) ||
-        !isDefined(sourceData) ||
-        !isDefined(targetData)
-      ) {
-        endRecordDrag();
-        return;
-      }
+  const handleDragStart = (
+    event: DragDropProviderDragStartEvent<DragDropItemData>,
+  ) => {
+    const source = event.operation.source;
+    const sourceData = source?.data as RecordTableRowDragData | undefined;
 
-      // Row targets and end drop zones mark the gap before them; convert that
-      // gap into the index the dragged row will occupy after the move.
-      const destinationIndex = getDestinationIndex({
-        dropTargetIndex: targetData.index,
-        sourceIndex: sourceData.index,
-        sourceDroppableId: sourceData.droppableId,
-        destinationDroppableId: targetData.droppableId,
+    if (!isDefined(source) || !isDefined(sourceData)) {
+      return;
+    }
+
+    const currentSelectedRecordIds = store.get(selectedRowIds) as string[];
+
+    startRecordDrag(sourceData.recordId, currentSelectedRecordIds);
+  };
+
+  const handleDragMove = (
+    event: DragDropProviderDragMoveEvent<DragDropItemData>,
+  ) => {
+    const { target, position } = event.operation;
+
+    const resolvedDrop = resolveDropFromPointer({
+      target,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount: (droppableId) =>
+        store.get(recordIdsByGroupCallbackState(droppableId)).length,
+    });
+
+    setActiveDropTargetIndex(resolvedDrop?.dropTargetIndex ?? null);
+    setActiveDroppableId(resolvedDrop?.droppableId ?? null);
+  };
+
+  const handleDragEnd = (
+    event: DragDropProviderDragEndEvent<DragDropItemData>,
+  ) => {
+    const { source, target, position } = event.operation;
+    const sourceData = source?.data as RecordTableRowDragData | undefined;
+
+    if (event.canceled || !isDefined(source) || !isDefined(sourceData)) {
+      clearDragState();
+      return;
+    }
+
+    const resolvedDrop = resolveDropFromPointer({
+      target,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount: (droppableId) =>
+        store.get(recordIdsByGroupCallbackState(droppableId)).length,
+    });
+
+    if (!isDefined(resolvedDrop)) {
+      clearDragState();
+      return;
+    }
+
+    // Row targets and end drop zones mark the gap before them; convert that
+    // gap into the index the dragged row will occupy after the move.
+    const destinationIndex = getDestinationIndex({
+      dropTargetIndex: resolvedDrop.dropTargetIndex,
+      sourceIndex: sourceData.index,
+      sourceDroppableId: sourceData.droppableId,
+      destinationDroppableId: resolvedDrop.droppableId,
+    });
+
+    const isSameRecordGroup =
+      sourceData.droppableId === resolvedDrop.droppableId;
+
+    if (isSameRecordGroup && destinationIndex === sourceData.index) {
+      clearDragState();
+      return;
+    }
+
+    try {
+      processTableWithGroupRecordDrop({
+        draggableId: sourceData.recordId,
+        source: {
+          droppableId: sourceData.droppableId,
+          index: sourceData.index,
+        },
+        destination: {
+          droppableId: resolvedDrop.droppableId,
+          index: destinationIndex,
+        },
       });
-
-      const isSameRecordGroup =
-        sourceData.droppableId === targetData.droppableId;
-
-      if (isSameRecordGroup && destinationIndex === sourceData.index) {
-        endRecordDrag();
-        return;
-      }
-
-      try {
-        processTableWithGroupRecordDrop({
-          draggableId: sourceData.recordId,
-          source: {
-            droppableId: sourceData.droppableId,
-            index: sourceData.index,
-          },
-          destination: {
-            droppableId: targetData.droppableId,
-            index: destinationIndex,
-          },
-        });
-      } finally {
-        endRecordDrag();
-      }
-    },
-    [endRecordDrag, processTableWithGroupRecordDrop],
-  );
+    } finally {
+      clearDragState();
+    }
+  };
 
   return (
-    <DragDropProvider<DragDropItemData>
-      sensors={DND_KIT_SENSORS}
-      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+    <DragDropItemDndContext.Provider
+      value={{ activeDropTargetIndex, activeDroppableId }}
     >
-      {children}
-      <DragOverlay>
-        {(source) => {
-          const sourceData = source?.data;
-          return (
-            <RecordTableRecordGroupBodyContextProvider
-              recordGroupId={sourceData?.droppableId ?? ''}
-            >
-              <RecordTableRowDragOverlayContent source={source} />
-            </RecordTableRecordGroupBodyContextProvider>
-          );
-        }}
-      </DragOverlay>
-    </DragDropProvider>
+      <DragDropProvider<DragDropItemData>
+        sensors={DND_KIT_SENSORS}
+        plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
+        onDragStart={handleDragStart}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEnd}
+      >
+        {children}
+        <DragOverlay>
+          {(source) => {
+            const sourceData = source?.data;
+            return (
+              <RecordTableRecordGroupBodyContextProvider
+                recordGroupId={sourceData?.droppableId ?? ''}
+              >
+                <RecordTableRowDragOverlayContent source={source} />
+              </RecordTableRecordGroupBodyContextProvider>
+            );
+          }}
+        </DragOverlay>
+      </DragDropProvider>
+    </DragDropItemDndContext.Provider>
   );
 };

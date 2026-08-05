@@ -80,6 +80,12 @@ export const usePageLayoutWidgetDragAndDrop = (
         | PageLayoutWidgetDndData
         | undefined;
 
+      if (sourceData?.type === 'widget' && targetData?.type === 'widget-list') {
+        setActiveDroppableId(targetData.tabId);
+        setActiveDropTargetIndex(targetData.itemCount);
+        return;
+      }
+
       const isWidgetReorder =
         sourceData?.type === 'widget' && targetData?.type === 'widget';
       const isTabReorder =
