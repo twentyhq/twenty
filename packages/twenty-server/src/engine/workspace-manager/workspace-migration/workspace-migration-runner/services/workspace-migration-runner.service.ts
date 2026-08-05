@@ -192,7 +192,42 @@ export class WorkspaceMigrationRunnerService {
     }
   }
 
-  run = async ({
+  run = async (args: {
+    workspaceMigration: WorkspaceMigration;
+    workspaceId: string;
+  }): Promise<{
+    allFlatEntityMaps: AllFlatEntityMaps;
+    metadataEvents: MetadataEvent[];
+    hasSchemaMetadataChanged: boolean;
+  }> => {
+    const runStart = performance.now();
+
+    try {
+      const result = await this.executeRun(args);
+
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+        value: performance.now() - runStart,
+        unit: 'ms',
+        attributes: { status: 'success' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
+      return result;
+    } catch (error) {
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+        value: performance.now() - runStart,
+        unit: 'ms',
+        attributes: { status: 'fail' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
+      throw error;
+    }
+  };
+
+  private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
   }: {
@@ -214,7 +249,6 @@ export class WorkspaceMigrationRunnerService {
     this.logger.perfTime('Runner', 'Total execution');
     this.logger.perfTime('Runner', 'Initial cache retrieval');
 
-    const runStart = performance.now();
     const initialCacheRetrievalStart = performance.now();
 
     const queryRunner = this.coreDataSource.createQueryRunner();
@@ -377,11 +411,13 @@ export class WorkspaceMigrationRunnerService {
       const commitMs = performance.now() - commitStart;
       const transactionMs = performance.now() - transactionStart;
 
+      // Commit is recorded as its own phase; subtract it so phases stay
+      // disjoint and summing them approximates the total run duration
       this.metricsService.recordHistogram({
         key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
-        value: transactionMs,
+        value: transactionMs - commitMs,
         unit: 'ms',
-        attributes: { phase: 'transaction' },
+        attributes: { phase: 'action-execution' },
         bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
@@ -452,14 +488,6 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      this.metricsService.recordHistogram({
-        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
-        value: performance.now() - runStart,
-        unit: 'ms',
-        attributes: { status: 'fail' },
-        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
-      });
-
       if (error instanceof WorkspaceMigrationRunnerException) {
         throw error;
       }
@@ -517,14 +545,6 @@ export class WorkspaceMigrationRunnerService {
     const hasSchemaMetadataChanged =
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
       allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
-
-    this.metricsService.recordHistogram({
-      key: MetricsKeys.WorkspaceMigrationRunDurationMs,
-      value: performance.now() - runStart,
-      unit: 'ms',
-      attributes: { status: 'success' },
-      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
-    });
 
     this.logger.perfTimeEnd('Runner', 'Total execution');
 

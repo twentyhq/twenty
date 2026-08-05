@@ -332,28 +332,37 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     // Measured locally so metrics stay accurate regardless of the performance
     // log level and of concurrent migrations sharing the logger's timer map
     const startedAt = performance.now();
+    let status: 'success' | 'fail' = 'success';
 
     this.logger.perfTime(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );
-    await method();
-    this.logger.perfTimeEnd(
-      'BaseWorkspaceMigrationRunnerActionHandlerService',
-      `${this.actionType}_${this.metadataName} ${label}`,
-    );
 
-    this.metricsService.recordHistogram({
-      key: MetricsKeys.WorkspaceMigrationActionDurationMs,
-      value: performance.now() - startedAt,
-      unit: 'ms',
-      attributes: {
-        actionType: this.actionType,
-        metadataName: this.metadataName,
-        step: label,
-      },
-      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
-    });
+    try {
+      await method();
+
+      this.logger.perfTimeEnd(
+        'BaseWorkspaceMigrationRunnerActionHandlerService',
+        `${this.actionType}_${this.metadataName} ${label}`,
+      );
+    } catch (error) {
+      status = 'fail';
+      throw error;
+    } finally {
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationActionDurationMs,
+        value: performance.now() - startedAt,
+        unit: 'ms',
+        attributes: {
+          actionType: this.actionType,
+          metadataName: this.metadataName,
+          step: label,
+          status,
+        },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+    }
   }
 }
 
