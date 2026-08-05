@@ -31,22 +31,22 @@ export const fetchSlackAssistantContext = async ({
 
   const { client } = slackClientResult;
 
+  // Without the bot user id, no history turn gets the assistant role, so a
+  // failed resolution degrades the context instead of failing the request
+  const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
+    () => undefined,
+  );
+
   const [conversationMessages, requesterName] = await Promise.all([
-    // Without the bot user id, no history turn gets the assistant role, so a
-    // failed resolution degrades the context instead of failing the request
-    resolveSlackBotUserIdOrThrow()
-      .catch(() => undefined)
-      .then((assistantBotUserId) =>
-        fetchSlackConversationMessages({
-          client,
-          channelId: slackChannelId,
-          threadTimestamp: parentMessageTimestamp,
-          isDirectMessage,
-          assistantBotUserId,
-          excludeMessageTimestamps,
-          excludeMessageTexts: SLACK_ASSISTANT_TRANSIENT_TEXTS,
-        }),
-      ),
+    fetchSlackConversationMessages({
+      client,
+      channelId: slackChannelId,
+      threadTimestamp: parentMessageTimestamp,
+      isDirectMessage,
+      assistantBotUserId,
+      excludeMessageTimestamps,
+      excludeMessageTexts: SLACK_ASSISTANT_TRANSIENT_TEXTS,
+    }),
     fetchSlackRequesterName({ client, slackUserId }),
   ]);
 
