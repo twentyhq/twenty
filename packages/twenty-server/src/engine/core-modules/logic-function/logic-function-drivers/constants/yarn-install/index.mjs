@@ -8,14 +8,6 @@ import { pipeline } from 'stream/promises';
 const YARN_INSTALL_TIMEOUT_MS = 240_000;
 const YARN_ENGINE_DIR = resolve('yarn-engine');
 const YARN_ENGINE_PATH = join(YARN_ENGINE_DIR, '.yarn/releases/yarn-4.9.2.cjs');
-const MAX_UNZIPPED_DEPENDENCIES_MB = 200;
-
-class DependenciesSizeExceededError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'DependenciesSizeExceededError';
-  }
-}
 
 const writePackageFiles = async (nodejsDir, packageJson, yarnLock) => {
   await fs.mkdir(nodejsDir, { recursive: true });
@@ -73,55 +65,6 @@ const runYarnInstall = async (nodejsDir) => {
   );
 };
 
-const computeDirectorySizeBytes = async (directory) => {
-  const entries = await fs.readdir(directory, { withFileTypes: true });
-
-  const sizes = await Promise.all(
-    entries.map(async (entry) => {
-      const fullPath = join(directory, entry.name);
-
-      if (entry.isDirectory()) {
-        return computeDirectorySizeBytes(fullPath);
-      }
-
-      if (entry.isSymbolicLink()) {
-        try {
-          const targetStat = await fs.stat(fullPath);
-
-          return targetStat.isFile() ? targetStat.size : 0;
-        } catch {
-          return 0;
-        }
-      }
-
-      if (!entry.isFile()) {
-        return 0;
-      }
-
-      const stat = await fs.stat(fullPath);
-
-      return stat.size;
-    }),
-  );
-
-  return sizes.reduce((total, size) => total + size, 0);
-};
-
-const assertDependenciesSizeWithinLimit = async (buildDir, maxSizeMb) => {
-  const effectiveMaxSizeMb =
-    Number.isFinite(maxSizeMb) && maxSizeMb > 0
-      ? maxSizeMb
-      : MAX_UNZIPPED_DEPENDENCIES_MB;
-  const sizeBytes = await computeDirectorySizeBytes(buildDir);
-  const sizeMb = Math.ceil(sizeBytes / (1024 * 1024));
-
-  if (sizeMb > effectiveMaxSizeMb) {
-    throw new DependenciesSizeExceededError(
-      `Dependencies size exceeded: production dependencies unpack to ${sizeMb}MB, the maximum is ${effectiveMaxSizeMb}MB. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".`,
-    );
-  }
-};
-
 const createZip = async (buildDir, zipPath) => {
   const output = createWriteStream(zipPath);
   const archive = archiver('zip', { zlib: { level: 9 } });
@@ -151,13 +94,7 @@ const uploadToPresignedUrl = async (zipPath, presignedUploadUrl) => {
 };
 
 export const handler = async (event) => {
-  const {
-    action,
-    packageJson,
-    yarnLock,
-    presignedUploadUrl,
-    maxUnzippedSizeMb,
-  } = event;
+  const { action, packageJson, yarnLock, presignedUploadUrl } = event;
 
   if (action !== 'createLayer') {
     throw new Error(`Unknown action: ${action}`);
@@ -180,7 +117,6 @@ export const handler = async (event) => {
     await writePackageFiles(nodejsDir, packageJson, yarnLock);
     await copyYarnEngine(nodejsDir);
     await runYarnInstall(nodejsDir);
-    await assertDependenciesSizeWithinLimit(buildDir, maxUnzippedSizeMb);
     await createZip(buildDir, zipPath);
 
     await uploadToPresignedUrl(zipPath, presignedUploadUrl);

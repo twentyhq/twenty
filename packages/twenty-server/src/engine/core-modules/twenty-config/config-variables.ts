@@ -719,15 +719,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description:
-      'Maximum unzipped size in MB for the production dependencies of an application',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  LOGIC_FUNCTION_MAX_DEPS_SIZE_MB = 200;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Region for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })

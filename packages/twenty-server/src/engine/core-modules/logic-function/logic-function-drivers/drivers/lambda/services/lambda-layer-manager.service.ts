@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 import {
   DeleteLayerVersionCommand,
   type GetFunctionCommandOutput,
+  InvalidParameterValueException,
   ListLayerVersionsCommand,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
@@ -22,6 +23,10 @@ import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logi
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 type LayerAppContext = {
   flatApplication: FlatApplication;
@@ -34,7 +39,7 @@ export class LambdaLayerManagerService {
   constructor(
     private readonly options: Pick<
       LambdaDriverOptions,
-      'layerBucket' | 'resourceNamespace' | 'twentyConfigService'
+      'layerBucket' | 'resourceNamespace'
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly toolFunctions: LambdaToolFunctionsService,
@@ -173,25 +178,39 @@ export class LambdaLayerManagerService {
       packageJson,
       yarnLock,
       presignedUploadUrl,
-      maxUnzippedSizeMb: this.options.twentyConfigService.get(
-        'LOGIC_FUNCTION_MAX_DEPS_SIZE_MB',
-      ),
     });
 
     const lambdaClient = await this.awsClient.getLambdaClient();
-    const publishResult = await lambdaClient.send(
-      new PublishLayerVersionCommand({
-        LayerName: layerName,
-        Content: {
-          S3Bucket: this.options.layerBucket,
-          S3Key: s3Key,
-        },
-        CompatibleRuntimes: [
-          LogicFunctionRuntime.NODE18,
-          LogicFunctionRuntime.NODE22,
-        ],
-      }),
-    );
+
+    let publishResult;
+
+    try {
+      publishResult = await lambdaClient.send(
+        new PublishLayerVersionCommand({
+          LayerName: layerName,
+          Content: {
+            S3Bucket: this.options.layerBucket,
+            S3Key: s3Key,
+          },
+          CompatibleRuntimes: [
+            LogicFunctionRuntime.NODE18,
+            LogicFunctionRuntime.NODE22,
+          ],
+        }),
+      );
+    } catch (error) {
+      if (
+        error instanceof InvalidParameterValueException &&
+        error.message.toLowerCase().includes('size')
+      ) {
+        throw new LogicFunctionException(
+          `Dependency layer '${layerName}' exceeds the Lambda layer size limit: ${error.message}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
+        );
+      }
+
+      throw error;
+    }
 
     if (!publishResult.LayerVersionArn) {
       throw new Error(

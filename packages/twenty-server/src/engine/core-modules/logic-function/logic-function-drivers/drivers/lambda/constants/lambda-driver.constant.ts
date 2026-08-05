@@ -10,8 +10,6 @@ export const LAMBDA_CLIENT_RETRY_MODE = 'adaptive' as const;
 
 export const YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS = 300;
 export const YARN_INSTALL_LAMBDA_MEMORY_MB = 4096;
-export const DEPENDENCIES_SIZE_EXCEEDED_ERROR_NAME =
-  'DependenciesSizeExceededError';
 export const TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS = 3;
 export const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 export const BUILDER_LAMBDA_MEMORY_MB = 512;
