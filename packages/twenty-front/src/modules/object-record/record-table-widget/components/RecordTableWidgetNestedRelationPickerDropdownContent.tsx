@@ -1,3 +1,4 @@
+import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
 import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { RecordTableWidgetNestedRelationPickerMenuItem } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerMenuItem';
 import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
@@ -54,15 +55,21 @@ export const RecordTableWidgetNestedRelationPickerDropdownContent = ({
             (relationRecord) => relationRecord.id,
           )}
         >
-          {recordsToSelect.map((relationRecord) => (
-            <RecordTableWidgetNestedRelationPickerMenuItem
-              key={relationRecord.id}
-              relationRecord={relationRecord}
-              onSelect={onRelationRecordSelected}
-            />
-          ))}
-          {!loading && recordsToSelect.length === 0 && (
-            <RecordPickerNoRecordFoundMenuItem />
+          {loading && recordsToSelect.length === 0 ? (
+            <RecordPickerLoadingSkeletonList />
+          ) : (
+            <>
+              {recordsToSelect.map((relationRecord) => (
+                <RecordTableWidgetNestedRelationPickerMenuItem
+                  key={relationRecord.id}
+                  relationRecord={relationRecord}
+                  onSelect={onRelationRecordSelected}
+                />
+              ))}
+              {recordsToSelect.length === 0 && (
+                <RecordPickerNoRecordFoundMenuItem />
+              )}
+            </>
           )}
         </SelectableList>
       </DropdownMenuItemsContainer>
