@@ -7,6 +7,7 @@ import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AgentMessageRole } from '~/generated-admin/graphql';
 
+import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
 import { SettingsAdminChatMessage } from '@/settings/admin-panel/components/SettingsAdminChatMessage';
 import { type AdminChatThreadMessage } from '@/settings/admin-panel/types/AdminChatThreadMessage';
 import { isRenderableAdminChatMessagePart } from '@/settings/admin-panel/utils/isRenderableAdminChatMessagePart';
@@ -46,10 +47,12 @@ export const SettingsAdminChatThreadMessageList = ({
   }
 
   return (
-    <StyledMessagesContainer>
-      {visibleMessages.map((message) => (
-        <SettingsAdminChatMessage key={message.id} message={message} />
-      ))}
-    </StyledMessagesContainer>
+    <ChatReferenceNavigationEnabledContext.Provider value={false}>
+      <StyledMessagesContainer>
+        {visibleMessages.map((message) => (
+          <SettingsAdminChatMessage key={message.id} message={message} />
+        ))}
+      </StyledMessagesContainer>
+    </ChatReferenceNavigationEnabledContext.Provider>
   );
 };

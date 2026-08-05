@@ -1,7 +1,9 @@
 import { t } from '@lingui/core/macro';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipVariant, LinkChip } from 'twenty-ui/data-display';
+
+import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
 
 type ChatReferenceChipDisplayProps = {
   displayName: string;
@@ -14,7 +16,9 @@ export const ChatReferenceChipDisplay = ({
   leftComponent,
   to,
 }: ChatReferenceChipDisplayProps) => {
-  if (!isDefined(to)) {
+  const isNavigationEnabled = useContext(ChatReferenceNavigationEnabledContext);
+
+  if (!isDefined(to) || !isNavigationEnabled) {
     return (
       <Chip
         label={displayName}
