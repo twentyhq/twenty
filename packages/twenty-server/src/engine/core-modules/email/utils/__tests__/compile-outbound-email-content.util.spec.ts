@@ -233,7 +233,7 @@ describe('compileOutboundEmailContent', () => {
 
   describe('unsafe URL schemes', () => {
     it('should drop javascript: hrefs from buttons, links and images', async () => {
-      const html = await renderRichTextToHtml({
+      const html = await compileDocument({
         type: 'doc',
         content: [
           {
@@ -265,7 +265,7 @@ describe('compileOutboundEmailContent', () => {
     });
 
     it('should keep http, mailto and variable-bearing URLs', async () => {
-      const html = await renderRichTextToHtml({
+      const html = await compileDocument({
         type: 'doc',
         content: [
           {
