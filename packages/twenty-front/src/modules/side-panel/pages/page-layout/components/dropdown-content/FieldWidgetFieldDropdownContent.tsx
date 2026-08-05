@@ -16,12 +16,11 @@ import {
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { FieldWidgetNestedFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetNestedFieldDropdownContent';
 import {
   StyledPageLayoutDropdownContentContainer,
   StyledPageLayoutDropdownMenuItemsContainer,
 } from '@/side-panel/pages/page-layout/components/dropdown-content/PageLayoutDropdownContentContainer';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -34,7 +33,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -248,82 +247,20 @@ export const FieldWidgetFieldDropdownContent = () => {
   };
 
   if (isDefined(drillInFieldMetadataItem)) {
-    const nestedFieldCandidates =
-      nestedFieldCandidatesByFieldId.get(drillInFieldMetadataItem.id) ?? [];
-
     return (
-      <StyledPageLayoutDropdownContentContainer>
-        <DropdownMenuHeader
-          StartComponent={
-            <DropdownMenuHeaderLeftComponent
-              onClick={() => setDrillInFieldMetadataItem(null)}
-              Icon={IconChevronLeft}
-            />
-          }
-        >
-          {drillInFieldMetadataItem.label}
-        </DropdownMenuHeader>
-        <StyledPageLayoutDropdownMenuItemsContainer>
-          <SelectableList
-            selectableListInstanceId={dropdownId}
-            focusId={dropdownId}
-            selectableItemIdArray={[
-              drillInFieldMetadataItem.id,
-              ...nestedFieldCandidates.map((field) => field.id),
-            ]}
-          >
-            <SelectableListItem
-              itemId={drillInFieldMetadataItem.id}
-              onEnter={() => {
-                handleSelectField(drillInFieldMetadataItem.id);
-              }}
-            >
-              <MenuItemSelect
-                text={drillInFieldMetadataItem.label}
-                selected={
-                  currentFieldMetadataId === drillInFieldMetadataItem.id &&
-                  !isDefined(currentNestedRelationFieldMetadataId)
-                }
-                focused={selectedItemId === drillInFieldMetadataItem.id}
-                LeftIcon={getIcon(drillInFieldMetadataItem.icon)}
-                onClick={() => {
-                  handleSelectField(drillInFieldMetadataItem.id);
-                }}
-              />
-            </SelectableListItem>
-            <DropdownMenuSeparator />
-            {nestedFieldCandidates.map((nestedFieldMetadataItem) => (
-              <SelectableListItem
-                key={nestedFieldMetadataItem.id}
-                itemId={nestedFieldMetadataItem.id}
-                onEnter={() => {
-                  handleSelectNestedField(
-                    drillInFieldMetadataItem,
-                    nestedFieldMetadataItem,
-                  );
-                }}
-              >
-                <MenuItemSelect
-                  text={nestedFieldMetadataItem.label}
-                  selected={
-                    currentFieldMetadataId === drillInFieldMetadataItem.id &&
-                    currentNestedRelationFieldMetadataId ===
-                      nestedFieldMetadataItem.id
-                  }
-                  focused={selectedItemId === nestedFieldMetadataItem.id}
-                  LeftIcon={getIcon(nestedFieldMetadataItem.icon)}
-                  onClick={() => {
-                    handleSelectNestedField(
-                      drillInFieldMetadataItem,
-                      nestedFieldMetadataItem,
-                    );
-                  }}
-                />
-              </SelectableListItem>
-            ))}
-          </SelectableList>
-        </StyledPageLayoutDropdownMenuItemsContainer>
-      </StyledPageLayoutDropdownContentContainer>
+      <FieldWidgetNestedFieldDropdownContent
+        drillInFieldMetadataItem={drillInFieldMetadataItem}
+        nestedFieldCandidates={
+          nestedFieldCandidatesByFieldId.get(drillInFieldMetadataItem.id) ?? []
+        }
+        currentFieldMetadataId={currentFieldMetadataId}
+        currentNestedRelationFieldMetadataId={
+          currentNestedRelationFieldMetadataId
+        }
+        onBack={() => setDrillInFieldMetadataItem(null)}
+        onSelectField={handleSelectField}
+        onSelectNestedField={handleSelectNestedField}
+      />
     );
   }
 
