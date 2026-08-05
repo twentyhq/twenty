@@ -1,9 +1,13 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { useResolveFieldWidgetRelationTableViewIdChange } from '@/page-layout/widgets/record-table/hooks/useResolveFieldWidgetRelationTableViewIdChange';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
+import { getFieldWidgetEligibleNestedFields } from '@/page-layout/widgets/field/utils/getFieldWidgetEligibleNestedFields';
 import {
   getFieldWidgetDefaultDisplayMode,
   isDisplayModeValidForFieldType,
@@ -15,6 +19,8 @@ import {
   StyledPageLayoutDropdownContentContainer,
   StyledPageLayoutDropdownMenuItemsContainer,
 } from '@/side-panel/pages/page-layout/components/dropdown-content/PageLayoutDropdownContentContainer';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -26,14 +32,17 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type FieldConfiguration } from '~/generated-metadata/graphql';
+import { FieldDisplayMode, RelationType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const FieldWidgetFieldDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [drillInFieldMetadataItem, setDrillInFieldMetadataItem] =
+    useState<FieldMetadataItem | null>(null);
 
   const { pageLayoutId, objectNameSingular } =
     usePageLayoutIdFromContextStore();
@@ -45,6 +54,8 @@ export const FieldWidgetFieldDropdownContent = () => {
     | undefined;
 
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
+  const currentNestedRelationFieldMetadataId =
+    fieldConfiguration?.nestedRelationFieldMetadataId;
 
   const allFieldWidgetFieldMetadataItems =
     useFieldWidgetEligibleFields(objectNameSingular);
@@ -114,6 +125,30 @@ export const FieldWidgetFieldDropdownContent = () => {
   const { fieldMetadataItem: currentFieldMetadataItem } =
     useFieldMetadataItemById(currentFieldMetadataId ?? '');
 
+  const getNestedFieldCandidates = (
+    fieldMetadataItem: FieldMetadataItem,
+  ): FieldMetadataItem[] => {
+    if (
+      fieldMetadataItem.type !== FieldMetadataType.RELATION ||
+      fieldMetadataItem.relation?.type !== RelationType.ONE_TO_MANY ||
+      hasJunctionConfig(fieldMetadataItem.settings)
+    ) {
+      return [];
+    }
+
+    const relationTargetObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.id ===
+        fieldMetadataItem.relation?.targetObjectMetadata.id,
+    );
+
+    if (!isDefined(relationTargetObjectMetadataItem)) {
+      return [];
+    }
+
+    return getFieldWidgetEligibleNestedFields(relationTargetObjectMetadataItem);
+  };
+
   const handleSelectField = (fieldMetadataId: string) => {
     const selectedField = allFieldWidgetFieldMetadataItems.find(
       (field) => field.id === fieldMetadataId,
@@ -131,7 +166,8 @@ export const FieldWidgetFieldDropdownContent = () => {
       );
 
     const isSelectingDifferentField =
-      currentFieldMetadataId !== fieldMetadataId;
+      currentFieldMetadataId !== fieldMetadataId ||
+      isDefined(currentNestedRelationFieldMetadataId);
 
     const relationTableViewIdChange =
       resolveFieldWidgetRelationTableViewIdChange({
@@ -145,6 +181,7 @@ export const FieldWidgetFieldDropdownContent = () => {
     updateCurrentWidgetConfig({
       configToUpdate: {
         fieldMetadataId,
+        nestedRelationFieldMetadataId: null,
         ...relationTableViewIdChange,
         ...(needsDisplayModeSwitch && {
           fieldDisplayMode: getFieldWidgetDefaultDisplayMode(
@@ -163,6 +200,125 @@ export const FieldWidgetFieldDropdownContent = () => {
     closeDropdown();
   };
 
+  const handleSelectNestedField = (
+    parentFieldMetadataItem: FieldMetadataItem,
+    nestedFieldMetadataItem: FieldMetadataItem,
+  ) => {
+    const isSelectingDifferentField =
+      currentFieldMetadataId !== parentFieldMetadataItem.id ||
+      currentNestedRelationFieldMetadataId !== nestedFieldMetadataItem.id;
+
+    // A nested relation widget always renders as an embedded view, so the
+    // effective display mode is TABLE regardless of the current one.
+    const relationTableViewIdChange =
+      resolveFieldWidgetRelationTableViewIdChange({
+        selectedField: parentFieldMetadataItem,
+        selectedNestedField: nestedFieldMetadataItem,
+        currentDisplayMode: FieldDisplayMode.TABLE,
+        isSelectingDifferentField,
+        widgetId: widgetInEditMode?.id,
+        currentViewId: fieldConfiguration?.viewId,
+      });
+
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        fieldMetadataId: parentFieldMetadataItem.id,
+        nestedRelationFieldMetadataId: nestedFieldMetadataItem.id,
+        fieldDisplayMode: FieldDisplayMode.TABLE,
+        ...relationTableViewIdChange,
+      },
+    });
+
+    if (isDefined(widgetInEditMode)) {
+      updatePageLayoutWidget(widgetInEditMode.id, {
+        title: `${parentFieldMetadataItem.label} → ${nestedFieldMetadataItem.label}`,
+      });
+    }
+
+    closeDropdown();
+  };
+
+  if (isDefined(drillInFieldMetadataItem)) {
+    const nestedFieldCandidates = getNestedFieldCandidates(
+      drillInFieldMetadataItem,
+    );
+
+    return (
+      <StyledPageLayoutDropdownContentContainer>
+        <DropdownMenuHeader
+          StartComponent={
+            <DropdownMenuHeaderLeftComponent
+              onClick={() => setDrillInFieldMetadataItem(null)}
+              Icon={IconChevronLeft}
+            />
+          }
+        >
+          {drillInFieldMetadataItem.label}
+        </DropdownMenuHeader>
+        <StyledPageLayoutDropdownMenuItemsContainer>
+          <SelectableList
+            selectableListInstanceId={dropdownId}
+            focusId={dropdownId}
+            selectableItemIdArray={[
+              drillInFieldMetadataItem.id,
+              ...nestedFieldCandidates.map((field) => field.id),
+            ]}
+          >
+            <SelectableListItem
+              itemId={drillInFieldMetadataItem.id}
+              onEnter={() => {
+                handleSelectField(drillInFieldMetadataItem.id);
+              }}
+            >
+              <MenuItemSelect
+                text={drillInFieldMetadataItem.label}
+                selected={
+                  currentFieldMetadataId === drillInFieldMetadataItem.id &&
+                  !isDefined(currentNestedRelationFieldMetadataId)
+                }
+                focused={selectedItemId === drillInFieldMetadataItem.id}
+                LeftIcon={getIcon(drillInFieldMetadataItem.icon)}
+                onClick={() => {
+                  handleSelectField(drillInFieldMetadataItem.id);
+                }}
+              />
+            </SelectableListItem>
+            <DropdownMenuSeparator />
+            {nestedFieldCandidates.map((nestedFieldMetadataItem) => (
+              <SelectableListItem
+                key={nestedFieldMetadataItem.id}
+                itemId={nestedFieldMetadataItem.id}
+                onEnter={() => {
+                  handleSelectNestedField(
+                    drillInFieldMetadataItem,
+                    nestedFieldMetadataItem,
+                  );
+                }}
+              >
+                <MenuItemSelect
+                  text={nestedFieldMetadataItem.label}
+                  selected={
+                    currentFieldMetadataId === drillInFieldMetadataItem.id &&
+                    currentNestedRelationFieldMetadataId ===
+                      nestedFieldMetadataItem.id
+                  }
+                  focused={selectedItemId === nestedFieldMetadataItem.id}
+                  LeftIcon={getIcon(nestedFieldMetadataItem.icon)}
+                  onClick={() => {
+                    handleSelectNestedField(
+                      drillInFieldMetadataItem,
+                      nestedFieldMetadataItem,
+                    );
+                  }}
+                />
+              </SelectableListItem>
+            ))}
+          </SelectableList>
+        </StyledPageLayoutDropdownMenuItemsContainer>
+      </StyledPageLayoutDropdownContentContainer>
+    );
+  }
+
   return (
     <StyledPageLayoutDropdownContentContainer>
       <DropdownMenuSearchInput
@@ -179,29 +335,35 @@ export const FieldWidgetFieldDropdownContent = () => {
           focusId={dropdownId}
           selectableItemIdArray={availableFields.map((field) => field.id)}
         >
-          {availableFields.map((fieldMetadataItem) => (
-            <SelectableListItem
-              key={fieldMetadataItem.id}
-              itemId={fieldMetadataItem.id}
-              onEnter={() => {
-                handleSelectField(fieldMetadataItem.id);
-              }}
-            >
-              <MenuItemSelect
-                text={fieldMetadataItem.label}
-                selected={currentFieldMetadataId === fieldMetadataItem.id}
-                focused={selectedItemId === fieldMetadataItem.id}
-                LeftIcon={getIcon(
-                  currentFieldMetadataId === fieldMetadataItem.id
-                    ? currentFieldMetadataItem?.icon
-                    : fieldMetadataItem.icon,
-                )}
-                onClick={() => {
-                  handleSelectField(fieldMetadataItem.id);
-                }}
-              />
-            </SelectableListItem>
-          ))}
+          {availableFields.map((fieldMetadataItem) => {
+            const hasNestedFieldCandidates =
+              getNestedFieldCandidates(fieldMetadataItem).length > 0;
+
+            const handleClick = hasNestedFieldCandidates
+              ? () => setDrillInFieldMetadataItem(fieldMetadataItem)
+              : () => handleSelectField(fieldMetadataItem.id);
+
+            return (
+              <SelectableListItem
+                key={fieldMetadataItem.id}
+                itemId={fieldMetadataItem.id}
+                onEnter={handleClick}
+              >
+                <MenuItemSelect
+                  text={fieldMetadataItem.label}
+                  selected={currentFieldMetadataId === fieldMetadataItem.id}
+                  focused={selectedItemId === fieldMetadataItem.id}
+                  LeftIcon={getIcon(
+                    currentFieldMetadataId === fieldMetadataItem.id
+                      ? currentFieldMetadataItem?.icon
+                      : fieldMetadataItem.icon,
+                  )}
+                  hasSubMenu={hasNestedFieldCandidates}
+                  onClick={handleClick}
+                />
+              </SelectableListItem>
+            );
+          })}
         </SelectableList>
       </StyledPageLayoutDropdownMenuItemsContainer>
     </StyledPageLayoutDropdownContentContainer>

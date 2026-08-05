@@ -10,11 +10,18 @@ import {
 
 type ResolveFieldWidgetRelationTableViewIdChangeArgs = {
   selectedField: FieldMetadataItem | undefined;
+  selectedNestedField?: FieldMetadataItem;
   currentDisplayMode: FieldDisplayMode | undefined;
   isSelectingDifferentField: boolean;
   widgetId: string | undefined;
   currentViewId: string | null | undefined;
 };
+
+const isOneToManyRelationField = (
+  fieldMetadataItem: FieldMetadataItem | undefined,
+): boolean =>
+  fieldMetadataItem?.type === FieldMetadataType.RELATION &&
+  fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY;
 
 export const useResolveFieldWidgetRelationTableViewIdChange = (
   pageLayoutId: string,
@@ -24,6 +31,7 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
 
   const resolveFieldWidgetRelationTableViewIdChange = ({
     selectedField,
+    selectedNestedField,
     currentDisplayMode,
     isSelectingDifferentField,
     widgetId,
@@ -31,26 +39,41 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
   }: ResolveFieldWidgetRelationTableViewIdChangeArgs):
     | Pick<FieldConfiguration, 'viewId'>
     | undefined => {
-    const targetObjectMetadataId =
-      selectedField?.relation?.targetObjectMetadata.id;
-    const targetFieldMetadataId =
-      selectedField?.relation?.targetFieldMetadata.id;
+    // With a nested relation, the embedded view lists records of the nested
+    // relation's target (e.g. Company -> People -> Opportunities lists
+    // opportunities), scoped through the nested inverse relation back to the
+    // current record. Without one, it lists the direct relation's records.
+    const targetObjectMetadataId = isDefined(selectedNestedField)
+      ? selectedNestedField.relation?.targetObjectMetadata.id
+      : selectedField?.relation?.targetObjectMetadata.id;
+    const inverseFieldMetadataId = isDefined(selectedNestedField)
+      ? selectedNestedField.relation?.targetFieldMetadata.id
+      : selectedField?.relation?.targetFieldMetadata.id;
+    const relationTargetFieldMetadataId = isDefined(selectedNestedField)
+      ? selectedField?.relation?.targetFieldMetadata.id
+      : null;
+
+    const isValidRelationChain = isDefined(selectedNestedField)
+      ? isOneToManyRelationField(selectedField) &&
+        isOneToManyRelationField(selectedNestedField) &&
+        isDefined(relationTargetFieldMetadataId)
+      : isOneToManyRelationField(selectedField);
 
     const shouldRegenerateRelationTableView =
       currentDisplayMode === FieldDisplayMode.TABLE &&
       isSelectingDifferentField &&
-      selectedField?.type === FieldMetadataType.RELATION &&
-      selectedField.relation?.type === RelationType.ONE_TO_MANY &&
+      isValidRelationChain &&
       isDefined(widgetId) &&
       isDefined(targetObjectMetadataId) &&
-      isDefined(targetFieldMetadataId);
+      isDefined(inverseFieldMetadataId);
 
     const regeneratedRelationTableViewId = shouldRegenerateRelationTableView
-      ? addDraftViewForFieldRelationTableWidget(
+      ? addDraftViewForFieldRelationTableWidget({
           widgetId,
           targetObjectMetadataId,
-          targetFieldMetadataId,
-        )
+          inverseFieldMetadataId,
+          relationTargetFieldMetadataId,
+        })
       : undefined;
 
     if (isDefined(regeneratedRelationTableViewId)) {

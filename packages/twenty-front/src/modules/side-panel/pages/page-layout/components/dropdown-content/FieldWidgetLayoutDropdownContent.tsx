@@ -1,7 +1,9 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import {
   type RecordTableWidgetLayoutViewType,
@@ -32,11 +34,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FieldDisplayMode,
-  ViewType,
-  type FieldConfiguration,
-} from '~/generated-metadata/graphql';
+import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.FIELD]: IconListDetails,
@@ -63,11 +61,24 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
   const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
+  const currentNestedRelationFieldMetadataId =
+    fieldConfiguration?.nestedRelationFieldMetadataId;
   const currentViewId = fieldConfiguration?.viewId ?? null;
 
   const { fieldMetadataItem } = useFieldMetadataItemById(
     currentFieldMetadataId ?? '',
   );
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const resolvedNestedRelation = resolveFieldWidgetNestedRelation({
+    objectMetadataItems,
+    relationTargetObjectMetadataId:
+      fieldMetadataItem?.relation?.targetObjectMetadata.id,
+    nestedRelationFieldMetadataId: currentNestedRelationFieldMetadataId,
+  });
+
+  const isNestedRelationWidget = isDefined(resolvedNestedRelation);
 
   const availableDisplayModes = fieldMetadataItem
     ? getFieldWidgetAvailableDisplayModes(
@@ -76,19 +87,28 @@ export const FieldWidgetLayoutDropdownContent = () => {
       )
     : [FieldDisplayMode.FIELD];
 
-  const inlineDisplayModes = availableDisplayModes.filter(
-    (displayMode) => displayMode !== FieldDisplayMode.TABLE,
-  );
+  // A nested relation widget only makes sense as an embedded view: inline
+  // display modes would render the first hop's relation field, contradicting
+  // the widget's two-hop title.
+  const inlineDisplayModes = isNestedRelationWidget
+    ? []
+    : availableDisplayModes.filter(
+        (displayMode) => displayMode !== FieldDisplayMode.TABLE,
+      );
   const hasEmbeddedViewLayouts = availableDisplayModes.includes(
     FieldDisplayMode.TABLE,
   );
 
-  const targetObjectMetadataId =
-    fieldMetadataItem?.relation?.targetObjectMetadata.id;
-  const inverseFieldMetadataId =
-    fieldMetadataItem?.relation?.targetFieldMetadata.id;
-
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const targetObjectMetadataId = isNestedRelationWidget
+    ? resolvedNestedRelation.nestedRelationTargetObjectMetadataId
+    : fieldMetadataItem?.relation?.targetObjectMetadata.id;
+  const inverseFieldMetadataId = isNestedRelationWidget
+    ? resolvedNestedRelation.nestedRelationFieldMetadataItem.relation
+        ?.targetFieldMetadata.id
+    : fieldMetadataItem?.relation?.targetFieldMetadata.id;
+  const relationTargetFieldMetadataId = isNestedRelationWidget
+    ? fieldMetadataItem?.relation?.targetFieldMetadata.id
+    : null;
   const targetObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItemToFind) =>
       objectMetadataItemToFind.id === targetObjectMetadataId,
@@ -171,11 +191,12 @@ export const FieldWidgetLayoutDropdownContent = () => {
       isDefined(targetObjectMetadataId) &&
       isDefined(inverseFieldMetadataId)
     ) {
-      const viewId = addDraftViewForFieldRelationTableWidget(
-        widgetInEditMode.id,
+      const viewId = addDraftViewForFieldRelationTableWidget({
+        widgetId: widgetInEditMode.id,
         targetObjectMetadataId,
         inverseFieldMetadataId,
-      );
+        relationTargetFieldMetadataId,
+      });
 
       updateCurrentWidgetConfig({
         configToUpdate: {

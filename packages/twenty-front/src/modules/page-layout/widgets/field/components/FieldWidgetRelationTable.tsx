@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -5,6 +6,7 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
+import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
@@ -38,8 +40,13 @@ export const FieldWidgetRelationTable = ({
 
   const { isInSidePanel } = useLayoutRenderingContext();
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const viewId = isFieldWidget(widget)
     ? widget.configuration.viewId
+    : undefined;
+  const nestedRelationFieldMetadataId = isFieldWidget(widget)
+    ? widget.configuration.nestedRelationFieldMetadataId
     : undefined;
 
   const relationObjectMetadataId =
@@ -47,9 +54,29 @@ export const FieldWidgetRelationTable = ({
   const recordPageObjectMetadataNameSingular =
     fieldDefinition.metadata.objectMetadataNameSingular;
 
+  const resolvedNestedRelation = resolveFieldWidgetNestedRelation({
+    objectMetadataItems,
+    relationTargetObjectMetadataId: relationObjectMetadataId,
+    nestedRelationFieldMetadataId,
+  });
+
+  // A widget with a broken nested relation (deleted or deactivated second
+  // hop) renders nothing rather than falling back to the first hop's records,
+  // which would silently show a different object than the widget title claims.
+  if (
+    isDefined(nestedRelationFieldMetadataId) &&
+    !isDefined(resolvedNestedRelation)
+  ) {
+    return null;
+  }
+
+  const tableObjectMetadataId = isDefined(resolvedNestedRelation)
+    ? resolvedNestedRelation.nestedRelationTargetObjectMetadataId
+    : relationObjectMetadataId;
+
   if (
     !isDefined(viewId) ||
-    !isDefined(relationObjectMetadataId) ||
+    !isDefined(tableObjectMetadataId) ||
     !isDefined(recordPageObjectMetadataNameSingular)
   ) {
     return null;
@@ -66,7 +93,7 @@ export const FieldWidgetRelationTable = ({
     >
       <StyledContainer>
         <RecordTableWidgetRendererContent
-          objectMetadataId={relationObjectMetadataId}
+          objectMetadataId={tableObjectMetadataId}
           viewId={viewId}
           widgetId={widget.id}
           isReadOnly={isPageLayoutInEditMode}
