@@ -113,7 +113,6 @@ describe('buildAdvancedTextEditorExtensions', () => {
 const createProfile = (
   overrides: Partial<AdvancedTextEditorProfile> = {},
 ): AdvancedTextEditorProfile => ({
-  contentType: 'json',
   chrome: 'document',
   minHeight: 0,
   enableFullScreen: false,

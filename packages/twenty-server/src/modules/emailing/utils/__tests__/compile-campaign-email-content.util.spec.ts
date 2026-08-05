@@ -1,4 +1,5 @@
 import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
+import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
 jest.mock(
   'src/engine/core-modules/email/utils/compile-outbound-email-content.util',
@@ -22,11 +23,15 @@ const VARIABLES = {
   personId: 'person-123',
 };
 
-const buildDocument = (text: string) =>
+const serializeDocument = (content?: unknown[]) =>
   JSON.stringify({
     type: 'doc',
-    content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+    attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+    ...(content === undefined ? {} : { content }),
   });
+
+const buildDocument = (text: string) =>
+  serializeDocument([{ type: 'paragraph', content: [{ type: 'text', text }] }]);
 
 const compiledDocument = () => compileOutboundEmailContent.mock.calls[0][0];
 
@@ -47,6 +52,7 @@ describe('compileCampaignEmailContent', () => {
     });
     expect(compiledDocument()).toEqual({
       type: 'doc',
+      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -69,18 +75,15 @@ describe('compileCampaignEmailContent', () => {
 
   it('should substitute variables carried by variable chip attributes', async () => {
     await compileCampaignEmailContent(
-      JSON.stringify({
-        type: 'doc',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              { type: 'text', text: 'Dear ' },
-              { type: 'variableTag', attrs: { variable: '{{firstName}}' } },
-            ],
-          },
-        ],
-      }),
+      serializeDocument([
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'Dear ' },
+            { type: 'variableTag', attrs: { variable: '{{firstName}}' } },
+          ],
+        },
+      ]),
       VARIABLES,
     );
 
@@ -92,31 +95,28 @@ describe('compileCampaignEmailContent', () => {
 
   it('should substitute variables inside button and link URLs', async () => {
     await compileCampaignEmailContent(
-      JSON.stringify({
-        type: 'doc',
-        content: [
-          {
-            type: 'button',
-            attrs: { href: 'https://example.com/p/{{personId}}' },
-            content: [{ type: 'text', text: 'Open' }],
-          },
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                text: 'here',
-                marks: [
-                  {
-                    type: 'link',
-                    attrs: { href: 'https://example.com/u/{{personId}}' },
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }),
+      serializeDocument([
+        {
+          type: 'button',
+          attrs: { href: 'https://example.com/p/{{personId}}' },
+          content: [{ type: 'text', text: 'Open' }],
+        },
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'here',
+              marks: [
+                {
+                  type: 'link',
+                  attrs: { href: 'https://example.com/u/{{personId}}' },
+                },
+              ],
+            },
+          ],
+        },
+      ]),
       VARIABLES,
     );
 
@@ -130,19 +130,16 @@ describe('compileCampaignEmailContent', () => {
 
   it('should substitute variables inside image link URLs', async () => {
     await compileCampaignEmailContent(
-      JSON.stringify({
-        type: 'doc',
-        content: [
-          {
-            type: 'image',
-            attrs: {
-              src: 'https://example.com/{{personId}}/banner.png',
-              href: 'https://example.com/promo/{{personId}}',
-              alt: 'Banner for {{firstName}}',
-            },
+      serializeDocument([
+        {
+          type: 'image',
+          attrs: {
+            src: 'https://example.com/{{personId}}/banner.png',
+            href: 'https://example.com/promo/{{personId}}',
+            alt: 'Banner for {{firstName}}',
           },
-        ],
-      }),
+        },
+      ]),
       VARIABLES,
     );
 
@@ -157,17 +154,14 @@ describe('compileCampaignEmailContent', () => {
 
   it('should substitute variables inside raw HTML blocks with escaping', async () => {
     await compileCampaignEmailContent(
-      JSON.stringify({
-        type: 'doc',
-        content: [
-          {
-            type: 'html',
-            attrs: {
-              html: '<a href="https://example.com/p/{{personId}}">Hi {{firstName}}</a>',
-            },
+      serializeDocument([
+        {
+          type: 'html',
+          attrs: {
+            html: '<a href="https://example.com/p/{{personId}}">Hi {{firstName}}</a>',
           },
-        ],
-      }),
+        },
+      ]),
       { ...VARIABLES, firstName: '<b>Ada</b>' },
     );
 
@@ -177,31 +171,28 @@ describe('compileCampaignEmailContent', () => {
   });
 
   it('should substitute variables nested under marks and lists', async () => {
-    const document = JSON.stringify({
-      type: 'doc',
-      content: [
-        {
-          type: 'bulletList',
-          content: [
-            {
-              type: 'listItem',
-              content: [
-                {
-                  type: 'paragraph',
-                  content: [
-                    {
-                      type: 'text',
-                      text: 'Dear {{firstName}}',
-                      marks: [{ type: 'bold' }],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
+    const document = serializeDocument([
+      {
+        type: 'bulletList',
+        content: [
+          {
+            type: 'listItem',
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  {
+                    type: 'text',
+                    text: 'Dear {{firstName}}',
+                    marks: [{ type: 'bold' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ]);
 
     await compileCampaignEmailContent(document, VARIABLES);
 
@@ -267,7 +258,11 @@ describe('compileCampaignEmailContent', () => {
   it('should reject a document with a non-array content', async () => {
     await expect(
       compileCampaignEmailContent(
-        '{"type":"doc","content":"not an array"}',
+        JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+          content: 'not an array',
+        }),
         VARIABLES,
       ),
     ).rejects.toThrow('not a renderable email document');
@@ -275,11 +270,23 @@ describe('compileCampaignEmailContent', () => {
 
   it('should render a document with no content at all', async () => {
     const content = await compileCampaignEmailContent(
-      '{"type":"doc"}',
+      serializeDocument(),
       VARIABLES,
     );
 
     expect(content.html).toBe('<p>rendered html</p>');
-    expect(compiledDocument()).toEqual({ type: 'doc' });
+    expect(compiledDocument()).toEqual({
+      type: 'doc',
+      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+    });
+  });
+
+  it('should reject a versionless document', async () => {
+    await expect(
+      compileCampaignEmailContent(
+        JSON.stringify({ type: 'doc', content: [] }),
+        VARIABLES,
+      ),
+    ).rejects.toThrow('not a renderable email document');
   });
 });

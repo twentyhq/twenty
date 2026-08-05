@@ -222,8 +222,19 @@ export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
 export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
-export { parseEmailDocument } from './tiptap/parse-email-document';
+export {
+  parseEmailDocument,
+  parseCanonicalEmailDocument,
+} from './tiptap/parse-email-document';
+export {
+  isTipTapNode,
+  parseTipTapJsonDocument,
+  parseCanonicalTipTapJsonDocument,
+} from './tiptap/parse-tiptap-json-document';
 export { resolveCanvasTheme } from './tiptap/resolve-canvas-theme';
+export { TIPTAP_DOCUMENT_SCHEMA_VERSION } from './tiptap/tiptap-document-schema-version';
+export { tipTapDocumentToMarkdown } from './tiptap/tiptap-document-to-markdown';
+export type { TipTapDocument } from './tiptap/tiptap-document';
 export type {
   TipTapMarkType,
   LinkMarkAttributes,
@@ -233,6 +244,7 @@ export { TIPTAP_MARK_TYPES } from './tiptap/tiptap-mark-types';
 export { TIPTAP_MARKS_RENDER_ORDER } from './tiptap/tiptap-marks-render-order';
 export type { TipTapNodeType } from './tiptap/tiptap-node-types';
 export { TIPTAP_NODE_TYPES } from './tiptap/tiptap-node-types';
+export type { TipTapNode } from './tiptap/tiptap-node';
 export { transformEmailDocumentStrings } from './tiptap/transform-email-document-strings';
 export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';

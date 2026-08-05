@@ -1,5 +1,8 @@
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from '../email-document-schema-version';
-import { parseEmailDocument } from '../parse-email-document';
+import {
+  parseCanonicalEmailDocument,
+  parseEmailDocument,
+} from '../parse-email-document';
 
 const paragraph = (text: string) => ({
   type: 'paragraph',
@@ -109,6 +112,25 @@ describe('parseEmailDocument', () => {
     });
 
     expect(result.success).toBe(true);
+  });
+
+  it('should require the current schema version at canonical boundaries', () => {
+    expect(
+      parseCanonicalEmailDocument({
+        type: 'doc',
+        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+        content: [paragraph('Current body')],
+      }).success,
+    ).toBe(true);
+    expect(
+      parseCanonicalEmailDocument({
+        type: 'doc',
+        content: [paragraph('Legacy body')],
+      }),
+    ).toEqual({
+      success: false,
+      error: `attrs.schemaVersion: Expected ${EMAIL_DOCUMENT_SCHEMA_VERSION}`,
+    });
   });
 
   it('should accept an empty document', () => {

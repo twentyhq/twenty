@@ -3,7 +3,7 @@ import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedT
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
-import { serializeAdvancedTextEditorContent } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorContent';
+import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -126,7 +126,7 @@ export const FormAdvancedTextFieldInput = ({
   fullScreenBreadcrumbs,
   onEditorReady,
 }: FormAdvancedTextFieldInputProps) => {
-  const { contentType, chrome, minHeight: profileMinHeight } = profile;
+  const { chrome, minHeight: profileMinHeight } = profile;
 
   const editorMinHeight = minHeight ?? profileMinHeight;
   const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
@@ -147,7 +147,7 @@ export const FormAdvancedTextFieldInput = ({
       readonly,
       defaultValue,
       onUpdate: (editor) => {
-        onChange?.(serializeAdvancedTextEditorContent({ editor, contentType }));
+        onChange?.(serializeAdvancedTextEditorDocument(editor));
       },
       onFocus: () => {
         pushFocusItemToFocusStack({

@@ -1,4 +1,5 @@
 import { MessageCampaignStatus } from 'twenty-shared/types';
+import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 
 describe('sendableDraftCampaignSchema', () => {
@@ -7,6 +8,7 @@ describe('sendableDraftCampaignSchema', () => {
     subject: 'Monthly newsletter',
     bodyTemplate: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
       content: [
         { type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
       ],
@@ -75,12 +77,13 @@ describe('sendableDraftCampaignSchema', () => {
     ).toBe(false);
   });
 
-  it('should accept a body holding a valid TipTap document', () => {
+  it('should accept a body holding a canonical TipTap document', () => {
     expect(
       sendableDraftCampaignSchema.safeParse({
         ...sendableDraftCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
           content: [
             {
               type: 'paragraph',
@@ -90,6 +93,23 @@ describe('sendableDraftCampaignSchema', () => {
         }),
       }).success,
     ).toBe(true);
+  });
+
+  it('should reject a versionless TipTap document', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Legacy body' }],
+            },
+          ],
+        }),
+      }).success,
+    ).toBe(false);
   });
 
   it('should reject a body that is not an email document', () => {
@@ -116,6 +136,7 @@ describe('sendableDraftCampaignSchema', () => {
         ...sendableDraftCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
           content: [{ type: 'paragraph', content: [{ text: 'no type' }] }],
         }),
       }).success,
@@ -128,7 +149,7 @@ describe('sendableDraftCampaignSchema', () => {
         ...sendableDraftCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
-          attrs: { schemaVersion: 1 },
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
           content: [
             {
               type: 'section',
@@ -157,6 +178,7 @@ describe('sendableDraftCampaignSchema', () => {
         ...sendableDraftCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
           content: [{ type: 'countdownTimer', attrs: {} }],
         }),
       }).success,

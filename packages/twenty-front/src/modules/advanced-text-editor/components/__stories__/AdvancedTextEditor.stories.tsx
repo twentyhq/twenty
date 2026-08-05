@@ -14,7 +14,6 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const STORY_RICH_TEXT_PROFILE = {
-  contentType: 'json',
   chrome: 'document',
   minHeight: 200,
   enableFullScreen: false,
@@ -22,7 +21,6 @@ const STORY_RICH_TEXT_PROFILE = {
 } satisfies AdvancedTextEditorProfile;
 
 const STORY_MINIMAL_PROFILE = {
-  contentType: 'json',
   chrome: 'document',
   minHeight: 200,
   enableFullScreen: false,
