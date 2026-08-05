@@ -7,7 +7,6 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum EmailToolExceptionCode {
   INVALID_CONNECTED_ACCOUNT_ID = 'INVALID_CONNECTED_ACCOUNT_ID',
   CONNECTED_ACCOUNT_NOT_FOUND = 'CONNECTED_ACCOUNT_NOT_FOUND',
-  CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION = 'CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION',
   INVALID_EMAIL = 'INVALID_EMAIL',
   WORKSPACE_ID_NOT_FOUND = 'WORKSPACE_ID_NOT_FOUND',
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
@@ -23,8 +22,6 @@ const getEmailToolExceptionUserFriendlyMessage = (
       return msg`Invalid connected account ID.`;
     case EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
       return msg`Connected account not found.`;
-    case EmailToolExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION:
-      return msg`This connected account belongs to another user.`;
     case EmailToolExceptionCode.INVALID_EMAIL:
       return msg`Invalid email address.`;
     case EmailToolExceptionCode.WORKSPACE_ID_NOT_FOUND:
