@@ -3,6 +3,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import {
@@ -103,20 +104,28 @@ export const FieldWidgetLayoutDropdownContent = () => {
     FieldDisplayMode.TABLE,
   );
 
-  const targetObjectMetadataId = isNestedRelationWidget
-    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataId
-    : fieldMetadataItem?.relation?.targetObjectMetadata.id;
-  const inverseFieldMetadataId = isNestedRelationWidget
-    ? resolvedNestedRelation?.nestedRelationFieldMetadataItem.relation
-        ?.targetFieldMetadata.id
-    : fieldMetadataItem?.relation?.targetFieldMetadata.id;
-  const relationTargetFieldMetadataId = isNestedRelationWidget
-    ? fieldMetadataItem?.relation?.targetFieldMetadata.id
-    : null;
-  const targetObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItemToFind) =>
-      objectMetadataItemToFind.id === targetObjectMetadataId,
-  );
+  // A configured but unresolvable second hop yields no traversal at all, so a
+  // stale nested widget cannot fall back to scoping by its first hop.
+  const relationTraversal =
+    isNestedRelationWidget && !isDefined(resolvedNestedRelation)
+      ? undefined
+      : getFieldWidgetRelationTraversal({
+          sourceFieldMetadataItem: fieldMetadataItem,
+          nestedRelationFieldMetadataItem:
+            resolvedNestedRelation?.nestedRelationFieldMetadataItem,
+        });
+
+  const targetObjectMetadataId = relationTraversal?.targetObjectMetadataId;
+  const inverseFieldMetadataId = relationTraversal?.inverseFieldMetadataId;
+  const relationTargetFieldMetadataId =
+    relationTraversal?.relationTargetFieldMetadataId ?? null;
+
+  const targetObjectMetadataItem = isNestedRelationWidget
+    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem
+    : objectMetadataItems.find(
+        (objectMetadataItemToFind) =>
+          objectMetadataItemToFind.id === targetObjectMetadataId,
+      );
 
   const defaultGroupByFieldMetadataItem =
     (targetObjectMetadataItem?.readableFields ?? []).find(

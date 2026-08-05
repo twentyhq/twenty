@@ -74,6 +74,7 @@ const buildFieldConfiguration = (
   overrides: Partial<{
     fieldMetadataId: string;
     nestedRelationFieldMetadataId: string | null;
+    fieldDisplayMode: FieldDisplayMode;
   }> = {},
 ): AllPageLayoutWidgetConfiguration =>
   ({
@@ -117,6 +118,18 @@ describe('validateFieldConfigurationNestedRelationOrThrow', () => {
         flatFieldMetadataMaps,
       }),
     ).not.toThrow();
+  });
+
+  it('should throw when a nested relation is combined with an inline display mode', () => {
+    expect(() =>
+      validateFieldConfigurationNestedRelationOrThrow({
+        widgetConfiguration: buildFieldConfiguration({
+          fieldDisplayMode: FieldDisplayMode.FIELD,
+        }),
+        widgetObjectMetadataId: COMPANY_OBJECT_ID,
+        flatFieldMetadataMaps,
+      }),
+    ).toThrow(/fieldDisplayMode/);
   });
 
   it('should throw when the source field does not exist', () => {

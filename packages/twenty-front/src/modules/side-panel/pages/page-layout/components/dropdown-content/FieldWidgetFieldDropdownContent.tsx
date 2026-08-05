@@ -113,33 +113,6 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const { getIcon } = useIcons();
 
-  // Keyboard focus carries over between the browse list and the drill-in
-  // submenu since both share the dropdown's selectable list instance. Align
-  // it on the checked option when entering the submenu, and back on the
-  // parent row when leaving, so Enter never activates a stale row.
-  const handleDrillIn = (fieldMetadataItem: FieldMetadataItem) => {
-    setDrillInFieldMetadataItem(fieldMetadataItem);
-
-    const isCheckedNestedFieldInCandidates =
-      currentFieldMetadataId === fieldMetadataItem.id &&
-      isDefined(currentNestedRelationFieldMetadataId) &&
-      (nestedFieldCandidatesByFieldId.get(fieldMetadataItem.id) ?? []).some(
-        (nestedFieldMetadataItem) =>
-          nestedFieldMetadataItem.id === currentNestedRelationFieldMetadataId,
-      );
-
-    if (isCheckedNestedFieldInCandidates) {
-      setSelectedItemId(currentNestedRelationFieldMetadataId);
-    } else {
-      resetSelectedItem();
-    }
-  };
-
-  const handleDrillOut = (fieldMetadataItem: FieldMetadataItem) => {
-    setDrillInFieldMetadataItem(null);
-    setSelectedItemId(fieldMetadataItem.id);
-  };
-
   const searchableFieldMetadataItems = [
     ...regularFieldMetadataItems,
     ...advancedFieldMetadataItems,
@@ -184,15 +157,45 @@ export const FieldWidgetFieldDropdownContent = () => {
     return candidatesByFieldId;
   }, [allFieldWidgetFieldMetadataItems, objectMetadataItems]);
 
-  const handleSelectField = (fieldMetadataId: string) => {
-    const selectedField = allFieldWidgetFieldMetadataItems.find(
-      (field) => field.id === fieldMetadataId,
-    );
+  // Keyboard focus carries over between the browse list and the drill-in
+  // submenu since both share the dropdown's selectable list instance. Align
+  // it on the checked option when entering the submenu, and back on the
+  // parent row when leaving, so Enter never activates a stale row.
+  const handleDrillIn = (fieldMetadataItem: FieldMetadataItem) => {
+    setDrillInFieldMetadataItem(fieldMetadataItem);
 
+    const isCheckedNestedFieldInCandidates =
+      currentFieldMetadataId === fieldMetadataItem.id &&
+      isDefined(currentNestedRelationFieldMetadataId) &&
+      (nestedFieldCandidatesByFieldId.get(fieldMetadataItem.id) ?? []).some(
+        (nestedFieldMetadataItem) =>
+          nestedFieldMetadataItem.id === currentNestedRelationFieldMetadataId,
+      );
+
+    if (isCheckedNestedFieldInCandidates) {
+      setSelectedItemId(currentNestedRelationFieldMetadataId);
+    } else {
+      resetSelectedItem();
+    }
+  };
+
+  const handleDrillOut = (fieldMetadataItem: FieldMetadataItem) => {
+    setDrillInFieldMetadataItem(null);
+    setSelectedItemId(fieldMetadataItem.id);
+  };
+
+  const isSelectingDifferentChain = (
+    fieldMetadataId: string,
+    nestedRelationFieldMetadataId: string | null,
+  ) =>
+    currentFieldMetadataId !== fieldMetadataId ||
+    (currentNestedRelationFieldMetadataId ?? null) !==
+      nestedRelationFieldMetadataId;
+
+  const handleSelectField = (selectedField: FieldMetadataItem) => {
     const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
 
     const needsDisplayModeSwitch =
-      isDefined(selectedField) &&
       isDefined(currentDisplayMode) &&
       !isDisplayModeValidForFieldType(
         selectedField.type,
@@ -200,22 +203,21 @@ export const FieldWidgetFieldDropdownContent = () => {
         selectedField.relation?.type,
       );
 
-    const isSelectingDifferentField =
-      currentFieldMetadataId !== fieldMetadataId ||
-      isDefined(currentNestedRelationFieldMetadataId);
-
     const relationTableViewIdChange =
       resolveFieldWidgetRelationTableViewIdChange({
         selectedField,
         currentDisplayMode,
-        isSelectingDifferentField,
+        isSelectingDifferentField: isSelectingDifferentChain(
+          selectedField.id,
+          null,
+        ),
         widgetId: widgetInEditMode?.id,
         currentViewId: fieldConfiguration?.viewId,
       });
 
     updateCurrentWidgetConfig({
       configToUpdate: {
-        fieldMetadataId,
+        fieldMetadataId: selectedField.id,
         nestedRelationFieldMetadataId: null,
         ...relationTableViewIdChange,
         ...(needsDisplayModeSwitch && {
@@ -226,7 +228,7 @@ export const FieldWidgetFieldDropdownContent = () => {
       },
     });
 
-    if (isDefined(widgetInEditMode) && isDefined(selectedField)) {
+    if (isDefined(widgetInEditMode)) {
       updatePageLayoutWidget(widgetInEditMode.id, {
         title: selectedField.label,
       });
@@ -239,10 +241,6 @@ export const FieldWidgetFieldDropdownContent = () => {
     parentFieldMetadataItem: FieldMetadataItem,
     nestedFieldMetadataItem: FieldMetadataItem,
   ) => {
-    const isSelectingDifferentField =
-      currentFieldMetadataId !== parentFieldMetadataItem.id ||
-      currentNestedRelationFieldMetadataId !== nestedFieldMetadataItem.id;
-
     // A nested relation widget always renders as an embedded view, so the
     // effective display mode is TABLE regardless of the current one.
     const relationTableViewIdChange =
@@ -250,7 +248,10 @@ export const FieldWidgetFieldDropdownContent = () => {
         selectedField: parentFieldMetadataItem,
         selectedNestedField: nestedFieldMetadataItem,
         currentDisplayMode: FieldDisplayMode.TABLE,
-        isSelectingDifferentField,
+        isSelectingDifferentField: isSelectingDifferentChain(
+          parentFieldMetadataItem.id,
+          nestedFieldMetadataItem.id,
+        ),
         widgetId: widgetInEditMode?.id,
         currentViewId: fieldConfiguration?.viewId,
       });
@@ -280,9 +281,11 @@ export const FieldWidgetFieldDropdownContent = () => {
         nestedFieldCandidates={
           nestedFieldCandidatesByFieldId.get(drillInFieldMetadataItem.id) ?? []
         }
-        currentFieldMetadataId={currentFieldMetadataId}
-        currentNestedRelationFieldMetadataId={
-          currentNestedRelationFieldMetadataId
+        checkedItemId={
+          currentFieldMetadataId === drillInFieldMetadataItem.id
+            ? (currentNestedRelationFieldMetadataId ??
+              drillInFieldMetadataItem.id)
+            : undefined
         }
         onBack={() => handleDrillOut(drillInFieldMetadataItem)}
         onSelectField={handleSelectField}
@@ -314,7 +317,7 @@ export const FieldWidgetFieldDropdownContent = () => {
 
             const handleClick = hasNestedFieldCandidates
               ? () => handleDrillIn(fieldMetadataItem)
-              : () => handleSelectField(fieldMetadataItem.id);
+              : () => handleSelectField(fieldMetadataItem);
 
             return (
               <SelectableListItem

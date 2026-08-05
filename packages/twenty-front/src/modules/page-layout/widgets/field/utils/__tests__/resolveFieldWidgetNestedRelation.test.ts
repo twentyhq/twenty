@@ -30,7 +30,7 @@ describe('resolveFieldWidgetNestedRelation', () => {
     expect(resolved?.nestedRelationFieldMetadataItem.id).toBe(
       personOpportunitiesField?.id,
     );
-    expect(resolved?.nestedRelationTargetObjectMetadataId).toBe(
+    expect(resolved?.nestedRelationTargetObjectMetadataItem.id).toBe(
       opportunityObjectMetadataItem.id,
     );
   });

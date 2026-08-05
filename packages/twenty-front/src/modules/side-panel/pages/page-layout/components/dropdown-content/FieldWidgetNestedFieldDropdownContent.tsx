@@ -12,17 +12,15 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type FieldWidgetNestedFieldDropdownContentProps = {
   drillInFieldMetadataItem: FieldMetadataItem;
   nestedFieldCandidates: FieldMetadataItem[];
-  currentFieldMetadataId: string | undefined;
-  currentNestedRelationFieldMetadataId: string | null | undefined;
+  checkedItemId: string | undefined;
   onBack: () => void;
-  onSelectField: (fieldMetadataId: string) => void;
+  onSelectField: (fieldMetadataItem: FieldMetadataItem) => void;
   onSelectNestedField: (
     parentFieldMetadataItem: FieldMetadataItem,
     nestedFieldMetadataItem: FieldMetadataItem,
@@ -32,8 +30,7 @@ type FieldWidgetNestedFieldDropdownContentProps = {
 export const FieldWidgetNestedFieldDropdownContent = ({
   drillInFieldMetadataItem,
   nestedFieldCandidates,
-  currentFieldMetadataId,
-  currentNestedRelationFieldMetadataId,
+  checkedItemId,
   onBack,
   onSelectField,
   onSelectNestedField,
@@ -48,6 +45,25 @@ export const FieldWidgetNestedFieldDropdownContent = ({
   );
 
   const { getIcon } = useIcons();
+
+  const renderOption = (
+    fieldMetadataItem: FieldMetadataItem,
+    onSelect: () => void,
+  ) => (
+    <SelectableListItem
+      key={fieldMetadataItem.id}
+      itemId={fieldMetadataItem.id}
+      onEnter={onSelect}
+    >
+      <MenuItemSelect
+        text={fieldMetadataItem.label}
+        selected={checkedItemId === fieldMetadataItem.id}
+        focused={selectedItemId === fieldMetadataItem.id}
+        LeftIcon={getIcon(fieldMetadataItem.icon)}
+        onClick={onSelect}
+      />
+    </SelectableListItem>
+  );
 
   return (
     <StyledPageLayoutDropdownContentContainer>
@@ -70,55 +86,18 @@ export const FieldWidgetNestedFieldDropdownContent = ({
             ...nestedFieldCandidates.map((field) => field.id),
           ]}
         >
-          <SelectableListItem
-            itemId={drillInFieldMetadataItem.id}
-            onEnter={() => {
-              onSelectField(drillInFieldMetadataItem.id);
-            }}
-          >
-            <MenuItemSelect
-              text={drillInFieldMetadataItem.label}
-              selected={
-                currentFieldMetadataId === drillInFieldMetadataItem.id &&
-                !isDefined(currentNestedRelationFieldMetadataId)
-              }
-              focused={selectedItemId === drillInFieldMetadataItem.id}
-              LeftIcon={getIcon(drillInFieldMetadataItem.icon)}
-              onClick={() => {
-                onSelectField(drillInFieldMetadataItem.id);
-              }}
-            />
-          </SelectableListItem>
+          {renderOption(drillInFieldMetadataItem, () =>
+            onSelectField(drillInFieldMetadataItem),
+          )}
           <DropdownMenuSeparator />
-          {nestedFieldCandidates.map((nestedFieldMetadataItem) => (
-            <SelectableListItem
-              key={nestedFieldMetadataItem.id}
-              itemId={nestedFieldMetadataItem.id}
-              onEnter={() => {
-                onSelectNestedField(
-                  drillInFieldMetadataItem,
-                  nestedFieldMetadataItem,
-                );
-              }}
-            >
-              <MenuItemSelect
-                text={nestedFieldMetadataItem.label}
-                selected={
-                  currentFieldMetadataId === drillInFieldMetadataItem.id &&
-                  currentNestedRelationFieldMetadataId ===
-                    nestedFieldMetadataItem.id
-                }
-                focused={selectedItemId === nestedFieldMetadataItem.id}
-                LeftIcon={getIcon(nestedFieldMetadataItem.icon)}
-                onClick={() => {
-                  onSelectNestedField(
-                    drillInFieldMetadataItem,
-                    nestedFieldMetadataItem,
-                  );
-                }}
-              />
-            </SelectableListItem>
-          ))}
+          {nestedFieldCandidates.map((nestedFieldMetadataItem) =>
+            renderOption(nestedFieldMetadataItem, () =>
+              onSelectNestedField(
+                drillInFieldMetadataItem,
+                nestedFieldMetadataItem,
+              ),
+            ),
+          )}
         </SelectableList>
       </StyledPageLayoutDropdownMenuItemsContainer>
     </StyledPageLayoutDropdownContentContainer>

@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
+import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -32,28 +33,20 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
   }: ResolveFieldWidgetRelationTableViewIdChangeArgs):
     | Pick<FieldConfiguration, 'viewId'>
     | undefined => {
-    // With a nested relation, the embedded view lists records of the nested
-    // relation's target (e.g. Company -> People -> Opportunities lists
-    // opportunities), scoped through the nested inverse relation back to the
-    // current record. Without one, it lists the direct relation's records.
-    const targetObjectMetadataId = isDefined(selectedNestedField)
-      ? selectedNestedField.relation?.targetObjectMetadata.id
-      : selectedField?.relation?.targetObjectMetadata.id;
-    const inverseFieldMetadataId = isDefined(selectedNestedField)
-      ? selectedNestedField.relation?.targetFieldMetadata.id
-      : selectedField?.relation?.targetFieldMetadata.id;
-    const relationTargetFieldMetadataId = isDefined(selectedNestedField)
-      ? selectedField?.relation?.targetFieldMetadata.id
-      : null;
+    const {
+      targetObjectMetadataId,
+      inverseFieldMetadataId,
+      relationTargetFieldMetadataId,
+    } = getFieldWidgetRelationTraversal({
+      sourceFieldMetadataItem: selectedField,
+      nestedRelationFieldMetadataItem: selectedNestedField,
+    });
 
-    const isSelectedFieldOneToMany =
-      isDefined(selectedField) && isOneToManyRelationField(selectedField);
-
-    const isValidRelationChain = isDefined(selectedNestedField)
-      ? isSelectedFieldOneToMany &&
-        isOneToManyRelationField(selectedNestedField) &&
-        isDefined(relationTargetFieldMetadataId)
-      : isSelectedFieldOneToMany;
+    const isValidRelationChain =
+      isDefined(selectedField) &&
+      isOneToManyRelationField(selectedField) &&
+      (!isDefined(selectedNestedField) ||
+        isOneToManyRelationField(selectedNestedField));
 
     const shouldRegenerateRelationTableView =
       currentDisplayMode === FieldDisplayMode.TABLE &&

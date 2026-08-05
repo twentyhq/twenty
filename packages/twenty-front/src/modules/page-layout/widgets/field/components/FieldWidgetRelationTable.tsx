@@ -60,18 +60,12 @@ export const FieldWidgetRelationTable = ({
     nestedRelationFieldMetadataId,
   });
 
-  // A widget with a broken nested relation (deleted or deactivated second
-  // hop) renders nothing rather than falling back to the first hop's records,
-  // which would silently show a different object than the widget title claims.
-  if (
-    isDefined(nestedRelationFieldMetadataId) &&
-    !isDefined(resolvedNestedRelation)
-  ) {
-    return null;
-  }
-
-  const tableObjectMetadataId = isDefined(resolvedNestedRelation)
-    ? resolvedNestedRelation.nestedRelationTargetObjectMetadataId
+  // A widget with a broken nested relation (deleted or deactivated second hop)
+  // resolves to no object and so renders nothing, rather than falling back to
+  // the first hop's records and silently showing a different object than the
+  // widget title claims.
+  const tableObjectMetadataId = isDefined(nestedRelationFieldMetadataId)
+    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : relationObjectMetadataId;
 
   if (

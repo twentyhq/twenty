@@ -345,11 +345,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const nestedRelationFieldMetadataUniversalIdentifier = isDefined(
         nestedRelationFieldMetadataId,
       )
-        ? getFieldMetadataUniversalIdentifier({
+        ? (getFieldMetadataUniversalIdentifier({
             fieldMetadataId: nestedRelationFieldMetadataId,
             fieldMetadataUniversalIdentifierById,
             shouldThrowOnMissingIdentifier,
-          })
+          }) ?? nestedRelationFieldMetadataId)
         : undefined;
 
       let viewUniversalIdentifier: string | undefined = undefined;
@@ -374,11 +374,10 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         fieldMetadataId: fieldMetadataUniversalIdentifier ?? fieldMetadataId,
         fieldDisplayMode,
         viewId: viewUniversalIdentifier,
-        ...(isDefined(nestedRelationFieldMetadataId)
+        ...(isDefined(nestedRelationFieldMetadataUniversalIdentifier)
           ? {
               nestedRelationFieldMetadataId:
-                nestedRelationFieldMetadataUniversalIdentifier ??
-                nestedRelationFieldMetadataId,
+                nestedRelationFieldMetadataUniversalIdentifier,
             }
           : {}),
       };

@@ -10,8 +10,10 @@ type ResolveFieldWidgetNestedRelationArgs = {
 };
 
 type ResolvedFieldWidgetNestedRelation = {
-  nestedRelationFieldMetadataItem: FieldMetadataItem;
-  nestedRelationTargetObjectMetadataId: string;
+  nestedRelationFieldMetadataItem: FieldMetadataItem & {
+    relation: NonNullable<FieldMetadataItem['relation']>;
+  };
+  nestedRelationTargetObjectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 // Resolves the second hop of a nested relation field widget: the one-to-many
@@ -54,12 +56,10 @@ export const resolveFieldWidgetNestedRelation = ({
     return undefined;
   }
 
-  const nestedRelationTargetObjectMetadataId =
-    nestedRelationFieldMetadataItem.relation?.targetObjectMetadata.id;
-
   const nestedRelationTargetObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
-      objectMetadataItem.id === nestedRelationTargetObjectMetadataId,
+      objectMetadataItem.id ===
+      nestedRelationFieldMetadataItem.relation.targetObjectMetadata.id,
   );
 
   if (!isDefined(nestedRelationTargetObjectMetadataItem)) {
@@ -68,7 +68,6 @@ export const resolveFieldWidgetNestedRelation = ({
 
   return {
     nestedRelationFieldMetadataItem,
-    nestedRelationTargetObjectMetadataId:
-      nestedRelationTargetObjectMetadataItem.id,
+    nestedRelationTargetObjectMetadataItem,
   };
 };

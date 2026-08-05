@@ -103,7 +103,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   // the target undefined so the terminal view's settings stay hidden instead
   // of being edited against the first hop's object.
   const targetObjectMetadataId = isDefined(currentNestedRelationFieldMetadataId)
-    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataId
+    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : currentFieldMetadataItem?.relation?.targetObjectMetadata.id;
 
   const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
@@ -145,9 +145,10 @@ export const SidePanelRecordPageFieldSettings = () => {
     );
   };
 
+  const baseFieldLabel = currentFieldMetadataItem?.label ?? '';
   const fieldLabel = isDefined(resolvedNestedRelation)
-    ? `${currentFieldMetadataItem?.label ?? ''} → ${resolvedNestedRelation.nestedRelationFieldMetadataItem.label}`
-    : (currentFieldMetadataItem?.label ?? '');
+    ? `${baseFieldLabel} → ${resolvedNestedRelation.nestedRelationFieldMetadataItem.label}`
+    : baseFieldLabel;
 
   const displayModeLabels: Record<string, string> = {
     [FieldDisplayMode.FIELD]: t`Field`,
