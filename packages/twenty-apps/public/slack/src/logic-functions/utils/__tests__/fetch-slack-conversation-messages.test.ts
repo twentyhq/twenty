@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { fetchSlackConversationMessages } from 'src/logic-functions/utils/fetch-slack-conversation-messages';
 
+const ASSISTANT_BOT_ID = 'B_ASSISTANT';
+
 const buildClient = ({
   replies,
   history,
@@ -18,11 +20,11 @@ const buildClient = ({
   }) as unknown as WebClient;
 
 describe('fetchSlackConversationMessages', () => {
-  it('should map thread replies to user and assistant turns', async () => {
+  it('should map member messages and own bot replies to user and assistant turns', async () => {
     const client = buildClient({
       replies: [
         { ts: '1', user: 'U123', text: 'Find the ACME account' },
-        { ts: '2', bot_id: 'B1', text: 'ACME is a company record.' },
+        { ts: '2', bot_id: ASSISTANT_BOT_ID, text: 'ACME is a company record.' },
       ],
     });
 
@@ -31,6 +33,7 @@ describe('fetchSlackConversationMessages', () => {
       channelId: 'C1',
       threadTimestamp: '1',
       isDirectMessage: false,
+      assistantBotId: ASSISTANT_BOT_ID,
     });
 
     expect(messages).toEqual([
@@ -39,12 +42,11 @@ describe('fetchSlackConversationMessages', () => {
     ]);
   });
 
-  it('should exclude filtered timestamps and transient texts', async () => {
+  it('should keep other bots as attributed user content instead of assistant turns', async () => {
     const client = buildClient({
       replies: [
-        { ts: '1', user: 'U123', text: 'Hello' },
-        { ts: '2', user: 'U123', text: 'The request itself' },
-        { ts: '3', bot_id: 'B1', text: 'Thinking…' },
+        { ts: '1', bot_id: 'B_OTHER', text: 'Deploy finished.' },
+        { ts: '2', bot_id: ASSISTANT_BOT_ID, text: 'Noted.' },
       ],
     });
 
@@ -53,6 +55,48 @@ describe('fetchSlackConversationMessages', () => {
       channelId: 'C1',
       threadTimestamp: '1',
       isDirectMessage: false,
+      assistantBotId: ASSISTANT_BOT_ID,
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: 'bot B_OTHER: Deploy finished.' },
+      { role: 'assistant', content: 'Noted.' },
+    ]);
+  });
+
+  it('should not produce assistant turns when the own bot id is unknown', async () => {
+    const client = buildClient({
+      replies: [{ ts: '1', bot_id: ASSISTANT_BOT_ID, text: 'Earlier answer' }],
+    });
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: '1',
+      isDirectMessage: false,
+      assistantBotId: undefined,
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: `bot ${ASSISTANT_BOT_ID}: Earlier answer` },
+    ]);
+  });
+
+  it('should exclude filtered timestamps and transient texts', async () => {
+    const client = buildClient({
+      replies: [
+        { ts: '1', user: 'U123', text: 'Hello' },
+        { ts: '2', user: 'U123', text: 'The request itself' },
+        { ts: '3', bot_id: ASSISTANT_BOT_ID, text: 'Thinking…' },
+      ],
+    });
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: '1',
+      isDirectMessage: false,
+      assistantBotId: ASSISTANT_BOT_ID,
       excludeMessageTimestamps: ['2'],
       excludeMessageTexts: ['Thinking…'],
     });
@@ -63,7 +107,7 @@ describe('fetchSlackConversationMessages', () => {
   it('should read channel history in chronological order for direct messages', async () => {
     const client = buildClient({
       history: [
-        { ts: '2', bot_id: 'B1', text: 'Earlier answer' },
+        { ts: '2', bot_id: ASSISTANT_BOT_ID, text: 'Earlier answer' },
         { ts: '1', user: 'U123', text: 'Earlier question' },
       ],
     });
@@ -73,6 +117,7 @@ describe('fetchSlackConversationMessages', () => {
       channelId: 'D1',
       threadTimestamp: undefined,
       isDirectMessage: true,
+      assistantBotId: ASSISTANT_BOT_ID,
     });
 
     expect(messages).toEqual([
@@ -89,6 +134,7 @@ describe('fetchSlackConversationMessages', () => {
       channelId: 'C1',
       threadTimestamp: undefined,
       isDirectMessage: false,
+      assistantBotId: ASSISTANT_BOT_ID,
     });
 
     expect(messages).toBeUndefined();
@@ -106,6 +152,7 @@ describe('fetchSlackConversationMessages', () => {
       channelId: 'C1',
       threadTimestamp: '1',
       isDirectMessage: false,
+      assistantBotId: ASSISTANT_BOT_ID,
     });
 
     expect(messages).toBeUndefined();

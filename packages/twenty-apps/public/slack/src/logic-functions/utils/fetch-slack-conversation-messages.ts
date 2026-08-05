@@ -17,10 +17,12 @@ type SlackContextMessage = {
 
 const toAgentMessages = ({
   messages,
+  assistantBotId,
   excludeMessageTimestamps,
   excludeMessageTexts,
 }: {
   messages: ReadonlyArray<SlackContextMessage>;
+  assistantBotId: string | undefined;
   excludeMessageTimestamps: Set<string>;
   excludeMessageTexts: Set<string>;
 }): SlackAssistantAgentMessage[] =>
@@ -44,14 +46,21 @@ const toAgentMessages = ({
     })
     .slice(-CONTEXT_MESSAGE_LIMIT)
     .map((message): SlackAssistantAgentMessage => {
-      if (isNonEmptyString(message.bot_id)) {
+      // Only this assistant's own replies become assistant turns; every other
+      // participant, bots included, stays attributed user content so the model
+      // never mistakes third-party output for its own
+      if (
+        isNonEmptyString(message.bot_id) &&
+        message.bot_id === assistantBotId
+      ) {
         return { role: 'assistant', content: message.text ?? '' };
       }
 
-      return {
-        role: 'user',
-        content: `<@${message.user ?? 'unknown'}>: ${message.text}`,
-      };
+      const author = isNonEmptyString(message.bot_id)
+        ? `bot ${message.bot_id}`
+        : `<@${message.user ?? 'unknown'}>`;
+
+      return { role: 'user', content: `${author}: ${message.text}` };
     });
 
 export const fetchSlackConversationMessages = async ({
@@ -59,6 +68,7 @@ export const fetchSlackConversationMessages = async ({
   channelId,
   threadTimestamp,
   isDirectMessage,
+  assistantBotId,
   excludeMessageTimestamps = [],
   excludeMessageTexts = [],
 }: {
@@ -66,6 +76,7 @@ export const fetchSlackConversationMessages = async ({
   channelId: string;
   threadTimestamp: string | undefined;
   isDirectMessage: boolean;
+  assistantBotId: string | undefined;
   excludeMessageTimestamps?: string[];
   excludeMessageTexts?: string[];
 }): Promise<SlackAssistantAgentMessage[] | undefined> => {
@@ -84,6 +95,7 @@ export const fetchSlackConversationMessages = async ({
 
       return toAgentMessages({
         messages: replies.messages ?? [],
+        assistantBotId,
         excludeMessageTimestamps: excludedTimestamps,
         excludeMessageTexts: excludedTexts,
       });
@@ -97,6 +109,7 @@ export const fetchSlackConversationMessages = async ({
 
       return toAgentMessages({
         messages: [...(history.messages ?? [])].reverse(),
+        assistantBotId,
         excludeMessageTimestamps: excludedTimestamps,
         excludeMessageTexts: excludedTexts,
       });

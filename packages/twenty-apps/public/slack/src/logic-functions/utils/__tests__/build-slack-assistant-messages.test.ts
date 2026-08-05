@@ -15,6 +15,7 @@ describe('buildSlackAssistantMessages', () => {
     expect(messages).toHaveLength(1);
     expect(messages[0].role).toBe('user');
     expect(messages[0].content).toContain('killed after 300 seconds');
+    expect(messages[0].content).not.toContain('recent Slack history');
     expect(messages[0].content).toContain(
       '[Record Name](https://acme.twenty.com/object/<objectNameSingular>/<recordId>)',
     );
@@ -45,6 +46,9 @@ describe('buildSlackAssistantMessages', () => {
       content: 'ACME is a company record.',
     });
     expect(messages[2].role).toBe('user');
+    expect(messages[2].content).toContain(
+      'recent Slack history for context only',
+    );
     expect(messages[2].content).toContain(
       'Jane asks from Slack:\nAnd who owns it?',
     );
