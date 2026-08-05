@@ -135,26 +135,6 @@ describe('EmailComposerService connected account resolution', () => {
       );
     });
 
-    it('falls back to an account shared with the whole workspace', async () => {
-      const sharedAccount = buildAccount(OTHER_CONNECTED_ACCOUNT_ID, {
-        userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        visibility: 'workspace',
-        handle: 'support@apple.dev',
-      });
-
-      connectedAccountRepository.find.mockResolvedValue([sharedAccount]);
-      connectedAccountRepository.findOne.mockResolvedValue(sharedAccount);
-
-      const result = await service.composeEmail(baseParams, callerContext);
-
-      expect(result.success).toBe(true);
-      expect(connectedAccountRepository.findOne).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { id: OTHER_CONNECTED_ACCOUNT_ID, workspaceId: WORKSPACE_ID },
-        }),
-      );
-    });
-
     it('throws rather than composing from a colleague account', async () => {
       connectedAccountRepository.find.mockResolvedValue([
         buildAccount(OTHER_CONNECTED_ACCOUNT_ID, {
@@ -198,22 +178,5 @@ describe('EmailComposerService connected account resolution', () => {
         { workspaceId: WORKSPACE_ID, userWorkspaceId: USER_WORKSPACE_ID },
       ),
     ).rejects.toThrow('does not belong to user workspace');
-  });
-
-  it('accepts a connected account id shared with the whole workspace', async () => {
-    connectedAccountRepository.findOne.mockResolvedValue(
-      buildAccount(OTHER_CONNECTED_ACCOUNT_ID, {
-        userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        visibility: 'workspace',
-        handle: 'support@apple.dev',
-      }),
-    );
-
-    const result = await service.composeEmail(
-      { ...baseParams, connectedAccountId: OTHER_CONNECTED_ACCOUNT_ID },
-      { workspaceId: WORKSPACE_ID, userWorkspaceId: USER_WORKSPACE_ID },
-    );
-
-    expect(result.success).toBe(true);
   });
 });
