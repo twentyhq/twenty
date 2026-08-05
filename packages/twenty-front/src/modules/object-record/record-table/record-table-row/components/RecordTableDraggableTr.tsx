@@ -103,15 +103,17 @@ export const RecordTableDraggableTr = ({
           {children}
         </RecordTableRowDraggableContextProvider>
       </DragDropItemSortableHandleRefContext.Provider>
-      <StyledRowDropTargetSlot>
-        <DragDropItemDropTarget
-          index={draggableIndex}
-          droppableId={droppableId}
-          orientation="horizontal"
-          compact
-          seamAligned
-        />
-      </StyledRowDropTargetSlot>
+      {!isDragSource && (
+        <StyledRowDropTargetSlot>
+          <DragDropItemDropTarget
+            index={draggableIndex}
+            droppableId={droppableId}
+            orientation="horizontal"
+            compact
+            seamAligned
+          />
+        </StyledRowDropTargetSlot>
+      )}
     </RecordTableTr>
   );
 };

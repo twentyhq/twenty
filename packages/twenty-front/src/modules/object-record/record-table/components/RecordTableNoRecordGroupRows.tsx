@@ -3,6 +3,8 @@ import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 
+import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableNoRecordGroupAddNew } from '@/object-record/record-table/components/RecordTableNoRecordGroupAddNew';
 import { RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID } from '@/object-record/record-table/constants/RecordTableNoRecordGroupDroppableId';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
@@ -27,10 +29,17 @@ const StyledEndDropZone = styled.div`
 `;
 
 export const RecordTableNoRecordGroupRows = () => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const totalNumberOfRecordsToVirtualize =
     useAtomComponentStateValue(
       totalNumberOfRecordsToVirtualizeComponentState,
     ) ?? 0;
+
+  const isDraggingRecord = useAtomComponentStateValue(
+    isDraggingRecordComponentState,
+    recordIndexId,
+  );
 
   const numberOfRows = Math.min(
     totalNumberOfRecordsToVirtualize,
@@ -61,11 +70,13 @@ export const RecordTableNoRecordGroupRows = () => {
         );
       })}
       <StyledEndDropZone ref={endDropZoneRef}>
+        {/* Zero footprint at rest; expands during a row drag so the zone
+            stays droppable even when the add-new row is hidden. */}
         <DragDropItemDropTarget
           index={totalNumberOfRecordsToVirtualize}
           droppableId={RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID}
           orientation="horizontal"
-          compact
+          compact={!isDraggingRecord}
           seamAligned
         />
         <RecordTableNoRecordGroupAddNew />

@@ -1,8 +1,10 @@
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 
+import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
@@ -15,6 +17,7 @@ import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/
 import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,9 +28,16 @@ const StyledRecordGroupDropTarget = styled.div`
 `;
 
 export const RecordTableRecordGroupRows = () => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
+
+  const isDraggingRecord = useAtomComponentStateValue(
+    isDraggingRecordComponentState,
+    recordIndexId,
+  );
 
   const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
@@ -83,13 +93,13 @@ export const RecordTableRecordGroupRows = () => {
         );
       })}
       <StyledRecordGroupDropTarget ref={endDropZoneRef}>
-        {/* An empty group may render neither action row below, so the target
-            keeps its full height there to preserve a droppable hit area. */}
+        {/* Zero footprint at rest; expands during a row drag so the zone
+            stays droppable even when neither action row below renders. */}
         <DragDropItemDropTarget
           index={recordIndexRecordIdsByGroup.length}
           droppableId={currentRecordGroupId}
           orientation="horizontal"
-          compact={recordIndexRecordIdsByGroup.length > 0}
+          compact={!isDraggingRecord}
           seamAligned
         />
         <RecordTableRecordGroupSectionLoadMore />
