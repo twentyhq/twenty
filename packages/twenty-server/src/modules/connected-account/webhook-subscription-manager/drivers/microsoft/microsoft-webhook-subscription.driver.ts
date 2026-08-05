@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type GraphError } from '@microsoft/microsoft-graph-client';
 import { type Subscription } from '@microsoft/microsoft-graph-types';
+import { ApiPath, WebhookSubscriptionChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MICROSOFT_SUBSCRIPTION_TTL_MS } from 'src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/constants/microsoft-subscription-ttl-ms.constant';
@@ -35,12 +34,12 @@ const MICROSOFT_GRAPH_RESOURCE_CONFIG_BY_CHANNEL_TYPE: Record<
   [WebhookSubscriptionChannelType.MESSAGING]: {
     resource: '/me/messages',
     changeType: 'created,updated',
-    notificationPath: 'webhooks/microsoft/messaging',
+    notificationPath: `${ApiPath.Webhooks}/microsoft/messaging`,
   },
   [WebhookSubscriptionChannelType.CALENDAR]: {
     resource: '/me/events',
     changeType: 'created,updated,deleted',
-    notificationPath: 'webhooks/microsoft/calendar',
+    notificationPath: `${ApiPath.Webhooks}/microsoft/calendar`,
   },
 };
 

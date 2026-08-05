@@ -7963,6 +7963,11 @@ msgstr "Det är ett problem med din token. Försök igen."
 msgid "There is no failed message to retry."
 msgstr "Det finns inget misslyckat meddelande att försöka igen med."
 
+#. js-lingui-id: Yi0Q/T
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
+msgstr ""
+
 #. js-lingui-id: Iy9pZw
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."

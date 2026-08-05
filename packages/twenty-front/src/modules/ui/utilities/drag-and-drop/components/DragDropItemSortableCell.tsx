@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
+import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
 
@@ -23,6 +24,7 @@ const SORTABLE_TRANSITION = {
 const StyledSortableRoot = styled.div<{
   $disabled?: boolean;
   $fill?: boolean;
+  $isDragSourceFaded?: boolean;
   $isDraggingHighlighted?: boolean;
 }>`
   background: ${({ $isDraggingHighlighted }) =>
@@ -37,6 +39,8 @@ const StyledSortableRoot = styled.div<{
   height: ${({ $fill }) => ($fill ? '100%' : 'auto')};
   min-height: 0;
   min-width: ${({ $fill }) => ($fill ? '0' : 'auto')};
+  opacity: ${({ $isDragSourceFaded }) =>
+    $isDragSourceFaded ? DRAG_SOURCE_OPACITY : 1};
   outline: none;
   position: relative;
   transition: background 0.1s ease;
@@ -54,6 +58,7 @@ type DragDropItemSortableCellProps = {
   children: ReactNode;
   data?: Record<string, unknown>;
   disabled?: boolean;
+  fadeSourceWhileDragging?: boolean;
   fill?: boolean;
   group: string;
   hasTransition?: boolean;
@@ -70,6 +75,7 @@ export const DragDropItemSortableCell = ({
   children,
   data,
   disabled = false,
+  fadeSourceWhileDragging = false,
   fill = false,
   group,
   hasTransition = true,
@@ -116,6 +122,7 @@ export const DragDropItemSortableCell = ({
         ref={ref}
         $disabled={disabled}
         $fill={fill}
+        $isDragSourceFaded={fadeSourceWhileDragging && isDragSource}
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
         onDragStart={preventNativeDragStart}
       >
