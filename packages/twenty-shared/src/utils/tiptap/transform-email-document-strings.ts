@@ -1,3 +1,5 @@
+import { isDefined } from '@/utils/validation';
+
 import {
   EMAIL_DOCUMENT_MARK_CATALOG,
   isEmailDocumentMarkType,
@@ -23,7 +25,7 @@ const transformAttributes = (
   stringAttributes: StringAttributeContexts,
   transform: StringTransformer,
 ): Record<string, unknown> | undefined => {
-  if (!attributes) {
+  if (!isDefined(attributes)) {
     return attributes;
   }
 
