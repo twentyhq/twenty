@@ -70,15 +70,22 @@ export class AddApplicationUniversalIdentifierToActorCommand extends Provisioned
     }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
+    const queryRunner = dataSource.createQueryRunner();
 
-    // No transaction: IF NOT EXISTS keeps reruns idempotent, and per-table DDL avoids holding ACCESS EXCLUSIVE locks on the whole schema until commit
-    for (const actorApplicationUniversalIdentifierColumnTarget of actorApplicationUniversalIdentifierColumnTargets) {
-      await dataSource.query(
-        buildAddActorApplicationUniversalIdentifierColumnsSql({
-          schemaName,
-          actorApplicationUniversalIdentifierColumnTarget,
-        }),
-      );
+    try {
+      await queryRunner.connect();
+
+      // No transaction: IF NOT EXISTS keeps reruns idempotent, and per-table DDL avoids holding ACCESS EXCLUSIVE locks on the whole schema until commit
+      for (const actorApplicationUniversalIdentifierColumnTarget of actorApplicationUniversalIdentifierColumnTargets) {
+        await queryRunner.query(
+          buildAddActorApplicationUniversalIdentifierColumnsSql({
+            schemaName,
+            actorApplicationUniversalIdentifierColumnTarget,
+          }),
+        );
+      }
+    } finally {
+      await queryRunner.release();
     }
 
     this.logger.log(
