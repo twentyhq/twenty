@@ -178,10 +178,45 @@ describe('findChatReferences', () => {
     ).toEqual([]);
   });
 
-  it('should drop a metadata reference closed by a bare legacy terminator', () => {
+  it('should support a bare legacy terminator on a metadata reference', () => {
     expect(
       findChatReferences('Open [[object:partner:Partners]] to start'),
-    ).toEqual([]);
+    ).toEqual([
+      {
+        kind: 'object',
+        fullMatch: '[[object:partner:Partners]]',
+        index: 5,
+        objectNameSingular: 'partner',
+        displayName: 'Partners',
+      },
+    ]);
+  });
+
+  it('should find legacy object references in a markdown table row', () => {
+    const references = findChatReferences(
+      '| Owner | Many-to-one | [[object:workspaceMember:Workspace Member]] |\n| Company | Many-to-one | [[object:company:Company]] |',
+    );
+
+    expect(references.map((reference) => reference.displayName)).toEqual([
+      'Workspace Member',
+      'Company',
+    ]);
+  });
+
+  it('should find a legacy object reference in a heading', () => {
+    const references = findChatReferences(
+      '## [[object:project:Project]] object created',
+    );
+
+    expect(references).toEqual([
+      {
+        kind: 'object',
+        fullMatch: '[[object:project:Project]]',
+        index: 3,
+        objectNameSingular: 'project',
+        displayName: 'Project',
+      },
+    ]);
   });
 
   it('should not let a legacy record swallow a foreign close tag', () => {

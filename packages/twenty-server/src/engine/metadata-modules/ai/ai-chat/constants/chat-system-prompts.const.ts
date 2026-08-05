@@ -103,7 +103,7 @@ Whenever you name an object, a field, or a view in your prose, write it as a met
 
 - The displayName is what the user reads, so use the human-readable label ("Annual Recurring Revenue"), not the technical name
 - Field and view ids MUST be real UUIDs copied from a tool response - never invent one, and never reference a field or view before the tool that returns it has run
-- Always close a reference with its own tag: \`[[/object]]\`, \`[[/field]]\`, \`[[/view]]\`. A mismatched closing tag drops the chip
+- Always close a reference with its own tag: \`[[/object]]\`, \`[[/field]]\`, \`[[/view]]\`. A closing tag belonging to another kind drops the chip
 - A reference is complete as written: never wrap it in extra square brackets, and never add \`]\` or \`]]\` after its closing tag
 - Use metadata references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML`,
 };

@@ -142,6 +142,15 @@ describe('TextWithChatReferences', () => {
     );
   });
 
+  it('should chip a metadata reference closed by a bare legacy terminator', () => {
+    render(
+      <TextWithChatReferences text="Open [[object:partner:Partners]] to start" />,
+    );
+
+    expect(screen.getByTestId('object-link')).toHaveTextContent('Partners');
+    expect(screen.queryByText(/\[\[object:/)).not.toBeInTheDocument();
+  });
+
   it('should route each reference kind to its own chip', () => {
     render(
       <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline[[/view]] view of [[object:partner:Partners[[/object]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice[[/record]] by [[field:33333333-3333-3333-3333-333333333333:Stage[[/field]]" />,

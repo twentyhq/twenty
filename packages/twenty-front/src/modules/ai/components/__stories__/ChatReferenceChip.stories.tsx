@@ -129,6 +129,22 @@ export const SurplusClosingBrackets: Story = {
   },
 };
 
+export const LegacyClosingTerminator: Story = {
+  args: {
+    text: `## [[object:partner:Partners]] object created\n\n| Relation | Links to |\n| --- | --- |\n| Company | [[object:company:Companies]] |`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Partners')).toBeVisible();
+    expect((await canvas.findByText('Companies')).closest('a')).toHaveAttribute(
+      'href',
+      `/objects/${companyObjectMetadataItem.namePlural}`,
+    );
+    expect(canvasElement).not.toHaveTextContent('[[object:');
+  },
+};
+
 export const ProposedObject: Story = {
   args: {
     text: `As a Head of Partnerships, you seem to work across partner companies, key contacts, and commercial follow-ups, so I suggest creating a ${formatChatReference(
