@@ -1,6 +1,8 @@
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { RECORD_RICH_TEXT_EDITOR_PROFILE } from '@/object-record/record-field/ui/form-types/constants/RecordRichTextEditorProfile';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { convertTipTapDocumentToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapDocumentToBlockNote';
 
 type FormRichTextFieldInputProps = {
   label?: string;
@@ -12,18 +14,6 @@ type FormRichTextFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
-};
-
-const mapTipTapToBlockNote = (tiptapJson: string): string => {
-  try {
-    const json = JSON.parse(tiptapJson);
-    if (json.type === 'doc' && Array.isArray(json.content)) {
-      return JSON.stringify(json.content);
-    }
-    return tiptapJson;
-  } catch {
-    return tiptapJson;
-  }
 };
 
 export const FormRichTextFieldInput = ({
@@ -38,7 +28,9 @@ export const FormRichTextFieldInput = ({
 }: FormRichTextFieldInputProps) => {
   const handleChange = (value: string) => {
     onChange({
-      blocknote: mapTipTapToBlockNote(value),
+      // RICH_TEXT still exposes the legacy BlockNote array contract. Keep the
+      // compatibility projection here until that field is migrated to TipTap.
+      blocknote: convertTipTapDocumentToBlockNote(value),
       markdown: null,
     });
   };
@@ -53,7 +45,7 @@ export const FormRichTextFieldInput = ({
       onChange={handleChange}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      preset="recordRichTextField"
+      profile={RECORD_RICH_TEXT_EDITOR_PROFILE}
     />
   );
 };

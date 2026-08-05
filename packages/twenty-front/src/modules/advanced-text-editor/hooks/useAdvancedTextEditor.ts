@@ -1,18 +1,14 @@
-import {
-  ADVANCED_TEXT_EDITOR_PRESETS,
-  type AdvancedTextEditorPresetName,
-} from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
-import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
+import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { type Content } from '@tiptap/core';
 import { type Editor, type EditorOptions, useEditor } from '@tiptap/react';
-import { marked } from 'marked';
 import { type DependencyList, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseAdvancedTextEditorProps = {
-  preset: AdvancedTextEditorPresetName;
+  profile: AdvancedTextEditorProfile;
   placeholder: string | undefined;
   readonly: boolean | undefined;
   defaultValue: string | undefined | null;
@@ -27,7 +23,7 @@ type UseAdvancedTextEditorProps = {
 
 export const useAdvancedTextEditor = (
   {
-    preset,
+    profile,
     placeholder,
     readonly,
     defaultValue,
@@ -41,12 +37,10 @@ export const useAdvancedTextEditor = (
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
-  const { contentType, capabilities } = ADVANCED_TEXT_EDITOR_PRESETS[preset];
-
   const extensions = useMemo(
     () =>
       buildAdvancedTextEditorExtensions({
-        capabilities,
+        profile,
         context: {
           onImageUpload,
           onImageUploadError,
@@ -54,7 +48,7 @@ export const useAdvancedTextEditor = (
         placeholder,
         readonly,
       }),
-    [capabilities, placeholder, onImageUpload, onImageUploadError, readonly],
+    [profile, placeholder, onImageUpload, onImageUploadError, readonly],
   );
 
   const getEditorContent = (): Content | undefined => {
@@ -66,16 +60,10 @@ export const useAdvancedTextEditor = (
       return undefined;
     }
 
-    if (contentType === 'markdown') {
-      // Convert markdown to HTML, then TipTap will parse the HTML
-      return marked.parse(defaultValue, { async: false }) as string;
-    }
-
-    if (contentType === 'html') {
-      return defaultValue;
-    }
-
-    return getInitialAdvancedTextEditorContent(defaultValue);
+    return deserializeAdvancedTextEditorDocument({
+      serializedDocument: defaultValue,
+      parseLegacyDocument: profile.parseLegacyDocument,
+    });
   };
 
   const editor = useEditor(

@@ -3,6 +3,9 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
+import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
+import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import {
@@ -24,16 +27,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
-const textToTiptapContent = (text: string) => ({
-  type: 'doc',
-  content: [
-    {
-      type: 'paragraph',
-      content: text ? [{ type: 'text', text }] : [],
-    },
-  ],
-});
-
 export const useAiChatEditor = () => {
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
@@ -46,14 +39,11 @@ export const useAiChatEditor = () => {
 
   const draftKey = currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
-  const initialContent = textToTiptapContent(initialDraft);
-
   const editor = useAdvancedTextEditor({
-    preset: 'aiChat',
+    profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: t`Ask, search or make anything...`,
     readonly: false,
-    defaultValue: undefined,
-    content: initialContent,
+    defaultValue: initialDraft,
     editorProps: {
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -78,8 +68,14 @@ export const useAiChatEditor = () => {
       const text = turnIntoEmptyStringIfWhitespacesOnly(
         currentEditor.getText({ blockSeparator: '\n' }),
       );
+      const serializedDraft =
+        text === '' ? '' : serializeAdvancedTextEditorDocument(currentEditor);
+
       setAgentChatInput(text);
-      setAgentChatDraftsByThreadId((prev) => ({ ...prev, [draftKey]: text }));
+      setAgentChatDraftsByThreadId((prev) => ({
+        ...prev,
+        [draftKey]: serializedDraft,
+      }));
       if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
         dispatchAgentChatEnsureThreadForDraftEvent();
       }
@@ -117,7 +113,11 @@ export const useAiChatEditor = () => {
   const handleRestoreEditorContent = useCallback(
     (detail?: { content: string }) => {
       if (isDefined(detail?.content)) {
-        editor?.commands.setContent(textToTiptapContent(detail.content));
+        editor?.commands.setContent(
+          deserializeAdvancedTextEditorDocument({
+            serializedDocument: detail.content,
+          }),
+        );
       }
     },
     [editor],

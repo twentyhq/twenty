@@ -1,5 +1,8 @@
-import { ADVANCED_TEXT_EDITOR_PRESETS } from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
+import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
+import { buildFullRichTextExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
+import { Document } from '@tiptap/extension-document';
 
 const getExtensionNames = (
   extensions: ReturnType<typeof buildAdvancedTextEditorExtensions>,
@@ -8,7 +11,7 @@ const getExtensionNames = (
 describe('buildAdvancedTextEditorExtensions', () => {
   it('should always include core extensions', () => {
     const extensions = buildAdvancedTextEditorExtensions({
-      capabilities: [],
+      profile: createProfile(),
       context: {},
       placeholder: undefined,
       readonly: false,
@@ -27,9 +30,14 @@ describe('buildAdvancedTextEditorExtensions', () => {
     );
   });
 
-  it('should build the structured email extension set for campaign bodies', () => {
+  it('should compose the extension set provided by the surface profile', () => {
     const extensions = buildAdvancedTextEditorExtensions({
-      capabilities: ADVANCED_TEXT_EDITOR_PRESETS.campaignBody.capabilities,
+      profile: createProfile({
+        buildExtensions: (context) => [
+          ...buildFullRichTextExtensions(context),
+          VariableTag,
+        ],
+      }),
       context: {},
       placeholder: undefined,
       readonly: false,
@@ -48,19 +56,14 @@ describe('buildAdvancedTextEditorExtensions', () => {
         'uploadImage',
         'variableTag',
         'slash-command',
-        'section',
-        'columns',
-        'column',
-        'button',
-        'divider',
-        'html',
       ]),
     );
   });
 
-  it('should only add mention extensions on top of core for the aiChat preset', () => {
+  it('should allow a surface profile to replace the document extension', () => {
+    const SurfaceDocument = Document.extend({ name: 'surfaceDocument' });
     const extensions = buildAdvancedTextEditorExtensions({
-      capabilities: ADVANCED_TEXT_EDITOR_PRESETS.aiChat.capabilities,
+      profile: createProfile({ documentExtension: SurfaceDocument }),
       context: {},
       placeholder: undefined,
       readonly: false,
@@ -68,19 +71,15 @@ describe('buildAdvancedTextEditorExtensions', () => {
 
     const extensionNames = getExtensionNames(extensions);
 
-    expect(extensionNames).toEqual(
-      expect.arrayContaining(['mentionTag', 'mention-suggestion']),
-    );
-    expect(extensionNames).not.toEqual(expect.arrayContaining(['bold']));
-    expect(extensionNames).not.toEqual(expect.arrayContaining(['heading']));
-    expect(extensionNames).not.toEqual(
-      expect.arrayContaining(['slash-command']),
-    );
+    expect(extensionNames).toContain('surfaceDocument');
+    expect(extensionNames).not.toContain('doc');
   });
 
   it('should drop the slash command when readonly', () => {
     const extensions = buildAdvancedTextEditorExtensions({
-      capabilities: ['slashCommand'],
+      profile: createProfile({
+        buildExtensions: (context) => buildFullRichTextExtensions(context),
+      }),
       context: {},
       placeholder: undefined,
       readonly: true,
@@ -95,7 +94,9 @@ describe('buildAdvancedTextEditorExtensions', () => {
     const onImageUpload = jest.fn();
 
     const extensions = buildAdvancedTextEditorExtensions({
-      capabilities: ['images'],
+      profile: createProfile({
+        buildExtensions: (context) => buildFullRichTextExtensions(context),
+      }),
       context: { onImageUpload },
       placeholder: undefined,
       readonly: false,
@@ -107,4 +108,14 @@ describe('buildAdvancedTextEditorExtensions', () => {
 
     expect(uploadImageExtension?.options.onImageUpload).toBe(onImageUpload);
   });
+});
+
+const createProfile = (
+  overrides: Partial<AdvancedTextEditorProfile> = {},
+): AdvancedTextEditorProfile => ({
+  chrome: 'document',
+  minHeight: 0,
+  enableFullScreen: false,
+  buildExtensions: () => [],
+  ...overrides,
 });
