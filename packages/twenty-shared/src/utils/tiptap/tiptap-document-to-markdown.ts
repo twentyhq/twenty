@@ -1,3 +1,5 @@
+import { formatRecordReference } from '@/ai/utils/format-record-reference.util';
+
 import { parseTipTapJsonDocument } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';
 import { type TipTapMark, TIPTAP_MARK_TYPES } from './tiptap-mark-types';
@@ -60,7 +62,11 @@ const renderMention = (node: TipTapNode): string => {
   const label = node.attrs?.label;
 
   return typeof objectName === 'string' && typeof recordId === 'string'
-    ? `[[record:${objectName}:${recordId}:${typeof label === 'string' ? label : ''}[[/record]]`
+    ? formatRecordReference({
+        objectNameSingular: objectName,
+        recordId,
+        displayName: typeof label === 'string' ? label : '',
+      })
     : typeof label === 'string'
       ? `@${label}`
       : '';
