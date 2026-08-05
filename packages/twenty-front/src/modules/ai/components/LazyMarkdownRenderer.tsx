@@ -51,6 +51,12 @@ const processChildrenForChatReferences = (
   return children;
 };
 
+const createChatReferenceElement =
+  (Element: React.ElementType) =>
+  ({ children }: { children?: React.ReactNode }) => (
+    <Element>{processChildrenForChatReferences(children)}</Element>
+  );
+
 // react-markdown uses each entry as the JSX element type, so rebuilding this map
 // per render would remount every node on every streamed chunk.
 const MARKDOWN_COMPONENTS = {
@@ -59,38 +65,16 @@ const MARKDOWN_COMPONENTS = {
       <table>{children}</table>
     </StyledTableScrollContainer>
   ),
-  p: ({ children }: { children?: React.ReactNode }) => (
-    <StyledParagraph>
-      {processChildrenForChatReferences(children)}
-    </StyledParagraph>
-  ),
-  td: ({ children }: { children?: React.ReactNode }) => (
-    <td>{processChildrenForChatReferences(children)}</td>
-  ),
-  th: ({ children }: { children?: React.ReactNode }) => (
-    <th>{processChildrenForChatReferences(children)}</th>
-  ),
-  li: ({ children }: { children?: React.ReactNode }) => (
-    <li>{processChildrenForChatReferences(children)}</li>
-  ),
-  h1: ({ children }: { children?: React.ReactNode }) => (
-    <h1>{processChildrenForChatReferences(children)}</h1>
-  ),
-  h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2>{processChildrenForChatReferences(children)}</h2>
-  ),
-  h3: ({ children }: { children?: React.ReactNode }) => (
-    <h3>{processChildrenForChatReferences(children)}</h3>
-  ),
-  h4: ({ children }: { children?: React.ReactNode }) => (
-    <h4>{processChildrenForChatReferences(children)}</h4>
-  ),
-  h5: ({ children }: { children?: React.ReactNode }) => (
-    <h5>{processChildrenForChatReferences(children)}</h5>
-  ),
-  h6: ({ children }: { children?: React.ReactNode }) => (
-    <h6>{processChildrenForChatReferences(children)}</h6>
-  ),
+  p: createChatReferenceElement(StyledParagraph),
+  td: createChatReferenceElement('td'),
+  th: createChatReferenceElement('th'),
+  li: createChatReferenceElement('li'),
+  h1: createChatReferenceElement('h1'),
+  h2: createChatReferenceElement('h2'),
+  h3: createChatReferenceElement('h3'),
+  h4: createChatReferenceElement('h4'),
+  h5: createChatReferenceElement('h5'),
+  h6: createChatReferenceElement('h6'),
   a: ({
     children,
     href,
