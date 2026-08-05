@@ -44,7 +44,7 @@ export class FrontComponentEntity
   @Column({ default: false })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.28.0_AddUsesVendorToFrontComponentFastInstanceCommand_1785848400000',
+      '2.28.0_AddUsesVendorToFrontComponentFastInstanceCommand_1786000200000',
   })
   usesVendor: boolean;
 

@@ -139,14 +139,14 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.28.0_AddVendorToApplicationFastInstanceCommand_1785848300000',
+      '2.28.0_AddVendorToApplicationFastInstanceCommand_1786000100000',
   })
   vendorChecksum: string | null;
 
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.28.0_AddVendorToApplicationFastInstanceCommand_1785848300000',
+      '2.28.0_AddVendorToApplicationFastInstanceCommand_1786000100000',
   })
   vendorBuiltPath: string | null;
 
