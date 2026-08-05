@@ -96,7 +96,7 @@ export class RenamePeopleDataLabsApiKeysSlowInstanceCommand
     );
     const targetVariable = variables.find((variable) => variable.key === toKey);
 
-    if (!isDefined(sourceVariable) || targetVariable?.isFilled === true) {
+    if (!isDefined(sourceVariable) || targetVariable?.isFilled) {
       return;
     }
 
@@ -123,6 +123,7 @@ export class RenamePeopleDataLabsApiKeysSlowInstanceCommand
       type: KeyValuePairType.CONFIG_VARIABLE,
       userId: IsNull(),
       workspaceId: IsNull(),
+      applicationId: IsNull(),
     };
 
     const sourcePair = await keyValuePairRepository.findOne({
