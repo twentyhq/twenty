@@ -10,7 +10,10 @@ export const getFieldWidgetNestedRelationCreateThrough = ({
   nestedRelationFieldMetadataItem,
   recordId,
 }: {
-  fieldRelationMetadata: FieldRelationMetadata;
+  fieldRelationMetadata: Pick<
+    FieldRelationMetadata,
+    'targetFieldMetadataName' | 'relationObjectMetadataNameSingular'
+  >;
   nestedRelationFieldMetadataItem: FieldMetadataItem;
   recordId: string;
 }): RecordTableWidgetNestedRelationCreateThrough | undefined => {
