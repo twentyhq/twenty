@@ -50,6 +50,8 @@ export const useGoBackToPreviousOnboardingStep = () => {
             previousOnboardingStatus: null,
           };
         });
+
+        return;
       }
 
       enqueueErrorSnackBar(

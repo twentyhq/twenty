@@ -33,9 +33,11 @@ describe('OnboardingService', () => {
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
-  const mockQueryRunner = { query: jest.fn() } as unknown as QueryRunner;
+  let mockQueryRunner: QueryRunner;
 
   beforeEach(async () => {
+    mockQueryRunner = { query: jest.fn() } as unknown as QueryRunner;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OnboardingService,

@@ -6,7 +6,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import {
@@ -18,6 +17,14 @@ import {
   OnboardingStatus,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
+
+const mockEnqueueErrorSnackBar = jest.fn();
+
+jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: () => ({
+    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
+  }),
+}));
 
 const buildGoBackMock = ({
   onboardingStatus,
@@ -41,13 +48,7 @@ const buildGoBackMock = ({
 const renderGoBackHook = (mocks: readonly MockedResponse[]) => {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <MockedProvider mocks={mocks}>
-      <JotaiProvider store={jotaiStore}>
-        <SnackBarComponentInstanceContext.Provider
-          value={{ instanceId: 'snack-bar-manager' }}
-        >
-          {children}
-        </SnackBarComponentInstanceContext.Provider>
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     </MockedProvider>
   );
 
@@ -56,6 +57,7 @@ const renderGoBackHook = (mocks: readonly MockedResponse[]) => {
 
 describe('useGoBackToPreviousOnboardingStep', () => {
   beforeEach(() => {
+    mockEnqueueErrorSnackBar.mockClear();
     resetJotaiStore();
     localStorage.clear();
     jotaiStore.set(currentUserState.atom, {
@@ -169,5 +171,21 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
       OnboardingStatus.PROFILE_CREATION,
     );
+    expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
+  });
+
+  it('should surface a snackbar when the failure is not a stale back target', async () => {
+    const { result } = renderGoBackHook([
+      {
+        request: { query: GoBackToPreviousOnboardingStepDocument },
+        result: { errors: [new GraphQLError('Network failure')] },
+      },
+    ]);
+
+    await act(async () => {
+      await result.current.goBackToPreviousOnboardingStep();
+    });
+
+    expect(mockEnqueueErrorSnackBar).toHaveBeenCalled();
   });
 });
