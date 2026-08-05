@@ -517,10 +517,6 @@ export class WorkspaceMigrationRunnerService {
 
     const postCommitInvalidateStart = performance.now();
 
-    // Recorded here rather than in invalidateCache, which standalone callers
-    // (upgrade backfills, FlatCacheInvalidateCommand) invoke outside any run.
-    // A fail sample is the only metric trace of a swallowed post-commit
-    // invalidation failure, since the run itself still reports success
     try {
       await this.invalidateCache({
         allFlatEntityMapsKeys,
