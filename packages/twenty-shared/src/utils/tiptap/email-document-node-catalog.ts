@@ -2,7 +2,6 @@ import { type EmailDocumentStringContext } from './email-document-string-context
 import { TIPTAP_NODE_TYPES, type TipTapNodeType } from './tiptap-node-types';
 
 type EmailDocumentNodeDefinition = {
-  kind: 'document' | 'block' | 'inline' | 'structural';
   renderMode: 'children' | 'node' | 'parent';
   stringAttributes: Readonly<
     Partial<Record<string, EmailDocumentStringContext>>
@@ -11,32 +10,26 @@ type EmailDocumentNodeDefinition = {
 
 export const EMAIL_DOCUMENT_NODE_CATALOG = {
   [TIPTAP_NODE_TYPES.DOCUMENT]: {
-    kind: 'document',
     renderMode: 'children',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.PARAGRAPH]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.TEXT]: {
-    kind: 'inline',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.HEADING]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.VARIABLE_TAG]: {
-    kind: 'inline',
     renderMode: 'node',
     stringAttributes: { variable: 'text' },
   },
   [TIPTAP_NODE_TYPES.IMAGE]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {
       src: 'url',
@@ -46,52 +39,42 @@ export const EMAIL_DOCUMENT_NODE_CATALOG = {
     },
   },
   [TIPTAP_NODE_TYPES.BULLET_LIST]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.ORDERED_LIST]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.LIST_ITEM]: {
-    kind: 'structural',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.HARD_BREAK]: {
-    kind: 'inline',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.SECTION]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.COLUMNS]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.COLUMN]: {
-    kind: 'structural',
     renderMode: 'parent',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.BUTTON]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: { href: 'url' },
   },
   [TIPTAP_NODE_TYPES.DIVIDER]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: {},
   },
   [TIPTAP_NODE_TYPES.HTML]: {
-    kind: 'block',
     renderMode: 'node',
     stringAttributes: { html: 'html' },
   },
