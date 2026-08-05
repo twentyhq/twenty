@@ -94,14 +94,70 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
+const UUID_FILTER_OPERATOR_KEYS = new Set<string>([
+  'eq',
+  'gt',
+  'gte',
+  'in',
+  'is',
+  'lt',
+  'lte',
+  'neq',
+]);
+
+// A filter on a relation field name either holds UUID operators applied to
+// the related record id, or field names of the related record to match
+// against the related record itself, like { person: { companyId: { in: [...] } } }
+// produced by view filters traversing a relation.
+const isNestedRelationFilter = (
+  filterValue: unknown,
+): filterValue is RecordGqlOperationFilter =>
+  isObject(filterValue) &&
+  Object.keys(filterValue).some((key) => !UUID_FILTER_OPERATOR_KEYS.has(key));
+
+const isRecordMatchingNestedRelationFilter = ({
+  relationRecord,
+  nestedFilter,
+  relationFieldMetadataItem,
+  objectMetadataItems,
+}: {
+  relationRecord: unknown;
+  nestedFilter: RecordGqlOperationFilter;
+  relationFieldMetadataItem: FieldMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+}): boolean => {
+  if (!isObject(relationRecord) || Array.isArray(relationRecord)) {
+    return false;
+  }
+
+  const relationTargetObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.id ===
+      relationFieldMetadataItem.relation?.targetObjectMetadata.id,
+  );
+
+  if (!isDefined(relationTargetObjectMetadataItem)) {
+    return false;
+  }
+
+  return isRecordMatchingFilter({
+    record: relationRecord,
+    filter: nestedFilter,
+    objectMetadataItem: relationTargetObjectMetadataItem,
+    objectMetadataItems,
+  });
+};
+
 export const isRecordMatchingFilter = ({
   record,
   filter,
   objectMetadataItem,
+  objectMetadataItems,
 }: {
   record: any;
   filter: RecordGqlOperationFilter;
   objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
@@ -113,6 +169,7 @@ export const isRecordMatchingFilter = ({
         record,
         filter: { [filterKey]: value },
         objectMetadataItem,
+        objectMetadataItems,
       }),
     );
   }
@@ -133,6 +190,7 @@ export const isRecordMatchingFilter = ({
           record,
           filter: andFilter,
           objectMetadataItem,
+          objectMetadataItems,
         }),
       )
     );
@@ -149,6 +207,7 @@ export const isRecordMatchingFilter = ({
             record,
             filter: orFilter,
             objectMetadataItem,
+            objectMetadataItems,
           }),
         )
       );
@@ -160,6 +219,7 @@ export const isRecordMatchingFilter = ({
         record,
         filter: filterValue,
         objectMetadataItem,
+        objectMetadataItems,
       });
     }
 
@@ -179,6 +239,7 @@ export const isRecordMatchingFilter = ({
         record,
         filter: filterValue,
         objectMetadataItem,
+        objectMetadataItems,
       })
     );
   }
@@ -431,6 +492,18 @@ export const isRecordMatchingFilter = ({
           return isMatchingUUIDFilter({
             uuidFilter: filterValue as UUIDFilter,
             value: record[filterKey],
+          });
+        }
+
+        if (
+          objectMetadataField.type === FieldMetadataType.RELATION &&
+          isNestedRelationFilter(filterValue)
+        ) {
+          return isRecordMatchingNestedRelationFilter({
+            relationRecord: record[filterKey],
+            nestedFilter: filterValue,
+            relationFieldMetadataItem: objectMetadataField,
+            objectMetadataItems,
           });
         }
 
