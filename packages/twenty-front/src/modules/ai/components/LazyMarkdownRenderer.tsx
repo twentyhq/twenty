@@ -7,8 +7,11 @@ import {
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import {
+  EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE,
+  getMarkdownBlocksIncrementally,
+} from '@/ai/utils/getMarkdownBlocksIncrementally';
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
-import { marked } from 'marked';
 import {
   cloneElement,
   isValidElement,
@@ -16,7 +19,7 @@ import {
   memo,
   Suspense,
   useContext,
-  useMemo,
+  useRef,
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
@@ -170,23 +173,29 @@ const LoadingSkeleton = () => {
   );
 };
 
+// Protecting per block behind the memo means only the streaming tail blocks
+// pay the reference-parsing cost on each flush; settled blocks never re-run it.
 const MemoizedMarkdownBlock = memo(
   ({ blockText }: { blockText: string }) => (
-    <MarkdownRenderer>{blockText}</MarkdownRenderer>
+    <MarkdownRenderer>
+      {protectChatReferencesForMarkdown(blockText)}
+    </MarkdownRenderer>
   ),
   (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
 );
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
-  const protectedText = useMemo(
-    () => protectChatReferencesForMarkdown(text),
-    [text],
-  );
+  // Not state: the blocks are a pure function of `text`, the ref only caches
+  // the previous split so streaming appends skip re-tokenizing settled blocks.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const blockSplitCacheRef = useRef(EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE);
 
-  const markdownBlocks = useMemo(
-    () => marked.lexer(protectedText).map((token) => token.raw),
-    [protectedText],
-  );
+  const { blocks: markdownBlocks, cache } = getMarkdownBlocksIncrementally({
+    text,
+    cache: blockSplitCacheRef.current,
+  });
+
+  blockSplitCacheRef.current = cache;
 
   return (
     <StyledMarkdownContainer
