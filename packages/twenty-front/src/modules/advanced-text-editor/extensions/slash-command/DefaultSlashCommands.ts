@@ -10,7 +10,7 @@ import {
   IconPilcrow,
 } from 'twenty-ui/icon';
 
-const BASE_SLASH_COMMANDS: SlashCommandConfig[] = [
+const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
   {
     id: 'paragraph',
     title: msg`Text`,
@@ -55,6 +55,9 @@ const BASE_SLASH_COMMANDS: SlashCommandConfig[] = [
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
   },
+];
+
+const LIST_SLASH_COMMANDS: SlashCommandConfig[] = [
   {
     id: 'bulletList',
     title: msg`Bullet List`,
@@ -80,6 +83,7 @@ const BASE_SLASH_COMMANDS: SlashCommandConfig[] = [
 ];
 
 export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
-  ...BASE_SLASH_COMMANDS,
+  ...TEXT_SLASH_COMMANDS,
   ...ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS,
+  ...LIST_SLASH_COMMANDS,
 ];

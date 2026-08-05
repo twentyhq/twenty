@@ -1,5 +1,5 @@
 import { type EmailDocumentStringContext } from './email-document-string-context';
-import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
+import { TIPTAP_NODE_TYPES, type TipTapNodeType } from './tiptap-node-types';
 
 type EmailDocumentNodeDefinition = {
   kind: 'document' | 'block' | 'inline' | 'structural';
@@ -95,7 +95,9 @@ export const EMAIL_DOCUMENT_NODE_CATALOG = {
     renderMode: 'node',
     stringAttributes: { html: 'html' },
   },
-} as const satisfies Record<string, EmailDocumentNodeDefinition>;
+} as const satisfies Partial<
+  Record<TipTapNodeType, EmailDocumentNodeDefinition>
+>;
 
 export type EmailDocumentNodeType = keyof typeof EMAIL_DOCUMENT_NODE_CATALOG;
 

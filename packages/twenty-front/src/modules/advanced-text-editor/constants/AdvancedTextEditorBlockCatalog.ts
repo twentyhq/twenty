@@ -1,5 +1,3 @@
-/* oxlint-disable twenty/no-hardcoded-colors -- placeholders show literal
-   inline CSS examples that are stored in document content */
 import {
   createColumnBlockContent,
   createParagraphBlockContent,

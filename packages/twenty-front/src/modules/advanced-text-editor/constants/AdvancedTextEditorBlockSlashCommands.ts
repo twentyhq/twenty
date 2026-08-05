@@ -11,7 +11,11 @@ export const ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS: SlashCommandConfig[] =
     icon: recipe.icon,
     keywords: [...recipe.keywords],
     getIsActive: (editor) => editor.isActive(recipe.nodeType),
-    getIsVisible: (editor) => isDefined(editor.schema.nodes[recipe.nodeType]),
+    getIsVisible: (editor) =>
+      isDefined(editor.schema.nodes[recipe.nodeType]) &&
+      editor
+        .can()
+        .insertContent(recipe.createContent((message) => i18n._(message))),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()

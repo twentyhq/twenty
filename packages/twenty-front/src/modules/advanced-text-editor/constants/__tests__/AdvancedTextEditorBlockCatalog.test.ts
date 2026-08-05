@@ -3,6 +3,7 @@ import { ADVANCED_TEXT_EDITOR_BLOCK_EXTENSIONS } from '@/advanced-text-editor/co
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
 import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSlashCommands';
 import { ADVANCED_TEXT_EDITOR_BLOCK_NODE_TYPES } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
+import { DEFAULT_SLASH_COMMANDS } from '@/advanced-text-editor/extensions/slash-command/DefaultSlashCommands';
 
 describe('ADVANCED_TEXT_EDITOR_BLOCK_CATALOG', () => {
   it('defines every shared block exactly once', () => {
@@ -38,5 +39,17 @@ describe('ADVANCED_TEXT_EDITOR_BLOCK_CATALOG', () => {
     expect(
       ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS.map(({ id }) => id),
     ).toEqual(recipeIds);
+  });
+
+  it('keeps document blocks above list commands in the slash menu', () => {
+    expect(DEFAULT_SLASH_COMMANDS.map(({ id }) => id)).toEqual([
+      'paragraph',
+      'h1',
+      'h2',
+      'h3',
+      ...ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.map(({ id }) => id),
+      'bulletList',
+      'orderedList',
+    ]);
   });
 });
