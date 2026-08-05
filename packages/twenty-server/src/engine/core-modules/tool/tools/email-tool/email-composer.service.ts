@@ -52,9 +52,23 @@ export class EmailComposerService {
     private readonly fileService: FileService,
   ) {}
 
+  // A caller may only compose from an account they own, or from one shared with
+  // the whole workspace. Mirrors ConnectedAccountMetadataService.verifyOwnership,
+  // which the sendEmail resolver applies to the same accounts.
+  private isUsableByCaller(
+    connectedAccount: ConnectedAccountEntity,
+    userWorkspaceId: string,
+  ): boolean {
+    return (
+      connectedAccount.visibility === 'workspace' ||
+      connectedAccount.userWorkspaceId === userWorkspaceId
+    );
+  }
+
   private async getConnectedAccountOrThrow(
     connectedAccountId: string,
     workspaceId: string,
+    userWorkspaceId?: string,
   ): Promise<ConnectedAccountEntity> {
     if (!isValidUuid(connectedAccountId)) {
       throw new EmailToolException(
@@ -83,14 +97,29 @@ export class EmailComposerService {
           );
         }
 
+        if (
+          isDefined(userWorkspaceId) &&
+          !this.isUsableByCaller(connectedAccount, userWorkspaceId)
+        ) {
+          throw new EmailToolException(
+            `Connected account '${connectedAccountId}' does not belong to user workspace '${userWorkspaceId}'`,
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION,
+          );
+        }
+
         return connectedAccount;
       },
       authContext,
     );
   }
 
-  private async getOrThrowFirstConnectedAccountId(
+  // The account to compose from when the caller named none. It must be the
+  // caller's own — writing to whichever account happens to come first in the
+  // workspace puts their mail in a colleague's mailbox — so fall back only to
+  // an account explicitly shared with the workspace, and otherwise fail.
+  private async getOrThrowDefaultConnectedAccountId(
     workspaceId: string,
+    userWorkspaceId?: string,
   ): Promise<string> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -98,6 +127,7 @@ export class EmailComposerService {
       async () => {
         const allAccounts = await this.connectedAccountRepository.find({
           where: { workspaceId, archivedAt: IsNull() },
+          order: { createdAt: 'ASC' },
         });
 
         if (!allAccounts || allAccounts.length === 0) {
@@ -107,7 +137,30 @@ export class EmailComposerService {
           );
         }
 
-        return allAccounts[0].id;
+        // No caller to attribute the mail to (a workflow run resolves its own
+        // sender upstream and passes the id explicitly).
+        if (!isDefined(userWorkspaceId)) {
+          return allAccounts[0].id;
+        }
+
+        const ownAccount = allAccounts.find(
+          (account) => account.userWorkspaceId === userWorkspaceId,
+        );
+
+        const sharedAccount = allAccounts.find(
+          (account) => account.visibility === 'workspace',
+        );
+
+        const usableAccount = ownAccount ?? sharedAccount;
+
+        if (!isDefined(usableAccount)) {
+          throw new EmailToolException(
+            `No connected account available for user workspace '${userWorkspaceId}'`,
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          );
+        }
+
+        return usableAccount.id;
       },
       authContext,
     );
@@ -312,7 +365,7 @@ export class EmailComposerService {
     parameters: ComposeEmailParams,
     context: ToolExecutionContext,
   ): Promise<EmailComposerResult> {
-    const { workspaceId } = context;
+    const { workspaceId, userWorkspaceId } = context;
     const { subject, body, files, inReplyTo } = parameters;
     let { connectedAccountId } = parameters;
 
@@ -351,13 +404,16 @@ export class EmailComposerService {
     const toRecipientsDisplay = recipients.to.join(', ');
 
     if (!connectedAccountId) {
-      connectedAccountId =
-        await this.getOrThrowFirstConnectedAccountId(workspaceId);
+      connectedAccountId = await this.getOrThrowDefaultConnectedAccountId(
+        workspaceId,
+        userWorkspaceId,
+      );
     }
 
     const connectedAccount = await this.getConnectedAccountOrThrow(
       connectedAccountId,
       workspaceId,
+      userWorkspaceId,
     );
 
     const messageChannel =
