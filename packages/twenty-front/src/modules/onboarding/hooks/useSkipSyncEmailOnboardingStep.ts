@@ -14,7 +14,11 @@ export const useSkipSyncEmailOnboardingStep = () => {
       await skipSyncEmailOnboardingStepMutation({
         variables: { isAutoSkipped },
       });
-      setNextOnboardingStatus({ isCurrentStepReversible: !isAutoSkipped });
+      setNextOnboardingStatus({
+        stepHistoryEffect: isAutoSkipped
+          ? 'leaveUnchanged'
+          : 'recordAsReversible',
+      });
     },
     [skipSyncEmailOnboardingStepMutation, setNextOnboardingStatus],
   );

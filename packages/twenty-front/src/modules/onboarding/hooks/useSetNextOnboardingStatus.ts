@@ -17,6 +17,8 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/should
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
+import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPreviousOnboardingStatus';
+import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useStore } from 'jotai';
@@ -94,7 +96,11 @@ export const useSetNextOnboardingStatus = () => {
   );
 
   return useCallback(
-    ({ isCurrentStepReversible }: { isCurrentStepReversible: boolean }) => {
+    ({
+      stepHistoryEffect,
+    }: {
+      stepHistoryEffect: OnboardingStepHistoryEffect;
+    }) => {
       const nextOnboardingStatus = getNextOnboardingStatus({
         currentUser,
         currentWorkspace,
@@ -110,9 +116,11 @@ export const useSetNextOnboardingStatus = () => {
           return {
             ...current,
             onboardingStatus: nextOnboardingStatus,
-            previousOnboardingStatus: isCurrentStepReversible
-              ? current.onboardingStatus
-              : current.previousOnboardingStatus,
+            previousOnboardingStatus: getNextPreviousOnboardingStatus({
+              stepHistoryEffect,
+              currentOnboardingStatus: current.onboardingStatus,
+              currentPreviousOnboardingStatus: current.previousOnboardingStatus,
+            }),
           };
         }
         return current;

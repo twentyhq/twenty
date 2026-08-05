@@ -180,7 +180,10 @@ export const useInviteTeam = () => {
         await companyEnrichmentSettlement;
 
         setNextOnboardingStatus({
-          isCurrentStepReversible: sentInvitationsCount === 0,
+          stepHistoryEffect:
+            sentInvitationsCount > 0
+              ? 'clearAfterIrreversibleStep'
+              : 'recordAsReversible',
         });
       } catch (error) {
         setIsNavigating(false);

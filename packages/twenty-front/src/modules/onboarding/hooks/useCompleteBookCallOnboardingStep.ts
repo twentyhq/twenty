@@ -24,7 +24,7 @@ export const useCompleteBookCallOnboardingStep = () => {
     setCurrentUser((current) =>
       setIsBookCallOnboardingStepPending(current, false),
     );
-    setNextOnboardingStatus({ isCurrentStepReversible: false });
+    setNextOnboardingStatus({ stepHistoryEffect: 'leaveUnchanged' });
 
     if (isPlanRequired) {
       navigate(AppPath.PlanRequired);

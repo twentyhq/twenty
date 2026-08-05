@@ -340,6 +340,26 @@ export class OnboardingService {
     );
   }
 
+  private async clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+    {
+      userId,
+      workspaceId,
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    await this.setReversibleOnboardingStepHistory(
+      {
+        userId,
+        workspaceId,
+        reversibleStepHistory: [],
+      },
+      queryRunner,
+    );
+  }
+
   private async restoreReversibleOnboardingStepPendingFlag(
     {
       userId,
@@ -437,7 +457,26 @@ export class OnboardingService {
     workspaceId: string;
   }) {
     const hasClaimedConnectAccountStep =
-      await this.claimOnboardingConnectAccountStep({ userId, workspaceId });
+      await this.runStepTransitionInLockedTransaction(
+        { userId, workspaceId },
+        async (queryRunner) => {
+          const hasClaimedStep = await this.claimOnboardingConnectAccountStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+          if (!hasClaimedStep) {
+            return false;
+          }
+
+          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+          return true;
+        },
+      );
 
     if (!hasClaimedConnectAccountStep) {
       return;
@@ -624,9 +663,27 @@ export class OnboardingService {
       return;
     }
 
-    const hasClaimedInstallAppsStep = await this.claimInstallAppsOnboardingStep(
-      { userId, workspaceId },
-    );
+    const hasClaimedInstallAppsStep =
+      await this.runStepTransitionInLockedTransaction(
+        { userId, workspaceId },
+        async (queryRunner) => {
+          const hasClaimedStep = await this.claimInstallAppsOnboardingStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+          if (!hasClaimedStep) {
+            return false;
+          }
+
+          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+          return true;
+        },
+      );
 
     if (!hasClaimedInstallAppsStep) {
       return;
@@ -964,7 +1021,16 @@ export class OnboardingService {
             queryRunner,
           );
 
-        if (!hasClaimedInviteTeamStep || hasSentInvitations) {
+        if (!hasClaimedInviteTeamStep) {
+          return;
+        }
+
+        if (hasSentInvitations) {
+          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
           return;
         }
 
