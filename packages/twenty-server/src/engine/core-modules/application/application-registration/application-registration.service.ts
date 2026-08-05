@@ -7,7 +7,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import {
+  ILike,
+  IsNull,
+  Not,
+  type FindOptionsWhere,
+  type Repository,
+} from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
@@ -733,6 +739,42 @@ export class ApplicationRegistrationService {
       registration.id,
       params.manifest.application.serverVariables,
     );
+  }
+
+  // Only called right after a successful catalog sync of the package, so
+  // unlisting never acts on stale or partially fetched registry data.
+  async unlistSupersededCatalogRegistrations({
+    sourcePackage,
+    currentUniversalIdentifier,
+  }: {
+    sourcePackage: string;
+    currentUniversalIdentifier: string;
+  }): Promise<void> {
+    const supersededRegistrations =
+      await this.applicationRegistrationRepository.find({
+        select: ['id'],
+        where: {
+          sourceType: ApplicationRegistrationSourceType.NPM,
+          sourcePackage,
+          universalIdentifier: Not(currentUniversalIdentifier),
+          isListed: true,
+        },
+      });
+
+    if (supersededRegistrations.length === 0) {
+      return;
+    }
+
+    await this.applicationRegistrationRepository.update(
+      supersededRegistrations.map((registration) => registration.id),
+      { isListed: false },
+    );
+
+    this.logger.log(
+      `Unlisted ${supersededRegistrations.length} superseded registration(s) for package "${sourcePackage}"`,
+    );
+
+    await this.invalidateMarketplaceAppsCache();
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {

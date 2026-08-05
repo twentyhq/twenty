@@ -61,6 +61,13 @@ export class MarketplaceCatalogSyncService {
           manifest: fetchedManifest,
         });
 
+        await this.applicationRegistrationService.unlistSupersededCatalogRegistrations(
+          {
+            sourcePackage: pkg.name,
+            currentUniversalIdentifier: universalIdentifier,
+          },
+        );
+
         const registration =
           await this.applicationRegistrationService.findOneByUniversalIdentifier(
             universalIdentifier,
