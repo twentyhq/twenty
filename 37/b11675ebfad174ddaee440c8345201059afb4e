@@ -1,0 +1,43 @@
+packages/twenty-server/src/engine/metadata-modules/connected-account/connected-account-metadata.service.ts
+  s_32f55f850d942f::t_9f4f42072bad65 101-133,137
+  s_32f55f850d942f::t_f8be283b76dfd0 251,255,271-273
+  s_32f55f850d942f::t_a1051ce7346137 222-226
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service.ts
+  s_32f55f850d942f::t_b3e736a9a1ab56 113
+  s_32f55f850d942f::t_94ae9d08e08c80 8
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-slow-1785927669596-backfill-connected-account-custodian.ts
+  s_32f55f850d942f::t_31558361fa2610 1-26
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.ts
+  s_32f55f850d942f::t_625157c9ffbff0 124
+  s_32f55f850d942f::t_0ab8d518a965f9 8
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+  s_32f55f850d942f::t_0c8af2a4844c82 24,153
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_f2d273a7d4f9b9::t_a01ec79c8b4e7b 139,278
+packages/twenty-server/src/engine/metadata-modules/connected-account/resolvers/connected-account.resolver.ts
+  s_32f55f850d942f::t_c02257ddaa15b8 47,68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "37b11675ebfad174ddaee440c8345201059afb4e",
+  "prompts": {},
+  "sessions": {
+    "s_32f55f850d942f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9232941-c129-4d97-a592-82c7922e6c58",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    },
+    "s_f2d273a7d4f9b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6afc7207-6ea7-4d1b-9eb7-c2dfe44ac5f5",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
