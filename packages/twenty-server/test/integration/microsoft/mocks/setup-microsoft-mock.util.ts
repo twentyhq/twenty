@@ -27,6 +27,7 @@ export type MicrosoftMock = {
     options?: { deltaToken?: string },
   ) => void;
   failSubscriptionRenewal: () => void;
+  failSubscriptionRenewalTemporarily: () => void;
 };
 
 export const setupMicrosoftMock = ({
@@ -60,6 +61,12 @@ export const setupMicrosoftMock = ({
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {
           renewalFails: true,
+        }),
+      ),
+    failSubscriptionRenewalTemporarily: () =>
+      httpMock.use(
+        ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {
+          renewalTemporarilyFails: true,
         }),
       ),
   };

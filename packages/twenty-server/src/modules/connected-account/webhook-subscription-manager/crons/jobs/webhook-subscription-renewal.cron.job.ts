@@ -25,6 +25,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-buffer-ms.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-cron-pattern.constant';
+import { isWebhookSubscriptionThrottled } from 'src/modules/connected-account/webhook-subscription-manager/utils/is-webhook-subscription-throttled.util';
 import {
   RenewWebhookSubscriptionJob,
   type RenewWebhookSubscriptionJobData,
@@ -32,7 +33,13 @@ import {
 
 type WebhookSubscribableChannel = MessageChannelEntity | CalendarChannelEntity;
 
-type StaleChannel = Pick<WebhookSubscribableChannel, 'id' | 'workspaceId'>;
+type StaleChannel = Pick<
+  WebhookSubscribableChannel,
+  | 'id'
+  | 'workspaceId'
+  | 'webhookSubscriptionFailedAt'
+  | 'webhookSubscriptionFailureCount'
+>;
 
 @Processor(MessageQueue.cronQueue)
 export class WebhookSubscriptionRenewalCronJob {
@@ -96,7 +103,7 @@ export class WebhookSubscriptionRenewalCronJob {
     );
   }
 
-  private findStaleChannels<TChannel extends WebhookSubscribableChannel>(
+  private async findStaleChannels<TChannel extends WebhookSubscribableChannel>(
     repository: Repository<TChannel>,
     activeWorkspaceIds: string[],
   ): Promise<StaleChannel[]> {
@@ -120,10 +127,25 @@ export class WebhookSubscriptionRenewalCronJob {
           webhookSubscriptionExpiresAt: LessThanOrEqual(renewalThreshold),
         },
       ],
-      select: { id: true, workspaceId: true },
+      select: {
+        id: true,
+        workspaceId: true,
+        webhookSubscriptionFailedAt: true,
+        webhookSubscriptionFailureCount: true,
+      },
     };
 
-    return repository.find(options as FindManyOptions<TChannel>);
+    const staleChannels = await repository.find(
+      options as FindManyOptions<TChannel>,
+    );
+
+    return staleChannels.filter(
+      (channel) =>
+        !isWebhookSubscriptionThrottled(
+          channel.webhookSubscriptionFailedAt,
+          channel.webhookSubscriptionFailureCount,
+        ),
+    );
   }
 
   private async enqueueRenewals(
@@ -140,7 +162,6 @@ export class WebhookSubscriptionRenewalCronJob {
         },
         {
           id: `${RenewWebhookSubscriptionJob.name}:${channelType}:${channel.id}`,
-          retryLimit: 3,
         },
       );
     }

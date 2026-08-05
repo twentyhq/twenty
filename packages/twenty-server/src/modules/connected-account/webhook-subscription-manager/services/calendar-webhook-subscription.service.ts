@@ -112,11 +112,13 @@ export class CalendarWebhookSubscriptionService {
       });
 
       await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
-        error,
-        'CREATE',
-        WebhookSubscriptionChannelType.CALENDAR,
-        calendarChannel,
-        workspaceId,
+        {
+          exception: error,
+          operation: 'CREATE',
+          channelType: WebhookSubscriptionChannelType.CALENDAR,
+          channel: calendarChannel,
+          workspaceId,
+        },
       );
 
       return;
@@ -211,18 +213,15 @@ export class CalendarWebhookSubscriptionService {
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      const recoveryAction =
-        await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
-          error,
-          'RENEW',
-          WebhookSubscriptionChannelType.CALENDAR,
-          calendarChannel,
-          calendarChannel.workspaceId,
-        );
-
-      if (recoveryAction === 'RECREATE') {
-        await this.createSubscription(calendarChannelId, workspaceId);
-      }
+      await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
+        {
+          exception: error,
+          operation: 'RENEW',
+          channelType: WebhookSubscriptionChannelType.CALENDAR,
+          channel: calendarChannel,
+          workspaceId: calendarChannel.workspaceId,
+        },
+      );
     }
   }
 
