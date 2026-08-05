@@ -2,17 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
-import { computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-index-view-field-position-by-field-universal-identifier.util';
+import { computeSystemViewFieldsForCreatedObjectView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-for-created-object-view.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import { computeFlatIndexViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-index-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
@@ -31,67 +27,30 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
     const sourceFlatObjectMetadata =
       flatObjectMetadata as UniversalFlatObjectMetadata;
-    const { applicationUniversalIdentifier, universalIdentifier } =
-      sourceFlatObjectMetadata;
-
-    const systemFlatFieldMetadatas = Object.values(
-      buildReservedSystemFlatFieldMetadatasForCustomObject({
-        flatObjectMetadata: {
-          applicationUniversalIdentifier,
-          universalIdentifier,
-        },
-      }),
-    );
-
-    const systemFieldMetadataToCreate: Record<
-      string,
-      MetadataUniversalFlatEntity<'fieldMetadata'>
-    > = {};
-
-    for (const systemFlatFieldMetadata of systemFlatFieldMetadatas) {
-      systemFieldMetadataToCreate[systemFlatFieldMetadata.universalIdentifier] =
-        systemFlatFieldMetadata;
-    }
+    const { applicationUniversalIdentifier } = sourceFlatObjectMetadata;
 
     const flatIndexViewToCreate = computeFlatIndexViewToCreate({
       objectMetadata: sourceFlatObjectMetadata,
       applicationUniversalIdentifier,
     });
 
-    const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
-      objectMetadataUniversalIdentifier: universalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-      allFlatEntityOperationRecordByMetadataName,
-    });
-
-    const positionByFieldUniversalIdentifier =
-      computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
-        applicationUniversalIdentifier,
-        objectMetadataUniversalIdentifier: universalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-        callerFlatFieldMetadatas,
+    const { systemFlatFieldMetadatas, flatViewFieldsToCreate } =
+      computeSystemViewFieldsForCreatedObjectView({
+        sourceFlatObjectMetadata,
+        viewUniversalIdentifier: flatIndexViewToCreate.universalIdentifier,
+        allFlatEntityOperationRecordByMetadataName,
+        labelIdentifierPolicy: 'displayedFirst',
       });
-
-    const flatViewFieldsToCreate = computeFlatViewFieldsToCreate({
-      objectFlatFieldMetadatas: systemFlatFieldMetadatas,
-      viewUniversalIdentifier: flatIndexViewToCreate.universalIdentifier,
-      applicationUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-    }).map((flatViewFieldToCreate) => ({
-      ...flatViewFieldToCreate,
-      position:
-        positionByFieldUniversalIdentifier.get(
-          flatViewFieldToCreate.fieldMetadataUniversalIdentifier,
-        ) ?? flatViewFieldToCreate.position,
-    }));
 
     return {
       status: 'success',
       operations: {
-        fieldMetadata: { flatEntityToCreate: systemFieldMetadataToCreate },
+        fieldMetadata: {
+          flatEntityToCreate: fromArrayToUniqueKeyRecord({
+            array: systemFlatFieldMetadatas,
+            uniqueKey: 'universalIdentifier',
+          }),
+        },
         view: {
           flatEntityToCreate: {
             [flatIndexViewToCreate.universalIdentifier]: flatIndexViewToCreate,
