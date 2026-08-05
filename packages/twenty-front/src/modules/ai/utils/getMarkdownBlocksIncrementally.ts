@@ -60,13 +60,26 @@ export const getMarkdownBlocksIncrementally = ({
     0,
     Math.max(0, blocks.length - UNSTABLE_TRAILING_BLOCK_COUNT),
   );
+  // Append newly stabilized raws instead of re-joining the whole prefix on
+  // every flush. The stable set shrinks when the tail collapses into fewer
+  // than two blocks; then trim the raws that fell out of it.
+  const nextStablePrefix =
+    nextStableBlocks.length >= stableBlocks.length
+      ? stablePrefix + nextStableBlocks.slice(stableBlocks.length).join('')
+      : stablePrefix.slice(
+          0,
+          stablePrefix.length -
+            stableBlocks
+              .slice(nextStableBlocks.length)
+              .reduce((removedLength, raw) => removedLength + raw.length, 0),
+        );
 
   return {
     blocks,
     cache: {
       text: normalizedText,
       blocks,
-      stablePrefix: nextStableBlocks.join(''),
+      stablePrefix: nextStablePrefix,
       stableBlocks: nextStableBlocks,
     },
   };

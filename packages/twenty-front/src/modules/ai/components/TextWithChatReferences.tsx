@@ -10,11 +10,11 @@ export const TextWithChatReferences = ({
 }: TextWithChatReferencesProps) => {
   return (
     <>
-      {getChatReferenceSegments(text).map((segment, index) =>
+      {getChatReferenceSegments(text).map((segment) =>
         typeof segment === 'string' ? (
           segment
         ) : (
-          <ChatReferenceChip key={index} reference={segment} />
+          <ChatReferenceChip key={segment.index} reference={segment} />
         ),
       )}
     </>
