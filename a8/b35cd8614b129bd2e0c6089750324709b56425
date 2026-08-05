@@ -1,0 +1,25 @@
+packages/twenty-front/src/modules/object-record/record-list/states/recordListHoveredFieldMetadataItemIdComponentState.ts
+  s_78d9b82a19ccf1::t_a40404eca4a31f 4-7
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRowField.tsx
+  s_78d9b82a19ccf1::t_98fa12e1a80a8c 8
+  s_78d9b82a19ccf1::t_de146b43eb427e 37-38,47-49
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListFieldTooltip.tsx
+  s_78d9b82a19ccf1::t_13888af7ce7310 10
+  s_78d9b82a19ccf1::t_a319e941f0e815 2,4,7-9,12-18,21-28,39-46,55-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "a8b35cd8614b129bd2e0c6089750324709b56425",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
