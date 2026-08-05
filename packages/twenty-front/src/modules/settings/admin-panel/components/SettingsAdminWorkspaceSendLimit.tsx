@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { MESSAGE_CAMPAIGN_DAILY_SEND_LIMIT_MAX } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
@@ -61,7 +62,7 @@ export const SettingsAdminWorkspaceSendLimit = ({
     !hasCustomLimit ||
     (Number.isInteger(parsedLimit) &&
       parsedLimit >= 0 &&
-      parsedLimit <= 1000000);
+      parsedLimit <= MESSAGE_CAMPAIGN_DAILY_SEND_LIMIT_MAX);
 
   const handleSave = async () => {
     if (!isValid) {

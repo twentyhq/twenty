@@ -8,6 +8,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { MESSAGE_CAMPAIGN_DAILY_SEND_LIMIT_MAX } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -22,6 +23,6 @@ export class UpdateWorkspaceMessageCampaignDailySendLimitInput {
   @IsOptional()
   @IsInt()
   @Min(0)
-  @Max(1000000)
+  @Max(MESSAGE_CAMPAIGN_DAILY_SEND_LIMIT_MAX)
   dailySendLimit?: number | null;
 }
