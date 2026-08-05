@@ -6,18 +6,13 @@ import {
 } from 'twenty-emails';
 import {
   type EmailDocument,
+  isEmailDocumentShape,
   parseEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 
 import { type CompiledOutboundEmailContent } from 'src/engine/core-modules/email/types/compiled-outbound-email-content.type';
 import { sanitizeOutboundEmailHtml } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
-
-const isDocumentShape = (value: unknown): boolean =>
-  typeof value === 'object' &&
-  value !== null &&
-  'type' in value &&
-  value.type === 'doc';
 
 const renderContent = async (body: string | EmailDocument): Promise<string> => {
   const parsedBody = typeof body === 'string' ? parseJson<unknown>(body) : body;
@@ -27,7 +22,7 @@ const renderContent = async (body: string | EmailDocument): Promise<string> => {
     return render(reactMarkupFromJSON(parseResult.document as JSONContent));
   }
 
-  if (typeof body !== 'string' || isDocumentShape(parsedBody)) {
+  if (typeof body !== 'string' || isEmailDocumentShape(parsedBody)) {
     throw new Error(`Invalid outbound email document: ${parseResult.error}`);
   }
 

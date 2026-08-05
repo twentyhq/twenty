@@ -14,7 +14,13 @@ describe('resolveEmailDocumentBindings', () => {
             {
               type: 'variableTag',
               attrs: { variable: '{{message}}' },
-              marks: [{ type: 'bold' }],
+              marks: [
+                { type: 'bold' },
+                {
+                  type: 'link',
+                  attrs: { href: 'https://example.com/{{id}}' },
+                },
+              ],
             },
             {
               type: 'text',
@@ -67,9 +73,38 @@ describe('resolveEmailDocumentBindings', () => {
             { type: 'text', text: 'Hello Ada: first' },
             { type: 'hardBreak' },
             { type: 'text', text: 'second' },
-            { type: 'text', text: 'first', marks: [{ type: 'bold' }] },
-            { type: 'hardBreak', marks: [{ type: 'bold' }] },
-            { type: 'text', text: 'second', marks: [{ type: 'bold' }] },
+            {
+              type: 'text',
+              text: 'first',
+              marks: [
+                { type: 'bold' },
+                {
+                  type: 'link',
+                  attrs: { href: 'https://example.com/person-1' },
+                },
+              ],
+            },
+            {
+              type: 'hardBreak',
+              marks: [
+                { type: 'bold' },
+                {
+                  type: 'link',
+                  attrs: { href: 'https://example.com/person-1' },
+                },
+              ],
+            },
+            {
+              type: 'text',
+              text: 'second',
+              marks: [
+                { type: 'bold' },
+                {
+                  type: 'link',
+                  attrs: { href: 'https://example.com/person-1' },
+                },
+              ],
+            },
             {
               type: 'text',
               text: 'link',

@@ -41,7 +41,15 @@ const resolveNode = (
       return [node];
     }
 
-    return textToInlineNodes(resolve(variable, 'text'), node.marks);
+    const resolvedNode = transformEmailDocumentStrings(
+      {
+        type: TIPTAP_NODE_TYPES.TEXT,
+        marks: node.marks,
+      },
+      resolve,
+    );
+
+    return textToInlineNodes(resolve(variable, 'text'), resolvedNode.marks);
   }
 
   if (node.type === TIPTAP_NODE_TYPES.TEXT && typeof node.text === 'string') {

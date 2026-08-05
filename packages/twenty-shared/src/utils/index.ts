@@ -205,6 +205,7 @@ export type { EmailDocument } from './tiptap/email-document-schema';
 export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';
+export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
 export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
 export { parseEmailDocument } from './tiptap/parse-email-document';
