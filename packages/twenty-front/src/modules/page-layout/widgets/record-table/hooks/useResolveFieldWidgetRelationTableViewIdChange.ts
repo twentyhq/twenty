@@ -11,8 +11,8 @@ import {
 type ResolveFieldWidgetRelationTableViewIdChangeArgs = {
   selectedField: FieldMetadataItem | undefined;
   selectedNestedField?: FieldMetadataItem;
-  currentDisplayMode: FieldDisplayMode | undefined;
-  isSelectingDifferentField: boolean;
+  nextDisplayMode: FieldDisplayMode | undefined;
+  isSelectingDifferentChain: boolean;
   widgetId: string | undefined;
   currentViewId: string | null | undefined;
 };
@@ -23,11 +23,16 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
   const { addDraftViewForFieldRelationTableWidget } =
     useAddDraftViewForFieldRelationTableWidget(pageLayoutId);
 
+  // The embedded view must always list the selected chain's terminal object.
+  // Whenever the selection results in a table widget, a fresh draft view is
+  // generated on a chain change or a missing view id; otherwise a view id
+  // belonging to the previous chain is cleared so the layout dropdown can
+  // lazily create the right one.
   const resolveFieldWidgetRelationTableViewIdChange = ({
     selectedField,
     selectedNestedField,
-    currentDisplayMode,
-    isSelectingDifferentField,
+    nextDisplayMode,
+    isSelectingDifferentChain,
     widgetId,
     currentViewId,
   }: ResolveFieldWidgetRelationTableViewIdChangeArgs):
@@ -49,8 +54,8 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
         isOneToManyRelationField(selectedNestedField));
 
     const shouldRegenerateRelationTableView =
-      currentDisplayMode === FieldDisplayMode.TABLE &&
-      isSelectingDifferentField &&
+      nextDisplayMode === FieldDisplayMode.TABLE &&
+      (isSelectingDifferentChain || !isDefined(currentViewId)) &&
       isValidRelationChain &&
       isDefined(widgetId) &&
       isDefined(targetObjectMetadataId) &&
@@ -69,7 +74,7 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
       return { viewId: regeneratedRelationTableViewId };
     }
 
-    if (isSelectingDifferentField && isDefined(currentViewId)) {
+    if (isSelectingDifferentChain && isDefined(currentViewId)) {
       return { viewId: undefined };
     }
 

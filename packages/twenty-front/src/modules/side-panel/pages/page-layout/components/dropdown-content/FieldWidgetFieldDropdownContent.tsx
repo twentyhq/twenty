@@ -203,11 +203,15 @@ export const FieldWidgetFieldDropdownContent = () => {
         selectedField.relation?.type,
       );
 
+    const nextDisplayMode = needsDisplayModeSwitch
+      ? getFieldWidgetDefaultDisplayMode(selectedField.type)
+      : currentDisplayMode;
+
     const relationTableViewIdChange =
       resolveFieldWidgetRelationTableViewIdChange({
         selectedField,
-        currentDisplayMode,
-        isSelectingDifferentField: isSelectingDifferentChain(
+        nextDisplayMode,
+        isSelectingDifferentChain: isSelectingDifferentChain(
           selectedField.id,
           null,
         ),
@@ -221,9 +225,7 @@ export const FieldWidgetFieldDropdownContent = () => {
         nestedRelationFieldMetadataId: null,
         ...relationTableViewIdChange,
         ...(needsDisplayModeSwitch && {
-          fieldDisplayMode: getFieldWidgetDefaultDisplayMode(
-            selectedField.type,
-          ),
+          fieldDisplayMode: nextDisplayMode,
         }),
       },
     });
@@ -247,8 +249,8 @@ export const FieldWidgetFieldDropdownContent = () => {
       resolveFieldWidgetRelationTableViewIdChange({
         selectedField: parentFieldMetadataItem,
         selectedNestedField: nestedFieldMetadataItem,
-        currentDisplayMode: FieldDisplayMode.TABLE,
-        isSelectingDifferentField: isSelectingDifferentChain(
+        nextDisplayMode: FieldDisplayMode.TABLE,
+        isSelectingDifferentChain: isSelectingDifferentChain(
           parentFieldMetadataItem.id,
           nestedFieldMetadataItem.id,
         ),
@@ -327,7 +329,13 @@ export const FieldWidgetFieldDropdownContent = () => {
               >
                 <MenuItemSelect
                   text={fieldMetadataItem.label}
-                  selected={currentFieldMetadataId === fieldMetadataItem.id}
+                  // Rows opening a submenu never show the checkmark: the
+                  // selected chain is only visible inside the submenu, like
+                  // the chart group by field selection.
+                  selected={
+                    !hasNestedFieldCandidates &&
+                    currentFieldMetadataId === fieldMetadataItem.id
+                  }
                   focused={selectedItemId === fieldMetadataItem.id}
                   LeftIcon={getIcon(
                     currentFieldMetadataId === fieldMetadataItem.id
