@@ -47,19 +47,19 @@ export const OnboardingTransitionOutlet = () => {
     onboardingNavigationDirectionState,
   );
 
-  const exitSlideOffset =
+  const directionalExitSlideOffset =
     onboardingNavigationDirection === 'backward'
       ? ONBOARDING_MOTION_SLIDE_OFFSET
       : -ONBOARDING_MOTION_SLIDE_OFFSET;
 
-  const exitCustom = shouldReduceMotion ? 0 : exitSlideOffset;
+  const exitSlideOffset = shouldReduceMotion ? 0 : directionalExitSlideOffset;
 
   return (
     <StyledTransitionContainer>
-      <AnimatePresence custom={exitCustom}>
+      <AnimatePresence custom={exitSlideOffset}>
         <StyledTransitionPage
           key={pathname}
-          custom={exitCustom}
+          custom={exitSlideOffset}
           variants={transitionPageVariants}
           initial="initial"
           animate="animate"

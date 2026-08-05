@@ -701,17 +701,17 @@ describe('OnboardingService', () => {
     });
 
     it('should take the step transition lock before reading the history', async () => {
-      const callOrder: string[] = [];
+      const lockThenReadCallOrder: string[] = [];
 
       jest
         .spyOn(mockQueryRunner, 'query')
         .mockImplementation(async (statement: string) => {
-          callOrder.push(`query:${statement}`);
+          lockThenReadCallOrder.push(`query:${statement}`);
 
           return [];
         });
       jest.spyOn(userVarsService, 'get').mockImplementation(async () => {
-        callOrder.push('readHistory');
+        lockThenReadCallOrder.push('readHistory');
 
         return [OnboardingStatus.SYNC_EMAIL];
       });
@@ -729,10 +729,10 @@ describe('OnboardingService', () => {
         'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
         [`onboarding-step-transition:${userId}:${workspaceId}`],
       );
-      expect(callOrder[0]).toBe(
+      expect(lockThenReadCallOrder[0]).toBe(
         'query:SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
       );
-      expect(callOrder[1]).toBe('readHistory');
+      expect(lockThenReadCallOrder[1]).toBe('readHistory');
     });
 
     it('should re-arm the workspace-scoped flag when going back to invite team', async () => {

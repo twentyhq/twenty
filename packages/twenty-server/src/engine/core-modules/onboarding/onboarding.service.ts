@@ -12,7 +12,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
-import { ONBOARDING_STEP_TRANSITION_LOCK_PREFIX } from 'src/engine/core-modules/onboarding/constants/onboarding-step-transition-lock-prefix';
+import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
+import { buildOnboardingStepTransitionLockName } from 'src/engine/core-modules/onboarding/utils/build-onboarding-step-transition-lock-name.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   INSTALL_ONBOARDING_APPS_JOB_NAME,
@@ -68,7 +69,7 @@ export class OnboardingService {
     private readonly dataSource: DataSource,
   ) {}
 
-  private async runInTransaction<T>(
+  private async runStepTransitionInLockedTransaction<T>(
     {
       userId,
       workspaceId,
@@ -76,24 +77,24 @@ export class OnboardingService {
       userId: string;
       workspaceId: string;
     },
-    work: (queryRunner: QueryRunner) => Promise<T>,
+    runStepTransition: (queryRunner: QueryRunner) => Promise<T>,
   ): Promise<T> {
     return this.dataSource.transaction(async (entityManager) => {
-      const queryRunner = entityManager.queryRunner;
+      const transactionQueryRunner = entityManager.queryRunner;
 
-      if (!isDefined(queryRunner)) {
+      if (!isDefined(transactionQueryRunner)) {
         throw new OnboardingException(
           'Onboarding step transitions require a transaction-scoped entity manager',
           OnboardingExceptionCode.MISSING_TRANSACTION_QUERY_RUNNER,
         );
       }
 
-      await queryRunner.query(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [`${ONBOARDING_STEP_TRANSITION_LOCK_PREFIX}:${userId}:${workspaceId}`],
+      await transactionQueryRunner.query(
+        ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT,
+        [buildOnboardingStepTransitionLockName({ userId, workspaceId })],
       );
 
-      return work(queryRunner);
+      return runStepTransition(transactionQueryRunner);
     });
   }
 
@@ -223,7 +224,7 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    await this.runInTransaction(
+    await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {
         const reversibleStepHistory =
@@ -231,10 +232,10 @@ export class OnboardingService {
             userId,
             workspaceId,
           });
-        const previousStep =
+        const previousReversibleStep =
           reversibleStepHistory[reversibleStepHistory.length - 1];
 
-        if (!isDefined(previousStep)) {
+        if (!isDefined(previousReversibleStep)) {
           throw new OnboardingException(
             `No previous onboarding step to go back to for user ${userId} in workspace ${workspaceId}`,
             OnboardingExceptionCode.NO_PREVIOUS_ONBOARDING_STEP,
@@ -250,11 +251,11 @@ export class OnboardingService {
           queryRunner,
         );
 
-        await this.setReversibleOnboardingStepPending(
+        await this.restoreReversibleOnboardingStepPendingFlag(
           {
             userId,
             workspaceId,
-            step: previousStep,
+            step: previousReversibleStep,
           },
           queryRunner,
         );
@@ -339,7 +340,7 @@ export class OnboardingService {
     );
   }
 
-  private async setReversibleOnboardingStepPending(
+  private async restoreReversibleOnboardingStepPendingFlag(
     {
       userId,
       workspaceId,
@@ -454,7 +455,7 @@ export class OnboardingService {
     workspaceId: string;
     isAutoSkipped: boolean;
   }) {
-    await this.runInTransaction(
+    await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {
         const hasClaimedConnectAccountStep =
@@ -596,7 +597,7 @@ export class OnboardingService {
     );
 
     if (installableUniversalIdentifiers.length === 0) {
-      await this.runInTransaction(
+      await this.runStepTransitionInLockedTransaction(
         { userId, workspaceId },
         async (queryRunner) => {
           const hasClaimedInstallAppsStep =
@@ -898,7 +899,7 @@ export class OnboardingService {
       return;
     }
 
-    await this.runInTransaction(
+    await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {
         const hasClaimedCreateProfileStep =
@@ -954,7 +955,7 @@ export class OnboardingService {
     workspaceId: string;
     hasSentInvitations: boolean;
   }) {
-    await this.runInTransaction(
+    await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {
         const hasClaimedInviteTeamStep =

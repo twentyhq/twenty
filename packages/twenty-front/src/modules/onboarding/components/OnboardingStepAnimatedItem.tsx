@@ -30,7 +30,7 @@ export const OnboardingStepAnimatedItem = ({
     onboardingNavigationDirectionState,
   );
 
-  const enterSlideOffset =
+  const directionalEnterSlideOffset =
     onboardingNavigationDirection === 'backward'
       ? -ONBOARDING_MOTION_SLIDE_OFFSET
       : ONBOARDING_MOTION_SLIDE_OFFSET;
@@ -40,7 +40,7 @@ export const OnboardingStepAnimatedItem = ({
       className={className}
       initial={{
         opacity: 0,
-        y: shouldReduceMotion ? 0 : enterSlideOffset,
+        y: shouldReduceMotion ? 0 : directionalEnterSlideOffset,
       }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
