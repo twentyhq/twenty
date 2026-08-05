@@ -221,6 +221,19 @@ the three most recent plus whatever is serving and whatever is incoming. Set
 deploys fail partway through unpacking with `no space left on device` and retry
 forever, so this trim is what keeps the host deployable.
 
+That count is a budget, not a guarantee, because the volume is shared with
+dangling images, local builds and every other container on this daemon. So the
+converger also checks the volume actually has 6GB free (`STAGING_MIN_FREE_GB`)
+before pulling. Below that it deletes every old staging image and rechecks; if
+it is still short, it refuses the deploy and says so, leaving the current image
+serving. A refusal means something other than staging is filling the volume, so
+start with `docker system df`.
+
+Note that the host `df` cannot see this: on a Mac the images live on a
+fixed-size disk inside the Docker VM, so the volume can be full while the Mac
+reports hundreds of gigabytes free. Read the real number with
+`colima ssh -- df -h /var/lib/docker`.
+
 Install the converger with:
 
 ```bash
