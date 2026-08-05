@@ -1,7 +1,7 @@
 import { STANDARD_OBJECT_FIELDS } from '@/metadata/constants/standard-object-fields.constant';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/standard-object-universal-identifiers.constant';
 import { buildStandardObjectIndexView } from '@/metadata/utils/internal/build-standard-object-index-view.util';
-import { buildStandardObjectRecordPage } from '@/metadata/utils/internal/build-standard-object-record-page.util';
+import { buildStandardObjectRecordPageFieldsView } from '@/metadata/utils/internal/build-standard-object-record-page-fields-view.util';
 
 // Important notice:
 // - Never ever mutate an existing universal identifier
@@ -16,7 +16,7 @@ import { buildStandardObjectRecordPage } from '@/metadata/utils/internal/build-s
 //   getSystemViewFieldUniversalIdentifier for each view field).
 // - FIELDS_WIDGET record-page view universal identifiers (keyed on
 //   ViewKey.FIELDS_WIDGET), their view fields and their view field groups are
-//   deterministically derived by buildStandardObjectRecordPage; the group
+//   deterministically derived by buildStandardObjectRecordPageFieldsView; the group
 //   names passed there MUST match the ones the server standard view-field-group
 //   builders assign.
 export const STANDARD_OBJECTS = {
@@ -85,7 +85,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.blocklist,
         viewFieldNames: ['handle', 'workspaceMember', 'createdAt'],
       }),
-      blocklistRecordPageFields: buildStandardObjectRecordPage({
+      blocklistRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
         fields: STANDARD_OBJECT_FIELDS.blocklist,
@@ -122,7 +122,7 @@ export const STANDARD_OBJECTS = {
         ],
       }),
       calendarChannelEventAssociationRecordPageFields:
-        buildStandardObjectRecordPage({
+        buildStandardObjectRecordPageFieldsView({
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarChannelEventAssociation,
           fields: STANDARD_OBJECT_FIELDS.calendarChannelEventAssociation,
@@ -171,7 +171,7 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
-      calendarEventParticipantRecordPageFields: buildStandardObjectRecordPage({
+      calendarEventParticipantRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
         fields: STANDARD_OBJECT_FIELDS.calendarEventParticipant,
@@ -213,7 +213,7 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
-      calendarEventRecordPageFields: buildStandardObjectRecordPage({
+      calendarEventRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent,
         fields: STANDARD_OBJECT_FIELDS.calendarEvent,
@@ -258,7 +258,7 @@ export const STANDARD_OBJECTS = {
           'startedAt',
         ],
       }),
-      callRecordingRecordPageFields: buildStandardObjectRecordPage({
+      callRecordingRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording,
         fields: STANDARD_OBJECT_FIELDS.callRecording,
@@ -308,7 +308,7 @@ export const STANDARD_OBJECTS = {
           'address',
         ],
       }),
-      companyRecordPageFields: buildStandardObjectRecordPage({
+      companyRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
         fields: STANDARD_OBJECT_FIELDS.company,
@@ -389,7 +389,7 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
-      messageCampaignRecordPageFields: buildStandardObjectRecordPage({
+      messageCampaignRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageCampaign,
         fields: STANDARD_OBJECT_FIELDS.messageCampaign,
@@ -466,7 +466,7 @@ export const STANDARD_OBJECTS = {
         ],
       }),
       messageChannelMessageAssociationRecordPageFields:
-        buildStandardObjectRecordPage({
+        buildStandardObjectRecordPageFieldsView({
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation,
           fields: STANDARD_OBJECT_FIELDS.messageChannelMessageAssociation,
@@ -515,7 +515,7 @@ export const STANDARD_OBJECTS = {
           ],
         }),
       messageChannelMessageAssociationMessageFolderRecordPageFields:
-        buildStandardObjectRecordPage({
+        buildStandardObjectRecordPageFieldsView({
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociationMessageFolder,
           fields:
@@ -566,7 +566,7 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
-      messageParticipantRecordPageFields: buildStandardObjectRecordPage({
+      messageParticipantRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
         fields: STANDARD_OBJECT_FIELDS.messageParticipant,
@@ -647,7 +647,7 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
-      noteRecordPageFields: buildStandardObjectRecordPage({
+      noteRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
         fields: STANDARD_OBJECT_FIELDS.note,
         viewFieldNames: [
@@ -773,7 +773,7 @@ export const STANDARD_OBJECTS = {
           },
         },
       },
-      opportunityRecordPageFields: buildStandardObjectRecordPage({
+      opportunityRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
         fields: STANDARD_OBJECT_FIELDS.opportunity,
@@ -830,7 +830,7 @@ export const STANDARD_OBJECTS = {
           'linkedinLink',
         ],
       }),
-      personRecordPageFields: buildStandardObjectRecordPage({
+      personRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
         fields: STANDARD_OBJECT_FIELDS.person,
         viewFieldNames: [
@@ -964,7 +964,7 @@ export const STANDARD_OBJECTS = {
           },
         },
       },
-      taskRecordPageFields: buildStandardObjectRecordPage({
+      taskRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
         fields: STANDARD_OBJECT_FIELDS.task,
         viewFieldNames: [
@@ -1122,7 +1122,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
         viewFieldNames: ['type', 'workflow', 'createdAt'],
       }),
-      workflowAutomatedTriggerRecordPageFields: buildStandardObjectRecordPage({
+      workflowAutomatedTriggerRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
         fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
@@ -1155,7 +1155,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.workflowRun,
         viewFieldNames: ['name', 'workflow', 'status'],
       }),
-      workflowRunRecordPageFields: buildStandardObjectRecordPage({
+      workflowRunRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
         fields: STANDARD_OBJECT_FIELDS.workflowRun,
@@ -1198,7 +1198,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.workflowVersion,
         viewFieldNames: ['name', 'workflow', 'status', 'updatedAt', 'runs'],
       }),
-      workflowVersionRecordPageFields: buildStandardObjectRecordPage({
+      workflowVersionRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
         fields: STANDARD_OBJECT_FIELDS.workflowVersion,

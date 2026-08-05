@@ -10,7 +10,7 @@ type StandardUniversalIdentifierHolder = { universalIdentifier: string };
 // for a standard object: the view (object identifier + FIELDS_WIDGET key), its
 // view fields (keyed on the displayed field) and its view field groups (keyed
 // on the group name within the view). Mirrors buildStandardObjectIndexView.
-export const buildStandardObjectRecordPage = <
+export const buildStandardObjectRecordPageFieldsView = <
   const TViewFieldName extends string,
   const TViewFieldGroupName extends string,
 >({
