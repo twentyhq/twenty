@@ -153,6 +153,7 @@ const StyledCanvasPage = styled.div`
   }
 
   .tiptap {
+    color: inherit;
     min-height: inherit;
     padding: 0;
   }
