@@ -49,12 +49,14 @@ export const useUpdateApplicationVendorChecksumApolloCache = ({
 
       // Writing into a cache the initial query has not populated yet would be
       // overwritten by that in-flight response, so the value is refetched
-      // instead.
+      // instead. Deduplication is disabled for that refetch, otherwise it is
+      // served by the very request that predates this update.
       if (!isDefined(cachedData)) {
         void apolloClient.query({
           query: GetApplicationVendorChecksumDocument,
           variables: { applicationId },
           fetchPolicy: 'network-only',
+          context: { queryDeduplication: false },
         });
 
         return;
