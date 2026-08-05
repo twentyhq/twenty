@@ -21,10 +21,8 @@ import {
   getExistingOrStandardFlatEntityOrThrow,
   getStandardFlatEntitiesToCreateOrThrow,
 } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
-import {
-  remapRecordPageUniversalIdentifiersToPre228,
-  toPre228RecordPageUniversalIdentifier,
-} from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre228 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-28.util';
+import { toPre228RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -37,7 +35,6 @@ import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-f
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const getUniversalIdentifiers = (
@@ -269,19 +266,12 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
 
     const now = new Date().toISOString();
 
-    const { allFlatEntityMaps: derivedStandardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
+    const standardAllFlatEntityMaps =
+      computeTwentyStandardApplicationAllFlatEntityMapsPre228({
         now,
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
-
-    // This command predates the 2-28 record-page reconcile: workspace rows
-    // still hold the pre-derivation universal identifiers.
-    const standardAllFlatEntityMaps =
-      remapRecordPageUniversalIdentifiersToPre228(
-        derivedStandardAllFlatEntityMaps,
-      );
 
     const objectMetadataRenameUpdates = buildCallRecordingObjectRenameUpdates({
       flatObjectMetadataMaps,
