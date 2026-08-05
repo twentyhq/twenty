@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetFieldWidgetRelationTraversalArgs = {
@@ -23,13 +24,23 @@ export const getFieldWidgetRelationTraversal = ({
   const lastHopFieldMetadataItem =
     nestedRelationFieldMetadataItem ?? sourceFieldMetadataItem;
 
+  // Only a one-to-many first hop needs the traversal: its intermediate
+  // records carry the join column pointing back at the current record. A
+  // many-to-one first hop points at a single intermediate record, which the
+  // widget supplies as the filter's current record, so the seeded filter
+  // stays a direct one.
+  const shouldTraverseFirstHop =
+    isDefined(nestedRelationFieldMetadataItem) &&
+    isDefined(sourceFieldMetadataItem) &&
+    isOneToManyRelationField(sourceFieldMetadataItem);
+
   return {
     targetObjectMetadataId:
       lastHopFieldMetadataItem?.relation?.targetObjectMetadata.id,
     inverseFieldMetadataId:
       lastHopFieldMetadataItem?.relation?.targetFieldMetadata.id,
-    relationTargetFieldMetadataId: isDefined(nestedRelationFieldMetadataItem)
-      ? (sourceFieldMetadataItem?.relation?.targetFieldMetadata.id ?? null)
+    relationTargetFieldMetadataId: shouldTraverseFirstHop
+      ? (sourceFieldMetadataItem.relation?.targetFieldMetadata.id ?? null)
       : null,
   };
 };

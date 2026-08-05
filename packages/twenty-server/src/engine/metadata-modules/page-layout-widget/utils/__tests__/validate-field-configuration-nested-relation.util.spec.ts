@@ -15,6 +15,7 @@ const OPPORTUNITY_OBJECT_ID = 'opportunity-object-id';
 const PEOPLE_FIELD_ID = 'company-people-field-id';
 const OWNED_OPPORTUNITIES_FIELD_ID = 'person-owned-opportunities-field-id';
 const PERSON_COMPANY_FIELD_ID = 'person-company-field-id';
+const COMPANY_NAME_FIELD_ID = 'company-name-field-id';
 
 const peopleField = getFlatFieldMetadataMock({
   id: PEOPLE_FIELD_ID,
@@ -52,6 +53,16 @@ const personCompanyField = getFlatFieldMetadataMock({
   relationTargetObjectMetadataId: COMPANY_OBJECT_ID,
 });
 
+const companyNameField = getFlatFieldMetadataMock({
+  id: COMPANY_NAME_FIELD_ID,
+  universalIdentifier: 'company-name-field-ui',
+  objectMetadataId: COMPANY_OBJECT_ID,
+  type: FieldMetadataType.TEXT,
+  name: 'name',
+  label: 'Name',
+  settings: null,
+});
+
 const buildFlatFieldMetadataMaps = (
   fields: FlatFieldMetadata[],
 ): FlatEntityMaps<FlatFieldMetadata> => ({
@@ -68,6 +79,7 @@ const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
   peopleField,
   ownedOpportunitiesField,
   personCompanyField,
+  companyNameField,
 ]);
 
 const buildFieldConfiguration = (
@@ -144,16 +156,29 @@ describe('validateFieldConfigurationNestedRelationOrThrow', () => {
     ).toThrow(/not found/);
   });
 
-  it('should throw when the source field is not a one-to-many relation', () => {
+  it('should pass for a valid many-to-one first hop chain', () => {
     expect(() =>
       validateFieldConfigurationNestedRelationOrThrow({
         widgetConfiguration: buildFieldConfiguration({
           fieldMetadataId: PERSON_COMPANY_FIELD_ID,
+          nestedRelationFieldMetadataId: PEOPLE_FIELD_ID,
         }),
         widgetObjectMetadataId: PERSON_OBJECT_ID,
         flatFieldMetadataMaps,
       }),
-    ).toThrow(/one-to-many/);
+    ).not.toThrow();
+  });
+
+  it('should throw when the source field is not a relation', () => {
+    expect(() =>
+      validateFieldConfigurationNestedRelationOrThrow({
+        widgetConfiguration: buildFieldConfiguration({
+          fieldMetadataId: COMPANY_NAME_FIELD_ID,
+        }),
+        widgetObjectMetadataId: COMPANY_OBJECT_ID,
+        flatFieldMetadataMaps,
+      }),
+    ).toThrow(/one-to-many or many-to-one/);
   });
 
   it('should throw when the source field belongs to another object', () => {
@@ -188,6 +213,35 @@ describe('validateFieldConfigurationNestedRelationOrThrow', () => {
         flatFieldMetadataMaps,
       }),
     ).toThrow(/one-to-many/);
+  });
+
+  it('should throw when the source field is a junction many-to-one relation', () => {
+    const junctionSourceField = getFlatFieldMetadataMock({
+      id: 'company-junction-source-field-id',
+      universalIdentifier: 'company-junction-source-field-ui',
+      objectMetadataId: COMPANY_OBJECT_ID,
+      type: FieldMetadataType.RELATION,
+      name: 'primaryAgreement',
+      label: 'Primary agreement',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        junctionTargetFieldId: 'junction-target-field-id',
+      },
+      relationTargetObjectMetadataId: PERSON_OBJECT_ID,
+    });
+
+    expect(() =>
+      validateFieldConfigurationNestedRelationOrThrow({
+        widgetConfiguration: buildFieldConfiguration({
+          fieldMetadataId: junctionSourceField.id,
+        }),
+        widgetObjectMetadataId: COMPANY_OBJECT_ID,
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          junctionSourceField,
+          ownedOpportunitiesField,
+        ]),
+      }),
+    ).toThrow(/one-to-many or many-to-one/);
   });
 
   it('should throw when the nested field is a junction relation', () => {

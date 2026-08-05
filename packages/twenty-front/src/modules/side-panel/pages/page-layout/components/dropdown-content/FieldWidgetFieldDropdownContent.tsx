@@ -2,7 +2,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
-import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
+import { isFieldWidgetEligibleNestedParentField } from '@/page-layout/widgets/field/utils/isFieldWidgetEligibleNestedParentField';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { useResolveFieldWidgetRelationTableViewIdChange } from '@/page-layout/widgets/record-table/hooks/useResolveFieldWidgetRelationTableViewIdChange';
@@ -131,7 +131,7 @@ export const FieldWidgetFieldDropdownContent = () => {
     const candidatesByFieldId = new Map<string, FieldMetadataItem[]>();
 
     for (const fieldMetadataItem of allFieldWidgetFieldMetadataItems) {
-      if (!isPlainOneToManyRelationField(fieldMetadataItem)) {
+      if (!isFieldWidgetEligibleNestedParentField(fieldMetadataItem)) {
         continue;
       }
 

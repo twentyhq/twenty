@@ -3,6 +3,7 @@ import { type FieldRelationMetadata } from '@/object-record/record-field/ui/type
 import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { isNonEmptyString } from '@sniptt/guards';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
+import { RelationType } from '~/generated-metadata/graphql';
 
 export const getFieldWidgetNestedRelationCreateThrough = ({
   fieldRelationMetadata,
@@ -13,6 +14,14 @@ export const getFieldWidgetNestedRelationCreateThrough = ({
   nestedRelationFieldMetadataItem: FieldMetadataItem;
   recordId: string;
 }): RecordTableWidgetNestedRelationCreateThrough | undefined => {
+  // Only a one-to-many first hop leaves the record to create through
+  // ambiguous. A many-to-one first hop points at a single intermediate
+  // record, so the created record's join column is prefilled from the
+  // seeded direct filter instead of a picker.
+  if (fieldRelationMetadata.relationType !== RelationType.ONE_TO_MANY) {
+    return undefined;
+  }
+
   const relationInverseFieldName =
     fieldRelationMetadata.targetFieldMetadataName;
   const nestedRelationInverseFieldName =

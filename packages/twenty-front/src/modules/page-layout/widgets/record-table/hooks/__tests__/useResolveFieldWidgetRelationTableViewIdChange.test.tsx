@@ -24,6 +24,14 @@ const personOpportunitiesField = personObjectMetadataItem.fields.find(
   (field) => field.name === 'pointOfContactForOpportunities',
 );
 
+const personCompanyField = personObjectMetadataItem.fields.find(
+  (field) => field.name === 'company',
+);
+
+const companyOpportunitiesField = companyObjectMetadataItem.fields.find(
+  (field) => field.name === 'opportunities',
+);
+
 const getWrapper =
   (store: ReturnType<typeof createStore>) =>
   ({ children }: { children: ReactNode }) => (
@@ -74,6 +82,44 @@ describe('useResolveFieldWidgetRelationTableViewIdChange', () => {
     expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
       opportunityObjectMetadataItem.id,
     );
+  });
+
+  it('should regenerate a view for a many-to-one first hop chain', () => {
+    const { result, store } = renderResolveHook();
+
+    let change: { viewId?: string | null } | undefined;
+
+    act(() => {
+      change = result.current.resolveFieldWidgetRelationTableViewIdChange({
+        selectedField: personCompanyField,
+        selectedNestedField: companyOpportunitiesField,
+        nextDisplayMode: FieldDisplayMode.TABLE,
+        isSelectingDifferentChain: true,
+        widgetId: WIDGET_ID,
+        currentViewId: undefined,
+      });
+    });
+
+    expect(change?.viewId).toBeDefined();
+
+    const draft = store.get(
+      recordTableWidgetViewDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_ID,
+      }),
+    );
+
+    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+      opportunityObjectMetadataItem.id,
+    );
+    // The intermediate is the single record the current record points at, so
+    // the seeded filter carries no relation traversal.
+    expect(draft[WIDGET_ID].viewFilters).toEqual([
+      expect.objectContaining({
+        fieldMetadataId:
+          companyOpportunitiesField?.relation?.targetFieldMetadata.id,
+        relationTargetFieldMetadataId: null,
+      }),
+    ]);
   });
 
   it('should regenerate a missing view even when the chain is unchanged', () => {
