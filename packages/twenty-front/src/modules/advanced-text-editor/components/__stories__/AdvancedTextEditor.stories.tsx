@@ -4,7 +4,7 @@ import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/Adv
 import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -107,6 +107,7 @@ export const WithContent: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -162,6 +163,7 @@ export const WithHeadings: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'heading',
@@ -200,6 +202,7 @@ export const WithLinks: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -235,6 +238,7 @@ export const WithVariableTags: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -268,6 +272,7 @@ export const ReadOnly: Story = {
     readonly: true,
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -324,6 +329,7 @@ export const WithLists: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'heading',

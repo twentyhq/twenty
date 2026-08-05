@@ -4,6 +4,7 @@ import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-edit
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -39,6 +40,7 @@ const DEFAULT_PROPS = {
 
 const RICH_CONTENT_VALUE = JSON.stringify({
   type: 'doc',
+  attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
   content: [
     {
       type: 'heading',
@@ -250,6 +252,7 @@ export const WithLongContent: Story = {
     label: 'Field with Long Content',
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: Array.from({ length: 20 }, (_, i) => ({
         type: 'paragraph',
         content: [
