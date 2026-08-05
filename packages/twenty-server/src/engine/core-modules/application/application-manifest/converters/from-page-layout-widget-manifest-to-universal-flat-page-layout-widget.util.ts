@@ -1,47 +1,12 @@
-import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
-import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import {
-  PageLayoutTabLayoutMode,
-  type GridPosition,
-  type PageLayoutWidgetPosition,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+  getPageLayoutWidgetManifestGridPosition,
+  getPageLayoutWidgetManifestPosition,
+  type PageLayoutWidgetManifest,
+} from 'twenty-shared/application';
+import { type PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
-
-const getPageLayoutWidgetPosition = ({
-  pageLayoutWidgetManifest,
-  pageLayoutTabLayoutMode,
-  gridPosition,
-  widgetIndex,
-}: {
-  pageLayoutWidgetManifest: PageLayoutWidgetManifest;
-  pageLayoutTabLayoutMode: PageLayoutTabLayoutMode;
-  gridPosition: GridPosition;
-  widgetIndex: number;
-}): PageLayoutWidgetPosition => {
-  if (isDefined(pageLayoutWidgetManifest.position)) {
-    return pageLayoutWidgetManifest.position;
-  }
-
-  switch (pageLayoutTabLayoutMode) {
-    case PageLayoutTabLayoutMode.VERTICAL_LIST:
-      return {
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-        index: widgetIndex,
-      };
-    case PageLayoutTabLayoutMode.CANVAS:
-      return {
-        layoutMode: PageLayoutTabLayoutMode.CANVAS,
-      };
-    case PageLayoutTabLayoutMode.GRID:
-      return {
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        ...gridPosition,
-      };
-  }
-};
 
 export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   pageLayoutWidgetManifest,
@@ -58,13 +23,6 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatPageLayoutWidget => {
-  const gridPosition = pageLayoutWidgetManifest.gridPosition ?? {
-    row: 0,
-    column: 0,
-    rowSpan: DEFAULT_WIDGET_SIZE.default.h,
-    columnSpan: DEFAULT_WIDGET_SIZE.default.w,
-  };
-
   return {
     universalIdentifier: pageLayoutWidgetManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -76,11 +34,12 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,
-    gridPosition,
-    position: getPageLayoutWidgetPosition({
+    gridPosition: getPageLayoutWidgetManifestGridPosition(
+      pageLayoutWidgetManifest,
+    ),
+    position: getPageLayoutWidgetManifestPosition({
       pageLayoutWidgetManifest,
       pageLayoutTabLayoutMode,
-      gridPosition,
       widgetIndex,
     }),
     universalConfiguration:

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  getPageLayoutTabManifestLayoutMode,
   type Manifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
@@ -23,7 +24,6 @@ import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
-import { getPageLayoutTabManifestLayoutMode } from 'src/engine/core-modules/application/application-manifest/converters/get-page-layout-tab-manifest-layout-mode.util';
 import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';

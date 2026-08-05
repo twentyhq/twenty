@@ -1,9 +1,9 @@
 import {
+  getPageLayoutTabManifestLayoutMode,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
 } from 'twenty-shared/application';
 
-import { getPageLayoutTabManifestLayoutMode } from 'src/engine/core-modules/application/application-manifest/converters/get-page-layout-tab-manifest-layout-mode.util';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 
 export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({

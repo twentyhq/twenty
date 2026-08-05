@@ -1,14 +1,14 @@
 import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
-} from 'twenty-shared/application';
-import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
+} from '@/application/pageLayoutManifestType';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '@/types';
 
 export const getPageLayoutTabManifestLayoutMode = ({
   pageLayoutTabManifest,
   pageLayoutType,
 }: {
-  pageLayoutTabManifest: PageLayoutTabManifest;
+  pageLayoutTabManifest: Pick<PageLayoutTabManifest, 'layoutMode'>;
   pageLayoutType: PageLayoutManifest['type'] | undefined;
 }): PageLayoutTabLayoutMode =>
   pageLayoutTabManifest.layoutMode ??

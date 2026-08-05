@@ -149,6 +149,9 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export { getPageLayoutTabManifestLayoutMode } from './utils/get-page-layout-tab-manifest-layout-mode.util';
+export { getPageLayoutWidgetManifestGridPosition } from './utils/get-page-layout-widget-manifest-grid-position.util';
+export { getPageLayoutWidgetManifestPosition } from './utils/get-page-layout-widget-manifest-position.util';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,
