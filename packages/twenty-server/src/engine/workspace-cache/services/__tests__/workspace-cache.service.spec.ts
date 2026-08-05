@@ -714,10 +714,13 @@ describe('WorkspaceCacheService', () => {
         service as unknown as { localCache: Map<string, unknown> }
       ).localCache;
       const ormBudget = 128;
+      const overflow = 5;
       const workspaceId = (index: number) =>
         `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
 
-      for (let index = 0; index <= ormBudget; index += 1) {
+      // Write well past the budget so eviction fires across several rounds — this only
+      // holds at ormBudget if the per-provider count stays consistent as entries are dropped.
+      for (let index = 0; index < ormBudget + overflow; index += 1) {
         await service.getOrRecompute(workspaceId(index), [
           'ORMEntityMetadatas',
         ]);
@@ -729,11 +732,16 @@ describe('WorkspaceCacheService', () => {
       );
 
       expect(ormKeys.length).toBe(ormBudget);
-      expect(localCache.has(`orm:entity-metadatas:${workspaceId(0)}`)).toBe(
-        false,
-      );
+      // The first `overflow` workspaces (least-recently-read) were evicted; the newest is kept.
+      for (let index = 0; index < overflow; index += 1) {
+        expect(
+          localCache.has(`orm:entity-metadatas:${workspaceId(index)}`),
+        ).toBe(false);
+      }
       expect(
-        localCache.has(`orm:entity-metadatas:${workspaceId(ormBudget)}`),
+        localCache.has(
+          `orm:entity-metadatas:${workspaceId(ormBudget + overflow - 1)}`,
+        ),
       ).toBe(true);
     });
   });

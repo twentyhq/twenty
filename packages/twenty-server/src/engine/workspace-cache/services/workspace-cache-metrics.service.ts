@@ -155,10 +155,7 @@ export class WorkspaceCacheMetricsService {
 
       stats.count += 1;
 
-      if (
-        stats.sampled < SIZE_SAMPLE_PER_PROVIDER &&
-        entry.versions.size > 0
-      ) {
+      if (stats.sampled < SIZE_SAMPLE_PER_PROVIDER && entry.versions.size > 0) {
         // Size every retained version, not just the latest — stale versions still occupy heap.
         let entryBytes = 0;
 

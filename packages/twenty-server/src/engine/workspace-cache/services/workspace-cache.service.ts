@@ -76,6 +76,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     string,
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
+  // Per-provider entry count, so the over-budget check is O(1) instead of a full-cache scan.
+  private readonly localEntryCountByProvider = new Map<string, number>();
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType>
@@ -609,6 +611,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     if (!isDefined(entry)) {
       entry = { versions: new Map(), latestHash: '', lastHashCheckedAt: 0 };
       this.localCache.set(localKey, entry);
+
+      const prefix = WORKSPACE_CACHE_KEYS_V2[keyName];
+
+      this.localEntryCountByProvider.set(
+        prefix,
+        (this.localEntryCountByProvider.get(prefix) ?? 0) + 1,
+      );
     }
 
     entry.versions.set(hash, { data, lastReadAt: Date.now() });
@@ -629,7 +638,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const prefix = WORKSPACE_CACHE_KEYS_V2[writtenKeyName];
     const providerCap = LOCAL_ENTRY_COUNT_BY_PREFIX.get(prefix);
 
-    if (isDefined(providerCap)) {
+    if (
+      isDefined(providerCap) &&
+      (this.localEntryCountByProvider.get(prefix) ?? 0) > providerCap
+    ) {
       this.evictLeastRecentlyRead(
         (key) => key.slice(0, key.lastIndexOf(':')) === prefix,
         providerCap,
@@ -645,14 +657,20 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  // Only called once a cheap count check says we are over budget, so the O(n) scan and
+  // sort here are paid only when an eviction is actually going to happen.
   private evictLeastRecentlyRead(
     matches: (key: string) => boolean,
     maxEntries: number,
     minEvict = 0,
   ): void {
-    const matching = [...this.localCache.entries()].filter(([key]) =>
-      matches(key),
-    );
+    const matching: [string, WorkspaceLocalCacheEntry<CacheDataType>][] = [];
+
+    for (const keyEntry of this.localCache) {
+      if (matches(keyEntry[0])) {
+        matching.push(keyEntry);
+      }
+    }
 
     if (matching.length <= maxEntries) {
       return;
@@ -668,7 +686,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
 
     for (let index = 0; index < evictCount; index += 1) {
-      this.localCache.delete(matching[index][0]);
+      const key = matching[index][0];
+
+      this.localCache.delete(key);
+
+      const prefix = key.slice(0, key.lastIndexOf(':'));
+
+      this.localEntryCountByProvider.set(
+        prefix,
+        Math.max(0, (this.localEntryCountByProvider.get(prefix) ?? 0) - 1),
+      );
     }
 
     this.cacheMetricsService.recordEviction(evictCount);
