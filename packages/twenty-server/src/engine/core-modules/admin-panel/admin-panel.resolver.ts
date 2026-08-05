@@ -45,6 +45,7 @@ import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
 import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel/services/admin-panel-signing-key.service';
 import { AdminPanelServerAdminService } from 'src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service';
@@ -128,6 +129,7 @@ export class AdminPanelResolver {
     private readonly adminStatisticsService: AdminPanelStatisticsService,
     private readonly adminBillingService: AdminPanelBillingService,
     private readonly adminChatService: AdminPanelChatService,
+    private readonly adminGlobalChatThreadsService: AdminPanelGlobalChatThreadsService,
     private readonly adminConfigService: AdminPanelConfigService,
     private readonly adminVersionService: AdminPanelVersionService,
     private readonly adminPanelHealthService: AdminPanelHealthService,
@@ -841,7 +843,7 @@ export class AdminPanelResolver {
     @Args('searchTerm', { type: () => String, nullable: true })
     searchTerm?: string | null,
   ): Promise<PaginatedAdminChatThreadsDTO> {
-    return this.adminChatService.getGlobalChatThreads({
+    return this.adminGlobalChatThreadsService.getGlobalChatThreads({
       scope: scope ?? AdminChatThreadScope.ONBOARDING,
       hasErrorOnly: hasErrorOnly ?? false,
       userNeverEngagedOnly: userNeverEngagedOnly ?? false,
