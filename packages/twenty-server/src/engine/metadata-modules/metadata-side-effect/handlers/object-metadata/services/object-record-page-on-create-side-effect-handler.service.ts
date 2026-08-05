@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
-import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
-import { computeDefaultRecordPageViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-record-page-view-field-position-by-field-universal-identifier.util';
+import { computeSystemViewFieldsForCreatedObjectView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-for-created-object-view.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
@@ -31,53 +28,20 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
     const sourceFlatObjectMetadata =
       flatObjectMetadata as UniversalFlatObjectMetadata;
-    const { applicationUniversalIdentifier, universalIdentifier } =
-      sourceFlatObjectMetadata;
+    const { applicationUniversalIdentifier } = sourceFlatObjectMetadata;
 
     const flatRecordPageViewToCreate = computeFlatRecordPageFieldsViewToCreate({
       objectMetadata: sourceFlatObjectMetadata,
       applicationUniversalIdentifier,
     });
 
-    const systemFlatFieldMetadatas = Object.values(
-      buildReservedSystemFlatFieldMetadatasForCustomObject({
-        flatObjectMetadata: {
-          applicationUniversalIdentifier,
-          universalIdentifier,
-        },
-      }),
-    );
-
-    const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
-      objectMetadataUniversalIdentifier: universalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-      allFlatEntityOperationRecordByMetadataName,
-    });
-
-    const positionByFieldUniversalIdentifier =
-      computeDefaultRecordPageViewFieldPositionByFieldUniversalIdentifier({
-        applicationUniversalIdentifier,
-        objectMetadataUniversalIdentifier: universalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-        callerFlatFieldMetadatas,
+    const { flatViewFieldsToCreate } =
+      computeSystemViewFieldsForCreatedObjectView({
+        sourceFlatObjectMetadata,
+        viewUniversalIdentifier: flatRecordPageViewToCreate.universalIdentifier,
+        allFlatEntityOperationRecordByMetadataName,
+        labelIdentifierPolicy: 'excluded',
       });
-
-    const flatViewFieldsToCreate = computeFlatViewFieldsToCreate({
-      objectFlatFieldMetadatas: systemFlatFieldMetadatas,
-      viewUniversalIdentifier: flatRecordPageViewToCreate.universalIdentifier,
-      applicationUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-      excludeLabelIdentifier: true,
-    }).map((flatViewFieldToCreate) => ({
-      ...flatViewFieldToCreate,
-      position:
-        positionByFieldUniversalIdentifier.get(
-          flatViewFieldToCreate.fieldMetadataUniversalIdentifier,
-        ) ?? flatViewFieldToCreate.position,
-    }));
 
     const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
       computeFlatDefaultRecordPageLayoutToCreate({
