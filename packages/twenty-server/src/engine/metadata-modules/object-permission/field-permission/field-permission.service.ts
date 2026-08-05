@@ -166,13 +166,21 @@ export class FieldPermissionService {
       );
 
       if (!isDefined(current)) {
+        const canReadFieldValue = desired.canReadFieldValue ?? null;
+        const canUpdateFieldValue = desired.canUpdateFieldValue ?? null;
+
+        // A row with no restriction left grants nothing: creating it would only add noise
+        if (!isDefined(canReadFieldValue) && !isDefined(canUpdateFieldValue)) {
+          continue;
+        }
+
         flatEntityToCreate.push(
           fromCreateFieldPermissionInputToUniversalFlatFieldPermission({
             fieldPermissionInput: {
               objectMetadataId: desired.objectMetadataId,
               fieldMetadataId: desired.fieldMetadataId,
-              canReadFieldValue: desired.canReadFieldValue ?? null,
-              canUpdateFieldValue: desired.canUpdateFieldValue ?? null,
+              canReadFieldValue,
+              canUpdateFieldValue,
             },
             roleId: input.roleId,
             flatApplication: workspaceCustomFlatApplication,
@@ -190,6 +198,27 @@ export class FieldPermissionService {
           desired.canUpdateFieldValue !== undefined
             ? desired.canUpdateFieldValue
             : current.canUpdateFieldValue;
+
+        // Once both flags are cleared the row no longer restricts anything: delete it
+        // instead of keeping an empty row (mirrored relation permissions land here on grant-back)
+        if (!isDefined(effectiveCanRead) && !isDefined(effectiveCanUpdate)) {
+          flatEntityToDelete.push({
+            universalIdentifier: current.universalIdentifier,
+            applicationUniversalIdentifier:
+              current.applicationUniversalIdentifier,
+            roleUniversalIdentifier: current.roleUniversalIdentifier,
+            objectMetadataUniversalIdentifier:
+              current.objectMetadataUniversalIdentifier,
+            fieldMetadataUniversalIdentifier:
+              current.fieldMetadataUniversalIdentifier,
+            canReadFieldValue: current.canReadFieldValue ?? undefined,
+            canUpdateFieldValue: current.canUpdateFieldValue ?? undefined,
+            createdAt: current.createdAt,
+            updatedAt: current.updatedAt,
+          });
+          continue;
+        }
+
         const changed =
           effectiveCanRead !== current.canReadFieldValue ||
           effectiveCanUpdate !== current.canUpdateFieldValue;
@@ -476,11 +505,24 @@ export class FieldPermissionService {
         continue;
       }
 
+      // Restricting a relation field mirrors the restriction onto the inverse
+      // field, so clearing it must mirror the clear as well: null propagates
+      // (clears the flag on the inverse side) while undefined leaves it as is.
+      // Otherwise the mirrored row survives as an orphan that keeps blocking
+      // updates on the relation's join column after the admin granted the field back.
+      const sourceIsCleared =
+        !isDefined(fieldPermission.canReadFieldValue) &&
+        !isDefined(fieldPermission.canUpdateFieldValue);
+
       desiredMap.set(targetKey, {
         objectMetadataId: targetObjectId,
         fieldMetadataId: targetFieldId,
-        canReadFieldValue: fieldPermission.canReadFieldValue ?? undefined,
-        canUpdateFieldValue: fieldPermission.canUpdateFieldValue ?? undefined,
+        canReadFieldValue: sourceIsCleared
+          ? null
+          : fieldPermission.canReadFieldValue,
+        canUpdateFieldValue: sourceIsCleared
+          ? null
+          : fieldPermission.canUpdateFieldValue,
       });
     }
   }

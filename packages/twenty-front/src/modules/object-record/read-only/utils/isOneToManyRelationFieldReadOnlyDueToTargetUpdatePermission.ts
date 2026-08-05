@@ -37,7 +37,20 @@ export const isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission = ({
       relationObjectMetadataId,
     );
 
-    return relationObjectPermissions.canUpdateObjectRecords === false;
+    if (relationObjectPermissions.canUpdateObjectRecords === false) {
+      return true;
+    }
+
+    // Attaching or detaching writes the join column owned by the inverse
+    // many-to-one field, so a field-level restriction there blocks the edit
+    const inverseRelationFieldMetadataId =
+      fieldDefinition.metadata.relationFieldMetadataId;
+
+    return (
+      isNonEmptyString(inverseRelationFieldMetadataId) &&
+      relationObjectPermissions.restrictedFields[inverseRelationFieldMetadataId]
+        ?.canUpdate === false
+    );
   }
 
   if (isFieldMorphRelationOneToMany(fieldDefinition)) {

@@ -7,6 +7,10 @@ const buildObjectPermissionsMap = (opts: {
   sourceId: string;
   targetId: string;
   targetCanUpdate: boolean;
+  targetRestrictedFields?: Record<
+    string,
+    { canRead: boolean | null; canUpdate: boolean | null }
+  >;
 }) => ({
   [opts.sourceId]: {
     objectMetadataId: opts.sourceId,
@@ -24,7 +28,7 @@ const buildObjectPermissionsMap = (opts: {
     canUpdateObjectRecords: opts.targetCanUpdate,
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: true,
-    restrictedFields: {},
+    restrictedFields: opts.targetRestrictedFields ?? {},
     rowLevelPermissionPredicates: [],
     rowLevelPermissionPredicateGroups: [],
   },
@@ -75,6 +79,38 @@ describe('isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission', () => {
           sourceId: sourceObjectMetadataId,
           targetId: targetObjectMetadataId,
           targetCanUpdate: true,
+        }),
+      }),
+    ).toBe(false);
+  });
+
+  it('should return true when the inverse relation field on the related object is update-restricted', () => {
+    expect(
+      isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission({
+        fieldDefinition: oneToManyFieldDefinition,
+        objectPermissionsByObjectMetadataId: buildObjectPermissionsMap({
+          sourceId: sourceObjectMetadataId,
+          targetId: targetObjectMetadataId,
+          targetCanUpdate: true,
+          targetRestrictedFields: {
+            'target-field': { canRead: null, canUpdate: false },
+          },
+        }),
+      }),
+    ).toBe(true);
+  });
+
+  it('should return false when only unrelated fields on the related object are update-restricted', () => {
+    expect(
+      isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission({
+        fieldDefinition: oneToManyFieldDefinition,
+        objectPermissionsByObjectMetadataId: buildObjectPermissionsMap({
+          sourceId: sourceObjectMetadataId,
+          targetId: targetObjectMetadataId,
+          targetCanUpdate: true,
+          targetRestrictedFields: {
+            'some-other-field': { canRead: null, canUpdate: false },
+          },
         }),
       }),
     ).toBe(false);
