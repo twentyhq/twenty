@@ -201,7 +201,6 @@ export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
-  EMAIL_DOCUMENT_MARK_TYPES,
   EMAIL_DOCUMENT_MARK_CATALOG,
   isEmailDocumentMarkType,
 } from './tiptap/email-document-mark-catalog';
@@ -210,7 +209,6 @@ export type {
   RenderedEmailDocumentNodeType,
 } from './tiptap/email-document-node-catalog';
 export {
-  EMAIL_DOCUMENT_NODE_TYPES,
   EMAIL_DOCUMENT_NODE_CATALOG,
   isEmailDocumentNodeType,
   isRenderedEmailDocumentNodeType,

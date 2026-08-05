@@ -1,10 +1,10 @@
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import {
-  EMAIL_DOCUMENT_MARK_TYPES,
   type EmailDocumentMarkType,
   isEmailDocumentMarkType,
   type TipTapMark,
+  TIPTAP_MARK_TYPES,
   TIPTAP_MARKS_RENDER_ORDER,
 } from 'twenty-shared/utils';
 import { bold } from '@/utils/email-renderer/marks/bold';
@@ -14,11 +14,11 @@ import { strike } from '@/utils/email-renderer/marks/strike';
 import { underline } from '@/utils/email-renderer/marks/underline';
 
 const MARK_RENDERERS = {
-  [EMAIL_DOCUMENT_MARK_TYPES.BOLD]: bold,
-  [EMAIL_DOCUMENT_MARK_TYPES.ITALIC]: italic,
-  [EMAIL_DOCUMENT_MARK_TYPES.UNDERLINE]: underline,
-  [EMAIL_DOCUMENT_MARK_TYPES.STRIKE]: strike,
-  [EMAIL_DOCUMENT_MARK_TYPES.LINK]: link,
+  [TIPTAP_MARK_TYPES.BOLD]: bold,
+  [TIPTAP_MARK_TYPES.ITALIC]: italic,
+  [TIPTAP_MARK_TYPES.UNDERLINE]: underline,
+  [TIPTAP_MARK_TYPES.STRIKE]: strike,
+  [TIPTAP_MARK_TYPES.LINK]: link,
 } as const satisfies Record<
   EmailDocumentMarkType,
   (mark: TipTapMark, children: ReactNode) => ReactNode

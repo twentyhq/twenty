@@ -16,8 +16,8 @@ import { type JSONContent } from '@tiptap/core';
 import { Fragment, type JSX, type ReactNode } from 'react';
 import { type InheritedTypography } from 'src/utils/email-renderer/utils/inherited-typography';
 import {
-  EMAIL_DOCUMENT_NODE_TYPES,
   isRenderedEmailDocumentNodeType,
+  TIPTAP_NODE_TYPES,
   type RenderedEmailDocumentNodeType,
 } from 'twenty-shared/utils';
 
@@ -27,20 +27,20 @@ type EmailNodeRenderer = (
 ) => ReactNode;
 
 const NODE_RENDERERS = {
-  [EMAIL_DOCUMENT_NODE_TYPES.PARAGRAPH]: paragraph,
-  [EMAIL_DOCUMENT_NODE_TYPES.TEXT]: text,
-  [EMAIL_DOCUMENT_NODE_TYPES.HEADING]: heading,
-  [EMAIL_DOCUMENT_NODE_TYPES.VARIABLE_TAG]: variableTag,
-  [EMAIL_DOCUMENT_NODE_TYPES.IMAGE]: image,
-  [EMAIL_DOCUMENT_NODE_TYPES.BULLET_LIST]: bulletList,
-  [EMAIL_DOCUMENT_NODE_TYPES.ORDERED_LIST]: orderedList,
-  [EMAIL_DOCUMENT_NODE_TYPES.LIST_ITEM]: listItem,
-  [EMAIL_DOCUMENT_NODE_TYPES.HARD_BREAK]: hardBreak,
-  [EMAIL_DOCUMENT_NODE_TYPES.SECTION]: section,
-  [EMAIL_DOCUMENT_NODE_TYPES.COLUMNS]: columns,
-  [EMAIL_DOCUMENT_NODE_TYPES.BUTTON]: button,
-  [EMAIL_DOCUMENT_NODE_TYPES.DIVIDER]: divider,
-  [EMAIL_DOCUMENT_NODE_TYPES.HTML]: html,
+  [TIPTAP_NODE_TYPES.PARAGRAPH]: paragraph,
+  [TIPTAP_NODE_TYPES.TEXT]: text,
+  [TIPTAP_NODE_TYPES.HEADING]: heading,
+  [TIPTAP_NODE_TYPES.VARIABLE_TAG]: variableTag,
+  [TIPTAP_NODE_TYPES.IMAGE]: image,
+  [TIPTAP_NODE_TYPES.BULLET_LIST]: bulletList,
+  [TIPTAP_NODE_TYPES.ORDERED_LIST]: orderedList,
+  [TIPTAP_NODE_TYPES.LIST_ITEM]: listItem,
+  [TIPTAP_NODE_TYPES.HARD_BREAK]: hardBreak,
+  [TIPTAP_NODE_TYPES.SECTION]: section,
+  [TIPTAP_NODE_TYPES.COLUMNS]: columns,
+  [TIPTAP_NODE_TYPES.BUTTON]: button,
+  [TIPTAP_NODE_TYPES.DIVIDER]: divider,
+  [TIPTAP_NODE_TYPES.HTML]: html,
 } satisfies Record<RenderedEmailDocumentNodeType, EmailNodeRenderer>;
 
 const renderNode = (

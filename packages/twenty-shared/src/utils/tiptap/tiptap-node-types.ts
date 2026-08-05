@@ -1,4 +1,5 @@
 export const TIPTAP_NODE_TYPES = {
+  DOCUMENT: 'doc',
   PARAGRAPH: 'paragraph',
   TEXT: 'text',
   HEADING: 'heading',

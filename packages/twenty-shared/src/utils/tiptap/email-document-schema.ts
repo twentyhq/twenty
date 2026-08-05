@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-import { EMAIL_DOCUMENT_MARK_TYPES } from './email-document-mark-catalog';
 import { type EmailDocumentNode } from './email-document-node';
-import { EMAIL_DOCUMENT_NODE_TYPES } from './email-document-node-catalog';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
+import { TIPTAP_MARK_TYPES } from './tiptap-mark-types';
+import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
 const styleAttributeSchema = z
   .record(
@@ -16,29 +16,29 @@ const styleAttributeSchema = z
   .optional();
 
 const markSchema = z.discriminatedUnion('type', [
-  z.looseObject({ type: z.literal(EMAIL_DOCUMENT_MARK_TYPES.BOLD) }),
-  z.looseObject({ type: z.literal(EMAIL_DOCUMENT_MARK_TYPES.ITALIC) }),
-  z.looseObject({ type: z.literal(EMAIL_DOCUMENT_MARK_TYPES.UNDERLINE) }),
-  z.looseObject({ type: z.literal(EMAIL_DOCUMENT_MARK_TYPES.STRIKE) }),
+  z.looseObject({ type: z.literal(TIPTAP_MARK_TYPES.BOLD) }),
+  z.looseObject({ type: z.literal(TIPTAP_MARK_TYPES.ITALIC) }),
+  z.looseObject({ type: z.literal(TIPTAP_MARK_TYPES.UNDERLINE) }),
+  z.looseObject({ type: z.literal(TIPTAP_MARK_TYPES.STRIKE) }),
   z.looseObject({
-    type: z.literal(EMAIL_DOCUMENT_MARK_TYPES.LINK),
+    type: z.literal(TIPTAP_MARK_TYPES.LINK),
     attrs: z.looseObject({ href: z.string().max(4_000) }).optional(),
   }),
 ]);
 
 const textNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.TEXT),
+  type: z.literal(TIPTAP_NODE_TYPES.TEXT),
   text: z.string().min(1),
   marks: z.array(markSchema).optional(),
 });
 
 const variableTagNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.VARIABLE_TAG),
+  type: z.literal(TIPTAP_NODE_TYPES.VARIABLE_TAG),
   attrs: z.looseObject({ variable: z.string().nullable() }),
 });
 
 const hardBreakNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.HARD_BREAK),
+  type: z.literal(TIPTAP_NODE_TYPES.HARD_BREAK),
 });
 
 const inlineNodeSchema = z.discriminatedUnion('type', [
@@ -52,13 +52,13 @@ const blockContentSchema = z.array(
 );
 
 const paragraphNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.PARAGRAPH),
+  type: z.literal(TIPTAP_NODE_TYPES.PARAGRAPH),
   attrs: z.looseObject({}).optional(),
   content: z.array(inlineNodeSchema).optional(),
 });
 
 const headingNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.HEADING),
+  type: z.literal(TIPTAP_NODE_TYPES.HEADING),
   attrs: z.looseObject({
     level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   }),
@@ -66,25 +66,25 @@ const headingNodeSchema = z.looseObject({
 });
 
 const listItemNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.LIST_ITEM),
+  type: z.literal(TIPTAP_NODE_TYPES.LIST_ITEM),
   attrs: z.looseObject({}).optional(),
   content: blockContentSchema.min(1),
 });
 
 const bulletListNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.BULLET_LIST),
+  type: z.literal(TIPTAP_NODE_TYPES.BULLET_LIST),
   attrs: z.looseObject({}).optional(),
   content: z.array(listItemNodeSchema).min(1),
 });
 
 const orderedListNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.ORDERED_LIST),
+  type: z.literal(TIPTAP_NODE_TYPES.ORDERED_LIST),
   attrs: z.looseObject({}).optional(),
   content: z.array(listItemNodeSchema).min(1),
 });
 
 const imageNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.IMAGE),
+  type: z.literal(TIPTAP_NODE_TYPES.IMAGE),
   attrs: z.looseObject({
     fileId: z.uuid().nullable().optional(),
     src: z.string().max(4_000),
@@ -97,25 +97,25 @@ const imageNodeSchema = z.looseObject({
 });
 
 const sectionNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.SECTION),
+  type: z.literal(TIPTAP_NODE_TYPES.SECTION),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: blockContentSchema.min(1),
 });
 
 const columnNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.COLUMN),
+  type: z.literal(TIPTAP_NODE_TYPES.COLUMN),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: blockContentSchema.min(1),
 });
 
 const columnsNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.COLUMNS),
+  type: z.literal(TIPTAP_NODE_TYPES.COLUMNS),
   attrs: z.looseObject({ style: styleAttributeSchema }),
   content: z.array(columnNodeSchema).min(2).max(4),
 });
 
 const buttonNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.BUTTON),
+  type: z.literal(TIPTAP_NODE_TYPES.BUTTON),
   attrs: z.looseObject({
     href: z.string().max(4_000).nullable(),
     style: styleAttributeSchema,
@@ -123,7 +123,7 @@ const buttonNodeSchema = z.looseObject({
   content: z
     .array(
       z.looseObject({
-        type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.TEXT),
+        type: z.literal(TIPTAP_NODE_TYPES.TEXT),
         text: z.string().min(1),
       }),
     )
@@ -131,12 +131,12 @@ const buttonNodeSchema = z.looseObject({
 });
 
 const dividerNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.DIVIDER),
+  type: z.literal(TIPTAP_NODE_TYPES.DIVIDER),
   attrs: z.looseObject({ style: styleAttributeSchema }),
 });
 
 const htmlNodeSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.HTML),
+  type: z.literal(TIPTAP_NODE_TYPES.HTML),
   attrs: z.looseObject({ html: z.string().max(100_000) }),
 });
 
@@ -167,7 +167,7 @@ const canvasThemeAttributeSchema = z.looseObject({
 });
 
 export const emailDocumentSchema = z.looseObject({
-  type: z.literal(EMAIL_DOCUMENT_NODE_TYPES.DOCUMENT),
+  type: z.literal(TIPTAP_NODE_TYPES.DOCUMENT),
   attrs: z
     .looseObject({
       schemaVersion: z

@@ -4,10 +4,8 @@ import {
   createColumnBlockContent,
   createParagraphBlockContent,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockContent';
-import {
-  getAdvancedTextEditorContainerAppearanceSettings,
-  getAdvancedTextEditorTypographySettings,
-} from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSettingGroups';
+import { getAdvancedTextEditorContainerAppearanceSettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings';
+import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings';
 import { ButtonNode } from '@/advanced-text-editor/extensions/blocks/ButtonNode';
 import { ColumnNode } from '@/advanced-text-editor/extensions/blocks/ColumnNode';
 import { ColumnsNode } from '@/advanced-text-editor/extensions/blocks/ColumnsNode';
