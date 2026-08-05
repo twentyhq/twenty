@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 
-const buildMentionBody = (overrides: Record<string, unknown> = {}) => ({
+const buildMentionBody = (
+  eventOverrides: Record<string, unknown> = {},
+  bodyOverrides: Record<string, unknown> = {},
+) => ({
   type: 'event_callback',
   event_id: 'Ev123',
   team_id: 'T123',
@@ -12,9 +15,12 @@ const buildMentionBody = (overrides: Record<string, unknown> = {}) => ({
     text: '<@UBOT> create an invoice for ACME',
     ts: '1700000000.000100',
     channel: 'C123',
-    ...overrides,
+    ...eventOverrides,
   },
+  ...bodyOverrides,
 });
+
+const BOT_AUTHORIZATIONS = [{ user_id: 'UBOT', is_bot: true }];
 
 describe('parseSlackAssistantRequest', () => {
   it('should parse an app_mention and strip the bot mention', () => {
@@ -34,7 +40,7 @@ describe('parseSlackAssistantRequest', () => {
     });
   });
 
-  it('should keep other user mentions when stripping the leading bot mention', () => {
+  it('should keep other user mentions when stripping the bot mention', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({
         text: '<@UBOT> ask <@UALICE> about the ACME deal',
@@ -43,6 +49,64 @@ describe('parseSlackAssistantRequest', () => {
 
     expect(result.request?.requestText).toBe(
       'ask <@UALICE> about the ACME deal',
+    );
+  });
+
+  it('should strip a bot mention in the middle of the text', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody(
+        { text: 'hey <@UBOT>, who owns ACME?' },
+        { authorizations: BOT_AUTHORIZATIONS },
+      ),
+    );
+
+    expect(result.request?.requestText).toBe('hey, who owns ACME?');
+  });
+
+  it('should strip the bot mention at the start and in the middle of the text', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody(
+        { text: '<@UBOT> can <@UBOT> list open deals for ACME?' },
+        { authorizations: BOT_AUTHORIZATIONS },
+      ),
+    );
+
+    expect(result.request?.requestText).toBe('can list open deals for ACME?');
+  });
+
+  it('should strip a repeated bot mention using the leading mention when authorizations are missing', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        text: '<@UBOT> what does <@UBOT|twenty> know about ACME?',
+      }),
+    );
+
+    expect(result.request?.requestText).toBe('what does know about ACME?');
+  });
+
+  it('should keep other user mentions when stripping a mid-text bot mention', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody(
+        { text: 'hey <@UBOT> ask <@UALICE> about the ACME deal' },
+        { authorizations: BOT_AUTHORIZATIONS },
+      ),
+    );
+
+    expect(result.request?.requestText).toBe(
+      'hey ask <@UALICE> about the ACME deal',
+    );
+  });
+
+  it('should keep a leading other-user mention when the bot id is known', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody(
+        { text: '<@UALICE> and <@UBOT> should review the ACME deal' },
+        { authorizations: BOT_AUTHORIZATIONS },
+      ),
+    );
+
+    expect(result.request?.requestText).toBe(
+      '<@UALICE> and should review the ACME deal',
     );
   });
 
@@ -106,6 +170,43 @@ describe('parseSlackAssistantRequest', () => {
       slackUserId: 'U123',
       requestText: 'how many open opportunities do we have?',
     });
+  });
+
+  it('should strip the bot mention from a direct message', () => {
+    const result = parseSlackAssistantRequest({
+      type: 'event_callback',
+      event_id: 'Ev456',
+      authorizations: BOT_AUTHORIZATIONS,
+      event: {
+        type: 'message',
+        channel_type: 'im',
+        user: 'U123',
+        text: 'hey <@UBOT>, how many open opportunities do we have?',
+        ts: '1700000000.000200',
+        channel: 'D123',
+      },
+    });
+
+    expect(result.request?.requestText).toBe(
+      'hey, how many open opportunities do we have?',
+    );
+  });
+
+  it('should keep mentions in a direct message when the bot id is unknown', () => {
+    const result = parseSlackAssistantRequest({
+      type: 'event_callback',
+      event_id: 'Ev456',
+      event: {
+        type: 'message',
+        channel_type: 'im',
+        user: 'U123',
+        text: 'ping <@UBOT> about the ACME deal',
+        ts: '1700000000.000200',
+        channel: 'D123',
+      },
+    });
+
+    expect(result.request?.requestText).toBe('ping <@UBOT> about the ACME deal');
   });
 
   it('should skip messages sent by bots so the assistant never answers itself', () => {

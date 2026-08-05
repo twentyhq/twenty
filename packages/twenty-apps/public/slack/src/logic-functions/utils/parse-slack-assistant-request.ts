@@ -4,8 +4,10 @@ import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack
 import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-assistant-request-draft.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { getSlackBotUserIdFromEventBody } from 'src/logic-functions/utils/get-slack-bot-user-id-from-event-body';
+import { stripSlackBotMention } from 'src/logic-functions/utils/strip-slack-bot-mention';
 
-const LEADING_BOT_MENTION_PATTERN = /^<@[A-Z0-9]+(\|[^>]*)?>\s*/;
+const LEADING_MENTION_PATTERN = /^<@([A-Z0-9]+)(\|[^>]*)?>/;
 
 type ParsedSlackAssistantRequest =
   | {
@@ -18,8 +20,11 @@ type ParsedSlackAssistantRequest =
       emptyRequest?: SlackAssistantEmptyRequest;
     };
 
-const stripLeadingBotMention = (text: string): string =>
-  text.replace(LEADING_BOT_MENTION_PATTERN, '').replace(/\s+/g, ' ').trim();
+const normalizeWhitespace = (text: string): string =>
+  text.replace(/\s+/g, ' ').trim();
+
+const getBotUserIdFromLeadingMention = (text: string): string | undefined =>
+  text.trimStart().match(LEADING_MENTION_PATTERN)?.[1];
 
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
@@ -61,9 +66,15 @@ export const parseSlackAssistantRequest = (
   }
 
   const rawText = event.text ?? '';
-  const requestText = isMention
-    ? stripLeadingBotMention(rawText)
-    : rawText.replace(/\s+/g, ' ').trim();
+  const botUserId =
+    getSlackBotUserIdFromEventBody(body) ??
+    (isMention ? getBotUserIdFromLeadingMention(rawText) : undefined);
+
+  const requestText = normalizeWhitespace(
+    isNonEmptyString(botUserId)
+      ? stripSlackBotMention({ text: rawText, botUserId })
+      : rawText,
+  );
 
   if (!isNonEmptyString(requestText)) {
     if (isMention || isDirectMessage) {
