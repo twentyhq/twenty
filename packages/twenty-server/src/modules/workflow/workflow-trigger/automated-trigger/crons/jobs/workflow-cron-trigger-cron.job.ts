@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
@@ -11,12 +12,15 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { type CronTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
@@ -45,6 +49,8 @@ export class WorkflowCronTriggerCronJob {
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Process(WorkflowCronTriggerCronJob.name)
@@ -152,57 +158,51 @@ export class WorkflowCronTriggerCronJob {
     now: Date,
   ): Promise<CachedCronTrigger[]> {
     try {
-      const schemaName = getWorkspaceSchemaName(workspaceId);
+      const cronTriggers = await this.getWorkspaceCronTriggers(workspaceId);
 
-      const workflowAutomatedCronTriggers = await this.coreDataSource.query(
-        `SELECT * FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}'`,
-      );
-
-      if (workflowAutomatedCronTriggers.length === 0) {
+      if (cronTriggers.length === 0) {
         return [];
       }
 
       this.logger.log(
-        `Workspace ${workspaceId}: found ${workflowAutomatedCronTriggers.length} cron triggers`,
+        `Workspace ${workspaceId}: found ${cronTriggers.length} cron triggers`,
       );
 
       const triggersToCache: CachedCronTrigger[] = [];
 
-      for (const trigger of workflowAutomatedCronTriggers) {
-        const settings = trigger.settings as CronTriggerSettings;
-
-        if (!isDefined(settings.pattern)) {
+      for (const { workflowId, pattern } of cronTriggers) {
+        if (!isDefined(pattern)) {
           this.logger.warn(
-            `Trigger ${trigger.id}: skipping - pattern not defined`,
+            `Workflow ${workflowId}: skipping - cron pattern not defined`,
           );
           continue;
         }
 
         const cachedTrigger: CachedCronTrigger = {
           workspaceId,
-          workflowId: trigger.workflowId,
-          pattern: settings.pattern,
+          workflowId,
+          pattern,
         };
 
         triggersToCache.push(cachedTrigger);
 
         const shouldDispatch =
           await this.cronTriggerDeduplicationService.shouldDispatch(
-            `workflow-cron:${workspaceId}:${trigger.workflowId}`,
-            settings.pattern,
+            `workflow-cron:${workspaceId}:${workflowId}`,
+            pattern,
             now,
           );
 
         if (shouldDispatch) {
           this.logger.log(
-            `Trigger ${trigger.id}: enqueuing WorkflowTriggerJob for workflow ${trigger.workflowId}`,
+            `Enqueuing WorkflowTriggerJob for workflow ${workflowId}`,
           );
 
           await this.messageQueueService.add<WorkflowTriggerJobData>(
             WorkflowTriggerJob.name,
             {
               workspaceId,
-              workflowId: trigger.workflowId,
+              workflowId,
               payload: {},
             },
             { retryLimit: 3 },
@@ -219,5 +219,42 @@ export class WorkflowCronTriggerCronJob {
 
       return [];
     }
+  }
+
+  private async getWorkspaceCronTriggers(
+    workspaceId: string,
+  ): Promise<Array<{ workflowId: string; pattern?: string }>> {
+    const isDispatchFromCoreEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED,
+        workspaceId,
+      );
+
+    if (isDispatchFromCoreEnabled) {
+      const { workflowAutomatedTriggerMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'workflowAutomatedTriggerMaps',
+        ]);
+
+      return Object.values(workflowAutomatedTriggerMaps.byWorkflowId)
+        .filter(isCachedCronTrigger)
+        .map((trigger) => ({
+          workflowId: trigger.workflowId,
+          pattern: trigger.settings.pattern,
+        }));
+    }
+
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    const rows = await this.coreDataSource.query(
+      `SELECT "workflowId", settings FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}'`,
+    );
+
+    return rows.map(
+      (row: { workflowId: string; settings: CronTriggerSettings }) => ({
+        workflowId: row.workflowId,
+        pattern: row.settings?.pattern,
+      }),
+    );
   }
 }

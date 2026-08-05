@@ -14,7 +14,7 @@ import { join } from 'path';
 import { type Readable } from 'stream';
 
 import { Request, Response } from 'express';
-import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
+import { ApiPath, FileFolder, ServerFileFolder } from 'twenty-shared/types';
 
 import {
   FileStorageException,
@@ -51,7 +51,9 @@ export class FileController {
   // public folder path. These are instance-global marketplace resources, also
   // displayed on the public OAuth authorize page, hence no auth token, unlike
   // the workspace-scoped /file/:folder/:id.
-  @Get('files/application-registrations/:applicationRegistrationId/*path')
+  @Get(
+    `${ApiPath.Files}/application-registrations/:applicationRegistrationId/*path`,
+  )
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getApplicationRegistrationAsset(
     @Res() res: Response,
@@ -110,7 +112,7 @@ export class FileController {
     }
   }
 
-  @Get('public-assets/:workspaceId/:applicationId/*path')
+  @Get(`${ApiPath.PublicAssets}/:workspaceId/:applicationId/*path`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getPublicAssets(
     @Res() res: Response,
@@ -183,7 +185,7 @@ export class FileController {
     }
   }
 
-  @Get('file/:fileFolder/:id')
+  @Get(`${ApiPath.File}/:fileFolder/:id`)
   @UseGuards(FileByIdGuard, NoPermissionGuard)
   async getFileById(
     @Res() res: Response,

@@ -4,6 +4,7 @@ import { firefliesApiRequest } from 'src/logic-functions/utils/fireflies-api-req
 
 describe('firefliesApiRequest', () => {
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
@@ -85,19 +86,23 @@ describe('firefliesApiRequest', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
-  it('does not retry rate limiting so the sweep can pause and continue', async () => {
+  it('retries rate limiting using the shared retry policy', async () => {
+    vi.useFakeTimers();
     const fetchMock = vi
       .fn()
       .mockResolvedValue(new Response('rate limited', { status: 429 }));
 
     vi.stubGlobal('fetch', fetchMock);
 
-    const result = await firefliesApiRequest({
+    const resultPromise = firefliesApiRequest({
       apiKey: 'api-key',
       query: 'query Test { user { user_id } }',
     });
 
+    await vi.runAllTimersAsync();
+    const result = await resultPromise;
+
     expect(result).toEqual(expect.objectContaining({ ok: false, status: 429 }));
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 });

@@ -7,7 +7,7 @@ import { pipeline } from 'stream/promises';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import bytes from 'bytes';
-import { FileFolder } from 'twenty-shared/types';
+import { ApiPath, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -175,7 +175,7 @@ export class FileUploadService {
 
     return {
       fileId,
-      uploadUrl: `${serverUrl}/file-upload/${fileId}?token=${token}`,
+      uploadUrl: `${serverUrl}/${ApiPath.FileUpload}/${fileId}?token=${token}`,
       // octet-stream keeps the request body away from the server's json/text
       // body parsers; the real mime type is already on the file record.
       contentType: 'application/octet-stream',

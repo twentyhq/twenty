@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type FirefliesCallListResult } from 'src/logic-functions/types/fireflies-call-list-result.type';
 import { type FirefliesListCallsByParticipantInput } from 'src/logic-functions/types/fireflies-list-calls-by-participant-input.type';
 import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
-import { listFirefliesTranscripts } from 'src/logic-functions/utils/list-fireflies-transcripts';
+import { listFirefliesTranscripts } from 'src/logic-functions/utils/list-fireflies-transcripts.util';
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
