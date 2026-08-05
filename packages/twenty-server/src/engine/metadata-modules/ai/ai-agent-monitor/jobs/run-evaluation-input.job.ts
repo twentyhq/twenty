@@ -56,7 +56,7 @@ export class RunEvaluationInputJob {
 
     const executionResult = await this.aiAgentExecutorService.executeAgent({
       agent,
-      userPrompt: data.input,
+      messages: [{ role: 'user', content: data.input }],
       baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
       workspaceId: data.workspaceId,
       userWorkspaceId: null,

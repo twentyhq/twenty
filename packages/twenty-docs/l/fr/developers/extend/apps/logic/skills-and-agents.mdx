@@ -100,7 +100,9 @@ Remarques sur le schéma :
 </Accordion>
 <Accordion title="runAgent" description="Exécuter un agent depuis une fonction logique">
 
-`runAgent()` permet à une fonction logique d'exécuter l'un des agents de votre application (avec ses compétences et ses outils). Identifiez l'agent par le `universalIdentifier` que vous avez passé à `defineAgent()` :
+`runAgent()` permet à une fonction logique d'exécuter l'un des agents de votre application (avec ses compétences et ses outils). Identifiez l'agent à l'aide du `universalIdentifier` que vous avez passé
+à `defineAgent()`. Passez soit une chaîne de caractères `prompt`, soit un historique de conversation `messages`,
+mais pas les deux :
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +113,25 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Pour les bots multi-tours (Slack, Discord, Teams, …), passez l'historique du fil de discussion en
+`messages` au lieu d'un seul `prompt` :
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Points clés :
+* Fournissez **exactement l'un des deux** : `prompt` (string) ou `messages` (1 à 100 entrées
+  de `{ role: 'user' | 'assistant', content: string }`).
 * L'agent s'exécute **de manière synchrone** et peut lire/mettre à jour lui-même des enregistrements via ses propres outils — `runAgent()` se résout une fois l'exécution terminée.
 * Une application ne peut exécuter que ses propres agents.
 * Le [rôle par défaut](/l/fr/developers/extend/apps/config/roles) de l'application doit accorder l'indicateur d'autorisation `AI` — ajoutez `SystemPermissionFlag.AI` à ses `permissionFlagUniversalIdentifiers` (ou définissez `canAccessAllTools: true`).

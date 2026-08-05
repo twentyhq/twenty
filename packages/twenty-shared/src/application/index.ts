@@ -135,7 +135,12 @@ export type {
   RowLevelPermissionPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
-export type { RunAgentInput, RunAgentResult } from './runAgentType';
+export type {
+  RunAgentMessageRole,
+  RunAgentMessage,
+  RunAgentInput,
+  RunAgentResult,
+} from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';

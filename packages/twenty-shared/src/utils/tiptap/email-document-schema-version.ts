@@ -1,0 +1,1 @@
+export const EMAIL_DOCUMENT_SCHEMA_VERSION = 1;

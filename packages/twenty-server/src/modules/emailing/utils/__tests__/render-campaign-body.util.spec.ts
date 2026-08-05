@@ -16,6 +16,7 @@ const VARIABLES = {
   lastName: 'Lovelace',
   fullName: 'Ada Lovelace',
   email: 'ada@example.com',
+  personId: 'person-123',
 };
 
 const buildDocument = (text: string) =>
@@ -57,6 +58,112 @@ describe('renderCampaignBodyToHtml', () => {
 
     expect(renderedDocument().content[0].content[0].text).toBe(
       'Hi Ada, from Ada Lovelace',
+    );
+  });
+
+  it('should substitute variables carried by variable chip attributes', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Dear ' },
+              { type: 'variableTag', attrs: { variable: '{{firstName}}' } },
+            ],
+          },
+        ],
+      }),
+      VARIABLES,
+    );
+
+    expect(renderedDocument().content[0].content[1].attrs.variable).toBe('Ada');
+  });
+
+  it('should substitute variables inside button and link URLs', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'button',
+            attrs: { href: 'https://example.com/p/{{personId}}' },
+            content: [{ type: 'text', text: 'Open' }],
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: 'here',
+                marks: [
+                  {
+                    type: 'link',
+                    attrs: { href: 'https://example.com/u/{{personId}}' },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+      VARIABLES,
+    );
+
+    expect(renderedDocument().content[0].attrs.href).toBe(
+      'https://example.com/p/person-123',
+    );
+    expect(renderedDocument().content[1].content[0].marks[0].attrs.href).toBe(
+      'https://example.com/u/person-123',
+    );
+  });
+
+  it('should substitute variables inside image link URLs', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'image',
+            attrs: {
+              src: 'https://example.com/{{personId}}/banner.png',
+              href: 'https://example.com/promo/{{personId}}',
+              alt: 'Banner for {{firstName}}',
+            },
+          },
+        ],
+      }),
+      VARIABLES,
+    );
+
+    expect(renderedDocument().content[0].attrs.href).toBe(
+      'https://example.com/promo/person-123',
+    );
+    expect(renderedDocument().content[0].attrs.src).toBe(
+      'https://example.com/person-123/banner.png',
+    );
+    expect(renderedDocument().content[0].attrs.alt).toBe('Banner for Ada');
+  });
+
+  it('should substitute variables inside raw HTML blocks with escaping', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'html',
+            attrs: {
+              html: '<a href="https://example.com/p/{{personId}}">Hi {{firstName}}</a>',
+            },
+          },
+        ],
+      }),
+      { ...VARIABLES, firstName: '<b>Ada</b>' },
+    );
+
+    expect(renderedDocument().content[0].attrs.html).toBe(
+      '<a href="https://example.com/p/person-123">Hi &lt;b&gt;Ada&lt;/b&gt;</a>',
     );
   });
 
@@ -121,49 +228,31 @@ describe('renderCampaignBodyToHtml', () => {
     );
   });
 
-  it('should interpolate legacy html bodies without rendering them again', async () => {
-    const html = await renderCampaignBodyToHtml(
-      '<p>Hi {{firstName}}</p>',
-      VARIABLES,
-    );
-
-    expect(html).toBe('<p>Hi Ada</p>');
-    expect(renderRichTextToHtml).not.toHaveBeenCalled();
-  });
-
-  it('should escape values interpolated into legacy html bodies', async () => {
-    const html = await renderCampaignBodyToHtml('<p>{{firstName}}</p>', {
-      ...VARIABLES,
-      firstName: '<script>alert(1)</script>',
-    });
-
-    expect(html).not.toContain('<script>');
-  });
-
-  it('should return a legacy html body untouched when no variables are given', async () => {
-    const body = '<p>Hi {{firstName}}</p>';
-
-    expect(await renderCampaignBodyToHtml(body, null)).toBe(body);
-    expect(renderRichTextToHtml).not.toHaveBeenCalled();
-  });
-
-  it('should treat an empty body as a legacy body', async () => {
+  it('should render an empty body as empty without calling the renderer', async () => {
     expect(await renderCampaignBodyToHtml('', VARIABLES)).toBe('');
+    expect(await renderCampaignBodyToHtml('   ', VARIABLES)).toBe('');
     expect(renderRichTextToHtml).not.toHaveBeenCalled();
   });
 
-  it('should treat a JSON value that is not a document as a legacy body', async () => {
-    const body = '{"foo":"bar"}';
-
-    expect(await renderCampaignBodyToHtml(body, VARIABLES)).toBe(body);
-    expect(renderRichTextToHtml).not.toHaveBeenCalled();
+  it('should reject a body that is not JSON', async () => {
+    await expect(
+      renderCampaignBodyToHtml('<p>Hi {{firstName}}</p>', VARIABLES),
+    ).rejects.toThrow('not a renderable email document');
   });
 
-  it('should treat a document with a non-array content as a legacy body', async () => {
-    const body = '{"type":"doc","content":"not an array"}';
+  it('should reject a JSON value that is not a document', async () => {
+    await expect(
+      renderCampaignBodyToHtml('{"foo":"bar"}', VARIABLES),
+    ).rejects.toThrow('not a renderable email document');
+  });
 
-    expect(await renderCampaignBodyToHtml(body, VARIABLES)).toBe(body);
-    expect(renderRichTextToHtml).not.toHaveBeenCalled();
+  it('should reject a document with a non-array content', async () => {
+    await expect(
+      renderCampaignBodyToHtml(
+        '{"type":"doc","content":"not an array"}',
+        VARIABLES,
+      ),
+    ).rejects.toThrow('not a renderable email document');
   });
 
   it('should render a document with no content at all', async () => {

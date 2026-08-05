@@ -1,13 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Document } from '@tiptap/extension-document';
-import { HardBreak } from '@tiptap/extension-hard-break';
-import { Paragraph } from '@tiptap/extension-paragraph';
-import { Text } from '@tiptap/extension-text';
-import { Placeholder } from '@tiptap/extensions/placeholder';
-import { useEditor } from '@tiptap/react';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import {
@@ -19,8 +14,6 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { dispatchAgentChatEnsureThreadForDraftEvent } from '@/ai/utils/dispatchAgentChatEnsureThreadForDraftEvent';
 import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
-import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
-import { MentionTag } from '@/mention/extensions/MentionTag';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -55,26 +48,12 @@ export const useAiChatEditor = () => {
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const initialContent = textToTiptapContent(initialDraft);
 
-  const extensions = useMemo(
-    () => [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        placeholder: t`Ask, search or make anything...`,
-      }),
-      HardBreak.configure({
-        keepMarks: false,
-      }),
-      MentionTag,
-      MentionSuggestion,
-    ],
-    [],
-  );
-
-  const editor = useEditor({
+  const editor = useAdvancedTextEditor({
+    preset: 'aiChat',
+    placeholder: t`Ask, search or make anything...`,
+    readonly: false,
+    defaultValue: undefined,
     content: initialContent,
-    extensions,
     editorProps: {
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -95,7 +74,7 @@ export const useAiChatEditor = () => {
         return false;
       },
     },
-    onUpdate: ({ editor: currentEditor }) => {
+    onUpdate: (currentEditor) => {
       const text = turnIntoEmptyStringIfWhitespacesOnly(
         currentEditor.getText({ blockSeparator: '\n' }),
       );
@@ -120,7 +99,6 @@ export const useAiChatEditor = () => {
     onBlur: () => {
       removeFocusItemFromFocusStackById({ focusId: AI_CHAT_INPUT_ID });
     },
-    injectCSS: false,
   });
 
   // Keep search function in sync via Tiptap extension storage,

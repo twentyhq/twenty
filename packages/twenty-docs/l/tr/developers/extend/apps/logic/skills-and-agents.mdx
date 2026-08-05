@@ -100,7 +100,7 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="Bir mantık işlevinden bir ajan çalıştırın">
 
-`runAgent()`, bir mantık işlevinin uygulamanızın ajanlarından birini (kendi yetenekleri ve araçlarıyla) çalıştırmasına olanak tanır. Ajanı, `defineAgent()` işlevine ilettiğiniz `universalIdentifier` ile belirleyin:
+`runAgent()`, bir mantık işlevinin uygulamanızın ajanlarından birini (kendi yetenekleri ve araçlarıyla) çalıştırmasına olanak tanır. Ajanı, `defineAgent()` işlevine ilettiğiniz `universalIdentifier` ile belirleyin: Ya bir `prompt` dizesi ya da bir `messages` konuşma geçmişi iletin — ikisini birden değil:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,23 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Çok turlu botlar (Slack, Discord, Teams, …) için, tek bir `prompt` yerine iş parçacığı geçmişini `messages` olarak iletin:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Önemli noktalar:
+* `prompt` (string) veya `messages`'tan (1 ila 100 adet `{ role: 'user' | 'assistant', content: string }` girişi) **yalnızca birini** sağlayın.
 * Ajan **senkron** olarak çalışır ve kendi araçları aracılığıyla kayıtları kendisi okuyup/güncelleyebilir — işlem tamamlandığında `runAgent()` çözümlenir.
 * Bir uygulama yalnızca kendi ajanlarını çalıştırabilir.
 * Uygulamanın [varsayılan rolü](/l/tr/developers/extend/apps/config/roles), `AI` izin bayrağını vermelidir — `permissionFlagUniversalIdentifiers` içine `SystemPermissionFlag.AI` ekleyin (veya `canAccessAllTools: true` olarak ayarlayın).

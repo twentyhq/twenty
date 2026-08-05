@@ -4,6 +4,8 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renewToken } from '@/auth/services/AuthService';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
@@ -154,6 +156,7 @@ describe('ApolloFactory', () => {
     fetchMock.resetMocks();
     jest.mocked(renewToken).mockReset().mockResolvedValue(RENEWED_TOKEN_PAIR);
     jest.mocked(getTokenPair).mockReset().mockReturnValue(CURRENT_TOKEN_PAIR);
+    jotaiStore.set(isCookieAuthActiveState.atom, false);
   });
 
   it('should create an instance of ApolloFactory', () => {
@@ -365,5 +368,70 @@ describe('ApolloFactory', () => {
 
     expect(renewToken).not.toHaveBeenCalled();
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+  });
+  describe('cookie auth fallback during a mixed-version rollout', () => {
+    const setCookieAuthActive = () =>
+      jotaiStore.set(isCookieAuthActiveState.atom, true);
+
+    // fetch normalises header names, so assert case-insensitively rather than
+    // depending on the casing the mock happens to expose.
+    const readHeader = (
+      headers: Record<string, string>,
+      name: string,
+    ): string | undefined =>
+      Object.entries(headers).find(
+        ([key]) => key.toLowerCase() === name.toLowerCase(),
+      )?.[1];
+
+    it('should not attach the Bearer header while cookie auth is active', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(() =>
+        Promise.resolve({ body: JSON.stringify({ data: {} }) }),
+      );
+
+      await makeRequest();
+
+      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+
+      expect(readHeader(headers, 'authorization')).toBeUndefined();
+      // Version-mismatch detection must keep working in cookie-auth mode.
+      expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
+    });
+
+    it('should fall back to the token pair instead of signing out when a server ignores the session cookie', async () => {
+      setCookieAuthActive();
+      fetchMock
+        .mockResponseOnce(UNAUTHENTICATED_RESPONSE)
+        .mockResponseOnce(JSON.stringify({ data: { trackAnalytics: null } }));
+
+      await makeRequest();
+
+      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
+
+      const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+
+      expect(readHeader(retryHeaders, 'authorization')).toBe(
+        `Bearer ${CURRENT_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
+      );
+    });
+
+    it('should only attempt the cookie fallback once, then go through renewal', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
+
+      try {
+        await makeRequest();
+      } catch {}
+
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
+      expect(renewToken).toHaveBeenCalled();
+    });
   });
 });
