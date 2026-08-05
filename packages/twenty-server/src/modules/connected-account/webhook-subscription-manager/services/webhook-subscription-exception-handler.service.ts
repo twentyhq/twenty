@@ -7,7 +7,7 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
-import { WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-attempts.constant';
+import { WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-failure-count.constant';
 import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
@@ -149,7 +149,7 @@ export class WebhookSubscriptionExceptionHandlerService {
   }): Promise<void> {
     if (
       channel.webhookSubscriptionFailureCount >=
-      WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS
+      WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT
     ) {
       await this.webhookSubscriptionStatusService.markAsExpired(
         channelType,
@@ -159,7 +159,7 @@ export class WebhookSubscriptionExceptionHandlerService {
       this.exceptionHandlerService.captureExceptions(
         [
           new Error(
-            `Temporary error occurred ${WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS} times while running ${operation} on the webhook subscription of ${channelType} channel ${channel.id} in workspace ${workspaceId}: ${exception.message}`,
+            `Temporary error occurred ${WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT} times while running ${operation} on the webhook subscription of ${channelType} channel ${channel.id} in workspace ${workspaceId}: ${exception.message}`,
           ),
         ],
         {

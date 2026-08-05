@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/types';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-attempts.constant';
+import { WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-failure-count.constant';
 
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
@@ -165,7 +165,7 @@ describe('Microsoft webhook lifecycle notifications (integration)', () => {
     microsoft.failSubscriptionRenewalTemporarily();
 
     await calendarChannelRepository().update(account.calendarChannelId, {
-      webhookSubscriptionFailureCount: WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS,
+      webhookSubscriptionFailureCount: WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT,
     });
 
     await postLifecycleNotification('reauthorizationRequired').expect(200);
@@ -178,13 +178,13 @@ describe('Microsoft webhook lifecycle notifications (integration)', () => {
       WebhookSubscriptionStatus.EXPIRED,
     );
     expect(channel.webhookSubscriptionFailureCount).toBe(
-      WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS,
+      WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT,
     );
   }, 60000);
 
   it('clears the failure count when a renewal succeeds', async () => {
     await calendarChannelRepository().update(account.calendarChannelId, {
-      webhookSubscriptionFailureCount: WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS - 1,
+      webhookSubscriptionFailureCount: WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT - 1,
     });
 
     await postLifecycleNotification('reauthorizationRequired').expect(200);
