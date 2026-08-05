@@ -177,6 +177,36 @@ describe('validateFieldConfigurationNestedRelationOrThrow', () => {
     ).toThrow(/one-to-many/);
   });
 
+  it('should throw when the nested field is a junction relation', () => {
+    const junctionField = getFlatFieldMetadataMock({
+      id: 'person-junction-field-id',
+      universalIdentifier: 'person-junction-field-ui',
+      objectMetadataId: PERSON_OBJECT_ID,
+      type: FieldMetadataType.RELATION,
+      name: 'petCareAgreements',
+      label: 'Pet care agreements',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+        junctionTargetFieldId: 'junction-target-field-id',
+      },
+      relationTargetObjectMetadataId: OPPORTUNITY_OBJECT_ID,
+    });
+
+    expect(() =>
+      validateFieldConfigurationNestedRelationOrThrow({
+        widgetConfiguration: buildFieldConfiguration({
+          nestedRelationFieldMetadataId: junctionField.id,
+        }),
+        widgetObjectMetadataId: COMPANY_OBJECT_ID,
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          peopleField,
+          ownedOpportunitiesField,
+          junctionField,
+        ]),
+      }),
+    ).toThrow(/one-to-many/);
+  });
+
   it('should throw when the nested field does not belong to the relation target', () => {
     const opportunityStagesField = getFlatFieldMetadataMock({
       id: 'opportunity-stages-field-id',

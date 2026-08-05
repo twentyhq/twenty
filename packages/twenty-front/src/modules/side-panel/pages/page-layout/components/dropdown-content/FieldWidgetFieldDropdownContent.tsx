@@ -1,6 +1,7 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -32,11 +33,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { FieldDisplayMode, RelationType } from '~/generated-metadata/graphql';
+import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const FieldWidgetFieldDropdownContent = () => {
@@ -125,29 +125,38 @@ export const FieldWidgetFieldDropdownContent = () => {
   const { fieldMetadataItem: currentFieldMetadataItem } =
     useFieldMetadataItemById(currentFieldMetadataId ?? '');
 
-  const getNestedFieldCandidates = (
-    fieldMetadataItem: FieldMetadataItem,
-  ): FieldMetadataItem[] => {
-    if (
-      fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-      fieldMetadataItem.relation?.type !== RelationType.ONE_TO_MANY ||
-      hasJunctionConfig(fieldMetadataItem.settings)
-    ) {
-      return [];
+  const nestedFieldCandidatesByFieldId = useMemo(() => {
+    const candidatesByFieldId = new Map<string, FieldMetadataItem[]>();
+
+    for (const fieldMetadataItem of allFieldWidgetFieldMetadataItems) {
+      if (
+        !isOneToManyRelationField(fieldMetadataItem) ||
+        hasJunctionConfig(fieldMetadataItem.settings)
+      ) {
+        continue;
+      }
+
+      const relationTargetObjectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id ===
+          fieldMetadataItem.relation?.targetObjectMetadata.id,
+      );
+
+      if (!isDefined(relationTargetObjectMetadataItem)) {
+        continue;
+      }
+
+      const nestedFieldCandidates = getFieldWidgetEligibleNestedFields(
+        relationTargetObjectMetadataItem,
+      );
+
+      if (nestedFieldCandidates.length > 0) {
+        candidatesByFieldId.set(fieldMetadataItem.id, nestedFieldCandidates);
+      }
     }
 
-    const relationTargetObjectMetadataItem = objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id ===
-        fieldMetadataItem.relation?.targetObjectMetadata.id,
-    );
-
-    if (!isDefined(relationTargetObjectMetadataItem)) {
-      return [];
-    }
-
-    return getFieldWidgetEligibleNestedFields(relationTargetObjectMetadataItem);
-  };
+    return candidatesByFieldId;
+  }, [allFieldWidgetFieldMetadataItems, objectMetadataItems]);
 
   const handleSelectField = (fieldMetadataId: string) => {
     const selectedField = allFieldWidgetFieldMetadataItems.find(
@@ -239,9 +248,8 @@ export const FieldWidgetFieldDropdownContent = () => {
   };
 
   if (isDefined(drillInFieldMetadataItem)) {
-    const nestedFieldCandidates = getNestedFieldCandidates(
-      drillInFieldMetadataItem,
-    );
+    const nestedFieldCandidates =
+      nestedFieldCandidatesByFieldId.get(drillInFieldMetadataItem.id) ?? [];
 
     return (
       <StyledPageLayoutDropdownContentContainer>
@@ -336,8 +344,9 @@ export const FieldWidgetFieldDropdownContent = () => {
           selectableItemIdArray={availableFields.map((field) => field.id)}
         >
           {availableFields.map((fieldMetadataItem) => {
-            const hasNestedFieldCandidates =
-              getNestedFieldCandidates(fieldMetadataItem).length > 0;
+            const hasNestedFieldCandidates = nestedFieldCandidatesByFieldId.has(
+              fieldMetadataItem.id,
+            );
 
             const handleClick = hasNestedFieldCandidates
               ? () => setDrillInFieldMetadataItem(fieldMetadataItem)

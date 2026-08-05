@@ -42,7 +42,7 @@ export const resolveFieldWidgetNestedRelation = ({
   }
 
   const nestedRelationFieldMetadataItem =
-    relationTargetObjectMetadataItem.fields.find(
+    relationTargetObjectMetadataItem.readableFields.find(
       (fieldMetadataItem) =>
         fieldMetadataItem.id === nestedRelationFieldMetadataId,
     );
@@ -57,12 +57,18 @@ export const resolveFieldWidgetNestedRelation = ({
   const nestedRelationTargetObjectMetadataId =
     nestedRelationFieldMetadataItem.relation?.targetObjectMetadata.id;
 
-  if (!isDefined(nestedRelationTargetObjectMetadataId)) {
+  const nestedRelationTargetObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.id === nestedRelationTargetObjectMetadataId,
+  );
+
+  if (!isDefined(nestedRelationTargetObjectMetadataItem)) {
     return undefined;
   }
 
   return {
     nestedRelationFieldMetadataItem,
-    nestedRelationTargetObjectMetadataId,
+    nestedRelationTargetObjectMetadataId:
+      nestedRelationTargetObjectMetadataItem.id,
   };
 };

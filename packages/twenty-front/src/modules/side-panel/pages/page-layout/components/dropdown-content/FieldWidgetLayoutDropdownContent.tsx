@@ -78,7 +78,11 @@ export const FieldWidgetLayoutDropdownContent = () => {
     nestedRelationFieldMetadataId: currentNestedRelationFieldMetadataId,
   });
 
-  const isNestedRelationWidget = isDefined(resolvedNestedRelation);
+  // Gate on the configured id, not on resolution success: a widget whose
+  // second hop was deleted must not fall back to first-hop behavior.
+  const isNestedRelationWidget = isDefined(
+    currentNestedRelationFieldMetadataId,
+  );
 
   const availableDisplayModes = fieldMetadataItem
     ? getFieldWidgetAvailableDisplayModes(
@@ -100,10 +104,10 @@ export const FieldWidgetLayoutDropdownContent = () => {
   );
 
   const targetObjectMetadataId = isNestedRelationWidget
-    ? resolvedNestedRelation.nestedRelationTargetObjectMetadataId
+    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataId
     : fieldMetadataItem?.relation?.targetObjectMetadata.id;
   const inverseFieldMetadataId = isNestedRelationWidget
-    ? resolvedNestedRelation.nestedRelationFieldMetadataItem.relation
+    ? resolvedNestedRelation?.nestedRelationFieldMetadataItem.relation
         ?.targetFieldMetadata.id
     : fieldMetadataItem?.relation?.targetFieldMetadata.id;
   const relationTargetFieldMetadataId = isNestedRelationWidget

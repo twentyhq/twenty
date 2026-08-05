@@ -1,11 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldDisplayMode,
   type FieldConfiguration,
-  RelationType,
 } from '~/generated-metadata/graphql';
 
 type ResolveFieldWidgetRelationTableViewIdChangeArgs = {
@@ -16,12 +15,6 @@ type ResolveFieldWidgetRelationTableViewIdChangeArgs = {
   widgetId: string | undefined;
   currentViewId: string | null | undefined;
 };
-
-const isOneToManyRelationField = (
-  fieldMetadataItem: FieldMetadataItem | undefined,
-): boolean =>
-  fieldMetadataItem?.type === FieldMetadataType.RELATION &&
-  fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY;
 
 export const useResolveFieldWidgetRelationTableViewIdChange = (
   pageLayoutId: string,
@@ -53,11 +46,14 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
       ? selectedField?.relation?.targetFieldMetadata.id
       : null;
 
+    const isSelectedFieldOneToMany =
+      isDefined(selectedField) && isOneToManyRelationField(selectedField);
+
     const isValidRelationChain = isDefined(selectedNestedField)
-      ? isOneToManyRelationField(selectedField) &&
+      ? isSelectedFieldOneToMany &&
         isOneToManyRelationField(selectedNestedField) &&
         isDefined(relationTargetFieldMetadataId)
-      : isOneToManyRelationField(selectedField);
+      : isSelectedFieldOneToMany;
 
     const shouldRegenerateRelationTableView =
       currentDisplayMode === FieldDisplayMode.TABLE &&

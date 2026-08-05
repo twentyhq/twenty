@@ -1,4 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,27 +15,32 @@ import {
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 
-const buildNestedRelationValidationException = (
-  message: string,
-  widgetTitle?: string | null,
-): PageLayoutWidgetException => {
+const buildNestedRelationValidationException = ({
+  message,
+  userFriendlyMessage,
+  widgetTitle,
+}: {
+  message: string;
+  userFriendlyMessage: MessageDescriptor;
+  widgetTitle?: string | null;
+}): PageLayoutWidgetException => {
   const prefix = isDefined(widgetTitle) ? `Widget "${widgetTitle}": ` : '';
-  const fullMessage = prefix + message;
 
   return new PageLayoutWidgetException(
-    fullMessage,
+    prefix + message,
     PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    {
-      userFriendlyMessage: msg`${fullMessage}`,
-    },
+    { userFriendlyMessage },
   );
 };
 
-const isOneToManyRelationFlatFieldMetadata = (
+// Junction relation fields also carry ONE_TO_MANY metadata but are rendered
+// through a dedicated junction path, so they are not valid nested hops.
+const isPlainOneToManyRelationFlatFieldMetadata = (
   field: FlatFieldMetadata,
 ): boolean =>
   isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
-  field.settings.relationType === RelationType.ONE_TO_MANY;
+  field.settings.relationType === RelationType.ONE_TO_MANY &&
+  !isNonEmptyString(field.settings.junctionTargetFieldId);
 
 export const validateFieldConfigurationNestedRelationOrThrow = ({
   widgetConfiguration,
@@ -66,27 +73,30 @@ export const validateFieldConfigurationNestedRelationOrThrow = ({
   );
 
   if (!isDefined(sourceField)) {
-    throw buildNestedRelationValidationException(
-      `fieldMetadataId "${fieldMetadataId}" not found.`,
+    throw buildNestedRelationValidationException({
+      message: `fieldMetadataId "${fieldMetadataId}" not found.`,
+      userFriendlyMessage: msg`The field configured for this widget could not be found.`,
       widgetTitle,
-    );
+    });
   }
 
-  if (!isOneToManyRelationFlatFieldMetadata(sourceField)) {
-    throw buildNestedRelationValidationException(
-      `nestedRelationFieldMetadataId requires "${sourceField.label}" to be a one-to-many relation field.`,
+  if (!isPlainOneToManyRelationFlatFieldMetadata(sourceField)) {
+    throw buildNestedRelationValidationException({
+      message: `nestedRelationFieldMetadataId requires "${sourceField.label}" to be a one-to-many relation field.`,
+      userFriendlyMessage: msg`${sourceField.label} must be a one-to-many relation field.`,
       widgetTitle,
-    );
+    });
   }
 
   if (
     isDefined(widgetObjectMetadataId) &&
     sourceField.objectMetadataId !== widgetObjectMetadataId
   ) {
-    throw buildNestedRelationValidationException(
-      `fieldMetadataId "${fieldMetadataId}" does not belong to the widget object.`,
+    throw buildNestedRelationValidationException({
+      message: `fieldMetadataId "${fieldMetadataId}" does not belong to the widget object.`,
+      userFriendlyMessage: msg`${sourceField.label} does not belong to this widget's object.`,
       widgetTitle,
-    );
+    });
   }
 
   const nestedField = findActiveFlatFieldMetadataById(
@@ -95,25 +105,28 @@ export const validateFieldConfigurationNestedRelationOrThrow = ({
   );
 
   if (!isDefined(nestedField)) {
-    throw buildNestedRelationValidationException(
-      `nestedRelationFieldMetadataId "${nestedRelationFieldMetadataId}" not found.`,
+    throw buildNestedRelationValidationException({
+      message: `nestedRelationFieldMetadataId "${nestedRelationFieldMetadataId}" not found.`,
+      userFriendlyMessage: msg`The nested relation field configured for this widget could not be found.`,
       widgetTitle,
-    );
+    });
   }
 
-  if (!isOneToManyRelationFlatFieldMetadata(nestedField)) {
-    throw buildNestedRelationValidationException(
-      `nestedRelationFieldMetadataId "${nestedField.label}" must be a one-to-many relation field.`,
+  if (!isPlainOneToManyRelationFlatFieldMetadata(nestedField)) {
+    throw buildNestedRelationValidationException({
+      message: `nestedRelationFieldMetadataId "${nestedField.label}" must be a one-to-many relation field.`,
+      userFriendlyMessage: msg`${nestedField.label} must be a one-to-many relation field.`,
       widgetTitle,
-    );
+    });
   }
 
   if (
     nestedField.objectMetadataId !== sourceField.relationTargetObjectMetadataId
   ) {
-    throw buildNestedRelationValidationException(
-      `nestedRelationFieldMetadataId "${nestedField.label}" does not belong to the relation target of "${sourceField.label}".`,
+    throw buildNestedRelationValidationException({
+      message: `nestedRelationFieldMetadataId "${nestedField.label}" does not belong to the relation target of "${sourceField.label}".`,
+      userFriendlyMessage: msg`${nestedField.label} does not belong to the object ${sourceField.label} points to.`,
       widgetTitle,
-    );
+    });
   }
 };
