@@ -3,8 +3,11 @@ import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { safeUrl } from 'src/utils/email-renderer/utils/safe-url';
+
 export const image = (node: JSONContent): ReactNode => {
-  const { src, alt, align = 'left', width, href } = node?.attrs || {};
+  const { src: rawSrc, alt, align = 'left', width, href } = node?.attrs || {};
+  const src = safeUrl(rawSrc);
   if (!isDefined(src)) {
     return null;
   }
@@ -28,8 +31,8 @@ export const image = (node: JSONContent): ReactNode => {
   return (
     <Row>
       <Column align={align}>
-        {typeof href === 'string' && href !== '' ? (
-          <Link href={href} target="_blank">
+        {isDefined(safeUrl(href)) ? (
+          <Link href={safeUrl(href)} target="_blank">
             {imageElement}
           </Link>
         ) : (

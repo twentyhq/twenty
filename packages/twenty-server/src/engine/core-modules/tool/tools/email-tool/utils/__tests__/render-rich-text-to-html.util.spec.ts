@@ -191,4 +191,64 @@ describe('renderRichTextToHtml', () => {
     expect(html).not.toContain('lost');
     expect(html).toContain('still rendered');
   });
+
+  describe('unsafe URL schemes', () => {
+    it('should drop javascript: hrefs from buttons, links and images', async () => {
+      const html = await renderRichTextToHtml({
+        type: 'doc',
+        content: [
+          {
+            type: 'button',
+            attrs: { href: 'javascript:alert(1)', style: {} },
+            content: [{ type: 'text', text: 'Click' }],
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: 'link',
+                marks: [
+                  { type: 'link', attrs: { href: ' javascript:alert(1)' } },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'image',
+            attrs: { src: 'javascript:alert(1)', href: 'data:text/html,x' },
+          },
+        ],
+      });
+
+      expect(html).not.toContain('javascript:');
+      expect(html).not.toContain('data:text/html');
+    });
+
+    it('should keep http, mailto and variable-bearing URLs', async () => {
+      const html = await renderRichTextToHtml({
+        type: 'doc',
+        content: [
+          {
+            type: 'button',
+            attrs: { href: 'https://hello/{{personId}}', style: {} },
+            content: [{ type: 'text', text: 'Go' }],
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: 'mail',
+                marks: [{ type: 'link', attrs: { href: 'mailto:a@b.c' } }],
+              },
+            ],
+          },
+        ],
+      });
+
+      expect(html).toContain('https://hello/{{personId}}');
+      expect(html).toContain('mailto:a@b.c');
+    });
+  });
 });
