@@ -25,10 +25,8 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import {
-  buildRequiredToolAuthContext,
-  withResolvedToolAuthContext,
-} from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
+import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
+import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
