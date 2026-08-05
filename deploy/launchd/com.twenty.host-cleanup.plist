@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.twenty.host-cleanup</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/ben/Projects/twenty/deploy/host-cleanup.sh</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/ben/Projects/twenty</string>
+
+  <!-- Homebrew is not on a launchd job's default PATH, so docker would be
+       invisible without this. -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+
+  <!-- 03:30, before the 04:15 staging data refresh, so the volume is at its
+       emptiest when the refresh needs room. -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>3</integer>
+    <key>Minute</key>
+    <integer>30</integer>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/twenty-host-cleanup.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/twenty-host-cleanup.log</string>
+</dict>
+</plist>

@@ -92,6 +92,35 @@ launchctl load ~/Library/LaunchAgents/com.twenty.production-converge.plist
 
 It logs to `/tmp/twenty-production-converge.log`.
 
+### Install host housekeeping
+
+Two things on this Mac grow without limit and nothing else reclaims them: the
+launchd job logs in `/tmp`, and untagged Docker images left by builds and by
+retagged pulls. The images matter more, because they share a fixed-size volume
+with staging's images, and a full volume fails every staging deploy partway
+through unpacking.
+
+```bash
+cp deploy/launchd/com.twenty.host-cleanup.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.twenty.host-cleanup.plist
+```
+
+It runs daily at 03:30, before the 04:15 staging refresh, and logs to
+`/tmp/twenty-host-cleanup.log`. Each run compresses any `/tmp/twenty-*.log` past
+20MB (`TWENTY_MAX_LOG_MB`) to a single `.1.gz` generation, sweeps untagged Twenty
+images older than 24h (`TWENTY_DANGLING_MIN_AGE`), and records Docker volume
+usage so the trend is in the log before a deploy fails on it.
+
+Logs are truncated in place rather than renamed, because launchd holds an open
+descriptor on them and a renamed file keeps collecting output at an inode
+nothing will read again.
+
+It does not prune Docker volumes, deliberately. `docker volume prune` removes
+any volume no *container* references, and staging's database volume only holds
+its reference while its containers exist, so a sweep landing while staging is
+down would delete the staging database. Collect orphaned volumes by name, by
+hand, with staging up.
+
 ### Why it does not trust git's exit code
 
 The post-merge hook reports migration failure with `|| echo` and still exits 0,
