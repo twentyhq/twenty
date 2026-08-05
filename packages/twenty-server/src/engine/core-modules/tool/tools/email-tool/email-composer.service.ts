@@ -132,7 +132,6 @@ export class EmailComposerService {
           );
         }
 
-        // A workflow run has no caller: it resolves its own sender upstream and passes the id explicitly.
         if (!isDefined(userWorkspaceId)) {
           return allAccounts[0].id;
         }
