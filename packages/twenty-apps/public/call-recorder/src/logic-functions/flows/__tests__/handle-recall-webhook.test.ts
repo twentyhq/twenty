@@ -359,6 +359,15 @@ describe('handleRecallWebhook', () => {
       callRecordingId: 'call-recording-1',
       callRecordingStatus: 'PROCESSING',
     });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+        },
+      },
+    ]);
   });
 
   it('ignores a no-capture sub code on a non-terminal status code', async () => {
