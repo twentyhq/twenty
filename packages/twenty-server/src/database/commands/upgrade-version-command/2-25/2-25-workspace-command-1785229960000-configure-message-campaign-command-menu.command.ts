@@ -6,16 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import {
-  remapRecordPageUniversalIdentifiersToPre228,
-  toPre228RecordPageUniversalIdentifier,
-} from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre228 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-28.util';
+import { toPre228RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const SEND_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
@@ -84,19 +81,12 @@ export class ConfigureMessageCampaignCommandMenuCommand extends ProvisionedWorks
       return;
     }
 
-    const { allFlatEntityMaps: derivedStandardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
+    const standardAllFlatEntityMaps =
+      computeTwentyStandardApplicationAllFlatEntityMapsPre228({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
-
-    // This command predates the 2-28 record-page reconcile: workspace rows
-    // still hold the pre-derivation universal identifiers.
-    const standardAllFlatEntityMaps =
-      remapRecordPageUniversalIdentifiersToPre228(
-        derivedStandardAllFlatEntityMaps,
-      );
 
     const itemsToCreate = SEND_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>

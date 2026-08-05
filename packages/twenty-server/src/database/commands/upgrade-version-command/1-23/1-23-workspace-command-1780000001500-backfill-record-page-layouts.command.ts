@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { remapRecordPageUniversalIdentifiersToPre228 } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre228 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-28.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -19,7 +19,6 @@ import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/objec
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -240,18 +239,12 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
     workspaceId: string;
     twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
-    const { allFlatEntityMaps: derivedStandardMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
+    const standardMaps =
+      computeTwentyStandardApplicationAllFlatEntityMapsPre228({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
-
-    // This command predates the 2-28 record-page reconcile: the record-page
-    // entities that later committed commands (2-10/2-14/2-15/2-25) resolve by
-    // universal identifier must keep their pre-derivation literals.
-    const standardMaps =
-      remapRecordPageUniversalIdentifiersToPre228(derivedStandardMaps);
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
