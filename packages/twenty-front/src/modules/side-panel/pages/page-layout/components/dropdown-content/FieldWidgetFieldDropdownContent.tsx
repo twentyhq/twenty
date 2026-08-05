@@ -1,9 +1,8 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { useResolveFieldWidgetRelationTableViewIdChange } from '@/page-layout/widgets/record-table/hooks/useResolveFieldWidgetRelationTableViewIdChange';
@@ -128,10 +127,7 @@ export const FieldWidgetFieldDropdownContent = () => {
     const candidatesByFieldId = new Map<string, FieldMetadataItem[]>();
 
     for (const fieldMetadataItem of allFieldWidgetFieldMetadataItems) {
-      if (
-        !isOneToManyRelationField(fieldMetadataItem) ||
-        hasJunctionConfig(fieldMetadataItem.settings)
-      ) {
+      if (!isPlainOneToManyRelationField(fieldMetadataItem)) {
         continue;
       }
 
