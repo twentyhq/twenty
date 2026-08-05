@@ -535,6 +535,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
         });
 
+        const pageLayoutTabLayoutMode = getPageLayoutTabManifestLayoutMode({
+          pageLayoutTabManifest,
+          pageLayoutType: pageLayoutManifest.type,
+        });
+
         for (const [widgetIndex, pageLayoutWidgetManifest] of (
           pageLayoutTabManifest.widgets ?? []
         ).entries()) {
@@ -545,10 +550,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
                   pageLayoutWidgetManifest,
                   pageLayoutTabUniversalIdentifier:
                     pageLayoutTabManifest.universalIdentifier,
-                  pageLayoutTabLayoutMode: getPageLayoutTabManifestLayoutMode({
-                    pageLayoutTabManifest,
-                    pageLayoutType: pageLayoutManifest.type,
-                  }),
+                  pageLayoutTabLayoutMode,
                   widgetIndex,
                   applicationUniversalIdentifier,
                   now,
@@ -588,6 +590,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
       });
 
+      const pageLayoutTabLayoutMode = getPageLayoutTabManifestLayoutMode({
+        pageLayoutTabManifest,
+        pageLayoutType: referencedPageLayoutManifest?.type,
+      });
+
       for (const [widgetIndex, pageLayoutWidgetManifest] of (
         pageLayoutTabManifest.widgets ?? []
       ).entries()) {
@@ -597,10 +604,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
               pageLayoutWidgetManifest,
               pageLayoutTabUniversalIdentifier:
                 pageLayoutTabManifest.universalIdentifier,
-              pageLayoutTabLayoutMode: getPageLayoutTabManifestLayoutMode({
-                pageLayoutTabManifest,
-                pageLayoutType: referencedPageLayoutManifest?.type,
-              }),
+              pageLayoutTabLayoutMode,
               widgetIndex,
               applicationUniversalIdentifier,
               now,
