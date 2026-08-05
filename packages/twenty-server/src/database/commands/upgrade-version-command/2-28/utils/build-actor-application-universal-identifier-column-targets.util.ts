@@ -11,7 +11,6 @@ export type ActorApplicationUniversalIdentifierColumnTarget = {
   columnNames: string[];
 };
 
-// Hardcoded pascalCase suffix so the columns can ship one release before the applicationUniversalIdentifier ACTOR composite property exists
 const ACTOR_APPLICATION_UNIVERSAL_IDENTIFIER_COLUMN_SUFFIX =
   'ApplicationUniversalIdentifier';
 
