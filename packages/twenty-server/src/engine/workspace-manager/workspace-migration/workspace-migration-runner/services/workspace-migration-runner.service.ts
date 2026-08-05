@@ -6,6 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -36,6 +39,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -149,6 +153,28 @@ export class WorkspaceMigrationRunnerService {
     );
   }
 
+  private recordRunPhaseMetric({
+    phase,
+    status,
+    value,
+  }: {
+    phase:
+      | 'initial-cache-retrieval'
+      | 'action-execution'
+      | 'commit'
+      | 'cache-invalidation';
+    status: 'success' | 'fail';
+    value: number;
+  }): void {
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationRunPhaseDurationMs,
+      value,
+      unit: 'ms',
+      attributes: { phase, status },
+      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
+  }
+
   private async logBlockingDbActivity(): Promise<void> {
     try {
       // Metadata only (no query text) to avoid logging literals from other sessions.
@@ -178,7 +204,42 @@ export class WorkspaceMigrationRunnerService {
     }
   }
 
-  run = async ({
+  run = async (args: {
+    workspaceMigration: WorkspaceMigration;
+    workspaceId: string;
+  }): Promise<{
+    allFlatEntityMaps: AllFlatEntityMaps;
+    metadataEvents: MetadataEvent[];
+    hasSchemaMetadataChanged: boolean;
+  }> => {
+    const runStart = performance.now();
+
+    try {
+      const result = await this.executeRun(args);
+
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+        value: performance.now() - runStart,
+        unit: 'ms',
+        attributes: { status: 'success' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
+      return result;
+    } catch (error) {
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+        value: performance.now() - runStart,
+        unit: 'ms',
+        attributes: { status: 'fail' },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
+      throw error;
+    }
+  };
+
+  private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
   }: {
@@ -245,6 +306,12 @@ export class WorkspaceMigrationRunnerService {
 
     const initialCacheRetrievalMs =
       performance.now() - initialCacheRetrievalStart;
+
+    this.recordRunPhaseMetric({
+      phase: 'initial-cache-retrieval',
+      status: 'success',
+      value: initialCacheRetrievalMs,
+    });
 
     this.logger.perf(
       `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
@@ -354,6 +421,18 @@ export class WorkspaceMigrationRunnerService {
       const commitMs = performance.now() - commitStart;
       const transactionMs = performance.now() - transactionStart;
 
+      this.recordRunPhaseMetric({
+        phase: 'action-execution',
+        status: 'success',
+        value: transactionMs - commitMs,
+      });
+
+      this.recordRunPhaseMetric({
+        phase: 'commit',
+        status: 'success',
+        value: commitMs,
+      });
+
       this.logger.perf(
         `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
         'Runner',
@@ -361,6 +440,12 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.perfTimeEnd('Runner', 'Transaction execution');
     } catch (error) {
+      this.recordRunPhaseMetric({
+        phase: 'action-execution',
+        status: 'fail',
+        value: performance.now() - transactionStart,
+      });
+
       this.logger.error(
         `[install-perf] migration failed after ${actionCount} action(s): ${
           error instanceof Error ? error.message : String(error)
@@ -433,7 +518,19 @@ export class WorkspaceMigrationRunnerService {
         allFlatEntityMapsKeys,
         workspaceId,
       });
+
+      this.recordRunPhaseMetric({
+        phase: 'cache-invalidation',
+        status: 'success',
+        value: performance.now() - postCommitInvalidateStart,
+      });
     } catch (cacheError) {
+      this.recordRunPhaseMetric({
+        phase: 'cache-invalidation',
+        status: 'fail',
+        value: performance.now() - postCommitInvalidateStart,
+      });
+
       this.logger.error(
         `Cache invalidation failed after committed transaction: ${cacheError}`,
         'Runner',
