@@ -1,5 +1,9 @@
 import { Command } from 'nest-commander';
 
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -7,6 +11,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { computeTwentyStandardApplicationAllFlatEntityMapsPre228 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-28.util';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { toPre228RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-28.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -17,47 +22,80 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// Pre-2.27 literals, pinned: this command runs before the 2-28 record-page
-// reconcile, when workspace rows still hold the pre-derivation universal
-// identifiers; the shared constants now resolve to the derived scheme.
+// This command predates the 2-28 record-page reconcile: workspace rows still
+// hold the pre-derivation universal identifiers.
+const MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW =
+  STANDARD_OBJECTS.messageCampaign.views.messageCampaignRecordPageFields;
+const MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage;
+
 const MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_UNIVERSAL_IDENTIFIER =
-  '20202020-a009-4a09-8a09-fa9de11ca901';
+  toPre228RecordPageUniversalIdentifier(
+    MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.universalIdentifier,
+  );
 
 const MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
-  '20202020-af09-4a09-8a09-fa9de11ca903',
-  '20202020-af09-4a09-8a09-fa9de11ca904',
-  '20202020-af09-4a09-8a09-fa9de11ca905',
-  '20202020-af09-4a09-8a09-fa9de11ca906',
-  '20202020-af09-4a09-8a09-fa9de11ca907',
-  '20202020-af09-4a09-8a09-fa9de11ca908',
-];
+  MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.status.universalIdentifier,
+  MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.sentAt.universalIdentifier,
+  MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.sentCount.universalIdentifier,
+  MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.failedCount.universalIdentifier,
+  MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.bouncedCount.universalIdentifier,
+  MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.complainedCount
+    .universalIdentifier,
+].map(toPre228RecordPageUniversalIdentifier);
 
 const MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS =
-  ['20202020-a009-4a09-8a09-fa9de11ca902'];
+  [
+    toPre228RecordPageUniversalIdentifier(
+      MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFieldGroups.stats
+        .universalIdentifier,
+    ),
+  ];
 
 const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  '8704b091-94bd-4f8f-82b1-e2f3eab92217';
+  toPre228RecordPageUniversalIdentifier(
+    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.universalIdentifier,
+  );
 
-const HOME_TAB_UNIVERSAL_IDENTIFIER = 'f16785cd-a5b7-4ec1-8f20-ff8b80fb94b9';
+const HOME_TAB_UNIVERSAL_IDENTIFIER = toPre228RecordPageUniversalIdentifier(
+  MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.universalIdentifier,
+);
 
-const COMPOSER_TAB_UNIVERSAL_IDENTIFIER =
-  '5f21c19d-6c3e-4b8a-9d47-1e8f02a63b71';
+const COMPOSER_TAB_UNIVERSAL_IDENTIFIER = toPre228RecordPageUniversalIdentifier(
+  MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.composer.universalIdentifier,
+);
 
 const COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER =
-  '9c74d8e2-0b5f-4a19-8630-57d2ba14ce92';
+  toPre228RecordPageUniversalIdentifier(
+    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.composer.widgets.messageCampaign
+      .universalIdentifier,
+  );
 
 const HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
-  '886296e0-a5b6-4054-b450-ad624180c2ef';
+  toPre228RecordPageUniversalIdentifier(
+    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.widgets.fields
+      .universalIdentifier,
+  );
 
 const HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER =
-  'ce2f82cc-9340-45a2-90a0-c34207e8e3b0';
+  toPre228RecordPageUniversalIdentifier(
+    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.widgets.details
+      .universalIdentifier,
+  );
 
 const HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER =
-  'b04fb8a5-f471-49a7-b82c-8434ea8276c5';
+  toPre228RecordPageUniversalIdentifier(
+    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.widgets.list
+      .universalIdentifier,
+  );
 
 const HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER =
-  'b667f20a-1d38-453e-b888-3ecab00a1044';
+  toPre228RecordPageUniversalIdentifier(
+    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.widgets.recipients
+      .universalIdentifier,
+  );
 
+// Deleted from the standard definitions, so it has no constant to derive from.
 const HOME_OBSOLETE_MESSAGES_WIDGET_UNIVERSAL_IDENTIFIER =
   'a33b43f4-72a1-476d-9372-30e82f450377';
 
