@@ -14,7 +14,7 @@ export const hasTransientRegistrationForObservation = ({
 }: HasTransientRegistrationForObservationInput): boolean =>
   registrations.some(
     (registration) =>
-      registration.isTransient === true &&
+      registration.isTransient &&
       registration.sink === sink &&
       registration.options === options,
   );

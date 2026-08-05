@@ -25,7 +25,7 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
 
       registrationsByTarget.set(target, [
         ...registrations.filter((registration) => registration.sink !== sink),
-        { sink, options },
+        { sink, options, isTransient: false },
       ]);
     },
 
@@ -115,7 +115,7 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
           target,
           registrations.filter(
             (registration) =>
-              registration.isTransient !== true || registration.sink !== sink,
+              !registration.isTransient || registration.sink !== sink,
           ),
         );
       }
@@ -125,9 +125,10 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
       oldValueRequestedBySink.clear();
 
       let observedNode: Node | null = record.target;
-      let isMutationTarget = true;
 
       while (isDefined(observedNode)) {
+        const isMutationTarget = observedNode === record.target;
+
         for (const registration of registrationsByTarget.get(observedNode) ??
           NO_REGISTRATIONS) {
           const isObservedFromThisNode =
@@ -155,7 +156,6 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
         }
 
         observedNode = observedNode.parentNode;
-        isMutationTarget = false;
       }
 
       for (const [sink, oldValueRequested] of oldValueRequestedBySink) {
