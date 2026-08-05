@@ -31,8 +31,6 @@ export const releaseSlackTeamOnDisconnect = async ({
         excludedConnectedAccountId: connectedAccountId,
       });
 
-    // A reconnect that re-claimed the team while this job was queued, or a
-    // second connection to the same Slack workspace, owns the claim now.
     if (isClaimedByAnotherConnection) {
       await kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId));
 
