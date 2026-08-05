@@ -4,11 +4,14 @@ import { join } from 'path';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
+  type FunctionConfiguration,
   GetFunctionCommand,
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
+  ResourceConflictException,
   ResourceNotFoundException,
+  UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -215,9 +218,16 @@ export class LambdaToolFunctionsService {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
     try {
-      await lambdaClient.send(
+      const existingFunction = await lambdaClient.send(
         new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
       );
+
+      await this.reconcileToolFunctionConfiguration({
+        functionName: yarnInstallFunctionName,
+        existingConfiguration: existingFunction.Configuration,
+        memorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
+        timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+      });
 
       return;
     } catch (error) {
@@ -264,9 +274,16 @@ export class LambdaToolFunctionsService {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
     try {
-      await lambdaClient.send(
+      const existingFunction = await lambdaClient.send(
         new GetFunctionCommand({ FunctionName: builderFunctionName }),
       );
+
+      await this.reconcileToolFunctionConfiguration({
+        functionName: builderFunctionName,
+        existingConfiguration: existingFunction.Configuration,
+        memorySize: BUILDER_LAMBDA_MEMORY_MB,
+        timeoutSeconds: BUILDER_LAMBDA_TIMEOUT_SECONDS,
+      });
 
       return;
     } catch (error) {
@@ -306,6 +323,46 @@ export class LambdaToolFunctionsService {
     }
 
     await this.awsClient.waitFunctionActive(builderFunctionName);
+  }
+
+  // Tool function names only hash the handler content, so memory/timeout
+  // changes never produce a new function and must be applied in place.
+  private async reconcileToolFunctionConfiguration({
+    functionName,
+    existingConfiguration,
+    memorySize,
+    timeoutSeconds,
+  }: {
+    functionName: string;
+    existingConfiguration: FunctionConfiguration | undefined;
+    memorySize: number;
+    timeoutSeconds: number;
+  }): Promise<void> {
+    if (
+      existingConfiguration?.MemorySize === memorySize &&
+      existingConfiguration?.Timeout === timeoutSeconds
+    ) {
+      return;
+    }
+
+    const lambdaClient = await this.awsClient.getLambdaClient();
+
+    try {
+      await lambdaClient.send(
+        new UpdateFunctionConfigurationCommand({
+          FunctionName: functionName,
+          MemorySize: memorySize,
+          Timeout: timeoutSeconds,
+        }),
+      );
+    } catch (error) {
+      // Another worker is applying the same update concurrently.
+      if (!(error instanceof ResourceConflictException)) {
+        throw error;
+      }
+    }
+
+    await this.awsClient.waitFunctionUpdated(functionName);
   }
 
   private async getCommonLayerName(): Promise<string> {
