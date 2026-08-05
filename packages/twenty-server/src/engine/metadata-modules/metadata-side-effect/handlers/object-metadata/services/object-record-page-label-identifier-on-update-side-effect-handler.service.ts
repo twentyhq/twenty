@@ -6,15 +6,15 @@ import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { computeRecordPageViewFieldForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-page-view-field-for-existing-object.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { MetadataSideEffectExceptionCode } from 'src/engine/metadata-modules/metadata-side-effect/exceptions/metadata-side-effect-exception-code';
+import { computeRecordPageViewFieldForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-page-view-field-for-existing-object.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
@@ -92,17 +92,10 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
     }
 
     const recordPageFlatViewFields =
-      recordPageFlatView.viewFieldUniversalIdentifiers
-        .map(
-          (viewFieldUniversalIdentifier) =>
-            relatedFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
-              viewFieldUniversalIdentifier
-            ],
-        )
-        .filter(isDefined)
-        .filter(
-          (flatViewField) => !isDefined(flatViewField.deletedAt),
-        ) as UniversalFlatViewField[];
+      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
+        flatEntityMaps: relatedFlatEntityMaps.flatViewFieldMaps,
+        universalIdentifiers: recordPageFlatView.viewFieldUniversalIdentifiers,
+      }).filter((flatViewField) => !isDefined(flatViewField.deletedAt));
 
     const newLabelIdentifierFlatViewFieldToDelete =
       recordPageFlatViewFields.find(
@@ -174,8 +167,6 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
       return undefined;
     }
 
-    // Relabeling away from a field deleted in the same operation (e.g. a
-    // manifest sync removing the field): there is nothing to restore.
     const previousLabelIdentifierDeletedInSameBatch = isDefined(
       allFlatEntityOperationRecordByMetadataName.fieldMetadata
         ?.flatEntityToDelete[
@@ -196,8 +187,6 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
       return undefined;
     }
 
-    // Pending pair dedup: a caller-authored view field for the previous label
-    // identifier can already be part of the same batch (manifest sync).
     const pairAlreadyPending = Object.values(
       allFlatEntityOperationRecordByMetadataName.viewField
         ?.flatEntityToCreate ?? {},
@@ -226,8 +215,7 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
     }
 
     return computeRecordPageViewFieldForExistingObject({
-      sourceFlatFieldMetadata:
-        previousLabelIdentifierFlatFieldMetadata as UniversalFlatFieldMetadata,
+      sourceFlatFieldMetadata: previousLabelIdentifierFlatFieldMetadata,
       recordPageViewUniversalIdentifier,
       flatViewMaps: relatedFlatEntityMaps.flatViewMaps,
       flatViewFieldMaps: relatedFlatEntityMaps.flatViewFieldMaps,
