@@ -1,5 +1,6 @@
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackThreadReference } from 'src/logic-functions/types/slack-thread-reference.type';
 import { type SlackThreadSubscription } from 'src/logic-functions/types/slack-thread-subscription.type';
@@ -18,7 +19,7 @@ export const getSlackThreadSubscriptionState = async ({
   const key = getSlackThreadKvKey({ channelId, threadTimestamp });
   const subscription = await kv.get<SlackThreadSubscription>(key);
 
-  if (subscription === null || !isNumber(subscription.expiresAt)) {
+  if (!isDefined(subscription) || !isNumber(subscription.expiresAt)) {
     return 'none';
   }
 

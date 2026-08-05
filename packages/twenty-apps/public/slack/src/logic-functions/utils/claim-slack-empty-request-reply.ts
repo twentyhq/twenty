@@ -1,5 +1,6 @@
 import { isNumber } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { getSlackEmptyRequestReplyKvKey } from 'src/logic-functions/utils/get-slack-empty-request-reply-kv-key';
 
@@ -23,7 +24,7 @@ export const claimSlackEmptyRequestReply = async ({
   const existingClaim = await kv.get<SlackEmptyRequestReplyClaim>(key);
 
   if (
-    existingClaim !== null &&
+    isDefined(existingClaim) &&
     isNumber(existingClaim.expiresAt) &&
     existingClaim.expiresAt > Date.now()
   ) {

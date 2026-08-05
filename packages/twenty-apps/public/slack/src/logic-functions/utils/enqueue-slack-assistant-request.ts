@@ -1,4 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
@@ -20,7 +21,7 @@ export const enqueueSlackAssistantRequest = async (
   const parsed = parseSlackAssistantRequest(body);
 
   if (parsed.request === null) {
-    if (parsed.emptyRequest !== undefined) {
+    if (isDefined(parsed.emptyRequest)) {
       return await replyToEmptySlackAssistantRequest(parsed.emptyRequest);
     }
 
