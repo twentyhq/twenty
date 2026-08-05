@@ -24,7 +24,11 @@ export const OnboardingStepLayout = () => {
   return (
     <OnboardingLayout
       onBack={
-        hasPreviousOnboardingStep ? goBackToPreviousOnboardingStep : undefined
+        hasPreviousOnboardingStep
+          ? () => {
+              void goBackToPreviousOnboardingStep();
+            }
+          : undefined
       }
       isBackDisabled={isGoingBackToPreviousOnboardingStep}
       freeCredits={isDefined(onboardingConfig) ? freeCreditsTotal : undefined}

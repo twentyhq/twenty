@@ -6,6 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import {
@@ -40,7 +41,13 @@ const buildGoBackMock = ({
 const renderGoBackHook = (mocks: readonly MockedResponse[]) => {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <MockedProvider mocks={mocks}>
-      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+      <JotaiProvider store={jotaiStore}>
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'snack-bar-manager' }}
+        >
+          {children}
+        </SnackBarComponentInstanceContext.Provider>
+      </JotaiProvider>
     </MockedProvider>
   );
 
@@ -104,21 +111,63 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     const { result } = renderGoBackHook([
       {
         request: { query: GoBackToPreviousOnboardingStepDocument },
-        result: { errors: [new GraphQLError('No previous onboarding step')] },
+        result: { errors: [new GraphQLError('Network failure')] },
+      },
+    ]);
+
+    await act(async () => {
+      await result.current.goBackToPreviousOnboardingStep();
+    });
+
+    expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
+      OnboardingStatus.PROFILE_CREATION,
+    );
+    expect(
+      jotaiStore.get(currentUserState.atom)?.previousOnboardingStatus,
+    ).toBe(OnboardingStatus.APPS_INSTALLATION);
+    expect(jotaiStore.get(onboardingNavigationDirectionState.atom)).toBe(
+      'forward',
+    );
+  });
+
+  it('should not reject so a click handler never sees an unhandled rejection', async () => {
+    const { result } = renderGoBackHook([
+      {
+        request: { query: GoBackToPreviousOnboardingStepDocument },
+        result: { errors: [new GraphQLError('Network failure')] },
       },
     ]);
 
     await act(async () => {
       await expect(
         result.current.goBackToPreviousOnboardingStep(),
-      ).rejects.toThrow();
+      ).resolves.toBeUndefined();
+    });
+  });
+
+  it('should drop the stale back target when the server has no previous step', async () => {
+    const { result } = renderGoBackHook([
+      {
+        request: { query: GoBackToPreviousOnboardingStepDocument },
+        result: {
+          errors: [
+            new GraphQLError('No previous onboarding step', {
+              extensions: { code: 'NO_PREVIOUS_ONBOARDING_STEP' },
+            }),
+          ],
+        },
+      },
+    ]);
+
+    await act(async () => {
+      await result.current.goBackToPreviousOnboardingStep();
     });
 
+    expect(
+      jotaiStore.get(currentUserState.atom)?.previousOnboardingStatus,
+    ).toBeNull();
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
       OnboardingStatus.PROFILE_CREATION,
-    );
-    expect(jotaiStore.get(onboardingNavigationDirectionState.atom)).toBe(
-      'forward',
     );
   });
 });
