@@ -281,11 +281,10 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     case WidgetConfigurationType.RECORD_TABLE: {
       const { viewId, ...rest } = configuration;
 
-      let viewUniversalIdentifier: string | undefined = undefined;
+      let viewUniversalIdentifier: string | null = null;
 
       if (isDefined(viewId)) {
-        viewUniversalIdentifier =
-          viewUniversalIdentifierById[viewId] ?? undefined;
+        viewUniversalIdentifier = viewUniversalIdentifierById[viewId] ?? null;
 
         if (
           !isDefined(viewUniversalIdentifier) &&
@@ -300,7 +299,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
 
       return {
         ...rest,
-        viewId: viewUniversalIdentifier,
+        viewUniversalIdentifier,
       };
     }
 

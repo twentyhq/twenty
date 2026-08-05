@@ -1,11 +1,11 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { type CanvasTheme } from 'twenty-shared/utils';
 
-import { type EmailStyleFieldKind } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
+import { type AdvancedTextEditorSettingInput } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 
 export type EmailThemeField = {
   label: MessageDescriptor;
   property: keyof CanvasTheme;
-  input: EmailStyleFieldKind;
+  input: AdvancedTextEditorSettingInput;
   placeholder?: string;
 };

@@ -15,7 +15,16 @@ import { variableTag } from '@/utils/email-renderer/nodes/variable-tag';
 import { type JSONContent } from '@tiptap/core';
 import { Fragment, type JSX, type ReactNode } from 'react';
 import { type InheritedTypography } from 'src/utils/email-renderer/utils/inherited-typography';
-import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import {
+  isRenderedEmailDocumentNodeType,
+  TIPTAP_NODE_TYPES,
+  type RenderedEmailDocumentNodeType,
+} from 'twenty-shared/utils';
+
+type EmailNodeRenderer = (
+  node: JSONContent,
+  inherited: InheritedTypography,
+) => ReactNode;
 
 const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.PARAGRAPH]: paragraph,
@@ -32,19 +41,20 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.BUTTON]: button,
   [TIPTAP_NODE_TYPES.DIVIDER]: divider,
   [TIPTAP_NODE_TYPES.HTML]: html,
-};
+} satisfies Record<RenderedEmailDocumentNodeType, EmailNodeRenderer>;
 
 const renderNode = (
   node: JSONContent,
   inherited: InheritedTypography,
 ): ReactNode => {
-  const renderer = NODE_RENDERERS[node.type as keyof typeof NODE_RENDERERS];
-
-  if (!renderer) {
+  if (
+    typeof node.type !== 'string' ||
+    !isRenderedEmailDocumentNodeType(node.type)
+  ) {
     return null;
   }
 
-  return renderer(node, inherited);
+  return NODE_RENDERERS[node.type](node, inherited);
 };
 
 export const mappedNodeContent = (

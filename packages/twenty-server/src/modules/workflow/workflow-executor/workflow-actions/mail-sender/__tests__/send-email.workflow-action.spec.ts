@@ -11,17 +11,6 @@ import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-execu
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
-jest.mock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
-  () => ({
-    renderRichTextToHtml: jest.fn().mockResolvedValue('<p>rendered html</p>'),
-  }),
-);
-
-const { renderRichTextToHtml } = jest.requireMock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
-);
-
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -117,8 +106,13 @@ describe('SendEmailWorkflowAction', () => {
       },
     });
 
+  const executedBodyDocument = () =>
+    JSON.parse(
+      mockSendEmailTool.execute.mock.calls[0][0].body as string,
+    ) as Record<string, unknown>;
+
   describe('email body handling', () => {
-    it('should render TipTap JSON body to HTML', async () => {
+    it('should prepare TipTap JSON for the shared email compiler', async () => {
       const tipTapBody = JSON.stringify({
         type: 'doc',
         content: [
@@ -131,14 +125,10 @@ describe('SendEmailWorkflowAction', () => {
 
       await executeWithBody(tipTapBody);
 
-      expect(renderRichTextToHtml).toHaveBeenCalledWith(JSON.parse(tipTapBody));
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.objectContaining({ body: '<p>rendered html</p>' }),
-        expect.any(Object),
-      );
+      expect(executedBodyDocument()).toEqual(JSON.parse(tipTapBody));
     });
 
-    it('should resolve variableTag nodes inside TipTap JSON before rendering', async () => {
+    it('should resolve variableTag nodes inside TipTap JSON before compilation', async () => {
       const tipTapBodyWithVariable = JSON.stringify({
         type: 'doc',
         content: [
@@ -156,7 +146,7 @@ describe('SendEmailWorkflowAction', () => {
 
       await executeWithBody(tipTapBodyWithVariable);
 
-      expect(renderRichTextToHtml).toHaveBeenCalledWith({
+      expect(executedBodyDocument()).toEqual({
         type: 'doc',
         content: [
           {
@@ -192,7 +182,7 @@ describe('SendEmailWorkflowAction', () => {
         }),
       );
 
-      expect(renderRichTextToHtml).toHaveBeenCalledWith({
+      expect(executedBodyDocument()).toEqual({
         type: 'doc',
         content: [
           {
@@ -233,7 +223,7 @@ describe('SendEmailWorkflowAction', () => {
         },
       });
 
-      expect(renderRichTextToHtml).toHaveBeenCalledWith({
+      expect(executedBodyDocument()).toEqual({
         type: 'doc',
         content: [
           {
@@ -244,25 +234,44 @@ describe('SendEmailWorkflowAction', () => {
       });
     });
 
-    it('should not resolve an already-rendered email body a second time', async () => {
-      renderRichTextToHtml.mockResolvedValueOnce('<p>{{trigger.email}}</p>');
+    it('should keep placeholders from resolved values inert', async () => {
+      await action.execute({
+        currentStepId: 'step-1',
+        steps: [
+          buildSendEmailStep({
+            ...emailInput,
+            body: JSON.stringify({
+              type: 'doc',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: '{{trigger.name}}' }],
+                },
+              ],
+            }),
+          }),
+        ],
+        context: {
+          trigger: {
+            name: '{{trigger.email}}',
+            email: 'john@example.com',
+          },
+        },
+        runInfo: {
+          workspaceId: 'workspace-1',
+          workflowRunId: 'run-1',
+        },
+      });
 
-      await executeWithBody(
-        JSON.stringify({
-          type: 'doc',
-          content: [
-            {
-              type: 'paragraph',
-              content: [{ type: 'text', text: '{{trigger.name}}' }],
-            },
-          ],
-        }),
-      );
-
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.objectContaining({ body: '<p>{{trigger.email}}</p>' }),
-        expect.any(Object),
-      );
+      expect(executedBodyDocument()).toEqual({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: '{{trigger.email}}' }],
+          },
+        ],
+      });
     });
 
     it('should reject an invalid structured email document', async () => {
@@ -281,7 +290,6 @@ describe('SendEmailWorkflowAction', () => {
     it('should pass plain text body through without rendering', async () => {
       await executeWithBody('{{trigger.name}}\n{{trigger.email}}');
 
-      expect(renderRichTextToHtml).not.toHaveBeenCalled();
       expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
         expect.objectContaining({ body: 'John\njohn@example.com' }),
         expect.any(Object),
@@ -291,7 +299,6 @@ describe('SendEmailWorkflowAction', () => {
     it('should treat non-TipTap JSON as plain text', async () => {
       await executeWithBody('{"key":"value"}');
 
-      expect(renderRichTextToHtml).not.toHaveBeenCalled();
       expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
         expect.objectContaining({ body: '{"key":"value"}' }),
         expect.any(Object),
@@ -301,14 +308,12 @@ describe('SendEmailWorkflowAction', () => {
     it('should handle empty string body without crashing', async () => {
       await executeWithBody('');
 
-      expect(renderRichTextToHtml).not.toHaveBeenCalled();
       expect(mockSendEmailTool.execute).toHaveBeenCalled();
     });
 
     it('should handle undefined body without crashing', async () => {
       await executeWithBody(undefined);
 
-      expect(renderRichTextToHtml).not.toHaveBeenCalled();
       expect(mockSendEmailTool.execute).toHaveBeenCalled();
     });
   });
