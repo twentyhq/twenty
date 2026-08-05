@@ -221,16 +221,44 @@ describe('AdminPanelGlobalChatThreadsService', () => {
       }
     });
 
-    it('should gate both queries on workspaces allowing impersonation', async () => {
+    it('should gate both queries on live workspaces allowing impersonation', async () => {
       await service.getGlobalChatThreads(DEFAULT_ARGS);
 
       for (const queryBuilder of threadQueryBuilderMocks) {
         expect(queryBuilder.innerJoin).toHaveBeenCalledWith(
           'thread.workspace',
           'workspace',
-          expect.stringContaining('"allowImpersonation" = true'),
+          '"workspace"."allowImpersonation" = true AND "workspace"."deletedAt" IS NULL',
         );
       }
+    });
+
+    it('should keep soft-deleted user identity while joining thread owners', async () => {
+      await service.getGlobalChatThreads(DEFAULT_ARGS);
+
+      for (const queryBuilder of threadQueryBuilderMocks) {
+        expect(queryBuilder.leftJoin).toHaveBeenCalledWith(
+          'thread.userWorkspace',
+          'userWorkspace',
+        );
+        expect(queryBuilder.leftJoin).toHaveBeenCalledWith(
+          'userWorkspace.user',
+          'user',
+        );
+        expect(queryBuilder.withDeleted).toHaveBeenCalled();
+      }
+    });
+
+    it('should count only visible messages', async () => {
+      await service.getGlobalChatThreads(DEFAULT_ARGS);
+
+      const [listQueryBuilder] = threadQueryBuilderMocks;
+
+      expect(listQueryBuilder.leftJoin).toHaveBeenCalledWith(
+        'thread.messages',
+        'message',
+        '"message"."isHidden" = false',
+      );
     });
 
     it('should apply error and engagement filters when requested', async () => {
