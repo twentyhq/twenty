@@ -124,6 +124,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
 
   const selectableItemIdArray = [
     ViewType.TABLE,
+    ViewType.LIST,
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
@@ -135,7 +136,10 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             : 'CalendarDateField',
         ]
       : []),
-    ...(currentView?.type !== ViewType.TABLE ? ['Compact view'] : []),
+    ...(currentView?.type !== ViewType.TABLE &&
+    currentView?.type !== ViewType.LIST
+      ? ['Compact view']
+      : []),
   ];
 
   const selectedItemId = useAtomComponentStateValue(
@@ -177,6 +181,24 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 onClick={async () => {
                   if (currentView?.type !== ViewType.TABLE) {
                     await setAndPersistViewType(ViewType.TABLE);
+                  }
+                }}
+              />
+            </SelectableListItem>
+            <SelectableListItem
+              itemId={ViewType.LIST}
+              onEnter={() => {
+                setAndPersistViewType(ViewType.LIST);
+              }}
+            >
+              <MenuItemSelect
+                LeftIcon={viewTypeIconMapping(ViewType.LIST)}
+                text={t(getViewTypeLabel(ViewType.LIST))}
+                selected={currentView?.type === ViewType.LIST}
+                focused={selectedItemId === ViewType.LIST}
+                onClick={async () => {
+                  if (currentView?.type !== ViewType.LIST) {
+                    await setAndPersistViewType(ViewType.LIST);
                   }
                 }}
               />
@@ -305,31 +327,32 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 />
               </SelectableListItem>
             )}
-            {currentView?.type !== ViewType.TABLE && (
-              <SelectableListItem
-                itemId="Compact view"
-                onEnter={() => {
-                  setAndPersistIsCompactModeActive(
-                    !isCompactModeActive,
-                    currentView,
-                  );
-                }}
-              >
-                <MenuItemToggle
-                  focused={selectedItemId === 'Compact view'}
-                  LeftIcon={IconBaselineDensitySmall}
-                  onToggleChange={() =>
+            {currentView?.type !== ViewType.TABLE &&
+              currentView?.type !== ViewType.LIST && (
+                <SelectableListItem
+                  itemId="Compact view"
+                  onEnter={() => {
                     setAndPersistIsCompactModeActive(
                       !isCompactModeActive,
                       currentView,
-                    )
-                  }
-                  toggled={isCompactModeActive}
-                  text={t`Compact view`}
-                  toggleSize="small"
-                />
-              </SelectableListItem>
-            )}
+                    );
+                  }}
+                >
+                  <MenuItemToggle
+                    focused={selectedItemId === 'Compact view'}
+                    LeftIcon={IconBaselineDensitySmall}
+                    onToggleChange={() =>
+                      setAndPersistIsCompactModeActive(
+                        !isCompactModeActive,
+                        currentView,
+                      )
+                    }
+                    toggled={isCompactModeActive}
+                    text={t`Compact view`}
+                    toggleSize="small"
+                  />
+                </SelectableListItem>
+              )}
           </DropdownMenuItemsContainer>
         </SelectableList>
       )}

@@ -43,7 +43,12 @@ const PAGE_LAYOUTS_GROUP_KEYS: MetadataEntityKey[] = [
   'pageLayoutWidgets',
 ];
 
-const INDEX_VIEW_TYPES = [ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR];
+const INDEX_VIEW_TYPES = [
+  ViewType.TABLE,
+  ViewType.KANBAN,
+  ViewType.CALENDAR,
+  ViewType.LIST,
+];
 const FIELDS_WIDGET_VIEW_TYPES = [ViewType.FIELDS_WIDGET];
 const WIDGET_VIEW_TYPES = [
   ViewType.TABLE_WIDGET,
