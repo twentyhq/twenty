@@ -2,7 +2,6 @@ import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
@@ -16,6 +15,7 @@ import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/reco
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
+import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 
 // The grip, checkbox and first field cells are sticky at
@@ -44,8 +44,6 @@ export const RecordTableDraggableTr = ({
   onClick,
   children,
 }: RecordTableDraggableTrProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
   const { recordGroupId } = useContext(RecordGroupContext);
@@ -68,19 +66,18 @@ export const RecordTableDraggableTr = ({
   // per-instance id avoids the collision; recordId travels in the drag data.
   const [sortableId] = useState(() => v4());
 
-  const { handleRef, ref, isDragging, isDragSource, isDropTarget } =
-    useSortable({
-      id: sortableId,
-      index: draggableIndex,
-      group: droppableId,
-      type: RECORD_TABLE_ROW_DND_TYPE,
-      accept: RECORD_TABLE_ROW_DND_TYPE,
-      data: rowDragData,
-      disabled: isDragDisabled,
-      transition: null,
-      plugins: DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC,
-      feedback: 'clone',
-    });
+  const { handleRef, ref, isDragSource, isDropTarget } = useSortable({
+    id: sortableId,
+    index: draggableIndex,
+    group: droppableId,
+    type: RECORD_TABLE_ROW_DND_TYPE,
+    accept: RECORD_TABLE_ROW_DND_TYPE,
+    data: rowDragData,
+    disabled: isDragDisabled,
+    transition: null,
+    plugins: DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC,
+    feedback: 'clone',
+  });
 
   return (
     <RecordTableTr
@@ -89,19 +86,16 @@ export const RecordTableDraggableTr = ({
       ref={ref}
       className={className}
       style={{
-        background: isDragging ? theme.background.transparent.light : undefined,
-        borderColor: isDragging
-          ? `${theme.border.color.medium}`
-          : 'transparent',
-        opacity: isSecondaryDragged ? 0.3 : undefined,
+        opacity:
+          isDragSource || isSecondaryDragged ? DRAG_SOURCE_OPACITY : undefined,
       }}
-      isDragging={isDragging}
+      isDragging={false}
       data-testid={`row-id-${recordId}`}
       data-selectable-id={recordId}
       onClick={onClick}
     >
       <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
-        <RecordTableRowDraggableContextProvider value={{ isDragging }}>
+        <RecordTableRowDraggableContextProvider value={{ isDragging: false }}>
           {children}
           <RecordTableRowMultiDragPreview />
         </RecordTableRowDraggableContextProvider>
