@@ -61,15 +61,19 @@ const renderMention = (node: TipTapNode): string => {
   const recordId = node.attrs?.recordId;
   const label = node.attrs?.label;
 
-  return typeof objectName === 'string' && typeof recordId === 'string'
-    ? formatRecordReference({
-        objectNameSingular: objectName,
-        recordId,
-        displayName: typeof label === 'string' ? label : '',
-      })
-    : typeof label === 'string'
-      ? `@${label}`
-      : '';
+  if (typeof objectName === 'string' && typeof recordId === 'string') {
+    return formatRecordReference({
+      objectNameSingular: objectName,
+      recordId,
+      displayName: typeof label === 'string' ? label : '',
+    });
+  }
+
+  if (typeof label === 'string') {
+    return `@${label}`;
+  }
+
+  return '';
 };
 
 const renderListItem = (item: TipTapNode, marker: string): string => {

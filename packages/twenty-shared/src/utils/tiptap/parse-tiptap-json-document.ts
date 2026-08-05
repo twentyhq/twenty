@@ -17,7 +17,7 @@ const isTipTapMark = (value: unknown): value is TipTapMark => {
   );
 };
 
-const isTipTapNode = (value: unknown): value is TipTapNode => {
+export const isTipTapNode = (value: unknown): value is TipTapNode => {
   if (!isRecord(value)) {
     return false;
   }
@@ -33,16 +33,16 @@ const isTipTapNode = (value: unknown): value is TipTapNode => {
   );
 };
 
+const isTipTapDocument = (value: unknown): value is TipTapDocument =>
+  isTipTapNode(value) && value.type === TIPTAP_NODE_TYPES.DOCUMENT;
+
 export const parseTipTapJsonDocument = (
   serializedDocument: string,
 ): TipTapDocument | undefined => {
   try {
     const parsedDocument: unknown = JSON.parse(serializedDocument);
 
-    return isTipTapNode(parsedDocument) &&
-      parsedDocument.type === TIPTAP_NODE_TYPES.DOCUMENT
-      ? (parsedDocument as TipTapDocument)
-      : undefined;
+    return isTipTapDocument(parsedDocument) ? parsedDocument : undefined;
   } catch {
     return undefined;
   }
