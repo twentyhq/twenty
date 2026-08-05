@@ -33,7 +33,7 @@ const transformAttributes = (
     (transformedAttributes, [attributeName, context]) => {
       const value = transformedAttributes[attributeName];
 
-      return typeof value === 'string' && context
+      return typeof value === 'string' && isDefined(context)
         ? {
             ...transformedAttributes,
             [attributeName]: transform(value, context),
