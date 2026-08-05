@@ -36,6 +36,16 @@ const HostApiStorageFrontComponent = () => {
     }
   };
 
+  const runLocalStorageWrite = () => {
+    try {
+      window.localStorage.setItem('theme', 'dark');
+
+      setStatus(`storage:local-write:${window.localStorage.getItem('theme')}`);
+    } catch (error) {
+      setStatus(`storage:error:${getErrorName(error)}`);
+    }
+  };
+
   const runSessionStorageRoundTrip = () => {
     try {
       window.sessionStorage.setItem('visits', '2');
@@ -65,6 +75,14 @@ const HostApiStorageFrontComponent = () => {
         style={BUTTON_STYLE}
       >
         Local storage round trip
+      </button>
+      <button
+        data-testid="local-storage-write"
+        type="button"
+        onClick={runLocalStorageWrite}
+        style={BUTTON_STYLE}
+      >
+        Local storage write
       </button>
       <button
         data-testid="session-storage"

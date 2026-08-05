@@ -127,35 +127,38 @@ const persistedStory = runFrontComponentStory({
 
     await expectFrontComponentMounted(canvas);
 
+    const keyPrefix = buildFrontComponentStorageKeyPrefix(
+      PERSISTED_STORAGE_NAMESPACE,
+    );
+
+    await userEvent.click(await canvas.findByTestId('local-storage-write'));
     await userEvent.click(await canvas.findByTestId('session-storage'));
 
     await waitFor(
       () => {
-        expect(
-          window.sessionStorage.getItem(
-            `${buildFrontComponentStorageKeyPrefix(PERSISTED_STORAGE_NAMESPACE)}visits`,
-          ),
-        ).toBe('2');
+        expect(window.localStorage.getItem(`${keyPrefix}theme`)).toBe('dark');
+        expect(window.sessionStorage.getItem(`${keyPrefix}visits`)).toBe('2');
       },
       { timeout: HOST_API_TIMEOUT },
     );
   },
 });
 
+const clearPersistedStorageNamespace = () => {
+  for (const area of ['local', 'session'] as const) {
+    frontComponentStorageService.clear({
+      area,
+      ...PERSISTED_STORAGE_NAMESPACE,
+    });
+  }
+};
+
 export const StoragePersistsToTheHostPage: Story = {
   ...persistedStory,
   beforeEach: () => {
-    frontComponentStorageService.clear({
-      area: 'session',
-      ...PERSISTED_STORAGE_NAMESPACE,
-    });
+    clearPersistedStorageNamespace();
 
-    return () => {
-      frontComponentStorageService.clear({
-        area: 'session',
-        ...PERSISTED_STORAGE_NAMESPACE,
-      });
-    };
+    return clearPersistedStorageNamespace;
   },
   args: {
     ...persistedStory.args,

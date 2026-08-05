@@ -122,6 +122,34 @@ describe('frontComponentStorageService', () => {
     expect(window.localStorage.getItem('unrelatedTwentyKey')).toBe('value');
   });
 
+  it('should refuse a write whose key or value is not a string', () => {
+    const oversizedValue = 'v'.repeat(
+      FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH + 1,
+    );
+
+    expect(() =>
+      frontComponentStorageService.set({
+        ...NAMESPACE,
+        area: 'local',
+        key: 'draft',
+        serializedValue: [oversizedValue] as unknown as string,
+      }),
+    ).toThrow('Storage keys and values must be strings');
+
+    expect(() =>
+      frontComponentStorageService.set({
+        ...NAMESPACE,
+        area: 'local',
+        key: ['draft'] as unknown as string,
+        serializedValue: 'value',
+      }),
+    ).toThrow('Storage keys and values must be strings');
+
+    expect(
+      frontComponentStorageService.snapshot({ ...NAMESPACE, area: 'local' }),
+    ).toEqual({});
+  });
+
   it('should refuse a write that breaks the limits', () => {
     const oversizedValue = 'v'.repeat(
       FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH + 1,

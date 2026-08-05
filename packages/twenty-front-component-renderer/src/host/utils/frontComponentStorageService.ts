@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
 
@@ -54,6 +55,10 @@ export const frontComponentStorageService = {
     key: string;
     serializedValue: string;
   }): void => {
+    if (!isString(key) || !isString(serializedValue)) {
+      throw new Error('Storage keys and values must be strings');
+    }
+
     const browserStorage = getBrowserStorage(area);
     const keyPrefix = buildFrontComponentStorageKeyPrefix(namespace);
     const namespacedKey = `${keyPrefix}${key}`;
