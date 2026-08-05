@@ -37,6 +37,7 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
+import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
@@ -615,12 +616,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.cleanupStaleVersions(entry);
   }
 
-  private entryLastReadAt(
-    entry: WorkspaceLocalCacheEntry<CacheDataType>,
-  ): number {
-    return entry.versions.get(entry.latestHash)?.lastReadAt ?? 0;
-  }
-
   private sweepLocalCacheIfDue(): void {
     const now = Date.now();
 
@@ -632,70 +627,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
     this.lastLocalCacheSweepAt = now;
 
-    let expired = 0;
+    const evicted = sweepLocalCache(this.localCache, now, {
+      ttlMs: LOCAL_ENTRY_TTL_MS,
+      maxEntriesByPrefix: MAX_LOCAL_ENTRIES_BY_PREFIX,
+      globalMaxEntries: MAX_LOCAL_CACHE_ENTRIES,
+      minEvict: MIN_EVICT_KEYS,
+    });
 
-    for (const [localKey, entry] of this.localCache) {
-      for (const [hash, version] of entry.versions) {
-        if (now - version.lastReadAt > LOCAL_ENTRY_TTL_MS) {
-          entry.versions.delete(hash);
-        }
-      }
-
-      if (entry.versions.size === 0 || !entry.versions.has(entry.latestHash)) {
-        this.localCache.delete(localKey);
-        expired += 1;
-      }
+    if (evicted > 0) {
+      this.cacheMetricsService.recordEviction(evicted);
     }
-
-    if (expired > 0) {
-      this.cacheMetricsService.recordEviction(expired);
-    }
-
-    for (const [prefix, maxEntries] of MAX_LOCAL_ENTRIES_BY_PREFIX) {
-      this.evictLeastRecentlyRead(
-        (key) => key.startsWith(`${prefix}:`),
-        maxEntries,
-      );
-    }
-
-    this.evictLeastRecentlyRead(
-      () => true,
-      MAX_LOCAL_CACHE_ENTRIES,
-      MIN_EVICT_KEYS,
-    );
-  }
-
-  private evictLeastRecentlyRead(
-    matches: (key: string) => boolean,
-    maxEntries: number,
-    minEvict = 0,
-  ): void {
-    const matching: [string, WorkspaceLocalCacheEntry<CacheDataType>][] = [];
-
-    for (const keyEntry of this.localCache) {
-      if (matches(keyEntry[0])) {
-        matching.push(keyEntry);
-      }
-    }
-
-    if (matching.length <= maxEntries) {
-      return;
-    }
-
-    matching.sort(
-      (a, b) => this.entryLastReadAt(a[1]) - this.entryLastReadAt(b[1]),
-    );
-
-    const evictCount = Math.min(
-      matching.length,
-      Math.max(minEvict, matching.length - maxEntries),
-    );
-
-    for (let index = 0; index < evictCount; index += 1) {
-      this.localCache.delete(matching[index][0]);
-    }
-
-    this.cacheMetricsService.recordEviction(evictCount);
   }
 
   private cleanupStaleVersions(
