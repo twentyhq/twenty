@@ -103,7 +103,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration(buildArgs)
         .catch((error) => {
-          // Distinct from 'fail' (validation errors): the builder itself threw
           this.metricsService.recordHistogram({
             key: MetricsKeys.WorkspaceMigrationBuildDurationMs,
             value: performance.now() - buildStart,

@@ -421,8 +421,6 @@ export class WorkspaceMigrationRunnerService {
       const commitMs = performance.now() - commitStart;
       const transactionMs = performance.now() - transactionStart;
 
-      // Commit is recorded as its own phase; subtract it so phases stay
-      // disjoint
       this.recordRunPhaseMetric({
         phase: 'action-execution',
         status: 'success',
@@ -442,8 +440,6 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.perfTimeEnd('Runner', 'Transaction execution');
     } catch (error) {
-      // The action/commit split is unknowable mid-failure; the whole elapsed
-      // transaction time goes to action-execution, segregated by status
       this.recordRunPhaseMetric({
         phase: 'action-execution',
         status: 'fail',

@@ -329,8 +329,6 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     label: string;
     method: () => Promise<void>;
   }): Promise<void> {
-    // Measured locally so metrics stay accurate regardless of the performance
-    // log level and of concurrent migrations sharing the logger's timer map
     const startedAt = performance.now();
 
     const recordActionDuration = (status: 'success' | 'fail') =>
