@@ -4,6 +4,11 @@ import { type WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-attempts.constant';
+import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
 } from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
@@ -11,12 +16,11 @@ import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/
 import {
   type WebhookSubscribableChannel,
   type WebhookSubscriptionOperation,
-  type WebhookSubscriptionRecoveryAction,
 } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
 type WebhookSubscribableChannelReference = Pick<
   WebhookSubscribableChannel,
-  'id' | 'webhookSubscriptionExternalId'
+  'id' | 'webhookSubscriptionExternalId' | 'webhookSubscriptionFailureCount'
 >;
 
 @Injectable()
@@ -32,47 +36,61 @@ export class WebhookSubscriptionExceptionHandlerService {
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
     workspaceId: string,
-  ): Promise<WebhookSubscriptionRecoveryAction> {
-    if (exception instanceof WebhookSubscriptionDriverException) {
+  ): Promise<void> {
+    if (
+      exception instanceof WebhookSubscriptionDriverException ||
+      exception instanceof ConnectedAccountRefreshAccessTokenException
+    ) {
       switch (exception.code) {
         case WebhookSubscriptionDriverExceptionCode.NOT_FOUND:
-          return await this.handleNotFoundException(
+          await this.handleNotFoundException(
             operation,
             channelType,
             channel,
             workspaceId,
           );
-        case WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
-          return await this.handleInsufficientPermissionsException(
-            channelType,
-            channel,
-          );
+          break;
         case WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR:
-          return await this.handleTemporaryException(
+        case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+          await this.handleTemporaryException(
             exception,
+            operation,
+            channelType,
+            channel,
+            workspaceId,
+          );
+          break;
+        case WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
+          await this.handleInsufficientPermissionsException(
             channelType,
             channel,
           );
+          break;
+        case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
         case WebhookSubscriptionDriverExceptionCode.PROVIDER_NOT_CONFIGURED:
         case WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID:
         case WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER:
         case WebhookSubscriptionDriverExceptionCode.UNKNOWN:
         default:
-          return await this.handleUnknownException(
+          await this.handleUnknownException(
             exception,
             channelType,
             channel,
             workspaceId,
           );
+          break;
       }
+    } else {
+      await this.handleUnknownException(
+        exception,
+        channelType,
+        channel,
+        workspaceId,
+      );
     }
-
-    return await this.handleUnknownException(
-      exception,
-      channelType,
-      channel,
-      workspaceId,
-    );
   }
 
   private async handleNotFoundException(
@@ -80,42 +98,73 @@ export class WebhookSubscriptionExceptionHandlerService {
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
     workspaceId: string,
-  ): Promise<WebhookSubscriptionRecoveryAction> {
+  ): Promise<void> {
     if (operation === 'CREATE') {
-      return await this.handleInsufficientPermissionsException(
-        channelType,
-        channel,
-      );
+      await this.handleInsufficientPermissionsException(channelType, channel);
+
+      return;
     }
 
-    const cleared =
-      await this.webhookSubscriptionStatusService.clearRemovedSubscription(
-        channelType,
-        channel.id,
-        workspaceId,
-        channel.webhookSubscriptionExternalId,
-      );
-
-    return cleared ? 'RECREATE' : 'NONE';
+    await this.webhookSubscriptionStatusService.clearRemovedSubscription(
+      channelType,
+      channel.id,
+      workspaceId,
+      channel.webhookSubscriptionExternalId,
+    );
   }
 
   private async handleInsufficientPermissionsException(
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
-  ): Promise<WebhookSubscriptionRecoveryAction> {
+  ): Promise<void> {
     await this.webhookSubscriptionStatusService.markAsExpired(
       channelType,
       channel.id,
     );
-
-    return 'NONE';
   }
 
   private async handleTemporaryException(
-    exception: WebhookSubscriptionDriverException,
+    exception: { message: string },
+    operation: WebhookSubscriptionOperation,
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
-  ): Promise<WebhookSubscriptionRecoveryAction> {
+    workspaceId: string,
+  ): Promise<void> {
+    if (
+      channel.webhookSubscriptionFailureCount >=
+      WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS
+    ) {
+      await this.webhookSubscriptionStatusService.markAsExpired(
+        channelType,
+        channel.id,
+      );
+
+      this.exceptionHandlerService.captureExceptions(
+        [
+          new Error(
+            `Temporary error occurred ${WEBHOOK_SUBSCRIPTION_MAX_ATTEMPTS} times while running ${operation} on the webhook subscription of ${channelType} channel ${channel.id} in workspace ${workspaceId}: ${exception.message}`,
+          ),
+        ],
+        {
+          additionalData: {
+            channelId: channel.id,
+            channelType,
+            operation,
+            webhookSubscriptionFailureCount:
+              channel.webhookSubscriptionFailureCount,
+          },
+          workspace: { id: workspaceId },
+        },
+      );
+
+      return;
+    }
+
+    await this.webhookSubscriptionStatusService.incrementFailureCount(
+      channelType,
+      channel.id,
+    );
+
     await this.webhookSubscriptionStatusService.markAsFailed(
       channelType,
       channel.id,
@@ -129,8 +178,8 @@ export class WebhookSubscriptionExceptionHandlerService {
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
     workspaceId: string,
-  ): Promise<WebhookSubscriptionRecoveryAction> {
-    await this.webhookSubscriptionStatusService.markAsFailed(
+  ): Promise<void> {
+    await this.webhookSubscriptionStatusService.markAsExpired(
       channelType,
       channel.id,
     );

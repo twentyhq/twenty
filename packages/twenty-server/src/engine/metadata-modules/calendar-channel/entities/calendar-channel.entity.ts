@@ -122,6 +122,12 @@ export class CalendarChannelEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'timestamptz', nullable: true })
   webhookSubscriptionExpiresAt: Date | null;
 
+  @Column({ type: 'integer', nullable: false, default: 0 })
+  webhookSubscriptionFailureCount: number;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  webhookSubscriptionFailedAt: Date | null;
+
   @Column({ type: 'uuid', nullable: false })
   connectedAccountId: string;
 
