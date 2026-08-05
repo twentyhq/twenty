@@ -14,6 +14,49 @@ type HtmlDocumentPreamble = {
   doctype?: string;
 };
 
+const findDoctypeEnd = (html: string, start: number): number | undefined => {
+  const searchEnd = Math.min(html.length, start + MAX_DOCTYPE_LENGTH);
+  let quote: '"' | "'" | undefined;
+
+  for (let cursor = start + '<!doctype'.length; cursor < searchEnd; cursor++) {
+    const character = html[cursor];
+
+    if (quote !== undefined) {
+      if (character === quote) {
+        quote = undefined;
+      }
+
+      continue;
+    }
+
+    if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === '>') {
+      return cursor;
+    }
+  }
+
+  return undefined;
+};
+
+const isHtmlDoctype = (doctype: string): boolean => {
+  let cursor = '<!doctype'.length;
+
+  if (!isWhitespace(doctype[cursor])) {
+    return false;
+  }
+
+  while (isWhitespace(doctype[cursor])) {
+    cursor += 1;
+  }
+
+  return (
+    doctype.slice(cursor, cursor + 'html'.length).toLowerCase() === 'html' &&
+    (doctype[cursor + 'html'.length] === '>' ||
+      isWhitespace(doctype[cursor + 'html'.length]))
+  );
+};
+
 const inspectHtmlDocumentPreamble = (html: string): HtmlDocumentPreamble => {
   let cursor = 0;
 
@@ -42,20 +85,13 @@ const inspectHtmlDocumentPreamble = (html: string): HtmlDocumentPreamble => {
     (html[cursor + 9] === '>' || isWhitespace(html[cursor + 9]));
 
   if (startsWithDoctype) {
-    const doctypeEnd = html.indexOf('>', cursor + 9);
+    const doctypeEnd = findDoctypeEnd(html, cursor);
     const doctype =
-      doctypeEnd !== -1 && doctypeEnd - cursor < MAX_DOCTYPE_LENGTH
-        ? html.slice(cursor, doctypeEnd + 1)
-        : undefined;
-    const normalizedDoctype = doctype?.toLowerCase();
-    const htmlNameBoundary = normalizedDoctype?.[14];
-    const isHtmlDoctype =
-      normalizedDoctype?.startsWith('<!doctype html') === true &&
-      (htmlNameBoundary === '>' || isWhitespace(htmlNameBoundary));
+      doctypeEnd !== undefined ? html.slice(cursor, doctypeEnd + 1) : undefined;
 
     return {
       isWholeDocument: true,
-      ...(isHtmlDoctype && { doctype }),
+      ...(doctype !== undefined && isHtmlDoctype(doctype) && { doctype }),
     };
   }
 

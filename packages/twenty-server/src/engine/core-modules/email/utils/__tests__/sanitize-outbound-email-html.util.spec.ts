@@ -27,6 +27,24 @@ describe('outbound email sanitization', () => {
     expect(sanitized).toContain('<body>');
   });
 
+  it('should preserve doctypes with repeated whitespace before the HTML name', async () => {
+    const doctype = '<!DOCTYPE \n\t html>';
+    const sanitized = await sanitizeOutboundEmailHtml(
+      `${doctype}<html><body>Hello</body></html>`,
+    );
+
+    expect(sanitized.startsWith(`${doctype}<html>`)).toBe(true);
+  });
+
+  it('should preserve quoted greater-than signs in doctypes', async () => {
+    const doctype = '<!DOCTYPE html SYSTEM "about:legacy-compat?x=>">';
+    const sanitized = await sanitizeOutboundEmailHtml(
+      `${doctype}<html><body>Hello</body></html>`,
+    );
+
+    expect(sanitized.startsWith(`${doctype}<html>`)).toBe(true);
+  });
+
   it('should reject active meta directives', async () => {
     const sanitized = await sanitizeOutboundEmailHtml(
       '<!doctype html><html><head><meta http-equiv="refresh" content="0;url=https://evil.test"></head><body>Hello</body></html>',
