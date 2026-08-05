@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { filterSystemSideEffectFlatViewFieldsToDelete } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/filter-system-side-effect-flat-view-fields-to-delete.util';
+import { isNavigationCommandMenuItemForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/find-object-navigation-flat-command-menu-item.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -24,7 +26,8 @@ type FlatEntityToDelete<
     | 'viewFieldGroup'
     | 'pageLayout'
     | 'pageLayoutTab'
-    | 'pageLayoutWidget',
+    | 'pageLayoutWidget'
+    | 'commandMenuItem',
 > = Record<string, MetadataUniversalFlatEntity<TMetadataName>>;
 
 @Injectable()
@@ -34,7 +37,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectSystemSideEffectsOnDelete',
     description:
-      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, its engine-owned views (the INDEX table view and the FIELDS_WIDGET record-page view) with their view fields and view field groups, and its engine-owned record-page layout stack (pageLayout, pageLayoutTab, pageLayoutWidget). View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields and groups; page layouts have no aggregator on the object, so they are resolved by their objectMetadata reference) and indexes into the flat entity maps. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes and emits nothing for the layout stack, and manifest deletion inference excludes these entities entirely, so without these buckets the layout stack would only ever disappear through raw DB foreign key cascade, behind the engine back. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
+      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, its engine-owned views (the INDEX table view and the FIELDS_WIDGET record-page view) with their view fields and view field groups, its engine-owned record-page layout stack (pageLayout, pageLayoutTab, pageLayoutWidget), and its engine-owned navigation command menu item (provisioned by objectNavigationCommandOnCreate; matched by NAVIGATION payload or derived identifier since the entity has no foreign key to the object). View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields and groups; page layouts have no aggregator on the object, so they are resolved by their objectMetadata reference) and indexes into the flat entity maps. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes and emits nothing for the layout stack, and manifest deletion inference excludes these entities entirely, so without these buckets the layout stack would only ever disappear through raw DB foreign key cascade, behind the engine back. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
   },
 ) {
   buildSideEffects({
@@ -87,6 +90,10 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
       pageLayoutWidget: this.computePageLayoutWidgetToDelete({
         relatedFlatEntityMaps,
         flatPageLayoutTabsToDelete: Object.values(pageLayoutTabToDelete),
+      }),
+      commandMenuItem: this.computeCommandMenuItemToDelete({
+        flatObjectMetadata,
+        relatedFlatEntityMaps,
       }),
     };
 
@@ -285,6 +292,59 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     }
 
     return viewToDelete;
+  }
+
+  // The navigation command menu item has no foreign key to its object (the
+  // link lives in the NAVIGATION payload), so this is the one lookup that
+  // scans the command menu item maps instead of walking an aggregator. The
+  // match is payload-or-derived-identifier based so rows not yet re-owned
+  // onto getNavigationCommandUniversalIdentifier are cascaded too.
+  private computeCommandMenuItemToDelete({
+    flatObjectMetadata,
+    relatedFlatEntityMaps,
+  }: {
+    flatObjectMetadata: MetadataUniversalFlatEntity<'objectMetadata'>;
+    relatedFlatEntityMaps: RelatedFlatEntityMaps;
+  }): FlatEntityToDelete<'commandMenuItem'> {
+    const commandMenuItemToDelete: FlatEntityToDelete<'commandMenuItem'> = {};
+
+    const flatObjectMetadataWithId = flatObjectMetadata as Partial<{
+      id: string;
+    }>;
+    const objectMetadataId =
+      flatObjectMetadataWithId.id ??
+      (
+        relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          flatObjectMetadata.universalIdentifier
+        ] as Partial<{ id: string }> | undefined
+      )?.id;
+
+    const derivedUniversalIdentifier = getNavigationCommandUniversalIdentifier({
+      applicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
+      objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+    });
+
+    for (const flatCommandMenuItem of Object.values(
+      relatedFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier,
+    )) {
+      if (
+        !isDefined(flatCommandMenuItem) ||
+        flatCommandMenuItem.isSystemSideEffect !== true ||
+        !isNavigationCommandMenuItemForObject({
+          commandMenuItem: flatCommandMenuItem,
+          objectMetadataId,
+          derivedUniversalIdentifier,
+        })
+      ) {
+        continue;
+      }
+
+      commandMenuItemToDelete[flatCommandMenuItem.universalIdentifier] =
+        flatCommandMenuItem;
+    }
+
+    return commandMenuItemToDelete;
   }
 
   private computeViewFieldToDelete({

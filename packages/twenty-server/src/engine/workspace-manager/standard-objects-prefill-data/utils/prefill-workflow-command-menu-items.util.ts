@@ -73,6 +73,9 @@ export const prefillWorkflowCommandMenuItems = async ({
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     isActive: true,
+    // Deliberately not isSystemSideEffect: these rows are derived from
+    // user-created workflows, not from a metadata operation, so the
+    // side-effect engine does not own their lifecycle.
     isSystemSideEffect: false,
     overrides: null,
     universalOverrides: null,
