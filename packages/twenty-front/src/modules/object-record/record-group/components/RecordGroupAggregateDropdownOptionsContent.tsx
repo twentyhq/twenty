@@ -1,12 +1,12 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
-import {
-  RecordBoardColumnHeaderAggregateDropdownContext,
-  type RecordBoardColumnHeaderAggregateDropdownContextValue,
-} from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { RecordBoardColumnHeaderAggregateDropdownMenuItem } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuItem';
-import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
-import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { RecordGroupAggregateDropdownMenuItem } from '@/object-record/record-group/components/RecordGroupAggregateDropdownMenuItem';
+import {
+  RecordGroupAggregateDropdownContext,
+  type RecordGroupAggregateDropdownContextValue,
+} from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
+import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';
+import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
@@ -21,7 +21,7 @@ import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import isEmpty from 'lodash.isempty';
 import { IconCheck, IconChevronLeft } from 'twenty-ui/icon';
 
-export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
+export const RecordGroupAggregateDropdownOptionsContent = ({
   availableAggregations,
   title,
 }: {
@@ -29,9 +29,9 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   title: string;
 }) => {
   const { onContentChange, closeDropdown, resetContent, objectMetadataItem } =
-    useDropdownContextStateManagement<RecordBoardColumnHeaderAggregateDropdownContextValue>(
+    useDropdownContextStateManagement<RecordGroupAggregateDropdownContextValue>(
       {
-        context: RecordBoardColumnHeaderAggregateDropdownContext,
+        context: RecordGroupAggregateDropdownContext,
       },
     );
 
@@ -69,7 +69,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
               availableAggregationOperation,
               availableAggregationFieldsIdsForOperation,
             ]) => (
-              <RecordBoardColumnHeaderAggregateDropdownMenuItem
+              <RecordGroupAggregateDropdownMenuItem
                 key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
                 onContentChange={() => {
                   if (

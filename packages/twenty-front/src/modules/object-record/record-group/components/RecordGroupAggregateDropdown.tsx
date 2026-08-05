@@ -1,16 +1,16 @@
 import { useDropdownContextCurrentContentId } from '@/dropdown-context-state-management/hooks/useDropdownContextCurrentContentId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from '@/object-record/record-board/contexts/RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext';
-import { RecordBoardColumnHeaderAggregateDropdownButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownButton';
-import { AggregateDropdownContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent';
-import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { type RecordBoardColumnHeaderAggregateContentId } from '@/object-record/record-board/types/RecordBoardColumnHeaderAggregateContentId';
+import { RecordGroupAggregateDropdownButton } from '@/object-record/record-group/components/RecordGroupAggregateDropdownButton';
+import { RecordGroupAggregateDropdownContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownContent';
+import { RecordGroupAggregateDropdownComponentInstanceContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownComponentInstanceContext';
+import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
+import { type RecordGroupAggregateContentId } from '@/object-record/record-group/types/RecordGroupAggregateContentId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { styled } from '@linaria/react';
 import { type Nullable } from 'twenty-shared/types';
 
-type RecordBoardColumnHeaderAggregateDropdownProps = {
+type RecordGroupAggregateDropdownProps = {
   aggregateValue?: Nullable<string | number>;
   aggregateLabel?: Nullable<string>;
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -21,22 +21,21 @@ const StyledContainer = styled.div`
   flex-shrink: 0;
 `;
 
-export const RecordBoardColumnHeaderAggregateDropdown = ({
+export const RecordGroupAggregateDropdown = ({
   objectMetadataItem,
   aggregateValue,
   aggregateLabel,
   dropdownId,
-}: RecordBoardColumnHeaderAggregateDropdownProps) => {
+}: RecordGroupAggregateDropdownProps) => {
   const {
     currentContentId,
     handleContentChange,
     handleResetContent,
     previousContentId,
-  } =
-    useDropdownContextCurrentContentId<RecordBoardColumnHeaderAggregateContentId>();
+  } = useDropdownContextCurrentContentId<RecordGroupAggregateContentId>();
 
   return (
-    <RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext.Provider
+    <RecordGroupAggregateDropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
     >
       <StyledContainer>
@@ -45,14 +44,14 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
           dropdownId={dropdownId}
           dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
           clickableComponent={
-            <RecordBoardColumnHeaderAggregateDropdownButton
+            <RecordGroupAggregateDropdownButton
               dropdownId={dropdownId}
               value={aggregateValue}
               tooltip={aggregateLabel}
             />
           }
           dropdownComponents={
-            <RecordBoardColumnHeaderAggregateDropdownContext.Provider
+            <RecordGroupAggregateDropdownContext.Provider
               value={{
                 currentContentId,
                 onContentChange: handleContentChange,
@@ -62,11 +61,11 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
                 dropdownId: dropdownId,
               }}
             >
-              <AggregateDropdownContent />
-            </RecordBoardColumnHeaderAggregateDropdownContext.Provider>
+              <RecordGroupAggregateDropdownContent />
+            </RecordGroupAggregateDropdownContext.Provider>
           }
         />
       </StyledContainer>
-    </RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext.Provider>
+    </RecordGroupAggregateDropdownComponentInstanceContext.Provider>
   );
 };

@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { useCallback } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { RecordGroupAggregateDropdown } from '@/object-record/record-group/components/RecordGroupAggregateDropdown';
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
@@ -233,7 +233,7 @@ export const RecordTableRecordGroupSection = () => {
           isNonInteractive={isRecordTableCellsNonEditable}
           inert={isRecordTableCellsNonEditable || undefined}
         >
-          <RecordBoardColumnHeaderAggregateDropdown
+          <RecordGroupAggregateDropdown
             aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
             dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}
             objectMetadataItem={objectMetadataItem}

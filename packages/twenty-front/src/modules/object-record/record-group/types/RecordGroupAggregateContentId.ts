@@ -1,4 +1,4 @@
-export type RecordBoardColumnHeaderAggregateContentId =
+export type RecordGroupAggregateContentId =
   | 'aggregateOperations'
   | 'aggregateFields'
   | 'countAggregateOperationsOptions'

@@ -17,7 +17,7 @@ const StyledHeaderContainer = styled.div`
   }
 `;
 
-export const RecordBoardColumnHeaderAggregateDropdownButton = ({
+export const RecordGroupAggregateDropdownButton = ({
   dropdownId,
   value,
   tooltip,

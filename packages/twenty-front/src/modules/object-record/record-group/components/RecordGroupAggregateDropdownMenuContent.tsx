@@ -1,21 +1,21 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import {
-  RecordBoardColumnHeaderAggregateDropdownContext,
-  type RecordBoardColumnHeaderAggregateDropdownContextValue,
-} from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
+  RecordGroupAggregateDropdownContext,
+  type RecordGroupAggregateDropdownContextValue,
+} from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useLingui } from '@lingui/react/macro';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
+export const RecordGroupAggregateDropdownMenuContent = () => {
   const { t } = useLingui();
 
   const { onContentChange } =
-    useDropdownContextStateManagement<RecordBoardColumnHeaderAggregateDropdownContextValue>(
+    useDropdownContextStateManagement<RecordGroupAggregateDropdownContextValue>(
       {
-        context: RecordBoardColumnHeaderAggregateDropdownContext,
+        context: RecordGroupAggregateDropdownContext,
       },
     );
 
