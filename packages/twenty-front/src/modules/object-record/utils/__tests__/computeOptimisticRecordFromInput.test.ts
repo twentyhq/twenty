@@ -77,6 +77,7 @@ describe('computeOptimisticRecordFromInput', () => {
         name: currentWorkspaceMemberFullname,
         source: 'API',
         workspaceMemberId: currentWorkspaceMember.id,
+        applicationUniversalIdentifier: null,
       },
     });
   });
@@ -106,6 +107,7 @@ describe('computeOptimisticRecordFromInput', () => {
         name: currentWorkspaceMemberFullname,
         source: 'SYSTEM',
         workspaceMemberId: currentWorkspaceMember.id,
+        applicationUniversalIdentifier: null,
       },
     });
   });

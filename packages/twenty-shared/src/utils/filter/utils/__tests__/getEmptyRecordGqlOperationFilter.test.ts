@@ -136,6 +136,48 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       });
     });
 
+    it('should filter actor application universal identifier on NULL', () => {
+      const emptyActorApplicationFilter = getEmptyRecordGqlOperationFilter(
+        makeParams(
+          FieldMetadataType.ACTOR,
+          ViewFilterOperand.IS_EMPTY,
+          'applicationUniversalIdentifier',
+        ),
+      );
+
+      expect(emptyActorApplicationFilter).toEqual({
+        testField: { applicationUniversalIdentifier: { is: 'NULL' } },
+      });
+    });
+
+    it('should filter actor workspace member id on NULL', () => {
+      const emptyActorWorkspaceMemberFilter = getEmptyRecordGqlOperationFilter(
+        makeParams(
+          FieldMetadataType.ACTOR,
+          ViewFilterOperand.IS_EMPTY,
+          'workspaceMemberId',
+        ),
+      );
+
+      expect(emptyActorWorkspaceMemberFilter).toEqual({
+        testField: { workspaceMemberId: { is: 'NULL' } },
+      });
+    });
+
+    it('should filter actor source on NULL', () => {
+      const emptyActorSourceFilter = getEmptyRecordGqlOperationFilter(
+        makeParams(
+          FieldMetadataType.ACTOR,
+          ViewFilterOperand.IS_EMPTY,
+          'source',
+        ),
+      );
+
+      expect(emptyActorSourceFilter).toEqual({
+        testField: { source: { is: 'NULL' } },
+      });
+    });
+
     it('should handle ARRAY type', () => {
       const result = getEmptyRecordGqlOperationFilter(
         makeParams(FieldMetadataType.ARRAY),

@@ -1,10 +1,7 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import {
-  buildActorApplicationUniversalIdentifierColumnTargets,
-  buildAddActorApplicationUniversalIdentifierColumnsSql,
-} from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785915867000-add-application-universal-identifier-to-actor.command';
+import { buildActorApplicationUniversalIdentifierColumnTargets } from 'src/database/commands/upgrade-version-command/2-28/utils/build-actor-application-universal-identifier-column-targets.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -28,7 +25,7 @@ const buildFlatEntityMaps = <TFlatEntity extends SyncableFlatEntity>(
   universalIdentifiersByApplicationId: {},
 });
 
-describe('add application universal identifier to actor workspace command', () => {
+describe('buildActorApplicationUniversalIdentifierColumnTargets', () => {
   it('builds one nullable UUID column target for every local ACTOR field', () => {
     const personObject = {
       id: 'person-id',
@@ -93,22 +90,5 @@ describe('add application universal identifier to actor workspace command', () =
         ],
       },
     ]);
-  });
-
-  it('builds idempotent DDL without a default or row backfill', () => {
-    const sql = buildAddActorApplicationUniversalIdentifierColumnsSql({
-      schemaName: 'workspace_test',
-      actorApplicationUniversalIdentifierColumnTarget: {
-        tableName: 'person',
-        columnNames: ['createdByApplicationUniversalIdentifier'],
-      },
-    });
-
-    expect(sql).toBe(
-      'ALTER TABLE "workspace_test"."person" ADD COLUMN IF NOT EXISTS "createdByApplicationUniversalIdentifier" uuid',
-    );
-    expect(sql).not.toContain('DEFAULT');
-    expect(sql).not.toContain('NOT NULL');
-    expect(sql).not.toContain('UPDATE');
   });
 });

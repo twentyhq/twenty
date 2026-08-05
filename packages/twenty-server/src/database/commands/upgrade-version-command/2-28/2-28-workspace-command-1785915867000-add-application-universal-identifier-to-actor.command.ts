@@ -1,95 +1,14 @@
 import { Command } from 'nest-commander';
-import {
-  FieldMetadataType,
-  compositeTypeDefinitions,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildActorApplicationUniversalIdentifierColumnTargets } from 'src/database/commands/upgrade-version-command/2-28/utils/build-actor-application-universal-identifier-column-targets.util';
+import { buildAddActorApplicationUniversalIdentifierColumnsSql } from 'src/database/commands/upgrade-version-command/2-28/utils/build-add-actor-application-universal-identifier-columns-sql.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-
-export type ActorApplicationUniversalIdentifierColumnTarget = {
-  tableName: string;
-  columnNames: string[];
-};
-
-export const buildActorApplicationUniversalIdentifierColumnTargets = ({
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
-}: {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}): ActorApplicationUniversalIdentifierColumnTarget[] => {
-  const actorCompositeType = compositeTypeDefinitions.get(
-    FieldMetadataType.ACTOR,
-  );
-  const applicationUniversalIdentifierProperty =
-    actorCompositeType?.properties.find(
-      (property) => property.name === 'applicationUniversalIdentifier',
-    );
-
-  if (!isDefined(applicationUniversalIdentifierProperty)) {
-    throw new Error(
-      'applicationUniversalIdentifier is not defined on the ACTOR composite type',
-    );
-  }
-
-  const columnNamesByTableName = new Map<string, string[]>();
-
-  for (const flatFieldMetadata of Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  ).filter(isDefined)) {
-    if (flatFieldMetadata.type !== FieldMetadataType.ACTOR) {
-      continue;
-    }
-
-    const flatObjectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        flatFieldMetadata.objectMetadataUniversalIdentifier
-      ];
-
-    if (!isDefined(flatObjectMetadata) || flatObjectMetadata.isRemote) {
-      continue;
-    }
-
-    const tableName = computeObjectTargetTable(flatObjectMetadata);
-    const columnName = computeCompositeColumnName(
-      flatFieldMetadata.name,
-      applicationUniversalIdentifierProperty,
-    );
-    const existingColumnNames = columnNamesByTableName.get(tableName) ?? [];
-
-    columnNamesByTableName.set(tableName, [...existingColumnNames, columnName]);
-  }
-
-  return [...columnNamesByTableName.entries()].map(
-    ([tableName, columnNames]) => ({ tableName, columnNames }),
-  );
-};
-
-export const buildAddActorApplicationUniversalIdentifierColumnsSql = ({
-  schemaName,
-  actorApplicationUniversalIdentifierColumnTarget,
-}: {
-  schemaName: string;
-  actorApplicationUniversalIdentifierColumnTarget: ActorApplicationUniversalIdentifierColumnTarget;
-}): string =>
-  `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(actorApplicationUniversalIdentifierColumnTarget.tableName)} ${actorApplicationUniversalIdentifierColumnTarget.columnNames
-    .map(
-      (columnName) =>
-        `ADD COLUMN IF NOT EXISTS ${escapeIdentifier(columnName)} uuid`,
-    )
-    .join(', ')}`;
 
 @RegisteredWorkspaceCommand('2.28.0', 1785915867000)
 @Command({
@@ -139,15 +58,9 @@ export class AddApplicationUniversalIdentifierToActorCommand extends Provisioned
 
     if (isDryRun) {
       const actorApplicationUniversalIdentifierColumnCount =
-        actorApplicationUniversalIdentifierColumnTargets.reduce(
-          (
-            accumulatedActorApplicationUniversalIdentifierColumnCount,
-            actorApplicationUniversalIdentifierColumnTarget,
-          ) =>
-            accumulatedActorApplicationUniversalIdentifierColumnCount +
-            actorApplicationUniversalIdentifierColumnTarget.columnNames.length,
-          0,
-        );
+        actorApplicationUniversalIdentifierColumnTargets.flatMap(
+          ({ columnNames }) => columnNames,
+        ).length;
 
       this.logger.log(
         `[DRY RUN] Would add ${actorApplicationUniversalIdentifierColumnCount} nullable ACTOR application identity columns across ${actorApplicationUniversalIdentifierColumnTargets.length} tables for workspace ${workspaceId}`,
@@ -157,30 +70,15 @@ export class AddApplicationUniversalIdentifierToActorCommand extends Provisioned
     }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
-    const queryRunner = dataSource.createQueryRunner();
 
-    try {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-
-      for (const actorApplicationUniversalIdentifierColumnTarget of actorApplicationUniversalIdentifierColumnTargets) {
-        await queryRunner.query(
-          buildAddActorApplicationUniversalIdentifierColumnsSql({
-            schemaName,
-            actorApplicationUniversalIdentifierColumnTarget,
-          }),
-        );
-      }
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
+    // No transaction: IF NOT EXISTS keeps reruns idempotent, and per-table DDL avoids holding ACCESS EXCLUSIVE locks on the whole schema until commit
+    for (const actorApplicationUniversalIdentifierColumnTarget of actorApplicationUniversalIdentifierColumnTargets) {
+      await dataSource.query(
+        buildAddActorApplicationUniversalIdentifierColumnsSql({
+          schemaName,
+          actorApplicationUniversalIdentifierColumnTarget,
+        }),
+      );
     }
 
     this.logger.log(

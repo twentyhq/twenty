@@ -284,6 +284,7 @@ ${mapObjectMetadataToGraphQLQuery({
 {
     source
     workspaceMemberId
+    applicationUniversalIdentifier
     name
     context
 }`;

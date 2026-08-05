@@ -13,6 +13,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       createdBy {
         source
         workspaceMemberId
+        applicationUniversalIdentifier
         name
         context
       }
@@ -45,6 +46,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       updatedBy {
         source
         workspaceMemberId
+        applicationUniversalIdentifier
         name
         context
       }
@@ -118,6 +120,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       createdBy {
         source
         workspaceMemberId
+        applicationUniversalIdentifier
         name
         context
       }
@@ -221,6 +224,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       updatedBy {
         source
         workspaceMemberId
+        applicationUniversalIdentifier
         name
         context
       }
