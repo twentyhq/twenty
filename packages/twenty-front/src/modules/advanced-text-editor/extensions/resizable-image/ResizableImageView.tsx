@@ -10,11 +10,14 @@ const IMAGE_MAX_WIDTH = 600;
 const StyledNodeViewWrapperContainer = styled.div<{
   align?: string;
 }>`
+  display: flex;
   height: 100%;
-  margin-left: ${({ align }) =>
-    align === 'left' ? '0' : align === 'center' ? 'auto' : 'unset'};
-  margin-right: ${({ align }) =>
-    align === 'right' ? '0' : align === 'center' ? 'auto' : 'unset'};
+  justify-content: ${({ align }) =>
+    align === 'center'
+      ? 'center'
+      : align === 'right'
+        ? 'flex-end'
+        : 'flex-start'};
 `;
 
 const StyledImageWrapper = styled.div<{ width?: number }>`

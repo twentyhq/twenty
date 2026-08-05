@@ -5,6 +5,7 @@ export const ENRICH_WORKSPACE_COMPANY = gql`
     enrichWorkspaceCompany {
       outcome
       enrichment
+      isBookCallOnboardingStepPending
     }
   }
 `;

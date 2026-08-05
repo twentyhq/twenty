@@ -177,7 +177,7 @@ export const RecordTableRowDragOverlayContent = ({
           recordId={recordId}
           focusIndex={sourceData.focusIndex}
           style={{
-            background: themeCssVariables.background.transparent.light,
+            background: themeCssVariables.background.secondary,
             borderColor: themeCssVariables.border.color.medium,
           }}
           isDragging
