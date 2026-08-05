@@ -5,8 +5,9 @@ import { type SlackThreadReference } from 'src/logic-functions/types/slack-threa
 import { type SlackThreadSubscription } from 'src/logic-functions/types/slack-thread-subscription.type';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
-// 'expired' is returned exactly once per lapsed thread: the key is deleted on
-// detection, so later messages in that thread resolve to 'none'
+// read-only: a lapsed subscription keeps reporting 'expired' until the caller
+// clears it with clearSlackThreadSubscription, so a failed expiry nudge can be
+// retried on the next follow-up instead of being lost
 export type SlackThreadSubscriptionState = 'active' | 'expired' | 'none';
 
 export const getSlackThreadSubscriptionState = async ({
@@ -24,11 +25,5 @@ export const getSlackThreadSubscriptionState = async ({
     return 'none';
   }
 
-  if (subscription.expiresAt <= Date.now()) {
-    await kv.delete(key);
-
-    return 'expired';
-  }
-
-  return 'active';
+  return subscription.expiresAt <= Date.now() ? 'expired' : 'active';
 };

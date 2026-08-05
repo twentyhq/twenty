@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { clearSlackThreadSubscription } from 'src/logic-functions/utils/clear-slack-thread-subscription';
 import { getSlackThreadSubscriptionState } from 'src/logic-functions/utils/get-slack-thread-subscription-state';
 import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
 import { nudgeExpiredSlackThread } from 'src/logic-functions/utils/nudge-expired-slack-thread';
@@ -33,15 +34,26 @@ export const enqueueSlackAssistantRequest = async (
     });
 
     if (subscriptionState === 'expired') {
-      await nudgeExpiredSlackThread({
+      const nudgeResult = await nudgeExpiredSlackThread({
         slackChannelId: parsed.request.slackChannelId,
         slackUserId: parsed.request.slackUserId,
         threadTimestamp: parsed.request.slackThreadTimestamp,
       });
 
+      // the lapsed subscription is only cleared once the nudge reached the
+      // member, so a failed nudge is retried on the next follow-up
+      if (nudgeResult.success) {
+        await clearSlackThreadSubscription({
+          channelId: parsed.request.slackChannelId,
+          threadTimestamp: parsed.request.slackThreadTimestamp,
+        });
+      }
+
       return {
         ok: true,
-        skipped: 'Thread subscription expired; nudged the requester',
+        skipped: nudgeResult.success
+          ? 'Thread subscription expired; nudged the requester'
+          : 'Thread subscription expired; the nudge could not be posted',
       };
     }
 

@@ -3,16 +3,18 @@ import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack
 import { claimSlackEmptyRequestReply } from 'src/logic-functions/utils/claim-slack-empty-request-reply';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
+import { releaseSlackEmptyRequestReply } from 'src/logic-functions/utils/release-slack-empty-request-reply';
 
 type SlackEmptyRequestReplyResult = { ok: boolean; skipped?: string };
 
 export const replyToEmptySlackAssistantRequest = async (
   emptyRequest: SlackAssistantEmptyRequest,
 ): Promise<SlackEmptyRequestReplyResult> => {
-  const isFirstReply = await claimSlackEmptyRequestReply({
+  const claimReference = {
     slackChannelId: emptyRequest.slackChannelId,
     slackMessageTimestamp: emptyRequest.slackMessageTimestamp,
-  });
+  };
+  const isFirstReply = await claimSlackEmptyRequestReply(claimReference);
 
   if (!isFirstReply) {
     return { ok: true, skipped: 'Empty request was already answered' };
@@ -21,6 +23,8 @@ export const replyToEmptySlackAssistantRequest = async (
   const slackClientResult = await getSlackClient();
 
   if (!slackClientResult.success) {
+    await releaseSlackEmptyRequestReply(claimReference);
+
     return { ok: true, skipped: 'Slack is not connected' };
   }
 
@@ -32,6 +36,8 @@ export const replyToEmptySlackAssistantRequest = async (
   });
 
   if (!replyResult.success) {
+    await releaseSlackEmptyRequestReply(claimReference);
+
     return {
       ok: true,
       skipped: `Could not post the empty request hint: ${replyResult.error ?? replyResult.message}`,

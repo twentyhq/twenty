@@ -61,7 +61,7 @@ describe('getSlackThreadSubscriptionState', () => {
     expect(kvDeleteMock).not.toHaveBeenCalled();
   });
 
-  it('should return expired once and delete the key when the subscription lapsed', async () => {
+  it('should return expired without clearing the key when the subscription lapsed', async () => {
     kvGetMock.mockResolvedValue({ expiresAt: Date.now() - 60_000 });
 
     const state = await getSlackThreadSubscriptionState({
@@ -70,8 +70,6 @@ describe('getSlackThreadSubscriptionState', () => {
     });
 
     expect(state).toBe('expired');
-    expect(kvDeleteMock).toHaveBeenCalledWith(
-      'slack-thread:C123:1700000000.000100',
-    );
+    expect(kvDeleteMock).not.toHaveBeenCalled();
   });
 });
