@@ -3,7 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
@@ -16,7 +18,9 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
     TypeOrmModule.forFeature([WorkspaceEntity]),
     CacheStorageModule,
     CronModule,
+    FeatureFlagModule,
     WorkflowCommonModule,
+    WorkspaceCacheModule,
     WorkspaceDataSourceModule,
   ],
   providers: [

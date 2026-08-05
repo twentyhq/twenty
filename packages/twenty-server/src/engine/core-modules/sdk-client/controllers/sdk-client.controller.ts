@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -26,7 +27,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@Controller('rest/sdk-client')
+@Controller(`${ApiPath.Rest}/sdk-client`)
 @UseGuards(WorkspaceAuthGuard)
 export class SdkClientController {
   constructor(
