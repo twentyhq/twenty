@@ -30,6 +30,7 @@ export type { DocumentationPath } from './DocumentationPaths';
 export { DOCUMENTATION_PATHS } from './DocumentationPaths';
 export type { DocumentationSupportedLanguage } from './DocumentationSupportedLanguages';
 export { DOCUMENTATION_SUPPORTED_LANGUAGES } from './DocumentationSupportedLanguages';
+export { EMAIL_IMAGE_MIME_TYPES } from './EmailImageMimeTypes';
 export type { EnterpriseInstanceType } from './EnterpriseInstanceType';
 export { ENTERPRISE_INSTANCE_TYPE } from './EnterpriseInstanceType';
 export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldNamesFromAgentToolSchema';

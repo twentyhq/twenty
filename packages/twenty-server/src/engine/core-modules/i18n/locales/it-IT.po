@@ -6872,6 +6872,11 @@ msgstr "Esecuzioni"
 msgid "Saturday"
 msgstr "Sabato"
 
+#. js-lingui-id: H2SymB
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Save Campaign"
+msgstr ""
+
 #. js-lingui-id: 4ba0NE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -8124,6 +8129,11 @@ msgstr "Questo permesso del campo è già impostato per il ruolo"
 #: src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util.ts
 msgid "This field references an object that could not be found"
 msgstr "Questo campo fa riferimento a un oggetto che non è stato trovato"
+
+#. js-lingui-id: 5F02zD
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "This file format is not supported."
+msgstr ""
 
 #. js-lingui-id: HUJCXI
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
