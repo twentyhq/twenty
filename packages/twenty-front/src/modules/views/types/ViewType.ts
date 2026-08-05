@@ -4,6 +4,7 @@ import {
   IconCalendar,
   type IconComponent,
   IconLayoutKanban,
+  IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
 
@@ -27,30 +28,45 @@ export const getViewTypeLabel = (
 ): MessageDescriptor =>
   VIEW_TYPE_LABELS[viewType] ?? VIEW_TYPE_LABELS[ViewType.TABLE];
 
-const VIEW_TYPE_ICON_MAPPING = [
-  {
+const VIEW_TYPE_ICON_MAPPING = {
+  [ViewType.TABLE]: {
+    icon: IconTable,
+    iconKey: 'IconTable',
+  },
+  [ViewType.KANBAN]: {
     icon: IconLayoutKanban,
     iconKey: 'IconLayoutKanban',
-    value: ViewType.KANBAN,
   },
-  { icon: IconTable, iconKey: 'IconTable', value: ViewType.TABLE },
-  { icon: IconCalendar, iconKey: 'IconCalendar', value: ViewType.CALENDAR },
-] as const satisfies {
-  icon: IconComponent;
-  iconKey: string;
-  value: ViewType;
-}[];
+  [ViewType.CALENDAR]: {
+    icon: IconCalendar,
+    iconKey: 'IconCalendar',
+  },
+  [ViewType.FIELDS_WIDGET]: {
+    icon: IconListDetails,
+    iconKey: 'IconListDetails',
+  },
+  [ViewType.TABLE_WIDGET]: {
+    icon: IconTable,
+    iconKey: 'IconTable',
+  },
+  [ViewType.KANBAN_WIDGET]: {
+    icon: IconLayoutKanban,
+    iconKey: 'IconLayoutKanban',
+  },
+  [ViewType.CALENDAR_WIDGET]: {
+    icon: IconCalendar,
+    iconKey: 'IconCalendar',
+  },
+} as const satisfies Record<
+  ViewType,
+  {
+    icon: IconComponent;
+    iconKey: string;
+  }
+>;
 
-export const viewTypeIconMapping = (viewType?: ViewType) => {
-  return (
-    VIEW_TYPE_ICON_MAPPING.find((type) => type.value === viewType)?.icon ??
-    IconTable
-  );
-};
+export const viewTypeIconMapping = (viewType: ViewType = ViewType.TABLE) =>
+  VIEW_TYPE_ICON_MAPPING[viewType].icon;
 
-export const viewTypeIconKeyMapping = (viewType?: ViewType) => {
-  return (
-    VIEW_TYPE_ICON_MAPPING.find((type) => type.value === viewType)?.iconKey ??
-    'IconTable'
-  );
-};
+export const viewTypeIconKeyMapping = (viewType: ViewType = ViewType.TABLE) =>
+  VIEW_TYPE_ICON_MAPPING[viewType].iconKey;

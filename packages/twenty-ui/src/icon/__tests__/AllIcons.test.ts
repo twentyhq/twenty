@@ -1,18 +1,16 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { ALL_ICONS } from '@ui/icon/providers/internal/AllIcons';
+
+const DYNAMIC_ICON_NAMES = [
+  'IconCopyPlus',
+  'IconNumber95Small',
+  'IconTimezone',
+] as const;
 
 describe('ALL_ICONS', () => {
-  const dynamicIconCatalog = readFileSync(
-    resolve(__dirname, '../providers/internal/AllIcons.ts'),
-    'utf8',
-  );
-
-  it.each(['IconCopyPlus', 'IconNumber95Small', 'IconTimezone'])(
+  it.each(DYNAMIC_ICON_NAMES)(
     'makes %s available to string-based icon resolution',
     (iconName) => {
-      expect(
-        dynamicIconCatalog.match(new RegExp(`\\b${iconName}\\b`, 'g')),
-      ).toHaveLength(2);
+      expect(ALL_ICONS[iconName]).toBeDefined();
     },
   );
 });

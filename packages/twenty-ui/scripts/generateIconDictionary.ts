@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -10,7 +10,9 @@ const generatedMarkdown = generateTwentyIconDictionaryMarkdown();
 const isCheckOnly = process.argv.includes('--check');
 
 if (isCheckOnly) {
-  const currentMarkdown = readFileSync(outputPath, 'utf8');
+  const currentMarkdown = existsSync(outputPath)
+    ? readFileSync(outputPath, 'utf8')
+    : undefined;
 
   if (currentMarkdown !== generatedMarkdown) {
     throw new Error(
