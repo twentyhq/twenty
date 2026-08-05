@@ -25,7 +25,7 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
     metadataName: 'objectMetadata',
     name: 'objectRecordPageLabelIdentifierOnUpdate',
     description:
-      'When an object label identifier changes onto a pre-existing field, preserve the record-page exclusion invariant, the inverse of objectIndexViewLabelIdentifierOnUpdate: the engine-owned FIELDS_WIDGET record-page view never displays the label identifier (the record page shows it in the title), so the new label identifier engine-owned view field is deleted from the record-page view, and the previous label identifier gets its view field restored through the widget-driven builder (visibility from the FIELDS widget newFieldDefaultVisibility, appended into the last active group). Only engine-owned (isSystemSideEffect) view fields are touched. Relabeling onto a field created in the same operation is handled by fieldSystemViewFieldsOnCreate instead. Noop when the label identifier is unchanged, when the object has no engine-owned record-page view, when the new label identifier has no engine-owned record-page view field and the old one is already displayed or not restorable.',
+      'When an object label identifier changes onto a pre-existing field, preserve the record-page exclusion invariant, the inverse of objectIndexViewLabelIdentifierOnUpdate: the engine-owned FIELDS_WIDGET record-page view never displays the label identifier (the record page shows it in the title), so the new label identifier engine-owned view field is deleted from the record-page view, and the previous label identifier gets its view field restored through the widget-driven builder (visibility from the FIELDS widget newFieldDefaultVisibility, appended into the last active group). Only engine-owned (isSystemSideEffect) view fields are touched. Relabeling onto a field created in the same operation is handled by fieldSystemViewFieldsOnCreate instead. The restore is emitted even when the caller batch declares a view field for the same (view, field) pair: the engine always produces its system side effects, and the pair-uniqueness validator surfaces the conflict to the caller. Noop when the label identifier is unchanged, when the object has no engine-owned record-page view, when the new label identifier has no engine-owned record-page view field and the old one is already displayed or not restorable.',
   },
 ) {
   buildSideEffects({
@@ -184,22 +184,6 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
       ];
 
     if (!isDefined(previousLabelIdentifierFlatFieldMetadata)) {
-      return undefined;
-    }
-
-    const pairAlreadyPending = Object.values(
-      allFlatEntityOperationRecordByMetadataName.viewField
-        ?.flatEntityToCreate ?? {},
-    ).some(
-      (pendingFlatViewField) =>
-        (pendingFlatViewField as UniversalFlatViewField)
-          .viewUniversalIdentifier === recordPageViewUniversalIdentifier &&
-        (pendingFlatViewField as UniversalFlatViewField)
-          .fieldMetadataUniversalIdentifier ===
-          previousLabelIdentifierFieldMetadataUniversalIdentifier,
-    );
-
-    if (pairAlreadyPending) {
       return undefined;
     }
 

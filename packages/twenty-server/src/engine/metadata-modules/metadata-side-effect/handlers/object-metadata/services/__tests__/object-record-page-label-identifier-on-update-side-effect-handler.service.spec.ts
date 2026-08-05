@@ -61,6 +61,11 @@ const buildArgs = ({
   }[],
   fieldsWidgets = [FIELDS_WIDGET],
   fieldMetadatasDeletedInBatch = [] as string[],
+  viewFieldsPendingInBatch = [] as {
+    universalIdentifier: string;
+    viewUniversalIdentifier: string;
+    fieldMetadataUniversalIdentifier: string;
+  }[],
 } = {}): BuildSideEffectsArgs<'objectMetadata'> =>
   ({
     flatEntity: {
@@ -79,6 +84,18 @@ const buildArgs = ({
           ]),
         ),
       },
+      ...(viewFieldsPendingInBatch.length > 0 && {
+        viewField: {
+          flatEntityToCreate: Object.fromEntries(
+            viewFieldsPendingInBatch.map((pendingViewField) => [
+              pendingViewField.universalIdentifier,
+              pendingViewField,
+            ]),
+          ),
+          flatEntityToUpdate: {},
+          flatEntityToDelete: {},
+        },
+      }),
     },
     relatedFlatEntityMaps: {
       flatObjectMetadataMaps: {
@@ -294,6 +311,48 @@ describe('ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService', () =
     expect(
       Object.values(result.operations.viewField?.flatEntityToDelete ?? {}),
     ).toHaveLength(1);
+  });
+
+  // The engine always produces its system side effects: a caller-pending view
+  // field for the same pair is a conflict the pair-uniqueness validator
+  // surfaces to the caller, not something the engine yields to.
+  it('should restore the previous label identifier even when the batch declares a view field for the same pair', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        recordPageViewFields: [
+          {
+            universalIdentifier: NEW_LABEL_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier:
+              NEW_LABEL_FIELD_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+        viewFieldsPendingInBatch: [
+          {
+            universalIdentifier: 'caller-authored-view-field-uid',
+            viewUniversalIdentifier:
+              DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier:
+              PREVIOUS_LABEL_FIELD_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+      }),
+    );
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    const restoredFlatViewFields = Object.values(
+      result.operations.viewField?.flatEntityToCreate ?? {},
+    );
+
+    expect(restoredFlatViewFields).toHaveLength(1);
+    expect(restoredFlatViewFields[0].fieldMetadataUniversalIdentifier).toBe(
+      PREVIOUS_LABEL_FIELD_UNIVERSAL_IDENTIFIER,
+    );
+    expect(restoredFlatViewFields[0].isSystemSideEffect).toBe(true);
   });
 
   it('should not restore the previous label identifier when no active FIELDS widget references the view', () => {
