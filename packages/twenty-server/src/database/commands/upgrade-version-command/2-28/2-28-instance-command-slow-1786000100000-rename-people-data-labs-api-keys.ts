@@ -25,7 +25,7 @@ const RENAMED_APP_KEY = 'PEOPLE_DATA_LABS_APP_API_KEY';
 const LEGACY_ENGINE_KEY = 'PEOPLE_DATA_LABS_API_KEY';
 const RENAMED_ENGINE_KEY = 'PEOPLE_DATA_LABS_ENGINE_API_KEY';
 
-@RegisteredInstanceCommand('2.28.0', 1785836761026, { type: 'slow' })
+@RegisteredInstanceCommand('2.28.0', 1786000100000, { type: 'slow' })
 export class RenamePeopleDataLabsApiKeysSlowInstanceCommand
   implements SlowInstanceCommand
 {
