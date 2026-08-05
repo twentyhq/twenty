@@ -22,7 +22,7 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
     metadataName: 'objectMetadata',
     name: 'objectIndexViewLabelIdentifierOnUpdate',
     description:
-      'When an object label identifier changes onto a pre-existing field, keep that field INDEX view field strictly lowest and visible, as the flat view field validator requires. The engine owns the INDEX view, so this is a system side effect on both the API and manifest-sync paths, and only the engine-owned view field is touched. Relabeling onto a field created in the same operation is handled by fieldSystemViewFieldsOnCreate instead (its view field does not exist yet to be updated), so this handler considers only synced view fields. Noop when the label identifier is unchanged, when the object has no engine-owned INDEX view, when the new label identifier has no synced INDEX view field, or when that view field is already visible and strictly lowest.',
+      'When an object label identifier changes onto a pre-existing field, keep that field INDEX view field strictly lowest and visible, as the flat view field validator requires. The engine owns the INDEX view, so this is a system side effect on both the API and manifest-sync paths, and only the engine-owned view field is touched. Relabeling onto a field created in the same operation is handled by fieldIndexViewFieldOnCreate instead (its view field does not exist yet to be updated), so this handler considers only synced view fields. Noop when the label identifier is unchanged, when the object has no engine-owned INDEX view, when the new label identifier has no synced INDEX view field, or when that view field is already visible and strictly lowest.',
   },
 ) {
   buildSideEffects({
