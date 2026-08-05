@@ -45,13 +45,10 @@ const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
-// Byte-blind total backstop; heavy providers get a tighter per-provider cap below.
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
-// Per-provider entry caps for providers whose payloads are large. An idle ORM graph is
-// ~5 MB, so a pod that has served many workspaces would otherwise pin gigabytes; rebuilding
-// on a later miss is cheap (6-16 ms). Providers without an override fall back to the global
-// cap. Conservative first value — tune against twenty_workspace_cache_recompute_duration.
+// An idle ORM graph is ~5 MB, so a pod that served many workspaces would pin gigabytes;
+// rebuilding on a miss is cheap (6-16 ms). No override falls back to the global cap.
 const LOCAL_ENTRY_COUNT_OVERRIDES: {
   keyName: WorkspaceCacheKeyName;
   maxEntries: number;
@@ -286,8 +283,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         stats.sampled < LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER &&
         entry.versions.size > 0
       ) {
-        // Size every retained version, not just the latest: stale versions still
-        // occupy heap until the expiration sweep drops them.
+        // Size every retained version, not just the latest — stale versions still occupy heap.
         let entryBytes = 0;
 
         for (const version of entry.versions.values()) {
@@ -936,8 +932,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.evictOverBudgetEntries(keyName);
   }
 
-  // Last time this entry was served (the latest version's read time). Used as the LRU key
-  // so eviction drops the genuinely least-recently-read entry.
+  // LRU key for eviction: the latest version's read time.
   private entryLastReadAt(
     entry: WorkspaceLocalCacheEntry<CacheDataType>,
   ): number {
@@ -956,7 +951,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       );
     }
 
-    // Byte-blind total backstop across every provider.
     if (this.localCache.size > MAX_LOCAL_CACHE_ENTRIES) {
       this.evictLeastRecentlyRead(
         () => true,
