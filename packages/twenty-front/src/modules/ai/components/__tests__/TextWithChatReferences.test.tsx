@@ -116,6 +116,19 @@ describe('TextWithChatReferences', () => {
     expect(screen.queryByText(/\[\[record:/)).not.toBeInTheDocument();
   });
 
+  it('should not leave a surplus bracket after a chip', () => {
+    render(
+      <TextWithChatReferences text="Created [[object:opportunity:Opportunities[[/object]]]." />,
+    );
+
+    expect(screen.getByTestId('object-link')).toHaveTextContent(
+      'Opportunities',
+    );
+    expect(screen.getByText(/Created/)).toHaveTextContent(
+      'Created Opportunities.',
+    );
+  });
+
   it('should route each reference kind to its own chip', () => {
     render(
       <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline[[/view]] view of [[object:partner:Partners[[/object]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice[[/record]] by [[field:33333333-3333-3333-3333-333333333333:Stage[[/field]]" />,

@@ -260,4 +260,48 @@ describe('findChatReferences', () => {
   it('should drop an unclosed reference', () => {
     expect(findChatReferences('Open [[object:partner:Partners')).toEqual([]);
   });
+
+  it('should consume a surplus bracket added after the closing tag', () => {
+    expect(
+      findChatReferences(
+        'Created [[object:opportunity:Opportunities[[/object]]].',
+      ),
+    ).toEqual([
+      {
+        kind: 'object',
+        fullMatch: '[[object:opportunity:Opportunities[[/object]]]',
+        index: 8,
+        objectNameSingular: 'opportunity',
+        displayName: 'Opportunities',
+      },
+    ]);
+  });
+
+  it('should consume the extra brackets of an over-wrapped reference', () => {
+    expect(
+      findChatReferences('Created [[[object:partner:Partners[[/object]]]] now'),
+    ).toEqual([
+      {
+        kind: 'object',
+        fullMatch: '[[[object:partner:Partners[[/object]]]]',
+        index: 8,
+        objectNameSingular: 'partner',
+        displayName: 'Partners',
+      },
+    ]);
+  });
+
+  it('should not consume a bracket separated from the closing tag', () => {
+    expect(
+      findChatReferences('Created [[object:partner:Partners[[/object]] ] now'),
+    ).toEqual([
+      {
+        kind: 'object',
+        fullMatch: '[[object:partner:Partners[[/object]]',
+        index: 8,
+        objectNameSingular: 'partner',
+        displayName: 'Partners',
+      },
+    ]);
+  });
 });
