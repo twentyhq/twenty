@@ -30,8 +30,6 @@ export const AdvancedFilterValueInput = ({
 }: AdvancedFilterValueInputProps) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${recordFilterId}`;
 
-  // The dropdown content components read the object filter dropdown states
-  // from the row's instance, not from this dropdown's id.
   const objectFilterDropdownInstanceId =
     getAdvancedFilterObjectFilterDropdownComponentInstanceId(recordFilterId);
 
@@ -80,8 +78,6 @@ export const AdvancedFilterValueInput = ({
       ? ({ y: -33, x: 0 } satisfies DropdownOffset)
       : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
 
-  // The row instance is only hydrated on dropdown open, so fall back to the
-  // persisted subFieldName for the first render of a freshly loaded filter.
   const showFilterTextInputInsteadOfDropdown = shouldShowFilterTextInput({
     recordFilter,
     subFieldNameUsedInDropdown:
