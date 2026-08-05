@@ -14,7 +14,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 
 const STORY_FORM_EDITOR_PROFILE = {
-  contentType: 'json',
   chrome: 'field',
   minHeight: 340,
   enableFullScreen: true,

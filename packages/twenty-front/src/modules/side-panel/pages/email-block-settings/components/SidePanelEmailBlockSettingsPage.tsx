@@ -12,6 +12,8 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
+import { ADVANCED_TEXT_EDITOR_BLOCK_CATALOG } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog';
+import { type AdvancedTextEditorBlockSetting } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { getBlockStyle } from '@/advanced-text-editor/utils/getBlockStyle';
 import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
@@ -20,8 +22,6 @@ import {
   type CssBoxSides,
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
 import { EmailPageStyleSection } from '@/side-panel/pages/email-block-settings/components/EmailPageStyleSection';
-import { EMAIL_BLOCK_SETTINGS_FIELDS } from '@/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields';
-import { getEmailBlockLabel } from '@/side-panel/pages/email-block-settings/utils/getEmailBlockLabel';
 import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -81,7 +81,8 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
     return <EmailPageStyleSection editor={editor} />;
   }
 
-  const fields = EMAIL_BLOCK_SETTINGS_FIELDS[target.nodeType] ?? [];
+  const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];
+  const fields = blockDefinition.settingsFields;
   const styles = getBlockStyle(target.attrs.style);
   const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
 
@@ -122,7 +123,10 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       .run();
   };
 
-  const handleFieldChange = (field: (typeof fields)[number], value: string) => {
+  const handleFieldChange = (
+    field: AdvancedTextEditorBlockSetting,
+    value: string,
+  ) => {
     if (field.kind === 'attribute') {
       if (field.property === 'width') {
         const trimmed = value.trim();
@@ -178,9 +182,7 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   return (
     <StyledContainer>
       <StyledBlockHeader>
-        <StyledBlockTitle>
-          {getEmailBlockLabel(target.nodeType)}
-        </StyledBlockTitle>
+        <StyledBlockTitle>{i18n._(blockDefinition.label)}</StyledBlockTitle>
         <LightIconButton
           Icon={IconTrash}
           size="small"

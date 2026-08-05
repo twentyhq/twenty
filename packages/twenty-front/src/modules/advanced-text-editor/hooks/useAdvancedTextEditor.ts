@@ -1,10 +1,9 @@
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
-import { getInitialAdvancedTextEditorContent } from '@/advanced-text-editor/utils/getInitialAdvancedTextEditorContent';
+import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { type Content } from '@tiptap/core';
 import { type Editor, type EditorOptions, useEditor } from '@tiptap/react';
-import { marked } from 'marked';
 import { type DependencyList, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -38,8 +37,6 @@ export const useAdvancedTextEditor = (
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
-  const { contentType } = profile;
-
   const extensions = useMemo(
     () =>
       buildAdvancedTextEditorExtensions({
@@ -63,16 +60,10 @@ export const useAdvancedTextEditor = (
       return undefined;
     }
 
-    if (contentType === 'markdown') {
-      // Convert markdown to HTML, then TipTap will parse the HTML
-      return marked.parse(defaultValue, { async: false }) as string;
-    }
-
-    if (contentType === 'html') {
-      return defaultValue;
-    }
-
-    return getInitialAdvancedTextEditorContent(defaultValue);
+    return deserializeAdvancedTextEditorDocument({
+      serializedDocument: defaultValue,
+      parseLegacyDocument: profile.parseLegacyDocument,
+    });
   };
 
   const editor = useEditor(
