@@ -1,4 +1,7 @@
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  type RelationType,
+} from '~/generated-metadata/graphql';
 
 export type FieldWithRelation = {
   type: FieldMetadataType;
