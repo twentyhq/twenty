@@ -31,8 +31,6 @@ export const fetchSlackAssistantContext = async ({
 
   const { client } = slackClientResult;
 
-  // Without the bot user id, no history turn gets the assistant role, so a
-  // failed resolution degrades the context instead of failing the request
   const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
     () => undefined,
   );
