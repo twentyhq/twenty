@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229960000-configure-message-campaign-command-menu.command';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillMessageListMembersJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1784567000000-backfill-message-list-members-junction-target.command';
 import { AddMessageCampaignComposerTabCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229940000-add-message-campaign-composer-tab.command';
+import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229960000-configure-message-campaign-command-menu.command';
 import { AddMessageCampaignNameFieldCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229970000-add-message-campaign-name-field.command';
 import { RemoveMessageCampaignNavigationMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785332550000-remove-message-campaign-navigation-menu-item.command';
 import { AlignMessageCampaignViewFieldPositionsCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785332560000-align-message-campaign-view-field-positions.command';
@@ -24,9 +24,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
   ],
   providers: [
-    ConfigureMessageCampaignCommandMenuCommand,
     BackfillMessageListMembersJunctionTargetCommand,
     AddMessageCampaignComposerTabCommand,
+    ConfigureMessageCampaignCommandMenuCommand,
     AddMessageCampaignNameFieldCommand,
     RemoveMessageCampaignNavigationMenuItemCommand,
     AlignMessageCampaignViewFieldPositionsCommand,

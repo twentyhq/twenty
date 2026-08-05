@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { AddEmailBlockSettingsCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785510000000-add-email-block-settings-command-menu-item.command';
 import { AddWorkspaceMemberOpenRecordInCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785505000000-add-workspace-member-open-record-in.command';
 import { SeedObjectOpenRecordInCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785505100000-seed-object-open-record-in.command';
 import { BackfillMissingStandardSkillsCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785499350000-backfill-standard-skills.command';
@@ -20,7 +19,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AddWorkspaceMemberOpenRecordInCommand,
-    AddEmailBlockSettingsCommandMenuItemCommand,
     SeedObjectOpenRecordInCommand,
     BackfillMissingStandardSkillsCommand,
   ],
