@@ -7,7 +7,6 @@ const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const PHIL_USER_WORKSPACE_ID = '20202020-7169-42cf-bc47-1cfef15264b1';
 const PHIL_CONNECTED_ACCOUNT_ID = '20202020-cafc-4323-908d-e5b42ad69fdf';
 
-const JONY_USER_WORKSPACE_ID = '20202020-3957-4908-9c36-2929a23f8353';
 const JONY_CONNECTED_ACCOUNT_ID = '20202020-0cc8-4d60-a3a4-803245698908';
 
 const UNKNOWN_USER_WORKSPACE_ID = '20202020-0000-4000-8000-00000000dead';
@@ -18,6 +17,18 @@ const baseParams = {
   subject: 'Subject',
   body: '<p>body</p>',
   files: [],
+};
+
+const getFirstWorkspaceConnectedAccountId = async (): Promise<string> => {
+  const [{ id }] = await global.testDataSource.query(
+    `SELECT id FROM core."connectedAccount"
+     WHERE "workspaceId" = $1 AND "archivedAt" IS NULL
+     ORDER BY "createdAt" ASC, id ASC
+     LIMIT 1`,
+    [WORKSPACE_ID],
+  );
+
+  return id;
 };
 
 const setVisibility = async (
@@ -34,8 +45,9 @@ describe('EmailComposerService connected account resolution (integration)', () =
   let service: EmailComposerService;
 
   beforeAll(() => {
-    service =
-      getAppProviderByClassName<EmailComposerService>('EmailComposerService');
+    service = getAppProviderByClassName<EmailComposerService>(
+      'EmailComposerService',
+    );
   });
 
   describe('when the caller names a connected account', () => {
@@ -67,7 +79,10 @@ describe('EmailComposerService connected account resolution (integration)', () =
       await expect(
         service.composeEmail(
           { ...baseParams, connectedAccountId: 'not-a-uuid' },
-          { workspaceId: WORKSPACE_ID, userWorkspaceId: PHIL_USER_WORKSPACE_ID },
+          {
+            workspaceId: WORKSPACE_ID,
+            userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+          },
         ),
       ).rejects.toThrow('Connected account id is not a valid UUID');
     });
@@ -76,7 +91,10 @@ describe('EmailComposerService connected account resolution (integration)', () =
       await expect(
         service.composeEmail(
           { ...baseParams, connectedAccountId: UNKNOWN_CONNECTED_ACCOUNT_ID },
-          { workspaceId: WORKSPACE_ID, userWorkspaceId: PHIL_USER_WORKSPACE_ID },
+          {
+            workspaceId: WORKSPACE_ID,
+            userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+          },
         ),
       ).rejects.toThrow('No connected account found for id');
     });
@@ -123,13 +141,16 @@ describe('EmailComposerService connected account resolution (integration)', () =
     });
 
     it('takes the first workspace account when there is no caller (workflow run)', async () => {
+      const firstWorkspaceConnectedAccountId =
+        await getFirstWorkspaceConnectedAccountId();
+
       const result = await service.composeEmail(baseParams, {
         workspaceId: WORKSPACE_ID,
       });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
-        JONY_CONNECTED_ACCOUNT_ID,
+        firstWorkspaceConnectedAccountId,
       );
     });
   });
