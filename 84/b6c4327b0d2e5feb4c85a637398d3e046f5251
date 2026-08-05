@@ -1,0 +1,27 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_405b3fe1a0ce44::t_2b04c008bed4d5 9-15
+  s_405b3fe1a0ce44::t_3d78a24b8b4419 36-42
+  s_405b3fe1a0ce44::t_f80da359688cad 28
+  s_405b3fe1a0ce44::t_ff23d96908782a 118-146,148
+  s_405b3fe1a0ce44::t_63836072a41a94 106,110-113
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/utils/__tests__/is-webhook-subscription-throttled.util.spec.ts
+  s_405b3fe1a0ce44::t_7d4e7744eb122e 1-42
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/utils/is-webhook-subscription-throttled.util.ts
+  s_405b3fe1a0ce44::t_1455f96c20041f 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "84b6c4327b0d2e5feb4c85a637398d3e046f5251",
+  "prompts": {},
+  "sessions": {
+    "s_405b3fe1a0ce44": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b153cf-7ae2-4eeb-8601-d00a49a98d9a",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
