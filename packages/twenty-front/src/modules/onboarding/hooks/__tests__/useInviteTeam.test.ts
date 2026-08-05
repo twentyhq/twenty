@@ -6,6 +6,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import {
   jotaiStore,
@@ -63,6 +64,20 @@ describe('useInviteTeam', () => {
     mockSendInvitation.mockResolvedValue({});
     mockWaitForCompanyEnrichmentSettlement.mockResolvedValue(undefined);
     jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, true);
+    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, true);
+  });
+
+  it('should not wait for an enrichment that will never run', async () => {
+    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, false);
+
+    const { result } = renderInviteTeam();
+
+    await act(async () => {
+      await result.current.handleSkip();
+    });
+
+    expect(mockWaitForCompanyEnrichmentSettlement).not.toHaveBeenCalled();
+    expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
   });
 
   it('should not wait for the enrichment when the book-call step is disabled', async () => {

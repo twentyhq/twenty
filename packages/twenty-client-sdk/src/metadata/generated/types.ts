@@ -3860,6 +3860,9 @@ export default {
             "isBookCallOnboardingStepEnabled": [
                 3
             ],
+            "isCompanyEnrichmentEnabled": [
+                3
+            ],
             "isCloudflareIntegrationEnabled": [
                 3
             ],

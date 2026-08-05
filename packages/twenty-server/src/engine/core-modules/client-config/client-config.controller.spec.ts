@@ -106,6 +106,7 @@ describe('ClientConfigController', () => {
         isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
         isBookCallOnboardingStepEnabled: false,
+        isCompanyEnrichmentEnabled: false,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,

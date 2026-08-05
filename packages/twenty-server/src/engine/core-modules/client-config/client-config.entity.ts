@@ -343,6 +343,9 @@ export class ClientConfig {
   isBookCallOnboardingStepEnabled: boolean;
 
   @Field(() => Boolean)
+  isCompanyEnrichmentEnabled: boolean;
+
+  @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;
 
   @Field(() => Boolean)

@@ -5,6 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
@@ -92,6 +93,30 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     localStorage.clear();
     sessionStorage.clear();
     mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
+    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, true);
+  });
+
+  it('does not fetch when enrichment has no consumer or api key', async () => {
+    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, false);
+
+    let callCount = 0;
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {
+          callCount += 1;
+        },
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(callCount).toBe(0);
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
+    expect(jotaiStore.get(hasAttemptedCompanyEnrichmentFetchState.atom)).toBe(
+      false,
+    );
   });
 
   afterEach(() => {

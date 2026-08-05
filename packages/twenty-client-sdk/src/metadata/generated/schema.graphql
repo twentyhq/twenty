@@ -1994,6 +1994,7 @@ type ClientConfig {
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
   isBookCallOnboardingStepEnabled: Boolean!
+  isCompanyEnrichmentEnabled: Boolean!
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!

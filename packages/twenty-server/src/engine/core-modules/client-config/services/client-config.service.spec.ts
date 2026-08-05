@@ -192,6 +192,7 @@ describe('ClientConfigService', () => {
         allowRequestsToTwentyIcons: false,
         calendarBookingPageId: 'team/twenty/talk-to-us',
         isBookCallOnboardingStepEnabled: true,
+        isCompanyEnrichmentEnabled: false,
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
         isOnboardingAiChatEnabled: false,

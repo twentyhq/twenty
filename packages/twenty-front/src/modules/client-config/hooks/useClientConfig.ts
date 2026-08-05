@@ -8,6 +8,7 @@ import { calendarBookingPageIdState } from '@/client-config/states/calendarBooki
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
@@ -112,6 +113,10 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setIsBookCallOnboardingStepEnabled = useSetAtomState(
     isBookCallOnboardingStepEnabledState,
+  );
+
+  const setIsCompanyEnrichmentEnabled = useSetAtomState(
+    isCompanyEnrichmentEnabledState,
   );
 
   const setIsEmailingDomainInDemoMode = useSetAtomState(
@@ -223,6 +228,9 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsBookCallOnboardingStepEnabled(
         clientConfig?.isBookCallOnboardingStepEnabled ?? false,
       );
+      setIsCompanyEnrichmentEnabled(
+        clientConfig?.isCompanyEnrichmentEnabled ?? false,
+      );
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
       setIsEmailingDomainInDemoMode(
         clientConfig?.isEmailingDomainInDemoMode ?? false,
@@ -269,6 +277,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsAnalyticsEnabled,
     setIsAttachmentPreviewEnabled,
     setIsBookCallOnboardingStepEnabled,
+    setIsCompanyEnrichmentEnabled,
     setIsConfigVariablesInDbEnabled,
     setIsDeveloperDefaultSignInPrefilled,
     setIsEmailVerificationRequired,

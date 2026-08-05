@@ -1,5 +1,6 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
@@ -35,6 +36,9 @@ export const useInviteTeam = () => {
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const isBookCallOnboardingStepEnabled = useAtomStateValue(
     isBookCallOnboardingStepEnabledState,
+  );
+  const isCompanyEnrichmentEnabled = useAtomStateValue(
+    isCompanyEnrichmentEnabledState,
   );
   const store = useStore();
 
@@ -140,9 +144,12 @@ export const useInviteTeam = () => {
       setIsNavigating(true);
 
       try {
-        const companyEnrichmentSettlement = isBookCallOnboardingStepEnabled
-          ? waitForCompanyEnrichmentSettlement({ store })
-          : Promise.resolve();
+        // Only wait when enrichment is actually going to run, otherwise the
+        // settlement never resolves and every submit burns the full timeout.
+        const companyEnrichmentSettlement =
+          isBookCallOnboardingStepEnabled && isCompanyEnrichmentEnabled
+            ? waitForCompanyEnrichmentSettlement({ store })
+            : Promise.resolve();
 
         const result = await sendInvitation({ emails });
 
@@ -179,6 +186,7 @@ export const useInviteTeam = () => {
     [
       enqueueSuccessSnackBar,
       isBookCallOnboardingStepEnabled,
+      isCompanyEnrichmentEnabled,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
       sendInvitation,
       setNextOnboardingStatus,
