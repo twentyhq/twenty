@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
@@ -12,6 +13,10 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -125,22 +130,36 @@ export class AgentActorContextService {
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<RunAsWorkspaceMemberContext> {
-    const workspaceMember =
-      await this.userWorkspaceService.getWorkspaceMemberOrThrow({
-        workspaceMemberId,
-        workspaceId,
-      });
+    const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    if (!isDefined(workspaceMember)) {
+      throw new AiException(
+        `Workspace member ${workspaceMemberId} not found`,
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+      );
+    }
 
     const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+      await this.userWorkspaceService.getUserWorkspaceForUser({
         userId: workspaceMember.userId,
         workspaceId,
         relations: ['workspace', 'user'],
       });
 
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+    if (!isDefined(userWorkspace)) {
+      throw new AiException(
+        `Workspace member ${workspaceMemberId} has no user workspace`,
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+      );
+    }
+
+    const roleId = await this.resolveRoleIdOrThrow({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
+      workspaceMemberId,
     });
 
     return {
@@ -158,5 +177,34 @@ export class AgentActorContextService {
       }),
       roleId,
     };
+  }
+
+  private async resolveRoleIdOrThrow({
+    userWorkspaceId,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<string> {
+    try {
+      return await this.userRoleService.getRoleIdForUserWorkspace({
+        userWorkspaceId,
+        workspaceId,
+      });
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE
+      ) {
+        throw new AiException(
+          `Workspace member ${workspaceMemberId} has no role assigned`,
+          AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
   }
 }

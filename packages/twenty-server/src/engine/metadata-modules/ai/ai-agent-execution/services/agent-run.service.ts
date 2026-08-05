@@ -184,23 +184,9 @@ export class AgentRunService {
       );
     }
 
-    try {
-      return await this.agentActorContextService.buildRunAsWorkspaceMemberContext(
-        {
-          workspaceMemberId: runAsWorkspaceMemberId,
-          workspaceId,
-        },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Could not resolve workspace member ${runAsWorkspaceMemberId} to run as`,
-        error instanceof Error ? error.stack : error,
-      );
-
-      throw new AiException(
-        `Could not run as workspace member ${runAsWorkspaceMemberId}`,
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
-      );
-    }
+    return this.agentActorContextService.buildRunAsWorkspaceMemberContext({
+      workspaceMemberId: runAsWorkspaceMemberId,
+      workspaceId,
+    });
   }
 }

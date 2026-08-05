@@ -8,7 +8,10 @@ import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-age
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 describe('AgentRunService', () => {
@@ -191,7 +194,10 @@ describe('AgentRunService', () => {
 
   it('fails the run instead of falling back to the agent role when the member cannot be resolved', async () => {
     agentActorContextService.buildRunAsWorkspaceMemberContext.mockRejectedValue(
-      new Error('Workspace member not found'),
+      new AiException(
+        'Workspace member not found',
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+      ),
     );
 
     await expect(
