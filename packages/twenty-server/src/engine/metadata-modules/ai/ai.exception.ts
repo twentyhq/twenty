@@ -22,6 +22,7 @@ export enum AiExceptionCode {
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS = 'ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS',
   RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED = 'RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED',
+  RUN_AS_WORKSPACE_MEMBER_NOT_FOUND = 'RUN_AS_WORKSPACE_MEMBER_NOT_FOUND',
   NO_FAILED_TURN_TO_RETRY = 'NO_FAILED_TURN_TO_RETRY',
   STREAM_INTERRUPTED = 'STREAM_INTERRUPTED',
 }
@@ -62,6 +63,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This role cannot be assigned to agents.`;
     case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       return msg`This action is not available for your request.`;
+    case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND:
+      return msg`Workspace member not found.`;
     case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       return msg`There is no failed message to retry.`;
     case AiExceptionCode.STREAM_INTERRUPTED:

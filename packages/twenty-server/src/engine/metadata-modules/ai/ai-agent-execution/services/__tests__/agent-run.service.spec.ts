@@ -8,6 +8,7 @@ import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-age
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 describe('AgentRunService', () => {
@@ -201,7 +202,9 @@ describe('AgentRunService', () => {
         callerApplication,
         input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
       }),
-    ).rejects.toThrow('Workspace member not found');
+    ).rejects.toMatchObject({
+      code: AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+    });
 
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });

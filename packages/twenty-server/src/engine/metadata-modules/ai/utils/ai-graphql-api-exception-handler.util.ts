@@ -26,6 +26,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.WORKSPACE_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
+      case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND:
         throw new NotFoundError(error);
       case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
       case AiExceptionCode.INVALID_AGENT_INPUT:
