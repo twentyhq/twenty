@@ -1,8 +1,7 @@
-// Mirrors RunAgentMessage from twenty-sdk >= 2.28; local copy until the app
-// bumps to an SDK release whose runAgent input types include messages.
-export type SlackAssistantAgentMessageRole = 'user' | 'assistant';
+import { type RunAgentInput } from 'twenty-sdk/logic-function';
 
-export type SlackAssistantAgentMessage = {
-  role: SlackAssistantAgentMessageRole;
-  content: string;
-};
+// The SDK does not re-export RunAgentMessage by name yet, so derive it from
+// the runAgent input union
+export type SlackAssistantAgentMessage = NonNullable<
+  RunAgentInput['messages']
+>[number];
