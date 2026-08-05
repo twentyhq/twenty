@@ -7,6 +7,7 @@ import { typeORMCoreModuleOptions } from 'src/database/typeorm/core/core.datasou
 import { DatabaseGaugeService } from 'src/database/typeorm/database-gauge.service';
 import { DatabasePoolMetricsService } from 'src/database/typeorm/database-pool-metrics.service';
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { PostgresProviderService } from 'src/database/typeorm/providers/postgres-provider.service';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { installUpgradeAwareRepositoryProxy } from 'src/engine/twenty-orm/upgrade-aware/install-upgrade-aware-repository-proxy';
 
@@ -29,7 +30,8 @@ import { installUpgradeAwareRepositoryProxy } from 'src/engine/twenty-orm/upgrad
     DatabasePoolMetricsService,
     DatabaseGaugeService,
     PostgresAdvisoryLockService,
+    PostgresProviderService,
   ],
-  exports: [DatabasePoolMetricsService, PostgresAdvisoryLockService],
+  exports: [DatabasePoolMetricsService, PostgresAdvisoryLockService, PostgresProviderService],
 })
 export class TypeORMModule {}
