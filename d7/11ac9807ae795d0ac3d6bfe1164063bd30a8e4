@@ -1,0 +1,58 @@
+packages/twenty-front/src/modules/object-record/record-group/components/RecordGroupAggregateDropdownMenuContent.tsx
+  s_78d9b82a19ccf1::t_9e7ed9af21337b 3-5
+  s_78d9b82a19ccf1::t_d7a4c99daf1519 12-18
+packages/twenty-front/src/modules/object-record/record-group/components/RecordGroupAggregateDropdownMenuItem.tsx
+  s_78d9b82a19ccf1::t_46a2ea62cbf1c9 4
+packages/twenty-front/src/modules/object-record/record-group/states/context/RecordGroupAggregateDropdownComponentInstanceContext.ts
+  s_78d9b82a19ccf1::t_3944a5b4ea726d 3
+packages/twenty-front/src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection.tsx
+  s_78d9b82a19ccf1::t_a4f0f25a77bda0 6
+  s_78d9b82a19ccf1::t_d5a014a6816d55 236
+packages/twenty-front/src/modules/object-record/record-group/components/RecordGroupAggregateDropdownContent.tsx
+  s_78d9b82a19ccf1::t_889bd0ba724de2 20
+  s_78d9b82a19ccf1::t_dfc641516d410c 17,45-96
+  s_78d9b82a19ccf1::t_dc89b640d773c4 4-7
+packages/twenty-front/src/modules/object-record/record-group/states/aggregateOperationComponentState.ts
+  s_78d9b82a19ccf1::t_6a52b9a44e733a 9-10
+  s_78d9b82a19ccf1::t_4ac1d928ff5b28 1
+packages/twenty-front/src/modules/dropdown-context-state-management/hooks/useDropdownContextStateManagement.ts
+  s_78d9b82a19ccf1::t_dfeeaff43e6505 16
+  s_78d9b82a19ccf1::t_68fc0762191476 3
+packages/twenty-front/src/modules/object-record/record-group/components/RecordGroupAggregateDropdownButton.tsx
+  s_78d9b82a19ccf1::t_316cb61c771af4 20
+packages/twenty-front/src/modules/object-record/record-group/components/RecordGroupAggregateDropdownFieldsContent.tsx
+  s_78d9b82a19ccf1::t_19ff56bf614d0c 18-26
+  s_78d9b82a19ccf1::t_d6ecb2bd2211b5 3-5
+packages/twenty-front/src/modules/object-record/record-group/types/RecordGroupAggregateContentId.ts
+  s_78d9b82a19ccf1::t_e48331bdfc5a6c 1
+packages/twenty-front/src/modules/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState.ts
+  s_78d9b82a19ccf1::t_05f5f999c96673 1
+  s_78d9b82a19ccf1::t_6a52b9a44e733a 8-9
+packages/twenty-front/src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
+  s_78d9b82a19ccf1::t_4278155379517f 3-69
+packages/twenty-front/src/modules/object-record/record-group/states/context/RecordGroupAggregateDropdownContext.tsx
+  s_78d9b82a19ccf1::t_6840c6abd79d7e 2-16
+packages/twenty-front/src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
+  s_78d9b82a19ccf1::t_20af1708367404 15
+  s_78d9b82a19ccf1::t_d9c86004fe6789 230
+packages/twenty-front/src/modules/object-record/record-group/components/RecordGroupAggregateDropdownOptionsContent.tsx
+  s_78d9b82a19ccf1::t_6f0372ca9a2320 72
+  s_78d9b82a19ccf1::t_936f13d45b97a3 24-34
+  s_78d9b82a19ccf1::t_78ddee990e33dc 3-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "d711ac9807ae795d0ac3d6bfe1164063bd30a8e4",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
