@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -42,10 +43,27 @@ export class AddEmailBlockSettingsCommandMenuItemCommand extends ProvisionedWork
         { workspaceId },
       );
 
-    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatObjectMetadataMaps',
+    ]);
+
+    if (
+      !isDefined(
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.messageCampaign.universalIdentifier
+        ],
+      )
+    ) {
+      this.logger.log(
+        `Message campaign object does not exist for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     if (
       isDefined(
