@@ -15,6 +15,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -65,23 +66,59 @@ export class ToolExecutorService {
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
     const safeArgs = args ?? {};
+    const authContext = await this.resolveAuthContext(context);
 
+    if (!isDefined(authContext)) {
+      return this.dispatchByExecutionRef(descriptor, safeArgs, context);
+    }
+
+    return withWorkspaceAuthContext(authContext, () =>
+      this.dispatchByExecutionRef(descriptor, safeArgs, {
+        ...context,
+        authContext,
+      }),
+    );
+  }
+
+  private async dispatchByExecutionRef(
+    descriptor: ToolIndexEntry | ToolDescriptor,
+    args: Record<string, unknown>,
+    context: ToolProviderContext,
+  ): Promise<ToolOutput> {
     switch (descriptor.executionRef.kind) {
       case 'database_crud':
         return this.dispatchDatabaseCrud(
           descriptor.executionRef,
-          safeArgs,
+          args,
           context,
         );
       case 'static':
-        return this.dispatchStaticTool(descriptor, safeArgs, context);
+        return this.dispatchStaticTool(descriptor, args, context);
       case 'logic_function':
         return this.dispatchLogicFunction(
           descriptor.executionRef,
-          safeArgs,
+          args,
           context,
         );
     }
+  }
+
+  // Tools are dispatched from queue workers (AI chat, workflows) as well as
+  // HTTP requests; only the latter get an async-local auth context from
+  // WorkspaceAuthContextMiddleware. Establish it here so any tool code relying
+  // on getWorkspaceAuthContext() works on every transport.
+  private async resolveAuthContext(
+    context: ToolProviderContext,
+  ): Promise<WorkspaceAuthContext | undefined> {
+    if (isDefined(context.authContext)) {
+      return context.authContext;
+    }
+
+    if (!isDefined(context.userId) || !isDefined(context.userWorkspaceId)) {
+      return undefined;
+    }
+
+    return this.buildAuthContext(context);
   }
 
   private async dispatchDatabaseCrud(
