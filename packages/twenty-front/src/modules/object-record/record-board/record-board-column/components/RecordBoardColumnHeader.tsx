@@ -148,8 +148,9 @@ export const RecordBoardColumnHeader = () => {
 
   // Creating in a nested relation widget requires picking the related record
   // to create through, which only the table layout offers today.
-  const nestedRelationCreateThrough = useContext(RecordTableWidgetContext)
-    ?.nestedRelationCreateThrough;
+  const nestedRelationCreateThrough = useContext(
+    RecordTableWidgetContext,
+  )?.nestedRelationCreateThrough;
 
   const canCreateRecords =
     !isDefined(nestedRelationCreateThrough) &&

@@ -21,8 +21,9 @@ import { IconPlus } from 'twenty-ui/icon';
 export const RecordTableNoRecordGroupAddNew = () => {
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
-  const nestedRelationCreateThrough = useContext(RecordTableWidgetContext)
-    ?.nestedRelationCreateThrough;
+  const nestedRelationCreateThrough = useContext(
+    RecordTableWidgetContext,
+  )?.nestedRelationCreateThrough;
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,

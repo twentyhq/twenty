@@ -13,7 +13,8 @@ export const getFieldWidgetNestedRelationCreateThrough = ({
   nestedRelationFieldMetadataItem: FieldMetadataItem;
   recordId: string;
 }): RecordTableWidgetNestedRelationCreateThrough | undefined => {
-  const relationInverseFieldName = fieldRelationMetadata.targetFieldMetadataName;
+  const relationInverseFieldName =
+    fieldRelationMetadata.targetFieldMetadataName;
   const nestedRelationInverseFieldName =
     nestedRelationFieldMetadataItem.relation?.targetFieldMetadata.name;
 
