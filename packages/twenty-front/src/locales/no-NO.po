@@ -3181,6 +3181,11 @@ msgstr "Innhold"
 msgid "Body Input"
 msgstr "Body-inndata"
 
+#. js-lingui-id: SkYx9p
+#: src/pages/onboarding/BookCall.tsx
+msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
+msgstr ""
+
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Book a Call"
@@ -18107,6 +18112,11 @@ msgstr "Tabell, Kanban, Kalender"
 #. js-lingui-id: DBxdLI
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
+msgstr ""
+
+#. js-lingui-id: gNSS33
+#: src/pages/onboarding/BookCall.tsx
+msgid "Talk to our team"
 msgstr ""
 
 #. js-lingui-id: sceIIK
