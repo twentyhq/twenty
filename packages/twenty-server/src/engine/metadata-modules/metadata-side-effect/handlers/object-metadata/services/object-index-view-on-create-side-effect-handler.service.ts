@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
+import { ViewKey } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { computeSystemViewFieldsForCreatedObjectView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-for-created-object-view.util';
+import { computeSystemViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-to-create.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { computeFlatIndexViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-index-view-to-create.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
@@ -29,9 +30,10 @@ export class ObjectIndexViewOnCreateSideEffectHandlerService extends MetadataSid
       flatObjectMetadata as UniversalFlatObjectMetadata;
     const { applicationUniversalIdentifier } = sourceFlatObjectMetadata;
 
-    const flatIndexViewToCreate = computeFlatIndexViewToCreate({
+    const flatIndexViewToCreate = computeSystemViewToCreate({
       objectMetadata: sourceFlatObjectMetadata,
       applicationUniversalIdentifier,
+      viewKey: ViewKey.INDEX,
     });
 
     const flatViewFieldsToCreate = computeSystemViewFieldsForCreatedObjectView({

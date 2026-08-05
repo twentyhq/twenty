@@ -6,7 +6,7 @@ import { orderFlatFieldMetadatasForSystemIndexView } from 'src/engine/metadata-m
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-export const computeFlatViewFieldsToCreate = ({
+export const computeSystemViewFieldsToCreate = ({
   objectFlatFieldMetadatas,
   viewUniversalIdentifier,
   applicationUniversalIdentifier,

@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-import { computeFlatViewFieldsToCreate } from '../compute-flat-view-fields-to-create.util';
+import { computeSystemViewFieldsToCreate } from '../compute-system-view-fields-to-create.util';
 
 const makeFieldMetadata = (
   overrides: Partial<UniversalFlatFieldMetadata> & {
@@ -44,7 +44,7 @@ const applicationUniversalIdentifier = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 
 const viewUniversalIdentifier = 'view-uid';
 
-describe('computeFlatViewFieldsToCreate', () => {
+describe('computeSystemViewFieldsToCreate', () => {
   it('should exclude TS_VECTOR fields', () => {
     const fields = [
       makeFieldMetadata({
@@ -57,7 +57,7 @@ describe('computeFlatViewFieldsToCreate', () => {
       }),
     ];
 
-    const result = computeFlatViewFieldsToCreate({
+    const result = computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -82,7 +82,7 @@ describe('computeFlatViewFieldsToCreate', () => {
       }),
     ];
 
-    const result = computeFlatViewFieldsToCreate({
+    const result = computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -111,7 +111,7 @@ describe('computeFlatViewFieldsToCreate', () => {
       }),
     ];
 
-    const result = computeFlatViewFieldsToCreate({
+    const result = computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -136,7 +136,7 @@ describe('computeFlatViewFieldsToCreate', () => {
       }),
     ];
 
-    const result = computeFlatViewFieldsToCreate({
+    const result = computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -160,7 +160,7 @@ describe('computeFlatViewFieldsToCreate', () => {
     });
     const fields = [otherField, labelField];
 
-    const result = computeFlatViewFieldsToCreate({
+    const result = computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -189,7 +189,7 @@ describe('computeFlatViewFieldsToCreate', () => {
       type: FieldMetadataType.DATE_TIME,
     });
 
-    const result = computeFlatViewFieldsToCreate({
+    const result = computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas: [labelField, otherField],
       viewUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -210,7 +210,7 @@ describe('computeFlatViewFieldsToCreate', () => {
       type: FieldMetadataType.TEXT,
     });
 
-    const result = computeFlatViewFieldsToCreate({
+    const result = computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas: [field],
       viewUniversalIdentifier,
       applicationUniversalIdentifier,

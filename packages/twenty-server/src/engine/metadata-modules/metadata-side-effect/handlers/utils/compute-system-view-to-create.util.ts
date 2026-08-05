@@ -10,22 +10,50 @@ import { v4 } from 'uuid';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
-export const computeFlatIndexViewToCreate = ({
+type SystemViewObjectMetadata = Pick<
+  UniversalFlatObjectMetadata,
+  'universalIdentifier' | 'labelSingular'
+>;
+
+// The INDEX view name is a template resolved at display time; the record-page
+// view name is materialized at creation.
+const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
+  [ViewKey.INDEX]: {
+    type: ViewType.TABLE,
+    computeName: () => 'All {objectLabelPlural}',
+  },
+  [ViewKey.FIELDS_WIDGET]: {
+    type: ViewType.FIELDS_WIDGET,
+    computeName: (objectMetadata: SystemViewObjectMetadata) =>
+      `${objectMetadata.labelSingular} Record Page Fields`,
+  },
+} as const satisfies Record<
+  ViewKey,
+  {
+    type: ViewType;
+    computeName: (objectMetadata: SystemViewObjectMetadata) => string;
+  }
+>;
+
+export const computeSystemViewToCreate = ({
   objectMetadata,
   applicationUniversalIdentifier,
+  viewKey,
 }: {
   applicationUniversalIdentifier: string;
-  objectMetadata: Pick<UniversalFlatObjectMetadata, 'universalIdentifier'>;
+  objectMetadata: SystemViewObjectMetadata;
+  viewKey: ViewKey;
 }): UniversalFlatView & { id: string } => {
+  const { type, computeName } = SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY[viewKey];
   const createdAt = new Date().toISOString();
 
   return {
     id: v4(),
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
-    name: `All {objectLabelPlural}`,
-    key: ViewKey.INDEX,
+    name: computeName(objectMetadata),
+    key: viewKey,
     icon: 'IconList',
-    type: ViewType.TABLE,
+    type,
     createdAt,
     updatedAt: createdAt,
     deletedAt: null,
@@ -46,7 +74,7 @@ export const computeFlatIndexViewToCreate = ({
       objectMetadataApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadata.universalIdentifier,
-      viewKey: ViewKey.INDEX,
+      viewKey,
     }),
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,

@@ -47,7 +47,7 @@ const DEFAULT_RECORD_PAGE_TAB_DEFINITIONS = [
   widgetConfigurationType: WidgetConfigurationType;
 }[];
 
-export const computeFlatDefaultRecordPageLayoutToCreate = ({
+export const computeSystemRecordPageLayoutToCreate = ({
   objectMetadata,
   applicationUniversalIdentifier,
   recordPageFieldsViewUniversalIdentifier,
