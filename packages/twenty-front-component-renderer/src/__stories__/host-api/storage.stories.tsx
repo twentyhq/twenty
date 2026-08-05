@@ -3,7 +3,8 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
-import { frontComponentLocalStorageService } from '@/host/utils/frontComponentLocalStorageService';
+import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
+import { frontComponentStorageService } from '@/host/utils/frontComponentStorageService';
 import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   hostApiMocks,
@@ -22,7 +23,7 @@ const PERSISTED_STORAGE_NAMESPACE = {
 };
 
 const meta: Meta<typeof FrontComponentRenderer> = {
-  title: 'FrontComponent/HostApi/LocalStorage',
+  title: 'FrontComponent/HostApi/Storage',
   component: FrontComponentRenderer,
   parameters: { layout: 'centered' },
   args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
@@ -34,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
 export const LocalStorageRoundTrip: Story = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-local-storage',
+  frontComponentBundleName: 'host-api-storage',
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const api = args.frontComponentHostCommunicationApi;
@@ -47,28 +48,30 @@ export const LocalStorageRoundTrip: Story = runFrontComponentStory({
 
     await userEvent.click(await canvas.findByTestId('subject'));
 
-    await waitFor(
-      () => {
-        expect(api.localStorageSet).toHaveBeenCalledWith(
-          'greeting',
-          '{"hello":"world"}',
-        );
-      },
-      { timeout: HOST_API_TIMEOUT },
-    );
-
     expect(
       await canvas.findByText(
-        'storage:success:world:greeting:true',
+        'storage:local:hello:greeting:1:0',
         {},
         { timeout: INTERACTION_TIMEOUT },
       ),
     ).toBeVisible();
+
+    await waitFor(
+      () => {
+        expect(api.storageSet).toHaveBeenCalledWith(
+          'local',
+          'greeting',
+          'hello',
+        );
+        expect(api.storageDelete).toHaveBeenCalledWith('local', 'greeting');
+      },
+      { timeout: HOST_API_TIMEOUT },
+    );
   },
 });
 
-export const LocalStorageSharedWithGlobalShim: Story = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-local-storage',
+export const SessionStorageRoundTrip: Story = runFrontComponentStory({
+  frontComponentBundleName: 'host-api-storage',
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const api = args.frontComponentHostCommunicationApi;
@@ -79,30 +82,27 @@ export const LocalStorageSharedWithGlobalShim: Story = runFrontComponentStory({
 
     await expectFrontComponentMounted(canvas);
 
-    await userEvent.click(await canvas.findByTestId('global-storage'));
-
-    await waitFor(
-      () => {
-        expect(api.localStorageSet).toHaveBeenCalledWith(
-          'from-dependency',
-          '"raw"',
-        );
-      },
-      { timeout: HOST_API_TIMEOUT },
-    );
+    await userEvent.click(await canvas.findByTestId('session-storage'));
 
     expect(
       await canvas.findByText(
-        'storage:shared:raw',
+        'storage:session:2',
         {},
         { timeout: INTERACTION_TIMEOUT },
       ),
     ).toBeVisible();
+
+    await waitFor(
+      () => {
+        expect(api.storageSet).toHaveBeenCalledWith('session', 'visits', '2');
+      },
+      { timeout: HOST_API_TIMEOUT },
+    );
   },
 });
 
 export const LocalStorageValueTooLarge: Story = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-local-storage',
+  frontComponentBundleName: 'host-api-storage',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -112,7 +112,7 @@ export const LocalStorageValueTooLarge: Story = runFrontComponentStory({
 
     expect(
       await canvas.findByText(
-        'storage:error:FRONT_COMPONENT_STORAGE_VALUE_TOO_LARGE',
+        'storage:error:QuotaExceededError',
         {},
         { timeout: INTERACTION_TIMEOUT },
       ),
@@ -120,77 +120,69 @@ export const LocalStorageValueTooLarge: Story = runFrontComponentStory({
   },
 });
 
-export const LocalStorageReadsRawDependencyValue: Story =
-  runFrontComponentStory({
-    frontComponentBundleName: 'host-api-local-storage',
-    play: async ({ canvasElement }) => {
-      const canvas = within(canvasElement);
-
-      await expectFrontComponentMounted(canvas);
-
-      await userEvent.click(await canvas.findByTestId('raw-dependency'));
-
-      expect(
-        await canvas.findByText(
-          'storage:raw:plain text',
-          {},
-          { timeout: INTERACTION_TIMEOUT },
-        ),
-      ).toBeVisible();
-    },
-  });
-
 const persistedStory = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-local-storage',
+  frontComponentBundleName: 'host-api-storage',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expectFrontComponentMounted(canvas);
 
-    await userEvent.click(await canvas.findByTestId('global-storage'));
+    await userEvent.click(await canvas.findByTestId('session-storage'));
 
     await waitFor(
-      async () => {
+      () => {
         expect(
-          await frontComponentLocalStorageService.snapshot(
-            PERSISTED_STORAGE_NAMESPACE,
+          window.sessionStorage.getItem(
+            `${buildFrontComponentStorageKeyPrefix(PERSISTED_STORAGE_NAMESPACE)}visits`,
           ),
-        ).toEqual({ 'from-dependency': '"raw"' });
+        ).toBe('2');
       },
       { timeout: HOST_API_TIMEOUT },
     );
   },
 });
 
-export const LocalStoragePersistsToIndexedDb: Story = {
+export const StoragePersistsToTheHostPage: Story = {
   ...persistedStory,
-  beforeEach: async () => {
-    await frontComponentLocalStorageService.clear(PERSISTED_STORAGE_NAMESPACE);
+  beforeEach: () => {
+    frontComponentStorageService.clear({
+      area: 'session',
+      ...PERSISTED_STORAGE_NAMESPACE,
+    });
 
-    return async () => {
-      await frontComponentLocalStorageService.clear(
-        PERSISTED_STORAGE_NAMESPACE,
-      );
+    return () => {
+      frontComponentStorageService.clear({
+        area: 'session',
+        ...PERSISTED_STORAGE_NAMESPACE,
+      });
     };
   },
   args: {
     ...persistedStory.args,
-    localStorageNamespace: PERSISTED_STORAGE_NAMESPACE,
+    storageNamespace: PERSISTED_STORAGE_NAMESPACE,
     frontComponentHostCommunicationApi: {
       ...hostApiMocks,
-      localStorageSet: (key: string, serializedValue: string) =>
-        frontComponentLocalStorageService.set({
+      storageSet: async (area, key, serializedValue) => {
+        frontComponentStorageService.set({
           ...PERSISTED_STORAGE_NAMESPACE,
+          area,
           key,
           serializedValue,
-        }),
-      localStorageDelete: (key: string) =>
-        frontComponentLocalStorageService.delete({
+        });
+      },
+      storageDelete: async (area, key) => {
+        frontComponentStorageService.delete({
           ...PERSISTED_STORAGE_NAMESPACE,
+          area,
           key,
-        }),
-      localStorageClear: () =>
-        frontComponentLocalStorageService.clear(PERSISTED_STORAGE_NAMESPACE),
+        });
+      },
+      storageClear: async (area) => {
+        frontComponentStorageService.clear({
+          ...PERSISTED_STORAGE_NAMESPACE,
+          area,
+        });
+      },
     },
   },
 };

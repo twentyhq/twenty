@@ -13,9 +13,9 @@ const createHostThreadImportsStub = () =>
     closeSidePanel: jest.fn(),
     updateProgress: jest.fn(),
     copyToClipboard: jest.fn(),
-    localStorageSet: jest.fn(),
-    localStorageDelete: jest.fn(),
-    localStorageClear: jest.fn(),
+    storageSet: jest.fn(),
+    storageDelete: jest.fn(),
+    storageClear: jest.fn(),
     hostFetch: jest.fn(),
   }) as unknown as FrontComponentHostThreadExports;
 
@@ -36,13 +36,13 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'closeSidePanel',
       'copyToClipboard',
       'enqueueSnackbar',
-      'localStorageClear',
-      'localStorageDelete',
-      'localStorageSet',
       'navigate',
       'openCommandConfirmationModal',
       'openSidePanelPage',
       'requestAccessTokenRefresh',
+      'storageClear',
+      'storageDelete',
+      'storageSet',
       'unmountFrontComponent',
       'updateProgress',
     ]);
@@ -68,14 +68,12 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     expect(hostCommunicationApi.copyToClipboard).toBe(
       hostThreadImports.copyToClipboard,
     );
-    expect(hostCommunicationApi.localStorageSet).toBe(
-      hostThreadImports.localStorageSet,
+    expect(hostCommunicationApi.storageSet).toBe(hostThreadImports.storageSet);
+    expect(hostCommunicationApi.storageDelete).toBe(
+      hostThreadImports.storageDelete,
     );
-    expect(hostCommunicationApi.localStorageDelete).toBe(
-      hostThreadImports.localStorageDelete,
-    );
-    expect(hostCommunicationApi.localStorageClear).toBe(
-      hostThreadImports.localStorageClear,
+    expect(hostCommunicationApi.storageClear).toBe(
+      hostThreadImports.storageClear,
     );
   });
 

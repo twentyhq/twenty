@@ -4,7 +4,6 @@ export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
-export { localStorage } from './functions/localStorage';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
@@ -26,8 +25,7 @@ export type {
   TranslationValues,
 } from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
-export type { FrontComponentLocalStorageBridge } from './types/FrontComponentLocalStorageBridge';
-export type { FrontComponentStorageErrorCode } from './types/FrontComponentStorageErrorCode';
+export type { FrontComponentStorageArea } from './types/FrontComponentStorageArea';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
   CloseSidePanelFunction,
@@ -35,15 +33,15 @@ export type {
   CommandConfirmationModalResult,
   CopyToClipboardFunction,
   EnqueueSnackbarFunction,
-  LocalStorageClearFunction,
-  LocalStorageDeleteFunction,
-  LocalStorageSetFunction,
   NavigateFunction,
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
+  StorageClearFunction,
+  StorageDeleteFunction,
+  StorageSetFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,
 } from './globals/frontComponentHostCommunicationApi';

@@ -1,1 +1,0 @@
-export const FRONT_COMPONENT_LOCAL_STORAGE_ENTRIES_STORE_NAME = 'entries';

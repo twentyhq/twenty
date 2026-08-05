@@ -6,6 +6,8 @@ import {
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
+import { type FrontComponentStorageArea } from '../types/FrontComponentStorageArea';
+
 export type NavigateFunction = <T extends AppPath>(
   to: T,
   params?: Parameters<typeof getAppPath<T>>[1],
@@ -104,14 +106,20 @@ export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
 
-export type LocalStorageSetFunction = (
+export type StorageSetFunction = (
+  area: FrontComponentStorageArea,
   key: string,
   serializedValue: string,
 ) => Promise<void>;
 
-export type LocalStorageDeleteFunction = (key: string) => Promise<boolean>;
+export type StorageDeleteFunction = (
+  area: FrontComponentStorageArea,
+  key: string,
+) => Promise<void>;
 
-export type LocalStorageClearFunction = () => Promise<void>;
+export type StorageClearFunction = (
+  area: FrontComponentStorageArea,
+) => Promise<void>;
 
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
@@ -123,9 +131,9 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
-  localStorageSet?: LocalStorageSetFunction;
-  localStorageDelete?: LocalStorageDeleteFunction;
-  localStorageClear?: LocalStorageClearFunction;
+  storageSet?: StorageSetFunction;
+  storageDelete?: StorageDeleteFunction;
+  storageClear?: StorageClearFunction;
 };
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from '../constants/front-component-host-communication-api-key';

@@ -7,9 +7,8 @@ import { useMemo, useRef } from 'react';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-  type FrontComponentLocalStorageNamespace,
-  frontComponentLocalStorageService,
-  FrontComponentStorageError,
+  type FrontComponentStorageNamespace,
+  frontComponentStorageService,
 } from 'twenty-front-component-renderer';
 import {
   AppPath,
@@ -65,7 +64,7 @@ export const useFrontComponentExecutionContext = ({
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
-  localStorageNamespace?: FrontComponentLocalStorageNamespace;
+  storageNamespace?: FrontComponentStorageNamespace;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
@@ -369,7 +368,7 @@ export const useFrontComponentExecutionContext = ({
 
   const currentUserId = currentUser?.id;
 
-  const localStorageNamespace = useMemo(
+  const storageNamespace = useMemo(
     () =>
       isDefined(currentUserId)
         ? { applicationId, userId: currentUserId }
@@ -377,39 +376,42 @@ export const useFrontComponentExecutionContext = ({
     [applicationId, currentUserId],
   );
 
-  const requireLocalStorageNamespace =
-    (): FrontComponentLocalStorageNamespace => {
-      if (!isDefined(localStorageNamespace)) {
-        throw new FrontComponentStorageError(
-          'Device storage requires a signed-in user',
-          'FRONT_COMPONENT_STORAGE_UNAVAILABLE',
-        );
-      }
+  const requireStorageNamespace = (): FrontComponentStorageNamespace => {
+    if (!isDefined(storageNamespace)) {
+      throw new Error('Device storage requires a signed-in user');
+    }
 
-      return localStorageNamespace;
-    };
+    return storageNamespace;
+  };
 
-  const localStorageSet: FrontComponentHostCommunicationApi['localStorageSet'] =
-    async (key, serializedValue) => {
-      await frontComponentLocalStorageService.set({
-        ...requireLocalStorageNamespace(),
+  const storageSet: FrontComponentHostCommunicationApi['storageSet'] = async (
+    area,
+    key,
+    serializedValue,
+  ) => {
+    frontComponentStorageService.set({
+      ...requireStorageNamespace(),
+      area,
+      key,
+      serializedValue,
+    });
+  };
+
+  const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
+    async (area, key) => {
+      frontComponentStorageService.delete({
+        ...requireStorageNamespace(),
+        area,
         key,
-        serializedValue,
       });
     };
 
-  const localStorageDelete: FrontComponentHostCommunicationApi['localStorageDelete'] =
-    async (key) =>
-      frontComponentLocalStorageService.delete({
-        ...requireLocalStorageNamespace(),
-        key,
+  const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
+    async (area) => {
+      frontComponentStorageService.clear({
+        ...requireStorageNamespace(),
+        area,
       });
-
-  const localStorageClear: FrontComponentHostCommunicationApi['localStorageClear'] =
-    async () => {
-      await frontComponentLocalStorageService.clear(
-        requireLocalStorageNamespace(),
-      );
     };
 
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
@@ -423,14 +425,14 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
-      localStorageSet,
-      localStorageDelete,
-      localStorageClear,
+      storageSet,
+      storageDelete,
+      storageClear,
     };
 
   return {
     executionContext,
     frontComponentHostCommunicationApi,
-    localStorageNamespace,
+    storageNamespace,
   };
 };

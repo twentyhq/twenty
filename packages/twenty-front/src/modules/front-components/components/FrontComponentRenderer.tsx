@@ -86,7 +86,7 @@ const FrontComponentRendererContent = ({
   const {
     executionContext,
     frontComponentHostCommunicationApi,
-    localStorageNamespace,
+    storageNamespace,
   } = useFrontComponentExecutionContext({
     frontComponentId,
     applicationId,
@@ -162,7 +162,7 @@ const FrontComponentRendererContent = ({
               frontComponentHostCommunicationApi
             }
             applicationVariables={applicationVariables}
-            localStorageNamespace={localStorageNamespace}
+            storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
           />

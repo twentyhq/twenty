@@ -15,9 +15,9 @@ export const hostApiMocks = {
   requestAccessTokenRefresh: fn().mockResolvedValue('refreshed-token'),
   openCommandConfirmationModal: fn().mockResolvedValue(undefined),
   copyToClipboard: fn().mockResolvedValue(undefined),
-  localStorageSet: fn().mockResolvedValue(undefined),
-  localStorageDelete: fn().mockResolvedValue(false),
-  localStorageClear: fn().mockResolvedValue(undefined),
+  storageSet: fn().mockResolvedValue(undefined),
+  storageDelete: fn().mockResolvedValue(undefined),
+  storageClear: fn().mockResolvedValue(undefined),
 };
 
 export const FRONT_COMPONENT_STORY_DEFAULT_ARGS: NonNullable<
@@ -47,7 +47,7 @@ export const resetFrontComponentStoryMocks = () => {
   hostApiMocks.requestAccessTokenRefresh.mockClear();
   hostApiMocks.openCommandConfirmationModal.mockClear();
   hostApiMocks.copyToClipboard.mockClear();
-  hostApiMocks.localStorageSet.mockClear();
-  hostApiMocks.localStorageDelete.mockClear();
-  hostApiMocks.localStorageClear.mockClear();
+  hostApiMocks.storageSet.mockClear();
+  hostApiMocks.storageDelete.mockClear();
+  hostApiMocks.storageClear.mockClear();
 };

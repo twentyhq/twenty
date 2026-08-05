@@ -1,0 +1,10 @@
+export type FrontComponentStorageWorkerBridge = {
+  getItem: (key: string) => string | null;
+  getKeyAtIndex: (index: number) => string | null;
+  getLength: () => number;
+  setItem: (key: string, serializedValue: string) => void;
+  removeItem: (key: string) => void;
+  clear: () => void;
+  seed: (seededEntries: Record<string, string>) => void;
+  flushPendingPersistOperations: () => void;
+};

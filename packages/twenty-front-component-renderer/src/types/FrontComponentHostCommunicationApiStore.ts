@@ -2,13 +2,13 @@ import {
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
-  type LocalStorageClearFunction,
-  type LocalStorageDeleteFunction,
-  type LocalStorageSetFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
+  type StorageClearFunction,
+  type StorageDeleteFunction,
+  type StorageSetFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
 } from 'twenty-sdk/front-component';
@@ -23,7 +23,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
-  localStorageSet?: LocalStorageSetFunction;
-  localStorageDelete?: LocalStorageDeleteFunction;
-  localStorageClear?: LocalStorageClearFunction;
+  storageSet?: StorageSetFunction;
+  storageDelete?: StorageDeleteFunction;
+  storageClear?: StorageClearFunction;
 };

@@ -1,17 +1,21 @@
-import { createInMemoryStorage } from '@/polyfills/storage/utils/createInMemoryStorage';
-import { createStorageFromLocalStorageBridge } from '@/polyfills/storage/utils/createStorageFromLocalStorageBridge';
+import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
+
+import { createStorageFromStorageBridge } from '@/polyfills/storage/utils/createStorageFromStorageBridge';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
-import { type FrontComponentLocalStorageWorkerBridge } from '@/types/FrontComponentLocalStorageWorkerBridge';
+import { type FrontComponentStorageWorkerBridge } from '@/types/FrontComponentStorageWorkerBridge';
 
 export const installStorageShims = ({
   globalScope,
-  localStorageBridge,
+  storageBridges,
 }: {
   globalScope: Record<string, unknown>;
-  localStorageBridge: FrontComponentLocalStorageWorkerBridge;
+  storageBridges: Record<
+    FrontComponentStorageArea,
+    FrontComponentStorageWorkerBridge
+  >;
 }): void => {
-  const localStorage = createStorageFromLocalStorageBridge(localStorageBridge);
-  const sessionStorage = createInMemoryStorage();
+  const localStorage = createStorageFromStorageBridge(storageBridges.local);
+  const sessionStorage = createStorageFromStorageBridge(storageBridges.session);
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
     installTarget.localStorage = localStorage;

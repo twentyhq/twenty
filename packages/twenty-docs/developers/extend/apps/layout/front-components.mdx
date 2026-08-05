@@ -475,11 +475,6 @@ Front components can trigger navigation, modals, and notifications using functio
 | `enqueueSnackbar(params)` | Show a toast notification |
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
-| `localStorage.get(key)` | Read a device-local value |
-| `localStorage.set(key, value)` | Write a device-local value |
-| `localStorage.delete(key)` | Delete a device-local value |
-| `localStorage.keys()` | List the keys your app has stored |
-| `localStorage.clear()` | Delete every value your app has stored |
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
@@ -525,31 +520,20 @@ export default defineFrontComponent({
 });
 ```
 
-### Device-local storage
+### Storage
 
-`localStorage` from `twenty-sdk/front-component` stores small JSON values on the current device, scoped to your app install and the signed-in user. Nobody else's app can read your keys, and another user signing into the same browser starts from an empty store. Nothing is synced: the values do not follow the user to another browser or machine, so use it for UI state, drafts and preferences, and use a logic function's [key-value store](/developers/extend/apps/logic/key-value-store) for anything that must survive a device change.
-
-Every method is async, and values go through `JSON.stringify` / `JSON.parse`:
+`localStorage` and `sessionStorage` work as they do in a normal page, with the standard synchronous API. Your keys are scoped to your app install and the signed-in user: no other app can read them, and another user signing into the same browser starts from an empty store. Values written to `localStorage` stay on the device across reloads; `sessionStorage` lasts for the browser session.
 
 ```tsx src/front-components/note-draft.tsx
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { localStorage } from 'twenty-sdk/front-component';
 
 const NoteDraft = () => {
-  const [draft, setDraft] = useState('');
-
-  useEffect(() => {
-    localStorage.get<string>('draft').then((storedDraft) => {
-      if (storedDraft !== null) {
-        setDraft(storedDraft);
-      }
-    });
-  }, []);
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
 
   const handleChange = (nextDraft: string) => {
     setDraft(nextDraft);
-    localStorage.set('draft', nextDraft);
+    localStorage.setItem('draft', nextDraft);
   };
 
   return (
@@ -565,11 +549,9 @@ export default defineFrontComponent({
 });
 ```
 
-Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single serialized value at most 262,144 characters, and your app's whole store at most 1,048,576 characters per user. A write that breaks a limit rejects with an error whose `code` is one of `FRONT_COMPONENT_STORAGE_KEY_TOO_LONG`, `FRONT_COMPONENT_STORAGE_VALUE_TOO_LARGE`, `FRONT_COMPONENT_STORAGE_QUOTA_EXCEEDED` or `FRONT_COMPONENT_STORAGE_UNAVAILABLE`. Use `keys()` and `delete()` to make room.
+Twenty stores the values on your app's behalf, so a write is applied locally right away and saved in the background. Reads never wait on the host. Nothing is synced: the values do not follow the user to another browser or machine, so use a logic function's [key-value store](/developers/extend/apps/logic/key-value-store) for anything that must survive a device change.
 
-The global `window.localStorage` is backed by the same store, so a dependency that reads or writes it keeps working and its data persists too. It stays synchronous like the browser API, which means a write is applied locally right away and saved in the background; use the SDK methods when you need to know the write reached the host. Because that store is shared, `get()` returns the raw string for a value a dependency wrote as plain text instead of JSON.
-
-`window.sessionStorage` is also available, but it stays in memory for the lifetime of the component and is never written to the device.
+Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single value at most 262,144 characters, and each storage at most 1,048,576 characters per app and user. A write that breaks a limit throws a `QuotaExceededError`, like the browser API.
 
 ### Working with multiple records
 
@@ -806,7 +788,7 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `<style>` el
 
 ### Storage and network
 
-`localStorage` is provided by Twenty rather than the browser: the component runs in a worker at an opaque origin, so the host stores the values on your app's behalf. See [device-local storage](#device-local-storage) for the API, its scoping and its limits. `sessionStorage` is a shim that keeps values in memory for the lifetime of the component and never persists them. IndexedDB, cookies, the Cache API and `BroadcastChannel` remain unavailable. To persist state across devices, call a [logic function](/developers/extend/apps/logic/logic-functions) and use its [key-value store](/developers/extend/apps/logic/key-value-store).
+`localStorage` and `sessionStorage` are provided by Twenty rather than the browser: the component runs in a worker at an opaque origin, so the host stores the values on your app's behalf. See [storage](#storage) for their scoping and limits. IndexedDB, cookies, the Cache API and `BroadcastChannel` remain unavailable. To persist state across devices, call a [logic function](/developers/extend/apps/logic/logic-functions) and use its [key-value store](/developers/extend/apps/logic/key-value-store).
 
 `fetch` works, with caveats:
 

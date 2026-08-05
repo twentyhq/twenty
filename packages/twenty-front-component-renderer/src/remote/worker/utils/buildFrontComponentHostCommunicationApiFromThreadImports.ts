@@ -15,7 +15,7 @@ export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   closeSidePanel: hostThreadImports.closeSidePanel,
   updateProgress: hostThreadImports.updateProgress,
   copyToClipboard: hostThreadImports.copyToClipboard,
-  localStorageSet: hostThreadImports.localStorageSet,
-  localStorageDelete: hostThreadImports.localStorageDelete,
-  localStorageClear: hostThreadImports.localStorageClear,
+  storageSet: hostThreadImports.storageSet,
+  storageDelete: hostThreadImports.storageDelete,
+  storageClear: hostThreadImports.storageClear,
 });

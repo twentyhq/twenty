@@ -9,18 +9,15 @@ import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnfo
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/utils/fetchSdkClientSources';
-import { frontComponentLocalStorageService } from '@/host/utils/frontComponentLocalStorageService';
+import { buildFrontComponentStorageSnapshots } from '@/host/utils/buildFrontComponentStorageSnapshots';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
-import { type FrontComponentLocalStorageNamespace } from '@/types/FrontComponentLocalStorageNamespace';
+import { type FrontComponentStorageNamespace } from '@/types/FrontComponentStorageNamespace';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/containsSdkClientImportSpecifier';
-
-const LOCAL_STORAGE_SNAPSHOT_FAILURE_WARNING =
-  'The front component local storage could not be read from this device';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -29,7 +26,7 @@ type FrontComponentWorkerEffectProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   applicationVariables?: Record<string, string>;
-  localStorageNamespace?: FrontComponentLocalStorageNamespace;
+  storageNamespace?: FrontComponentStorageNamespace;
   geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
@@ -43,7 +40,7 @@ export const FrontComponentWorkerEffect = ({
   functionsBaseUrl,
   sdkClientUrls,
   applicationVariables,
-  localStorageNamespace,
+  storageNamespace,
   geometryTracker,
   setReceiver,
   setThread,
@@ -120,19 +117,9 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
-        const localStorageSnapshot = isDefined(localStorageNamespace)
-          ? await frontComponentLocalStorageService
-              .snapshot(localStorageNamespace)
-              .catch(() => {
-                console.warn(LOCAL_STORAGE_SNAPSHOT_FAILURE_WARNING);
-
-                return {};
-              })
+        const storageSnapshots = isDefined(storageNamespace)
+          ? buildFrontComponentStorageSnapshots(storageNamespace)
           : undefined;
-
-        if (isCancelled) {
-          return;
-        }
 
         await thread.imports.render(newReceiver.connection, {
           componentUrl,
@@ -144,7 +131,7 @@ export const FrontComponentWorkerEffect = ({
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
-          localStorageSnapshot,
+          storageSnapshots,
         });
       } catch (error) {
         if (!isCancelled) {
@@ -173,7 +160,7 @@ export const FrontComponentWorkerEffect = ({
     functionsBaseUrl,
     sdkClientUrls,
     applicationVariables,
-    localStorageNamespace,
+    storageNamespace,
     geometryTracker,
     setError,
     setReceiver,
