@@ -1,19 +1,12 @@
+import {
+  isAdvancedTextEditorBlockNodeType,
+  type AdvancedTextEditorBlockNodeType,
+} from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { type Editor } from '@tiptap/core';
 import { NodeSelection } from '@tiptap/pm/state';
-import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
-
-const INSPECTABLE_NODE_TYPES: readonly string[] = [
-  TIPTAP_NODE_TYPES.SECTION,
-  TIPTAP_NODE_TYPES.COLUMNS,
-  TIPTAP_NODE_TYPES.COLUMN,
-  TIPTAP_NODE_TYPES.BUTTON,
-  TIPTAP_NODE_TYPES.DIVIDER,
-  TIPTAP_NODE_TYPES.HTML,
-  TIPTAP_NODE_TYPES.IMAGE,
-];
 
 export type BlockSelectionTarget = {
-  nodeType: string;
+  nodeType: AdvancedTextEditorBlockNodeType;
   pos: number;
   attrs: Record<string, unknown>;
 };
@@ -25,7 +18,7 @@ export const getBlockSelectionTarget = (
 
   if (
     selection instanceof NodeSelection &&
-    INSPECTABLE_NODE_TYPES.includes(selection.node.type.name)
+    isAdvancedTextEditorBlockNodeType(selection.node.type.name)
   ) {
     return {
       nodeType: selection.node.type.name,
@@ -37,7 +30,7 @@ export const getBlockSelectionTarget = (
   const { $from } = selection;
   for (let depth = $from.depth; depth > 0; depth--) {
     const node = $from.node(depth);
-    if (INSPECTABLE_NODE_TYPES.includes(node.type.name)) {
+    if (isAdvancedTextEditorBlockNodeType(node.type.name)) {
       return {
         nodeType: node.type.name,
         pos: $from.before(depth),

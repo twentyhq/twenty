@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { type MessageDescriptor } from '@lingui/core';
 
+import { type AdvancedTextEditorBlockSetting } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { EmailAlignmentInput } from '@/side-panel/pages/email-block-settings/components/EmailAlignmentInput';
 import { EmailColorInput } from '@/side-panel/pages/email-block-settings/components/EmailColorInput';
 import { EmailSizeInput } from '@/side-panel/pages/email-block-settings/components/EmailSizeInput';
@@ -8,20 +8,11 @@ import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/c
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-export type EmailStyleFieldKind =
-  | 'text'
-  | 'color'
-  | 'box'
-  | 'size'
-  | 'alignment'
-  | 'textarea';
-
 type EmailBlockSettingsFieldInputProps = {
-  field: {
-    label: MessageDescriptor;
-    input: EmailStyleFieldKind;
-    placeholder?: string;
-  };
+  field: Pick<
+    AdvancedTextEditorBlockSetting,
+    'label' | 'input' | 'placeholder'
+  >;
   value: string;
   onChange: (value: string) => void;
 };

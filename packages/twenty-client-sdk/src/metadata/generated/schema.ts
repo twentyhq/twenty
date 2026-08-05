@@ -687,7 +687,7 @@ export interface User {
 
 
 /** Onboarding status */
-export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'APPS_INSTALLATION' | 'INVITE_TEAM' | 'COMPLETED'
+export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'APPS_INSTALLATION' | 'INVITE_TEAM' | 'BOOK_CALL' | 'COMPLETED'
 
 export interface ApplicationRegistration {
     id: Scalars['UUID']
@@ -1634,6 +1634,8 @@ export interface ClientConfig {
     isEmailingDomainInDemoMode: Scalars['Boolean']
     allowRequestsToTwentyIcons: Scalars['Boolean']
     calendarBookingPageId?: Scalars['String']
+    isBookCallOnboardingStepEnabled: Scalars['Boolean']
+    isCompanyEnrichmentEnabled: Scalars['Boolean']
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
     isWorkspaceSchemaDDLLocked: Scalars['Boolean']
@@ -1854,6 +1856,7 @@ export interface MarketplaceAppDetail {
 export interface WorkspaceCompanyEnrichmentResult {
     outcome: WorkspaceCompanyEnrichmentOutcome
     enrichment?: Scalars['JSON']
+    isBookCallOnboardingStepPending: Scalars['Boolean']
     __typename: 'WorkspaceCompanyEnrichmentResult'
 }
 
@@ -2999,6 +3002,7 @@ export interface Mutation {
     revokeUserSession: Scalars['Boolean']
     revokeAllOtherUserSessions: Scalars['Int']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
+    completeBookCallOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
     updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
@@ -4882,6 +4886,8 @@ export interface ClientConfigGenqlSelection{
     isEmailingDomainInDemoMode?: boolean | number
     allowRequestsToTwentyIcons?: boolean | number
     calendarBookingPageId?: boolean | number
+    isBookCallOnboardingStepEnabled?: boolean | number
+    isCompanyEnrichmentEnabled?: boolean | number
     isCloudflareIntegrationEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
     isWorkspaceSchemaDDLLocked?: boolean | number
@@ -5124,6 +5130,7 @@ export interface MarketplaceAppDetailGenqlSelection{
 export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
     outcome?: boolean | number
     enrichment?: boolean | number
+    isBookCallOnboardingStepPending?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6370,6 +6377,7 @@ export interface MutationGenqlSelection{
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
     revokeAllOtherUserSessions?: boolean | number
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
+    completeBookCallOnboardingStep?: OnboardingStepSuccessGenqlSelection
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][]} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
@@ -9432,6 +9440,7 @@ export const enumOnboardingStatus = {
    SYNC_EMAIL: 'SYNC_EMAIL' as const,
    APPS_INSTALLATION: 'APPS_INSTALLATION' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const,
+   BOOK_CALL: 'BOOK_CALL' as const,
    COMPLETED: 'COMPLETED' as const
 }
 

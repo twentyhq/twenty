@@ -1,9 +1,9 @@
 import { MessageCampaignStatus } from 'twenty-shared/types';
-import { emailDocumentSchema, parseJson } from 'twenty-shared/utils';
+import { parseCanonicalEmailDocument, parseJson } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 const isSendableBodyTemplate = (bodyTemplate: string): boolean =>
-  emailDocumentSchema.safeParse(parseJson<unknown>(bodyTemplate)).success;
+  parseCanonicalEmailDocument(parseJson<unknown>(bodyTemplate)).success;
 
 export const sendableDraftCampaignSchema = z.object({
   status: z.literal(MessageCampaignStatus.DRAFT),
