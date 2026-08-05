@@ -1,4 +1,4 @@
-import { isConnectedAccountUsableByCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/is-connected-account-usable-by-caller.util';
+import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 // Their own account first, then one shared with the whole workspace: composing from whichever account comes first in the workspace puts the caller's mail in a colleague's mailbox.

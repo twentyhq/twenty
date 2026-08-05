@@ -153,14 +153,23 @@ describe('EmailComposerService connected account resolution', () => {
     it('keeps the first workspace account when there is no caller (workflow run)', async () => {
       const firstAccount = buildAccount(OTHER_CONNECTED_ACCOUNT_ID, {
         userWorkspaceId: OTHER_USER_WORKSPACE_ID,
+        handle: 'colleague@apple.dev',
       });
 
-      connectedAccountRepository.find.mockResolvedValue([firstAccount]);
+      connectedAccountRepository.find.mockResolvedValue([
+        firstAccount,
+        buildAccount(CONNECTED_ACCOUNT_ID),
+      ]);
       connectedAccountRepository.findOne.mockResolvedValue(firstAccount);
 
       const result = await service.composeEmail(baseParams, context);
 
       expect(result.success).toBe(true);
+      expect(connectedAccountRepository.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: OTHER_CONNECTED_ACCOUNT_ID, workspaceId: WORKSPACE_ID },
+        }),
+      );
     });
   });
 
