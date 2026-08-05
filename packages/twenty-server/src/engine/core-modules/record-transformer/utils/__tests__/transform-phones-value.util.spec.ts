@@ -32,7 +32,7 @@ describe('transformPhonesValue', () => {
       },
     });
 
-    expect(result?.additionalPhones).toBe(JSON.stringify([{ number: null }]));
+    expect(result?.additionalPhones).toBe(null);
   });
 
   it('should parse a valid international phone number into its canonical parts', () => {
