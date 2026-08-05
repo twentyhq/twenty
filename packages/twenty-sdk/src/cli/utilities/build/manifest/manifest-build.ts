@@ -27,6 +27,7 @@ import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type VendorConfig } from '@/sdk/define/vendor/vendor-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -670,7 +671,7 @@ export const buildManifest = async (
                   },
                 }
               : {}),
-            ...(vendorManifests.length >= 1
+            ...(isNonEmptyArray(vendorManifests)
               ? { vendor: vendorManifests[0] }
               : {}),
           };

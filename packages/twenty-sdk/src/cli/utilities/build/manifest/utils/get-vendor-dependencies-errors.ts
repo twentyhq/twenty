@@ -1,3 +1,5 @@
+import { isNonEmptyArray } from '@sniptt/guards';
+
 export const getVendorDependenciesErrors = (
   dependencies: string[],
 ): string[] => {
@@ -7,7 +9,7 @@ export const getVendorDependenciesErrors = (
   );
 
   if (
-    vendoredReactDomDependencies.length > 0 &&
+    isNonEmptyArray(vendoredReactDomDependencies) &&
     !dependencies.includes('react')
   ) {
     return [

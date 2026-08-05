@@ -8,6 +8,7 @@ import { pathExists } from '@/cli/utilities/file/fs-utils';
 import chokidar, { type FSWatcher } from 'chokidar';
 import { join } from 'path';
 import { type VendorManifest } from 'twenty-shared/application';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 const INSTALLED_DEPENDENCY_VERSION_PATHS = ['package.json', 'yarn.lock'];
@@ -116,7 +117,7 @@ export class VendorBundleWatcher {
       )
     ).filter(isDefined);
 
-    if (watchedPaths.length === 0) {
+    if (!isNonEmptyArray(watchedPaths)) {
       return;
     }
 
