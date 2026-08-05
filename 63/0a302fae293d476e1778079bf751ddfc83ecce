@@ -1,0 +1,25 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service.ts
+  s_62258254606868::t_728e2d1f4b5d89 152
+  s_62258254606868::t_617b641d923f0a 10
+  s_62258254606868::t_1b3bbb7b02dbae 162
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-failure-count.constant.ts
+  s_62258254606868::t_85d7922dd05a50 1
+packages/twenty-server/test/integration/microsoft/webhook/lifecycle-notification.integration-spec.ts
+  s_62258254606868::t_d7c1804b344afe 8,168,181,187
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "630a302fae293d476e1778079bf751ddfc83ecce",
+  "prompts": {},
+  "sessions": {
+    "s_62258254606868": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b859e0a0-923c-4364-abb5-2540ded6d7bd",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
