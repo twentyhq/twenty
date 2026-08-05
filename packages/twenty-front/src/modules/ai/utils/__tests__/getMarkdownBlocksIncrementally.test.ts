@@ -1,10 +1,8 @@
 import { marked } from 'marked';
 
-import {
-  EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE,
-  getMarkdownBlocksIncrementally,
-  type MarkdownBlockSplitCache,
-} from '@/ai/utils/getMarkdownBlocksIncrementally';
+import { EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE } from '@/ai/constants/EmptyMarkdownBlockSplitCache';
+import { type MarkdownBlockSplitCache } from '@/ai/types/MarkdownBlockSplitCache';
+import { getMarkdownBlocksIncrementally } from '@/ai/utils/getMarkdownBlocksIncrementally';
 
 const lexerBlocks = (text: string): string[] =>
   marked.lexer(text).map((token) => token.raw);

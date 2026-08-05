@@ -1,18 +1,5 @@
+import { type MarkdownBlockSplitCache } from '@/ai/types/MarkdownBlockSplitCache';
 import { Lexer } from 'marked';
-
-export type MarkdownBlockSplitCache = {
-  text: string;
-  blocks: string[];
-  stablePrefix: string;
-  stableBlocks: string[];
-};
-
-export const EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE: MarkdownBlockSplitCache = {
-  text: '',
-  blocks: [],
-  stablePrefix: '',
-  stableBlocks: [],
-};
 
 // Appended text can reopen the last block, and a list followed by a blank-line
 // token merges with a later item ("- a\n\n" + "- b" is one loose list), so the

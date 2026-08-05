@@ -7,10 +7,8 @@ import {
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import {
-  EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE,
-  getMarkdownBlocksIncrementally,
-} from '@/ai/utils/getMarkdownBlocksIncrementally';
+import { EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE } from '@/ai/constants/EmptyMarkdownBlockSplitCache';
+import { getMarkdownBlocksIncrementally } from '@/ai/utils/getMarkdownBlocksIncrementally';
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
 import {
   cloneElement,
