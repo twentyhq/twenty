@@ -120,10 +120,15 @@ export const FieldWidgetFieldDropdownContent = () => {
   const handleDrillIn = (fieldMetadataItem: FieldMetadataItem) => {
     setDrillInFieldMetadataItem(fieldMetadataItem);
 
-    if (
+    const isCheckedNestedFieldInCandidates =
       currentFieldMetadataId === fieldMetadataItem.id &&
-      isDefined(currentNestedRelationFieldMetadataId)
-    ) {
+      isDefined(currentNestedRelationFieldMetadataId) &&
+      (nestedFieldCandidatesByFieldId.get(fieldMetadataItem.id) ?? []).some(
+        (nestedFieldMetadataItem) =>
+          nestedFieldMetadataItem.id === currentNestedRelationFieldMetadataId,
+      );
+
+    if (isCheckedNestedFieldInCandidates) {
       setSelectedItemId(currentNestedRelationFieldMetadataId);
     } else {
       resetSelectedItem();
