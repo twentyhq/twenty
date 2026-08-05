@@ -7,6 +7,7 @@ import {
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
+import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 
 export { ViewType } from '~/generated-metadata/graphql';
 import { ViewType } from '~/generated-metadata/graphql';
@@ -28,45 +29,18 @@ export const getViewTypeLabel = (
 ): MessageDescriptor =>
   VIEW_TYPE_LABELS[viewType] ?? VIEW_TYPE_LABELS[ViewType.TABLE];
 
-const VIEW_TYPE_ICON_MAPPING = {
-  [ViewType.TABLE]: {
-    icon: IconTable,
-    iconKey: 'IconTable',
-  },
-  [ViewType.KANBAN]: {
-    icon: IconLayoutKanban,
-    iconKey: 'IconLayoutKanban',
-  },
-  [ViewType.CALENDAR]: {
-    icon: IconCalendar,
-    iconKey: 'IconCalendar',
-  },
-  [ViewType.FIELDS_WIDGET]: {
-    icon: IconListDetails,
-    iconKey: 'IconListDetails',
-  },
-  [ViewType.TABLE_WIDGET]: {
-    icon: IconTable,
-    iconKey: 'IconTable',
-  },
-  [ViewType.KANBAN_WIDGET]: {
-    icon: IconLayoutKanban,
-    iconKey: 'IconLayoutKanban',
-  },
-  [ViewType.CALENDAR_WIDGET]: {
-    icon: IconCalendar,
-    iconKey: 'IconCalendar',
-  },
-} as const satisfies Record<
-  ViewType,
-  {
-    icon: IconComponent;
-    iconKey: string;
-  }
->;
+type ViewTypeIconKey =
+  (typeof VIEW_TYPE_DEFAULT_ICONS)[keyof typeof VIEW_TYPE_DEFAULT_ICONS];
+
+const VIEW_TYPE_ICON_COMPONENTS = {
+  IconCalendar,
+  IconLayoutKanban,
+  IconListDetails,
+  IconTable,
+} satisfies Record<ViewTypeIconKey, IconComponent>;
 
 export const viewTypeIconMapping = (viewType: ViewType = ViewType.TABLE) =>
-  VIEW_TYPE_ICON_MAPPING[viewType].icon;
+  VIEW_TYPE_ICON_COMPONENTS[VIEW_TYPE_DEFAULT_ICONS[viewType]];
 
 export const viewTypeIconKeyMapping = (viewType: ViewType = ViewType.TABLE) =>
-  VIEW_TYPE_ICON_MAPPING[viewType].iconKey;
+  VIEW_TYPE_DEFAULT_ICONS[viewType];
