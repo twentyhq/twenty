@@ -65,6 +65,7 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_CACHE_STATS_TTL_MS = 5_000;
 const LOCAL_CACHE_SIZE_REFRESH_MS = 5 * 60 * 1000;
+const LOCAL_CACHE_SIZE_STARTUP_DELAY_MS = 30 * 1000;
 const LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER = 3;
 const LOCAL_CACHE_SIZE_WALK_NODE_CAP = 300_000;
 const CACHE_DURATION_BUCKETS_SECONDS = [
@@ -178,6 +179,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   onModuleDestroy(): void {
+    if (isDefined(this.cacheSizeStartupTimer)) {
+      clearTimeout(this.cacheSizeStartupTimer);
+    }
     if (isDefined(this.cacheSizeSampler)) {
       clearInterval(this.cacheSizeSampler);
     }
@@ -186,6 +190,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private cacheSizeByProvider: Record<string, number> = {};
   private cacheSizeTotalBytes = 0;
   private cacheSizeSampler?: ReturnType<typeof setInterval>;
+  private cacheSizeStartupTimer?: ReturnType<typeof setTimeout>;
 
   private localCacheStatsCache?: {
     computedAt: number;
@@ -241,11 +246,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private scheduleCacheSizeSampler(): void {
-    this.cacheSizeSampler = setInterval(() => {
+    const sample = (): void => {
       this.refreshCacheSizeBreakdown().catch((error) =>
         this.logger.error('Failed to sample local cache size', error),
       );
-    }, LOCAL_CACHE_SIZE_REFRESH_MS);
+    };
+
+    // Prime the byte gauges shortly after startup so they reflect a warming cache
+    // within the minute instead of reporting 0 until the first full interval.
+    this.cacheSizeStartupTimer = setTimeout(
+      sample,
+      LOCAL_CACHE_SIZE_STARTUP_DELAY_MS,
+    );
+    this.cacheSizeStartupTimer.unref();
+
+    this.cacheSizeSampler = setInterval(sample, LOCAL_CACHE_SIZE_REFRESH_MS);
     this.cacheSizeSampler.unref();
   }
 
@@ -269,14 +284,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
       stats.count += 1;
 
-      if (stats.sampled < LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER) {
-        const version = entry.versions.get(entry.latestHash);
+      if (
+        stats.sampled < LOCAL_CACHE_SIZE_SAMPLE_PER_PROVIDER &&
+        entry.versions.size > 0
+      ) {
+        // Size every retained version, not just the latest: stale versions still
+        // occupy heap until the expiration sweep drops them.
+        let entryBytes = 0;
 
-        if (isDefined(version)) {
-          stats.sampledBytes += this.deepSizeBytes(version.data);
-          stats.sampled += 1;
-          await new Promise((resolve) => setImmediate(resolve));
+        for (const version of entry.versions.values()) {
+          entryBytes += this.deepSizeBytes(version.data);
         }
+
+        stats.sampledBytes += entryBytes;
+        stats.sampled += 1;
+        await new Promise((resolve) => setImmediate(resolve));
       }
     }
 
@@ -340,36 +362,20 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         continue;
       }
 
-      let handled = false;
-
-      try {
-        if (value instanceof Map) {
-          bytes += 48 + value.size * 16;
-          for (const [mapKey, mapValue] of value) {
-            stack.push(mapKey);
-            stack.push(mapValue);
-          }
-          handled = true;
+      if (value instanceof Map) {
+        bytes += 48 + value.size * 16;
+        for (const [mapKey, mapValue] of value) {
+          stack.push(mapKey);
+          stack.push(mapValue);
         }
-      } catch {
-        handled = false;
-      }
-      if (handled) {
         continue;
       }
 
-      try {
-        if (value instanceof Set) {
-          bytes += 48 + value.size * 8;
-          for (const item of value) {
-            stack.push(item);
-          }
-          handled = true;
+      if (value instanceof Set) {
+        bytes += 48 + value.size * 8;
+        for (const item of value) {
+          stack.push(item);
         }
-      } catch {
-        handled = false;
-      }
-      if (handled) {
         continue;
       }
 
