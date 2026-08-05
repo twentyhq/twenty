@@ -30,7 +30,7 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
   min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
 
   /* FormFieldInputContainer is shared by every form field and does not carry a
