@@ -18,6 +18,14 @@ export const createFrontComponentStorageBridge = ({
   const entries = new Map<string, string>();
   const pendingPersistOperations: (() => void)[] = [];
 
+  let cachedKeys: string[] | null = null;
+
+  const getKeys = (): string[] => {
+    cachedKeys ??= Array.from(entries.keys());
+
+    return cachedKeys;
+  };
+
   const persist = (
     runPersist: (
       hostCommunicationApi: FrontComponentHostCommunicationApiStore,
@@ -52,11 +60,12 @@ export const createFrontComponentStorageBridge = ({
 
   return {
     getItem: (key) => entries.get(key) ?? null,
-    getKeyAtIndex: (index) => Array.from(entries.keys())[index] ?? null,
+    getKeyAtIndex: (index) => getKeys()[index] ?? null,
     getLength: () => entries.size,
 
     seed: (seededEntries) => {
       entries.clear();
+      cachedKeys = null;
 
       for (const [key, value] of Object.entries(seededEntries)) {
         entries.set(key, value);
@@ -75,6 +84,7 @@ export const createFrontComponentStorageBridge = ({
       }
 
       entries.set(key, serializedValue);
+      cachedKeys = null;
 
       persist((hostCommunicationApi) =>
         hostCommunicationApi.storageSet?.(area, key, serializedValue),
@@ -83,6 +93,7 @@ export const createFrontComponentStorageBridge = ({
 
     removeItem: (key) => {
       entries.delete(key);
+      cachedKeys = null;
 
       persist((hostCommunicationApi) =>
         hostCommunicationApi.storageDelete?.(area, key),
@@ -91,6 +102,7 @@ export const createFrontComponentStorageBridge = ({
 
     clear: () => {
       entries.clear();
+      cachedKeys = null;
 
       persist((hostCommunicationApi) =>
         hostCommunicationApi.storageClear?.(area),

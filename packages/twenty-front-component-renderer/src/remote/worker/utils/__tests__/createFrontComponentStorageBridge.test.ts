@@ -37,6 +37,36 @@ describe('createFrontComponentStorageBridge', () => {
     expect(bridge.getItem('missing')).toBeNull();
   });
 
+  it('should enumerate keys in insertion order across mutations', () => {
+    const { bridge } = createConnectedBridge();
+
+    bridge.seed({ theme: '"dark"', draft: '"hello"' });
+
+    const enumerateKeys = () =>
+      Array.from({ length: bridge.getLength() }, (_unused, index) =>
+        bridge.getKeyAtIndex(index),
+      );
+
+    expect(enumerateKeys()).toEqual(['theme', 'draft']);
+
+    bridge.setItem('locale', '"en"');
+
+    expect(enumerateKeys()).toEqual(['theme', 'draft', 'locale']);
+
+    bridge.removeItem('theme');
+
+    expect(enumerateKeys()).toEqual(['draft', 'locale']);
+
+    bridge.setItem('draft', '"updated"');
+
+    expect(enumerateKeys()).toEqual(['draft', 'locale']);
+
+    bridge.clear();
+
+    expect(enumerateKeys()).toEqual([]);
+    expect(bridge.getKeyAtIndex(0)).toBeNull();
+  });
+
   it('should apply writes locally and persist them with the area', () => {
     const { bridge, hostCommunicationApi } = createConnectedBridge();
 
