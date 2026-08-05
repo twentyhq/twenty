@@ -12,6 +12,7 @@ import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retriev
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
+import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 
@@ -27,6 +28,7 @@ const ENV_VAR_NAMES = [
   RECALL_REGION_ENV_VAR_NAME,
   CALL_RECORDER_NAME_ENV_VAR_NAME,
   CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME,
+  CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME,
 ] as const;
 const ORIGINAL_ENV_VALUES = ENV_VAR_NAMES.map(
   (envVarName) => [envVarName, process.env[envVarName]] as const,
@@ -39,6 +41,7 @@ describe('recall bot api', () => {
     vi.useFakeTimers();
     vi.setSystemTime(NOW);
     delete process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
+    delete process.env[CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME];
     process.env[RECALL_API_KEY_ENV_VAR_NAME] = 'recall-api-key';
     process.env[RECALL_REGION_ENV_VAR_NAME] = 'ap-northeast-1';
     process.env[CALL_RECORDER_NAME_ENV_VAR_NAME] = 'Call Recorder';
@@ -551,7 +554,7 @@ describe('recall bot api', () => {
     });
   });
 
-  it('creates an async transcript with the locked provider settings', async () => {
+  it('creates an async transcript with the default provider settings', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       status: 201,
@@ -567,6 +570,25 @@ describe('recall bot api', () => {
       'https://ap-northeast-1.recall.ai/api/v1/recording/recall-recording-id/create_transcript/',
       expect.objectContaining({ method: 'POST' }),
     );
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      provider: { recallai_async: { language_code: 'auto' } },
+      diarization: { use_separate_streams_when_available: true },
+    });
+  });
+
+  it('creates an async transcript with the configured provider', async () => {
+    process.env[CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME] =
+      'gladia_v2_async';
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ id: 'recall-transcript-id' }),
+    });
+
+    await createAsyncRecallTranscript({
+      externalRecordingId: 'recall-recording-id',
+    });
+
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
       provider: {
         gladia_v2_async: { language_config: { code_switching: true } },

@@ -260,10 +260,9 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.RECORD_TABLE: {
-      const { viewId: viewUniversalIdentifier, ...rest } =
-        universalConfiguration;
+      const { viewUniversalIdentifier, ...rest } = universalConfiguration;
 
-      let viewId: string | undefined = undefined;
+      let viewId: string | null = null;
 
       if (isDefined(viewUniversalIdentifier)) {
         const flatView = findFlatEntityByUniversalIdentifier({

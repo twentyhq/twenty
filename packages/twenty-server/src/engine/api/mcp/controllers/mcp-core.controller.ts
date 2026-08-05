@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
@@ -30,7 +31,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@Controller('mcp')
+@Controller(ApiPath.Mcp)
 @UseGuards(McpAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 @UseFilters(RestApiExceptionFilter)
 export class McpCoreController {

@@ -84,7 +84,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const executionResult = await this.aiAgentExecutionService.executeAgent({
       agent,
-      userPrompt: resolveInput(prompt, context) as string,
+      messages: [
+        { role: 'user', content: resolveInput(prompt, context) as string },
+      ],
       baseSystemPrompt: WORKFLOW_BASE_SYSTEM_PROMPT,
       actorContext: executionContext.isActingOnBehalfOfUser
         ? executionContext.initiator

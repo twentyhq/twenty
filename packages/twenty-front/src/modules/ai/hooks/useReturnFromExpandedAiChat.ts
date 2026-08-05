@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -25,6 +26,7 @@ export const useReturnFromExpandedAiChat = ({
     if (reopenSidePanel) {
       openAskAiPage({ resetNavigationStack: true });
     } else {
+      store.set(shouldContinueAiChatInSidePanelState.atom, false);
       void closeSidePanelMenu();
     }
 
