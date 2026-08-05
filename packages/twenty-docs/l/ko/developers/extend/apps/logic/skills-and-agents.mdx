@@ -100,7 +100,7 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="로직 함수에서 에이전트를 실행">
 
-`runAgent()`를 사용하면 로직 함수가 앱의 에이전트(해당 skills 및 tools 포함) 중 하나를 실행할 수 있습니다. `defineAgent()`에 전달했던 `universalIdentifier`로 에이전트를 식별합니다:
+`runAgent()`를 사용하면 로직 함수가 앱의 에이전트(해당 skills 및 tools 포함) 중 하나를 실행할 수 있습니다. `defineAgent()`에 전달한 `universalIdentifier`로 에이전트를 식별하세요: `prompt` 문자열 또는 `messages` 대화 기록 중 하나만 전달하고, 둘 다 전달하지는 마세요:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,23 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+멀티 턴 봇(Slack, Discord, Teams 등)의 경우, 단일 `prompt` 대신 스레드 기록을 `messages`로 전달하세요:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 핵심 요점:
+* `prompt`(문자열) 또는 `messages`(1개에서 100개의 `{ role: 'user' | 'assistant', content: string }` 항목) 중 **정확히 하나만** 제공해야 합니다.
 * 에이전트는 **동기적으로** 실행되며, 자체 tools를 통해 레코드를 읽고/업데이트할 수 있습니다. 실행이 완료되면 `runAgent()`가 resolve됩니다.
 * 앱은 자신의 에이전트만 실행할 수 있습니다.
 * 앱의 [기본 역할](/l/ko/developers/extend/apps/config/roles)은 `AI` 권한 플래그를 부여해야 합니다. 이를 위해 `permissionFlagUniversalIdentifiers`에 `SystemPermissionFlag.AI`를 추가하거나, `canAccessAllTools: true`로 설정하세요.
