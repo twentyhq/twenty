@@ -19,9 +19,9 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
-import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
+import { computeSystemRecordPageLayoutToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-page-layout-to-create.util';
+import { computeSystemViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-to-create.util';
+import { computeSystemViewFieldsToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-to-create.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -448,9 +448,10 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
       )
     ) {
       applicationBucket.viewsToCreate.push(
-        computeFlatRecordPageFieldsViewToCreate({
+        computeSystemViewToCreate({
           objectMetadata: flatObjectMetadata,
           applicationUniversalIdentifier,
+          viewKey: ViewKey.FIELDS_WIDGET,
         }),
       );
     }
@@ -481,7 +482,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
     }
 
     const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
-      computeFlatDefaultRecordPageLayoutToCreate({
+      computeSystemRecordPageLayoutToCreate({
         objectMetadata: flatObjectMetadata,
         applicationUniversalIdentifier,
         recordPageFieldsViewUniversalIdentifier: derivedViewUniversalIdentifier,
@@ -514,7 +515,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
       )
       .filter(isDefined);
 
-    return computeFlatViewFieldsToCreate({
+    return computeSystemViewFieldsToCreate({
       objectFlatFieldMetadatas,
       viewUniversalIdentifier: derivedViewUniversalIdentifier,
       applicationUniversalIdentifier:

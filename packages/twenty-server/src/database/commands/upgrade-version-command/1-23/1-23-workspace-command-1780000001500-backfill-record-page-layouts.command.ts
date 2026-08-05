@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { type FeatureFlagKey, ViewType } from 'twenty-shared/types';
+import { type FeatureFlagKey, ViewKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -13,9 +13,9 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
-import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
-import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
+import { computeSystemRecordPageLayoutToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-page-layout-to-create.util';
+import { computeSystemViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-to-create.util';
+import { computeSystemViewFieldsToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-to-create.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -508,10 +508,11 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
     const allViewFields: UniversalFlatViewField[] = [];
 
     for (const customObject of customObjectsWithoutPageLayout) {
-      const fieldsView = computeFlatRecordPageFieldsViewToCreate({
+      const fieldsView = computeSystemViewToCreate({
         objectMetadata: customObject,
         applicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
+        viewKey: ViewKey.FIELDS_WIDGET,
       });
 
       const objectFieldMetadatas = Object.values(
@@ -520,7 +521,7 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
         .filter(isDefined)
         .filter((field) => field.objectMetadataId === customObject.id);
 
-      const viewFields = computeFlatViewFieldsToCreate({
+      const viewFields = computeSystemViewFieldsToCreate({
         objectFlatFieldMetadatas: objectFieldMetadatas,
         viewUniversalIdentifier: fieldsView.universalIdentifier,
         applicationUniversalIdentifier:
@@ -531,7 +532,7 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
       });
 
       const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
-        computeFlatDefaultRecordPageLayoutToCreate({
+        computeSystemRecordPageLayoutToCreate({
           objectMetadata: customObject,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

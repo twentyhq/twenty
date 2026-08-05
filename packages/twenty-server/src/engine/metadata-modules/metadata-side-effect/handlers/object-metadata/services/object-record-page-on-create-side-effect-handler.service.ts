@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { ViewKey } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
+import { computeSystemRecordPageLayoutToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-page-layout-to-create.util';
 import { computeSystemViewFieldsForCreatedObjectView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-for-created-object-view.util';
+import { computeSystemViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-to-create.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
-import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
@@ -30,9 +31,10 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
       flatObjectMetadata as UniversalFlatObjectMetadata;
     const { applicationUniversalIdentifier } = sourceFlatObjectMetadata;
 
-    const flatRecordPageViewToCreate = computeFlatRecordPageFieldsViewToCreate({
+    const flatRecordPageViewToCreate = computeSystemViewToCreate({
       objectMetadata: sourceFlatObjectMetadata,
       applicationUniversalIdentifier,
+      viewKey: ViewKey.FIELDS_WIDGET,
     });
 
     const flatViewFieldsToCreate = computeSystemViewFieldsForCreatedObjectView({
@@ -43,7 +45,7 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
     });
 
     const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
-      computeFlatDefaultRecordPageLayoutToCreate({
+      computeSystemRecordPageLayoutToCreate({
         objectMetadata: sourceFlatObjectMetadata,
         applicationUniversalIdentifier,
         recordPageFieldsViewUniversalIdentifier:

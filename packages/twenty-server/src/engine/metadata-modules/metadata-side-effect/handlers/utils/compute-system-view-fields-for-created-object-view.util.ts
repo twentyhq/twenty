@@ -4,8 +4,8 @@ import {
   computeDefaultViewFieldPositionByFieldUniversalIdentifier,
   type ViewFieldLabelIdentifierPolicy,
 } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-view-field-position-by-field-universal-identifier.util';
+import { computeSystemViewFieldsToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-to-create.util';
 import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
@@ -49,7 +49,7 @@ export const computeSystemViewFieldsForCreatedObjectView = ({
       labelIdentifierPolicy,
     });
 
-  return computeFlatViewFieldsToCreate({
+  return computeSystemViewFieldsToCreate({
     objectFlatFieldMetadatas: systemFlatFieldMetadatas,
     viewUniversalIdentifier,
     applicationUniversalIdentifier,
