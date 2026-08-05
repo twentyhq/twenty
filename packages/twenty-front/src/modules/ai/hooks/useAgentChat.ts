@@ -66,8 +66,7 @@ export const useAgentChat = (
       store.get(currentAiChatThreadState.atom) ??
       AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
     const serializedContentToSend =
-      store.get(agentChatDraftsByThreadIdState.atom)[draftKey] ??
-      store.get(agentChatInputState.atom);
+      store.get(agentChatDraftsByThreadIdState.atom)[draftKey] ?? '';
     const contentToSend = tipTapDocumentToMarkdown(
       serializedContentToSend,
     ).trim();

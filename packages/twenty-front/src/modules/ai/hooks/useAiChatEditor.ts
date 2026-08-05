@@ -116,7 +116,6 @@ export const useAiChatEditor = () => {
         editor?.commands.setContent(
           deserializeAdvancedTextEditorDocument({
             serializedDocument: detail.content,
-            parseLegacyDocument: AI_CHAT_EDITOR_PROFILE.parseLegacyDocument,
           }),
         );
       }

@@ -1,4 +1,8 @@
-import { isDefined, parseJson, parseEmailDocument } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseCanonicalEmailDocument,
+  parseJson,
+} from 'twenty-shared/utils';
 
 import { type CompiledOutboundEmailContent } from 'src/engine/core-modules/email/types/compiled-outbound-email-content.type';
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
@@ -13,7 +17,9 @@ export const compileCampaignEmailContent = async (
     return { html: '', plainText: '' };
   }
 
-  const parseResult = parseEmailDocument(parseJson<unknown>(bodyTemplate));
+  const parseResult = parseCanonicalEmailDocument(
+    parseJson<unknown>(bodyTemplate),
+  );
 
   if (!parseResult.success) {
     throw new Error('Campaign bodyTemplate is not a renderable email document');

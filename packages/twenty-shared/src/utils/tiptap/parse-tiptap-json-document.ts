@@ -1,4 +1,5 @@
 import { type TipTapDocument } from './tiptap-document';
+import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from './tiptap-document-schema-version';
 import { type TipTapMark } from './tiptap-mark-types';
 import { type TipTapNode } from './tiptap-node';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
@@ -46,4 +47,14 @@ export const parseTipTapJsonDocument = (
   } catch {
     return undefined;
   }
+};
+
+export const parseCanonicalTipTapJsonDocument = (
+  serializedDocument: string,
+): TipTapDocument | undefined => {
+  const document = parseTipTapJsonDocument(serializedDocument);
+
+  return document?.attrs?.schemaVersion === TIPTAP_DOCUMENT_SCHEMA_VERSION
+    ? document
+    : undefined;
 };

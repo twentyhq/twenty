@@ -4,7 +4,6 @@ import { parseLegacyHtmlOrPlainTextDocument } from '@/advanced-text-editor/utils
 import { parseLegacyPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyPlainTextDocument';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { withLegacyVersionlessTipTapDocuments } from '@/advanced-text-editor/utils/withLegacyVersionlessTipTapDocuments';
 import { type Editor } from '@tiptap/core';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
@@ -72,17 +71,12 @@ describe('advanced text editor document persistence', () => {
     ).toEqual(parseLegacyPlainTextDocument(versionlessDocument));
   });
 
-  it('supports versionless TipTap documents only through an explicit legacy adapter', () => {
-    const versionlessDocument = JSON.stringify({ type: 'doc', content });
-
+  it('does not reinterpret non-canonical content without a legacy parser', () => {
     expect(
       deserializeAdvancedTextEditorDocument({
-        serializedDocument: versionlessDocument,
-        parseLegacyDocument: withLegacyVersionlessTipTapDocuments(
-          parseLegacyPlainTextDocument,
-        ),
+        serializedDocument: JSON.stringify({ type: 'doc', content }),
       }),
-    ).toEqual(JSON.parse(versionlessDocument));
+    ).toEqual(getInitialEditorContent(''));
   });
 
   it('recognizes structured and self-closing legacy HTML fragments', () => {

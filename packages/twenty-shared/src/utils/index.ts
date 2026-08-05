@@ -222,10 +222,14 @@ export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
 export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
-export { parseEmailDocument } from './tiptap/parse-email-document';
+export {
+  parseEmailDocument,
+  parseCanonicalEmailDocument,
+} from './tiptap/parse-email-document';
 export {
   isTipTapNode,
   parseTipTapJsonDocument,
+  parseCanonicalTipTapJsonDocument,
 } from './tiptap/parse-tiptap-json-document';
 export { resolveCanvasTheme } from './tiptap/resolve-canvas-theme';
 export { TIPTAP_DOCUMENT_SCHEMA_VERSION } from './tiptap/tiptap-document-schema-version';

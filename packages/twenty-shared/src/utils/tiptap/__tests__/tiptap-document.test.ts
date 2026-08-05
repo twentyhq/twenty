@@ -1,4 +1,7 @@
-import { parseTipTapJsonDocument } from '../parse-tiptap-json-document';
+import {
+  parseCanonicalTipTapJsonDocument,
+  parseTipTapJsonDocument,
+} from '../parse-tiptap-json-document';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from '../tiptap-document-schema-version';
 import { tipTapDocumentToMarkdown } from '../tiptap-document-to-markdown';
 
@@ -66,6 +69,26 @@ const document = {
 describe('TipTap document primitives', () => {
   it('parses a structurally valid document without filtering extensions', () => {
     expect(parseTipTapJsonDocument(JSON.stringify(document))).toEqual(document);
+  });
+
+  it('parses only documents with the current canonical schema version', () => {
+    expect(parseCanonicalTipTapJsonDocument(JSON.stringify(document))).toEqual(
+      document,
+    );
+    expect(
+      parseCanonicalTipTapJsonDocument(
+        JSON.stringify({ type: 'doc', content: [] }),
+      ),
+    ).toBeUndefined();
+    expect(
+      parseCanonicalTipTapJsonDocument(
+        JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION + 1 },
+          content: [],
+        }),
+      ),
+    ).toBeUndefined();
   });
 
   it('rejects malformed nested nodes and marks', () => {
