@@ -10,6 +10,11 @@ import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
 import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import {
+  buildUpdatedRecordActionFormData,
+  type RecordActionFormData,
+  type RelationManyToOneField,
+} from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
@@ -22,14 +27,7 @@ import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
 
-type RelationManyToOneField = {
-  id: string;
-};
-
-type CreateRecordFormData = {
-  objectName: string;
-  [field: string]: RelationManyToOneField | JsonValue;
-};
+type CreateRecordFormData = RecordActionFormData;
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -146,21 +144,12 @@ export const WorkflowEditActionCreateRecord = ({
       return;
     }
 
-    const isFieldRelationManyToOne =
-      isFieldRelation(fieldDefinition) &&
-      fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
-
-    const newFormData: CreateRecordFormData = { ...formData };
-
-    if (isFieldRelationManyToOne && !isDefined(updatedValue)) {
-      delete newFormData[fieldName];
-    } else {
-      newFormData[fieldName] = isFieldRelationManyToOne
-        ? {
-            id: updatedValue,
-          }
-        : updatedValue;
-    }
+    const newFormData = buildUpdatedRecordActionFormData({
+      formData,
+      fieldName,
+      fieldDefinition,
+      updatedValue,
+    });
 
     setFormData(newFormData);
 
