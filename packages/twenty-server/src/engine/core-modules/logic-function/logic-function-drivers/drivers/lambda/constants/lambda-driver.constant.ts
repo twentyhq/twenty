@@ -16,26 +16,9 @@ export const EXECUTOR_LAMBDA_MEMORY_MB = 512;
 export const EXECUTOR_LAMBDA_TIMEOUT_SECONDS = 900;
 export const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
 
-/**
- * Synchronous invocations block a socket for as long as the function runs, so
- * this ceiling has to clear the longest executor timeout with room to spare.
- * It exists to bound a hung request, not to cut short a legitimate one.
- */
 export const LAMBDA_CLIENT_REQUEST_TIMEOUT_MS =
   (EXECUTOR_LAMBDA_TIMEOUT_SECONDS + 60) * 1000;
-/**
- * Above the SDK default of 50: long-running invocations legitimately occupy
- * sockets for minutes, and they must not starve the control-plane calls
- * (layer lookups, waiters) that share this client. Each socket is one TCP
- * connection to the Lambda endpoint, so this trades file descriptors for
- * concurrency and can be raised further if builds start queueing.
- */
 export const LAMBDA_CLIENT_MAX_SOCKETS = 500;
-/**
- * Generous because it also caps how long a call may wait for a free socket:
- * concurrent builds and invocations can burst well above the pool size, and
- * they should queue rather than fail while the pool drains.
- */
 export const LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS = 60_000;
 
 export const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';

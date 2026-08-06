@@ -165,8 +165,6 @@ export class LambdaAwsClientService {
       Date.now() + (CREDENTIALS_DURATION_IN_SECONDS - 60 * 5) * 1000,
     );
 
-    // Both clients carry the previous assume-role credentials, so they have to
-    // be rebuilt alongside them.
     this.lambdaClient = undefined;
     this.s3Client = undefined;
   }

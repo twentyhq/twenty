@@ -7,21 +7,14 @@ import {
 
 describe('buildAwsRequestHandlerOptions', () => {
   it('always sets a non-zero request timeout', () => {
-    // The SDK default is 0, which means "no timeout" and lets a stuck request
-    // hold its socket forever.
     expect(buildAwsRequestHandlerOptions().requestTimeout).toBeGreaterThan(0);
   });
 
   it('always throws on request timeout rather than only warning', () => {
-    // Without this, a breached requestTimeout is merely logged and the request
-    // keeps running, so the socket is never returned to the pool — the timeout
-    // would be cosmetic.
     expect(buildAwsRequestHandlerOptions().throwOnRequestTimeout).toBe(true);
   });
 
   it('always sets a non-zero connection timeout', () => {
-    // This also bounds how long a call waits for a free socket, so leaving it
-    // at the SDK default of 0 would let a saturated pool queue forever.
     expect(buildAwsRequestHandlerOptions().connectionTimeout).toBeGreaterThan(
       0,
     );
@@ -46,23 +39,21 @@ describe('buildAwsRequestHandlerOptions', () => {
     expect(options.connectionTimeout).toBe(60_000);
   });
 
-  it.each([0, -1])(
-    'rejects a non-positive requestTimeoutMs (%p), which would mean "no timeout"',
-    (requestTimeoutMs) => {
-      expect(() => buildAwsRequestHandlerOptions({ requestTimeoutMs })).toThrow(
-        /requestTimeoutMs must be greater than 0/,
-      );
-    },
-  );
+  it.each([0, -1])('rejects a non-positive requestTimeoutMs (%p)', (
+    requestTimeoutMs,
+  ) => {
+    expect(() => buildAwsRequestHandlerOptions({ requestTimeoutMs })).toThrow(
+      /requestTimeoutMs must be greater than 0/,
+    );
+  });
 
-  it.each([0, -1])(
-    'rejects a non-positive connectionTimeoutMs (%p)',
-    (connectionTimeoutMs) => {
-      expect(() =>
-        buildAwsRequestHandlerOptions({ connectionTimeoutMs }),
-      ).toThrow(/connectionTimeoutMs must be greater than 0/);
-    },
-  );
+  it.each([0, -1])('rejects a non-positive connectionTimeoutMs (%p)', (
+    connectionTimeoutMs,
+  ) => {
+    expect(() => buildAwsRequestHandlerOptions({ connectionTimeoutMs })).toThrow(
+      /connectionTimeoutMs must be greater than 0/,
+    );
+  });
 
   it('allows the socket pool size to be raised above the SDK default', () => {
     expect(

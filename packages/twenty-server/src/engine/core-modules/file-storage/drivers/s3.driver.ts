@@ -24,6 +24,11 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
+  FILE_STORAGE_S3_MAX_SOCKETS,
+  FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+} from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
@@ -59,7 +64,11 @@ export class S3Driver implements StorageDriver {
       return;
     }
 
-    const requestHandler = buildAwsRequestHandlerOptions();
+    const requestHandler = buildAwsRequestHandlerOptions({
+      requestTimeoutMs: FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+      connectionTimeoutMs: FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
+      maxSockets: FILE_STORAGE_S3_MAX_SOCKETS,
+    });
 
     this.s3Client = new S3({ ...s3Options, region, endpoint, requestHandler });
     this.bucketName = bucketName;
