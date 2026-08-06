@@ -431,8 +431,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
-      const data = allValues[index * 2] as CacheDataType | undefined;
+      const rawData = allValues[index * 2];
       const hash = allValues[index * 2 + 1] as string | undefined;
+      const data = isDefined(rawData)
+        ? (this.getProviderOrThrow(keyName).decodeFromCacheStorage(
+            rawData,
+          ) as CacheDataType)
+        : undefined;
 
       if (isDefined(data) && isDefined(hash)) {
         Object.assign(redisEntries.data, { [keyName]: data });
@@ -518,7 +523,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (!isLocalDataOnly) {
-        redisEntries.push({ key: `${baseKey}:data`, value: data });
+        redisEntries.push({
+          key: `${baseKey}:data`,
+          value: this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
+        });
       }
 
       this.setInLocalCache(workspaceId, keyName, data, hash);
