@@ -39,7 +39,7 @@ const innerAppInstall = async (
 
     const message = errorEvents
       ? errorEvents.map((event) => event.message).join('\n')
-      : `Install failed with error: ${result.error?.userFriendlyMessage ?? result.message ?? 'Unknown error'}`;
+      : `Install failed with error: ${result.message ?? 'Unknown error'}`;
 
     return {
       success: false,

@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type OrchestratorStateStepEvent } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 
 export const formatManifestValidationErrors = (
-  error: Partial<MetadataValidationErrorResponse> | undefined,
+  error: MetadataValidationErrorResponse | undefined,
 ): OrchestratorStateStepEvent[] | null => {
   if (!isDefined(error?.errors) || !isDefined(error?.summary)) {
     return null;

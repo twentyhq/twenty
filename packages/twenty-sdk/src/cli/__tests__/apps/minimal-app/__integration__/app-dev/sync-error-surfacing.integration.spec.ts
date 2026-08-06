@@ -2,16 +2,35 @@ import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { mockApiService } from '@/cli/__tests__/integration/utils/setup-app-dev-mocks';
 import { AppDevCommand } from '@/cli/commands/dev/dev';
 
-const USER_FRIENDLY_MESSAGE =
-  'Your application\'s production dependencies are too large to install. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".';
+const DEPENDENCIES_SIZE_ERROR_CODE = 'LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED';
+const DEPENDENCIES_SIZE_ERROR_MESSAGE =
+  'Production dependencies are too large to install. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".';
 
 describe('minimal-app dev sync error surfacing', () => {
-  it('should surface the server userFriendlyMessage when the sync fails', async () => {
+  it('should render the dependencies size error through the validation error report when the sync fails', async () => {
     mockApiService.syncApplication.mockResolvedValue({
       success: false,
-      error: { userFriendlyMessage: USER_FRIENDLY_MESSAGE },
-      message:
-        "Dependency layer 'deps-abc' exceeds the Lambda layer size limit: Unzipped size must be smaller than 262144000 bytes",
+      error: {
+        summary: { totalErrors: 1, logicFunction: 1 },
+        errors: {
+          logicFunction: [
+            {
+              type: 'update',
+              metadataName: 'logicFunction',
+              errors: [
+                {
+                  code: DEPENDENCIES_SIZE_ERROR_CODE,
+                  message: DEPENDENCIES_SIZE_ERROR_MESSAGE,
+                  value:
+                    "Dependency layer 'deps-abc' exceeds the Lambda layer size limit: Unzipped size must be smaller than 262144000 bytes",
+                },
+              ],
+              flatEntityMinimalInformation: {},
+            },
+          ],
+        },
+      },
+      message: 'Validation failed for 1 logicFunction',
     });
 
     const command = new AppDevCommand();
@@ -41,7 +60,8 @@ describe('minimal-app dev sync error surfacing', () => {
         .map((event) => event.message)
         .join('\n');
 
-      expect(eventMessages).toContain(USER_FRIENDLY_MESSAGE);
+      expect(eventMessages).toContain(DEPENDENCIES_SIZE_ERROR_CODE);
+      expect(eventMessages).toContain(DEPENDENCIES_SIZE_ERROR_MESSAGE);
     } finally {
       await command.close();
     }

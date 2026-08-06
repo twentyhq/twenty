@@ -26,7 +26,6 @@ export type {
   FailedMetadataValidationError,
   FailedMetadataValidation,
   MetadataValidationErrorResponse,
-  MetadataApiError,
 } from './types/MetadataValidationError';
 export { WorkspaceMigrationV2ExceptionCode } from './types/MetadataValidationError';
 export type { SyncAction } from './types/sync-action.type';

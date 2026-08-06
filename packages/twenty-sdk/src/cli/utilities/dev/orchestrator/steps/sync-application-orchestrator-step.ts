@@ -1,5 +1,4 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import { type MetadataApiError } from 'twenty-shared/metadata';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import {
@@ -16,6 +15,7 @@ import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { type Manifest } from 'twenty-shared/application';
+import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 
 export type SyncApplicationOrchestratorStepOutput = {
   syncStatus: OrchestratorStateSyncStatus;
@@ -170,7 +170,7 @@ export class SyncApplicationOrchestratorStep {
   }
 
   private applyFailure(
-    result: { error?: MetadataApiError; message?: string },
+    result: { error?: MetadataValidationErrorResponse; message?: string },
     events: OrchestratorStateStepEvent[],
   ): void {
     const step = this.state.steps.syncApplication;
@@ -187,7 +187,7 @@ export class SyncApplicationOrchestratorStep {
       });
     } else {
       events.push({
-        message: `Sync failed with error: ${result.error?.userFriendlyMessage ?? result.message ?? 'Sync failed'}`,
+        message: `Sync failed with error: ${result.message ?? 'Sync failed'}`,
         status: 'error',
       });
     }

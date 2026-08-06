@@ -1,9 +1,9 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import { type MetadataApiError } from 'twenty-shared/metadata';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
+import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { type FileFolder } from 'twenty-shared/types';
 import { pascalCase } from 'twenty-shared/utils';
 
@@ -146,7 +146,7 @@ export class FileApi {
     universalIdentifier,
   }: {
     universalIdentifier: string;
-  }): Promise<ApiResponse<boolean, MetadataApiError>> {
+  }): Promise<ApiResponse<boolean, MetadataValidationErrorResponse>> {
     try {
       const mutation = `
         mutation InstallApplication($universalIdentifier: String!) {

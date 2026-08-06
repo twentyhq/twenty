@@ -1,9 +1,9 @@
 import path from 'path';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
+import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { type MetadataApiError } from 'twenty-shared/metadata';
 import {
   ensureAppAccessTokenIsValidOrRefresh,
   ensureAppRegistration,
@@ -67,7 +67,7 @@ const NOT_INSTALLED_SUB_CODES = new Set([
 ]);
 
 const isAppNotInstalledError = (result: {
-  error?: MetadataApiError;
+  error?: MetadataValidationErrorResponse;
   message?: string;
 }): boolean => {
   const extensions = result.error;
@@ -90,7 +90,7 @@ const isAppNotInstalledError = (result: {
 };
 
 const buildSyncError = (
-  result: { error?: MetadataApiError; message?: string },
+  result: { error?: MetadataValidationErrorResponse; message?: string },
   verbose: boolean,
 ): CommandError => {
   const errorEvents = verbose
@@ -99,7 +99,7 @@ const buildSyncError = (
 
   const message = errorEvents
     ? errorEvents.map((event) => event.message).join('\n')
-    : `Sync failed with error: ${result.error?.userFriendlyMessage ?? result.message ?? 'Unknown error'}`;
+    : `Sync failed with error: ${result.message ?? 'Unknown error'}`;
 
   return {
     code: APP_ERROR_CODES.SYNC_FAILED,
