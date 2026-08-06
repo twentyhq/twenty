@@ -11,8 +11,6 @@ const StyledPreview = styled.div`
   outline: 1px dashed transparent;
   outline-offset: 2px;
 
-  contain: paint;
-
   &:hover {
     outline-color: ${themeCssVariables.border.color.medium};
   }
