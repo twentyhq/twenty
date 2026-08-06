@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, IsNull, Repository } from 'typeorm';
+import { type EntityManager, In, IsNull, Repository } from 'typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -47,7 +47,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
-      where: { userWorkspaceId, workspaceId },
+      where: { userWorkspaceId, workspaceId, archivedAt: IsNull() },
     });
   }
 
@@ -188,36 +188,89 @@ export class ConnectedAccountMetadataService {
       await entityManager.update(
         ConnectedAccountEntity,
         { id: In(connectedAccountIds), workspaceId },
-        {
-          userWorkspaceId: toUserWorkspaceId,
-          accessToken: null,
-          refreshToken: null,
-          connectionParameters: null,
-        },
+        { userWorkspaceId: toUserWorkspaceId },
       );
 
-      await entityManager.update(
-        ConnectedAccountEntity,
-        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
-        { archivedAt: new Date() },
-      );
-
-      await entityManager.update(
-        MessageChannelEntity,
-        { connectedAccountId: In(connectedAccountIds), workspaceId },
-        { isSyncEnabled: false },
-      );
-
-      await entityManager.update(
-        CalendarChannelEntity,
-        { connectedAccountId: In(connectedAccountIds), workspaceId },
-        { isSyncEnabled: false },
-      );
+      await this.disconnectAccounts({
+        entityManager,
+        connectedAccountIds,
+        workspaceId,
+      });
     });
 
     for (const connectedAccount of connectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
     }
+  }
+
+  private async disconnectAccounts({
+    entityManager,
+    connectedAccountIds,
+    workspaceId,
+  }: {
+    entityManager: EntityManager;
+    connectedAccountIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    await entityManager.update(
+      ConnectedAccountEntity,
+      { id: In(connectedAccountIds), workspaceId },
+      {
+        accessToken: null,
+        refreshToken: null,
+        connectionParameters: null,
+      },
+    );
+
+    await entityManager.update(
+      ConnectedAccountEntity,
+      { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
+      { archivedAt: new Date() },
+    );
+
+    await entityManager.update(
+      MessageChannelEntity,
+      { connectedAccountId: In(connectedAccountIds), workspaceId },
+      { isSyncEnabled: false },
+    );
+
+    await entityManager.update(
+      CalendarChannelEntity,
+      { connectedAccountId: In(connectedAccountIds), workspaceId },
+      { isSyncEnabled: false },
+    );
+  }
+
+  async disconnect({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.repository.findOneOrFail({
+      where: { id, workspaceId },
+    });
+
+    await this.repository.manager.transaction(async (entityManager) => {
+      await this.disconnectAccounts({
+        entityManager,
+        connectedAccountIds: [id],
+        workspaceId,
+      });
+    });
+
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+
+    if (isDefined(connectedAccount.connectionProviderId)) {
+      await this.connectionProviderLifecycleHookService.dispatchOnDisconnect({
+        connectionProviderId: connectedAccount.connectionProviderId,
+        workspaceId,
+        connectedAccountId: id,
+      });
+    }
+
+    return connectedAccount;
   }
 
   async delete({

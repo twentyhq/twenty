@@ -27,7 +27,7 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
+import { DISCONNECT_CONNECTED_ACCOUNT } from '../graphql/mutations/disconnectConnectedAccount';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -37,7 +37,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   account,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
-  const deleteAccountModalId = `delete-account-modal-${account.id}`;
+  const removeAccountModalId = `remove-account-modal-${account.id}`;
   const accountHandle = account.handle;
 
   const { t } = useLingui();
@@ -47,8 +47,8 @@ export const SettingsAccountsRowDropdownMenu = ({
   const { closeDropdown } = useCloseDropdown();
 
   const apolloClient = useApolloClient();
-  const [deleteConnectedAccountMutation] = useMutation(
-    DELETE_CONNECTED_ACCOUNT,
+  const [disconnectConnectedAccountMutation] = useMutation(
+    DISCONNECT_CONNECTED_ACCOUNT,
   );
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
@@ -62,8 +62,8 @@ export const SettingsAccountsRowDropdownMenu = ({
         channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
     );
 
-  const deleteAccount = async () => {
-    await deleteConnectedAccountMutation({
+  const removeAccount = async () => {
+    await disconnectConnectedAccountMutation({
       variables: { id: account.id },
     });
     await apolloClient.refetchQueries({ include: 'active' });
@@ -141,7 +141,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 text={t`Remove account`}
                 onClick={() => {
                   closeDropdown(dropdownId);
-                  openModal(deleteAccountModalId);
+                  openModal(removeAccountModalId);
                 }}
               />
             </DropdownMenuItemsContainer>
@@ -149,16 +149,16 @@ export const SettingsAccountsRowDropdownMenu = ({
         }
       />
       <ConfirmationModal
-        modalInstanceId={deleteAccountModalId}
-        title={t`Data deletion`}
+        modalInstanceId={removeAccountModalId}
+        title={t`Remove account`}
         subtitle={
           <Trans>
-            All emails and events linked to this account ({accountHandle}) will
-            be deleted
+            {accountHandle} will stop syncing. Emails and events already synced
+            stay on your records.
           </Trans>
         }
-        onConfirmClick={deleteAccount}
-        confirmButtonText={t`Delete account`}
+        onConfirmClick={removeAccount}
+        confirmButtonText={t`Remove account`}
       />
     </>
   );
