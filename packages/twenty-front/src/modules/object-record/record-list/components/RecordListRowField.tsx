@@ -4,6 +4,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME } from '@/object-record/record-list/constants/RecordListRowFieldAnchorClassName';
+import { RECORD_LIST_ROW_FIELD_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMaxWidth';
 import { RECORD_LIST_ROW_INPUT_ID_PREFIX } from '@/object-record/record-list/constants/RecordListRowInputIdPrefix';
 import { recordListHoveredFieldMetadataItemIdComponentState } from '@/object-record/record-list/states/recordListHoveredFieldMetadataItemIdComponentState';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -14,7 +15,7 @@ const StyledFieldContainer = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  max-width: 156px;
+  max-width: ${RECORD_LIST_ROW_FIELD_MAX_WIDTH}px;
   overflow: hidden;
 
   & > * {
@@ -51,7 +52,7 @@ export const RecordListRowField = ({
       <FieldContext.Provider
         value={{
           recordId,
-          maxWidth: 156,
+          maxWidth: RECORD_LIST_ROW_FIELD_MAX_WIDTH,
           isLabelIdentifier: false,
           isRecordFieldReadOnly: true,
           fieldDefinition,

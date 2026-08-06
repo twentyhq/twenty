@@ -5,10 +5,11 @@ import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isField
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
-import { RECORD_LIST_ROW_VISIBLE_FIELD_LIMIT } from '@/object-record/record-list/constants/RecordListRowVisibleFieldLimit';
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
+import { recordListDisplayedFieldCountComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldCountComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,6 +41,7 @@ const StyledRow = styled.div`
 
 const StyledRecordChipContainer = styled.div`
   display: flex;
+  min-width: 176px;
   overflow: hidden;
 `;
 
@@ -87,6 +89,10 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
     visibleRecordFieldsComponentSelector,
   );
 
+  const recordListDisplayedFieldCount = useAtomComponentStateValue(
+    recordListDisplayedFieldCountComponentState,
+  );
+
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   if (!isDefined(recordStore)) {
@@ -112,7 +118,7 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
 
   const displayedRecordFields = nonEmptyRecordFields.slice(
     0,
-    RECORD_LIST_ROW_VISIBLE_FIELD_LIMIT,
+    recordListDisplayedFieldCount,
   );
 
   const hiddenFieldCount =
