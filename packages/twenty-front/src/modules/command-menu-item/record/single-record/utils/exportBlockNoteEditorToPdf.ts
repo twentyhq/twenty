@@ -3,11 +3,16 @@ import {
   PDFExporter,
   pdfDefaultSchemaMappings,
 } from '@blocknote/xl-pdf-exporter';
-import interLatin400Url from '@fontsource/inter/files/inter-latin-400-normal.woff2?url';
-import interLatin500Url from '@fontsource/inter/files/inter-latin-500-normal.woff2?url';
-import interLatin600Url from '@fontsource/inter/files/inter-latin-600-normal.woff2?url';
 import { Font, pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
+// Not @fontsource/inter, which the app itself uses: it splits Inter into
+// per-script files picked by unicode-range, while Font.register takes one file
+// per weight, so a Cyrillic or Greek note would export with missing glyphs.
+// They must stay TTF too: fontkit parses woff2, but @react-pdf's subsetter
+// crashes on the transformed glyf table woff2 stores.
+import interRegularUrl from '~/assets/fonts/inter-400.ttf?url';
+import interMediumUrl from '~/assets/fonts/inter-500.ttf?url';
+import interSemiBoldUrl from '~/assets/fonts/inter-600.ttf?url';
 
 const registerInterFonts = (() => {
   let registrationPromise: Promise<void> | null = null;
@@ -19,15 +24,15 @@ const registerInterFonts = (() => {
           family: 'Inter',
           fonts: [
             {
-              src: interLatin400Url,
+              src: interRegularUrl,
               fontWeight: 400,
             },
             {
-              src: interLatin500Url,
+              src: interMediumUrl,
               fontWeight: 500,
             },
             {
-              src: interLatin600Url,
+              src: interSemiBoldUrl,
               fontWeight: 600,
             },
           ],
