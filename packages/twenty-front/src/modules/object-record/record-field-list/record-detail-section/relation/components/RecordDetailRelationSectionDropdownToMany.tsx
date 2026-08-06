@@ -317,6 +317,8 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         });
 
         updatePickerState(newTargetId, junctionTargetObjectMetadata.id);
+        closeDropdown(dropdownId);
+
         return;
       }
 
@@ -354,11 +356,19 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     (morphItem: Parameters<typeof updateRelation>[0]) => {
       if (isJunctionRelation && isJunctionConfigValid) {
         updateJunctionRelationFromCell({ morphItem });
+
+        // Picking a target writes a whole junction row, so the action is done.
+        // Deselecting leaves the dropdown open so the removal can be undone.
+        if (morphItem.isSelected) {
+          closeDropdown(dropdownId);
+        }
       } else {
         updateRelation(morphItem);
       }
     },
     [
+      closeDropdown,
+      dropdownId,
       isJunctionRelation,
       isJunctionConfigValid,
       updateJunctionRelationFromCell,
