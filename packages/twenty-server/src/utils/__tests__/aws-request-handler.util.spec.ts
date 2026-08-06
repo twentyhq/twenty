@@ -39,21 +39,23 @@ describe('buildAwsRequestHandlerOptions', () => {
     expect(options.connectionTimeout).toBe(60_000);
   });
 
-  it.each([0, -1])('rejects a non-positive requestTimeoutMs (%p)', (
-    requestTimeoutMs,
-  ) => {
-    expect(() => buildAwsRequestHandlerOptions({ requestTimeoutMs })).toThrow(
-      /requestTimeoutMs must be greater than 0/,
-    );
-  });
+  it.each([0, -1])(
+    'rejects a non-positive requestTimeoutMs (%p)',
+    (requestTimeoutMs) => {
+      expect(() => buildAwsRequestHandlerOptions({ requestTimeoutMs })).toThrow(
+        /requestTimeoutMs must be greater than 0/,
+      );
+    },
+  );
 
-  it.each([0, -1])('rejects a non-positive connectionTimeoutMs (%p)', (
-    connectionTimeoutMs,
-  ) => {
-    expect(() => buildAwsRequestHandlerOptions({ connectionTimeoutMs })).toThrow(
-      /connectionTimeoutMs must be greater than 0/,
-    );
-  });
+  it.each([0, -1])(
+    'rejects a non-positive connectionTimeoutMs (%p)',
+    (connectionTimeoutMs) => {
+      expect(() =>
+        buildAwsRequestHandlerOptions({ connectionTimeoutMs }),
+      ).toThrow(/connectionTimeoutMs must be greater than 0/);
+    },
+  );
 
   it('allows the socket pool size to be raised above the SDK default', () => {
     expect(
