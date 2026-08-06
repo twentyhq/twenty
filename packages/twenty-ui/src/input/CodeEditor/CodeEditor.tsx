@@ -33,6 +33,13 @@ type CodeEditorContentPadding = 'default' | 'comfortable';
 // The import stays dynamic so Monaco is still only fetched when a code editor
 // is actually rendered, instead of weighing down every chunk importing this
 // component.
+//
+// Contract: the bundled ESM Monaco (unlike the CDN AMD build) resolves its
+// language workers through `globalThis.MonacoEnvironment`, which the host app
+// must set up before an editor mounts — worker wiring is bundler-specific, so
+// it can't live in this library. twenty-front does this in
+// `src/modules/app/utils/setupMonacoEnvironment.ts`; without it, language
+// services (validation, intellisense) are silently unavailable.
 let monacoLoaderConfiguration: Promise<void> | undefined;
 
 const configureMonacoLoader = () => {
