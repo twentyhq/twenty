@@ -17718,14 +17718,14 @@ msgstr "サブドメインはすでに使用されています。次の候補を
 msgid "Subdomain already taken"
 msgstr "サブドメインは既に使用されています"
 
-#. js-lingui-id: la3+yi
+#. js-lingui-id: OlC/tU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be empty"
-msgstr ""
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "サブドメインは30文字以内にしてください"
 
-#. js-lingui-id: d5CFUo
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be longer than 30 characters"
+msgid "Subdomain cannot be shorter than {minLength} characters"
 msgstr ""
 
 #. js-lingui-id: DTG2nE

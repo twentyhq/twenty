@@ -17718,14 +17718,14 @@ msgstr "Underdomæne allerede i brug, her er nogle alternativer:"
 msgid "Subdomain already taken"
 msgstr "Underdomænet er allerede taget"
 
-#. js-lingui-id: la3+yi
+#. js-lingui-id: OlC/tU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be empty"
-msgstr ""
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "Underdomænet må ikke være længere end 30 tegn"
 
-#. js-lingui-id: d5CFUo
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be longer than 30 characters"
+msgid "Subdomain cannot be shorter than {minLength} characters"
 msgstr ""
 
 #. js-lingui-id: DTG2nE

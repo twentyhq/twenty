@@ -17718,14 +17718,14 @@ msgstr "Субдомен уже використовується, ось кіл�
 msgid "Subdomain already taken"
 msgstr "Субдомен вже зайнятий"
 
-#. js-lingui-id: la3+yi
+#. js-lingui-id: OlC/tU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be empty"
-msgstr ""
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "Субдомен не може бути довшим за 30 символів"
 
-#. js-lingui-id: d5CFUo
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be longer than 30 characters"
+msgid "Subdomain cannot be shorter than {minLength} characters"
 msgstr ""
 
 #. js-lingui-id: DTG2nE

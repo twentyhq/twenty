@@ -33,10 +33,6 @@ export const EmptySubdomain: Story = {
 
     await userEvent.clear(input);
 
-    const errorMessage = await canvas.findByText('Subdomain cannot be empty');
-
-    await expect(errorMessage).toBeVisible();
-
     const saveButton = canvas.getByText('Save');
 
     await expect(saveButton.closest('button')).toBeDisabled();

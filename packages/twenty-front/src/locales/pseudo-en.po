@@ -17690,14 +17690,14 @@ msgstr ""
 msgid "Subdomain already taken"
 msgstr ""
 
-#. js-lingui-id: la3+yi
+#. js-lingui-id: OlC/tU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be empty"
+msgid "Subdomain can not be longer than 30 characters"
 msgstr ""
 
-#. js-lingui-id: d5CFUo
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be longer than 30 characters"
+msgid "Subdomain cannot be shorter than {minLength} characters"
 msgstr ""
 
 #. js-lingui-id: DTG2nE
