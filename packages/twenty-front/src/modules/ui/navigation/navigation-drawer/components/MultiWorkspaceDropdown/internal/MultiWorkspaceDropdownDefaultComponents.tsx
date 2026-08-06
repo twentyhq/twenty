@@ -4,7 +4,6 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { billingState } from '@/client-config/states/billingState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useCanAccessAdminPanel } from '@/settings/admin-panel/hooks/useCanAccessAdminPanel';
 import { useSupportAccess } from '@/support/hooks/useSupportAccess';
@@ -71,15 +70,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
   const { colorScheme, colorSchemeList } = useColorScheme();
-  const billing = useAtomStateValue(billingState);
   const { isSupportAvailable, openSupport } = useSupportAccess();
   const canAccessAdminPanel = useCanAccessAdminPanel();
   const navigateSettings = useNavigateSettings();
 
-  // The workspace limit only applies to self-hosted instances without an
-  // Enterprise plan.
   const isWorkspaceCreationLocked =
-    billing?.isBillingEnabled !== true &&
     currentWorkspace?.canCreateAdditionalWorkspace === false;
 
   const setMultiWorkspaceDropdown = useSetAtomState(
