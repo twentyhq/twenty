@@ -301,7 +301,9 @@ export class ReconcileWorkspaceCustomRecordPageCommand extends ProvisionedWorksp
     this.logger.warn(
       `Ambiguous record-page layouts ${candidates
         .map((flatPageLayout) => flatPageLayout.id)
-        .join(', ')} on object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping object`,
+        .join(
+          ', ',
+        )} on object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping object`,
     );
 
     return undefined;

@@ -70,6 +70,12 @@ export const collectRecordPageStackTree = ({
   | 'flatPageLayoutWidgetMaps'
 >): RecordPageStackTree => {
   const tabs: RecordPageStackTabNode[] = [];
+  // Several FIELDS widgets of one stack can reference the same view: the
+  // materialized node is cached so its fields and groups are walked once.
+  const fieldsViewNodeByViewId = new Map<
+    string,
+    RecordPageStackFieldsViewNode
+  >();
 
   for (const tabUniversalIdentifier of flatPageLayout.tabUniversalIdentifiers) {
     const flatPageLayoutTab =
@@ -118,10 +124,10 @@ export const collectRecordPageStackTree = ({
         continue;
       }
 
-      widgets.push({
-        flatPageLayoutWidget,
-        fieldsWidgetViewId,
-        fieldsView: {
+      let fieldsView = fieldsViewNodeByViewId.get(flatView.id);
+
+      if (!isDefined(fieldsView)) {
+        fieldsView = {
           flatView,
           flatViewFields: flatView.viewFieldUniversalIdentifiers
             .map(
@@ -141,10 +147,16 @@ export const collectRecordPageStackTree = ({
             )
             .filter(isDefined)
             .filter(
-              (flatViewFieldGroup) =>
-                !isDefined(flatViewFieldGroup.deletedAt),
+              (flatViewFieldGroup) => !isDefined(flatViewFieldGroup.deletedAt),
             ),
-        },
+        };
+        fieldsViewNodeByViewId.set(flatView.id, fieldsView);
+      }
+
+      widgets.push({
+        flatPageLayoutWidget,
+        fieldsWidgetViewId,
+        fieldsView,
       });
     }
 

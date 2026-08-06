@@ -8,7 +8,10 @@ import {
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordPageReownUpdate, type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/types/record-page-reown-updates.type';
+import {
+  type RecordPageReownUpdate,
+  type RecordPageReownUpdates,
+} from 'src/database/commands/upgrade-version-command/2-29/types/record-page-reown-updates.type';
 import {
   collectRecordPageStackTree,
   type RecordPageStackFieldsViewNode,
@@ -99,12 +102,13 @@ export const computeRecordPageStackReownUpdates = ({
       continue;
     }
 
-    const derivedTabUniversalIdentifier = getSystemPageLayoutTabUniversalIdentifier({
-      objectMetadataApplicationUniversalIdentifier:
-        flatObjectMetadata.applicationUniversalIdentifier,
-      pageLayoutUniversalIdentifier: derivedPageLayoutUniversalIdentifier,
-      title: flatPageLayoutTab.title,
-    });
+    const derivedTabUniversalIdentifier =
+      getSystemPageLayoutTabUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier:
+          flatObjectMetadata.applicationUniversalIdentifier,
+        pageLayoutUniversalIdentifier: derivedPageLayoutUniversalIdentifier,
+        title: flatPageLayoutTab.title,
+      });
 
     if (seenDerivedTabUniversalIdentifiers.has(derivedTabUniversalIdentifier)) {
       logger.warn(
@@ -126,7 +130,11 @@ export const computeRecordPageStackReownUpdates = ({
 
     const seenDerivedWidgetUniversalIdentifiers = new Set<string>();
 
-    for (const { flatPageLayoutWidget, fieldsWidgetViewId, fieldsView } of widgets) {
+    for (const {
+      flatPageLayoutWidget,
+      fieldsWidgetViewId,
+      fieldsView,
+    } of widgets) {
       if (
         !engineOwnedApplicationUniversalIdentifiers.has(
           flatPageLayoutWidget.applicationUniversalIdentifier,

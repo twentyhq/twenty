@@ -183,7 +183,6 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
         recordPageViewUniversalIdentifier
       ];
 
-    // Synced pair dedup, whatever the existing row identifier.
     const pairAlreadySynced =
       isDefined(existingRecordPageFlatView) &&
       existingRecordPageFlatView.viewFieldUniversalIdentifiers.some(

@@ -7,9 +7,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 // by the engine, so the column defaults to false; the 2-29 record-page reconcile
 // command flags the engine/standard-derived rows afterwards.
 @RegisteredInstanceCommand('2.29.0', 1786010740000)
-export class AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."viewFieldGroup" ADD COLUMN IF NOT EXISTS "isSystemSideEffect" boolean NOT NULL DEFAULT false',
