@@ -31,8 +31,6 @@ export class AdminChatThreadListItemDTO {
   @Field(() => Int)
   messageCount: number;
 
-  // Visible user messages plus answered ask_questions cards, which the user
-  // answers by clicking rather than by sending a message.
   @Field(() => Int)
   userReplyCount: number;
 

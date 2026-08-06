@@ -339,8 +339,6 @@ describe('Admin panel global chat threads (integration)', () => {
       createdAt: '2026-01-01T00:05:00Z',
     });
 
-    // Mirrors the in-place toolOutput update done by resolvePendingQuestion;
-    // answering leaves `state` untouched and creates no user message.
     await insertPart({
       messageId: answeredQuestionMessageId,
       orderIndex: 0,
@@ -557,8 +555,6 @@ describe('Admin panel global chat threads (integration)', () => {
 
       const threadIds = result.threads.map((thread) => thread.id);
 
-      // The answered-question thread has one reply and no user message, so it
-      // must outrank threads whose only messages are from the assistant.
       expect(threadIds.indexOf(answeredQuestionThreadId)).toBeLessThan(
         threadIds.indexOf(pendingQuestionThreadId),
       );

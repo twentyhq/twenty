@@ -19,8 +19,6 @@ export const ChatReferenceChipDisplay = ({
   const isNavigationEnabled = useContext(ChatReferenceNavigationEnabledContext);
 
   if (!isDefined(to) || !isNavigationEnabled) {
-    // Static keeps the highlighted background but drops the hover and active
-    // states, which would otherwise advertise the chip as interactive.
     return (
       <Chip
         label={displayName}
