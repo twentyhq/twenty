@@ -14,11 +14,7 @@ export const useAgentChatModelId = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
-  // Auto-select sentinel ids ("default-fast-model" / "default-smart-model")
-  // are resolved server-side by the model registry and are deliberately absent
-  // from the enabled-models list — treat them as always available, or a FAST
-  // preselection silently degrades to the server default (the smart model)
-  // for every workspace whose fastModel is the default sentinel.
+  // Auto-select sentinels are server-resolved and absent from enabledModels — without this a FAST preselection silently degrades to the smart model.
   const isUserModelAvailable =
     !isDefined(agentChatUserSelectedModel) ||
     isAutoSelectModelId(agentChatUserSelectedModel) ||
