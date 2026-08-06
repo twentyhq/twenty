@@ -1,0 +1,20 @@
+packages/twenty-server/test/integration/microsoft/webhook/lifecycle-notification.integration-spec.ts
+  s_62258254606868::t_be34750bf134c0 228-233
+  s_62258254606868::t_8796f95583f7af 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "074445e3a2cbd21bad8a69bf27ddfade1b197fff",
+  "prompts": {},
+  "sessions": {
+    "s_62258254606868": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b859e0a0-923c-4364-abb5-2540ded6d7bd",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
