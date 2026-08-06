@@ -17723,10 +17723,10 @@ msgstr "Subdomain bereits vergeben"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Die Subdomain darf nicht länger als 30 Zeichen sein"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Die Subdomain darf nicht kürzer als 3 Zeichen sein"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts

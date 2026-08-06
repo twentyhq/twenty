@@ -17723,10 +17723,10 @@ msgstr "Alidomain on jo käytössä"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Alidomain ei voi olla yli 30 merkkiä pitkä"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Alidomain ei voi olla lyhyempi kuin 3 merkkiä"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts

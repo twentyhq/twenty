@@ -17723,10 +17723,10 @@ msgstr "\\"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "תת-דומיין לא יכול להיות ארוך מ-<b>30</b> תווים"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "תת-דומיין לא יכול להיות קצר מ-<b>3</b> תווים"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts

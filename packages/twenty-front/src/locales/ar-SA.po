@@ -17723,10 +17723,10 @@ msgstr "النطاق الفرعي مأخوذ بالفعل"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "لا يمكن أن يكون طول النطاق الفرعي أطول من 30 حرفاً"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "لا يمكن أن يقل طول النطاق الفرعي عن 3 أحرف"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
