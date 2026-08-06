@@ -1062,6 +1062,8 @@ enum WidgetType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  CALL_RECORDING_SUMMARY
+  CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
 }
@@ -1091,7 +1093,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1132,6 +1134,8 @@ enum WidgetConfigurationType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  CALL_RECORDING_SUMMARY
+  CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
 }
@@ -1300,6 +1304,14 @@ type EmailThreadConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+type CallRecordingSummaryConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type CallRecordingTranscriptConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
 type MessageCampaignBodyConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -1313,6 +1325,7 @@ type FieldConfiguration {
   fieldMetadataId: String!
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
+  nestedRelationFieldMetadataId: String
 }
 
 """Display mode for field configuration widgets"""
@@ -1978,6 +1991,7 @@ type ClientConfig {
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
+  subdomainMinLength: Float!
   frontDomain: String!
   publicFunctionDomain: String
   analyticsEnabled: Boolean!

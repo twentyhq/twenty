@@ -6,5 +6,4 @@ export const formatRecordReference = ({
   objectNameSingular: string;
   recordId: string;
   displayName: string;
-}): string =>
-  `[[record:${objectNameSingular}:${recordId}:${displayName}[[/record]]`;
+}): string => `[[record:${objectNameSingular}:${recordId}:${displayName}]]`;

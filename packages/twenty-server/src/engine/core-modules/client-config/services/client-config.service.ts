@@ -206,6 +206,7 @@ export class ClientConfigService {
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
+      subdomainMinLength: this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??

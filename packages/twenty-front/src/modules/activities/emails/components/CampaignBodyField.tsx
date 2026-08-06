@@ -28,7 +28,9 @@ type CampaignBodyFieldProps = {
 };
 
 export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
-  const { body, setBody, flush } = useCampaignBodyState({ campaign });
+  const { body, setBody, flush, draftResyncKey } = useCampaignBodyState({
+    campaign,
+  });
   const setActiveEmailEditor = useSetAtomState(activeEmailEditorState);
   const { uploadEmailImage } = useUploadEmailImage();
   const { variables } = useCampaignEmailEditorVariables();
@@ -46,6 +48,7 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   return (
     <StyledContainer onBlur={() => flush()}>
       <FormAdvancedTextFieldInput
+        key={draftResyncKey}
         defaultValue={body}
         onChange={setBody}
         placeholder={t`Type something or press "/" to see commands`}

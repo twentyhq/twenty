@@ -83,4 +83,11 @@ export enum MetricsKeys {
   ConnectedAccountWebhookSubscriptionRenewalFailed = 'connected-account-webhook-subscription/renewal-failed',
   ConnectedAccountWebhookSubscriptionDeleted = 'connected-account-webhook-subscription/deleted',
   ConnectedAccountWebhookSubscriptionDeletionFailed = 'connected-account-webhook-subscription/deletion-failed',
+  WorkspaceMigrationBuildDurationMs = 'workspace-migration/build-duration-ms',
+  WorkspaceMigrationBuildEntityDurationMs = 'workspace-migration/build-entity-duration-ms',
+  WorkspaceMigrationBuildEntityPhaseDurationMs = 'workspace-migration/build-entity-phase-duration-ms',
+  WorkspaceMigrationRunDurationMs = 'workspace-migration/run-duration-ms',
+  WorkspaceMigrationRunPhaseDurationMs = 'workspace-migration/run-phase-duration-ms',
+  WorkspaceMigrationActionDurationMs = 'workspace-migration/action-duration-ms',
+  WorkspaceMigrationActionCount = 'workspace-migration/action-count',
 }
