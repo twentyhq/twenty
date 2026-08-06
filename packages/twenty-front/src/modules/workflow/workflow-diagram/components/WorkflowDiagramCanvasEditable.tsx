@@ -141,6 +141,13 @@ export const WorkflowDiagramCanvasEditable = () => {
     const stepToUpdate = flow?.steps?.find((step) => step.id === node.id);
 
     if (isDefined(stepToUpdate)) {
+      if (
+        stepToUpdate.position?.x === node.position.x &&
+        stepToUpdate.position?.y === node.position.y
+      ) {
+        return;
+      }
+
       await updateStep({
         ...stepToUpdate,
         position: node.position,
@@ -152,6 +159,13 @@ export const WorkflowDiagramCanvasEditable = () => {
     const triggerToUpdate = flow?.trigger;
 
     if (isDefined(triggerToUpdate)) {
+      if (
+        triggerToUpdate.position?.x === node.position.x &&
+        triggerToUpdate.position?.y === node.position.y
+      ) {
+        return;
+      }
+
       await updateTrigger({
         ...triggerToUpdate,
         position: node.position,
