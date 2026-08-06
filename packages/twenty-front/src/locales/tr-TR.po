@@ -17718,14 +17718,14 @@ msgstr "Alt etki alanı zaten kullanılıyor, işte bazı alternatifler:"
 msgid "Subdomain already taken"
 msgstr "Alt alan adı zaten alınmış"
 
-#. js-lingui-id: OlC/tU
+#. js-lingui-id: la3+yi
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "Alt alan adı 30 karakterden uzun olamaz"
+msgid "Subdomain cannot be empty"
+msgstr ""
 
-#. js-lingui-id: a17S75
+#. js-lingui-id: d5CFUo
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be shorter than {minLength} characters"
+msgid "Subdomain cannot be longer than 30 characters"
 msgstr ""
 
 #. js-lingui-id: DTG2nE

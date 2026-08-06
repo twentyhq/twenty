@@ -17718,14 +17718,14 @@ msgstr "Aliverkkotunnus on jo käytössä, tässä joitakin vaihtoehtoja:"
 msgid "Subdomain already taken"
 msgstr "Alidomain on jo käytössä"
 
-#. js-lingui-id: OlC/tU
+#. js-lingui-id: la3+yi
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "Alidomain ei voi olla yli 30 merkkiä pitkä"
+msgid "Subdomain cannot be empty"
+msgstr ""
 
-#. js-lingui-id: a17S75
+#. js-lingui-id: d5CFUo
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be shorter than {minLength} characters"
+msgid "Subdomain cannot be longer than 30 characters"
 msgstr ""
 
 #. js-lingui-id: DTG2nE

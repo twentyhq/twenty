@@ -17718,14 +17718,14 @@ msgstr "서브도메인이 이미 사용 중입니다. 다음은 몇 가지 대�
 msgid "Subdomain already taken"
 msgstr "이미 사용 중인 하위 도메인"
 
-#. js-lingui-id: OlC/tU
+#. js-lingui-id: la3+yi
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "하위 도메인은 30자를 초과할 수 없습니다"
+msgid "Subdomain cannot be empty"
+msgstr ""
 
-#. js-lingui-id: a17S75
+#. js-lingui-id: d5CFUo
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be shorter than {minLength} characters"
+msgid "Subdomain cannot be longer than 30 characters"
 msgstr ""
 
 #. js-lingui-id: DTG2nE
