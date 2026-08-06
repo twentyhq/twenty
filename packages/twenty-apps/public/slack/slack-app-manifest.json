@@ -14,7 +14,7 @@
       "messages_tab_read_only_enabled": false
     },
     "agent_view": {
-      "assistant_description": "Ask about your CRM: look up people, companies and opportunities, create and update records, and capture notes and tasks."
+      "agent_description": "Ask about your CRM: look up people, companies and opportunities, create and update records, and capture notes and tasks."
     }
   },
   "oauth_config": {
