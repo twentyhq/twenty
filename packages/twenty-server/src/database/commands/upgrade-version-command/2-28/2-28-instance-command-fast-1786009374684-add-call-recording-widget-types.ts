@@ -10,7 +10,7 @@ export class AddCallRecordingWidgetTypesFastInstanceCommand implements FastInsta
       'ALTER TYPE "core"."pageLayoutWidget_type_enum" RENAME TO "pageLayoutWidget_type_enum_old"',
     );
     await queryRunner.query(
-      "CREATE TYPE \"core\".\"pageLayoutWidget_type_enum\" AS ENUM('VIEW', 'IFRAME', 'FIELD', 'FIELDS', 'GRAPH', 'STANDALONE_RICH_TEXT', 'TIMELINE', 'TASKS', 'NOTES', 'FILES', 'EMAILS', 'CALENDAR', 'FIELD_RICH_TEXT', 'WORKFLOW', 'WORKFLOW_VERSION', 'WORKFLOW_RUN', 'FRONT_COMPONENT', 'RECORD_TABLE', 'EMAIL_THREAD', 'CALL_RECORDING_TRANSCRIPT', 'CALL_RECORDING_SUMMARY', 'MESSAGE_CAMPAIGN_BODY', 'MESSAGE_CAMPAIGN_DETAILS')",
+      "CREATE TYPE \"core\".\"pageLayoutWidget_type_enum\" AS ENUM('VIEW', 'IFRAME', 'FIELD', 'FIELDS', 'GRAPH', 'STANDALONE_RICH_TEXT', 'TIMELINE', 'TASKS', 'NOTES', 'FILES', 'EMAILS', 'CALENDAR', 'FIELD_RICH_TEXT', 'WORKFLOW', 'WORKFLOW_VERSION', 'WORKFLOW_RUN', 'FRONT_COMPONENT', 'RECORD_TABLE', 'EMAIL_THREAD', 'CALL_RECORDING_SUMMARY', 'CALL_RECORDING_TRANSCRIPT', 'MESSAGE_CAMPAIGN_BODY', 'MESSAGE_CAMPAIGN_DETAILS')",
     );
     await queryRunner.query(
       'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" DROP DEFAULT',
@@ -28,7 +28,7 @@ export class AddCallRecordingWidgetTypesFastInstanceCommand implements FastInsta
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DELETE FROM "core"."pageLayoutWidget" WHERE "type" IN ('CALL_RECORDING_TRANSCRIPT', 'CALL_RECORDING_SUMMARY')`,
+      `DELETE FROM "core"."pageLayoutWidget" WHERE "type" IN ('CALL_RECORDING_SUMMARY', 'CALL_RECORDING_TRANSCRIPT')`,
     );
     await queryRunner.query(
       "CREATE TYPE \"core\".\"pageLayoutWidget_type_enum_old\" AS ENUM('VIEW', 'IFRAME', 'FIELD', 'FIELDS', 'GRAPH', 'STANDALONE_RICH_TEXT', 'TIMELINE', 'TASKS', 'NOTES', 'FILES', 'EMAILS', 'CALENDAR', 'FIELD_RICH_TEXT', 'WORKFLOW', 'WORKFLOW_VERSION', 'WORKFLOW_RUN', 'FRONT_COMPONENT', 'RECORD_TABLE', 'EMAIL_THREAD', 'MESSAGE_CAMPAIGN_BODY', 'MESSAGE_CAMPAIGN_DETAILS')",

@@ -167,12 +167,12 @@ export type MessageCampaignDetailsConfiguration = {
   configurationType: 'MESSAGE_CAMPAIGN_DETAILS';
 };
 
-export type CallRecordingTranscriptConfiguration = {
-  configurationType: 'CALL_RECORDING_TRANSCRIPT';
-};
-
 export type CallRecordingSummaryConfiguration = {
   configurationType: 'CALL_RECORDING_SUMMARY';
+};
+
+export type CallRecordingTranscriptConfiguration = {
+  configurationType: 'CALL_RECORDING_TRANSCRIPT';
 };
 
 export type CalendarConfiguration = {
@@ -216,5 +216,5 @@ export type PageLayoutWidgetConfiguration =
   | EmailThreadConfiguration
   | MessageCampaignBodyConfiguration
   | MessageCampaignDetailsConfiguration
-  | CallRecordingTranscriptConfiguration
-  | CallRecordingSummaryConfiguration;
+  | CallRecordingSummaryConfiguration
+  | CallRecordingTranscriptConfiguration;

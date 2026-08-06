@@ -95,11 +95,11 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       EMAIL_THREAD: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.EMAIL_THREAD,
       ),
-      CALL_RECORDING_TRANSCRIPT: validateSimpleRecordPageWidgetForCreation(
-        WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
-      ),
       CALL_RECORDING_SUMMARY: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+      ),
+      CALL_RECORDING_TRANSCRIPT: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
       ),
       MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
@@ -161,11 +161,11 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       EMAIL_THREAD: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.EMAIL_THREAD,
       ),
-      CALL_RECORDING_TRANSCRIPT: validateSimpleRecordPageWidgetForUpdate(
-        WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
-      ),
       CALL_RECORDING_SUMMARY: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+      ),
+      CALL_RECORDING_TRANSCRIPT: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
       ),
       MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
