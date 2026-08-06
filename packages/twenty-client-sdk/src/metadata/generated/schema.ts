@@ -21,6 +21,7 @@ export interface ApplicationRegistrationVariable {
     description: Scalars['String']
     isSecret: Scalars['Boolean']
     isRequired: Scalars['Boolean']
+    isDeprecated: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
     isFilled: Scalars['Boolean']
@@ -56,6 +57,7 @@ export interface ApplicationVariable {
     value: Scalars['String']
     description: Scalars['String']
     isSecret: Scalars['Boolean']
+    isDeprecated: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
     __typename: 'ApplicationVariable'
@@ -1449,6 +1451,7 @@ export interface ApplicationRegistrationVariableDTO {
     description: Scalars['String']
     isSecret: Scalars['Boolean']
     isRequired: Scalars['Boolean']
+    isDeprecated: Scalars['Boolean']
     isFilled: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
@@ -3222,6 +3225,7 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     description?: boolean | number
     isSecret?: boolean | number
     isRequired?: boolean | number
+    isDeprecated?: boolean | number
     type?: boolean | number
     options?: boolean | number
     isFilled?: boolean | number
@@ -3258,6 +3262,7 @@ export interface ApplicationVariableGenqlSelection{
     value?: boolean | number
     description?: boolean | number
     isSecret?: boolean | number
+    isDeprecated?: boolean | number
     type?: boolean | number
     options?: boolean | number
     __typename?: boolean | number
@@ -4692,6 +4697,7 @@ export interface ApplicationRegistrationVariableDTOGenqlSelection{
     description?: boolean | number
     isSecret?: boolean | number
     isRequired?: boolean | number
+    isDeprecated?: boolean | number
     isFilled?: boolean | number
     type?: boolean | number
     options?: boolean | number

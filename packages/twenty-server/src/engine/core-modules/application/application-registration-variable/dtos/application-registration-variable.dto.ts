@@ -31,6 +31,10 @@ export class ApplicationRegistrationVariableDTO {
 
   @IsBoolean()
   @Field()
+  isDeprecated: boolean;
+
+  @IsBoolean()
+  @Field()
   isFilled: boolean;
 
   @IsString()

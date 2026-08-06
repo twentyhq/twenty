@@ -11,6 +11,7 @@ type ApplicationRegistrationVariable {
   description: String!
   isSecret: Boolean!
   isRequired: Boolean!
+  isDeprecated: Boolean!
   type: String!
   options: JSON
   isFilled: Boolean!
@@ -61,6 +62,7 @@ type ApplicationVariable {
   value: String!
   description: String!
   isSecret: Boolean!
+  isDeprecated: Boolean!
   type: String!
   options: JSON
 }
@@ -1810,6 +1812,7 @@ type ApplicationRegistrationVariableDTO {
   description: String!
   isSecret: Boolean!
   isRequired: Boolean!
+  isDeprecated: Boolean!
   isFilled: Boolean!
   type: String!
   options: JSON

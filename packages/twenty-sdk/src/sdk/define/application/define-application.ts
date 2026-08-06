@@ -37,6 +37,16 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     }
   }
 
+  for (const [variableName, variable] of Object.entries(
+    config.serverVariables ?? {},
+  )) {
+    if (variable.isRequired === true && variable.isDeprecated === true) {
+      warnings.push(
+        `Server variable "${variableName}" is both required and deprecated. \`isDeprecated\` wins: the variable is excluded from the application configuration check.`,
+      );
+    }
+  }
+
   if (config.defaultRoleUniversalIdentifier) {
     warnings.push(
       '`defaultRoleUniversalIdentifier` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.',

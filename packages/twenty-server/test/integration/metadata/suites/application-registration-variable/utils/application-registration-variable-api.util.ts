@@ -18,6 +18,7 @@ type VariableFields = Pick<
   | 'description'
   | 'isSecret'
   | 'isRequired'
+  | 'isDeprecated'
   | 'isFilled'
   | 'createdAt'
   | 'updatedAt'

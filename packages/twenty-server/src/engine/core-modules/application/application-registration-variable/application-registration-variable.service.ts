@@ -142,6 +142,7 @@ export class ApplicationRegistrationVariableService {
           description: schema.description ?? '',
           isSecret: schema.isSecret ?? true,
           isRequired: schema.isRequired ?? false,
+          isDeprecated: schema.isDeprecated ?? false,
           type: schema.type ?? FieldMetadataType.TEXT,
           options: schema.options ?? null,
         });
@@ -154,6 +155,7 @@ export class ApplicationRegistrationVariableService {
             description: schema.description ?? '',
             isSecret: schema.isSecret ?? true,
             isRequired: schema.isRequired ?? false,
+            isDeprecated: schema.isDeprecated ?? false,
             type: schema.type ?? FieldMetadataType.TEXT,
             options: schema.options ?? null,
           }),
@@ -198,7 +200,9 @@ export class ApplicationRegistrationVariableService {
       const areVariablesConfigured = variables
         .filter(
           (variable) =>
-            variable.applicationRegistrationId === id && variable.isRequired,
+            variable.applicationRegistrationId === id &&
+            variable.isRequired &&
+            variable.isDeprecated !== true,
         )
         .every((variable) => variable.isFilled);
 
@@ -264,9 +268,12 @@ export class ApplicationRegistrationVariableService {
     const updateData: Record<string, unknown> = {};
 
     if (isDefined(update.value)) {
-      updateData.encryptedValue = this.encryptionService.encryptVersioned(
-        update.value,
-      );
+      // An empty input means "unset", not "an encrypted empty string": '' is
+      // the sentinel `isFilled` and the required check both read.
+      updateData.encryptedValue =
+        update.value === ''
+          ? ''
+          : this.encryptionService.encryptVersioned(update.value);
     }
 
     if (isDefined(update.resetValue) && update.resetValue) {

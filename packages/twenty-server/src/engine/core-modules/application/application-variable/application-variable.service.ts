@@ -148,9 +148,13 @@ export class ApplicationVariableEntityService {
     await this.applicationVariableRepository.update(
       { key, applicationId },
       {
-        value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
-          workspaceId,
-        }),
+        // An empty input means "unset", not "an encrypted empty string".
+        value:
+          plainTextValue === ''
+            ? ''
+            : this.secretEncryptionService.encryptVersioned(plainTextValue, {
+                workspaceId,
+              }),
       },
     );
 

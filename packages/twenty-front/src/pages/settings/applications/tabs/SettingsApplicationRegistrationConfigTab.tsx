@@ -9,6 +9,7 @@ import {
   UpdateAdminApplicationRegistrationVariableDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
+import { Pill } from 'twenty-ui/data-display';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 import { IconInfoCircle } from 'twenty-ui/icon';
@@ -20,6 +21,7 @@ import { useContext, useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
+import { shouldHideDeprecatedVariable } from '~/pages/settings/applications/utils/shouldHideDeprecatedVariable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
 type ConfigVariable = {
@@ -29,6 +31,7 @@ type ConfigVariable = {
   type?: string | null;
   options?: ApplicationVariableOption[] | null;
   isSecret?: boolean | null;
+  isDeprecated?: boolean | null;
   isFilled?: boolean | null;
 };
 
@@ -130,9 +133,17 @@ export const SettingsApplicationRegistrationConfigTab = ({
     },
   );
 
-  const variables = fromAdmin
-    ? (adminVariablesData?.findAdminApplicationRegistrationVariables ?? [])
-    : (workspaceVariablesData?.findApplicationRegistrationVariables ?? []);
+  const variables = (
+    fromAdmin
+      ? (adminVariablesData?.findAdminApplicationRegistrationVariables ?? [])
+      : (workspaceVariablesData?.findApplicationRegistrationVariables ?? [])
+  ).filter(
+    (variable) =>
+      !shouldHideDeprecatedVariable({
+        isDeprecated: variable.isDeprecated,
+        hasValue: variable.isFilled,
+      }),
+  );
 
   const handleUpdate = (id: string, value: string) => {
     if (fromAdmin === true) {
@@ -160,6 +171,9 @@ export const SettingsApplicationRegistrationConfigTab = ({
               <div key={variable.key}>
                 <StyledLabelRow>
                   <StyledLabel>{variable.key}</StyledLabel>
+                  {variable.isDeprecated === true && (
+                    <Pill label={t`Deprecated`} />
+                  )}
                   {isNonEmptyString(variable.description) && (
                     <>
                       <IconInfoCircle

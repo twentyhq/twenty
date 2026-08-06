@@ -20,9 +20,11 @@ import {
   type ApplicationVariableType,
 } from 'twenty-shared/application';
 
+import { ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-28/add-is-deprecated-to-application-variables-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 
 @Entity({ name: 'applicationRegistrationVariable', schema: 'core' })
 @ObjectType('ApplicationRegistrationVariable')
@@ -61,6 +63,14 @@ export class ApplicationRegistrationVariableEntity {
   @Field()
   @Column({ nullable: false, type: 'boolean', default: false })
   isRequired: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
+  })
+  @Field()
+  @Column({ nullable: false, type: 'boolean', default: false })
+  isDeprecated: boolean;
 
   @Field(() => String)
   @Column({ nullable: false, type: 'text', default: FieldMetadataType.TEXT })

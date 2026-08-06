@@ -180,6 +180,34 @@ describe('ApplicationVariableEntityService', () => {
       ).toHaveBeenCalledTimes(2);
     });
 
+    it('should still inject a deprecated variable so apps can fall back to it', async () => {
+      mockCachedApplicationVariables([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'API_KEY',
+          value: `enc:v2:deadbeef:legacy-key|${workspaceA}` as EncryptedString,
+          isSecret: true,
+          isDeprecated: true,
+        }),
+        makeFlatVariable({
+          universalIdentifier: 'variable-2',
+          key: 'NEW_API_KEY',
+          value: `enc:v2:deadbeef:new-key|${workspaceA}` as EncryptedString,
+          isSecret: true,
+        }),
+      ]);
+
+      const result = await service.getServerEnvVariables({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+      });
+
+      expect(result).toEqual({
+        API_KEY: 'legacy-key',
+        NEW_API_KEY: 'new-key',
+      });
+    });
+
     it('should route each variable to its own workspace HKDF context', async () => {
       mockCachedApplicationVariables([
         makeFlatVariable({
@@ -282,6 +310,25 @@ describe('ApplicationVariableEntityService', () => {
         secretEncryptionService.decryptVersionedOrThrow,
       ).toHaveBeenCalledTimes(1);
     });
+
+    it('should still inject a deprecated variable so apps can fall back to it', async () => {
+      mockCachedApplicationVariables([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'LEGACY_URL',
+          value:
+            `enc:v2:deadbeef:https://legacy.example.com|${workspaceA}` as EncryptedString,
+          isDeprecated: true,
+        }),
+      ]);
+
+      const result = await service.getPublicEnvVariables({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+      });
+
+      expect(result).toEqual({ LEGACY_URL: 'https://legacy.example.com' });
+    });
   });
 
   describe('update', () => {
@@ -344,6 +391,32 @@ describe('ApplicationVariableEntityService', () => {
       expect(repository.update).toHaveBeenCalledWith(
         { key: 'PUBLIC_URL', applicationId: mockApplicationId },
         { value: `enc:v2:deadbeef:https://new-url.com|${mockWorkspaceId}` },
+      );
+    });
+
+    it('should store the unset sentinel instead of encrypting an empty value', async () => {
+      const existingVariable = {
+        id: '1',
+        key: 'API_KEY',
+        value: 'old-encrypted-value',
+        isSecret: true,
+        applicationId: mockApplicationId,
+      } as ApplicationVariableEntity;
+
+      repository.findOne.mockResolvedValue(existingVariable);
+      repository.update.mockResolvedValue({ affected: 1 } as any);
+
+      await service.update({
+        key: 'API_KEY',
+        plainTextValue: '' as PlaintextString,
+        applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(secretEncryptionService.encryptVersioned).not.toHaveBeenCalled();
+      expect(repository.update).toHaveBeenCalledWith(
+        { key: 'API_KEY', applicationId: mockApplicationId },
+        { value: '' },
       );
     });
 

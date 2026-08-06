@@ -8,6 +8,7 @@ import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/appli
 import { SettingsApplicationGeneralSection } from '~/pages/settings/applications/tabs/SettingsApplicationGeneralSection';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
+import { shouldHideDeprecatedVariable } from '~/pages/settings/applications/utils/shouldHideDeprecatedVariable';
 
 export const SettingsApplicationDetailSettingsTab = ({
   application,
@@ -26,9 +27,15 @@ export const SettingsApplicationDetailSettingsTab = ({
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
-  const envVariables = [...(application?.applicationVariables ?? [])].sort(
-    (a, b) => a.key.localeCompare(b.key),
-  );
+  const envVariables = [...(application?.applicationVariables ?? [])]
+    .filter(
+      (applicationVariable) =>
+        !shouldHideDeprecatedVariable({
+          isDeprecated: applicationVariable.isDeprecated,
+          hasValue: applicationVariable.value !== '',
+        }),
+    )
+    .sort((a, b) => a.key.localeCompare(b.key));
 
   const hasHttpTriggeredFunctions =
     applicationHasHttpTriggeredFunctions(application);

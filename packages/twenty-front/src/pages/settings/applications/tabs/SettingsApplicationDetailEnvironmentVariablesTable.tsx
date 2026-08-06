@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
+import { Pill } from 'twenty-ui/data-display';
 import { IconInfoCircle } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
@@ -61,6 +62,9 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
             <div key={editedEnvVariable.key}>
               <StyledLabelRow>
                 <StyledLabel>{editedEnvVariable.key}</StyledLabel>
+                {editedEnvVariable.isDeprecated === true && (
+                  <Pill label={t`Deprecated`} />
+                )}
                 {isNonEmptyString(editedEnvVariable.description) && (
                   <>
                     <IconInfoCircle

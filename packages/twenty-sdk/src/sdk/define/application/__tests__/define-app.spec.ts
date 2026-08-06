@@ -108,6 +108,36 @@ describe('defineApplication', () => {
     expect(result.warnings ?? []).toEqual([]);
   });
 
+  it('should warn when a server variable is both required and deprecated', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      serverVariables: {
+        API_KEY: { isRequired: true, isDeprecated: true },
+      },
+    });
+
+    const warnings = result.warnings ?? [];
+
+    expect(result.success).toBe(true);
+    expect(warnings.some((warning) => warning.includes('API_KEY'))).toBe(true);
+  });
+
+  it('should not warn when a server variable is only deprecated or only required', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      serverVariables: {
+        API_KEY: { isDeprecated: true },
+        NEW_API_KEY: { isRequired: true },
+      },
+    });
+
+    expect(result.warnings ?? []).toEqual([]);
+  });
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       displayName: 'My App',

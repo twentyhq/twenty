@@ -133,6 +133,9 @@ export default {
             "isRequired": [
                 3
             ],
+            "isDeprecated": [
+                3
+            ],
             "type": [
                 1
             ],
@@ -214,6 +217,9 @@ export default {
                 1
             ],
             "isSecret": [
+                3
+            ],
+            "isDeprecated": [
                 3
             ],
             "type": [
@@ -3459,6 +3465,9 @@ export default {
                 3
             ],
             "isRequired": [
+                3
+            ],
+            "isDeprecated": [
                 3
             ],
             "isFilled": [

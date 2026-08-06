@@ -32,6 +32,7 @@ export const APPLICATION_FRAGMENT = gql`
       value
       description
       isSecret
+      isDeprecated
       type
       options
     }
