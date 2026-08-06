@@ -78,11 +78,11 @@ export class UserSessionResolver {
     }
 
     // Before revoking: afterwards it is no longer active and would not be found.
-    const currentSession = await this.resolveCurrentSession(
-      context.req,
+    const currentSession = await this.resolveCurrentSession({
+      request: context.req,
       user,
       workspace,
-    );
+    });
 
     const revoked =
       await this.userSessionService.revokeSessionByIdForUserWorkspace({
@@ -104,11 +104,15 @@ export class UserSessionResolver {
   }
 
   // A revoked or expired cookie must not decide which sessions survive.
-  private async resolveCurrentSession(
-    request: Request,
-    user: AuthContextUser,
-    workspace: WorkspaceEntity,
-  ): Promise<UserSessionEntity | undefined> {
+  private async resolveCurrentSession({
+    request,
+    user,
+    workspace,
+  }: {
+    request: Request;
+    user: AuthContextUser;
+    workspace: Pick<WorkspaceEntity, 'id'>;
+  }): Promise<UserSessionEntity | undefined> {
     const presentedSessionToken =
       this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
@@ -141,11 +145,11 @@ export class UserSessionResolver {
       return 0;
     }
 
-    const currentSession = await this.resolveCurrentSession(
-      context.req,
+    const currentSession = await this.resolveCurrentSession({
+      request: context.req,
       user,
       workspace,
-    );
+    });
 
     return await this.userSessionService.revokeAllSessionsForUser({
       userId: user.id,
