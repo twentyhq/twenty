@@ -55,7 +55,9 @@ describe('sanitizeHtmlPreview', () => {
 
   it('should remove templates instead of leaving their handlers unreachable', () => {
     expect(
-      sanitizeHtmlPreview('<template><img src=x onerror="alert(1)"></template>'),
+      sanitizeHtmlPreview(
+        '<template><img src=x onerror="alert(1)"></template>',
+      ),
     ).toBe('');
     expect(
       sanitizeHtmlPreview(
