@@ -4,9 +4,9 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 // The engine-owned FIELDS_WIDGET record-page view is keyed on the reserved
-// ViewKey.FIELDS_WIDGET; the 2-28 record-page reconcile backfills the key on
+// ViewKey.FIELDS_WIDGET; the 2-29 record-page reconcile backfills the key on
 // existing rows.
-@RegisteredInstanceCommand('2.28.0', 1786010743000)
+@RegisteredInstanceCommand('2.29.0', 1786010743000)
 export class AddFieldsWidgetViewKeyFastInstanceCommand
   implements FastInstanceCommand
 {

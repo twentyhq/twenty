@@ -3,17 +3,17 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 
-import { PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-28/constants/pre-2-28-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
+import { PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-29/constants/pre-2-29-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
 
-// Standard record-page layouts added AFTER 2.28 are born on the derived
-// scheme and need no pre-2.28 literal: list them here to keep the
+// Standard record-page layouts added AFTER 2.29 are born on the derived
+// scheme and need no pre-2.29 literal: list them here to keep the
 // completeness check green.
 const POST_2_28_RECORD_PAGE_KEYS: string[] = [];
 
-describe('PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER', () => {
+describe('PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER', () => {
   // A missing entry would make the standard reconcile silently skip that
   // curated stack, and the backfill would then create a duplicate one.
-  it('covers every pre-2.28 standard record-page layout', () => {
+  it('covers every pre-2.29 standard record-page layout', () => {
     const recordPageObjectNames = Object.keys(
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
     )
@@ -31,7 +31,7 @@ describe('PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UN
 
       expect(objectUniversalIdentifier).toBeDefined();
       expect(
-        PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
+        PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
           objectUniversalIdentifier
         ],
       ).toBeDefined();
@@ -46,7 +46,7 @@ describe('PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UN
     );
 
     for (const pre228LayoutUniversalIdentifier of Object.values(
-      PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER,
+      PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER,
     )) {
       expect(
         derivedLayoutUniversalIdentifiers.has(pre228LayoutUniversalIdentifier),

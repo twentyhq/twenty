@@ -8,16 +8,16 @@ import { Repository } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-28/constants/pre-2-28-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
-import { applyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-28/utils/apply-record-page-reown-updates.util';
-import { collectRecordPageStackFlatEntities } from 'src/database/commands/upgrade-version-command/2-28/utils/collect-record-page-stack-flat-entities.util';
+import { PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-29/constants/pre-2-29-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
+import { applyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/apply-record-page-reown-updates.util';
+import { collectRecordPageStackFlatEntities } from 'src/database/commands/upgrade-version-command/2-29/utils/collect-record-page-stack-flat-entities.util';
 import {
   computeRecordPageStackReownUpdates,
   countRecordPageReownUpdates,
   createEmptyRecordPageReownUpdates,
   type RecordPageReownUpdates,
-} from 'src/database/commands/upgrade-version-command/2-28/utils/compute-record-page-stack-reown-updates.util';
-import { invalidateRecordPageReconcileCache } from 'src/database/commands/upgrade-version-command/2-28/utils/invalidate-record-page-reconcile-cache.util';
+} from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
+import { invalidateRecordPageReconcileCache } from 'src/database/commands/upgrade-version-command/2-29/utils/invalidate-record-page-reconcile-cache.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -26,11 +26,11 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-@RegisteredWorkspaceCommand('2.28.0', 1786010741000)
+@RegisteredWorkspaceCommand('2.29.0', 1786010741000)
 @Command({
-  name: 'upgrade:2-28:reconcile-standard-record-page',
+  name: 'upgrade:2-29:reconcile-standard-record-page',
   description:
-    'Normalize the twenty-standard-owned record-page rows. Only the standard sync and the 1-23 backfill ever authored rows under twenty-standard, so per object there is at most one RECORD_PAGE layout by construction and no winner selection is ever needed. Two passes. (1) For every standard object, the curated layout is located by its pre-2.28 pinned literal (or by the derived identifier on a rerun) and its whole stack (tabs, widgets, the FIELDS widget view plus the reserved FIELDS_WIDGET key backfill, its view fields keyed on the displayed field application, standard-authored groups) is re-owned onto the name-free derived scheme and flagged isSystemSideEffect. App-authored tabs attached to the standard layout (e.g. fireflies, call-recorder) are left untouched. (2) The 1-23 backfill authored the record-page stacks of workspace-custom objects under twenty-standard: those stacks are de-owned, i.e. their applicationId moves to the workspace-custom application without touching identifiers, so that the workspace-custom reconcile command running next treats one homogeneous population per custom object. Standard-owned layouts matching neither pass (unknown row on a standard object, layout on an app object) are logged and left untouched. universalIdentifier is unique per workspace, so any derived identifier already held by another row is skipped with a warning instead of aborting the transaction. Objects missing the stack entirely get it from the backfill-record-page command.',
+    'Normalize the twenty-standard-owned record-page rows. Only the standard sync and the 1-23 backfill ever authored rows under twenty-standard, so per object there is at most one RECORD_PAGE layout by construction and no winner selection is ever needed. Two passes. (1) For every standard object, the curated layout is located by its pre-2.29 pinned literal (or by the derived identifier on a rerun) and its whole stack (tabs, widgets, the FIELDS widget view plus the reserved FIELDS_WIDGET key backfill, its view fields keyed on the displayed field application, standard-authored groups) is re-owned onto the name-free derived scheme and flagged isSystemSideEffect. App-authored tabs attached to the standard layout (e.g. fireflies, call-recorder) are left untouched. (2) The 1-23 backfill authored the record-page stacks of workspace-custom objects under twenty-standard: those stacks are de-owned, i.e. their applicationId moves to the workspace-custom application without touching identifiers, so that the workspace-custom reconcile command running next treats one homogeneous population per custom object. Standard-owned layouts matching neither pass (unknown row on a standard object, layout on an app object) are logged and left untouched. universalIdentifier is unique per workspace, so any derived identifier already held by another row is skipped with a warning instead of aborting the transaction. Objects missing the stack entirely get it from the backfill-record-page command.',
 })
 export class ReconcileStandardRecordPageCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -144,7 +144,7 @@ export class ReconcileStandardRecordPageCommand extends ProvisionedWorkspaceComm
   }
 
   // Pass 1: for every standard object, locate the curated layout by its
-  // pre-2.28 pinned literal (or the derived identifier on a rerun) and re-own
+  // pre-2.29 pinned literal (or the derived identifier on a rerun) and re-own
   // its whole stack onto the derived scheme.
   private computeCuratedStackReownUpdates({
     workspaceId,
@@ -191,7 +191,7 @@ export class ReconcileStandardRecordPageCommand extends ProvisionedWorkspaceComm
       }
 
       const pre228LayoutUniversalIdentifier =
-        PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
+        PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
           flatObjectMetadata.universalIdentifier
         ];
       const derivedPageLayoutUniversalIdentifier =
@@ -316,7 +316,7 @@ export class ReconcileStandardRecordPageCommand extends ProvisionedWorkspaceComm
         twentyStandardApplicationUniversalIdentifier
       ) {
         const expectedLayoutUniversalIdentifiers = [
-          PRE_2_28_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
+          PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
             flatObjectMetadata.universalIdentifier
           ],
           getRecordPageLayoutUniversalIdentifier({
@@ -332,7 +332,7 @@ export class ReconcileStandardRecordPageCommand extends ProvisionedWorkspaceComm
           )
         ) {
           this.logger.warn(
-            `Standard-owned record-page layout ${flatPageLayout.id} on standard object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId} matches neither the pre-2.28 literal nor the derived identifier, skipping`,
+            `Standard-owned record-page layout ${flatPageLayout.id} on standard object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId} matches neither the pre-2.29 literal nor the derived identifier, skipping`,
           );
         }
         continue;

@@ -12,7 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_VIEW_FIELD_GROUP_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-28/add-is-system-side-effect-to-view-field-group-upgrade-command-name.constant';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_VIEW_FIELD_GROUP_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-29/add-is-system-side-effect-to-view-field-group-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';

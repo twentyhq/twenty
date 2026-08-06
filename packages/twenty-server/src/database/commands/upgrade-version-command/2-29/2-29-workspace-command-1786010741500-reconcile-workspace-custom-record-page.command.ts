@@ -8,14 +8,14 @@ import { Repository } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { applyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-28/utils/apply-record-page-reown-updates.util';
+import { applyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/apply-record-page-reown-updates.util';
 import {
   computeRecordPageStackReownUpdates,
   countRecordPageReownUpdates,
   createEmptyRecordPageReownUpdates,
   type RecordPageReownUpdates,
-} from 'src/database/commands/upgrade-version-command/2-28/utils/compute-record-page-stack-reown-updates.util';
-import { invalidateRecordPageReconcileCache } from 'src/database/commands/upgrade-version-command/2-28/utils/invalidate-record-page-reconcile-cache.util';
+} from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
+import { invalidateRecordPageReconcileCache } from 'src/database/commands/upgrade-version-command/2-29/utils/invalidate-record-page-reconcile-cache.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -28,9 +28,9 @@ type FlatPageLayoutCandidate = NonNullable<
   AllFlatEntityMaps['flatPageLayoutMaps']['byUniversalIdentifier'][string]
 >;
 
-@RegisteredWorkspaceCommand('2.28.0', 1786010741500)
+@RegisteredWorkspaceCommand('2.29.0', 1786010741500)
 @Command({
-  name: 'upgrade:2-28:reconcile-workspace-custom-record-page',
+  name: 'upgrade:2-29:reconcile-workspace-custom-record-page',
   description:
     'Re-own the system record-page stack of every workspace-custom object onto the engine convention. Runs after reconcile-standard-record-page de-owned the 1-23-era stacks onto workspace-custom, so per custom object the workspace-custom RECORD_PAGE layouts are one homogeneous population: the system stack (1-23 backfill or the incremental createOneObject path, whose pre-2-15 rows are stuck at isSystemSideEffect false because the 2-15 column landed with default false and no backfill) plus, theoretically, API-created custom layouts. The system stack per object is resolved by a decision table, never by scoring: a single candidate is the system stack; among several, a single isSystemSideEffect candidate wins (the engine wrote that flag); anything still ambiguous is logged and skipped, the backfill command provisions the derived stack next and the untouched layouts keep working as caller customs. The winner stack (tabs, widgets, the FIELDS widget view plus the reserved FIELDS_WIDGET key backfill, its view fields keyed on the displayed field application) is re-owned onto the name-free derived scheme and flagged isSystemSideEffect. App-authored rows are left untouched, and derived identifiers already held by another row are skipped with a warning instead of aborting the transaction.',
 })
