@@ -34,9 +34,15 @@ type FilterValueSchemasMap = {
     Partial<Record<ViewFilterOperand, z.ZodType>>;
 };
 
-const relationFilterValueSchema = jsonRelationFilterValueSchema.or(
-  strictArrayOfUuidOrVariableSchema,
-);
+// The reader stays tolerant of the object form, but a value being written must
+// carry ids the `in` predicate can actually use, matching the bare array form.
+const relationFilterValueSchema = jsonRelationFilterValueSchema
+  .refine(
+    ({ selectedRecordIds }) =>
+      strictArrayOfUuidOrVariableSchema.safeParse(selectedRecordIds).success,
+    'Expected selectedRecordIds to contain UUIDs or variables',
+  )
+  .or(strictArrayOfUuidOrVariableSchema);
 
 const containsOperandsSchemas = {
   [ViewFilterOperand.CONTAINS]: nonEmptyStringFilterValueSchema,

@@ -9,12 +9,8 @@ import {
   type ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
-  convertViewFilterValueToString,
-  FILTER_VALUE_FORMAT_HINTS,
-  getFilterTypeFromFieldType,
-  getFilterValueSchema,
+  getFilterValueValidationMessage,
   isDefined,
-  isRecordFilterValueValid,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -359,37 +355,20 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       return undefined;
     }
 
-    const recordFilterOperand = operand as ViewFilterOperand;
-    const stringifiedValue = convertViewFilterValueToString(value);
-
-    if (
-      !isRecordFilterValueValid({
-        operand: recordFilterOperand,
-        value: stringifiedValue,
-      })
-    ) {
-      return undefined;
-    }
-
-    const filterType = getFilterTypeFromFieldType(fieldType);
-
-    const valueSchema = getFilterValueSchema({
-      filterType,
-      operand: recordFilterOperand,
+    const message = getFilterValueValidationMessage({
+      fieldType,
+      operand: operand as ViewFilterOperand,
       subFieldName,
+      value,
     });
 
-    if (
-      !isDefined(valueSchema) ||
-      valueSchema.safeParse(stringifiedValue).success
-    ) {
+    if (!isDefined(message)) {
       return undefined;
     }
 
     return {
       code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-      message:
-        t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${FILTER_VALUE_FORMAT_HINTS[recordFilterOperand] ?? ''}`.trim(),
+      message: t`${message}`,
       userFriendlyMessage: msg`Predicate value is not valid for this operand`,
     };
   }

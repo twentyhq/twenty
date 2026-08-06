@@ -8,14 +8,10 @@ import {
   type ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
-  convertViewFilterValueToString,
   FILTER_OPERANDS_MAP,
-  FILTER_VALUE_FORMAT_HINTS,
   getFilterOperandsForFilterableFieldType,
-  getFilterTypeFromFieldType,
-  getFilterValueSchema,
+  getFilterValueValidationMessage,
   isDefined,
-  isRecordFilterValueValid,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -403,35 +399,23 @@ export class FlatViewFilterValidatorService {
     relationTargetFieldType: FieldMetadataType | undefined;
     value: ViewFilterValue;
   }) {
-    const stringifiedValue = convertViewFilterValueToString(value);
-
-    // An operand awaiting its value is a filter still being built, which the
-    // read path ignores rather than rejects.
-    if (!isRecordFilterValueValid({ operand, value: stringifiedValue })) {
-      return undefined;
-    }
-
-    const filterType = getFilterTypeFromFieldType(
-      this.getEffectiveFieldType({ fieldType, relationTargetFieldType }),
-    );
-
-    const valueSchema = getFilterValueSchema({
-      filterType,
+    const message = getFilterValueValidationMessage({
+      fieldType: this.getEffectiveFieldType({
+        fieldType,
+        relationTargetFieldType,
+      }),
       operand,
       subFieldName,
+      value,
     });
 
-    if (
-      !isDefined(valueSchema) ||
-      valueSchema.safeParse(stringifiedValue).success
-    ) {
+    if (!isDefined(message)) {
       return undefined;
     }
 
     return {
       code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-      message:
-        t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${FILTER_VALUE_FORMAT_HINTS[operand] ?? ''}`.trim(),
+      message: t`${message}`,
       userFriendlyMessage: msg`Filter value is not valid for this operand`,
     };
   }
