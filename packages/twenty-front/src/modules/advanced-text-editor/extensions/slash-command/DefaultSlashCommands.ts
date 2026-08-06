@@ -1,42 +1,16 @@
-import { type MessageDescriptor } from '@lingui/core';
+import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSlashCommands';
+import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
 import { msg } from '@lingui/core/macro';
-import { type Editor, type Range } from '@tiptap/core';
-import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
-  type IconComponent,
-  IconBox,
-  IconClick,
-  IconCode,
-  IconColumns,
   IconH1,
   IconH2,
   IconH3,
   IconList,
   IconListNumbers,
-  IconMinus,
   IconPilcrow,
 } from 'twenty-ui/icon';
 
-const hasSchemaNode = (editor: Editor, nodeName: string) =>
-  isDefined(editor.schema.nodes[nodeName]);
-
-const columnJson = () => ({
-  type: TIPTAP_NODE_TYPES.COLUMN,
-  content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
-});
-
-export type SlashCommandConfig = {
-  id: string;
-  title: MessageDescriptor;
-  description: MessageDescriptor;
-  icon: IconComponent;
-  keywords: MessageDescriptor[];
-  getIsActive: (editor: Editor) => boolean;
-  getIsVisible: (editor: Editor) => boolean;
-  getOnSelect: (editor: Editor, range: Range) => () => void;
-};
-
-export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
+const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
   {
     id: 'paragraph',
     title: msg`Text`,
@@ -45,9 +19,8 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     keywords: [msg`paragraph`, msg`text`, msg`p`],
     getIsActive: (editor) => editor.isActive('paragraph'),
     getIsVisible: (editor) => editor.can().setParagraph?.() ?? false,
-    getOnSelect: (editor, range) => () => {
-      return editor.chain().focus().deleteRange(range).setParagraph().run();
-    },
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setParagraph().run(),
   },
   {
     id: 'h1',
@@ -82,114 +55,9 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
   },
-  {
-    id: 'section',
-    title: msg`Section`,
-    description: msg`Styled container for email content`,
-    icon: IconBox,
-    keywords: [msg`section`, msg`container`, msg`block`, msg`background`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.SECTION),
-    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.SECTION),
-    getOnSelect: (editor, range) => () =>
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent({
-          type: TIPTAP_NODE_TYPES.SECTION,
-          content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
-        })
-        .run(),
-  },
-  {
-    id: 'emailColumns2',
-    title: msg`2 Columns`,
-    description: msg`Two columns side by side`,
-    icon: IconColumns,
-    keywords: [msg`columns`, msg`two`, msg`layout`, msg`row`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.COLUMNS),
-    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.COLUMNS),
-    getOnSelect: (editor, range) => () =>
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent({
-          type: TIPTAP_NODE_TYPES.COLUMNS,
-          content: [columnJson(), columnJson()],
-        })
-        .run(),
-  },
-  {
-    id: 'emailColumns3',
-    title: msg`3 Columns`,
-    description: msg`Three columns side by side`,
-    icon: IconColumns,
-    keywords: [msg`columns`, msg`three`, msg`layout`, msg`row`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.COLUMNS),
-    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.COLUMNS),
-    getOnSelect: (editor, range) => () =>
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent({
-          type: TIPTAP_NODE_TYPES.COLUMNS,
-          content: [columnJson(), columnJson(), columnJson()],
-        })
-        .run(),
-  },
-  {
-    id: 'button',
-    title: msg`Button`,
-    description: msg`Call-to-action button`,
-    icon: IconClick,
-    keywords: [msg`button`, msg`cta`, msg`link`, msg`action`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.BUTTON),
-    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.BUTTON),
-    getOnSelect: (editor, range) => () =>
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent({
-          type: TIPTAP_NODE_TYPES.BUTTON,
-          content: [{ type: TIPTAP_NODE_TYPES.TEXT, text: 'Click here' }],
-        })
-        .run(),
-  },
-  {
-    id: 'html',
-    title: msg`HTML`,
-    description: msg`Raw HTML embedded in the email`,
-    icon: IconCode,
-    keywords: [msg`html`, msg`embed`, msg`code`, msg`custom`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.HTML),
-    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.HTML),
-    getOnSelect: (editor, range) => () =>
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent({ type: TIPTAP_NODE_TYPES.HTML })
-        .run(),
-  },
-  {
-    id: 'divider',
-    title: msg`Divider`,
-    description: msg`Horizontal separator line`,
-    icon: IconMinus,
-    keywords: [msg`divider`, msg`separator`, msg`line`, msg`hr`],
-    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.DIVIDER),
-    getIsVisible: (editor) => hasSchemaNode(editor, TIPTAP_NODE_TYPES.DIVIDER),
-    getOnSelect: (editor, range) => () =>
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent({ type: TIPTAP_NODE_TYPES.DIVIDER })
-        .run(),
-  },
+];
+
+const LIST_SLASH_COMMANDS: SlashCommandConfig[] = [
   {
     id: 'bulletList',
     title: msg`Bullet List`,
@@ -212,4 +80,10 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).toggleOrderedList().run(),
   },
+];
+
+export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
+  ...TEXT_SLASH_COMMANDS,
+  ...ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS,
+  ...LIST_SLASH_COMMANDS,
 ];

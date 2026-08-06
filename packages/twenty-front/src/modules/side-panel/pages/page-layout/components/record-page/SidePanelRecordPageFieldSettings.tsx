@@ -1,7 +1,10 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -35,7 +38,6 @@ import {
   FeatureFlagKey,
   FieldDisplayMode,
   ViewType,
-  type FieldConfiguration,
 } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -67,6 +69,8 @@ export const SidePanelRecordPageFieldSettings = () => {
     | undefined;
 
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
+  const currentNestedRelationFieldMetadataId =
+    fieldConfiguration?.nestedRelationFieldMetadataId;
   const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
   const currentViewId = isDefined(widgetInEditMode)
     ? getWidgetConfigurationViewId(widgetInEditMode.configuration)
@@ -75,6 +79,8 @@ export const SidePanelRecordPageFieldSettings = () => {
   const { fieldMetadataItem: currentFieldMetadataItem } =
     useFieldMetadataItemById(currentFieldMetadataId ?? '');
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const { recordTableWidgetViewFieldItems } =
     useRecordTableWidgetViewFieldItems({
       viewId: currentViewId ?? '',
@@ -82,11 +88,22 @@ export const SidePanelRecordPageFieldSettings = () => {
       pageLayoutId,
     });
 
+  const resolvedNestedRelation = resolveFieldWidgetNestedRelation({
+    objectMetadataItems,
+    relationTargetObjectMetadataId:
+      currentFieldMetadataItem?.relation?.targetObjectMetadata.id,
+    nestedRelationFieldMetadataId: currentNestedRelationFieldMetadataId,
+  });
+
   // A relation field widget in table display mode embeds a widget view scoped to
   // the current record's related records; its source object is the relation
-  // target, not the record page's own object.
-  const targetObjectMetadataId =
-    currentFieldMetadataItem?.relation?.targetObjectMetadata.id;
+  // target (or the nested relation target two hops away), not the record
+  // page's own object. A configured but unresolvable nested relation keeps
+  // the target undefined so the terminal view's settings stay hidden instead
+  // of being edited against the first hop's object.
+  const targetObjectMetadataId = isDefined(currentNestedRelationFieldMetadataId)
+    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
+    : currentFieldMetadataItem?.relation?.targetObjectMetadata.id;
 
   const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
     viewId: currentViewId ?? '',
@@ -127,7 +144,10 @@ export const SidePanelRecordPageFieldSettings = () => {
     );
   };
 
-  const fieldLabel = currentFieldMetadataItem?.label ?? '';
+  const baseFieldLabel = currentFieldMetadataItem?.label ?? '';
+  const fieldLabel = isDefined(resolvedNestedRelation)
+    ? `${baseFieldLabel} → ${resolvedNestedRelation.nestedRelationFieldMetadataItem.label}`
+    : baseFieldLabel;
 
   const displayModeLabels: Record<string, string> = {
     [FieldDisplayMode.FIELD]: t`Field`,

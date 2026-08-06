@@ -167,7 +167,7 @@ const canvasThemeAttributeSchema = z.looseObject({
 });
 
 export const emailDocumentSchema = z.looseObject({
-  type: z.literal('doc'),
+  type: z.literal(TIPTAP_NODE_TYPES.DOCUMENT),
   attrs: z
     .looseObject({
       schemaVersion: z

@@ -27,6 +27,7 @@ describe('transformEmailDocumentStrings', () => {
               title: '{{name}}',
             },
           },
+          { type: 'button', attrs: { href: '/people/{{id}}' } },
           { type: 'html', attrs: { html: '<p>{{name}}</p>' } },
         ],
       },
@@ -52,7 +53,8 @@ describe('transformEmailDocumentStrings', () => {
       alt: '[text]{{name}}',
       title: '[text]{{name}}',
     });
-    expect(document.content?.[2].attrs?.html).toBe('[html]<p>{{name}}</p>');
+    expect(document.content?.[2].attrs?.href).toBe('[url]/people/{{id}}');
+    expect(document.content?.[3].attrs?.html).toBe('[html]<p>{{name}}</p>');
     expect(contexts).toContain('html');
     expect(contexts).toContain('text');
     expect(contexts).toContain('url');

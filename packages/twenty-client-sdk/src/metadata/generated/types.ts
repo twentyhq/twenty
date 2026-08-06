@@ -2531,6 +2531,9 @@ export default {
             "viewId": [
                 1
             ],
+            "nestedRelationFieldMetadataId": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -3858,6 +3861,12 @@ export default {
             "calendarBookingPageId": [
                 1
             ],
+            "isBookCallOnboardingStepEnabled": [
+                3
+            ],
+            "isCompanyEnrichmentEnabled": [
+                3
+            ],
             "isCloudflareIntegrationEnabled": [
                 3
             ],
@@ -4358,6 +4367,9 @@ export default {
             ],
             "enrichment": [
                 5
+            ],
+            "isBookCallOnboardingStepPending": [
+                3
             ],
             "__typename": [
                 1
@@ -7870,6 +7882,9 @@ export default {
                 31
             ],
             "skipSyncEmailOnboardingStep": [
+                170
+            ],
+            "completeBookCallOnboardingStep": [
                 170
             ],
             "triggerInstallAppsOnboardingStep": [

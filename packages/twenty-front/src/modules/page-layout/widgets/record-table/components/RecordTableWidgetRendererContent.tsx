@@ -4,6 +4,7 @@ import { RecordBoardWidget } from '@/object-record/record-board-widget/component
 import { RecordCalendarWidget } from '@/object-record/record-calendar-widget/components/RecordCalendarWidget';
 import { RecordTableWidget } from '@/object-record/record-table-widget/components/RecordTableWidget';
 import { RecordTableWidgetProvider } from '@/object-record/record-table-widget/components/RecordTableWidgetProvider';
+import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { recordTableWidgetViewDraftByWidgetIdComponentFamilySelector } from '@/page-layout/states/selectors/recordTableWidgetViewDraftByWidgetIdComponentFamilySelector';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
@@ -25,6 +26,7 @@ type RecordTableWidgetRendererContentProps = {
   isEmptyStateHidden?: boolean;
   recordLimit?: number;
   instanceIdSuffix?: string;
+  nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
 };
 
 export const RecordTableWidgetRendererContent = ({
@@ -35,6 +37,7 @@ export const RecordTableWidgetRendererContent = ({
   isEmptyStateHidden = false,
   recordLimit,
   instanceIdSuffix,
+  nestedRelationCreateThrough,
 }: RecordTableWidgetRendererContentProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -88,6 +91,7 @@ export const RecordTableWidgetRendererContent = ({
       widgetId={widgetId}
       recordLimit={recordLimit}
       instanceIdSuffix={instanceIdSuffix}
+      nestedRelationCreateThrough={nestedRelationCreateThrough}
       contextStoreViewType={
         isKanbanLayout
           ? ContextStoreViewType.Kanban

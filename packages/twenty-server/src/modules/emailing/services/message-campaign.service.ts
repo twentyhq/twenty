@@ -53,7 +53,7 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
-import { renderCampaignBodyToHtml } from 'src/modules/emailing/utils/render-campaign-body.util';
+import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -61,7 +61,6 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import {
   MessageParticipantRole,
@@ -115,8 +114,6 @@ const toRawRecipient = (person: {
 @Injectable()
 export class MessageCampaignService {
   private readonly logger = new Logger(MessageCampaignService.name);
-  private readonly htmlToText = createHtmlToTextConverter();
-
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
@@ -267,7 +264,7 @@ export class MessageCampaignService {
     const renderedSubject = renderCampaignTemplate(subject, variables, {
       escapeValues: false,
     });
-    const renderedHtml = await renderCampaignBodyToHtml(html, variables);
+    const compiledContent = await compileCampaignEmailContent(html, variables);
 
     return this.emailingDomainSenderService.sendEmail(
       workspaceId,
@@ -276,8 +273,8 @@ export class MessageCampaignService {
         from: fromAddress,
         to: [toAddress],
         subject: renderedSubject,
-        text: this.htmlToText(renderedHtml),
-        html: renderedHtml,
+        text: compiledContent.plainText,
+        html: compiledContent.html,
         unsubscribeTopicId,
       },
     );
@@ -452,11 +449,10 @@ export class MessageCampaignService {
           escapeValues: false,
         },
       );
-      const html = await renderCampaignBodyToHtml(
+      const compiledContent = await compileCampaignEmailContent(
         campaign.bodyTemplate ?? '',
         variables,
       );
-      const text = this.htmlToText(html);
       const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
       const unsubscribeTopicId = campaign.unsubscribeTopicId ?? undefined;
 
@@ -482,8 +478,8 @@ export class MessageCampaignService {
               from: fromAddress,
               to: [recipientEmail],
               subject,
-              text,
-              html,
+              text: compiledContent.plainText,
+              html: compiledContent.html,
               unsubscribeTopicId,
             },
           );
@@ -526,7 +522,7 @@ export class MessageCampaignService {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
           headerMessageId: result.messageId,
           subject,
-          text,
+          text: compiledContent.plainText,
         });
 
         await this.emailBillingService.billSentEmails({
@@ -655,8 +651,9 @@ export class MessageCampaignService {
     const now = new Date();
     // The stored message keeps the unresolved template, so placeholders stay
     // visible on the campaign's message records.
-    const text = this.htmlToText(
-      await renderCampaignBodyToHtml(bodyTemplate, null),
+    const { plainText: text } = await compileCampaignEmailContent(
+      bodyTemplate,
+      null,
     );
     const rows = recipients.map((recipient) => ({
       recipient,
