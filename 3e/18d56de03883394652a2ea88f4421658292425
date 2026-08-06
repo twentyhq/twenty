@@ -1,0 +1,21 @@
+packages/twenty-docs/developers/extend/apps/layout/views.mdx
+  s_78d9b82a19ccf1::t_597825067f2973 46
+packages/twenty-server/src/engine/twenty-orm/entity-manager/workspace-entity-manager.spec.ts
+  s_78d9b82a19ccf1::t_099a2df2706957 248
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "3e18d56de03883394652a2ea88f4421658292425",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
