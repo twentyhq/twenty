@@ -171,26 +171,27 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
-      calendarEventParticipantRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
-        fields: STANDARD_OBJECT_FIELDS.calendarEventParticipant,
-        viewFieldNames: [
-          'calendarEvent',
-          'handle',
-          'displayName',
-          'isOrganizer',
-          'responseStatus',
-          'person',
-          'workspaceMember',
-          'createdAt',
-          'createdBy',
-        ],
-        viewFieldGroupNames: {
-          general: 'General',
-          system: 'System',
-        },
-      }),
+      calendarEventParticipantRecordPageFields:
+        buildStandardObjectRecordPageFieldsView({
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
+          fields: STANDARD_OBJECT_FIELDS.calendarEventParticipant,
+          viewFieldNames: [
+            'calendarEvent',
+            'handle',
+            'displayName',
+            'isOrganizer',
+            'responseStatus',
+            'person',
+            'workspaceMember',
+            'createdAt',
+            'createdBy',
+          ],
+          viewFieldGroupNames: {
+            general: 'General',
+            system: 'System',
+          },
+        }),
     },
   },
   calendarEvent: {
@@ -566,24 +567,25 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
-      messageParticipantRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
-        fields: STANDARD_OBJECT_FIELDS.messageParticipant,
-        viewFieldNames: [
-          'message',
-          'role',
-          'displayName',
-          'person',
-          'workspaceMember',
-          'createdAt',
-          'createdBy',
-        ],
-        viewFieldGroupNames: {
-          general: 'General',
-          system: 'System',
-        },
-      }),
+      messageParticipantRecordPageFields:
+        buildStandardObjectRecordPageFieldsView({
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
+          fields: STANDARD_OBJECT_FIELDS.messageParticipant,
+          viewFieldNames: [
+            'message',
+            'role',
+            'displayName',
+            'person',
+            'workspaceMember',
+            'createdAt',
+            'createdBy',
+          ],
+          viewFieldGroupNames: {
+            general: 'General',
+            system: 'System',
+          },
+        }),
     },
   },
   messageThread: {
@@ -1122,16 +1124,17 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
         viewFieldNames: ['type', 'workflow', 'createdAt'],
       }),
-      workflowAutomatedTriggerRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
-        fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
-        viewFieldNames: ['type', 'workflow', 'createdAt', 'createdBy'],
-        viewFieldGroupNames: {
-          general: 'General',
-          system: 'System',
-        },
-      }),
+      workflowAutomatedTriggerRecordPageFields:
+        buildStandardObjectRecordPageFieldsView({
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
+          fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
+          viewFieldNames: ['type', 'workflow', 'createdAt', 'createdBy'],
+          viewFieldGroupNames: {
+            general: 'General',
+            system: 'System',
+          },
+        }),
     },
   },
   workflowRun: {
