@@ -1313,6 +1313,38 @@ export class ConfigVariables {
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Store workspace cache payloads in Redis with short key codes and empty ' +
+      'relation arrays omitted. Compacted entries are written under a separate ' +
+      'key suffix, so toggling this cannot mix encodings: it only causes a miss ' +
+      'and a recompute.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Keep only the most recently read workspace cache entries as live objects ' +
+      'and hold the rest as serialized buffers, which the garbage collector does ' +
+      'not traverse. Trades a parse on a cold read for a much shorter GC pause.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  IS_WORKSPACE_CACHE_COLD_STORAGE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'How many entries per provider stay live objects when cold storage is on. ' +
+      'Size it above the workspaces a pod serves in one sweep interval, or reads ' +
+      'pay the parse too often.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WORKSPACE_CACHE_HOT_ENTRIES_PER_PROVIDER: number = 64;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description: 'Redis connection URL used for cache and queues by default',

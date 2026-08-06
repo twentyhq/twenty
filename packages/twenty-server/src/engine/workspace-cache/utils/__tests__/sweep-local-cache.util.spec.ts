@@ -8,7 +8,7 @@ const TTL_MS = 30 * 60 * 1000;
 const ORM_PREFIX = 'orm:entity-metadatas';
 
 const entry = (lastReadAt: number): WorkspaceLocalCacheEntry<unknown> => ({
-  versions: new Map([['h', { data: {}, lastReadAt }]]),
+  versions: new Map([['h', { state: 'hot', data: {}, lastReadAt }]]),
   latestHash: 'h',
   lastHashCheckedAt: lastReadAt,
 });
