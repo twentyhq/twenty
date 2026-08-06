@@ -122,6 +122,10 @@ export class DnsManagerService {
   ) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
+    if (fromHostname.trim().toLowerCase() === toHostname.trim().toLowerCase()) {
+      return this.refreshHostname(toHostname, options);
+    }
+
     const fromCustomHostnameId = await this.getHostnameId(
       fromHostname,
       options,
