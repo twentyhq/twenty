@@ -2,7 +2,8 @@ import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { mockApiService } from '@/cli/__tests__/integration/utils/setup-app-dev-mocks';
 import { AppDevCommand } from '@/cli/commands/dev/dev';
 
-const DEPENDENCIES_SIZE_ERROR_CODE = 'LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED';
+const DEPENDENCIES_SIZE_ERROR_CODE =
+  'LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED';
 const DEPENDENCIES_SIZE_ERROR_MESSAGE =
   'Production dependencies are too large to install. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".';
 
