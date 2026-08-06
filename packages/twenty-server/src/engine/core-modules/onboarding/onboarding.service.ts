@@ -262,14 +262,20 @@ export class OnboardingService {
       },
     );
 
-    return {
-      onboardingStatus: await this.getOnboardingStatus({ userId, workspaceId }),
-      previousOnboardingStatus:
-        await this.getPreviousReversibleOnboardingStatus({
+    return this.runStepTransitionInLockedTransaction(
+      { userId, workspaceId },
+      async () => ({
+        onboardingStatus: await this.getOnboardingStatus({
           userId,
           workspaceId,
         }),
-    };
+        previousOnboardingStatus:
+          await this.getPreviousReversibleOnboardingStatus({
+            userId,
+            workspaceId,
+          }),
+      }),
+    );
   }
 
   private async pushReversibleOnboardingStep(
