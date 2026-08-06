@@ -304,6 +304,12 @@ export const RelationOneToManyFieldInput = () => {
           updateJunctionRelationFromCell({
             morphItem,
           });
+
+          // Picking a target writes a whole junction row, so the action is
+          // done. Deselecting stays open so the removal can be undone.
+          if (morphItem.isSelected) {
+            handleSubmit();
+          }
         } else {
           updateRelation(morphItem);
         }

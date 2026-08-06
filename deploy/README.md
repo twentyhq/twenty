@@ -11,6 +11,8 @@ This directory defines the operating model for the
 - [DEVELOPMENT.md](DEVELOPMENT.md) — isolated development on another machine
 - [LLM-LOCAL-DEV.md](LLM-LOCAL-DEV.md) — the same pipeline, written for coding
   agents working on a developer machine
+- [LLM-FOLK-SYNC.md](LLM-FOLK-SYNC.md) — what the Folk sync must preserve when
+  writing connections, which are now stored in both directions
 - [STAGING.md](STAGING.md) — isolated staging on the production Mac
 - [PRODUCTION.md](PRODUCTION.md) — current live-instance operations
 
