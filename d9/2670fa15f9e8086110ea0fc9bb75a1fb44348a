@@ -1,0 +1,32 @@
+packages/twenty-front/src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+  s_78d9b82a19ccf1::t_59638b60e8a630 64-66
+  s_78d9b82a19ccf1::t_4c0ebbb5a31186 206-208
+packages/twenty-front/src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+  s_78d9b82a19ccf1::t_2166cc515d5bce 191-195,197-210
+  s_78d9b82a19ccf1::t_f1d53a3349a895 130
+  s_78d9b82a19ccf1::t_3d514a3ca0b831 132
+  s_78d9b82a19ccf1::t_c75d1b2fb95911 70-72
+packages/twenty-shared/src/types/FeatureFlagKey.ts
+  s_78d9b82a19ccf1::t_3725e84e226c08 8
+packages/twenty-server/src/engine/core-modules/feature-flag/constants/public-feature-flag.const.ts
+  s_78d9b82a19ccf1::t_cbf487e3f5246e 32-38
+  s_78d9b82a19ccf1::t_6cdaf062ba3131 31
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_78d9b82a19ccf1::t_5aa44958eb25ff 1807
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "d92670fa15f9e8086110ea0fc9bb75a1fb44348a",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
