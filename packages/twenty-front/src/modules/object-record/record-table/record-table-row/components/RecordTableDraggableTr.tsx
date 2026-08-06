@@ -9,19 +9,23 @@ import { RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID } from '@/object-record/recor
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
-import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
 import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 
-// The grip, checkbox and first field cells are sticky at
-// TABLE_Z_INDEX.cell.sticky; without a higher z-index they would paint over
-// the insertion line and truncate it to the scrollable columns.
-const StyledRowDropLine = styled(DragDropItemDropLine)`
+// Overlays the row's leading edge without reflowing it. The grip, checkbox and
+// first field cells are sticky at TABLE_Z_INDEX.cell.sticky; without a higher
+// z-index they would paint over the insertion line and truncate it to the
+// scrollable columns.
+const StyledRowDropTargetSlot = styled.div`
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: -1px;
   z-index: ${TABLE_Z_INDEX.rowDropLine};
 `;
 
@@ -66,7 +70,7 @@ export const RecordTableDraggableTr = ({
   // per-instance id avoids the collision; recordId travels in the drag data.
   const [sortableId] = useState(() => v4());
 
-  const { handleRef, ref, isDragSource, isDropTarget } = useSortable({
+  const { handleRef, ref, isDragSource } = useSortable({
     id: sortableId,
     index: draggableIndex,
     group: droppableId,
@@ -97,10 +101,19 @@ export const RecordTableDraggableTr = ({
       <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
         <RecordTableRowDraggableContextProvider value={{ isDragging: false }}>
           {children}
-          <RecordTableRowMultiDragPreview />
         </RecordTableRowDraggableContextProvider>
       </DragDropItemSortableHandleRefContext.Provider>
-      {isDropTarget && !isDragSource && <StyledRowDropLine />}
+      {!isDragSource && (
+        <StyledRowDropTargetSlot>
+          <DragDropItemDropTarget
+            index={draggableIndex}
+            droppableId={droppableId}
+            orientation="horizontal"
+            compact
+            seamAligned
+          />
+        </StyledRowDropTargetSlot>
+      )}
     </RecordTableTr>
   );
 };

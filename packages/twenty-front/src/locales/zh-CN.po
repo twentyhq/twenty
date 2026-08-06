@@ -808,8 +808,7 @@ msgid "1d"
 msgstr "1天"
 
 #. js-lingui-id: Wf1ux6
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "2 Columns"
 msgstr ""
 
@@ -849,8 +848,7 @@ msgid "2FA Method Reset"
 msgstr "双因素验证方法重置"
 
 #. js-lingui-id: SiBsG2
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "3 Columns"
 msgstr ""
 
@@ -1050,7 +1048,7 @@ msgid "ACS Url copied to clipboard"
 msgstr "ACS Url 已复制到剪贴板"
 
 #. js-lingui-id: r6Y4GL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "action"
 msgstr ""
 
@@ -1906,11 +1904,9 @@ msgid "Alert"
 msgstr "警报"
 
 #. js-lingui-id: ukH0aS
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Alignment"
 msgstr ""
@@ -2154,7 +2150,7 @@ msgid "Already in navbar"
 msgstr "已在导航栏中"
 
 #. js-lingui-id: u/DP73
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr ""
 
@@ -2995,16 +2991,14 @@ msgid "Back to settings"
 msgstr "返回设置"
 
 #. js-lingui-id: i8ZVQU
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "background"
 msgstr ""
 
 #. js-lingui-id: GtJbUa
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
 msgid "Background"
@@ -3145,7 +3139,7 @@ msgid "Billing portal session error. Please retry or contact Twenty team"
 msgstr "计费门户会话错误。请重试或联系 Twenty 团队"
 
 #. js-lingui-id: 8kIU+G
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "block"
 msgstr ""
 
@@ -3160,7 +3154,7 @@ msgid "Blocklist"
 msgstr "拦截列表"
 
 #. js-lingui-id: 7s3WlU
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Blocks"
 msgstr ""
 
@@ -3197,17 +3191,13 @@ msgid "Boolean"
 msgstr "布尔值"
 
 #. js-lingui-id: dCIGNG
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Border"
 msgstr ""
 
 #. js-lingui-id: o/S4BG
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Border color"
 msgstr ""
@@ -3294,7 +3284,7 @@ msgid "bullet"
 msgstr ""
 
 #. js-lingui-id: ijLc3m
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Bullet list"
 msgstr ""
 
@@ -3309,14 +3299,13 @@ msgid "Bundled with {applicationName}"
 msgstr "随 {applicationName} 一起提供"
 
 #. js-lingui-id: yjeERL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "button"
 msgstr ""
 
 #. js-lingui-id: hxBFty
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Button"
 msgstr ""
 
@@ -3458,7 +3447,7 @@ msgid "Call recorder"
 msgstr "通话录音"
 
 #. js-lingui-id: +Kx1Id
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Call-to-action button"
 msgstr ""
 
@@ -3955,7 +3944,7 @@ msgid "Click a user to see their daily breakdown."
 msgstr "点击某个用户以查看其每日明细。"
 
 #. js-lingui-id: uWe4QF
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Click here"
 msgstr ""
 
@@ -4060,7 +4049,7 @@ msgid "Close side panel"
 msgstr "关闭侧边栏"
 
 #. js-lingui-id: 1Lxtdt
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "code"
 msgstr ""
 
@@ -4130,8 +4119,8 @@ msgid "Collapse to side panel"
 msgstr ""
 
 #. js-lingui-id: jZlrte
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 msgid "Color"
 msgstr "颜色"
 
@@ -4146,7 +4135,7 @@ msgid "Colors"
 msgstr "颜色"
 
 #. js-lingui-id: WtgDbl
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Column"
 msgstr ""
 
@@ -4156,13 +4145,13 @@ msgid "column data is not compatible with Multi-Select. Format required is '[\"o
 msgstr "列数据与多选不兼容。需要的格式为“[\"选项1\", \"选项2\"]”或 选项1,选项2。"
 
 #. js-lingui-id: /xTbaM
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "columns"
 msgstr ""
 
 #. js-lingui-id: jEu4bB
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Columns"
 msgstr ""
 
@@ -4664,7 +4653,7 @@ msgid "Contact your admin to continue using Workflow or AI features."
 msgstr "请联系您的管理员以继续使用工作流或 AI 功能。"
 
 #. js-lingui-id: vrs6yX
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "container"
 msgstr ""
 
@@ -4888,10 +4877,8 @@ msgid "Core Objects"
 msgstr "核心对象"
 
 #. js-lingui-id: Fnq2K7
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Corner radius"
 msgstr ""
@@ -5422,7 +5409,7 @@ msgid "CSV import & export"
 msgstr "CSV 导入和导出"
 
 #. js-lingui-id: uSVq1a
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "cta"
 msgstr ""
 
@@ -5492,7 +5479,7 @@ msgid "Cursor"
 msgstr "Cursor"
 
 #. js-lingui-id: bfu5HZ
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "custom"
 msgstr ""
 
@@ -6596,14 +6583,13 @@ msgid "Distribution"
 msgstr "分发"
 
 #. js-lingui-id: XqIcDF
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "divider"
 msgstr ""
 
 #. js-lingui-id: R8AthW
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Divider"
 msgstr ""
 
@@ -7230,7 +7216,7 @@ msgid "Emails should not be empty"
 msgstr "电子邮件不能为空"
 
 #. js-lingui-id: 5gxbuc
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "embed"
 msgstr ""
 
@@ -8500,14 +8486,14 @@ msgid "Failed to upgrade the application."
 msgstr "升级应用失败。"
 
 #. js-lingui-id: eh+uU5
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Failed to upload \"{fileName}\""
 msgstr ""
 
 #. js-lingui-id: jU/HbX
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "上传“{fileNameForError}”失败"
 
@@ -8722,14 +8708,14 @@ msgstr "第五"
 
 #. js-lingui-id: sWmIx3
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "文件 \"{fileName}\" 超过 {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "文件“{fileName}”上传成功"
 
@@ -8923,9 +8909,7 @@ msgid "Follow us on X"
 msgstr "在 X 上关注我们"
 
 #. js-lingui-id: q3il6U
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Font size"
 msgstr ""
 
@@ -9439,7 +9423,7 @@ msgid "heading"
 msgstr ""
 
 #. js-lingui-id: zgPjoD
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Heading"
 msgstr ""
 
@@ -9581,7 +9565,7 @@ msgid "Horizontal Bar Chart"
 msgstr ""
 
 #. js-lingui-id: 8e0cQ8
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Horizontal separator line"
 msgstr ""
 
@@ -9644,20 +9628,19 @@ msgid "How your system is doing"
 msgstr "您的系统运行状况"
 
 #. js-lingui-id: agP50o
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "hr"
 msgstr ""
 
 #. js-lingui-id: We4l8Y
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "html"
 msgstr ""
 
 #. js-lingui-id: FBknns
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "HTML"
 msgstr ""
 
@@ -9829,19 +9812,19 @@ msgid "iFrame Widget"
 msgstr "iFrame 小部件"
 
 #. js-lingui-id: hG89Ed
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Image"
 msgstr "图片"
 
 #. js-lingui-id: TtdnUc
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr ""
 
 #. js-lingui-id: VyUuZb
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Image URL"
 msgstr ""
 
@@ -10127,7 +10110,7 @@ msgid "Insert a JSON input, then press \"Run Function\"."
 msgstr "插入一个 JSON 输入，然后按“运行函数”。"
 
 #. js-lingui-id: mia08l
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Insert image"
 msgstr ""
 
@@ -10941,8 +10924,8 @@ msgid "Launch manually"
 msgstr "手动启动"
 
 #. js-lingui-id: pNPdL3
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "layout"
 msgstr ""
 
@@ -11073,9 +11056,7 @@ msgid "Let each member decide for themselves"
 msgstr ""
 
 #. js-lingui-id: vhRvfF
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Letter spacing"
 msgstr ""
 
@@ -11138,7 +11119,7 @@ msgid "Limits"
 msgstr "限制"
 
 #. js-lingui-id: DXCDta
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "line"
 msgstr ""
 
@@ -11149,14 +11130,12 @@ msgid "Line Chart"
 msgstr "折线图"
 
 #. js-lingui-id: Wqh8xb
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Line height"
 msgstr ""
 
 #. js-lingui-id: LdyooL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "link"
 msgstr ""
 
@@ -11189,8 +11168,8 @@ msgid "Link label"
 msgstr "链接标签"
 
 #. js-lingui-id: roAe2K
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Link URL"
 msgstr ""
 
@@ -11606,7 +11585,7 @@ msgid "Manual configuration"
 msgstr "手动配置"
 
 #. js-lingui-id: lkcAoj
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Margin"
 msgstr ""
 
@@ -13496,7 +13475,7 @@ msgid "numbered"
 msgstr ""
 
 #. js-lingui-id: M3G9ZD
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Numbered list"
 msgstr ""
@@ -14142,10 +14121,8 @@ msgid "Package name or universal identifier"
 msgstr ""
 
 #. js-lingui-id: fdjq4c
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
 msgid "Padding"
@@ -14265,7 +14242,7 @@ msgid "Past due"
 msgstr "逾期未付"
 
 #. js-lingui-id: Hfiz9B
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Paste a link to a hosted image"
 msgstr ""
 
@@ -14977,9 +14954,9 @@ msgstr "评分"
 msgid "Ratio"
 msgstr "比例"
 
-#. js-lingui-id: +eZqq+
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-msgid "Raw HTML embedded in the email"
+#. js-lingui-id: wdlYqX
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+msgid "Raw HTML embedded in the document"
 msgstr ""
 
 #. js-lingui-id: kdLBDj
@@ -15512,6 +15489,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "移除此提供商并断开其所有模型的连接"
 
 #. js-lingui-id: Kl3J3D
+#: src/modules/advanced-text-editor/extensions/variable-tag/VariableChip.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Remove variable"
 msgstr "移除变量"
@@ -15918,8 +15896,8 @@ msgid "Routing tokens"
 msgstr "路由令牌"
 
 #. js-lingui-id: Q7BPyr
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "row"
 msgstr ""
 
@@ -16459,14 +16437,13 @@ msgid "Secret Access Key"
 msgstr "秘密访问密钥"
 
 #. js-lingui-id: YTsmM8
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "section"
 msgstr ""
 
 #. js-lingui-id: BhZ5PL
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Section"
 msgstr ""
 
@@ -16868,7 +16845,7 @@ msgid "Sent email"
 msgstr "已发送电子邮件"
 
 #. js-lingui-id: b/sg59
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "separator"
 msgstr ""
 
@@ -17473,9 +17450,9 @@ msgid "Sorts"
 msgstr "排序"
 
 #. js-lingui-id: wdxz7K
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -17691,9 +17668,9 @@ msgstr "Stripe 订阅"
 msgid "Style"
 msgstr ""
 
-#. js-lingui-id: I1rOJ9
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-msgid "Styled container for email content"
+#. js-lingui-id: WQfv5B
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+msgid "Styled container for document content"
 msgstr ""
 
 #. js-lingui-id: WIUeUf
@@ -17847,7 +17824,7 @@ msgid "subtitle"
 msgstr ""
 
 #. js-lingui-id: a0w0iQ
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Subtitle"
 msgstr ""
 
@@ -18173,8 +18150,8 @@ msgid "text"
 msgstr "文本"
 
 #. js-lingui-id: xeiujy
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
@@ -18183,10 +18160,8 @@ msgid "Text"
 msgstr "文本"
 
 #. js-lingui-id: MapzEo
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Text color"
 msgstr ""
 
@@ -18201,7 +18176,7 @@ msgid "Text copied to clipboard"
 msgstr "文本已复制到剪贴板"
 
 #. js-lingui-id: YXRaNg
-#: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "文本编辑器"
 
@@ -18443,7 +18418,7 @@ msgid "There was an error while updating password."
 msgstr "更新密码时出错。"
 
 #. js-lingui-id: 5Ml5Nr
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Thickness"
 msgstr ""
 
@@ -18803,12 +18778,12 @@ msgid "Thought"
 msgstr "思考"
 
 #. js-lingui-id: pAlfed
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "three"
 msgstr ""
 
 #. js-lingui-id: nRnNXK
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Three columns side by side"
 msgstr ""
 
@@ -18874,7 +18849,7 @@ msgid "title"
 msgstr "标题"
 
 #. js-lingui-id: MHrjPM
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Title"
@@ -19251,12 +19226,12 @@ msgid "Twitter/X Search"
 msgstr "Twitter/X 搜索"
 
 #. js-lingui-id: 6HI/Yp
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "two"
 msgstr ""
 
 #. js-lingui-id: vo+eKm
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Two columns side by side"
 msgstr ""
 
@@ -19622,7 +19597,7 @@ msgid "Unsubscribers"
 msgstr ""
 
 #. js-lingui-id: uxfv+n
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Unsupported image format"
 msgstr ""
 
@@ -19913,9 +19888,9 @@ msgstr "上传 .xlsx，.xls 或 .csv 文件"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/activities/emails/components/EmailAttachmentsField.tsx
-#: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowSendEmailAttachments.tsx
 msgid "Upload file"
 msgstr "上传文件"
 
@@ -19956,7 +19931,7 @@ msgid "Uploaded content is too large."
 msgstr "上传的内容过大。"
 
 #. js-lingui-id: GxkJXS
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."
 msgstr "正在上传..."
@@ -20277,7 +20252,7 @@ msgid "Variable not found"
 msgstr "变量未找到"
 
 #. js-lingui-id: gpmbqk
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Variables"
 msgstr ""
 
@@ -20909,8 +20884,8 @@ msgid "Widgets"
 msgstr "小部件"
 
 #. js-lingui-id: aFWU1n
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Width"
 msgstr ""

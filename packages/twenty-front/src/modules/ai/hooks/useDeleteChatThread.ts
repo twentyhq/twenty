@@ -14,6 +14,7 @@ import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMet
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 export const useDeleteChatThread = () => {
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
@@ -48,11 +49,15 @@ export const useDeleteChatThread = () => {
         const nextThreadId = remaining[0].id;
 
         setCurrentAiChatThread(nextThreadId);
-        setAgentChatInput(draftsByThreadId[nextThreadId] ?? '');
+        setAgentChatInput(
+          tipTapDocumentToMarkdown(draftsByThreadId[nextThreadId] ?? ''),
+        );
       } else {
         setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
         setAgentChatInput(
-          draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '',
+          tipTapDocumentToMarkdown(
+            draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '',
+          ),
         );
       }
     } catch (error) {
