@@ -4,7 +4,7 @@ import {
 } from '@/object-metadata/utils/isRelationFieldOfType';
 import { RelationType } from '~/generated-metadata/graphql';
 
-export const isManyToOneRelationField = <T extends FieldWithRelation>(
+export const isOneToManyRelationField = <T extends FieldWithRelation>(
   field: T,
 ): field is T & { relation: NonNullable<T['relation']> } =>
-  isRelationFieldOfType(field, RelationType.MANY_TO_ONE);
+  isRelationFieldOfType(field, RelationType.ONE_TO_MANY);
