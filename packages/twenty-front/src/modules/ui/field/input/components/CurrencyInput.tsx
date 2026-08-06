@@ -141,7 +141,7 @@ export const CurrencyInput = ({
           mask={Number}
           thousandsSeparator={thousandsSeparator}
           radix={radix}
-          scale={getSafeScaleForCurrencyInput(value, decimals)}
+          scale={getSafeScaleForCurrencyInput(value, decimals, radix)}
           onAccept={(value: string) => handleChange(value)}
           inputRef={wrapperRef}
           autoComplete="off"

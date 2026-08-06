@@ -11,8 +11,14 @@ describe('getSafeScaleForCurrencyInput', () => {
     expect(getSafeScaleForCurrencyInput('458.6432', 2)).toBe(4);
   });
 
+  it('handles comma radix decimal separators correctly for user editing flow', () => {
+    expect(getSafeScaleForCurrencyInput('458,64', 0, ',')).toBe(2);
+    expect(getSafeScaleForCurrencyInput('1234,5678', 2, ',')).toBe(4);
+  });
+
   it('honors configured decimals when configured decimals is greater than draft precision', () => {
     expect(getSafeScaleForCurrencyInput('458.6', 2)).toBe(2);
+    expect(getSafeScaleForCurrencyInput('458,6', 2, ',')).toBe(2);
   });
 
   it('handles empty value string gracefully', () => {
