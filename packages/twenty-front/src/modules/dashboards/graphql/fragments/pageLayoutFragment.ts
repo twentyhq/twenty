@@ -5,6 +5,7 @@ export const PAGE_LAYOUT_FRAGMENT = gql`
   ${PAGE_LAYOUT_TAB_FRAGMENT}
   fragment PageLayoutFragment on PageLayout {
     id
+    applicationId
     name
     objectMetadataId
     type

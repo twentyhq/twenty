@@ -19,6 +19,7 @@ const PAGE_LAYOUT_ID_1 = 'page-layout-1';
 const PAGE_LAYOUT_ID_2 = 'page-layout-2';
 
 const MOCK_PAGE_LAYOUT: PageLayout = {
+  applicationId: 'application-id-mock',
   __typename: 'PageLayout',
   id: PAGE_LAYOUT_ID_1,
   name: 'Test Layout',

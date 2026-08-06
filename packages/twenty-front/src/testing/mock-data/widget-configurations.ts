@@ -114,6 +114,8 @@ export const createTestWidget = (
   __typename: 'PageLayoutWidget',
   id: 'widget-1',
   applicationId: 'test-application-id',
+  universalIdentifier: 'universal-identifier-mock',
+  isSystemSideEffect: false,
   pageLayoutTabId: 'tab-1',
   title: 'Test Widget',
   type: WidgetType.GRAPH,

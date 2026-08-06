@@ -19,6 +19,7 @@ import {
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockPageLayout: PageLayout = {
+  applicationId: 'application-id-mock',
   id: 'page-layout-1',
   name: 'Test Layout',
   type: PageLayoutType.DASHBOARD,
