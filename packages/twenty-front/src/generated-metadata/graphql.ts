@@ -983,7 +983,6 @@ export type ClientConfig = {
   publicFunctionDomain?: Maybe<Scalars['String']['output']>;
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
-  subdomainMinLength: Scalars['Float']['output'];
   support: Support;
 };
 

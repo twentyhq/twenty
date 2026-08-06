@@ -3801,9 +3801,6 @@ export default {
             "defaultSubdomain": [
                 1
             ],
-            "subdomainMinLength": [
-                16
-            ],
             "frontDomain": [
                 1
             ],

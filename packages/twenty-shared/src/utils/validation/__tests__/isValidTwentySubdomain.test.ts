@@ -16,10 +16,7 @@ describe('isValidTwentySubdomain', () => {
       expect(isValidTwentySubdomain('a-b-c-d-e')).toBe(true);
     });
 
-    it('should accept short subdomains regardless of minimum length', () => {
-      // Minimum length is enforced by the caller, not by the pattern
-      expect(isValidTwentySubdomain('a')).toBe(true);
-      expect(isValidTwentySubdomain('ab')).toBe(true);
+    it('should accept minimum length subdomains (3 characters)', () => {
       expect(isValidTwentySubdomain('abc')).toBe(true);
       expect(isValidTwentySubdomain('a1b')).toBe(true);
       expect(isValidTwentySubdomain('a-b')).toBe(true);
@@ -42,6 +39,11 @@ describe('isValidTwentySubdomain', () => {
   describe('invalid subdomains', () => {
     it('should reject empty strings', () => {
       expect(isValidTwentySubdomain('')).toBe(false);
+    });
+
+    it('should reject subdomains shorter than 3 characters', () => {
+      expect(isValidTwentySubdomain('a')).toBe(false);
+      expect(isValidTwentySubdomain('ab')).toBe(false);
     });
 
     it('should reject subdomains longer than 30 characters', () => {

@@ -1,6 +1,4 @@
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useApolloClient, useLazyQuery } from '@apollo/client/react';
 import { useMemo, useState } from 'react';
 import {
@@ -27,11 +25,7 @@ export const useWorkspaceSubdomainField = ({
   isSubdomainEnabled = true,
 }: { isSubdomainEnabled?: boolean } = {}) => {
   const apolloClient = useApolloClient();
-  const { subdomainMinLength } = useAtomStateValue(domainConfigurationState);
-  const subdomainSchema = useMemo(
-    () => getSubdomainValidationSchema(subdomainMinLength),
-    [subdomainMinLength],
-  );
+  const subdomainSchema = useMemo(() => getSubdomainValidationSchema(), []);
 
   const defaults = useMemo(
     () =>

@@ -277,9 +277,6 @@ export class ClientConfig {
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 
-  @Field(() => Number)
-  subdomainMinLength: number;
-
   @Field(() => String)
   frontDomain: string;
 
