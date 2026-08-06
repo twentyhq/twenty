@@ -4285,6 +4285,7 @@ export type PageInfo = {
 
 export type PageLayout = {
   __typename?: 'PageLayout';
+  applicationId: Scalars['UUID']['output'];
   createdAt: Scalars['DateTime']['output'];
   defaultTabToFocusOnMobileAndSidePanelId?: Maybe<Scalars['UUID']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -4308,10 +4309,12 @@ export type PageLayoutTab = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect: Scalars['Boolean']['output'];
   layoutMode?: Maybe<PageLayoutTabLayoutMode>;
   pageLayoutId: Scalars['UUID']['output'];
   position: Scalars['Float']['output'];
   title: Scalars['String']['output'];
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
   widgets?: Maybe<Array<PageLayoutWidget>>;
 };
@@ -4343,11 +4346,13 @@ export type PageLayoutWidget = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect: Scalars['Boolean']['output'];
   objectMetadataId?: Maybe<Scalars['UUID']['output']>;
   pageLayoutTabId: Scalars['UUID']['output'];
   position?: Maybe<PageLayoutWidgetPosition>;
   title: Scalars['String']['output'];
   type: WidgetType;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -6302,6 +6307,7 @@ export type VersionDistributionEntry = {
 export type View = {
   __typename?: 'View';
   anyFieldFilterValue?: Maybe<Scalars['String']['output']>;
+  applicationId: Scalars['UUID']['output'];
   calendarEndFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   calendarFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   calendarLayout?: Maybe<ViewCalendarLayout>;
@@ -6313,6 +6319,7 @@ export type View = {
   isActive: Scalars['Boolean']['output'];
   isCompact: Scalars['Boolean']['output'];
   isCustom: Scalars['Boolean']['output'];
+  isSystemSideEffect: Scalars['Boolean']['output'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   kanbanColumnWidth?: Maybe<Scalars['Int']['output']>;
@@ -6325,6 +6332,7 @@ export type View = {
   position: Scalars['Float']['output'];
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
   type: ViewType;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
   viewFieldGroups: Array<ViewFieldGroup>;
   viewFields: Array<ViewField>;
@@ -6350,6 +6358,7 @@ export type ViewConfiguration = {
 export type ViewField = {
   __typename?: 'ViewField';
   aggregateOperation?: Maybe<AggregateOperations>;
+  applicationId: Scalars['UUID']['output'];
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   fieldMetadataId: Scalars['UUID']['output'];
@@ -6357,9 +6366,11 @@ export type ViewField = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect: Scalars['Boolean']['output'];
   isVisible: Scalars['Boolean']['output'];
   position: Scalars['Float']['output'];
   size: Scalars['Float']['output'];
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
   viewFieldGroupId?: Maybe<Scalars['UUID']['output']>;
   viewId: Scalars['UUID']['output'];
