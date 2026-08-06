@@ -4,7 +4,7 @@ import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjec
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
@@ -27,7 +27,6 @@ import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { RelationType } from '~/generated-metadata/graphql';
 
 type UpsertRecordFormData = RecordActionFormData;
 
@@ -281,11 +280,7 @@ export const WorkflowEditActionUpsertRecord = ({
             );
           }
 
-          const isFieldRelationManyToOne =
-            isFieldRelation(fieldDefinition) &&
-            fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
-
-          const currentValue = isFieldRelationManyToOne
+          const currentValue = isFieldRelationManyToOne(fieldDefinition)
             ? (
                 formData[
                   fieldDefinition.metadata.fieldName
