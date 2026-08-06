@@ -8,7 +8,10 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableWidgetContextStoreInitEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetContextStoreInitEffect';
 import { RecordTableWidgetViewLoadEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetViewLoadEffect';
-import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import {
+  RecordTableWidgetContext,
+  type RecordTableWidgetNestedRelationCreateThrough,
+} from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -26,6 +29,7 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   recordLimit?: number;
   instanceIdSuffix?: string;
   contextStoreViewType?: ContextStoreViewType;
+  nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
 }>;
 
 export const RecordTableWidgetProvider = ({
@@ -35,6 +39,7 @@ export const RecordTableWidgetProvider = ({
   recordLimit,
   instanceIdSuffix,
   contextStoreViewType,
+  nestedRelationCreateThrough,
   children,
 }: RecordTableWidgetProviderProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -90,11 +95,13 @@ export const RecordTableWidgetProvider = ({
       isPageLayoutInEditMode,
       pageLayoutId: pageLayoutComponentInstanceContext?.instanceId,
       widgetId,
+      nestedRelationCreateThrough,
     }),
     [
       isPageLayoutInEditMode,
       pageLayoutComponentInstanceContext?.instanceId,
       widgetId,
+      nestedRelationCreateThrough,
     ],
   );
 

@@ -966,6 +966,7 @@ export interface FieldConfiguration {
     fieldMetadataId: Scalars['String']
     fieldDisplayMode: FieldDisplayMode
     viewId?: Scalars['String']
+    nestedRelationFieldMetadataId?: Scalars['String']
     __typename: 'FieldConfiguration'
 }
 
@@ -4191,6 +4192,7 @@ export interface FieldConfigurationGenqlSelection{
     fieldMetadataId?: boolean | number
     fieldDisplayMode?: boolean | number
     viewId?: boolean | number
+    nestedRelationFieldMetadataId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
