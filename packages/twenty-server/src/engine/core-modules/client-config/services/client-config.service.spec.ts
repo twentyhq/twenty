@@ -301,8 +301,7 @@ describe('ClientConfigService', () => {
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           if (key === 'IS_BILLING_ENABLED') return false;
-          if (key === 'SUPPORT_SELF_HOSTING_FRONT_CHAT_ID')
-            return 'self-hosting-chat-123';
+          if (key === 'SUPPORT_FRONT_CHAT_ID') return 'self-hosting-chat-123';
 
           return undefined;
         });
@@ -319,8 +318,7 @@ describe('ClientConfigService', () => {
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           if (key === 'IS_BILLING_ENABLED') return false;
-          if (key === 'SUPPORT_SELF_HOSTING_FRONT_CHAT_ID')
-            return 'self-hosting-chat-123';
+          if (key === 'SUPPORT_FRONT_CHAT_ID') return 'self-hosting-chat-123';
 
           return undefined;
         });

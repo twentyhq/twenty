@@ -1214,18 +1214,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
-  SUPPORT_FRONT_CHAT_ID: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
-    isSensitive: true,
-    description:
-      'Chat ID of the Front inbox self-hosted Enterprise instances use to reach Twenty support',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  SUPPORT_SELF_HOSTING_FRONT_CHAT_ID: string =
-    SELF_HOSTING_SUPPORT_FRONT_CHAT_ID;
+  SUPPORT_FRONT_CHAT_ID: string = SELF_HOSTING_SUPPORT_FRONT_CHAT_ID;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,

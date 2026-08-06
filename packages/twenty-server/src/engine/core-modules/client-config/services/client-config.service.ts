@@ -47,36 +47,19 @@ export class ClientConfigService {
   }
 
   private getSupportConfig(isBillingEnabled: boolean): Support {
-    const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
-    const supportFrontChatId = this.twentyConfigService.get(
-      'SUPPORT_FRONT_CHAT_ID',
-    );
+    const isSelfHostedEnterprise =
+      !isBillingEnabled && this.enterprisePlanService.isValid();
 
     if (
-      supportDriver === SupportDriver.FRONT &&
-      isNonEmptyString(supportFrontChatId)
+      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.FRONT &&
+      !isSelfHostedEnterprise
     ) {
-      return { supportDriver, supportFrontChatId };
-    }
-
-    const selfHostingFrontChatId = this.twentyConfigService.get(
-      'SUPPORT_SELF_HOSTING_FRONT_CHAT_ID',
-    );
-
-    if (
-      !isBillingEnabled &&
-      this.enterprisePlanService.isValid() &&
-      isNonEmptyString(selfHostingFrontChatId)
-    ) {
-      return {
-        supportDriver: SupportDriver.FRONT,
-        supportFrontChatId: selfHostingFrontChatId,
-      };
+      return { supportDriver: SupportDriver.NONE };
     }
 
     return {
-      supportDriver: supportDriver ?? SupportDriver.NONE,
-      supportFrontChatId,
+      supportDriver: SupportDriver.FRONT,
+      supportFrontChatId: this.twentyConfigService.get('SUPPORT_FRONT_CHAT_ID'),
     };
   }
 
