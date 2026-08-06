@@ -505,7 +505,6 @@ export class ObjectRecordEventPublisher {
     } as ObjectRecordSubscriptionEvent;
   }
 
-  // Strips before/diff when the before snapshot fails subscriber RLS — a record entering scope must not expose prior values.
   private redactRLSUnauthorizedBeforeSnapshot(
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
