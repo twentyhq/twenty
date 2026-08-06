@@ -122,7 +122,8 @@ export const computeRecordPageViewFieldForExistingObject = ({
     fieldMetadataUniversalIdentifier:
       sourceFlatFieldMetadata.universalIdentifier,
     viewUniversalIdentifier: recordPageViewUniversalIdentifier,
-    viewFieldGroupUniversalIdentifier: targetSystemViewFieldGroupUniversalIdentifier,
+    viewFieldGroupUniversalIdentifier:
+      targetSystemViewFieldGroupUniversalIdentifier,
     isVisible: newFieldDefaultVisibility,
     size: DEFAULT_VIEW_FIELD_SIZE,
     position,

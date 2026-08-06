@@ -64,10 +64,12 @@ export const computeSystemRecordPageLayoutToCreate = ({
   pageLayoutWidgets: UniversalFlatPageLayoutWidget[];
 } => {
   const now = new Date().toISOString();
-  const pageLayoutUniversalIdentifier = getSystemRecordPageLayoutUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
-    objectUniversalIdentifier: objectMetadata.universalIdentifier,
-  });
+  const pageLayoutUniversalIdentifier =
+    getSystemRecordPageLayoutUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
+      objectUniversalIdentifier: objectMetadata.universalIdentifier,
+    });
 
   const pageLayoutTabs: UniversalFlatPageLayoutTab[] = [];
   const pageLayoutWidgets: UniversalFlatPageLayoutWidget[] = [];
@@ -80,15 +82,18 @@ export const computeSystemRecordPageLayoutToCreate = ({
     const tabProps = TAB_PROPS[key];
     const widgetProps = WIDGET_PROPS[widgetKey];
     const tabUniversalIdentifier = getSystemPageLayoutTabUniversalIdentifier({
-      objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+      objectMetadataApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
       pageLayoutUniversalIdentifier,
       title: tabProps.title,
     });
-    const widgetUniversalIdentifier = getSystemPageLayoutWidgetUniversalIdentifier({
-      objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
-      pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
-      title: widgetProps.title,
-    });
+    const widgetUniversalIdentifier =
+      getSystemPageLayoutWidgetUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier:
+          applicationUniversalIdentifier,
+        pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
+        title: widgetProps.title,
+      });
 
     pageLayoutTabs.push({
       universalIdentifier: tabUniversalIdentifier,

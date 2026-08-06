@@ -32,7 +32,8 @@ const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
 
 const DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   getSystemRecordPageLayoutUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectMetadataApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   });
 
@@ -143,7 +144,8 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
     for (const pageLayoutTab of pageLayoutTabs) {
       expect(pageLayoutTab.universalIdentifier).toBe(
         getSystemPageLayoutTabUniversalIdentifier({
-          objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectMetadataApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
           pageLayoutUniversalIdentifier:
             DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
           title: pageLayoutTab.title,
@@ -160,7 +162,8 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
     for (const pageLayoutWidget of pageLayoutWidgets) {
       expect(pageLayoutWidget.universalIdentifier).toBe(
         getSystemPageLayoutWidgetUniversalIdentifier({
-          objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectMetadataApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
           pageLayoutTabUniversalIdentifier:
             pageLayoutWidget.pageLayoutTabUniversalIdentifier,
           title: pageLayoutWidget.title,
