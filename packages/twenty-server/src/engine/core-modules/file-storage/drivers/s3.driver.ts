@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import fs from 'fs';
 import { readdir, readFile } from 'fs/promises';
+import { Agent } from 'https';
 import { dirname, join } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
@@ -38,6 +39,17 @@ export interface S3DriverOptions extends S3ClientConfig {
   presignEndpoint?: string;
 }
 
+// The SDK default request handler has no request timeout and only 50 sockets:
+// one batch of stalled transfers holds the pool forever and every later
+// request (file streaming, layer builds, seed writes) queues behind it until
+// the process is restarted. Bounding requests lets the pool self-heal; the
+// shared keep-alive agent raises capacity across all S3 clients.
+const S3_REQUEST_HANDLER_OPTIONS = {
+  connectionTimeout: 5_000,
+  requestTimeout: 120_000,
+  httpsAgent: new Agent({ keepAlive: true, maxSockets: 200 }),
+};
+
 export class S3Driver implements StorageDriver {
   private s3Client: S3;
   private presignClient: S3 | undefined;
@@ -58,12 +70,22 @@ export class S3Driver implements StorageDriver {
       return;
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    this.s3Client = new S3({
+      ...s3Options,
+      region,
+      endpoint,
+      requestHandler: S3_REQUEST_HANDLER_OPTIONS,
+    });
     this.bucketName = bucketName;
 
     if (presignEnabled) {
       this.presignClient = presignEndpoint
-        ? new S3({ ...s3Options, region, endpoint: presignEndpoint })
+        ? new S3({
+            ...s3Options,
+            region,
+            endpoint: presignEndpoint,
+            requestHandler: S3_REQUEST_HANDLER_OPTIONS,
+          })
         : this.s3Client;
     }
   }

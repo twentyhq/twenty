@@ -39,6 +39,10 @@ export class DisabledDriver implements LogicFunctionDriver {
     );
   }
 
+  async warmLayers(): Promise<void> {
+    // No-op when disabled
+  }
+
   async getInstalledBundleChecksum(): Promise<string | null> {
     return null;
   }
