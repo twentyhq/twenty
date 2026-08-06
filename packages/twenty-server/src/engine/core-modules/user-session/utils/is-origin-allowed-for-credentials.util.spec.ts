@@ -83,6 +83,16 @@ describe('isOriginAllowedForCredentials', () => {
       ).toBe(true);
     });
 
+    it('should fall back to SERVER_URL when FRONTEND_URL is unset, as getFrontUrl does', () => {
+      expect(
+        expectAllowed('https://acme.api.twenty.example', {
+          ...multiWorkspace,
+          FRONTEND_URL: undefined,
+          SERVER_URL: 'https://api.twenty.example',
+        }),
+      ).toBe(true);
+    });
+
     it('should reject a subdomain of the server domain, which no browser is served from', () => {
       expect(
         expectAllowed('https://acme.api.example', {

@@ -19,7 +19,13 @@ const isWorkspaceSubdomainOrigin = (
     return false;
   }
 
-  const frontendUrl = twentyConfigService.get('FRONTEND_URL');
+  // Mirrors DomainServerConfigService.getFrontUrl: FRONTEND_URL is optional and
+  // has no default, and workspace URLs are built under SERVER_URL when it is
+  // unset, so the trusted parent has to follow the same fallback.
+  const configuredFrontendUrl = twentyConfigService.get('FRONTEND_URL');
+  const frontendUrl = isNonEmptyString(configuredFrontendUrl)
+    ? configuredFrontendUrl
+    : twentyConfigService.get('SERVER_URL');
 
   if (!isNonEmptyString(frontendUrl)) {
     return false;
