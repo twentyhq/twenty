@@ -1,0 +1,98 @@
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+
+import { type Histogram } from '@opentelemetry/api';
+import { constants, PerformanceObserver } from 'perf_hooks';
+import { getHeapStatistics } from 'v8';
+
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+
+const MILLISECONDS_PER_SECOND = 1_000;
+// Scavenges land under a millisecond; mark-compact over a multi-GB heap runs into seconds.
+const GC_DURATION_BUCKETS_SECONDS = [
+  0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5,
+];
+
+const GC_KIND_BY_CONSTANT = new Map<number, string>([
+  [constants.NODE_PERFORMANCE_GC_MINOR, 'minor'],
+  [constants.NODE_PERFORMANCE_GC_MAJOR, 'major'],
+  [constants.NODE_PERFORMANCE_GC_INCREMENTAL, 'incremental'],
+  [constants.NODE_PERFORMANCE_GC_WEAKCB, 'weakcb'],
+]);
+
+// Attributes event loop stalls to garbage collection: a `major` pause is stop-the-world, so its
+// duration lands directly on request latency. Paired with the heap gauges, this is what tells us
+// whether a cache-size reduction actually bought p99.
+@Injectable()
+export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
+  private readonly pauseHistogram: Histogram;
+  private observer?: PerformanceObserver;
+
+  constructor(private readonly metricsService: MetricsService) {
+    this.pauseHistogram = this.metricsService
+      .getMeter()
+      .createHistogram('twenty_nodejs_gc_duration_seconds', {
+        description: 'V8 garbage collection pause duration, by collection kind',
+        unit: 's',
+        advice: { explicitBucketBoundaries: GC_DURATION_BUCKETS_SECONDS },
+      });
+  }
+
+  onModuleInit(): void {
+    this.observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        const kind =
+          GC_KIND_BY_CONSTANT.get(
+            (entry.detail as { kind?: number } | undefined)?.kind ?? -1,
+          ) ?? 'unknown';
+
+        this.pauseHistogram.record(entry.duration / MILLISECONDS_PER_SECOND, {
+          kind,
+        });
+      }
+    });
+    this.observer.observe({ entryTypes: ['gc'] });
+
+    this.registerHeapGauges();
+  }
+
+  onModuleDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  private registerHeapGauges(): void {
+    const gauges: {
+      metricName: string;
+      description: string;
+      read: (statistics: ReturnType<typeof getHeapStatistics>) => number;
+    }[] = [
+      {
+        metricName: 'twenty_nodejs_heap_used_bytes',
+        description: 'V8 heap occupied by live objects',
+        read: (statistics) => statistics.used_heap_size,
+      },
+      {
+        metricName: 'twenty_nodejs_heap_total_bytes',
+        description: 'V8 heap committed by the process',
+        read: (statistics) => statistics.total_heap_size,
+      },
+      {
+        metricName: 'twenty_nodejs_heap_size_limit_bytes',
+        description: 'V8 heap ceiling (--max-old-space-size)',
+        read: (statistics) => statistics.heap_size_limit,
+      },
+      {
+        metricName: 'twenty_nodejs_heap_external_bytes',
+        description: 'Memory held outside the V8 heap by native objects',
+        read: (statistics) => statistics.external_memory,
+      },
+    ];
+
+    for (const gauge of gauges) {
+      this.metricsService.createObservableGauge({
+        metricName: gauge.metricName,
+        options: { description: gauge.description, unit: 'By' },
+        callback: async () => gauge.read(getHeapStatistics()),
+      });
+    }
+  }
+}
