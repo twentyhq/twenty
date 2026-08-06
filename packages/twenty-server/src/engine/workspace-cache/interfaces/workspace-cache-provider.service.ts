@@ -13,8 +13,6 @@ export abstract class WorkspaceCacheProvider<
 > {
   abstract computeForCache(workspaceId: string): Promise<T>;
 
-  // Override to store a smaller shape in Redis than the one held in memory. Entries are
-  // hash-versioned and disposable, so a codec change needs no migration or legacy read support.
   encodeForCacheStorage(data: T): unknown {
     return data;
   }

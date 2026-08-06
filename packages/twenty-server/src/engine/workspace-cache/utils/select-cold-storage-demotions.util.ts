@@ -6,19 +6,12 @@ export type ColdStorageDemotion = {
 };
 
 export type ColdStorageConfig = {
-  // Cache-key prefixes eligible for cold storage. Only providers whose payloads are already
-  // JSON round-tripped for Redis qualify; the ORM entity metadata graph holds class instances,
-  // functions and cycles, so it can never be one of these.
   eligiblePrefixes: ReadonlySet<string>;
   hotEntriesPerPrefix: number;
 };
 
 const prefixOf = (localKey: string): string =>
   localKey.slice(0, localKey.lastIndexOf(':'));
-
-// Picks the versions to serialize, keeping the `hotEntriesPerPrefix` most recently read entries
-// of each eligible provider as live objects. Pure so the ranking is unit-testable; the caller
-// owns the encoding, which needs the provider.
 export const selectColdStorageDemotions = <T>(
   localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T>>,
   config: ColdStorageConfig,
