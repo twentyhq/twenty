@@ -18,7 +18,7 @@ type EncryptedRow = { id: string; encryptedValue: string };
 
 type NormalizationTally = { normalized: number; undecryptable: number };
 
-@RegisteredInstanceCommand('2.28.0', 1785942889001, { type: 'slow' })
+@RegisteredInstanceCommand('2.29.0', 1785942889001, { type: 'slow' })
 export class NormalizeEmptyApplicationVariableValuesSlowInstanceCommand
   implements SlowInstanceCommand
 {
