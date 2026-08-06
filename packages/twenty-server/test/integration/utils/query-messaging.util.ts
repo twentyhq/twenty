@@ -188,9 +188,9 @@ export const queryCalendarChannel = async ({
   return channel;
 };
 
-export const queryConnectedAccount = async (
-  connectedAccountId: string,
-): Promise<ConnectedAccountDto> => {
+export const queryConnectedAccounts = async (): Promise<
+  ConnectedAccountDto[]
+> => {
   const response = await makeMetadataAPIRequest({
     query: gql`
       query ConnectedAccountsForTest {
@@ -205,9 +205,15 @@ export const queryConnectedAccount = async (
     `,
   });
 
-  const account = (
-    getDataOrThrow(response).myConnectedAccounts as ConnectedAccountDto[]
-  ).find((candidate) => candidate.id === connectedAccountId);
+  return getDataOrThrow(response).myConnectedAccounts as ConnectedAccountDto[];
+};
+
+export const queryConnectedAccount = async (
+  connectedAccountId: string,
+): Promise<ConnectedAccountDto> => {
+  const account = (await queryConnectedAccounts()).find(
+    (candidate) => candidate.id === connectedAccountId,
+  );
 
   if (!account) {
     throw new Error(`Connected account ${connectedAccountId} not found`);
@@ -279,6 +285,25 @@ export const startChannelSync = async (
   });
 
   getDataOrThrow(response);
+};
+
+export const disconnectConnectedAccount = async (
+  connectedAccountId: string,
+): Promise<void> => {
+  const response = await makeMetadataAPIRequest({
+    query: gql`
+      mutation DisconnectConnectedAccountForTest($id: UUID!) {
+        disconnectConnectedAccount(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: connectedAccountId },
+  });
+
+  getDataOrThrow(response);
+
+  await waitForAllJobsToFinish();
 };
 
 export const deleteConnectedAccount = async (
