@@ -523,6 +523,92 @@ describe('JwtAuthStrategy', () => {
         expect(e.code).toBe(AuthExceptionCode.FORBIDDEN_EXCEPTION);
       }
     });
+
+    it('should reject an application token whose workspace member is soft-deleted', async () => {
+      const validApplicationId = randomUUID();
+      const validWorkspaceId = randomUUID();
+      const validUserId = randomUUID();
+      const validUserWorkspaceId = randomUUID();
+      const validWorkspaceMemberId = randomUUID();
+
+      const payload = {
+        sub: validApplicationId,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        applicationId: validApplicationId,
+        workspaceId: validWorkspaceId,
+        userId: validUserId,
+        userWorkspaceId: validUserWorkspaceId,
+      };
+
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = validWorkspaceId;
+      mockWorkspace.activationStatus = WorkspaceActivationStatus.ACTIVE;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      applicationStore[validWorkspaceId] = {
+        [validApplicationId]: { id: validApplicationId },
+      };
+      userStore[validUserId] = { id: validUserId };
+
+      workspaceCacheService.getOrRecompute.mockImplementation(
+        async (workspaceId: string, cacheKeys: string[]) => {
+          const result: Record<string, any> = {};
+
+          if (cacheKeys.includes('flatWorkspaceMemberMaps')) {
+            result.flatWorkspaceMemberMaps = {
+              byId: {
+                [validWorkspaceMemberId]: {
+                  id: validWorkspaceMemberId,
+                  userId: validUserId,
+                  deletedAt: new Date(),
+                },
+              },
+              idByUserId: { [validUserId]: validWorkspaceMemberId },
+            };
+          }
+
+          if (cacheKeys.includes('flatApplicationMaps')) {
+            result.flatApplicationMaps = {
+              byId: applicationStore[workspaceId] ?? {},
+            };
+          }
+
+          return result;
+        },
+      );
+
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
+
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              workspaceId: validWorkspaceId,
+              user: { id: validUserId },
+              workspace: { id: validWorkspaceId },
+            };
+          }
+
+          return null;
+        },
+      );
+
+      strategy = createStrategy();
+
+      try {
+        await strategy.validate(payload as JwtPayload);
+        throw new Error('Expected validate to reject');
+      } catch (e) {
+        expect(e.code).toBe(AuthExceptionCode.FORBIDDEN_EXCEPTION);
+      }
+    });
   });
 
   describe('Impersonation validation', () => {
