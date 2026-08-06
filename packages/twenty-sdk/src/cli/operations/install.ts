@@ -2,6 +2,7 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getUserFriendlySyncErrorMessage } from '@/cli/utilities/error/get-user-friendly-sync-error-message';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -39,7 +40,7 @@ const innerAppInstall = async (
 
     const message = errorEvents
       ? errorEvents.map((event) => event.message).join('\n')
-      : `Install failed with error: ${result.message ?? 'Unknown error'}`;
+      : `Install failed with error: ${getUserFriendlySyncErrorMessage(result.error) ?? result.message ?? 'Unknown error'}`;
 
     return {
       success: false,

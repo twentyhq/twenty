@@ -24,6 +24,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { getUserFriendlySyncErrorMessage } from '@/cli/utilities/error/get-user-friendly-sync-error-message';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
@@ -99,7 +100,7 @@ const buildSyncError = (
 
   const message = errorEvents
     ? errorEvents.map((event) => event.message).join('\n')
-    : `Sync failed with error: ${result.message ?? 'Unknown error'}`;
+    : `Sync failed with error: ${getUserFriendlySyncErrorMessage(result.error) ?? result.message ?? 'Unknown error'}`;
 
   return {
     code: APP_ERROR_CODES.SYNC_FAILED,

@@ -14,6 +14,7 @@ import {
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { getUserFriendlySyncErrorMessage } from '@/cli/utilities/error/get-user-friendly-sync-error-message';
 import { type Manifest } from 'twenty-shared/application';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 
@@ -187,7 +188,7 @@ export class SyncApplicationOrchestratorStep {
       });
     } else {
       events.push({
-        message: `Sync failed with error: ${result.message ?? 'Sync failed'}`,
+        message: `Sync failed with error: ${getUserFriendlySyncErrorMessage(result.error) ?? result.message ?? 'Sync failed'}`,
         status: 'error',
       });
     }
