@@ -1,0 +1,35 @@
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListResponsiveFieldCountEffect.tsx
+  s_78d9b82a19ccf1::t_d915cdf49ad4f1 1-69
+packages/twenty-front/src/modules/object-record/record-list/constants/RecordListRowFieldMaxWidth.ts
+  s_78d9b82a19ccf1::t_6f88e48799485b 1
+packages/twenty-front/src/modules/object-record/record-list/components/RecordList.tsx
+  s_78d9b82a19ccf1::t_30880ebd3af3bf 32-33,35-36
+  s_78d9b82a19ccf1::t_34f4dd1334317e 5,11
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRow.tsx
+  s_78d9b82a19ccf1::t_aeedd1bfd6a4cb 44
+  s_78d9b82a19ccf1::t_dd7220b053fe82 92-95
+  s_78d9b82a19ccf1::t_8c0699409743df 121
+  s_78d9b82a19ccf1::t_cea818ac84d02f 9,12
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRowField.tsx
+  s_78d9b82a19ccf1::t_ea15d54f936b91 18
+  s_78d9b82a19ccf1::t_3ff67533c5ee18 55
+  s_78d9b82a19ccf1::t_b6e54488d5b321 7
+packages/twenty-front/src/modules/object-record/record-list/states/recordListDisplayedFieldCountComponentState.ts
+  s_78d9b82a19ccf1::t_30c2161973709e 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "1011170c80a5fe4b6ca5f6d10ad48d4ea57a8e78",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
