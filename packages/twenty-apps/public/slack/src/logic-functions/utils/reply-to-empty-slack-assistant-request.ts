@@ -34,7 +34,7 @@ export const replyToEmptySlackAssistantRequest = async (
     slackChannelId: emptyRequest.slackChannelId,
     messageText: SLACK_ASSISTANT_EMPTY_REQUEST_TEXT,
     parentMessageTimestamp: emptyRequest.parentMessageTimestamp,
-    messageFormat: 'plain',
+    messageFormat: 'markdown',
   });
 
   if (!replyResult.success) {
