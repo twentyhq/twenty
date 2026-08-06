@@ -25,6 +25,7 @@ export type ClientConfig = {
   canManageFeatureFlags: boolean;
   captcha: Captcha;
   defaultSubdomain?: string;
+  subdomainMinLength: number;
   frontDomain: string;
   publicFunctionDomain?: string | null;
   isAttachmentPreviewEnabled: boolean;
