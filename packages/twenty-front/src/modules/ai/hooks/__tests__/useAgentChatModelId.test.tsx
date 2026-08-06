@@ -87,4 +87,13 @@ describe('useAgentChatModelId', () => {
 
     expect(result.current.modelIdForRequest).toBe('openai/gpt-4.1');
   });
+
+  it('should keep an auto-select sentinel selection instead of discarding it', () => {
+    const result = renderHooks({
+      pathname: '/objects/companies',
+      userSelectedModel: 'default-fast-model',
+    });
+
+    expect(result.current.modelIdForRequest).toBe('default-fast-model');
+  });
 });

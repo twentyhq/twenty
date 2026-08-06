@@ -37,7 +37,7 @@ msgid " per {intervalLabel}"
 msgstr " 每 {intervalLabel}"
 
 #. js-lingui-id: h47p9L
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "—"
 msgstr "—"
 
@@ -149,11 +149,11 @@ msgstr "(已選取: {selectedIconKey})"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "[empty string]"
 msgstr "[空字串]"
 
@@ -808,8 +808,7 @@ msgid "1d"
 msgstr "1 天"
 
 #. js-lingui-id: Wf1ux6
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "2 Columns"
 msgstr ""
 
@@ -849,8 +848,7 @@ msgid "2FA Method Reset"
 msgstr "2FA 方法重置"
 
 #. js-lingui-id: SiBsG2
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "3 Columns"
 msgstr ""
 
@@ -1050,7 +1048,7 @@ msgid "ACS Url copied to clipboard"
 msgstr "ACS 網址已複製到剪貼板"
 
 #. js-lingui-id: r6Y4GL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "action"
 msgstr ""
 
@@ -1376,6 +1374,7 @@ msgstr "添加新項目"
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow.tsx
 #: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
 msgstr "添加新項目"
@@ -1782,7 +1781,7 @@ msgid "AI & Automations"
 msgstr "AI 與自動化"
 
 #. js-lingui-id: oI7HO0
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "AI agent run"
 msgstr "AI 代理執行"
 
@@ -1906,11 +1905,9 @@ msgid "Alert"
 msgstr "警示"
 
 #. js-lingui-id: ukH0aS
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Alignment"
 msgstr ""
@@ -2154,7 +2151,7 @@ msgid "Already in navbar"
 msgstr "已在導覽列中"
 
 #. js-lingui-id: u/DP73
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr ""
 
@@ -2797,8 +2794,8 @@ msgstr "附加檔案"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Attachments"
 msgstr "附件"
 
@@ -2995,16 +2992,14 @@ msgid "Back to settings"
 msgstr "返回設定"
 
 #. js-lingui-id: i8ZVQU
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "background"
 msgstr ""
 
 #. js-lingui-id: GtJbUa
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
 msgid "Background"
@@ -3044,7 +3039,7 @@ msgstr "基本"
 #. js-lingui-id: /xLNEx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Bcc"
 msgstr "密件副本"
 
@@ -3145,7 +3140,7 @@ msgid "Billing portal session error. Please retry or contact Twenty team"
 msgstr "帳務入口會話錯誤。請重試或聯絡 Twenty 團隊"
 
 #. js-lingui-id: 8kIU+G
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "block"
 msgstr ""
 
@@ -3160,7 +3155,7 @@ msgid "Blocklist"
 msgstr "阻止列表"
 
 #. js-lingui-id: 7s3WlU
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Blocks"
 msgstr ""
 
@@ -3171,8 +3166,8 @@ msgstr "藍色"
 
 #. js-lingui-id: bGQplw
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Body"
 msgstr "內文"
 
@@ -3180,6 +3175,11 @@ msgstr "內文"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Body Input"
 msgstr "主體輸入"
+
+#. js-lingui-id: SkYx9p
+#: src/pages/onboarding/BookCall.tsx
+msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
+msgstr ""
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -3192,17 +3192,13 @@ msgid "Boolean"
 msgstr "布爾值"
 
 #. js-lingui-id: dCIGNG
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Border"
 msgstr ""
 
 #. js-lingui-id: o/S4BG
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Border color"
 msgstr ""
@@ -3289,7 +3285,7 @@ msgid "bullet"
 msgstr ""
 
 #. js-lingui-id: ijLc3m
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Bullet list"
 msgstr ""
 
@@ -3304,14 +3300,13 @@ msgid "Bundled with {applicationName}"
 msgstr "隨 {applicationName} 一起打包"
 
 #. js-lingui-id: yjeERL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "button"
 msgstr ""
 
 #. js-lingui-id: hxBFty
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Button"
 msgstr ""
 
@@ -3346,12 +3341,12 @@ msgid "Cache write"
 msgstr "快取寫入"
 
 #. js-lingui-id: LbCV38
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Cached creation"
 msgstr "快取建立"
 
 #. js-lingui-id: FKV3nW
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Cached read"
 msgstr "快取讀取"
 
@@ -3453,7 +3448,7 @@ msgid "Call recorder"
 msgstr "通話錄音程式"
 
 #. js-lingui-id: +Kx1Id
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Call-to-action button"
 msgstr ""
 
@@ -3647,7 +3642,7 @@ msgstr "分類"
 #. js-lingui-id: RpYfjZ
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Cc"
 msgstr "副本"
 
@@ -3950,7 +3945,7 @@ msgid "Click a user to see their daily breakdown."
 msgstr "按一下用戶以查看其每日明細。"
 
 #. js-lingui-id: uWe4QF
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Click here"
 msgstr ""
 
@@ -4055,7 +4050,7 @@ msgid "Close side panel"
 msgstr "關閉側邊面板"
 
 #. js-lingui-id: 1Lxtdt
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "code"
 msgstr ""
 
@@ -4101,11 +4096,11 @@ msgstr "編寫您的功能代碼"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Collapse"
 msgstr "收起"
 
@@ -4125,8 +4120,8 @@ msgid "Collapse to side panel"
 msgstr ""
 
 #. js-lingui-id: jZlrte
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 msgid "Color"
 msgstr "顏色"
 
@@ -4141,7 +4136,7 @@ msgid "Colors"
 msgstr "顏色"
 
 #. js-lingui-id: WtgDbl
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Column"
 msgstr ""
 
@@ -4151,13 +4146,13 @@ msgid "column data is not compatible with Multi-Select. Format required is '[\"o
 msgstr "欄位資料與多選不相容。所需格式為'[\\"
 
 #. js-lingui-id: /xTbaM
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "columns"
 msgstr ""
 
 #. js-lingui-id: jEu4bB
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Columns"
 msgstr ""
 
@@ -4659,7 +4654,7 @@ msgid "Contact your admin to continue using Workflow or AI features."
 msgstr "請聯絡您的管理員以繼續使用工作流程或 AI 功能。"
 
 #. js-lingui-id: vrs6yX
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "container"
 msgstr ""
 
@@ -4883,17 +4878,15 @@ msgid "Core Objects"
 msgstr "核心對象"
 
 #. js-lingui-id: Fnq2K7
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Corner radius"
 msgstr ""
 
 #. js-lingui-id: I99Miw
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Cost"
 msgstr "成本"
 
@@ -5417,7 +5410,7 @@ msgid "CSV import & export"
 msgstr "CSV 匯入與匯出"
 
 #. js-lingui-id: uSVq1a
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "cta"
 msgstr ""
 
@@ -5487,7 +5480,7 @@ msgid "Cursor"
 msgstr "Cursor"
 
 #. js-lingui-id: bfu5HZ
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "custom"
 msgstr ""
 
@@ -6591,14 +6584,13 @@ msgid "Distribution"
 msgstr "發佈"
 
 #. js-lingui-id: XqIcDF
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "divider"
 msgstr ""
 
 #. js-lingui-id: R8AthW
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Divider"
 msgstr ""
 
@@ -6740,12 +6732,12 @@ msgid "Draft"
 msgstr "草稿"
 
 #. js-lingui-id: DbAw4C
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "電子郵件草稿"
 
 #. js-lingui-id: fdUFex
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Drafted"
 msgstr "已建立草稿"
 
@@ -6800,10 +6792,10 @@ msgid "Duplicates"
 msgstr "副本"
 
 #. js-lingui-id: lkz6PL
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Duration"
 msgstr "持續時間"
 
@@ -7225,7 +7217,7 @@ msgid "Emails should not be empty"
 msgstr "電子郵件不可為空"
 
 #. js-lingui-id: 5gxbuc
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "embed"
 msgstr ""
 
@@ -7259,11 +7251,11 @@ msgstr "空"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Empty Array"
 msgstr "空陣列"
 
@@ -7283,11 +7275,11 @@ msgstr "清空收件箱"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Empty Object"
 msgstr "空對象"
 
@@ -7662,13 +7654,13 @@ msgstr "實體 ID 已複製到剪貼板"
 
 #. js-lingui-id: /qwiJU
 #. placeholder {0}: entries.length
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEntries.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries.tsx
 msgid "Entries ({0}, latest iteration only)"
 msgstr "項目（{0}，僅限最新一次迭代）"
 
 #. js-lingui-id: 3aFckQ
 #. placeholder {0}: entries.length
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEntries.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries.tsx
 msgid "Entries ({0})"
 msgstr "項目（{0}）"
 
@@ -7695,10 +7687,10 @@ msgstr "擦除已軟刪除的記錄"
 #. js-lingui-id: SlfejT
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Error"
 msgstr "錯誤"
 
@@ -8040,11 +8032,11 @@ msgstr "退出導入流程"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Expand"
 msgstr "展開"
 
@@ -8175,7 +8167,7 @@ msgstr "已延長"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
 #: src/modules/settings/admin-panel/utils/getUpgradeHealthStatusBadge.ts
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Failed"
@@ -8495,14 +8487,14 @@ msgid "Failed to upgrade the application."
 msgstr "應用程式升級失敗。"
 
 #. js-lingui-id: eh+uU5
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Failed to upload \"{fileName}\""
 msgstr ""
 
 #. js-lingui-id: jU/HbX
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "上傳「{fileNameForError}」失敗"
 
@@ -8717,14 +8709,14 @@ msgstr "第五"
 
 #. js-lingui-id: sWmIx3
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "檔案 \"{fileName}\" 超過 {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "檔案「{fileName}」上傳成功"
 
@@ -8823,11 +8815,6 @@ msgstr "流程結束時有錯誤"
 msgid "Finish Setup"
 msgstr "完成設定"
 
-#. js-lingui-id: eYwdpC
-#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
-msgid "Finished thinking"
-msgstr "完成思考"
-
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
@@ -8918,9 +8905,7 @@ msgid "Follow us on X"
 msgstr "在 X 上追蹤我們"
 
 #. js-lingui-id: q3il6U
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Font size"
 msgstr ""
 
@@ -9096,7 +9081,7 @@ msgid "Function name"
 msgstr "函式名稱"
 
 #. js-lingui-id: KBnkoU
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 msgid "Function run"
 msgstr "函式執行"
 
@@ -9434,7 +9419,7 @@ msgid "heading"
 msgstr ""
 
 #. js-lingui-id: zgPjoD
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Heading"
 msgstr ""
 
@@ -9576,7 +9561,7 @@ msgid "Horizontal Bar Chart"
 msgstr ""
 
 #. js-lingui-id: 8e0cQ8
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Horizontal separator line"
 msgstr ""
 
@@ -9639,20 +9624,19 @@ msgid "How your system is doing"
 msgstr "系統運行情況"
 
 #. js-lingui-id: agP50o
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "hr"
 msgstr ""
 
 #. js-lingui-id: We4l8Y
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "html"
 msgstr ""
 
 #. js-lingui-id: FBknns
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "HTML"
 msgstr ""
 
@@ -9674,7 +9658,7 @@ msgid "HTTP Method"
 msgstr "HTTP 方法"
 
 #. js-lingui-id: PmknJS
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "HTTP request"
 msgstr "HTTP 請求"
 
@@ -9824,19 +9808,19 @@ msgid "iFrame Widget"
 msgstr ""
 
 #. js-lingui-id: hG89Ed
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Image"
 msgstr "圖片"
 
 #. js-lingui-id: TtdnUc
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr ""
 
 #. js-lingui-id: VyUuZb
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Image URL"
 msgstr ""
 
@@ -10014,11 +9998,6 @@ msgstr "未完成"
 msgid "Incomplete expired"
 msgstr "未完成且已過期"
 
-#. js-lingui-id: pxFAp/
-#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-msgid "Increase"
-msgstr "增加"
-
 #. js-lingui-id: Xltrl0
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Increase to ${priceDisplay}"
@@ -10079,8 +10058,8 @@ msgstr "資訊"
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -10122,7 +10101,7 @@ msgid "Insert a JSON input, then press \"Run Function\"."
 msgstr "插入 JSON 輸入，然後按下「執行函式」。"
 
 #. js-lingui-id: mia08l
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Insert image"
 msgstr ""
 
@@ -10936,8 +10915,8 @@ msgid "Launch manually"
 msgstr "手動啟動"
 
 #. js-lingui-id: pNPdL3
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "layout"
 msgstr ""
 
@@ -11068,9 +11047,7 @@ msgid "Let each member decide for themselves"
 msgstr ""
 
 #. js-lingui-id: vhRvfF
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Letter spacing"
 msgstr ""
 
@@ -11133,7 +11110,7 @@ msgid "Limits"
 msgstr "限制"
 
 #. js-lingui-id: DXCDta
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "line"
 msgstr ""
 
@@ -11144,14 +11121,12 @@ msgid "Line Chart"
 msgstr "折線圖"
 
 #. js-lingui-id: Wqh8xb
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Line height"
 msgstr ""
 
 #. js-lingui-id: LdyooL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "link"
 msgstr ""
 
@@ -11184,8 +11159,8 @@ msgid "Link label"
 msgstr "連結標籤"
 
 #. js-lingui-id: roAe2K
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Link URL"
 msgstr ""
 
@@ -11480,6 +11455,7 @@ msgid "Make private"
 msgstr "設為私有"
 
 #. js-lingui-id: wckWOP
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
@@ -11601,7 +11577,7 @@ msgid "Manual configuration"
 msgstr "手動設定"
 
 #. js-lingui-id: lkcAoj
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Margin"
 msgstr ""
 
@@ -12286,7 +12262,7 @@ msgid "Needs a Select field"
 msgstr ""
 
 #. js-lingui-id: wW3b68
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Network error"
 msgstr "網路錯誤"
 
@@ -12703,7 +12679,7 @@ msgid "No billing data is available for this workspace."
 msgstr "此工作區無可用的計費資料。"
 
 #. js-lingui-id: V/RzSE
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "No body"
 msgstr "沒有主體"
@@ -12925,7 +12901,7 @@ msgid "No indexes match your filters."
 msgstr "沒有索引符合您的篩選條件。"
 
 #. js-lingui-id: gIrKyO
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No input"
 msgstr ""
@@ -12962,7 +12938,7 @@ msgid "No limit"
 msgstr "無限制"
 
 #. js-lingui-id: vV85hO
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "No logs were recorded for this step."
 msgstr "此步驟未記錄任何日誌。"
 
@@ -13029,7 +13005,7 @@ msgstr "未找到選項"
 
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
 msgstr "無輸出"
 
@@ -13114,12 +13090,12 @@ msgid "No relations found"
 msgstr "未找到任何關聯"
 
 #. js-lingui-id: YLozFb
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "No request body"
 msgstr "沒有請求主體"
 
 #. js-lingui-id: 0X71SU
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "No response body"
 msgstr "沒有回應主體"
 
@@ -13195,7 +13171,7 @@ msgid "No targets available"
 msgstr "沒有可用的目標"
 
 #. js-lingui-id: t0t36i
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "No tools were called"
 msgstr "未呼叫任何工具"
 
@@ -13491,7 +13467,7 @@ msgid "numbered"
 msgstr ""
 
 #. js-lingui-id: M3G9ZD
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Numbered list"
 msgstr ""
@@ -14067,9 +14043,9 @@ msgstr "此通道寄出的郵件會透過此網域傳送。在可投遞電子郵
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Output"
 msgstr "輸出"
@@ -14137,10 +14113,8 @@ msgid "Package name or universal identifier"
 msgstr ""
 
 #. js-lingui-id: fdjq4c
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
 msgid "Padding"
@@ -14260,7 +14234,7 @@ msgid "Past due"
 msgstr "逾期未付"
 
 #. js-lingui-id: Hfiz9B
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Paste a link to a hosted image"
 msgstr ""
 
@@ -14972,9 +14946,9 @@ msgstr "評分"
 msgid "Ratio"
 msgstr "比率"
 
-#. js-lingui-id: +eZqq+
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-msgid "Raw HTML embedded in the email"
+#. js-lingui-id: wdlYqX
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+msgid "Raw HTML embedded in the document"
 msgstr ""
 
 #. js-lingui-id: kdLBDj
@@ -15043,7 +15017,7 @@ msgid "Reason"
 msgstr ""
 
 #. js-lingui-id: wUf2OL
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Reasoning"
 msgstr "推理"
 
@@ -15091,7 +15065,7 @@ msgstr ""
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr "收件人"
 
@@ -15507,6 +15481,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "移除此供應商並斷開其所有模型"
 
 #. js-lingui-id: Kl3J3D
+#: src/modules/advanced-text-editor/extensions/variable-tag/VariableChip.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Remove variable"
 msgstr "移除變數"
@@ -15582,7 +15557,7 @@ msgid "Reports"
 msgstr "報表"
 
 #. js-lingui-id: OlFf9i
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Request"
 msgstr "請求"
 
@@ -15671,8 +15646,8 @@ msgid "Resource Type"
 msgstr "資源類型"
 
 #. js-lingui-id: ZlCDf+
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Response"
 msgstr "回應"
 
@@ -15913,8 +15888,8 @@ msgid "Routing tokens"
 msgstr "路由權杖"
 
 #. js-lingui-id: Q7BPyr
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "row"
 msgstr ""
 
@@ -16092,6 +16067,7 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
@@ -16454,14 +16430,13 @@ msgid "Secret Access Key"
 msgstr "秘密存取金鑰"
 
 #. js-lingui-id: YTsmM8
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "section"
 msgstr ""
 
 #. js-lingui-id: BhZ5PL
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Section"
 msgstr ""
 
@@ -16789,7 +16764,7 @@ msgid "Send an invite email to your team"
 msgstr "向您的團隊發送邀請電子郵件"
 
 #. js-lingui-id: 65dxv8
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "發送電子郵件"
 
@@ -16848,7 +16823,7 @@ msgstr "發送中..."
 
 #. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"
 msgstr "已發送"
 
@@ -16863,7 +16838,7 @@ msgid "Sent email"
 msgstr "已發送電子郵件"
 
 #. js-lingui-id: b/sg59
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "separator"
 msgstr ""
 
@@ -17385,7 +17360,7 @@ msgstr "某些版面配置變更無法儲存"
 #. js-lingui-id: VOOhW/
 #. placeholder {0}: stepLog.truncated.droppedEntries
 #. placeholder {1}: stepLog.truncated.droppedBytes
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "為符合大小限制，部分日誌資料已被捨棄（{0} 個項目，{1} 位元組）。"
 
@@ -17468,9 +17443,9 @@ msgid "Sorts"
 msgstr "排序"
 
 #. js-lingui-id: wdxz7K
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -17686,9 +17661,9 @@ msgstr "Stripe 訂閱"
 msgid "Style"
 msgstr ""
 
-#. js-lingui-id: I1rOJ9
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-msgid "Styled container for email content"
+#. js-lingui-id: WQfv5B
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+msgid "Styled container for document content"
 msgstr ""
 
 #. js-lingui-id: WIUeUf
@@ -17725,10 +17700,10 @@ msgstr "子域名已被佔用"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "子域名不能超過 30 個字符"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "子域名不能少於 3 個字符"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
@@ -17842,13 +17817,13 @@ msgid "subtitle"
 msgstr ""
 
 #. js-lingui-id: a0w0iQ
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Subtitle"
 msgstr ""
 
 #. js-lingui-id: zzDlyQ
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 msgid "Success"
 msgstr "成功"
 
@@ -18086,6 +18061,11 @@ msgstr "表格、看板、行事曆"
 msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
 msgstr ""
 
+#. js-lingui-id: gNSS33
+#: src/pages/onboarding/BookCall.tsx
+msgid "Talk to our team"
+msgstr ""
+
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
@@ -18163,8 +18143,8 @@ msgid "text"
 msgstr "文本"
 
 #. js-lingui-id: xeiujy
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
@@ -18173,10 +18153,8 @@ msgid "Text"
 msgstr "文本"
 
 #. js-lingui-id: MapzEo
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Text color"
 msgstr ""
 
@@ -18191,7 +18169,7 @@ msgid "Text copied to clipboard"
 msgstr "文本已複製到剪貼板"
 
 #. js-lingui-id: YXRaNg
-#: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "文本編輯器"
 
@@ -18433,7 +18411,7 @@ msgid "There was an error while updating password."
 msgstr "更新密碼時出現錯誤。"
 
 #. js-lingui-id: 5Ml5Nr
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Thickness"
 msgstr ""
 
@@ -18441,11 +18419,6 @@ msgstr ""
 #: src/modules/ai/components/AiChatThinkingRow.tsx
 msgid "Thinking"
 msgstr "思考中"
-
-#. js-lingui-id: Ed99mE
-#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
-msgid "Thinking..."
-msgstr "思考中…"
 
 #. js-lingui-id: 9ItHLu
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -18793,12 +18766,12 @@ msgid "Thought"
 msgstr "想法"
 
 #. js-lingui-id: pAlfed
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "three"
 msgstr ""
 
 #. js-lingui-id: nRnNXK
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Three columns side by side"
 msgstr ""
 
@@ -18864,7 +18837,7 @@ msgid "title"
 msgstr "標題"
 
 #. js-lingui-id: MHrjPM
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Title"
@@ -18873,8 +18846,8 @@ msgstr "標題"
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "To"
 msgstr "收件者"
 
@@ -18908,7 +18881,7 @@ msgid "Token limits for context and output"
 msgstr "上下文與輸出的權杖上限"
 
 #. js-lingui-id: 7wDgAB
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Token usage"
 msgstr "詞元使用情況"
 
@@ -18918,7 +18891,7 @@ msgid "tokens"
 msgstr "權杖"
 
 #. js-lingui-id: 6RDwJM
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tokens"
 msgstr "個詞元"
 
@@ -18952,14 +18925,14 @@ msgid "Tool call: {0}"
 msgstr "工具呼叫: {0}"
 
 #. js-lingui-id: YDLN0O
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tool calls"
 msgstr "工具呼叫"
 
 #. js-lingui-id: XfXfry
 #. placeholder {0}: toolCalls.length
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tool calls ({0})"
 msgstr "工具呼叫（{0}）"
 
@@ -19241,12 +19214,12 @@ msgid "Twitter/X Search"
 msgstr "Twitter/X 搜索"
 
 #. js-lingui-id: 6HI/Yp
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "two"
 msgstr ""
 
 #. js-lingui-id: vo+eKm
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Two columns side by side"
 msgstr ""
 
@@ -19612,7 +19585,7 @@ msgid "Unsubscribers"
 msgstr ""
 
 #. js-lingui-id: uxfv+n
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Unsupported image format"
 msgstr ""
 
@@ -19903,9 +19876,9 @@ msgstr "上傳 .xlsx、.xls 或 .csv 文件"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/activities/emails/components/EmailAttachmentsField.tsx
-#: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowSendEmailAttachments.tsx
 msgid "Upload file"
 msgstr "上傳文件"
 
@@ -19946,7 +19919,7 @@ msgid "Uploaded content is too large."
 msgstr "上傳的內容過大。"
 
 #. js-lingui-id: GxkJXS
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."
 msgstr "正在上傳..."
@@ -20267,7 +20240,7 @@ msgid "Variable not found"
 msgstr "變量未找到"
 
 #. js-lingui-id: gpmbqk
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Variables"
 msgstr ""
 
@@ -20706,7 +20679,7 @@ msgid "Web Search"
 msgstr "網路搜索"
 
 #. js-lingui-id: 4ptK68
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Web searches"
 msgstr "網頁搜尋"
 
@@ -20899,8 +20872,8 @@ msgid "Widgets"
 msgstr "小工具"
 
 #. js-lingui-id: aFWU1n
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Width"
 msgstr ""

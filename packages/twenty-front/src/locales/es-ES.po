@@ -37,7 +37,7 @@ msgid " per {intervalLabel}"
 msgstr " por {intervalLabel}"
 
 #. js-lingui-id: h47p9L
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "—"
 msgstr "—"
 
@@ -149,11 +149,11 @@ msgstr "(seleccionado: {selectedIconKey})"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "[empty string]"
 msgstr "[cadeia vazia]"
 
@@ -808,8 +808,7 @@ msgid "1d"
 msgstr "1d"
 
 #. js-lingui-id: Wf1ux6
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "2 Columns"
 msgstr ""
 
@@ -849,8 +848,7 @@ msgid "2FA Method Reset"
 msgstr "Restablecer el método de 2FA"
 
 #. js-lingui-id: SiBsG2
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "3 Columns"
 msgstr ""
 
@@ -1050,7 +1048,7 @@ msgid "ACS Url copied to clipboard"
 msgstr "URL de ACS copiado al portapapeles"
 
 #. js-lingui-id: r6Y4GL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "action"
 msgstr ""
 
@@ -1376,6 +1374,7 @@ msgstr "Agregar nuevo"
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow.tsx
 #: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
 msgstr "Agregar nuevo"
@@ -1782,7 +1781,7 @@ msgid "AI & Automations"
 msgstr "IA y automatizaciones"
 
 #. js-lingui-id: oI7HO0
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "AI agent run"
 msgstr "Ejecución de agente de IA"
 
@@ -1906,11 +1905,9 @@ msgid "Alert"
 msgstr "Alerta"
 
 #. js-lingui-id: ukH0aS
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Alignment"
 msgstr ""
@@ -2154,7 +2151,7 @@ msgid "Already in navbar"
 msgstr "Ya en la barra de navegación"
 
 #. js-lingui-id: u/DP73
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr ""
 
@@ -2797,8 +2794,8 @@ msgstr "Adjuntar archivos"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Attachments"
 msgstr "Adjuntos"
 
@@ -2995,16 +2992,14 @@ msgid "Back to settings"
 msgstr "Volver a Configuración"
 
 #. js-lingui-id: i8ZVQU
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "background"
 msgstr ""
 
 #. js-lingui-id: GtJbUa
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
 msgid "Background"
@@ -3044,7 +3039,7 @@ msgstr "Básico"
 #. js-lingui-id: /xLNEx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Bcc"
 msgstr "CCO"
 
@@ -3145,7 +3140,7 @@ msgid "Billing portal session error. Please retry or contact Twenty team"
 msgstr "Error en la sesión del portal de facturación. Por favor, reintenta o contacta al equipo de Twenty"
 
 #. js-lingui-id: 8kIU+G
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "block"
 msgstr ""
 
@@ -3160,7 +3155,7 @@ msgid "Blocklist"
 msgstr "Lista de bloqueo"
 
 #. js-lingui-id: 7s3WlU
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Blocks"
 msgstr ""
 
@@ -3171,8 +3166,8 @@ msgstr "Azul"
 
 #. js-lingui-id: bGQplw
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Body"
 msgstr "Cuerpo"
 
@@ -3180,6 +3175,11 @@ msgstr "Cuerpo"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Body Input"
 msgstr "Entrada del cuerpo"
+
+#. js-lingui-id: SkYx9p
+#: src/pages/onboarding/BookCall.tsx
+msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
+msgstr ""
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -3192,17 +3192,13 @@ msgid "Boolean"
 msgstr "Booleano"
 
 #. js-lingui-id: dCIGNG
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Border"
 msgstr ""
 
 #. js-lingui-id: o/S4BG
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Border color"
 msgstr ""
@@ -3289,7 +3285,7 @@ msgid "bullet"
 msgstr "viñeta"
 
 #. js-lingui-id: ijLc3m
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Bullet list"
 msgstr ""
 
@@ -3304,14 +3300,13 @@ msgid "Bundled with {applicationName}"
 msgstr "Incluido con {applicationName}"
 
 #. js-lingui-id: yjeERL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "button"
 msgstr ""
 
 #. js-lingui-id: hxBFty
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Button"
 msgstr ""
 
@@ -3346,12 +3341,12 @@ msgid "Cache write"
 msgstr "Escritura de caché"
 
 #. js-lingui-id: LbCV38
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Cached creation"
 msgstr "Creación en caché"
 
 #. js-lingui-id: FKV3nW
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Cached read"
 msgstr "Lectura de caché"
 
@@ -3453,7 +3448,7 @@ msgid "Call recorder"
 msgstr "Grabador de llamadas"
 
 #. js-lingui-id: +Kx1Id
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Call-to-action button"
 msgstr ""
 
@@ -3647,7 +3642,7 @@ msgstr "Categoría"
 #. js-lingui-id: RpYfjZ
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Cc"
 msgstr "CC"
 
@@ -3950,7 +3945,7 @@ msgid "Click a user to see their daily breakdown."
 msgstr "Haz clic en un usuario para ver su desglose diario."
 
 #. js-lingui-id: uWe4QF
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Click here"
 msgstr ""
 
@@ -4055,7 +4050,7 @@ msgid "Close side panel"
 msgstr "Cerrar panel lateral"
 
 #. js-lingui-id: 1Lxtdt
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "code"
 msgstr ""
 
@@ -4101,11 +4096,11 @@ msgstr "Codificar su función"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Collapse"
 msgstr "Colapsar"
 
@@ -4125,8 +4120,8 @@ msgid "Collapse to side panel"
 msgstr ""
 
 #. js-lingui-id: jZlrte
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 msgid "Color"
 msgstr "Color"
 
@@ -4141,7 +4136,7 @@ msgid "Colors"
 msgstr "Colores"
 
 #. js-lingui-id: WtgDbl
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Column"
 msgstr ""
 
@@ -4151,13 +4146,13 @@ msgid "column data is not compatible with Multi-Select. Format required is '[\"o
 msgstr "los datos de la columna no son compatibles con Selección Múltiple. El formato requerido es '[\"opción1\", \"opción2\"]' o opción1,opción2."
 
 #. js-lingui-id: /xTbaM
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "columns"
 msgstr ""
 
 #. js-lingui-id: jEu4bB
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Columns"
 msgstr ""
 
@@ -4659,7 +4654,7 @@ msgid "Contact your admin to continue using Workflow or AI features."
 msgstr "Ponte en contacto con tu administrador para seguir usando las funciones de flujo de trabajo o de IA."
 
 #. js-lingui-id: vrs6yX
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "container"
 msgstr ""
 
@@ -4883,17 +4878,15 @@ msgid "Core Objects"
 msgstr "Objetos principales"
 
 #. js-lingui-id: Fnq2K7
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Corner radius"
 msgstr ""
 
 #. js-lingui-id: I99Miw
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Cost"
 msgstr "Costo"
 
@@ -5417,7 +5410,7 @@ msgid "CSV import & export"
 msgstr "Importación y exportación CSV"
 
 #. js-lingui-id: uSVq1a
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "cta"
 msgstr ""
 
@@ -5487,7 +5480,7 @@ msgid "Cursor"
 msgstr "Cursor"
 
 #. js-lingui-id: bfu5HZ
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "custom"
 msgstr ""
 
@@ -6591,14 +6584,13 @@ msgid "Distribution"
 msgstr "Distribución"
 
 #. js-lingui-id: XqIcDF
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "divider"
 msgstr ""
 
 #. js-lingui-id: R8AthW
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Divider"
 msgstr ""
 
@@ -6740,12 +6732,12 @@ msgid "Draft"
 msgstr "Borrador"
 
 #. js-lingui-id: DbAw4C
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Borrador de correo electrónico"
 
 #. js-lingui-id: fdUFex
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Drafted"
 msgstr "En borrador"
 
@@ -6800,10 +6792,10 @@ msgid "Duplicates"
 msgstr "Duplicados"
 
 #. js-lingui-id: lkz6PL
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Duration"
 msgstr "Duración"
 
@@ -7225,7 +7217,7 @@ msgid "Emails should not be empty"
 msgstr "Los correos electrónicos no deben estar vacíos"
 
 #. js-lingui-id: 5gxbuc
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "embed"
 msgstr ""
 
@@ -7259,11 +7251,11 @@ msgstr "Vacío"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Empty Array"
 msgstr "Array vacío"
 
@@ -7283,11 +7275,11 @@ msgstr "Bandeja de entrada vacía"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Empty Object"
 msgstr "Objeto vacío"
 
@@ -7662,13 +7654,13 @@ msgstr "ID de entidad copiado al portapapeles"
 
 #. js-lingui-id: /qwiJU
 #. placeholder {0}: entries.length
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEntries.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries.tsx
 msgid "Entries ({0}, latest iteration only)"
 msgstr "Entradas ({0}, solo de la última iteración)"
 
 #. js-lingui-id: 3aFckQ
 #. placeholder {0}: entries.length
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEntries.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries.tsx
 msgid "Entries ({0})"
 msgstr "Entradas ({0})"
 
@@ -7695,10 +7687,10 @@ msgstr "Borrado de registros eliminados suavemente"
 #. js-lingui-id: SlfejT
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Error"
 msgstr "Error"
 
@@ -8040,11 +8032,11 @@ msgstr "Salir del flujo de importación"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Expand"
 msgstr "Expandir"
 
@@ -8175,7 +8167,7 @@ msgstr "Ampliado"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
 #: src/modules/settings/admin-panel/utils/getUpgradeHealthStatusBadge.ts
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Failed"
@@ -8495,14 +8487,14 @@ msgid "Failed to upgrade the application."
 msgstr "No se pudo actualizar la aplicación."
 
 #. js-lingui-id: eh+uU5
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Failed to upload \"{fileName}\""
 msgstr ""
 
 #. js-lingui-id: jU/HbX
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "Error al subir \"{fileNameForError}\""
 
@@ -8717,14 +8709,14 @@ msgstr "Quinto"
 
 #. js-lingui-id: sWmIx3
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "El archivo \"{fileName}\" supera {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
 #: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
-#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "Archivo \"{fileName}\" subido correctamente"
 
@@ -8823,11 +8815,6 @@ msgstr "Finalizar flujo con errores"
 msgid "Finish Setup"
 msgstr "Finalizar la configuración"
 
-#. js-lingui-id: eYwdpC
-#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
-msgid "Finished thinking"
-msgstr "Pensamiento terminado"
-
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
@@ -8918,9 +8905,7 @@ msgid "Follow us on X"
 msgstr "Síguenos en X"
 
 #. js-lingui-id: q3il6U
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Font size"
 msgstr ""
 
@@ -9096,7 +9081,7 @@ msgid "Function name"
 msgstr "Nombre de la función"
 
 #. js-lingui-id: KBnkoU
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 msgid "Function run"
 msgstr "Ejecución de función"
 
@@ -9434,7 +9419,7 @@ msgid "heading"
 msgstr "encabezado"
 
 #. js-lingui-id: zgPjoD
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Heading"
 msgstr ""
 
@@ -9576,7 +9561,7 @@ msgid "Horizontal Bar Chart"
 msgstr ""
 
 #. js-lingui-id: 8e0cQ8
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Horizontal separator line"
 msgstr ""
 
@@ -9662,20 +9647,19 @@ msgid "How your system is doing"
 msgstr "Cómo está funcionando tu sistema"
 
 #. js-lingui-id: agP50o
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "hr"
 msgstr ""
 
 #. js-lingui-id: We4l8Y
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "html"
 msgstr ""
 
 #. js-lingui-id: FBknns
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "HTML"
 msgstr ""
 
@@ -9697,7 +9681,7 @@ msgid "HTTP Method"
 msgstr "Método HTTP"
 
 #. js-lingui-id: PmknJS
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "HTTP request"
 msgstr "Solicitud HTTP"
 
@@ -9847,19 +9831,19 @@ msgid "iFrame Widget"
 msgstr "Widget de iFrame"
 
 #. js-lingui-id: hG89Ed
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Image"
 msgstr "Imagen"
 
 #. js-lingui-id: TtdnUc
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr ""
 
 #. js-lingui-id: VyUuZb
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Image URL"
 msgstr ""
 
@@ -10037,11 +10021,6 @@ msgstr "Incompleto"
 msgid "Incomplete expired"
 msgstr "Incompleta vencida"
 
-#. js-lingui-id: pxFAp/
-#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-msgid "Increase"
-msgstr "Aumentar"
-
 #. js-lingui-id: Xltrl0
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Increase to ${priceDisplay}"
@@ -10102,8 +10081,8 @@ msgstr "Información"
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -10145,7 +10124,7 @@ msgid "Insert a JSON input, then press \"Run Function\"."
 msgstr "Inserte una entrada JSON y luego presione \"Ejecutar función\"."
 
 #. js-lingui-id: mia08l
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Insert image"
 msgstr ""
 
@@ -10959,8 +10938,8 @@ msgid "Launch manually"
 msgstr "Lanzar manualmente"
 
 #. js-lingui-id: pNPdL3
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "layout"
 msgstr ""
 
@@ -11091,9 +11070,7 @@ msgid "Let each member decide for themselves"
 msgstr ""
 
 #. js-lingui-id: vhRvfF
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Letter spacing"
 msgstr ""
 
@@ -11156,7 +11133,7 @@ msgid "Limits"
 msgstr "Límites"
 
 #. js-lingui-id: DXCDta
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "line"
 msgstr ""
 
@@ -11167,14 +11144,12 @@ msgid "Line Chart"
 msgstr "Gráfico de líneas"
 
 #. js-lingui-id: Wqh8xb
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Line height"
 msgstr ""
 
 #. js-lingui-id: LdyooL
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "link"
 msgstr ""
 
@@ -11207,8 +11182,8 @@ msgid "Link label"
 msgstr "Etiqueta del enlace"
 
 #. js-lingui-id: roAe2K
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Link URL"
 msgstr ""
 
@@ -11503,6 +11478,7 @@ msgid "Make private"
 msgstr "Hacer privado"
 
 #. js-lingui-id: wckWOP
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
@@ -11624,7 +11600,7 @@ msgid "Manual configuration"
 msgstr "Configuración manual"
 
 #. js-lingui-id: lkcAoj
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Margin"
 msgstr ""
 
@@ -12309,7 +12285,7 @@ msgid "Needs a Select field"
 msgstr ""
 
 #. js-lingui-id: wW3b68
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Network error"
 msgstr "Error de red"
 
@@ -12726,7 +12702,7 @@ msgid "No billing data is available for this workspace."
 msgstr "No hay datos de facturación disponibles para este espacio de trabajo."
 
 #. js-lingui-id: V/RzSE
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "No body"
 msgstr "Sin cuerpo"
@@ -12948,7 +12924,7 @@ msgid "No indexes match your filters."
 msgstr "Ningún índice coincide con tus filtros."
 
 #. js-lingui-id: gIrKyO
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No input"
 msgstr ""
@@ -12985,7 +12961,7 @@ msgid "No limit"
 msgstr "Sin límite"
 
 #. js-lingui-id: vV85hO
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "No logs were recorded for this step."
 msgstr "No se registraron logs para este paso."
 
@@ -13052,7 +13028,7 @@ msgstr "No se encontró opción"
 
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
 msgstr "Sin salida"
 
@@ -13137,12 +13113,12 @@ msgid "No relations found"
 msgstr "No se encontraron relaciones"
 
 #. js-lingui-id: YLozFb
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "No request body"
 msgstr "Sin cuerpo de la solicitud"
 
 #. js-lingui-id: 0X71SU
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "No response body"
 msgstr "Sin cuerpo de la respuesta"
 
@@ -13218,7 +13194,7 @@ msgid "No targets available"
 msgstr "No hay destinos disponibles"
 
 #. js-lingui-id: t0t36i
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "No tools were called"
 msgstr "No se llamaron herramientas"
 
@@ -13514,7 +13490,7 @@ msgid "numbered"
 msgstr "numerado"
 
 #. js-lingui-id: M3G9ZD
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Numbered list"
 msgstr "Lista numerada"
@@ -14090,9 +14066,9 @@ msgstr "El correo saliente de este canal se envía a través de este dominio. De
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Output"
 msgstr "Salida"
@@ -14160,10 +14136,8 @@ msgid "Package name or universal identifier"
 msgstr ""
 
 #. js-lingui-id: fdjq4c
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailPageThemeFields.ts
 msgid "Padding"
@@ -14283,7 +14257,7 @@ msgid "Past due"
 msgstr "Vencida"
 
 #. js-lingui-id: Hfiz9B
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Paste a link to a hosted image"
 msgstr ""
 
@@ -14995,9 +14969,9 @@ msgstr "Valoración"
 msgid "Ratio"
 msgstr "Proporción"
 
-#. js-lingui-id: +eZqq+
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-msgid "Raw HTML embedded in the email"
+#. js-lingui-id: wdlYqX
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+msgid "Raw HTML embedded in the document"
 msgstr ""
 
 #. js-lingui-id: kdLBDj
@@ -15066,7 +15040,7 @@ msgid "Reason"
 msgstr ""
 
 #. js-lingui-id: wUf2OL
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Reasoning"
 msgstr "Razonamiento"
 
@@ -15114,7 +15088,7 @@ msgstr ""
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr "Destinatarios"
 
@@ -15530,6 +15504,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "Elimina este proveedor y desconecta todos sus modelos"
 
 #. js-lingui-id: Kl3J3D
+#: src/modules/advanced-text-editor/extensions/variable-tag/VariableChip.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Remove variable"
 msgstr "Eliminar variable"
@@ -15605,7 +15580,7 @@ msgid "Reports"
 msgstr "Informes"
 
 #. js-lingui-id: OlFf9i
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Request"
 msgstr "Solicitud"
 
@@ -15694,8 +15669,8 @@ msgid "Resource Type"
 msgstr "Tipo de recurso"
 
 #. js-lingui-id: ZlCDf+
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Response"
 msgstr "Respuesta"
 
@@ -15936,8 +15911,8 @@ msgid "Routing tokens"
 msgstr "Tokens de enrutamiento"
 
 #. js-lingui-id: Q7BPyr
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "row"
 msgstr ""
 
@@ -16115,6 +16090,7 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
@@ -16477,14 +16453,13 @@ msgid "Secret Access Key"
 msgstr "Clave de acceso secreta"
 
 #. js-lingui-id: YTsmM8
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "section"
 msgstr ""
 
 #. js-lingui-id: BhZ5PL
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-#: src/modules/side-panel/pages/email-block-settings/utils/getEmailBlockLabel.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Section"
 msgstr ""
 
@@ -16812,7 +16787,7 @@ msgid "Send an invite email to your team"
 msgstr "Enviar una invitación por correo electrónico a tu equipo"
 
 #. js-lingui-id: 65dxv8
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Enviar correo electrónico"
 
@@ -16871,7 +16846,7 @@ msgstr "Enviando..."
 
 #. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"
 msgstr "Enviado"
 
@@ -16886,7 +16861,7 @@ msgid "Sent email"
 msgstr "Correo electrónico enviado"
 
 #. js-lingui-id: b/sg59
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "separator"
 msgstr ""
 
@@ -17408,7 +17383,7 @@ msgstr "No se pudieron guardar algunos cambios de diseño"
 #. js-lingui-id: VOOhW/
 #. placeholder {0}: stepLog.truncated.droppedEntries
 #. placeholder {1}: stepLog.truncated.droppedBytes
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "Se descartaron algunos datos de logs para ajustarse al límite de tamaño ({0} entradas, {1} bytes)."
 
@@ -17491,9 +17466,9 @@ msgid "Sorts"
 msgstr "Criterios de ordenación"
 
 #. js-lingui-id: wdxz7K
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -17709,9 +17684,9 @@ msgstr "Suscripción de Stripe"
 msgid "Style"
 msgstr ""
 
-#. js-lingui-id: I1rOJ9
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
-msgid "Styled container for email content"
+#. js-lingui-id: WQfv5B
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+msgid "Styled container for document content"
 msgstr ""
 
 #. js-lingui-id: WIUeUf
@@ -17748,10 +17723,10 @@ msgstr "Subdominio ya está en uso"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "El subdominio no puede tener más de 30 caracteres"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "El subdominio no puede tener menos de 3 caracteres"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
@@ -17865,13 +17840,13 @@ msgid "subtitle"
 msgstr "subtítulo"
 
 #. js-lingui-id: a0w0iQ
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Subtitle"
 msgstr ""
 
 #. js-lingui-id: zzDlyQ
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 msgid "Success"
 msgstr "Éxito"
 
@@ -18109,6 +18084,11 @@ msgstr "Tabla, Kanban, Calendario"
 msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
 msgstr ""
 
+#. js-lingui-id: gNSS33
+#: src/pages/onboarding/BookCall.tsx
+msgid "Talk to our team"
+msgstr ""
+
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
@@ -18186,8 +18166,8 @@ msgid "text"
 msgstr "texto"
 
 #. js-lingui-id: xeiujy
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
@@ -18196,10 +18176,8 @@ msgid "Text"
 msgstr "Texto"
 
 #. js-lingui-id: MapzEo
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
 msgid "Text color"
 msgstr ""
 
@@ -18214,7 +18192,7 @@ msgid "Text copied to clipboard"
 msgstr "Texto copiado al portapapeles"
 
 #. js-lingui-id: YXRaNg
-#: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "Editor de texto"
 
@@ -18486,7 +18464,7 @@ msgid "There was an error while updating password."
 msgstr "Hubo un error al actualizar la contraseña."
 
 #. js-lingui-id: 5Ml5Nr
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Thickness"
 msgstr ""
 
@@ -18494,11 +18472,6 @@ msgstr ""
 #: src/modules/ai/components/AiChatThinkingRow.tsx
 msgid "Thinking"
 msgstr "Pensando"
-
-#. js-lingui-id: Ed99mE
-#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
-msgid "Thinking..."
-msgstr "Pensando..."
 
 #. js-lingui-id: 9ItHLu
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -18848,12 +18821,12 @@ msgid "Thought"
 msgstr "Pensamiento"
 
 #. js-lingui-id: pAlfed
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "three"
 msgstr ""
 
 #. js-lingui-id: nRnNXK
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Three columns side by side"
 msgstr ""
 
@@ -18919,7 +18892,7 @@ msgid "title"
 msgstr "título"
 
 #. js-lingui-id: MHrjPM
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Title"
@@ -18928,8 +18901,8 @@ msgstr "Título"
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "To"
 msgstr "Para"
 
@@ -18963,7 +18936,7 @@ msgid "Token limits for context and output"
 msgstr "Límites de tokens para el contexto y la salida"
 
 #. js-lingui-id: 7wDgAB
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Token usage"
 msgstr "Uso de tokens"
 
@@ -18973,7 +18946,7 @@ msgid "tokens"
 msgstr "tokens"
 
 #. js-lingui-id: 6RDwJM
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tokens"
 msgstr "Tokens"
 
@@ -19007,14 +18980,14 @@ msgid "Tool call: {0}"
 msgstr "Llamada a la herramienta: {0}"
 
 #. js-lingui-id: YDLN0O
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tool calls"
 msgstr "Llamadas a herramientas"
 
 #. js-lingui-id: XfXfry
 #. placeholder {0}: toolCalls.length
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tool calls ({0})"
 msgstr "Llamadas a herramientas ({0})"
 
@@ -19296,12 +19269,12 @@ msgid "Twitter/X Search"
 msgstr "Twitter/X Buscar"
 
 #. js-lingui-id: 6HI/Yp
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "two"
 msgstr ""
 
 #. js-lingui-id: vo+eKm
-#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Two columns side by side"
 msgstr ""
 
@@ -19667,7 +19640,7 @@ msgid "Unsubscribers"
 msgstr ""
 
 #. js-lingui-id: uxfv+n
-#: src/modules/advanced-text-editor/hooks/useUploadEmailImage.ts
+#: src/modules/activities/emails/hooks/useUploadEmailImage.ts
 msgid "Unsupported image format"
 msgstr ""
 
@@ -19958,9 +19931,9 @@ msgstr "Subir un archivo .xlsx, .xls o .csv"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/activities/emails/components/EmailAttachmentsField.tsx
-#: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowSendEmailAttachments.tsx
 msgid "Upload file"
 msgstr "Subir archivo"
 
@@ -20001,7 +19974,7 @@ msgid "Uploaded content is too large."
 msgstr "El contenido subido es demasiado grande."
 
 #. js-lingui-id: GxkJXS
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."
 msgstr "Subiendo..."
@@ -20322,7 +20295,7 @@ msgid "Variable not found"
 msgstr "Variable no encontrada"
 
 #. js-lingui-id: gpmbqk
-#: src/modules/advanced-text-editor/components/InsertRail.tsx
+#: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Variables"
 msgstr ""
 
@@ -20761,7 +20734,7 @@ msgid "Web Search"
 msgstr "Buscar en la Web"
 
 #. js-lingui-id: 4ptK68
-#: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Web searches"
 msgstr "Búsquedas web"
 
@@ -20954,8 +20927,8 @@ msgid "Widgets"
 msgstr "Widgets"
 
 #. js-lingui-id: aFWU1n
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
-#: src/modules/side-panel/pages/email-block-settings/constants/EmailBlockSettingsFields.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
 msgid "Width"
 msgstr ""

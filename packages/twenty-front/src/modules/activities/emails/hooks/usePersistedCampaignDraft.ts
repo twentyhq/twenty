@@ -1,13 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-
-const PERSIST_DEBOUNCE_MS = 500;
 
 type UsePersistedCampaignDraftArgs<TDraft extends object> = {
   campaignId: string;
@@ -22,27 +19,28 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
   initialDraft,
   toUpdateOneRecordInput,
 }: UsePersistedCampaignDraftArgs<TDraft>) => {
-  const [draft, setDraft] = useState<TDraft>(initialDraft);
-
   const { updateOneRecord } = useUpdateOneRecord();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const persistDebounced = useDebouncedCallback((nextDraft: TDraft) => {
-    updateOneRecord<MessageCampaign>({
-      objectNameSingular: CoreObjectNameSingular.MessageCampaign,
-      idToUpdate: campaignId,
-      updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
-    }).catch(() =>
-      enqueueErrorSnackBar({ message: t`Failed to save the campaign` }),
-    );
-  }, PERSIST_DEBOUNCE_MS);
+  const { draft, updateDraft, flush, draftResyncKey } = useRecordSeededDraft({
+    upstreamDraft: initialDraft(),
+    onPersist: (nextDraft) => {
+      updateOneRecord<MessageCampaign>({
+        objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+        idToUpdate: campaignId,
+        updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
+      }).catch(() =>
+        enqueueErrorSnackBar({ message: t`Failed to save the campaign` }),
+      );
+    },
+  });
 
-  const updateDraft = (partialDraft: Partial<TDraft>) => {
-    const nextDraft = { ...draft, ...partialDraft };
-
-    setDraft(nextDraft);
-    persistDebounced(nextDraft);
+  return {
+    draft,
+    updateDraft,
+    flush,
+    // Inputs seeded through defaultValue (TipTap editors, record picker) read
+    // the draft on mount only; key them with this to remount on adoption.
+    draftResyncKey: `${campaignId}-${draftResyncKey}`,
   };
-
-  return { draft, updateDraft, flush: persistDebounced.flush };
 };

@@ -14,7 +14,11 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -354,7 +358,7 @@ export class AgentAsyncExecutorService {
       let hasNoMoreAvailableCredits = false;
 
       const textResponse = await generateText({
-        system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}${toolCatalogSection}`,
+        system: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
         messages: messages.map(

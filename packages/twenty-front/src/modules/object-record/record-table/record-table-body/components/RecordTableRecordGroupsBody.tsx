@@ -38,10 +38,7 @@ export const RecordTableRecordGroupsBody = () => {
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
         {visibleRecordGroupIds.map((recordGroupId, index) => (
-          <RecordTableRecordGroupBodyContextProvider
-            key={recordGroupId}
-            recordGroupId={recordGroupId}
-          >
+          <RecordTableRecordGroupBodyContextProvider key={recordGroupId}>
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordTableBody data-replay-ignore-mutations="true">
                 <RecordTableRecordGroupSection />

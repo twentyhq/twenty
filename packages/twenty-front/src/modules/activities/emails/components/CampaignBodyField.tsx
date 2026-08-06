@@ -6,11 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
 import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
-import { InsertRail } from '@/advanced-text-editor/components/InsertRail';
-import { useUploadEmailImage } from '@/advanced-text-editor/hooks/useUploadEmailImage';
-import { activeEmailEditorState } from '@/advanced-text-editor/states/activeEmailEditorState';
+import { EmailEditorCanvas } from '@/activities/emails/editor/components/EmailEditorCanvas';
+import { CAMPAIGN_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/CampaignBodyEditorProfile';
+import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
+import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { AdvancedTextEditorInsertRail } from '@/advanced-text-editor/components/AdvancedTextEditorInsertRail';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledContainer = styled.div`
@@ -26,7 +28,9 @@ type CampaignBodyFieldProps = {
 };
 
 export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
-  const { body, setBody, flush } = useCampaignBodyState({ campaign });
+  const { body, setBody, flush, draftResyncKey } = useCampaignBodyState({
+    campaign,
+  });
   const setActiveEmailEditor = useSetAtomState(activeEmailEditorState);
   const { uploadEmailImage } = useUploadEmailImage();
   const { variables } = useCampaignEmailEditorVariables();
@@ -44,15 +48,17 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   return (
     <StyledContainer onBlur={() => flush()}>
       <FormAdvancedTextFieldInput
+        key={draftResyncKey}
         defaultValue={body}
         onChange={setBody}
         placeholder={t`Type something or press "/" to see commands`}
-        preset="campaignBody"
+        profile={CAMPAIGN_BODY_EDITOR_PROFILE}
+        EditorComponent={EmailEditorCanvas}
         onEditorReady={handleEditorReady}
         onImageUpload={uploadEmailImage}
       />
       {isDefined(bodyEditor) && (
-        <InsertRail
+        <AdvancedTextEditorInsertRail
           editor={bodyEditor}
           onImageUpload={uploadEmailImage}
           variables={variables}

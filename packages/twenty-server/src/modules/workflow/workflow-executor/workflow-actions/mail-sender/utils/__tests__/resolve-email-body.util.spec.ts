@@ -1,23 +1,6 @@
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
 
-jest.mock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-email-body.util',
-  () => ({
-    renderEmailBodyToHtml: jest.fn().mockResolvedValue('<p>rendered html</p>'),
-  }),
-);
-
-const { renderEmailBodyToHtml } = jest.requireMock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-email-body.util',
-);
-
-const renderedDocument = () => renderEmailBodyToHtml.mock.calls[0][0];
-
 describe('resolveEmailBody', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('should resolve only authored placeholders in structured documents', async () => {
     const body = JSON.stringify({
       type: 'doc',
@@ -35,7 +18,7 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    await resolveEmailBody(body, {
+    const resolvedBody = await resolveEmailBody(body, {
       trigger: {
         name: 'Ada',
         message: '{{trigger.secret}}',
@@ -43,7 +26,7 @@ describe('resolveEmailBody', () => {
       },
     });
 
-    expect(renderedDocument().content[0].content).toEqual([
+    expect(JSON.parse(resolvedBody).content[0].content).toEqual([
       { type: 'text', text: 'Hello Ada: ' },
       { type: 'text', text: '{{trigger.secret}}' },
     ]);
@@ -65,11 +48,11 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    await resolveEmailBody(body, {
+    const resolvedBody = await resolveEmailBody(body, {
       trigger: { message: 'first\n\nthird' },
     });
 
-    expect(renderedDocument().content[0].content).toEqual([
+    expect(JSON.parse(resolvedBody).content[0].content).toEqual([
       { type: 'text', text: 'first' },
       { type: 'hardBreak' },
       { type: 'hardBreak' },
@@ -88,11 +71,11 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    await resolveEmailBody(body, {
+    const resolvedBody = await resolveEmailBody(body, {
       trigger: { message: '<b>{{trigger.secret}}</b>', secret: 'hidden' },
     });
 
-    expect(renderedDocument().content[0].attrs.html).toBe(
+    expect(JSON.parse(resolvedBody).content[0].attrs.html).toBe(
       '<p>&lt;b&gt;{{trigger.secret}}&lt;/b&gt;</p>',
     );
   });
@@ -103,7 +86,5 @@ describe('resolveEmailBody', () => {
         trigger: { name: 'Ada' },
       }),
     ).resolves.toBe('<p>Hello Ada</p>');
-
-    expect(renderEmailBodyToHtml).not.toHaveBeenCalled();
   });
 });

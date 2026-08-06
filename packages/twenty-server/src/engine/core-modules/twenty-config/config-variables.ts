@@ -11,11 +11,14 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Max,
+  Min,
   ValidateIf,
   type ValidationError,
   validateSync,
 } from 'class-validator';
 import {
+  DEFAULT_SUBDOMAIN_MIN_LENGTH,
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
@@ -1080,6 +1083,19 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Minimum number of characters allowed for a workspace subdomain (between 1 and 30)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @Min(1)
+  @Max(30)
+  @IsOptional()
+  SUBDOMAIN_MIN_LENGTH = DEFAULT_SUBDOMAIN_MIN_LENGTH;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Page ID for Cal.com booking integration',
     isHiddenInAdminPanel: true,
@@ -1087,6 +1103,18 @@ export class ConfigVariables {
   })
   @IsOptional()
   CALENDAR_BOOKING_PAGE_ID?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset or set to 0 to disable the step. The step also requires CALENDAR_BOOKING_PAGE_ID.',
+    isHiddenInAdminPanel: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT?: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,

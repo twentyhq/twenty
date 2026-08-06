@@ -137,6 +137,7 @@ import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/comm
 import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
 import { AddWebhookSubscriptionFailureTrackingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010000000-add-webhook-subscription-failure-tracking';
 import { ReplaceWebhookSubscriptionExpiredStatusFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010100000-replace-webhook-subscription-expired-status';
+import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -276,4 +277,5 @@ export const INSTANCE_COMMANDS = [
   CreateApplicationAuthorizationCoreTableFastInstanceCommand,
   AddWebhookSubscriptionFailureTrackingFastInstanceCommand,
   ReplaceWebhookSubscriptionExpiredStatusFastInstanceCommand,
+  AddCallRecordingWidgetTypesFastInstanceCommand,
 ];
