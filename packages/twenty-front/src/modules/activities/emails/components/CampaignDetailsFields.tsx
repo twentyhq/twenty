@@ -109,6 +109,7 @@ export const CampaignDetailsFields = ({
   return (
     <StyledFieldsContainer onBlur={() => detailsState.flush()}>
       <FormTextFieldInput
+        key={`subject-${detailsState.draftResyncKey}`}
         label={t`Subject`}
         defaultValue={detailsState.subject}
         onChange={detailsState.setSubject}
@@ -124,6 +125,7 @@ export const CampaignDetailsFields = ({
         onChange={detailsState.setFromAddress}
       />
       <FormSingleRecordPicker
+        key={`list-${detailsState.draftResyncKey}`}
         label={t`To`}
         objectNameSingulars={[CoreObjectNameSingular.MessageList]}
         defaultValue={detailsState.listId}
