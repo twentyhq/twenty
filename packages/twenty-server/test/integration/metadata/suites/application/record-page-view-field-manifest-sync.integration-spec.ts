@@ -7,7 +7,11 @@ import { uninstallApplication } from 'test/integration/metadata/suites/applicati
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
-import { type FieldManifest, type Manifest } from 'twenty-shared/application';
+import {
+  getSystemViewFieldUniversalIdentifier,
+  type FieldManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -134,6 +138,20 @@ describe('Manifest sync - engine-emitted record-page view field for an app field
     expect(emittedViewField).toBeDefined();
     expect(emittedViewField?.isVisible).toBe(true);
     expect(emittedViewField?.viewFieldGroupId).not.toBeNull();
+
+    // Engine-owned but attributed to the contributing app: the identifier is
+    // keyed on the displayed field's application.
+    expect(emittedViewField?.universalIdentifier).toBe(
+      getSystemViewFieldUniversalIdentifier({
+        fieldMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+        viewUniversalIdentifier:
+          STANDARD_OBJECTS.person.views.personRecordPageFields
+            .universalIdentifier,
+        fieldMetadataUniversalIdentifier: TEST_FIELD_ID,
+      }),
+    );
+    expect(emittedViewField?.applicationId).toBe(customField?.applicationId);
+    expect(emittedViewField?.isSystemSideEffect).toBe(true);
 
     expect(viewFieldsAfterSync.length).toBe(standardViewFields.length + 1);
     for (const standardViewFieldId of standardViewFieldIds) {

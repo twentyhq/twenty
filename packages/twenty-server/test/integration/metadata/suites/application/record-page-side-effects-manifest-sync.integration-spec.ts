@@ -9,7 +9,13 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
-import { type ObjectManifest } from 'twenty-shared/application';
+import {
+  getPageLayoutTabUniversalIdentifier,
+  getRecordPageLayoutUniversalIdentifier,
+  getSystemViewFieldUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
+  type ObjectManifest,
+} from 'twenty-shared/application';
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -63,6 +69,19 @@ const buildManifest = (object: ObjectManifest) =>
     overrides: { objects: [object] },
   });
 
+const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
+  getSystemViewUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+    objectUniversalIdentifier: TEST_OBJECT_ID,
+    viewKey: ViewKey.FIELDS_WIDGET,
+  });
+
+const DERIVED_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  getRecordPageLayoutUniversalIdentifier({
+    applicationUniversalIdentifier: TEST_APP_ID,
+    objectUniversalIdentifier: TEST_OBJECT_ID,
+  });
+
 const findTicketObject = async () => {
   const { objects } = await findManyObjectMetadata({
     input: {
@@ -76,6 +95,7 @@ const findTicketObject = async () => {
       fieldsList {
         id
         name
+        applicationId
         universalIdentifier
       }
     `,
@@ -90,7 +110,8 @@ const findTicketObject = async () => {
 const findTicketRecordPageView = async (objectMetadataId: string) => {
   const { data } = await findViews({
     objectMetadataId,
-    gqlFields: 'id key type',
+    gqlFields:
+      'id key type universalIdentifier applicationId isSystemSideEffect',
     expectToFail: false,
   });
 
@@ -151,6 +172,11 @@ describe('Manifest sync - engine-provisioned record-page stack', () => {
       throw new Error('expected the engine record-page view');
     }
 
+    expect(recordPageView.universalIdentifier).toBe(
+      DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
+    );
+    expect(recordPageView.isSystemSideEffect).toBe(true);
+
     const nameField = ticket.fieldsList?.find((field) => field.name === 'name');
     const codeField = ticket.fieldsList?.find((field) => field.name === 'code');
 
@@ -169,15 +195,25 @@ describe('Manifest sync - engine-provisioned record-page stack', () => {
         (viewField) => viewField.fieldMetadataId === nameField.id,
       ),
     ).toBe(false);
-    expect(
-      recordPageViewFields.some(
-        (viewField) => viewField.fieldMetadataId === codeField.id,
-      ),
-    ).toBe(true);
+    const codeViewField = recordPageViewFields.find(
+      (viewField) => viewField.fieldMetadataId === codeField.id,
+    );
+
+    expect(codeViewField).toBeDefined();
+    expect(codeViewField?.universalIdentifier).toBe(
+      getSystemViewFieldUniversalIdentifier({
+        fieldMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+        viewUniversalIdentifier: DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
+        fieldMetadataUniversalIdentifier: CODE_FIELD_ID,
+      }),
+    );
+    expect(codeViewField?.applicationId).toBe(codeField.applicationId);
+    expect(codeViewField?.isSystemSideEffect).toBe(true);
 
     const { data: pageLayoutsData } = await findPageLayouts({
       input: { objectMetadataId: ticket.id },
-      gqlFields: 'id type objectMetadataId isSystemSideEffect',
+      gqlFields:
+        'id type objectMetadataId universalIdentifier applicationId isSystemSideEffect',
       expectToFail: false,
     });
 
@@ -186,6 +222,10 @@ describe('Manifest sync - engine-provisioned record-page stack', () => {
     );
 
     expect(recordPageLayout).toBeDefined();
+    expect(recordPageLayout?.universalIdentifier).toBe(
+      DERIVED_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+    );
+    expect(recordPageLayout?.applicationId).toBe(codeField.applicationId);
     expect(recordPageLayout?.isSystemSideEffect).toBe(true);
 
     if (!isDefined(recordPageLayout)) {
@@ -194,18 +234,30 @@ describe('Manifest sync - engine-provisioned record-page stack', () => {
 
     const { data: tabsData } = await findPageLayoutTabs({
       input: { pageLayoutId: recordPageLayout.id },
-      gqlFields: 'id title',
+      gqlFields: 'id title universalIdentifier isSystemSideEffect',
       expectToFail: false,
     });
 
-    const tabTitles = (tabsData?.getPageLayoutTabs ?? []).map(
-      (tab) => tab.title,
-    );
+    const tabs = tabsData?.getPageLayoutTabs ?? [];
+    const tabTitles = tabs.map((tab) => tab.title);
 
     expect(tabTitles).toHaveLength(5);
     expect(tabTitles).toEqual(
       expect.arrayContaining(['Home', 'Timeline', 'Tasks', 'Notes', 'Files']),
     );
+
+    // Tabs carry title-keyed derived identifiers under the engine layout.
+    for (const tab of tabs) {
+      expect(tab.universalIdentifier).toBe(
+        getPageLayoutTabUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          pageLayoutUniversalIdentifier:
+            DERIVED_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+          title: tab.title,
+        }),
+      );
+      expect(tab.isSystemSideEffect).toBe(true);
+    }
   }, 60000);
 
   it('swaps the record-page view fields when the label identifier changes', async () => {
@@ -266,5 +318,13 @@ describe('Manifest sync - engine-provisioned record-page stack', () => {
 
     expect(restoredNameViewField).toBeDefined();
     expect(restoredNameViewField?.isVisible).toBe(true);
+    expect(restoredNameViewField?.universalIdentifier).toBe(
+      getSystemViewFieldUniversalIdentifier({
+        fieldMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+        viewUniversalIdentifier: DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
+        fieldMetadataUniversalIdentifier: NAME_FIELD_ID,
+      }),
+    );
+    expect(restoredNameViewField?.isSystemSideEffect).toBe(true);
   }, 60000);
 });
