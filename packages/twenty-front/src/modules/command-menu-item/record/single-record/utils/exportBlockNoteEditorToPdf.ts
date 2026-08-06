@@ -3,6 +3,9 @@ import {
   PDFExporter,
   pdfDefaultSchemaMappings,
 } from '@blocknote/xl-pdf-exporter';
+import interLatin400Url from '@fontsource/inter/files/inter-latin-400-normal.woff2?url';
+import interLatin500Url from '@fontsource/inter/files/inter-latin-500-normal.woff2?url';
+import interLatin600Url from '@fontsource/inter/files/inter-latin-600-normal.woff2?url';
 import { Font, pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 
@@ -16,15 +19,15 @@ const registerInterFonts = (() => {
           family: 'Inter',
           fonts: [
             {
-              src: 'https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf',
+              src: interLatin400Url,
               fontWeight: 400,
             },
             {
-              src: 'https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf',
+              src: interLatin500Url,
               fontWeight: 500,
             },
             {
-              src: 'https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf',
+              src: interLatin600Url,
               fontWeight: 600,
             },
           ],
