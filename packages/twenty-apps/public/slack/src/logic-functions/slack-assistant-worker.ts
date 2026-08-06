@@ -10,7 +10,6 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { SLACK_ASSISTANT_FAILURE_REACTION_EMOJI } from 'src/logic-functions/constants/slack-assistant-failure-reaction-emoji';
 import { SLACK_ASSISTANT_PLACEHOLDER_TEXT } from 'src/logic-functions/constants/slack-assistant-placeholder-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_THINKING_REACTION_EMOJI } from 'src/logic-functions/constants/slack-assistant-thinking-reaction-emoji';
@@ -91,12 +90,6 @@ export const slackAssistantWorkerHandler = async (
     !placeholderResult.success ||
     !isNonEmptyString(placeholderResult.slackTs)
   ) {
-    await runSlackReaction({
-      operation: 'add',
-      slackChannelId,
-      messageTimestamp: slackMessageTimestamp,
-      emojiName: SLACK_ASSISTANT_FAILURE_REACTION_EMOJI,
-    });
     await clearSlackAssistantThinkingReaction({
       slackChannelId,
       slackMessageTimestamp,

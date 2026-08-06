@@ -1,1 +1,0 @@
-export const SLACK_ASSISTANT_FAILURE_REACTION_EMOJI = 'x';
