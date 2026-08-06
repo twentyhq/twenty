@@ -1,5 +1,9 @@
+// template is blocked rather than traversed: its children live in a separate
+// content fragment that querySelectorAll never reaches, so handlers inside it
+// would survive stripping. The outbound email sanitizer drops it too, so the
+// preview keeps matching what is actually sent.
 const BLOCKED_ELEMENT_SELECTOR =
-  'script, iframe, frame, object, embed, link, meta, base, style, svg, math';
+  'script, iframe, frame, object, embed, link, meta, base, style, svg, math, template';
 
 const URL_ATTRIBUTE_NAMES = ['href', 'src', 'xlink:href', 'action'];
 

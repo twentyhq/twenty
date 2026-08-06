@@ -11,6 +11,11 @@ const StyledPreview = styled.div`
   outline: 1px dashed transparent;
   outline-offset: 2px;
 
+  // Inline styles survive sanitization so the preview matches the sent email,
+  // which leaves the block free to position content over the editor chrome.
+  // Paint containment keeps that rendering inside the block's own box.
+  contain: paint;
+
   &:hover {
     outline-color: ${themeCssVariables.border.color.medium};
   }
