@@ -31,12 +31,15 @@ describe('stripSlackBotMention', () => {
   });
 
   it('should keep the punctuation tight around the replacement', () => {
-    expect(
-      stripSlackBotMention({
-        text: 'hey <@UBOT>, who owns ACME?',
-        botUserId: 'UBOT',
-      }),
-    ).toBe('hey you, who owns ACME?');
+    expect(stripAndCollapse('hey <@UBOT>, who owns ACME?')).toBe(
+      'hey you, who owns ACME?',
+    );
+  });
+
+  it('should keep word boundaries around a mention glued to text', () => {
+    expect(stripAndCollapse('please<@UBOT>review the ACME deal')).toBe(
+      'please you review the ACME deal',
+    );
   });
 
   it('should drop the punctuation left behind by a leading mention', () => {
@@ -49,12 +52,9 @@ describe('stripSlackBotMention', () => {
   });
 
   it('should collapse consecutive mentions into a single replacement', () => {
-    expect(
-      stripSlackBotMention({
-        text: 'hey <@UBOT> <@UBOT>, who owns ACME?',
-        botUserId: 'UBOT',
-      }),
-    ).toBe('hey you, who owns ACME?');
+    expect(stripAndCollapse('hey <@UBOT> <@UBOT>, who owns ACME?')).toBe(
+      'hey you, who owns ACME?',
+    );
   });
 
   it('should keep other user mentions', () => {

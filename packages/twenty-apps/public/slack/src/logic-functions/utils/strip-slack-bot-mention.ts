@@ -21,5 +21,12 @@ export const stripSlackBotMention = ({
       new RegExp(`^\\s*${mentionRunPattern}\\s*${PUNCTUATION_PATTERN}*\\s*`),
       '',
     )
-    .replace(new RegExp(mentionRunPattern, 'g'), MID_TEXT_MENTION_REPLACEMENT);
+    .replace(
+      new RegExp(`${mentionRunPattern}\\s*(${PUNCTUATION_PATTERN})`, 'g'),
+      ` ${MID_TEXT_MENTION_REPLACEMENT}$1`,
+    )
+    .replace(
+      new RegExp(mentionRunPattern, 'g'),
+      ` ${MID_TEXT_MENTION_REPLACEMENT} `,
+    );
 };
