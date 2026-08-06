@@ -518,14 +518,64 @@ describe('ObjectRecordEventPublisher', () => {
 
       await service.publish(eventBatch as WorkspaceEventBatch<never>);
 
-      expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(1);
       const publishCall = (
         mockSubscriptionService.publishToEventStream as jest.Mock
       ).mock.calls[0][0];
 
       expect(
+        publishCall.payload.objectRecordEventsWithQueryIds,
+      ).toHaveLength(1);
+      expect(
         publishCall.payload.objectRecordEventsWithQueryIds[0].queryIds,
-      ).toContain('query-1');
+      ).toEqual(['query-1']);
+    });
+
+    it('should not publish update events when the delivered state fails the RLS filter, even if the before state matched', async () => {
+      const rlsFilter: RecordGqlOperationFilter = { status: { eq: 'active' } };
+
+      (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
+        rlsFilter,
+      );
+
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(
+        ({
+          record,
+          filter,
+        }: {
+          record: { status?: string };
+          filter: RecordGqlOperationFilter;
+        }) =>
+          'status' in filter ? record.status === 'active' : true,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1', name: 'Test Company', status: 'active' },
+              after: {
+                id: 'record-1',
+                name: 'Test Company',
+                status: 'archived',
+              },
+            } as MockObjectRecordEvent['properties'],
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
     });
 
     it('should not publish update events when neither state matches the filter', async () => {
@@ -1013,7 +1063,7 @@ describe('ObjectRecordEventPublisher', () => {
       });
     });
 
-    it('should combine query filter with RLS filter', async () => {
+    it('should check the RLS filter and the query filter separately', async () => {
       const rlsFilter: RecordGqlOperationFilter = { status: { eq: 'active' } };
 
       (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
@@ -1066,12 +1116,18 @@ describe('ObjectRecordEventPublisher', () => {
             name: 'Test Company',
             status: 'active',
           }),
-          filter: expect.objectContaining({
-            and: expect.arrayContaining([
-              { name: { eq: 'Test Company' } },
-              { status: { eq: 'active' } },
-            ]),
+          filter: { status: { eq: 'active' } },
+        }),
+      );
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          record: expect.objectContaining({
+            name: 'Test Company',
+            status: 'active',
           }),
+          filter: { name: { eq: 'Test Company' } },
         }),
       );
     });

@@ -12,7 +12,6 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
-  combineFilters,
   isDefined,
   isNonEmptyArray,
   isRecordGqlOperationSignature,
@@ -547,41 +546,53 @@ export class ObjectRecordEventPublisher {
       before?: object;
     };
 
-    // For updates, both states matter: an after-state match means the record
-    // is (still or newly) in the subscribed view, a before-state match means
-    // it may have just LEFT it — subscribers must be notified either way, or
-    // a record updated out of a filtered view stays on screen forever.
-    const candidateRecords =
-      event.action === DatabaseEventAction.UPDATED
-        ? [properties?.after, properties?.before].filter(isDefined)
-        : [properties?.after ?? properties?.before].filter(isDefined);
+    const deliveredRecord = properties?.after ?? properties?.before;
 
-    if (candidateRecords.length === 0) {
+    if (!isDefined(deliveredRecord)) {
       return false;
-    }
-
-    const queryFilter = operationSignature.variables?.filter ?? {};
-
-    const filtersToApply: RecordGqlOperationFilter[] = [queryFilter];
-
-    if (subscriberRLSFilter && Object.keys(subscriberRLSFilter).length > 0) {
-      filtersToApply.push(subscriberRLSFilter);
-    }
-
-    const combinedFilter = combineFilters(filtersToApply);
-
-    if (Object.keys(combinedFilter).length === 0) {
-      return true;
     }
 
     const shouldIgnoreSoftDeleteDefaultFilter =
       event.action === DatabaseEventAction.DELETED ||
       event.action === DatabaseEventAction.RESTORED;
 
+    // Row-level permission is evaluated ONLY against the delivered snapshot:
+    // a before-state match must never authorize sending an after snapshot the
+    // subscriber has lost access to.
+    if (
+      isDefined(subscriberRLSFilter) &&
+      Object.keys(subscriberRLSFilter).length > 0 &&
+      !isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: deliveredRecord,
+        filter: subscriberRLSFilter,
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps,
+        shouldIgnoreSoftDeleteDefaultFilter,
+      })
+    ) {
+      return false;
+    }
+
+    const queryFilter = operationSignature.variables?.filter ?? {};
+
+    if (Object.keys(queryFilter).length === 0) {
+      return true;
+    }
+
+    // View membership may match on either snapshot of an update: an
+    // after-match means the record is (still or newly) in the subscribed
+    // view, a before-match means it may have just LEFT it — subscribers must
+    // be notified either way, or a record updated out of a filtered view
+    // stays on screen forever.
+    const candidateRecords =
+      event.action === DatabaseEventAction.UPDATED
+        ? [properties?.after, properties?.before].filter(isDefined)
+        : [deliveredRecord];
+
     return candidateRecords.some((record) =>
       isRecordMatchingRLSRowLevelPermissionPredicate({
         record,
-        filter: combinedFilter,
+        filter: queryFilter,
         flatObjectMetadata: objectMetadata,
         flatFieldMetadataMaps,
         shouldIgnoreSoftDeleteDefaultFilter,
