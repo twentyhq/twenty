@@ -10,8 +10,8 @@ export const SLACK_SUGGESTED_PROMPTS: { title: string; message: string }[] = [
     message: 'What are our five biggest open opportunities and who owns them?',
   },
   {
-    title: 'Catch up on changes',
-    message: 'What changed in the CRM this week?',
+    title: 'See the newest companies',
+    message: 'Which companies were added recently, and who added them?',
   },
   {
     title: 'Create a task',
