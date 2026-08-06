@@ -40,6 +40,7 @@ const relationFilterValueSchema = jsonRelationFilterValueSchema
   )
   .or(strictArrayOfUuidOrVariableSchema);
 
+// Mirrors normalizeSelectFilterValues: a value that is not JSON is a legacy scalar option.
 const selectFilterValueSchema = nonEmptyStringFilterValueSchema.refine(
   (value) => {
     if (arrayOfStringsOrVariablesSchema.safeParse(value).success) {
