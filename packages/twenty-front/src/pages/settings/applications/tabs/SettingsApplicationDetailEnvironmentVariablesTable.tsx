@@ -62,7 +62,7 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
             <div key={editedEnvVariable.key}>
               <StyledLabelRow>
                 <StyledLabel>{editedEnvVariable.key}</StyledLabel>
-                {editedEnvVariable.isDeprecated === true && (
+                {editedEnvVariable.isDeprecated && (
                   <Pill label={t`Deprecated`} />
                 )}
                 {isNonEmptyString(editedEnvVariable.description) && (

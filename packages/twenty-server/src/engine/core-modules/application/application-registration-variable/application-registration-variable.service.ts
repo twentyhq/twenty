@@ -202,7 +202,7 @@ export class ApplicationRegistrationVariableService {
           (variable) =>
             variable.applicationRegistrationId === id &&
             variable.isRequired &&
-            variable.isDeprecated !== true,
+            !variable.isDeprecated,
         )
         .every((variable) => variable.isFilled);
 
