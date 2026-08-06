@@ -11,8 +11,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const ComposeEmailCommand = () => {
-  const { connectedAccountId, loading: accountLoading } =
-    useFirstConnectedAccount();
+  const {
+    connectedAccountId,
+    connectedAccountHandle,
+    loading: accountLoading,
+  } = useFirstConnectedAccount();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const navigateSettings = useNavigateSettings();
 
@@ -35,7 +38,8 @@ export const ComposeEmailCommand = () => {
       objectNameSingular: CoreObjectNameSingular.Person,
       filter: graphqlFilter ?? undefined,
       recordGqlFields: { id: true, emails: { primaryEmail: true } },
-      limit: MAX_EMAIL_RECIPIENTS,
+      // Reserve one recipient slot for the sender's own address in To.
+      limit: MAX_EMAIL_RECIPIENTS - 1,
       skip: !isBulkPerson,
     });
 
@@ -49,12 +53,21 @@ export const ComposeEmailCommand = () => {
       recordId: singleSelectedRecordId,
     });
 
+  const bulkRecipientEmails = bulkPersonRecords
+    .map(getPrimaryEmailFromRecord)
+    .filter(isDefined);
+
+  // Bulk sends go out as Bcc so recipients don't see each other's addresses;
+  // To falls back to the sender so the message still has a visible recipient.
+  // Leave To empty when no bulk recipient resolved so Send stays disabled,
+  // instead of silently emailing only the sender.
   const defaultTo = isBulkPerson
-    ? bulkPersonRecords
-        .map(getPrimaryEmailFromRecord)
-        .filter(isDefined)
-        .join(', ')
+    ? bulkRecipientEmails.length > 0
+      ? (connectedAccountHandle ?? '')
+      : ''
     : singleDefaultTo;
+
+  const defaultBcc = isBulkPerson ? bulkRecipientEmails.join(', ') : undefined;
 
   const handleExecute = () => {
     if (!isDefined(connectedAccountId)) {
@@ -66,6 +79,7 @@ export const ComposeEmailCommand = () => {
     openComposeEmailInSidePanel({
       connectedAccountId,
       defaultTo,
+      defaultBcc,
       contextRecord:
         isDefined(objectNameSingular) && isDefined(singleSelectedRecordId)
           ? {

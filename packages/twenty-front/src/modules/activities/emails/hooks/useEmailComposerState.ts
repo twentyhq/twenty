@@ -13,6 +13,7 @@ type UseEmailComposerStateArgs = {
   connectedAccountId: string;
   draftPrefill?: EmailDraftPrefill | null;
   defaultTo?: string;
+  defaultBcc?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
   onSent?: (messageThreadId: string | null) => void;
@@ -27,13 +28,14 @@ export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
   draftPrefill,
   defaultTo = '',
+  defaultBcc = '',
   defaultSubject = '',
   defaultInReplyTo,
   onSent,
 }: UseEmailComposerStateArgs) => {
   const initialTo = draftPrefill?.to ?? defaultTo;
   const initialCc = draftPrefill?.cc ?? '';
-  const initialBcc = draftPrefill?.bcc ?? '';
+  const initialBcc = draftPrefill?.bcc ?? defaultBcc;
   const initialSubject = draftPrefill?.subject ?? defaultSubject;
   const initialBody = draftPrefill?.body ?? '';
 
