@@ -121,5 +121,6 @@ Lorsque quelque chose se passe mal, le diff de métadonnées et les erreurs nomm
 
 * **Erreur de construction du manifeste** — le CLI échoue avant la synchronisation (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`) ; corrigez le code source de votre application.
 * **Erreur de synchronisation / migration** — la construction réussit mais l'application du diff échoue, en nommant l'entité et son `universalIdentifier` ; corrigez les métadonnées en conflit.
+* **Erreur de taille des dépendances** — la synchronisation ou l’installation échoue parce que les `dependencies` de production de l’application sont trop volumineuses pour être installées en tant que couche d’exécution (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`) ; déplacez vers `devDependencies` les packages que vos fonctions logiques n’importent pas au moment de l’exécution (bibliothèques d’interface utilisateur, outils de développement).
 * **Erreur d’exécution du code de l’application** — la synchronisation réussit, mais vos fonctions logiques ou composants se comportent mal à l’exécution ; consultez les [journaux de fonctions](/l/fr/developers/extend/apps/operations/cli).
 * **État local de l’instance** — aucun des cas ci-dessus et l’espace de travail semble toujours incorrect ; descendez l’échelle de récupération.

@@ -172,6 +172,10 @@ Din motive de securitate, anteturile de răspuns sunt limitate la o listă de an
 Codul de stare trebuie să fie un cod de stare HTTP valid (între 100 și 599). Numele anteturilor de răspuns sunt comparate fără a ține cont de majuscule și minuscule.
 </Note>
 
+#### Răspunsuri de eroare ale platformei
+
+Pe lângă propriile răspunsuri ale handlerului tău, platforma răspunde direct la apelurile către rute în anumite situații: `404` când ruta sau funcția nu există, `403` când aplicația este oprită, `429` când este atinsă limita ratei de execuție și `422` când `dependencies` de producție ale aplicației sunt prea mari pentru a fi instalate — vezi [limite privind dimensiunea dependențelor](/l/ro/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Declanșator de rută de server
 
 `httpRouteTriggerSettings` expune o funcție sub `/s/` și rezolvă spațiul de lucru din gazda cererii — ceea ce funcționează atunci când fiecare spațiu de lucru are propriul domeniu. Furnizorii terți, însă, livrează evenimentele fiecărui tenant către **un** singur URL. Pentru acest caz, folosiți `serverRouteTriggerSettings`.

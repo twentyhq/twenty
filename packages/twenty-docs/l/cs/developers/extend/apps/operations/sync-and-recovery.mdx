@@ -121,5 +121,6 @@ Když se něco pokazí, diff metadat a pojmenované chyby vám umožní lokalizo
 
 * **Chyba sestavení manifestu** — CLI selže ještě před synchronizací (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); opravte zdrojový kód své aplikace.
 * **Chyba synchronizace / migrace** — sestavení proběhne úspěšně, ale aplikování diffu selže a uvede entitu a `universalIdentifier`; opravte konfliktní metadata.
+* **Chyba velikosti závislostí** — synchronizace nebo instalace selže, protože produkční `dependencies` aplikace jsou příliš velké na to, aby je bylo možné nainstalovat jako runtime vrstvu (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); přesuňte balíčky, které vaše logické funkce za běhu neimportují (UI knihovny, vývojářské nástroje), do `devDependencies`.
 * **Chyba za běhu aplikačního kódu** — synchronizace proběhne úspěšně, ale vaše logické funkce nebo komponenty se za běhu chovají nesprávně; zkontrolujte [protokoly funkcí](/l/cs/developers/extend/apps/operations/cli).
 * **Lokální stav instance** — neplatí nic z výše uvedeného a pracovní prostor stále vypadá chybně; pokračujte dolů po žebříčku obnovy.
