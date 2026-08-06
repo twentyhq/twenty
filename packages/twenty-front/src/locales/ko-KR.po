@@ -17723,10 +17723,10 @@ msgstr "이미 사용 중인 하위 도메인"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "하위 도메인은 30자를 초과할 수 없습니다"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "하위 도메인은 3자보다 짧을 수 없습니다"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts

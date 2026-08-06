@@ -17700,10 +17700,10 @@ msgstr "子域名已被佔用"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "子域名不能超過 30 個字符"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: a17S75
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "子域名不能少於 3 個字符"
+msgid "Subdomain cannot be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
