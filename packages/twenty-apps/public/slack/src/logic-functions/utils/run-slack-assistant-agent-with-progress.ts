@@ -4,21 +4,14 @@ import {
   type RunAgentResult,
 } from 'twenty-sdk/logic-function';
 
-import { startSlackAssistantProgressUpdates } from 'src/logic-functions/utils/start-slack-assistant-progress-updates';
-
 export const runSlackAssistantAgentWithProgress = async ({
   agentUniversalIdentifier,
   prompt,
-  slackChannelId,
-  placeholderTimestamp,
+  startProgressUpdates,
 }: RunAgentInput & {
-  slackChannelId: string;
-  placeholderTimestamp: string;
+  startProgressUpdates: () => () => Promise<void>;
 }): Promise<RunAgentResult> => {
-  const stopProgressUpdates = startSlackAssistantProgressUpdates({
-    slackChannelId,
-    placeholderTimestamp,
-  });
+  const stopProgressUpdates = startProgressUpdates();
 
   try {
     return await runAgent({ agentUniversalIdentifier, prompt });

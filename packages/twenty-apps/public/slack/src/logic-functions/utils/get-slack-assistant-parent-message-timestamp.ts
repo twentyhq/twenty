@@ -1,17 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+// Under agent_view every conversation is a thread, DMs included: replies
+// always target the incoming message's thread, or start one on the message
 export const getSlackAssistantParentMessageTimestamp = ({
   slackThreadTimestamp,
   slackMessageTimestamp,
-  isDirectMessage,
 }: {
   slackThreadTimestamp: string | undefined;
   slackMessageTimestamp: string;
-  isDirectMessage: boolean;
-}): string | undefined => {
-  if (isNonEmptyString(slackThreadTimestamp)) {
-    return slackThreadTimestamp;
-  }
-
-  return isDirectMessage ? undefined : slackMessageTimestamp;
-};
+}): string =>
+  isNonEmptyString(slackThreadTimestamp)
+    ? slackThreadTimestamp
+    : slackMessageTimestamp;

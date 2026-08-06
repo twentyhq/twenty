@@ -54,14 +54,12 @@ export const fetchSlackConversationContext = async ({
   client,
   channelId,
   threadTimestamp,
-  isDirectMessage,
   excludeMessageTimestamps = [],
   excludeMessageTexts = [],
 }: {
   client: WebClient;
   channelId: string;
-  threadTimestamp: string | undefined;
-  isDirectMessage: boolean;
+  threadTimestamp: string;
   excludeMessageTimestamps?: string[];
   excludeMessageTexts?: string[];
 }): Promise<string | undefined> => {
@@ -71,34 +69,17 @@ export const fetchSlackConversationContext = async ({
   const excludedTexts = new Set(excludeMessageTexts.filter(isNonEmptyString));
 
   try {
-    if (isNonEmptyString(threadTimestamp)) {
-      const replies = await client.conversations.replies({
-        channel: channelId,
-        ts: threadTimestamp,
-        limit: THREAD_REPLIES_FETCH_LIMIT,
-      });
+    const replies = await client.conversations.replies({
+      channel: channelId,
+      ts: threadTimestamp,
+      limit: THREAD_REPLIES_FETCH_LIMIT,
+    });
 
-      return formatContextMessages({
-        messages: replies.messages ?? [],
-        excludeMessageTimestamps: excludedTimestamps,
-        excludeMessageTexts: excludedTexts,
-      });
-    }
-
-    if (isDirectMessage) {
-      const history = await client.conversations.history({
-        channel: channelId,
-        limit: CONTEXT_MESSAGE_LIMIT,
-      });
-
-      return formatContextMessages({
-        messages: [...(history.messages ?? [])].reverse(),
-        excludeMessageTimestamps: excludedTimestamps,
-        excludeMessageTexts: excludedTexts,
-      });
-    }
-
-    return undefined;
+    return formatContextMessages({
+      messages: replies.messages ?? [],
+      excludeMessageTimestamps: excludedTimestamps,
+      excludeMessageTexts: excludedTexts,
+    });
   } catch {
     return undefined;
   }

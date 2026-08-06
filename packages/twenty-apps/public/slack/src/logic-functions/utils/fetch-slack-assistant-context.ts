@@ -11,13 +11,11 @@ type SlackAssistantContext = {
 export const fetchSlackAssistantContext = async ({
   slackChannelId,
   parentMessageTimestamp,
-  isDirectMessage,
   slackUserId,
   excludeMessageTimestamps,
 }: {
   slackChannelId: string;
-  parentMessageTimestamp: string | undefined;
-  isDirectMessage: boolean;
+  parentMessageTimestamp: string;
   slackUserId: string | undefined;
   excludeMessageTimestamps: string[];
 }): Promise<SlackAssistantContext> => {
@@ -34,7 +32,6 @@ export const fetchSlackAssistantContext = async ({
       client,
       channelId: slackChannelId,
       threadTimestamp: parentMessageTimestamp,
-      isDirectMessage,
       excludeMessageTimestamps,
       excludeMessageTexts: SLACK_ASSISTANT_TRANSIENT_TEXTS,
     }),
