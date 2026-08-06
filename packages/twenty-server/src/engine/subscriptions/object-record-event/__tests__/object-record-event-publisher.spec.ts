@@ -525,9 +525,9 @@ describe('ObjectRecordEventPublisher', () => {
         mockSubscriptionService.publishToEventStream as jest.Mock
       ).mock.calls[0][0];
 
-      expect(
-        publishCall.payload.objectRecordEventsWithQueryIds,
-      ).toHaveLength(1);
+      expect(publishCall.payload.objectRecordEventsWithQueryIds).toHaveLength(
+        1,
+      );
       expect(
         publishCall.payload.objectRecordEventsWithQueryIds[0].queryIds,
       ).toEqual(['query-1']);
@@ -549,8 +549,7 @@ describe('ObjectRecordEventPublisher', () => {
         }: {
           record: { status?: string };
           filter: RecordGqlOperationFilter;
-        }) =>
-          'status' in filter ? record.status === 'active' : true,
+        }) => ('status' in filter ? record.status === 'active' : true),
       );
 
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
@@ -560,7 +559,11 @@ describe('ObjectRecordEventPublisher', () => {
         events: [
           createMockEvent({
             properties: {
-              before: { id: 'record-1', name: 'Test Company', status: 'active' },
+              before: {
+                id: 'record-1',
+                name: 'Test Company',
+                status: 'active',
+              },
               after: {
                 id: 'record-1',
                 name: 'Test Company',
