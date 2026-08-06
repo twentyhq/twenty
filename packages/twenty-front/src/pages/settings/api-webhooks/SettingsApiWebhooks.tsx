@@ -17,10 +17,10 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
+  IconApi,
   IconBrandGraphql,
   IconPlus,
-  IconPlug,
-  IconSparkle2,
+  IconSparkles,
   IconWebhook,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -65,12 +65,12 @@ export const SettingsApiWebhooks = () => {
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP,
       title: t`MCP`,
-      Icon: IconSparkle2,
+      Icon: IconSparkles,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
       title: t`API`,
-      Icon: IconPlug,
+      Icon: IconApi,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
@@ -117,7 +117,7 @@ export const SettingsApiWebhooks = () => {
                     {
                       id: 'rest',
                       title: t`REST`,
-                      Icon: IconPlug,
+                      Icon: IconApi,
                       vimeoId: '928786722',
                     },
                     {

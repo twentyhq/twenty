@@ -22,7 +22,7 @@ export const computeStandardCalendarChannelEventAssociationViews = (
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconTable',
       },
     }),
     calendarChannelEventAssociationRecordPageFields:
@@ -35,7 +35,7 @@ export const computeStandardCalendarChannelEventAssociationViews = (
           type: ViewType.FIELDS_WIDGET,
           key: null,
           position: 0,
-          icon: 'IconList',
+          icon: 'IconListDetails',
         },
       }),
   };

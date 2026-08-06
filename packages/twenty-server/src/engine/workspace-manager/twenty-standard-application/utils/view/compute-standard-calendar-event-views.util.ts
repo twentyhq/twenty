@@ -19,7 +19,7 @@ export const computeStandardCalendarEventViews = (
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconTable',
         calendarFieldName: 'startsAt',
       },
     }),
@@ -32,7 +32,7 @@ export const computeStandardCalendarEventViews = (
         type: ViewType.FIELDS_WIDGET,
         key: null,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconListDetails',
       },
     }),
   };

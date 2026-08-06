@@ -208,7 +208,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
       id: 'company-tab-files',
       isActive: true,
       title: 'Files',
-      icon: 'IconPaperclip',
+      icon: 'IconFiles',
       position: 500,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID,

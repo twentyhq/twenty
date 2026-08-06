@@ -223,7 +223,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       fieldName: 'workspaceMember',
       label: i18nLabel(msg`WorkspaceMember`),
       description: i18nLabel(msg`WorkspaceMember`),
-      icon: 'IconCircleUser',
+      icon: 'IconUsers',
       isNullable: false,
       isUIEditable: false,
       targetObjectName: 'workspaceMember',

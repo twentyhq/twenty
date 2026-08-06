@@ -338,7 +338,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       fieldName: 'workspaceMember',
       label: i18nLabel(msg`Workspace Member`),
       description: i18nLabel(msg`Workspace member`),
-      icon: 'IconCircleUser',
+      icon: 'IconUsers',
       isNullable: true,
       isUIEditable: false,
       targetObjectName: 'workspaceMember',

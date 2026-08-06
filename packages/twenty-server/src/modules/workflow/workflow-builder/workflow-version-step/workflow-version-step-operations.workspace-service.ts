@@ -567,7 +567,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const newAgent = await this.agentService.createOneAgent(
           {
             label: 'Workflow Agent ' + baseStep.id.substring(0, 4),
-            icon: 'IconRobot',
+            icon: 'IconLego',
             description: '',
             prompt:
               'You are a helpful AI assistant. Complete the task based on the workflow context.',

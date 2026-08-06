@@ -24,7 +24,7 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViews =
             type: ViewType.TABLE,
             key: ViewKey.INDEX,
             position: 0,
-            icon: 'IconList',
+            icon: 'IconTable',
           },
         }),
       messageChannelMessageAssociationMessageFolderRecordPageFields:
@@ -38,7 +38,7 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViews =
             type: ViewType.FIELDS_WIDGET,
             key: null,
             position: 0,
-            icon: 'IconList',
+            icon: 'IconListDetails',
           },
         }),
     };

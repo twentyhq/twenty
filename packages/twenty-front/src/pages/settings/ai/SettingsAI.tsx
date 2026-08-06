@@ -8,11 +8,11 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
 import {
+  IconBook,
   IconChartBar,
   IconCpu,
   IconLayoutDashboard,
   IconPlus,
-  IconSparkles,
   IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -48,7 +48,7 @@ export const SettingsAI = () => {
     {
       id: SETTINGS_AI_TABS.TABS_IDS.SKILLS,
       title: t`Skills`,
-      Icon: IconSparkles,
+      Icon: IconBook,
     },
     {
       id: SETTINGS_AI_TABS.TABS_IDS.TOOLS,
@@ -121,7 +121,7 @@ export const SettingsAI = () => {
               {
                 id: 'skills',
                 title: t`Skills`,
-                Icon: IconSparkles,
+                Icon: IconBook,
                 vimeoId: '1185511734',
               },
               {

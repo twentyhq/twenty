@@ -209,7 +209,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       id: 'note-tab-files',
       isActive: true,
       title: 'Files',
-      icon: 'IconPaperclip',
+      icon: 'IconFiles',
       position: 300,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,

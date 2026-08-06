@@ -7,7 +7,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
-import { viewTypeIconMapping } from '@/views/types/ViewType';
+import { viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -90,8 +90,7 @@ export const ViewPickerContentEffect = () => {
       !viewPickerIsPersisting &&
       !viewPickerIsDirty
     ) {
-      const defaultIcon =
-        viewTypeIconMapping(viewPickerType).displayName ?? 'IconTable';
+      const defaultIcon = viewTypeIconKeyMapping(viewPickerType);
 
       if (viewPickerMode === 'create-empty') {
         setViewPickerSelectedIcon(defaultIcon);

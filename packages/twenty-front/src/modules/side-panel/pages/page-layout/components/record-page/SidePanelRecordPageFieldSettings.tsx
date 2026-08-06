@@ -31,7 +31,6 @@ import {
   IconCalendar,
   IconLayoutKanban,
   IconLayoutSidebarRight,
-  IconList,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
@@ -250,7 +249,7 @@ export const SidePanelRecordPageFieldSettings = () => {
                 <CommandMenuItem
                   id="fields"
                   label={t`Fields`}
-                  Icon={IconList}
+                  Icon={IconListDetails}
                   hasSubMenu
                   onClick={handleNavigateToFields}
                   description={t`${visibleFieldsCount} visible fields`}

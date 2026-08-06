@@ -66,3 +66,4 @@ export { SystemPermissionFlag } from './SystemPermissionFlag';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
 export { TWENTY_ICONS_BASE_URL } from './TwentyIconsBaseUrl';
 export { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from './ViewGroupVisibleOptionsMax';
+export { VIEW_TYPE_DEFAULT_ICONS } from './ViewTypeDefaultIcons';

@@ -5,7 +5,7 @@ import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/S
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui/icon';
+import { IconCircleDot, IconUpload, IconVersions } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { type Application } from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
@@ -75,7 +75,7 @@ export const SettingsApplicationVersionContainer = ({
     ...(isUpgradableApp
       ? [
           {
-            Icon: IconStatusChange,
+            Icon: IconVersions,
             label: t`Latest version`,
             value: (
               <SettingsAdminVersionDisplay

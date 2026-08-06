@@ -206,7 +206,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
       id: 'task-tab-files',
       isActive: true,
       title: 'Files',
-      icon: 'IconPaperclip',
+      icon: 'IconFiles',
       position: 300,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID,

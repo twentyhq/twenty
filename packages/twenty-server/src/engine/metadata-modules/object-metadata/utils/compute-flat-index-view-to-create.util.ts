@@ -24,7 +24,7 @@ export const computeFlatIndexViewToCreate = ({
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
     name: `All {objectLabelPlural}`,
     key: ViewKey.INDEX,
-    icon: 'IconList',
+    icon: 'IconTable',
     type: ViewType.TABLE,
     createdAt,
     updatedAt: createdAt,

@@ -18,6 +18,32 @@
       ],
       "options": { "command": "tsx {projectRoot}/scripts/generateBarrels.ts" }
     },
+    "generateIconDictionary": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/scripts/generateIconDictionary.ts",
+        "{projectRoot}/src/icon/constants/TwentyIconDictionary.ts",
+        "{projectRoot}/src/icon/internal/generateTwentyIconDictionaryMarkdown.ts"
+      ],
+      "outputs": ["{projectRoot}/src/icon/icon-dictionary.md"],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateIconDictionary.ts"
+      }
+    },
+    "checkIconDictionary": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/scripts/generateIconDictionary.ts",
+        "{projectRoot}/src/icon/constants/TwentyIconDictionary.ts",
+        "{projectRoot}/src/icon/internal/generateTwentyIconDictionaryMarkdown.ts",
+        "{projectRoot}/src/icon/icon-dictionary.md"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateIconDictionary.ts --check"
+      }
+    },
     "build:individual": {
       "executor": "nx:run-commands",
       "cache": true,

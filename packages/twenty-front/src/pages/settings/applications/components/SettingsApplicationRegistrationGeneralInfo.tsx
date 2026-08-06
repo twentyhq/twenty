@@ -1,8 +1,8 @@
 import {
   IconBox,
   IconDownload,
-  IconGitBranch,
   IconTag,
+  IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -176,7 +176,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
 
     if (isNonEmptyString(registration.latestAvailableVersion)) {
       items.push({
-        Icon: IconGitBranch,
+        Icon: IconVersions,
         label: t`Latest version`,
         value: registration.latestAvailableVersion,
       });

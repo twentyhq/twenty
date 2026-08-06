@@ -880,7 +880,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsObjects: {
     universalIdentifier: '9302bfeb-f6cd-4858-ab5b-5f70f4d358c4',
     label: 'Go to Data Model Settings',
-    icon: 'IconHierarchy2',
+    icon: 'IconHierarchy',
     isPinned: false,
     position: 53,
     shortLabel: 'Data Model',
@@ -940,7 +940,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsBilling: {
     universalIdentifier: 'f46a0fb9-14e9-4d48-801d-c33bdd543f74',
     label: 'Go to Billing Settings',
-    icon: 'IconCurrencyDollar',
+    icon: 'IconCreditCard',
     isPinned: false,
     position: 57,
     shortLabel: 'Billing',

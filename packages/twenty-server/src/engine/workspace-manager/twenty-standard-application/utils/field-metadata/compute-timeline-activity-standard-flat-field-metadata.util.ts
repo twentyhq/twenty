@@ -292,7 +292,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       fieldName: 'workspaceMember',
       label: i18nLabel(msg`Workspace Member`),
       description: i18nLabel(msg`Event workspace member`),
-      icon: 'IconCircleUser',
+      icon: 'IconUsers',
       isNullable: true,
       isUIEditable: false,
       targetObjectName: 'workspaceMember',

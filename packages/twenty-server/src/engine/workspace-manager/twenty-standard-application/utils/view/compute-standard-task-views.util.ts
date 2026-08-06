@@ -20,7 +20,7 @@ export const computeStandardTaskViews = (
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconTable',
       },
     }),
     byStatus: createStandardViewFlatMetadata({
@@ -58,7 +58,7 @@ export const computeStandardTaskViews = (
         type: ViewType.FIELDS_WIDGET,
         key: null,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconListDetails',
       },
     }),
   };
