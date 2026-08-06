@@ -334,6 +334,11 @@ export class WorkspaceResolver {
     return this.enterprisePlanService.hasValidEnterpriseValidityToken();
   }
 
+  @ResolveField(() => Boolean)
+  async canCreateAdditionalWorkspace(): Promise<boolean> {
+    return this.enterprisePlanService.canCreateAdditionalWorkspace();
+  }
+
   @ResolveField(() => WorkspaceUrlsDTO)
   workspaceUrls(@Parent() workspace: WorkspaceEntity) {
     return this.workspaceDomainsService.getWorkspaceUrls(workspace);

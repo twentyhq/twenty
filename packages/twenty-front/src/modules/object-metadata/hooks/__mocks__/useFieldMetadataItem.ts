@@ -160,6 +160,7 @@ export const responseData = {
         isPublicInviteLinkEnabled: false,
         hasValidSignedEnterpriseKey: false,
         hasValidEnterpriseValidityToken: false,
+        canCreateAdditionalWorkspace: true,
         isGoogleAuthEnabled: true,
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,

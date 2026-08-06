@@ -4,8 +4,10 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { supportChatState } from '@/client-config/states/supportChatState';
+import { billingState } from '@/client-config/states/billingState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useCanAccessAdminPanel } from '@/settings/admin-panel/hooks/useCanAccessAdminPanel';
+import { useSupportAccess } from '@/support/hooks/useSupportAccess';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -25,12 +27,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import {
   IconDotsVertical,
+  IconLock,
   IconLogout,
   IconMessage,
   IconPlus,
@@ -45,6 +47,7 @@ import {
   UndecoratedLink,
 } from 'twenty-ui/navigation';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -68,10 +71,16 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
   const { colorScheme, colorSchemeList } = useColorScheme();
-  const supportChat = useAtomStateValue(supportChatState);
-  const isSupportChatConfigured =
-    supportChat?.supportDriver === 'FRONT' &&
-    isNonEmptyString(supportChat.supportFrontChatId);
+  const billing = useAtomStateValue(billingState);
+  const { isSupportAvailable, openSupport } = useSupportAccess();
+  const canAccessAdminPanel = useCanAccessAdminPanel();
+  const navigateSettings = useNavigateSettings();
+
+  // The workspace limit only applies to self-hosted instances without an
+  // Enterprise plan.
+  const isWorkspaceCreationLocked =
+    billing?.isBillingEnabled !== true &&
+    currentWorkspace?.canCreateAdditionalWorkspace === false;
 
   const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
@@ -80,7 +89,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { openSettingsMenu } = useOpenSettingsMenu();
 
   const handleSupport = () => {
-    window.FrontChat?.('show');
+    openSupport();
+    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+  };
+
+  const openEnterpriseSettings = () => {
+    navigateSettings(SettingsPath.AdminPanelEnterprise);
     closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   };
 
@@ -128,8 +142,16 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   {isMultiWorkspaceEnabled && (
                     <MenuItem
                       LeftIcon={IconPlus}
+                      RightIcon={isWorkspaceCreationLocked ? IconLock : null}
+                      disabled={
+                        isWorkspaceCreationLocked && !canAccessAdminPanel
+                      }
                       text={t`Create Workspace`}
-                      onClick={createWorkspace}
+                      onClick={
+                        isWorkspaceCreationLocked
+                          ? openEnterpriseSettings
+                          : createWorkspace
+                      }
                     />
                   )}
                   <MenuItem
@@ -211,7 +233,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         >
           <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
         </UndecoratedLink>
-        {isSupportChatConfigured && (
+        {isSupportAvailable && (
           <MenuItem
             LeftIcon={IconMessage}
             text={t`Support`}

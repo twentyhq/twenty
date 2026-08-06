@@ -7,6 +7,7 @@ import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/main
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -16,6 +17,7 @@ describe('ClientConfigService', () => {
   let service: ClientConfigService;
   let twentyConfigService: TwentyConfigService;
   let domainServerConfigService: DomainServerConfigService;
+  let enterprisePlanService: EnterprisePlanService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -51,10 +53,19 @@ describe('ClientConfigService', () => {
             getMaintenanceMode: jest.fn().mockResolvedValue(null),
           },
         },
+        {
+          provide: EnterprisePlanService,
+          useValue: {
+            isValid: jest.fn().mockReturnValue(false),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<ClientConfigService>(ClientConfigService);
+    enterprisePlanService = module.get<EnterprisePlanService>(
+      EnterprisePlanService,
+    );
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainServerConfigService = module.get<DomainServerConfigService>(
       DomainServerConfigService,
@@ -283,6 +294,42 @@ describe('ClientConfigService', () => {
 
       expect(result.support.supportDriver).toBe(SupportDriver.NONE);
       expect(result.aiModels).toEqual([]);
+    });
+
+    it('should point self-hosted enterprise instances to the self-hosting front chat', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'SUPPORT_SELF_HOSTING_FRONT_CHAT_ID')
+            return 'self-hosting-chat-123';
+
+          return undefined;
+        });
+      jest.spyOn(enterprisePlanService, 'isValid').mockReturnValue(true);
+
+      const result = await service.getClientConfig();
+
+      expect(result.support.supportDriver).toBe(SupportDriver.FRONT);
+      expect(result.support.supportFrontChatId).toBe('self-hosting-chat-123');
+    });
+
+    it('should not enable support chat on self-hosted instances without an enterprise plan', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'SUPPORT_SELF_HOSTING_FRONT_CHAT_ID')
+            return 'self-hosting-chat-123';
+
+          return undefined;
+        });
+      jest.spyOn(enterprisePlanService, 'isValid').mockReturnValue(false);
+
+      const result = await service.getClientConfig();
+
+      expect(result.support.supportDriver).toBe(SupportDriver.NONE);
+      expect(result.support.supportFrontChatId).toBeUndefined();
     });
 
     it('should handle billing enabled with feature flags', async () => {

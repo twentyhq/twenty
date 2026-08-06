@@ -648,6 +648,7 @@ export interface Workspace {
     billingEntitlements: BillingEntitlement[]
     hasValidSignedEnterpriseKey: Scalars['Boolean']
     hasValidEnterpriseValidityToken: Scalars['Boolean']
+    canCreateAdditionalWorkspace: Scalars['Boolean']
     workspaceUrls: WorkspaceUrls
     workspaceCustomApplicationId: Scalars['String']
     __typename: 'Workspace'
@@ -3858,6 +3859,7 @@ export interface WorkspaceGenqlSelection{
     billingEntitlements?: BillingEntitlementGenqlSelection
     hasValidSignedEnterpriseKey?: boolean | number
     hasValidEnterpriseValidityToken?: boolean | number
+    canCreateAdditionalWorkspace?: boolean | number
     workspaceUrls?: WorkspaceUrlsGenqlSelection
     workspaceCustomApplicationId?: boolean | number
     __typename?: boolean | number

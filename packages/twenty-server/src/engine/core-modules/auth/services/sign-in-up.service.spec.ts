@@ -111,6 +111,7 @@ const createSignInUpServiceForTests = () => {
     } as any,
     {
       isValid: jest.fn().mockReturnValue(false),
+      canCreateAdditionalWorkspace: jest.fn().mockResolvedValue(true),
     } as any,
     {
       createContext: jest.fn().mockReturnValue({

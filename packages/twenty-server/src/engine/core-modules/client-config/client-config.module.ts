@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 
 import { ClientConfigController } from './client-config.controller';
 import { ClientConfigResolver } from './client-config.resolver';
@@ -9,7 +10,7 @@ import { ClientConfigResolver } from './client-config.resolver';
 import { ClientConfigService } from './services/client-config.service';
 
 @Module({
-  imports: [DomainServerConfigModule, AdminPanelModule],
+  imports: [DomainServerConfigModule, AdminPanelModule, EnterpriseModule],
   controllers: [ClientConfigController],
   providers: [ClientConfigResolver, ClientConfigService],
 })

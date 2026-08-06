@@ -68,7 +68,11 @@ export const useInstantiateSupportChat = () => {
               currentWorkspaceMember.name.firstName +
               ' ' +
               currentWorkspaceMember.name.lastName,
-            userHash: currentUser?.supportUserHash,
+            // Self-hosted instances have no HMAC key, so they reach an
+            // unverified Front inbox and must not send an empty hash.
+            ...(isNonEmptyString(currentUser.supportUserHash)
+              ? { userHash: currentUser.supportUserHash }
+              : {}),
           });
           setIsFrontChatLoaded(true);
         },

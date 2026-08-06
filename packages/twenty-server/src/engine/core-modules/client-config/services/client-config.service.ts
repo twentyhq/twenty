@@ -12,9 +12,11 @@ import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/main
 import {
   type ClientAiModelConfig,
   type ClientConfig,
+  type Support,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -34,6 +36,7 @@ export class ClientConfigService {
     private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
     private maintenanceModeService: MaintenanceModeService,
+    private enterprisePlanService: EnterprisePlanService,
   ) {}
 
   private isCloudflareIntegrationEnabled(): boolean {
@@ -43,9 +46,44 @@ export class ClientConfigService {
     );
   }
 
+  private getSupportConfig(isBillingEnabled: boolean): Support {
+    const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
+    const supportFrontChatId = this.twentyConfigService.get(
+      'SUPPORT_FRONT_CHAT_ID',
+    );
+
+    if (
+      supportDriver === SupportDriver.FRONT &&
+      isNonEmptyString(supportFrontChatId)
+    ) {
+      return { supportDriver, supportFrontChatId };
+    }
+
+    // Self-hosted Enterprise instances reach Twenty support through a dedicated
+    // Front inbox, without having to configure a Front workspace of their own.
+    const selfHostingFrontChatId = this.twentyConfigService.get(
+      'SUPPORT_SELF_HOSTING_FRONT_CHAT_ID',
+    );
+
+    if (
+      !isBillingEnabled &&
+      this.enterprisePlanService.isValid() &&
+      isNonEmptyString(selfHostingFrontChatId)
+    ) {
+      return {
+        supportDriver: SupportDriver.FRONT,
+        supportFrontChatId: selfHostingFrontChatId,
+      };
+    }
+
+    return {
+      supportDriver: supportDriver ?? SupportDriver.NONE,
+      supportFrontChatId,
+    };
+  }
+
   async getClientConfig(): Promise<ClientConfig> {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
-    const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
     const calendarBookingPageId = this.twentyConfigService.get(
       'CALENDAR_BOOKING_PAGE_ID',
     );
@@ -210,12 +248,7 @@ export class ClientConfigService {
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
         null,
-      support: {
-        supportDriver: supportDriver ? supportDriver : SupportDriver.NONE,
-        supportFrontChatId: this.twentyConfigService.get(
-          'SUPPORT_FRONT_CHAT_ID',
-        ),
-      },
+      support: this.getSupportConfig(isBillingEnabled),
       sentry: {
         environment: this.twentyConfigService.get('SENTRY_ENVIRONMENT'),
         release: this.twentyConfigService.get('APP_VERSION'),

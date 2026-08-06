@@ -639,7 +639,7 @@ export const SettingsEnterprise = ({
           <Section>
             <H2Title
               title={t`Get Enterprise`}
-              description={t`Unlock enterprise features like SSO, row-level security, and audit logs.`}
+              description={t`Unlock enterprise features like access to support, SSO, row-level security, the ability to create more than 5 workspaces, and audit logs.`}
             />
             <Button
               Icon={IconKey}

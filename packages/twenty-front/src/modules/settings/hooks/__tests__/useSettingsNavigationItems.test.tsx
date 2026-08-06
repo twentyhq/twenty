@@ -179,6 +179,61 @@ describe('useSettingsNavigationItems', () => {
     expect(billingItem?.isHidden).toBe(true);
   });
 
+  it('should show support on self-hosted instances to admins without a support chat', () => {
+    jotaiStore.set(currentUserState.atom, {
+      ...mockCurrentUser,
+      canAccessFullAdminPanel: true,
+    });
+
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.WORKSPACE]: true,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: true,
+      [PermissionFlagType.DATA_MODEL]: true,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
+      [PermissionFlagType.ROLES]: true,
+      [PermissionFlagType.SECURITY]: true,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
+    }));
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+
+    const otherSection = result.current.find(
+      (section) => section.label === 'Other',
+    );
+    const supportItem = otherSection?.items.find(
+      (item) => item.label === 'Support',
+    );
+
+    expect(supportItem?.isHidden).toBe(false);
+  });
+
+  it('should hide support when no support chat is configured and the user is not an admin', () => {
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.WORKSPACE]: true,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: true,
+      [PermissionFlagType.DATA_MODEL]: true,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
+      [PermissionFlagType.ROLES]: true,
+      [PermissionFlagType.SECURITY]: true,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
+    }));
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+
+    const otherSection = result.current.find(
+      (section) => section.label === 'Other',
+    );
+    const supportItem = otherSection?.items.find(
+      (item) => item.label === 'Support',
+    );
+
+    expect(supportItem?.isHidden).toBe(true);
+  });
+
   it('should show user section items regardless of permissions', () => {
     (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: false,

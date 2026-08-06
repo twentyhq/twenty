@@ -19,6 +19,7 @@ import {
   ENTERPRISE_JWT_DEV_PUBLIC_KEY,
   ENTERPRISE_JWT_PUBLIC_KEY,
 } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
+import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-workspaces-without-enterprise-key.constants';
 import {
   EnterpriseException,
   EnterpriseExceptionCode,
@@ -168,6 +169,16 @@ export class EnterprisePlanService implements OnModuleInit {
 
   isValid(): boolean {
     return this.hasValidEnterpriseValidityToken();
+  }
+
+  async canCreateAdditionalWorkspace(): Promise<boolean> {
+    if (this.isValid()) {
+      return true;
+    }
+
+    const workspaceCount = await this.workspaceRepository.count();
+
+    return workspaceCount < MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY;
   }
 
   isValidEnterpriseKeyFormat(key: string): boolean {

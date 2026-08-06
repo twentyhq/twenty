@@ -52,6 +52,7 @@ import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decora
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
+import { SELF_HOSTING_SUPPORT_FRONT_CHAT_ID } from 'src/engine/core-modules/twenty-config/constants/self-hosting-support-front-chat-id.constant';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
@@ -1214,6 +1215,17 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
   SUPPORT_FRONT_CHAT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
+    isSensitive: true,
+    description:
+      'Chat ID of the Front inbox self-hosted Enterprise instances use to reach Twenty support',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  SUPPORT_SELF_HOSTING_FRONT_CHAT_ID: string =
+    SELF_HOSTING_SUPPORT_FRONT_CHAT_ID;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,

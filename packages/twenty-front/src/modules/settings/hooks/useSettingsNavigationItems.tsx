@@ -4,8 +4,8 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { billingState } from '@/client-config/states/billingState';
-import { supportChatState } from '@/client-config/states/supportChatState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useSupportAccess } from '@/support/hooks/useSupportAccess';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import {
   type NavigationDrawerItemIndentationLevel,
@@ -14,7 +14,6 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   IconApps,
   IconAt,
@@ -60,7 +59,7 @@ export type SettingsNavigationItem = {
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useAtomStateValue(billingState);
   const { signOut } = useAuth();
-  const supportChat = useAtomStateValue(supportChatState);
+  const { isSupportAvailable, openSupport } = useSupportAccess();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
@@ -68,9 +67,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
-  const isSupportChatConfigured =
-    supportChat?.supportDriver === 'FRONT' &&
-    isNonEmptyString(supportChat.supportFrontChatId);
 
   const permissionMap = usePermissionFlagMap();
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
@@ -200,9 +196,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         },
         {
           label: t`Support`,
-          onClick: () => window.FrontChat?.('show'),
+          onClick: openSupport,
           Icon: IconMessage,
-          isHidden: !isSupportChatConfigured,
+          isHidden: !isSupportAvailable,
         },
         {
           label: t`Documentation`,
