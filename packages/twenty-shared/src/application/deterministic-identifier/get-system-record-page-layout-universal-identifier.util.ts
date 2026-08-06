@@ -11,5 +11,6 @@ export const getSystemRecordPageLayoutUniversalIdentifier = ({
   computeDeterministicUuid({
     entityNamespace: 'pageLayout',
     value: `${objectUniversalIdentifier}:${PageLayoutType.RECORD_PAGE}`,
-    applicationUniversalIdentifier: objectMetadataApplicationUniversalIdentifier,
+    applicationUniversalIdentifier:
+      objectMetadataApplicationUniversalIdentifier,
   });
