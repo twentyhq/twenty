@@ -33,7 +33,7 @@ export const claimSlackEmptyRequestReply = async ({
 
   await kv.set(key, {
     expiresAt: Date.now() + SLACK_EMPTY_REQUEST_REPLY_TTL_MS,
-  } satisfies SlackEmptyRequestReplyClaim);
+  });
 
   return true;
 };
