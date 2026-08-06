@@ -1,14 +1,14 @@
 import { ApiClient } from '@/cli/utilities/api/api-client';
-import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import {
+  type ApiResponse,
+  type MetadataApiErrorExtensions,
+} from '@/cli/utilities/api/api-response-type';
 import { ApplicationApi } from '@/cli/utilities/api/application-api';
 import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
 import { SchemaApi } from '@/cli/utilities/api/schema-api';
 import { type Manifest } from 'twenty-shared/application';
-import {
-  type MetadataValidationErrorResponse,
-  type SyncAction,
-} from 'twenty-shared/metadata';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 type ApiServiceOptions = {
   disableInterceptors?: boolean;
@@ -91,7 +91,7 @@ export class ApiService {
         applicationUniversalIdentifier: string;
         actions: SyncAction[];
       },
-      MetadataValidationErrorResponse
+      MetadataApiErrorExtensions
     >
   > {
     return this.applicationApi.syncApplication(manifest, options);
