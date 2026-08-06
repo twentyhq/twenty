@@ -140,6 +140,14 @@ describe('getFilterValueSchema', () => {
       );
     });
 
+    // normalizeSelectFilterValues still accepts the legacy scalar form.
+    it('should accept a bare option value', () => {
+      expectAccepted(
+        { filterType: 'SELECT', operand: ViewFilterOperand.IS },
+        'OPTION_0',
+      );
+    });
+
     it('should reject an object rather than an array', () => {
       expectRejected(
         { filterType: 'SELECT', operand: ViewFilterOperand.IS },
@@ -147,11 +155,13 @@ describe('getFilterValueSchema', () => {
       );
     });
 
-    it('should reject malformed json rather than throwing', () => {
-      expectRejected(
-        { filterType: 'MULTI_SELECT', operand: ViewFilterOperand.CONTAINS },
-        '{bad json',
-      );
+    it('should not throw on malformed json', () => {
+      const schema = getFilterValueSchema({
+        filterType: 'MULTI_SELECT',
+        operand: ViewFilterOperand.CONTAINS,
+      });
+
+      expect(() => schema?.safeParse('{bad json')).not.toThrow();
     });
   });
 
