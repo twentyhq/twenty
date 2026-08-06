@@ -1,8 +1,8 @@
-import { type SlackRegisterConnectionPayload } from 'src/logic-functions/types/slack-register-connection-payload.type';
+import { type SlackConnectionHookPayload } from 'src/logic-functions/types/slack-connection-hook-payload.type';
 import { registerSlackConnection } from 'src/logic-functions/utils/register-slack-connection';
 
 export const slackRegisterConnectionHandler = (
-  payload: SlackRegisterConnectionPayload,
+  payload: SlackConnectionHookPayload,
 ) =>
   registerSlackConnection({
     connectedAccountId: payload.connectedAccountId,
