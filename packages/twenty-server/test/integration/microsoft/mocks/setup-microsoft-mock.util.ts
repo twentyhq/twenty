@@ -1,7 +1,10 @@
 import { type Event, type MailFolder } from '@microsoft/microsoft-graph-types';
 
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
-import { microsoftAuthHandlers } from 'test/integration/microsoft/mocks/microsoft-auth-handlers.util';
+import {
+  microsoftAuthHandlers,
+  microsoftInvalidRefreshTokenHandler,
+} from 'test/integration/microsoft/mocks/microsoft-auth-handlers.util';
 import { microsoftCalendarEventsHandlers } from 'test/integration/microsoft/mocks/microsoft-calendar-events-handlers.util';
 import { microsoftMailboxHandlers } from 'test/integration/microsoft/mocks/microsoft-mailbox-handlers.util';
 import {
@@ -27,6 +30,8 @@ export type MicrosoftMock = {
     options?: { deltaToken?: string },
   ) => void;
   failSubscriptionRenewal: () => void;
+  failSubscriptionRenewalTemporarily: () => void;
+  failTokenRefresh: () => void;
 };
 
 export const setupMicrosoftMock = ({
@@ -62,5 +67,12 @@ export const setupMicrosoftMock = ({
           renewalFails: true,
         }),
       ),
+    failSubscriptionRenewalTemporarily: () =>
+      httpMock.use(
+        ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {
+          renewalTemporarilyFails: true,
+        }),
+      ),
+    failTokenRefresh: () => httpMock.use(microsoftInvalidRefreshTokenHandler()),
   };
 };

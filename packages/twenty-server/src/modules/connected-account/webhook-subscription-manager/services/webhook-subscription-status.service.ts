@@ -35,6 +35,8 @@ export class WebhookSubscriptionStatusService {
       webhookSubscriptionExternalId: result.externalSubscriptionId,
       webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
       webhookSubscriptionExpiresAt: result.expiresAt,
+      webhookSubscriptionFailureCount: 0,
+      webhookSubscriptionFailedAt: null,
       ...(isDefined(clientState)
         ? { webhookSubscriptionClientState: clientState }
         : {}),
@@ -48,17 +50,28 @@ export class WebhookSubscriptionStatusService {
     channelType: WebhookSubscriptionChannelType,
     channelId: string,
   ) {
-    await this.update(channelType, channelId, {
-      webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-    });
+    await this.getRepository(channelType)
+      .createQueryBuilder()
+      .update()
+      .set({
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+        webhookSubscriptionFailedAt: new Date(),
+        webhookSubscriptionFailureCount: () =>
+          '"webhookSubscriptionFailureCount" + 1',
+      })
+      .where({ id: channelId })
+      .execute();
   }
 
-  public async markAsExpired(
+  public async markAsPermanentlyFailed(
     channelType: WebhookSubscriptionChannelType,
     channelId: string,
+    status:
+      | WebhookSubscriptionStatus.FAILED_INSUFFICIENT_PERMISSIONS
+      | WebhookSubscriptionStatus.FAILED_UNKNOWN,
   ) {
     await this.update(channelType, channelId, {
-      webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED,
+      webhookSubscriptionStatus: status,
     });
   }
 

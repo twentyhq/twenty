@@ -112,11 +112,13 @@ export class MessagingWebhookSubscriptionService {
       });
 
       await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
-        error,
-        'CREATE',
-        WebhookSubscriptionChannelType.MESSAGING,
-        messageChannel,
-        workspaceId,
+        {
+          exception: error,
+          operation: 'CREATE',
+          channelType: WebhookSubscriptionChannelType.MESSAGING,
+          channel: messageChannel,
+          workspaceId,
+        },
       );
 
       return;
@@ -213,11 +215,13 @@ export class MessagingWebhookSubscriptionService {
 
       const recoveryAction =
         await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
-          error,
-          'RENEW',
-          WebhookSubscriptionChannelType.MESSAGING,
-          messageChannel,
-          messageChannel.workspaceId,
+          {
+            exception: error,
+            operation: 'RENEW',
+            channelType: WebhookSubscriptionChannelType.MESSAGING,
+            channel: messageChannel,
+            workspaceId: messageChannel.workspaceId,
+          },
         );
 
       if (recoveryAction === 'RECREATE') {

@@ -40,9 +40,23 @@ const resourceNotFound = () =>
     { status: 404 },
   );
 
+const serviceUnavailable = () =>
+  HttpResponse.json(
+    {
+      error: {
+        code: 'ServiceUnavailable',
+        message: 'The service is temporarily unavailable.',
+      },
+    },
+    { status: 503 },
+  );
+
 export const microsoftWebhookSubscriptionHandlers = (
   store: MicrosoftSubscriptionStore,
-  { renewalFails = false }: { renewalFails?: boolean } = {},
+  {
+    renewalFails = false,
+    renewalTemporarilyFails = false,
+  }: { renewalFails?: boolean; renewalTemporarilyFails?: boolean } = {},
 ): MswHandler[] => [
   http.post('*/subscriptions', async ({ request }) => {
     const payload = (await request.json()) as Subscription;
@@ -60,6 +74,10 @@ export const microsoftWebhookSubscriptionHandlers = (
   }),
   http.patch('*/subscriptions/*', async ({ request }) => {
     const id = subscriptionId(request);
+
+    if (renewalTemporarilyFails) {
+      return serviceUnavailable();
+    }
 
     if (renewalFails) {
       return resourceNotFound();

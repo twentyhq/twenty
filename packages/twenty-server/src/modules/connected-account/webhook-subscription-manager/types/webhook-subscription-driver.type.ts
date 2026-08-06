@@ -9,7 +9,7 @@ export type WebhookSubscribableChannel =
 
 export type WebhookSubscriptionOperation = 'CREATE' | 'RENEW';
 
-export type WebhookSubscriptionRecoveryAction = 'NONE' | 'RECREATE';
+export type WebhookSubscriptionRecoveryAction = 'RECREATE' | 'NONE';
 
 export type WebhookSubscriptionResult = {
   externalSubscriptionId: string | null;
