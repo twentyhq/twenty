@@ -578,6 +578,61 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('should redact the before snapshot when it fails the subscriber RLS filter (record entering scope)', async () => {
+      const rlsFilter: RecordGqlOperationFilter = { status: { eq: 'active' } };
+
+      (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
+        rlsFilter,
+      );
+
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(
+        ({
+          record,
+          filter,
+        }: {
+          record: { status?: string };
+          filter: RecordGqlOperationFilter;
+        }) =>
+          'status' in filter ? record.status === 'active' : true,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: {
+                id: 'record-1',
+                name: 'Test Company',
+                status: 'archived',
+              },
+              after: { id: 'record-1', name: 'Test Company', status: 'active' },
+            } as MockObjectRecordEvent['properties'],
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(1);
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+      const deliveredProperties =
+        publishCall.payload.objectRecordEventsWithQueryIds[0].objectRecordEvent
+          .properties;
+
+      expect(deliveredProperties.after).toBeDefined();
+      expect(deliveredProperties.before).toBeUndefined();
+      expect(deliveredProperties.diff).toBeUndefined();
+    });
+
     it('should not publish update events when neither state matches the filter', async () => {
       (
         isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
