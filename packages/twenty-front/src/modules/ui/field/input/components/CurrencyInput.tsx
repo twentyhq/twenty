@@ -6,6 +6,7 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
+import { getSafeScaleForCurrencyInput } from '@/ui/field/input/utils/getSafeScaleForCurrencyInput';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -118,6 +119,8 @@ export const CurrencyInput = ({
 
   const currency = CURRENCIES.find(({ value }) => value === currencyCode);
 
+  const scale = getSafeScaleForCurrencyInput({ value, decimals });
+
   useEffect(() => {
     setInternalText(value);
   }, [value]);
@@ -140,7 +143,7 @@ export const CurrencyInput = ({
           mask={Number}
           thousandsSeparator={thousandsSeparator}
           radix={radix}
-          scale={decimals}
+          scale={scale}
           onAccept={(value: string) => handleChange(value)}
           inputRef={wrapperRef}
           autoComplete="off"
