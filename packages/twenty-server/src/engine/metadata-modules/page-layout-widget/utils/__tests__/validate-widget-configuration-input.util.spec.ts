@@ -24,6 +24,42 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 
 describe('validateWidgetConfigurationInput', () => {
+  describe('EMAIL_THREAD widget', () => {
+    it('should not throw for valid email thread configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.EMAIL_THREAD,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
+  describe('MESSAGE_CAMPAIGN_BODY widget', () => {
+    it('should not throw for valid message campaign body configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
+  describe('MESSAGE_CAMPAIGN_DETAILS widget', () => {
+    it('should not throw for valid message campaign details configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
   describe('CALL_RECORDING_SUMMARY widget', () => {
     it('should not throw for valid call recording summary configuration', () => {
       expect(() =>
