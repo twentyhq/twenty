@@ -1,3 +1,4 @@
+import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
@@ -15,6 +16,10 @@ export const RecordListSSESubscribeEffect = () => {
   const { filter, orderBy } =
     useFindManyRecordIndexTableParams(objectNameSingular);
 
+  const { refetchFindManyRecords } = useRefetchFindManyRecords({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
+
   const queryId = `record-list-${recordListId}`;
 
   useListenToEventsForQuery({
@@ -26,6 +31,7 @@ export const RecordListSSESubscribeEffect = () => {
         orderBy,
       },
     },
+    onSseReconnected: refetchFindManyRecords,
   });
 
   return null;

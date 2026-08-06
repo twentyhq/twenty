@@ -13,6 +13,9 @@ export class AddListViewTypeFastInstanceCommand implements FastInstanceCommand {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      `UPDATE "core"."view" SET "type" = 'TABLE' WHERE "type" = 'LIST'`,
+    );
+    await queryRunner.query(
       "CREATE TYPE \"core\".\"view_type_enum_old\" AS ENUM('TABLE', 'KANBAN', 'CALENDAR', 'FIELDS_WIDGET', 'TABLE_WIDGET', 'KANBAN_WIDGET', 'CALENDAR_WIDGET')",
     );
     await queryRunner.query(
