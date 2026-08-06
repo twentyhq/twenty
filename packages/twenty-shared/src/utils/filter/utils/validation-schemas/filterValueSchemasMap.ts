@@ -100,18 +100,34 @@ export const FILTER_VALUE_SCHEMAS_MAP = {
   },
 } as const satisfies FilterValueSchemasMap;
 
-export const ACTOR_SUB_FIELD_VALUE_SCHEMAS = {
-  source: {
-    [ViewFilterOperand.IS]: actorSourceFilterValueSchema,
-    [ViewFilterOperand.IS_NOT]: actorSourceFilterValueSchema,
+export const COMPOSITE_SUB_FIELD_VALUE_SCHEMAS = {
+  ACTOR: {
+    source: {
+      [ViewFilterOperand.IS]: actorSourceFilterValueSchema,
+      [ViewFilterOperand.IS_NOT]: actorSourceFilterValueSchema,
+    },
+    workspaceMemberId: {
+      [ViewFilterOperand.IS]: relationFilterValueSchema,
+      [ViewFilterOperand.IS_NOT]: relationFilterValueSchema,
+    },
   },
-  workspaceMemberId: {
-    [ViewFilterOperand.IS]: relationFilterValueSchema,
-    [ViewFilterOperand.IS_NOT]: relationFilterValueSchema,
+  CURRENCY: {
+    currencyCode: {
+      [ViewFilterOperand.IS]: arrayOfStringsOrVariablesSchema,
+      [ViewFilterOperand.IS_NOT]: arrayOfStringsOrVariablesSchema,
+    },
   },
-} as const satisfies Record<
-  string,
-  Partial<Record<ViewFilterOperand, z.ZodType>>
+  ADDRESS: {
+    addressCountry: {
+      [ViewFilterOperand.CONTAINS]: arrayOfStringsOrVariablesSchema,
+      [ViewFilterOperand.DOES_NOT_CONTAIN]: arrayOfStringsOrVariablesSchema,
+    },
+  },
+} as const satisfies Partial<
+  Record<
+    keyof typeof FILTER_OPERANDS_MAP,
+    Record<string, Partial<Record<ViewFilterOperand, z.ZodType>>>
+  >
 >;
 
 export const FILTER_VALUE_FORMAT_HINTS: Partial<
@@ -121,8 +137,3 @@ export const FILTER_VALUE_FORMAT_HINTS: Partial<
     'Expected a stringified relative date such as "NEXT_30_DAY", not an object.',
   [ViewFilterOperand.VECTOR_SEARCH]: 'Expected a non empty search string.',
 };
-
-export const CURRENCY_CODE_VALUE_SCHEMAS = {
-  [ViewFilterOperand.IS]: arrayOfStringsOrVariablesSchema,
-  [ViewFilterOperand.IS_NOT]: arrayOfStringsOrVariablesSchema,
-} as const satisfies Partial<Record<ViewFilterOperand, z.ZodType>>;

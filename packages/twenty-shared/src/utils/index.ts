@@ -169,9 +169,8 @@ export {
 } from './filter/utils/validation-schemas/filterValueScalarSchemas';
 export {
   FILTER_VALUE_SCHEMAS_MAP,
-  ACTOR_SUB_FIELD_VALUE_SCHEMAS,
+  COMPOSITE_SUB_FIELD_VALUE_SCHEMAS,
   FILTER_VALUE_FORMAT_HINTS,
-  CURRENCY_CODE_VALUE_SCHEMAS,
 } from './filter/utils/validation-schemas/filterValueSchemasMap';
 export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
 export {

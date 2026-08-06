@@ -53,6 +53,13 @@ import {
   type RecordFilter,
 } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
+import {
+  actorSourceFilterValueSchema,
+  booleanFilterValueSchema,
+  instantFilterValueSchema,
+  numericFilterValueSchema,
+  plainDateOrInstantFilterValueSchema,
+} from '@/utils/filter/utils/validation-schemas/filterValueScalarSchemas';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 import {
@@ -63,6 +70,19 @@ import {
 const PHONE_FILTER_NON_SIGNIFICANT_CHARS = /(?!^)\+|[^0-9+]/g;
 
 const CONTAINS_DIGIT = /[0-9]/;
+
+// The write path validates against these schemas strictly; the read path keeps
+// its historical tolerance by catching into the value it used to produce.
+const lenientNumericFilterValueSchema = numericFilterValueSchema.catch(NaN);
+const lenientBooleanFilterValueSchema = booleanFilterValueSchema.catch(false);
+
+// Sources outside the known enum used to flow through untouched, so fall back to
+// the raw parse rather than rejecting them at read time.
+const parseActorSourceFilterValue = (value: string): string[] => {
+  const parsed = actorSourceFilterValueSchema.safeParse(value);
+
+  return parsed.success ? parsed.data : (JSON.parse(value) as string[]);
+};
 
 type FieldSharedMorphRelation = {
   type: RelationType;
@@ -492,19 +512,20 @@ const buildDirectFieldGqlOperationFilter = ({
         if (recordFilter.operand === RecordFilterOperand.IS) {
           const timeZone = filterValueDependencies.timeZone ?? 'UTC';
 
-          let parsedPlainDate = null;
+          const parsedDateTime = plainDateOrInstantFilterValueSchema.safeParse(
+            recordFilter.value,
+          );
 
-          try {
-            parsedPlainDate = recordFilter.value.includes('T')
-              ? Temporal.Instant.from(recordFilter.value)
-                  .toZonedDateTimeISO(timeZone)
-                  .toPlainDate()
-              : Temporal.PlainDate.from(recordFilter.value);
-          } catch {
+          if (!parsedDateTime.success) {
             throw new Error(
               `Cannot parse "${recordFilter.value}" for ${filterType} filter`,
             );
           }
+
+          const parsedPlainDate =
+            parsedDateTime.data instanceof Temporal.Instant
+              ? parsedDateTime.data.toZonedDateTimeISO(timeZone).toPlainDate()
+              : parsedDateTime.data;
 
           const zonedDateTime = parsedPlainDate.toZonedDateTime(timeZone);
           const start = zonedDateTime.toInstant();
@@ -526,7 +547,9 @@ const buildDirectFieldGqlOperationFilter = ({
           };
         }
 
-        const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
+        const resolvedDateTime = instantFilterValueSchema.parse(
+          recordFilter.value,
+        );
 
         switch (recordFilter.operand) {
           case RecordFilterOperand.IS_AFTER: {
@@ -555,14 +578,18 @@ const buildDirectFieldGqlOperationFilter = ({
         case RecordFilterOperand.IS:
           return {
             [fieldMetadataItem.name]: {
-              eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
+              eq: convertRatingToRatingValue(
+                lenientNumericFilterValueSchema.parse(recordFilter.value),
+              ),
             } as RatingFilter,
           };
         case RecordFilterOperand.IS_NOT:
           return {
             not: {
               [fieldMetadataItem.name]: {
-                eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
+                eq: convertRatingToRatingValue(
+                  lenientNumericFilterValueSchema.parse(recordFilter.value),
+                ),
               } as RatingFilter,
             },
           };
@@ -570,7 +597,7 @@ const buildDirectFieldGqlOperationFilter = ({
           return {
             [fieldMetadataItem.name]: {
               in: convertGreaterThanOrEqualRatingToArrayOfRatingValues(
-                parseFloat(recordFilter.value),
+                lenientNumericFilterValueSchema.parse(recordFilter.value),
               ),
             } as RatingFilter,
           };
@@ -578,7 +605,7 @@ const buildDirectFieldGqlOperationFilter = ({
           return {
             [fieldMetadataItem.name]: {
               in: convertLessThanOrEqualRatingToArrayOfRatingValues(
-                parseFloat(recordFilter.value),
+                lenientNumericFilterValueSchema.parse(recordFilter.value),
               ),
             } as RatingFilter,
           };
@@ -592,26 +619,26 @@ const buildDirectFieldGqlOperationFilter = ({
         case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
           return {
             [fieldMetadataItem.name]: {
-              gte: parseFloat(recordFilter.value),
+              gte: lenientNumericFilterValueSchema.parse(recordFilter.value),
             } as FloatFilter,
           };
         case RecordFilterOperand.LESS_THAN_OR_EQUAL:
           return {
             [fieldMetadataItem.name]: {
-              lte: parseFloat(recordFilter.value),
+              lte: lenientNumericFilterValueSchema.parse(recordFilter.value),
             } as FloatFilter,
           };
         case RecordFilterOperand.IS:
           return {
             [fieldMetadataItem.name]: {
-              eq: parseFloat(recordFilter.value),
+              eq: lenientNumericFilterValueSchema.parse(recordFilter.value),
             } as FloatFilter,
           };
         case RecordFilterOperand.IS_NOT:
           return {
             not: {
               [fieldMetadataItem.name]: {
-                eq: parseFloat(recordFilter.value),
+                eq: lenientNumericFilterValueSchema.parse(recordFilter.value),
               } as FloatFilter,
             },
           };
@@ -732,19 +759,31 @@ const buildDirectFieldGqlOperationFilter = ({
           case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
             return {
               [fieldMetadataItem.name]: {
-                amountMicros: { gte: parseFloat(recordFilter.value) * 1000000 },
+                amountMicros: {
+                  gte:
+                    lenientNumericFilterValueSchema.parse(recordFilter.value) *
+                    1000000,
+                },
               } as CurrencyFilter,
             };
           case RecordFilterOperand.LESS_THAN_OR_EQUAL:
             return {
               [fieldMetadataItem.name]: {
-                amountMicros: { lte: parseFloat(recordFilter.value) * 1000000 },
+                amountMicros: {
+                  lte:
+                    lenientNumericFilterValueSchema.parse(recordFilter.value) *
+                    1000000,
+                },
               } as CurrencyFilter,
             };
           case RecordFilterOperand.IS:
             return {
               [fieldMetadataItem.name]: {
-                amountMicros: { eq: parseFloat(recordFilter.value) * 1000000 },
+                amountMicros: {
+                  eq:
+                    lenientNumericFilterValueSchema.parse(recordFilter.value) *
+                    1000000,
+                },
               } as CurrencyFilter,
             };
           case RecordFilterOperand.IS_NOT:
@@ -752,7 +791,10 @@ const buildDirectFieldGqlOperationFilter = ({
               not: {
                 [fieldMetadataItem.name]: {
                   amountMicros: {
-                    eq: parseFloat(recordFilter.value) * 1000000,
+                    eq:
+                      lenientNumericFilterValueSchema.parse(
+                        recordFilter.value,
+                      ) * 1000000,
                   },
                 } as CurrencyFilter,
               },
@@ -1027,9 +1069,9 @@ const buildDirectFieldGqlOperationFilter = ({
             };
           } else {
             if (subFieldName === 'addressCountry') {
-              const parsedCountryCodes = JSON.parse(
+              const parsedCountryCodes = arrayOfStringsOrVariablesSchema.parse(
                 recordFilter.value,
-              ) as string[];
+              );
 
               if (
                 recordFilter.value === '[]' ||
@@ -1044,7 +1086,7 @@ const buildDirectFieldGqlOperationFilter = ({
                     not: {
                       [fieldMetadataItem.name]: {
                         addressCountry: {
-                          in: JSON.parse(recordFilter.value),
+                          in: parsedCountryCodes,
                         } as AddressFilter,
                       },
                     },
@@ -1235,7 +1277,9 @@ const buildDirectFieldGqlOperationFilter = ({
               return;
             }
 
-            const parsedSources = JSON.parse(recordFilter.value) as string[];
+            const parsedSources = parseActorSourceFilterValue(
+              recordFilter.value,
+            );
 
             return {
               [fieldMetadataItem.name]: {
@@ -1250,7 +1294,9 @@ const buildDirectFieldGqlOperationFilter = ({
               return;
             }
 
-            const parsedSources = JSON.parse(recordFilter.value) as string[];
+            const parsedSources = parseActorSourceFilterValue(
+              recordFilter.value,
+            );
 
             if (parsedSources.length === 0) return;
 
@@ -1597,7 +1643,7 @@ const buildDirectFieldGqlOperationFilter = ({
     case 'BOOLEAN': {
       return {
         [fieldMetadataItem.name]: {
-          eq: recordFilter.value === 'true',
+          eq: lenientBooleanFilterValueSchema.parse(recordFilter.value),
         } as BooleanFilter,
       };
     }

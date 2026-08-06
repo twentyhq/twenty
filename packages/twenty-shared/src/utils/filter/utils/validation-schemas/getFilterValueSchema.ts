@@ -6,10 +6,11 @@ import {
 } from '@/types';
 import { isRecordFilterOperandExpectingValue } from '@/utils/filter/isRecordFilterOperandExpectingValue';
 import {
-  ACTOR_SUB_FIELD_VALUE_SCHEMAS,
-  CURRENCY_CODE_VALUE_SCHEMAS,
+  COMPOSITE_SUB_FIELD_VALUE_SCHEMAS,
   FILTER_VALUE_SCHEMAS_MAP,
 } from '@/utils/filter/utils/validation-schemas/filterValueSchemasMap';
+
+type OperandSchemas = Partial<Record<ViewFilterOperand, z.ZodType>>;
 
 export const getFilterValueSchema = ({
   filterType,
@@ -24,24 +25,18 @@ export const getFilterValueSchema = ({
     return undefined;
   }
 
-  if (filterType === 'CURRENCY' && subFieldName === 'currencyCode') {
-    return CURRENCY_CODE_VALUE_SCHEMAS[
-      operand as keyof typeof CURRENCY_CODE_VALUE_SCHEMAS
+  const subFieldSchemas: Record<string, OperandSchemas> | undefined =
+    COMPOSITE_SUB_FIELD_VALUE_SCHEMAS[
+      filterType as keyof typeof COMPOSITE_SUB_FIELD_VALUE_SCHEMAS
     ];
+
+  const subFieldSchema = subFieldName
+    ? subFieldSchemas?.[subFieldName]?.[operand]
+    : undefined;
+
+  if (subFieldSchema) {
+    return subFieldSchema;
   }
 
-  if (
-    filterType === 'ACTOR' &&
-    (subFieldName === 'source' || subFieldName === 'workspaceMemberId')
-  ) {
-    return ACTOR_SUB_FIELD_VALUE_SCHEMAS[subFieldName][
-      operand as keyof (typeof ACTOR_SUB_FIELD_VALUE_SCHEMAS)[typeof subFieldName]
-    ];
-  }
-
-  return (
-    FILTER_VALUE_SCHEMAS_MAP[filterType] as Partial<
-      Record<ViewFilterOperand, z.ZodType>
-    >
-  )[operand];
+  return (FILTER_VALUE_SCHEMAS_MAP[filterType] as OperandSchemas)[operand];
 };

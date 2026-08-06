@@ -255,6 +255,37 @@ describe('getFilterValueSchema', () => {
       );
     });
 
+    it('should validate addressCountry as an array of codes', () => {
+      expectAccepted(
+        {
+          filterType: 'ADDRESS',
+          operand: ViewFilterOperand.CONTAINS,
+          subFieldName: 'addressCountry',
+        },
+        '["FR"]',
+      );
+
+      expectRejected(
+        {
+          filterType: 'ADDRESS',
+          operand: ViewFilterOperand.CONTAINS,
+          subFieldName: 'addressCountry',
+        },
+        'FR',
+      );
+    });
+
+    it('should keep the text contract on other address sub fields', () => {
+      expectAccepted(
+        {
+          filterType: 'ADDRESS',
+          operand: ViewFilterOperand.CONTAINS,
+          subFieldName: 'addressStreet1',
+        },
+        'rue de Rivoli',
+      );
+    });
+
     it('should fall back to the text contract on other actor sub fields', () => {
       expectAccepted(
         {
