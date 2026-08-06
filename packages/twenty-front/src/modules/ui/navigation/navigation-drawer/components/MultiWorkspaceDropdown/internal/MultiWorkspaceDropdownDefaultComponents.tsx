@@ -5,7 +5,7 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useCanAccessAdminPanel } from '@/settings/admin-panel/hooks/useCanAccessAdminPanel';
+import { useOpenEnterpriseUpgrade } from '@/settings/enterprise/hooks/useOpenEnterpriseUpgrade';
 import { useSupportAccess } from '@/support/hooks/useSupportAccess';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
@@ -46,7 +46,6 @@ import {
   UndecoratedLink,
 } from 'twenty-ui/navigation';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -71,8 +70,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { signOut } = useAuth();
   const { colorScheme, colorSchemeList } = useColorScheme();
   const { isSupportAvailable, openSupport } = useSupportAccess();
-  const canAccessAdminPanel = useCanAccessAdminPanel();
-  const navigateSettings = useNavigateSettings();
+  const openEnterpriseUpgrade = useOpenEnterpriseUpgrade();
 
   const isWorkspaceCreationLocked =
     currentWorkspace?.canCreateAdditionalWorkspace === false;
@@ -88,8 +86,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   };
 
-  const openEnterpriseSettings = () => {
-    navigateSettings(SettingsPath.AdminPanelEnterprise);
+  const handleLockedWorkspaceCreation = () => {
+    openEnterpriseUpgrade();
     closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   };
 
@@ -138,13 +136,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     <MenuItem
                       LeftIcon={IconPlus}
                       RightIcon={isWorkspaceCreationLocked ? IconLock : null}
-                      disabled={
-                        isWorkspaceCreationLocked && !canAccessAdminPanel
-                      }
                       text={t`Create Workspace`}
                       onClick={
                         isWorkspaceCreationLocked
-                          ? openEnterpriseSettings
+                          ? handleLockedWorkspaceCreation
                           : createWorkspace
                       }
                     />

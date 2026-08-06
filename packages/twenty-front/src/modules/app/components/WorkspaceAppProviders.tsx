@@ -24,6 +24,7 @@ import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOv
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
+import { EnterpriseRequiredModal } from '@/settings/enterprise/components/EnterpriseRequiredModal';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -78,6 +79,7 @@ export const WorkspaceAppProviders = () => {
                   </SnackBarProvider>
                   <MainContextStoreProvider />
                   <SupportChatEffect />
+                  <EnterpriseRequiredModal />
                   <InitializeQueryParamStateEffect />
                   <TrackPageViewEffect />
                   <RequestFreshCaptchaTokenEffect />
