@@ -29,11 +29,12 @@ export const buildStandardObjectRecordPageLayout = <
     };
   };
 } => {
-  const pageLayoutUniversalIdentifier = getSystemRecordPageLayoutUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier:
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-    objectUniversalIdentifier,
-  });
+  const pageLayoutUniversalIdentifier =
+    getSystemRecordPageLayoutUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      objectUniversalIdentifier,
+    });
 
   const derivedTabs = Object.fromEntries(
     Object.entries(tabs).map(([tabKey, { title, widgets }]) => {
@@ -52,12 +53,13 @@ export const buildStandardObjectRecordPageLayout = <
             Object.entries(widgets).map(([widgetKey, widgetTitle]) => [
               widgetKey,
               {
-                universalIdentifier: getSystemPageLayoutWidgetUniversalIdentifier({
-                  objectMetadataApplicationUniversalIdentifier:
-                    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-                  pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
-                  title: widgetTitle,
-                }),
+                universalIdentifier:
+                  getSystemPageLayoutWidgetUniversalIdentifier({
+                    objectMetadataApplicationUniversalIdentifier:
+                      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                    pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
+                    title: widgetTitle,
+                  }),
               },
             ]),
           ),

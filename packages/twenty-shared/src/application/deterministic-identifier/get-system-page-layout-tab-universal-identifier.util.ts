@@ -13,5 +13,6 @@ export const getSystemPageLayoutTabUniversalIdentifier = ({
   computeDeterministicUuid({
     entityNamespace: 'pageLayoutTab',
     value: `${pageLayoutUniversalIdentifier}:${title}`,
-    applicationUniversalIdentifier: objectMetadataApplicationUniversalIdentifier,
+    applicationUniversalIdentifier:
+      objectMetadataApplicationUniversalIdentifier,
   });

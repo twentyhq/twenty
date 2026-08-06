@@ -13,5 +13,6 @@ export const getSystemViewFieldGroupUniversalIdentifier = ({
   computeDeterministicUuid({
     entityNamespace: 'viewFieldGroup',
     value: `${viewUniversalIdentifier}:${name}`,
-    applicationUniversalIdentifier: objectMetadataApplicationUniversalIdentifier,
+    applicationUniversalIdentifier:
+      objectMetadataApplicationUniversalIdentifier,
   });
