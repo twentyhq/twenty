@@ -25,6 +25,7 @@ export const ChatReferenceChipDisplay = ({
         emptyLabel={t`Untitled`}
         variant={ChipVariant.Highlighted}
         leftComponent={leftComponent}
+        clickable={false}
       />
     );
   }
