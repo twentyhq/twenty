@@ -23,14 +23,14 @@ export default defineConnectionProvider({
       'chat:write.public',
       'groups:read',
       'reactions:write',
-      // Inbound scopes, only used by the conversational assistant
+      // Only used by the conversational assistant
       'app_mentions:read',
       'channels:history',
       'groups:history',
       'im:history',
+      'users:read',
       // Agent surface: assistant.threads.* (statuses, titles, suggested prompts)
       'assistant:write',
-      'users:read',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',

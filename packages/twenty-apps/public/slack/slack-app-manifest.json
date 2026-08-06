@@ -30,8 +30,8 @@
         "channels:history",
         "groups:history",
         "im:history",
-        "assistant:write",
-        "users:read"
+        "users:read",
+        "assistant:write"
       ]
     }
   },
