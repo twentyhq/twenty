@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type AdminChatMessageDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-message.dto';
@@ -34,7 +35,7 @@ export class AdminPanelChatService {
       select: { id: true, allowImpersonation: true },
     });
 
-    if (!workspace) {
+    if (!isDefined(workspace)) {
       throw new UserInputError('Workspace not found');
     }
 
@@ -78,7 +79,7 @@ export class AdminPanelChatService {
     workspaceId: string;
     threadIds: string[];
   }): Promise<Map<string, number>> {
-    if (threadIds.length === 0) {
+    if (!isNonEmptyArray(threadIds)) {
       return new Map();
     }
 
@@ -106,7 +107,7 @@ export class AdminPanelChatService {
       where: { id: threadId },
     });
 
-    if (!thread) {
+    if (!isDefined(thread)) {
       throw new UserInputError('Thread not found');
     }
 

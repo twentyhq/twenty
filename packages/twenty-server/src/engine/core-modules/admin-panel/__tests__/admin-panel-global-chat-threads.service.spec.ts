@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { isString } from '@sniptt/guards';
 import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { Brackets } from 'typeorm';
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
@@ -110,7 +111,7 @@ const findSubQueryBuilderByAlias = (
 const getAndWhereConditions = (queryBuilderMock: QueryBuilderMock): string[] =>
   queryBuilderMock.andWhere.mock.calls
     .map(([condition]) => condition)
-    .filter((condition): condition is string => typeof condition === 'string');
+    .filter((condition): condition is string => isString(condition));
 
 const RAW_ROW = {
   id: 'thread-1',

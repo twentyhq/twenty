@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAdminChatsTable } from '@/settings/admin-panel/chats/components/SettingsAdminChatsTable';
@@ -30,13 +30,13 @@ export const SettingsAdminChatsContent = ({
     );
   }
 
-  if (loading && threads.length === 0) {
+  if (loading && !isNonEmptyArray(threads)) {
     return (
       <SettingsEmptyPlaceholder>{t`Loading chats...`}</SettingsEmptyPlaceholder>
     );
   }
 
-  if (threads.length === 0) {
+  if (!isNonEmptyArray(threads)) {
     return (
       <SettingsEmptyPlaceholder>{t`No chats found`}</SettingsEmptyPlaceholder>
     );

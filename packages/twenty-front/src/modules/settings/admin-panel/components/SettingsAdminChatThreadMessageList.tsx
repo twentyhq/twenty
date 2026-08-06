@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AgentMessageRole } from '~/generated-admin/graphql';
@@ -31,7 +32,7 @@ export const SettingsAdminChatThreadMessageList = ({
       message.parts.some(isRenderableAdminChatMessagePart),
   );
 
-  if (visibleMessages.length === 0) {
+  if (!isNonEmptyArray(visibleMessages)) {
     return (
       <Card rounded>
         <TableRow gridTemplateColumns="1fr">

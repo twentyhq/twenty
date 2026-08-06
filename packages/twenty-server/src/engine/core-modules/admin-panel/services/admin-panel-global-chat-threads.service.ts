@@ -5,6 +5,7 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionsToolStatus,
 } from 'twenty-shared/ai';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Brackets, Repository, type SelectQueryBuilder } from 'typeorm';
 
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
@@ -176,7 +177,7 @@ export class AdminPanelGlobalChatThreadsService {
 
     const trimmedSearchTerm = searchTerm?.trim();
 
-    if (trimmedSearchTerm) {
+    if (isNonEmptyString(trimmedSearchTerm)) {
       const escapedSearchTerm = trimmedSearchTerm.replace(/[\\%_]/g, '\\$&');
 
       queryBuilder.andWhere(
