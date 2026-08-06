@@ -24,9 +24,9 @@ export const slackPostEphemeralMessageInputSchema: InputJsonSchema = {
     },
     parentMessageTimestamp: {
       type: 'string',
-      label: 'Thread timestamp (optional)',
+      label: 'Parent message timestamp',
       description:
-        'Optional. Show the note inside a thread: the `messageTimestamp` of the thread’s first message, same as **Send Slack Message**.',
+        'Optional. Only when you want the note to appear **inside a thread**: paste the **Message timestamp** of the thread’s first message (the value returned as `slackTs` when it was posted). Leave empty to show it at the bottom of the channel.',
     },
     messageFormat: {
       type: 'string',

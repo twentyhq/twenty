@@ -1,18 +1,11 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
-import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { clearLapsedSlackThreadSubscription } from 'src/logic-functions/utils/clear-lapsed-slack-thread-subscription';
-import { getSlackThreadSubscriptionState } from 'src/logic-functions/utils/get-slack-thread-subscription-state';
-import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
-import { nudgeExpiredSlackThread } from 'src/logic-functions/utils/nudge-expired-slack-thread';
+import { enqueueSlackAssistantRequestRecord } from 'src/logic-functions/utils/enqueue-slack-assistant-request-record';
+import { gateSlackThreadFollowUp } from 'src/logic-functions/utils/gate-slack-thread-follow-up';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 import { replyToEmptySlackAssistantRequest } from 'src/logic-functions/utils/reply-to-empty-slack-assistant-request';
-
-const ALREADY_QUEUED_SKIP_REASON = 'Slack message is already queued';
 
 export const enqueueSlackAssistantRequest = async (
   body: SlackEventsRequestBody,
@@ -28,64 +21,12 @@ export const enqueueSlackAssistantRequest = async (
   }
 
   if (parsed.requiresActiveThreadSubscription) {
-    const subscriptionState = await getSlackThreadSubscriptionState({
-      channelId: parsed.request.slackChannelId,
-      threadTimestamp: parsed.request.slackThreadTimestamp,
-    });
+    const followUpGateResult = await gateSlackThreadFollowUp(parsed.request);
 
-    if (subscriptionState === 'expired') {
-      const nudgeResult = await nudgeExpiredSlackThread({
-        slackChannelId: parsed.request.slackChannelId,
-        slackUserId: parsed.request.slackUserId,
-        threadTimestamp: parsed.request.slackThreadTimestamp,
-      });
-
-      if (nudgeResult.success) {
-        await clearLapsedSlackThreadSubscription({
-          channelId: parsed.request.slackChannelId,
-          threadTimestamp: parsed.request.slackThreadTimestamp,
-        });
-      }
-
-      return {
-        ok: true,
-        skipped: nudgeResult.success
-          ? 'Thread subscription expired; nudged the requester'
-          : 'Thread subscription expired; the nudge could not be posted',
-      };
-    }
-
-    if (subscriptionState === 'none') {
-      return {
-        ok: true,
-        skipped: 'Thread is not subscribed for unmentioned follow-ups',
-      };
+    if (isDefined(followUpGateResult)) {
+      return followUpGateResult;
     }
   }
 
-  const client = new CoreApiClient();
-
-  const existingRequestId = await findSlackAssistantRequestBySlackMessage(
-    client,
-    {
-      slackChannelId: parsed.request.slackChannelId,
-      slackMessageTimestamp: parsed.request.slackMessageTimestamp,
-    },
-  );
-
-  if (existingRequestId !== undefined) {
-    return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
-  }
-
-  try {
-    await createSlackAssistantRequest(client, parsed.request);
-  } catch (error) {
-    if (isDuplicateRecordError(error)) {
-      return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
-    }
-
-    throw error;
-  }
-
-  return { ok: true };
+  return await enqueueSlackAssistantRequestRecord(parsed.request);
 };
