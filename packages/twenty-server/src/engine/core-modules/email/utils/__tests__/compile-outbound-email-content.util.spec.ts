@@ -188,6 +188,46 @@ describe('compileOutboundEmailContent', () => {
     expect(html).toContain('<table role="presentation">');
   });
 
+  it('should neutralize raw HTML blocks that hide markup from a tag walker', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'html',
+          attrs: {
+            html: [
+              '<template><img src=x onerror="alert(1)"></template>',
+              '<noscript><p title="</noscript><img src=x onerror="alert(1)">">',
+              '<svg><style><a title="</style><img src=x onerror="alert(1)">">',
+            ].join(''),
+          },
+        },
+      ],
+    });
+
+    expect(html).not.toContain('onerror');
+    expect(html).not.toContain('alert(1)');
+  });
+
+  it('should drop raw HTML blocks that redirect or rebase the message', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'html',
+          attrs: {
+            html: '<meta http-equiv="refresh" content="0;url=https://evil.test"><base href="https://evil.test/">',
+          },
+        },
+      ],
+    });
+
+    // The meta element survives as an inert shell: the hook drops every
+    // http-equiv other than content-type, so nothing acts on the stale content.
+    expect(html).not.toContain('http-equiv="refresh"');
+    expect(html).not.toContain('<base');
+  });
+
   it('should wrap linked images in an anchor', async () => {
     const html = await compileDocument({
       type: 'doc',
