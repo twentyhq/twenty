@@ -250,5 +250,19 @@ export class WorkspaceCacheMetricsService {
           attributes: { provider },
         })),
     });
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_workspace_cache_local_entries_by_provider',
+      options: {
+        description:
+          'Entries in the local workspace metadata cache per provider',
+      },
+      callback: async () =>
+        Object.entries(this.getStats().entriesByProvider).map(
+          ([provider, value]) => ({
+            value,
+            attributes: { provider },
+          }),
+        ),
+    });
   }
 }
