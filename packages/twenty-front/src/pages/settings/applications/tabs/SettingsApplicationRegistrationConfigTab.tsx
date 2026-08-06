@@ -169,9 +169,7 @@ export const SettingsApplicationRegistrationConfigTab = ({
               <div key={variable.key}>
                 <StyledLabelRow>
                   <StyledLabel>{variable.key}</StyledLabel>
-                  {variable.isDeprecated === true && (
-                    <Pill label={t`Deprecated`} />
-                  )}
+                  {variable.isDeprecated && <Pill label={t`Deprecated`} />}
                   {isNonEmptyString(variable.description) && (
                     <>
                       <IconInfoCircle

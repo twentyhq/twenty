@@ -23,6 +23,11 @@ const normalizedIds = (query: jest.Mock): string[] =>
     .filter(([sql]) => sql.includes('UPDATE'))
     .flatMap(([, params]) => params[0]);
 
+const normalizedCiphertexts = (query: jest.Mock): string[] =>
+  query.mock.calls
+    .filter(([sql]) => sql.includes('UPDATE'))
+    .flatMap(([, params]) => params[1]);
+
 describe('NormalizeEmptyApplicationVariableValuesSlowInstanceCommand', () => {
   const secretEncryptionService = {
     decryptVersionedOrThrow: jest.fn((value: string) => {
@@ -72,6 +77,21 @@ describe('NormalizeEmptyApplicationVariableValuesSlowInstanceCommand', () => {
       wrapAsV2(''),
       { workspaceId: 'workspace-1' },
     );
+  });
+
+  it('should match on the decrypted ciphertext so a concurrent write is not clobbered', async () => {
+    const { dataSource, query } = buildDataSource([
+      [{ id: 'a', encryptedValue: wrapAsV2('') }],
+      [],
+      [],
+    ]);
+
+    await command.runDataMigration(dataSource);
+
+    expect(normalizedCiphertexts(query)).toEqual([wrapAsV2('')]);
+    expect(
+      query.mock.calls.find(([sql]) => sql.includes('UPDATE'))?.[0],
+    ).toContain('stale');
   });
 
   it('should skip rows that cannot be decrypted', async () => {

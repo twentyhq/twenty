@@ -67,17 +67,24 @@ export class NormalizeEmptyApplicationVariableValuesSlowInstanceCommand
         break;
       }
 
-      const idsToNormalize = this.collectIdsDecryptingToEmptyString({
+      const rowsToNormalize = this.collectRowsDecryptingToEmptyString({
         rows,
         tally,
       });
 
-      if (idsToNormalize.length > 0) {
+      if (rowsToNormalize.length > 0) {
         await dataSource.query(
-          `UPDATE "core"."applicationRegistrationVariable"
+          `UPDATE "core"."applicationRegistrationVariable" AS target
               SET "encryptedValue" = ''
-            WHERE id = ANY($1::uuid[])`,
-          [idsToNormalize],
+             FROM (
+               SELECT unnest($1::uuid[]) AS id, unnest($2::text[]) AS "encryptedValue"
+             ) AS stale
+            WHERE target.id = stale.id
+              AND target."encryptedValue" = stale."encryptedValue"`,
+          [
+            rowsToNormalize.map(({ id }) => id),
+            rowsToNormalize.map(({ encryptedValue }) => encryptedValue),
+          ],
         );
       }
 
@@ -109,17 +116,24 @@ export class NormalizeEmptyApplicationVariableValuesSlowInstanceCommand
         break;
       }
 
-      const idsToNormalize = this.collectIdsDecryptingToEmptyString({
+      const rowsToNormalize = this.collectRowsDecryptingToEmptyString({
         rows,
         tally,
       });
 
-      if (idsToNormalize.length > 0) {
+      if (rowsToNormalize.length > 0) {
         await dataSource.query(
-          `UPDATE "core"."applicationVariable"
+          `UPDATE "core"."applicationVariable" AS target
               SET "value" = ''
-            WHERE id = ANY($1::uuid[])`,
-          [idsToNormalize],
+             FROM (
+               SELECT unnest($1::uuid[]) AS id, unnest($2::text[]) AS "value"
+             ) AS stale
+            WHERE target.id = stale.id
+              AND target."value" = stale."value"`,
+          [
+            rowsToNormalize.map(({ id }) => id),
+            rowsToNormalize.map(({ encryptedValue }) => encryptedValue),
+          ],
         );
       }
 
@@ -129,14 +143,16 @@ export class NormalizeEmptyApplicationVariableValuesSlowInstanceCommand
     this.logTally('applicationVariable', tally);
   }
 
-  private collectIdsDecryptingToEmptyString({
+  // Returns the ciphertext alongside the id so the UPDATE can match on it and
+  // skip any row an operator filled while this migration was running.
+  private collectRowsDecryptingToEmptyString({
     rows,
     tally,
   }: {
     rows: (EncryptedRow & { workspaceId?: string })[];
     tally: NormalizationTally;
-  }): string[] {
-    const idsToNormalize: string[] = [];
+  }): EncryptedRow[] {
+    const rowsToNormalize: EncryptedRow[] = [];
 
     for (const { id, encryptedValue, workspaceId } of rows) {
       try {
@@ -146,16 +162,16 @@ export class NormalizeEmptyApplicationVariableValuesSlowInstanceCommand
             { workspaceId },
           ) === ''
         ) {
-          idsToNormalize.push(id);
+          rowsToNormalize.push({ id, encryptedValue });
         }
       } catch {
         tally.undecryptable++;
       }
     }
 
-    tally.normalized += idsToNormalize.length;
+    tally.normalized += rowsToNormalize.length;
 
-    return idsToNormalize;
+    return rowsToNormalize;
   }
 
   private logTally(tableName: string, tally: NormalizationTally): void {

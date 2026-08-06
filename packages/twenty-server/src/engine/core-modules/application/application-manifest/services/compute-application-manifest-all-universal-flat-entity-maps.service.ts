@@ -38,6 +38,7 @@ import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/app
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
+import { isUnsetApplicationVariableValue } from 'src/engine/core-modules/application/utils/is-unset-application-variable-value.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -56,7 +57,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     plaintext: string,
     workspaceId: string,
   ): EncryptedString | '' {
-    if (plaintext === '') {
+    if (isUnsetApplicationVariableValue(plaintext)) {
       return '';
     }
 
