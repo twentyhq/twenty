@@ -153,6 +153,7 @@ describe('parseSlackAssistantRequest', () => {
         slackChannelId: 'C123',
         slackMessageTimestamp: '1700000000.000100',
         parentMessageTimestamp: '1700000000.000100',
+        isInExistingThread: false,
       },
     });
   });
@@ -166,6 +167,7 @@ describe('parseSlackAssistantRequest', () => {
       request: null,
       emptyRequest: {
         parentMessageTimestamp: '1699999999.000001',
+        isInExistingThread: true,
       },
     });
   });
@@ -191,6 +193,7 @@ describe('parseSlackAssistantRequest', () => {
         slackChannelId: 'D123',
         slackMessageTimestamp: '1700000000.000200',
         parentMessageTimestamp: undefined,
+        isInExistingThread: false,
       },
     });
   });

@@ -78,6 +78,7 @@ export const parseSlackAssistantRequest = (
             slackMessageTimestamp: event.ts,
             isDirectMessage,
           }),
+          isInExistingThread: isNonEmptyString(event.thread_ts),
         },
       };
     }

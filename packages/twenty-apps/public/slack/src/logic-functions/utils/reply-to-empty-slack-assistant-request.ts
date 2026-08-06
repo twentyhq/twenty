@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { SLACK_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-request-text';
+import { SLACK_ASSISTANT_EMPTY_THREAD_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-thread-request-text';
 import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack-assistant-empty-request.type';
 import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { claimSlackEmptyRequestReply } from 'src/logic-functions/utils/claim-slack-empty-request-reply';
@@ -32,7 +33,9 @@ export const replyToEmptySlackAssistantRequest = async (
 
   const replyResult = await postSlackMessage(slackClientResult.client, {
     slackChannelId: emptyRequest.slackChannelId,
-    messageText: SLACK_ASSISTANT_EMPTY_REQUEST_TEXT,
+    messageText: emptyRequest.isInExistingThread
+      ? SLACK_ASSISTANT_EMPTY_THREAD_REQUEST_TEXT
+      : SLACK_ASSISTANT_EMPTY_REQUEST_TEXT,
     parentMessageTimestamp: emptyRequest.parentMessageTimestamp,
     messageFormat: 'markdown',
   });
