@@ -97,7 +97,13 @@ export const CurrencyInput = ({
   const { thousandsSeparator, radix } =
     getSeparatorsForNumberFormat(numberFormat);
 
-  const handleChange = (value: string) => {
+  // imask re-emits accept while formatting the incoming value, with no
+  // originating input event; only a user keystroke may change the draft
+  const handleAccept = (value: string, event?: InputEvent) => {
+    if (!isDefined(event)) {
+      return;
+    }
+
     setInternalText(value);
     onChange?.(value);
   };
@@ -144,7 +150,9 @@ export const CurrencyInput = ({
           thousandsSeparator={thousandsSeparator}
           radix={radix}
           scale={scale}
-          onAccept={(value: string) => handleChange(value)}
+          onAccept={(value: string, _maskRef: unknown, event?: InputEvent) =>
+            handleAccept(value, event)
+          }
           inputRef={wrapperRef}
           autoComplete="off"
           placeholder={placeholder}
