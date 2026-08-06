@@ -81,7 +81,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
         )
       : undefined;
 
-  const targetViewFieldGroupUniversalIdentifier =
+  const targetSystemViewFieldGroupUniversalIdentifier =
     lastFlatViewFieldGroup?.universalIdentifier ?? null;
 
   const existingActivePositions =
@@ -96,7 +96,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
           flatViewField.isActive &&
           !isDefined(flatViewField.deletedAt) &&
           flatViewField.viewFieldGroupUniversalIdentifier ===
-            targetViewFieldGroupUniversalIdentifier,
+            targetSystemViewFieldGroupUniversalIdentifier,
       )
       .map((flatViewField) => flatViewField.position);
 
@@ -122,7 +122,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
     fieldMetadataUniversalIdentifier:
       sourceFlatFieldMetadata.universalIdentifier,
     viewUniversalIdentifier: recordPageViewUniversalIdentifier,
-    viewFieldGroupUniversalIdentifier: targetViewFieldGroupUniversalIdentifier,
+    viewFieldGroupUniversalIdentifier: targetSystemViewFieldGroupUniversalIdentifier,
     isVisible: newFieldDefaultVisibility,
     size: DEFAULT_VIEW_FIELD_SIZE,
     position,

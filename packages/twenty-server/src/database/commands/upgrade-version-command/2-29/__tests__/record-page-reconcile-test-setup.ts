@@ -1,10 +1,10 @@
 import {
-  getPageLayoutTabUniversalIdentifier,
-  getPageLayoutWidgetUniversalIdentifier,
-  getRecordPageLayoutUniversalIdentifier,
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemPageLayoutWidgetUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getViewFieldGroupUniversalIdentifier,
+  getSystemViewFieldGroupUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 
@@ -34,17 +34,17 @@ export const buildDerivedRecordPageStackUniversalIdentifiers = ({
   fieldApplicationUniversalIdentifier?: string;
   fieldUniversalIdentifier?: string;
 }) => {
-  const pageLayout = getRecordPageLayoutUniversalIdentifier({
-    applicationUniversalIdentifier,
+  const pageLayout = getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
     objectUniversalIdentifier,
   });
-  const homeTab = getPageLayoutTabUniversalIdentifier({
-    applicationUniversalIdentifier,
+  const homeTab = getSystemPageLayoutTabUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
     pageLayoutUniversalIdentifier: pageLayout,
     title: 'Home',
   });
-  const fieldsWidget = getPageLayoutWidgetUniversalIdentifier({
-    applicationUniversalIdentifier,
+  const fieldsWidget = getSystemPageLayoutWidgetUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
     pageLayoutTabUniversalIdentifier: homeTab,
     title: 'Fields',
   });
@@ -59,8 +59,8 @@ export const buildDerivedRecordPageStackUniversalIdentifiers = ({
     viewUniversalIdentifier: view,
     fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
   });
-  const generalGroup = getViewFieldGroupUniversalIdentifier({
-    applicationUniversalIdentifier,
+  const generalGroup = getSystemViewFieldGroupUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
     viewUniversalIdentifier: view,
     name: 'General',
   });

@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 import {
-  getRecordPageLayoutUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
@@ -60,7 +60,7 @@ type StandardRecordPageFlatEntityMaps = Pick<
 @Command({
   name: 'upgrade:2-29:backfill-record-page',
   description:
-    'Every object carries a system record-page stack; caller-defined custom record-page layouts coexist with it (the frontend displays a custom layout over the system one when defined). Running after the reconcile-standard-record-page and reconcile-workspace-custom-record-page commands normalized identifiers and ownership, this command backfills the system record-page stack for every object missing it, converging upgraded installs with fresh installs and replacing the frontend hardcoded default-layout fallback with a database guarantee. Twenty-standard objects get their curated stack from the standard definitions (which hold the derived identifiers post-reconcile, so lookups are direct); standard objects the definitions give no record page to stay without one, exactly like fresh installs. Workspace-custom and application objects get the engine default stack (the one objectRecordPageOnCreate always emits through the workspace migration pipeline): the FIELDS_WIDGET view (derived identifier, reserved key), its view fields for every displayable field except the label identifier, and the default layout with its 5 tabs and widgets. The backfill is idempotent and retry-safe: view, view-field and layout creation are gated independently on their derived identifiers, so a retry after a partial failure still backfills the missing view fields of an already-committed view. On objects whose view already exists it only tops up missing view-field rows, and it never touches the tabs and widgets of an existing layout, so deliberate customizations survive.',
+    'Every object carries a system record-page stack; caller-defined custom record-page layouts coexist with it (the frontend displays a custom layout over the system one when defined). Running after the reconcile-standard-record-page and reconcile-workspace-custom-record-page commands normalized identifiers and ownership, this command backfills the system record-page stack for every object missing it, converging upgraded installs with fresh installs and replacing the frontend hardcoded default-layout fallback with a database guarantee. Twenty-standard objects get their curated stack from the standard definitions (which hold the derived identifiers post-reconcile, so lookups are direct); standard objects the definitions give no record page to stay without one, exactly like fresh installs. Workspace-custom and application objects get the engine default stack (the one objectRecordPageOnCreate always emits through the workspace migration pipeline): the FIELDS_WIDGET view (derived identifier, reserved key), its view fields for every displayable field except the label identifier, and the default layout with its 5 tabs and widgets. The backfill is idempotent and retry-safe: view, view-field, view-field-group and layout creation are gated independently on their derived identifiers, so a retry after a partial failure still backfills the missing view fields and groups of an already-committed view. View fields land in the migration bucket of the application owning their displayed field, matching the engine emission for app-contributed fields on foreign objects. On objects whose view already exists it only tops up missing view-field rows, and it never touches the tabs and widgets of an existing layout, so deliberate customizations survive.',
 })
 export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -81,12 +81,14 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
     const {
       flatViewMaps,
       flatViewFieldMaps,
+      flatViewFieldGroupMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatPageLayoutMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatViewMaps',
       'flatViewFieldMaps',
+      'flatViewFieldGroupMaps',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatPageLayoutMaps',
@@ -111,6 +113,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
         standardFlatEntityMaps,
         flatViewMaps,
         flatViewFieldMaps,
+        flatViewFieldGroupMaps,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatPageLayoutMaps,
@@ -159,6 +162,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
     standardFlatEntityMaps,
     flatViewMaps,
     flatViewFieldMaps,
+    flatViewFieldGroupMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatPageLayoutMaps,
@@ -169,6 +173,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
     AllFlatEntityMaps,
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
+    | 'flatViewFieldGroupMaps'
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
     | 'flatPageLayoutMaps'
@@ -209,10 +214,6 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
         continue;
       }
 
-      const applicationBucket = getApplicationBucket(
-        flatObjectMetadata.applicationUniversalIdentifier,
-      );
-
       const isStandardObject =
         flatObjectMetadata.applicationUniversalIdentifier ===
         twentyStandardApplicationUniversalIdentifier;
@@ -220,17 +221,18 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
       if (isStandardObject) {
         this.collectStandardObjectRecordPageOperations({
           flatObjectMetadata,
-          applicationBucket,
+          getApplicationBucket,
           standardFlatEntityMaps,
           flatViewMaps,
           flatViewFieldMaps,
+          flatViewFieldGroupMaps,
           flatFieldMetadataMaps,
           flatPageLayoutMaps,
         });
       } else {
         this.collectDefaultRecordPageOperations({
           flatObjectMetadata,
-          applicationBucket,
+          getApplicationBucket,
           flatViewMaps,
           flatViewFieldMaps,
           flatFieldMetadataMaps,
@@ -249,25 +251,32 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
   // definitions give no record page to stay without one, like fresh installs.
   private collectStandardObjectRecordPageOperations({
     flatObjectMetadata,
-    applicationBucket,
+    getApplicationBucket,
     standardFlatEntityMaps,
     flatViewMaps,
     flatViewFieldMaps,
+    flatViewFieldGroupMaps,
     flatFieldMetadataMaps,
     flatPageLayoutMaps,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
-    applicationBucket: BackfillOperations;
+    getApplicationBucket: (
+      applicationUniversalIdentifier: string,
+    ) => BackfillOperations;
     standardFlatEntityMaps: StandardRecordPageFlatEntityMaps;
   } & Pick<
     AllFlatEntityMaps,
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
+    | 'flatViewFieldGroupMaps'
     | 'flatFieldMetadataMaps'
     | 'flatPageLayoutMaps'
   >): void {
     const applicationUniversalIdentifier =
       flatObjectMetadata.applicationUniversalIdentifier;
+    const applicationBucket = getApplicationBucket(
+      applicationUniversalIdentifier,
+    );
 
     const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
       objectMetadataApplicationUniversalIdentifier:
@@ -287,18 +296,6 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
 
     if (!viewAlreadyExists && isDefined(standardFlatView)) {
       applicationBucket.viewsToCreate.push(standardFlatView);
-
-      applicationBucket.viewFieldGroupsToCreate.push(
-        ...Object.values(
-          standardFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier,
-        )
-          .filter(isDefined)
-          .filter(
-            (flatViewFieldGroup) =>
-              flatViewFieldGroup.viewUniversalIdentifier ===
-              derivedViewUniversalIdentifier,
-          ),
-      );
 
       const curatedFlatViewFields = Object.values(
         standardFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
@@ -324,24 +321,40 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
     }
 
     if (viewAlreadyExists || isDefined(standardFlatView)) {
-      applicationBucket.viewFieldsToCreate.push(
-        ...this.computeMissingFlatViewFieldsToCreate({
-          flatObjectMetadata,
-          derivedViewUniversalIdentifier,
-          flatViewFieldMaps,
-          flatFieldMetadataMaps,
-        }).filter(
-          (flatViewFieldToCreate) =>
-            !curatedViewFieldUniversalIdentifiers.has(
-              flatViewFieldToCreate.universalIdentifier,
-            ),
-        ),
+      // Groups are topped up independently of the view creation gate so a
+      // retry after a partial failure still backfills them on an
+      // already-committed view.
+      applicationBucket.viewFieldGroupsToCreate.push(
+        ...Object.values(
+          standardFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier,
+        )
+          .filter(isDefined)
+          .filter(
+            (flatViewFieldGroup) =>
+              flatViewFieldGroup.viewUniversalIdentifier ===
+                derivedViewUniversalIdentifier &&
+              !isDefined(
+                flatViewFieldGroupMaps.byUniversalIdentifier[
+                  flatViewFieldGroup.universalIdentifier
+                ],
+              ),
+          ),
       );
+
+      this.collectMissingFlatViewFieldsToCreate({
+        flatObjectMetadata,
+        derivedViewUniversalIdentifier,
+        getApplicationBucket,
+        flatViewFieldMaps,
+        flatFieldMetadataMaps,
+        skippedViewFieldUniversalIdentifiers:
+          curatedViewFieldUniversalIdentifiers,
+      });
     }
 
     const derivedPageLayoutUniversalIdentifier =
-      getRecordPageLayoutUniversalIdentifier({
-        applicationUniversalIdentifier,
+      getSystemRecordPageLayoutUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       });
 
@@ -417,14 +430,16 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
   // for objects that predate the engine handler.
   private collectDefaultRecordPageOperations({
     flatObjectMetadata,
-    applicationBucket,
+    getApplicationBucket,
     flatViewMaps,
     flatViewFieldMaps,
     flatFieldMetadataMaps,
     flatPageLayoutMaps,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
-    applicationBucket: BackfillOperations;
+    getApplicationBucket: (
+      applicationUniversalIdentifier: string,
+    ) => BackfillOperations;
   } & Pick<
     AllFlatEntityMaps,
     | 'flatViewMaps'
@@ -434,6 +449,9 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
   >): void {
     const applicationUniversalIdentifier =
       flatObjectMetadata.applicationUniversalIdentifier;
+    const applicationBucket = getApplicationBucket(
+      applicationUniversalIdentifier,
+    );
 
     const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
       objectMetadataApplicationUniversalIdentifier:
@@ -456,18 +474,17 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
       );
     }
 
-    applicationBucket.viewFieldsToCreate.push(
-      ...this.computeMissingFlatViewFieldsToCreate({
-        flatObjectMetadata,
-        derivedViewUniversalIdentifier,
-        flatViewFieldMaps,
-        flatFieldMetadataMaps,
-      }),
-    );
+    this.collectMissingFlatViewFieldsToCreate({
+      flatObjectMetadata,
+      derivedViewUniversalIdentifier,
+      getApplicationBucket,
+      flatViewFieldMaps,
+      flatFieldMetadataMaps,
+    });
 
     const derivedPageLayoutUniversalIdentifier =
-      getRecordPageLayoutUniversalIdentifier({
-        applicationUniversalIdentifier,
+      getSystemRecordPageLayoutUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       });
 
@@ -495,19 +512,28 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
 
   // Missing view-field rows for the object's record-page view, so every
   // displayable field except the label identifier has one, the invariant the
-  // engine maintains on field creation.
-  private computeMissingFlatViewFieldsToCreate({
+  // engine maintains on field creation. Each row lands in the bucket of the
+  // application owning its displayed field, per the engine convention: a field
+  // contributed by another application yields a view field owned by that
+  // application, on a view owned by the object's application.
+  private collectMissingFlatViewFieldsToCreate({
     flatObjectMetadata,
     derivedViewUniversalIdentifier,
+    getApplicationBucket,
     flatViewFieldMaps,
     flatFieldMetadataMaps,
+    skippedViewFieldUniversalIdentifiers,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
     derivedViewUniversalIdentifier: string;
+    getApplicationBucket: (
+      applicationUniversalIdentifier: string,
+    ) => BackfillOperations;
+    skippedViewFieldUniversalIdentifiers?: Set<string>;
   } & Pick<
     AllFlatEntityMaps,
     'flatViewFieldMaps' | 'flatFieldMetadataMaps'
-  >): UniversalFlatViewField[] {
+  >): void {
     const objectFlatFieldMetadatas = flatObjectMetadata.fieldUniversalIdentifiers
       .map(
         (fieldUniversalIdentifier) =>
@@ -515,22 +541,47 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
       )
       .filter(isDefined);
 
-    return computeSystemViewFieldsToCreate({
-      objectFlatFieldMetadatas,
-      viewUniversalIdentifier: derivedViewUniversalIdentifier,
-      applicationUniversalIdentifier:
-        flatObjectMetadata.applicationUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-      excludeLabelIdentifier: true,
-    }).filter(
-      (flatViewFieldToCreate) =>
-        !isDefined(
-          flatViewFieldMaps.byUniversalIdentifier[
-            flatViewFieldToCreate.universalIdentifier
-          ],
-        ),
-    );
+    const fieldApplicationUniversalIdentifierByFieldUniversalIdentifier =
+      new Map(
+        objectFlatFieldMetadatas.map((flatFieldMetadata) => [
+          flatFieldMetadata.universalIdentifier,
+          flatFieldMetadata.applicationUniversalIdentifier,
+        ]),
+      );
+
+    const missingFlatViewFields: UniversalFlatViewField[] =
+      computeSystemViewFieldsToCreate({
+        objectFlatFieldMetadatas,
+        viewUniversalIdentifier: derivedViewUniversalIdentifier,
+        applicationUniversalIdentifier:
+          flatObjectMetadata.applicationUniversalIdentifier,
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+        excludeLabelIdentifier: true,
+      }).filter(
+        (flatViewFieldToCreate) =>
+          !isDefined(
+            flatViewFieldMaps.byUniversalIdentifier[
+              flatViewFieldToCreate.universalIdentifier
+            ],
+          ) &&
+          !skippedViewFieldUniversalIdentifiers?.has(
+            flatViewFieldToCreate.universalIdentifier,
+          ),
+      );
+
+    for (const missingFlatViewField of missingFlatViewFields) {
+      const fieldApplicationUniversalIdentifier =
+        fieldApplicationUniversalIdentifierByFieldUniversalIdentifier.get(
+          missingFlatViewField.fieldMetadataUniversalIdentifier,
+        ) ?? flatObjectMetadata.applicationUniversalIdentifier;
+
+      getApplicationBucket(fieldApplicationUniversalIdentifier)
+        .viewFieldsToCreate.push({
+          ...missingFlatViewField,
+          applicationUniversalIdentifier: fieldApplicationUniversalIdentifier,
+        });
+    }
   }
 
   private async runBackfillMigrations({
