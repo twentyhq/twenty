@@ -4,6 +4,8 @@ import { type Histogram } from '@opentelemetry/api';
 import { constants, PerformanceObserver } from 'perf_hooks';
 import { getHeapStatistics } from 'v8';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 const MILLISECONDS_PER_SECOND = 1_000;
@@ -11,6 +13,8 @@ const MILLISECONDS_PER_SECOND = 1_000;
 const GC_DURATION_BUCKETS_SECONDS = [
   0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5,
 ];
+
+const HEAP_STATISTICS_CACHE_MS = 1_000;
 
 const GC_KIND_BY_CONSTANT = new Map<number, string>([
   [constants.NODE_PERFORMANCE_GC_MINOR, 'minor'],
@@ -26,6 +30,8 @@ const GC_KIND_BY_CONSTANT = new Map<number, string>([
 export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
   private readonly pauseHistogram: Histogram;
   private observer?: PerformanceObserver;
+  private heapStatistics?: ReturnType<typeof getHeapStatistics>;
+  private heapStatisticsAt = 0;
 
   constructor(private readonly metricsService: MetricsService) {
     this.pauseHistogram = this.metricsService
@@ -91,8 +97,23 @@ export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
       this.metricsService.createObservableGauge({
         metricName: gauge.metricName,
         options: { description: gauge.description, unit: 'By' },
-        callback: async () => gauge.read(getHeapStatistics()),
+        callback: async () => gauge.read(this.getHeapStatisticsSnapshot()),
       });
     }
+  }
+
+  // The four gauges share one snapshot per scrape instead of each calling into V8.
+  private getHeapStatisticsSnapshot(): ReturnType<typeof getHeapStatistics> {
+    const now = Date.now();
+
+    if (
+      !isDefined(this.heapStatistics) ||
+      now - this.heapStatisticsAt > HEAP_STATISTICS_CACHE_MS
+    ) {
+      this.heapStatistics = getHeapStatistics();
+      this.heapStatisticsAt = now;
+    }
+
+    return this.heapStatistics;
   }
 }
