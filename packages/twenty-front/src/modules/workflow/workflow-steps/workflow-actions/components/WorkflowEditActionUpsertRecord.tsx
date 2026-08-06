@@ -167,16 +167,17 @@ export const WorkflowEditActionUpsertRecord = ({
       isFieldRelation(fieldDefinition) &&
       fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
 
-    const fieldValue = isFieldRelationManyToOne
-      ? {
-          id: updatedValue,
-        }
-      : updatedValue;
+    const newFormData: UpsertRecordFormData = { ...formData };
 
-    const newFormData: UpsertRecordFormData = {
-      ...formData,
-      [fieldName]: fieldValue,
-    };
+    if (isFieldRelationManyToOne && !isDefined(updatedValue)) {
+      delete newFormData[fieldName];
+    } else {
+      newFormData[fieldName] = isFieldRelationManyToOne
+        ? {
+            id: updatedValue,
+          }
+        : updatedValue;
+    }
 
     setFormData(newFormData);
 
