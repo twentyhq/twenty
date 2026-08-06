@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   CREDENTIALS_DURATION_IN_SECONDS,
+  LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS,
   LAMBDA_CLIENT_MAX_ATTEMPTS,
   LAMBDA_CLIENT_MAX_SOCKETS,
   LAMBDA_CLIENT_REQUEST_TIMEOUT_MS,
@@ -46,6 +47,7 @@ export class LambdaAwsClientService {
         retryMode: LAMBDA_CLIENT_RETRY_MODE,
         requestHandler: buildAwsRequestHandlerOptions({
           requestTimeoutMs: LAMBDA_CLIENT_REQUEST_TIMEOUT_MS,
+          connectionTimeoutMs: LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS,
           maxSockets: LAMBDA_CLIENT_MAX_SOCKETS,
         }),
       });

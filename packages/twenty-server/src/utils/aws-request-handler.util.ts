@@ -8,11 +8,20 @@
  * and every subsequent call on that process queues indefinitely instead of
  * failing — which is indistinguishable from a hang to the caller.
  *
- * Giving every client an explicit request timeout turns that failure mode into
- * an ordinary error the caller can catch and retry.
+ * Two settings matter here and both are easy to get wrong:
+ *
+ * - `throwOnRequestTimeout` must be true. On its own `requestTimeout` only logs
+ *   a warning and leaves the request running, so the socket is never returned
+ *   to the pool. Only the throwing variant destroys the request.
+ *
+ * - `connectionTimeout` bounds the time spent *waiting for a socket*, not just
+ *   the TCP handshake: its timer starts when the request is created and is
+ *   cleared when a socket is assigned. A request queued behind a saturated pool
+ *   is therefore killed by this timeout, so it must be generous enough to
+ *   absorb a legitimate burst of concurrent calls.
  */
 
-export const AWS_CONNECTION_TIMEOUT_MS = 5_000;
+export const AWS_DEFAULT_CONNECTION_TIMEOUT_MS = 10_000;
 export const AWS_DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 export const AWS_DEFAULT_MAX_SOCKETS = 100;
 
@@ -24,14 +33,24 @@ type AwsRequestHandlerOptions = {
    * own timeout allows.
    */
   requestTimeoutMs?: number;
+  /**
+   * Upper bound for acquiring a socket and connecting. Raise it for clients
+   * whose callers burst above `maxSockets`, since queued requests are killed
+   * by this timeout rather than by `requestTimeout`.
+   */
+  connectionTimeoutMs?: number;
   maxSockets?: number;
 };
 
 export const buildAwsRequestHandlerOptions = ({
   requestTimeoutMs = AWS_DEFAULT_REQUEST_TIMEOUT_MS,
+  connectionTimeoutMs = AWS_DEFAULT_CONNECTION_TIMEOUT_MS,
   maxSockets = AWS_DEFAULT_MAX_SOCKETS,
 }: AwsRequestHandlerOptions = {}) => ({
-  connectionTimeout: AWS_CONNECTION_TIMEOUT_MS,
+  connectionTimeout: connectionTimeoutMs,
   requestTimeout: requestTimeoutMs,
+  // Without this, a breached requestTimeout is only logged and the socket stays
+  // checked out — which is the exact failure this helper exists to prevent.
+  throwOnRequestTimeout: true,
   httpsAgent: { maxSockets },
 });

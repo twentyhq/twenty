@@ -26,9 +26,17 @@ export const LAMBDA_CLIENT_REQUEST_TIMEOUT_MS =
 /**
  * Above the SDK default of 50: long-running invocations legitimately occupy
  * sockets for minutes, and they must not starve the control-plane calls
- * (layer lookups, waiters) that share this client.
+ * (layer lookups, waiters) that share this client. Each socket is one TCP
+ * connection to the Lambda endpoint, so this trades file descriptors for
+ * concurrency and can be raised further if builds start queueing.
  */
-export const LAMBDA_CLIENT_MAX_SOCKETS = 200;
+export const LAMBDA_CLIENT_MAX_SOCKETS = 500;
+/**
+ * Generous because it also caps how long a call may wait for a free socket:
+ * concurrent builds and invocations can burst well above the pool size, and
+ * they should queue rather than fail while the pool drains.
+ */
+export const LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS = 60_000;
 
 export const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 export const YARN_INSTALL_FUNCTION_NAME_PREFIX = 'twenty-yarn-install';
