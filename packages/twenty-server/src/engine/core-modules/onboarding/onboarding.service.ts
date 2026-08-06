@@ -408,6 +408,15 @@ export class OnboardingService {
           },
           queryRunner,
         );
+      case OnboardingStatus.BOOK_CALL:
+        return this.setOnboardingBookCallPending(
+          {
+            userId,
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
       default:
         assertUnreachable(step);
     }
@@ -826,6 +835,72 @@ export class OnboardingService {
       },
       queryRunner,
     );
+  }
+
+  async completeOnboardingBookCallStep({
+    userId,
+    workspaceId,
+    hasBookedCall,
+    isAutoSkipped,
+  }: {
+    userId: string;
+    workspaceId: string;
+    hasBookedCall: boolean;
+    isAutoSkipped: boolean;
+  }) {
+    await this.runStepTransitionInLockedTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedBookCallStep = await this.claimOnboardingBookCallStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
+
+        if (!hasClaimedBookCallStep || isAutoSkipped) {
+          return;
+        }
+
+        if (hasBookedCall) {
+          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+          return;
+        }
+
+        await this.pushReversibleOnboardingStep(
+          {
+            userId,
+            workspaceId,
+            step: OnboardingStatus.BOOK_CALL,
+          },
+          queryRunner,
+        );
+      },
+    );
+  }
+
+  private async claimOnboardingBookCallStep(
+    {
+      userId,
+      workspaceId,
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+      },
+      queryRunner,
+    );
+
+    return isDefined(affectedRows) && affectedRows > 0;
   }
 
   async setOnboardingBookCallPendingIfQualified({

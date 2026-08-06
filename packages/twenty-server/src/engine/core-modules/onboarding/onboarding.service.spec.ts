@@ -607,6 +607,84 @@ describe('OnboardingService', () => {
     });
   });
 
+  describe('completeOnboardingBookCallStep', () => {
+    it('should record the step as reversible when the user skipped the call', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: false,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.BOOK_CALL],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should clear every step to go back to when a call was booked', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: true,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should not record the step as reversible when it was dropped automatically', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: false,
+        isAutoSkipped: true,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should not record the step as reversible when it was already consumed', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: false,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+  });
+
   describe('completeOnboardingInviteTeamStep', () => {
     it('should record the step as reversible when no invitation was sent', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
@@ -805,6 +883,47 @@ describe('OnboardingService', () => {
       );
       expect(result.onboardingStatus).toBe(OnboardingStatus.INVITE_TEAM);
       expect(result.previousOnboardingStatus).toBeNull();
+    });
+
+    it('should re-arm the book-call step when going back to it', async () => {
+      jest
+        .spyOn(userVarsService, 'get')
+        .mockResolvedValueOnce([OnboardingStatus.BOOK_CALL])
+        .mockResolvedValue([]);
+      jest
+        .spyOn(userVarsService, 'getAll')
+        .mockResolvedValue(
+          new Map<string, boolean>([
+            [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING, true],
+          ]),
+        );
+      jest
+        .spyOn(billingService, 'isSubscriptionIncompleteOnboardingStatus')
+        .mockResolvedValue(true);
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation(
+          (key: string) =>
+            (key === 'CALENDAR_BOOKING_PAGE_ID'
+              ? 'team/twenty/talk-to-us'
+              : 50) as never,
+        );
+
+      const result = await service.goBackToPreviousOnboardingStep({
+        userId,
+        workspaceId,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+          value: true,
+        },
+        mockQueryRunner,
+      );
+      expect(result.onboardingStatus).toBe(OnboardingStatus.BOOK_CALL);
     });
 
     it('should throw when there is no recorded step to go back to', async () => {

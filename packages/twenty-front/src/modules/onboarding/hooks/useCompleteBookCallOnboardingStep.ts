@@ -18,22 +18,31 @@ export const useCompleteBookCallOnboardingStep = () => {
     CompleteBookCallOnboardingStepDocument,
   );
 
-  return useCallback(async () => {
-    await completeBookCallOnboardingStepMutation();
+  return useCallback(
+    async ({ hasBookedCall }: { hasBookedCall: boolean }) => {
+      await completeBookCallOnboardingStepMutation({
+        variables: { hasBookedCall, isAutoSkipped: false },
+      });
 
-    setCurrentUser((current) =>
-      setIsBookCallOnboardingStepPending(current, false),
-    );
-    setNextOnboardingStatus({ stepHistoryEffect: 'leaveUnchanged' });
+      setCurrentUser((current) =>
+        setIsBookCallOnboardingStepPending(current, false),
+      );
+      setNextOnboardingStatus({
+        stepHistoryEffect: hasBookedCall
+          ? 'clearAfterIrreversibleStep'
+          : 'recordAsReversible',
+      });
 
-    if (isPlanRequired) {
-      navigate(AppPath.PlanRequired);
-    }
-  }, [
-    completeBookCallOnboardingStepMutation,
-    setCurrentUser,
-    setNextOnboardingStatus,
-    isPlanRequired,
-    navigate,
-  ]);
+      if (isPlanRequired) {
+        navigate(AppPath.PlanRequired);
+      }
+    },
+    [
+      completeBookCallOnboardingStepMutation,
+      setCurrentUser,
+      setNextOnboardingStatus,
+      isPlanRequired,
+      navigate,
+    ],
+  );
 };
