@@ -70,6 +70,7 @@ describe('useIsPageLayoutInEditMode', () => {
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       {
+        applicationId: 'application-id-mock',
         __typename: 'PageLayout',
         id: PAGE_LAYOUT_TEST_INSTANCE_ID,
         name: 'Record Page',

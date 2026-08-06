@@ -13,6 +13,7 @@ import { type ReactNode } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const MOCK_DASHBOARD_LAYOUT: PageLayout = {
+  applicationId: 'application-id-mock',
   __typename: 'PageLayout',
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Dashboard Layout',

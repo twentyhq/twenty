@@ -12,6 +12,8 @@ describe('getTabsRenderableForTargetObject', () => {
     id: string,
     type: WidgetType,
   ): PageLayoutTab['widgets'][0] => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
@@ -42,6 +44,8 @@ describe('getTabsRenderableForTargetObject', () => {
     id: string,
     widgets: PageLayoutTab['widgets'],
   ): PageLayoutTab => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutTab',
     applicationId: '',
     id,

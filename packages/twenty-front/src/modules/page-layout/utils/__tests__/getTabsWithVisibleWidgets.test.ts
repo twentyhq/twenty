@@ -10,6 +10,8 @@ describe('getTabsWithVisibleWidgets', () => {
     id: string,
     conditionalDisplay?: any,
   ): PageLayoutTab['widgets'][0] => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
@@ -40,6 +42,8 @@ describe('getTabsWithVisibleWidgets', () => {
     id: string,
     widgets: PageLayoutTab['widgets'],
   ): PageLayoutTab => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutTab',
     applicationId: '',
     id,

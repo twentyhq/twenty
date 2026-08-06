@@ -9,6 +9,8 @@ import {
 
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     id,
     applicationId: '',
     isActive: true,
