@@ -11,11 +11,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// The virtualized rows are absolutely positioned on a grid whose pitch is
-// RECORD_TABLE_ROW_HEIGHT + 1 (row plus its bottom border), with the header
-// taking the first slot. Header cells are sized RECORD_TABLE_ROW_HEIGHT with
-// their border inside, so without this the body sits one pixel above the grid
-// and the add-new row paints over the last row's bottom border.
+// The header takes the first slot of the virtualized row grid, whose pitch is
+// RECORD_TABLE_ROW_HEIGHT + 1 (row plus its bottom border).
 const StyledHeaderContainer = styled.div`
   background-color: ${themeCssVariables.background.primary};
   box-shadow: 0 -1px 0 ${themeCssVariables.background.primary};
