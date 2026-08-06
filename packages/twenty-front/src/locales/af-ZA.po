@@ -17723,10 +17723,10 @@ msgstr "Subdomein reeds geneem"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Subdomein kan nie langer as 30 karakters wees nie"
 
-#. js-lingui-id: Zh/ANr
+#. js-lingui-id: ZETwlU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than {minLength} characters"
-msgstr ""
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Subdomein kan nie korter as 3 karakters wees nie"
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts

@@ -17723,10 +17723,10 @@ msgstr "Субдомен вже зайнятий"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Субдомен не може бути довшим за 30 символів"
 
-#. js-lingui-id: Zh/ANr
+#. js-lingui-id: ZETwlU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than {minLength} characters"
-msgstr ""
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Субдомен не може бути коротшим за 3 символи"
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts

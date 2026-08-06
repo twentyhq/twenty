@@ -17725,10 +17725,10 @@ msgstr "Ο υποτομέας έχει ήδη ληφθεί"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Ο υποτομέας δεν μπορεί να είναι μεγαλύτερος από 30 χαρακτήρες"
 
-#. js-lingui-id: Zh/ANr
+#. js-lingui-id: ZETwlU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than {minLength} characters"
-msgstr ""
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Ο υποτομέας δεν μπορεί να είναι μικρότερος από 3 χαρακτήρες"
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts

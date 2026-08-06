@@ -17723,10 +17723,10 @@ msgstr "Subdoména je již zabraná"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Subdoména nemůže být delší než 30 znaků"
 
-#. js-lingui-id: Zh/ANr
+#. js-lingui-id: ZETwlU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than {minLength} characters"
-msgstr ""
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Subdoména nemůže být kratší než 3 znaky"
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
