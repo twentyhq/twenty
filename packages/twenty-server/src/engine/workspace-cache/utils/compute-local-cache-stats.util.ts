@@ -3,6 +3,7 @@ export type LocalCacheStats = {
   workspaces: number;
   versionsTotal: number;
   versionsByCount: Record<string, number>;
+  entriesByProvider: Record<string, number>;
 };
 
 export const computeLocalCacheStats = (
@@ -16,10 +17,14 @@ export const computeLocalCacheStats = (
     '4': 0,
     '5+': 0,
   };
+  const entriesByProvider: Record<string, number> = {};
   let versionsTotal = 0;
 
   for (const [key, entry] of localCache) {
     workspaceIds.add(key.slice(key.lastIndexOf(':') + 1));
+    const provider = key.slice(0, key.lastIndexOf(':'));
+
+    entriesByProvider[provider] = (entriesByProvider[provider] ?? 0) + 1;
     const versionCount = entry.versions.size;
 
     versionsTotal += versionCount;
@@ -33,5 +38,6 @@ export const computeLocalCacheStats = (
     workspaces: workspaceIds.size,
     versionsTotal,
     versionsByCount,
+    entriesByProvider,
   };
 };
