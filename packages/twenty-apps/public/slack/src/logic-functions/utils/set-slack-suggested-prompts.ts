@@ -3,10 +3,8 @@ import {
   SLACK_SUGGESTED_PROMPTS_TITLE,
 } from 'src/logic-functions/constants/slack-suggested-prompts';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { claimSlackSuggestedPrompts } from 'src/logic-functions/utils/claim-slack-suggested-prompts';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { parseSlackHomeOpenedEvent } from 'src/logic-functions/utils/parse-slack-home-opened-event';
-import { releaseSlackSuggestedPrompts } from 'src/logic-functions/utils/release-slack-suggested-prompts';
 
 type SetSlackSuggestedPromptsResult = { ok: boolean; skipped?: string };
 
@@ -21,17 +19,9 @@ export const setSlackSuggestedPrompts = async (
 
   const { slackChannelId } = parsed.homeOpened;
 
-  const isFirstClaim = await claimSlackSuggestedPrompts(slackChannelId);
-
-  if (!isFirstClaim) {
-    return { ok: true, skipped: 'Prompts were set recently' };
-  }
-
   const slackClientResult = await getSlackClient();
 
   if (!slackClientResult.success) {
-    await releaseSlackSuggestedPrompts(slackChannelId).catch(() => undefined);
-
     throw new Error(slackClientResult.error);
   }
 
@@ -42,8 +32,6 @@ export const setSlackSuggestedPrompts = async (
       prompts: SLACK_SUGGESTED_PROMPTS,
     });
   } catch (error) {
-    await releaseSlackSuggestedPrompts(slackChannelId).catch(() => undefined);
-
     throw new Error(
       `Failed to set the Slack suggested prompts in channel ${slackChannelId}: ${
         error instanceof Error ? error.message : String(error)
