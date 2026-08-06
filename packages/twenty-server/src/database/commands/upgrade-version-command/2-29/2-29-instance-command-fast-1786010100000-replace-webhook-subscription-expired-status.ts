@@ -5,7 +5,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 const TABLES = ['calendarChannel', 'messageChannel'] as const;
 
-@RegisteredInstanceCommand('2.28.0', 1786010100000)
+@RegisteredInstanceCommand('2.29.0', 1786010100000)
 export class ReplaceWebhookSubscriptionExpiredStatusFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
