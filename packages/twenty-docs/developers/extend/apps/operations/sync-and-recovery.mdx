@@ -121,5 +121,6 @@ When something goes wrong, the metadata diff and named errors let you place the 
 
 - **Manifest build error** — the CLI fails before syncing (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); fix your app source.
 - **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
+- **Dependencies size error** — the sync or install fails because the app's production `dependencies` are too large to install as a runtime layer; move packages your logic functions do not import at runtime (UI libraries, dev tooling) to `devDependencies`.
 - **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).
 - **Local instance state** — none of the above and the workspace still looks wrong; work down the recovery ladder.
