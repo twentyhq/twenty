@@ -809,7 +809,7 @@ export class AdminPanelResolver {
     @Args('scope', {
       type: () => AdminChatThreadScope,
       nullable: true,
-      defaultValue: AdminChatThreadScope.ONBOARDING,
+      defaultValue: AdminChatThreadScope.ALL,
     })
     scope: AdminChatThreadScope | null,
     @Args('hasErrorOnly', {
@@ -844,7 +844,7 @@ export class AdminPanelResolver {
     searchTerm?: string | null,
   ): Promise<PaginatedAdminChatThreadsDTO> {
     return this.adminGlobalChatThreadsService.getGlobalChatThreads({
-      scope: scope ?? AdminChatThreadScope.ONBOARDING,
+      scope: scope ?? AdminChatThreadScope.ALL,
       hasErrorOnly: hasErrorOnly ?? false,
       userNeverEngagedOnly: userNeverEngagedOnly ?? false,
       searchTerm: searchTerm ?? undefined,

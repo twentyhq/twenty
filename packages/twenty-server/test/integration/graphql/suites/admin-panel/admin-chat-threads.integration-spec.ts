@@ -423,7 +423,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
   describe('getAdminChatThreads', () => {
     it('returns only onboarding threads for the ONBOARDING scope', async () => {
-      const result = await fetchThreads({ limit: 100 });
+      const result = await fetchThreads({ scope: 'ONBOARDING', limit: 100 });
 
       const threadIds = result.threads.map((thread) => thread.id);
 
@@ -434,6 +434,15 @@ describe('Admin panel global chat threads (integration)', () => {
       for (const thread of result.threads) {
         expect(thread.isOnboardingThread).toBe(true);
       }
+    });
+
+    it('defaults to every scope when none is given', async () => {
+      const result = await fetchThreads({ limit: 100 });
+
+      const threadIds = result.threads.map((thread) => thread.id);
+
+      expect(threadIds).toContain(regularThreadId);
+      expect(threadIds).toContain(kickoffThreadId);
     });
 
     it('returns all threads with the onboarding flag for the ALL scope', async () => {
@@ -484,6 +493,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
     it('filters threads without user replies via userNeverEngagedOnly', async () => {
       const result = await fetchThreads({
+        scope: 'ONBOARDING',
         userNeverEngagedOnly: true,
         limit: 100,
       });
@@ -524,6 +534,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
     it('sorts by message count', async () => {
       const result = await fetchThreads({
+        scope: 'ONBOARDING',
         sortBy: 'MESSAGE_COUNT',
         sortDirection: 'ASC',
         limit: 100,
@@ -557,7 +568,7 @@ describe('Admin panel global chat threads (integration)', () => {
     });
 
     it('paginates with totalCount and hasMore', async () => {
-      const result = await fetchThreads({ limit: 1 });
+      const result = await fetchThreads({ scope: 'ONBOARDING', limit: 1 });
 
       expect(result.threads).toHaveLength(1);
       expect(result.totalCount).toBeGreaterThanOrEqual(2);

@@ -1,10 +1,11 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
+import { SettingsAdminChatCollapsibleSection } from '@/settings/admin-panel/components/SettingsAdminChatCollapsibleSection';
 import { SettingsAdminChatToolCallPart } from '@/settings/admin-panel/components/SettingsAdminChatToolCallPart';
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
 
@@ -34,6 +35,16 @@ const StyledTextContent = styled.div<{ isUser?: boolean }>`
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
 
+const StyledReasoningContent = styled.div`
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[3]};
+  white-space: pre-wrap;
+`;
+
 export const SettingsAdminChatMessagePartRenderer = ({
   part,
   isUserMessage,
@@ -51,7 +62,11 @@ export const SettingsAdminChatMessagePartRenderer = ({
   }
 
   if (part.type === 'reasoning' && isNonEmptyString(part.reasoningContent)) {
-    return <ReasoningSummaryDisplay content={part.reasoningContent} />;
+    return (
+      <SettingsAdminChatCollapsibleSection label={t`Reasoning`}>
+        <StyledReasoningContent>{part.reasoningContent}</StyledReasoningContent>
+      </SettingsAdminChatCollapsibleSection>
+    );
   }
 
   return <SettingsAdminChatToolCallPart part={part} />;
