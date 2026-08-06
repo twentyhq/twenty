@@ -84,9 +84,10 @@ export class ConnectionNameService {
         SYSTEM_MAINTAINED_FIELD_PERMISSIONS,
       );
 
+    // name is a composite field, which cannot be named in a flat select, and
+    // the endpoint count per batch is small enough not to warrant narrowing
     const people = await personRepository.find({
       where: { id: In([...new Set(personIds)]) },
-      select: { id: true, name: true },
     });
 
     const personNameById = new Map<string, FullNameMetadata | null>(
