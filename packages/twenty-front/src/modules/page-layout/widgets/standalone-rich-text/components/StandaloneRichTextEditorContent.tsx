@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -51,9 +52,15 @@ export const StandaloneRichTextEditorContent = ({
 
   const shouldPersistDraft = useCallback(() => {
     const isDashboardInEditMode = store.get(isDashboardInEditModeState);
+    const isLayoutCustomizationModeEnabled = store.get(
+      isLayoutCustomizationModeEnabledState.atom,
+    );
     const editingWidgetId = store.get(pageLayoutEditingWidgetIdState);
 
-    return isDashboardInEditMode && editingWidgetId === widget.id;
+    const isPageLayoutInEditMode =
+      isDashboardInEditMode || isLayoutCustomizationModeEnabled;
+
+    return isPageLayoutInEditMode && editingWidgetId === widget.id;
   }, [
     isDashboardInEditModeState,
     pageLayoutEditingWidgetIdState,

@@ -53,4 +53,23 @@ describe('createDefaultStandaloneRichTextWidget', () => {
     expect(withObjectId.objectMetadataId).toBe('object-1');
     expect(withoutObjectId.objectMetadataId).toBeNull();
   });
+
+  it('should use provided custom position if specified', () => {
+    const verticalListPosition = {
+      __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 2,
+    };
+
+    const widget = createDefaultStandaloneRichTextWidget(
+      'w3',
+      't1',
+      { blocknote: '[]' },
+      { row: 0, column: 0, rowSpan: 1, columnSpan: 12 },
+      null,
+      verticalListPosition,
+    );
+
+    expect(widget.position).toEqual(verticalListPosition);
+  });
 });

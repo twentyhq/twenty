@@ -26,6 +26,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendar,
+  IconFilter,
   IconLayoutKanban,
   IconLayoutSidebarRight,
   IconList,
@@ -122,9 +123,17 @@ export const SidePanelRecordPageFieldSettings = () => {
     (item) => item.viewField.isVisible,
   ).length;
 
+  const activeFilterCount = embeddedWidgetView?.viewFilters?.length ?? 0;
+
   const handleNavigateToFields = () => {
     navigateToSidePanelSubPage(
       SidePanelSubPages.PageLayoutFieldRelationTableFields,
+    );
+  };
+
+  const handleNavigateToFilter = () => {
+    navigateToSidePanelSubPage(
+      SidePanelSubPages.PageLayoutFieldRelationTableFilter,
     );
   };
 
@@ -166,7 +175,7 @@ export const SidePanelRecordPageFieldSettings = () => {
           isLayoutRowHidden: true,
         })
       : []),
-    ...(isTableDisplayMode ? ['fields'] : []),
+    ...(isTableDisplayMode ? ['fields', 'filter'] : []),
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
@@ -234,6 +243,26 @@ export const SidePanelRecordPageFieldSettings = () => {
                   hasSubMenu
                   onClick={handleNavigateToFields}
                   description={t`${visibleFieldsCount} visible fields`}
+                  contextualTextPosition="right"
+                />
+              </SelectableListItem>
+            )}
+            {isTableDisplayMode && (
+              <SelectableListItem
+                itemId="filter"
+                onEnter={handleNavigateToFilter}
+              >
+                <CommandMenuItem
+                  id="filter"
+                  label={t`Filter`}
+                  Icon={IconFilter}
+                  hasSubMenu
+                  onClick={handleNavigateToFilter}
+                  description={
+                    activeFilterCount > 0
+                      ? t`${activeFilterCount} active filters`
+                      : ''
+                  }
                   contextualTextPosition="right"
                 />
               </SelectableListItem>

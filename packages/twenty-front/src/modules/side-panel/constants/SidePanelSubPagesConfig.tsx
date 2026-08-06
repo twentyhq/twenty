@@ -8,6 +8,7 @@ import { SidePanelNewSidebarItemViewPickerSubPage } from '@/navigation-menu-item
 import { SidePanelNewSidebarItemViewSystemPickerSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemPickerSubPage';
 import { SidePanelChartFilterSubPage } from '@/side-panel/pages/page-layout/components/SidePanelChartFilterSubPage';
 import { SidePanelFieldRelationTableFieldsSubPage } from '@/side-panel/pages/page-layout/components/SidePanelFieldRelationTableFieldsSubPage';
+import { SidePanelFieldRelationTableFilterSubPage } from '@/side-panel/pages/page-layout/components/SidePanelFieldRelationTableFilterSubPage';
 import { SidePanelFieldsLayoutSubPage } from '@/side-panel/pages/page-layout/components/SidePanelFieldsLayoutSubPage';
 import { SidePanelRecordTableFilterSubPage } from '@/side-panel/pages/page-layout/components/record-table-settings/SidePanelRecordTableFilterSubPage';
 import { SidePanelRecordTableSortSubPage } from '@/side-panel/pages/page-layout/components/record-table-settings/SidePanelRecordTableSortSubPage';
@@ -32,6 +33,10 @@ export const SIDE_PANEL_SUB_PAGES_CONFIG = new Map<
   [
     SidePanelSubPages.PageLayoutFieldRelationTableFields,
     <SidePanelFieldRelationTableFieldsSubPage />,
+  ],
+  [
+    SidePanelSubPages.PageLayoutFieldRelationTableFilter,
+    <SidePanelFieldRelationTableFilterSubPage />,
   ],
   [
     SidePanelSubPages.NewSidebarItemViewObjectPicker,

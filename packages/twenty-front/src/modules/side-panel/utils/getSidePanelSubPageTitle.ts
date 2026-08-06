@@ -16,6 +16,8 @@ export const getSidePanelSubPageTitle = (
       return t`Sorts`;
     case SidePanelSubPages.PageLayoutFieldRelationTableFields:
       return t`Fields`;
+    case SidePanelSubPages.PageLayoutFieldRelationTableFilter:
+      return t`Filters`;
     case SidePanelSubPages.NewSidebarItemMainMenu:
       return t`Add menu item`;
     case SidePanelSubPages.NewSidebarItemViewObjectPicker:
