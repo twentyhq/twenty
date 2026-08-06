@@ -9,7 +9,7 @@ export const getSubdomainValidationSchema = (minLength = 3) =>
   z
     .string()
     .min(minLength, {
-      message: t`Subdomain can not be shorter than ${minLength} characters`,
+      message: t`Subdomain cannot be shorter than ${minLength} characters`,
     })
     .max(30, { message: t`Subdomain can not be longer than 30 characters` })
     .regex(SUBDOMAIN_PATTERN, {
