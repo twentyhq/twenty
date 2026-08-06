@@ -8,6 +8,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserSessionDTO } from 'src/engine/core-modules/user-session/dtos/user-session.dto';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
@@ -16,6 +17,7 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
@@ -32,11 +34,14 @@ export class UserSessionResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async currentUserSessions(
     @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { req: Request },
   ): Promise<UserSessionDTO[]> {
-    const sessions = await this.userSessionService.findActiveSessionsForUser(
-      user.id,
-    );
+    const sessions =
+      await this.userSessionService.findActiveSessionsForUserWorkspace({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
 
     const presentedSessionToken =
       this.userSessionCookieService.extractSessionTokenFromRequest(context.req);
@@ -53,18 +58,25 @@ export class UserSessionResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async revokeUserSession(
     @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('userSessionId', { type: () => UUIDScalarType })
     userSessionId: string,
     @Context() context: { req: Request },
   ): Promise<boolean> {
     // Before revoking: afterwards it is no longer active and would not be found.
-    const currentSession = await this.resolveCurrentSession(context.req, user);
+    const currentSession = await this.resolveCurrentSession(
+      context.req,
+      user,
+      workspace,
+    );
 
-    const revoked = await this.userSessionService.revokeSessionByIdForUser({
-      sessionId: userSessionId,
-      userId: user.id,
-      reason: UserSessionRevokedReason.UserRevoked,
-    });
+    const revoked =
+      await this.userSessionService.revokeSessionByIdForUserWorkspace({
+        sessionId: userSessionId,
+        userId: user.id,
+        workspaceId: workspace.id,
+        reason: UserSessionRevokedReason.UserRevoked,
+      });
 
     if (
       revoked &&
@@ -81,6 +93,7 @@ export class UserSessionResolver {
   private async resolveCurrentSession(
     request: Request,
     user: AuthContextUser,
+    workspace: WorkspaceEntity,
   ): Promise<UserSessionEntity | undefined> {
     const presentedSessionToken =
       this.userSessionCookieService.extractSessionTokenFromRequest(request);
@@ -90,7 +103,10 @@ export class UserSessionResolver {
     }
 
     const activeSessions =
-      await this.userSessionService.findActiveSessionsForUser(user.id);
+      await this.userSessionService.findActiveSessionsForUserWorkspace({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
     const presentedTokenHash = hashUserSessionToken(presentedSessionToken);
 
     return activeSessions.find(
@@ -102,12 +118,18 @@ export class UserSessionResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async revokeAllOtherUserSessions(
     @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { req: Request },
   ): Promise<number> {
-    const currentSession = await this.resolveCurrentSession(context.req, user);
+    const currentSession = await this.resolveCurrentSession(
+      context.req,
+      user,
+      workspace,
+    );
 
     return await this.userSessionService.revokeAllSessionsForUser({
       userId: user.id,
+      workspaceId: workspace.id,
       reason: UserSessionRevokedReason.UserRevoked,
       exceptSessionId: currentSession?.id,
     });
