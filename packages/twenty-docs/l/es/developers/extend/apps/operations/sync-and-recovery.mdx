@@ -121,5 +121,6 @@ Cuando algo sale mal, el diff de metadatos y los errores con nombre te permiten 
 
 * **Error de compilación del manifiesto**: la CLI falla antes de sincronizar (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); corrige el código fuente de tu aplicación.
 * **Error de sincronización / migración**: la compilación tiene éxito, pero aplicar el diff falla, nombrando la entidad y el `universalIdentifier`; corrige los metadatos en conflicto.
+* **Error de tamaño de dependencias** — la sincronización o la instalación fallan porque las `dependencies` de producción de la aplicación son demasiado grandes para instalarse como una capa de tiempo de ejecución (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); mueve a `devDependencies` los paquetes que tus funciones de lógica no importan en tiempo de ejecución (bibliotecas de UI, herramientas de desarrollo).
 * **Error de tiempo de ejecución del código de la aplicación**: la sincronización se completa correctamente, pero tus funciones lógicas o componentes se comportan de forma incorrecta en tiempo de ejecución; revisa los [registros de funciones](/l/es/developers/extend/apps/operations/cli).
 * **Estado de instancia local**: nada de lo anterior aplica y el espacio de trabajo sigue viéndose mal; desciende por la escalera de recuperación.
