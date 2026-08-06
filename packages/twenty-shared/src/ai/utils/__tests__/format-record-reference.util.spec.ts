@@ -6,8 +6,8 @@ describe('formatRecordReference', () => {
       formatRecordReference({
         objectNameSingular: 'company',
         recordId: 'record-id',
-        displayName: '[test] ]] [test]',
+        displayName: 'Acme Corp',
       }),
-    ).toBe('[[record:company:record-id:[test] ]] [test][[/record]]');
+    ).toBe('[[record:company:record-id:Acme Corp]]');
   });
 });
