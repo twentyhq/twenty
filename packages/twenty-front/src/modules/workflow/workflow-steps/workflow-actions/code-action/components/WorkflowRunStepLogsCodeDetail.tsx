@@ -11,7 +11,7 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
-import { formatDuration } from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
+import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {
   StyledErrorCard,
   StyledErrorMessageText,
@@ -26,7 +26,7 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
 
 const StyledErrorHeader = styled.div`
   align-items: center;

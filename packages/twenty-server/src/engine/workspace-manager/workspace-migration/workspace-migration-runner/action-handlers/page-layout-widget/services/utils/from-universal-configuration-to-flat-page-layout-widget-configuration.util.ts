@@ -316,6 +316,8 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       const {
         fieldMetadataId: fieldMetadataUniversalIdentifier,
         viewId: viewUniversalIdentifier,
+        nestedRelationFieldMetadataId:
+          nestedRelationFieldMetadataUniversalIdentifier,
         ...rest
       } = universalConfiguration;
 
@@ -323,6 +325,16 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         fieldMetadataUniversalIdentifier,
         flatFieldMetadataMaps,
       });
+
+      const nestedRelationFieldMetadataId = isDefined(
+        nestedRelationFieldMetadataUniversalIdentifier,
+      )
+        ? resolveFieldMetadataIdOrThrow({
+            fieldMetadataUniversalIdentifier:
+              nestedRelationFieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          })
+        : undefined;
 
       let viewId: string | undefined = undefined;
 
@@ -342,7 +354,14 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         viewId = flatView.id;
       }
 
-      return { ...rest, fieldMetadataId, viewId };
+      return {
+        ...rest,
+        fieldMetadataId,
+        viewId,
+        ...(isDefined(nestedRelationFieldMetadataId)
+          ? { nestedRelationFieldMetadataId }
+          : {}),
+      };
     }
 
     case WidgetConfigurationType.VIEW:

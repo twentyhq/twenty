@@ -13,10 +13,8 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
-import {
-  formatBytes,
-  formatDuration,
-} from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
+import { formatBytes } from '@/workflow/workflow-steps/workflow-actions/utils/formatBytes';
+import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {
   StyledBadgeGroup,
   StyledBodyMeta,
@@ -34,7 +32,7 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
 
 const StyledMethodBadge = styled.span<{ method: string }>`
   background: ${themeCssVariables.background.transparent.light};

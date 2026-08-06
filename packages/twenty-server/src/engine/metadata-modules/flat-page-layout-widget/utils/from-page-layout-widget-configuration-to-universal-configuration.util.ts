@@ -326,8 +326,13 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELD: {
-      const { fieldMetadataId, fieldDisplayMode, configurationType, viewId } =
-        configuration;
+      const {
+        fieldMetadataId,
+        fieldDisplayMode,
+        configurationType,
+        viewId,
+        nestedRelationFieldMetadataId,
+      } = configuration;
 
       const fieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
@@ -335,6 +340,16 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier,
         });
+
+      const nestedRelationFieldMetadataUniversalIdentifier = isDefined(
+        nestedRelationFieldMetadataId,
+      )
+        ? (getFieldMetadataUniversalIdentifier({
+            fieldMetadataId: nestedRelationFieldMetadataId,
+            fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
+          }) ?? nestedRelationFieldMetadataId)
+        : undefined;
 
       let viewUniversalIdentifier: string | undefined = undefined;
 
@@ -358,6 +373,12 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         fieldMetadataId: fieldMetadataUniversalIdentifier ?? fieldMetadataId,
         fieldDisplayMode,
         viewId: viewUniversalIdentifier,
+        ...(isDefined(nestedRelationFieldMetadataUniversalIdentifier)
+          ? {
+              nestedRelationFieldMetadataId:
+                nestedRelationFieldMetadataUniversalIdentifier,
+            }
+          : {}),
       };
     }
 
