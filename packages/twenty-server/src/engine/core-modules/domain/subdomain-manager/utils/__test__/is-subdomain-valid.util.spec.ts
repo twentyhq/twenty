@@ -23,9 +23,10 @@ describe('isSubdomainValid', () => {
       expect(isSubdomainValid('my-app-123')).toBe(true);
     });
 
-    it('should accept minimum length subdomains (3 characters)', () => {
-      expect(isSubdomainValid('abc')).toBe(true);
-      expect(isSubdomainValid('a1b')).toBe(true);
+    it('should accept minimum length subdomains (1 character)', () => {
+      expect(isSubdomainValid('a')).toBe(true);
+      expect(isSubdomainValid('1')).toBe(true);
+      expect(isSubdomainValid('ab')).toBe(true);
       expect(isSubdomainValid('x-y')).toBe(true);
     });
 
@@ -49,13 +50,6 @@ describe('isSubdomainValid', () => {
   describe('invalid subdomain patterns', () => {
     it('should reject empty strings', () => {
       expect(isSubdomainValid('')).toBe(false);
-    });
-
-    it('should reject subdomains that are too short (less than 3 characters)', () => {
-      expect(isSubdomainValid('a')).toBe(false);
-      expect(isSubdomainValid('ab')).toBe(false);
-      expect(isSubdomainValid('1')).toBe(false);
-      expect(isSubdomainValid('12')).toBe(false);
     });
 
     it('should reject subdomains that are too long (more than 30 characters)', () => {

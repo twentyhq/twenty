@@ -25,18 +25,15 @@ export type Story = StoryObj<typeof SettingsSubdomainPage>;
 
 export const Default: Story = {};
 
-export const TooShortSubdomain: Story = {
+export const EmptySubdomain: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     const input = await canvas.findByRole('textbox', {}, { timeout: 5000 });
 
     await userEvent.clear(input);
-    await userEvent.type(input, 'ab');
 
-    const errorMessage = await canvas.findByText(
-      'Subdomain can not be shorter than 3 characters',
-    );
+    const errorMessage = await canvas.findByText('Subdomain can not be empty');
 
     await expect(errorMessage).toBeVisible();
 
