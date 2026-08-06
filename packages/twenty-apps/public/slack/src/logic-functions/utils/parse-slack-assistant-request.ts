@@ -58,27 +58,6 @@ const normalizeSlackRequestText = (
     ? stripLeadingBotMention(text)
     : text.replace(/\s+/g, ' ').trim();
 
-const buildSlackAssistantEmptyRequest = ({
-  slackChannelId,
-  slackMessageTimestamp,
-  slackThreadTimestamp,
-  isDirectMessage,
-}: {
-  slackChannelId: string;
-  slackMessageTimestamp: string;
-  slackThreadTimestamp: string | undefined;
-  isDirectMessage: boolean;
-}): SlackAssistantEmptyRequest => ({
-  slackChannelId,
-  slackMessageTimestamp,
-  parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
-    slackThreadTimestamp,
-    slackMessageTimestamp,
-    isDirectMessage,
-  }),
-  isInExistingThread: isNonEmptyString(slackThreadTimestamp),
-});
-
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
 ): ParsedSlackAssistantRequest => {
@@ -121,12 +100,16 @@ export const parseSlackAssistantRequest = (
     return {
       request: null,
       skipReason: 'Empty request text',
-      emptyRequest: buildSlackAssistantEmptyRequest({
+      emptyRequest: {
         slackChannelId: event.channel,
         slackMessageTimestamp: event.ts,
-        slackThreadTimestamp: event.thread_ts,
-        isDirectMessage: kind === 'directMessage',
-      }),
+        parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
+          slackThreadTimestamp: event.thread_ts,
+          slackMessageTimestamp: event.ts,
+          isDirectMessage: kind === 'directMessage',
+        }),
+        isInExistingThread: isNonEmptyString(event.thread_ts),
+      },
     };
   }
 
