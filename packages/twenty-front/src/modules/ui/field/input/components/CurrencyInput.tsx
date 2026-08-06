@@ -90,6 +90,9 @@ export const CurrencyInput = ({
 }: CurrencyInputProps) => {
   const { theme } = useContext(ThemeContext);
   const [internalText, setInternalText] = useState(value);
+  const [scale, setScale] = useState(() =>
+    getSafeScaleForCurrencyInput({ value, decimals }),
+  );
   const { numberFormat } = useNumberFormat();
 
   const wrapperRef = useRef<HTMLInputElement>(null);
@@ -125,7 +128,16 @@ export const CurrencyInput = ({
 
   const currency = CURRENCIES.find(({ value }) => value === currencyCode);
 
-  const scale = getSafeScaleForCurrencyInput({ value, decimals });
+  const scaleForCurrentValue = getSafeScaleForCurrencyInput({
+    value,
+    decimals,
+  });
+
+  // deleting a decimal must not narrow the mask for the rest of the edit,
+  // it would make the digit impossible to type back
+  if (scale < scaleForCurrentValue) {
+    setScale(scaleForCurrentValue);
+  }
 
   useEffect(() => {
     setInternalText(value);
