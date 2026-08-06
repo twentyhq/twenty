@@ -13,7 +13,7 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { formatDuration } from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
+import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {
   StyledBadgeGroup,
   StyledEmptyHint,
@@ -27,8 +27,8 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
-import { WorkflowRunStepLogsToolCallRow } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow';
+} from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
+import { WorkflowRunStepLogsToolCallRow } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledModelBadge = styled.span`
