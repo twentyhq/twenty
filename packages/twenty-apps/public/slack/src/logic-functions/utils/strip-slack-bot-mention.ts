@@ -13,8 +13,7 @@ export const stripSlackBotMention = ({
 
   const mentionPattern = `<@${botUserId}(?:\\|[^>]*)?>`;
 
-  // "hey <@UBOT>, ..." must become "hey, ..." rather than "hey , ..."
   return text
-    .replace(new RegExp(`\\s*${mentionPattern}\\s*([,.!?;:])`, 'g'), '$1')
+    .replace(new RegExp(`(?:\\s*${mentionPattern})+\\s*([,.!?;:])`, 'g'), '$1')
     .replace(new RegExp(mentionPattern, 'g'), ' ');
 };
