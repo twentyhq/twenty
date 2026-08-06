@@ -6,7 +6,7 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
 
 1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps) → **Create New App → From a manifest**, pasting [`slack-app-manifest.json`](./slack-app-manifest.json) with both `<YOUR_TWENTY_SERVER_URL>` placeholders replaced. The manifest is the source of truth for scopes, event subscriptions and the agent surface — the steps below describe what it configures, so an app created from it only needs credentials copied (step 4). Use a dedicated app — do not reuse one across Twenty apps.
 
-   The manifest enables `agent_view` (Slack's Agent messaging experience): conversations with the bot get a native thinking status, suggested prompts at the top of its Messages tab, and the app is listed as an agent in Slack's UI. On an app configured by hand instead, enable **Agents & AI Apps** in the app settings, which also adds the `assistant:write` scope.
+   The manifest enables `agent_view` (Slack's Agent messaging experience): the app is listed as an agent in Slack's UI and shows clickable suggested prompts at the top of its Messages tab. The native thinking status for replies is not wired up yet and arrives with a later release. On an app configured by hand instead, enable **Agents & AI Apps** in the app settings, which also adds the `assistant:write` scope.
 
 2. **OAuth & Permissions → Bot Token Scopes.** Twenty uses Slack's bot OAuth (`oauth/v2/authorize` with `scope=…`), so scopes must be added here and not only under **User Token Scopes**, otherwise Slack refuses the install with *"doesn't have a bot user to install"*.
 

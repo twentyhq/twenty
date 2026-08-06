@@ -30,7 +30,7 @@ export const setSlackSuggestedPrompts = async (
   const slackClientResult = await getSlackClient();
 
   if (!slackClientResult.success) {
-    await releaseSlackSuggestedPrompts(slackChannelId);
+    await releaseSlackSuggestedPrompts(slackChannelId).catch(() => undefined);
 
     throw new Error(slackClientResult.error);
   }
@@ -42,7 +42,7 @@ export const setSlackSuggestedPrompts = async (
       prompts: SLACK_SUGGESTED_PROMPTS,
     });
   } catch (error) {
-    await releaseSlackSuggestedPrompts(slackChannelId);
+    await releaseSlackSuggestedPrompts(slackChannelId).catch(() => undefined);
 
     throw new Error(
       `Failed to set the Slack suggested prompts in channel ${slackChannelId}: ${
