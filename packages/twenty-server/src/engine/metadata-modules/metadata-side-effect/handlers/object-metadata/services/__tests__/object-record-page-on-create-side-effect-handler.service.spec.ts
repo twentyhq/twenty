@@ -1,7 +1,7 @@
 import {
-  getPageLayoutTabUniversalIdentifier,
-  getPageLayoutWidgetUniversalIdentifier,
-  getRecordPageLayoutUniversalIdentifier,
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemPageLayoutWidgetUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey, ViewType } from 'twenty-shared/types';
@@ -31,8 +31,8 @@ const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
   });
 
 const DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  getRecordPageLayoutUniversalIdentifier({
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   });
 
@@ -142,8 +142,8 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
     ]);
     for (const pageLayoutTab of pageLayoutTabs) {
       expect(pageLayoutTab.universalIdentifier).toBe(
-        getPageLayoutTabUniversalIdentifier({
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        getSystemPageLayoutTabUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
           pageLayoutUniversalIdentifier:
             DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
           title: pageLayoutTab.title,
@@ -159,8 +159,8 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
     expect(pageLayoutWidgets).toHaveLength(5);
     for (const pageLayoutWidget of pageLayoutWidgets) {
       expect(pageLayoutWidget.universalIdentifier).toBe(
-        getPageLayoutWidgetUniversalIdentifier({
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        getSystemPageLayoutWidgetUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
           pageLayoutTabUniversalIdentifier:
             pageLayoutWidget.pageLayoutTabUniversalIdentifier,
           title: pageLayoutWidget.title,

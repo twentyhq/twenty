@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { getRecordPageLayoutUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemRecordPageLayoutUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -11,12 +11,10 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-29/constants/pre-2-29-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
 import { applyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/apply-record-page-reown-updates.util';
 import { collectRecordPageStackFlatEntities } from 'src/database/commands/upgrade-version-command/2-29/utils/collect-record-page-stack-flat-entities.util';
-import {
-  computeRecordPageStackReownUpdates,
-  countRecordPageReownUpdates,
-  createEmptyRecordPageReownUpdates,
-  type RecordPageReownUpdates,
-} from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
+import { computeRecordPageStackReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
+import { countRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/count-record-page-reown-updates.util';
+import { createEmptyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/create-empty-record-page-reown-updates.util';
+import { type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/types/record-page-reown-updates.type';
 import { computeRecordPageReconcileFlatEntityMapsKeys } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-reconcile-flat-entity-maps-keys.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -195,8 +193,8 @@ export class ReconcileStandardRecordPageCommand extends ProvisionedWorkspaceComm
           flatObjectMetadata.universalIdentifier
         ];
       const derivedPageLayoutUniversalIdentifier =
-        getRecordPageLayoutUniversalIdentifier({
-          applicationUniversalIdentifier:
+        getSystemRecordPageLayoutUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
             twentyStandardApplicationUniversalIdentifier,
           objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         });
@@ -319,8 +317,8 @@ export class ReconcileStandardRecordPageCommand extends ProvisionedWorkspaceComm
           PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
             flatObjectMetadata.universalIdentifier
           ],
-          getRecordPageLayoutUniversalIdentifier({
-            applicationUniversalIdentifier:
+          getSystemRecordPageLayoutUniversalIdentifier({
+            objectMetadataApplicationUniversalIdentifier:
               twentyStandardApplicationUniversalIdentifier,
             objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
           }),

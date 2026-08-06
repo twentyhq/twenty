@@ -10,8 +10,8 @@ import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/ut
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import {
-  getPageLayoutTabUniversalIdentifier,
-  getRecordPageLayoutUniversalIdentifier,
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   type ObjectManifest,
@@ -77,8 +77,8 @@ const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
   });
 
 const DERIVED_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  getRecordPageLayoutUniversalIdentifier({
-    applicationUniversalIdentifier: TEST_APP_ID,
+  getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
     objectUniversalIdentifier: TEST_OBJECT_ID,
   });
 
@@ -249,8 +249,8 @@ describe('Manifest sync - engine-provisioned record-page stack', () => {
     // Tabs carry title-keyed derived identifiers under the engine layout.
     for (const tab of tabs) {
       expect(tab.universalIdentifier).toBe(
-        getPageLayoutTabUniversalIdentifier({
-          applicationUniversalIdentifier: TEST_APP_ID,
+        getSystemPageLayoutTabUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
           pageLayoutUniversalIdentifier:
             DERIVED_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
           title: tab.title,

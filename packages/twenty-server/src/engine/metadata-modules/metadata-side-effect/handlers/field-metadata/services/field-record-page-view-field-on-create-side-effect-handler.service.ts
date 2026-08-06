@@ -20,7 +20,6 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { isFlatFieldMetadataDisplayableInDefaultView } from 'src/engine/metadata-modules/object-metadata/utils/is-flat-field-metadata-displayable-in-default-view.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
@@ -116,11 +115,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
 
     if (
       sourceFlatFieldMetadata.universalIdentifier ===
-        labelIdentifierFieldMetadataUniversalIdentifier ||
-      !isFlatFieldMetadataDisplayableInDefaultView({
-        flatFieldMetadata: sourceFlatFieldMetadata,
-        labelIdentifierFieldMetadataUniversalIdentifier,
-      })
+      labelIdentifierFieldMetadataUniversalIdentifier
     ) {
       return undefined;
     }
@@ -214,8 +209,6 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
     return computeRecordPageViewFieldForExistingObject({
       sourceFlatFieldMetadata,
       recordPageViewUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
       flatViewMaps: relatedFlatEntityMaps.flatViewMaps,
       flatViewFieldMaps: relatedFlatEntityMaps.flatViewFieldMaps,
       flatViewFieldGroupMaps: relatedFlatEntityMaps.flatViewFieldGroupMaps,

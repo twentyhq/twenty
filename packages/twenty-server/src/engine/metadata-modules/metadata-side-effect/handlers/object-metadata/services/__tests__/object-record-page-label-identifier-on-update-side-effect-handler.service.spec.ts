@@ -279,15 +279,9 @@ describe('ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService', () =
       }),
     );
 
-    expect(result.status).toBe('success');
-
-    if (result.status !== 'success') {
-      throw new Error('expected success');
-    }
-
-    expect(
-      Object.values(result.operations.viewField?.flatEntityToCreate ?? {}),
-    ).toHaveLength(0);
+    // Nothing to delete and nothing to restore: the handler emits no
+    // operations at all.
+    expect(result.status).toBe('noop');
   });
 
   it('should not restore a previous label identifier deleted in the same batch', () => {

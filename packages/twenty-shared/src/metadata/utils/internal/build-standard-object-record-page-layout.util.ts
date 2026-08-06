@@ -1,7 +1,7 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/application/constants/TwentyStandardApplicationUniversalIdentifier';
-import { getPageLayoutTabUniversalIdentifier } from '@/application/deterministic-identifier/get-page-layout-tab-universal-identifier.util';
-import { getRecordPageLayoutUniversalIdentifier } from '@/application/deterministic-identifier/get-page-layout-universal-identifier.util';
-import { getPageLayoutWidgetUniversalIdentifier } from '@/application/deterministic-identifier/get-page-layout-widget-universal-identifier.util';
+import { getSystemPageLayoutTabUniversalIdentifier } from '@/application/deterministic-identifier/get-system-page-layout-tab-universal-identifier.util';
+import { getSystemRecordPageLayoutUniversalIdentifier } from '@/application/deterministic-identifier/get-system-record-page-layout-universal-identifier.util';
+import { getSystemPageLayoutWidgetUniversalIdentifier } from '@/application/deterministic-identifier/get-system-page-layout-widget-universal-identifier.util';
 
 type RecordPageLayoutTabsSpec = Record<
   string,
@@ -29,16 +29,16 @@ export const buildStandardObjectRecordPageLayout = <
     };
   };
 } => {
-  const pageLayoutUniversalIdentifier = getRecordPageLayoutUniversalIdentifier({
-    applicationUniversalIdentifier:
+  const pageLayoutUniversalIdentifier = getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier,
   });
 
   const derivedTabs = Object.fromEntries(
     Object.entries(tabs).map(([tabKey, { title, widgets }]) => {
-      const tabUniversalIdentifier = getPageLayoutTabUniversalIdentifier({
-        applicationUniversalIdentifier:
+      const tabUniversalIdentifier = getSystemPageLayoutTabUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier:
           TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         pageLayoutUniversalIdentifier,
         title,
@@ -52,8 +52,8 @@ export const buildStandardObjectRecordPageLayout = <
             Object.entries(widgets).map(([widgetKey, widgetTitle]) => [
               widgetKey,
               {
-                universalIdentifier: getPageLayoutWidgetUniversalIdentifier({
-                  applicationUniversalIdentifier:
+                universalIdentifier: getSystemPageLayoutWidgetUniversalIdentifier({
+                  objectMetadataApplicationUniversalIdentifier:
                     TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
                   pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
                   title: widgetTitle,

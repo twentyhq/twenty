@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { getRecordPageLayoutUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemRecordPageLayoutUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -9,12 +9,10 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { applyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/apply-record-page-reown-updates.util';
-import {
-  computeRecordPageStackReownUpdates,
-  countRecordPageReownUpdates,
-  createEmptyRecordPageReownUpdates,
-  type RecordPageReownUpdates,
-} from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
+import { computeRecordPageStackReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
+import { countRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/count-record-page-reown-updates.util';
+import { createEmptyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/create-empty-record-page-reown-updates.util';
+import { type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/types/record-page-reown-updates.type';
 import { computeRecordPageReconcileFlatEntityMapsKeys } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-reconcile-flat-entity-maps-keys.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -236,8 +234,8 @@ export class ReconcileWorkspaceCustomRecordPageCommand extends ProvisionedWorksp
         flatObjectMetadata,
         flatPageLayout: systemStackFlatPageLayout,
         derivedPageLayoutUniversalIdentifier:
-          getRecordPageLayoutUniversalIdentifier({
-            applicationUniversalIdentifier:
+          getSystemRecordPageLayoutUniversalIdentifier({
+            objectMetadataApplicationUniversalIdentifier:
               flatObjectMetadata.applicationUniversalIdentifier,
             objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
           }),

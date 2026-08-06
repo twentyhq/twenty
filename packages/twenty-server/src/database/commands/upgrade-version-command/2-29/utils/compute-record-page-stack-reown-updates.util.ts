@@ -1,54 +1,22 @@
 import {
-  getPageLayoutTabUniversalIdentifier,
-  getPageLayoutWidgetUniversalIdentifier,
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemPageLayoutWidgetUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getViewFieldGroupUniversalIdentifier,
+  getSystemViewFieldGroupUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RecordPageReownUpdate, type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/types/record-page-reown-updates.type';
+import {
+  collectRecordPageStackTree,
+  type RecordPageStackFieldsViewNode,
+} from 'src/database/commands/upgrade-version-command/2-29/utils/collect-record-page-stack-tree.util';
+import { createEmptyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/create-empty-record-page-reown-updates.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 type ReownLogger = { warn: (message: string) => void };
-
-export type RecordPageReownUpdate = {
-  id: string;
-  update: {
-    universalIdentifier?: string;
-    isSystemSideEffect?: boolean;
-    key?: ViewKey;
-    applicationId?: string;
-  };
-};
-
-export type RecordPageReownUpdates = {
-  pageLayoutUpdates: RecordPageReownUpdate[];
-  pageLayoutTabUpdates: RecordPageReownUpdate[];
-  pageLayoutWidgetUpdates: RecordPageReownUpdate[];
-  viewUpdates: RecordPageReownUpdate[];
-  viewFieldUpdates: RecordPageReownUpdate[];
-  viewFieldGroupUpdates: RecordPageReownUpdate[];
-};
-
-export const createEmptyRecordPageReownUpdates =
-  (): RecordPageReownUpdates => ({
-    pageLayoutUpdates: [],
-    pageLayoutTabUpdates: [],
-    pageLayoutWidgetUpdates: [],
-    viewUpdates: [],
-    viewFieldUpdates: [],
-    viewFieldGroupUpdates: [],
-  });
-
-export const countRecordPageReownUpdates = (
-  reownUpdates: RecordPageReownUpdates,
-): number =>
-  Object.values(reownUpdates).reduce(
-    (count, updates) => count + updates.length,
-    0,
-  );
 
 type RecordPageStackMaps = Pick<
   AllFlatEntityMaps,
@@ -100,6 +68,15 @@ export const computeRecordPageStackReownUpdates = ({
 }: ComputeRecordPageStackReownUpdatesArgs): RecordPageReownUpdates => {
   const reownUpdates = createEmptyRecordPageReownUpdates();
 
+  const stackTree = collectRecordPageStackTree({
+    flatPageLayout,
+    flatViewMaps,
+    flatViewFieldMaps,
+    flatViewFieldGroupMaps,
+    flatPageLayoutTabMaps,
+    flatPageLayoutWidgetMaps,
+  });
+
   pushReownUpdate({
     workspaceId,
     logger,
@@ -110,14 +87,10 @@ export const computeRecordPageStackReownUpdates = ({
   });
 
   const seenDerivedTabUniversalIdentifiers = new Set<string>();
+  const processedViewIds = new Set<string>();
 
-  for (const tabUniversalIdentifier of flatPageLayout.tabUniversalIdentifiers) {
-    const flatPageLayoutTab =
-      flatPageLayoutTabMaps.byUniversalIdentifier[tabUniversalIdentifier];
-
+  for (const { flatPageLayoutTab, widgets } of stackTree.tabs) {
     if (
-      !isDefined(flatPageLayoutTab) ||
-      isDefined(flatPageLayoutTab.deletedAt) ||
       // App-authored tabs attached to the engine layout stay app-owned.
       !engineOwnedApplicationUniversalIdentifiers.has(
         flatPageLayoutTab.applicationUniversalIdentifier,
@@ -126,8 +99,8 @@ export const computeRecordPageStackReownUpdates = ({
       continue;
     }
 
-    const derivedTabUniversalIdentifier = getPageLayoutTabUniversalIdentifier({
-      applicationUniversalIdentifier:
+    const derivedTabUniversalIdentifier = getSystemPageLayoutTabUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
         flatObjectMetadata.applicationUniversalIdentifier,
       pageLayoutUniversalIdentifier: derivedPageLayoutUniversalIdentifier,
       title: flatPageLayoutTab.title,
@@ -151,115 +124,70 @@ export const computeRecordPageStackReownUpdates = ({
         flatPageLayoutTabMaps.byUniversalIdentifier,
     });
 
-    computeWidgetReownUpdates({
-      workspaceId,
-      logger,
-      reownUpdates,
-      flatObjectMetadata,
-      flatPageLayoutTab,
-      derivedTabUniversalIdentifier,
-      engineOwnedApplicationUniversalIdentifiers,
-      twentyStandardApplicationUniversalIdentifier,
-      flatViewMaps,
-      flatViewFieldMaps,
-      flatViewFieldGroupMaps,
-      flatFieldMetadataMaps,
-      flatPageLayoutWidgetMaps,
-    });
-  }
+    const seenDerivedWidgetUniversalIdentifiers = new Set<string>();
 
-  return reownUpdates;
-};
+    for (const { flatPageLayoutWidget, fieldsWidgetViewId, fieldsView } of widgets) {
+      if (
+        !engineOwnedApplicationUniversalIdentifiers.has(
+          flatPageLayoutWidget.applicationUniversalIdentifier,
+        )
+      ) {
+        continue;
+      }
 
-const computeWidgetReownUpdates = ({
-  workspaceId,
-  logger,
-  reownUpdates,
-  flatObjectMetadata,
-  flatPageLayoutTab,
-  derivedTabUniversalIdentifier,
-  engineOwnedApplicationUniversalIdentifiers,
-  twentyStandardApplicationUniversalIdentifier,
-  flatViewMaps,
-  flatViewFieldMaps,
-  flatViewFieldGroupMaps,
-  flatFieldMetadataMaps,
-  flatPageLayoutWidgetMaps,
-}: {
-  workspaceId: string;
-  logger: ReownLogger;
-  reownUpdates: RecordPageReownUpdates;
-  flatObjectMetadata: ComputeRecordPageStackReownUpdatesArgs['flatObjectMetadata'];
-  flatPageLayoutTab: NonNullable<
-    AllFlatEntityMaps['flatPageLayoutTabMaps']['byUniversalIdentifier'][string]
-  >;
-  derivedTabUniversalIdentifier: string;
-  engineOwnedApplicationUniversalIdentifiers: Set<string>;
-  twentyStandardApplicationUniversalIdentifier: string;
-} & Pick<
-  RecordPageStackMaps,
-  | 'flatViewMaps'
-  | 'flatViewFieldMaps'
-  | 'flatViewFieldGroupMaps'
-  | 'flatFieldMetadataMaps'
-  | 'flatPageLayoutWidgetMaps'
->): void => {
-  const seenDerivedWidgetUniversalIdentifiers = new Set<string>();
+      const derivedWidgetUniversalIdentifier =
+        getSystemPageLayoutWidgetUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            flatObjectMetadata.applicationUniversalIdentifier,
+          pageLayoutTabUniversalIdentifier: derivedTabUniversalIdentifier,
+          title: flatPageLayoutWidget.title,
+        });
 
-  for (const widgetUniversalIdentifier of flatPageLayoutTab.widgetUniversalIdentifiers) {
-    const flatPageLayoutWidget =
-      flatPageLayoutWidgetMaps.byUniversalIdentifier[widgetUniversalIdentifier];
+      if (
+        seenDerivedWidgetUniversalIdentifiers.has(
+          derivedWidgetUniversalIdentifier,
+        )
+      ) {
+        logger.warn(
+          `Duplicate widget title "${flatPageLayoutWidget.title}" on tab ${flatPageLayoutTab.id} in workspace ${workspaceId}, skipping widget ${flatPageLayoutWidget.id}`,
+        );
+        continue;
+      }
+      seenDerivedWidgetUniversalIdentifiers.add(
+        derivedWidgetUniversalIdentifier,
+      );
 
-    if (
-      !isDefined(flatPageLayoutWidget) ||
-      isDefined(flatPageLayoutWidget.deletedAt) ||
-      !engineOwnedApplicationUniversalIdentifiers.has(
-        flatPageLayoutWidget.applicationUniversalIdentifier,
-      )
-    ) {
-      continue;
-    }
-
-    const derivedWidgetUniversalIdentifier =
-      getPageLayoutWidgetUniversalIdentifier({
-        applicationUniversalIdentifier:
-          flatObjectMetadata.applicationUniversalIdentifier,
-        pageLayoutTabUniversalIdentifier: derivedTabUniversalIdentifier,
-        title: flatPageLayoutWidget.title,
+      pushReownUpdate({
+        workspaceId,
+        logger,
+        updates: reownUpdates.pageLayoutWidgetUpdates,
+        flatEntity: flatPageLayoutWidget,
+        derivedUniversalIdentifier: derivedWidgetUniversalIdentifier,
+        flatEntitiesByUniversalIdentifier:
+          flatPageLayoutWidgetMaps.byUniversalIdentifier,
       });
 
-    if (
-      seenDerivedWidgetUniversalIdentifiers.has(
-        derivedWidgetUniversalIdentifier,
-      )
-    ) {
-      logger.warn(
-        `Duplicate widget title "${flatPageLayoutWidget.title}" on tab ${flatPageLayoutTab.id} in workspace ${workspaceId}, skipping widget ${flatPageLayoutWidget.id}`,
-      );
-      continue;
-    }
-    seenDerivedWidgetUniversalIdentifiers.add(derivedWidgetUniversalIdentifier);
+      if (isDefined(fieldsWidgetViewId) && !isDefined(fieldsView)) {
+        logger.warn(
+          `Dangling FIELDS widget view ${fieldsWidgetViewId} for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping`,
+        );
+        continue;
+      }
 
-    pushReownUpdate({
-      workspaceId,
-      logger,
-      updates: reownUpdates.pageLayoutWidgetUpdates,
-      flatEntity: flatPageLayoutWidget,
-      derivedUniversalIdentifier: derivedWidgetUniversalIdentifier,
-      flatEntitiesByUniversalIdentifier:
-        flatPageLayoutWidgetMaps.byUniversalIdentifier,
-    });
+      if (
+        !isDefined(fieldsView) ||
+        processedViewIds.has(fieldsView.flatView.id)
+      ) {
+        continue;
+      }
+      processedViewIds.add(fieldsView.flatView.id);
 
-    if (
-      flatPageLayoutWidget.configuration?.configurationType ===
-      WidgetConfigurationType.FIELDS
-    ) {
       computeRecordPageViewReownUpdates({
         workspaceId,
         logger,
         reownUpdates,
         flatObjectMetadata,
-        fieldsWidgetViewId: flatPageLayoutWidget.configuration.viewId,
+        fieldsView,
         twentyStandardApplicationUniversalIdentifier,
         flatViewMaps,
         flatViewFieldMaps,
@@ -268,6 +196,8 @@ const computeWidgetReownUpdates = ({
       });
     }
   }
+
+  return reownUpdates;
 };
 
 const computeRecordPageViewReownUpdates = ({
@@ -275,7 +205,7 @@ const computeRecordPageViewReownUpdates = ({
   logger,
   reownUpdates,
   flatObjectMetadata,
-  fieldsWidgetViewId,
+  fieldsView,
   twentyStandardApplicationUniversalIdentifier,
   flatViewMaps,
   flatViewFieldMaps,
@@ -286,7 +216,7 @@ const computeRecordPageViewReownUpdates = ({
   logger: ReownLogger;
   reownUpdates: RecordPageReownUpdates;
   flatObjectMetadata: ComputeRecordPageStackReownUpdatesArgs['flatObjectMetadata'];
-  fieldsWidgetViewId: string | null;
+  fieldsView: RecordPageStackFieldsViewNode;
   twentyStandardApplicationUniversalIdentifier: string;
 } & Pick<
   RecordPageStackMaps,
@@ -295,23 +225,7 @@ const computeRecordPageViewReownUpdates = ({
   | 'flatViewFieldGroupMaps'
   | 'flatFieldMetadataMaps'
 >): void => {
-  if (!isDefined(fieldsWidgetViewId)) {
-    return;
-  }
-
-  const viewUniversalIdentifier =
-    flatViewMaps.universalIdentifierById[fieldsWidgetViewId];
-  const flatView = isDefined(viewUniversalIdentifier)
-    ? flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier]
-    : undefined;
-
-  if (!isDefined(flatView) || isDefined(flatView.deletedAt)) {
-    logger.warn(
-      `Dangling FIELDS widget view ${fieldsWidgetViewId} for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping`,
-    );
-
-    return;
-  }
+  const { flatView, flatViewFields, flatViewFieldGroups } = fieldsView;
 
   const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
     objectMetadataApplicationUniversalIdentifier:
@@ -319,14 +233,6 @@ const computeRecordPageViewReownUpdates = ({
     objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
     viewKey: ViewKey.FIELDS_WIDGET,
   });
-
-  const alreadyProcessed = reownUpdates.viewUpdates.some(
-    (viewUpdate) => viewUpdate.id === flatView.id,
-  );
-
-  if (alreadyProcessed) {
-    return;
-  }
 
   // The view identifier derives from the object alone, so a second view
   // reached through another FIELDS widget of the same stack cannot take it.
@@ -363,14 +269,7 @@ const computeRecordPageViewReownUpdates = ({
 
   const seenDerivedViewFieldUniversalIdentifiers = new Set<string>();
 
-  for (const viewFieldUniversalIdentifier of flatView.viewFieldUniversalIdentifiers) {
-    const flatViewField =
-      flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier];
-
-    if (!isDefined(flatViewField) || isDefined(flatViewField.deletedAt)) {
-      continue;
-    }
-
+  for (const flatViewField of flatViewFields) {
     const flatFieldMetadata =
       flatFieldMetadataMaps.byUniversalIdentifier[
         flatViewField.fieldMetadataUniversalIdentifier
@@ -417,34 +316,46 @@ const computeRecordPageViewReownUpdates = ({
     });
   }
 
-  for (const viewFieldGroupUniversalIdentifier of flatView.viewFieldGroupUniversalIdentifiers) {
-    const flatViewFieldGroup =
-      flatViewFieldGroupMaps.byUniversalIdentifier[
-        viewFieldGroupUniversalIdentifier
-      ];
+  const seenDerivedViewFieldGroupUniversalIdentifiers = new Set<string>();
 
+  for (const flatViewFieldGroup of flatViewFieldGroups) {
     if (
-      !isDefined(flatViewFieldGroup) ||
-      isDefined(flatViewFieldGroup.deletedAt) ||
       // User-created groups (CRUD API) keep isSystemSideEffect false and
       // their own identifier; only standard-authored groups are re-owned.
       flatViewFieldGroup.applicationUniversalIdentifier !==
-        twentyStandardApplicationUniversalIdentifier
+      twentyStandardApplicationUniversalIdentifier
     ) {
       continue;
     }
+
+    const derivedViewFieldGroupUniversalIdentifier =
+      getSystemViewFieldGroupUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier:
+          flatObjectMetadata.applicationUniversalIdentifier,
+        viewUniversalIdentifier: derivedViewUniversalIdentifier,
+        name: flatViewFieldGroup.name,
+      });
+
+    if (
+      seenDerivedViewFieldGroupUniversalIdentifiers.has(
+        derivedViewFieldGroupUniversalIdentifier,
+      )
+    ) {
+      logger.warn(
+        `Duplicate view field group name "${flatViewFieldGroup.name}" on record-page view ${flatView.id} in workspace ${workspaceId}, skipping group ${flatViewFieldGroup.id}`,
+      );
+      continue;
+    }
+    seenDerivedViewFieldGroupUniversalIdentifiers.add(
+      derivedViewFieldGroupUniversalIdentifier,
+    );
 
     pushReownUpdate({
       workspaceId,
       logger,
       updates: reownUpdates.viewFieldGroupUpdates,
       flatEntity: flatViewFieldGroup,
-      derivedUniversalIdentifier: getViewFieldGroupUniversalIdentifier({
-        applicationUniversalIdentifier:
-          flatObjectMetadata.applicationUniversalIdentifier,
-        viewUniversalIdentifier: derivedViewUniversalIdentifier,
-        name: flatViewFieldGroup.name,
-      }),
+      derivedUniversalIdentifier: derivedViewFieldGroupUniversalIdentifier,
       flatEntitiesByUniversalIdentifier:
         flatViewFieldGroupMaps.byUniversalIdentifier,
     });

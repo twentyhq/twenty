@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { collectRecordPageStackTree } from 'src/database/commands/upgrade-version-command/2-29/utils/collect-record-page-stack-tree.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 type ApplicationOwnedFlatEntity = {
   id: string;
@@ -40,6 +40,15 @@ export const collectRecordPageStackFlatEntities = ({
   | 'flatPageLayoutTabMaps'
   | 'flatPageLayoutWidgetMaps'
 >): RecordPageStackFlatEntities => {
+  const stackTree = collectRecordPageStackTree({
+    flatPageLayout,
+    flatViewMaps,
+    flatViewFieldMaps,
+    flatViewFieldGroupMaps,
+    flatPageLayoutTabMaps,
+    flatPageLayoutWidgetMaps,
+  });
+
   const stack: RecordPageStackFlatEntities = {
     pageLayouts: [flatPageLayout],
     pageLayoutTabs: [],
@@ -49,81 +58,22 @@ export const collectRecordPageStackFlatEntities = ({
     viewFieldGroups: [],
   };
 
-  for (const tabUniversalIdentifier of flatPageLayout.tabUniversalIdentifiers) {
-    const flatPageLayoutTab =
-      flatPageLayoutTabMaps.byUniversalIdentifier[tabUniversalIdentifier];
-
-    if (
-      !isDefined(flatPageLayoutTab) ||
-      isDefined(flatPageLayoutTab.deletedAt)
-    ) {
-      continue;
-    }
-
+  for (const { flatPageLayoutTab, widgets } of stackTree.tabs) {
     stack.pageLayoutTabs.push(flatPageLayoutTab);
 
-    for (const widgetUniversalIdentifier of flatPageLayoutTab.widgetUniversalIdentifiers) {
-      const flatPageLayoutWidget =
-        flatPageLayoutWidgetMaps.byUniversalIdentifier[
-          widgetUniversalIdentifier
-        ];
-
-      if (
-        !isDefined(flatPageLayoutWidget) ||
-        isDefined(flatPageLayoutWidget.deletedAt)
-      ) {
-        continue;
-      }
-
+    for (const { flatPageLayoutWidget, fieldsView } of widgets) {
       stack.pageLayoutWidgets.push(flatPageLayoutWidget);
 
       if (
-        flatPageLayoutWidget.configuration?.configurationType !==
-        WidgetConfigurationType.FIELDS
+        !isDefined(fieldsView) ||
+        stack.views.some((view) => view.id === fieldsView.flatView.id)
       ) {
         continue;
       }
 
-      const fieldsWidgetViewId = flatPageLayoutWidget.configuration.viewId;
-      const viewUniversalIdentifier = isDefined(fieldsWidgetViewId)
-        ? flatViewMaps.universalIdentifierById[fieldsWidgetViewId]
-        : undefined;
-      const flatView = isDefined(viewUniversalIdentifier)
-        ? flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier]
-        : undefined;
-
-      if (
-        !isDefined(flatView) ||
-        isDefined(flatView.deletedAt) ||
-        stack.views.some((view) => view.id === flatView.id)
-      ) {
-        continue;
-      }
-
-      stack.views.push(flatView);
-
-      for (const viewFieldUniversalIdentifier of flatView.viewFieldUniversalIdentifiers) {
-        const flatViewField =
-          flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier];
-
-        if (isDefined(flatViewField) && !isDefined(flatViewField.deletedAt)) {
-          stack.viewFields.push(flatViewField);
-        }
-      }
-
-      for (const viewFieldGroupUniversalIdentifier of flatView.viewFieldGroupUniversalIdentifiers) {
-        const flatViewFieldGroup =
-          flatViewFieldGroupMaps.byUniversalIdentifier[
-            viewFieldGroupUniversalIdentifier
-          ];
-
-        if (
-          isDefined(flatViewFieldGroup) &&
-          !isDefined(flatViewFieldGroup.deletedAt)
-        ) {
-          stack.viewFieldGroups.push(flatViewFieldGroup);
-        }
-      }
+      stack.views.push(fieldsView.flatView);
+      stack.viewFields.push(...fieldsView.flatViewFields);
+      stack.viewFieldGroups.push(...fieldsView.flatViewFieldGroups);
     }
   }
 

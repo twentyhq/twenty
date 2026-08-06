@@ -1,5 +1,5 @@
 import {
-  getRecordPageLayoutUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
@@ -53,8 +53,8 @@ const STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER =
   });
 
 const STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  getRecordPageLayoutUniversalIdentifier({
-    applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   });
 

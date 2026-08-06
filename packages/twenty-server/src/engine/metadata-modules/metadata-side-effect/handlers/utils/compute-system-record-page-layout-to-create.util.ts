@@ -1,7 +1,7 @@
 import {
-  getPageLayoutTabUniversalIdentifier,
-  getPageLayoutWidgetUniversalIdentifier,
-  getRecordPageLayoutUniversalIdentifier,
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemPageLayoutWidgetUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
 } from 'twenty-shared/application';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -64,8 +64,8 @@ export const computeSystemRecordPageLayoutToCreate = ({
   pageLayoutWidgets: UniversalFlatPageLayoutWidget[];
 } => {
   const now = new Date().toISOString();
-  const pageLayoutUniversalIdentifier = getRecordPageLayoutUniversalIdentifier({
-    applicationUniversalIdentifier,
+  const pageLayoutUniversalIdentifier = getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
     objectUniversalIdentifier: objectMetadata.universalIdentifier,
   });
 
@@ -79,13 +79,13 @@ export const computeSystemRecordPageLayoutToCreate = ({
   } of DEFAULT_RECORD_PAGE_TAB_DEFINITIONS) {
     const tabProps = TAB_PROPS[key];
     const widgetProps = WIDGET_PROPS[widgetKey];
-    const tabUniversalIdentifier = getPageLayoutTabUniversalIdentifier({
-      applicationUniversalIdentifier,
+    const tabUniversalIdentifier = getSystemPageLayoutTabUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
       pageLayoutUniversalIdentifier,
       title: tabProps.title,
     });
-    const widgetUniversalIdentifier = getPageLayoutWidgetUniversalIdentifier({
-      applicationUniversalIdentifier,
+    const widgetUniversalIdentifier = getSystemPageLayoutWidgetUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
       pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
       title: widgetProps.title,
     });
