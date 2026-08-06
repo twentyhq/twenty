@@ -10,18 +10,21 @@ export type CancelWorkspaceRecallBotsResult = {
   canceledExternalBotIds: string[];
   failedExternalBotIds: string[];
   truncatedBotList: boolean;
+  deadlineReached: boolean;
 };
 
 export const cancelWorkspaceRecallBots = async ({
   joinAtAfter,
+  deadlineEpochMs,
 }: {
   joinAtAfter: string;
+  deadlineEpochMs: number;
 }): Promise<CancelWorkspaceRecallBotsResult> => {
   const currentWorkspaceId = getCurrentWorkspaceId();
 
   if (isUndefined(currentWorkspaceId)) {
     console.warn(
-      '[call-recorder] cannot cancel workspace Recall bots: workspace id unavailable',
+      '[call-recorder] uninstall bot cleanup incomplete: workspace id unavailable',
     );
 
     return {
@@ -29,56 +32,102 @@ export const cancelWorkspaceRecallBots = async ({
       canceledExternalBotIds: [],
       failedExternalBotIds: [],
       truncatedBotList: false,
+      deadlineReached: false,
     };
   }
 
-  const listResult = await listScheduledRecallBots({
-    joinAtAfter,
-    metadata: { twentyWorkspaceId: currentWorkspaceId },
-  });
+  const scannedExternalBotIds = new Set<string>();
+  const attemptedCancellationExternalBotIds = new Set<string>();
+  const canceledExternalBotIds = new Set<string>();
+  const failedExternalBotIds = new Set<string>();
+  let truncatedBotList = false;
+  let deadlineReached = false;
+  let continueDraining = true;
 
-  if (!listResult.ok) {
-    console.warn(
-      `[call-recorder] failed to list Recall bots for uninstall cancellation: ${listResult.errorMessage}`,
-    );
+  // Canceled bots drop out of subsequent list responses, so re-listing after a
+  // truncated pass pages through the remaining backlog.
+  while (continueDraining) {
+    if (Date.now() >= deadlineEpochMs) {
+      deadlineReached = true;
 
-    return {
-      scannedBotCount: 0,
-      canceledExternalBotIds: [],
-      failedExternalBotIds: [],
-      truncatedBotList: false,
-    };
-  }
-
-  const workspaceBots = listResult.bots.filter((bot) => {
-    const claimedWorkspaceId = bot.metadata.twentyWorkspaceId;
-
-    return (
-      isNonEmptyString(claimedWorkspaceId) &&
-      claimedWorkspaceId.trim() === currentWorkspaceId
-    );
-  });
-
-  const canceledExternalBotIds: string[] = [];
-  const failedExternalBotIds: string[] = [];
-
-  for (const bot of workspaceBots) {
-    const cancelResult = await cancelRecallBot({ externalBotId: bot.id });
-
-    if (cancelResult.ok) {
-      canceledExternalBotIds.push(bot.id);
-    } else {
-      console.warn(
-        `[call-recorder] failed to cancel Recall bot ${bot.id} on uninstall: ${cancelResult.errorMessage}`,
-      );
-      failedExternalBotIds.push(bot.id);
+      break;
     }
+
+    const listResult = await listScheduledRecallBots({
+      joinAtAfter,
+      metadata: { twentyWorkspaceId: currentWorkspaceId },
+    });
+
+    if (!listResult.ok) {
+      console.warn(
+        `[call-recorder] uninstall bot cleanup incomplete: failed to list Recall bots: ${listResult.errorMessage}`,
+      );
+
+      break;
+    }
+
+    truncatedBotList = listResult.truncated;
+    listResult.bots.forEach((bot) => scannedExternalBotIds.add(bot.id));
+
+    const workspaceBots = listResult.bots.filter((bot) => {
+      const claimedWorkspaceId = bot.metadata.twentyWorkspaceId;
+
+      return (
+        isNonEmptyString(claimedWorkspaceId) &&
+        claimedWorkspaceId.trim() === currentWorkspaceId
+      );
+    });
+
+    let canceledBotCountInCurrentPass = 0;
+
+    for (const bot of workspaceBots) {
+      if (attemptedCancellationExternalBotIds.has(bot.id)) {
+        continue;
+      }
+
+      if (Date.now() >= deadlineEpochMs) {
+        deadlineReached = true;
+
+        break;
+      }
+
+      attemptedCancellationExternalBotIds.add(bot.id);
+      const cancelResult = await cancelRecallBot({ externalBotId: bot.id });
+
+      if (cancelResult.ok) {
+        canceledExternalBotIds.add(bot.id);
+        canceledBotCountInCurrentPass += 1;
+      } else {
+        console.warn(
+          `[call-recorder] uninstall bot cleanup incomplete: failed to cancel Recall bot ${bot.id}: ${cancelResult.errorMessage}`,
+        );
+        failedExternalBotIds.add(bot.id);
+      }
+    }
+
+    continueDraining =
+      listResult.truncated &&
+      canceledBotCountInCurrentPass > 0 &&
+      !deadlineReached;
+  }
+
+  if (deadlineReached) {
+    console.warn(
+      '[call-recorder] uninstall bot cleanup incomplete: cancellation deadline reached',
+    );
+  }
+
+  if (truncatedBotList) {
+    console.warn(
+      '[call-recorder] uninstall bot cleanup incomplete: bot list remains truncated',
+    );
   }
 
   return {
-    scannedBotCount: listResult.bots.length,
-    canceledExternalBotIds,
-    failedExternalBotIds,
-    truncatedBotList: listResult.truncated,
+    scannedBotCount: scannedExternalBotIds.size,
+    canceledExternalBotIds: [...canceledExternalBotIds],
+    failedExternalBotIds: [...failedExternalBotIds],
+    truncatedBotList,
+    deadlineReached,
   };
 };
