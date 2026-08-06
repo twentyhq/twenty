@@ -1,4 +1,8 @@
-import { type FieldMetadataType, type ViewFilterOperand } from '@/types';
+import {
+  type FieldMetadataType,
+  type FilterableAndTSVectorFieldType,
+  type ViewFilterOperand,
+} from '@/types';
 import { isRecordFilterValueValid } from '@/utils/filter/isRecordFilterValueValid';
 import { convertViewFilterValueToString } from '@/utils/filter/utils/convertViewFilterValueToString';
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
@@ -6,10 +10,17 @@ import { FILTER_VALUE_FORMAT_HINTS } from '@/utils/filter/utils/validation-schem
 import { getFilterValueSchema } from '@/utils/filter/utils/validation-schemas/getFilterValueSchema';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// Single write-time contract for anything storing a filter value: view filters
-// and row level permission predicates both resolve the same schema, and only map
-// the message onto their own exception code.
-export const getFilterValueValidationMessage = ({
+export type FilterValueValidationIssue = {
+  stringifiedValue: string;
+  operand: ViewFilterOperand;
+  filterType: FilterableAndTSVectorFieldType;
+  hint: string;
+};
+
+// Single write-time contract for anything storing a filter value. The parts are
+// returned rather than an assembled sentence so callers keep a literal
+// translatable template.
+export const getFilterValueValidationIssue = ({
   fieldType,
   operand,
   subFieldName,
@@ -19,7 +30,7 @@ export const getFilterValueValidationMessage = ({
   operand: ViewFilterOperand;
   subFieldName?: string | null;
   value: unknown;
-}): string | undefined => {
+}): FilterValueValidationIssue | undefined => {
   const stringifiedValue = convertViewFilterValueToString(value);
 
   // An operand still awaiting its value is a filter being built, which the read
@@ -36,19 +47,18 @@ export const getFilterValueValidationMessage = ({
     subFieldName,
   });
 
-  if (
-    !isDefined(valueSchema) ||
-    valueSchema.safeParse(stringifiedValue).success
-  ) {
+  if (!isDefined(valueSchema)) {
     return undefined;
   }
 
-  const hint = FILTER_VALUE_FORMAT_HINTS[operand];
+  if (valueSchema.safeParse(stringifiedValue).success) {
+    return undefined;
+  }
 
-  return [
-    `Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}".`,
-    hint,
-  ]
-    .filter(isDefined)
-    .join(' ');
+  return {
+    stringifiedValue,
+    operand,
+    filterType,
+    hint: FILTER_VALUE_FORMAT_HINTS[operand] ?? '',
+  };
 };

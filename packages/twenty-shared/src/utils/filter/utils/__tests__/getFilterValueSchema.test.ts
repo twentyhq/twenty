@@ -50,6 +50,18 @@ describe('getFilterValueSchema', () => {
   });
 
   describe('IS_RELATIVE', () => {
+    // The inner object schema used to throw out of safeParse for a value that
+    // matches the outer regex but has no amount.
+    it.each(['NEXT__DAY', 'NEXT_0_DAY'])(
+      'should reject %s without throwing',
+      (value) => {
+        expectRejected(
+          { filterType: 'DATE', operand: ViewFilterOperand.IS_RELATIVE },
+          value,
+        );
+      },
+    );
+
     it.each(['DATE', 'DATE_TIME'] as const)(
       'should accept a stringified relative date on %s',
       (filterType) => {
@@ -140,13 +152,17 @@ describe('getFilterValueSchema', () => {
       );
     });
 
-    // normalizeSelectFilterValues still accepts the legacy scalar form.
-    it('should accept a bare option value', () => {
-      expectAccepted(
-        { filterType: 'SELECT', operand: ViewFilterOperand.IS },
-        'OPTION_0',
-      );
-    });
+    // normalizeSelectFilterValues still accepts the legacy scalar form, so a
+    // value that is not parseable as JSON is treated as a single option.
+    it.each(['OPTION_0', '{bad json'])(
+      'should accept %s as a legacy scalar option value',
+      (value) => {
+        expectAccepted(
+          { filterType: 'SELECT', operand: ViewFilterOperand.IS },
+          value,
+        );
+      },
+    );
 
     it('should reject an object rather than an array', () => {
       expectRejected(
@@ -155,13 +171,11 @@ describe('getFilterValueSchema', () => {
       );
     });
 
-    it('should not throw on malformed json', () => {
-      const schema = getFilterValueSchema({
-        filterType: 'MULTI_SELECT',
-        operand: ViewFilterOperand.CONTAINS,
-      });
-
-      expect(() => schema?.safeParse('{bad json')).not.toThrow();
+    it('should reject a json array that is not an array of strings', () => {
+      expectRejected(
+        { filterType: 'MULTI_SELECT', operand: ViewFilterOperand.CONTAINS },
+        '[1, 2]',
+      );
     });
   });
 

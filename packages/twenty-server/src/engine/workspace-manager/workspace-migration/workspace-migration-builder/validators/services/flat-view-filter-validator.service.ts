@@ -10,7 +10,7 @@ import {
 import {
   FILTER_OPERANDS_MAP,
   getFilterOperandsForFilterableFieldType,
-  getFilterValueValidationMessage,
+  getFilterValueValidationIssue,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -399,7 +399,7 @@ export class FlatViewFilterValidatorService {
     relationTargetFieldType: FieldMetadataType | undefined;
     value: ViewFilterValue;
   }) {
-    const message = getFilterValueValidationMessage({
+    const issue = getFilterValueValidationIssue({
       fieldType: this.getEffectiveFieldType({
         fieldType,
         relationTargetFieldType,
@@ -409,13 +409,15 @@ export class FlatViewFilterValidatorService {
       value,
     });
 
-    if (!isDefined(message)) {
+    if (!isDefined(issue)) {
       return undefined;
     }
 
+    const { stringifiedValue, filterType, hint } = issue;
+
     return {
       code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-      message: t`${message}`,
+      message: t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${hint}`,
       userFriendlyMessage: msg`Filter value is not valid for this operand`,
     };
   }

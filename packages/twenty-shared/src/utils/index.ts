@@ -173,7 +173,8 @@ export {
   FILTER_VALUE_FORMAT_HINTS,
 } from './filter/utils/validation-schemas/filterValueSchemasMap';
 export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
-export { getFilterValueValidationMessage } from './filter/utils/validation-schemas/getFilterValueValidationMessage';
+export type { FilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
+export { getFilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,
