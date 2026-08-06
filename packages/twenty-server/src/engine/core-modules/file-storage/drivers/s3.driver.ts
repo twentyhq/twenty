@@ -29,6 +29,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -58,12 +59,19 @@ export class S3Driver implements StorageDriver {
       return;
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    const requestHandler = buildAwsRequestHandlerOptions();
+
+    this.s3Client = new S3({ ...s3Options, region, endpoint, requestHandler });
     this.bucketName = bucketName;
 
     if (presignEnabled) {
       this.presignClient = presignEndpoint
-        ? new S3({ ...s3Options, region, endpoint: presignEndpoint })
+        ? new S3({
+            ...s3Options,
+            region,
+            endpoint: presignEndpoint,
+            requestHandler,
+          })
         : this.s3Client;
     }
   }

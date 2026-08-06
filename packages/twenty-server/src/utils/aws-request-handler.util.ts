@@ -46,11 +46,28 @@ export const buildAwsRequestHandlerOptions = ({
   requestTimeoutMs = AWS_DEFAULT_REQUEST_TIMEOUT_MS,
   connectionTimeoutMs = AWS_DEFAULT_CONNECTION_TIMEOUT_MS,
   maxSockets = AWS_DEFAULT_MAX_SOCKETS,
-}: AwsRequestHandlerOptions = {}) => ({
-  connectionTimeout: connectionTimeoutMs,
-  requestTimeout: requestTimeoutMs,
-  // Without this, a breached requestTimeout is only logged and the socket stays
-  // checked out — which is the exact failure this helper exists to prevent.
-  throwOnRequestTimeout: true,
-  httpsAgent: { maxSockets },
-});
+}: AwsRequestHandlerOptions = {}) => {
+  // A non-positive timeout is how the SDK spells "wait forever", so accepting
+  // one here would quietly reintroduce the failure this helper exists to
+  // prevent. Fail loudly at construction instead.
+  if (requestTimeoutMs <= 0) {
+    throw new Error(
+      `buildAwsRequestHandlerOptions: requestTimeoutMs must be greater than 0, received ${requestTimeoutMs}.`,
+    );
+  }
+
+  if (connectionTimeoutMs <= 0) {
+    throw new Error(
+      `buildAwsRequestHandlerOptions: connectionTimeoutMs must be greater than 0, received ${connectionTimeoutMs}.`,
+    );
+  }
+
+  return {
+    connectionTimeout: connectionTimeoutMs,
+    requestTimeout: requestTimeoutMs,
+    // Without this, a breached requestTimeout is only logged and the socket
+    // stays checked out — the exact failure this helper exists to prevent.
+    throwOnRequestTimeout: true,
+    httpsAgent: { maxSockets },
+  };
+};
