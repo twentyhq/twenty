@@ -1,0 +1,23 @@
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_78d9b82a19ccf1::t_d24445d826ba29 588,1438,9397,9634
+packages/twenty-front/src/generated-admin/graphql.ts
+  s_78d9b82a19ccf1::t_2648c14941badf 328
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_78d9b82a19ccf1::t_d24445d826ba29 840,1796
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "6f1265469ec249ce3df3842a20fc73467feb7172",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
