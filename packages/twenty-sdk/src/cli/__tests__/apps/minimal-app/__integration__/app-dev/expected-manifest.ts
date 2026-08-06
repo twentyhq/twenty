@@ -78,6 +78,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       builtComponentChecksum: '[checksum]',
       isHeadless: false,
       usesSdkClient: false,
+      usesVendor: false,
     },
   ],
   views: [],

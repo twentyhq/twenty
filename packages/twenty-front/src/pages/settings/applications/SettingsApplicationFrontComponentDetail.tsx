@@ -87,6 +87,7 @@ export const SettingsApplicationFrontComponentDetail = () => {
             builtComponentChecksum={frontComponent.builtComponentChecksum}
             isHeadless={frontComponent.isHeadless}
             usesSdkClient={frontComponent.usesSdkClient}
+            usesVendor={frontComponent.usesVendor}
             createdAt={frontComponent.createdAt}
             updatedAt={frontComponent.updatedAt}
           />

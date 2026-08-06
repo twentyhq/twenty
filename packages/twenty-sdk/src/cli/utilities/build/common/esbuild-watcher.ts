@@ -3,6 +3,7 @@ import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-resul
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
+import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -14,6 +15,7 @@ import * as esbuild from 'esbuild';
 import path from 'path';
 import { NODE_ESM_CJS_BANNER, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'twenty-client-sdk/core',
@@ -57,6 +59,7 @@ export class EsbuildWatcher implements RestartableWatcher {
   private sourcePaths: string[];
   private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
+  private pendingRestartSourcePaths: string[] | null = null;
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
@@ -92,7 +95,11 @@ export class EsbuildWatcher implements RestartableWatcher {
   }
 
   async restart(sourcePaths: string[]): Promise<void> {
-    if (this.isRestarting) return;
+    if (this.isRestarting) {
+      this.pendingRestartSourcePaths = sourcePaths;
+
+      return;
+    }
 
     this.isRestarting = true;
     try {
@@ -108,6 +115,14 @@ export class EsbuildWatcher implements RestartableWatcher {
       }
     } finally {
       this.isRestarting = false;
+
+      const pendingRestartSourcePaths = this.pendingRestartSourcePaths;
+
+      if (isDefined(pendingRestartSourcePaths)) {
+        this.pendingRestartSourcePaths = null;
+
+        await this.restart(pendingRestartSourcePaths);
+      }
     }
   }
 
@@ -192,6 +207,11 @@ export type EsbuildWatcherFactoryOptions = RestartableWatcherOptions & {
   shouldSkipTypecheck: () => boolean;
 };
 
+export type FrontComponentsWatcherFactoryOptions =
+  EsbuildWatcherFactoryOptions & {
+    getVendorBuildContext?: () => VendorBuildContext | null;
+  };
+
 export const createLogicFunctionsWatcher = (
   options: EsbuildWatcherFactoryOptions,
 ): EsbuildWatcher =>
@@ -210,7 +230,7 @@ export const createLogicFunctionsWatcher = (
   });
 
 export const createFrontComponentsWatcher = (
-  options: EsbuildWatcherFactoryOptions,
+  options: FrontComponentsWatcherFactoryOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
@@ -220,7 +240,9 @@ export const createFrontComponentsWatcher = (
       jsx: 'automatic',
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
-        ...getFrontComponentBuildPlugins(),
+        ...getFrontComponentBuildPlugins({
+          getVendorBuildContext: options.getVendorBuildContext,
+        }),
         createStubTwentySdkDefinePlugin(),
       ],
     },

@@ -6,6 +6,7 @@ import { buildApplicationFileList } from 'src/engine/core-modules/application/ap
 describe('buildApplicationFileList', () => {
   it('includes source and built files for logic functions and front components', () => {
     const manifest = {
+      application: {},
       logicFunctions: [
         {
           sourceHandlerPath: 'src/send-email.function.ts',
@@ -58,5 +59,33 @@ describe('buildApplicationFileList', () => {
         isRequired: true,
       },
     ]);
+  });
+
+  it('includes the vendor source and bundle when the application declares one', () => {
+    const manifest = {
+      application: {
+        vendor: {
+          dependencies: ['react'],
+          sourceVendorPath: 'src/vendor.ts',
+          builtVendorPath: 'src/vendor.mjs',
+          builtVendorChecksum: 'checksum',
+        },
+      },
+    } as Manifest;
+
+    expect(buildApplicationFileList(manifest)).toEqual(
+      expect.arrayContaining([
+        {
+          relativePath: 'src/vendor.ts',
+          fileFolder: FileFolder.Source,
+          isRequired: false,
+        },
+        {
+          relativePath: 'src/vendor.mjs',
+          fileFolder: FileFolder.BuiltFrontComponent,
+          isRequired: true,
+        },
+      ]),
+    );
   });
 });

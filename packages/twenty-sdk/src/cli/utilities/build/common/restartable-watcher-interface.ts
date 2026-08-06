@@ -14,6 +14,7 @@ export type OnFileBuiltCallback = (options: {
   sourcePath: string;
   checksum: string;
   usesSdkClient?: boolean;
+  usesVendor?: boolean;
 }) => void | Promise<void>;
 
 export type OnBuildErrorCallback = (

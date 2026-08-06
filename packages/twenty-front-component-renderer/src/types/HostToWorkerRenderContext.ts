@@ -8,6 +8,7 @@ export type HostToWorkerRenderContext = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientSources?: SdkClientSources;
+  vendorSource?: string;
   hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
   initialViewportGeometry?: ViewportGeometrySnapshot;

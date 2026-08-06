@@ -9,6 +9,9 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
+import { getVendorDependenciesErrors } from '@/cli/utilities/build/manifest/utils/get-vendor-dependencies-errors';
+import { getVendorDependenciesWarnings } from '@/cli/utilities/build/manifest/utils/get-vendor-dependencies-warnings';
+import { normalizeVendorDependencies } from '@/cli/utilities/build/manifest/utils/normalize-vendor-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -22,7 +25,9 @@ import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type VendorConfig } from '@/sdk/define/vendor/vendor-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -49,6 +54,7 @@ import {
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
+  type VendorManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
@@ -122,6 +128,7 @@ export const buildManifest = async (
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
+  const vendorManifests: VendorManifest[] = [];
   const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
@@ -142,6 +149,7 @@ export const buildManifest = async (
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
+  const vendorFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -491,6 +499,31 @@ export const buildManifest = async (
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.Vendor: {
+        const extract = await extractManifestFromFile<VendorConfig>({
+          appPath,
+          filePath,
+        });
+
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+
+        const dependencies = normalizeVendorDependencies(
+          extract.config.dependencies ?? [],
+        );
+
+        errors.push(...getVendorDependenciesErrors(dependencies));
+        warnings.push(...getVendorDependenciesWarnings(dependencies));
+
+        vendorManifests.push({
+          dependencies,
+          sourceVendorPath: relativePath,
+          builtVendorPath: relativePath.replace(/\.tsx?$/, '.mjs'),
+          builtVendorChecksum: null,
+        });
+        vendorFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -578,6 +611,10 @@ export const buildManifest = async (
     errors.push('Only one defineApplicationRole is allowed per application');
   }
 
+  if (vendorManifests.length > 1) {
+    errors.push('Only one defineVendor is allowed per application');
+  }
+
   const resolvedDefaultRoleUniversalIdentifier =
     applicationConfig?.defaultRoleUniversalIdentifier ??
     (applicationRoleUniversalIdentifiers.length === 1
@@ -634,6 +671,9 @@ export const buildManifest = async (
                   },
                 }
               : {}),
+            ...(isNonEmptyArray(vendorManifests)
+              ? { vendor: vendorManifests[0] }
+              : {}),
           };
         })()
       : undefined;
@@ -686,6 +726,7 @@ export const buildManifest = async (
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
+    vendor: vendorFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

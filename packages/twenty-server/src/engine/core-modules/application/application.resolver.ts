@@ -49,6 +49,20 @@ export class ApplicationResolver {
     };
   }
 
+  @Query(() => String, { nullable: true })
+  async applicationVendorChecksum(
+    @Args('applicationId', { type: () => UUIDScalarType })
+    applicationId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    return flatApplicationMaps.byId[applicationId]?.vendorChecksum ?? null;
+  }
+
   // Surfaces the kill switch so clients can warn users that the app is
   // temporarily stopped and behaving in a degraded way. Kept as a dedicated
   // query so listing applications does not trigger one Redis read per app.

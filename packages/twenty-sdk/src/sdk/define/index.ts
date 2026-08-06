@@ -163,6 +163,9 @@ export { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 
+export { defineVendor } from '@/sdk/define/vendor/define-vendor';
+export type { VendorConfig } from '@/sdk/define/vendor/vendor-config';
+
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
 export {

@@ -7,12 +7,14 @@ import { FileUploadWatcher } from '@/cli/utilities/build/common/file-upload-watc
 import { TscWatcher } from '@/cli/utilities/build/common/tsc-watcher';
 import { type TypecheckError } from '@/cli/utilities/build/common/typecheck-plugin';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-update-checksums';
+import { VendorBundleWatcher } from '@/cli/utilities/build/common/vendor-build/vendor-bundle-watcher';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import type { Location } from 'esbuild';
 import { type ChokidarFsEvent } from '@/cli/types';
-import { ASSETS_DIR } from 'twenty-shared/application';
+import { ASSETS_DIR, type VendorManifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type FileBuiltEvent = {
   fileFolder: FileFolder;
@@ -20,6 +22,7 @@ export type FileBuiltEvent = {
   sourcePath: string;
   checksum: string;
   usesSdkClient?: boolean;
+  usesVendor?: boolean;
 };
 
 export type StartWatchersOrchestratorStepOutput = {
@@ -37,6 +40,8 @@ export class StartWatchersOrchestratorStep {
   private manifestWatcher: ManifestWatcher | null = null;
   private logicFunctionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
+  private vendorBundleWatcher: VendorBundleWatcher | null = null;
+  private frontComponentSourcePaths: string[] = [];
   private assetWatcher: FileUploadWatcher | null = null;
   private dependencyWatcher: FileUploadWatcher | null = null;
   private tscWatcher: TscWatcher | null = null;
@@ -72,20 +77,25 @@ export class StartWatchersOrchestratorStep {
 
   async handleWatcherRestarts(result: ManifestBuildResult): Promise<void> {
     const { logicFunctions, frontComponents } = result.filePaths;
+    const vendor = result.manifest?.application.vendor;
 
     if (!this.state.steps.startWatchers.output.watchersStarted) {
       this.state.steps.startWatchers.output.watchersStarted = true;
       this.state.steps.startWatchers.status = 'done';
+      await this.startVendorBundleWatcher(vendor);
       await this.startFileWatchers(logicFunctions, frontComponents);
 
       return;
     }
+
+    await this.handleVendorBundleWatcherRestart(vendor);
 
     if (this.logicFunctionsWatcher?.shouldRestart(logicFunctions)) {
       await this.logicFunctionsWatcher.restart(logicFunctions);
     }
 
     if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
+      this.frontComponentSourcePaths = frontComponents;
       await this.frontComponentsWatcher.restart(frontComponents);
     }
   }
@@ -95,6 +105,7 @@ export class StartWatchersOrchestratorStep {
 
     await Promise.all([
       this.manifestWatcher?.close(),
+      this.vendorBundleWatcher?.close(),
       this.logicFunctionsWatcher?.close(),
       this.frontComponentsWatcher?.close(),
       this.assetWatcher?.close(),
@@ -154,6 +165,7 @@ export class StartWatchersOrchestratorStep {
       sourcePath: event.sourcePath,
       fileFolder: event.fileFolder,
       usesSdkClient: event.usesSdkClient,
+      usesVendor: event.usesVendor,
     });
 
     this.onFileBuilt(event);
@@ -192,15 +204,67 @@ export class StartWatchersOrchestratorStep {
   private async startFrontComponentsWatcher(
     sourcePaths: string[],
   ): Promise<void> {
+    this.frontComponentSourcePaths = sourcePaths;
+
     this.frontComponentsWatcher = createFrontComponentsWatcher({
       appPath: this.state.appPath,
       sourcePaths,
       shouldSkipTypecheck: this.shouldSkipTypecheck,
       handleBuildError: this.handleFileBuildError.bind(this),
       handleFileBuilt: this.handleFileBuilt.bind(this),
+      getVendorBuildContext: () =>
+        this.vendorBundleWatcher?.getContext() ?? null,
     });
 
     await this.frontComponentsWatcher.start();
+  }
+
+  private async rebuildFrontComponentsAgainstCurrentVendor(): Promise<void> {
+    await this.frontComponentsWatcher?.restart(this.frontComponentSourcePaths);
+  }
+
+  private async startVendorBundleWatcher(
+    vendor: VendorManifest | undefined,
+  ): Promise<void> {
+    if (!isDefined(vendor)) {
+      return;
+    }
+
+    this.vendorBundleWatcher = new VendorBundleWatcher({
+      appPath: this.state.appPath,
+      vendor,
+      handleBuildError: this.handleFileBuildError.bind(this),
+      handleFileBuilt: this.handleFileBuilt.bind(this),
+      handleVendorRebuilt: () =>
+        this.rebuildFrontComponentsAgainstCurrentVendor(),
+    });
+
+    await this.vendorBundleWatcher.start();
+  }
+
+  private async handleVendorBundleWatcherRestart(
+    vendor: VendorManifest | undefined,
+  ): Promise<void> {
+    const hasVendorWatcher = isDefined(this.vendorBundleWatcher);
+    const isVendorAdded = isDefined(vendor) && !hasVendorWatcher;
+    const isVendorRemoved = !isDefined(vendor) && hasVendorWatcher;
+    const isVendorDependenciesChanged =
+      isDefined(vendor) && this.vendorBundleWatcher?.shouldRestart(vendor);
+
+    if (!isVendorAdded && !isVendorRemoved && !isVendorDependenciesChanged) {
+      return;
+    }
+
+    await this.vendorBundleWatcher?.close();
+    this.vendorBundleWatcher = null;
+
+    if (isDefined(vendor)) {
+      await this.startVendorBundleWatcher(vendor);
+
+      return;
+    }
+
+    await this.rebuildFrontComponentsAgainstCurrentVendor();
   }
 
   private async startAssetWatcher(): Promise<void> {
