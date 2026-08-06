@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import DOMPurify from 'dompurify';
-import { toPlainText } from 'twenty-emails';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
@@ -15,6 +13,8 @@ import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
+import { sanitizeOutboundEmailSubject } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
 import { EMAIL_ATTACHMENT_FILE_FOLDERS } from 'src/engine/core-modules/tool/tools/email-tool/constants/email-attachment-file-folders.const';
 import {
   EmailToolException,
@@ -417,13 +417,9 @@ export class EmailComposerService {
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
-    const { JSDOM } = await import('jsdom');
-    const window = new JSDOM('').window;
-    const purify = DOMPurify(window);
-
-    const sanitizedHtmlBody = purify.sanitize(body || '');
-    const plainTextBody = toPlainText(sanitizedHtmlBody);
-    const sanitizedSubject = purify.sanitize(subject || '');
+    const { html: sanitizedHtmlBody, plainText: plainTextBody } =
+      await compileOutboundEmailContent(body ?? '');
+    const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =
       isDefined(inReplyTo) && isDefined(messageChannel)

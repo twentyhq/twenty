@@ -92,7 +92,7 @@ export type ViewConfiguration = {
 
 export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
-  viewId?: string;
+  viewId?: SerializedRelation | null;
   recordLimit?: number;
 };
 

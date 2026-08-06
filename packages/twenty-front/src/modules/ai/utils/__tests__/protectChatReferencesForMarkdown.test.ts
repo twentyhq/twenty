@@ -75,6 +75,22 @@ describe('protectChatReferencesForMarkdown', () => {
     );
   });
 
+  it('should drop a surplus bracket added after the closing tag', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        'Created [[object:opportunity:Opportunities[[/object]]].',
+      ),
+    ).toBe('Created [[object:opportunity:Opportunities[[/object]].');
+  });
+
+  it('should drop the extra brackets of an over-wrapped reference', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        'Created [[[object:opportunity:Opportunities[[/object]]]] now',
+      ),
+    ).toBe('Created [[object:opportunity:Opportunities[[/object]] now');
+  });
+
   it('should rewrite every kind in a mixed string', () => {
     expect(
       protectChatReferencesForMarkdown(
