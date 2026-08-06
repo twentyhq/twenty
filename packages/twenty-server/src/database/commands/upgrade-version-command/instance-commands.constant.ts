@@ -59,8 +59,6 @@ import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database
 import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785518325511-create-user-session-core-table';
 import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
 import { AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785810340935-add-on-disconnect-logic-function-to-connection-provider';
-import { AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1785504603000-add-is-system-side-effect-to-view-field-group';
-import { AddFieldsWidgetViewKeyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1785504606000-add-fields-widget-view-key';
 import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234300000-add-relation-target-field-metadata-id-to-view-filter';
@@ -280,6 +278,4 @@ export const INSTANCE_COMMANDS = [
   AddListViewTypeFastInstanceCommand,
   AddCallRecordingWidgetTypesFastInstanceCommand,
   AddListWidgetViewTypeFastInstanceCommand,
-  AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand,
-  AddFieldsWidgetViewKeyFastInstanceCommand,
 ];

@@ -49,7 +49,7 @@ type ReownUpdates = {
   viewFieldGroupUpdates: ReownUpdate[];
 };
 
-@RegisteredWorkspaceCommand('2.28.0', 1785504604000)
+@RegisteredWorkspaceCommand('2.28.0', 1786010741000)
 @Command({
   name: 'upgrade:2-28:reconcile-standard-and-custom-record-page-universal-identifier',
   description:

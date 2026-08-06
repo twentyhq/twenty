@@ -6,7 +6,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 // The engine-owned FIELDS_WIDGET record-page view is keyed on the reserved
 // ViewKey.FIELDS_WIDGET; the 2-28 record-page reconcile backfills the key on
 // existing rows.
-@RegisteredInstanceCommand('2.28.0', 1785504606000)
+@RegisteredInstanceCommand('2.28.0', 1786010743000)
 export class AddFieldsWidgetViewKeyFastInstanceCommand
   implements FastInstanceCommand
 {

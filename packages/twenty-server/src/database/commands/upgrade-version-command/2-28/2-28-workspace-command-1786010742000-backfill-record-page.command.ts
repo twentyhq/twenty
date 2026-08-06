@@ -56,7 +56,7 @@ type StandardRecordPageFlatEntityMaps = Pick<
   | 'flatPageLayoutWidgetMaps'
 >;
 
-@RegisteredWorkspaceCommand('2.28.0', 1785504605000)
+@RegisteredWorkspaceCommand('2.28.0', 1786010742000)
 @Command({
   name: 'upgrade:2-28:backfill-record-page',
   description:
