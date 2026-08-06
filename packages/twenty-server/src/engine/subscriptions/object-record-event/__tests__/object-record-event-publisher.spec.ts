@@ -475,6 +475,104 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('should publish update events when only the BEFORE state matches the filter (record leaving the view)', async () => {
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(
+        ({ record }: { record: { name?: string } }) =>
+          record.name === 'Open Company',
+      );
+
+      const streamDataWithFilter: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-1': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: { name: { eq: 'Open Company' } },
+            },
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([[streamChannelId, streamDataWithFilter]]) as Map<
+          string,
+          EventStreamData | undefined
+        >,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1', name: 'Open Company' },
+              after: { id: 'record-1', name: 'Done Company' },
+            } as MockObjectRecordEvent['properties'],
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds[0].queryIds,
+      ).toContain('query-1');
+    });
+
+    it('should not publish update events when neither state matches the filter', async () => {
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockReturnValue(false);
+
+      const streamDataWithFilter: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-1': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: { name: { eq: 'Open Company' } },
+            },
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([[streamChannelId, streamDataWithFilter]]) as Map<
+          string,
+          EventStreamData | undefined
+        >,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1', name: 'Unrelated A' },
+              after: { id: 'record-1', name: 'Unrelated B' },
+            } as MockObjectRecordEvent['properties'],
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
+    });
+
     it('should filter restricted fields from events', async () => {
       const restrictedField = getFlatFieldMetadataMock({
         objectMetadataId: companyObjectMetadata.id,

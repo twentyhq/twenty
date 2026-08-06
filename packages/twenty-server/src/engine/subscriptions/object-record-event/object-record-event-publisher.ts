@@ -547,9 +547,16 @@ export class ObjectRecordEventPublisher {
       before?: object;
     };
 
-    const record = properties?.after ?? properties?.before;
+    // For updates, both states matter: an after-state match means the record
+    // is (still or newly) in the subscribed view, a before-state match means
+    // it may have just LEFT it — subscribers must be notified either way, or
+    // a record updated out of a filtered view stays on screen forever.
+    const candidateRecords =
+      event.action === DatabaseEventAction.UPDATED
+        ? [properties?.after, properties?.before].filter(isDefined)
+        : [properties?.after ?? properties?.before].filter(isDefined);
 
-    if (!isDefined(record)) {
+    if (candidateRecords.length === 0) {
       return false;
     }
 
@@ -571,13 +578,15 @@ export class ObjectRecordEventPublisher {
       event.action === DatabaseEventAction.DELETED ||
       event.action === DatabaseEventAction.RESTORED;
 
-    return isRecordMatchingRLSRowLevelPermissionPredicate({
-      record,
-      filter: combinedFilter,
-      flatObjectMetadata: objectMetadata,
-      flatFieldMetadataMaps,
-      shouldIgnoreSoftDeleteDefaultFilter,
-    });
+    return candidateRecords.some((record) =>
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record,
+        filter: combinedFilter,
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps,
+        shouldIgnoreSoftDeleteDefaultFilter,
+      }),
+    );
   }
 
   private async fetchPermissionsContext(
