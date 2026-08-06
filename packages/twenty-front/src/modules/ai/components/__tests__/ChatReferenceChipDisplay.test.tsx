@@ -40,9 +40,12 @@ describe('ChatReferenceChipDisplay', () => {
     expect(screen.getByText('Acme')).toBeInTheDocument();
   });
 
-  it('should not show a pointer cursor when navigation is disabled', () => {
+  it('should not look interactive when navigation is disabled', () => {
     renderChip({ isNavigationEnabled: false });
 
-    expect(screen.getByTestId('chip').className).not.toMatch(/cursorPointer/);
+    const chipClassName = screen.getByTestId('chip').className;
+
+    expect(chipClassName).not.toMatch(/cursorPointer/);
+    expect(chipClassName).toMatch(/backgroundStatic/);
   });
 });
