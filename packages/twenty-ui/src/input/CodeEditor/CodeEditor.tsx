@@ -1,4 +1,8 @@
-import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
+import Editor, {
+  loader,
+  type EditorProps,
+  type Monaco,
+} from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/Loader/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/CodeEditor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/input/CodeEditor/utils/getBaseCodeEditorTheme';
@@ -17,6 +21,34 @@ import styles from './CodeEditor.module.scss';
 
 type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
 type CodeEditorContentPadding = 'default' | 'comfortable';
+
+// Left alone, `@monaco-editor/loader` downloads Monaco from a CDN at runtime,
+// which puts a second Monaco — pinned to a different version than the one we
+// bundle — on the page next to the one GraphiQL uses. The two then fight over
+// the single global `MonacoEnvironment` and end up talking to each other's
+// workers over an incompatible protocol. Point the loader at the bundled
+// instance so there is exactly one Monaco (and one that also works offline /
+// in self-hosted deployments, unlike the CDN).
+//
+// The import stays dynamic so Monaco is still only fetched when a code editor
+// is actually rendered, instead of weighing down every chunk importing this
+// component.
+//
+// Contract: the bundled ESM Monaco (unlike the CDN AMD build) resolves its
+// language workers through `globalThis.MonacoEnvironment`, which the host app
+// must set up before an editor mounts — worker wiring is bundler-specific, so
+// it can't live in this library. twenty-front does this in
+// `src/modules/app/utils/setupMonacoEnvironment.ts`; without it, language
+// services (validation, intellisense) are silently unavailable.
+let monacoLoaderConfiguration: Promise<void> | undefined;
+
+const configureMonacoLoader = () => {
+  monacoLoaderConfiguration ??= import('monaco-editor').then((monaco) => {
+    loader.config({ monaco });
+  });
+
+  return monacoLoaderConfiguration;
+};
 
 const setCodeEditorTheme = (
   monaco: Monaco,
@@ -67,6 +99,8 @@ export const CodeEditor = ({
     editor.IStandaloneCodeEditor | undefined
   >(undefined);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
+  const [isMonacoLoaderConfigured, setIsMonacoLoaderConfigured] =
+    useState(false);
   const [autoHeightContentHeight, setAutoHeightContentHeight] = useState<
     number | undefined
   >(undefined);
@@ -125,6 +159,20 @@ export const CodeEditor = ({
   };
 
   useEffect(() => {
+    let isStillMounted = true;
+
+    configureMonacoLoader().then(() => {
+      if (isStillMounted) {
+        setIsMonacoLoaderConfigured(true);
+      }
+    });
+
+    return () => {
+      isStillMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isDefined(monaco)) {
       return;
     }
@@ -161,7 +209,7 @@ export const CodeEditor = ({
     };
   }, [editor, shouldAutoHeight]);
 
-  return isLoading ? (
+  return isLoading || !isMonacoLoaderConfigured ? (
     <div
       className={styles.editorLoader}
       data-variant={variant}
