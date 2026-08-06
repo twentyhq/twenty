@@ -288,8 +288,11 @@ describe('isSubdomainValid', () => {
     });
 
     it('should handle boundary length cases precisely', () => {
-      // Exactly 3 characters (minimum valid)
-      expect(isSubdomainValid('abc')).toBe(true);
+      // Exactly 1 character (minimum valid)
+      expect(isSubdomainValid('a')).toBe(true);
+
+      // Exactly 2 characters
+      expect(isSubdomainValid('ab')).toBe(true);
 
       // Exactly 30 characters (maximum valid)
       const exactly30Chars = 'a'.repeat(28) + 'bc';
@@ -362,8 +365,11 @@ describe('isSubdomainValid', () => {
     });
 
     it('should validate length constraints from regex', () => {
-      // The regex pattern is: /^(?!api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/
-      // This means: start char + 1-28 middle chars + end char = 3-30 total chars
+      // The regex pattern is: /^(?!api-)[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?$/
+      // This means: start char + optional (0-28 middle chars + end char) = 1-30 total chars
+
+      // 1 char: start only
+      expect(isSubdomainValid('a')).toBe(true);
 
       // 3 chars: start + 1 middle + end
       expect(isSubdomainValid('abc')).toBe(true);
