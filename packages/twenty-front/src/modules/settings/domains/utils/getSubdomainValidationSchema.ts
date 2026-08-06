@@ -1,11 +1,14 @@
 import { t } from '@lingui/core/macro';
 import {
+  DEFAULT_SUBDOMAIN_MIN_LENGTH,
   RESERVED_SUBDOMAINS,
   SUBDOMAIN_PATTERN,
 } from 'twenty-shared/constants';
 import { z } from 'zod';
 
-export const getSubdomainValidationSchema = (minLength = 3) =>
+export const getSubdomainValidationSchema = (
+  minLength = DEFAULT_SUBDOMAIN_MIN_LENGTH,
+) =>
   z
     .string()
     .min(minLength, {

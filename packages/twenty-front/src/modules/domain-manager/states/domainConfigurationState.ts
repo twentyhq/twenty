@@ -1,5 +1,6 @@
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { DEFAULT_SUBDOMAIN_MIN_LENGTH } from 'twenty-shared/constants';
 
 export const domainConfigurationState = createAtomState<
   Pick<
@@ -15,6 +16,6 @@ export const domainConfigurationState = createAtomState<
     frontDomain: '',
     defaultSubdomain: undefined,
     publicFunctionDomain: undefined,
-    subdomainMinLength: 3,
+    subdomainMinLength: DEFAULT_SUBDOMAIN_MIN_LENGTH,
   },
 });

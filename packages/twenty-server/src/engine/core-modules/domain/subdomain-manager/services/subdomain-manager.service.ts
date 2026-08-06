@@ -74,12 +74,13 @@ export class SubdomainManagerService {
   ): Promise<string[]> {
     const minLength = this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH');
 
-    const derivedBase = isSubdomainValid(desired, minLength)
+    const derivedBase = isSubdomainValid({ subdomain: desired, minLength })
       ? desired
       : getSubdomainSlugFromDisplayName(desired);
 
     const base =
-      isDefined(derivedBase) && isSubdomainValid(derivedBase, minLength)
+      isDefined(derivedBase) &&
+      isSubdomainValid({ subdomain: derivedBase, minLength })
         ? derivedBase
         : generateRandomSubdomain();
 
@@ -117,7 +118,7 @@ export class SubdomainManagerService {
 
     const validCandidates = candidates.filter(
       (candidate) =>
-        isSubdomainValid(candidate, minLength) &&
+        isSubdomainValid({ subdomain: candidate, minLength }) &&
         candidate !== defaultSubdomain,
     );
 
@@ -143,10 +144,10 @@ export class SubdomainManagerService {
   async getSubdomainAvailability(
     subdomain: string,
   ): Promise<SubdomainAvailabilityDTO> {
-    const isValid = isSubdomainValid(
+    const isValid = isSubdomainValid({
       subdomain,
-      this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
-    );
+      minLength: this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
+    });
     const available = isValid && (await this.isSubdomainFreeToUse(subdomain));
 
     // Autofill adopts the first suggestion directly, so never echo an invalid
@@ -176,10 +177,10 @@ export class SubdomainManagerService {
   }
 
   async validateSubdomainOrThrow(subdomain: string) {
-    const isValid = isSubdomainValid(
+    const isValid = isSubdomainValid({
       subdomain,
-      this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
-    );
+      minLength: this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
+    });
 
     if (!isValid) {
       throw new WorkspaceException(
@@ -203,10 +204,10 @@ export class SubdomainManagerService {
 
   private async isSubdomainFreeToUse(subdomain: string): Promise<boolean> {
     return (
-      isSubdomainValid(
+      isSubdomainValid({
         subdomain,
-        this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
-      ) &&
+        minLength: this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
+      }) &&
       this.twentyConfigService.get('DEFAULT_SUBDOMAIN') !== subdomain &&
       (await this.isSubdomainAvailable(subdomain))
     );

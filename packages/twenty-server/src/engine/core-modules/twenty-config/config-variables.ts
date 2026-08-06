@@ -18,6 +18,7 @@ import {
   validateSync,
 } from 'class-validator';
 import {
+  DEFAULT_SUBDOMAIN_MIN_LENGTH,
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
@@ -1092,7 +1093,7 @@ export class ConfigVariables {
   @Min(1)
   @Max(30)
   @IsOptional()
-  SUBDOMAIN_MIN_LENGTH = 3;
+  SUBDOMAIN_MIN_LENGTH = DEFAULT_SUBDOMAIN_MIN_LENGTH;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
