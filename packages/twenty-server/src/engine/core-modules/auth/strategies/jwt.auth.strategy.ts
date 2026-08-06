@@ -363,9 +363,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         expectedWorkspaceId: workspace.id,
       });
 
-      // Callers read the absence of a user as "no human is driving this token".
-      // Letting an unresolvable user fall through would hand a token bound to a
-      // removed user the wider permissions of an unbound one.
       assertIsDefinedOrThrow(
         userContext,
         new AuthException(
@@ -402,8 +399,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
         : undefined;
 
-      // A bound token whose member is gone must not keep working with the
-      // application's own permissions, which is how an access token behaves.
       assertIsDefinedOrThrow(
         workspaceMember,
         new AuthException(
