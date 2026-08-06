@@ -1331,30 +1331,23 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Store workspace cache payloads in Redis with short key codes and empty ' +
-      'relation arrays omitted. Compacted entries are written under a separate ' +
-      'key suffix, so toggling this cannot mix encodings: it only causes a miss ' +
-      'and a recompute.',
+      'Store workspace cache payloads compactly: short key codes with empty ' +
+      'relation arrays omitted in Redis, and all but the most recently read ' +
+      'entries held in memory as serialized buffers the garbage collector does ' +
+      'not traverse. Trades a parse on a cold read for a much shorter GC pause. ' +
+      'Compacted entries use a separate Redis key suffix, so toggling this can ' +
+      'never read an entry back under the wrong encoding: it misses and ' +
+      'recomputes.',
     type: ConfigVariableType.BOOLEAN,
   })
-  IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED = false;
+  IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Keep only the most recently read workspace cache entries as live objects ' +
-      'and hold the rest as serialized buffers, which the garbage collector does ' +
-      'not traverse. Trades a parse on a cold read for a much shorter GC pause.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  IS_WORKSPACE_CACHE_COLD_STORAGE_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'How many entries per provider stay live objects when cold storage is on. ' +
-      'Size it above the workspaces a pod serves in one sweep interval, or reads ' +
-      'pay the parse too often.',
+      'How many entries per provider stay live objects when compact storage is ' +
+      'on. Size it above the workspaces a pod serves in one sweep interval, or ' +
+      'reads pay the parse too often.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

@@ -671,9 +671,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   // it, and so an entry written and read back within the sweep interval is never serialized at
   // all. The cost is that the hot set is a periodic bound, not an exact one.
   private demoteColdEntries(): void {
-    if (
-      !this.twentyConfigService.get('IS_WORKSPACE_CACHE_COLD_STORAGE_ENABLED')
-    ) {
+    if (!this.isCompactStorageEnabled) {
       return;
     }
 
@@ -709,12 +707,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  private get isCompactStorageEnabled(): boolean {
+    return this.twentyConfigService.get(
+      'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED',
+    );
+  }
+
   // Compacted payloads live under their own key suffix. Flipping the flag therefore cannot read
   // an entry written under the other encoding: it simply misses and recomputes.
   private buildDataKey(baseKey: string): string {
-    return this.twentyConfigService.get(
-      'IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED',
-    )
+    return this.isCompactStorageEnabled
       ? `${baseKey}:data:compact-v1`
       : `${baseKey}:data`;
   }
@@ -723,11 +725,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     keyName: WorkspaceCacheKeyName,
     data: CacheDataType,
   ): unknown {
-    if (
-      !this.twentyConfigService.get(
-        'IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED',
-      )
-    ) {
+    if (!this.isCompactStorageEnabled) {
       return data;
     }
 
@@ -738,11 +736,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     keyName: WorkspaceCacheKeyName,
     rawData: unknown,
   ): CacheDataType {
-    if (
-      !this.twentyConfigService.get(
-        'IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED',
-      )
-    ) {
+    if (!this.isCompactStorageEnabled) {
       return rawData as CacheDataType;
     }
 
