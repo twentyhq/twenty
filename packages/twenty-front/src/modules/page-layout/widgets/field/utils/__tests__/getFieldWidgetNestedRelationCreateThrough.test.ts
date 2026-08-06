@@ -1,5 +1,6 @@
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldWidgetNestedRelationCreateThrough } from '@/page-layout/widgets/field/utils/getFieldWidgetNestedRelationCreateThrough';
+import { RelationType } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
@@ -11,6 +12,7 @@ const personOpportunitiesField = personObjectMetadataItem.fields.find(
 const companyPeopleFieldRelationMetadata = {
   relationObjectMetadataNameSingular: 'person',
   targetFieldMetadataName: 'company',
+  relationType: RelationType.ONE_TO_MANY,
 } as FieldRelationMetadata;
 
 describe('getFieldWidgetNestedRelationCreateThrough', () => {
@@ -26,6 +28,21 @@ describe('getFieldWidgetNestedRelationCreateThrough', () => {
       relationRecordsFilter: { companyId: { eq: 'current-company-id' } },
       nestedRelationJoinColumnName: 'pointOfContactId',
     });
+  });
+
+  it('should return undefined for a many-to-one first hop', () => {
+    // The intermediate is unambiguous there, so the created record's join
+    // column is prefilled from the seeded direct filter instead of a picker.
+    expect(
+      getFieldWidgetNestedRelationCreateThrough({
+        fieldRelationMetadata: {
+          ...companyPeopleFieldRelationMetadata,
+          relationType: RelationType.MANY_TO_ONE,
+        },
+        nestedRelationFieldMetadataItem: personOpportunitiesField!,
+        recordId: 'current-company-id',
+      }),
+    ).toBeUndefined();
   });
 
   it('should return undefined without the relation inverse field name', () => {

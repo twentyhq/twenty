@@ -14,6 +14,14 @@ const personOpportunitiesField = personObjectMetadataItem.fields.find(
   (field) => field.name === 'pointOfContactForOpportunities',
 );
 
+const personCompanyField = personObjectMetadataItem.fields.find(
+  (field) => field.name === 'company',
+);
+
+const companyOpportunitiesField = companyObjectMetadataItem.fields.find(
+  (field) => field.name === 'opportunities',
+);
+
 describe('getFieldWidgetRelationTraversal', () => {
   it('should scope a direct widget through the relation own inverse', () => {
     const traversal = getFieldWidgetRelationTraversal({
@@ -60,6 +68,23 @@ describe('getFieldWidgetRelationTraversal', () => {
     expect(traversal.targetObjectMetadataId).not.toBe(
       personObjectMetadataItem.id,
     );
+  });
+
+  it('should scope a many-to-one first hop directly, without traversal', () => {
+    const traversal = getFieldWidgetRelationTraversal({
+      sourceFieldMetadataItem: personCompanyField,
+      nestedRelationFieldMetadataItem: companyOpportunitiesField,
+    });
+
+    expect(traversal.targetObjectMetadataId).toBe(
+      opportunityObjectMetadataItem.id,
+    );
+    expect(traversal.inverseFieldMetadataId).toBe(
+      companyOpportunitiesField?.relation?.targetFieldMetadata.id,
+    );
+    // The intermediate is the single record the current record points at, so
+    // the seeded filter is a direct one on the terminal object.
+    expect(traversal.relationTargetFieldMetadataId).toBeNull();
   });
 
   it('should return an empty traversal without a source field', () => {

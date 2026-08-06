@@ -43,6 +43,15 @@ const isPlainOneToManyRelationFlatFieldMetadata = (
   field.settings.relationType === RelationType.ONE_TO_MANY &&
   !isNonEmptyString(field.settings.junctionTargetFieldId);
 
+// The first hop can also be many-to-one: the widget then scopes the terminal
+// view directly by the single intermediate record the current record points
+// at, instead of traversing the relation.
+const isPlainRelationFlatFieldMetadata = (field: FlatFieldMetadata): boolean =>
+  isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
+  (field.settings.relationType === RelationType.ONE_TO_MANY ||
+    field.settings.relationType === RelationType.MANY_TO_ONE) &&
+  !isNonEmptyString(field.settings.junctionTargetFieldId);
+
 export const validateFieldConfigurationNestedRelationOrThrow = ({
   widgetConfiguration,
   widgetObjectMetadataId,
@@ -99,10 +108,10 @@ export const validateFieldConfigurationNestedRelationOrThrow = ({
     );
   }
 
-  if (!isPlainOneToManyRelationFlatFieldMetadata(sourceField)) {
+  if (!isPlainRelationFlatFieldMetadata(sourceField)) {
     throw invalidNestedRelation(
-      `nestedRelationFieldMetadataId requires "${sourceField.label}" to be a one-to-many relation field.`,
-      msg`${sourceField.label} must be a one-to-many relation field.`,
+      `nestedRelationFieldMetadataId requires "${sourceField.label}" to be a one-to-many or many-to-one relation field.`,
+      msg`${sourceField.label} must be a one-to-many or many-to-one relation field.`,
     );
   }
 

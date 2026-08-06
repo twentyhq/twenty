@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
+import { isFieldWidgetEligibleNestedParentField } from '@/page-layout/widgets/field/utils/isFieldWidgetEligibleNestedParentField';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -49,9 +50,10 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
 
     const isValidRelationChain =
       isDefined(selectedField) &&
-      isOneToManyRelationField(selectedField) &&
-      (!isDefined(selectedNestedField) ||
-        isOneToManyRelationField(selectedNestedField));
+      (isDefined(selectedNestedField)
+        ? isFieldWidgetEligibleNestedParentField(selectedField) &&
+          isOneToManyRelationField(selectedNestedField)
+        : isOneToManyRelationField(selectedField));
 
     const shouldRegenerateRelationTableView =
       nextDisplayMode === FieldDisplayMode.TABLE &&
