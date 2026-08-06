@@ -70,6 +70,92 @@ gh_deploy() {
   fi
 }
 
+# Every deployed image pins about 1.3GB of layers that nothing else reclaims,
+# because each build rewrites the node_modules layer even when its contents are
+# identical. A full Docker volume fails the next deploy partway through
+# unpacking, and that failure is not something retries can clear, so the trim
+# runs before the pull rather than after a successful deploy.
+prune_old_images() {
+  local repo="$1" serving="$2" incoming="$3" retain="$4" kept=0 pruned=0 ref
+
+  # Newest first, so what falls past the retention budget is the oldest.
+  while IFS= read -r ref; do
+    [ -n "$ref" ] || continue
+
+    # The serving image is the rollback target and the incoming one is about to
+    # start, so both survive even when they sit outside the budget. They still
+    # spend it while inside, which keeps the count a bound on what is kept
+    # rather than a floor.
+    if [ "$ref" = "$serving" ] || [ "$ref" = "$incoming" ]; then
+      if [ "$kept" -lt "$retain" ]; then
+        kept=$((kept + 1))
+      fi
+      continue
+    fi
+
+    if [ "$kept" -lt "$retain" ]; then
+      kept=$((kept + 1))
+      continue
+    fi
+
+    # A failure here is not fatal: an image still referenced by a stopped
+    # container just stays, and the deploy has no reason to stop for it.
+    if docker rmi "$ref" >/dev/null 2>&1; then
+      pruned=$((pruned + 1))
+    fi
+  done < <(
+    docker images --format '{{.CreatedAt}}	{{.Repository}}:{{.Tag}}' "$repo" 2>/dev/null |
+      sort -r | cut -f2
+  )
+
+  [ "$pruned" -eq 0 ] ||
+    log "pruned ${pruned} old image(s), keeping the ${retain} most recent"
+}
+
+# Free kilobytes on the filesystem holding the images, or nothing if that cannot
+# be determined. Read from inside a container because the images live on the
+# Docker host, which on a Mac is a VM whose disk the host `df` cannot see; that
+# is why a volume at 93% looked like 700GB free while deploys failed. The
+# serving image is the probe so this needs nothing that could itself be pruned.
+docker_volume_free_kb() {
+  local probe_image="$1"
+  docker run --rm --entrypoint df -v /var/lib/docker:/vol:ro "$probe_image" \
+    -Pk /vol 2>/dev/null | awk 'NR == 2 { print $4 }'
+}
+
+# Retention alone bounds only the images this script creates, and they share the
+# volume with dangling images, local builds and everything else on this daemon.
+# So the count is a budget, not a guarantee, and this is the guarantee: confirm
+# the space actually exists, spend the retained images to get it, and refuse the
+# deploy in a way that names the problem. Failing here beats failing inside
+# `docker pull`, which reports a confused per-file error from the containerd
+# snapshotter and then retries every two minutes forever.
+ensure_free_space() {
+  local repo="$1" serving="$2" incoming="$3" min_gb free_kb min_kb
+  min_gb="${STAGING_MIN_FREE_GB:-6}"
+  min_kb=$((min_gb * 1048576))
+
+  free_kb="$(docker_volume_free_kb "$serving")"
+  if [ -z "$free_kb" ]; then
+    log "could not read free space on the Docker volume; continuing without the check"
+    return 0
+  fi
+
+  [ "$free_kb" -lt "$min_kb" ] || return 0
+
+  log "only $((free_kb / 1048576))GB free on the Docker volume, want ${min_gb}GB; \
+dropping retention to just the serving image"
+  prune_old_images "$repo" "$serving" "$incoming" 0
+
+  free_kb="$(docker_volume_free_kb "$serving")"
+  if [ -n "$free_kb" ] && [ "$free_kb" -lt "$min_kb" ]; then
+    fail "only $((free_kb / 1048576))GB free on the Docker volume and every old \
+staging image is already gone, so something else is filling it. Deploying now \
+would fail partway through unpacking. Check 'docker system df' for dangling \
+images, unused volumes and local builds; staging keeps serving ${serving##*:}."
+  fi
+}
+
 report() {
   local state="$1" description="$2" deployment_id
   deployment_id="$(
@@ -174,6 +260,10 @@ before deploying ${target_sha}"
     fail "cannot check out ${target_sha} in the staging checkout"
 
   write_image "$target_image"
+
+  prune_old_images "$image_repo" "$current_image" "$target_image" \
+    "${STAGING_IMAGE_RETAIN:-3}"
+  ensure_free_space "$image_repo" "$current_image" "$target_image"
 
   # Order matters. A server image newer than the database cannot pass its
   # healthcheck, so containers start without the health gate, the schema is
