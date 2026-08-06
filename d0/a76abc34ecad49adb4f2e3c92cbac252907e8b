@@ -1,0 +1,69 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010100000-replace-webhook-subscription-expired-status.ts
+  s_62258254606868::t_86c2aa9aa9f2f6 1-45
+packages/twenty-server/test/integration/microsoft/mocks/setup-microsoft-mock.util.ts
+  s_62258254606868::t_bb292aee9f92c1 34
+  s_62258254606868::t_5c7d4feee0329b 4-7
+  s_62258254606868::t_61d61f3d2b90a0 76
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service.ts
+  s_62258254606868::t_ee5719aa0c8eaf 112,114-117,120-128,134,140-141
+  s_62258254606868::t_91f3c45279635c 22
+  s_62258254606868::t_ed68814588a58b 49,56,64,74,85,93-99
+  s_62258254606868::t_f075f24b06f546 156
+  s_62258254606868::t_a4eb6242bd5f42 3-6
+  s_62258254606868::t_1e1bbd34c8df02 185
+  s_62258254606868::t_8c4718122cb7c9 161,164
+  s_62258254606868::t_4ca2145ad2d084 211-214,216-217,219-220,222-227
+  s_62258254606868::t_0ddc4e255928a1 215,218
+  s_62258254606868::t_bdb48476bf065b 206,221
+  s_62258254606868::t_37c18285b56ee0 135,138
+  s_62258254606868::t_e256c6f4374085 228
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_62258254606868::t_215f0f06f13270 139
+  s_62258254606868::t_1b5a1f19578253 277
+  s_62258254606868::t_8aeb510aaebe7b 278
+  s_62258254606868::t_04f1e8788634fc 138
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_62258254606868::t_e2adac5e5b9698 216-229
+packages/twenty-server/test/integration/microsoft/webhook/lifecycle-notification.integration-spec.ts
+  s_62258254606868::t_069828b13b94b3 166,180
+  s_62258254606868::t_c3008142115405 205,212-223,225-233,235-249,255-273
+  s_62258254606868::t_54d5c33cbb6fbd 224,234
+  s_62258254606868::t_84bbead96a9434 9,14
+  s_62258254606868::t_bde54d0d75a27a 189-190
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service.ts
+  s_62258254606868::t_cbab4f658a436d 53-63
+  s_62258254606868::t_e974e112de58cc 66,69-71,74
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-throttle-max-pause.constant.ts
+  s_62258254606868::t_10fcae6e841f57 1
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_62258254606868::t_7c93e270070e8f 216-229
+packages/twenty-shared/src/types/WebhookSubscriptionStatus.ts
+  s_62258254606868::t_3b8df17f026834 5-6
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/utils/is-webhook-subscription-throttled.util.ts
+  s_62258254606868::t_a2449f049c89f6 30-33,35-36
+  s_62258254606868::t_c615147ca7c490 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010000000-add-webhook-subscription-failure-tracking.ts
+  s_62258254606868::t_d8529629eff977 1-37
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/utils/__tests__/is-webhook-subscription-throttled.util.spec.ts
+  s_62258254606868::t_96180d1da0fe86 31-35
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type.ts
+  s_62258254606868::t_2a9b9bc8d30eab 12-13
+packages/twenty-server/test/integration/microsoft/mocks/microsoft-auth-handlers.util.ts
+  s_62258254606868::t_34186dde39b320 5-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "d0a76abc34ecad49adb4f2e3c92cbac252907e8b",
+  "prompts": {},
+  "sessions": {
+    "s_62258254606868": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b859e0a0-923c-4364-abb5-2540ded6d7bd",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
