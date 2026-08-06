@@ -348,7 +348,6 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
       expect(result.nativeWebSearchCallCount).toBe(0);
       expect(result.totalCostInDollars).toBeCloseTo(0.0042, 6);
-      // credits = dollars * 1_000_000
       expect(result.creditsUsedMicro).toBe(4200);
     });
 
@@ -369,8 +368,6 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
         ],
         usage: {
           ...baseUsage,
-          // inputTokens (100) is the full prompt: noCache(60) + cacheRead(10) +
-          // cacheCreation(30) — the emitted total must not add the 30 again
           inputTokenDetails: {
             noCacheTokens: 60,
             cacheReadTokens: 10,

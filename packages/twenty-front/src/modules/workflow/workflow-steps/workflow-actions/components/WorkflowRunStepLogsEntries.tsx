@@ -7,7 +7,7 @@ import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily'
 import {
   StyledSection,
   StyledSectionTitle,
-} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
 
 const StyledEntriesList = styled.div`
   background: ${themeCssVariables.background.tertiary};
@@ -77,9 +77,6 @@ export const WorkflowRunStepLogsEntries = ({
   onlyLatestIteration = false,
 }: {
   entries: WorkflowRunStepLog['entries'];
-  // Set when the parent step lives inside an iterator loop: each iteration
-  // overwrites the same `stepLogs[stepId]` key, so what we render here is
-  // only the latest iteration's entries — not a cumulative view.
   onlyLatestIteration?: boolean;
 }) => {
   const { t } = useLingui();

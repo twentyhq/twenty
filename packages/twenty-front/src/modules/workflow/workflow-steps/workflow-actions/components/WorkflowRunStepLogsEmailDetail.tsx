@@ -11,10 +11,8 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  formatBytes,
-  formatDuration,
-} from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
+import { formatBytes } from '@/workflow/workflow-steps/workflow-actions/utils/formatBytes';
+import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {
   StyledBadgeGroup,
   StyledBodyMeta,
@@ -32,7 +30,7 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
 
 const StyledModeBadge = styled.span`
   background: ${themeCssVariables.background.transparent.light};

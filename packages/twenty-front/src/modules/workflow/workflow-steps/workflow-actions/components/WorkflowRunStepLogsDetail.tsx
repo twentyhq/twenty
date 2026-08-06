@@ -10,11 +10,11 @@ import { type JsonValue } from 'type-fest';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { useWorkflowRunStepLog } from '@/workflow/hooks/useWorkflowRunStepLog';
-import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail';
-import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail';
-import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail';
-import { WorkflowRunStepLogsEntries } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsEntries';
-import { WorkflowRunStepLogsHttpRequestDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail';
+import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail';
+import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail';
+import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail';
+import { WorkflowRunStepLogsEntries } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries';
+import { WorkflowRunStepLogsHttpRequestDetail } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail';
 import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
