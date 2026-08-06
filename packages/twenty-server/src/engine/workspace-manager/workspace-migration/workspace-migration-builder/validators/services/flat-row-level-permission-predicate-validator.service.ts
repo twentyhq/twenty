@@ -267,7 +267,9 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     } else if (
       'value' in flatEntityUpdate ||
       'operand' in flatEntityUpdate ||
-      'fieldMetadataUniversalIdentifier' in flatEntityUpdate
+      'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
+      'subFieldName' in flatEntityUpdate ||
+      'workspaceMemberFieldMetadataUniversalIdentifier' in flatEntityUpdate
     ) {
       const invalidValueError = this.getInvalidValueError({
         fieldType: fieldMetadata.type,

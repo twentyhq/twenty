@@ -203,6 +203,18 @@ describe('FlatViewFilterValidatorService', () => {
       expect(result.errors).toHaveLength(1);
     });
 
+    it('should revalidate when the sub field changes the applicable schema', () => {
+      const result = service.validateFlatViewFilterUpdate(
+        buildUpdateArgs({
+          fieldType: FieldMetadataType.CURRENCY,
+          operand: ViewFilterOperand.IS,
+          flatEntityUpdate: { subFieldName: 'currencyCode' },
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+    });
+
     it('should not validate the value when it is not part of the update', () => {
       const result = service.validateFlatViewFilterUpdate(
         buildUpdateArgs({

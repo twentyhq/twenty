@@ -72,9 +72,16 @@ const PHONE_FILTER_NON_SIGNIFICANT_CHARS = /(?!^)\+|[^0-9+]/g;
 const CONTAINS_DIGIT = /[0-9]/;
 
 // The write path validates against these schemas strictly; the read path keeps
-// its historical tolerance by catching into the value it used to produce.
-const lenientNumericFilterValueSchema = numericFilterValueSchema.catch(NaN);
+// its historical tolerance by falling back to the value it used to produce.
 const lenientBooleanFilterValueSchema = booleanFilterValueSchema.catch(false);
+
+// parseFloat used to accept trailing garbage such as "30abc", so keep coercing
+// rather than turning previously working stored filters into NaN.
+const parseNumericFilterValue = (value: string): number => {
+  const parsed = numericFilterValueSchema.safeParse(value);
+
+  return parsed.success ? parsed.data : parseFloat(value);
+};
 
 // Sources outside the known enum used to flow through untouched, so fall back to
 // the raw parse rather than rejecting them at read time.
@@ -579,7 +586,7 @@ const buildDirectFieldGqlOperationFilter = ({
           return {
             [fieldMetadataItem.name]: {
               eq: convertRatingToRatingValue(
-                lenientNumericFilterValueSchema.parse(recordFilter.value),
+                parseNumericFilterValue(recordFilter.value),
               ),
             } as RatingFilter,
           };
@@ -588,7 +595,7 @@ const buildDirectFieldGqlOperationFilter = ({
             not: {
               [fieldMetadataItem.name]: {
                 eq: convertRatingToRatingValue(
-                  lenientNumericFilterValueSchema.parse(recordFilter.value),
+                  parseNumericFilterValue(recordFilter.value),
                 ),
               } as RatingFilter,
             },
@@ -597,7 +604,7 @@ const buildDirectFieldGqlOperationFilter = ({
           return {
             [fieldMetadataItem.name]: {
               in: convertGreaterThanOrEqualRatingToArrayOfRatingValues(
-                lenientNumericFilterValueSchema.parse(recordFilter.value),
+                parseNumericFilterValue(recordFilter.value),
               ),
             } as RatingFilter,
           };
@@ -605,7 +612,7 @@ const buildDirectFieldGqlOperationFilter = ({
           return {
             [fieldMetadataItem.name]: {
               in: convertLessThanOrEqualRatingToArrayOfRatingValues(
-                lenientNumericFilterValueSchema.parse(recordFilter.value),
+                parseNumericFilterValue(recordFilter.value),
               ),
             } as RatingFilter,
           };
@@ -619,26 +626,26 @@ const buildDirectFieldGqlOperationFilter = ({
         case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
           return {
             [fieldMetadataItem.name]: {
-              gte: lenientNumericFilterValueSchema.parse(recordFilter.value),
+              gte: parseNumericFilterValue(recordFilter.value),
             } as FloatFilter,
           };
         case RecordFilterOperand.LESS_THAN_OR_EQUAL:
           return {
             [fieldMetadataItem.name]: {
-              lte: lenientNumericFilterValueSchema.parse(recordFilter.value),
+              lte: parseNumericFilterValue(recordFilter.value),
             } as FloatFilter,
           };
         case RecordFilterOperand.IS:
           return {
             [fieldMetadataItem.name]: {
-              eq: lenientNumericFilterValueSchema.parse(recordFilter.value),
+              eq: parseNumericFilterValue(recordFilter.value),
             } as FloatFilter,
           };
         case RecordFilterOperand.IS_NOT:
           return {
             not: {
               [fieldMetadataItem.name]: {
-                eq: lenientNumericFilterValueSchema.parse(recordFilter.value),
+                eq: parseNumericFilterValue(recordFilter.value),
               } as FloatFilter,
             },
           };
@@ -760,9 +767,7 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  gte:
-                    lenientNumericFilterValueSchema.parse(recordFilter.value) *
-                    1000000,
+                  gte: parseNumericFilterValue(recordFilter.value) * 1000000,
                 },
               } as CurrencyFilter,
             };
@@ -770,9 +775,7 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  lte:
-                    lenientNumericFilterValueSchema.parse(recordFilter.value) *
-                    1000000,
+                  lte: parseNumericFilterValue(recordFilter.value) * 1000000,
                 },
               } as CurrencyFilter,
             };
@@ -780,9 +783,7 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  eq:
-                    lenientNumericFilterValueSchema.parse(recordFilter.value) *
-                    1000000,
+                  eq: parseNumericFilterValue(recordFilter.value) * 1000000,
                 },
               } as CurrencyFilter,
             };
@@ -791,10 +792,7 @@ const buildDirectFieldGqlOperationFilter = ({
               not: {
                 [fieldMetadataItem.name]: {
                   amountMicros: {
-                    eq:
-                      lenientNumericFilterValueSchema.parse(
-                        recordFilter.value,
-                      ) * 1000000,
+                    eq: parseNumericFilterValue(recordFilter.value) * 1000000,
                   },
                 } as CurrencyFilter,
               },

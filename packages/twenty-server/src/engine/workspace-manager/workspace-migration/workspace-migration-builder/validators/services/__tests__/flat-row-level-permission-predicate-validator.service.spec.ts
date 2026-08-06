@@ -62,6 +62,54 @@ const buildCreationArgs = ({
     FlatRowLevelPermissionPredicateValidatorService['validateFlatRowLevelPermissionPredicateCreation']
   >[0];
 
+const buildUpdateArgs = ({
+  fieldType,
+  operand,
+  value,
+  flatEntityUpdate,
+}: {
+  fieldType: FieldMetadataType;
+  operand: RowLevelPermissionPredicateOperand;
+  value: unknown;
+  flatEntityUpdate: Record<string, unknown>;
+}) =>
+  ({
+    universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
+    flatEntityUpdate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatRowLevelPermissionPredicateMaps: mapsFrom([
+        {
+          universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
+          fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+          rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+          operand,
+          value,
+          subFieldName: null,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            FIELD_UNIVERSAL_IDENTIFIER,
+        },
+      ]),
+      flatRowLevelPermissionPredicateGroupMaps: mapsFrom([]),
+      flatFieldMetadataMaps: mapsFrom([
+        {
+          universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          type: fieldType,
+          label: 'Account Owner',
+        },
+      ]),
+      flatObjectMetadataMaps: mapsFrom([
+        { universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER },
+      ]),
+      flatRoleMaps: mapsFrom([
+        { universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER },
+      ]),
+    },
+  }) as unknown as Parameters<
+    FlatRowLevelPermissionPredicateValidatorService['validateFlatRowLevelPermissionPredicateUpdate']
+  >[0];
+
 describe('FlatRowLevelPermissionPredicateValidatorService', () => {
   let service: FlatRowLevelPermissionPredicateValidatorService;
 
@@ -106,13 +154,29 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
     expect(result.errors).toEqual([]);
   });
 
+  it('should validate the retained value when workspace member resolution is cleared', () => {
+    const result = service.validateFlatRowLevelPermissionPredicateUpdate(
+      buildUpdateArgs({
+        fieldType: FieldMetadataType.RELATION,
+        operand: RowLevelPermissionPredicateOperand.IS,
+        value: { direction: 'NEXT', amount: 30, unit: 'DAY' },
+        flatEntityUpdate: {
+          workspaceMemberFieldMetadataUniversalIdentifier: null,
+        },
+      }),
+    );
+
+    expect(result.errors).toHaveLength(1);
+  });
+
   it('should skip validation when the value is resolved from the workspace member', () => {
     const result = service.validateFlatRowLevelPermissionPredicateCreation(
       buildCreationArgs({
         fieldType: FieldMetadataType.RELATION,
         operand: RowLevelPermissionPredicateOperand.IS,
         value: null,
-        workspaceMemberFieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          FIELD_UNIVERSAL_IDENTIFIER,
       }),
     );
 

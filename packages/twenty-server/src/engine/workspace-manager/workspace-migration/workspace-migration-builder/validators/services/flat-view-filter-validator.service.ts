@@ -293,7 +293,9 @@ export class FlatViewFilterValidatorService {
       if (
         'value' in flatEntityUpdate ||
         'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
-        'operand' in flatEntityUpdate
+        'operand' in flatEntityUpdate ||
+        'subFieldName' in flatEntityUpdate ||
+        'relationTargetFieldMetadataUniversalIdentifier' in flatEntityUpdate
       ) {
         const invalidValueError = this.getInvalidValueError({
           operand: updatedFlatViewFilter.operand,

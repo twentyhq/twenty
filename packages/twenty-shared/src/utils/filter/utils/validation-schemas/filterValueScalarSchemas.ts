@@ -5,10 +5,13 @@ import { FieldActorSource } from '@/types';
 
 export const nonEmptyStringFilterValueSchema = z.string().min(1);
 
+const NUMERIC_VALUE = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/;
+
 export const numericFilterValueSchema = z
   .string()
+  .refine((value) => NUMERIC_VALUE.test(value.trim()), 'Expected a number')
   .transform((value) => parseFloat(value))
-  .refine((value) => !Number.isNaN(value), 'Expected a number');
+  .refine((value) => Number.isFinite(value), 'Expected a finite number');
 
 const temporalSchema = <TParsed>(
   parse: (value: string) => TParsed,
