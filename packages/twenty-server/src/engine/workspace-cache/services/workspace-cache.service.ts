@@ -449,7 +449,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const hash = allValues[index * 2 + 1] as string | undefined;
 
       if (isDefined(rawData) && isDefined(hash)) {
-        const data = this.decodeFromStorage(workspaceId, keyName, rawData);
+        let data: CacheDataType;
+
+        try {
+          data = this.decodeFromStorage(workspaceId, keyName, rawData);
+        } catch (error) {
+          this.logger.warn(
+            `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
+            error,
+          );
+          missingInRedis.push(keyName);
+          continue;
+        }
 
         Object.assign(redisEntries.data, { [keyName]: data });
         redisEntries.hashes[keyName] = hash;
