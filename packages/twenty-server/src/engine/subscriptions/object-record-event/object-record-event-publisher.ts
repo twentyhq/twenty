@@ -505,10 +505,7 @@ export class ObjectRecordEventPublisher {
     } as ObjectRecordSubscriptionEvent;
   }
 
-  // The delivered payload carries both snapshots of an update, while the RLS
-  // gate authorizes the after snapshot. A record entering the subscriber's
-  // row-level scope must not expose the before values they had no access to —
-  // strip before/diff when the before snapshot fails the subscriber's RLS.
+  // Strips before/diff when the before snapshot fails subscriber RLS — a record entering scope must not expose prior values.
   private redactRLSUnauthorizedBeforeSnapshot(
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
@@ -606,9 +603,7 @@ export class ObjectRecordEventPublisher {
       event.action === DatabaseEventAction.DELETED ||
       event.action === DatabaseEventAction.RESTORED;
 
-    // Row-level permission is evaluated ONLY against the delivered snapshot:
-    // a before-state match must never authorize sending an after snapshot the
-    // subscriber has lost access to.
+    // RLS is checked on the delivered snapshot only — a before-state match must never authorize an after snapshot.
     if (
       isDefined(subscriberRLSFilter) &&
       Object.keys(subscriberRLSFilter).length > 0 &&
@@ -629,11 +624,7 @@ export class ObjectRecordEventPublisher {
       return true;
     }
 
-    // View membership may match on either snapshot of an update: an
-    // after-match means the record is (still or newly) in the subscribed
-    // view, a before-match means it may have just LEFT it — subscribers must
-    // be notified either way, or a record updated out of a filtered view
-    // stays on screen forever.
+    // Membership matches either snapshot of an update, so records leaving a filtered view still notify.
     const candidateRecords =
       event.action === DatabaseEventAction.UPDATED
         ? [properties?.after, properties?.before].filter(isDefined)
