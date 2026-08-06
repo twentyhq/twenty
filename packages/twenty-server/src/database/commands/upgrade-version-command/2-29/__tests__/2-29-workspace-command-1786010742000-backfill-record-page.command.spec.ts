@@ -32,10 +32,8 @@ const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
 const EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-0000-4000-8000-0000000000ae';
 const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
-const LABEL_FIELD_UNIVERSAL_IDENTIFIER =
-  '20202020-0000-4000-8000-0000000000cc';
-const OTHER_FIELD_UNIVERSAL_IDENTIFIER =
-  '20202020-0000-4000-8000-0000000000cd';
+const LABEL_FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000cc';
+const OTHER_FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000cd';
 
 const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier:
@@ -54,7 +52,8 @@ const STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER =
 
 const STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   getSystemRecordPageLayoutUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectMetadataApplicationUniversalIdentifier:
+      STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   });
 
@@ -351,16 +350,14 @@ describe('BackfillRecordPageCommand', () => {
         viewFields: [
           {
             universalIdentifier: curatedViewFieldUniversalIdentifier,
-            viewUniversalIdentifier:
-              STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+            viewUniversalIdentifier: STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
             fieldMetadataUniversalIdentifier: OTHER_FIELD_UNIVERSAL_IDENTIFIER,
           } as never,
         ],
         viewFieldGroups: [
           {
             universalIdentifier: 'standard-group-uid',
-            viewUniversalIdentifier:
-              STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+            viewUniversalIdentifier: STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
           } as never,
         ],
         pageLayouts: [
@@ -509,8 +506,7 @@ describe('BackfillRecordPageCommand', () => {
         viewFieldGroups: [
           {
             universalIdentifier: 'standard-group-uid',
-            viewUniversalIdentifier:
-              STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+            viewUniversalIdentifier: STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
           } as never,
         ],
         pageLayouts: [

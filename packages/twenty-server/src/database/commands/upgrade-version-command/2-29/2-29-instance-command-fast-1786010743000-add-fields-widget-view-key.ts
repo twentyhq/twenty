@@ -7,9 +7,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 // ViewKey.FIELDS_WIDGET; the 2-29 record-page reconcile backfills the key on
 // existing rows.
 @RegisteredInstanceCommand('2.29.0', 1786010743000)
-export class AddFieldsWidgetViewKeyFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddFieldsWidgetViewKeyFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TYPE "core"."view_key_enum" ADD VALUE IF NOT EXISTS 'FIELDS_WIDGET'`,

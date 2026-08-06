@@ -134,7 +134,9 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
     );
 
     if (totalCreateCount === 0) {
-      this.logger.log(`No record page to backfill for workspace ${workspaceId}`);
+      this.logger.log(
+        `No record page to backfill for workspace ${workspaceId}`,
+      );
 
       return;
     }
@@ -354,7 +356,8 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
 
     const derivedPageLayoutUniversalIdentifier =
       getSystemRecordPageLayoutUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        objectMetadataApplicationUniversalIdentifier:
+          applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       });
 
@@ -389,7 +392,9 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
           derivedPageLayoutUniversalIdentifier,
       );
 
-    applicationBucket.pageLayoutTabsToCreate.push(...standardFlatPageLayoutTabs);
+    applicationBucket.pageLayoutTabsToCreate.push(
+      ...standardFlatPageLayoutTabs,
+    );
 
     const standardTabUniversalIdentifiers = new Set(
       standardFlatPageLayoutTabs.map((tab) => tab.universalIdentifier),
@@ -484,7 +489,8 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
 
     const derivedPageLayoutUniversalIdentifier =
       getSystemRecordPageLayoutUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        objectMetadataApplicationUniversalIdentifier:
+          applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       });
 
@@ -534,12 +540,15 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
     AllFlatEntityMaps,
     'flatViewFieldMaps' | 'flatFieldMetadataMaps'
   >): void {
-    const objectFlatFieldMetadatas = flatObjectMetadata.fieldUniversalIdentifiers
-      .map(
-        (fieldUniversalIdentifier) =>
-          flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier],
-      )
-      .filter(isDefined);
+    const objectFlatFieldMetadatas =
+      flatObjectMetadata.fieldUniversalIdentifiers
+        .map(
+          (fieldUniversalIdentifier) =>
+            flatFieldMetadataMaps.byUniversalIdentifier[
+              fieldUniversalIdentifier
+            ],
+        )
+        .filter(isDefined);
 
     const fieldApplicationUniversalIdentifierByFieldUniversalIdentifier =
       new Map(
@@ -576,11 +585,12 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
           missingFlatViewField.fieldMetadataUniversalIdentifier,
         ) ?? flatObjectMetadata.applicationUniversalIdentifier;
 
-      getApplicationBucket(fieldApplicationUniversalIdentifier)
-        .viewFieldsToCreate.push({
-          ...missingFlatViewField,
-          applicationUniversalIdentifier: fieldApplicationUniversalIdentifier,
-        });
+      getApplicationBucket(
+        fieldApplicationUniversalIdentifier,
+      ).viewFieldsToCreate.push({
+        ...missingFlatViewField,
+        applicationUniversalIdentifier: fieldApplicationUniversalIdentifier,
+      });
     }
   }
 

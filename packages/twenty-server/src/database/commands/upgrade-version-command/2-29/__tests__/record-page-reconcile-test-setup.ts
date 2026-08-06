@@ -35,21 +35,25 @@ export const buildDerivedRecordPageStackUniversalIdentifiers = ({
   fieldUniversalIdentifier?: string;
 }) => {
   const pageLayout = getSystemRecordPageLayoutUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+    objectMetadataApplicationUniversalIdentifier:
+      applicationUniversalIdentifier,
     objectUniversalIdentifier,
   });
   const homeTab = getSystemPageLayoutTabUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+    objectMetadataApplicationUniversalIdentifier:
+      applicationUniversalIdentifier,
     pageLayoutUniversalIdentifier: pageLayout,
     title: 'Home',
   });
   const fieldsWidget = getSystemPageLayoutWidgetUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+    objectMetadataApplicationUniversalIdentifier:
+      applicationUniversalIdentifier,
     pageLayoutTabUniversalIdentifier: homeTab,
     title: 'Fields',
   });
   const view = getSystemViewUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+    objectMetadataApplicationUniversalIdentifier:
+      applicationUniversalIdentifier,
     objectUniversalIdentifier,
     viewKey: ViewKey.FIELDS_WIDGET,
   });
@@ -60,7 +64,8 @@ export const buildDerivedRecordPageStackUniversalIdentifiers = ({
     fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
   });
   const generalGroup = getSystemViewFieldGroupUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: applicationUniversalIdentifier,
+    objectMetadataApplicationUniversalIdentifier:
+      applicationUniversalIdentifier,
     viewUniversalIdentifier: view,
     name: 'General',
   });

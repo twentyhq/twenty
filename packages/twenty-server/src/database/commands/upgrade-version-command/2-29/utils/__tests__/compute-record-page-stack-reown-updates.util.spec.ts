@@ -25,7 +25,8 @@ const FIELD_METADATA = {
 
 const DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   getSystemRecordPageLayoutUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectMetadataApplicationUniversalIdentifier:
+      STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   });
 
@@ -41,8 +42,7 @@ describe('computeRecordPageStackReownUpdates', () => {
     buildUnderivedRecordPageStack({
       idPrefix: 'stack',
       objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-      applicationUniversalIdentifier:
-        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       withGroup: true,
     });
 
