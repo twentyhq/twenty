@@ -8,8 +8,8 @@ on:
 permissions: {}
 
 concurrency:
-  group: pr-review-dispatch-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: pr-review-dispatch-${{ github.event.pull_request.number }}-${{ github.event.action }}
+  cancel-in-progress: ${{ github.event.action == 'synchronize' }}
 
 jobs:
   dispatch:
