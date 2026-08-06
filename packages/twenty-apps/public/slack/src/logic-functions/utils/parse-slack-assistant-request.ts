@@ -7,6 +7,10 @@ import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/uti
 
 const LEADING_BOT_MENTION_PATTERN = /^<@[A-Z0-9]+(\|[^>]*)?>\s*/;
 
+type SlackInboundEvent = NonNullable<SlackEventsRequestBody['event']>;
+
+type SlackAssistantEventKind = 'mention' | 'directMessage' | 'threadFollowUp';
+
 type ParsedSlackAssistantRequest =
   | {
       request: SlackAssistantRequestDraft;
@@ -18,8 +22,62 @@ type ParsedSlackAssistantRequest =
       emptyRequest?: SlackAssistantEmptyRequest;
     };
 
+const classifySlackAssistantEvent = (
+  event: SlackInboundEvent,
+): SlackAssistantEventKind | null => {
+  if (event.type === 'app_mention') {
+    return 'mention';
+  }
+
+  if (event.type !== 'message') {
+    return null;
+  }
+
+  if (event.channel_type === 'im') {
+    return 'directMessage';
+  }
+
+  const isChannelOrGroupMessage =
+    event.channel_type === 'channel' || event.channel_type === 'group';
+
+  if (isChannelOrGroupMessage && isNonEmptyString(event.thread_ts)) {
+    return 'threadFollowUp';
+  }
+
+  return null;
+};
+
 const stripLeadingBotMention = (text: string): string =>
   text.replace(LEADING_BOT_MENTION_PATTERN, '').replace(/\s+/g, ' ').trim();
+
+const normalizeSlackRequestText = (
+  text: string,
+  kind: SlackAssistantEventKind,
+): string =>
+  kind === 'mention'
+    ? stripLeadingBotMention(text)
+    : text.replace(/\s+/g, ' ').trim();
+
+const buildSlackAssistantEmptyRequest = ({
+  slackChannelId,
+  slackMessageTimestamp,
+  slackThreadTimestamp,
+  isDirectMessage,
+}: {
+  slackChannelId: string;
+  slackMessageTimestamp: string;
+  slackThreadTimestamp: string | undefined;
+  isDirectMessage: boolean;
+}): SlackAssistantEmptyRequest => ({
+  slackChannelId,
+  slackMessageTimestamp,
+  parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
+    slackThreadTimestamp,
+    slackMessageTimestamp,
+    isDirectMessage,
+  }),
+  isInExistingThread: isNonEmptyString(slackThreadTimestamp),
+});
 
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
@@ -34,16 +92,9 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: 'Missing event payload' };
   }
 
-  const isMention = event.type === 'app_mention';
-  const isDirectMessage =
-    event.type === 'message' && event.channel_type === 'im';
-  const isChannelOrGroupMessage =
-    event.type === 'message' &&
-    (event.channel_type === 'channel' || event.channel_type === 'group');
-  const isThreadFollowUp =
-    isChannelOrGroupMessage && isNonEmptyString(event.thread_ts);
+  const kind = classifySlackAssistantEvent(event);
 
-  if (!isMention && !isDirectMessage && !isThreadFollowUp) {
+  if (kind === null) {
     return { request: null, skipReason: `Unhandled event type: ${event.type}` };
   }
 
@@ -60,46 +111,35 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: 'Event is missing required fields' };
   }
 
-  const rawText = event.text ?? '';
-  const requestText = isMention
-    ? stripLeadingBotMention(rawText)
-    : rawText.replace(/\s+/g, ' ').trim();
+  const requestText = normalizeSlackRequestText(event.text ?? '', kind);
 
   if (!isNonEmptyString(requestText)) {
-    if (isMention || isDirectMessage) {
-      return {
-        request: null,
-        skipReason: 'Empty request text',
-        emptyRequest: {
-          slackChannelId: event.channel,
-          slackMessageTimestamp: event.ts,
-          parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
-            slackThreadTimestamp: event.thread_ts,
-            slackMessageTimestamp: event.ts,
-            isDirectMessage,
-          }),
-          isInExistingThread: isNonEmptyString(event.thread_ts),
-        },
-      };
+    if (kind === 'threadFollowUp') {
+      return { request: null, skipReason: 'Empty request text' };
     }
 
-    return { request: null, skipReason: 'Empty request text' };
+    return {
+      request: null,
+      skipReason: 'Empty request text',
+      emptyRequest: buildSlackAssistantEmptyRequest({
+        slackChannelId: event.channel,
+        slackMessageTimestamp: event.ts,
+        slackThreadTimestamp: event.thread_ts,
+        isDirectMessage: kind === 'directMessage',
+      }),
+    };
   }
-
-  const slackChannelType =
-    event.channel_type ??
-    (isMention ? 'channel' : isDirectMessage ? 'im' : 'channel');
 
   return {
     request: {
       slackEventId: body.event_id,
       slackChannelId: event.channel,
-      slackChannelType,
+      slackChannelType: event.channel_type ?? 'channel',
       slackThreadTimestamp: event.thread_ts ?? '',
       slackMessageTimestamp: event.ts,
       slackUserId: event.user,
       requestText,
     },
-    requiresActiveThreadSubscription: isThreadFollowUp && !isMention,
+    requiresActiveThreadSubscription: kind === 'threadFollowUp',
   };
 };
