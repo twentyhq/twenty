@@ -7910,7 +7910,7 @@ export default {
                 172
             ],
             "completeBookCallOnboardingStep": [
-                170
+                172
             ],
             "triggerInstallAppsOnboardingStep": [
                 172,
