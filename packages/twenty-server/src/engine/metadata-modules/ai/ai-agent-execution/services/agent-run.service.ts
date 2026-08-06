@@ -82,6 +82,16 @@ export class AgentRunService {
       );
     }
 
+    if (
+      isDefined(callerApplication) &&
+      agent.applicationId !== callerApplication.id
+    ) {
+      throw new AiException(
+        `Agent ${input.agentUniversalIdentifier} belongs to another application`,
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
     const application = await this.applicationService.findById(
       agent.applicationId,
     );

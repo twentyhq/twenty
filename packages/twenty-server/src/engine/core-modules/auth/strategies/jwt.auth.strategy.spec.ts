@@ -432,6 +432,38 @@ describe('JwtAuthStrategy', () => {
         expect(e.code).toBe(AuthExceptionCode.APPLICATION_NOT_FOUND);
       }
     });
+
+    it('should reject an application token bound to a user that cannot be resolved', async () => {
+      const validApplicationId = randomUUID();
+      const validWorkspaceId = randomUUID();
+      const removedUserId = randomUUID();
+
+      const payload = {
+        sub: validApplicationId,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        applicationId: validApplicationId,
+        workspaceId: validWorkspaceId,
+        userId: removedUserId,
+        userWorkspaceId: randomUUID(),
+      };
+
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = validWorkspaceId;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      applicationStore[validWorkspaceId] = {
+        [validApplicationId]: { id: validApplicationId },
+      };
+
+      strategy = createStrategy();
+
+      try {
+        await strategy.validate(payload as JwtPayload);
+        throw new Error('Expected validate to reject');
+      } catch (e) {
+        expect(e.code).toBe(AuthExceptionCode.USER_NOT_FOUND);
+      }
+    });
   });
 
   describe('Impersonation validation', () => {

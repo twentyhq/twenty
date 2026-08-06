@@ -146,6 +146,24 @@ Key points:
   failure `success` is `false`, `result` is `null`, and `error` holds the
   reason (for example, when the workspace ran out of AI credits mid-run).
 
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
+
+<Warning>
+  **Avoid loops:** if you call `runAgent()` from a `*.updated` database-event
+  trigger and the agent updates the same record, scope the trigger with
+  `updatedFields` to a field the agent never writes (e.g. the source URL), or
+  guard on whether any target field is still empty before calling `runAgent()`.
+</Warning>
+
 ### Running on behalf of a workspace member
 
 Pass `runAsWorkspaceMemberId` when the run is triggered by a person — a chat
@@ -166,34 +184,23 @@ row-level permissions apply. Omit the field for autonomous runs (scheduled
 jobs, database-event triggers): those keep the agent's own role.
 
 Your app is responsible for mapping the person who triggered the run to a
-workspace member. Only calls authenticated with an app access token — which is
-what `runAgent()` uses from a logic function — may name a member. A token
-issued on behalf of a specific user, as a front component receives, may only
-name that user's own member.
+workspace member. Naming one requires an app access token, and what a token may
+name depends on whether it carries a user:
+
+- A token with **no user attached** may name any member. A logic function runs
+  with one, and so do tokens minted through `client_credentials` or from an API
+  key.
+- A token issued **on behalf of a user**, as a front component receives, may
+  only name that user's own member.
+
+Anything else — a plain user session, an API key without an app token — may not
+name a member at all.
 
 <Warning>
   `runAgent()` throws when the workspace member cannot be resolved — an
   unknown or removed member, or one with no role. It never falls back to the
   agent's own role, since that would grant more access than the caller asked
   for.
-</Warning>
-
-```ts src/roles/default-role.ts
-import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
-
-export default defineApplicationRole({
-  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
-  label: 'Default function role',
-  // runAgent() requires the AI permission flag on the app's default role.
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
-});
-```
-
-<Warning>
-  **Avoid loops:** if you call `runAgent()` from a `*.updated` database-event
-  trigger and the agent updates the same record, scope the trigger with
-  `updatedFields` to a field the agent never writes (e.g. the source URL), or
-  guard on whether any target field is still empty before calling `runAgent()`.
 </Warning>
 
 </Accordion>

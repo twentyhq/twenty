@@ -313,6 +313,51 @@ describe('AgentRunService', () => {
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });
 
+  it('allows an application token with no user binding to name any member', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: null,
+      requestWorkspaceMemberId: null,
+      callerApplication,
+      input: { ...input, runAsWorkspaceMemberId: 'someone-elses-member-id' },
+    });
+
+    expect(
+      agentActorContextService.buildRunAsWorkspaceMemberContext,
+    ).toHaveBeenCalledWith({
+      workspaceMemberId: 'someone-elses-member-id',
+      workspaceId: workspace.id,
+    });
+  });
+
+  it('rejects running an agent that belongs to another application', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: null,
+        requestWorkspaceMemberId: null,
+        callerApplication: { id: 'another-app' } as FlatApplication,
+        input,
+      }),
+    ).rejects.toMatchObject({
+      code: AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('allows an application to run its own agent', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: null,
+      requestWorkspaceMemberId: null,
+      callerApplication,
+      input,
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalled();
+  });
+
   it('allows an application token issued for a user to run as that same user', async () => {
     await service.run({
       workspace,

@@ -363,24 +363,36 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         expectedWorkspaceId: workspace.id,
       });
 
-      if (isDefined(userContext)) {
-        context.user = userContext.user;
-        context.userWorkspace = userContext.userWorkspace;
-        context.userWorkspaceId = userContext.userWorkspace.id;
+      // Callers read the absence of a user as "no human is driving this token".
+      // Letting an unresolvable user fall through would hand a token bound to a
+      // removed user the wider permissions of an unbound one.
+      assertIsDefinedOrThrow(
+        userContext,
+        new AuthException(
+          'User or user workspace not found',
+          AuthExceptionCode.USER_NOT_FOUND,
+          {
+            userFriendlyMessage: msg`User does not have access to this workspace`,
+          },
+        ),
+      );
 
-        const { flatWorkspaceMemberMaps } =
-          await this.workspaceCacheService.getOrRecompute(workspace.id, [
-            'flatWorkspaceMemberMaps',
-          ]);
+      context.user = userContext.user;
+      context.userWorkspace = userContext.userWorkspace;
+      context.userWorkspaceId = userContext.userWorkspace.id;
 
-        const workspaceMemberId =
-          flatWorkspaceMemberMaps.idByUserId[userContext.user.id];
+      const { flatWorkspaceMemberMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspace.id, [
+          'flatWorkspaceMemberMaps',
+        ]);
 
-        if (isDefined(workspaceMemberId)) {
-          context.workspaceMemberId = workspaceMemberId;
-          context.workspaceMember =
-            flatWorkspaceMemberMaps.byId[workspaceMemberId];
-        }
+      const workspaceMemberId =
+        flatWorkspaceMemberMaps.idByUserId[userContext.user.id];
+
+      if (isDefined(workspaceMemberId)) {
+        context.workspaceMemberId = workspaceMemberId;
+        context.workspaceMember =
+          flatWorkspaceMemberMaps.byId[workspaceMemberId];
       }
     }
 
