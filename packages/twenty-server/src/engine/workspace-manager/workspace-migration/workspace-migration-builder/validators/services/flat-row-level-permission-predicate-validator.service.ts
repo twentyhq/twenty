@@ -4,7 +4,18 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  type FieldMetadataType,
+  type ViewFilterOperand,
+} from 'twenty-shared/types';
+import {
+  convertViewFilterValueToString,
+  FILTER_VALUE_FORMAT_HINTS,
+  getFilterTypeFromFieldType,
+  getFilterValueSchema,
+  isDefined,
+  isRecordFilterValueValid,
+} from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
@@ -64,6 +75,19 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else {
+      const invalidValueError = this.getInvalidValueError({
+        fieldType: fieldMetadata.type,
+        operand: flatPredicateToValidate.operand,
+        subFieldName: flatPredicateToValidate.subFieldName,
+        value: flatPredicateToValidate.value,
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(invalidValueError)) {
+        validationResult.errors.push(invalidValueError);
+      }
     }
 
     const objectMetadata = flatObjectMetadataMaps
@@ -240,6 +264,23 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else if (
+      'value' in flatEntityUpdate ||
+      'operand' in flatEntityUpdate ||
+      'fieldMetadataUniversalIdentifier' in flatEntityUpdate
+    ) {
+      const invalidValueError = this.getInvalidValueError({
+        fieldType: fieldMetadata.type,
+        operand: updatedPredicate.operand,
+        subFieldName: updatedPredicate.subFieldName,
+        value: updatedPredicate.value,
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(invalidValueError)) {
+        validationResult.errors.push(invalidValueError);
+      }
     }
 
     const objectMetadata = flatObjectMetadataMaps
@@ -295,5 +336,59 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     }
 
     return validationResult;
+  }
+
+  private getInvalidValueError({
+    fieldType,
+    operand,
+    subFieldName,
+    value,
+    workspaceMemberFieldMetadataUniversalIdentifier,
+  }: {
+    fieldType: FieldMetadataType;
+    operand: string;
+    subFieldName: string | null | undefined;
+    value: unknown;
+    workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
+  }) {
+    // The stored value is unused when the predicate resolves against the
+    // current workspace member at query time.
+    if (isDefined(workspaceMemberFieldMetadataUniversalIdentifier)) {
+      return undefined;
+    }
+
+    const recordFilterOperand = operand as ViewFilterOperand;
+    const stringifiedValue = convertViewFilterValueToString(value);
+
+    if (
+      !isRecordFilterValueValid({
+        operand: recordFilterOperand,
+        value: stringifiedValue,
+      })
+    ) {
+      return undefined;
+    }
+
+    const filterType = getFilterTypeFromFieldType(fieldType);
+
+    const valueSchema = getFilterValueSchema({
+      filterType,
+      operand: recordFilterOperand,
+      subFieldName,
+    });
+
+    if (
+      !isDefined(valueSchema) ||
+      valueSchema.safeParse(stringifiedValue).success
+    ) {
+      return undefined;
+    }
+
+    return {
+      code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+      message:
+        t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${FILTER_VALUE_FORMAT_HINTS[recordFilterOperand] ?? ''}`.trim(),
+      userFriendlyMessage: msg`Predicate value is not valid for this operand`,
+    };
   }
 }

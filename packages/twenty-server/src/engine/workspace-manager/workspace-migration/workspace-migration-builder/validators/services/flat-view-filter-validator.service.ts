@@ -8,9 +8,14 @@ import {
   type ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
+  convertViewFilterValueToString,
   FILTER_OPERANDS_MAP,
+  FILTER_VALUE_FORMAT_HINTS,
   getFilterOperandsForFilterableFieldType,
+  getFilterTypeFromFieldType,
+  getFilterValueSchema,
   isDefined,
+  isRecordFilterValueValid,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -113,6 +118,18 @@ export class FlatViewFilterValidatorService {
 
       if (isDefined(incompatibleOperandError)) {
         validationResult.errors.push(incompatibleOperandError);
+      }
+
+      const invalidValueError = this.getInvalidValueError({
+        operand: flatViewFilterToValidate.operand,
+        fieldType: referencedFieldMetadata.type,
+        subFieldName: flatViewFilterToValidate.subFieldName,
+        relationTargetFieldType,
+        value: flatViewFilterToValidate.value,
+      });
+
+      if (isDefined(invalidValueError)) {
+        validationResult.errors.push(invalidValueError);
       }
 
       if (
@@ -274,6 +291,24 @@ export class FlatViewFilterValidatorService {
       }
 
       if (
+        'value' in flatEntityUpdate ||
+        'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
+        'operand' in flatEntityUpdate
+      ) {
+        const invalidValueError = this.getInvalidValueError({
+          operand: updatedFlatViewFilter.operand,
+          fieldType: referencedFieldMetadata.type,
+          subFieldName: updatedFlatViewFilter.subFieldName,
+          relationTargetFieldType,
+          value: updatedFlatViewFilter.value,
+        });
+
+        if (isDefined(invalidValueError)) {
+          validationResult.errors.push(invalidValueError);
+        }
+      }
+
+      if (
         ('value' in flatEntityUpdate ||
           'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
           'operand' in flatEntityUpdate) &&
@@ -353,6 +388,65 @@ export class FlatViewFilterValidatorService {
     };
   }
 
+  private getInvalidValueError({
+    operand,
+    fieldType,
+    subFieldName,
+    relationTargetFieldType,
+    value,
+  }: {
+    operand: ViewFilterOperand;
+    fieldType: FieldMetadataType;
+    subFieldName: string | null | undefined;
+    relationTargetFieldType: FieldMetadataType | undefined;
+    value: ViewFilterValue;
+  }) {
+    const stringifiedValue = convertViewFilterValueToString(value);
+
+    // An operand awaiting its value is a filter still being built, which the
+    // read path ignores rather than rejects.
+    if (!isRecordFilterValueValid({ operand, value: stringifiedValue })) {
+      return undefined;
+    }
+
+    const filterType = getFilterTypeFromFieldType(
+      this.getEffectiveFieldType({ fieldType, relationTargetFieldType }),
+    );
+
+    const valueSchema = getFilterValueSchema({
+      filterType,
+      operand,
+      subFieldName,
+    });
+
+    if (
+      !isDefined(valueSchema) ||
+      valueSchema.safeParse(stringifiedValue).success
+    ) {
+      return undefined;
+    }
+
+    return {
+      code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
+      message:
+        t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${FILTER_VALUE_FORMAT_HINTS[operand] ?? ''}`.trim(),
+      userFriendlyMessage: msg`Filter value is not valid for this operand`,
+    };
+  }
+
+  private getEffectiveFieldType({
+    fieldType,
+    relationTargetFieldType,
+  }: {
+    fieldType: FieldMetadataType;
+    relationTargetFieldType: FieldMetadataType | undefined;
+  }) {
+    return fieldType === FieldMetadataType.RELATION &&
+      isDefined(relationTargetFieldType)
+      ? relationTargetFieldType
+      : fieldType;
+  }
+
   private getIncompatibleOperandError({
     operand,
     fieldType,
@@ -364,11 +458,10 @@ export class FlatViewFilterValidatorService {
     subFieldName: string | null | undefined;
     relationTargetFieldType: FieldMetadataType | undefined;
   }) {
-    const effectiveFieldType =
-      fieldType === FieldMetadataType.RELATION &&
-      isDefined(relationTargetFieldType)
-        ? relationTargetFieldType
-        : fieldType;
+    const effectiveFieldType = this.getEffectiveFieldType({
+      fieldType,
+      relationTargetFieldType,
+    });
 
     if (!(effectiveFieldType in FILTER_OPERANDS_MAP)) {
       return undefined;
