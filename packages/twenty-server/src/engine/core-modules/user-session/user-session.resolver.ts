@@ -34,9 +34,17 @@ export class UserSessionResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async currentUserSessions(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace({ allowUndefined: true }) workspace:
+      | WorkspaceEntity
+      | undefined,
     @Context() context: { req: Request },
   ): Promise<UserSessionDTO[]> {
+    // UserAuthGuard admits workspace-agnostic credentials, which have no
+    // workspace to scope to. Nothing is in scope rather than everything.
+    if (!isDefined(workspace)) {
+      return [];
+    }
+
     const sessions =
       await this.userSessionService.findActiveSessionsForUserWorkspace({
         userId: user.id,
@@ -58,11 +66,17 @@ export class UserSessionResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async revokeUserSession(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace({ allowUndefined: true }) workspace:
+      | WorkspaceEntity
+      | undefined,
     @Args('userSessionId', { type: () => UUIDScalarType })
     userSessionId: string,
     @Context() context: { req: Request },
   ): Promise<boolean> {
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
     // Before revoking: afterwards it is no longer active and would not be found.
     const currentSession = await this.resolveCurrentSession(
       context.req,
@@ -118,9 +132,15 @@ export class UserSessionResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async revokeAllOtherUserSessions(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace({ allowUndefined: true }) workspace:
+      | WorkspaceEntity
+      | undefined,
     @Context() context: { req: Request },
   ): Promise<number> {
+    if (!isDefined(workspace)) {
+      return 0;
+    }
+
     const currentSession = await this.resolveCurrentSession(
       context.req,
       user,

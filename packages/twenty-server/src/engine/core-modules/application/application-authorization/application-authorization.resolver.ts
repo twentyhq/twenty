@@ -7,6 +7,8 @@ import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/app
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -32,8 +34,16 @@ export class ApplicationAuthorizationResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async currentUserApplicationAuthorizations(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace({ allowUndefined: true }) workspace:
+      | WorkspaceEntity
+      | undefined,
   ): Promise<ApplicationAuthorizationDTO[]> {
+    // UserAuthGuard admits workspace-agnostic credentials, which have no
+    // workspace to scope to. Nothing is in scope rather than everything.
+    if (!isDefined(workspace)) {
+      return [];
+    }
+
     const authorizations =
       await this.applicationAuthorizationService.findActiveAuthorizationsForUserWorkspace(
         { userId: user.id, workspaceId: workspace.id },
@@ -48,10 +58,16 @@ export class ApplicationAuthorizationResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async revokeApplicationAuthorization(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace({ allowUndefined: true }) workspace:
+      | WorkspaceEntity
+      | undefined,
     @Args('applicationAuthorizationId', { type: () => UUIDScalarType })
     applicationAuthorizationId: string,
   ): Promise<boolean> {
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
     return await this.applicationAuthorizationService.revokeAuthorizationByIdForUserWorkspace(
       {
         authorizationId: applicationAuthorizationId,
