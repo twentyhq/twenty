@@ -99,6 +99,18 @@ const buildByUniversalIdentifierMap = <
   ),
 });
 
+const isDefinedOperations = (
+  args: {
+    allFlatEntityOperationByMetadataName: Record<
+      string,
+      { flatEntityToCreate: unknown[] } | undefined
+    >;
+  },
+  metadataName: string,
+) =>
+  (args.allFlatEntityOperationByMetadataName[metadataName]?.flatEntityToCreate
+    .length ?? 0) > 0;
+
 const buildStandardMaps = ({
   views = [] as { universalIdentifier: string }[],
   viewFields = [] as { universalIdentifier: string }[],
@@ -166,6 +178,7 @@ describe('BackfillRecordPageCommand', () => {
       objectMetadataUniversalIdentifier: string;
     }[],
     viewFields = [] as { universalIdentifier: string }[],
+    viewFieldGroups = [] as { universalIdentifier: string }[],
     pageLayouts = [] as {
       universalIdentifier: string;
       type: PageLayoutType;
@@ -179,6 +192,7 @@ describe('BackfillRecordPageCommand', () => {
         views.map((view) => ({ deletedAt: null, ...view })),
       ),
       flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
+      flatViewFieldGroupMaps: buildByUniversalIdentifierMap(viewFieldGroups),
       flatObjectMetadataMaps: buildByUniversalIdentifierMap(objectMetadatas),
       flatFieldMetadataMaps: buildByUniversalIdentifierMap(fieldMetadatas),
       flatPageLayoutMaps: buildByUniversalIdentifierMap(
@@ -284,6 +298,18 @@ describe('BackfillRecordPageCommand', () => {
       objectMetadatas: [
         {
           ...OBJECT_METADATA,
+          applicationUniversalIdentifier:
+            CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+      fieldMetadatas: [
+        {
+          ...LABEL_FIELD_METADATA,
+          applicationUniversalIdentifier:
+            CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+        {
+          ...OTHER_FIELD_METADATA,
           applicationUniversalIdentifier:
             CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
@@ -434,6 +460,100 @@ describe('BackfillRecordPageCommand', () => {
     expect(
       pageLayoutWidgetOperations.flatEntityToCreate[0].universalIdentifier,
     ).toBe('standard-widget-uid');
+  });
+
+  it('buckets the view field of an app-contributed field under the contributing application', async () => {
+    mockWorkspaceCache({
+      fieldMetadatas: [
+        LABEL_FIELD_METADATA,
+        {
+          ...OTHER_FIELD_METADATA,
+          applicationUniversalIdentifier:
+            CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    const contributedViewFieldRun =
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls
+        .map(([args]) => args)
+        .find(
+          (args) =>
+            args.applicationUniversalIdentifier ===
+              CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER &&
+            isDefinedOperations(args, 'viewField'),
+        );
+
+    expect(contributedViewFieldRun).toBeDefined();
+
+    const [contributedViewField] =
+      contributedViewFieldRun.allFlatEntityOperationByMetadataName.viewField
+        .flatEntityToCreate;
+
+    expect(contributedViewField).toMatchObject({
+      fieldMetadataUniversalIdentifier: OTHER_FIELD_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+  });
+
+  it('tops up missing curated view field groups on an already-committed standard view (retry safety)', async () => {
+    computeStandardMapsMock.mockReturnValue(
+      buildStandardMaps({
+        views: [
+          {
+            universalIdentifier: STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+        viewFieldGroups: [
+          {
+            universalIdentifier: 'standard-group-uid',
+            viewUniversalIdentifier:
+              STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          } as never,
+        ],
+        pageLayouts: [
+          {
+            universalIdentifier:
+              STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+      }),
+    );
+
+    mockWorkspaceCache({
+      objectMetadatas: [
+        {
+          ...OBJECT_METADATA,
+          applicationUniversalIdentifier:
+            STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+      fieldMetadatas: [],
+      views: [
+        {
+          universalIdentifier: STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          type: ViewType.FIELDS_WIDGET,
+          objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    const groupRun = validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls
+      .map(([args]) => args)
+      .find((args) => isDefinedOperations(args, 'viewFieldGroup'));
+
+    expect(groupRun).toBeDefined();
+    expect(groupRun.allFlatEntityOperationByMetadataName.view).toBeUndefined();
+    expect(
+      groupRun.allFlatEntityOperationByMetadataName.viewFieldGroup
+        .flatEntityToCreate,
+    ).toEqual([
+      expect.objectContaining({ universalIdentifier: 'standard-group-uid' }),
+    ]);
   });
 
   it('leaves a standard object without curated record page untouched, like fresh installs', async () => {

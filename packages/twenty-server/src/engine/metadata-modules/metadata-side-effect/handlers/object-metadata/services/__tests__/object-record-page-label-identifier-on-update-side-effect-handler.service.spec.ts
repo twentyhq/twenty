@@ -255,11 +255,15 @@ describe('ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService', () =
       }),
     );
 
-    if (result.status === 'success') {
-      expect(
-        Object.values(result.operations.viewField?.flatEntityToDelete ?? {}),
-      ).toHaveLength(0);
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
     }
+
+    expect(
+      Object.values(result.operations.viewField?.flatEntityToDelete ?? {}),
+    ).toHaveLength(0);
   });
 
   it('should not restore the previous label identifier when it is already displayed', () => {
@@ -275,11 +279,15 @@ describe('ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService', () =
       }),
     );
 
-    if (result.status === 'success') {
-      expect(
-        Object.values(result.operations.viewField?.flatEntityToCreate ?? {}),
-      ).toHaveLength(0);
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
     }
+
+    expect(
+      Object.values(result.operations.viewField?.flatEntityToCreate ?? {}),
+    ).toHaveLength(0);
   });
 
   it('should not restore a previous label identifier deleted in the same batch', () => {

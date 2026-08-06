@@ -15,7 +15,7 @@ import {
   createEmptyRecordPageReownUpdates,
   type RecordPageReownUpdates,
 } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
-import { invalidateRecordPageReconcileCache } from 'src/database/commands/upgrade-version-command/2-29/utils/invalidate-record-page-reconcile-cache.util';
+import { computeRecordPageReconcileFlatEntityMapsKeys } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-reconcile-flat-entity-maps-keys.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -118,9 +118,9 @@ export class ReconcileWorkspaceCustomRecordPageCommand extends ProvisionedWorksp
       reownUpdates,
     });
 
-    await invalidateRecordPageReconcileCache({
+    await this.workspaceMigrationRunnerService.invalidateCache({
+      allFlatEntityMapsKeys: computeRecordPageReconcileFlatEntityMapsKeys(),
       workspaceId,
-      workspaceMigrationRunnerService: this.workspaceMigrationRunnerService,
     });
 
     this.logger.log(
