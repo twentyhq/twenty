@@ -24,11 +24,10 @@ export type MetadataValidationErrorResponse = {
   };
 };
 
-export type MetadataApiError =
-  Partial<MetadataValidationErrorResponse> & {
-    userFriendlyMessage?: string;
-    subCode?: string;
-  };
+export type MetadataApiError = Partial<MetadataValidationErrorResponse> & {
+  userFriendlyMessage?: string;
+  subCode?: string;
+};
 
 export enum WorkspaceMigrationV2ExceptionCode {
   BUILDER_INTERNAL_SERVER_ERROR = 'BUILDER_INTERNAL_SERVER_ERROR',
