@@ -11,6 +11,7 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
+import { getAdminToolDisplayName } from '@/settings/admin-panel/utils/getAdminToolDisplayName';
 import { parseAdminToolJson } from '@/settings/admin-panel/utils/parseAdminToolJson';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -105,11 +106,7 @@ export const SettingsAdminChatToolCallPart = ({
   );
   const { copyToClipboard } = useCopyToClipboard();
 
-  const toolName = isNonEmptyString(part.toolName)
-    ? part.toolName
-    : part.type.startsWith('tool-')
-      ? part.type.slice('tool-'.length)
-      : part.type;
+  const toolName = getAdminToolDisplayName(part);
 
   const hasToolError =
     part.state === 'output-error' || isNonEmptyString(part.errorMessage);
