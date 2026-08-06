@@ -2531,6 +2531,9 @@ export default {
             "viewId": [
                 1
             ],
+            "nestedRelationFieldMetadataId": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -3797,6 +3800,9 @@ export default {
             ],
             "defaultSubdomain": [
                 1
+            ],
+            "subdomainMinLength": [
+                16
             ],
             "frontDomain": [
                 1

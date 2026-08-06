@@ -1311,6 +1311,7 @@ type FieldConfiguration {
   fieldMetadataId: String!
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
+  nestedRelationFieldMetadataId: String
 }
 
 """Display mode for field configuration widgets"""
@@ -1975,6 +1976,7 @@ type ClientConfig {
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
+  subdomainMinLength: Float!
   frontDomain: String!
   publicFunctionDomain: String
   analyticsEnabled: Boolean!
