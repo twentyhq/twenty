@@ -16,14 +16,16 @@ export const handleExpiredSlackThreadFollowUp = async ({
     slackUserId,
   });
 
-  if (nudgeResult.success) {
-    await clearLapsedSlackThreadSubscription({ channelId, threadTimestamp });
+  if (!nudgeResult.success) {
+    throw new Error(
+      `Failed to post the Slack expired thread nudge in channel ${channelId}: ${nudgeResult.error ?? nudgeResult.message}`,
+    );
   }
+
+  await clearLapsedSlackThreadSubscription({ channelId, threadTimestamp });
 
   return {
     ok: true,
-    skipped: nudgeResult.success
-      ? 'Thread subscription expired; nudged the requester'
-      : 'Thread subscription expired; the nudge could not be posted',
+    skipped: 'Thread subscription expired; nudged the requester',
   };
 };

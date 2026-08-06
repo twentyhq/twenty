@@ -28,7 +28,7 @@ export const replyToEmptySlackAssistantRequest = async (
   if (!slackClientResult.success) {
     await releaseSlackEmptyRequestReply(claimReference);
 
-    return { ok: true, skipped: 'Slack is not connected' };
+    throw new Error(slackClientResult.error);
   }
 
   const replyResult = await postSlackMessage(slackClientResult.client, {
@@ -43,10 +43,9 @@ export const replyToEmptySlackAssistantRequest = async (
   if (!replyResult.success) {
     await releaseSlackEmptyRequestReply(claimReference);
 
-    return {
-      ok: true,
-      skipped: `Could not post the empty request hint: ${replyResult.error ?? replyResult.message}`,
-    };
+    throw new Error(
+      `Failed to post the Slack empty request hint in channel ${emptyRequest.slackChannelId}: ${replyResult.error ?? replyResult.message}`,
+    );
   }
 
   if (isNonEmptyString(emptyRequest.parentMessageTimestamp)) {
