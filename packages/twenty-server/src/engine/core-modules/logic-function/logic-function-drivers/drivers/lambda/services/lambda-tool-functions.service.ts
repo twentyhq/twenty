@@ -4,14 +4,11 @@ import { join } from 'path';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
-  type FunctionConfiguration,
   GetFunctionCommand,
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
-  ResourceConflictException,
   ResourceNotFoundException,
-  UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,7 +21,6 @@ import {
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
   COMMON_LAYER_NAME_PREFIX,
   LAMBDA_EPHEMERAL_STORAGE_MB,
-  TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS,
   YARN_INSTALL_FUNCTION_NAME_PREFIX,
   YARN_INSTALL_HANDLER_PATH,
   YARN_INSTALL_LAMBDA_MEMORY_MB,
@@ -39,7 +35,6 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
-import { isToolFunctionConfigurationUpToDate } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/is-tool-function-configuration-up-to-date.util';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
@@ -218,16 +213,9 @@ export class LambdaToolFunctionsService {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
     try {
-      const existingFunction = await lambdaClient.send(
+      await lambdaClient.send(
         new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
       );
-
-      await this.reconcileToolFunctionConfiguration({
-        functionName: yarnInstallFunctionName,
-        existingConfiguration: existingFunction.Configuration,
-        memorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
-        timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
-      });
 
       return;
     } catch (error) {
@@ -274,16 +262,9 @@ export class LambdaToolFunctionsService {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
     try {
-      const existingFunction = await lambdaClient.send(
+      await lambdaClient.send(
         new GetFunctionCommand({ FunctionName: builderFunctionName }),
       );
-
-      await this.reconcileToolFunctionConfiguration({
-        functionName: builderFunctionName,
-        existingConfiguration: existingFunction.Configuration,
-        memorySize: BUILDER_LAMBDA_MEMORY_MB,
-        timeoutSeconds: BUILDER_LAMBDA_TIMEOUT_SECONDS,
-      });
 
       return;
     } catch (error) {
@@ -325,81 +306,6 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(builderFunctionName);
   }
 
-  private async reconcileToolFunctionConfiguration({
-    functionName,
-    existingConfiguration,
-    memorySize,
-    timeoutSeconds,
-  }: {
-    functionName: string;
-    existingConfiguration: FunctionConfiguration | undefined;
-    memorySize: number;
-    timeoutSeconds: number;
-  }): Promise<void> {
-    if (
-      isToolFunctionConfigurationUpToDate({
-        configuration: existingConfiguration,
-        memorySize,
-        timeoutSeconds,
-        ephemeralStorageMb: LAMBDA_EPHEMERAL_STORAGE_MB,
-      })
-    ) {
-      if (existingConfiguration?.State !== 'Active') {
-        await this.awsClient.waitFunctionActive(functionName);
-      }
-
-      if (existingConfiguration?.LastUpdateStatus === 'InProgress') {
-        await this.awsClient.waitFunctionUpdated(functionName);
-      }
-
-      return;
-    }
-
-    const lambdaClient = await this.awsClient.getLambdaClient();
-
-    for (
-      let attempt = 0;
-      attempt < TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS;
-      attempt++
-    ) {
-      try {
-        await lambdaClient.send(
-          new UpdateFunctionConfigurationCommand({
-            FunctionName: functionName,
-            MemorySize: memorySize,
-            Timeout: timeoutSeconds,
-            EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-          }),
-        );
-      } catch (error) {
-        if (!(error instanceof ResourceConflictException)) {
-          throw error;
-        }
-      }
-
-      await this.awsClient.waitFunctionUpdated(functionName);
-
-      const refreshedFunction = await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: functionName }),
-      );
-
-      if (
-        isToolFunctionConfigurationUpToDate({
-          configuration: refreshedFunction.Configuration,
-          memorySize,
-          timeoutSeconds,
-          ephemeralStorageMb: LAMBDA_EPHEMERAL_STORAGE_MB,
-        })
-      ) {
-        return;
-      }
-    }
-
-    throw new Error(
-      `Configuration of tool function '${functionName}' could not be reconciled after ${TOOL_FUNCTION_RECONCILE_MAX_ATTEMPTS} attempts`,
-    );
-  }
-
   private async getCommonLayerName(): Promise<string> {
     if (isDefined(this.commonLayerName)) {
       return this.commonLayerName;
@@ -438,7 +344,12 @@ export class LambdaToolFunctionsService {
     this.yarnInstallFunctionName = computeHashedLambdaResourceName({
       resourceNamePrefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
-      contents: [handlerContent],
+      contents: [
+        handlerContent,
+        String(YARN_INSTALL_LAMBDA_MEMORY_MB),
+        String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
+      ],
     });
 
     return this.yarnInstallFunctionName;
@@ -454,7 +365,12 @@ export class LambdaToolFunctionsService {
     this.builderFunctionName = computeHashedLambdaResourceName({
       resourceNamePrefix: BUILDER_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
-      contents: [handlerContent],
+      contents: [
+        handlerContent,
+        String(BUILDER_LAMBDA_MEMORY_MB),
+        String(BUILDER_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
+      ],
     });
 
     return this.builderFunctionName;
