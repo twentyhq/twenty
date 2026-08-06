@@ -22,7 +22,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// This command predates the 2-28 record-page reconcile: workspace rows still
+// This command predates the 2-29 record-page reconcile: workspace rows still
 // hold the pre-derivation universal identifiers.
 const MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW =
   STANDARD_OBJECTS.messageCampaign.views.messageCampaignRecordPageFields;

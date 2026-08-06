@@ -176,7 +176,6 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
     recordPageViewUniversalIdentifier: string;
     relatedFlatEntityMaps: BuildSideEffectsArgs<'fieldMetadata'>['relatedFlatEntityMaps'];
   }): UniversalFlatViewField | undefined {
-    // The record page excludes the label identifier view field.
     if (
       sourceFlatFieldMetadata.universalIdentifier ===
       parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier
@@ -215,6 +214,8 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
     return computeRecordPageViewFieldForExistingObject({
       sourceFlatFieldMetadata,
       recordPageViewUniversalIdentifier,
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
       flatViewMaps: relatedFlatEntityMaps.flatViewMaps,
       flatViewFieldMaps: relatedFlatEntityMaps.flatViewFieldMaps,
       flatViewFieldGroupMaps: relatedFlatEntityMaps.flatViewFieldGroupMaps,

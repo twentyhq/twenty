@@ -156,11 +156,11 @@ export const remapRecordPageUniversalIdentifiersToPre229 = <T>(
 
   for (const [
     derivedUniversalIdentifier,
-    pre228UniversalIdentifier,
+    pre229UniversalIdentifier,
   ] of Object.entries(PRE_2_29_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED)) {
     serialized = serialized
       .split(derivedUniversalIdentifier)
-      .join(pre228UniversalIdentifier);
+      .join(pre229UniversalIdentifier);
   }
 
   serialized = serialized.split('"key":"FIELDS_WIDGET"').join('"key":null');
