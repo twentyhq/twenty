@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type ReleaseSlackTeamResult } from 'src/logic-functions/types/release-slack-team-result.type';
+import { type ReleaseSlackTeamClaimResult } from 'src/logic-functions/types/release-slack-team-claim-result.type';
 import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slack-connected-account-team';
 import { isSlackTeamClaimedByAnotherConnection } from 'src/logic-functions/utils/is-slack-team-claimed-by-another-connection';
 import { releaseSlackTeamClaim } from 'src/logic-functions/utils/release-slack-team-claim';
@@ -11,7 +11,7 @@ type ReleaseSlackTeamOnDisconnectArgs = {
 
 export const releaseSlackTeamOnDisconnect = async ({
   connectedAccountId,
-}: ReleaseSlackTeamOnDisconnectArgs): Promise<ReleaseSlackTeamResult> => {
+}: ReleaseSlackTeamOnDisconnectArgs): Promise<ReleaseSlackTeamClaimResult> => {
   if (!isNonEmptyString(connectedAccountId)) {
     throw new Error(
       'Slack team release failed: onDisconnect payload is missing connectedAccountId',

@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
-import { type ReleaseSlackTeamResult } from 'src/logic-functions/types/release-slack-team-result.type';
+import { type ReleaseSlackTeamClaimResult } from 'src/logic-functions/types/release-slack-team-claim-result.type';
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 
@@ -13,7 +13,7 @@ type ReleaseSlackTeamClaimArgs = {
 export const releaseSlackTeamClaim = async ({
   connectedAccountId,
   teamId,
-}: ReleaseSlackTeamClaimArgs): Promise<ReleaseSlackTeamResult> => {
+}: ReleaseSlackTeamClaimArgs): Promise<ReleaseSlackTeamClaimResult> => {
   const hasReleasedClaim = isNonEmptyString(teamId)
     ? await kv.delete(getSlackTeamKvKey(teamId), { scope: 'SERVER' })
     : false;

@@ -1,4 +1,4 @@
-export type ReleaseSlackTeamResult = {
+export type ReleaseSlackTeamClaimResult = {
   ok: true;
   releasedTeamId: string | null;
 };
