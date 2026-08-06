@@ -8,6 +8,8 @@ import { SetConnectionJunctionTargetsCommand } from 'src/database/commands/upgra
 import { DefaultConnectionTypeToRelationshipCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785810000000-default-connection-type-to-relationship.command';
 import { AddConnectionIsReciprocalFieldCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785820000000-add-connection-is-reciprocal-field.command';
 import { BackfillConnectionReciprocalsCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785830000000-backfill-connection-reciprocals.command';
+import { HidePersonConnectedFromViewFieldCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785840000000-hide-person-connected-from-view-field.command';
+import { HideReciprocalsFromConnectionsViewCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785850000000-hide-reciprocals-from-connections-view.command';
 import { BackfillMissingStandardSkillsCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785499350000-backfill-standard-skills.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ConnectionModule } from 'src/modules/connection/connection.module';
@@ -34,6 +36,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DefaultConnectionTypeToRelationshipCommand,
     AddConnectionIsReciprocalFieldCommand,
     BackfillConnectionReciprocalsCommand,
+    HidePersonConnectedFromViewFieldCommand,
+    HideReciprocalsFromConnectionsViewCommand,
   ],
 })
 export class V2_27_UpgradeVersionCommandModule {}
