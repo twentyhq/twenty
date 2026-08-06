@@ -77,7 +77,10 @@ describe('successful find view with all sub-relations (e2e)', () => {
       };
 
       expect(stableTestView).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...stableTestView }),
+        extractRecordIdsAndDatesAsExpectAny(
+          { ...stableTestView },
+          { keepLiteralKeys: ['universalIdentifier'] },
+        ),
       );
     });
   });
