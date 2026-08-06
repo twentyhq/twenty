@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/types';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WEBHOOK_SUBSCRIPTION_MAX_FAILURE_COUNT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-max-failure-count.constant';
 import { WebhookSubscriptionRenewalCronJob } from 'src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job';
 
@@ -223,6 +224,12 @@ describe('Microsoft webhook lifecycle notifications (integration)', () => {
 
   it('permanently fails the subscription when the refresh token is rejected', async () => {
     microsoft.failTokenRefresh();
+
+    await getCoreRepository<ConnectedAccountEntity>(
+      ConnectedAccountEntity,
+    ).update(account.connectedAccountId, {
+      lastCredentialsRefreshedAt: new Date(Date.now() - 60 * 60 * 1000),
+    });
 
     await postLifecycleNotification('reauthorizationRequired').expect(200);
 
