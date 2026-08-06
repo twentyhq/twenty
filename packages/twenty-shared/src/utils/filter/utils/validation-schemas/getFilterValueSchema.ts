@@ -31,8 +31,6 @@ export const getFilterValueSchema = ({
       filterType as keyof typeof COMPOSITE_SUB_FIELD_VALUE_SCHEMAS
     ];
 
-  // A recognized composite sub field owns its whole operand set: falling back to
-  // the parent contract would accept operands the reader rejects for it.
   if (isDefined(subFieldName) && isDefined(subFieldSchemas?.[subFieldName])) {
     return subFieldSchemas[subFieldName][operand];
   }

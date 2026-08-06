@@ -50,8 +50,6 @@ describe('getFilterValueSchema', () => {
   });
 
   describe('IS_RELATIVE', () => {
-    // The inner object schema used to throw out of safeParse for a value that
-    // matches the outer regex but has no amount.
     it.each(['NEXT__DAY', 'NEXT_0_DAY'])(
       'should reject %s without throwing',
       (value) => {
@@ -105,8 +103,6 @@ describe('getFilterValueSchema', () => {
       );
     });
 
-    // The UI seeds DATE_TIME + IS with a plain date, the reader narrows an
-    // instant down to one, so both have to be accepted.
     it.each(['2026-01-31', '2026-01-31T10:00:00Z'])(
       'should accept %s on DATE_TIME IS',
       (value) => {
@@ -152,8 +148,6 @@ describe('getFilterValueSchema', () => {
       );
     });
 
-    // normalizeSelectFilterValues still accepts the legacy scalar form, so a
-    // value that is not parseable as JSON is treated as a single option.
     it.each(['OPTION_0', '{bad json'])(
       'should accept %s as a legacy scalar option value',
       (value) => {

@@ -37,9 +37,6 @@ export const instantFilterValueSchema = temporalSchema(
   'Expected an ISO date time, e.g. "2026-01-31T00:00:00Z"',
 );
 
-// The DATE_TIME "IS" reader narrows an instant down to a plain date in the
-// viewer timezone, and the UI seeds that operand with a plain date, so both
-// forms are accepted and the caller resolves the timezone.
 export const plainDateOrInstantFilterValueSchema = temporalSchema(
   (value) =>
     value.includes('T')

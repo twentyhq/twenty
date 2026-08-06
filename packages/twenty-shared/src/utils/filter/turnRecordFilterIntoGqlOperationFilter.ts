@@ -71,20 +71,14 @@ const PHONE_FILTER_NON_SIGNIFICANT_CHARS = /(?!^)\+|[^0-9+]/g;
 
 const CONTAINS_DIGIT = /[0-9]/;
 
-// The write path validates against these schemas strictly; the read path keeps
-// its historical tolerance by falling back to the value it used to produce.
 const lenientBooleanFilterValueSchema = booleanFilterValueSchema.catch(false);
 
-// parseFloat used to accept trailing garbage such as "30abc", so keep coercing
-// rather than turning previously working stored filters into NaN.
 const parseNumericFilterValue = (value: string): number => {
   const parsed = numericFilterValueSchema.safeParse(value);
 
   return parsed.success ? parsed.data : parseFloat(value);
 };
 
-// Sources outside the known enum used to flow through untouched, so fall back to
-// the raw parse rather than rejecting them at read time.
 const parseActorSourceFilterValue = (value: string): string[] => {
   const parsed = actorSourceFilterValueSchema.safeParse(value);
 

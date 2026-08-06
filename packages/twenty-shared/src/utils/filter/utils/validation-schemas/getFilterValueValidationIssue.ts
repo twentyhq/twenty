@@ -17,9 +17,6 @@ export type FilterValueValidationIssue = {
   hint: string;
 };
 
-// Single write-time contract for anything storing a filter value. The parts are
-// returned rather than an assembled sentence so callers keep a literal
-// translatable template.
 export const getFilterValueValidationIssue = ({
   fieldType,
   operand,
@@ -33,8 +30,6 @@ export const getFilterValueValidationIssue = ({
 }): FilterValueValidationIssue | undefined => {
   const stringifiedValue = convertViewFilterValueToString(value);
 
-  // An operand still awaiting its value is a filter being built, which the read
-  // path ignores rather than rejects.
   if (!isRecordFilterValueValid({ operand, value: stringifiedValue })) {
     return undefined;
   }

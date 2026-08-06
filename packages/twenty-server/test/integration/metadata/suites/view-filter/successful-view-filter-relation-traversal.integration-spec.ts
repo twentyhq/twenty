@@ -144,8 +144,6 @@ describe('View Filter relation-traversal round-trip should succeed', () => {
         viewId: createdViewId,
         fieldMetadataId: personCompanyRelationFieldId,
         operand: ViewFilterOperand.IS,
-        // Without a relation target the filter applies to the relation itself,
-        // which expects record ids rather than a label.
         value: '["20202020-c02a-4a1b-b1a4-0f6b9b6b3b3b"]',
       },
       gqlFields: RELATION_TRAVERSAL_GQL_FIELDS,

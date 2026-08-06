@@ -24,8 +24,6 @@ type ValuelessOperand =
   | ViewFilterOperand.IS_IN_FUTURE
   | ViewFilterOperand.IS_TODAY;
 
-// Every operand of FILTER_OPERANDS_MAP that expects a value must declare a schema
-// here, so adding an operand there without a value contract fails to compile.
 type FilterValueSchemasMap = {
   [FilterType in keyof typeof FILTER_OPERANDS_MAP]: Record<
     Exclude<(typeof FILTER_OPERANDS_MAP)[FilterType][number], ValuelessOperand>,
@@ -34,8 +32,6 @@ type FilterValueSchemasMap = {
     Partial<Record<ViewFilterOperand, z.ZodType>>;
 };
 
-// The reader stays tolerant of the object form, but a value being written must
-// carry ids the `in` predicate can actually use, matching the bare array form.
 const relationFilterValueSchema = jsonRelationFilterValueSchema
   .refine(
     ({ selectedRecordIds }) =>
@@ -44,9 +40,6 @@ const relationFilterValueSchema = jsonRelationFilterValueSchema
   )
   .or(strictArrayOfUuidOrVariableSchema);
 
-// Select filters still accept a bare option value alongside the canonical JSON
-// array, see normalizeSelectFilterValues and its migration TODO. Only a value
-// that parses as JSON without yielding a string array is rejected.
 const selectFilterValueSchema = nonEmptyStringFilterValueSchema.refine(
   (value) => {
     if (arrayOfStringsOrVariablesSchema.safeParse(value).success) {

@@ -24,8 +24,6 @@ export const relativeDateFilterStringifiedSchema = z
 
     const [_, direction, amount, unit, timezone, firstDayOfTheWeek] = result;
 
-    // A throw here would escape safeParse, so surface it as a parse issue and
-    // let callers decide, they all already handle the failure branch.
     const parseResult = relativeDateFilterSchema.safeParse({
       direction,
       amount,
