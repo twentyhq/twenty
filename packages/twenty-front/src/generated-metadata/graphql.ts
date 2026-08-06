@@ -2914,6 +2914,7 @@ export type MutationCompleteBookCallOnboardingStepArgs = {
   isAutoSkipped?: Scalars['Boolean']['input'];
 };
 
+
 export type MutationCompleteFileUploadArgs = {
   fileId: Scalars['String']['input'];
 };

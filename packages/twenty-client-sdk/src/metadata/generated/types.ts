@@ -7902,7 +7902,17 @@ export default {
                 }
             ],
             "completeBookCallOnboardingStep": [
-                171
+                171,
+                {
+                    "hasBookedCall": [
+                        3,
+                        "Boolean!"
+                    ],
+                    "isAutoSkipped": [
+                        3,
+                        "Boolean!"
+                    ]
+                }
             ],
             "triggerInstallAppsOnboardingStep": [
                 171,

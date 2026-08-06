@@ -6397,7 +6397,7 @@ export interface MutationGenqlSelection{
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
     revokeAllOtherUserSessions?: boolean | number
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
-    completeBookCallOnboardingStep?: OnboardingStepSuccessGenqlSelection
+    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
     goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
