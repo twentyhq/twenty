@@ -2,6 +2,8 @@ import { isNotEmptyObject, type ValidationError } from 'class-validator';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { CallRecordingSummaryConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-summary-configuration.dto';
+import { CallRecordingTranscriptConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-transcript-configuration.dto';
 import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
 import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
@@ -118,6 +120,18 @@ export const validateWidgetConfigurationInput = ({
     case WidgetConfigurationType.RECORD_TABLE:
       errors = validateWidgetConfigurationByDto(
         RecordTableConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT:
+      errors = validateWidgetConfigurationByDto(
+        CallRecordingTranscriptConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.CALL_RECORDING_SUMMARY:
+      errors = validateWidgetConfigurationByDto(
+        CallRecordingSummaryConfigurationDTO,
         configuration,
       );
       break;

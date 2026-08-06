@@ -24,6 +24,31 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 
 describe('validateWidgetConfigurationInput', () => {
+  describe('CALL_RECORDING_TRANSCRIPT widget', () => {
+    it('should not throw for valid call recording transcript configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType:
+              WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
+  describe('CALL_RECORDING_SUMMARY widget', () => {
+    it('should not throw for valid call recording summary configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
   describe('IFRAME widget', () => {
     it('should not throw for valid iframe configuration', () => {
       expect(() =>
