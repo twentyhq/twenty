@@ -2,10 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 
-const buildMentionBody = (
-  eventOverrides: Record<string, unknown> = {},
-  bodyOverrides: Record<string, unknown> = {},
-) => ({
+const buildMentionBody = ({
+  eventOverrides = {},
+  bodyOverrides = {},
+}: {
+  eventOverrides?: Record<string, unknown>;
+  bodyOverrides?: Record<string, unknown>;
+} = {}) => ({
   type: 'event_callback',
   event_id: 'Ev123',
   team_id: 'T123',
@@ -43,7 +46,7 @@ describe('parseSlackAssistantRequest', () => {
   it('should keep other user mentions when stripping the bot mention', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({
-        text: '<@UBOT> ask <@UALICE> about the ACME deal',
+        eventOverrides: { text: '<@UBOT> ask <@UALICE> about the ACME deal' },
       }),
     );
 
@@ -54,10 +57,10 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should strip a bot mention in the middle of the text', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody(
-        { text: 'hey <@UBOT>, who owns ACME?' },
-        { authorizations: BOT_AUTHORIZATIONS },
-      ),
+      buildMentionBody({
+        eventOverrides: { text: 'hey <@UBOT>, who owns ACME?' },
+        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
+      }),
     );
 
     expect(result.request?.requestText).toBe('hey, who owns ACME?');
@@ -65,10 +68,12 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should strip the bot mention at the start and in the middle of the text', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody(
-        { text: '<@UBOT> can <@UBOT> list open deals for ACME?' },
-        { authorizations: BOT_AUTHORIZATIONS },
-      ),
+      buildMentionBody({
+        eventOverrides: {
+          text: '<@UBOT> can <@UBOT> list open deals for ACME?',
+        },
+        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
+      }),
     );
 
     expect(result.request?.requestText).toBe('can list open deals for ACME?');
@@ -77,7 +82,9 @@ describe('parseSlackAssistantRequest', () => {
   it('should strip a repeated bot mention using the leading mention when authorizations are missing', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({
-        text: '<@UBOT> what does <@UBOT|twenty> know about ACME?',
+        eventOverrides: {
+          text: '<@UBOT> what does <@UBOT|twenty> know about ACME?',
+        },
       }),
     );
 
@@ -86,10 +93,12 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should keep other user mentions when stripping a mid-text bot mention', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody(
-        { text: 'hey <@UBOT> ask <@UALICE> about the ACME deal' },
-        { authorizations: BOT_AUTHORIZATIONS },
-      ),
+      buildMentionBody({
+        eventOverrides: {
+          text: 'hey <@UBOT> ask <@UALICE> about the ACME deal',
+        },
+        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
+      }),
     );
 
     expect(result.request?.requestText).toBe(
@@ -99,10 +108,12 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should keep a leading other-user mention when the bot id is known', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody(
-        { text: '<@UALICE> and <@UBOT> should review the ACME deal' },
-        { authorizations: BOT_AUTHORIZATIONS },
-      ),
+      buildMentionBody({
+        eventOverrides: {
+          text: '<@UALICE> and <@UBOT> should review the ACME deal',
+        },
+        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
+      }),
     );
 
     expect(result.request?.requestText).toBe(
@@ -141,7 +152,7 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should keep the thread timestamp when mentioned inside a thread', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody({ thread_ts: '1699999999.000001' }),
+      buildMentionBody({ eventOverrides: { thread_ts: '1699999999.000001' } }),
     );
 
     expect(result.request?.slackThreadTimestamp).toBe('1699999999.000001');
@@ -211,7 +222,7 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should skip messages sent by bots so the assistant never answers itself', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody({ bot_id: 'B123' }),
+      buildMentionBody({ eventOverrides: { bot_id: 'B123' } }),
     );
 
     expect(result.request).toBeNull();
@@ -219,7 +230,7 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should skip message subtypes such as edits', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody({ subtype: 'message_changed' }),
+      buildMentionBody({ eventOverrides: { subtype: 'message_changed' } }),
     );
 
     expect(result.request).toBeNull();
@@ -244,7 +255,7 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should flag a mention with no remaining text for a hint reply', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody({ text: '<@UBOT>' }),
+      buildMentionBody({ eventOverrides: { text: '<@UBOT>' } }),
     );
 
     expect(result).toEqual({
@@ -261,7 +272,9 @@ describe('parseSlackAssistantRequest', () => {
 
   it('should target the existing thread when an empty mention is inside one', () => {
     const result = parseSlackAssistantRequest(
-      buildMentionBody({ text: '<@UBOT>', thread_ts: '1699999999.000001' }),
+      buildMentionBody({
+        eventOverrides: { text: '<@UBOT>', thread_ts: '1699999999.000001' },
+      }),
     );
 
     expect(result).toMatchObject({
