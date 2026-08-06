@@ -1,0 +1,40 @@
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListSSESubscribeEffect.tsx
+  s_78d9b82a19ccf1::t_1dde63eab7a3c9 1,19-22,34
+packages/twenty-front/src/modules/object-record/record-index/hooks/useRecordIndexTableQuery.ts
+  s_78d9b82a19ccf1::t_4ad6d010aeeccc 22,33
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListEmptyRecordGroupEffect.tsx
+  s_78d9b82a19ccf1::t_72fa20dc5dfff7 1-2,5-6,8-10,13-16,19-26,32,35,46-48
+  s_78d9b82a19ccf1::t_48367356967f63 3-4,7,11-12,17-18,27-31,33-34,36-45
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListBody.tsx
+  s_78d9b82a19ccf1::t_526036ff20d2e0 4
+  s_78d9b82a19ccf1::t_a37fa7ab9be3d1 34
+packages/twenty-server/src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1785929606728-add-list-view-type.ts
+  s_78d9b82a19ccf1::t_3b9dc67d69ab6b 16-17
+  s_78d9b82a19ccf1::t_72d43ee7f09ba3 15
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListRecordGroup.tsx
+  s_78d9b82a19ccf1::t_68a09dc3b4d98c 5,8
+  s_78d9b82a19ccf1::t_6148478e984b27 32
+  s_78d9b82a19ccf1::t_d36b8de529f54c 57-58
+  s_78d9b82a19ccf1::t_bdedca22fece6c 54-56,59
+packages/twenty-front/src/modules/object-record/record-list/components/RecordListUpsertRecordsInStoreEffect.tsx
+  s_78d9b82a19ccf1::t_936a223b352af4 1-19
+packages/twenty-server/src/engine/metadata-modules/view/tools/view-tools.factory.ts
+  s_78d9b82a19ccf1::t_f323c3ed4b2fc6 33
+  s_78d9b82a19ccf1::t_de3648a5ef0f1f 675
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "2ae61fd8db65b9f37ef6f3849a34d8f9662dc837",
+  "prompts": {},
+  "sessions": {
+    "s_78d9b82a19ccf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "86bd5173-867b-4753-ae66-f22f04db59d9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
