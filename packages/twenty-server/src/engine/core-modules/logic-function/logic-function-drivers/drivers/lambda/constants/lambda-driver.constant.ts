@@ -16,6 +16,11 @@ export const EXECUTOR_LAMBDA_MEMORY_MB = 512;
 export const EXECUTOR_LAMBDA_TIMEOUT_SECONDS = 900;
 export const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
 
+export const LAMBDA_CLIENT_REQUEST_TIMEOUT_MS =
+  (EXECUTOR_LAMBDA_TIMEOUT_SECONDS + 60) * 1000;
+export const LAMBDA_CLIENT_MAX_SOCKETS = 500;
+export const LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS = 60_000;
+
 export const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 export const YARN_INSTALL_FUNCTION_NAME_PREFIX = 'twenty-yarn-install';
 export const BUILDER_FUNCTION_NAME_PREFIX = 'twenty-builder';
