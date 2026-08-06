@@ -67,6 +67,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const recordIndexCalendarLayout = useAtomComponentStateValue(
     recordIndexCalendarLayoutComponentState,
   );
+  const isListViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_LIST_VIEW_ENABLED,
+  );
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
@@ -124,9 +127,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
 
   const selectableItemIdArray = [
     ViewType.TABLE,
-    ViewType.LIST,
-    ...(isDefaultView ? [] : [ViewType.KANBAN]),
+    ...(isListViewEnabled ? [ViewType.LIST] : []),
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
+    ...(isDefaultView ? [] : [ViewType.KANBAN]),
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
     ...(currentView?.type === ViewType.CALENDAR
       ? [
@@ -185,24 +188,26 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 }}
               />
             </SelectableListItem>
-            <SelectableListItem
-              itemId={ViewType.LIST}
-              onEnter={() => {
-                setAndPersistViewType(ViewType.LIST);
-              }}
-            >
-              <MenuItemSelect
-                LeftIcon={viewTypeIconMapping(ViewType.LIST)}
-                text={t(getViewTypeLabel(ViewType.LIST))}
-                selected={currentView?.type === ViewType.LIST}
-                focused={selectedItemId === ViewType.LIST}
-                onClick={async () => {
-                  if (currentView?.type !== ViewType.LIST) {
-                    await setAndPersistViewType(ViewType.LIST);
-                  }
+            {isListViewEnabled && (
+              <SelectableListItem
+                itemId={ViewType.LIST}
+                onEnter={() => {
+                  setAndPersistViewType(ViewType.LIST);
                 }}
-              />
-            </SelectableListItem>
+              >
+                <MenuItemSelect
+                  LeftIcon={viewTypeIconMapping(ViewType.LIST)}
+                  text={t(getViewTypeLabel(ViewType.LIST))}
+                  selected={currentView?.type === ViewType.LIST}
+                  focused={selectedItemId === ViewType.LIST}
+                  onClick={async () => {
+                    if (currentView?.type !== ViewType.LIST) {
+                      await setAndPersistViewType(ViewType.LIST);
+                    }
+                  }}
+                />
+              </SelectableListItem>
+            )}
             <SelectableListItem
               itemId={ViewType.CALENDAR}
               onEnter={() => {
