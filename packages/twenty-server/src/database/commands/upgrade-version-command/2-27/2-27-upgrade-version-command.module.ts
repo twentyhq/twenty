@@ -7,8 +7,10 @@ import { SeedObjectOpenRecordInCommand } from 'src/database/commands/upgrade-ver
 import { SetConnectionJunctionTargetsCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785800000000-set-connection-junction-targets.command';
 import { DefaultConnectionTypeToRelationshipCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785810000000-default-connection-type-to-relationship.command';
 import { AddConnectionIsReciprocalFieldCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785820000000-add-connection-is-reciprocal-field.command';
+import { BackfillConnectionReciprocalsCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785830000000-backfill-connection-reciprocals.command';
 import { BackfillMissingStandardSkillsCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-workspace-command-1785499350000-backfill-standard-skills.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ConnectionModule } from 'src/modules/connection/connection.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -22,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceIteratorModule,
+    ConnectionModule,
   ],
   providers: [
     AddWorkspaceMemberOpenRecordInCommand,
@@ -30,6 +33,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SetConnectionJunctionTargetsCommand,
     DefaultConnectionTypeToRelationshipCommand,
     AddConnectionIsReciprocalFieldCommand,
+    BackfillConnectionReciprocalsCommand,
   ],
 })
 export class V2_27_UpgradeVersionCommandModule {}
