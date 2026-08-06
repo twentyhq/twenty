@@ -1,13 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { kv } from 'twenty-sdk/logic-function';
 
+import { type ReleaseSlackTeamResult } from 'src/logic-functions/types/release-slack-team-result.type';
 import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slack-connected-account-team';
-import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { isSlackTeamClaimedByAnotherConnection } from 'src/logic-functions/utils/is-slack-team-claimed-by-another-connection';
-import {
-  releaseSlackTeamClaim,
-  type ReleaseSlackTeamResult,
-} from 'src/logic-functions/utils/release-slack-team-claim';
+import { releaseSlackTeamClaim } from 'src/logic-functions/utils/release-slack-team-claim';
 
 type ReleaseSlackTeamOnDisconnectArgs = {
   connectedAccountId: string;
@@ -24,19 +20,15 @@ export const releaseSlackTeamOnDisconnect = async ({
 
   const teamId = await getSlackConnectedAccountTeam(connectedAccountId);
 
-  if (isNonEmptyString(teamId)) {
-    const isClaimedByAnotherConnection =
-      await isSlackTeamClaimedByAnotherConnection({
-        teamId,
-        excludedConnectedAccountId: connectedAccountId,
-      });
+  const isClaimedByAnotherConnection =
+    isNonEmptyString(teamId) &&
+    (await isSlackTeamClaimedByAnotherConnection({
+      teamId,
+      excludedConnectedAccountId: connectedAccountId,
+    }));
 
-    if (isClaimedByAnotherConnection) {
-      await kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId));
-
-      return { ok: true, releasedTeamId: null };
-    }
-  }
-
-  return releaseSlackTeamClaim({ connectedAccountId, teamId });
+  return releaseSlackTeamClaim({
+    connectedAccountId,
+    teamId: isClaimedByAnotherConnection ? null : teamId,
+  });
 };
