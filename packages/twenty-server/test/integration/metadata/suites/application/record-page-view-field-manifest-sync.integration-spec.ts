@@ -15,15 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();
-const TEST_VIEW_FIELD_ID = uuidv4();
 
 const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.person.universalIdentifier;
-const PERSON_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.person.views.personRecordPageFields.universalIdentifier;
-const PERSON_RECORD_PAGE_GENERAL_GROUP_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.person.views.personRecordPageFields.viewFieldGroups.general
-    .universalIdentifier;
 
 const CUSTOM_FIELD_NAME = 'integrationContributedColumn';
 
@@ -37,9 +31,7 @@ const personFieldManifest: FieldManifest = {
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
 };
 
-const buildManifest = (
-  overrides?: Partial<Pick<Manifest, 'fields' | 'viewFields'>>,
-) =>
+const buildManifest = (overrides?: Partial<Pick<Manifest, 'fields'>>) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
@@ -91,13 +83,13 @@ const findRecordPageViewFields = async (viewId: string) => {
   return data?.getViewFields ?? [];
 };
 
-describe('Manifest update - standalone view fields on existing views', () => {
+describe('Manifest sync - engine-emitted record-page view field for an app field on a standard object', () => {
   beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Test Application',
-      description: 'App for testing standalone view field manifest updates',
-      sourcePath: 'test-manifest-update-view-field',
+      description: 'App for testing engine-emitted record-page view fields',
+      sourcePath: 'test-record-page-view-field-manifest-sync',
     });
   }, 60000);
 
@@ -107,7 +99,7 @@ describe('Manifest update - standalone view fields on existing views', () => {
     });
   });
 
-  it('attaches a standalone view field to the standard record-page view without recreating the view', async () => {
+  it('emits a record-page view field for the app field without any manifest declaration', async () => {
     const person = await findPersonObject();
     const recordPageViewId = await findRecordPageViewId(person.id);
     const standardViewFields = await findRecordPageViewFields(recordPageViewId);
@@ -118,22 +110,7 @@ describe('Manifest update - standalone view fields on existing views', () => {
     expect(standardViewFields.length).toBeGreaterThan(0);
 
     const { data, errors } = await syncApplication({
-      manifest: buildManifest({
-        fields: [personFieldManifest],
-        viewFields: [
-          {
-            universalIdentifier: TEST_VIEW_FIELD_ID,
-            viewUniversalIdentifier:
-              PERSON_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
-            viewFieldGroupUniversalIdentifier:
-              PERSON_RECORD_PAGE_GENERAL_GROUP_UNIVERSAL_IDENTIFIER,
-            fieldMetadataUniversalIdentifier: TEST_FIELD_ID,
-            position: 10,
-            isVisible: true,
-            size: 150,
-          },
-        ],
-      }),
+      manifest: buildManifest({ fields: [personFieldManifest] }),
       expectToFail: false,
     });
 
@@ -150,17 +127,13 @@ describe('Manifest update - standalone view fields on existing views', () => {
     const viewFieldsAfterSync =
       await findRecordPageViewFields(recordPageViewId);
 
-    const contributedViewField = viewFieldsAfterSync.find(
+    const emittedViewField = viewFieldsAfterSync.find(
       (viewField) => viewField.fieldMetadataId === customField?.id,
     );
 
-    expect(contributedViewField).toBeDefined();
-    expect(contributedViewField).toMatchObject({
-      viewId: recordPageViewId,
-      position: 10,
-      isVisible: true,
-      size: 150,
-    });
+    expect(emittedViewField).toBeDefined();
+    expect(emittedViewField?.isVisible).toBe(true);
+    expect(emittedViewField?.viewFieldGroupId).not.toBeNull();
 
     expect(viewFieldsAfterSync.length).toBe(standardViewFields.length + 1);
     for (const standardViewFieldId of standardViewFieldIds) {
@@ -172,7 +145,7 @@ describe('Manifest update - standalone view fields on existing views', () => {
     }
   }, 60000);
 
-  it('removes the contributed view field on uninstall while keeping the standard view intact', async () => {
+  it('removes the emitted view field on uninstall while keeping the standard view intact', async () => {
     const person = await findPersonObject();
     const recordPageViewId = await findRecordPageViewId(person.id);
     const standardViewFields = await findRecordPageViewFields(recordPageViewId);
@@ -181,22 +154,7 @@ describe('Manifest update - standalone view fields on existing views', () => {
     );
 
     await syncApplication({
-      manifest: buildManifest({
-        fields: [personFieldManifest],
-        viewFields: [
-          {
-            universalIdentifier: TEST_VIEW_FIELD_ID,
-            viewUniversalIdentifier:
-              PERSON_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
-            viewFieldGroupUniversalIdentifier:
-              PERSON_RECORD_PAGE_GENERAL_GROUP_UNIVERSAL_IDENTIFIER,
-            fieldMetadataUniversalIdentifier: TEST_FIELD_ID,
-            position: 10,
-            isVisible: true,
-            size: 150,
-          },
-        ],
-      }),
+      manifest: buildManifest({ fields: [personFieldManifest] }),
       expectToFail: false,
     });
 
