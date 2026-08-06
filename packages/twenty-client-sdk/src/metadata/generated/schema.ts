@@ -1615,6 +1615,8 @@ export interface ClientConfig {
     isMultiWorkspaceEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
     defaultSubdomain?: Scalars['String']
+    /** @deprecated Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend. */
+    subdomainMinLength: Scalars['Float']
     frontDomain: Scalars['String']
     publicFunctionDomain?: Scalars['String']
     analyticsEnabled: Scalars['Boolean']
@@ -4868,6 +4870,7 @@ export interface ClientConfigGenqlSelection{
     isMultiWorkspaceEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
     defaultSubdomain?: boolean | number
+    subdomainMinLength?: boolean | number
     frontDomain?: boolean | number
     publicFunctionDomain?: boolean | number
     analyticsEnabled?: boolean | number
