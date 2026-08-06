@@ -1,0 +1,24 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786010000000-add-webhook-subscription-failure-tracking.ts
+  s_62258254606868::t_dc26d91602eda5 6
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_62258254606868::t_d1c783f3865964 278
+  s_62258254606868::t_5f7059a26f27a3 139-140
+packages/twenty-server/src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786010100000-replace-webhook-subscription-expired-status.ts
+  s_62258254606868::t_7be9d58d29ca56 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "87b6206762b83989bfc84e6887179799777f8cca",
+  "prompts": {},
+  "sessions": {
+    "s_62258254606868": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b859e0a0-923c-4364-abb5-2540ded6d7bd",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
