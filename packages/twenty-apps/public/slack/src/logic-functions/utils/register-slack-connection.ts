@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 
 import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-user-id';
+import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 
 type RegisterSlackConnectionArgs = {
@@ -35,7 +36,7 @@ export const registerSlackConnection = async ({
     throw new Error('Slack auth.test returned no user_id for the bot');
   }
 
-  // TODO: release the claim on disconnect once connection providers expose an onDisconnect hook.
+  await kv.set(getSlackConnectedAccountTeamKvKey(connectedAccountId), teamId);
   await kv.set(getSlackTeamKvKey(teamId), null, { scope: 'SERVER' });
 
   await cacheSlackBotUserId(botUserId);
