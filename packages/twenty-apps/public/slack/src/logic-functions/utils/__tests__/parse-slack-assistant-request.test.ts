@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 
+const BOT_AUTHORIZATIONS = [{ user_id: 'UBOT', is_bot: true }];
+
 const buildMentionBody = ({
   eventOverrides = {},
   bodyOverrides = {},
@@ -12,6 +14,7 @@ const buildMentionBody = ({
   type: 'event_callback',
   event_id: 'Ev123',
   team_id: 'T123',
+  authorizations: BOT_AUTHORIZATIONS,
   event: {
     type: 'app_mention',
     user: 'U123',
@@ -22,8 +25,6 @@ const buildMentionBody = ({
   },
   ...bodyOverrides,
 });
-
-const BOT_AUTHORIZATIONS = [{ user_id: 'UBOT', is_bot: true }];
 
 describe('parseSlackAssistantRequest', () => {
   it('should parse an app_mention and strip the bot mention', () => {
@@ -59,11 +60,20 @@ describe('parseSlackAssistantRequest', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({
         eventOverrides: { text: 'hey <@UBOT>, who owns ACME?' },
-        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
       }),
     );
 
     expect(result.request?.requestText).toBe('hey, who owns ACME?');
+  });
+
+  it('should drop the punctuation left behind by a leading bot mention', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        eventOverrides: { text: '<@UBOT>, who owns ACME?' },
+      }),
+    );
+
+    expect(result.request?.requestText).toBe('who owns ACME?');
   });
 
   it('should strip the bot mention at the start and in the middle of the text', () => {
@@ -72,7 +82,6 @@ describe('parseSlackAssistantRequest', () => {
         eventOverrides: {
           text: '<@UBOT> can <@UBOT> list open deals for ACME?',
         },
-        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
       }),
     );
 
@@ -85,6 +94,7 @@ describe('parseSlackAssistantRequest', () => {
         eventOverrides: {
           text: '<@UBOT> what does <@UBOT|twenty> know about ACME?',
         },
+        bodyOverrides: { authorizations: undefined },
       }),
     );
 
@@ -97,7 +107,6 @@ describe('parseSlackAssistantRequest', () => {
         eventOverrides: {
           text: 'hey <@UBOT> ask <@UALICE> about the ACME deal',
         },
-        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
       }),
     );
 
@@ -112,7 +121,6 @@ describe('parseSlackAssistantRequest', () => {
         eventOverrides: {
           text: '<@UALICE> and <@UBOT> should review the ACME deal',
         },
-        bodyOverrides: { authorizations: BOT_AUTHORIZATIONS },
       }),
     );
 

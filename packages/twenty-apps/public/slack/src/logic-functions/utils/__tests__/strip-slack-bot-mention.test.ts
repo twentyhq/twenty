@@ -29,6 +29,15 @@ describe('stripSlackBotMention', () => {
     ).toBe('hey, who owns ACME?');
   });
 
+  it('should drop the punctuation left behind by a leading mention', () => {
+    expect(
+      stripSlackBotMention({
+        text: '<@UBOT>, who owns ACME?',
+        botUserId: 'UBOT',
+      }),
+    ).toBe('who owns ACME?');
+  });
+
   it('should handle consecutive mentions before punctuation', () => {
     expect(
       stripSlackBotMention({

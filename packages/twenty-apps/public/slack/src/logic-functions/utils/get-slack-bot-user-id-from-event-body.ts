@@ -7,5 +7,5 @@ export const getSlackBotUserIdFromEventBody = (
 ): string | undefined =>
   body.authorizations?.find(
     (authorization) =>
-      authorization.is_bot === true && isNonEmptyString(authorization.user_id),
+      authorization.is_bot && isNonEmptyString(authorization.user_id),
   )?.user_id;
