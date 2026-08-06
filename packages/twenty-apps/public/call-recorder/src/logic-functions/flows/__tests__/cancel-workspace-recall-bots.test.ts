@@ -53,7 +53,8 @@ describe('cancelWorkspaceRecallBots', () => {
   }) => {
     fetchMock.mockImplementation(async (url: string, init: RequestInit) => {
       if (init.method === 'DELETE') {
-        const botId = new URL(url).pathname.split('/').at(-2) ?? '';
+        const pathSegments = new URL(url).pathname.split('/');
+        const botId = pathSegments[pathSegments.length - 2] ?? '';
 
         return buildJsonResponse(cancelStatusByBotId[botId] ?? 204);
       }
