@@ -603,7 +603,6 @@ export class ObjectRecordEventPublisher {
       event.action === DatabaseEventAction.DELETED ||
       event.action === DatabaseEventAction.RESTORED;
 
-    // RLS is checked on the delivered snapshot only — a before-state match must never authorize an after snapshot.
     if (
       isDefined(subscriberRLSFilter) &&
       Object.keys(subscriberRLSFilter).length > 0 &&
@@ -624,7 +623,6 @@ export class ObjectRecordEventPublisher {
       return true;
     }
 
-    // Membership matches either snapshot of an update, so records leaving a filtered view still notify.
     const candidateRecords =
       event.action === DatabaseEventAction.UPDATED
         ? [properties?.after, properties?.before].filter(isDefined)
