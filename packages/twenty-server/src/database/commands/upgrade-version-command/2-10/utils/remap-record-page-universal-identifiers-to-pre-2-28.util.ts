@@ -76,8 +76,8 @@ export const PRE_2_28_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
   // callRecording record-page view stack
   [CALL_RECORDING_RECORD_PAGE_VIEW.universalIdentifier]:
     '99fa8b47-3b11-4f9b-8fbc-e67a9e1da682',
-  [CALL_RECORDING_RECORD_PAGE_VIEW.viewFieldGroups.general
-    .universalIdentifier]: '068426eb-dd20-49b0-ae9c-68727f3be2fb',
+  [CALL_RECORDING_RECORD_PAGE_VIEW.viewFieldGroups.general.universalIdentifier]:
+    '068426eb-dd20-49b0-ae9c-68727f3be2fb',
   [CALL_RECORDING_RECORD_PAGE_VIEW.viewFields.title.universalIdentifier]:
     '6308d574-8579-4cf2-a020-c208df97cf3e',
   [CALL_RECORDING_RECORD_PAGE_VIEW.viewFields.status.universalIdentifier]:
@@ -110,8 +110,8 @@ export const PRE_2_28_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
   // messageCampaign record-page view stack
   [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.universalIdentifier]:
     '20202020-a009-4a09-8a09-fa9de11ca901',
-  [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFieldGroups.stats
-    .universalIdentifier]: '20202020-a009-4a09-8a09-fa9de11ca902',
+  [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFieldGroups.stats.universalIdentifier]:
+    '20202020-a009-4a09-8a09-fa9de11ca902',
   [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.status.universalIdentifier]:
     '20202020-af09-4a09-8a09-fa9de11ca903',
   [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.sentAt.universalIdentifier]:
@@ -149,22 +149,21 @@ export const toPre228RecordPageUniversalIdentifier = (
   PRE_2_28_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED[universalIdentifier] ??
   universalIdentifier;
 
-// Deep-remaps every derived record-page universal identifier found anywhere in
-// the entity (identifier, universal foreign keys, universal configurations) to
-// its pre-2.28 literal. Serialization-based on purpose: universal identifiers
-// are unique tokens, so a textual replacement is exact and covers nested jsonb.
 export const remapRecordPageUniversalIdentifiersToPre228 = <T>(
   flatEntity: T,
 ): T => {
   let serialized = JSON.stringify(flatEntity);
 
-  for (const [derivedUniversalIdentifier, pre228UniversalIdentifier] of Object.entries(
-    PRE_2_28_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED,
-  )) {
+  for (const [
+    derivedUniversalIdentifier,
+    pre228UniversalIdentifier,
+  ] of Object.entries(PRE_2_28_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED)) {
     serialized = serialized
       .split(derivedUniversalIdentifier)
       .join(pre228UniversalIdentifier);
   }
+
+  serialized = serialized.split('"key":"FIELDS_WIDGET"').join('"key":null');
 
   return JSON.parse(serialized) as T;
 };
