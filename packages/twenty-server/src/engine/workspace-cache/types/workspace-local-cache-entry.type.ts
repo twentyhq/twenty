@@ -1,6 +1,3 @@
-// A version is held either as a live object graph (hot) or as a serialized buffer (cold).
-// A cold read costs a parse, but the garbage collector treats a buffer as a single opaque node
-// instead of traversing the whole graph, and that traversal is what dominates major GC pauses.
 export type HotVersionEntry<T> = {
   state: 'hot';
   data: T;

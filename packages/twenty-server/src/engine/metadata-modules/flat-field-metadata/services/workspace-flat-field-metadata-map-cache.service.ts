@@ -10,11 +10,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  decodeFlatFieldMetadataMapsFromCache,
-  encodeFlatFieldMetadataMapsForCache,
-  type EncodedFlatFieldMetadataMaps,
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/flat-field-metadata-cache-codec.util';
+import { type EncodedFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+import { decodeFlatFieldMetadataMapsFromCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/decode-flat-field-metadata-maps-from-cache.util';
+import { encodeFlatFieldMetadataMapsForCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/encode-flat-field-metadata-maps-for-cache.util';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { computeUniqueFieldMetadataIdsFromIndexEntities } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-index-entities.util';

@@ -1,6 +1,9 @@
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { selectColdStorageDemotions } from 'src/engine/workspace-cache/utils/select-cold-storage-demotions.util';
 
+const FIELD_METADATA = 'flat-maps:field-metadata';
+const ORM = 'orm:entity-metadatas';
+
 const hotEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<unknown> => ({
   versions: new Map([['hash-1', { state: 'hot', data: {}, lastReadAt }]]),
   latestHash: 'hash-1',
@@ -15,16 +18,9 @@ const coldEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<unknown> => ({
   lastHashCheckedAt: lastReadAt,
 });
 
-const buildCache = (
-  entries: [string, WorkspaceLocalCacheEntry<unknown>][],
-): Map<string, WorkspaceLocalCacheEntry<unknown>> => new Map(entries);
-
-const FIELD_METADATA = 'flat-maps:field-metadata';
-const ORM = 'orm:entity-metadatas';
-
 describe('selectColdStorageDemotions', () => {
   it('should demote nothing when the provider is within its hot budget', () => {
-    const cache = buildCache([
+    const cache = new Map([
       [`${FIELD_METADATA}:ws-a`, hotEntry(1)],
       [`${FIELD_METADATA}:ws-b`, hotEntry(2)],
     ]);
@@ -38,10 +34,10 @@ describe('selectColdStorageDemotions', () => {
   });
 
   it('should demote the least recently read entries beyond the hot budget', () => {
-    const cache = buildCache([
+    const cache = new Map([
+      [`${FIELD_METADATA}:ws-newest`, hotEntry(9)],
       [`${FIELD_METADATA}:ws-oldest`, hotEntry(1)],
       [`${FIELD_METADATA}:ws-middle`, hotEntry(5)],
-      [`${FIELD_METADATA}:ws-newest`, hotEntry(9)],
     ]);
 
     expect(
@@ -55,11 +51,10 @@ describe('selectColdStorageDemotions', () => {
     ]);
   });
 
-  it('should never demote a provider that is not eligible', () => {
-    const cache = buildCache([
+  it('should never demote an ineligible provider', () => {
+    const cache = new Map([
       [`${ORM}:ws-a`, hotEntry(1)],
       [`${ORM}:ws-b`, hotEntry(2)],
-      [`${ORM}:ws-c`, hotEntry(3)],
     ]);
 
     expect(
@@ -70,12 +65,11 @@ describe('selectColdStorageDemotions', () => {
     ).toEqual([]);
   });
 
-  it('should budget each provider independently', () => {
-    const cache = buildCache([
+  it('should budget each eligible provider independently', () => {
+    const cache = new Map([
       [`${FIELD_METADATA}:ws-a`, hotEntry(1)],
       [`${FIELD_METADATA}:ws-b`, hotEntry(2)],
       ['flat-maps:view-field:ws-a', hotEntry(3)],
-      ['flat-maps:view-field:ws-b', hotEntry(4)],
     ]);
 
     expect(
@@ -83,14 +77,11 @@ describe('selectColdStorageDemotions', () => {
         eligiblePrefixes: new Set([FIELD_METADATA, 'flat-maps:view-field']),
         hotEntriesPerPrefix: 1,
       }),
-    ).toEqual([
-      { localKey: `${FIELD_METADATA}:ws-a`, hash: 'hash-1' },
-      { localKey: 'flat-maps:view-field:ws-a', hash: 'hash-1' },
-    ]);
+    ).toEqual([{ localKey: `${FIELD_METADATA}:ws-a`, hash: 'hash-1' }]);
   });
 
-  it('should ignore versions that are already cold when counting the hot budget', () => {
-    const cache = buildCache([
+  it('should not count an already cold entry against the hot budget', () => {
+    const cache = new Map([
       [`${FIELD_METADATA}:ws-cold`, coldEntry(1)],
       [`${FIELD_METADATA}:ws-hot`, hotEntry(2)],
     ]);

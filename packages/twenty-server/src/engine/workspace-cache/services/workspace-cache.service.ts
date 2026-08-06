@@ -53,8 +53,6 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
-// Entries per provider kept as live objects when compact storage is on. Sized above the ~28
-// workspaces a prod pod touches in a sweep interval, so reads rarely pay the hydration.
 const HOT_ENTRIES_PER_PROVIDER = 64;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
@@ -137,11 +135,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
         } else if (workspaceCacheKeyName !== 'featureFlagsMap') {
-          // Only providers already JSON round-tripped for Redis can be held cold, which excludes
-          // the ORM entity metadata graph by construction rather than by a hand-kept list: it is
-          // localDataOnly precisely because it holds class instances, functions and cycles.
-          // featureFlagsMap is excluded separately because it decides cold storage, so it has to
-          // stay readable without hydrating anything.
           this.coldStorageEligiblePrefixes.add(prefix);
         }
       }
@@ -454,11 +447,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     for (const [index, keyName] of cacheKeyNames.entries()) {
       const rawData = allValues[index * 2];
       const hash = allValues[index * 2 + 1] as string | undefined;
-      const data = isDefined(rawData)
-        ? this.decodeFromStorage(workspaceId, keyName, rawData)
-        : undefined;
 
-      if (isDefined(data) && isDefined(hash)) {
+      if (isDefined(rawData) && isDefined(hash)) {
+        const data = this.decodeFromStorage(workspaceId, keyName, rawData);
+
         Object.assign(redisEntries.data, { [keyName]: data });
         redisEntries.hashes[keyName] = hash;
         this.setInLocalCache(workspaceId, keyName, data, hash);
@@ -673,9 +665,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.demoteColdEntries();
   }
 
-  // Serializing happens here rather than on the write path so a burst of writes never pays for
-  // it, and so an entry written and read back within the sweep interval is never serialized at
-  // all. The cost is that the hot set is a periodic bound, not an exact one.
   private demoteColdEntries(): void {
     const demotions = selectColdStorageDemotions(this.localCache, {
       eligiblePrefixes: this.coldStorageEligiblePrefixes,
@@ -710,9 +699,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // Peeks the workspace's already-cached flag map. Deliberately never recomputes: featureFlagsMap
-  // is itself a provider, so recomputing here would re-enter this service. A workspace whose flags
-  // are not cached yet keeps the uncompacted encoding until they are.
   private isCompactStorageEnabled(workspaceId: string): boolean {
     const entry = this.localCache.get(
       this.buildCacheKey(workspaceId, 'featureFlagsMap'),
@@ -730,8 +716,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
-  // Compacted payloads live under their own key suffix, so a workspace toggling the flag can never
-  // read an entry back under the other encoding: it misses and recomputes.
   private buildDataKey(workspaceId: string, baseKey: string): string {
     return this.isCompactStorageEnabled(workspaceId)
       ? `${baseKey}:data:compact-v1`
@@ -780,8 +764,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       JSON.parse(version.blob.toString('utf8')),
     );
 
-    // Promote back: an entry read once is likely to be read again, and leaving it cold would
-    // charge every subsequent read another parse.
     entry.versions.set(entry.latestHash, {
       state: 'hot',
       data,

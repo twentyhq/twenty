@@ -167,8 +167,6 @@ export class WorkspaceCacheMetricsService {
         let entryBytes = 0;
 
         for (const version of entry.versions.values()) {
-          // A cold version reports its exact serialized length; only a live object graph needs
-          // the sampled walk, whose byte model is an upper bound.
           entryBytes +=
             version.state === 'cold'
               ? version.blob.byteLength
