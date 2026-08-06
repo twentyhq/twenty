@@ -59,8 +59,6 @@ export class ClientConfigService {
       return { supportDriver, supportFrontChatId };
     }
 
-    // Self-hosted Enterprise instances reach Twenty support through a dedicated
-    // Front inbox, without having to configure a Front workspace of their own.
     const selfHostingFrontChatId = this.twentyConfigService.get(
       'SUPPORT_SELF_HOSTING_FRONT_CHAT_ID',
     );

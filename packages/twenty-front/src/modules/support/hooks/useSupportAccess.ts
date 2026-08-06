@@ -16,8 +16,6 @@ export const useSupportAccess = () => {
     supportChat?.supportDriver === SupportDriver.FRONT &&
     isNonEmptyString(supportChat.supportFrontChatId);
 
-  // Support is an Enterprise feature on self-hosted instances: without a plan,
-  // the entry point becomes an upgrade path instead of a chat.
   const isSupportAvailable = isSupportChatConfigured || isSelfHosting;
 
   const openSupport = useCallback(() => {

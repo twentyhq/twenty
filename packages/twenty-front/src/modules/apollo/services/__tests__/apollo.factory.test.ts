@@ -89,7 +89,6 @@ const mockWorkspace = {
   hasActivatedAndValidEnterpriseKey: false,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
-  canCreateAdditionalWorkspace: true,
   subdomain: 'test',
   customDomain: 'test.com',
   workspaceUrls: {

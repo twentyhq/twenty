@@ -1766,9 +1766,6 @@ export default {
             "hasValidEnterpriseValidityToken": [
                 3
             ],
-            "canCreateAdditionalWorkspace": [
-                3
-            ],
             "workspaceUrls": [
                 175
             ],

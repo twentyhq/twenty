@@ -35,7 +35,7 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-workspaces-without-enterprise-key.constants';
+import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
 import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
@@ -497,7 +497,7 @@ export class SignInUpService {
       return;
     }
 
-    await this.assertWorkspaceCountWithinLimit();
+    await this.assertWorkspaceCountWithinLimit(workspaceCount);
 
     if (
       !this.twentyConfigService.get(
@@ -524,8 +524,14 @@ export class SignInUpService {
     );
   }
 
-  private async assertWorkspaceCountWithinLimit(): Promise<void> {
-    if (await this.enterprisePlanService.canCreateAdditionalWorkspace()) {
+  private async assertWorkspaceCountWithinLimit(
+    workspaceCount: number,
+  ): Promise<void> {
+    if (this.enterprisePlanService.isValid()) {
+      return;
+    }
+
+    if (workspaceCount < MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY) {
       return;
     }
 

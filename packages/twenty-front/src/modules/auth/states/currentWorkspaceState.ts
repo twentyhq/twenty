@@ -30,7 +30,6 @@ export type CurrentWorkspace = Pick<
   | 'isCustomDomainEnabled'
   | 'hasValidSignedEnterpriseKey'
   | 'hasValidEnterpriseValidityToken'
-  | 'canCreateAdditionalWorkspace'
   | 'subdomain'
   | 'customDomain'
   | 'workspaceUrls'

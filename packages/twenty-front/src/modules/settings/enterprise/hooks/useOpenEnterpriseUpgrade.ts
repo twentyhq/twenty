@@ -5,8 +5,6 @@ import { useCallback } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-// Members who cannot reach the admin panel have nowhere to upgrade, so they get
-// an explanation pointing them at their server admin instead.
 export const useOpenEnterpriseUpgrade = () => {
   const canAccessAdminPanel = useCanAccessAdminPanel();
   const navigateSettings = useNavigateSettings();

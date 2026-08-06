@@ -5,7 +5,6 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useOpenEnterpriseUpgrade } from '@/settings/enterprise/hooks/useOpenEnterpriseUpgrade';
 import { useSupportAccess } from '@/support/hooks/useSupportAccess';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
@@ -31,7 +30,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import {
   IconDotsVertical,
-  IconLock,
   IconLogout,
   IconMessage,
   IconPlus,
@@ -70,10 +68,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { signOut } = useAuth();
   const { colorScheme, colorSchemeList } = useColorScheme();
   const { isSupportAvailable, openSupport } = useSupportAccess();
-  const openEnterpriseUpgrade = useOpenEnterpriseUpgrade();
-
-  const isWorkspaceCreationLocked =
-    currentWorkspace?.canCreateAdditionalWorkspace === false;
 
   const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
@@ -83,11 +77,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const handleSupport = () => {
     openSupport();
-    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
-  };
-
-  const handleLockedWorkspaceCreation = () => {
-    openEnterpriseUpgrade();
     closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   };
 
@@ -135,13 +124,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   {isMultiWorkspaceEnabled && (
                     <MenuItem
                       LeftIcon={IconPlus}
-                      RightIcon={isWorkspaceCreationLocked ? IconLock : null}
                       text={t`Create Workspace`}
-                      onClick={
-                        isWorkspaceCreationLocked
-                          ? handleLockedWorkspaceCreation
-                          : createWorkspace
-                      }
+                      onClick={createWorkspace}
                     />
                   )}
                   <MenuItem

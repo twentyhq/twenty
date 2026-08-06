@@ -334,18 +334,6 @@ export class WorkspaceResolver {
     return this.enterprisePlanService.hasValidEnterpriseValidityToken();
   }
 
-  // The workspace limit is a self-hosting rule: on cloud, workspace creation is
-  // governed by billing, and counting every workspace on each query would not
-  // scale.
-  @ResolveField(() => Boolean)
-  async canCreateAdditionalWorkspace(): Promise<boolean> {
-    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return true;
-    }
-
-    return this.enterprisePlanService.canCreateAdditionalWorkspace();
-  }
-
   @ResolveField(() => WorkspaceUrlsDTO)
   workspaceUrls(@Parent() workspace: WorkspaceEntity) {
     return this.workspaceDomainsService.getWorkspaceUrls(workspace);

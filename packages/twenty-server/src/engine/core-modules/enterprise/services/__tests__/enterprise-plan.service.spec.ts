@@ -4,7 +4,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-workspaces-without-enterprise-key.constants';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import {
@@ -346,31 +345,6 @@ describe('EnterprisePlanService', () => {
       await service.onModuleInit();
 
       expect(service.isValid()).toBe(false);
-    });
-  });
-
-  describe('canCreateAdditionalWorkspace', () => {
-    it('should return true when the enterprise plan is valid', async () => {
-      await setupValidState();
-      workspaceCountMock.mockResolvedValue(42);
-
-      await expect(service.canCreateAdditionalWorkspace()).resolves.toBe(true);
-    });
-
-    it('should return true below the workspace limit without an enterprise plan', async () => {
-      workspaceCountMock.mockResolvedValue(
-        MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY - 1,
-      );
-
-      await expect(service.canCreateAdditionalWorkspace()).resolves.toBe(true);
-    });
-
-    it('should return false at the workspace limit without an enterprise plan', async () => {
-      workspaceCountMock.mockResolvedValue(
-        MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY,
-      );
-
-      await expect(service.canCreateAdditionalWorkspace()).resolves.toBe(false);
     });
   });
 

@@ -915,7 +915,6 @@ type Workspace {
   billingEntitlements: [BillingEntitlement!]!
   hasValidSignedEnterpriseKey: Boolean!
   hasValidEnterpriseValidityToken: Boolean!
-  canCreateAdditionalWorkspace: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
 }
