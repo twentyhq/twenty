@@ -17723,10 +17723,10 @@ msgstr "Az aldomén már foglalt"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Az aldomain nem lehet hosszabb 30 karakternél"
 
-#. js-lingui-id: a17S75
+#. js-lingui-id: ZETwlU
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be shorter than {minLength} characters"
-msgstr ""
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Az aldomain nem lehet rövidebb 3 karakternél"
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
