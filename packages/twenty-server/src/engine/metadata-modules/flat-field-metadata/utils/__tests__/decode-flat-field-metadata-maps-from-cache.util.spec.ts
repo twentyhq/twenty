@@ -38,6 +38,20 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
     });
   });
 
+  it('should keep a null relation array as null instead of restoring the empty default', () => {
+    const encoded = encodeFlatFieldMetadataMapsForCache({
+      byUniversalIdentifier: { 'field-uid': { viewFieldIds: null } },
+      universalIdentifierById: {},
+      universalIdentifiersByApplicationId: {},
+    } as unknown as FlatEntityMaps<FlatFieldMetadata>);
+
+    expect(
+      decodeFlatFieldMetadataMapsFromCache(encoded).byUniversalIdentifier[
+        'field-uid'
+      ],
+    ).toMatchObject({ viewFieldIds: null });
+  });
+
   it('should round trip a field through JSON, as the cache storage layer does', () => {
     const maps = {
       byUniversalIdentifier: {
