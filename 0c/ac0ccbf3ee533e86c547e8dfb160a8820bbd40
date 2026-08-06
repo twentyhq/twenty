@@ -1,0 +1,34 @@
+packages/twenty-server/src/engine/metadata-modules/connected-account/connected-account-metadata.service.ts
+  s_9b61238296f1e7::t_d6d29083a95232 4
+  s_9b61238296f1e7::t_da78f5216f43e8 191,194-198,206-274
+  s_9b61238296f1e7::t_95767cdd5c2740 50
+  s_9b61238296f1e7::t_9d67ba95680814 275
+packages/twenty-front/src/modules/settings/accounts/graphql/mutations/disconnectConnectedAccount.ts
+  s_9b61238296f1e7::t_3b41eb3ae0eef6 1-9
+packages/twenty-server/src/engine/metadata-modules/connected-account/resolvers/connected-account.resolver.ts
+  s_9b61238296f1e7::t_4c88b753f9bd0f 60-80
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+  s_9b61238296f1e7::t_051a543f20e5d7 152-153,160-161
+  s_9b61238296f1e7::t_d94672ec5a1f85 156-157
+  s_9b61238296f1e7::t_e0a18130b7a4f8 65-66
+  s_9b61238296f1e7::t_86772cea5b7841 50-51
+  s_9b61238296f1e7::t_299b2394d63da3 40
+  s_9b61238296f1e7::t_871ecdd3bf093e 30
+  s_9b61238296f1e7::t_7e01d41db8ce2a 144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "0cac0ccbf3ee533e86c547e8dfb160a8820bbd40",
+  "prompts": {},
+  "sessions": {
+    "s_9b61238296f1e7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a7be4b5-edde-48a0-89fa-6c81bdfd9b8d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
