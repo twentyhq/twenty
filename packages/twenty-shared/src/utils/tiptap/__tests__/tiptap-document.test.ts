@@ -112,7 +112,7 @@ describe('TipTap document primitives', () => {
       [
         '## Overview',
         '',
-        'Hello [**Ada**](https://example.com) [[record:person:person-id:Ada Lovelace[[/record]]',
+        'Hello [**Ada**](https://example.com) [[record:person:person-id:Ada Lovelace]]',
         '',
         '- First',
         '- Second',
