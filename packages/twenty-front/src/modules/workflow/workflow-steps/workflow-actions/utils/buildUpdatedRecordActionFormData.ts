@@ -14,24 +14,22 @@ export type RecordActionFormData = {
   [field: string]: RelationManyToOneField | JsonValue;
 };
 
-export const buildUpdatedRecordActionFormData = <
-  T extends RecordActionFormData,
->({
+export const buildUpdatedRecordActionFormData = ({
   formData,
   fieldName,
   fieldDefinition,
   updatedValue,
 }: {
-  formData: T;
-  fieldName: keyof T;
+  formData: RecordActionFormData;
+  fieldName: keyof RecordActionFormData;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   updatedValue: JsonValue;
-}): T => {
+}): RecordActionFormData => {
   const isFieldRelationManyToOne =
     isFieldRelation(fieldDefinition) &&
     fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
 
-  const updatedFormData: T = { ...formData };
+  const updatedFormData: RecordActionFormData = { ...formData };
 
   if (isFieldRelationManyToOne && !isDefined(updatedValue)) {
     delete updatedFormData[fieldName];
@@ -39,9 +37,9 @@ export const buildUpdatedRecordActionFormData = <
     return updatedFormData;
   }
 
-  updatedFormData[fieldName] = (
-    isFieldRelationManyToOne ? { id: updatedValue } : updatedValue
-  ) as T[keyof T];
+  updatedFormData[fieldName] = isFieldRelationManyToOne
+    ? { id: updatedValue }
+    : updatedValue;
 
   return updatedFormData;
 };
