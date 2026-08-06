@@ -25,8 +25,8 @@ export type { AllMetadataName } from './types/all-metadata-name.type';
 export type {
   FailedMetadataValidationError,
   FailedMetadataValidation,
-  MetadataApiErrorExtensions,
   MetadataValidationErrorResponse,
+  MetadataApiErrorExtensions,
 } from './types/MetadataValidationError';
 export { WorkspaceMigrationV2ExceptionCode } from './types/MetadataValidationError';
 export type { SyncAction } from './types/sync-action.type';
