@@ -1,10 +1,19 @@
 import { isDefined } from 'twenty-shared/utils';
 
+type ExtractRecordIdsAndDatesAsExpectAnyOptions = {
+  // Keys left out of the matcher so their literal values are snapshotted,
+  // e.g. derived universal identifiers that are constant across workspaces.
+  keepLiteralKeys?: string[];
+};
+
 export const extractRecordIdsAndDatesAsExpectAny = (
   record: Record<string, unknown> | Array<Record<string, unknown>>,
+  options: ExtractRecordIdsAndDatesAsExpectAnyOptions = {},
 ): any => {
   if (Array.isArray(record)) {
-    return record.map(extractRecordIdsAndDatesAsExpectAny);
+    return record.map((item) =>
+      extractRecordIdsAndDatesAsExpectAny(item, options),
+    );
   }
 
   if (typeof record !== 'object') {
@@ -13,6 +22,10 @@ export const extractRecordIdsAndDatesAsExpectAny = (
 
   return Object.entries(record).reduce((acc, [key, value]) => {
     if (!isDefined(value)) {
+      return acc;
+    }
+
+    if (options.keepLiteralKeys?.includes(key)) {
       return acc;
     }
 
@@ -44,6 +57,7 @@ export const extractRecordIdsAndDatesAsExpectAny = (
         ...acc,
         [key]: extractRecordIdsAndDatesAsExpectAny(
           value as Record<string, unknown>,
+          options,
         ),
       };
     }
