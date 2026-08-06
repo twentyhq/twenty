@@ -2,10 +2,7 @@ import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
-import {
-  type MetadataApiError,
-  type SyncAction,
-} from 'twenty-shared/metadata';
+import { type MetadataApiError, type SyncAction } from 'twenty-shared/metadata';
 
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
