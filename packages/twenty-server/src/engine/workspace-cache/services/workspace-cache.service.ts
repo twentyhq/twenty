@@ -516,6 +516,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const computed = await Promise.all(computePromises);
 
     const redisEntries: Array<{ key: string; value: unknown }> = [];
+    const staleEncodingKeys: string[] = [];
     const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
 
     for (const { keyName, data, hash, isAdopted } of computed) {
@@ -534,10 +535,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (!isLocalDataOnly) {
+        const dataKey = this.buildDataKey(workspaceId, baseKey);
+
         redisEntries.push({
-          key: this.buildDataKey(workspaceId, baseKey),
+          key: dataKey,
           value: this.encodeForStorage(workspaceId, keyName, data),
         });
+        staleEncodingKeys.push(
+          ...[`${baseKey}:data`, `${baseKey}:data:compact-v1`].filter(
+            (key) => key !== dataKey,
+          ),
+        );
       }
 
       this.setInLocalCache(workspaceId, keyName, data, hash);
@@ -548,6 +556,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
       try {
         await this.cacheStorage.mset(redisEntries);
+
+        if (staleEncodingKeys.length > 0) {
+          await this.cacheStorage.mdel(staleEncodingKeys);
+        }
       } finally {
         this.cacheMetricsService.recordRedisWrite(
           (performance.now() - redisWriteStartedAt) / 1000,
@@ -581,7 +593,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const version = entry?.versions.get(entry.latestHash);
 
       if (isDefined(entry) && isDefined(version)) {
-        const data = this.readVersion(workspaceId, keyName, entry, version);
+        const data = this.readVersion(keyName, entry, version);
 
         Object.assign(result.data, { [keyName]: data });
         result.hashes[keyName] = entry.latestHash;
@@ -613,7 +625,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const keysToDelete = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [`${baseKey}:data`, `${baseKey}:hash`];
+      return [
+        `${baseKey}:data`,
+        `${baseKey}:data:compact-v1`,
+        `${baseKey}:hash`,
+      ];
     });
 
     await this.cacheStorage.mdel(keysToDelete);
@@ -690,7 +706,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         state: 'cold',
         blob: Buffer.from(
           JSON.stringify(
-            this.encodeForStorage(workspaceId, keyName, version.data),
+            this.getProviderOrThrow(keyName).encodeForCacheStorage(
+              version.data,
+            ),
           ),
           'utf8',
         ),
@@ -747,7 +765,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private readVersion(
-    workspaceId: string,
     keyName: WorkspaceCacheKeyName,
     entry: WorkspaceLocalCacheEntry<CacheDataType>,
     version: VersionEntry<CacheDataType>,
@@ -758,9 +775,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return version.data;
     }
 
-    const data = this.decodeFromStorage(
-      workspaceId,
-      keyName,
+    const data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
       JSON.parse(version.blob.toString('utf8')),
     );
 
