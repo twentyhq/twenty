@@ -7,8 +7,6 @@ type GetSafeScaleForCurrencyInputParams = {
 
 const UNMASKED_VALUE_PATTERN = /^-?\d*\.(\d+)$/;
 
-// The mask would silently truncate or misread an existing amount that has more
-// decimals than the field settings allow, so the scale is widened to fit it
 export const getSafeScaleForCurrencyInput = ({
   value,
   decimals = DEFAULT_DECIMAL_VALUE,
