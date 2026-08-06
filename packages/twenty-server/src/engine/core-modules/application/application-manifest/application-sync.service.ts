@@ -1,15 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Manifest } from 'twenty-shared/application';
-import { Repository } from 'typeorm';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
@@ -49,8 +46,6 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    @InjectRepository(ApplicationRegistrationEntity)
-    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
 
   public async synchronizeFromManifest({
@@ -167,6 +162,7 @@ export class ApplicationSyncService {
       defaultRoleId: null,
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
+      uninstallLogicFunctionId: null,
       canBeUninstalled: true,
       autoUpgrade: false,
       isSdkLayerStale: false,
@@ -346,7 +342,9 @@ export class ApplicationSyncService {
   // migration is applied, the hook's logic function metadata, code, and the
   // application's data are gone, so nothing can be executed anymore. It is
   // best-effort cleanup: a failure must never prevent the application from
-  // being removed.
+  // being removed. The hook is resolved from uninstallLogicFunctionId, set at
+  // sync time from the installed version's manifest, never from the
+  // registration's latest published manifest which can be a different version.
   private async runUninstallHook({
     application,
     workspaceId,
@@ -354,46 +352,21 @@ export class ApplicationSyncService {
     application: ApplicationEntity;
     workspaceId: string;
   }): Promise<void> {
-    if (!isDefined(application.applicationRegistrationId)) {
+    if (!isDefined(application.uninstallLogicFunctionId)) {
+      this.logger.log(
+        `No uninstall hook registered for application ${application.universalIdentifier}; skipping`,
+      );
+
       return;
     }
 
     try {
-      const appRegistration = await this.appRegistrationRepository.findOne({
-        where: { id: application.applicationRegistrationId },
-      });
-
-      const uninstallLogicFunction =
-        appRegistration?.manifest?.application.uninstallLogicFunction;
-
-      if (!isDefined(uninstallLogicFunction)) {
-        return;
-      }
-
-      const { flatLogicFunctionMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatLogicFunctionMaps',
-        ]);
-
-      const flatLogicFunction =
-        flatLogicFunctionMaps.byUniversalIdentifier[
-          uninstallLogicFunction.universalIdentifier
-        ];
-
-      if (!isDefined(flatLogicFunction)) {
-        this.logger.warn(
-          `Uninstall logic function "${uninstallLogicFunction.universalIdentifier}" not found for application "${application.universalIdentifier}"; skipping hook`,
-        );
-
-        return;
-      }
-
       this.logger.log(
         `Executing uninstall hook for app ${application.universalIdentifier}`,
       );
 
       const result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: flatLogicFunction.id,
+        logicFunctionId: application.uninstallLogicFunctionId,
         workspaceId,
         payload: { version: application.version ?? undefined },
       });

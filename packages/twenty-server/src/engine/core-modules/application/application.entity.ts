@@ -116,6 +116,16 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   settingsCustomTabFrontComponentId: string | null;
 
+  // Resolved from the installed version's manifest at sync time, so the
+  // uninstall hook never depends on the registration's latest published
+  // manifest, which can be a different version than the one installed.
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.29.0_AddUninstallLogicFunctionIdToApplicationFastInstanceCommand_1786041029602',
+  })
+  uninstallLogicFunctionId: string | null;
+
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 
