@@ -138,6 +138,8 @@ import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/
 import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
 import { AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1785504603000-add-is-system-side-effect-to-view-field-group';
 import { AddFieldsWidgetViewKeyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1785504606000-add-fields-widget-view-key';
+import { AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010740000-add-is-system-side-effect-to-view-field-group';
+import { AddFieldsWidgetViewKeyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-instance-command-fast-1786010743000-add-fields-widget-view-key';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

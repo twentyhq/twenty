@@ -6,7 +6,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 // View field groups are created by the user-facing CRUD API, by manifest apps and
 // by the engine, so the column defaults to false; the 2-28 record-page reconcile
 // command flags the engine/standard-derived rows afterwards.
-@RegisteredInstanceCommand('2.28.0', 1785504603000)
+@RegisteredInstanceCommand('2.28.0', 1786010740000)
 export class AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand
   implements FastInstanceCommand
 {
