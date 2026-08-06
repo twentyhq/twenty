@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { WEBHOOK_SUBSCRIPTION_THROTTLE_DURATION } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-throttle-duration.constant';
+import { WEBHOOK_SUBSCRIPTION_THROTTLE_MAX_PAUSE } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-throttle-max-pause.constant';
 
 export const isWebhookSubscriptionThrottled = (
   webhookSubscriptionFailedAt: Date | null,
@@ -26,9 +27,11 @@ const computeThrottlePauseUntil = (
   webhookSubscriptionFailedAt: Date,
   webhookSubscriptionFailureCount: number,
 ): Date => {
-  return new Date(
-    webhookSubscriptionFailedAt.getTime() +
-      WEBHOOK_SUBSCRIPTION_THROTTLE_DURATION *
-        Math.pow(2, webhookSubscriptionFailureCount - 1),
+  const pause = Math.min(
+    WEBHOOK_SUBSCRIPTION_THROTTLE_DURATION *
+      Math.pow(2, webhookSubscriptionFailureCount - 1),
+    WEBHOOK_SUBSCRIPTION_THROTTLE_MAX_PAUSE,
   );
+
+  return new Date(webhookSubscriptionFailedAt.getTime() + pause);
 };

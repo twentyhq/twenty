@@ -213,15 +213,20 @@ export class MessagingWebhookSubscriptionService {
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
-        {
-          exception: error,
-          operation: 'RENEW',
-          channelType: WebhookSubscriptionChannelType.MESSAGING,
-          channel: messageChannel,
-          workspaceId: messageChannel.workspaceId,
-        },
-      );
+      const recoveryAction =
+        await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
+          {
+            exception: error,
+            operation: 'RENEW',
+            channelType: WebhookSubscriptionChannelType.MESSAGING,
+            channel: messageChannel,
+            workspaceId: messageChannel.workspaceId,
+          },
+        );
+
+      if (recoveryAction === 'RECREATE') {
+        await this.createSubscription(messageChannelId, workspaceId);
+      }
     }
   }
 

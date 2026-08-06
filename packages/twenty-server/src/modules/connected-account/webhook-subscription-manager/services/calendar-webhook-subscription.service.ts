@@ -213,15 +213,20 @@ export class CalendarWebhookSubscriptionService {
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
-        {
-          exception: error,
-          operation: 'RENEW',
-          channelType: WebhookSubscriptionChannelType.CALENDAR,
-          channel: calendarChannel,
-          workspaceId: calendarChannel.workspaceId,
-        },
-      );
+      const recoveryAction =
+        await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
+          {
+            exception: error,
+            operation: 'RENEW',
+            channelType: WebhookSubscriptionChannelType.CALENDAR,
+            channel: calendarChannel,
+            workspaceId: calendarChannel.workspaceId,
+          },
+        );
+
+      if (recoveryAction === 'RECREATE') {
+        await this.createSubscription(calendarChannelId, workspaceId);
+      }
     }
   }
 
