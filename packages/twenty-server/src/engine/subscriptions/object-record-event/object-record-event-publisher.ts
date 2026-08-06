@@ -228,7 +228,12 @@ export class ObjectRecordEventPublisher {
 
       matchedEvents.push({
         queryIds: matchedQueryIds,
-        objectRecordEvent: filteredEvent,
+        objectRecordEvent: this.redactRLSUnauthorizedBeforeSnapshot(
+          filteredEvent,
+          subscriberRLSFilter,
+          workspaceEventBatch.objectMetadata,
+          permissionsContext.flatFieldMetadataMaps,
+        ),
       });
     }
 
@@ -497,6 +502,48 @@ export class ObjectRecordEventPublisher {
     return {
       ...event,
       properties: filteredProperties,
+    } as ObjectRecordSubscriptionEvent;
+  }
+
+  // Strips before/diff when the before snapshot fails subscriber RLS — a record entering scope must not expose prior values.
+  private redactRLSUnauthorizedBeforeSnapshot(
+    event: ObjectRecordSubscriptionEvent,
+    subscriberRLSFilter: RecordGqlOperationFilter | null,
+    objectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): ObjectRecordSubscriptionEvent {
+    if (
+      event.action !== DatabaseEventAction.UPDATED ||
+      !isDefined(subscriberRLSFilter) ||
+      Object.keys(subscriberRLSFilter).length === 0
+    ) {
+      return event;
+    }
+
+    const properties = event.properties as {
+      before?: object;
+      diff?: object;
+    };
+
+    if (
+      !isDefined(properties?.before) ||
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: properties.before,
+        filter: subscriberRLSFilter,
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps,
+        shouldIgnoreSoftDeleteDefaultFilter: false,
+      })
+    ) {
+      return event;
+    }
+
+    const { before: _before, diff: _diff, ...redactedProperties } =
+      event.properties as Record<string, unknown>;
+
+    return {
+      ...event,
+      properties: redactedProperties,
     } as ObjectRecordSubscriptionEvent;
   }
 
