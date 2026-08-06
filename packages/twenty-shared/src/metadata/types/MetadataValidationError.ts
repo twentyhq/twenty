@@ -24,7 +24,7 @@ export type MetadataValidationErrorResponse = {
   };
 };
 
-export type MetadataApiErrorExtensions =
+export type MetadataApiError =
   Partial<MetadataValidationErrorResponse> & {
     userFriendlyMessage?: string;
     subCode?: string;

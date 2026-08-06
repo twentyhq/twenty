@@ -1,5 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import { type MetadataApiErrorExtensions } from 'twenty-shared/metadata';
+import { type MetadataApiError } from 'twenty-shared/metadata';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import {
@@ -170,7 +170,7 @@ export class SyncApplicationOrchestratorStep {
   }
 
   private applyFailure(
-    result: { error?: MetadataApiErrorExtensions; message?: string },
+    result: { error?: MetadataApiError; message?: string },
     events: OrchestratorStateStepEvent[],
   ): void {
     const step = this.state.steps.syncApplication;

@@ -6,7 +6,7 @@ import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
 import { SchemaApi } from '@/cli/utilities/api/schema-api';
 import { type Manifest } from 'twenty-shared/application';
 import {
-  type MetadataApiErrorExtensions,
+  type MetadataApiError,
   type SyncAction,
 } from 'twenty-shared/metadata';
 
@@ -91,7 +91,7 @@ export class ApiService {
         applicationUniversalIdentifier: string;
         actions: SyncAction[];
       },
-      MetadataApiErrorExtensions
+      MetadataApiError
     >
   > {
     return this.applicationApi.syncApplication(manifest, options);

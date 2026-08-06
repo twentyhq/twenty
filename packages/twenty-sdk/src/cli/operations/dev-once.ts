@@ -3,7 +3,7 @@ import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { type MetadataApiErrorExtensions } from 'twenty-shared/metadata';
+import { type MetadataApiError } from 'twenty-shared/metadata';
 import {
   ensureAppAccessTokenIsValidOrRefresh,
   ensureAppRegistration,
@@ -67,7 +67,7 @@ const NOT_INSTALLED_SUB_CODES = new Set([
 ]);
 
 const isAppNotInstalledError = (result: {
-  error?: MetadataApiErrorExtensions;
+  error?: MetadataApiError;
   message?: string;
 }): boolean => {
   const extensions = result.error;
@@ -90,7 +90,7 @@ const isAppNotInstalledError = (result: {
 };
 
 const buildSyncError = (
-  result: { error?: MetadataApiErrorExtensions; message?: string },
+  result: { error?: MetadataApiError; message?: string },
   verbose: boolean,
 ): CommandError => {
   const errorEvents = verbose

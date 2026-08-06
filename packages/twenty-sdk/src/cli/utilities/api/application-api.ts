@@ -3,7 +3,7 @@ import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
 import {
-  type MetadataApiErrorExtensions,
+  type MetadataApiError,
   type SyncAction,
 } from 'twenty-shared/metadata';
 
@@ -320,7 +320,7 @@ export class ApplicationApi {
         applicationUniversalIdentifier: string;
         actions: SyncAction[];
       },
-      MetadataApiErrorExtensions
+      MetadataApiError
     >
   > {
     try {
