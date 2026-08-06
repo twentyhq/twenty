@@ -40,7 +40,7 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   for (const [variableName, variable] of Object.entries(
     config.serverVariables ?? {},
   )) {
-    if (variable.isRequired === true && variable.isDeprecated === true) {
+    if (variable.isRequired && variable.isDeprecated) {
       warnings.push(
         `Server variable "${variableName}" is both required and deprecated. \`isDeprecated\` wins: the variable is excluded from the application configuration check.`,
       );

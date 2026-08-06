@@ -9,6 +9,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { findOneApplicationIdByUniversalIdentifier } from 'test/integration/secret-encryption/utils/find-one-application.util';
 import { updateOneApplicationVariable } from 'test/integration/secret-encryption/utils/update-one-application-variable.util';
 
 const TEST_APP_ID = crypto.randomUUID();
@@ -68,26 +69,9 @@ describe('Manifest sync - deprecating an application variable', () => {
       expectToFail: false,
     });
 
-    const findResponse = await makeMetadataAPIRequest({
-      query: gql`
-        query FindAppForDeprecatedVariableTest($universalIdentifier: UUID!) {
-          findOneApplication(universalIdentifier: $universalIdentifier) {
-            id
-          }
-        }
-      `,
-      variables: { universalIdentifier: TEST_APP_ID },
+    applicationId = await findOneApplicationIdByUniversalIdentifier({
+      universalIdentifier: TEST_APP_ID,
     });
-
-    if (!isDefined(findResponse.body?.data?.findOneApplication?.id)) {
-      throw new Error(
-        `findOneApplication after sync did not return an id: ${JSON.stringify(
-          findResponse.body,
-        )}`,
-      );
-    }
-
-    applicationId = findResponse.body.data.findOneApplication.id;
   }, 120000);
 
   afterAll(async () => {

@@ -205,6 +205,28 @@ describe('ApplicationRegistrationVariableService', () => {
     });
   });
 
+  describe('createVariable', () => {
+    it('should store the unset sentinel instead of encrypting an empty value', async () => {
+      applicationRegistrationRepository.findOne.mockResolvedValue({
+        id: registrationId,
+      } as never);
+
+      await service.createVariable(
+        {
+          applicationRegistrationId: registrationId,
+          key: 'API_KEY',
+          value: '' as PlaintextString,
+        },
+        'workspace-1',
+      );
+
+      expect(encryptionService.encryptVersioned).not.toHaveBeenCalled();
+      expect(variableRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ key: 'API_KEY', encryptedValue: '' }),
+      );
+    });
+  });
+
   describe('updateVariableGlobal', () => {
     it('should store the unset sentinel instead of encrypting an empty value', async () => {
       const variable = makeExistingVariable({

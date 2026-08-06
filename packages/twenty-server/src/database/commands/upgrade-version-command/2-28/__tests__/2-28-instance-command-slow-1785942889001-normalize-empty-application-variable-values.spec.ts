@@ -4,67 +4,31 @@ import { NormalizeEmptyApplicationVariableValuesSlowInstanceCommand } from 'src/
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
-type FakeRow = { id: string; value: string; workspaceId: string | null };
-
-const FAKE_V2_KEY_ID = 'deadbeef';
-
 const wrapAsV2 = (plaintext: string): string =>
-  `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${FAKE_V2_KEY_ID}:CIPHER(${plaintext})`;
+  `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}deadbeef:CIPHER(${plaintext})`;
 
-const UNDECRYPTABLE_VALUE = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${FAKE_V2_KEY_ID}:GARBAGE`;
+const UNDECRYPTABLE_VALUE = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}deadbeef:GARBAGE`;
 
-const buildFakeDataSource = (
-  rowsByTable: Record<string, FakeRow[]>,
-): { dataSource: DataSource; rows: (tableName: string) => FakeRow[] } => {
-  const tables = Object.fromEntries(
-    Object.entries(rowsByTable).map(([tableName, rows]) => [
-      tableName,
-      [...rows].sort((a, b) => a.id.localeCompare(b.id)),
-    ]),
+// One SELECT batch per table, then an empty batch to end each cursor loop.
+const buildDataSource = (selectBatches: unknown[][]) => {
+  const query = jest.fn(async (sql: string) =>
+    sql.includes('SELECT') ? (selectBatches.shift() ?? []) : [],
   );
 
-  const tableNameFromSql = (sql: string): string =>
-    Object.keys(tables).find((tableName) =>
-      sql.includes(`"core"."${tableName}"`),
-    ) as string;
-
-  const fakeDataSource = {
-    query: jest.fn(async (sql: string, params?: unknown[]) => {
-      const rows = tables[tableNameFromSql(sql)];
-
-      if (sql.includes('SELECT id')) {
-        const cursor = params?.[0] as string;
-
-        return rows
-          .filter((row) => row.id > cursor)
-          .filter((row) => row.value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX))
-          .map(({ id, value, workspaceId }) => ({
-            id,
-            encryptedValue: value,
-            workspaceId,
-          }));
-      }
-
-      const targetRow = rows.find((row) => row.id === params?.[0]);
-
-      if (targetRow) {
-        targetRow.value = '';
-      }
-
-      return [];
-    }),
-  } as unknown as DataSource;
-
-  return {
-    dataSource: fakeDataSource,
-    rows: (tableName: string) => tables[tableName],
-  };
+  return { dataSource: { query } as unknown as DataSource, query };
 };
+
+const normalizedIds = (query: jest.Mock): string[] =>
+  query.mock.calls
+    .filter(([sql]) => sql.includes('UPDATE'))
+    .flatMap(([, params]) => params[0]);
 
 describe('NormalizeEmptyApplicationVariableValuesSlowInstanceCommand', () => {
   const secretEncryptionService = {
     decryptVersionedOrThrow: jest.fn((value: string) => {
-      const match = /^enc:v2:[0-9a-f]+:CIPHER\((.*)\)$/.exec(value);
+      const match = new RegExp(
+        `^${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}[0-9a-f]+:CIPHER\\((.*)\\)$`,
+      ).exec(value);
 
       if (match === null) {
         throw new Error('undecryptable');
@@ -74,43 +38,33 @@ describe('NormalizeEmptyApplicationVariableValuesSlowInstanceCommand', () => {
     }),
   } as unknown as SecretEncryptionService;
 
-  const command = new NormalizeEmptyApplicationVariableValuesSlowInstanceCommand(
-    secretEncryptionService,
-  );
+  const command =
+    new NormalizeEmptyApplicationVariableValuesSlowInstanceCommand(
+      secretEncryptionService,
+    );
 
-  it('should rewrite envelopes that decrypt to an empty string and leave the rest untouched', async () => {
-    const { dataSource, rows } = buildFakeDataSource({
-      applicationRegistrationVariable: [
-        { id: 'a', value: wrapAsV2(''), workspaceId: null },
-        { id: 'b', value: wrapAsV2('real-secret'), workspaceId: null },
-        { id: 'c', value: '', workspaceId: null },
+  it('should normalize only the envelopes that decrypt to an empty string', async () => {
+    const { dataSource, query } = buildDataSource([
+      [
+        { id: 'a', encryptedValue: wrapAsV2('') },
+        { id: 'b', encryptedValue: wrapAsV2('real-secret') },
       ],
-      applicationVariable: [
-        { id: 'd', value: wrapAsV2(''), workspaceId: 'workspace-1' },
-        { id: 'e', value: wrapAsV2('kept'), workspaceId: 'workspace-1' },
-      ],
-    });
+      [],
+      [{ id: 'd', encryptedValue: wrapAsV2(''), workspaceId: 'workspace-1' }],
+      [],
+    ]);
 
     await command.runDataMigration(dataSource);
 
-    expect(rows('applicationRegistrationVariable')).toEqual([
-      { id: 'a', value: '', workspaceId: null },
-      { id: 'b', value: wrapAsV2('real-secret'), workspaceId: null },
-      { id: 'c', value: '', workspaceId: null },
-    ]);
-    expect(rows('applicationVariable')).toEqual([
-      { id: 'd', value: '', workspaceId: 'workspace-1' },
-      { id: 'e', value: wrapAsV2('kept'), workspaceId: 'workspace-1' },
-    ]);
+    expect(normalizedIds(query)).toEqual(['a', 'd']);
   });
 
   it('should decrypt workspace-scoped rows with their workspace context', async () => {
-    const { dataSource } = buildFakeDataSource({
-      applicationRegistrationVariable: [],
-      applicationVariable: [
-        { id: 'd', value: wrapAsV2(''), workspaceId: 'workspace-1' },
-      ],
-    });
+    const { dataSource } = buildDataSource([
+      [],
+      [{ id: 'd', encryptedValue: wrapAsV2(''), workspaceId: 'workspace-1' }],
+      [],
+    ]);
 
     await command.runDataMigration(dataSource);
 
@@ -121,17 +75,14 @@ describe('NormalizeEmptyApplicationVariableValuesSlowInstanceCommand', () => {
   });
 
   it('should skip rows that cannot be decrypted', async () => {
-    const { dataSource, rows } = buildFakeDataSource({
-      applicationRegistrationVariable: [
-        { id: 'a', value: UNDECRYPTABLE_VALUE, workspaceId: null },
-      ],
-      applicationVariable: [],
-    });
+    const { dataSource, query } = buildDataSource([
+      [{ id: 'a', encryptedValue: UNDECRYPTABLE_VALUE }],
+      [],
+      [],
+    ]);
 
     await command.runDataMigration(dataSource);
 
-    expect(rows('applicationRegistrationVariable')[0].value).toBe(
-      UNDECRYPTABLE_VALUE,
-    );
+    expect(normalizedIds(query)).toEqual([]);
   });
 });

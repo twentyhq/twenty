@@ -15,6 +15,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
+import { encryptApplicationVariableValue } from 'src/engine/core-modules/application/utils/encrypt-application-variable-value.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
@@ -64,7 +65,10 @@ export class ApplicationRegistrationVariableService {
       workspaceId,
     );
 
-    const encryptedValue = this.encryptionService.encryptVersioned(input.value);
+    const encryptedValue = encryptApplicationVariableValue({
+      plainTextValue: input.value,
+      secretEncryptionService: this.encryptionService,
+    });
 
     const variable = this.variableRepository.create({
       applicationRegistrationId: input.applicationRegistrationId,
@@ -268,12 +272,10 @@ export class ApplicationRegistrationVariableService {
     const updateData: Record<string, unknown> = {};
 
     if (isDefined(update.value)) {
-      // An empty input means "unset", not "an encrypted empty string": '' is
-      // the sentinel `isFilled` and the required check both read.
-      updateData.encryptedValue =
-        update.value === ''
-          ? ''
-          : this.encryptionService.encryptVersioned(update.value);
+      updateData.encryptedValue = encryptApplicationVariableValue({
+        plainTextValue: update.value,
+        secretEncryptionService: this.encryptionService,
+      });
     }
 
     if (isDefined(update.resetValue) && update.resetValue) {

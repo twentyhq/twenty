@@ -15,11 +15,10 @@ jest.mock('@/settings/admin-panel/apollo/hooks/useApolloAdminClient', () => ({
   useApolloAdminClient: jest.fn(() => ({})),
 }));
 
-const mockedUseQuery = useQuery as jest.MockedFunction<typeof useQuery>;
+const mockedUseQuery = useQuery as unknown as jest.Mock;
 
 const makeVariable = (
   overrides: Partial<{
-    id: string;
     key: string;
     value: string | null;
     isDeprecated: boolean;
@@ -45,19 +44,12 @@ const makeVariable = (
 const mockVariables = (
   variables: ReturnType<typeof makeVariable>[],
   { fromAdmin }: { fromAdmin: boolean },
-) => {
-  mockedUseQuery.mockImplementation(((
-    _document: unknown,
-    options?: { skip?: boolean },
-  ) =>
-    options?.skip === true
-      ? { data: undefined }
-      : {
-          data: fromAdmin
-            ? { findAdminApplicationRegistrationVariables: variables }
-            : { findApplicationRegistrationVariables: variables },
-        }) as never);
-};
+) =>
+  mockedUseQuery.mockReturnValue({
+    data: fromAdmin
+      ? { findAdminApplicationRegistrationVariables: variables }
+      : { findApplicationRegistrationVariables: variables },
+  });
 
 const renderTab = ({ fromAdmin }: { fromAdmin: boolean }) =>
   render(
@@ -76,11 +68,10 @@ describe('SettingsApplicationRegistrationConfigTab', () => {
       mockVariables(
         [
           makeVariable({
-            id: 'variable-1',
             key: 'API_KEY',
             isDeprecated: true,
           }),
-          makeVariable({ id: 'variable-2', key: 'NEW_API_KEY' }),
+          makeVariable({ key: 'NEW_API_KEY' }),
         ],
         { fromAdmin },
       );
@@ -96,7 +87,6 @@ describe('SettingsApplicationRegistrationConfigTab', () => {
     mockVariables(
       [
         makeVariable({
-          id: 'variable-1',
           key: 'API_KEY',
           value: 'legacy-key',
           isDeprecated: true,
@@ -113,10 +103,9 @@ describe('SettingsApplicationRegistrationConfigTab', () => {
   });
 
   it('does not render the section when every variable is filtered out', () => {
-    mockVariables(
-      [makeVariable({ id: 'variable-1', key: 'API_KEY', isDeprecated: true })],
-      { fromAdmin: false },
-    );
+    mockVariables([makeVariable({ key: 'API_KEY', isDeprecated: true })], {
+      fromAdmin: false,
+    });
 
     renderTab({ fromAdmin: false });
 

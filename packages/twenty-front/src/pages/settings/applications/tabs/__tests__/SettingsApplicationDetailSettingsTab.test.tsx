@@ -37,7 +37,6 @@ jest.mock(
 
 const makeApplicationVariable = (
   overrides: Partial<{
-    id: string;
     key: string;
     value: string;
     isDeprecated: boolean;
@@ -75,12 +74,8 @@ const renderTab = (
 describe('SettingsApplicationDetailSettingsTab', () => {
   it('hides a deprecated application variable with no value', () => {
     renderTab([
-      makeApplicationVariable({
-        id: 'variable-1',
-        key: 'API_KEY',
-        isDeprecated: true,
-      }),
-      makeApplicationVariable({ id: 'variable-2', key: 'NEW_API_KEY' }),
+      makeApplicationVariable({ key: 'API_KEY', isDeprecated: true }),
+      makeApplicationVariable({ key: 'NEW_API_KEY' }),
     ]);
 
     expect(screen.queryByText('API_KEY')).not.toBeInTheDocument();
@@ -90,7 +85,6 @@ describe('SettingsApplicationDetailSettingsTab', () => {
   it('keeps a deprecated application variable that still has a value and tags it', () => {
     renderTab([
       makeApplicationVariable({
-        id: 'variable-1',
         key: 'API_KEY',
         value: 'legacy-key',
         isDeprecated: true,
