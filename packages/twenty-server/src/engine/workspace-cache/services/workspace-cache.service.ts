@@ -9,6 +9,7 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -52,6 +53,9 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
+// Entries per provider kept as live objects when compact storage is on. Sized above the ~28
+// workspaces a prod pod touches in a sweep interval, so reads rarely pay the hydration.
+const HOT_ENTRIES_PER_PROVIDER = 64;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
   [WORKSPACE_CACHE_KEYS_V2.ORMEntityMetadatas, 128],
@@ -132,10 +136,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
-        } else {
-          // Only providers already JSON round-tripped for Redis can be held cold. The ORM entity
-          // metadata graph is localDataOnly precisely because it holds class instances, functions
-          // and cycles, so it is excluded here by construction rather than by a hand-kept list.
+        } else if (workspaceCacheKeyName !== 'featureFlagsMap') {
+          // Only providers already JSON round-tripped for Redis can be held cold, which excludes
+          // the ORM entity metadata graph by construction rather than by a hand-kept list: it is
+          // localDataOnly precisely because it holds class instances, functions and cycles.
+          // featureFlagsMap is excluded separately because it decides cold storage, so it has to
+          // stay readable without hydrating anything.
           this.coldStorageEligiblePrefixes.add(prefix);
         }
       }
@@ -438,7 +444,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const allKeys = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [this.buildDataKey(baseKey), `${baseKey}:hash`];
+      return [this.buildDataKey(workspaceId, baseKey), `${baseKey}:hash`];
     });
 
     const allValues = await this.cacheStorage.mget<CacheDataType | string>(
@@ -449,7 +455,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const rawData = allValues[index * 2];
       const hash = allValues[index * 2 + 1] as string | undefined;
       const data = isDefined(rawData)
-        ? this.decodeFromStorage(keyName, rawData)
+        ? this.decodeFromStorage(workspaceId, keyName, rawData)
         : undefined;
 
       if (isDefined(data) && isDefined(hash)) {
@@ -537,8 +543,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
       if (!isLocalDataOnly) {
         redisEntries.push({
-          key: this.buildDataKey(baseKey),
-          value: this.encodeForStorage(keyName, data),
+          key: this.buildDataKey(workspaceId, baseKey),
+          value: this.encodeForStorage(workspaceId, keyName, data),
         });
       }
 
@@ -583,7 +589,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const version = entry?.versions.get(entry.latestHash);
 
       if (isDefined(entry) && isDefined(version)) {
-        const data = this.readVersion(keyName, entry, version);
+        const data = this.readVersion(workspaceId, keyName, entry, version);
 
         Object.assign(result.data, { [keyName]: data });
         result.hashes[keyName] = entry.latestHash;
@@ -671,15 +677,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   // it, and so an entry written and read back within the sweep interval is never serialized at
   // all. The cost is that the hot set is a periodic bound, not an exact one.
   private demoteColdEntries(): void {
-    if (!this.isCompactStorageEnabled) {
-      return;
-    }
-
     const demotions = selectColdStorageDemotions(this.localCache, {
       eligiblePrefixes: this.coldStorageEligiblePrefixes,
-      hotEntriesPerPrefix: this.twentyConfigService.get(
-        'WORKSPACE_CACHE_HOT_ENTRIES_PER_PROVIDER',
-      ),
+      hotEntriesPerPrefix: HOT_ENTRIES_PER_PROVIDER,
     });
 
     for (const { localKey, hash } of demotions) {
@@ -691,15 +691,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
 
       const keyName = this.keyNameFromLocalKey(localKey);
+      const workspaceId = localKey.slice(localKey.lastIndexOf(':') + 1);
 
-      if (!isDefined(keyName)) {
+      if (!isDefined(keyName) || !this.isCompactStorageEnabled(workspaceId)) {
         continue;
       }
 
       entry.versions.set(hash, {
         state: 'cold',
         blob: Buffer.from(
-          JSON.stringify(this.encodeForStorage(keyName, version.data)),
+          JSON.stringify(
+            this.encodeForStorage(workspaceId, keyName, version.data),
+          ),
           'utf8',
         ),
         lastReadAt: version.lastReadAt,
@@ -707,25 +710,40 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private get isCompactStorageEnabled(): boolean {
-    return this.twentyConfigService.get(
-      'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED',
+  // Peeks the workspace's already-cached flag map. Deliberately never recomputes: featureFlagsMap
+  // is itself a provider, so recomputing here would re-enter this service. A workspace whose flags
+  // are not cached yet keeps the uncompacted encoding until they are.
+  private isCompactStorageEnabled(workspaceId: string): boolean {
+    const entry = this.localCache.get(
+      this.buildCacheKey(workspaceId, 'featureFlagsMap'),
+    );
+    const version = entry?.versions.get(entry.latestHash);
+
+    if (version?.state !== 'hot') {
+      return false;
+    }
+
+    return (
+      (version.data as WorkspaceCacheDataMap['featureFlagsMap'])[
+        FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
+      ] === true
     );
   }
 
-  // Compacted payloads live under their own key suffix. Flipping the flag therefore cannot read
-  // an entry written under the other encoding: it simply misses and recomputes.
-  private buildDataKey(baseKey: string): string {
-    return this.isCompactStorageEnabled
+  // Compacted payloads live under their own key suffix, so a workspace toggling the flag can never
+  // read an entry back under the other encoding: it misses and recomputes.
+  private buildDataKey(workspaceId: string, baseKey: string): string {
+    return this.isCompactStorageEnabled(workspaceId)
       ? `${baseKey}:data:compact-v1`
       : `${baseKey}:data`;
   }
 
   private encodeForStorage(
+    workspaceId: string,
     keyName: WorkspaceCacheKeyName,
     data: CacheDataType,
   ): unknown {
-    if (!this.isCompactStorageEnabled) {
+    if (!this.isCompactStorageEnabled(workspaceId)) {
       return data;
     }
 
@@ -733,10 +751,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private decodeFromStorage(
+    workspaceId: string,
     keyName: WorkspaceCacheKeyName,
     rawData: unknown,
   ): CacheDataType {
-    if (!this.isCompactStorageEnabled) {
+    if (!this.isCompactStorageEnabled(workspaceId)) {
       return rawData as CacheDataType;
     }
 
@@ -744,6 +763,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private readVersion(
+    workspaceId: string,
     keyName: WorkspaceCacheKeyName,
     entry: WorkspaceLocalCacheEntry<CacheDataType>,
     version: VersionEntry<CacheDataType>,
@@ -755,6 +775,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     const data = this.decodeFromStorage(
+      workspaceId,
       keyName,
       JSON.parse(version.blob.toString('utf8')),
     );
