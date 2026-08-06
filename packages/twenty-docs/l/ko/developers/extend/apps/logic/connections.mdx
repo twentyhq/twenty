@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 이후에는 `getConnection(connectedAccountId)`를 사용하여 최신 액세스 토큰을 읽고, 공급자의 API(예: Slack `auth.test`)를 호출하거나 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)에 매핑을 저장합니다.
+
+</Accordion>
+
+<Accordion title="연결 해제 시 로직 함수 실행하기" description="연결이 제거될 때 정리 작업 수행하기">
+
+앱이 연결 시점에 확보(클레임)한 모든 항목은 연결이 해제될 때 반드시 해제되어야 합니다. 예를 들어, 연결 시점에 `team_id`를 확보(클레임)하는 Slack 연동은, 동일한 Slack 팀에 다른 워크스페이스가 연결될 수 있도록 그 클레임을 해제해야 합니다. `onDisconnectLogicFunction`을 동일한 앱의 로직 함수를 참조하도록 설정하면, `ConnectedAccount`가 삭제된 직후 해당 로직 함수가 실행됩니다.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+on-connect 훅과 마찬가지로 **연결이 끊기는 워크스페이스에서 비동기적으로 실행**되며, 연결 해제를 차단(block)하지 않습니다. 핸들러는 동일한 형태의 페이로드를 전달받습니다:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+훅이 실행될 때는 `ConnectedAccount`가 이미 제거된 상태이므로 `getConnection(connectedAccountId)`는 더 이상 해결(resolve)되지 않습니다. 정리(cleanup)에 필요한 모든 것(예: `team_id`, 외부 구독 ID)은 연결 시점에 `connectedAccountId`를 키로 사용해 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)에 미리 기록되어 있어야 합니다.
+
+이 훅은 연결이 자체적으로 제거될 때 실행됩니다. 앱을 제거(uninstall)하면, 데이터베이스의 CASCADE를 통해 연결이 삭제되므로 해당 경우에는 이 훅이 실행되지 않습니다. 그 경로에 대해 `defineApplication`에 `uninstallLogicFunction`을 선언하세요. 이 함수는 앱의 메타데이터가 삭제되기 전에 실행되므로, 아직 `listConnections`를 호출해 남은 항목을 정리(clean up)할 수 있습니다.
 
 </Accordion>
 

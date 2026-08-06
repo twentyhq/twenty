@@ -53,9 +53,32 @@ export default definePageLayout({
 
 - `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` or `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object.
 - `objectUniversalIdentifier` specifies which object this layout applies to.
-- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`VERTICAL_LIST` for record pages, `GRID` for dashboards). A tab holding a single widget renders it full-bleed automatically; with several widgets they stack as cards.
+- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards. In a `VERTICAL_LIST` tab, a single widget renders full-bleed and owns the whole tab; with several widgets they stack as cards. A `GRID` tab always lays its widgets out as cards on a 12-column grid, whatever their number, so pick `VERTICAL_LIST` when you want one widget to fill the page.
+- Set `layoutMode` explicitly. Omitting it gives you `VERTICAL_LIST` on a `STANDALONE_PAGE` and `GRID` everywhere else, which is rarely what you want on a record page.
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+
+### Field widgets
+
+A `FIELD` widget renders one field of the record. For relation fields it can also embed a list of related records:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+- `fieldMetadataId` takes the universal identifier of a field on the layout's object.
+- `fieldDisplayMode` is one of `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` or `'TABLE'`. `TABLE` embeds a view listing the records of a one-to-many relation field.
+- `nestedRelationFieldMetadataId` is optional and takes the universal identifier of a one-to-many relation field on the relation target object, to list records two relation hops away (e.g. a Company page listing the opportunities of the company's people, or a Person page listing the opportunities of the person's company). The first hop can be a one-to-many or a many-to-one relation field, the second must be one-to-many (junction relations are not supported), and it requires `fieldDisplayMode: 'TABLE'` — combining it with any other display mode is a validation error, since a nested widget always renders as an embedded view.
 
 ## definePageLayoutTab
 

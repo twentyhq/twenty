@@ -20,7 +20,7 @@ icon: wrench
 ⚠️ 警告：以下步骤将永久删除所有数据库数据！ ⚠️
 仅在这是一项没有重要数据的新安装时继续。
 
-为了更新 `PG_DATABASE_PASSWORD`，您需要：
+若要更新`PG_DATABASE_PASSSWORD`，您需要：
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -30,7 +30,7 @@ docker compose up -d
 
 #### 发现 CR 换行符 [Windows]
 
-这是由于 Windows 的换行符以及 git 配置。 尝试运行：
+发生这种情况的原因是Windows行尾字符与您的Git配置。 尝试运行：
 
 ```
 git config --global core.autocrlf false
@@ -42,11 +42,11 @@ git config --global core.autocrlf false
 
 在安装 Twenty 时，您需要为您的 postgres 数据库提供正确的模式、扩展和用户。
 如果您成功进行了此配置，数据库中应有 `default` 和 `metadata` 模式。
-如果没有，请确保您的计算机上没有运行多个 postgres 实例。
+如果您没有，请确保您的电脑上没有一个以上的 PostgreSQL 实例。
 
 #### 找不到模块 'twenty-emails' 或其相应的类型声明。
 
-在运行 `npx nx run twenty-emails:build`来初始化数据库之前，您必须构建 `twenty-emails` 包。
+在运行数据库初始化之前，您必须先构建`twentemails`软件包(`npx nx 运行 twentemails:build`)。
 
 #### 缺少 twenty-x 包
 
@@ -54,7 +54,7 @@ git config --global core.autocrlf false
 
 #### 保存时 Lint 不起作用
 
-这应在安装了 Oxc 扩展 (`oxc.oxc-vscode`) 后即可正常工作。 如果这不起作用，请尝试将此添加到您的 vscode 设置（在开发容器范围内）：
+这应在安装了 Oxc 扩展 (`oxc.oxc-vscode`) 后即可正常工作。 如果这不起作用，请尝试将其添加到您的 VS 代码设置(dev container scope):
 
 ```
 "editor.codeActionsOnSave": {
@@ -64,7 +64,7 @@ git config --global core.autocrlf false
 }
 ```
 
-#### 运行 `npx nx start` 或 `npx nx start twenty-front` 时，出现内存不足错误
+#### 在运行 `npx nx start` 或 `npx nx start twent` 时，出现了一个内存错误
 
 仅运行您需要的服务，而不是 `npx nx start`。 例如，如果您在服务器上工作，仅运行 `npx nx worker twenty-server`
 
@@ -73,18 +73,18 @@ git config --global core.autocrlf false
 
 `致命错误：无效标记-压缩接近堆限制 分配失败 - JavaScript 堆内存不足`
 
-解决方法是在终端中执行以下命令或将其添加到 .bashrc 配置中以便自动设置：
+解决方案是在您的终端中运行以下命令，或将其添加到您的`.bashrc`配置文件中，所以它自动应用：
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
 \--max-old-space-size=8192 标志为 Node.js 堆设置了 8GB 的上限；使用会根据应用程序需求进行扩展。
 参考：https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**如果不起作用：**
-调查哪些进程消耗了您机器的大部分内存。 在 Twenty，我们注意到一些 VScode 扩展占用了大量的内存，因此我们暂时禁用了它们。
+**如果它不能工作:**
+调查哪些进程正在占用你机器的大部分RAM。 20时，我们注意到一些VS 代码扩展占用了大量内存，所以我们暂时禁用了它们。
 
-**如果不起作用：**
-重启机器有助于清除幽灵进程。
+**如果它不起作用:**
+重启你的机器有助于清理幽灵过程。
 
 #### 运行 `npx nx start` 时日志中出现奇怪的 [0] 和 [1]
 
@@ -98,19 +98,19 @@ git config --global core.autocrlf false
 npx nx worker twenty-server
 ```
 
-#### 无法连接我的 Microsoft 365 账户
+#### 无法连接我的 Microsoft 365 帐户到 20ty
 
 大多数情况下，这是因为管理员没有为您的账户启用 Microsoft 365 许可证。 访问 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)。
 
 如果您收到错误代码 `AADSTS50020`，这可能意味着您正在使用个人 Microsoft 账户。 这尚不支持。 更多信息 [请访问这里](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### 运行 `yarn` 时控制台出现警告
+#### 在运行 `yarn`时，警告会出现在控制台中
 
 警告信息是为了告知您正在拉取额外且未在 `package.json` 中明确声明的依赖，只要没有发生严重错误，一切应该会按预期工作。
 
-#### 用户访问登录页面时，日志中出现关于未授权用户尝试访问工作区的错误
+#### 当用户访问登录页面时，一个未经授权的用户试图访问工作区的错误会出现在日志中。
 
-这是预期的情况，因为用户未经授权注销时会显示身份验证错误。
+由于用户身份尚未得到验证，因此用户在登出时可能未被授权。
 
 #### 如何检查您的 worker 是否在运行？
 
@@ -137,9 +137,9 @@ npx nx worker twenty-server
 
 * 如果收到 **POST 请求**，则说明您的 worker 正在成功运行。 否则，您需要对 worker 进行故障排除。
 
-#### 前端启动失败，并返回错误 TS5042：选项“项目”不能与命令行上的源文件混用
+#### 前端未能启动，返回错误 TS5042: 选项'project' 不能与命令行上的源文件混合。
 
-注释掉 `packages/twenty-ui/vite-config.ts` 中的 checker 插件，如下面示例所示
+评论`packes/twoi/vite-config.ts`中的检查器插件，如下所示：
 
 ```
 plugins: [
@@ -165,7 +165,7 @@ plugins: [
 
 #### 无法访问管理面板
 
-在数据库容器中运行 `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` 以访问管理面板。
+在数据库容器中运行 `updatE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` 以获得管理面板的访问权限。
 
 #### 在运行工作流时，工作流运行失败，并提示 "Logic function execution is disabled." 将 LOGIC_FUNCTION_TYPE 设置为 LOCAL 或 LAMBDA 以启用。
 
@@ -173,7 +173,7 @@ plugins: [
 
 #### 当我在 AI 聊天中输入消息时，它不会立即回答，我必须刷新页面才能看到答案
 
-将以下块添加到 nginx 配置
+这意味着您的逆向代理缺少基于流 API 响应的配置。 下面是 Nginx 配置的示例：
 
 ```
 location ~* ^/api/.*stream|\/graphql\/stream {
@@ -193,7 +193,7 @@ add_header X-Accel-Buffering no always;
 }
 ```
 
-### 一键使用 Docker Compose
+### 单击Docker 配置
 
 #### 无法登录
 
@@ -210,7 +210,7 @@ add_header X-Accel-Buffering no always;
    docker compose up -d
    ```
 
-注意 database:reset 命令将完全擦除您的数据库并从头重建。
+请注意，`database:reset`命令将完全擦除您的数据库并从头重新创建它。
 
 #### 反向代理后面的连接问题
 

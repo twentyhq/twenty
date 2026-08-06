@@ -32,7 +32,7 @@ Puoi importare dati per qualsiasi oggetto utilizzando file CSV, XLSX o XLS. Ogni
 6. Esamina gli errori (evidenziati in giallo) e correggili, modificando direttamente nell'interfaccia utente (UI)
 7. Conferma l'importazione
 
-### Importazione delle relazioni tra oggetti
+### Importare le relazioni tra oggetti
 
 Puoi importare le relazioni tra oggetti utilizzando la funzione di importazione CSV. Devi fare riferimento all'oggetto correlato utilizzando un campo univoco di tale oggetto: l'`id`, l'`email` per Persone e Membri dello spazio di lavoro, il `domain` per le aziende, qualsiasi altro campo impostato come univoco nel modello dati per qualsiasi altro oggetto.
 
@@ -43,8 +43,8 @@ Puoi importare le relazioni tra oggetti utilizzando la funzione di importazione 
 
 Quando importi oggetti correlati, carica i file in questo ordine:
 1. **Aziende** per prime (il lato "uno" delle relazioni)
-2. **Persone** in secondo luogo (collegate alle aziende tramite companyId)
-3. **Opportunità** in terzo luogo (collegate ad aziende/persone)
+2. **Persone** al secondo posto (collegate alle Aziende tramite companyId)
+3. **Opportunità** al terzo posto (collegate ad Aziende/Persone)
 4. **Oggetti personalizzati** con relazioni per ultimi
 
 Perché? Il lato "uno" di una relazione uno-a-molti deve esistere prima di potervi fare riferimento. Ad esempio, il record Azienda deve esistere prima di importare una Persona con l'ID di quella azienda.

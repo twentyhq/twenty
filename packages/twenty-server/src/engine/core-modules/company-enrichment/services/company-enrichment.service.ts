@@ -1,16 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
 
 import { COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-max-requests.constant';
 import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-window-ms.constant';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   COMPANY_ENRICHMENT_ATTEMPT_KEY,
   type CompanyEnrichmentAttemptKeyValueTypeMap,
@@ -19,26 +15,26 @@ import { type PeopleDataLabsCompanyEnrichResult } from 'src/engine/core-modules/
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
+// oxlint-disable-next-line twenty/inject-workspace-repository
 export class CompanyEnrichmentService {
   private readonly logger = new Logger(CompanyEnrichmentService.name);
 
   constructor(
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly throttlerService: ThrottlerService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
   ) {}
@@ -52,25 +48,15 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
-    if (!this.twentyConfigService.isWorkspaceCompanyEnrichmentEnabled()) {
+    if (!this.hasEnrichmentConsumer()) {
       return { outcome: 'unavailable', enrichment: null };
     }
 
-    // The enrichment only feeds the AI-chat workspace setup, so it is pointless without it.
-    const isOnboardingAiChatEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+    const isWorkspaceCreator =
+      await this.userWorkspaceService.isWorkspaceCreator({
+        userId,
         workspaceId,
-      );
-
-    if (!isOnboardingAiChatEnabled) {
-      return { outcome: 'unavailable', enrichment: null };
-    }
-
-    const isWorkspaceCreator = await this.isWorkspaceCreator({
-      userId,
-      workspaceId,
-    });
+      });
 
     if (!isWorkspaceCreator) {
       return { outcome: 'unavailable', enrichment: null };
@@ -118,14 +104,14 @@ export class CompanyEnrichmentService {
 
     // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
     if (result.outcome !== 'skipped') {
-      await this.recordEnrichmentAttempt({
-        workspaceId,
-        domain,
-        result,
-      });
+      await this.recordEnrichmentAttempt({ workspaceId, domain, result });
     }
 
     return enrichmentResult;
+  }
+
+  private hasEnrichmentConsumer(): boolean {
+    return readIsCompanyEnrichmentEnabled(this.twentyConfigService);
   }
 
   private resolveEnrichmentResult({
@@ -202,20 +188,5 @@ export class CompanyEnrichmentService {
         }`,
       );
     }
-  }
-
-  private async isWorkspaceCreator({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { workspaceId },
-      order: { createdAt: 'ASC' },
-    });
-
-    return earliestUserWorkspace?.userId === userId;
   }
 }

@@ -1,8 +1,7 @@
-import { type MessageDescriptor } from '@lingui/core';
+import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSlashCommands';
+import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
 import { msg } from '@lingui/core/macro';
-import { type Editor, type Range } from '@tiptap/core';
 import {
-  type IconComponent,
   IconH1,
   IconH2,
   IconH3,
@@ -11,18 +10,7 @@ import {
   IconPilcrow,
 } from 'twenty-ui/icon';
 
-export type SlashCommandConfig = {
-  id: string;
-  title: MessageDescriptor;
-  description: MessageDescriptor;
-  icon: IconComponent;
-  keywords: MessageDescriptor[];
-  getIsActive: (editor: Editor) => boolean;
-  getIsVisible: (editor: Editor) => boolean;
-  getOnSelect: (editor: Editor, range: Range) => () => void;
-};
-
-export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
+const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
   {
     id: 'paragraph',
     title: msg`Text`,
@@ -31,9 +19,8 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     keywords: [msg`paragraph`, msg`text`, msg`p`],
     getIsActive: (editor) => editor.isActive('paragraph'),
     getIsVisible: (editor) => editor.can().setParagraph?.() ?? false,
-    getOnSelect: (editor, range) => () => {
-      return editor.chain().focus().deleteRange(range).setParagraph().run();
-    },
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setParagraph().run(),
   },
   {
     id: 'h1',
@@ -68,6 +55,9 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
   },
+];
+
+const LIST_SLASH_COMMANDS: SlashCommandConfig[] = [
   {
     id: 'bulletList',
     title: msg`Bullet List`,
@@ -90,4 +80,10 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).toggleOrderedList().run(),
   },
+];
+
+export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
+  ...TEXT_SLASH_COMMANDS,
+  ...ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS,
+  ...LIST_SLASH_COMMANDS,
 ];

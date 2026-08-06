@@ -25,22 +25,24 @@ const StyledBaseContainer = styled.div<{
 
   user-select: none;
 
-  &:hover {
-    background-color: ${({ isReadOnly, backgroundColorSecondary }) =>
-      isReadOnly ? backgroundColorSecondary : 'unset'};
-    border-radius: ${({ isReadOnly }) => (isReadOnly ? '0px' : 'unset')};
-    color: ${({ isReadOnly, fontColorSecondary }) =>
-      isReadOnly ? fontColorSecondary : 'unset'};
-    outline: ${({ isReadOnly, fontColorMedium }) =>
-      isReadOnly ? `1px solid ${fontColorMedium}` : 'unset'};
-
-    svg {
+  @media (hover: hover) {
+    &:hover {
+      background-color: ${({ isReadOnly, backgroundColorSecondary }) =>
+        isReadOnly ? backgroundColorSecondary : 'unset'};
+      border-radius: ${({ isReadOnly }) => (isReadOnly ? '0px' : 'unset')};
       color: ${({ isReadOnly, fontColorSecondary }) =>
         isReadOnly ? fontColorSecondary : 'unset'};
-    }
+      outline: ${({ isReadOnly, fontColorMedium }) =>
+        isReadOnly ? `1px solid ${fontColorMedium}` : 'unset'};
 
-    img {
-      opacity: ${({ isReadOnly }) => (isReadOnly ? '0.64' : 'unset')};
+      svg {
+        color: ${({ isReadOnly, fontColorSecondary }) =>
+          isReadOnly ? fontColorSecondary : 'unset'};
+      }
+
+      img {
+        opacity: ${({ isReadOnly }) => (isReadOnly ? '0.64' : 'unset')};
+      }
     }
   }
 `;

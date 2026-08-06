@@ -296,4 +296,29 @@ describe('UpgradeSequenceReaderService', () => {
       expect(result).toEqual({ name: 'Ic1', status: 'failed' });
     });
   });
+
+  describe('getUpgradeStepNames', () => {
+    const sequence = [
+      makeFastInstance('Ic0'),
+      makeStep('slow-instance', 'Sic0'),
+      makeWorkspace('Wc0'),
+    ];
+
+    it('should return every step name when no kind is requested', async () => {
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      expect(service.getUpgradeStepNames()).toEqual(['Ic0', 'Sic0', 'Wc0']);
+    });
+
+    it('should keep only the requested kinds', async () => {
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      expect(
+        service.getUpgradeStepNames({
+          'fast-instance': true,
+          'slow-instance': true,
+        }),
+      ).toEqual(['Ic0', 'Sic0']);
+    });
+  });
 });

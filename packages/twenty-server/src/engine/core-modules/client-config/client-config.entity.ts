@@ -304,13 +304,16 @@ export class ClientConfig {
   @Field(() => ApiConfig)
   api: ApiConfig;
 
-  onboarding: OnboardingConfig;
+  onboarding: OnboardingConfig | null;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
 
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
+
+  @Field(() => Boolean)
+  isCookieSessionEnabled: boolean;
 
   @Field(() => Boolean)
   isMicrosoftMessagingEnabled: boolean;
@@ -340,6 +343,12 @@ export class ClientConfig {
   calendarBookingPageId?: string;
 
   @Field(() => Boolean)
+  isBookCallOnboardingStepEnabled: boolean;
+
+  @Field(() => Boolean)
+  isCompanyEnrichmentEnabled: boolean;
+
+  @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;
 
   @Field(() => Boolean)
@@ -347,6 +356,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isWorkspaceSchemaDDLLocked: boolean;
+
+  @Field(() => Boolean)
+  isOnboardingAiChatEnabled: boolean;
 
   @Field(() => String)
   enterpriseInstanceType: string;

@@ -340,6 +340,14 @@ export class BillingResolver {
     return {
       hasPaymentMethod: result.hasPaymentMethod,
       status: result.status,
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
     };
   }
 

@@ -10,11 +10,6 @@ type WelcomePersonChipSizeVariant = 'default' | 'compact';
 
 const StyledChip = styled.div<{ sizeVariant: WelcomePersonChipSizeVariant }>`
   align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${({ sizeVariant }) =>
-    sizeVariant === 'compact'
-      ? themeCssVariables.border.radius.sm
-      : themeCssVariables.border.radius.md};
   display: inline-flex;
   gap: ${({ sizeVariant }) =>
     sizeVariant === 'compact'

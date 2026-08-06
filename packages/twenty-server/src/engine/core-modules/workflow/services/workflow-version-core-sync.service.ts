@@ -100,6 +100,15 @@ export class WorkflowVersionCoreSyncService {
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
+  async findCoreVersionById(
+    workspaceId: string,
+    coreWorkflowVersionId: string,
+  ): Promise<WorkflowVersionEntity | null> {
+    return this.coreWorkflowVersionRepository.findOne(workspaceId, {
+      where: { id: coreWorkflowVersionId },
+    });
+  }
+
   async mirrorWorkflowVersionWrite({
     workspaceId,
     entityManager,

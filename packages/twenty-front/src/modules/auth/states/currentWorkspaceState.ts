@@ -48,7 +48,7 @@ export type CurrentWorkspace = Pick<
   workspaceCustomApplication: Pick<Application, 'id'> | null;
   installedApplications: Pick<
     Application,
-    'id' | 'name' | 'universalIdentifier' | 'logo' | 'logoUrl'
+    'id' | 'name' | 'universalIdentifier' | 'logoUrl'
   >[];
 };
 

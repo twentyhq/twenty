@@ -53,7 +53,8 @@ export default definePageLayout({
 
 * `type`, `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` veya `'STANDALONE_PAGE'` değerlerinden biridir. Belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` kullanın.
 * `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
-* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (kayıt sayfaları için `VERTICAL_LIST`, panolar için `GRID`). Tek bir bileşen içeren bir sekme, onu otomatik olarak tam genişlikte görüntüler; birden fazla bileşenle kartlar halinde üst üste dizilir.
+* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar: kayıt sayfaları ve bağımsız sayfalar için `VERTICAL_LIST`, panolar için `GRID`. Bir `VERTICAL_LIST` sekmesinde tek bir bileşen tam genişlikte görüntülenir ve tüm sekmeyi kaplar; birden fazla bileşen varsa kartlar halinde üst üste dizilir. Bir `GRID` sekmesi, bileşenlerinin sayısı ne olursa olsun, bunları her zaman 12 sütunlu bir ızgarada kartlar olarak düzenler; bu nedenle, bir bileşenin sayfayı doldurmasını istediğinizde `VERTICAL_LIST` seçin.
+* `layoutMode` değerini açıkça ayarlayın. Bunu atlamak, bir `STANDALONE_PAGE` üzerinde size `VERTICAL_LIST` ve diğer her yerde `GRID` verir; bu da, bir kayıt sayfasında nadiren istediğiniz davranıştır.
 * Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
 * Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 

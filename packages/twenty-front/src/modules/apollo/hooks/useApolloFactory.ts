@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -28,6 +29,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
 
   const navigate = useNavigate();
   const setTokenPair = useSetAtomState(tokenPairState);
+  const setIsCookieAuthActive = useSetAtomState(isCookieAuthActiveState);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -71,6 +73,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
       },
       onUnauthenticatedError: () => {
         setTokenPair(null);
+        setIsCookieAuthActive(false);
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
         setCurrentWorkspace(null);

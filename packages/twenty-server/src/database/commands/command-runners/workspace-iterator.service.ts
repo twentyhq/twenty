@@ -10,6 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 
+import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
@@ -41,6 +42,7 @@ export type WorkspaceIteratorReport = {
   success: {
     workspaceId: string;
   }[];
+  interrupted: boolean;
 };
 
 const DEFAULT_ACTIVATION_STATUSES = PROVISIONED_WORKSPACE_ACTIVATION_STATUSES;
@@ -53,7 +55,12 @@ export class WorkspaceIteratorService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly commandShutdownService: CommandShutdownService,
   ) {}
+
+  listenToShutdownSignals(): void {
+    this.commandShutdownService.listenToShutdownSignals();
+  }
 
   async iterate(args: WorkspaceIteratorArgs): Promise<WorkspaceIteratorReport> {
     const { callback, ...options } = args;
@@ -61,6 +68,7 @@ export class WorkspaceIteratorService {
     const report: WorkspaceIteratorReport = {
       fail: [],
       success: [],
+      interrupted: false,
     };
 
     const workspaceIdsToProcess =
@@ -73,6 +81,17 @@ export class WorkspaceIteratorService {
     }
 
     for (const [index, workspaceId] of workspaceIdsToProcess.entries()) {
+      if (this.commandShutdownService.isShutdownRequested()) {
+        this.logger.warn(
+          `Shutdown requested, stopping before workspace ${workspaceId}. ` +
+            `${workspaceIdsToProcess.length - index} workspace(s) left untouched.`,
+        );
+
+        report.interrupted = true;
+
+        break;
+      }
+
       this.logger.log(
         `Running on workspace ${workspaceId} ${index + 1}/${workspaceIdsToProcess.length}`,
       );

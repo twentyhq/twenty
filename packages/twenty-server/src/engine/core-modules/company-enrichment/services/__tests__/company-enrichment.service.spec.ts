@@ -1,9 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { COMPANY_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
@@ -13,26 +11,29 @@ import {
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 describe('CompanyEnrichmentService', () => {
   let service: CompanyEnrichmentService;
-  let userWorkspaceRepository: { findOne: jest.Mock };
+  let userWorkspaceService: { isWorkspaceCreator: jest.Mock };
   let peopleDataLabsCompanyClientService: {
     enrichCompanyByDomain: jest.Mock;
     isEnabled: jest.Mock;
   };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
-  let twentyConfigService: { isWorkspaceCompanyEnrichmentEnabled: jest.Mock };
-  let featureFlagService: { isFeatureEnabled: jest.Mock };
+  let configValues: Record<string, unknown>;
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
 
   beforeEach(async () => {
-    userWorkspaceRepository = {
-      findOne: jest.fn().mockResolvedValue({ userId: creatorUserId }),
+    userWorkspaceService = {
+      isWorkspaceCreator: jest
+        .fn()
+        .mockImplementation(({ userId }) =>
+          Promise.resolve(userId === creatorUserId),
+        ),
     };
     peopleDataLabsCompanyClientService = {
       enrichCompanyByDomain: jest.fn(),
@@ -40,19 +41,17 @@ describe('CompanyEnrichmentService', () => {
     };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
     keyValuePairService = { set: jest.fn() };
-    twentyConfigService = {
-      isWorkspaceCompanyEnrichmentEnabled: jest.fn().mockReturnValue(true),
-    };
-    featureFlagService = {
-      isFeatureEnabled: jest.fn().mockResolvedValue(true),
+    configValues = {
+      IS_ONBOARDING_AI_CHAT_ENABLED: true,
+      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CompanyEnrichmentService,
         {
-          provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: userWorkspaceRepository,
+          provide: UserWorkspaceService,
+          useValue: userWorkspaceService,
         },
         {
           provide: PeopleDataLabsCompanyClientService,
@@ -64,11 +63,7 @@ describe('CompanyEnrichmentService', () => {
         },
         {
           provide: TwentyConfigService,
-          useValue: twentyConfigService,
-        },
-        {
-          provide: FeatureFlagService,
-          useValue: featureFlagService,
+          useValue: { get: (key: string) => configValues[key] },
         },
         {
           provide: KeyValuePairService,
@@ -210,44 +205,6 @@ describe('CompanyEnrichmentService', () => {
     );
   });
 
-  it('should return unavailable without enriching when onboarding AI chat is off', async () => {
-    featureFlagService.isFeatureEnabled.mockResolvedValue(false);
-
-    const result = await service.enrichCompanyForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'foo@acme.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
-    expect(
-      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
-    ).not.toHaveBeenCalled();
-    expect(keyValuePairService.set).not.toHaveBeenCalled();
-  });
-
-  it('should return unavailable without any lookup when the enrichment flag is off', async () => {
-    twentyConfigService.isWorkspaceCompanyEnrichmentEnabled.mockReturnValue(
-      false,
-    );
-
-    const result = await service.enrichCompanyForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'foo@acme.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
-    expect(
-      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
-    ).not.toHaveBeenCalled();
-    expect(keyValuePairService.set).not.toHaveBeenCalled();
-  });
-
   it('should not consume throttle tokens when the feature is disabled', async () => {
     peopleDataLabsCompanyClientService.isEnabled.mockReturnValue(false);
 
@@ -357,6 +314,90 @@ describe('CompanyEnrichmentService', () => {
       domain: 'acme.com',
       name: 'Acme Inc',
     });
+  });
+
+  it('should not call the client when no api key is configured', async () => {
+    configValues = { IS_ONBOARDING_AI_CHAT_ENABLED: true };
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result.outcome).toBe('unavailable');
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should not call the client when no consumer of the enrichment is configured', async () => {
+    configValues = {
+      IS_ONBOARDING_AI_CHAT_ENABLED: false,
+      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+    };
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us' },
+    { ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 50 },
+    {
+      CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
+      ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 0,
+    },
+  ])(
+    'should not call the client for a half-configured book-call step (%j)',
+    async (bookCallConfig) => {
+      configValues = {
+        IS_ONBOARDING_AI_CHAT_ENABLED: false,
+        PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+        ...bookCallConfig,
+      };
+
+      await service.enrichCompanyForWorkspaceCreator({
+        userId: creatorUserId,
+        email: 'foo@acme.com',
+        workspaceId,
+      });
+
+      expect(
+        peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+      ).not.toHaveBeenCalled();
+    },
+  );
+
+  it('should enrich for the book-call step alone when the ai chat is disabled', async () => {
+    configValues = {
+      IS_ONBOARDING_AI_CHAT_ENABLED: false,
+      CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
+      ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 50,
+      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+    };
+    peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
+      outcome: 'matched',
+      data: { name: 'Acme Inc', employee_count: 320 },
+    });
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result.outcome).toBe('matched');
+    expect(result.enrichment).toMatchObject({ employeeCount: 320 });
   });
 
   it('should rethrow non throttler errors from the throttler', async () => {

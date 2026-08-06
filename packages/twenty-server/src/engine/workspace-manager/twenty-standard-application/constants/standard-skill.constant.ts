@@ -41,6 +41,9 @@ export const STANDARD_SKILL = {
   'custom-objects-cleanup': {
     universalIdentifier: '20202020-a1d3-4e5f-b6c7-8d9e0f1a2b3c',
   },
+  roles: {
+    universalIdentifier: '20202020-3f7c-4d21-9e58-a4b6c8d05e17',
+  },
 } as const satisfies Record<
   string,
   {

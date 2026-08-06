@@ -54,6 +54,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         axisNameDisplay
         displayDataLabel
         displayLegend
+        numberFormat
         rangeMin
         rangeMax
         color
@@ -84,6 +85,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         axisNameDisplay
         displayDataLabel
         displayLegend
+        numberFormat
         rangeMin
         rangeMax
         color
@@ -107,6 +109,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         displayDataLabel
         showCenterMetric
         displayLegend
+        numberFormat
         hideEmptyCategory
         splitMultiValueFields
         color
@@ -164,6 +167,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         fieldDisplayMode
         fieldMetadataId
         viewId
+        nestedRelationFieldMetadataId
       }
       ... on FieldRichTextConfiguration {
         configurationType

@@ -55,3 +55,5 @@ La **couche de mise en page** d’une application Twenty est tout ce que l’uti
 | **Menu de commande (Cmd+K)**                                 | Une action rapide épinglée ou une commande masquée                                                                                                | `defineCommandMenuItem`                   |
 
 Les composants frontaux s’exécutent à l’intérieur d’un Web Worker isolé en utilisant Remote DOM — ils sont rendus *nativement* dans la page (et non dans une iframe), mais ne peuvent pas accéder directement à la page hôte ou au DOM. La communication avec Twenty se fait via une API hôte de passage de messages.
+
+Elles sont encore en cours de développement actif : le bac à sable implémente un DOM partiel, donc les usages avancés peuvent échouer. Voir [Limitations actuelles](/l/fr/developers/extend/apps/layout/front-components#current-limitations).

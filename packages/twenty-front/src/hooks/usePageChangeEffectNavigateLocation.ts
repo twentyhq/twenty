@@ -1,7 +1,7 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
@@ -35,7 +35,7 @@ const readReturnToPathFromUrlSearchParams = (): string | null => {
 };
 
 export const usePageChangeEffectNavigateLocation = () => {
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const onboardingStatus = useOnboardingStatus();
@@ -93,7 +93,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
 
   if (
-    (!hasAccessTokenPair || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
+    (!isLogged || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
     !someMatchingLocationOf([
       ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,
@@ -164,6 +164,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.InviteTeam;
   }
 
+  if (
+    onboardingStatus === OnboardingStatus.BOOK_CALL &&
+    !isMatchingLocation(location, AppPath.BookCall)
+  ) {
+    return AppPath.BookCall;
+  }
+
   if (isBillingEnabled && onboardingStatus === OnboardingStatus.COMPLETED) {
     if (isMatchingLocation(location, AppPath.InviteTeam)) {
       return AppPath.PlanRequired;
@@ -180,7 +187,7 @@ export const usePageChangeEffectNavigateLocation = () => {
       ...ONGOING_USER_CREATION_PATHS,
     ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
-    hasAccessTokenPair &&
+    isLogged &&
     isOnAWorkspace
   ) {
     if (
@@ -193,7 +200,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     return resolvedReturnToPath ?? onboardingCompletedPath;
   }
 
-  if (isMatchingLocation(location, AppPath.Index) && hasAccessTokenPair) {
+  if (isMatchingLocation(location, AppPath.Index) && isLogged) {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
