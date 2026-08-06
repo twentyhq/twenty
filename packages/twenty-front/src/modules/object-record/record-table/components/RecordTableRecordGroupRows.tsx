@@ -1,5 +1,10 @@
+import { pointerIntersection } from '@dnd-kit/collision';
+import { useDroppable } from '@dnd-kit/react';
+
+import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
@@ -8,21 +13,31 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
 import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
+import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledRecordGroupEndDropZone = styled(DragDropItemEndDropZone)`
+const StyledRecordGroupDropTarget = styled.div`
+  position: relative;
   width: 100%;
 `;
 
 export const RecordTableRecordGroupRows = () => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
+
+  const isDraggingRecord = useAtomComponentStateValue(
+    isDraggingRecordComponentState,
+    recordIndexId,
+  );
 
   const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
@@ -42,6 +57,14 @@ export const RecordTableRecordGroupRows = () => {
     () => new Map(allRecordIds.map((recordId, index) => [recordId, index])),
     [allRecordIds],
   );
+
+  const { ref: endDropZoneRef } = useDroppable({
+    id: currentRecordGroupId,
+    accept: RECORD_TABLE_ROW_DND_TYPE,
+    collisionPriority: DND_KIT_COLLISION_PRIORITY,
+    collisionDetector: pointerIntersection,
+    data: { droppableId: currentRecordGroupId },
+  });
 
   if (shouldHide) {
     return null;
@@ -69,17 +92,19 @@ export const RecordTableRecordGroupRows = () => {
           />
         );
       })}
-      <StyledRecordGroupEndDropZone
-        id={`record-group-end-drop-zone-${currentRecordGroupId}`}
-        accept={RECORD_TABLE_ROW_DND_TYPE}
-        data={{
-          droppableId: currentRecordGroupId,
-          index: recordIndexRecordIdsByGroup.length,
-        }}
-      >
+      <StyledRecordGroupDropTarget ref={endDropZoneRef}>
+        {/* Zero footprint at rest; expands during a row drag so the zone
+            stays droppable even when neither action row below renders. */}
+        <DragDropItemDropTarget
+          index={recordIndexRecordIdsByGroup.length}
+          droppableId={currentRecordGroupId}
+          orientation="horizontal"
+          compact={!isDraggingRecord}
+          seamAligned
+        />
         <RecordTableRecordGroupSectionLoadMore />
         <RecordTableRecordGroupSectionAddNew />
-      </StyledRecordGroupEndDropZone>
+      </StyledRecordGroupDropTarget>
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}

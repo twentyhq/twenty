@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
+import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -46,6 +48,12 @@ export class ClientConfigService {
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
     const calendarBookingPageId = this.twentyConfigService.get(
       'CALENDAR_BOOKING_PAGE_ID',
+    );
+    const isBookCallOnboardingStepEnabled = isDefined(
+      readBookCallStepMinEmployeeCount(this.twentyConfigService),
+    );
+    const isCompanyEnrichmentEnabled = readIsCompanyEnrichmentEnabled(
+      this.twentyConfigService,
     );
 
     const isEmailingDomainInDemoMode =
@@ -198,6 +206,7 @@ export class ClientConfigService {
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
+      subdomainMinLength: this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
@@ -252,7 +261,9 @@ export class ClientConfigService {
       analyticsEnabled: this.twentyConfigService.get('ANALYTICS_ENABLED'),
       canManageFeatureFlags:
         this.twentyConfigService.get('NODE_ENV') ===
-          NodeEnvironment.DEVELOPMENT || isBillingEnabled,
+          NodeEnvironment.DEVELOPMENT ||
+        isBillingEnabled ||
+        this.twentyConfigService.get('IS_FEATURE_FLAG_MANAGEMENT_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
       isCookieSessionEnabled: this.twentyConfigService.get(
         'AUTH_COOKIE_SESSIONS_ENABLED',
@@ -282,6 +293,8 @@ export class ClientConfigService {
       calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
         ? calendarBookingPageId
         : undefined,
+      isBookCallOnboardingStepEnabled,
+      isCompanyEnrichmentEnabled,
       isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(

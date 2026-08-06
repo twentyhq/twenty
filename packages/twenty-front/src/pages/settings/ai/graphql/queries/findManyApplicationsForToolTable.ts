@@ -6,7 +6,7 @@ export const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
       id
       name
       universalIdentifier
-      logo
+      logoUrl
     }
   }
 `;

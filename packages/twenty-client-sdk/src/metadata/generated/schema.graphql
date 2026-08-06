@@ -188,6 +188,7 @@ enum EngineComponentKey {
   COMPOSE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN_TEST
+  EMAIL_BLOCK_SETTINGS
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -968,6 +969,7 @@ enum OnboardingStatus {
   SYNC_EMAIL
   APPS_INSTALLATION
   INVITE_TEAM
+  BOOK_CALL
   COMPLETED
 }
 
@@ -1309,6 +1311,7 @@ type FieldConfiguration {
   fieldMetadataId: String!
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
+  nestedRelationFieldMetadataId: String
 }
 
 """Display mode for field configuration widgets"""
@@ -1793,6 +1796,7 @@ enum FeatureFlagKey {
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
+  IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
 }
 
 type WorkspaceUrls {
@@ -1972,6 +1976,7 @@ type ClientConfig {
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
+  subdomainMinLength: Float!
   frontDomain: String!
   publicFunctionDomain: String
   analyticsEnabled: Boolean!
@@ -1992,6 +1997,8 @@ type ClientConfig {
   isEmailingDomainInDemoMode: Boolean!
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
+  isBookCallOnboardingStepEnabled: Boolean!
+  isCompanyEnrichmentEnabled: Boolean!
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
@@ -2188,6 +2195,7 @@ type MarketplaceAppDetail {
 type WorkspaceCompanyEnrichmentResult {
   outcome: WorkspaceCompanyEnrichmentOutcome!
   enrichment: JSON
+  isBookCallOnboardingStepPending: Boolean!
 }
 
 enum WorkspaceCompanyEnrichmentOutcome {
@@ -3483,6 +3491,7 @@ type Mutation {
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
+  completeBookCallOnboardingStep: OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
@@ -3725,6 +3734,7 @@ enum FileFolder {
   Dependencies
   Workflow
   EmailAttachment
+  EmailImage
   AppTarball
   GeneratedSdkClient
   Dpa
@@ -4703,7 +4713,18 @@ input CreateEmailingDomainInput {
 
 input RunAgentInput {
   agentUniversalIdentifier: String!
-  prompt: String!
+  prompt: String
+  messages: [RunAgentMessageInput!]
+}
+
+input RunAgentMessageInput {
+  role: RunAgentMessageRole!
+  content: String!
+}
+
+enum RunAgentMessageRole {
+  user
+  assistant
 }
 
 input CreateWebhookInput {

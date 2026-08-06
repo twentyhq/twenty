@@ -42,6 +42,31 @@ msgstr "\"{0}\" ليس حقلاً فرعياً صالحاً لـ \"{1}\"."
 msgid "\"{payloadKey}\" is not a valid workspace member field."
 msgstr "\"{payloadKey}\" ليس حقلا صالحا لعضو مساحة العمل."
 
+#. js-lingui-id: ddGPbK
+#. placeholder {0}: nestedField.label
+#. placeholder {1}: sourceField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} does not belong to the object {1} points to."
+msgstr ""
+
+#. js-lingui-id: bSLhyc
+#. placeholder {0}: sourceField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} does not belong to this widget's object."
+msgstr ""
+
+#. js-lingui-id: MTdK9i
+#. placeholder {0}: sourceField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} must be a one-to-many or many-to-one relation field."
+msgstr ""
+
+#. js-lingui-id: EIb+ss
+#. placeholder {0}: nestedField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} must be a one-to-many relation field."
+msgstr ""
+
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -162,6 +187,11 @@ msgstr "حدث تعارض في الاسم."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for FOLDER type"
+msgstr ""
+
+#. js-lingui-id: 9er1TA
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "A nested relation widget must use the table layout."
 msgstr ""
 
 #. js-lingui-id: ChJFls
@@ -6872,6 +6902,11 @@ msgstr "عمليات التشغيل"
 msgid "Saturday"
 msgstr "السبت"
 
+#. js-lingui-id: H2SymB
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Save Campaign"
+msgstr ""
+
 #. js-lingui-id: 4ba0NE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7667,6 +7702,11 @@ msgstr "مُنفذ سير العمل"
 msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
 msgstr "لا يمكن تحديث الحقل \"{field}\". يُرجى الاتصال بمسؤول مساحة العمل الخاص بك."
 
+#. js-lingui-id: xM30Ha
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "The field configured for this widget could not be found."
+msgstr ""
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -7725,6 +7765,11 @@ msgstr ""
 #. js-lingui-id: PgpPoi
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect was not found."
+msgstr ""
+
+#. js-lingui-id: fIq00W
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "The nested relation field configured for this widget could not be found."
 msgstr ""
 
 #. js-lingui-id: kdTB4e
@@ -7957,6 +8002,11 @@ msgstr "توجد مشكلة في رمز التحقق الخاص بك. يرجى �
 msgid "There is no failed message to retry."
 msgstr "لا توجد رسالة فاشلة لإعادة المحاولة."
 
+#. js-lingui-id: Yi0Q/T
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
+msgstr ""
+
 #. js-lingui-id: Iy9pZw
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
@@ -8021,6 +8071,11 @@ msgstr ""
 #. js-lingui-id: ZyEq3L
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign no longer exists."
+msgstr ""
+
+#. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-email-content.util.ts
+msgid "This campaign's email content is invalid."
 msgstr ""
 
 #. js-lingui-id: 99gsJ/
@@ -8119,6 +8174,11 @@ msgstr "صلاحية الحقل هذه مضبوطة بالفعل للدور"
 #: src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util.ts
 msgid "This field references an object that could not be found"
 msgstr "يشير هذا الحقل إلى كائن تعذّر العثور عليه"
+
+#. js-lingui-id: 5F02zD
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "This file format is not supported."
+msgstr ""
 
 #. js-lingui-id: HUJCXI
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts

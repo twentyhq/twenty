@@ -84,6 +84,7 @@ describe('ClientConfigService', () => {
             IS_MULTIWORKSPACE_ENABLED: true,
             IS_EMAIL_VERIFICATION_REQUIRED: true,
             DEFAULT_SUBDOMAIN: 'app',
+            SUBDOMAIN_MIN_LENGTH: 3,
             NODE_ENV: NodeEnvironment.DEVELOPMENT,
             SUPPORT_DRIVER: SupportDriver.FRONT,
             SUPPORT_FRONT_CHAT_ID: 'chat-123',
@@ -106,6 +107,7 @@ describe('ClientConfigService', () => {
             IS_CONFIG_VARIABLES_IN_DB_ENABLED: false,
             IS_IMAP_SMTP_CALDAV_ENABLED: false,
             CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
+            ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 50,
             CLOUDFLARE_API_KEY: undefined,
             CLOUDFLARE_ZONE_ID: undefined,
             ALLOW_REQUESTS_TO_TWENTY_ICONS: false,
@@ -153,6 +155,7 @@ describe('ClientConfigService', () => {
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: true,
         defaultSubdomain: 'app',
+        subdomainMinLength: 3,
         frontDomain: 'app.twenty.com',
         publicFunctionDomain: null,
         support: {
@@ -190,6 +193,8 @@ describe('ClientConfigService', () => {
         isEmailingDomainInDemoMode: false,
         allowRequestsToTwentyIcons: false,
         calendarBookingPageId: 'team/twenty/talk-to-us',
+        isBookCallOnboardingStepEnabled: true,
+        isCompanyEnrichmentEnabled: false,
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
         isOnboardingAiChatEnabled: false,
@@ -239,6 +244,7 @@ describe('ClientConfigService', () => {
         .mockImplementation((key: string) => {
           if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'IS_FEATURE_FLAG_MANAGEMENT_ENABLED') return false;
 
           return undefined;
         });
@@ -287,6 +293,22 @@ describe('ClientConfigService', () => {
         .mockImplementation((key: string) => {
           if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return true;
+
+          return undefined;
+        });
+
+      const result = await service.getClientConfig();
+
+      expect(result.canManageFeatureFlags).toBe(true);
+    });
+
+    it('should allow managing feature flags when IS_FEATURE_FLAG_MANAGEMENT_ENABLED is on', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
+          if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'IS_FEATURE_FLAG_MANAGEMENT_ENABLED') return true;
 
           return undefined;
         });

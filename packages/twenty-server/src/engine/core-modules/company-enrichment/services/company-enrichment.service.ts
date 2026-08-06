@@ -15,6 +15,7 @@ import { type PeopleDataLabsCompanyEnrichResult } from 'src/engine/core-modules/
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
@@ -47,8 +48,7 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
-    // The enrichment only feeds the AI-chat workspace setup, so it is pointless without it.
-    if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
+    if (!this.hasEnrichmentConsumer()) {
       return { outcome: 'unavailable', enrichment: null };
     }
 
@@ -104,14 +104,14 @@ export class CompanyEnrichmentService {
 
     // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
     if (result.outcome !== 'skipped') {
-      await this.recordEnrichmentAttempt({
-        workspaceId,
-        domain,
-        result,
-      });
+      await this.recordEnrichmentAttempt({ workspaceId, domain, result });
     }
 
     return enrichmentResult;
+  }
+
+  private hasEnrichmentConsumer(): boolean {
+    return readIsCompanyEnrichmentEnabled(this.twentyConfigService);
   }
 
   private resolveEnrichmentResult({

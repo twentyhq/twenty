@@ -2,7 +2,7 @@ import { defineConnectionProvider } from 'twenty-sdk/define';
 
 import {
   SLACK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
-  SLACK_TEAM_CLAIM_UNIVERSAL_IDENTIFIER,
+  SLACK_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
   SLACK_TEAM_RELEASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
@@ -12,7 +12,7 @@ export default defineConnectionProvider({
   displayName: 'Slack',
   type: 'oauth',
   onConnectLogicFunction: {
-    universalIdentifier: SLACK_TEAM_CLAIM_UNIVERSAL_IDENTIFIER,
+    universalIdentifier: SLACK_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
   },
   onDisconnectLogicFunction: {
     universalIdentifier: SLACK_TEAM_RELEASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,

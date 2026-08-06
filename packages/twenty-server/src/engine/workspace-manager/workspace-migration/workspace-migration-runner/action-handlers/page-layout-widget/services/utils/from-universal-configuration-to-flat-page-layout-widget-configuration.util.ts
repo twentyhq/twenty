@@ -260,10 +260,9 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.RECORD_TABLE: {
-      const { viewId: viewUniversalIdentifier, ...rest } =
-        universalConfiguration;
+      const { viewUniversalIdentifier, ...rest } = universalConfiguration;
 
-      let viewId: string | undefined = undefined;
+      let viewId: string | null = null;
 
       if (isDefined(viewUniversalIdentifier)) {
         const flatView = findFlatEntityByUniversalIdentifier({
@@ -317,6 +316,8 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       const {
         fieldMetadataId: fieldMetadataUniversalIdentifier,
         viewId: viewUniversalIdentifier,
+        nestedRelationFieldMetadataId:
+          nestedRelationFieldMetadataUniversalIdentifier,
         ...rest
       } = universalConfiguration;
 
@@ -324,6 +325,16 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         fieldMetadataUniversalIdentifier,
         flatFieldMetadataMaps,
       });
+
+      const nestedRelationFieldMetadataId = isDefined(
+        nestedRelationFieldMetadataUniversalIdentifier,
+      )
+        ? resolveFieldMetadataIdOrThrow({
+            fieldMetadataUniversalIdentifier:
+              nestedRelationFieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          })
+        : undefined;
 
       let viewId: string | undefined = undefined;
 
@@ -343,7 +354,14 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         viewId = flatView.id;
       }
 
-      return { ...rest, fieldMetadataId, viewId };
+      return {
+        ...rest,
+        fieldMetadataId,
+        viewId,
+        ...(isDefined(nestedRelationFieldMetadataId)
+          ? { nestedRelationFieldMetadataId }
+          : {}),
+      };
     }
 
     case WidgetConfigurationType.VIEW:

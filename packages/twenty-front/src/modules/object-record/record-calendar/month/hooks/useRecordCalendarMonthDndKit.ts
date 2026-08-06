@@ -11,7 +11,7 @@ import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRe
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
-import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
@@ -86,9 +86,10 @@ export const useRecordCalendarMonthDndKit = (): {
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
 
@@ -116,9 +117,10 @@ export const useRecordCalendarMonthDndKit = (): {
     const sourceDroppableId = (source.data as DragDropItemData).droppableId;
     const sourceIndex = (source.data as DragDropItemData).index;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
     if (!isDefined(resolvedDrop)) {

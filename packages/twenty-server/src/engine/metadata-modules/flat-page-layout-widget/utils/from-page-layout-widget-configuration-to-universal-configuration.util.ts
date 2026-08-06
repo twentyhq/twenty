@@ -281,11 +281,10 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     case WidgetConfigurationType.RECORD_TABLE: {
       const { viewId, ...rest } = configuration;
 
-      let viewUniversalIdentifier: string | undefined = undefined;
+      let viewUniversalIdentifier: string | null = null;
 
       if (isDefined(viewId)) {
-        viewUniversalIdentifier =
-          viewUniversalIdentifierById[viewId] ?? undefined;
+        viewUniversalIdentifier = viewUniversalIdentifierById[viewId] ?? null;
 
         if (
           !isDefined(viewUniversalIdentifier) &&
@@ -300,7 +299,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
 
       return {
         ...rest,
-        viewId: viewUniversalIdentifier,
+        viewUniversalIdentifier,
       };
     }
 
@@ -327,8 +326,13 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELD: {
-      const { fieldMetadataId, fieldDisplayMode, configurationType, viewId } =
-        configuration;
+      const {
+        fieldMetadataId,
+        fieldDisplayMode,
+        configurationType,
+        viewId,
+        nestedRelationFieldMetadataId,
+      } = configuration;
 
       const fieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
@@ -336,6 +340,16 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier,
         });
+
+      const nestedRelationFieldMetadataUniversalIdentifier = isDefined(
+        nestedRelationFieldMetadataId,
+      )
+        ? (getFieldMetadataUniversalIdentifier({
+            fieldMetadataId: nestedRelationFieldMetadataId,
+            fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
+          }) ?? nestedRelationFieldMetadataId)
+        : undefined;
 
       let viewUniversalIdentifier: string | undefined = undefined;
 
@@ -359,6 +373,12 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         fieldMetadataId: fieldMetadataUniversalIdentifier ?? fieldMetadataId,
         fieldDisplayMode,
         viewId: viewUniversalIdentifier,
+        ...(isDefined(nestedRelationFieldMetadataUniversalIdentifier)
+          ? {
+              nestedRelationFieldMetadataId:
+                nestedRelationFieldMetadataUniversalIdentifier,
+            }
+          : {}),
       };
     }
 
