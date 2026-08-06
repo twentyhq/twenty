@@ -38,6 +38,7 @@ const ANSWERED_ASK_QUESTIONS_PART_EXPRESSION = `"answeredQuestionPart"."toolOutp
 const ORDER_EXPRESSION_BY_SORT_FIELD: Record<AdminChatThreadSortField, string> =
   {
     [AdminChatThreadSortField.MESSAGE_COUNT]: '"messageCount"',
+    [AdminChatThreadSortField.REPLY_COUNT]: '"userReplyCount"',
     [AdminChatThreadSortField.CREATED_AT]: '"thread"."createdAt"',
     [AdminChatThreadSortField.UPDATED_AT]: '"thread"."updatedAt"',
   };

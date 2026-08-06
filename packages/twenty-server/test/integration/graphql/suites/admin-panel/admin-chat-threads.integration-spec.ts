@@ -536,6 +536,26 @@ describe('Admin panel global chat threads (integration)', () => {
       );
     });
 
+    it('sorts by reply count, counting answered question cards', async () => {
+      const result = await fetchThreads({
+        scope: 'ALL',
+        sortBy: 'REPLY_COUNT',
+        sortDirection: 'DESC',
+        limit: 100,
+      });
+
+      const threadIds = result.threads.map((thread) => thread.id);
+
+      // The answered-question thread has one reply and no user message, so it
+      // must outrank threads whose only messages are from the assistant.
+      expect(threadIds.indexOf(answeredQuestionThreadId)).toBeLessThan(
+        threadIds.indexOf(pendingQuestionThreadId),
+      );
+      expect(threadIds.indexOf(kickoffThreadId)).toBeLessThan(
+        threadIds.indexOf(pendingQuestionThreadId),
+      );
+    });
+
     it('paginates with totalCount and hasMore', async () => {
       const result = await fetchThreads({ limit: 1 });
 

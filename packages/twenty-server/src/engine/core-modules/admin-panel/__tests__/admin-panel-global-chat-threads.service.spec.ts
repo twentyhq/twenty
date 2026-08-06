@@ -410,6 +410,19 @@ describe('AdminPanelGlobalChatThreadsService', () => {
       );
     });
 
+    it('should sort by the reply count alias', async () => {
+      await service.getGlobalChatThreads({
+        ...DEFAULT_ARGS,
+        sortBy: AdminChatThreadSortField.REPLY_COUNT,
+        sortDirection: AdminChatThreadSortDirection.DESC,
+      });
+
+      expect(threadQueryBuilderMocks[0].orderBy).toHaveBeenCalledWith(
+        '"userReplyCount"',
+        'DESC',
+      );
+    });
+
     it('should sort by thread columns for date sort fields', async () => {
       await service.getGlobalChatThreads(DEFAULT_ARGS);
 

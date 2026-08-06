@@ -116,6 +116,7 @@ export enum AdminChatThreadSortDirection {
 export enum AdminChatThreadSortField {
   CREATED_AT = 'CREATED_AT',
   MESSAGE_COUNT = 'MESSAGE_COUNT',
+  REPLY_COUNT = 'REPLY_COUNT',
   UPDATED_AT = 'UPDATED_AT'
 }
 

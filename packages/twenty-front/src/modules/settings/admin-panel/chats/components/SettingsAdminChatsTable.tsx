@@ -30,7 +30,12 @@ export const SettingsAdminChatsTable = ({
           label={t`Msgs`}
           align="right"
         />
-        <TableHeader align="right">{t`Replies`}</TableHeader>
+        <SortableTableHeader
+          tableId={SETTINGS_ADMIN_CHATS_TABLE_ID}
+          fieldName={AdminChatThreadSortField.REPLY_COUNT}
+          label={t`Replies`}
+          align="right"
+        />
         <TableHeader>{t`Flags`}</TableHeader>
         <SortableTableHeader
           tableId={SETTINGS_ADMIN_CHATS_TABLE_ID}
