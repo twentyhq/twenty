@@ -688,10 +688,22 @@ export class OnboardingService {
 
     await this.messageQueueService.add<InstallOnboardingAppsJobData>(
       INSTALL_ONBOARDING_APPS_JOB_NAME,
-      { workspaceId, universalIdentifiers: installableUniversalIdentifiers },
+      {
+        workspaceId,
+        universalIdentifiers: installableUniversalIdentifiers,
+        userId,
+      },
       { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
     );
+  }
 
+  async clearReversibleOnboardingStepHistoryAfterAppsInstalled({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
     await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) =>

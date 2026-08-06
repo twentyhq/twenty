@@ -369,6 +369,7 @@ describe('OnboardingService', () => {
         {
           workspaceId,
           universalIdentifiers: [callRecorderId, peopleDataLabsId],
+          userId,
         },
         { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
       );
@@ -438,7 +439,7 @@ describe('OnboardingService', () => {
       expect(userVarsService.set).not.toHaveBeenCalled();
     });
 
-    it('should clear every step to go back to when apps were actually installed', async () => {
+    it('should leave clearing the steps to go back to to the install job', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
 
       await service.triggerInstallAppsOnboardingStep({
@@ -446,6 +447,15 @@ describe('OnboardingService', () => {
         workspaceId,
         universalIdentifiers: [callRecorderId],
         isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should clear every step to go back to once the install job runs', async () => {
+      await service.clearReversibleOnboardingStepHistoryAfterAppsInstalled({
+        userId,
+        workspaceId,
       });
 
       expect(userVarsService.set).toHaveBeenCalledWith(

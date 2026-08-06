@@ -13,6 +13,7 @@ describe('InstallOnboardingAppsJob', () => {
   let onboardingService: OnboardingService;
 
   const workspaceId = 'workspace-id';
+  const userId = 'user-id';
   const callRecorderId = 'call-recorder-uid';
   const peopleDataLabsId = 'people-data-labs-uid';
 
@@ -39,6 +40,7 @@ describe('InstallOnboardingAppsJob', () => {
           provide: OnboardingService,
           useValue: {
             creditInstallAppsReward: jest.fn(),
+            clearReversibleOnboardingStepHistoryAfterAppsInstalled: jest.fn(),
           },
         },
       ],
@@ -151,6 +153,46 @@ describe('InstallOnboardingAppsJob', () => {
       workspaceId,
       rewardAppsCount: 2,
     });
+    expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
+      1,
+    );
+  });
+
+  it('should clear every step to go back to once the apps are scheduled', async () => {
+    jest
+      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .mockResolvedValue(buildRegistration('registration-id'));
+    jest
+      .spyOn(applicationInstallService, 'installApplication')
+      .mockResolvedValue(true);
+
+    await job.handle({
+      workspaceId,
+      universalIdentifiers: [callRecorderId],
+      userId,
+    });
+
+    expect(
+      onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled,
+    ).toHaveBeenCalledWith({ userId, workspaceId });
+  });
+
+  it('should still install when the job was enqueued before it carried a user', async () => {
+    jest
+      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .mockResolvedValue(buildRegistration('registration-id'));
+    jest
+      .spyOn(applicationInstallService, 'installApplication')
+      .mockResolvedValue(true);
+
+    await job.handle({
+      workspaceId,
+      universalIdentifiers: [callRecorderId],
+    });
+
+    expect(
+      onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled,
+    ).not.toHaveBeenCalled();
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       1,
     );

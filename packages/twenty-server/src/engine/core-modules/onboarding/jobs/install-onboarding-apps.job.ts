@@ -27,7 +27,14 @@ export class InstallOnboardingAppsJob {
   async handle({
     workspaceId,
     universalIdentifiers,
+    userId,
   }: InstallOnboardingAppsJobData): Promise<void> {
+    if (isDefined(userId)) {
+      await this.onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled(
+        { userId, workspaceId },
+      );
+    }
+
     await this.onboardingService.creditInstallAppsReward({
       workspaceId,
       rewardAppsCount: universalIdentifiers.length,
