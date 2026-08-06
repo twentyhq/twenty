@@ -6,6 +6,7 @@ import { type SlackThreadReference } from 'src/logic-functions/types/slack-threa
 import { type SlackThreadSubscriptionState } from 'src/logic-functions/types/slack-thread-subscription-state.type';
 import { type SlackThreadSubscription } from 'src/logic-functions/types/slack-thread-subscription.type';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
+import { isSlackExpiryActive } from 'src/logic-functions/utils/is-slack-expiry-active';
 
 export const getSlackThreadSubscriptionState = async ({
   channelId,
@@ -22,5 +23,5 @@ export const getSlackThreadSubscriptionState = async ({
     return 'none';
   }
 
-  return subscription.expiresAt <= Date.now() ? 'expired' : 'active';
+  return isSlackExpiryActive(subscription) ? 'active' : 'expired';
 };
