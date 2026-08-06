@@ -5,10 +5,9 @@ import { createSlackAssistantRequest } from 'src/logic-functions/data/create-sla
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { clearLapsedSlackThreadSubscription } from 'src/logic-functions/utils/clear-lapsed-slack-thread-subscription';
 import { getSlackThreadSubscriptionState } from 'src/logic-functions/utils/get-slack-thread-subscription-state';
+import { handleExpiredSlackThreadFollowUp } from 'src/logic-functions/utils/handle-expired-slack-thread-follow-up';
 import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
-import { nudgeExpiredSlackThread } from 'src/logic-functions/utils/nudge-expired-slack-thread';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 import { replyToEmptySlackAssistantRequest } from 'src/logic-functions/utils/reply-to-empty-slack-assistant-request';
 
@@ -28,31 +27,19 @@ export const enqueueSlackAssistantRequest = async (
   }
 
   if (parsed.requiresActiveThreadSubscription) {
-    const subscriptionState = await getSlackThreadSubscriptionState({
+    const threadReference = {
       channelId: parsed.request.slackChannelId,
       threadTimestamp: parsed.request.slackThreadTimestamp,
-    });
+    };
+
+    const subscriptionState =
+      await getSlackThreadSubscriptionState(threadReference);
 
     if (subscriptionState === 'expired') {
-      const nudgeResult = await nudgeExpiredSlackThread({
-        slackChannelId: parsed.request.slackChannelId,
+      return await handleExpiredSlackThreadFollowUp({
+        ...threadReference,
         slackUserId: parsed.request.slackUserId,
-        threadTimestamp: parsed.request.slackThreadTimestamp,
       });
-
-      if (nudgeResult.success) {
-        await clearLapsedSlackThreadSubscription({
-          channelId: parsed.request.slackChannelId,
-          threadTimestamp: parsed.request.slackThreadTimestamp,
-        });
-      }
-
-      return {
-        ok: true,
-        skipped: nudgeResult.success
-          ? 'Thread subscription expired; nudged the requester'
-          : 'Thread subscription expired; the nudge could not be posted',
-      };
     }
 
     if (subscriptionState === 'none') {
