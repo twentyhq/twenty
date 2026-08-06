@@ -1,8 +1,7 @@
+import { type SlackMessageReference } from 'src/logic-functions/types/slack-message-reference.type';
+
 export const getSlackEmptyRequestReplyKvKey = ({
   slackChannelId,
   slackMessageTimestamp,
-}: {
-  slackChannelId: string;
-  slackMessageTimestamp: string;
-}): string =>
+}: SlackMessageReference): string =>
   `slack-empty-request-reply:${slackChannelId}:${slackMessageTimestamp}`;
