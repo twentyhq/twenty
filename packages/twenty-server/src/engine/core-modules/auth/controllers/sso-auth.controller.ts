@@ -13,7 +13,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { Response } from 'express';
-import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ApiPath,
+  AppPath,
+  ConnectedAccountProvider,
+} from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -43,7 +47,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth')
+@Controller(ApiPath.Auth)
 @UseFilters(AuthRestApiExceptionFilter)
 export class SSOAuthController {
   constructor(

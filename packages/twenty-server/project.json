@@ -18,6 +18,16 @@
       },
       "dependsOn": ["^build"]
     },
+    "test:integration:secure": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration-secure.config.ts --logHeapUsage"
+        ]
+      },
+      "parallel": false
+    },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {

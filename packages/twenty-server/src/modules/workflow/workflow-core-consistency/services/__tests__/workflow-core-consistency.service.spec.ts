@@ -19,6 +19,7 @@ describe('WorkflowCoreConsistencyService', () => {
   let metricsService: { incrementCounterBy: jest.Mock };
   let exceptionHandlerService: { captureExceptions: jest.Mock };
 
+  let shouldCheck: boolean;
   let workflowCounts: Counts;
   let workflowOrphan: number;
   let versionCounts: Counts;
@@ -37,6 +38,7 @@ describe('WorkflowCoreConsistencyService', () => {
   });
 
   beforeEach(() => {
+    shouldCheck = true;
     workflowCounts = zero();
     workflowOrphan = 0;
     versionCounts = zero();
@@ -46,11 +48,11 @@ describe('WorkflowCoreConsistencyService', () => {
 
     coreDataSource = {
       query: jest.fn().mockImplementation((sql: string) => {
-        if (sql.includes('DISTINCT "workspaceId"')) {
-          return Promise.resolve([{ workspaceId }]);
+        if (sql.includes('FROM core."workspace"')) {
+          return Promise.resolve([{ workspaceId, databaseSchema: schema }]);
         }
-        if (sql.includes('"databaseSchema"')) {
-          return Promise.resolve([{ databaseSchema: schema }]);
+        if (sql.includes('AS "shouldCheck"')) {
+          return Promise.resolve([{ shouldCheck }]);
         }
         if (sql.includes('AS "orphanCore"')) {
           return Promise.resolve([
@@ -204,10 +206,50 @@ describe('WorkflowCoreConsistencyService', () => {
     });
   });
 
+  it('enumerates active and suspended workspaces instead of workspaces having core rows', async () => {
+    await service.runConsistencyCheck();
+
+    expect(coreDataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining(`"activationStatus" IN ('ACTIVE', 'SUSPENDED')`),
+    );
+    expect(coreDataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining(`"databaseSchema" IS NOT NULL`),
+    );
+  });
+
+  it('gates on source workflows OR core rows so orphan core rows are still checked', async () => {
+    await service.runConsistencyCheck();
+
+    expect(coreDataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining(`OR EXISTS (SELECT 1 FROM core."workflow"`),
+      [workspaceId],
+    );
+  });
+
+  it('skips workspaces that have no workflow rows', async () => {
+    shouldCheck = false;
+    workflowCounts = { unlinked: 5, missingCore: 0, fieldMismatch: 0 };
+
+    await service.runConsistencyCheck();
+
+    expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
+    expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalled();
+  });
+
+  it('excludes soft-deleted rows from the automated trigger comparison', async () => {
+    await service.runConsistencyCheck();
+
+    expect(coreDataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining(
+        `"workflowAutomatedTrigger" WHERE "deletedAt" IS NULL`,
+      ),
+    );
+  });
+
   it('isolates a per-workspace failure and reports it to Sentry', async () => {
     coreDataSource.query.mockImplementation((sql: string) => {
-      if (sql.includes('DISTINCT "workspaceId"')) {
-        return Promise.resolve([{ workspaceId }]);
+      if (sql.includes('FROM core."workspace"')) {
+        return Promise.resolve([{ workspaceId, databaseSchema: schema }]);
       }
 
       return Promise.reject(new Error('boom'));

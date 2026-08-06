@@ -5,6 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
@@ -119,6 +120,32 @@ describe('WorkspaceSetup', () => {
     const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
 
     expect(queryByTestId('chat-kickoff-effect')).not.toBeInTheDocument();
+  });
+
+  it('should mark the chat for side panel continuation while mounted', () => {
+    setIsOnboardingAiChatEnabled(true);
+
+    const { unmount } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+      true,
+    );
+
+    unmount();
+
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+      false,
+    );
+  });
+
+  it('should not mark the chat for side panel continuation when the onboarding ai chat is disabled', () => {
+    setIsOnboardingAiChatEnabled(false);
+
+    render(<WorkspaceSetup />, { wrapper: Wrapper });
+
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+      false,
+    );
   });
 
   it('should redirect home when the onboarding ai chat is disabled', () => {

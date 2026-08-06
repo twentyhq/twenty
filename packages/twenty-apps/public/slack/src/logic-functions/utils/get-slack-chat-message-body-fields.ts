@@ -1,13 +1,17 @@
-import { type SlackMessageBodyFormat } from 'src/logic-functions/types/slack-message-body-format.type';
+import { isNonEmptyArray } from '@sniptt/guards';
 
-type SlackChatMessageBodyFields =
-  | { markdown_text: string; text?: never; mrkdwn?: never }
-  | { text: string; markdown_text?: never; mrkdwn?: boolean };
+import { type SlackChatMessageBodyFields } from 'src/logic-functions/types/slack-chat-message-body-fields.type';
+import { type SlackMessageBody } from 'src/logic-functions/types/slack-message-body.type';
 
-export const getSlackChatMessageBodyFields = (
-  messageText: string,
-  messageFormat: SlackMessageBodyFormat | undefined,
-): SlackChatMessageBodyFields => {
+export const getSlackChatMessageBodyFields = ({
+  messageText,
+  messageFormat,
+  messageBlocks,
+}: { messageText: string } & SlackMessageBody): SlackChatMessageBodyFields => {
+  if (isNonEmptyArray(messageBlocks)) {
+    return { blocks: messageBlocks, text: messageText };
+  }
+
   switch (messageFormat) {
     case 'markdown':
       return { markdown_text: messageText };

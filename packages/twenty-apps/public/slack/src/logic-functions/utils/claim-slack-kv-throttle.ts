@@ -1,5 +1,6 @@
-import { isNumber } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
+
+import { hasKvEntryExpired } from 'src/logic-functions/utils/has-kv-entry-expired';
 
 type SlackKvThrottleClaim = {
   expiresAt: number;
@@ -14,11 +15,7 @@ export const claimSlackKvThrottle = async ({
 }): Promise<boolean> => {
   const existingClaim = await kv.get<SlackKvThrottleClaim>(key);
 
-  if (
-    existingClaim !== null &&
-    isNumber(existingClaim.expiresAt) &&
-    existingClaim.expiresAt > Date.now()
-  ) {
+  if (existingClaim !== null && !hasKvEntryExpired(existingClaim)) {
     return false;
   }
 

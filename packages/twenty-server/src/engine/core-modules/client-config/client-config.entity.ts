@@ -277,6 +277,9 @@ export class ClientConfig {
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 
+  @Field(() => Number)
+  subdomainMinLength: number;
+
   @Field(() => String)
   frontDomain: string;
 
@@ -301,7 +304,7 @@ export class ClientConfig {
   @Field(() => ApiConfig)
   api: ApiConfig;
 
-  onboarding: OnboardingConfig;
+  onboarding: OnboardingConfig | null;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
@@ -338,6 +341,12 @@ export class ClientConfig {
 
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;
+
+  @Field(() => Boolean)
+  isBookCallOnboardingStepEnabled: boolean;
+
+  @Field(() => Boolean)
+  isCompanyEnrichmentEnabled: boolean;
 
   @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;

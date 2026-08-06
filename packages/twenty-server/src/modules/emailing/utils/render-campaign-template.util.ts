@@ -1,7 +1,5 @@
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
-
-export const CAMPAIGN_VARIABLE_PATTERN =
-  /\{\{\s*([a-zA-Z][a-zA-Z0-9_]*)\s*\}\}/g;
+import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
 
 export const renderCampaignTemplate = (
   template: string,

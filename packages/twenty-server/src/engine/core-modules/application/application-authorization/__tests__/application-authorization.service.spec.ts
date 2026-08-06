@@ -147,9 +147,12 @@ describe('ApplicationAuthorizationService', () => {
     });
   });
 
-  describe('findActiveAuthorizationsForUser', () => {
+  describe('findActiveAuthorizationsForUserWorkspace', () => {
     it('should only return unrevoked authorizations whose application still exists', async () => {
-      await service.findActiveAuthorizationsForUser(userId);
+      await service.findActiveAuthorizationsForUserWorkspace({
+        userId,
+        workspaceId,
+      });
 
       expect(queryBuilder.innerJoinAndSelect).toHaveBeenCalledWith(
         'applicationAuthorization.application',
@@ -164,8 +167,23 @@ describe('ApplicationAuthorizationService', () => {
       );
     });
 
+    it('should scope the query to the current workspace', async () => {
+      await service.findActiveAuthorizationsForUserWorkspace({
+        userId,
+        workspaceId,
+      });
+
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        'applicationAuthorization.workspaceId = :workspaceId',
+        { workspaceId },
+      );
+    });
+
     it('should put the most recently used authorization first', async () => {
-      await service.findActiveAuthorizationsForUser(userId);
+      await service.findActiveAuthorizationsForUserWorkspace({
+        userId,
+        workspaceId,
+      });
 
       expect(queryBuilder.orderBy).toHaveBeenCalledWith(
         'applicationAuthorization.lastUsedAt',
@@ -174,17 +192,23 @@ describe('ApplicationAuthorizationService', () => {
     });
   });
 
-  describe('revokeAuthorizationById', () => {
-    it('should scope the update by userId so an id from another user matches nothing', async () => {
+  describe('revokeAuthorizationByIdForUserWorkspace', () => {
+    it('should scope the update by userId and workspaceId so an id from elsewhere matches nothing', async () => {
       repository.update.mockResolvedValue(buildUpdateResult(0));
 
-      const revoked = await service.revokeAuthorizationById({
+      const revoked = await service.revokeAuthorizationByIdForUserWorkspace({
         authorizationId,
         userId: otherUserId,
+        workspaceId,
       });
 
       expect(repository.update).toHaveBeenCalledWith(
-        { id: authorizationId, userId: otherUserId, revokedAt: IsNull() },
+        {
+          id: authorizationId,
+          userId: otherUserId,
+          workspaceId,
+          revokedAt: IsNull(),
+        },
         expect.objectContaining({ revokedAt: expect.any(Date) }),
       );
       expect(revoked).toBe(false);
@@ -194,7 +218,11 @@ describe('ApplicationAuthorizationService', () => {
       repository.update.mockResolvedValue(buildUpdateResult(1));
 
       expect(
-        await service.revokeAuthorizationById({ authorizationId, userId }),
+        await service.revokeAuthorizationByIdForUserWorkspace({
+          authorizationId,
+          userId,
+          workspaceId,
+        }),
       ).toBe(true);
     });
 
@@ -202,7 +230,11 @@ describe('ApplicationAuthorizationService', () => {
       repository.update.mockResolvedValue(buildUpdateResult(0));
 
       expect(
-        await service.revokeAuthorizationById({ authorizationId, userId }),
+        await service.revokeAuthorizationByIdForUserWorkspace({
+          authorizationId,
+          userId,
+          workspaceId,
+        }),
       ).toBe(false);
     });
   });

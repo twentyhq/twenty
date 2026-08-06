@@ -329,7 +329,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       createNewRecordAndOpenSidePanel,
       createTargetRecord,
       dropdownId,
-      fieldName,
       isMorphJunction,
       isJunctionRelation,
       junctionConfig,

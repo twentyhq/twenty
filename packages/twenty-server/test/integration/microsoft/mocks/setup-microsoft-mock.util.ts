@@ -5,6 +5,11 @@ import { microsoftAuthHandlers } from 'test/integration/microsoft/mocks/microsof
 import { microsoftCalendarEventsHandlers } from 'test/integration/microsoft/mocks/microsoft-calendar-events-handlers.util';
 import { microsoftMailboxHandlers } from 'test/integration/microsoft/mocks/microsoft-mailbox-handlers.util';
 import {
+  createMicrosoftSubscriptionStore,
+  microsoftWebhookSubscriptionHandlers,
+  type MicrosoftSubscriptionStore,
+} from 'test/integration/microsoft/mocks/microsoft-webhook-subscription-handlers.util';
+import {
   createMockEntityStore,
   type MockEntityStore,
 } from 'test/integration/utils/mock-entity-store.util';
@@ -16,10 +21,12 @@ const DEFAULT_FOLDERS: MailFolder[] = [
 
 export type MicrosoftMock = {
   folders: MockEntityStore<MailFolder>;
+  subscriptions: MicrosoftSubscriptionStore;
   serveCalendarEvents: (
     events: Event[],
     options?: { deltaToken?: string },
   ) => void;
+  failSubscriptionRenewal: () => void;
 };
 
 export const setupMicrosoftMock = ({
@@ -34,16 +41,26 @@ export const setupMicrosoftMock = ({
     (folder) => folder.id ?? '',
   );
 
+  const subscriptionStore = createMicrosoftSubscriptionStore();
+
   const httpMock = setupHttpMock(
     ...microsoftAuthHandlers(handle),
     ...microsoftMailboxHandlers(folderStore),
+    ...microsoftWebhookSubscriptionHandlers(subscriptionStore),
   );
 
   return {
     folders: folderStore,
+    subscriptions: subscriptionStore,
     serveCalendarEvents: (
       events,
       { deltaToken = 'mock-calendar-delta-token' } = {},
     ) => httpMock.use(...microsoftCalendarEventsHandlers(events, deltaToken)),
+    failSubscriptionRenewal: () =>
+      httpMock.use(
+        ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {
+          renewalFails: true,
+        }),
+      ),
   };
 };
