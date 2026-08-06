@@ -13,10 +13,8 @@ import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
 import { color, fontFamily, tokenCssVariables } from '@/tokens';
 
-// Every family is self-hosted from src/fonts rather than pulled through
-// next/font/google, so neither a build nor a page view reaches Google. Host
-// Grotesk and Azeret Mono are variable fonts, declared over their full wght
-// axis so the browser interpolates every weight the site asks for.
+// Host Grotesk and Azeret Mono are variable fonts, declared over their full
+// wght axis so the browser interpolates every weight the site asks for.
 const hostGrotesk = localFont({
   src: '../../fonts/host-grotesk-latin-variable.woff2',
   weight: '300 800',
