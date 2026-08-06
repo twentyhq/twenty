@@ -1,6 +1,6 @@
 import { type EntityManager } from 'typeorm';
 
-import { type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-28/utils/compute-record-page-stack-reown-updates.util';
+import { type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
