@@ -58,6 +58,28 @@ export default definePageLayout({
 * Cada `widget` dentro de una pestaña puede renderizar un [componente de frontend](/l/es/developers/extend/apps/layout/front-components), una lista de relaciones u otros tipos de widget integrados.
 * `position` en las pestañas controla su orden. Usa valores más altos (p. ej., 50) para colocar pestañas personalizadas después de las integradas.
 
+### Widgets de campos
+
+Un widget `FIELD` representa un campo del registro. Para los campos de relación, también puede incrustar una lista de registros relacionados:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` toma el identificador universal de un campo en el objeto del layout.
+* `fieldDisplayMode` es uno de `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` o `'TABLE'`. `TABLE` incrusta una vista que lista los registros de un campo de relación de uno a muchos.
+* `nestedRelationFieldMetadataId` es opcional y toma el identificador universal de un campo de relación de uno a muchos en el objeto de destino de la relación, para enumerar registros a dos saltos de relación (por ejemplo, una página de Company que enumera las oportunidades de las personas de la compañía, o una página de Person que enumera las oportunidades de la compañía de la persona). El primer salto puede ser un campo de relación de uno a muchos o de muchos a uno, el segundo debe ser de uno a muchos (las relaciones de unión no son compatibles) y requiere `fieldDisplayMode: 'TABLE'` — combinarlo con cualquier otro modo de visualización es un error de validación, ya que un widget anidado siempre se representa como una vista incrustada.
+
 ## definePageLayoutTab
 
 Usa esto cuando solo quieras **agregar** una pestaña a un layout existente; por ejemplo, una pestaña de analíticas en la página estándar de Company o una pestaña de resumen de IA añadida al layout de tu propio objeto.
