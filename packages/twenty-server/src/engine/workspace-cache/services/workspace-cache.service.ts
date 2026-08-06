@@ -35,8 +35,12 @@ import {
   type WorkspaceCacheResult,
   type WorkspaceCacheResultWithHashes,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
+import {
+  type VersionEntry,
+  type WorkspaceLocalCacheEntry,
+} from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
+import { selectColdStorageDemotions } from 'src/engine/workspace-cache/utils/select-cold-storage-demotions.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
@@ -78,6 +82,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheProvider<CacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
+  private readonly keyNameByPrefix = new Map<string, WorkspaceCacheKeyName>();
+  private readonly coldStorageEligiblePrefixes = new Set<string>();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -120,8 +126,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             instance.constructor,
           );
 
+        const prefix = WORKSPACE_CACHE_KEYS_V2[workspaceCacheKeyName];
+
+        this.keyNameByPrefix.set(prefix, workspaceCacheKeyName);
+
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
+        } else {
+          // Only providers already JSON round-tripped for Redis can be held cold. The ORM entity
+          // metadata graph is localDataOnly precisely because it holds class instances, functions
+          // and cycles, so it is excluded here by construction rather than by a hand-kept list.
+          this.coldStorageEligiblePrefixes.add(prefix);
         }
       }
     }
@@ -423,7 +438,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const allKeys = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [`${baseKey}:data`, `${baseKey}:hash`];
+      return [this.buildDataKey(baseKey), `${baseKey}:hash`];
     });
 
     const allValues = await this.cacheStorage.mget<CacheDataType | string>(
@@ -434,9 +449,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const rawData = allValues[index * 2];
       const hash = allValues[index * 2 + 1] as string | undefined;
       const data = isDefined(rawData)
-        ? (this.getProviderOrThrow(keyName).decodeFromCacheStorage(
-            rawData,
-          ) as CacheDataType)
+        ? this.decodeFromStorage(keyName, rawData)
         : undefined;
 
       if (isDefined(data) && isDefined(hash)) {
@@ -524,8 +537,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
       if (!isLocalDataOnly) {
         redisEntries.push({
-          key: `${baseKey}:data`,
-          value: this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
+          key: this.buildDataKey(baseKey),
+          value: this.encodeForStorage(keyName, data),
         });
       }
 
@@ -570,8 +583,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const version = entry?.versions.get(entry.latestHash);
 
       if (isDefined(entry) && isDefined(version)) {
-        version.lastReadAt = Date.now();
-        Object.assign(result.data, { [keyName]: version.data });
+        const data = this.readVersion(keyName, entry, version);
+
+        Object.assign(result.data, { [keyName]: data });
         result.hashes[keyName] = entry.latestHash;
         this.cleanupStaleVersions(entry);
       }
@@ -621,7 +635,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       this.localCache.set(localKey, entry);
     }
 
-    entry.versions.set(hash, { data, lastReadAt: Date.now() });
+    entry.versions.set(hash, { state: 'hot', data, lastReadAt: Date.now() });
     entry.latestHash = hash;
     entry.lastHashCheckedAt = Date.now();
 
@@ -649,6 +663,125 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     if (evicted > 0) {
       this.cacheMetricsService.recordEviction(evicted);
     }
+
+    this.demoteColdEntries();
+  }
+
+  // Serializing happens here rather than on the write path so a burst of writes never pays for
+  // it, and so an entry written and read back within the sweep interval is never serialized at
+  // all. The cost is that the hot set is a periodic bound, not an exact one.
+  private demoteColdEntries(): void {
+    if (
+      !this.twentyConfigService.get('IS_WORKSPACE_CACHE_COLD_STORAGE_ENABLED')
+    ) {
+      return;
+    }
+
+    const demotions = selectColdStorageDemotions(this.localCache, {
+      eligiblePrefixes: this.coldStorageEligiblePrefixes,
+      hotEntriesPerPrefix: this.twentyConfigService.get(
+        'WORKSPACE_CACHE_HOT_ENTRIES_PER_PROVIDER',
+      ),
+    });
+
+    for (const { localKey, hash } of demotions) {
+      const entry = this.localCache.get(localKey);
+      const version = entry?.versions.get(hash);
+
+      if (!isDefined(entry) || version?.state !== 'hot') {
+        continue;
+      }
+
+      const keyName = this.keyNameFromLocalKey(localKey);
+
+      if (!isDefined(keyName)) {
+        continue;
+      }
+
+      entry.versions.set(hash, {
+        state: 'cold',
+        blob: Buffer.from(
+          JSON.stringify(this.encodeForStorage(keyName, version.data)),
+          'utf8',
+        ),
+        lastReadAt: version.lastReadAt,
+      });
+    }
+  }
+
+  // Compacted payloads live under their own key suffix. Flipping the flag therefore cannot read
+  // an entry written under the other encoding: it simply misses and recomputes.
+  private buildDataKey(baseKey: string): string {
+    return this.twentyConfigService.get(
+      'IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED',
+    )
+      ? `${baseKey}:data:compact-v1`
+      : `${baseKey}:data`;
+  }
+
+  private encodeForStorage(
+    keyName: WorkspaceCacheKeyName,
+    data: CacheDataType,
+  ): unknown {
+    if (
+      !this.twentyConfigService.get(
+        'IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED',
+      )
+    ) {
+      return data;
+    }
+
+    return this.getProviderOrThrow(keyName).encodeForCacheStorage(data);
+  }
+
+  private decodeFromStorage(
+    keyName: WorkspaceCacheKeyName,
+    rawData: unknown,
+  ): CacheDataType {
+    if (
+      !this.twentyConfigService.get(
+        'IS_WORKSPACE_CACHE_PAYLOAD_COMPACTION_ENABLED',
+      )
+    ) {
+      return rawData as CacheDataType;
+    }
+
+    return this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
+  }
+
+  private readVersion(
+    keyName: WorkspaceCacheKeyName,
+    entry: WorkspaceLocalCacheEntry<CacheDataType>,
+    version: VersionEntry<CacheDataType>,
+  ): CacheDataType {
+    if (version.state === 'hot') {
+      version.lastReadAt = Date.now();
+
+      return version.data;
+    }
+
+    const data = this.decodeFromStorage(
+      keyName,
+      JSON.parse(version.blob.toString('utf8')),
+    );
+
+    // Promote back: an entry read once is likely to be read again, and leaving it cold would
+    // charge every subsequent read another parse.
+    entry.versions.set(entry.latestHash, {
+      state: 'hot',
+      data,
+      lastReadAt: Date.now(),
+    });
+
+    return data;
+  }
+
+  private keyNameFromLocalKey(
+    localKey: string,
+  ): WorkspaceCacheKeyName | undefined {
+    const prefix = localKey.slice(0, localKey.lastIndexOf(':'));
+
+    return this.keyNameByPrefix.get(prefix);
   }
 
   private cleanupStaleVersions(
