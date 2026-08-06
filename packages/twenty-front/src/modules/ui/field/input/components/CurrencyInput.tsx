@@ -11,6 +11,7 @@ import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
+import { getSafeScaleForCurrencyInput } from '~/utils/format/getSafeScaleForCurrencyInput';
 
 export const StyledIMaskInput = styled.div`
   display: contents;
@@ -124,6 +125,11 @@ export const CurrencyInput = ({
 
   const Icon: IconComponent = currency?.Icon;
 
+  const safeScale = getSafeScaleForCurrencyInput({
+    value,
+    decimals,
+  });
+
   return (
     <StyledContainer ref={wrapperRef}>
       <CurrencyPickerDropdownButton
@@ -140,7 +146,7 @@ export const CurrencyInput = ({
           mask={Number}
           thousandsSeparator={thousandsSeparator}
           radix={radix}
-          scale={decimals}
+          scale={safeScale}
           onAccept={(value: string) => handleChange(value)}
           inputRef={wrapperRef}
           autoComplete="off"
