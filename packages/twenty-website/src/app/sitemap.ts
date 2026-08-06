@@ -67,18 +67,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const familyEntries = await Promise.all(
     WEBSITE_ROUTE_FAMILY_LIST.filter((family) => family.indexed).map(
       async (family) => {
-        const entries = await family.enumerateEntries();
-        return entries.flatMap((entry) =>
-          entriesFor(
-            `${family.basePath}/${entry.slug}`,
-            localesFor(family.localeMode),
-            {
-              changeFrequency: family.changeFrequency,
-              priority: family.priority,
-              lastModified: entry.lastModified,
-            },
-          ),
-        );
+        // A single failing enumerator must not sink the whole sitemap (and the
+        // build that renders it), so isolate each one here.
+        try {
+          const entries = await family.enumerateEntries();
+          return entries.flatMap((entry) =>
+            entriesFor(
+              `${family.basePath}/${entry.slug}`,
+              localesFor(family.localeMode),
+              {
+                changeFrequency: family.changeFrequency,
+                priority: family.priority,
+                lastModified: entry.lastModified,
+              },
+            ),
+          );
+        } catch (error) {
+          console.error(`[sitemap] route family "${family.id}" failed:`, error);
+          return [];
+        }
       },
     ),
   );

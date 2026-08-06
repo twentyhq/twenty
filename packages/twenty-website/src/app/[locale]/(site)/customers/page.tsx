@@ -1,3 +1,6 @@
+import { msg } from '@lingui/core/macro';
+
+import { PartnerEngagementBand } from '@/partners-marketplace/PartnerEngagementBand';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -45,6 +48,12 @@ export default async function CustomersPage({
         <CustomersHero />
         <TrustedBy scheme="muted" />
         <CaseStudyCatalogGrid />
+        <PartnerEngagementBand
+          heading={msg`Need a hand implementing Twenty?`}
+          body={msg`Browse certified partners who migrate, customise, host, and support Twenty across regions and languages.`}
+          ctaLabel={msg`Find a partner`}
+          ctaHref="/partners/list?ref=customers-index"
+        />
         <CustomersCatalogSignoff />
         <Faq />
       </main>

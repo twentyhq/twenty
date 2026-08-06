@@ -7,6 +7,7 @@ import {
   CASE_STUDY_STORIES,
   getCaseStudyAccent,
 } from '@/case-studies';
+import { PartnerEngagementBand } from '@/partners-marketplace/PartnerEngagementBand';
 import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -86,6 +87,12 @@ export default async function CaseStudyPage({
         <CaseStudyHighlights industry={entry.industry} kpis={entry.kpis} />
         <CaseStudyBody story={story} />
         <CaseStudyArticleNav items={story.tableOfContents} />
+        <PartnerEngagementBand
+          heading={msg`Want to build something like this?`}
+          body={msg`Work with a certified Twenty partner to migrate, customise, and implement your CRM.`}
+          ctaLabel={msg`Find a partner`}
+          ctaHref={`/partners/list?ref=customer-story-${slug}`}
+        />
         <CustomersCaseStudySignoff />
       </main>
     </>
