@@ -381,6 +381,15 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       context.userWorkspace = userContext.userWorkspace;
       context.userWorkspaceId = userContext.userWorkspace.id;
 
+      if (
+        workspace.activationStatus ===
+          WorkspaceActivationStatus.PENDING_CREATION ||
+        workspace.activationStatus ===
+          WorkspaceActivationStatus.ONGOING_CREATION
+      ) {
+        return context;
+      }
+
       const { flatWorkspaceMemberMaps } =
         await this.workspaceCacheService.getOrRecompute(workspace.id, [
           'flatWorkspaceMemberMaps',
@@ -389,11 +398,25 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       const workspaceMemberId =
         flatWorkspaceMemberMaps.idByUserId[userContext.user.id];
 
-      if (isDefined(workspaceMemberId)) {
-        context.workspaceMemberId = workspaceMemberId;
-        context.workspaceMember =
-          flatWorkspaceMemberMaps.byId[workspaceMemberId];
-      }
+      const workspaceMember = isDefined(workspaceMemberId)
+        ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+        : undefined;
+
+      // A bound token whose member is gone must not keep working with the
+      // application's own permissions, which is how an access token behaves.
+      assertIsDefinedOrThrow(
+        workspaceMember,
+        new AuthException(
+          'User is not a member of the workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`User is not a member of the workspace.`,
+          },
+        ),
+      );
+
+      context.workspaceMemberId = workspaceMemberId;
+      context.workspaceMember = workspaceMember;
     }
 
     return context;
