@@ -8,25 +8,35 @@ const stripAndCollapse = (text: string): string =>
     .trim();
 
 describe('stripSlackBotMention', () => {
-  it('should strip the bot mention anywhere in the text', () => {
+  it('should drop a leading bot mention', () => {
+    expect(stripAndCollapse('<@UBOT> list open deals')).toBe('list open deals');
+  });
+
+  it('should replace a mid-text bot mention with you', () => {
+    expect(stripAndCollapse('can <@UBOT> list open deals?')).toBe(
+      'can you list open deals?',
+    );
+  });
+
+  it('should drop the leading mention and replace the mid-text one', () => {
     expect(stripAndCollapse('<@UBOT> can <@UBOT> list open deals?')).toBe(
-      'can list open deals?',
+      'can you list open deals?',
     );
   });
 
-  it('should strip the labelled mention form', () => {
+  it('should replace the labelled mention form', () => {
     expect(stripAndCollapse('ask <@UBOT|twenty> about ACME')).toBe(
-      'ask about ACME',
+      'ask you about ACME',
     );
   });
 
-  it('should not leave a space before punctuation that follows the mention', () => {
+  it('should keep the punctuation tight around the replacement', () => {
     expect(
       stripSlackBotMention({
         text: 'hey <@UBOT>, who owns ACME?',
         botUserId: 'UBOT',
       }),
-    ).toBe('hey, who owns ACME?');
+    ).toBe('hey you, who owns ACME?');
   });
 
   it('should drop the punctuation left behind by a leading mention', () => {
@@ -38,13 +48,13 @@ describe('stripSlackBotMention', () => {
     ).toBe('who owns ACME?');
   });
 
-  it('should handle consecutive mentions before punctuation', () => {
+  it('should collapse consecutive mentions into a single replacement', () => {
     expect(
       stripSlackBotMention({
         text: 'hey <@UBOT> <@UBOT>, who owns ACME?',
         botUserId: 'UBOT',
       }),
-    ).toBe('hey, who owns ACME?');
+    ).toBe('hey you, who owns ACME?');
   });
 
   it('should keep other user mentions', () => {
@@ -53,7 +63,7 @@ describe('stripSlackBotMention', () => {
     );
   });
 
-  it('should not strip a mention whose id merely starts with the bot id', () => {
+  it('should not touch a mention whose id merely starts with the bot id', () => {
     expect(stripAndCollapse('ping <@UBOTHER> about ACME')).toBe(
       'ping <@UBOTHER> about ACME',
     );

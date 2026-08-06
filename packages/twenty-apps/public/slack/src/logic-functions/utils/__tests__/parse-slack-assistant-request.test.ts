@@ -56,14 +56,14 @@ describe('parseSlackAssistantRequest', () => {
     );
   });
 
-  it('should strip a bot mention in the middle of the text', () => {
+  it('should replace a mid-text bot mention with you', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({
         eventOverrides: { text: 'hey <@UBOT>, who owns ACME?' },
       }),
     );
 
-    expect(result.request?.requestText).toBe('hey, who owns ACME?');
+    expect(result.request?.requestText).toBe('hey you, who owns ACME?');
   });
 
   it('should drop the punctuation left behind by a leading bot mention', () => {
@@ -76,7 +76,7 @@ describe('parseSlackAssistantRequest', () => {
     expect(result.request?.requestText).toBe('who owns ACME?');
   });
 
-  it('should strip the bot mention at the start and in the middle of the text', () => {
+  it('should drop the leading bot mention and replace the mid-text one', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({
         eventOverrides: {
@@ -85,7 +85,9 @@ describe('parseSlackAssistantRequest', () => {
       }),
     );
 
-    expect(result.request?.requestText).toBe('can list open deals for ACME?');
+    expect(result.request?.requestText).toBe(
+      'can you list open deals for ACME?',
+    );
   });
 
   it('should strip a repeated bot mention using the leading mention when authorizations are missing', () => {
@@ -98,7 +100,7 @@ describe('parseSlackAssistantRequest', () => {
       }),
     );
 
-    expect(result.request?.requestText).toBe('what does know about ACME?');
+    expect(result.request?.requestText).toBe('what does you know about ACME?');
   });
 
   it('should keep other user mentions when stripping a mid-text bot mention', () => {
@@ -111,7 +113,7 @@ describe('parseSlackAssistantRequest', () => {
     );
 
     expect(result.request?.requestText).toBe(
-      'hey ask <@UALICE> about the ACME deal',
+      'hey you ask <@UALICE> about the ACME deal',
     );
   });
 
@@ -125,7 +127,7 @@ describe('parseSlackAssistantRequest', () => {
     );
 
     expect(result.request?.requestText).toBe(
-      '<@UALICE> and should review the ACME deal',
+      '<@UALICE> and you should review the ACME deal',
     );
   });
 
@@ -207,7 +209,7 @@ describe('parseSlackAssistantRequest', () => {
     });
 
     expect(result.request?.requestText).toBe(
-      'hey, how many open opportunities do we have?',
+      'hey you, how many open opportunities do we have?',
     );
   });
 

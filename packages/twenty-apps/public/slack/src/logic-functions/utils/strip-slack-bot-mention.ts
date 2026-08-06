@@ -1,5 +1,6 @@
 const SLACK_USER_ID_PATTERN = /^[A-Z0-9]+$/;
 const PUNCTUATION_PATTERN = '[,.!?;:]';
+const MID_TEXT_MENTION_REPLACEMENT = 'you';
 
 export const stripSlackBotMention = ({
   text,
@@ -13,13 +14,12 @@ export const stripSlackBotMention = ({
   }
 
   const mentionPattern = `<@${botUserId}(?:\\|[^>]*)?>`;
-  const mentionRunPattern = `(?:\\s*${mentionPattern})+\\s*`;
+  const mentionRunPattern = `${mentionPattern}(?:\\s*${mentionPattern})*`;
 
   return text
-    .replace(new RegExp(`^${mentionRunPattern}${PUNCTUATION_PATTERN}*\\s*`), '')
     .replace(
-      new RegExp(`${mentionRunPattern}(${PUNCTUATION_PATTERN})`, 'g'),
-      '$1',
+      new RegExp(`^\\s*${mentionRunPattern}\\s*${PUNCTUATION_PATTERN}*\\s*`),
+      '',
     )
-    .replace(new RegExp(mentionPattern, 'g'), ' ');
+    .replace(new RegExp(mentionRunPattern, 'g'), MID_TEXT_MENTION_REPLACEMENT);
 };
