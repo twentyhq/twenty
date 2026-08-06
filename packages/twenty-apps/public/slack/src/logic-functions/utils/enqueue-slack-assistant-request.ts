@@ -13,9 +13,11 @@ export const enqueueSlackAssistantRequest = async (
   const parsed = parseSlackAssistantRequest(body);
 
   if (parsed.request === null) {
-    return isDefined(parsed.emptyRequest)
-      ? await replyToEmptySlackAssistantRequest(parsed.emptyRequest)
-      : { ok: true, skipped: parsed.skipReason };
+    if (isDefined(parsed.emptyRequest)) {
+      return await replyToEmptySlackAssistantRequest(parsed.emptyRequest);
+    }
+
+    return { ok: true, skipped: parsed.skipReason };
   }
 
   if (parsed.requiresActiveThreadSubscription) {

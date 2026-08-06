@@ -50,10 +50,13 @@ const classifySlackAssistantEvent = (
 const stripLeadingBotMention = (text: string): string =>
   text.replace(LEADING_BOT_MENTION_PATTERN, '').replace(/\s+/g, ' ').trim();
 
-const normalizeSlackRequestText = (
-  text: string,
-  kind: SlackAssistantEventKind,
-): string =>
+const normalizeSlackRequestText = ({
+  text,
+  kind,
+}: {
+  text: string;
+  kind: SlackAssistantEventKind;
+}): string =>
   kind === 'mention'
     ? stripLeadingBotMention(text)
     : text.replace(/\s+/g, ' ').trim();
@@ -90,7 +93,10 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: 'Event is missing required fields' };
   }
 
-  const requestText = normalizeSlackRequestText(event.text ?? '', kind);
+  const requestText = normalizeSlackRequestText({
+    text: event.text ?? '',
+    kind,
+  });
 
   if (!isNonEmptyString(requestText)) {
     if (kind === 'threadFollowUp') {
