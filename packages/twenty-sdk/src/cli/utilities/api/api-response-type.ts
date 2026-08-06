@@ -1,11 +1,3 @@
-import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
-
-export type MetadataApiErrorExtensions =
-  Partial<MetadataValidationErrorResponse> & {
-    userFriendlyMessage?: string;
-    subCode?: string;
-  };
-
 type SuccessfulApiResponse<TData = unknown> = {
   success: true;
   data: TData;

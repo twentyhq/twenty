@@ -1,8 +1,6 @@
 import { ApiClient } from '@/cli/utilities/api/api-client';
-import {
-  type ApiResponse,
-  type MetadataApiErrorExtensions,
-} from '@/cli/utilities/api/api-response-type';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { type MetadataApiErrorExtensions } from 'twenty-shared/metadata';
 import { ApplicationApi } from '@/cli/utilities/api/application-api';
 import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';

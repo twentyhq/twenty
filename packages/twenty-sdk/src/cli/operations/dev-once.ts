@@ -3,7 +3,7 @@ import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { type MetadataApiErrorExtensions } from '@/cli/utilities/api/api-response-type';
+import { type MetadataApiErrorExtensions } from 'twenty-shared/metadata';
 import {
   ensureAppAccessTokenIsValidOrRefresh,
   ensureAppRegistration,

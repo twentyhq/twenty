@@ -1,7 +1,5 @@
-import {
-  type ApiResponse,
-  type MetadataApiErrorExtensions,
-} from '@/cli/utilities/api/api-response-type';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { type MetadataApiErrorExtensions } from 'twenty-shared/metadata';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import * as fs from 'fs';

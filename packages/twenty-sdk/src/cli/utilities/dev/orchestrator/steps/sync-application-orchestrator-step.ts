@@ -1,5 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import { type MetadataApiErrorExtensions } from '@/cli/utilities/api/api-response-type';
+import { type MetadataApiErrorExtensions } from 'twenty-shared/metadata';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import {
