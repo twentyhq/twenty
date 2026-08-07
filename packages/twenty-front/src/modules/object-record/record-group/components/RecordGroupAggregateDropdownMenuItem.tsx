@@ -1,7 +1,7 @@
 import { type IconComponent } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const RecordBoardColumnHeaderAggregateDropdownMenuItem = ({
+export const RecordGroupAggregateDropdownMenuItem = ({
   onContentChange,
   text,
   hasSubMenu,

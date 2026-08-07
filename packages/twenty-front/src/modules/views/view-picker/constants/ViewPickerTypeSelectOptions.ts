@@ -20,4 +20,9 @@ export const VIEW_PICKER_TYPE_SELECT_OPTIONS = [
     label: VIEW_TYPE_LABELS[ViewType.CALENDAR],
     Icon: viewTypeIconMapping(ViewType.CALENDAR),
   },
+  {
+    value: ViewType.LIST,
+    label: VIEW_TYPE_LABELS[ViewType.LIST],
+    Icon: viewTypeIconMapping(ViewType.LIST),
+  },
 ];

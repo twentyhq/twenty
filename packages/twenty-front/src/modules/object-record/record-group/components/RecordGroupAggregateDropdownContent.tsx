@@ -1,10 +1,10 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
-import { RecordBoardColumnHeaderAggregateDropdownMenuContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent';
-import { RecordBoardColumnHeaderAggregateDropdownOptionsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownOptionsContent';
+import { RecordGroupAggregateDropdownFieldsContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownFieldsContent';
+import { RecordGroupAggregateDropdownMenuContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownMenuContent';
+import { RecordGroupAggregateDropdownOptionsContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownOptionsContent';
+import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
@@ -14,10 +14,10 @@ import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-re
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { t } from '@lingui/core/macro';
 
-export const AggregateDropdownContent = () => {
+export const RecordGroupAggregateDropdownContent = () => {
   const { currentContentId, objectMetadataItem } =
     useDropdownContextStateManagement({
-      context: RecordBoardColumnHeaderAggregateDropdownContext,
+      context: RecordGroupAggregateDropdownContext,
     });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -42,7 +42,7 @@ export const AggregateDropdownContent = () => {
           targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
         });
       return (
-        <RecordBoardColumnHeaderAggregateDropdownOptionsContent
+        <RecordGroupAggregateDropdownOptionsContent
           availableAggregations={availableAggregations}
           title={t`Count`}
         />
@@ -55,7 +55,7 @@ export const AggregateDropdownContent = () => {
           targetAggregateOperations: PERCENT_AGGREGATE_OPERATION_OPTIONS,
         });
       return (
-        <RecordBoardColumnHeaderAggregateDropdownOptionsContent
+        <RecordGroupAggregateDropdownOptionsContent
           availableAggregations={availableAggregations}
           title={t`Percent`}
         />
@@ -71,7 +71,7 @@ export const AggregateDropdownContent = () => {
           ],
         });
       return (
-        <RecordBoardColumnHeaderAggregateDropdownOptionsContent
+        <RecordGroupAggregateDropdownOptionsContent
           availableAggregations={datesAvailableAggregations}
           title={t`Date`}
         />
@@ -84,15 +84,15 @@ export const AggregateDropdownContent = () => {
           targetAggregateOperations: NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
         });
       return (
-        <RecordBoardColumnHeaderAggregateDropdownOptionsContent
+        <RecordGroupAggregateDropdownOptionsContent
           availableAggregations={availableAggregationsWithoutDates}
           title={t`More options`}
         />
       );
     }
     case 'aggregateFields':
-      return <RecordBoardColumnHeaderAggregateDropdownFieldsContent />;
+      return <RecordGroupAggregateDropdownFieldsContent />;
     default:
-      return <RecordBoardColumnHeaderAggregateDropdownMenuContent />;
+      return <RecordGroupAggregateDropdownMenuContent />;
   }
 };
