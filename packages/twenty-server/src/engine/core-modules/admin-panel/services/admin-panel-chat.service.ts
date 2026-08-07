@@ -83,8 +83,6 @@ export class AdminPanelChatService {
       return new Map();
     }
 
-    // Query builder uses the scoped wrapper's escape hatch; we add the
-    // workspaceId predicate manually below.
     const rows = await this.agentMessageRepository
       .createQueryBuilder('message')
       .select('"message"."threadId"', 'threadId')

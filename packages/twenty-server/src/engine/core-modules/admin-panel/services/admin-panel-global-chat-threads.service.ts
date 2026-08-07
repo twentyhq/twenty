@@ -29,8 +29,6 @@ const WORKSPACE_SETUP_THREAD_ID_EXPRESSION = `public.uuid_generate_v5(
 
 const ANSWERED_ASK_QUESTIONS_STATUS: AskQuestionsToolStatus = 'answered';
 
-// Identifiers stay pre-quoted: TypeORM's alias replacer would otherwise swallow
-// the JSON operators and leave the alias unquoted.
 const ANSWERED_ASK_QUESTIONS_PART_EXPRESSION = `"answeredQuestionPart"."toolOutput" -> 'result' ->> 'status' = :answeredQuestionStatus`;
 
 const ORDER_EXPRESSION_BY_SORT_FIELD: Record<AdminChatThreadSortField, string> =
@@ -73,8 +71,6 @@ type GlobalChatThreadRawRow = {
 @Injectable()
 export class AdminPanelGlobalChatThreadsService {
   constructor(
-    // Spans every workspace, so allowImpersonation is enforced as a join
-    // condition instead of by workspace scoping.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AgentChatThreadEntity)
     private readonly agentChatThreadRepository: Repository<AgentChatThreadEntity>,
