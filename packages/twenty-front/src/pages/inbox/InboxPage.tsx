@@ -14,7 +14,7 @@ import { findInboxSectionBySlug } from '@/inbox/utils/findInboxSectionBySlug';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { type InboxItem } from '~/generated/graphql';
+import { type InboxItem, InboxItemScope } from '~/generated/graphql';
 
 const StyledPanes = styled.div`
   display: flex;
@@ -37,7 +37,18 @@ const StyledDetailPane = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   min-height: 0;
+  overflow-y: auto;
   width: 360px;
+`;
+
+const StyledErrorState = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.light};
+  display: flex;
+  flex: 1;
+  font-size: ${themeCssVariables.font.size.md};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[10]};
 `;
 
 export const InboxPage = () => {
@@ -49,9 +60,11 @@ export const InboxPage = () => {
   const SectionIcon = inboxSection.Icon;
 
   const {
+    inboxItems,
     needsActionItems,
     otherItems,
     isInitialLoading,
+    error,
     hasMoreItems,
     loadMoreItems,
   } = useInboxItems(inboxSection.scope);
@@ -59,6 +72,12 @@ export const InboxPage = () => {
   const [selectedInboxItemId, setSelectedInboxItemId] = useAtomState(
     selectedInboxItemIdState,
   );
+
+  // Deriving the selection from the loaded page keeps the reading pane honest:
+  // switching section, resolving an item or losing it to a poll all drop it
+  const selectedInboxItem =
+    inboxItems.find((inboxItem) => inboxItem.id === selectedInboxItemId) ??
+    null;
 
   const handleInboxItemClick = (inboxItem: InboxItem) => {
     if (!isDefined(inboxItem.readAt)) {
@@ -79,22 +98,26 @@ export const InboxPage = () => {
     >
       <StyledPanes>
         <StyledTablePane>
-          <InboxTable
-            loading={isInitialLoading}
-            needsActionItems={needsActionItems}
-            otherItems={otherItems}
-            selectedInboxItemId={selectedInboxItemId}
-            hasMoreItems={hasMoreItems}
-            onInboxItemClick={handleInboxItemClick}
-            onLoadMoreItems={loadMoreItems}
-          />
-        </StyledTablePane>
-        {isDefined(selectedInboxItemId) && (
-          <StyledDetailPane>
-            <InboxItemDetailCard
-              inboxItemId={selectedInboxItemId}
-              scope={inboxSection.scope}
+          {isDefined(error) ? (
+            <StyledErrorState>{t`Your inbox could not be loaded`}</StyledErrorState>
+          ) : (
+            <InboxTable
+              loading={isInitialLoading}
+              needsActionItems={needsActionItems}
+              otherItems={otherItems}
+              selectedInboxItemId={selectedInboxItem?.id ?? null}
+              hasMoreItems={hasMoreItems}
+              shouldSplitByPriority={
+                inboxSection.scope === InboxItemScope.INBOX
+              }
+              onInboxItemClick={handleInboxItemClick}
+              onLoadMoreItems={loadMoreItems}
             />
+          )}
+        </StyledTablePane>
+        {isDefined(selectedInboxItem) && (
+          <StyledDetailPane>
+            <InboxItemDetailCard inboxItem={selectedInboxItem} />
           </StyledDetailPane>
         )}
       </StyledPanes>

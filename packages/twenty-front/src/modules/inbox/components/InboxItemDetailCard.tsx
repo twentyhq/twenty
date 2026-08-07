@@ -5,16 +5,18 @@ import { useContext } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { InboxItemDetailCardActionButton } from '@/inbox/components/InboxItemDetailCardActionButton';
 import { INBOX_ITEM_ACTION_HANDLER_KIND } from '@/inbox/constants/InboxItemActionHandlerKind';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
-import { useInboxItemById } from '@/inbox/hooks/useInboxItemById';
+import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type InboxItemScope } from '~/generated/graphql';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { type InboxItem, InboxItemStatus } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledContainer = styled.div`
@@ -83,51 +85,25 @@ const StyledCardActions = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledEmptyState = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  justify-content: center;
-`;
-
 type InboxItemDetailCardProps = {
-  inboxItemId: string;
-  scope?: InboxItemScope;
+  inboxItem: InboxItem;
 };
 
 export const InboxItemDetailCard = ({
-  inboxItemId,
-  scope,
+  inboxItem,
 }: InboxItemDetailCardProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const { inboxItem, loading, error } = useInboxItemById(inboxItemId, scope);
-  const { executeInboxItemAction } = useInboxItemActions();
+  const { executeInboxItemAction, reopenInboxItem } = useInboxItemActions();
   const { openAskAiThread } = useOpenAskAiThread();
+  const setSelectedInboxItemId = useSetAtomState(selectedInboxItemIdState);
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
 
-  if (!isDefined(inboxItem)) {
-    if (loading) {
-      return <StyledContainer />;
-    }
-
-    return (
-      <StyledContainer>
-        <StyledEmptyState>
-          {isDefined(error)
-            ? t`This inbox item could not be loaded`
-            : t`This inbox item is no longer available`}
-        </StyledEmptyState>
-      </StyledContainer>
-    );
-  }
-
   const InboxItemIcon = getIcon(inboxItem.inboxItemType.icon);
+  const isResolved = inboxItem.status !== InboxItemStatus.OPEN;
 
   const subjectObjectMetadataItem = isDefined(inboxItem.subjectObjectMetadataId)
     ? objectMetadataItemsByIdMap.get(inboxItem.subjectObjectMetadataId)
@@ -159,7 +135,23 @@ export const InboxItemDetailCard = ({
           <StyledCardPreview>{inboxItem.preview}</StyledCardPreview>
         )}
         <StyledCardActions>
+          {isResolved && (
+            <Button
+              onClick={() => void reopenInboxItem(inboxItem.id)}
+              size="small"
+              title={t`Move to inbox`}
+              variant="secondary"
+            />
+          )}
           {inboxItem.inboxItemType.actions.map((action) => {
+            // A resolved item cannot be resolved again: the way back is Reopen
+            if (
+              isResolved &&
+              action.handlerKind === INBOX_ITEM_ACTION_HANDLER_KIND.COMPLETE
+            ) {
+              return null;
+            }
+
             if (
               action.handlerKind === INBOX_ITEM_ACTION_HANDLER_KIND.OPEN_THREAD
             ) {
@@ -173,7 +165,12 @@ export const InboxItemDetailCard = ({
                 <InboxItemDetailCardActionButton
                   key={action.key}
                   action={action}
-                  onClick={() => openAskAiThread(threadId)}
+                  onClick={() => {
+                    // The chat panel becomes the reading pane, so the inbox
+                    // one steps aside rather than competing for width
+                    setSelectedInboxItemId(null);
+                    openAskAiThread(threadId);
+                  }}
                 />
               );
             }

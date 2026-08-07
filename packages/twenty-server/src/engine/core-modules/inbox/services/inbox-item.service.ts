@@ -84,6 +84,8 @@ export class InboxItemService {
     return { unread, needsAction, snoozed };
   }
 
+  // Reading an item is not activity on it, so the list stays ordered by what
+  // actually happened rather than by what the assignee last looked at
   async markRead({
     inboxItemId,
     workspaceId,
@@ -91,7 +93,7 @@ export class InboxItemService {
   }: OwnedItemArgs): Promise<InboxItemEntity> {
     return this.updateOwnedItem(
       { inboxItemId, workspaceId, assigneeUserWorkspaceId },
-      { readAt: new Date() },
+      { readAt: new Date(), updatedAt: () => '"updatedAt"' },
     );
   }
 

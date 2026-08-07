@@ -44,6 +44,8 @@ type InboxTableProps = {
   otherItems: InboxItem[];
   selectedInboxItemId: string | null;
   hasMoreItems: boolean;
+  // Splitting by priority only earns its keep where work is still pending
+  shouldSplitByPriority: boolean;
   onInboxItemClick: (inboxItem: InboxItem) => void;
   onLoadMoreItems: () => void;
 };
@@ -54,12 +56,17 @@ export const InboxTable = ({
   otherItems,
   selectedInboxItemId,
   hasMoreItems,
+  shouldSplitByPriority,
   onInboxItemClick,
   onLoadMoreItems,
 }: InboxTableProps) => {
   const { t } = useLingui();
 
-  const hasNeedsActionSection = needsActionItems.length > 0;
+  const hasNeedsActionSection =
+    shouldSplitByPriority && needsActionItems.length > 0;
+  const flatItems = shouldSplitByPriority
+    ? otherItems
+    : [...needsActionItems, ...otherItems];
 
   if (needsActionItems.length === 0 && otherItems.length === 0) {
     return loading ? (
@@ -101,7 +108,7 @@ export const InboxTable = ({
           )}
         </>
       ) : (
-        <TableBody>{renderRows(otherItems)}</TableBody>
+        <TableBody>{renderRows(flatItems)}</TableBody>
       )}
       {hasMoreItems && isDefined(onLoadMoreItems) && (
         <StyledLoadMoreButton type="button" onClick={onLoadMoreItems}>

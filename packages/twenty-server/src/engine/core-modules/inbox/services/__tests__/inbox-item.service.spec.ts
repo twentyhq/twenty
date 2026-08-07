@@ -290,8 +290,18 @@ describe('InboxItemService', () => {
           id: INBOX_ITEM_ID,
           assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
         },
-        { readAt: NOW },
+        expect.objectContaining({ readAt: NOW }),
       );
+    });
+
+    it('should leave updatedAt alone so reading does not reorder the list', async () => {
+      // Act
+      await service.markRead(ownedItemArgs);
+
+      // Assert
+      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      expect(partialUpdate.updatedAt()).toBe('"updatedAt"');
     });
   });
 
