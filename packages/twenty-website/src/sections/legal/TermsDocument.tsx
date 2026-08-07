@@ -4,504 +4,578 @@ import { ExternalLink } from '@/ui';
 export function TermsDocument() {
   return (
     <>
-      <h2>Introduction</h2>
       <p>
-        Herein are the Terms of Service that govern the use of products created
-        by Twenty.com PBC (&quot;Company&quot;, &quot;we&quot;, &quot;our&quot;,
-        &quot;us&quot;). The estimated reading time for the full content is
-        approximately 20 minutes.
-      </p>
-      <p>
-        These Terms of Service (&quot;Terms&quot;, &quot;Terms of Service&quot;)
-        govern the use of our main website on Twenty.com and any of its
-        sub-domain, as well as any mobile application (together or individually
-        &quot;Service&quot;) operated by Twenty.com PBC.
-      </p>
-      <p>
-        Our Privacy Policy also governs your use of our Service and explains how
-        we collect, safeguard and disclose information that results from your
-        use of our web pages. Please read it here:{' '}
-        <LocalizedLink href="/privacy-policy">Privacy Policy</LocalizedLink>.
-      </p>
-      <p>
-        Your agreement with us includes these Terms and our Privacy Policy
-        (&quot;Agreements&quot;). You acknowledge that you have read and
-        understood Agreements, and agree to them.
-      </p>
-      <p>
-        If you do not agree with (or cannot comply with) Agreements, then you
-        may not use the Service, but please let us know by emailing at
-        contact@twenty.com so we can try to find a solution. These Terms apply
-        to all visitors, users and others who wish to access or use Service.
-      </p>
-      <p>Thank you for being responsible.</p>
-
-      <h2>Communications</h2>
-      <p>
-        By creating an Account on our Service, you agree to subscribe to
-        newsletters, marketing or promotional materials and other information we
-        may send. However, you may opt out of receiving any, or all, of these
-        communications from us by following the unsubscribe link or by emailing
-        us at contact@twenty.com.
+        <strong>Effective Date:</strong>
+        {' August 7, 2026'}
       </p>
 
-      <h2>Purchases</h2>
+      <h2>The short version</h2>
       <p>
-        If you wish to purchase any product or service made available through
-        Service (&quot;Purchase&quot;), you may be asked to supply certain
-        information relevant to your Purchase including, without limitation,
-        your credit card number, the expiration date of your credit card, your
-        billing address, and your shipping information.
+        This summary is here for convenience. It is not itself part of the
+        Terms; the numbered sections below are what govern.
+      </p>
+      <ul>
+        <li>
+          You own your data. We only use it to provide the Service to you, and
+          we never make it available to other customers.
+        </li>
+        <li>
+          You can export your data at any time, and for 30 days after your
+          subscription ends. Because Twenty is open source, you can also leave
+          our cloud and run Twenty on your own servers.
+        </li>
+        <li>
+          The open-source software itself is governed by its open-source
+          licenses, not by these Terms.
+        </li>
+        <li>
+          We do not use your data to train AI models, and we do not allow our AI
+          providers to do so.
+        </li>
+        <li>
+          Subscriptions renew automatically. You can cancel at any time,
+          effective at the end of your current billing period.
+        </li>
+        <li>
+          If we make a material change to these Terms, we will give you at least
+          30 days&rsquo; notice. The full history of this document is public in
+          our GitHub repository.
+        </li>
+      </ul>
+
+      <h2>1. Who we are and what these Terms cover</h2>
+      <p>
+        Twenty.com PBC (&ldquo;Twenty&rdquo;, &ldquo;we&rdquo;,
+        &ldquo;us&rdquo;, &ldquo;our&rdquo;) is a public benefit corporation
+        incorporated in Delaware, United States. We build an open-source
+        customer relationship management platform.
       </p>
       <p>
-        You represent and warrant that: (i) you have the legal right to use any
-        credit card(s) or other payment method(s) in connection with any
-        Purchase; and that (ii) the information you supply to us is true,
-        correct and complete.
+        These Terms of Service (the &ldquo;Terms&rdquo;) govern your access to
+        and use of:
+      </p>
+      <ul>
+        <li>
+          our websites at twenty.com and its subdomains (the
+          &ldquo;Site&rdquo;);
+        </li>
+        <li>
+          our hosted CRM product, available at app.twenty.com, including its
+          applications and APIs (the &ldquo;Cloud Service&rdquo;); and
+        </li>
+        <li>
+          paid subscriptions and license keys that unlock commercial features of
+          the self-hosted edition of Twenty (&ldquo;Self-Hosted
+          Subscriptions&rdquo;).
+        </li>
+      </ul>
+      <p>
+        We refer to these together as the &ldquo;Service&rdquo;. Our{' '}
+        <LocalizedLink href="/privacy-policy">Privacy Policy</LocalizedLink>{' '}
+        explains how we handle personal data and forms part of your agreement
+        with us. If you have signed a separate agreement with us, such as an
+        enterprise agreement, an order form, or a data processing agreement,
+        that agreement controls over these Terms to the extent of any conflict.
       </p>
       <p>
-        We may employ the use of third party services for the purpose of
-        facilitating payment and the completion of Purchases. By submitting your
-        information, you grant us the right to provide the information to these
-        third parties subject to our Privacy Policy.
-      </p>
-      <p>
-        We reserve the right to refuse or cancel your order at any time for
-        reasons including but not limited to: product or service availability,
-        errors in the description or price of the product or service, error in
-        your order or other reasons.
-      </p>
-      <p>
-        We reserve the right to refuse or cancel your order if fraud or an
-        unauthorized or illegal transaction is suspected.
+        By creating an account or using the Service, you agree to these Terms.
+        If you use the Service on behalf of a company or other organization, you
+        represent that you have authority to bind that organization, and
+        &ldquo;you&rdquo; refers to it. If you do not agree with these Terms, do
+        not use the Service; if you think something in them is wrong or unfair,
+        we genuinely want to hear about it at{' '}
+        <a href="mailto:contact@twenty.com">contact@twenty.com</a>.
       </p>
 
-      <h2>Contests, Sweepstakes and Promotions</h2>
+      <h2>2. Open source and self-hosting</h2>
       <p>
-        Any contests, sweepstakes or other promotions (collectively,
-        &quot;Promotions&quot;) made available through Service may be governed
-        by rules that are separate from these Terms of Service. If you
-        participate in any Promotions, please review the applicable rules as
-        well as our Privacy Policy. If the rules for a Promotion conflict with
-        these Terms of Service, Promotion rules will apply.
+        Twenty&rsquo;s source code is publicly available at{' '}
+        <ExternalLink href="https://github.com/twentyhq/twenty">
+          github.com/twentyhq/twenty
+        </ExternalLink>{' '}
+        and is licensed mostly under the GNU Affero General Public License v3
+        (AGPLv3), with certain packages under the MIT license and certain files
+        under a commercial license, as described in the LICENSE file of the
+        repository.
+      </p>
+      <p>
+        These Terms do not limit, replace, or modify any rights granted to you
+        by those software licenses. If you self-host the free edition of Twenty,
+        your use of the software is governed by its open-source licenses, not by
+        these Terms; only your use of the Site and of any services we provide to
+        you (such as license keys or support) is covered here.
+      </p>
+      <p>
+        Commercial features of the self-hosted edition require a valid license
+        key purchased from us. License keys are licensed, not sold, are limited
+        to the plan, number of users, and term you purchased, and may not be
+        shared outside your organization. We may verify the validity of license
+        keys, which involves limited technical information as described in our
+        Privacy Policy; it never involves your CRM records.
       </p>
 
-      <h2>Subscriptions</h2>
+      <h2>3. Accounts and workspaces</h2>
       <p>
-        Some parts of Service are billed on a subscription basis
-        (&quot;Subscription(s)&quot;). You will be billed in advance on a
-        recurring and periodic basis (&quot;Billing Cycle&quot;). Billing cycles
-        are set either on a monthly or annual basis, depending on the type of
-        subscription plan you select when purchasing a Subscription.
+        The Service is intended for professional use. You must be at least 18
+        years old to use it.
       </p>
       <p>
-        At the end of each Billing Cycle, your Subscription will automatically
-        renew under the exact same conditions unless you cancel it or Twenty.com
-        PBC cancels it. You may cancel your Subscription renewal either through
-        your online account management page or by contacting Twenty.com PBC
-        customer support team.
+        You agree to provide accurate account information and keep it up to
+        date, to keep your credentials confidential, and to notify us promptly
+        at <a href="mailto:contact@twenty.com">contact@twenty.com</a> if you
+        suspect unauthorized use of your account. You are responsible for
+        activity that occurs under your account.
       </p>
       <p>
-        A valid payment method, including credit card, is required to process
-        the payment for your subscription. You shall provide Twenty.com PBC with
-        accurate and complete billing information including full name, address,
-        state, zip code, telephone number, and a valid payment method
-        information. By submitting such payment information, you automatically
-        authorize Twenty.com PBC to charge all Subscription fees incurred
-        through your account to any such payment instruments.
-      </p>
-      <p>
-        Should automatic billing fail to occur for any reason, Twenty.com PBC
-        will issue an electronic invoice indicating that you must proceed
-        manually, within a certain deadline date, with the full payment
-        corresponding to the billing period as indicated on the invoice.
+        Data in Twenty lives in workspaces. Workspace administrators control who
+        is a member of a workspace and what each member can see and do. If you
+        join a workspace owned by an organization, that organization controls
+        the workspace and its data, including your access to it.
       </p>
 
-      <h2>Free Trial</h2>
+      <h2>4. Your data</h2>
       <p>
-        Twenty.com PBC may, at its sole discretion, offer a Subscription with a
-        free trial for a limited period of time (&quot;Free Trial&quot;).
+        &ldquo;Customer Data&rdquo; means the data you or your workspace members
+        submit to, store in, or sync into your workspace: records such as
+        people, companies and opportunities, notes, tasks, files, emails and
+        calendar events from connected accounts, and any other content of your
+        workspace.
       </p>
       <p>
-        You may be required to enter your billing information in order to sign
-        up for Free Trial.
+        <strong>You own your Customer Data.</strong> We claim no ownership of
+        it. You grant us a non-exclusive, worldwide license to host, store,
+        process, transmit, display, and back up Customer Data solely as
+        necessary to provide, maintain, secure, and support the Service, as
+        directed by you and your workspace members through the features of the
+        Service, and as required by law. This license exists only so we can run
+        the Service for you and ends when your Customer Data is deleted, except
+        for residual copies in backups until those are purged.
       </p>
       <p>
-        If you do enter your billing information when signing up for Free Trial,
-        you will not be charged by Twenty.com PBC until Free Trial has expired.
-        On the last day of Free Trial period, unless you canceled your
-        Subscription, you will be automatically charged the applicable
-        Subscription fees for the type of Subscription you have selected.
+        <strong>Your Customer Data is private to your workspace.</strong> We do
+        not make it available to other customers or to anyone outside your
+        workspace, and we do not use it for advertising or sell it. Within your
+        workspace, visibility is controlled by the roles and permissions your
+        administrators configure. Our personnel access Customer Data only when
+        needed to operate the Service, to respond to a support request, to
+        address a security or legal issue, or with your permission.
       </p>
       <p>
-        At any time and without notice, Twenty.com PBC reserves the right to (i)
-        modify Terms of Service of Free Trial offer, or (ii) cancel such Free
-        Trial offer.
-      </p>
-
-      <h2>Fee changes</h2>
-      <p>
-        Twenty.com PBC, in its sole discretion and at any time, may modify
-        Subscription fees for the Subscriptions. Any Subscription fee change
-        will become effective at the end of the then-current Billing Cycle.
+        Customer Data is your confidential information under Section 12, whether
+        or not it is marked as such.
       </p>
       <p>
-        Twenty.com PBC will provide you with a reasonable prior notice of any
-        change in Subscription fees to give you an opportunity to terminate your
-        Subscription before such change becomes effective.
+        You are responsible for the Customer Data you and your workspace members
+        bring into the Service: for having the right to use it, and for
+        complying with the laws that apply to it, including privacy laws
+        covering the people whose information you store in your CRM. Do not
+        submit data that requires protections we have not agreed to provide in
+        writing, such as regulated health information or full payment card
+        numbers.
       </p>
       <p>
-        Your continued use of Service after Subscription fee change comes into
-        effect constitutes your agreement to pay the modified Subscription fee
-        amount.
-      </p>
-
-      <h2>Refunds</h2>
-      <p>
-        Except when required by law, paid Subscription fees are non-refundable.
-      </p>
-
-      <h2>Content</h2>
-      <p>
-        Our Service allows you to post, link, store, share and otherwise make
-        available certain information, text, graphics, videos, or other material
-        (&quot;Content&quot;). You are responsible for Content that you post on
-        or through Service, including its legality, reliability, and
-        appropriateness.
-      </p>
-      <p>
-        By posting Content on or through Service, you represent and warrant
-        that: (i) Content is yours (you own it) and/or you have the right to use
-        it and the right to grant us the rights and license as provided in these
-        Terms, and (ii) that the posting of your Content on or through Service
-        does not violate the privacy rights, publicity rights, copyrights,
-        contract rights or any other rights of any person or entity. We reserve
-        the right to terminate the account of anyone found to be infringing on a
-        copyright.
-      </p>
-      <p>
-        You retain any and all of your rights to any Content you submit, post or
-        display on or through Service and you are responsible for protecting
-        those rights. We take no responsibility and assume no liability for
-        Content you or any third party posts on or through Service. However, by
-        posting Content using Service you grant us the right and license to use,
-        modify, publicly perform, publicly display, reproduce, and distribute
-        such Content on and through Service. You agree that this license
-        includes the right for us to make your Content available to other users
-        of Service, who may also use your Content subject to these Terms.
-      </p>
-      <p>
-        Twenty.com PBC has the right but not the obligation to monitor and edit
-        all Content provided by users.
-      </p>
-
-      <h2>Prohibited Uses</h2>
-      <p>
-        You may use Service only for lawful purposes and in accordance with
-        Terms. You agree not to use Service:
-      </p>
-      <ol>
-        <li>
-          In any way that violates any applicable national or international law
-          or regulation.
-        </li>
-        <li>
-          For the purpose of exploiting, harming, or attempting to exploit or
-          harm minors in any way by exposing them to inappropriate content or
-          otherwise.
-        </li>
-        <li>
-          To transmit, or procure the sending of, any advertising or promotional
-          material, including any &quot;junk mail&quot;, &quot;chain
-          letter,&quot; &quot;spam,&quot; or any other similar solicitation.
-        </li>
-        <li>
-          To impersonate or attempt to impersonate Company, a Company employee,
-          another user, or any other person or entity.
-        </li>
-        <li>
-          In any way that infringes upon the rights of others, or in any way is
-          illegal, threatening, fraudulent, or harmful, or in connection with
-          any unlawful, illegal, fraudulent, or harmful purpose or activity.
-        </li>
-        <li>
-          To engage in any other conduct that restricts or inhibits
-          anyone&apos;s use or enjoyment of Service, or which, as determined by
-          us, may harm or offend Company or users of Service or expose them to
-          liability.
-        </li>
-      </ol>
-      <p>Additionally, you agree not to:</p>
-      <ol>
-        <li>
-          Use Service in any manner that could disable, overburden, damage, or
-          impair Service or interfere with any other party&apos;s use of
-          Service, including their ability to engage in real time activities
-          through Service.
-        </li>
-        <li>
-          Use any robot, spider, or other automatic device, process, or means to
-          access Service for any purpose, including monitoring or copying any of
-          the material on Service.
-        </li>
-        <li>
-          Use any manual process to monitor or copy any of the material on
-          Service or for any other unauthorized purpose without our prior
-          written consent.
-        </li>
-        <li>
-          Use any device, software, or routine that interferes with the proper
-          working of Service.
-        </li>
-        <li>
-          Introduce any viruses, trojan horses, worms, logic bombs, or other
-          material which is malicious or technologically harmful.
-        </li>
-        <li>
-          Attempt to gain unauthorized access to, interfere with, damage, or
-          disrupt any parts of Service, the server on which Service is stored,
-          or any server, computer, or database connected to Service.
-        </li>
-        <li>
-          Attack Service via a denial-of-service attack or a distributed
-          denial-of-service attack.
-        </li>
-        <li>Take any action that may damage or falsify Company rating.</li>
-        <li>
-          Otherwise attempt to interfere with the proper working of Service.
-        </li>
-      </ol>
-
-      <h2>Analytics</h2>
-      <p>
-        We may use third-party Service Providers to monitor and analyze the use
-        of our Service.
-      </p>
-      <p>
-        <strong>Cloudflare analytics</strong>
-      </p>
-      <p>
-        Cloudflare analytics is a web analytics service operated by Cloudflare
-        Inc. Read the Privacy Policy here:{' '}
-        <ExternalLink href="https://www.cloudflare.com/privacypolicy/">
-          https://www.cloudflare.com/privacypolicy/
-        </ExternalLink>
-      </p>
-
-      <h2>No Use By Minors</h2>
-      <p>
-        Service is intended only for access and use by individuals at least
-        eighteen (18) years old. By accessing or using any product of the
-        Company, you warrant and represent that you are at least eighteen (18)
-        years of age and with the full authority, right, and capacity to enter
-        into this agreement and abide by all of the terms and conditions of
-        Terms. If you are not at least eighteen (18) years old, you are
-        prohibited from both the access and usage of Service.
-      </p>
-
-      <h2>Accounts</h2>
-      <p>
-        When you create an account with us, you guarantee that you are above the
-        age of 18, and that the information you provide us is accurate,
-        complete, and current at all times. Inaccurate, incomplete, or obsolete
-        information may result in the immediate termination of your account on
+        We collect technical logs, metrics, and telemetry about the operation
+        and usage of the Service (&ldquo;Usage Data&rdquo;). Usage Data does not
+        include the contents of your CRM records. We may also use data that has
+        been aggregated and de-identified, so that it identifies neither you nor
+        any person in your Customer Data, to operate, secure, and improve the
         Service.
       </p>
       <p>
-        You are responsible for maintaining the confidentiality of your account
-        and password, including but not limited to the restriction of access to
-        your computer and/or account. You agree to accept responsibility for any
-        and all activities or actions that occur under your account and/or
-        password, whether your password is with our Service or a third-party
-        service. You must notify us immediately upon becoming aware of any
-        breach of security or unauthorized use of your account.
-      </p>
-      <p>
-        You may not use as a username the name of another person or entity or
-        that is not lawfully available for use, a name or trademark that is
-        subject to any rights of another person or entity other than you,
-        without appropriate authorization. You may not use as a username any
-        name that is offensive, vulgar or obscene.
-      </p>
-      <p>
-        We reserve the right to refuse service, terminate accounts, remove or
-        edit content, or cancel orders at our sole discretion.
+        You can export your Customer Data at any time using the Service&rsquo;s
+        export features and APIs. After your subscription ends, we will make
+        your Customer Data available for export for 30 days, after which we will
+        delete it as described in our Privacy Policy.
       </p>
 
-      <h2>Intellectual Property</h2>
+      <h2>5. Privacy, security and data processing</h2>
       <p>
-        Service and its original content (excluding Content provided by users),
-        features and functionality are and will remain the exclusive property of
-        Twenty.com PBC and its licensors. Service is protected by copyright,
-        trademark, and other laws of the United States. Our trademarks and trade
-        dress may not be used in connection with any product or service without
-        the prior written consent of Twenty.com PBC.
-      </p>
-
-      <h2>Error Reporting and Feedback</h2>
-      <p>
-        You may provide us either directly at contact@twenty.com or via third
-        party sites and tools with information and feedback concerning errors,
-        suggestions for improvements, ideas, problems, complaints, and other
-        matters related to our Service (&quot;Feedback&quot;). You acknowledge
-        and agree that: (i) you shall not retain, acquire or assert any
-        intellectual property right or other right, title or interest in or to
-        the Feedback; (ii) Company may have development ideas similar to the
-        Feedback; (iii) Feedback does not contain confidential information or
-        proprietary information from you or any third party; and (iv) Company is
-        not under any obligation of confidentiality with respect to the
-        Feedback. In the event the transfer of the ownership to the Feedback is
-        not possible due to applicable mandatory laws, you grant Company and its
-        affiliates an exclusive, transferable, irrevocable, free-of-charge,
-        sub-licensable, unlimited and perpetual right to use (including copy,
-        modify, create derivative works, publish, distribute and commercialize)
-        Feedback in any manner and for any purpose.
+        Our <LocalizedLink href="/privacy-policy">Privacy Policy</LocalizedLink>{' '}
+        describes what we collect and how we use it. Where data protection laws
+        such as the GDPR apply to Customer Data, we process it as your processor
+        under our Data Processing Agreement, available on request at{' '}
+        <a href="mailto:privacy@twenty.com">privacy@twenty.com</a>.
       </p>
       <p>
-        The third party sites and tools mentioned above include the following:
-      </p>
-      <p>
-        <strong>Sentry</strong>
-      </p>
-      <p>
-        Sentry is an open-source error tracking solution provided by Functional
-        Software Inc. More information is available here:{' '}
-        <ExternalLink href="https://sentry.io/privacy/">
-          https://sentry.io/privacy/
+        We protect the Service with technical and organizational measures
+        including encryption in transit and at rest, access controls, and
+        monitoring. Details about our security practices and the list of
+        subprocessors we use are available in our{' '}
+        <ExternalLink href="https://trust.twenty.com/">
+          Trust Center
         </ExternalLink>
+        . If a breach of security affects your Customer Data, we will notify you
+        without undue delay, as required by applicable law.
       </p>
 
-      <h2>Links To Other Websites</h2>
+      <h2>6. Connected accounts and integrations</h2>
       <p>
-        Our Service may contain links to third party websites or services that
-        are not owned or controlled by Twenty.com PBC.
+        The Service can connect to third-party accounts and services, for
+        example to sync email and calendar data from Google or Microsoft
+        accounts. Connections are made only when a user chooses to establish
+        them, sync only the data described at the time of connection, and can be
+        disconnected at any time in the Service&rsquo;s settings.
       </p>
       <p>
-        Twenty.com PBC has no control over, and assumes no responsibility for
-        the content, privacy policies, or practices of any third party web sites
-        or services. We do not warrant the offerings of any of these
-        entities/individuals or their websites.
-      </p>
-      <p>
-        YOU ACKNOWLEDGE AND AGREE THAT TWENTY.COM PBC SHALL NOT BE RESPONSIBLE
-        OR LIABLE, DIRECTLY OR INDIRECTLY, FOR ANY DAMAGE OR LOSS CAUSED OR
-        ALLEGED TO BE CAUSED BY OR IN CONNECTION WITH USE OF OR RELIANCE ON ANY
-        SUCH CONTENT, GOODS OR SERVICES AVAILABLE ON OR THROUGH ANY SUCH THIRD
-        PARTY WEB SITES OR SERVICES.
-      </p>
-      <p>
-        WE STRONGLY ADVISE YOU TO READ THE TERMS OF SERVICE AND PRIVACY POLICIES
-        OF ANY THIRD PARTY WEB SITES OR SERVICES THAT YOU VISIT.
+        When you enable an integration or use our APIs to exchange data with a
+        third-party service, we share and receive data at your direction. Your
+        use of a third-party service is governed by that third party&rsquo;s own
+        terms and privacy policy, and we are not responsible for third-party
+        services, including what they do with data after you direct us to send
+        it to them.
       </p>
 
-      <h2>Limitation Of Liability</h2>
+      <h2>7. AI features</h2>
       <p>
-        EXCEPT AS PROHIBITED BY LAW, YOU WILL HOLD US AND OUR OFFICERS,
-        DIRECTORS, EMPLOYEES, AND AGENTS HARMLESS FOR ANY INDIRECT, PUNITIVE,
-        SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGE, HOWEVER IT ARISES
-        (INCLUDING ATTORNEYS&apos; FEES AND ALL RELATED COSTS AND EXPENSES OF
-        LITIGATION AND ARBITRATION, OR AT TRIAL OR ON APPEAL, IF ANY, WHETHER OR
-        NOT LITIGATION OR ARBITRATION IS INSTITUTED), WHETHER IN AN ACTION OF
-        CONTRACT, NEGLIGENCE, OR OTHER TORTIOUS ACTION, OR ARISING OUT OF OR IN
-        CONNECTION WITH THIS AGREEMENT, INCLUDING WITHOUT LIMITATION ANY CLAIM
-        FOR PERSONAL INJURY OR PROPERTY DAMAGE, ARISING FROM THIS AGREEMENT AND
-        ANY VIOLATION BY YOU OF ANY FEDERAL, STATE, OR LOCAL LAWS, STATUTES,
-        RULES, OR REGULATIONS, EVEN IF COMPANY HAS BEEN PREVIOUSLY ADVISED OF
-        THE POSSIBILITY OF SUCH DAMAGE. EXCEPT AS PROHIBITED BY LAW, IF THERE IS
-        LIABILITY FOUND ON THE PART OF COMPANY, IT WILL BE LIMITED TO THE AMOUNT
-        PAID FOR THE PRODUCTS AND/OR SERVICES, AND UNDER NO CIRCUMSTANCES WILL
-        THERE BE CONSEQUENTIAL OR PUNITIVE DAMAGES. SOME STATES DO NOT ALLOW THE
-        EXCLUSION OR LIMITATION OF PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
-        DAMAGES, SO THE PRIOR LIMITATION OR EXCLUSION MAY NOT APPLY TO YOU.
+        The Service includes optional AI-powered features, such as AI agents and
+        AI steps in workflows. When you use them, the relevant data is processed
+        by us and by the AI providers listed in our Trust Center, solely to
+        provide the feature to you. We do not use your Customer Data to train AI
+        models, and we do not permit our AI providers to use it to train theirs.
+      </p>
+      <p>
+        AI output is generated by statistical models: it can be inaccurate,
+        incomplete, or misleading, and similar prompts by other customers may
+        produce similar output. Review AI output before relying on it or sending
+        it to anyone. You are responsible for your use of AI output, and it is
+        not professional advice of any kind.
+      </p>
+      <p>
+        Some AI and workflow features are metered, for example through credits
+        included in your plan. Metered allowances that come with a plan expire
+        at the end of the period for which they were granted unless we state
+        otherwise.
       </p>
 
-      <h2>Termination</h2>
+      <h2>8. Fees and billing</h2>
       <p>
-        We may terminate or suspend your account and bar access to Service
-        immediately, without prior notice or liability, under our sole
-        discretion, for any reason whatsoever and without limitation, including
-        but not limited to a breach of Terms.
+        Paid plans are described on our{' '}
+        <LocalizedLink href="/pricing">pricing page</LocalizedLink> or in your
+        order form. Unless stated otherwise, fees are charged per user, in
+        advance, on a monthly or annual billing period, using the payment method
+        you provide. Adding users during a billing period may result in
+        additional pro-rated charges. Fees do not include taxes; you are
+        responsible for applicable taxes other than taxes on our income.
       </p>
       <p>
-        If you wish to terminate your account, you may simply discontinue using
-        Service.
+        Subscriptions renew automatically at the end of each billing period. You
+        can cancel at any time in the Service&rsquo;s settings or by contacting
+        us; cancellation takes effect at the end of the current billing period,
+        and you keep access until then.
       </p>
       <p>
-        All provisions of Terms which by their nature should survive termination
-        shall survive termination, including, without limitation, ownership
-        provisions, warranty disclaimers, indemnity and limitations of
-        liability.
-      </p>
-
-      <h2>Governing Law</h2>
-      <p>
-        These Terms shall be governed and construed in accordance with the laws
-        of State of Delaware without regard to its conflict of law provisions.
+        We may change our prices. Price changes take effect at your next
+        renewal, never mid-term, and we will give you at least 30 days&rsquo;
+        notice before a price increase applies to you, so you can cancel first
+        if you disagree.
       </p>
       <p>
-        Our failure to enforce any right or provision of these Terms will not be
-        considered a waiver of those rights. If any provision of these Terms is
-        held to be invalid or unenforceable by a court, the remaining provisions
-        of these Terms will remain in effect. These Terms constitute the entire
-        agreement between us regarding our Service and supersede and replace any
-        prior agreements we might have had between us regarding Service.
+        If a payment fails, we will notify you and retry before suspending
+        access for non-payment. We will not suspend the Service while an amount
+        is subject to a reasonable, good-faith billing dispute that you are
+        working with us to resolve.
       </p>
-
-      <h2>Changes To Service</h2>
       <p>
-        We reserve the right to withdraw or amend our Service, and any service
-        or material we provide via Service, in our sole discretion without
-        notice. We will not be liable if for any reason all or any part of
-        Service is unavailable at any time or for any period. From time to time,
-        we may restrict access to some parts of Service, or the entire Service,
-        to users, including registered users.
+        Except as set out in these Terms or required by law, fees are
+        non-refundable. We will, however, refund the pro-rated remainder of any
+        prepaid fees if we terminate your subscription without cause, if we
+        discontinue the Cloud Service, or if you terminate because of our
+        uncured material breach or because you reject a material adverse change
+        to these Terms under Section 20.
       </p>
 
-      <h2>Amendments To Terms</h2>
+      <h2>9. Trials, betas and free features</h2>
       <p>
-        We may amend Terms at any time by posting the amended terms on this
-        site. It is your responsibility to review these Terms periodically.
+        We may offer free trials of paid plans. When a trial ends, your
+        workspace continues on whatever paid or free option you have chosen; if
+        you choose none, we may suspend the workspace and, after giving you
+        notice and a chance to export your data, delete it.
       </p>
       <p>
-        Your continued use of the Platform following the posting of revised
-        Terms means that you accept and agree to the changes. You are expected
-        to check this page frequently so you are aware of any changes, as they
-        are binding on you.
-      </p>
-      <p>
-        By continuing to access or use our Service after any revisions become
-        effective, you agree to be bound by the revised terms. If you do not
-        agree to the new terms, you are no longer authorized to use Service.
+        Features labeled beta, preview, experimental, or similar are provided so
+        you can try them early. They may change, break, or be withdrawn at any
+        time, are provided as-is without any commitment or warranty, and may
+        have reduced support. Tell us what you think of them; that is what they
+        are for.
       </p>
 
-      <h2>Waiver And Severability</h2>
+      <h2>10. Acceptable use</h2>
+      <p>When using the Service, you agree not to:</p>
+      <ol>
+        <li>
+          violate applicable laws, or infringe the rights of others, including
+          intellectual property and privacy rights;
+        </li>
+        <li>
+          send spam or other communications that violate anti-spam,
+          telemarketing, or privacy laws; you are responsible for the compliance
+          of outreach you send using the Service;
+        </li>
+        <li>
+          upload or distribute malware or other harmful code, or use the Service
+          to phish or defraud;
+        </li>
+        <li>
+          attempt to access accounts, workspaces, data, or systems you are not
+          authorized to access, or probe or test the vulnerability of the
+          Service without our written consent;
+        </li>
+        <li>
+          interfere with or disrupt the Service, or circumvent its security,
+          rate limits, or usage limits;
+        </li>
+        <li>
+          access the Cloud Service by automated means other than our documented
+          APIs;
+        </li>
+        <li>misrepresent who you are or your affiliation with anyone; or</li>
+        <li>
+          resell or commercially provide access to the Cloud Service to third
+          parties without our written agreement. This restriction is about our
+          hosted service: it does not limit any right the open-source licenses
+          give you, including hosting the software yourself.
+        </li>
+      </ol>
       <p>
-        No waiver by Company of any term or condition set forth in Terms shall
-        be deemed a further or continuing waiver of such term or condition or a
-        waiver of any other term or condition, and any failure of Company to
-        assert a right or provision under Terms shall not constitute a waiver of
-        such right or provision.
-      </p>
-      <p>
-        If any provision of Terms is held by a court or other tribunal of
-        competent jurisdiction to be invalid, illegal or unenforceable for any
-        reason, such provision shall be eliminated or limited to the minimum
-        extent such that the remaining provisions of Terms will continue in full
-        force and effect.
+        Plans include usage limits, described on the pricing page or in your
+        order form, and the Service is subject to fair use so one
+        customer&rsquo;s usage cannot degrade the Service for others. We may
+        investigate violations of this section and take reasonable action,
+        including those described in Sections 14 and 15.
       </p>
 
-      <h2>Acknowledgement</h2>
+      <h2>11. Our intellectual property and feedback</h2>
       <p>
-        BY USING SERVICE OR OTHER SERVICES PROVIDED BY US, YOU ACKNOWLEDGE THAT
-        YOU HAVE READ THESE TERMS OF SERVICE AND AGREE TO BE BOUND BY THEM.
+        The Service, including its software, design, and content other than
+        Customer Data, belongs to Twenty and its licensors. Other than the
+        rights to use the Service granted in these Terms and the rights granted
+        by the applicable open-source licenses, no rights in the Service or in
+        our trademarks are granted to you. Please do not use the Twenty name or
+        logo in a way that suggests endorsement or affiliation without our
+        permission; using them to truthfully refer to the open-source project is
+        fine.
+      </p>
+      <p>
+        If you send us feedback, ideas, or suggestions, you do not have to, but
+        if you do, you grant us a non-exclusive, perpetual, irrevocable,
+        royalty-free license to use them without restriction or obligation to
+        you. Your feedback stays yours; this license simply lets us build on it.
       </p>
 
-      <h2>Contact Us</h2>
+      <h2>12. Confidentiality</h2>
       <p>
-        Please send your feedback, comments, requests for technical support:
+        Each of us may receive non-public information from the other in
+        connection with the Service (&ldquo;Confidential Information&rdquo;);
+        yours includes your Customer Data. Each of us agrees to use the
+        other&rsquo;s Confidential Information only as needed under these Terms,
+        to protect it with at least reasonable care, and to share it only with
+        personnel and service providers who need it and are bound by comparable
+        obligations.
       </p>
       <p>
-        By email: <a href="mailto:contact@twenty.com">contact@twenty.com</a>.
+        These obligations do not apply to information that is or becomes public
+        through no fault of the recipient, was lawfully known to the recipient
+        before disclosure, was received from a third party without duty of
+        confidence, or was independently developed. If a party is legally
+        compelled to disclose Confidential Information, it will, where legally
+        permitted, notify the other party and disclose only what is required.
+      </p>
+
+      <h2>13. Publicity</h2>
+      <p>
+        We will only identify you or your organization as a Twenty customer, or
+        use your name or logo in our marketing, with your prior consent. You can
+        withdraw that consent at any time by emailing{' '}
+        <a href="mailto:contact@twenty.com">contact@twenty.com</a>.
+      </p>
+
+      <h2>14. Suspension</h2>
+      <p>
+        We may suspend access to all or part of the Service, for a workspace or
+        a user, if: (i) there is a security risk or compromise; (ii) the use
+        materially violates Section 10; (iii) fees are more than 10 days overdue
+        after we have notified you, other than amounts disputed in good faith;
+        or (iv) we are required to by law.
+      </p>
+      <p>
+        Where practicable we will notify you before suspending, limit the
+        suspension to what is necessary, and lift it promptly once the issue is
+        resolved. Suspension does not remove your right to export your Customer
+        Data, except where we are legally prevented from allowing it.
+      </p>
+
+      <h2>15. Term and termination</h2>
+      <p>
+        These Terms apply for as long as you use the Service. You may stop using
+        the Service and cancel your subscription or delete your workspace at any
+        time.
+      </p>
+      <p>
+        Either party may terminate the agreement if the other materially
+        breaches it and does not cure the breach within 30 days of written
+        notice. We may also terminate immediately for serious violations of
+        Section 10, where required by law, or for non-payment following
+        suspension under Section 14. If we decide to discontinue the Cloud
+        Service entirely, we will give you at least 90 days&rsquo; notice and
+        refund prepaid fees for the period after discontinuation.
+      </p>
+      <p>
+        Upon termination, your right to use the Cloud Service ends, the export
+        window in Section 4 applies, and we then delete your Customer Data as
+        described in our Privacy Policy. Because Twenty is open source, you can
+        continue running Twenty on your own infrastructure with the data you
+        export. Provisions that by their nature should survive termination do
+        so, including the export and deletion commitments of Section 4, fees
+        owed for the period before termination, and Sections 11, 12, 16, 17, 18,
+        19, and 21.
+      </p>
+
+      <h2>16. Warranties and disclaimers</h2>
+      <p>
+        We will provide the Service with reasonable skill and care, and we work
+        hard to keep it fast, secure, and available. We do not, however, promise
+        uninterrupted or error-free operation, and we offer no uptime commitment
+        unless one is set out in a separate agreement with you, such as an
+        enterprise agreement.
+      </p>
+      <p>
+        EXCEPT AS EXPRESSLY STATED IN THESE TERMS, AND TO THE MAXIMUM EXTENT
+        PERMITTED BY LAW, THE SERVICE IS PROVIDED &ldquo;AS IS&rdquo; AND
+        &ldquo;AS AVAILABLE&rdquo;, AND WE DISCLAIM ALL OTHER WARRANTIES,
+        EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR
+        PURPOSE, AND NON-INFRINGEMENT.
+      </p>
+
+      <h2>17. Limitation of liability</h2>
+      <p>
+        TO THE MAXIMUM EXTENT PERMITTED BY LAW, NEITHER PARTY WILL BE LIABLE FOR
+        INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR
+        FOR LOST PROFITS, REVENUES, OR BUSINESS OPPORTUNITIES, EVEN IF ADVISED
+        OF THEIR POSSIBILITY. TO THE MAXIMUM EXTENT PERMITTED BY LAW, EACH
+        PARTY&rsquo;S TOTAL AGGREGATE LIABILITY ARISING OUT OF OR RELATED TO
+        THESE TERMS IS LIMITED TO THE FEES YOU PAID US FOR THE SERVICE IN THE 12
+        MONTHS BEFORE THE EVENT GIVING RISE TO THE CLAIM, OR 100 US DOLLARS IF
+        YOU ONLY USED FREE PARTS OF THE SERVICE.
+      </p>
+      <p>
+        These limits do not apply to a party&rsquo;s indemnification obligations
+        under Section 18, to your payment obligations, to either party&rsquo;s
+        gross negligence, willful misconduct, or fraud, or to any liability that
+        cannot be limited under applicable law.
+      </p>
+
+      <h2>18. Indemnification</h2>
+      <p>
+        We will defend you against third-party claims alleging that the Cloud
+        Service, used as permitted by these Terms, infringes their intellectual
+        property rights, and we will pay the resulting damages finally awarded
+        or agreed in settlement. If such a claim arises, we may modify or
+        replace the affected part of the Service or, if we cannot reasonably do
+        so, terminate the affected subscription and refund prepaid fees for the
+        remaining period. This is your exclusive remedy for such claims. It does
+        not cover claims arising from Customer Data, from modifications we did
+        not make, from combination with things we did not provide, or from
+        self-hosted use of the open-source software under its own licenses.
+      </p>
+      <p>
+        You will defend us against third-party claims arising from your Customer
+        Data, from your use of the Service in violation of these Terms or of
+        law, or from your products, services, or relationships with the people
+        and companies in your CRM, and you will pay the resulting damages
+        finally awarded or agreed in settlement.
+      </p>
+      <p>
+        The party seeking defense must promptly notify the other, give it
+        control of the defense and settlement, and reasonably cooperate. A
+        settlement may not impose obligations on the defended party without its
+        consent.
+      </p>
+
+      <h2>19. Governing law and disputes</h2>
+      <p>
+        These Terms are governed by the laws of the State of Delaware, United
+        States, without regard to its conflict of law rules. Before starting any
+        formal proceeding, you agree to first raise the issue with us at{' '}
+        <a href="mailto:contact@twenty.com">contact@twenty.com</a> and give us
+        30 days to try to resolve it with you in good faith.
+      </p>
+      <p>
+        Disputes that cannot be resolved this way will be brought exclusively in
+        the state or federal courts located in Delaware, and both parties
+        consent to their jurisdiction. Either party may seek injunctive relief
+        in any competent court to protect its intellectual property or
+        confidential information. If mandatory law in your country of residence
+        grants you protections or forums that cannot be waived, these Terms do
+        not take them away.
+      </p>
+
+      <h2>20. Changes to the Service or these Terms</h2>
+      <p>
+        Twenty evolves continuously and features will change. We will not
+        materially degrade the core functionality or the overall security of
+        your paid plan during a subscription period; if we ever do and cannot
+        promptly restore it, you may terminate and receive a refund of prepaid
+        fees for the remaining period. Subscriptions are purchases of the
+        Service as it exists today, not of future features.
+      </p>
+      <p>
+        We may update these Terms from time to time. For material changes, we
+        will notify you at least 30 days before they take effect, by email or
+        prominently in the Service, and the change will apply from the stated
+        effective date. Changes that are non-material, that concern new
+        features, or that we must make to comply with law may take effect
+        sooner. If a change materially reduces your rights, you may terminate
+        before it takes effect and receive a refund of prepaid fees for the
+        remaining period. Continued use after the effective date constitutes
+        acceptance.
+      </p>
+      <p>
+        Every version of these Terms is preserved in the history of our{' '}
+        <ExternalLink href="https://github.com/twentyhq/twenty/commits/main/packages/twenty-website/src/sections/legal/TermsDocument.tsx">
+          public GitHub repository
+        </ExternalLink>
+        , so you can always see exactly what changed and when.
+      </p>
+
+      <h2>21. Miscellaneous</h2>
+      <p>
+        These Terms, together with the Privacy Policy, any data processing
+        agreement, and any order form or separate agreement between us,
+        constitute the entire agreement regarding the Service and supersede
+        prior agreements on that subject.
+      </p>
+      <p>
+        You may not assign these Terms without our consent, which we will not
+        unreasonably withhold, except to a successor in a merger, acquisition,
+        or sale of substantially all assets, with notice to us. We may assign
+        these Terms to an affiliate or successor.
+      </p>
+      <p>
+        We will send notices to your account email address or through the
+        Service, and you agree to receive them electronically. You can send
+        notices to us at{' '}
+        <a href="mailto:contact@twenty.com">contact@twenty.com</a>.
+      </p>
+      <p>
+        Neither party is liable for delay or failure caused by events beyond its
+        reasonable control. You agree to comply with applicable export control
+        and sanctions laws, and you represent that you are not a sanctioned
+        person or located in an embargoed country. The parties are independent
+        contractors; these Terms create no partnership, agency, or third-party
+        rights.
+      </p>
+      <p>
+        If any provision of these Terms is held unenforceable, it will be
+        limited to the minimum extent necessary and the rest will remain in
+        effect. A failure to enforce a provision is not a waiver of it.
+      </p>
+
+      <h2>22. Contact us</h2>
+      <p>
+        Questions, concerns, or feedback about these Terms are welcome at{' '}
+        <a href="mailto:contact@twenty.com">contact@twenty.com</a>. For privacy
+        matters, contact{' '}
+        <a href="mailto:privacy@twenty.com">privacy@twenty.com</a>.
       </p>
     </>
   );
