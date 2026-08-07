@@ -197,7 +197,10 @@ export const InboxItemDetailCard = ({
                 key={action.key}
                 action={action}
                 onClick={() =>
-                  void executeInboxItemAction(inboxItem.id, action.key)
+                  void executeInboxItemAction({
+                    inboxItemId: inboxItem.id,
+                    actionKey: action.key,
+                  })
                 }
               />
             );

@@ -52,7 +52,13 @@ export const useInboxItemActions = () => {
     }
   };
 
-  const snoozeInboxItem = async (inboxItemId: string, snoozedUntil: string) => {
+  const snoozeInboxItem = async ({
+    inboxItemId,
+    snoozedUntil,
+  }: {
+    inboxItemId: string;
+    snoozedUntil: string;
+  }) => {
     try {
       await snoozeInboxItemMutation({
         variables: { inboxItemId, snoozedUntil },
@@ -78,10 +84,13 @@ export const useInboxItemActions = () => {
     }
   };
 
-  const executeInboxItemAction = async (
-    inboxItemId: string,
-    actionKey: string,
-  ) => {
+  const executeInboxItemAction = async ({
+    inboxItemId,
+    actionKey,
+  }: {
+    inboxItemId: string;
+    actionKey: string;
+  }) => {
     try {
       await executeInboxItemActionMutation({
         variables: { inboxItemId, actionKey },

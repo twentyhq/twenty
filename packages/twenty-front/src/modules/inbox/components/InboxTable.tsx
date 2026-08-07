@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { INBOX_TABLE_GRID_TEMPLATE_COLUMNS } from '@/inbox/constants/InboxTableGridTemplateColumns';
@@ -110,7 +109,7 @@ export const InboxTable = ({
       ) : (
         <TableBody>{renderRows(flatItems)}</TableBody>
       )}
-      {hasMoreItems && isDefined(onLoadMoreItems) && (
+      {hasMoreItems && (
         <StyledLoadMoreButton type="button" onClick={onLoadMoreItems}>
           {t`Load older`}
         </StyledLoadMoreButton>
