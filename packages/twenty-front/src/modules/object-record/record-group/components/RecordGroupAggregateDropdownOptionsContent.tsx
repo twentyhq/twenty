@@ -1,10 +1,8 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordGroupAggregateDropdownMenuItem } from '@/object-record/record-group/components/RecordGroupAggregateDropdownMenuItem';
-import {
-  RecordGroupAggregateDropdownContext,
-  type RecordGroupAggregateDropdownContextValue,
-} from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
+import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
+import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
 import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
