@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { IconFileText } from 'twenty-ui/icon';
+import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledStateContainer = styled.div`
+const StyledMessageContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
@@ -22,15 +22,17 @@ const StyledMessage = styled.div`
   max-width: 320px;
 `;
 
-type CallRecordingTranscriptStateProps = {
+type PageLayoutWidgetMessageDisplayProps = {
+  Icon: IconComponent;
   message: string;
 };
 
-export const CallRecordingTranscriptState = ({
+export const PageLayoutWidgetMessageDisplay = ({
+  Icon,
   message,
-}: CallRecordingTranscriptStateProps) => (
-  <StyledStateContainer>
-    <IconFileText size={24} />
+}: PageLayoutWidgetMessageDisplayProps) => (
+  <StyledMessageContainer>
+    <Icon size={24} />
     <StyledMessage>{message}</StyledMessage>
-  </StyledStateContainer>
+  </StyledMessageContainer>
 );

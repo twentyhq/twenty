@@ -2,8 +2,4 @@ import { type CalendarEventCallRecordingTranscriptSelection } from '@/page-layou
 
 export type CalendarEventCallRecordingTranscriptWidgetState =
   | CalendarEventCallRecordingTranscriptSelection
-  | {
-      state: 'LOADING';
-      loadingPhase: 'INITIAL' | 'ADDITIONAL_PAGE';
-    }
-  | { state: 'QUERY_ERROR' | 'FORBIDDEN' | 'UNSUPPORTED' };
+  | { state: 'LOADING' | 'QUERY_ERROR' | 'FORBIDDEN' | 'UNSUPPORTED' };

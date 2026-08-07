@@ -5,7 +5,6 @@ import { PageLayoutType } from '~/generated-metadata/graphql';
 
 let mockIsMobile = false;
 let mockIsInSidePanel = false;
-let mockIsPageLayoutInEditMode = false;
 
 const featureFilteredHomeTab: PageLayoutTab = {
   id: 'home-tab-id',
@@ -33,7 +32,7 @@ jest.mock('@/page-layout/hooks/useCurrentPageLayoutOrThrow', () => ({
 }));
 
 jest.mock('@/page-layout/hooks/useIsPageLayoutInEditMode', () => ({
-  useIsPageLayoutInEditMode: () => mockIsPageLayoutInEditMode,
+  useIsPageLayoutInEditMode: () => false,
 }));
 
 jest.mock(
@@ -60,7 +59,6 @@ describe('usePageLayoutRenderableTabs', () => {
   beforeEach(() => {
     mockIsMobile = false;
     mockIsInSidePanel = false;
-    mockIsPageLayoutInEditMode = false;
   });
 
   it.each([
@@ -80,14 +78,4 @@ describe('usePageLayoutRenderableTabs', () => {
       ]);
     },
   );
-
-  it('does not restore feature-filtered tabs in edit mode', () => {
-    mockIsPageLayoutInEditMode = true;
-
-    const { result } = renderHook(() => usePageLayoutRenderableTabs());
-
-    expect(result.current.tabsToRenderInTabList).toEqual([
-      featureFilteredHomeTab,
-    ]);
-  });
 });

@@ -1,9 +1,8 @@
 import { useCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/hooks/useCalendarEventCallRecordingTranscript';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const mockUseFindManyRecords = jest.fn();
-const mockFetchMoreRecords = jest.fn();
 
 const mockLayoutRenderingContext: {
   targetRecordIdentifier?: {
@@ -37,7 +36,6 @@ let findManyRecordsResult: {
   records: Record<string, unknown>[];
   loading: boolean;
   error: Error | undefined;
-  hasNextPage: boolean;
 };
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
@@ -57,20 +55,12 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: (parameters: unknown) => {
     mockUseFindManyRecords(parameters);
 
-    return {
-      ...findManyRecordsResult,
-      fetchMoreRecords: mockFetchMoreRecords,
-      queryIdentifier: 'call-recording-query-identifier',
-    };
+    return findManyRecordsResult;
   },
 }));
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => mockLayoutRenderingContext,
-}));
-
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue', () => ({
-  useAtomFamilyStateValue: () => false,
 }));
 
 const readyCallRecording = {
@@ -91,7 +81,6 @@ const readyCallRecording = {
 describe('useCalendarEventCallRecordingTranscript', () => {
   beforeEach(() => {
     mockUseFindManyRecords.mockClear();
-    mockFetchMoreRecords.mockReset();
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'calendar-event-id',
       targetObjectNameSingular: 'calendarEvent',
@@ -102,17 +91,17 @@ describe('useCalendarEventCallRecordingTranscript', () => {
       records: [],
       loading: false,
       error: undefined,
-      hasNextPage: false,
     };
   });
 
-  it('queries every transcript field for the current calendar event', () => {
+  it('queries every transcript field for the current calendar event in arrival order', () => {
     renderHook(() => useCalendarEventCallRecordingTranscript());
 
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({
         objectNameSingular: 'callRecording',
         filter: { calendarEventId: { eq: 'calendar-event-id' } },
+        orderBy: [{ createdAt: 'AscNullsLast' }, { id: 'AscNullsFirst' }],
         recordGqlFields: {
           id: true,
           status: true,
@@ -124,31 +113,6 @@ describe('useCalendarEventCallRecordingTranscript', () => {
         skip: false,
       }),
     );
-  });
-
-  it('loads every page before returning a selected transcript', async () => {
-    findManyRecordsResult.hasNextPage = true;
-    mockFetchMoreRecords.mockImplementation(async () => {
-      findManyRecordsResult.records = [readyCallRecording];
-      findManyRecordsResult.hasNextPage = false;
-
-      return { data: {} };
-    });
-
-    const { result, rerender } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
-
-    expect(result.current.callRecordingTranscriptState).toEqual({
-      state: 'LOADING',
-      loadingPhase: 'ADDITIONAL_PAGE',
-    });
-
-    await waitFor(() => expect(mockFetchMoreRecords).toHaveBeenCalledTimes(1));
-
-    rerender();
-
-    expect(result.current.callRecordingTranscriptState.state).toBe('READY');
   });
 
   it('returns permission denied when the object cannot be read', () => {
@@ -207,7 +171,7 @@ describe('useCalendarEventCallRecordingTranscript', () => {
     });
   });
 
-  it('distinguishes initial loading from no related recordings', () => {
+  it('distinguishes loading from no related recordings', () => {
     findManyRecordsResult.loading = true;
 
     const { result, rerender } = renderHook(() =>
@@ -216,7 +180,6 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'LOADING',
-      loadingPhase: 'INITIAL',
     });
 
     act(() => {
@@ -238,24 +201,6 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'QUERY_ERROR',
-    });
-  });
-
-  it('maps pagination failures without showing a partial selection', async () => {
-    findManyRecordsResult.records = [readyCallRecording];
-    findManyRecordsResult.hasNextPage = true;
-    mockFetchMoreRecords.mockResolvedValue({
-      error: new Error('Next page failed'),
-    });
-
-    const { result } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
-
-    await waitFor(() => {
-      expect(result.current.callRecordingTranscriptState).toEqual({
-        state: 'QUERY_ERROR',
-      });
     });
   });
 

@@ -4,25 +4,19 @@ import { CallRecordingStatus } from '~/generated/graphql';
 const createCallRecording = ({
   id,
   transcript,
-  endedAt,
-  startedAt = null,
-  createdAt = '2026-08-01T00:00:00.000Z',
   status = CallRecordingStatus.COMPLETED,
 }: {
   id: string;
   transcript: unknown;
-  endedAt: string | null;
-  startedAt?: string | null;
-  createdAt?: string;
   status?: CallRecordingStatus;
 }) => ({
   __typename: 'CallRecording',
   id,
   status,
   transcript,
-  startedAt,
-  endedAt,
-  createdAt,
+  startedAt: null,
+  endedAt: null,
+  createdAt: '2026-08-01T00:00:00.000Z',
 });
 
 const VALID_TRANSCRIPT = [
@@ -33,77 +27,90 @@ const VALID_TRANSCRIPT = [
 ];
 
 describe('selectCalendarEventCallRecordingTranscript', () => {
-  it('keeps an older readable transcript when a newer attempt failed', () => {
+  it('shows the first readable transcript even when a later attempt failed', () => {
     const selection = selectCalendarEventCallRecordingTranscript([
       createCallRecording({
-        id: 'older-readable',
+        id: 'first-readable',
         transcript: VALID_TRANSCRIPT,
-        endedAt: '2026-08-01T10:00:00.000Z',
       }),
       createCallRecording({
-        id: 'newer-failed',
+        id: 'later-failed',
         transcript: { status: 'FAILED' },
-        endedAt: '2026-08-02T10:00:00.000Z',
         status: CallRecordingStatus.FAILED,
       }),
     ]);
 
     expect(selection).toMatchObject({
       state: 'READY',
-      callRecording: { id: 'older-readable' },
+      callRecording: { id: 'first-readable' },
       entries: [{ speakerName: 'Ada', text: 'Readable transcript' }],
     });
   });
 
-  it('selects the newest readable transcript among readable candidates', () => {
+  it('shows the first readable transcript when several are readable', () => {
     const selection = selectCalendarEventCallRecordingTranscript([
       createCallRecording({
-        id: 'older-readable',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: '2026-08-01T10:00:00.000Z',
+        id: 'later-failed',
+        transcript: null,
+        status: CallRecordingStatus.FAILED,
       }),
       createCallRecording({
-        id: 'newer-readable',
+        id: 'first-readable',
+        transcript: VALID_TRANSCRIPT,
+      }),
+      createCallRecording({
+        id: 'second-readable',
         transcript: [
           {
             participant: { name: 'Grace' },
-            words: [{ text: 'Newer transcript' }],
+            words: [{ text: 'Second transcript' }],
           },
         ],
-        endedAt: '2026-08-02T10:00:00.000Z',
       }),
     ]);
 
     expect(selection).toMatchObject({
       state: 'READY',
-      callRecording: { id: 'newer-readable' },
+      callRecording: { id: 'first-readable' },
     });
   });
 
-  it('selects the newest pending candidate before terminal candidates', () => {
+  it('prefers a pending candidate over earlier terminal candidates', () => {
     const selection = selectCalendarEventCallRecordingTranscript([
       createCallRecording({
-        id: 'older-pending',
-        transcript: { status: 'PENDING' },
-        endedAt: '2026-08-01T10:00:00.000Z',
-      }),
-      createCallRecording({
-        id: 'newer-pending',
-        transcript: null,
-        endedAt: '2026-08-02T10:00:00.000Z',
-        status: CallRecordingStatus.PROCESSING,
-      }),
-      createCallRecording({
-        id: 'newest-failed',
+        id: 'first-failed',
         transcript: { status: 'FAILED' },
-        endedAt: '2026-08-03T10:00:00.000Z',
         status: CallRecordingStatus.FAILED,
+      }),
+      createCallRecording({
+        id: 'retry-pending',
+        transcript: null,
+        status: CallRecordingStatus.PROCESSING,
       }),
     ]);
 
     expect(selection).toMatchObject({
       state: 'PENDING',
-      callRecording: { id: 'newer-pending' },
+      callRecording: { id: 'retry-pending' },
+    });
+  });
+
+  it('falls back to the first recording when nothing is readable or pending', () => {
+    const selection = selectCalendarEventCallRecordingTranscript([
+      createCallRecording({
+        id: 'first-failed',
+        transcript: { status: 'FAILED' },
+        status: CallRecordingStatus.FAILED,
+      }),
+      createCallRecording({
+        id: 'later-empty',
+        transcript: [],
+      }),
+    ]);
+
+    expect(selection).toMatchObject({
+      state: 'FAILED',
+      callRecording: { id: 'first-failed' },
     });
   });
 
@@ -146,7 +153,6 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
           createCallRecording({
             id: 'recording',
             transcript,
-            endedAt: '2026-08-01T10:00:00.000Z',
             status,
           }),
         ]),
@@ -193,7 +199,6 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
           createCallRecording({
             id: 'recording',
             transcript,
-            endedAt: '2026-08-01T10:00:00.000Z',
             status,
           }),
         ]),
@@ -207,102 +212,15 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
         createCallRecording({
           id: 'recording',
           transcript: VALID_TRANSCRIPT,
-          endedAt: '2026-08-01T10:00:00.000Z',
           status: CallRecordingStatus.FAILED,
         }),
       ]),
     ).toMatchObject({ state: 'READY' });
   });
 
-  it('falls back from ended time to started time and then creation time', () => {
-    const selection = selectCalendarEventCallRecordingTranscript([
-      createCallRecording({
-        id: 'created-time-only',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: null,
-        createdAt: '2026-08-01T12:00:00.000Z',
-      }),
-      createCallRecording({
-        id: 'started-time',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: 'not-a-date',
-        startedAt: '2026-08-02T12:00:00.000Z',
-        createdAt: '2026-08-01T10:00:00.000Z',
-      }),
-    ]);
-
-    expect(selection).toMatchObject({
-      callRecording: { id: 'started-time' },
-    });
-  });
-
-  it('uses creation time and then id as deterministic tie-breakers', () => {
-    const selection = selectCalendarEventCallRecordingTranscript([
-      createCallRecording({
-        id: 'recording-b',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: '2026-08-01T12:00:00.000Z',
-        createdAt: '2026-08-01T11:00:00.000Z',
-      }),
-      createCallRecording({
-        id: 'recording-a',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: '2026-08-01T12:00:00.000Z',
-        createdAt: '2026-08-01T11:00:00.000Z',
-      }),
-    ]);
-
-    expect(selection).toMatchObject({
-      callRecording: { id: 'recording-a' },
-    });
-  });
-
-  it('uses id as a deterministic tie-breaker when every timestamp is invalid', () => {
-    const selection = selectCalendarEventCallRecordingTranscript([
-      createCallRecording({
-        id: 'recording-b',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: 'not-a-date',
-        startedAt: null,
-        createdAt: 'also-not-a-date',
-      }),
-      createCallRecording({
-        id: 'recording-a',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: null,
-        startedAt: 'not-a-date',
-        createdAt: 'also-not-a-date',
-      }),
-    ]);
-
-    expect(selection).toMatchObject({
-      callRecording: { id: 'recording-a' },
-    });
-  });
-
-  it('returns no recording without mutating the candidate order', () => {
+  it('returns no recording for an empty candidate list', () => {
     expect(selectCalendarEventCallRecordingTranscript([])).toEqual({
       state: 'NO_RECORDING',
     });
-
-    const callRecordings = [
-      createCallRecording({
-        id: 'older',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: '2026-08-01T10:00:00.000Z',
-      }),
-      createCallRecording({
-        id: 'newer',
-        transcript: VALID_TRANSCRIPT,
-        endedAt: '2026-08-02T10:00:00.000Z',
-      }),
-    ];
-
-    selectCalendarEventCallRecordingTranscript(callRecordings);
-
-    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
-      'older',
-      'newer',
-    ]);
   });
 });

@@ -170,7 +170,7 @@ describe('CalendarEvent standard metadata build', () => {
       Object.keys(
         STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs,
       ),
-    ).toEqual(['home', 'transcript', 'timeline']);
+    ).toEqual(['home', 'timeline', 'transcript']);
 
     expect(timelineWidget?.universalConfiguration).toMatchObject({
       configurationType: WidgetConfigurationType.TIMELINE,
@@ -197,7 +197,7 @@ describe('CalendarEvent standard metadata build', () => {
     expect(transcriptTab).toMatchObject({
       title: 'Transcript',
       icon: 'IconMicrophone',
-      position: 30,
+      position: 40,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });
     expect(transcriptWidget).toMatchObject({

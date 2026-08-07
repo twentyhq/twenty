@@ -27,15 +27,11 @@ const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
     .transcript.widgets.transcript.universalIdentifier;
 
-const TIMELINE_TAB_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .timeline.universalIdentifier;
-
 @RegisteredWorkspaceCommand('2.29.0', 1786098569000)
 @Command({
   name: 'upgrade:2-29:add-calendar-event-transcript-tab',
   description:
-    'Add the Transcript tab and widget to the CalendarEvent record page in existing workspaces and move the Timeline tab to its reserved position',
+    'Add the Transcript tab and widget to the CalendarEvent record page in existing workspaces',
 })
 export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -100,31 +96,8 @@ export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCo
         universalIdentifiers: [TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER],
       });
 
-    const existingTimelineTab =
-      flatPageLayoutTabMaps.byUniversalIdentifier[
-        TIMELINE_TAB_UNIVERSAL_IDENTIFIER
-      ];
-    const standardTimelineTab =
-      standardAllFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        TIMELINE_TAB_UNIVERSAL_IDENTIFIER
-      ];
-
-    const pageLayoutTabsToUpdate =
-      isDefined(existingTimelineTab) &&
-      isDefined(standardTimelineTab) &&
-      existingTimelineTab.position !== standardTimelineTab.position
-        ? [
-            {
-              ...existingTimelineTab,
-              position: standardTimelineTab.position,
-            },
-          ]
-        : [];
-
     const totalOperationCount =
-      pageLayoutTabsToCreate.length +
-      pageLayoutWidgetsToCreate.length +
-      pageLayoutTabsToUpdate.length;
+      pageLayoutTabsToCreate.length + pageLayoutWidgetsToCreate.length;
 
     if (totalOperationCount === 0) {
       this.logger.log(
@@ -153,7 +126,7 @@ export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCo
             pageLayoutTab: {
               flatEntityToCreate: pageLayoutTabsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: pageLayoutTabsToUpdate,
+              flatEntityToUpdate: [],
             },
             pageLayoutWidget: {
               flatEntityToCreate: pageLayoutWidgetsToCreate,
