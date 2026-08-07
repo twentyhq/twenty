@@ -1,5 +1,8 @@
+import { randomUUID } from 'crypto';
+
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
@@ -9,12 +12,81 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 
 describe('people merge resolvers (integration)', () => {
   let createdPersonIdsForCleaning: string[] = [];
+  let createdNoteTargetIdsForCleaning: string[] = [];
 
   afterEach(async () => {
+    if (createdNoteTargetIdsForCleaning.length > 0) {
+      await deleteRecordsByIds('noteTarget', createdNoteTargetIdsForCleaning);
+      createdNoteTargetIdsForCleaning = [];
+    }
+
     if (createdPersonIdsForCleaning.length > 0) {
       await deleteRecordsByIds('person', createdPersonIdsForCleaning);
       createdPersonIdsForCleaning = [];
     }
+  });
+
+  describe('migrating related records', () => {
+    it('should migrate morph relations when merging people', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          { name: { firstName: 'Priority', lastName: 'Person' } },
+          { name: { firstName: 'Duplicate', lastName: 'Person' } },
+        ],
+      });
+
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+      const [priorityPersonId, duplicatePersonId] = createdPersonIds;
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      const noteTargetId = randomUUID();
+      createdNoteTargetIdsForCleaning.push(noteTargetId);
+
+      const createNoteTargetOperation = createOneOperationFactory({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: 'id targetPersonId',
+        data: { id: noteTargetId, targetPersonId: duplicatePersonId },
+      });
+
+      const noteTargetResponse = await makeGraphqlAPIRequest(
+        createNoteTargetOperation,
+      );
+
+      expect(noteTargetResponse.body.errors).toBeUndefined();
+
+      const mergeOperation = mergeManyOperationFactory({
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        ids: createdPersonIds,
+        conflictPriorityIndex: 0,
+      });
+
+      const mergeResponse = await makeGraphqlAPIRequest(mergeOperation);
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const noteTarget = await makeGraphqlAPIRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'noteTarget',
+          gqlFields: 'id targetPersonId',
+          filter: { id: { eq: noteTargetId } },
+        }),
+      );
+
+      expect(noteTarget.body.errors).toBeUndefined();
+      expect(noteTarget.body.data.noteTarget.targetPersonId).toBe(
+        priorityPersonId,
+      );
+    });
   });
 
   describe('merging composite fields', () => {
