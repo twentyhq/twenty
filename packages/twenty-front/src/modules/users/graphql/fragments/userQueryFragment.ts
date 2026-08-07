@@ -24,6 +24,7 @@ export const USER_QUERY_FRAGMENT = gql`
     supportUserHash
     onboardingStatus
     previousOnboardingStatus
+    isWorkspaceCreator
     workspaceMember {
       ...WorkspaceMemberQueryFragment
     }

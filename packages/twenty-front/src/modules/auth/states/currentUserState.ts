@@ -10,6 +10,7 @@ export type CurrentUser = Pick<
   | 'canImpersonate'
   | 'onboardingStatus'
   | 'previousOnboardingStatus'
+  | 'isWorkspaceCreator'
   | 'userVars'
   | 'firstName'
   | 'lastName'

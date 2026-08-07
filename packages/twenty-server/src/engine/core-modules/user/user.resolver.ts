@@ -596,6 +596,22 @@ export class UserResolver {
     });
   }
 
+  @ResolveField(() => Boolean, {
+    nullable: true,
+  })
+  async isWorkspaceCreator(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<boolean | null> {
+    if (!workspace) return null;
+
+    return this.userWorkspaceService.isWorkspaceCreator({
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
   @ResolveField(() => WorkspaceEntity, {
     nullable: true,
   })

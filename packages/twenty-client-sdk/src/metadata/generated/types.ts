@@ -1848,6 +1848,9 @@ export default {
             "supportUserHash": [
                 1
             ],
+            "isWorkspaceCreator": [
+                3
+            ],
             "workspaces": [
                 54
             ],

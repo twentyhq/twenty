@@ -135,7 +135,7 @@ export const useSetNextOnboardingStatus = () => {
         store.set(isWelcomeAnimationVisibleState.atom, true);
         store.set(
           shouldOpenAiChatAfterOnboardingState.atom,
-          isOnboardingAiChatEnabled,
+          isOnboardingAiChatEnabled && currentUser?.isWorkspaceCreator === true,
         );
       }
     },
