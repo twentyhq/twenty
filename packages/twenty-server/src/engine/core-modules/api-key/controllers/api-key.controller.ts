@@ -12,6 +12,7 @@ import {
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -30,7 +31,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
  * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
  * rest/apiKeys will be removed in the future
  */
-@Controller(['rest/apiKeys', 'rest/metadata/apiKeys'])
+@Controller([`${ApiPath.Rest}/apiKeys`, `${ApiPath.Rest}/metadata/apiKeys`])
 @UseGuards(
   JwtAuthGuard,
   WorkspaceAuthGuard,

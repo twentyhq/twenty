@@ -36,6 +36,7 @@ exports[`Page layout with tabs creation via update should succeed should create 
             "groupByFieldMetadataId": Any<String>,
             "groupBySubFieldName": null,
             "manualSortOrder": null,
+            "numberFormat": null,
             "orderBy": "VALUE_DESC",
             "showCenterMetric": true,
             "timezone": "UTC",

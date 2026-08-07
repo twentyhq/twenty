@@ -35,6 +35,7 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       id
       permissionFlags
+      isImpersonating
       objectsPermissions {
         ...ObjectPermissionFragment
       }
@@ -70,7 +71,6 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         name
         universalIdentifier
-        logo
         logoUrl
       }
       isCustomDomainEnabled

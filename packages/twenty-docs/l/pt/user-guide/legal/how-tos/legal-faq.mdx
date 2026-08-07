@@ -1,0 +1,111 @@
+---
+title: FAQ Legal
+description: Perguntas legais frequentes.
+---
+
+## Localização de dados e transferências internacionais
+
+<AccordionGroup>
+<Accordion title="Em que país e região nossos dados do espaço de trabalho, anexos, logs e backups seriam armazenados?">
+Vinte nuvem roda em servidores AWS localizados em Frankfurt, Alemanha.
+</Accordion>
+<Accordion title="Será possível fixar a região de hospedagem para a nossa área de trabalho?">
+A seleção da região de hospedagem estará disponível a partir de 2027, inicialmente para novos workspaces. Os usuários poderão solicitar uma alteração de região para um workspace existente em uma data posterior. Como alternativa, você pode entrar em contato com [nossos parceiros](https://twenty.com/partners/list?categories=HOSTING) para ajudá-lo a configurar sua instância.
+</Accordion>
+<Accordion title="Quais subprocessadores podem processar ou acessar nossos dados de CRM, e em que países eles estão localizados?">
+Uma lista de todos os subprocessadores está disponível em [nosso Trust Center](https://trust.twenty.com/?tab=subprocessors).
+</Accordion>
+<Accordion title="Que salvaguardas se aplicam às transferências internacionais de dados?">
+As Cláusulas Contratuais Padrão da UE, juntamente com o adendo do Reino Unido e as emendas suíças, aplicam-se a transferências internacionais de dados para fora da UE, incluindo transferências para todos os subprocessadores.
+</Accordion>
+</AccordionGroup>
+
+## Contrato de processamento de dados e funções legais
+
+<AccordionGroup>
+<Accordion title="Onde podemos encontrar o atual Acordo de Processamento de Dados (DPA)?">
+Você pode gerar seu DPA assinado em https://{your-domain}/settings/legal/dpa (por exemplo, https://getting-started.twenty.com/settings/legal/dpa).
+</Accordion>
+<Accordion title="Vinte atua como processador de dados para informações comerciantes e de contato armazenadas no CRM, enquanto nossa empresa permanece o controlador de dados?">
+De acordo com nossa [Política de Privacidade](https://twenty.com/privacy-policy), 20 atua como o processador de dados para o comerciante e informações de contato armazenadas no CRM, enquanto sua empresa permanece o controlador de dados.
+</Accordion>
+<Accordion title="Conteúdo do CRM já é usado para treinar modelos de IA de vinte ou terceiros?">
+O conteúdo do CRM pode ser usado para treinar modelos de IA, dependendo dos Termos e Condições dos subprocessadores. A Twenty não possui seu próprio modelo de IA — todos os modelos de IA disponíveis no Twenty Cloud são fornecidos por nossos subprocessadores.
+</Accordion>
+<Accordion title="Se o processamento de IA for opcional, pode ser totalmente desativado para a nossa área de trabalho?">
+A IA pode ser totalmente desativada desligando todos os modelos de IA em Settings → AI → Models. Além disso, nenhum dado é enviado para a IA, a menos que você interaja ativamente com o chat de IA ou com um nó de IA em um fluxo de trabalho.
+</Accordion>
+</AccordionGroup>
+
+## Controles de segurança e acesso
+
+<AccordionGroup>
+<Accordion title="A criptografia é usada em trânsito e em repouso? Quais são suas práticas de gerenciamento de chaves e como os dados dos locatários são isolados?">
+Todos os dados são criptografados em trânsito e em repouso. Os dados dos locatários são isolados por meio de uma configuração de esquema por locatário, e as chaves de criptografia são periodicamente rotacionadas.
+</Accordion>
+<Accordion title="Que vinte funcionários ou subprocessadores podem acessar os espaços de trabalho do cliente, para que fins, e como o acesso é aprovado e registrado?">
+As equipes de engenharia e suporte da Twenty podem acessar os workspaces dos clientes somente após o cliente relatar um problema e conceder acesso em Settings → General → Security.
+</Accordion>
+<Accordion title="Qual é o seu processo de notificação de incidente e período de notificação alvo após um incidente de segurança confirmado que afeta nossos dados?">
+No caso de uma violação de dados pessoais confirmada afetando seus dados, notificaremos você sem um atraso indevido e em qualquer evento dentro de 48 horas após tomar conhecimento dele. Nossa notificação incluirá, na medida conhecida no momento: a natureza da violação, as categorias e o volume aproximado de dados e indivíduos afectados, consequências prováveis, e as medidas de reparação e mitigação tomadas ou planeadas. Iremos apresentar atualizações à medida que a investigação for avançando.
+</Accordion>
+</AccordionGroup>
+
+## retenção e exclusão de dados
+
+<AccordionGroup>
+<Accordion title="Quando um registro de CRM individual é excluído, quando é removido de sistemas ativos?">
+Quando um registro é excluído, ele é primeiro excluído de forma lógica (soft delete) e ainda pode ser restaurado. Ele é excluído permanentemente e removido dos sistemas ativos assim que o período de retenção expira ou um usuário o destrói manualmente.
+</Accordion>
+<Accordion title="Por quanto tempo os registros excluídos logicamente (soft delete) são mantidos no sistema?">
+Por padrão, os registros excluídos logicamente são mantidos por 14 dias, após os quais são removidos permanentemente do sistema. O período de retenção para registros excluídos logicamente pode ser alterado em Settings → General → Security.
+</Accordion>
+<Accordion title="Por quanto tempo esse registro pode permanecer em backups ou logs técnicos?">
+Um registro removido permanece nos backups por 30 dias, após os quais é excluído permanentemente.
+</Accordion>
+<Accordion title="Quando um espaço de trabalho é fechado ou a exclusão completa é solicitada, qual linha do tempo exata se aplica aos dados de produção, anexos, logs e backups?">
+Quando um workspace é excluído, seus dados são imediatamente removidos dos sistemas ativos. Os backups são retidos por 7 dias, após os quais todos os dados são excluídos permanentemente.
+</Accordion>
+<Accordion title="Durante qualquer período de retenção de back-retention, são excluídos dados isolados do acesso operacional e usados?">
+Sim, durante qualquer período de retenção de back-retention, dados excluídos são isolados de uso operacional.
+</Accordion>
+<Accordion title="São mantidas categorias de dados mais longas para fins jurídicos, facturações, prevenção de fraudes, segurança ou auditoria? Em caso afirmativo, que categorias e por quanto tempo?">
+Para mais informações sobre a retenção de dados, você pode solicitar nossa Política de Gerenciamento de Dados e Retenção disponível em [nosso Centro de Confiança](https://trust.twenty.com/?tab=documents).
+</Accordion>
+<Accordion title="Será possível confirmar por escrito quando um pedido de exclusão completo foi atendido?">
+Reconhecemos as solicitações de exclusão e fornecemos confirmação por escrito assim que a exclusão for concluída.
+</Accordion>
+</AccordionGroup>
+
+## Backups e resiliência
+
+<AccordionGroup>
+<Accordion title="Quais são a frequência e o período de retenção de backup?">
+Os backups são criados continuamente com snapshots diários, e o período de retenção é de 30 dias.
+</Accordion>
+<Accordion title="Qual é o objetivo de recuperação e o objetivo de recuperação de tempo para vinte nuvens?">
+RTO e RPO são ambos 6 horas (como por nosso DPA).
+</Accordion>
+<Accordion title="Qual é o processo para solicitar ou realizar uma recuperação?">
+Para solicitar uma restauração, entre em contato com nossa equipe via chat de suporte ou pelo endereço [contact@twenty.com](mailto:contact@twenty.com).
+</Accordion>
+<Accordion title="Os backups são criptografados e armazenados na mesma região dos dados primários do espaço de trabalho?">
+Todos os backups são criptografados e armazenados em locais geograficamente separados dentro da mesma jurisdição (por exemplo, dentro da UE para dados da UE).
+</Accordion>
+</AccordionGroup>
+
+## Conformidade
+
+<AccordionGroup>
+<Accordion title="Vinte é compatível com o RGPD?">
+Sim, Vinte é [compatível com o RGPD](https://trust.twenty.com/?tab=securityControls\&frameworks=gdpr_v1).
+</Accordion>
+<Accordion title="Vinte SOC 2 está em conformidade?">
+Sim, vinte é [compatível com o SOC 2](https://trust.twenty.com/?tab=securityControls\&frameworks=soc2_v1).
+</Accordion>
+<Accordion title="Vinte HIPAA é conforme?">
+Não, estão em vias de se tornar conformes com a iniciativa HIPAA.
+</Accordion>
+</AccordionGroup>
+
+Se você tiver mais dúvidas, consulte nossos [Termos e Condições](https://twenty.com/terms), nossa [Política de Privacidade](https://twenty.com/privacy-policy) e nosso [Trust Center](https://trust.twenty.com/). Se suas dúvidas ainda não tiverem sido respondidas, envie-as para [contact@twenty.com](mailto:contact@twenty.com) ou via chat de suporte.

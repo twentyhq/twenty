@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 @Injectable()
 export class InboundEmailS3ClientProvider {
@@ -54,7 +55,10 @@ export class InboundEmailS3ClientProvider {
       throw new Error('STORAGE_S3_REGION must be set to use email group.');
     }
 
-    const config: S3ClientConfig = { region };
+    const config: S3ClientConfig = {
+      region,
+      requestHandler: buildAwsRequestHandlerOptions(),
+    };
 
     const endpoint = this.twentyConfigService.get('STORAGE_S3_ENDPOINT');
 

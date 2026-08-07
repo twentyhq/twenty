@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
 
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -22,7 +23,7 @@ import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-te
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
-@Controller('rest/ai')
+@Controller(`${ApiPath.Rest}/ai`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,

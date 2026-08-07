@@ -204,7 +204,13 @@ Na konzoli Microsoft Azure povolte následující API v "Povoleních":
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-Poznámka: "Mail.ReadWrite" a "Mail.Send" jsou povinné pouze v případě, že chcete odesílat e-maily pomocí našich pracovních postupů. Můžete použít "Mail.Read" místo toho, pokud chcete pouze přijímat e-maily.
+<Note>
+"Mail.ReadWrite" a "Mail.Send" jsou povinné pouze tehdy, pokud chcete odesílat e-maily pomocí akcí v našich pracovních postupech. Můžete použít "Mail.Read" místo toho, pokud chcete pouze přijímat e-maily.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" je povinné, pokud chcete vytvářet události v kalendáři pomocí akcí v našich pracovních postupech. Pokud chcete pouze synchronizovat události kalendáře, použijte "Calendars.Read".
+</Note>
 
 ### Autorizované URI přesměrování
 
@@ -271,9 +277,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. Najděte sekci **E-mail**
 3. Nakonfigurujte své nastavení SMTP:
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   Budete potřebovat zřídit [Heslo aplikace](https://support.google.com/accounts/answer/185833).
   * EMAIL_DRIVER=smtp
@@ -282,9 +288,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=gmail_email_address
   * EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
   * EMAIL_DRIVER=smtp
@@ -293,9 +299,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=office365_email_address
   * EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
   * Spusťte obraz smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -305,9 +311,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
@@ -380,3 +386,22 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 Při použití `LOGIC_FUNCTION_TYPE=DISABLED` nebo `CODE_INTERPRETER_TYPE=DISABLED` vrátí každý pokus o spuštění chybu. To je užitečné, pokud chcete provozovat Twenty bez těchto schopností.
 </Note>
+
+## API a front-end na samostatných serverech
+
+Platí pouze v případě, že back-end neposkytuje front-end. Nasazení se stejným původem
+zde nic nepotřebují.
+
+Uveďte každý původ prohlížeče, který komunikuje s API, oddělený čárkami. `SERVER_URL`
+a `FRONTEND_URL` jsou již důvěryhodné.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Aktualizace na verzi s relacemi pomocí souborů cookie to vyžaduje. Front-end
+nyní posílá přihlašovací údaje u každého požadavku a prohlížeče odmítají odpověď s přihlašovacími údaji z nedeklarovaného původu, takže se aplikace nenačte, dokud to nenastavíte.
+</Warning>
+
+Pokud jsou dva hostitelé na různých registrovatelných doménách (nejen na různých subdoménách), nastavte také `AUTH_COOKIE_SAME_SITE=none`, což vyžaduje HTTPS.

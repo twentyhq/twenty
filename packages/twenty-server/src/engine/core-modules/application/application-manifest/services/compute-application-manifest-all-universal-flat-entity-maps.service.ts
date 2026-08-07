@@ -215,12 +215,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
+    const settingsFrontComponentUniversalIdentifier =
+      manifest.application.settingsFrontComponent?.universalIdentifier;
+
     for (const frontComponentManifest of manifest.frontComponents) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromFrontComponentManifestToUniversalFlatFrontComponent({
             frontComponentManifest,
             applicationUniversalIdentifier,
+            isSettingsFrontComponent:
+              frontComponentManifest.universalIdentifier ===
+              settingsFrontComponentUniversalIdentifier,
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -520,6 +526,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
               pageLayoutTabManifest,
               pageLayoutUniversalIdentifier:
                 pageLayoutManifest.universalIdentifier,
+              pageLayoutType: pageLayoutManifest.type,
               applicationUniversalIdentifier,
               now,
             }),
@@ -554,12 +561,19 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         );
       }
 
+      const referencedPageLayoutManifest = manifest.pageLayouts?.find(
+        (pageLayoutManifest) =>
+          pageLayoutManifest.universalIdentifier ===
+          pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+      );
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
             pageLayoutTabManifest,
             pageLayoutUniversalIdentifier:
               pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+            pageLayoutType: referencedPageLayoutManifest?.type,
             applicationUniversalIdentifier,
             now,
           }),

@@ -6,17 +6,23 @@ icon: window-maximize
 
 Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einem sandboxed iframe mit opaker Origin ausgeführt, wobei die UI dennoch nativ auf der Seite gerendert wird und nicht auf dieses iframe beschränkt ist.
 
+<Warning>
+Front-Komponenten befinden sich noch in aktiver Entwicklung. Ihr Code wird gegen ein teilweises DOM und nicht gegen eine echte Browserseite ausgeführt, sodass fortgeschrittene Anwendungsfälle fehlschlagen können – oft ohne sichtbare Fehlermeldung. Siehe [Aktuelle Einschränkungen](#current-limitations).
+</Warning>
+
 ## Wo Front-Komponenten verwendet werden können
 
-Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
+Front-Komponenten können an drei Stellen innerhalb von Twenty gerendert werden:
 
 * **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
 * **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts) eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
+* **App settings** — Definiert mit [`defineSettingsFrontComponent()`](#custom-settings-component), wird die Front-Komponente als Abschnitt im **Settings**-Tab der App gerendert und ersetzt dabei die standardmäßige Variablenkonfigurationsoberfläche.
 
-Eine Front-Komponente allein ist über die Benutzeroberfläche nicht erreichbar – Sie müssen sie *sichtbar machen*. Die beiden Möglichkeiten dafür sind:
+Eine Front-Komponente allein ist über die Benutzeroberfläche nicht erreichbar – Sie müssen sie *sichtbar machen*. Die drei Möglichkeiten dafür sind:
 
 * **Mit einem [Befehlsmenüeintrag](/l/de/developers/extend/apps/layout/command-menu-items) verknüpfen** — registriert sie im Befehlsmenü (Cmd+K) und optional als angeheftete Schnellaktion.
 * **Als Widget in ein [Seitenlayout](/l/de/developers/extend/apps/layout/page-layouts) einbetten** — platziert es auf der Detailseite eines Datensatzes oder in einem Dashboard.
+* **Definiere sie mit [`defineSettingsFrontComponent()`](#custom-settings-component)** — rendert sie als Abschnitt im **Settings**-Tab der App und ersetzt dabei die standardmäßige Variablenkonfigurationsoberfläche.
 
 ## Einfaches Beispiel
 
@@ -76,6 +82,34 @@ Klicken Sie darauf, um die Komponente inline zu rendern.
 ## Eine Front-Komponente auf einer Seite platzieren
 
 Über Befehle hinaus können Sie eine Front-Komponente direkt in eine Datensatzseite einbetten, indem Sie sie als Widget in einem **Seitenlayout** hinzufügen. Details finden Sie unter [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts).
+
+## Benutzerdefinierte Einstellungen-Komponente
+
+Um die automatisch generierte Variablenkonfigurationsoberfläche im **Settings**-Tab deiner App durch deine eigene Komponente zu ersetzen, definiere sie mit `defineSettingsFrontComponent` statt mit `defineFrontComponent`. Es verwendet dieselben [Konfigurationsfelder](#configuration-fields) (mit Ausnahme von `isHeadless`, das nicht akzeptiert wird, da eine Einstellungskomponente immer eine sichtbare Benutzeroberfläche rendert) und kennzeichnet die Komponente zusätzlich als Einstellungen-UI der App.
+
+Die Komponente wird als Abschnitt innerhalb des **Settings**-Tabs gerendert, nicht als Ersatz für den gesamten Tab. Die von Twenty verwalteten Systembereiche – Auto-Upgrade, App-URL und Verbindungen – werden immer darüber gerendert und können von der App nicht überschrieben werden.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Pro App ist nur eine Einstellungs-Frontkomponente zulässig; wenn mehr als eine deklariert wird, schlägt der Build fehl. Wenn vorhanden, rendert der **Settings**-Tab der App diese Komponente anstelle der standardmäßigen Konfigurationsoberfläche für Variablen.
 
 ## Headless vs. Nicht-Headless
 
@@ -666,3 +700,72 @@ const Card = () => {
 Da `useTheme()` ein Hook ist, lesen Sie Tokens im Komponenten-Body aus, sodass die Werte immer das aktuelle Theme widerspiegeln. Dieselbe Token-Map wird auch als Konstante `themeCssVariables` exportiert, aber bevorzugen Sie `useTheme()` in Frontend-Komponenten – eine modulweite Konstante, die `themeCssVariables` dereferenziert, kann undefiniert sein, während das App-Manifest extrahiert wird.
 
 Um explizit nach dem aktiven Schema zu verzweigen, lesen Sie es mit `useColorScheme()` aus `twenty-sdk/front-component` aus; der Hook gibt 'light' oder 'dark' zurück.
+
+## Aktuelle Einschränkungen
+
+Front-Komponenten befinden sich in aktiver Entwicklung. Rendern, Styling und das Behandeln von Ereignissen funktionieren gut. Alles, was *über* das Rendern hinausgeht (Messen eines Elements, Aufrufen einer DOM-Methode auf einem Ref, Portaling außerhalb deines Baums, Zugriff auf den Browser-Speicher), fehlt heute noch oder ist unvollständig, und das meiste davon schlägt stillschweigend fehl: keine Exception und auch kein TypeScript-Fehler, da das Gerüst gegen das vollständige Browser-DOM typisiert ist.
+
+Wenn dich eines dieser Probleme blockiert, [eröffne ein Issue](https://github.com/twentyhq/twenty/issues/new/choose), damit es priorisiert wird.
+
+### Layout und Messung
+
+Noch kann sich nichts selbst messen.
+
+| API                                                           | Was passiert                                                                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `getBoundingClientRect()`, `getClientRects()`                 | Löst eine Exception aus                                                                                |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Stillschweigend `undefined`, daher ergibt `width ?? 0` den Wert `0` und `width > 600` ist immer falsch |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof`-Guards funktionieren)                                                       |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Löst eine Exception aus                                                                                |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Stillschweigend `undefined`                                                                            |
+| `new MutationObserver(fn)`                                    | Wird konstruiert, dann löst `.observe()` eine Exception aus                                            |
+
+Daher funktionieren recharts `ResponsiveContainer`, Floating UI / Popper, Listen-Virtualisierung und Drag-to-Resize noch nicht. Führe das Layout stattdessen in CSS aus: Dein Stylesheet erreicht die echte Seite, daher verhalten sich Flexbox, Grid, `aspect-ratio`, `clamp()` und `@container` alle normal.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` und `queueMicrotask` funktionieren ohne das Präfix `window.`. Nur `window.requestAnimationFrame(...)` und ähnliche Aufrufe lösen eine Exception aus.
+</Note>
+
+### DOM-Zugriff
+
+Ein `ref` gibt dir ein Sandbox-Element, kein `HTMLElement`.
+
+| Was du schreibst                                                                                            | Was passiert                                          | Stattdessen verwenden                                                                                 |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Löst eine Exception aus                               | Gesteuerte Komponenten; Werte aus `event.target` auslesen                                             |
+| `element.classList.add(...)`                                                                                | Löst eine Exception aus (`classList` ist `undefined`) | Erstelle den `className`-String selbst                                                                |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Löst eine Exception aus                               | `querySelector()` / `querySelectorAll()`, die funktionieren                                           |
+| `document.activeElement`                                                                                    | Immer `undefined`                                     | Fokus mit `onFocus` / `onBlur` verfolgen                                                              |
+| `\<canvas>`                                                                                | Rendert nichts, keine Fehlermeldung                   | SVG verwenden oder Offscreen zeichnen und ein `<img src={dataUrl}>` anzeigen                          |
+| `createPortal(node, document.body)`                                                                         | Rendert nichts, während `isConnected` Erfolg meldet   | Overlays inline mit `position: absolute` oder der Bibliothek dein eigenes Container-Element übergeben |
+
+Diese Portal-Lücke ist der Grund, warum Radix-, Headless-UI-, MUI- und react-select-Popover standardmäßig nichts rendern. Die meisten akzeptieren eine Container-Prop; verweise sie auf ein Element, das du gerendert hast.
+
+### Ereignisse
+
+Maus, Zeiger, Touch, Drag, Tastatur, Fokus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` und `animationend`/`transitionend` werden an den Host durchgereicht, plus ein paar pro Element: `load`/`error` auf `<img>`, Zwischenablage und Composition auf `<input>`/`\<textarea>`, Medien auf `\<video>`/`\<audio>`, `toggle` auf `\<details>`/`\<dialog>`. Alles andere (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, Pointer-Capture, `onLoad` von `<img>`) wird ohne Warnung verworfen.
+
+`document.addEventListener()` und `window.addEventListener()` werden ohne Fehler registriert und feuern nie, weshalb ein Drag aufhört, sobald der Zeiger das Element verlässt, auf dem er begonnen hat. `event.preventDefault()` wird ebenfalls nicht durchgereicht; Formularübermittlung, `dragover`/`drop` und Link-Klicks sind bereits für dich abgesichert.
+
+### Attribute und Styling
+
+Jedes Element leitet seine eigenen Eigenschaften an den Host-DOM weiter (`href` auf `\<a>`, `src`/`alt` auf `<img>`, `value`/`placeholder`/`disabled` auf `<input>` usw.), plus einen gemeinsamen Satz auf jedem Element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` und jedes `aria-*`-/`data-*`-Attribut (mit Bindestrich, daher wird `ariaLabel` verworfen). Alles außerhalb davon wird stillschweigend verworfen, daher solltest du benutzerdefinierte Zustände als `data-*` ausdrücken.
+
+Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `\<style>`-Element, wird **unscoped** in den `\<head>` der Host-Seite injiziert. Dadurch kollidieren Klassennamen mit denen von Twenty (präfixe sie und schreibe niemals nacktes `div { ... }`-Selektoren), und `@media` bezieht sich auf das Browserfenster statt auf dein Widget (verwende `@container` mit deinem eigenen `container-type`). Inline-`style`-Props sind nicht betroffen.
+
+### Speicher und Netzwerk
+
+`localStorage`, `sessionStorage`, IndexedDB, Cookies, die Cache-API und `BroadcastChannel` sind alle nicht verfügbar, da die Komponente in einem Worker unter einem undurchsichtigen Origin läuft. Um Zustand zu persistieren, rufe eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auf und verwende deren [Key-Value Store](/l/de/developers/extend/apps/logic/key-value-store).
+
+`fetch` funktioniert, mit Einschränkungen:
+
+* Aufrufe an die Twenty-API und die Routen deiner App werden vom Host als Proxy weitergeleitet, daher solltest du [`RestApiClient`](#calling-the-twenty-rest-api) bevorzugen. Bei proxied Aufrufen werden `AbortSignal` und die anderen `RequestInit`-Optionen verworfen, und es werden nur `string`- und `URLSearchParams`-Bodies unterstützt.
+* Andere Origins verlassen die Sandbox mit `Origin: null`, sodass eine Drittanbieter-API nur antwortet, wenn sie `Access-Control-Allow-Origin: *` sendet. Rufe sie stattdessen aus einer Logic Function auf.
+* `fetch('/rest/people')` wird niemals der Twenty-API zugeordnet, weil die Sandbox keine Seiten-URL hat, gegen die ein relativer Pfad aufgelöst werden könnte.
+
+### Weitere Lücken
+
+* **Dateiinhalt.** `<input type="file">` gibt deinem Handler nur Dateimetadaten, nicht die Bytes, daher sind `FileReader` und Uploads noch nicht möglich.
+* **Drag-and-drop-Nutzlasten.** Drag-Events werden ausgelöst, aber `event.dataTransfer` ist `undefined`.
+* **Node-Built-ins.** `fs`, `path` und `node:crypto` führen zu einem Build-Fehler, daher solltest du diese Arbeit in eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auslagern. Web Crypto, `fetch`, `TextEncoder` und `URL` sind verfügbar.
+* **`\<iframe>`** wird immer erneut ohne `allow-same-origin` sandboxed, sodass ein Embed, das von seiner eigenen Session abhängt, als ausgeloggt gerendert wird. Es hat auch kein `onLoad`.

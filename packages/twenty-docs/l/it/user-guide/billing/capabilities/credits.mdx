@@ -13,22 +13,25 @@ I crediti sono un unico saldo che alimenta tutto ciò che eseguiamo per tuo cont
 
 Il costo varia in base al lavoro. Le automazioni quotidiane e i messaggi AI rapidi costano una piccola frazione di un credito; le grandi attività degli agenti AI multi-step costano di più. Ecco un quadro approssimativo:
 
-| Cosa fai                                                                                       | Costo approssimativo               | Cosa significa                    |
-| ---------------------------------------------------------------------------------------------- | ---------------------------------- | --------------------------------- |
-| Esegui uno step di workflow standard (ricerca, creazione, aggiornamento di record)             | ~$0.0001                           | Circa **10.000 step per credito** |
-| Chiama un'API esterna o esegui un nodo di codice                                               | Una piccola frazione di un credito | Migliaia per credito              |
-| Invia un messaggio di chat AI rapido o uno step AI semplice                                    | Una frazione di un centesimo       | Centinaia per credito             |
-| Esegui una grande attività di agente AI (ad es. "configura 10 oggetti dello spazio di lavoro") | Può arrivare a **~$1 o più**       | Alcuni per credito                |
-| Esegui una ricerca web con AI                                                                  | Un costo fisso per ricerca         | Centinaia di ricerche per credito |
-| Attiva la funzione di logica dell'app                                                          | Una piccola frazione di un credito | Migliaia per credito              |
+| Cosa fai                                                                                                                           | Costo approssimativo               | Cosa significa                    |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | --------------------------------- |
+| Esegui un passaggio standard del flusso di lavoro (ricerca, crea o aggiorna record) o attiva la funzione logica di un'applicazione | $0.0001                            | **10.000 esecuzioni per credito** |
+| Chiama un'API esterna o esegui un nodo di codice                                                                                   | Una piccola frazione di un credito | Migliaia per credito              |
+| Invia un messaggio di chat AI rapido o uno step AI semplice                                                                        | Una frazione di un centesimo       | Centinaia per credito             |
+| Esegui una grande attività di agente AI (ad es. "configura 10 oggetti dello spazio di lavoro")                                     | Può arrivare a **~$1 o più**       | Alcuni per credito                |
+| Esegui una ricerca web con AI                                                                                                      | Un costo fisso per ricerca         | Centinaia di ricerche per credito |
 
 <Note>
 Per la maggior parte dei team, le automazioni standard sono di fatto gratuite — noterai un impatto sul saldo solo quando ti affidi alle funzionalità AI o esegui nodi di codice pesanti. È voluto: i crediti inclusi sono pensati per permetterti di costruire senza dover controllare un contatore.
 </Note>
 
+<Note>
+Non tutte le app addebitano le proprie esecuzioni. Registratore di chiamate e Ultimo contatto reagiscono ad ogni email e evento del calendario importati nel vostro workspace, quindi la loro funzione logica funziona sono liberi. Ti viene comunque addebitato il lavoro a consumo che svolgono, ad esempio i minuti delle chiamate registrate.
+</Note>
+
 ## Come viene misurato l'utilizzo dell'AI
 
-Quando un'azione chiama un modello AI, misuriamo esattamente i token utilizzati e li tariffiamo alle **tariffe pubblicate dal provider del modello**, quindi convertiamo direttamente quell'importo in dollari in crediti — così ciò che spendi rispecchia il costo reale del lavoro, non una tariffa interna maggiorata. Un breve messaggio di chat costa una frazione di un centesimo. Una grande attività di agente — ad esempio, configurare dieci oggetti dello spazio di lavoro — effettua molte chiamate al modello su un contesto in crescita, quindi può arrivare a un dollaro o più. Ti viene addebitato ciò che usi effettivamente, fino al singolo token.
+Quando un'azione chiama un modello AI, misuriamo esattamente i token utilizzati e li tariffiamo alle **tariffe pubblicate dal provider del modello**, quindi convertiamo direttamente quell'importo in dollari in crediti — così ciò che spendi rispecchia il costo reale del lavoro, non una tariffa interna maggiorata. Un breve messaggio di chat costa una frazione di un centesimo. Una grande attività di agente — ad esempio, la configurazione di 10 oggetti di workspace — fa molte chiamate di modello su un contesto in crescita, così può aggiungere fino a un dollaro o più. Ti viene addebitato ciò che usi effettivamente, fino al singolo token.
 
 Il costo varia in base al modello: un modello leggero è drasticamente più economico per messaggio rispetto a un modello di ragionamento di fascia alta. Puoi vedere il dettaglio per azione — incluso quale modello è stato utilizzato — in **Impostazioni → Fatturazione**.
 
@@ -36,18 +39,18 @@ Il costo varia in base al modello: un modello leggero è drasticamente più econ
 
 Ogni abbonamento include crediti e l'importo dipende dal tuo **ciclo di fatturazione**, non dal tuo piano:
 
-| Ciclo di fatturazione | Crediti inclusi | Utilizzo equivalente            |
+| Ciclo di fatturazione | Crediti inclusi | Uso Equivalente                 |
 | --------------------- | --------------- | ------------------------------- |
 | Mensile               | 5/mese          | Circa $5 di utilizzo ogni mese  |
 | Annuale               | 50/anno         | Circa $50 di utilizzo ogni anno |
 
-Questi crediti sono pensati per coprire comodamente le automazioni quotidiane. Cinque crediti coprono decine di migliaia di step di automazione standard o centinaia di messaggi AI rapidi — anche se alcune grandi attività di agenti AI multi-step possono esaurirli più velocemente. Puoi effettuare una ricarica in qualsiasi momento (vedi sotto).
+Questi crediti sono pensati per coprire comodamente le automazioni quotidiane. Cinque crediti coprono decine di migliaia di passaggi di automazione standard o centinaia di messaggi rapidi di AI — anche se una manciata di grandi, le attività di agente multi-step possono utilizzarle più velocemente. Puoi effettuare una ricarica in qualsiasi momento (vedi sotto).
 
 ## Riporto dei crediti
 
 I crediti non utilizzati vengono riportati automaticamente al periodo di fatturazione successivo.
 
-* **Limite**: L'importo del riporto è limitato all'assegnazione completa di un periodo, quindi non puoi mai riportare più crediti di quanti il tuo piano ne preveda per periodo.
+* **Cap**: Il rollover è limitato alla piena allocazione di un periodo, quindi non potrai mai trasportare più di quanto il tuo ciclo di fatturazione fornisca per periodo.
 * **Visibilità**: Quando sono disponibili crediti riportati, compaiono come una voce separata **Crediti riportati** in **Impostazioni → Fatturazione**, accanto al saldo **Totale disponibile**.
 
 ## Monitoraggio dell'utilizzo
@@ -65,7 +68,7 @@ Rivedere questo regolarmente rende facile individuare in anticipo un workflow pe
 Se esaurisci i crediti — o vuoi un margine prima di una grande iniziativa di automazione — puoi acquistare pacchetti di crediti aggiuntivi in qualsiasi momento:
 
 1. Vai a **Impostazioni → Fatturazione**
-2. Fai clic sul pulsante **Aumenta**
-3. Seleziona l'importo di cui hai bisogno e accetta le modifiche
+2. Clicca sul pulsante **Increase**
+3. Seleziona l'importo necessario e accetta le modifiche
 
 I crediti acquistati vengono aggiunti immediatamente al tuo saldo disponibile.

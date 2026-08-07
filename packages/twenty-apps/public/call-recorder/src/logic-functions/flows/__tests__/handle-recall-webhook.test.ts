@@ -229,6 +229,193 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
+  it('keeps FAILED with the sub code as reason for non-benign fatal events', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'RECORDING',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'fatal',
+            sub_code: 'bot_errored',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'FAILED',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          externalBotId: 'recall-bot-1',
+          callRecorderFailureReason: 'bot_errored',
+        },
+      },
+    ]);
+  });
+
+  it('keeps the plain code mapping for a no-capture sub code when a recording is already known', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'RECORDING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'call_ended',
+            sub_code: 'timeout_exceeded_noone_joined',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'PROCESSING',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+        },
+      },
+    ]);
+  });
+
+  it('treats a bot-detection timeout as a normal call ending', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'RECORDING',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'call_ended',
+            sub_code:
+              'timeout_exceeded_only_bots_detected_using_participant_names',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'PROCESSING',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+        },
+      },
+    ]);
+  });
+
+  it('ignores a no-capture sub code on a non-terminal status code', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'SCHEDULED',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'joining_call',
+            sub_code: 'timeout_exceeded_noone_joined',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'JOINING',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'JOINING',
+          externalBotId: 'recall-bot-1',
+        },
+      },
+    ]);
+  });
+
   it('reads bot metadata nested under data when a top-level bot has none', async () => {
     const client = new FakeCoreApiClient([
       {

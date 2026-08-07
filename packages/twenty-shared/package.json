@@ -5,7 +5,7 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "scripts": {
     "build": "npx vite build"
   },

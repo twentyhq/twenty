@@ -1,16 +1,22 @@
 ---
-title: Targeting System Fields
-description: Reference auto-created system fields like createdAt or updatedAt from views and other entities with getFieldUniversalIdentifier.
+title: Targeting System Metadata
+description: Resolve the deterministic universal identifiers of the metadata Twenty provisions automatically on every object, so your app can reference it without hardcoding.
 icon: "gears"
 ---
 
-Every object in Twenty ships with a set of **system fields** that you never declare yourself. They are created automatically by the server when the object is provisioned:
+Every object in Twenty comes with **system metadata** you never declare yourself, such as a set of fields and a main list view with its columns. The server creates all of it when the object is provisioned, and the set grows as Twenty does.
+
+Because you don't declare it, there's no `universalIdentifier` constant for you to import. Instead, the server **derives** each identifier deterministically, and `twenty-sdk` exposes the same derivation so your manifest can resolve the exact value the server uses.
+
+## System fields
+
+The scalar fields present on every object, none of which you declare with [`defineField()`](/developers/extend/apps/data/extending-objects):
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-Because you don't declare these fields with [`defineField()`](/developers/extend/apps/data/extending-objects), there's no `universalIdentifier` constant for you to import. So how do you reference `createdAt` as a column in a [view](/developers/extend/apps/layout/views)?
+So how do you reference `createdAt` as a column in a [view](/developers/extend/apps/layout/views)?
 
-## The problem
+### The problem
 
 Since Twenty 2.19, a system field's universal identifier is **derived deterministically** by the server from three inputs: the application universal identifier, the object universal identifier, and the field name. Inventing an id and hardcoding it won't work: it matches nothing on the server, and the sync rejects the dangling reference:
 
@@ -18,7 +24,7 @@ Since Twenty 2.19, a system field's universal identifier is **derived determinis
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## The solution
+### The solution
 
 <Note>
   `getFieldUniversalIdentifier` is available from `twenty-sdk` 2.21 onward.
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 - `objectUniversalIdentifier` is the identifier of the object the field belongs to.
 - `name` is the system field name, one of the values listed above.
 
-## Example: a createdAt column in a view
+### Example: a createdAt column in a view
 
 The typical case is adding a `createdAt` column to a view of one of your custom objects. Resolve the field id and reference it as any other `fieldMetadataUniversalIdentifier`:
 
@@ -86,7 +92,7 @@ The same resolved id works anywhere a `fieldMetadataUniversalIdentifier` is expe
   inputs change, and avoids drift if the derivation ever evolves.
 </Note>
 
-## System relation fields
+### System relation fields
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` is available from `twenty-sdk`
@@ -132,18 +138,70 @@ const attachmentTargetRocketFieldId =
 
 As with scalar system fields, the resolved id works anywhere a `fieldMetadataUniversalIdentifier` is expected.
 
+## System views
+
+<Note>
+  `getSystemViewUniversalIdentifier` and `getSystemViewFieldUniversalIdentifier`
+  are available from `twenty-sdk` 2.26 onward and require a Twenty server on
+  2.26 or later.
+</Note>
+
+The server also provisions a **system view** on every object: the main list view (`All {objectLabelPlural}`, keyed on `ViewKey.INDEX`), with one column per displayable field. Like system relation fields, their identifiers are derived **name-free**, so renaming an object or a field never changes them.
+
+Use `getSystemViewUniversalIdentifier` to resolve the view:
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+- `objectMetadataApplicationUniversalIdentifier` is the application owning the **object**, which is what the view is namespaced by.
+- `objectUniversalIdentifier` is the object the view lists.
+- `viewKey` is the system view key, `ViewKey.INDEX` today.
+
+The resolved id works anywhere a `viewUniversalIdentifier` is expected, such as a [`NavigationMenuItemType.VIEW`](/developers/extend/apps/layout/navigation-menu-items) sidebar entry. To simply open an object's main list, prefer `NavigationMenuItemType.OBJECT` with `targetObjectUniversalIdentifier`: it needs no derivation.
+
+`getSystemViewFieldUniversalIdentifier` resolves a single **column** on a system view, from the view and the field it displays:
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Note the first argument: a column is namespaced by the application owning the **field it displays**, not the one owning the view. A field your app adds to a standard object gets its column derived under your application, on a view owned by Twenty.
+
+<Warning>
+  System views and their columns are **server-owned**: resolve their identifiers
+  to reference them, never to declare them. `key` on
+  [`defineView()`](/developers/extend/apps/layout/views) is deprecated and
+  ignored, so a manifest view can never claim the `INDEX` key, and the server
+  already provisions a column for every field you add, so declaring your own
+  `defineViewField()` for that same field on a system view conflicts with it.
+</Warning>
+
 ## Standard Twenty objects
 
-For a **standard** Twenty object (Person, Company, Opportunity, …), you don't need to derive anything: the system field identifiers are pre-computed constants you can import directly.
+For a **standard** Twenty object (Person, Company, Opportunity, …), you don't need to derive anything: the identifiers are pre-computed constants you can import directly, for both fields and views.
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-Reach for `getFieldUniversalIdentifier` when the object is one **your app** defines with [`defineObject()`](/developers/extend/apps/data/objects), where no such constant exists.
+Reach for the helpers above when the object is one **your app** defines with [`defineObject()`](/developers/extend/apps/data/objects), where no such constant exists.
 
 <Note>
   `name` is a **default** field, not a system field. It keeps its own hardcoded

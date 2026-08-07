@@ -60,6 +60,10 @@ import {
   computeRelationGqlFieldJoinColumnName,
 } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 
+const PHONE_FILTER_NON_SIGNIFICANT_CHARS = /(?!^)\+|[^0-9+]/g;
+
+const CONTAINS_DIGIT = /[0-9]/;
+
 type FieldSharedMorphRelation = {
   type: RelationType;
   targetObjectMetadata: {
@@ -1403,9 +1407,11 @@ const buildDirectFieldGqlOperationFilter = ({
     }
     case 'PHONES': {
       if (!isSubFieldFilter) {
-        const filterValue = recordFilter.value.replace(/[^0-9]/g, '');
+        const filterValue = recordFilter.value
+          .trim()
+          .replace(PHONE_FILTER_NON_SIGNIFICANT_CHARS, '');
 
-        if (!isNonEmptyString(filterValue)) {
+        if (!CONTAINS_DIGIT.test(filterValue)) {
           return;
         }
 

@@ -3,6 +3,9 @@ import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-comman
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
+import { SendMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignSingleRecordCommand';
+import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignTestSingleRecordCommand';
+import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
@@ -254,6 +257,15 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
+  [EngineComponentKey.SEND_MESSAGE_CAMPAIGN]: (
+    <SendMessageCampaignSingleRecordCommand />
+  ),
+  [EngineComponentKey.SEND_MESSAGE_CAMPAIGN_TEST]: (
+    <SendMessageCampaignTestSingleRecordCommand />
+  ),
+  [EngineComponentKey.EMAIL_BLOCK_SETTINGS]: (
+    <OpenEmailBlockSettingsSingleRecordCommand />
+  ),
 
   // Deprecated keys kept for backward compatibility until migration runs
   [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteRecordsCommand />,

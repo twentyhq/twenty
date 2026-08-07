@@ -79,6 +79,7 @@ export default defineObject({
 * `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
 * Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
 * `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
+* `openRecordIn`, bu nesnenin kayıtlarının tıklandığında nerede açılacağını ayarlar: `ObjectOpenRecordIn.USER_CHOICE` (varsayılan; her çalışma alanı üyesinin Ayarlar → Deneyim bölümündeki kendi tercihine uyar), `ObjectOpenRecordIn.SIDE_PANEL` veya `ObjectOpenRecordIn.RECORD_PAGE`. Kayıtların kullanılabilir olması için tam sayfa gerektirdiği durumlarda, iş akışları ve panolarda olduğu gibi `RECORD_PAGE` üzerinde sabitleyin; yalnızca hızlı bir panel olarak anlam ifade eden kayıtlar için ise, takvim etkinliklerinde olduğu gibi `SIDE_PANEL` üzerinde sabitleyin.
 * Burada tanımlanan satır içi alanların bir `objectUniversalIdentifier`'a **ihtiyacı yoktur** — üst nesneden devralınır. Sahibi olmadığınız nesnelere alan eklemek için [`defineField()`](/l/tr/developers/extend/apps/data/extending-objects) kullanın.
 * `yarn twenty dev:add object` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz. [Mimari → Varlık iskeleti oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding) bölümüne bakın.
 
@@ -138,4 +139,4 @@ Aynı kural, bileşik varsayılanların string alt alanları için (örneğin bi
 
 * **Bu nesneyi diğerlerine bağlayın** — çift yönlü ilişki modeli için [İlişkiler](/l/tr/developers/extend/apps/data/relations) bölümüne bakın.
 * **Diğer uygulamalardaki nesnelere alanlar ekleyin** — `defineField()` için [Nesneleri Genişletme](/l/tr/developers/extend/apps/data/extending-objects) bölümüne bakın.
-* **Bu nesneyi arayüzde görüntüleyin** — kenar çubuğuna yerleştirmek için [Görünümler](/l/tr/developers/extend/apps/layout/views) ve [Gezinme Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/navigation-menu-items) bölümlerine bakın.
+* **Bu nesneyi arayüzde görüntüle** — kenar çubuğuna bir menü öğesi eklemek için [Gezinme Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/navigation-menu-items) bölümüne bakın; özel liste yapılandırmaları eklemek için [Görünümler](/l/tr/developers/extend/apps/layout/views) bölümüne bakın.

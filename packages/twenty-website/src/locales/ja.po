@@ -59,7 +59,6 @@ msgstr "{count} 件の導入事例"
 
 #. js-lingui-id: NSO/FI
 #: src/partners-marketplace/PartnerRatesPanel.tsx
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "{hourly}/hr"
 msgstr "{hourly}/hr"
 
@@ -778,11 +777,6 @@ msgstr "Any Field フィルター"
 msgid "Any Questions?"
 msgstr "ご質問はありますか？"
 
-#. js-lingui-id: lgSvgF
-#: src/partner-application/partner-application-copy.ts
-msgid "Anything else we should know?"
-msgstr "その他、伝えておくべきことはありますか？"
-
 #. js-lingui-id: pkMjbA
 #: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
@@ -1276,11 +1270,6 @@ msgstr ""
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Catalan"
 msgstr "Catalan"
-
-#. js-lingui-id: NUrY9o
-#: src/partners-marketplace/PartnerCard.tsx
-msgid "Categories"
-msgstr "カテゴリ"
 
 #. js-lingui-id: K7tIrx
 #: src/apps-marketplace/AppDetail.tsx
@@ -1805,6 +1794,7 @@ msgstr "カスタムAIモデル"
 
 #. js-lingui-id: OaTurC
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Custom apps"
 msgstr "カスタムアプリ"
 
@@ -2000,6 +1990,11 @@ msgstr "データモデルダイアグラム"
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 msgstr "データモデリング · 移行 · ノーコードワークフロー · ダッシュボード · SSO/SCIM · 連携"
 
+#. js-lingui-id: pSXc9s
+#: src/partner-application/data/partner-twenty-experience-options.ts
+msgid "Data models"
+msgstr ""
+
 #. js-lingui-id: JvUngl
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Date & Time"
@@ -2044,6 +2039,11 @@ msgstr "デモ"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Denmark 🇩🇰"
 msgstr "Denmark 🇩🇰"
+
+#. js-lingui-id: 59TXqJ
+#: src/partner-application/partner-application-copy.ts
+msgid "Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters."
+msgstr ""
 
 #. js-lingui-id: tqbpyT
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2150,6 +2150,7 @@ msgstr "他社のエコシステムにロックインされないでください
 
 #. js-lingui-id: DPfwMq
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/partner-application/partner-application-copy.ts
 msgid "Done"
 msgstr "完了"
 
@@ -2513,6 +2514,11 @@ msgstr ""
 msgid "Expanded support for 30+ languages, so users can navigate and use the software in their preferred language."
 msgstr "30以上の言語に対応を拡大し、ユーザーが好みの言語でソフトウェアを操作できるようになりました。"
 
+#. js-lingui-id: bKBhgb
+#: src/partner-application/partner-application-copy.ts
+msgid "Experience"
+msgstr ""
+
 #. js-lingui-id: 14xdUh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Experience a more compact and intuitive settings layout, now featuring a breadcrumb navigation for easier access and better organization."
@@ -2523,10 +2529,10 @@ msgstr "よりコンパクトで直感的な設定レイアウトになり、パ
 msgid "Experience enterprise-grade granularity, starting with an 11th permission."
 msgstr "エンタープライズグレードの細かな制御を体験してください。11個目の権限から始まります。"
 
-#. js-lingui-id: uZRQi+
+#. js-lingui-id: PXKAnm
 #: src/partner-application/partner-application-copy.ts
-msgid "Expertise & experience"
-msgstr "専門性と経験"
+msgid "Expertise"
+msgstr ""
 
 #. js-lingui-id: JTM5zS
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -2822,11 +2828,6 @@ msgstr "あなたは無料！"
 msgid "French"
 msgstr "フランス語"
 
-#. js-lingui-id: weRlb1
-#: src/partners-marketplace/PartnerMoneyRow.tsx
-msgid "from {minBudget}"
-msgstr "from {minBudget}"
-
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "From CSV to CRM in minutes."
@@ -2870,6 +2871,11 @@ msgstr "シンプルから*高度*まで"
 #: src/case-studies/case-study-stories.ts
 msgid "From simple to advanced"
 msgstr "シンプルから高度まで"
+
+#. js-lingui-id: IvIKDS
+#: src/partner-application/data/partner-twenty-experience-options.ts
+msgid "Front components"
+msgstr ""
 
 #. js-lingui-id: m1I5TY
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2982,11 +2988,6 @@ msgstr "いい選択です！"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Google Calendar Integration"
 msgstr "Google カレンダー連携"
-
-#. js-lingui-id: Zh0acB
-#: src/partner-application/partner-application-copy.ts
-msgid "Grab 30 minutes so we can get to know your team."
-msgstr "30分お時間をいただき、あなたのチームについて教えてください。"
 
 #. js-lingui-id: 1W3PAd
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3191,15 +3192,15 @@ msgstr "Twenty がデータをどのように収集・利用・保護するか�
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr "W3villa Technologiesが、教育機関向けAI模擬面接プラットフォーム「W3Grads」を、運用のバックボーンとしてTwenty上に構築して出荷した方法。"
 
+#. js-lingui-id: vXtlks
+#: src/partner-application/wizard/steps/ExperienceStep.tsx
+msgid "https://"
+msgstr ""
+
 #. js-lingui-id: htrFcw
 #: src/partner-application/data/partner-country-options.ts
 msgid "Hungary 🇭🇺"
 msgstr "Hungary 🇭🇺"
-
-#. js-lingui-id: T6wyby
-#: src/partner-application/partner-application-copy.ts
-msgid "I'll book later →"
-msgstr "あとで予約する →"
 
 #. js-lingui-id: RYDa0v
 #: src/partner-application/data/partner-country-options.ts
@@ -3612,7 +3613,6 @@ msgstr "Labs"
 #. js-lingui-id: GAmD3h
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/partners-marketplace/PartnerReachFacts.tsx
-#: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Languages"
 msgstr "使用言語"
@@ -3728,6 +3728,11 @@ msgstr "通常のオブジェクトと同様に、タスクや会社にカスタ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "リンクフィールド"
+
+#. js-lingui-id: YOe6r4
+#: src/partner-application/partner-application-copy.ts
+msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
+msgstr ""
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -4453,6 +4458,11 @@ msgstr "その他の改善"
 msgid "Our onboarding process has been streamlined to let you import your calendar and emails seamlessly. You can now also configure your privacy settings directly during onboarding, allowing you to choose between sharing content with your team or keeping it hidden."
 msgstr "オンボーディングプロセスを簡素化し、カレンダーとメールをシームレスにインポートできるようにしました。オンボーディングの段階で直接プライバシー設定を行うこともでき、コンテンツをチームと共有するか、非表示のままにするかを選択できます。"
 
+#. js-lingui-id: V+7KMm
+#: src/partner-application/partner-application-copy.ts
+msgid "Our team reviews every application and will reach out if there's a fit."
+msgstr ""
+
 #. js-lingui-id: XR9aQ6
 #: src/client-brief/client-brief-copy.ts
 msgid "Our team will review your project and follow up by email. You won't hear from partners until we've matched you."
@@ -4638,6 +4648,11 @@ msgstr "パイプライン、カスタムオブジェクト、AIアシスタン�
 msgid "Please complete all required fields before continuing."
 msgstr "続行する前に、必須項目をすべて入力してください。"
 
+#. js-lingui-id: LjJ5i7
+#: src/partner-application/partner-application-copy.ts
+msgid "Please write at least {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters about the implementation."
+msgstr ""
+
 #. js-lingui-id: P04j61
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "Point of Contact"
@@ -4693,7 +4708,6 @@ msgstr "価格"
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "Pricing"
 msgstr "料金"
 
@@ -4762,6 +4776,11 @@ msgstr "これまで大きな手作業の調整が必要だったプログラム
 #: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Project minimum"
 msgstr "プロジェクトの最低料金"
+
+#. js-lingui-id: wwBgHX
+#: src/partner-application/partner-application-copy.ts
+msgid "Proof URL *"
+msgstr ""
 
 #. js-lingui-id: qcybNQ
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -4897,7 +4916,6 @@ msgstr "レコード数"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
-#: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
 msgstr "地域"
@@ -5259,6 +5277,11 @@ msgstr "{0} を選択"
 #: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 msgid "Select all"
 msgstr "すべて選択"
+
+#. js-lingui-id: /a1JwJ
+#: src/partner-application/partner-application-copy.ts
+msgid "Select every area you used in a real project — not what you offer, what you actually did."
+msgstr ""
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -5814,6 +5837,11 @@ msgstr "テクニカルノート"
 msgid "Technical skills"
 msgstr "技術スキル"
 
+#. js-lingui-id: JOu8tZ
+#: src/partner-application/partner-application-copy.ts
+msgid "Tell us about the implementation *"
+msgstr ""
+
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
 msgid "Tell us more"
@@ -5871,14 +5899,10 @@ msgstr "Thailand 🇹🇭"
 msgid "Thanks — we received your brief."
 msgstr ""
 
-#. js-lingui-id: Pa/Y6/
+#. js-lingui-id: 0ClTlj
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Thanks, you're in.\n"
-"*Now book your intro call.*"
+msgid "Thanks for applying."
 msgstr ""
-"ありがとうございます、ご参加が完了しました。\n"
-"*次に、イントロコールを予約してください。*"
 
 #. js-lingui-id: FjkPYg
 #: src/case-studies/case-study-stories.ts
@@ -6618,12 +6642,6 @@ msgstr "Vietnam 🇻🇳"
 msgid "Vietnamese"
 msgstr "Vietnamese"
 
-#. js-lingui-id: BRBSny
-#. placeholder {0}: partner.name
-#: src/partners-marketplace/PartnerCard.tsx
-msgid "View {0} on LinkedIn"
-msgstr "LinkedInで {0} を表示"
-
 #. js-lingui-id: 9nyGVq
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "View case study"
@@ -6848,6 +6866,11 @@ msgstr "これが意味すること"
 msgid "What you cover *"
 msgstr "担当領域 *"
 
+#. js-lingui-id: QFLt0F
+#: src/partner-application/partner-application-copy.ts
+msgid "What you've built in Twenty *"
+msgstr ""
+
 #. js-lingui-id: 1kfjxX
 #: src/case-studies/case-study-stories.ts
 msgid "Whatever came next had to be something they could own."
@@ -6906,6 +6929,11 @@ msgstr "CRMそのものがプロダクトであるとき：W3Grads on Twenty | W
 #: src/case-studies/case-study-stories.ts
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 msgstr "NetZeroは依然として、ブラジルの農家向けにWhatsAppを多用するオペレーションのために、第二のCRMを並行稼働させていますが、機能とエコシステムの拡充に伴い、それらすべてをTwentyへ移行していく予定です。すでに、構造化された多国籍のパイプラインはTwentyによって駆動されています。"
+
+#. js-lingui-id: oa2Bs3
+#: src/partner-application/partner-application-copy.ts
+msgid "Who it was for, what you built, which of the four areas you used…"
+msgstr ""
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/data/menu.ts
@@ -7013,6 +7041,7 @@ msgstr "ワークフローバージョン"
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/platform/releases/ReleaseNotes.tsx
+#: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Workflows"
 msgstr "ワークフロー"
 
@@ -7031,11 +7060,6 @@ msgstr "実際に使われるワークフロー"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Workspace"
 msgstr "ワークスペース"
-
-#. js-lingui-id: bwECg/
-#: src/partner-application/partner-application-copy.ts
-msgid "Workspace URL, customer references, relevant links…"
-msgstr "WorkspaceのURL、顧客のリファレンス、関連リンク…"
 
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/data/menu.ts

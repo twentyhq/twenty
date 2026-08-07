@@ -30,6 +30,7 @@ import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/compani
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const personMetadata = getMockObjectMetadataItemOrThrow('person');
 const companyMetadata = getMockObjectMetadataItemOrThrow('company');
@@ -145,6 +146,7 @@ const meta: Meta = {
     onCancel: { control: false },
   },
   decorators: [
+    MemoryRouterDecorator,
     clearMocksDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

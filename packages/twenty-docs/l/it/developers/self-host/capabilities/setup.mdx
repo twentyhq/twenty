@@ -203,7 +203,13 @@ Nel Microsoft Azure Console abilita le seguenti API in "Permessi":
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-Nota: "Mail.ReadWrite" e "Mail.Send" sono obbligatori solo se vuoi inviare email utilizzando le nostre azioni di flusso di lavoro. Puoi usare "Mail.Read" invece se vuoi solo ricevere email.
+<Note>
+"Mail.ReadWrite" e "Mail.Send" sono obbligatori solo se vuoi inviare email utilizzando le nostre azioni di flusso di lavoro. Puoi usare "Mail.Read" invece se vuoi solo ricevere email.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" è obbligatorio se vuoi creare eventi del calendario utilizzando le nostre azioni di flusso di lavoro. Se vuoi solo sincronizzare gli eventi del calendario, usa "Calendars.Read".
+</Note>
 
 ### URI di Riindirizzamento Autorizzati
 
@@ -270,9 +276,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. Trova la sezione **Email**
 3. Configura le impostazioni SMTP:
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   Avrai bisogno di provvedere una [Password per l'App](https://support.google.com/accounts/answer/185833).
   * EMAIL_DRIVER=smtp
@@ -281,9 +287,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=indirizzo_email_gmail
   * EMAIL_SMTP_PASSWORD='password_app_gmail'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   Tieni a mente che se hai abilitato l'autenticazione a due fattori, avrai bisogno di fornire una [Password per l'App](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
   * EMAIL_DRIVER=smtp
@@ -292,9 +298,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=indirizzo_email_office365
   * EMAIL_SMTP_PASSWORD='password_office365'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev** è un server SMTP fittizio per lo sviluppo e il test.
   * Esegui l'immagine smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -304,9 +310,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **Modalità solo ambiente:** Se imposti `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, aggiungi queste variabili al tuo file `.env` invece.
@@ -379,3 +385,24 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 Quando si utilizza `LOGIC_FUNCTION_TYPE=DISABLED` o `CODE_INTERPRETER_TYPE=DISABLED`, qualsiasi tentativo di esecuzione restituirà un errore. Ciò è utile se si desidera eseguire Twenty senza queste funzionalità.
 </Note>
+
+## API e front-end su host separati
+
+Rilevante solo se il back-end non serve il front-end. Le distribuzioni con la stessa origine
+non richiedono nulla qui.
+
+Dichiara tutte le origini del browser che comunicano con l'API, separate da virgole. `SERVER_URL`
+e `FRONTEND_URL` sono già considerate attendibili.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+L'aggiornamento a una versione con sessioni tramite cookie rende questo obbligatorio. Il front-end
+ora invia le credenziali con ogni richiesta e i browser rifiutano una risposta con credenziali
+proveniente da un'origine non dichiarata, quindi l'app non riesce a caricarsi finché non imposti questo valore.
+</Warning>
+
+Se i due host si trovano su domini registrabili diversi (non solo sottodomini
+diversi), imposta anche `AUTH_COOKIE_SAME_SITE=none`, che richiede HTTPS.

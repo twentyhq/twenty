@@ -1,6 +1,7 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { z } from 'zod';
 import { In, type ObjectLiteral } from 'typeorm';
 import { v4, v5 } from 'uuid';
 
@@ -8,7 +9,6 @@ import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
-  CAMPAIGN_STATUS,
   MATERIALIZE_CAMPAIGN_JOB,
   MAX_CAMPAIGN_RECIPIENTS,
   REFRESH_CAMPAIGN_STATS_JOB,
@@ -19,6 +19,10 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
@@ -41,27 +45,39 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
+import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
+import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
+import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { MessageParticipantRole } from 'twenty-shared/types';
+import {
+  MessageParticipantRole,
+  MessageCampaignStatus,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 type SendCampaignArgs = {
   workspaceId: string;
   userWorkspaceId: string;
-  listId: string;
+  campaignId: string;
+};
+
+type SendCampaignTestArgs = {
+  workspaceId: string;
+  toAddress: string;
   subject: string;
   html: string;
   fromAddress: string;
@@ -85,6 +101,8 @@ type CampaignAudiencePreview = {
 
 type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
 
+type SendableDraftCampaign = z.infer<typeof sendableDraftCampaignSchema>;
+
 const toRawRecipient = (person: {
   id: string;
   emails?: { primaryEmail?: string | null } | null;
@@ -96,8 +114,6 @@ const toRawRecipient = (person: {
 @Injectable()
 export class MessageCampaignService {
   private readonly logger = new Logger(MessageCampaignService.name);
-  private readonly htmlToText = createHtmlToTextConverter();
-
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
@@ -110,11 +126,12 @@ export class MessageCampaignService {
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly emailBillingService: EmailBillingService,
+    private readonly campaignVariableService: CampaignVariableService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  private getUserRepository<T extends ObjectLiteral>(
+  private getRoleScopedRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
     roleId: string,
@@ -136,31 +153,35 @@ export class MessageCampaignService {
   async send({
     workspaceId,
     userWorkspaceId,
-    unsubscribeTopicId,
-    subject,
-    html,
-    fromAddress,
-    listId,
+    campaignId,
   }: SendCampaignArgs): Promise<SendCampaignResult> {
-    const fromDomain = getDomainFromEmail(fromAddress)?.toLowerCase();
-
-    const emailingDomain = await this.emailingDomainRepository.findOne(
-      workspaceId,
-      { where: { domain: fromDomain, status: EmailingDomainStatus.VERIFIED } },
-    );
-
-    if (emailingDomain === null) {
-      throw new Error(
-        `No verified emailing domain matches the from address ${fromAddress}`,
-      );
-    }
-
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
     });
 
-    const { campaignId, recipients, skipped } =
+    const { fromAddress, listId } =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const sendableCampaign = await this.findSendableDraftCampaignOrThrow(
+            workspaceId,
+            campaignId,
+            roleId,
+          );
+
+          return {
+            fromAddress: sendableCampaign.fromAddress.primaryEmail,
+            listId: sendableCampaign.listId,
+          };
+        },
+      );
+
+    const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
+      workspaceId,
+      fromAddress,
+    );
+
+    const { recipients, skipped } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const rawRecipients = await this.resolveRecipientsFromList(
@@ -174,18 +195,26 @@ export class MessageCampaignService {
             MAX_CAMPAIGN_RECIPIENTS,
           );
 
-          const newCampaignId = await this.createCampaign({
+          const campaignRepository = await this.getRoleScopedRepository(
             workspaceId,
+            MessageCampaignWorkspaceEntity,
             roleId,
-            subject,
-            html,
-            fromAddress,
-            unsubscribeTopicId,
-            listId,
-          });
+          );
+
+          // Conditional update so two concurrent sends cannot both enqueue
+          const { affected } = await campaignRepository.update(
+            { id: campaignId, status: MessageCampaignStatus.DRAFT },
+            { status: MessageCampaignStatus.SENDING },
+          );
+
+          if (affected !== 1) {
+            throw new EmailingDomainException(
+              `Campaign ${campaignId} is no longer a sendable draft`,
+              EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+            );
+          }
 
           return {
-            campaignId: newCampaignId,
             recipients: normalized.recipients,
             skipped: normalized.skipped,
           };
@@ -214,6 +243,64 @@ export class MessageCampaignService {
     return { campaignId, queuedCount: recipients.length, skipped };
   }
 
+  async sendTest({
+    workspaceId,
+    toAddress,
+    subject,
+    html,
+    fromAddress,
+    unsubscribeTopicId,
+  }: SendCampaignTestArgs): Promise<EmailingDomainSendEmailResult> {
+    const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
+      workspaceId,
+      fromAddress,
+    );
+
+    const variables =
+      await this.campaignVariableService.buildVariablesForPerson(
+        workspaceId,
+        null,
+      );
+    const renderedSubject = renderCampaignTemplate(subject, variables, {
+      escapeValues: false,
+    });
+    const compiledContent = await compileCampaignEmailContent(html, variables);
+
+    return this.emailingDomainSenderService.sendEmail(
+      workspaceId,
+      emailingDomain.id,
+      {
+        from: fromAddress,
+        to: [toAddress],
+        subject: renderedSubject,
+        text: compiledContent.plainText,
+        html: compiledContent.html,
+        unsubscribeTopicId,
+      },
+    );
+  }
+
+  private async findVerifiedEmailingDomainOrThrow(
+    workspaceId: string,
+    fromAddress: string,
+  ): Promise<EmailingDomainEntity> {
+    const fromDomain = getDomainFromEmail(fromAddress)?.toLowerCase();
+
+    const emailingDomain = await this.emailingDomainRepository.findOne(
+      workspaceId,
+      { where: { domain: fromDomain, status: EmailingDomainStatus.VERIFIED } },
+    );
+
+    if (!isDefined(emailingDomain)) {
+      throw new EmailingDomainException(
+        `No verified emailing domain matches the from address ${fromAddress}`,
+        EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED,
+      );
+    }
+
+    return emailingDomain;
+  }
+
   async processMaterializeJob(data: MaterializeCampaignJobData): Promise<void> {
     const {
       workspaceId,
@@ -233,7 +320,7 @@ export class MessageCampaignService {
         where: { id: campaignId },
       });
 
-      if (campaign === null) {
+      if (!isDefined(campaign)) {
         return;
       }
 
@@ -321,7 +408,7 @@ export class MessageCampaignService {
       });
 
       if (
-        message === null ||
+        !isDefined(message) ||
         (message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED &&
           message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED)
       ) {
@@ -337,7 +424,7 @@ export class MessageCampaignService {
         where: { id: campaignId },
       });
 
-      if (campaign === null) {
+      if (!isDefined(campaign)) {
         return;
       }
 
@@ -350,7 +437,11 @@ export class MessageCampaignService {
         where: { id: personId },
       });
 
-      const variables = this.buildTemplateVariables(person);
+      const variables =
+        await this.campaignVariableService.buildVariablesForPerson(
+          workspaceId,
+          person,
+        );
       const subject = renderCampaignTemplate(
         campaign.subject ?? '',
         variables,
@@ -358,14 +449,10 @@ export class MessageCampaignService {
           escapeValues: false,
         },
       );
-      const html = renderCampaignTemplate(
+      const compiledContent = await compileCampaignEmailContent(
         campaign.bodyTemplate ?? '',
         variables,
-        {
-          escapeValues: true,
-        },
       );
-      const text = this.htmlToText(html);
       const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
       const unsubscribeTopicId = campaign.unsubscribeTopicId ?? undefined;
 
@@ -391,8 +478,8 @@ export class MessageCampaignService {
               from: fromAddress,
               to: [recipientEmail],
               subject,
-              text,
-              html,
+              text: compiledContent.plainText,
+              html: compiledContent.html,
               unsubscribeTopicId,
             },
           );
@@ -420,7 +507,7 @@ export class MessageCampaignService {
           );
 
           const isRetryable =
-            code === null ||
+            !isDefined(code) ||
             code === EmailingDomainDriverExceptionCode.TEMPORARY_ERROR ||
             code === EmailingDomainDriverExceptionCode.UNKNOWN;
 
@@ -435,7 +522,7 @@ export class MessageCampaignService {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
           headerMessageId: result.messageId,
           subject,
-          text,
+          text: compiledContent.plainText,
         });
 
         await this.emailBillingService.billSentEmails({
@@ -480,7 +567,7 @@ export class MessageCampaignService {
         where: { headerMessageId: providerMessageId },
       });
 
-      if (message === null || message.messageCampaignId === null) {
+      if (!isDefined(message) || !isDefined(message.messageCampaignId)) {
         return;
       }
 
@@ -500,39 +587,48 @@ export class MessageCampaignService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  private async createCampaign({
-    workspaceId,
-    roleId,
-    subject,
-    html,
-    fromAddress,
-    unsubscribeTopicId,
-    listId,
-  }: {
-    workspaceId: string;
-    roleId: string;
-    subject: string;
-    html: string;
-    fromAddress: string;
-    unsubscribeTopicId?: string;
-    listId: string;
-  }): Promise<string> {
-    const campaignRepository = await this.getUserRepository(
+  private async findSendableDraftCampaignOrThrow(
+    workspaceId: string,
+    campaignId: string,
+    roleId: string,
+  ): Promise<SendableDraftCampaign> {
+    const campaignRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
       roleId,
     );
 
-    const { identifiers } = await campaignRepository.insert({
-      subject,
-      bodyTemplate: html,
-      fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
-      status: CAMPAIGN_STATUS.SENDING,
-      unsubscribeTopicId: unsubscribeTopicId ?? null,
-      listId,
+    const campaign = await campaignRepository.findOne({
+      where: { id: campaignId },
     });
 
-    return identifiers[0].id;
+    if (!isDefined(campaign)) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} not found`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND,
+      );
+    }
+
+    const sendableCampaign = sendableDraftCampaignSchema.safeParse(campaign);
+
+    if (!sendableCampaign.success) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} is not sendable: ${sendableCampaign.error.issues
+          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
+          .join(', ')}`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      );
+    }
+
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      collectCampaignVariableNamesFromTemplates({
+        subject: sendableCampaign.data.subject,
+        bodyTemplate: sendableCampaign.data.bodyTemplate,
+      }),
+    );
+
+    return sendableCampaign.data;
   }
 
   private async materializeCampaignMessages({
@@ -553,7 +649,12 @@ export class MessageCampaignService {
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
     const now = new Date();
-    const text = this.htmlToText(bodyTemplate);
+    // The stored message keeps the unresolved template, so placeholders stay
+    // visible on the campaign's message records.
+    const { plainText: text } = await compileCampaignEmailContent(
+      bodyTemplate,
+      null,
+    );
     const rows = recipients.map((recipient) => ({
       recipient,
       messageId: recipient.messageId,
@@ -675,12 +776,12 @@ export class MessageCampaignService {
     );
 
     await campaignRepository.update(
-      { id: campaignId, status: CAMPAIGN_STATUS.SENDING },
+      { id: campaignId, status: MessageCampaignStatus.SENDING },
       {
         status:
           failedCount > 0
-            ? CAMPAIGN_STATUS.SENT_WITH_ERRORS
-            : CAMPAIGN_STATUS.SENT,
+            ? MessageCampaignStatus.SENT_WITH_ERRORS
+            : MessageCampaignStatus.SENT,
         sentAt: new Date(),
       },
     );
@@ -792,7 +893,7 @@ export class MessageCampaignService {
     listId: string,
     roleId: string,
   ): Promise<RawCampaignRecipient[]> {
-    const listMemberRepository = await this.getUserRepository(
+    const listMemberRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageListMemberWorkspaceEntity,
       roleId,
@@ -818,7 +919,7 @@ export class MessageCampaignService {
       return [];
     }
 
-    const personRepository = await this.getUserRepository(
+    const personRepository = await this.getRoleScopedRepository(
       workspaceId,
       PersonWorkspaceEntity,
       roleId,
@@ -829,20 +930,6 @@ export class MessageCampaignService {
     });
 
     return people.map(toRawRecipient);
-  }
-
-  private buildTemplateVariables(
-    person: PersonWorkspaceEntity | null,
-  ): Record<string, string> {
-    const firstName = person?.name?.firstName ?? '';
-    const lastName = person?.name?.lastName ?? '';
-
-    return {
-      firstName,
-      lastName,
-      fullName: [firstName, lastName].filter(Boolean).join(' '),
-      email: person?.emails?.primaryEmail ?? '',
-    };
   }
 
   private campaignMessageId(campaignId: string, personId: string): string {

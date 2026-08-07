@@ -8,15 +8,7 @@ import { Repository } from 'typeorm';
 import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
@@ -33,7 +25,10 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
+import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -57,6 +52,8 @@ export class ToolExecutorService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async dispatch(
@@ -66,19 +63,36 @@ export class ToolExecutorService {
   ): Promise<ToolOutput> {
     const safeArgs = args ?? {};
 
+    return withResolvedToolAuthContext(
+      {
+        context,
+        userRepository: this.userRepository,
+        userWorkspaceRepository: this.userWorkspaceRepository,
+        workspaceCacheService: this.workspaceCacheService,
+      },
+      (contextWithAuth) =>
+        this.dispatchByExecutionRef(descriptor, safeArgs, contextWithAuth),
+    );
+  }
+
+  private async dispatchByExecutionRef(
+    descriptor: ToolIndexEntry | ToolDescriptor,
+    args: Record<string, unknown>,
+    context: ToolProviderContext,
+  ): Promise<ToolOutput> {
     switch (descriptor.executionRef.kind) {
       case 'database_crud':
         return this.dispatchDatabaseCrud(
           descriptor.executionRef,
-          safeArgs,
+          args,
           context,
         );
       case 'static':
-        return this.dispatchStaticTool(descriptor, safeArgs, context);
+        return this.dispatchStaticTool(descriptor, args, context);
       case 'logic_function':
         return this.dispatchLogicFunction(
           descriptor.executionRef,
-          safeArgs,
+          args,
           context,
         );
     }
@@ -90,7 +104,13 @@ export class ToolExecutorService {
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
     const authContext =
-      context.authContext ?? (await this.buildAuthContext(context));
+      context.authContext ??
+      (await buildRequiredToolAuthContext({
+        context,
+        userRepository: this.userRepository,
+        userWorkspaceRepository: this.userWorkspaceRepository,
+        workspaceCacheService: this.workspaceCacheService,
+      }));
 
     switch (ref.operation) {
       case 'find_many': {
@@ -284,54 +304,5 @@ export class ToolExecutorService {
       message: 'Logic function executed successfully',
       result: result.data ?? undefined,
     };
-  }
-
-  // Build authContext on demand for database CRUD operations
-  private async buildAuthContext(
-    context: ToolProviderContext,
-  ): Promise<WorkspaceAuthContext> {
-    if (!isDefined(context.userId) || !isDefined(context.userWorkspaceId)) {
-      throw new AuthException(
-        'userId and userWorkspaceId are required for database operations',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
-    const user = await this.userRepository.findOne({
-      where: { id: context.userId },
-    });
-
-    if (!isDefined(user)) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-
-    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
-
-    const workspaceMember = isDefined(workspaceMemberId)
-      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
-      : undefined;
-
-    if (!isDefined(workspaceMemberId) || !isDefined(workspaceMember)) {
-      throw new AuthException(
-        'Workspace member not found',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
-    return buildUserAuthContext({
-      workspace: { id: context.workspaceId } as FlatWorkspace,
-      userWorkspaceId: context.userWorkspaceId,
-      user: fromUserEntityToFlat(user),
-      workspaceMemberId,
-      workspaceMember,
-    });
   }
 }

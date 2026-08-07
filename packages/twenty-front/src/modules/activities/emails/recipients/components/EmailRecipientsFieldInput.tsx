@@ -29,8 +29,8 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
-import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';

@@ -1,8 +1,10 @@
 import './setupServerRenderingGlobals';
 
-import { act, createElement } from 'react';
+import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
+import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { jsx } from 'react/jsx-runtime';
 
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
 
@@ -18,6 +20,11 @@ const renderWrapper = (
   renderToStaticMarkup(
     createElement(createHtmlHostWrapper(htmlTag), props, children),
   );
+
+const createWrapperElement = (
+  Wrapper: ComponentType<never>,
+  props: Record<string, unknown>,
+) => jsx(Wrapper as never, { ...props } as never);
 
 describe('createHtmlHostWrapper prop hardening', () => {
   it('should drop an on* attribute whose value is not a function', () => {
@@ -97,6 +104,16 @@ describe('createHtmlHostWrapper prop hardening', () => {
 
     expect(markup).toContain(dataImageUrl);
   });
+
+  it('should not leak the remote element symbol prop into the markup', () => {
+    const markup = renderToStaticMarkup(
+      createWrapperElement(createHtmlHostWrapper('div'), {
+        [REMOTE_ELEMENT_PROP]: { id: '7' },
+      }),
+    );
+
+    expect(markup).toBe('<div></div>');
+  });
 });
 
 describe('createHtmlHostWrapper client events', () => {
@@ -158,6 +175,23 @@ describe('createHtmlHostWrapper client events', () => {
     expect(node.value).toBe('fixed');
   });
 
+  it('should write a numeric controlled value to the host input', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 42 }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('42');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 43 }));
+    });
+
+    expect(node.value).toBe('43');
+  });
+
   it('should clear the host input when a controlled value becomes empty', () => {
     const Wrapper = createHtmlHostWrapper('input');
 
@@ -173,6 +207,48 @@ describe('createHtmlHostWrapper client events', () => {
     });
 
     expect(node.value).toBe('');
+  });
+
+  it('should forward focusin through a handler prop that arrives after mount', () => {
+    const handleFocusIn = jest.fn();
+    const Wrapper = createHtmlHostWrapper('div');
+
+    act(() => {
+      root.render(
+        createWrapperElement(Wrapper, { [REMOTE_ELEMENT_PROP]: { id: '7' } }),
+      );
+    });
+
+    act(() => {
+      root.render(
+        createWrapperElement(Wrapper, {
+          [REMOTE_ELEMENT_PROP]: { id: '7' },
+          onFocusin: handleFocusIn,
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLElement;
+    act(() => {
+      node.dispatchEvent(new Event('focusin', { bubbles: true }));
+    });
+
+    expect(handleFocusIn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not pass the remote dom instance ref to the dom element', () => {
+    const instanceRef = { current: null as unknown };
+
+    act(() => {
+      root.render(
+        createWrapperElement(createHtmlHostWrapper('div'), {
+          [REMOTE_ELEMENT_PROP]: { id: '7' },
+          ref: instanceRef,
+        }),
+      );
+    });
+
+    expect(instanceRef.current).toBeNull();
   });
 
   it('should stop forwarding focusin after the handler prop is removed', () => {

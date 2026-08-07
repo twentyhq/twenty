@@ -60,7 +60,7 @@ export default defineFrontComponent({
 
 **ロジック関数**は Node.js 環境で実行されます。 Node の組み込みモジュール（`fs`、`path`、`crypto`、`http` など） は利用可能で、インストールは不要です。
 
-**フロントコンポーネント**は Web Worker で実行されます。 Node の組み込みモジュールは利用できません—ブラウザー環境で動作するブラウザー API と npm パッケージのみが使用できます。
+**フロントコンポーネント**は Web Worker で実行されます。 Node の組み込みモジュールは利用できません—ブラウザー環境で動作する npm パッケージのみが使用できます。 サンドボックスは *一部のみ* の DOM を実装しているため、パッケージはクリーンにビルドできても実行時に失敗する可能性があります。詳しくは [Current limitations](/l/ja/developers/extend/apps/layout/front-components#current-limitations) を参照してください。
 
 どちらの環境でも、`twenty-client-sdk/core` および `twenty-client-sdk/metadata` が事前提供モジュールとして利用可能です—これらはバンドルされず、実行時にサーバーによって解決されます。
 

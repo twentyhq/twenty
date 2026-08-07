@@ -16,8 +16,10 @@ const StyledContainer = styled.div`
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  &:hover .icon {
-    opacity: 1;
+  @media (hover: hover) {
+    &:hover .icon {
+      opacity: 1;
+    }
   }
 
   z-index: ${TABLE_Z_INDEX.columnGrip};
@@ -39,6 +41,7 @@ export const RecordTableCellDragAndDrop = () => {
   return (
     <RecordTableCellStyleWrapper
       data-select-disable
+      isDragging={isDragging}
       hasRightBorder={false}
       hasBottomBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME}

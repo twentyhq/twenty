@@ -5,13 +5,14 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupHeader } from '@/onboarding/components/WorkspaceSetupHeader';
+import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
+import { WorkspaceSetupChatSidePanelHandoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelHandoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
 
@@ -39,8 +40,8 @@ const StyledContent = styled.div`
 export const WorkspaceSetup = () => {
   const { t } = useLingui();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const isOnboardingAiChatEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+  const isOnboardingAiChatEnabled = useAtomStateValue(
+    isOnboardingAiChatEnabledState,
   );
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
     shouldOpenAiChatAfterOnboardingState,
@@ -59,6 +60,8 @@ export const WorkspaceSetup = () => {
     <StyledPanel>
       <WorkspaceSetupHeader title={title} />
       <StyledContent>
+        <WorkspaceSetupChatSidePanelHandoffEffect />
+        {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
         <AiChatMessageListPreambleContext.Provider value={preamble}>
           <AiChatTab />
         </AiChatMessageListPreambleContext.Provider>
