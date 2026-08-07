@@ -13,5 +13,7 @@ export const getCommandMenuItemLabel = (
     return i18n._(label);
   }
 
-  return i18n._(label);
+  const { id, values, ...options } = label;
+
+  return i18n._(id, values, options);
 };
