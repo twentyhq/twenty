@@ -238,6 +238,7 @@ describe('Uninstall application logic function hook', () => {
 
     expect(errors).toBeUndefined();
     expect(data?.uninstallApplication).toBe(true);
+    expect(executeSpy).toHaveBeenCalledTimes(1);
     expect(executeSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         logicFunctionId: installedUninstallLogicFunction.id,

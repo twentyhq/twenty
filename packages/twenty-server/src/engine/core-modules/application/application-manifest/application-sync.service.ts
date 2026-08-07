@@ -377,9 +377,8 @@ export class ApplicationSyncService {
       }
 
       if (
-        isDefined(application.packageJsonChecksum) &&
         installedManifest.application.packageJsonChecksum !==
-          application.packageJsonChecksum
+        application.packageJsonChecksum
       ) {
         this.logger.warn(
           `Installed manifest checksum does not match application ${application.universalIdentifier}; skipping uninstall hook`,
