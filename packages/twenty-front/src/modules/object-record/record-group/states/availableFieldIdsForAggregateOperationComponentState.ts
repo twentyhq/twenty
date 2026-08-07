@@ -1,4 +1,4 @@
-import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from '@/object-record/record-board/contexts/RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext';
+import { RecordGroupAggregateDropdownComponentInstanceContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const availableFieldIdsForAggregateOperationComponentState =
@@ -6,5 +6,5 @@ export const availableFieldIdsForAggregateOperationComponentState =
     key: 'availableFieldIdsForAggregateOperationComponentFamilyState',
     defaultValue: [],
     componentInstanceContext:
-      RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext,
+      RecordGroupAggregateDropdownComponentInstanceContext,
   });

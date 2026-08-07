@@ -1,8 +1,8 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
-import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
-import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
+import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';
+import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Icon123, IconCheck, IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
+export const RecordGroupAggregateDropdownFieldsContent = () => {
   const {
     closeDropdown,
     objectMetadataItem,
@@ -23,7 +23,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     resetContent,
     previousContentId,
   } = useDropdownContextStateManagement({
-    context: RecordBoardColumnHeaderAggregateDropdownContext,
+    context: RecordGroupAggregateDropdownContext,
   });
 
   const { updateViewAggregate } = useUpdateViewAggregate();

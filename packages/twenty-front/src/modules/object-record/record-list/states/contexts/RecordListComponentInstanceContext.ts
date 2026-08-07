@@ -1,4 +1,4 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
-export const RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext =
+export const RecordListComponentInstanceContext =
   createComponentInstanceContext();

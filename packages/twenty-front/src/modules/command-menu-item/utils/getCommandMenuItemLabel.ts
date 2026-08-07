@@ -9,5 +9,11 @@ export const getCommandMenuItemLabel = (
     return '';
   }
 
-  return i18n._(label);
+  if (typeof label === 'string') {
+    return i18n._(label);
+  }
+
+  const { id, values, ...options } = label;
+
+  return i18n._(id, values, options);
 };
