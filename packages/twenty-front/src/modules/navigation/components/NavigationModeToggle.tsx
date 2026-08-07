@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
+import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -10,7 +11,7 @@ import {
   IconHome,
   IconInbox,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
 import { useOpenExpandedAiChat } from '@/ai/expanded-chat/hooks/useOpenExpandedAiChat';
@@ -20,6 +21,8 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -73,6 +76,7 @@ type NavigationModeSegment = {
 
 export const NavigationModeToggle = () => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
   const store = useStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -89,26 +93,35 @@ export const NavigationModeToggle = () => {
         ? 'studio'
         : 'app';
 
+  // Both memorized locations can point at another non-app mode when the
+  // user hopped between Inbox and Studio directly; the App segment must
+  // always land on an app page.
+  const isAppLocation = (
+    candidateLocation: string | null,
+  ): candidateLocation is string =>
+    isDefined(candidateLocation) &&
+    candidateLocation !== '' &&
+    !candidateLocation.startsWith('/settings') &&
+    !candidateLocation.startsWith(AppPath.AiChat);
+
   const navigateToApp = () => {
     if (activeMode === 'studio') {
       const memorizedUrl = store.get(navigationMemorizedUrlState.atom);
       store.set(currentMobileNavigationDrawerState.atom, 'main');
+      store.set(
+        isNavigationDrawerExpandedState.atom,
+        store.get(navigationDrawerExpandedMemorizedState.atom),
+      );
       navigate(
-        isDefined(memorizedUrl) && memorizedUrl !== ''
-          ? memorizedUrl
-          : defaultHomePagePath,
+        isAppLocation(memorizedUrl) ? memorizedUrl : defaultHomePagePath,
       );
       return;
     }
 
     const returnLocation = store.get(aiChatExpandedReturnLocationState.atom);
     store.set(aiChatExpandedReturnLocationState.atom, null);
-    const isSettingsReturnLocation =
-      isDefined(returnLocation) && returnLocation.startsWith('/settings');
     navigate(
-      isDefined(returnLocation) && !isSettingsReturnLocation
-        ? returnLocation
-        : defaultHomePagePath,
+      isAppLocation(returnLocation) ? returnLocation : defaultHomePagePath,
     );
   };
 
@@ -150,7 +163,7 @@ export const NavigationModeToggle = () => {
             aria-selected={activeMode === mode}
             onClick={() => handleSegmentClick(mode)}
           >
-            <Icon size={14} />
+            <Icon size={theme.icon.size.sm} />
             {label}
           </StyledSegment>
         ))}
