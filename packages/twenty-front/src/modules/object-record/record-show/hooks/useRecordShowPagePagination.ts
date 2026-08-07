@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { computeCursorArgFilter } from '@/object-record/graphql/utils/computeCursorArgFilter';
 import { extractOrderByFieldNames } from '@/object-record/graphql/utils/extractOrderByFieldNames';
 import { reverseOrderBy } from '@/object-record/graphql/utils/reverseOrderBy';
+import { resolveRecordShowPaginationObjectNameSingular } from '@/object-record/record-show/utils/resolveRecordShowPaginationObjectNameSingular';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
 import { AppPath } from 'twenty-shared/types';
@@ -28,12 +32,24 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetAtomState(lastShowPageRecordIdState);
 
-  const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
+  const propsOrParamObjectNameSingular =
+    propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
 
-  if (!objectNameSingular || !objectRecordId) {
+  if (!propsOrParamObjectNameSingular || !objectRecordId) {
     throw new Error('Object name or Record id is not defined');
   }
+
+  const contextStoreRecordShowParentView = useAtomComponentStateValue(
+    contextStoreRecordShowParentViewComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  const objectNameSingular = resolveRecordShowPaginationObjectNameSingular({
+    propsOrParamObjectNameSingular,
+    parentViewObjectNameSingular:
+      contextStoreRecordShowParentView?.parentViewObjectNameSingular,
+  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
