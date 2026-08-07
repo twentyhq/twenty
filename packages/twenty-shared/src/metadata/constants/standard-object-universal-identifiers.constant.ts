@@ -34,6 +34,7 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   messageCampaign: '238acb94-dd4c-4036-bc55-19b99d821efd',
   messageParticipant: '20202020-a433-4456-aa2d-fd9cb26b774a',
   messageThread: '20202020-849a-4c3e-84f5-a25a7d802271',
+  notification: 'c386061a-80c9-4be1-a99a-caae54d30c08',
 } as const;
 
 export type StandardObjectWithUniversalIdentifierName =

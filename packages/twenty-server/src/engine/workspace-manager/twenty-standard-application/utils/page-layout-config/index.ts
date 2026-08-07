@@ -12,6 +12,7 @@ export { STANDARD_MESSAGE_PARTICIPANT_PAGE_LAYOUT_CONFIG } from './standard-mess
 export { STANDARD_MESSAGE_LIST_PAGE_LAYOUT_CONFIG } from './standard-message-list-page-layout.config';
 export { STANDARD_MESSAGE_THREAD_PAGE_LAYOUT_CONFIG } from './standard-message-thread-page-layout.config';
 export { STANDARD_NOTE_PAGE_LAYOUT_CONFIG } from './standard-note-page-layout.config';
+export { STANDARD_NOTIFICATION_PAGE_LAYOUT_CONFIG } from './standard-notification-page-layout.config';
 export { STANDARD_OPPORTUNITY_PAGE_LAYOUT_CONFIG } from './standard-opportunity-page-layout.config';
 export {
   type StandardPageLayoutConfig,

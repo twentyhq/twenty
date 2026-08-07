@@ -10,6 +10,7 @@ import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-ob
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { type NotificationWorkspaceEntity } from 'src/modules/notification/standard-objects/notification.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -70,6 +71,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
   messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
   blocklist: Relation<BlocklistWorkspaceEntity[]>;
+  notifications: Relation<NotificationWorkspaceEntity[]>;
   calendarEventParticipants: Relation<
     CalendarEventParticipantWorkspaceEntity[]
   >;

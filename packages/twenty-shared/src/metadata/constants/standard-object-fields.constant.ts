@@ -655,6 +655,37 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',
     },
   },
+  notification: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.notification,
+    ),
+    type: { universalIdentifier: '0d893fa1-7c15-4a9f-a04f-022ade242485' },
+    title: { universalIdentifier: '85c65829-ed45-4882-bd67-a102c3804fb2' },
+    preview: {
+      universalIdentifier: '0266d565-667d-431a-a2d5-c99235272577',
+    },
+    payload: {
+      universalIdentifier: 'ca1b3eef-6611-4885-b1f3-82a006d747ee',
+    },
+    requiresAction: {
+      universalIdentifier: '64ec0548-321d-497c-b65e-a531cb65021a',
+    },
+    status: {
+      universalIdentifier: '7395f0ab-2c59-482c-8ee1-dc90f3c6260a',
+    },
+    dedupeKey: {
+      universalIdentifier: '0a9b2bb3-04f4-4369-b22c-0db52e9d8c36',
+    },
+    threadId: {
+      universalIdentifier: 'dcefcf2d-b5c5-42dd-82b9-797ae595709e',
+    },
+    subjectRecordId: {
+      universalIdentifier: 'e75d1983-2b7a-488d-a4f3-c0ce6a301226',
+    },
+    workspaceMember: {
+      universalIdentifier: 'c45b49df-e67a-4d3b-b00f-317bc98436c4',
+    },
+  },
   note: {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
@@ -1065,6 +1096,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     blocklist: {
       universalIdentifier: '20202020-6cb2-4161-9f29-a4b7f1283859',
+    },
+    notifications: {
+      universalIdentifier: 'e9f5d53e-ca19-4ecf-bb4a-a77672cfb92f',
     },
     calendarEventParticipants: {
       universalIdentifier: '20202020-0dbc-4841-9ce1-3e793b5b3512',

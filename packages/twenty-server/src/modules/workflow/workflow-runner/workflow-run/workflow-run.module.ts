@@ -5,6 +5,7 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { NotificationModule } from 'src/modules/notification/notification.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { DeleteWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run/command/delete-workflow-runs.command';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
@@ -18,6 +19,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     MetricsModule,
     WorkspaceIteratorModule,
     FeatureFlagModule,
+    NotificationModule,
   ],
   providers: [
     WorkflowRunWorkspaceService,

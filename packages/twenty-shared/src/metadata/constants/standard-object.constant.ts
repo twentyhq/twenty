@@ -793,6 +793,45 @@ export const STANDARD_OBJECTS = {
       }),
     },
   },
+  notification: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.notification,
+    fields: STANDARD_OBJECT_FIELDS.notification,
+    indexes: {
+      workspaceMemberIdIndex: {
+        universalIdentifier: '2d6992f1-c1f8-47c6-ac36-d806bd3ea7ab',
+      },
+    },
+    views: {
+      allNotifications: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.notification,
+        fields: STANDARD_OBJECT_FIELDS.notification,
+        viewFieldNames: ['title', 'type', 'status', 'createdAt'],
+      }),
+      notificationRecordPageFields: {
+        universalIdentifier: 'a3326454-a7ae-4a63-808f-b34fc216dcd7',
+        viewFieldGroups: {
+          general: {
+            universalIdentifier: '0156743e-430d-4a3f-99c0-69821249bb14',
+          },
+          system: {
+            universalIdentifier: '68b6c876-a30e-443d-ba35-ca63279a500c',
+          },
+        },
+        viewFields: {
+          workspaceMember: {
+            universalIdentifier: '0947fb77-0f21-44ef-8c3f-107c7cf16c96',
+          },
+          createdAt: {
+            universalIdentifier: '63d03a78-dd17-46fb-8367-b03ffd36ff33',
+          },
+          createdBy: {
+            universalIdentifier: 'ba9d0529-e17a-49d1-998a-f1c9dfc118f7',
+          },
+        },
+      },
+    },
+  },
   note: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
     fields: STANDARD_OBJECT_FIELDS.note,

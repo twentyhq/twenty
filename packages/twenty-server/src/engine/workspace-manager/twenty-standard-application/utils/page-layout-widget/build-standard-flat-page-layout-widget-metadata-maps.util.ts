@@ -91,6 +91,7 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
     'messageChannelMessageAssociationMessageFolderRecordPageFields',
   messageParticipant: 'messageParticipantRecordPageFields',
   note: 'noteRecordPageFields',
+  notification: 'notificationRecordPageFields',
   opportunity: 'opportunityRecordPageFields',
   person: 'personRecordPageFields',
   task: 'taskRecordPageFields',

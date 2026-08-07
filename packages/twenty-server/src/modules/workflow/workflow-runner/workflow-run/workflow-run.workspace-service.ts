@@ -12,6 +12,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { NotificationEmitterService } from 'src/modules/notification/services/notification-emitter.service';
 import {
   WorkflowRunStatus,
   type WorkflowRunState,
@@ -32,6 +33,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
+    private readonly notificationEmitterService: NotificationEmitterService,
   ) {}
 
   async createWorkflowRun({
@@ -237,6 +239,48 @@ export class WorkflowRunWorkspaceService {
         debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
       });
     }
+
+    if (status === WorkflowRunStatus.FAILED) {
+      await this.emitWorkflowRunFailedNotification({
+        workflowRun: workflowRunToUpdate,
+        workspaceId,
+        error,
+      });
+    }
+  }
+
+  private async emitWorkflowRunFailedNotification({
+    workflowRun,
+    workspaceId,
+    error,
+  }: {
+    workflowRun: WorkflowRunWorkspaceEntity;
+    workspaceId: string;
+    error?: string;
+  }) {
+    const workspaceMemberId = workflowRun.createdBy?.workspaceMemberId;
+
+    if (!isDefined(workspaceMemberId)) {
+      return;
+    }
+
+    // Run names follow the "#<count> - <workflow name>" convention
+    const workflowName = workflowRun.name?.match(/^#\d+ - (.+)$/)?.[1];
+
+    await this.notificationEmitterService.emitToWorkspaceMembers({
+      workspaceId,
+      workspaceMemberIds: [workspaceMemberId],
+      type: 'workflow_run_failed',
+      title: `${workflowName ?? 'Workflow'} run failed`,
+      preview: error,
+      requiresAction: true,
+      subjectRecordId: workflowRun.id,
+      payload: {
+        workflowRunId: workflowRun.id,
+        objectNameSingular: 'workflowRun',
+      },
+      dedupeKey: `workflow_run_failed:${workflowRun.id}`,
+    });
   }
 
   @WithLock('workflowRunId')

@@ -30,6 +30,9 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   messageListMember: [{ name: 'id', type: FieldMetadataType.UUID }],
   messageParticipant: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   messageThread: [{ name: 'subject', type: FieldMetadataType.TEXT }],
+  // Not searchable: notification keeps its searchVector column by convention
+  // but registers no search fields.
+  notification: [],
   note: [
     { name: 'title', type: FieldMetadataType.TEXT },
     { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT },

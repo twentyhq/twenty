@@ -1889,6 +1889,111 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
   },
+  "notification": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "45308511-d70e-5642-bec0-fd9a349c580e",
+      },
+      "createdBy": {
+        "universalIdentifier": "f9a1da7b-9843-5380-8d07-700345065659",
+      },
+      "dedupeKey": {
+        "universalIdentifier": "0a9b2bb3-04f4-4369-b22c-0db52e9d8c36",
+      },
+      "deletedAt": {
+        "universalIdentifier": "d653a764-6f10-5440-8401-39db1b48ebfe",
+      },
+      "id": {
+        "universalIdentifier": "1dade053-b56c-5e97-b0cf-d98995d1be35",
+      },
+      "payload": {
+        "universalIdentifier": "ca1b3eef-6611-4885-b1f3-82a006d747ee",
+      },
+      "position": {
+        "universalIdentifier": "ccd200de-27ef-5c17-aa3e-9833cdc0a786",
+      },
+      "preview": {
+        "universalIdentifier": "0266d565-667d-431a-a2d5-c99235272577",
+      },
+      "requiresAction": {
+        "universalIdentifier": "64ec0548-321d-497c-b65e-a531cb65021a",
+      },
+      "searchVector": {
+        "universalIdentifier": "4cbf17ce-f34b-5832-8058-0e76a915ae38",
+      },
+      "status": {
+        "universalIdentifier": "7395f0ab-2c59-482c-8ee1-dc90f3c6260a",
+      },
+      "subjectRecordId": {
+        "universalIdentifier": "e75d1983-2b7a-488d-a4f3-c0ce6a301226",
+      },
+      "threadId": {
+        "universalIdentifier": "dcefcf2d-b5c5-42dd-82b9-797ae595709e",
+      },
+      "title": {
+        "universalIdentifier": "85c65829-ed45-4882-bd67-a102c3804fb2",
+      },
+      "type": {
+        "universalIdentifier": "0d893fa1-7c15-4a9f-a04f-022ade242485",
+      },
+      "updatedAt": {
+        "universalIdentifier": "612860dd-7c85-5cbf-ba9b-be3051dbcfd7",
+      },
+      "updatedBy": {
+        "universalIdentifier": "51ababe6-b505-5686-8311-71e25c1b39fc",
+      },
+      "workspaceMember": {
+        "universalIdentifier": "c45b49df-e67a-4d3b-b00f-317bc98436c4",
+      },
+    },
+    "indexes": {
+      "workspaceMemberIdIndex": {
+        "universalIdentifier": "2d6992f1-c1f8-47c6-ac36-d806bd3ea7ab",
+      },
+    },
+    "universalIdentifier": "c386061a-80c9-4be1-a99a-caae54d30c08",
+    "views": {
+      "allNotifications": {
+        "universalIdentifier": "ddffd36c-8c98-5ece-906b-f47e3e4930ca",
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "03594a97-bd85-581e-a5bf-62124ba8168c",
+          },
+          "status": {
+            "universalIdentifier": "800b3660-7f7d-5686-8883-7fc66fc9ac48",
+          },
+          "title": {
+            "universalIdentifier": "fb0ed49e-a7e7-51c6-96d8-6b2e4984d990",
+          },
+          "type": {
+            "universalIdentifier": "34ac6811-43f1-5d47-99cd-bcacabc08fc0",
+          },
+        },
+      },
+      "notificationRecordPageFields": {
+        "universalIdentifier": "a3326454-a7ae-4a63-808f-b34fc216dcd7",
+        "viewFieldGroups": {
+          "general": {
+            "universalIdentifier": "0156743e-430d-4a3f-99c0-69821249bb14",
+          },
+          "system": {
+            "universalIdentifier": "68b6c876-a30e-443d-ba35-ca63279a500c",
+          },
+        },
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "63d03a78-dd17-46fb-8367-b03ffd36ff33",
+          },
+          "createdBy": {
+            "universalIdentifier": "ba9d0529-e17a-49d1-998a-f1c9dfc118f7",
+          },
+          "workspaceMember": {
+            "universalIdentifier": "0947fb77-0f21-44ef-8c3f-107c7cf16c96",
+          },
+        },
+      },
+    },
+  },
   "opportunity": {
     "fields": {
       "amount": {
@@ -3219,6 +3324,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "name": {
         "universalIdentifier": "20202020-e914-43a6-9c26-3603c59065f4",
+      },
+      "notifications": {
+        "universalIdentifier": "e9f5d53e-ca19-4ecf-bb4a-a77672cfb92f",
       },
       "numberFormat": {
         "universalIdentifier": "20202020-7f40-4e7f-b126-11c0eda6b141",

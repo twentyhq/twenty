@@ -641,4 +641,25 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
+  notificationRecordPage: {
+    universalIdentifier: 'dce9ca6f-6acc-4cc8-83e7-7a5a727b50ce',
+    tabs: {
+      home: {
+        universalIdentifier: 'b5d57ed9-eec7-49e1-aaa4-219c58461b81',
+        widgets: {
+          fields: {
+            universalIdentifier: '94794e61-3220-4318-836b-b61fe06db82c',
+          },
+        },
+      },
+      timeline: {
+        universalIdentifier: '9ec085e4-cd92-4fbe-8324-68fb76c8dfd8',
+        widgets: {
+          timeline: {
+            universalIdentifier: '9faca5db-fbd4-463a-bfe5-637d941150ad',
+          },
+        },
+      },
+    },
+  },
 };

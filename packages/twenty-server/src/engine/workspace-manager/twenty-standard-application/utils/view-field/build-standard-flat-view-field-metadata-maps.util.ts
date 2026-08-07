@@ -18,6 +18,7 @@ import { computeStandardMessageListViewFields } from 'src/engine/workspace-manag
 import { computeStandardMessageParticipantViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-participant-view-fields.util';
 import { computeStandardMessageThreadViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-thread-view-fields.util';
 import { computeStandardMessageViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-view-fields.util';
+import { computeStandardNotificationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-notification-view-fields.util';
 import { computeStandardNoteTargetViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-note-target-view-fields.util';
 import { computeStandardNoteViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-note-view-fields.util';
 import { computeStandardOpportunityViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-opportunity-view-fields.util';
@@ -55,6 +56,7 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageList: computeStandardMessageListViewFields,
   messageParticipant: computeStandardMessageParticipantViewFields,
   messageThread: computeStandardMessageThreadViewFields,
+  notification: computeStandardNotificationViewFields,
   note: computeStandardNoteViewFields,
   noteTarget: computeStandardNoteTargetViewFields,
   opportunity: computeStandardOpportunityViewFields,
