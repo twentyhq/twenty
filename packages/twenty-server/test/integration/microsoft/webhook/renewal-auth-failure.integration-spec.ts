@@ -5,6 +5,7 @@ import {
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WebhookSubscriptionRenewalCronJob } from 'src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job';
 
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
@@ -20,9 +21,13 @@ describe('Microsoft webhook subscription renewal (integration)', () => {
   const microsoft = setupMicrosoftMock({ handle: HANDLE });
 
   let account: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let storedRefreshToken: EncryptedString | null;
 
   const calendarChannelRepository = () =>
     getCoreRepository<CalendarChannelEntity>(CalendarChannelEntity);
+
+  const connectedAccountRepository = () =>
+    getCoreRepository<ConnectedAccountEntity>(ConnectedAccountEntity);
 
   const readChannel = async () =>
     await calendarChannelRepository().findOneOrFail({
@@ -38,11 +43,33 @@ describe('Microsoft webhook subscription renewal (integration)', () => {
     });
   };
 
+  // resolveTokens short-circuits on a still-valid access token, so the refresh
+  // token is only consulted once lastCredentialsRefreshedAt is stale.
+  const revokeRefreshToken = async () => {
+    await connectedAccountRepository().update(account.connectedAccountId, {
+      refreshToken: null,
+      lastCredentialsRefreshedAt: null,
+    });
+  };
+
+  const restoreRefreshToken = async () => {
+    await connectedAccountRepository().update(account.connectedAccountId, {
+      refreshToken: storedRefreshToken,
+      lastCredentialsRefreshedAt: null,
+    });
+  };
+
   beforeAll(async () => {
     account = await connectMessagingAccount({
       provider: ConnectedAccountProvider.MICROSOFT,
       handle: HANDLE,
     });
+
+    const connectedAccount = await connectedAccountRepository().findOneOrFail({
+      where: { id: account.connectedAccountId },
+    });
+
+    storedRefreshToken = connectedAccount.refreshToken;
   }, 120000);
 
   beforeEach(async () => {
@@ -68,9 +95,7 @@ describe('Microsoft webhook subscription renewal (integration)', () => {
 
   describe('when the connected account has no usable refresh token', () => {
     beforeEach(async () => {
-      await getCoreRepository<ConnectedAccountEntity>(
-        ConnectedAccountEntity,
-      ).update(account.connectedAccountId, { refreshToken: null });
+      await revokeRefreshToken();
     });
 
     it('expires the channel rather than marking it failed', async () => {
@@ -84,9 +109,16 @@ describe('Microsoft webhook subscription renewal (integration)', () => {
       expect(microsoft.subscriptions.renewed).not.toContain(SUBSCRIPTION_ID);
     }, 60000);
 
-    it('stops attempting the channel on subsequent cron runs', async () => {
+    // Restoring the token before the second run is what makes this meaningful:
+    // a re-selected channel would reach the provider and get a subscription.
+    it('stops selecting the channel on subsequent cron runs', async () => {
       await runSyncCron(WebhookSubscriptionRenewalCronJob);
 
+      expect((await readChannel()).webhookSubscriptionStatus).toBe(
+        WebhookSubscriptionStatus.EXPIRED,
+      );
+
+      await restoreRefreshToken();
       microsoft.subscriptions.reset();
 
       await runSyncCron(WebhookSubscriptionRenewalCronJob);
@@ -97,8 +129,8 @@ describe('Microsoft webhook subscription renewal (integration)', () => {
         WebhookSubscriptionStatus.EXPIRED,
       );
       expect(channel.webhookSubscriptionExternalId).toBe(SUBSCRIPTION_ID);
-      expect(microsoft.subscriptions.renewed).not.toContain(SUBSCRIPTION_ID);
       expect(microsoft.subscriptions.created).toHaveLength(0);
+      expect(microsoft.subscriptions.renewed).not.toContain(SUBSCRIPTION_ID);
     }, 60000);
   });
 });
