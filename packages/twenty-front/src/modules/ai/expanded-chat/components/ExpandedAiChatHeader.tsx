@@ -34,11 +34,11 @@ const StyledHeaderTitle = styled.div`
   white-space: nowrap;
 `;
 
-type WorkspaceSetupHeaderProps = {
+type ExpandedAiChatHeaderProps = {
   title: string;
 };
 
-export const WorkspaceSetupHeader = ({ title }: WorkspaceSetupHeaderProps) => (
+export const ExpandedAiChatHeader = ({ title }: ExpandedAiChatHeaderProps) => (
   <StyledHeader>
     <StyledHeaderTitle>{title}</StyledHeaderTitle>
     <AiChatCollapseButton />

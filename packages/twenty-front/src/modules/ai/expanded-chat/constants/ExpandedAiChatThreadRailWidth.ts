@@ -1,0 +1,1 @@
+export const EXPANDED_AI_CHAT_THREAD_RAIL_WIDTH = 240;

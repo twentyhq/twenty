@@ -117,6 +117,12 @@ const WorkspaceSetup = lazyWithPreload(() =>
   })),
 );
 
+const AiChatPage = lazyWithPreload(() =>
+  import('~/pages/ai/AiChatPage').then((module) => ({
+    default: module.AiChatPage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -132,6 +138,7 @@ const preloadOnboardingPages = () => {
   BookCall.preload();
   ChooseYourPlan.preload();
   WorkspaceSetup.preload();
+  AiChatPage.preload();
 
   return null;
 };
@@ -153,6 +160,14 @@ const createWorkspaceAppRouter = (
               element={
                 <LazyRoute fallback={null}>
                   <WorkspaceSetup />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.AiChat}
+              element={
+                <LazyRoute fallback={null}>
+                  <AiChatPage />
                 </LazyRoute>
               }
             />

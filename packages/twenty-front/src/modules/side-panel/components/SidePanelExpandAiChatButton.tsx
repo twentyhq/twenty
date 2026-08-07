@@ -6,7 +6,6 @@ import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -17,16 +16,14 @@ export const SidePanelExpandAiChatButton = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const isOnboardingAiChatEnabled = useAtomStateValue(
-    isOnboardingAiChatEnabledState,
-  );
   const setAiChatExpandedReturnLocation = useSetAtomState(
     aiChatExpandedReturnLocationState,
   );
 
   const isOnAskAiPage = sidePanelPage === SidePanelPages.AskAI;
+  const isOnExpandedAiChatPage = location.pathname === AppPath.AiChat;
 
-  if (!isOnboardingAiChatEnabled || isMobile || !isOnAskAiPage) {
+  if (isMobile || !isOnAskAiPage || isOnExpandedAiChatPage) {
     return null;
   }
 
@@ -34,7 +31,7 @@ export const SidePanelExpandAiChatButton = () => {
     setAiChatExpandedReturnLocation(
       `${location.pathname}${location.search}${location.hash}`,
     );
-    navigate(AppPath.WorkspaceSetup);
+    navigate(AppPath.AiChat);
   };
 
   return (

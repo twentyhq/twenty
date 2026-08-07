@@ -5,13 +5,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { ExpandedAiChatHeader } from '@/ai/expanded-chat/components/ExpandedAiChatHeader';
+import { ExpandedAiChatSidePanelHandoffEffect } from '@/ai/expanded-chat/effect-components/ExpandedAiChatSidePanelHandoffEffect';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
-import { WorkspaceSetupHeader } from '@/onboarding/components/WorkspaceSetupHeader';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
-import { WorkspaceSetupChatSidePanelHandoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelHandoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -60,9 +60,9 @@ export const WorkspaceSetup = () => {
 
   return (
     <StyledPanel>
-      <WorkspaceSetupHeader title={title} />
+      <ExpandedAiChatHeader title={title} />
       <StyledContent>
-        <WorkspaceSetupChatSidePanelHandoffEffect />
+        <ExpandedAiChatSidePanelHandoffEffect />
         {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
         <AiChatMessageListPreambleContext.Provider value={preamble}>
           <AiChatTab />

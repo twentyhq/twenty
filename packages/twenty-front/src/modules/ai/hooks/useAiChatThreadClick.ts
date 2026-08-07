@@ -1,11 +1,13 @@
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
+import { AiChatThreadClickBehaviorContext } from '@/ai/contexts/AiChatThreadClickBehaviorContext';
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -29,6 +31,7 @@ export const useAiChatThreadClick = (
   );
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const threadClickBehavior = useContext(AiChatThreadClickBehaviorContext);
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
@@ -59,6 +62,10 @@ export const useAiChatThreadClick = (
           }
         : null,
     );
+
+    if (threadClickBehavior === 'in-place') {
+      return;
+    }
 
     openAskAiPage({
       resetNavigationStack,

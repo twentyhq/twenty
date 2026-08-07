@@ -18,6 +18,7 @@ export enum AppPath {
 
   // Onboarded
   WorkspaceSetup = '/workspace-setup',
+  AiChat = '/chat',
   Index = '/',
   TasksPage = '/objects/tasks',
   OpportunitiesPage = '/objects/opportunities',
