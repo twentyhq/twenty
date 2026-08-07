@@ -54,7 +54,8 @@ export const RecordBoardColumnCardsContainer = ({
           />
         </Fragment>
       ))}
-      {recordBoardShouldFetchMoreInColumn ? (
+      {recordBoardShouldFetchMoreInColumn &&
+      recordIndexRecordIdsByGroup.length === 0 ? (
         <RecordBoardColumnLoadingSkeletonCards />
       ) : null}
       <DragDropItemDropTarget
