@@ -130,6 +130,10 @@ export type SelectFilter = {
   in?: string[];
   eq?: string;
   neq?: string;
+  gt?: string;
+  gte?: string;
+  lt?: string;
+  lte?: string;
 };
 
 export type MultiSelectFilter = {
