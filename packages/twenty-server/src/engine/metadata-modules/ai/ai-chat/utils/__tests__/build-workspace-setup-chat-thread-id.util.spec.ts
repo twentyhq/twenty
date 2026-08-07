@@ -1,17 +1,16 @@
-import { v5 } from 'uuid';
-
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
-
-const NAMESPACE = '1e9195f3-c26a-4bfc-961e-dc317b4badbd';
 
 const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const userWorkspaceId = '20202020-9e3b-46d4-a556-88b9ddc2b034';
 
+const THREAD_ID_ALREADY_STORED_FOR_THIS_PAIR =
+  'b23986d5-fd50-5d81-8bd5-311e3a4b6a0d';
+
 describe('buildWorkspaceSetupChatThreadId', () => {
-  it('should derive the thread id from the workspace and user workspace pair', () => {
+  it('should keep deriving the thread id already stored for existing workspaces', () => {
     expect(
       buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId }),
-    ).toBe(v5(`${workspaceId}:${userWorkspaceId}`, NAMESPACE));
+    ).toBe(THREAD_ID_ALREADY_STORED_FOR_THIS_PAIR);
   });
 
   it('should be stable across calls', () => {

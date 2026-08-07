@@ -155,4 +155,29 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     expect(navigateMock).not.toHaveBeenCalled();
     expect(getProcessedToolCallIds()).toEqual([]);
   });
+
+  it('should not redirect nor consume the tool call when the completion failed', () => {
+    const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.processWorkspaceSetupCompletion({
+        id: 'message-1',
+        role: 'assistant',
+        parts: [
+          {
+            type: 'tool-complete_workspace_setup',
+            toolCallId: 'call-1',
+            input: {},
+            state: 'output-available',
+            output: { success: false, message: 'Something went wrong.' },
+          },
+        ],
+      } as unknown as ExtendedUIMessage);
+    });
+
+    expect(navigateMock).not.toHaveBeenCalled();
+    expect(getProcessedToolCallIds()).toEqual([]);
+  });
 });

@@ -68,6 +68,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -219,7 +220,8 @@ export class ChatExecutionService {
         buildWorkspaceSetupChatThreadId({
           workspaceId: workspace.id,
           userWorkspaceId,
-        });
+        }) &&
+      !hasSucceededWorkspaceSetupCompletion(messages);
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
