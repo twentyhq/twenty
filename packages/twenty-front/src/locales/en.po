@@ -17713,15 +17713,15 @@ msgstr "Subdomain already in use, here are some alternatives:"
 msgid "Subdomain already taken"
 msgstr "Subdomain already taken"
 
-#. js-lingui-id: OlC/tU
+#. js-lingui-id: la3+yi
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "Subdomain can not be longer than 30 characters"
+msgid "Subdomain cannot be empty"
+msgstr "Subdomain cannot be empty"
 
-#. js-lingui-id: a17S75
+#. js-lingui-id: d5CFUo
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain cannot be shorter than {minLength} characters"
-msgstr "Subdomain cannot be shorter than {minLength} characters"
+msgid "Subdomain cannot be longer than 30 characters"
+msgstr "Subdomain cannot be longer than 30 characters"
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
