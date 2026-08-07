@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Int, Mutation, Query } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -12,7 +14,11 @@ import {
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
 import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/inbox-item-action.service';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
+import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
+import { TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
+import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
 import { toInboxItemDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-dto.util';
+import { toInboxItemTransition } from 'src/engine/core-modules/inbox/utils/to-inbox-item-transition.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -32,6 +38,7 @@ export class InboxItemResolver {
   constructor(
     private readonly inboxItemService: InboxItemService,
     private readonly inboxItemActionService: InboxItemActionService,
+    private readonly inboxTransitionService: InboxTransitionService,
   ) {}
 
   @Query(() => [InboxItemDTO])
@@ -82,64 +89,48 @@ export class InboxItemResolver {
   }
 
   @Mutation(() => InboxItemDTO)
-  async snoozeInboxItem(
+  async transitionInboxItem(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
-    @Args('snoozedUntil', { type: () => Date }) snoozedUntil: Date,
+    @Args('transition', { type: () => TransitionInboxItemInput })
+    transition: TransitionInboxItemInput,
+    // Omitted means "apply regardless"; a client that acted on what it read
+    // should always send back the version it saw
+    @Args('expectedVersion', { type: () => Int, nullable: true })
+    expectedVersion?: number,
   ): Promise<InboxItemDTO> {
-    const inboxItem = await this.inboxItemService.snooze({
+    const inboxItem = await this.inboxTransitionService.transition({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
-      snoozedUntil,
+      actorUserWorkspaceId: userWorkspaceId,
+      transition: toInboxItemTransition(transition),
+      expectedVersion,
     });
 
     return toInboxItemDto(inboxItem);
   }
 
-  @Mutation(() => InboxItemDTO)
-  async completeInboxItem(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
-  ): Promise<InboxItemDTO> {
-    const inboxItem = await this.inboxItemService.complete({
-      inboxItemId,
-      workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
-    });
-
-    return toInboxItemDto(inboxItem);
-  }
-
-  @Mutation(() => InboxItemDTO)
-  async reopenInboxItem(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
-  ): Promise<InboxItemDTO> {
-    const inboxItem = await this.inboxItemService.reopen({
-      inboxItemId,
-      workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
-    });
-
-    return toInboxItemDto(inboxItem);
-  }
-
+  // Ergonomic wrapper: names one of the type's declared actions instead of
+  // spelling out the transition it stands for.
   @Mutation(() => InboxItemDTO)
   async executeInboxItemAction(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
     @Args('actionKey', { type: () => String }) actionKey: string,
+    @Args('input', { type: () => GraphQLJSON, nullable: true })
+    input?: Record<string, unknown>,
+    @Args('expectedVersion', { type: () => Int, nullable: true })
+    expectedVersion?: number,
   ): Promise<InboxItemDTO> {
     const inboxItem = await this.inboxItemActionService.execute({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
       actionKey,
+      input: input as InboxItemPayload | undefined,
+      expectedVersion,
     });
 
     return toInboxItemDto(inboxItem);

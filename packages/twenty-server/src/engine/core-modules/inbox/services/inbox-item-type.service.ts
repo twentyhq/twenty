@@ -74,6 +74,7 @@ export class InboxItemTypeService {
         binding: standardType.binding,
         defaultPriority: standardType.defaultPriority,
         actions: standardType.actions,
+        resolution: standardType.resolution ?? null,
       })),
       { conflictPaths: ['workspaceId', 'universalIdentifier'] },
     );

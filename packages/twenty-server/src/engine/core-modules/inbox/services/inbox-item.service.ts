@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, MoreThan, Or } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
@@ -14,6 +13,8 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export const DEFAULT_INBOX_PAGE_SIZE = 50;
 export const MAX_INBOX_PAGE_SIZE = 500;
 
+// Reads and the one mutation that is not a transition. Everything that changes
+// an item's state lives in InboxTransitionService.
 @Injectable()
 export class InboxItemService {
   constructor(
@@ -85,79 +86,30 @@ export class InboxItemService {
   }
 
   // Reading an item is not activity on it, so the list stays ordered by what
-  // actually happened rather than by what the assignee last looked at
+  // actually happened rather than by what the assignee last looked at. It is
+  // also not a transition: it does not move the item or bump its version.
   async markRead({
     inboxItemId,
     workspaceId,
     assigneeUserWorkspaceId,
   }: OwnedItemArgs): Promise<InboxItemEntity> {
-    return this.updateOwnedItem(
-      { inboxItemId, workspaceId, assigneeUserWorkspaceId },
+    const inboxItem = await this.findOwnedItemOrThrow({
+      inboxItemId,
+      workspaceId,
+      assigneeUserWorkspaceId,
+    });
+
+    await this.inboxItemRepository.update(
+      workspaceId,
+      { id: inboxItem.id, assigneeUserWorkspaceId },
       { readAt: new Date(), updatedAt: () => '"updatedAt"' },
     );
-  }
 
-  async snooze({
-    inboxItemId,
-    workspaceId,
-    assigneeUserWorkspaceId,
-    snoozedUntil,
-  }: OwnedItemArgs & { snoozedUntil: Date }): Promise<InboxItemEntity> {
-    return this.updateOwnedItem(
-      { inboxItemId, workspaceId, assigneeUserWorkspaceId },
-      { snoozedUntil, readAt: new Date() },
-    );
-  }
-
-  async complete({
-    inboxItemId,
-    workspaceId,
-    assigneeUserWorkspaceId,
-  }: OwnedItemArgs): Promise<InboxItemEntity> {
-    return this.updateOwnedItem(
-      { inboxItemId, workspaceId, assigneeUserWorkspaceId },
-      {
-        status: InboxItemStatus.DONE,
-        resolvedAt: new Date(),
-        resolvedByUserWorkspaceId: assigneeUserWorkspaceId,
-        readAt: new Date(),
-        snoozedUntil: null,
-      },
-    );
-  }
-
-  async reopen({
-    inboxItemId,
-    workspaceId,
-    assigneeUserWorkspaceId,
-  }: OwnedItemArgs): Promise<InboxItemEntity> {
-    return this.updateOwnedItem(
-      { inboxItemId, workspaceId, assigneeUserWorkspaceId },
-      {
-        status: InboxItemStatus.OPEN,
-        resolvedAt: null,
-        resolvedByUserWorkspaceId: null,
-        snoozedUntil: null,
-        // A reopened item is asking for attention again, so it should count
-        // towards the unread badge
-        readAt: null,
-      },
-    );
-  }
-
-  async dismiss({
-    inboxItemId,
-    workspaceId,
-    assigneeUserWorkspaceId,
-  }: OwnedItemArgs): Promise<InboxItemEntity> {
-    return this.updateOwnedItem(
-      { inboxItemId, workspaceId, assigneeUserWorkspaceId },
-      {
-        status: InboxItemStatus.DISMISSED,
-        resolvedAt: new Date(),
-        resolvedByUserWorkspaceId: assigneeUserWorkspaceId,
-      },
-    );
+    return this.findOwnedItemOrThrow({
+      inboxItemId,
+      workspaceId,
+      assigneeUserWorkspaceId,
+    });
   }
 
   async findOwnedItemOrThrow({
@@ -177,29 +129,6 @@ export class InboxItemService {
     return inboxItem;
   }
 
-  // Every mutation is scoped to the caller's own items, so one person can never
-  // read or resolve another's inbox. The repository adds the workspace scope;
-  // the assignee scope is this service's own guarantee.
-  private async updateOwnedItem(
-    ownedItemArgs: OwnedItemArgs,
-    partialUpdate: QueryDeepPartialEntity<InboxItemEntity>,
-  ): Promise<InboxItemEntity> {
-    const inboxItem = await this.findOwnedItemOrThrow(ownedItemArgs);
-
-    // The assignee is part of the write predicate, not just the preceding read,
-    // so a reassignment between the two cannot let the old owner mutate it
-    await this.inboxItemRepository.update(
-      ownedItemArgs.workspaceId,
-      {
-        id: inboxItem.id,
-        assigneeUserWorkspaceId: ownedItemArgs.assigneeUserWorkspaceId,
-      },
-      partialUpdate,
-    );
-
-    return this.findOwnedItemOrThrow(ownedItemArgs);
-  }
-
   private buildScopeCriteria(scope: InboxItemScope) {
     const now = new Date();
 
@@ -216,7 +145,7 @@ export class InboxItemService {
         };
       case InboxItemScope.RESOLVED:
         return {
-          status: In([InboxItemStatus.DONE, InboxItemStatus.DISMISSED]),
+          status: In([InboxItemStatus.RESOLVED, InboxItemStatus.CANCELLED]),
         };
     }
   }

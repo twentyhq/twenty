@@ -3,17 +3,37 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type InboxItemActionDTO,
   type InboxItemDTO,
+  type InboxItemFieldDTO,
+  type InboxItemOutcomeDTO,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item.dto';
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
+import {
+  type InboxItemFieldSchema,
+  type InboxItemOutcome,
+} from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
+
+const toFieldDto = (field: InboxItemFieldSchema): InboxItemFieldDTO => ({
+  key: field.key,
+  label: field.label,
+  type: field.type,
+  isRequired: field.isRequired ?? false,
+});
+
+const toOutcomeDto = (outcome: InboxItemOutcome): InboxItemOutcomeDTO => ({
+  key: outcome.key,
+  label: outcome.label,
+});
 
 const toActionDto = (action: InboxItemAction): InboxItemActionDTO => ({
   key: action.key,
   label: action.label,
   icon: action.icon ?? null,
   isPrimary: action.isPrimary ?? false,
-  handlerKind: action.handler.kind,
+  navigationKind: action.navigation?.kind ?? null,
+  transitionKind: action.transition?.kind ?? null,
+  inputSchema: (action.inputSchema ?? []).map(toFieldDto),
 });
 
 // Requires the type relation to be loaded, so a caller that forgot the join
@@ -37,14 +57,21 @@ export const toInboxItemDto = (inboxItem: InboxItemWithType): InboxItemDTO => {
         ? inboxItemType.actions
         : []
       ).map(toActionDto),
+      outcomes: (inboxItemType.resolution?.outcomes ?? []).map(toOutcomeDto),
     },
     status: inboxItem.status,
     priority: inboxItem.priority,
+    version: inboxItem.version,
     title: inboxItem.title,
     preview: inboxItem.preview,
     payload: inboxItem.payload,
+    outcome: inboxItem.outcome,
+    result: inboxItem.result,
+    cancellationReason: inboxItem.cancellationReason,
     readAt: inboxItem.readAt,
     snoozedUntil: inboxItem.snoozedUntil,
+    claimedByUserWorkspaceId: inboxItem.claimedByUserWorkspaceId,
+    claimExpiresAt: inboxItem.claimExpiresAt,
     threadId: inboxItem.threadId,
     subjectObjectMetadataId: inboxItem.subjectObjectMetadataId,
     subjectRecordId: inboxItem.subjectRecordId,

@@ -14,6 +14,7 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
+import { type InboxItemResolution } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -91,6 +92,12 @@ export class InboxItemTypeEntity {
 
   @Column({ nullable: false, type: 'jsonb', default: [] })
   actions: JsonbProperty<InboxItemAction[]>;
+
+  // The ways an item of this type can end. An approval declares APPROVED and
+  // REJECTED, a question declares ANSWERED with an answer field: the engine
+  // stores the outcome key and its result without knowing either word.
+  @Column({ nullable: true, type: 'jsonb' })
+  resolution: JsonbProperty<InboxItemResolution> | null;
 
   // Optional app front component rendered in place of the generic detail card
   @Column({ nullable: true, type: 'uuid' })

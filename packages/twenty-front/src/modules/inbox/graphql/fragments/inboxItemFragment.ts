@@ -5,11 +5,17 @@ export const INBOX_ITEM_FRAGMENT = gql`
     id
     status
     priority
+    version
     title
     preview
     payload
+    outcome
+    result
+    cancellationReason
     readAt
     snoozedUntil
+    claimedByUserWorkspaceId
+    claimExpiresAt
     threadId
     subjectObjectMetadataId
     subjectRecordId
@@ -26,7 +32,18 @@ export const INBOX_ITEM_FRAGMENT = gql`
         label
         icon
         isPrimary
-        handlerKind
+        navigationKind
+        transitionKind
+        inputSchema {
+          key
+          label
+          type
+          isRequired
+        }
+      }
+      outcomes {
+        key
+        label
       }
     }
   }

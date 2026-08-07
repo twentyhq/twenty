@@ -28,8 +28,9 @@ export class InboxRouterService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  // The flag has to gate the writes, not just the UI, or turning the inbox off
-  // still seeds types and accrues rows in every workspace
+  // The flag gates what accrues: creating items and seeding types. Updates to
+  // items that already exist stay ungated, so archiving a thread while the flag
+  // is off cannot leave a stale item to resurface when it is turned back on.
   private async isInboxEnabled(workspaceId: string): Promise<boolean> {
     return this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_INBOX_ENABLED,
@@ -73,11 +74,11 @@ export class InboxRouterService {
       return null;
     }
 
-    const dedupeKey = this.resolveDedupeKey({ args, inboxItemType });
+    const slotKey = this.resolveSlotKey({ args, inboxItemType });
 
     if (
       inboxItemType.binding === InboxItemBinding.SUBJECT &&
-      !isDefined(dedupeKey)
+      !isDefined(slotKey)
     ) {
       throw new Error(
         `Inbox item type ${args.typeKey} is subject bound and needs a subject`,
@@ -88,7 +89,7 @@ export class InboxRouterService {
       args,
       inboxItemType,
       assigneeUserWorkspaceId,
-      dedupeKey,
+      slotKey,
     });
   }
 
@@ -99,18 +100,18 @@ export class InboxRouterService {
       return args.subject.ownerUserWorkspaceId;
     }
 
-    return args.fallbackAssigneeUserWorkspaceId ?? null;
+    return args.target?.userWorkspaceId ?? null;
   }
 
-  private resolveDedupeKey({
+  private resolveSlotKey({
     args,
     inboxItemType,
   }: {
     args: RouteInboxItemArgs;
     inboxItemType: InboxItemTypeEntity;
   }): string | null {
-    if (isDefined(args.dedupeKey)) {
-      return args.dedupeKey;
+    if (isDefined(args.slotKey)) {
+      return args.slotKey;
     }
 
     if (inboxItemType.binding === InboxItemBinding.OCCURRENCE) {
@@ -124,18 +125,18 @@ export class InboxRouterService {
     args,
     inboxItemType,
     assigneeUserWorkspaceId,
-    dedupeKey,
+    slotKey,
   }: {
     args: RouteInboxItemArgs;
     inboxItemType: InboxItemTypeEntity;
     assigneeUserWorkspaceId: string;
-    dedupeKey: string | null;
+    slotKey: string | null;
   }): Promise<InboxItemEntity | null> {
-    const existingItem = isDefined(dedupeKey)
+    const existingItem = isDefined(slotKey)
       ? await this.findFoldableItem({
           workspaceId: args.workspaceId,
           assigneeUserWorkspaceId,
-          dedupeKey,
+          slotKey,
           binding: inboxItemType.binding,
         })
       : null;
@@ -149,7 +150,7 @@ export class InboxRouterService {
         args,
         inboxItemType,
         assigneeUserWorkspaceId,
-        dedupeKey,
+        slotKey,
       });
     } catch (error) {
       const isConcurrentInsert =
@@ -158,7 +159,7 @@ export class InboxRouterService {
         (error as { code?: string }).code ===
           POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
 
-      if (!isConcurrentInsert || !isDefined(dedupeKey)) {
+      if (!isConcurrentInsert || !isDefined(slotKey)) {
         throw error;
       }
 
@@ -166,7 +167,7 @@ export class InboxRouterService {
       const concurrentItem = await this.findFoldableItem({
         workspaceId: args.workspaceId,
         assigneeUserWorkspaceId,
-        dedupeKey,
+        slotKey,
         binding: inboxItemType.binding,
       });
 
@@ -187,18 +188,18 @@ export class InboxRouterService {
   private async findFoldableItem({
     workspaceId,
     assigneeUserWorkspaceId,
-    dedupeKey,
+    slotKey,
     binding,
   }: {
     workspaceId: string;
     assigneeUserWorkspaceId: string;
-    dedupeKey: string;
+    slotKey: string;
     binding: InboxItemBinding;
   }): Promise<InboxItemEntity | null> {
     const openItem = await this.inboxItemRepository.findOne(workspaceId, {
       where: {
         assigneeUserWorkspaceId,
-        dedupeKey,
+        slotKey,
         status: InboxItemStatus.OPEN,
       },
       order: { updatedAt: 'DESC' },
@@ -212,7 +213,7 @@ export class InboxRouterService {
     // one while an open one still holds the key would collide on
     // IDX_INBOX_ITEM_DEDUPE_KEY_OPEN_UNIQUE, so the open row always wins.
     return this.inboxItemRepository.findOne(workspaceId, {
-      where: { assigneeUserWorkspaceId, dedupeKey },
+      where: { assigneeUserWorkspaceId, slotKey },
       order: { updatedAt: 'DESC' },
     });
   }
@@ -253,12 +254,12 @@ export class InboxRouterService {
     args,
     inboxItemType,
     assigneeUserWorkspaceId,
-    dedupeKey,
+    slotKey,
   }: {
     args: RouteInboxItemArgs;
     inboxItemType: InboxItemTypeEntity;
     assigneeUserWorkspaceId: string;
-    dedupeKey: string | null;
+    slotKey: string | null;
   }): Promise<InboxItemEntity> {
     return this.inboxItemRepository.save(args.workspaceId, {
       inboxItemTypeId: inboxItemType.id,
@@ -268,7 +269,7 @@ export class InboxRouterService {
       preview: args.preview ?? null,
       payload: args.payload ?? null,
       assigneeUserWorkspaceId,
-      dedupeKey,
+      slotKey,
       threadId: args.subject?.kind === 'thread' ? args.subject.threadId : null,
       subjectObjectMetadataId:
         args.subject?.kind === 'record' ? args.subject.objectMetadataId : null,
@@ -291,10 +292,6 @@ export class InboxRouterService {
     title: string;
   }): Promise<void> {
     await this.runBestEffort('renameThreadItem', workspaceId, async () => {
-      if (!(await this.isInboxEnabled(workspaceId))) {
-        return;
-      }
-
       await this.inboxItemRepository.update(
         workspaceId,
         { threadId },
@@ -312,14 +309,14 @@ export class InboxRouterService {
     threadId: string;
   }): Promise<void> {
     await this.runBestEffort('dismissByThreadId', workspaceId, async () => {
-      if (!(await this.isInboxEnabled(workspaceId))) {
-        return;
-      }
-
       await this.inboxItemRepository.update(
         workspaceId,
         { threadId, status: InboxItemStatus.OPEN },
-        { status: InboxItemStatus.DISMISSED, resolvedAt: new Date() },
+        {
+          status: InboxItemStatus.CANCELLED,
+          cancellationReason: 'Thread removed',
+          resolvedAt: new Date(),
+        },
       );
     });
   }

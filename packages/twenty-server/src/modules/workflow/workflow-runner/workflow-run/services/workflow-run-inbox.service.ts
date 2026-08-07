@@ -83,8 +83,8 @@ export class WorkflowRunInboxService {
       typeKey: INBOX_ITEM_TYPE_KEY.workflowRunFailed,
       title: `${workflowName ?? 'Workflow'} run failed`,
       preview: error,
-      fallbackAssigneeUserWorkspaceId: userWorkspaceId,
-      dedupeKey: `${INBOX_ITEM_TYPE_KEY.workflowRunFailed}:${workflowRun.id}`,
+      target: { kind: 'userWorkspace', userWorkspaceId },
+      slotKey: `${INBOX_ITEM_TYPE_KEY.workflowRunFailed}:${workflowRun.id}`,
       payload: { workflowRunId: workflowRun.id },
       ...(isDefined(workflowRunObjectMetadataId)
         ? {

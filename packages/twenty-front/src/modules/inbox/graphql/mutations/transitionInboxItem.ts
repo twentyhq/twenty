@@ -2,17 +2,15 @@ import { gql } from '@apollo/client';
 
 import { INBOX_ITEM_FRAGMENT } from '@/inbox/graphql/fragments/inboxItemFragment';
 
-export const EXECUTE_INBOX_ITEM_ACTION = gql`
-  mutation ExecuteInboxItemAction(
+export const TRANSITION_INBOX_ITEM = gql`
+  mutation TransitionInboxItem(
     $inboxItemId: UUID!
-    $actionKey: String!
-    $input: JSON
+    $transition: TransitionInboxItemInput!
     $expectedVersion: Int
   ) {
-    executeInboxItemAction(
+    transitionInboxItem(
       inboxItemId: $inboxItemId
-      actionKey: $actionKey
-      input: $input
+      transition: $transition
       expectedVersion: $expectedVersion
     ) {
       ...InboxItemFields

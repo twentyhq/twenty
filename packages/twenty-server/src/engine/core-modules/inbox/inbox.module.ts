@@ -10,6 +10,7 @@ import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/i
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
+import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 // Leaf module: producers import it, it imports none of them. That keeps the
@@ -27,11 +28,12 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     InboxItemService,
     InboxItemTypeService,
     InboxItemActionService,
+    InboxTransitionService,
     InboxRouterService,
     InboxItemResolver,
     provideWorkspaceScopedRepository(InboxItemEntity),
     provideWorkspaceScopedRepository(InboxItemTypeEntity),
   ],
-  exports: [InboxRouterService, InboxItemTypeService],
+  exports: [InboxRouterService, InboxItemTypeService, InboxTransitionService],
 })
 export class InboxModule {}

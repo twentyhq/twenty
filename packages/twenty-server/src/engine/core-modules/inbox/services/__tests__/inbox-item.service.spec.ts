@@ -131,7 +131,7 @@ describe('InboxItemService', () => {
 
       expect(findOptions.where).toEqual({
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        status: In([InboxItemStatus.DONE, InboxItemStatus.DISMISSED]),
+        status: In([InboxItemStatus.RESOLVED, InboxItemStatus.CANCELLED]),
       });
       expect('snoozedUntil' in findOptions.where).toBe(false);
     });
@@ -197,88 +197,18 @@ describe('InboxItemService', () => {
     });
   });
 
-  describe('mutations ownership', () => {
-    it.each([
-      ['complete', () => service.complete(ownedItemArgs)],
-      ['reopen', () => service.reopen(ownedItemArgs)],
-      ['dismiss', () => service.dismiss(ownedItemArgs)],
-      ['markRead', () => service.markRead(ownedItemArgs)],
-      ['snooze', () => service.snooze({ ...ownedItemArgs, snoozedUntil: NOW })],
-    ])(
-      'should throw a NotFoundException and mutate nothing from %s when the item is not owned by the caller',
-      async (_mutationName, mutate) => {
-        // Prepare
-        inboxItemRepository.findOne.mockResolvedValue(null);
-
-        // Act & Assert
-        await expect(mutate()).rejects.toThrow(NotFoundException);
-        expect(inboxItemRepository.update).not.toHaveBeenCalled();
-      },
-    );
-  });
-
-  describe('complete', () => {
-    it('should mark the item done, stamp the resolver and clear the snooze when the item is owned', async () => {
-      // Act
-      await service.complete(ownedItemArgs);
-
-      // Assert
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        {
-          id: INBOX_ITEM_ID,
-          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        },
-        {
-          status: InboxItemStatus.DONE,
-          resolvedAt: NOW,
-          resolvedByUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-          readAt: NOW,
-          snoozedUntil: null,
-        },
-      );
-    });
-
-    it('should return the item as it stands after the update', async () => {
-      // Prepare
-      const completedItem = buildInboxItem({
-        status: InboxItemStatus.DONE,
-        resolvedAt: NOW,
-      });
-
-      inboxItemRepository.findOne
-        .mockResolvedValueOnce(buildInboxItem())
-        .mockResolvedValueOnce(completedItem);
-
-      // Act
-      const result = await service.complete(ownedItemArgs);
-
-      // Assert
-      expect(result).toEqual(completedItem);
-    });
-  });
-
-  describe('snooze', () => {
-    it('should store the snooze deadline and mark the item read when the item is owned', async () => {
-      // Prepare
-      const snoozedUntil = new Date('2026-08-07T11:00:00.000Z');
-
-      // Act
-      await service.snooze({ ...ownedItemArgs, snoozedUntil });
-
-      // Assert
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        {
-          id: INBOX_ITEM_ID,
-          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        },
-        { snoozedUntil, readAt: NOW },
-      );
-    });
-  });
-
   describe('markRead', () => {
+    it('should throw a NotFoundException and mutate nothing when the item is not owned by the caller', async () => {
+      // Prepare
+      inboxItemRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.markRead(ownedItemArgs)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+    });
+
     it('should only stamp readAt when the item is owned', async () => {
       // Act
       await service.markRead(ownedItemArgs);
@@ -302,29 +232,6 @@ describe('InboxItemService', () => {
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
 
       expect(partialUpdate.updatedAt()).toBe('"updatedAt"');
-    });
-  });
-
-  describe('reopen', () => {
-    it('should clear the resolution and the snooze when the item is owned', async () => {
-      // Act
-      await service.reopen(ownedItemArgs);
-
-      // Assert
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        {
-          id: INBOX_ITEM_ID,
-          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        },
-        {
-          status: InboxItemStatus.OPEN,
-          resolvedAt: null,
-          resolvedByUserWorkspaceId: null,
-          snoozedUntil: null,
-          readAt: null,
-        },
-      );
     });
   });
 

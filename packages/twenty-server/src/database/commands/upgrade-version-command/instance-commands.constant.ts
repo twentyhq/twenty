@@ -137,6 +137,7 @@ import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/comm
 import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
 import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
 import { CreateInboxCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786122069394-create-inbox-core-tables';
+import { AddInboxTransitionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786133467428-add-inbox-transitions';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -276,4 +277,5 @@ export const INSTANCE_COMMANDS = [
   CreateApplicationAuthorizationCoreTableFastInstanceCommand,
   AddCallRecordingWidgetTypesFastInstanceCommand,
   CreateInboxCoreTablesFastInstanceCommand,
+  AddInboxTransitionsFastInstanceCommand,
 ];

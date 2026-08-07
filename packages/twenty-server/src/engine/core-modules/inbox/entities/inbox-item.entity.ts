@@ -32,14 +32,14 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
   'CHK_INBOX_ITEM_SINGLE_ASSIGNEE',
   '("assigneeUserWorkspaceId" IS NOT NULL) != ("assigneeAgentId" IS NOT NULL)',
 )
-// One live item per dedupe key and assignee. This is what makes folding
-// race-free: concurrent producers collide here instead of duplicating.
+// One live item per slot and assignee. This is what makes folding race-free:
+// concurrent producers collide here instead of duplicating.
 @Index(
-  'IDX_INBOX_ITEM_DEDUPE_KEY_OPEN_UNIQUE',
-  ['workspaceId', 'assigneeUserWorkspaceId', 'dedupeKey'],
+  'IDX_INBOX_ITEM_SLOT_KEY_OPEN_UNIQUE',
+  ['workspaceId', 'assigneeUserWorkspaceId', 'slotKey'],
   {
     unique: true,
-    where: `"status" = 'OPEN' AND "dedupeKey" IS NOT NULL AND "assigneeUserWorkspaceId" IS NOT NULL`,
+    where: `"status" = 'OPEN' AND "slotKey" IS NOT NULL AND "assigneeUserWorkspaceId" IS NOT NULL`,
   },
 )
 @Index('IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_STATUS', [
@@ -135,7 +135,32 @@ export class InboxItemEntity {
   assigneeAgentId: string | null;
 
   @Column({ nullable: true, type: 'varchar' })
-  dedupeKey: string | null;
+  slotKey: string | null;
+
+  // Bumped by every transition. A caller that read the item at version N can
+  // only transition it while it is still at N, so two people resolving the
+  // same approval cannot both win.
+  @Column({ nullable: false, type: 'integer', default: 1 })
+  version: number;
+
+  // Which of the type's declared outcomes ended this item, and whatever that
+  // outcome declared it carries
+  @Column({ nullable: true, type: 'varchar' })
+  outcome: string | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  result: JsonbProperty<InboxItemPayload> | null;
+
+  @Column({ nullable: true, type: 'varchar' })
+  cancellationReason: string | null;
+
+  // A claim is a soft lease, not ownership: it says someone is working on this
+  // right now, and it lapses on its own so nothing stays stuck
+  @Column({ nullable: true, type: 'uuid' })
+  claimedByUserWorkspaceId: string | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  claimExpiresAt: Date | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   resolvedAt: Date | null;

@@ -21,8 +21,8 @@ const SUBJECT_TYPE_ID = 'subject-type-id';
 const OCCURRENCE_TYPE_ID = 'occurrence-type-id';
 const EXISTING_ITEM_ID = 'existing-item-id';
 const INSERTED_ITEM_ID = 'inserted-item-id';
-const THREAD_DEDUPE_KEY = `thread:${THREAD_ID}`;
-const OCCURRENCE_DEDUPE_KEY = 'workflow-run:run-id';
+const THREAD_SLOT_KEY = `thread:${THREAD_ID}`;
+const OCCURRENCE_SLOT_KEY = 'workflow-run:run-id';
 
 const SUBJECT_TYPE = {
   id: SUBJECT_TYPE_ID,
@@ -51,7 +51,7 @@ const buildInboxItem = (
     priority: InboxItemPriority.LOW,
     title: 'An older message',
     assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-    dedupeKey: THREAD_DEDUPE_KEY,
+    slotKey: THREAD_SLOT_KEY,
     updatedAt: new Date('2026-01-01T00:00:00.000Z'),
     ...overrides,
   }) as InboxItemEntity;
@@ -81,7 +81,7 @@ describe('InboxRouterService', () => {
     isFeatureEnabled: jest.fn(),
   };
 
-  // Stands in for the rows the dedupe key currently holds, honouring the
+  // Stands in for the rows the slot currently holds, honouring the
   // optional status filter and the updatedAt DESC ordering the service asks for
   const stubFoldableRows = (rows: InboxItemEntity[]) => {
     const rowsByRecency = [...rows].sort(
@@ -163,7 +163,10 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
-    it('should not retitle a thread item when the inbox is disabled', async () => {
+    // Cleanup stays ungated on purpose: an item that already exists has to be
+    // kept in step even while the flag is off, or turning it back on would
+    // resurface work for a thread that is gone
+    it('should still retitle an existing item when the inbox is disabled', async () => {
       // Prepare
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
@@ -175,10 +178,10 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+      expect(inboxItemRepository.update).toHaveBeenCalledTimes(1);
     });
 
-    it('should not dismiss thread items when the inbox is disabled', async () => {
+    it('should still cancel an existing item when the inbox is disabled', async () => {
       // Prepare
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
@@ -189,7 +192,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+      expect(inboxItemRepository.update).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -216,7 +219,7 @@ describe('InboxRouterService', () => {
         preview: 'Hello there',
         payload: null,
         assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-        dedupeKey: THREAD_DEDUPE_KEY,
+        slotKey: THREAD_SLOT_KEY,
         threadId: THREAD_ID,
         subjectObjectMetadataId: null,
         subjectRecordId: null,
@@ -225,13 +228,16 @@ describe('InboxRouterService', () => {
       expect(result).toEqual(expect.objectContaining({ id: INSERTED_ITEM_ID }));
     });
 
-    it('should derive the dedupe key from a record subject when the subject is a record', async () => {
+    it('should derive the slot from a record subject when the subject is a record', async () => {
       // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A record needs attention',
-        fallbackAssigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        target: {
+          kind: 'userWorkspace',
+          userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        },
         subject: {
           kind: 'record',
           objectMetadataId: 'object-metadata-id',
@@ -243,7 +249,7 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.save).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
-          dedupeKey: 'record:object-metadata-id:record-id',
+          slotKey: 'record:object-metadata-id:record-id',
           assigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
           threadId: null,
           subjectObjectMetadataId: 'object-metadata-id',
@@ -363,7 +369,7 @@ describe('InboxRouterService', () => {
       // Prepare
       stubFoldableRows([
         buildInboxItem({
-          status: InboxItemStatus.DONE,
+          status: InboxItemStatus.RESOLVED,
           resolvedAt: new Date('2026-01-01T00:00:00.000Z'),
           resolvedByUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
         }),
@@ -384,7 +390,7 @@ describe('InboxRouterService', () => {
         {
           where: {
             assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-            dedupeKey: THREAD_DEDUPE_KEY,
+            slotKey: THREAD_SLOT_KEY,
             status: InboxItemStatus.OPEN,
           },
           order: { updatedAt: 'DESC' },
@@ -396,7 +402,7 @@ describe('InboxRouterService', () => {
         {
           where: {
             assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-            dedupeKey: THREAD_DEDUPE_KEY,
+            slotKey: THREAD_SLOT_KEY,
           },
           order: { updatedAt: 'DESC' },
         },
@@ -415,10 +421,10 @@ describe('InboxRouterService', () => {
       );
     });
 
-    it('should fold into the open item when a more recently updated done item shares the dedupe key', async () => {
+    it('should fold into the open item when a more recently updated done item shares the slot', async () => {
       // Prepare
       // Reviving the done row instead would leave two open rows on one key and
-      // collide on IDX_INBOX_ITEM_DEDUPE_KEY_OPEN_UNIQUE
+      // collide on IDX_INBOX_ITEM_SLOT_KEY_OPEN_UNIQUE
       stubFoldableRows([
         buildInboxItem({
           id: 'open-item-id',
@@ -427,7 +433,7 @@ describe('InboxRouterService', () => {
         }),
         buildInboxItem({
           id: 'done-item-id',
-          status: InboxItemStatus.DONE,
+          status: InboxItemStatus.RESOLVED,
           updatedAt: new Date('2026-02-01T00:00:00.000Z'),
         }),
       ]);
@@ -457,7 +463,10 @@ describe('InboxRouterService', () => {
           workspaceId: WORKSPACE_ID,
           typeKey: 'conversation',
           title: 'A message with no subject',
-          fallbackAssigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+          target: {
+            kind: 'userWorkspace',
+            userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+          },
         }),
       ).rejects.toThrow(
         'Inbox item type conversation is subject bound and needs a subject',
@@ -477,7 +486,7 @@ describe('InboxRouterService', () => {
       stubFoldableRows([
         buildInboxItem({
           inboxItemTypeId: OCCURRENCE_TYPE_ID,
-          dedupeKey: OCCURRENCE_DEDUPE_KEY,
+          slotKey: OCCURRENCE_SLOT_KEY,
           assigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
         }),
       ]);
@@ -487,15 +496,18 @@ describe('InboxRouterService', () => {
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed again',
-        dedupeKey: OCCURRENCE_DEDUPE_KEY,
-        fallbackAssigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        slotKey: OCCURRENCE_SLOT_KEY,
+        target: {
+          kind: 'userWorkspace',
+          userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        },
       });
 
       // Assert
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
         where: {
           assigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
-          dedupeKey: OCCURRENCE_DEDUPE_KEY,
+          slotKey: OCCURRENCE_SLOT_KEY,
           status: InboxItemStatus.OPEN,
         },
         order: { updatedAt: 'DESC' },
@@ -513,9 +525,9 @@ describe('InboxRouterService', () => {
       stubFoldableRows([
         buildInboxItem({
           inboxItemTypeId: OCCURRENCE_TYPE_ID,
-          dedupeKey: OCCURRENCE_DEDUPE_KEY,
+          slotKey: OCCURRENCE_SLOT_KEY,
           assigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
-          status: InboxItemStatus.DONE,
+          status: InboxItemStatus.RESOLVED,
         }),
       ]);
 
@@ -524,8 +536,11 @@ describe('InboxRouterService', () => {
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed again',
-        dedupeKey: OCCURRENCE_DEDUPE_KEY,
-        fallbackAssigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        slotKey: OCCURRENCE_SLOT_KEY,
+        target: {
+          kind: 'userWorkspace',
+          userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        },
       });
 
       // Assert
@@ -541,20 +556,23 @@ describe('InboxRouterService', () => {
         WORKSPACE_ID,
         expect.objectContaining({
           inboxItemTypeId: OCCURRENCE_TYPE_ID,
-          dedupeKey: OCCURRENCE_DEDUPE_KEY,
+          slotKey: OCCURRENCE_SLOT_KEY,
           status: InboxItemStatus.OPEN,
           priority: InboxItemPriority.NEEDS_ACTION,
         }),
       );
     });
 
-    it('should always insert without looking for a foldable item when no dedupe key is given', async () => {
+    it('should always insert without looking for a foldable item when no slot is given', async () => {
       // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed',
-        fallbackAssigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        target: {
+          kind: 'userWorkspace',
+          userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        },
       });
 
       // Assert
@@ -562,7 +580,7 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
       expect(inboxItemRepository.save).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ dedupeKey: null }),
+        expect.objectContaining({ slotKey: null }),
       );
     });
   });
@@ -672,7 +690,10 @@ describe('InboxRouterService', () => {
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
-        fallbackAssigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        target: {
+          kind: 'userWorkspace',
+          userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        },
       });
 
       // Assert
@@ -783,7 +804,7 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { threadId: THREAD_ID, status: InboxItemStatus.OPEN },
-        expect.objectContaining({ status: InboxItemStatus.DISMISSED }),
+        expect.objectContaining({ status: InboxItemStatus.CANCELLED }),
       );
     });
   });

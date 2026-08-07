@@ -195,13 +195,18 @@ export type InboxCounts = {
 
 export type InboxItem = {
   __typename?: 'InboxItem';
+  cancellationReason?: Maybe<Scalars['String']['output']>;
+  claimExpiresAt?: Maybe<Scalars['DateTime']['output']>;
+  claimedByUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   inboxItemType: InboxItemType;
+  outcome?: Maybe<Scalars['String']['output']>;
   payload?: Maybe<Scalars['JSON']['output']>;
   preview?: Maybe<Scalars['String']['output']>;
   priority: InboxItemPriority;
   readAt?: Maybe<Scalars['DateTime']['output']>;
+  result?: Maybe<Scalars['JSON']['output']>;
   snoozedUntil?: Maybe<Scalars['DateTime']['output']>;
   status: InboxItemStatus;
   subjectObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -209,21 +214,38 @@ export type InboxItem = {
   threadId?: Maybe<Scalars['UUID']['output']>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  version: Scalars['Int']['output'];
 };
 
 export type InboxItemAction = {
   __typename?: 'InboxItemAction';
-  handlerKind: Scalars['String']['output'];
   icon?: Maybe<Scalars['String']['output']>;
+  inputSchema: Array<InboxItemField>;
   isPrimary: Scalars['Boolean']['output'];
   key: Scalars['String']['output'];
   label: Scalars['String']['output'];
+  navigationKind?: Maybe<Scalars['String']['output']>;
+  transitionKind?: Maybe<Scalars['String']['output']>;
 };
 
 export enum InboxItemBinding {
   OCCURRENCE = 'OCCURRENCE',
   SUBJECT = 'SUBJECT'
 }
+
+export type InboxItemField = {
+  __typename?: 'InboxItemField';
+  isRequired: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
+export type InboxItemOutcome = {
+  __typename?: 'InboxItemOutcome';
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+};
 
 export enum InboxItemPriority {
   LOW = 'LOW',
@@ -238,9 +260,9 @@ export enum InboxItemScope {
 }
 
 export enum InboxItemStatus {
-  DISMISSED = 'DISMISSED',
-  DONE = 'DONE',
-  OPEN = 'OPEN'
+  CANCELLED = 'CANCELLED',
+  OPEN = 'OPEN',
+  RESOLVED = 'RESOLVED'
 }
 
 export type InboxItemType = {
@@ -251,6 +273,7 @@ export type InboxItemType = {
   id: Scalars['UUID']['output'];
   key: Scalars['String']['output'];
   label: Scalars['String']['output'];
+  outcomes: Array<InboxItemOutcome>;
 };
 
 export type LinkMetadata = {
@@ -275,7 +298,6 @@ export enum MessageChannelVisibility {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
-  completeInboxItem: InboxItem;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -290,13 +312,12 @@ export type Mutation = {
   executeInboxItemAction: InboxItem;
   generateSignedDpa: GenerateSignedDpaResult;
   markInboxItemRead: InboxItem;
-  reopenInboxItem: InboxItem;
   retryWorkflowRun: WorkflowRun;
   runWorkflowVersion: RunWorkflowVersion;
-  snoozeInboxItem: InboxItem;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  transitionInboxItem: InboxItem;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -306,11 +327,6 @@ export type Mutation = {
 
 export type MutationActivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type MutationCompleteInboxItemArgs = {
-  inboxItemId: Scalars['UUID']['input'];
 };
 
 
@@ -366,7 +382,9 @@ export type MutationDuplicateWorkflowVersionStepArgs = {
 
 export type MutationExecuteInboxItemActionArgs = {
   actionKey: Scalars['String']['input'];
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
   inboxItemId: Scalars['UUID']['input'];
+  input?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 
@@ -380,11 +398,6 @@ export type MutationMarkInboxItemReadArgs = {
 };
 
 
-export type MutationReopenInboxItemArgs = {
-  inboxItemId: Scalars['UUID']['input'];
-};
-
-
 export type MutationRetryWorkflowRunArgs = {
   workflowRunId: Scalars['UUID']['input'];
 };
@@ -392,12 +405,6 @@ export type MutationRetryWorkflowRunArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
-};
-
-
-export type MutationSnoozeInboxItemArgs = {
-  inboxItemId: Scalars['UUID']['input'];
-  snoozedUntil: Scalars['DateTime']['input'];
 };
 
 
@@ -413,6 +420,13 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationTestHttpRequestArgs = {
   input: TestHttpRequestInput;
+};
+
+
+export type MutationTransitionInboxItemArgs = {
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+  transition: TransitionInboxItemInput;
 };
 
 
@@ -709,6 +723,15 @@ export type TimelineThreadsWithTotal = {
   relatedPersonIds: Array<Scalars['UUID']['output']>;
   timelineThreads: Array<TimelineThread>;
   totalNumberOfThreads: Scalars['Int']['output'];
+};
+
+export type TransitionInboxItemInput = {
+  durationMinutes?: InputMaybe<Scalars['Int']['input']>;
+  kind: Scalars['String']['input'];
+  outcome?: InputMaybe<Scalars['String']['input']>;
+  reason?: InputMaybe<Scalars['String']['input']>;
+  result?: InputMaybe<Scalars['JSON']['input']>;
+  targetUserWorkspaceId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UuidFilter = {
