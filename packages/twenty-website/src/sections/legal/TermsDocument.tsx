@@ -216,13 +216,10 @@ export function TermsDocument() {
         Our <LocalizedLink href="/privacy-policy">Privacy Policy</LocalizedLink>{' '}
         describes what we collect and how we use it. Where data protection laws
         such as the GDPR apply to Customer Data, we process it as your processor
-        under our{' '}
-        {/* Plain anchor, not LocalizedLink: /legal/dpa is a next.config
-            redirect with an unlocalized source, so the href must not be
-            locale-prefixed. The DPA document will be published at that URL. */}
-        <a href="/legal/dpa">Data Processing Agreement</a>. For any privacy
-        question, contact{' '}
-        <a href="mailto:privacy@twenty.com">privacy@twenty.com</a>.
+        under our Data Processing Agreement, which you can review and sign in
+        your workspace settings, at{' '}
+        {'{workspace}.twenty.com/settings/legal/dpa'}. For any privacy question,
+        contact <a href="mailto:privacy@twenty.com">privacy@twenty.com</a>.
       </p>
       <p>
         We protect the Service with technical and organizational measures
