@@ -112,14 +112,26 @@ export class InboxItemService {
     });
   }
 
+  async findOwnedItem({
+    inboxItemId,
+    workspaceId,
+    assigneeUserWorkspaceId,
+  }: OwnedItemArgs): Promise<InboxItemEntity | null> {
+    return this.inboxItemRepository.findOne(workspaceId, {
+      where: { id: inboxItemId, assigneeUserWorkspaceId },
+      relations: { inboxItemType: true },
+    });
+  }
+
   async findOwnedItemOrThrow({
     inboxItemId,
     workspaceId,
     assigneeUserWorkspaceId,
   }: OwnedItemArgs): Promise<InboxItemEntity> {
-    const inboxItem = await this.inboxItemRepository.findOne(workspaceId, {
-      where: { id: inboxItemId, assigneeUserWorkspaceId },
-      relations: { inboxItemType: true },
+    const inboxItem = await this.findOwnedItem({
+      inboxItemId,
+      workspaceId,
+      assigneeUserWorkspaceId,
     });
 
     if (!isDefined(inboxItem)) {

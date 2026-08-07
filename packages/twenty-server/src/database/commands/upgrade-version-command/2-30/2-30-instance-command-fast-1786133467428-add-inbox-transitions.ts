@@ -39,13 +39,8 @@ export class AddInboxTransitionsFastInstanceCommand
       'DROP INDEX "core"."IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_STATUS"',
     );
 
-    // Going through text lets the existing DONE and DISMISSED rows be mapped
-    // onto the new names, which a direct enum cast could not do
     await queryRunner.query(
       'ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" DROP DEFAULT',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" TYPE text USING "status"::text',
     );
     await queryRunner.query(
       'ALTER TYPE "core"."inboxItem_status_enum" RENAME TO "inboxItem_status_enum_old"',
@@ -53,14 +48,16 @@ export class AddInboxTransitionsFastInstanceCommand
     await queryRunner.query(
       `CREATE TYPE "core"."inboxItem_status_enum" AS ENUM('OPEN', 'RESOLVED', 'CANCELLED')`,
     );
+    // The old names are mapped inside the USING clause rather than by a bulk
+    // UPDATE, so the rewrite is the one statement the type change already needs
     await queryRunner.query(
-      `UPDATE "core"."inboxItem" SET "status" = 'RESOLVED' WHERE "status" = 'DONE'`,
-    );
-    await queryRunner.query(
-      `UPDATE "core"."inboxItem" SET "status" = 'CANCELLED' WHERE "status" = 'DISMISSED'`,
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" TYPE "core"."inboxItem_status_enum" USING "status"::"core"."inboxItem_status_enum"',
+      `ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" TYPE "core"."inboxItem_status_enum" USING (
+        CASE "status"::text
+          WHEN 'DONE' THEN 'RESOLVED'
+          WHEN 'DISMISSED' THEN 'CANCELLED'
+          ELSE "status"::text
+        END
+      )::"core"."inboxItem_status_enum"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" SET DEFAULT 'OPEN'`,
@@ -87,27 +84,27 @@ export class AddInboxTransitionsFastInstanceCommand
       'ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" DROP DEFAULT',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" TYPE text USING "status"::text',
+      'ALTER TYPE "core"."inboxItem_status_enum" RENAME TO "inboxItem_status_enum_new"',
     );
-    await queryRunner.query(
-      `UPDATE "core"."inboxItem" SET "status" = 'DONE' WHERE "status" = 'RESOLVED'`,
-    );
-    await queryRunner.query(
-      `UPDATE "core"."inboxItem" SET "status" = 'DISMISSED' WHERE "status" = 'CANCELLED'`,
-    );
-    await queryRunner.query('DROP TYPE "core"."inboxItem_status_enum"');
     await queryRunner.query(
       `CREATE TYPE "core"."inboxItem_status_enum" AS ENUM('OPEN', 'DONE', 'DISMISSED')`,
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" TYPE "core"."inboxItem_status_enum" USING "status"::"core"."inboxItem_status_enum"',
+      `ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" TYPE "core"."inboxItem_status_enum" USING (
+        CASE "status"::text
+          WHEN 'RESOLVED' THEN 'DONE'
+          WHEN 'CANCELLED' THEN 'DISMISSED'
+          ELSE "status"::text
+        END
+      )::"core"."inboxItem_status_enum"`,
     );
+    await queryRunner.query('DROP TYPE "core"."inboxItem_status_enum_new"');
     await queryRunner.query(
       `ALTER TABLE "core"."inboxItem" ALTER COLUMN "status" SET DEFAULT 'OPEN'`,
     );
 
     await queryRunner.query(
-      'CREATE INDEX "IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_STATUS" ON "core"."inboxItem" ("status", "assigneeUserWorkspaceId") ',
+      'CREATE INDEX "IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_STATUS" ON "core"."inboxItem" ("assigneeUserWorkspaceId", "status") ',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."inboxItem" DROP COLUMN "claimExpiresAt"',

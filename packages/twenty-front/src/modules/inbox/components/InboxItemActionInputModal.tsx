@@ -54,7 +54,7 @@ const StyledButtons = styled.div`
 
 type InboxItemActionInputModalProps = {
   action: InboxItemAction;
-  onSubmit: (input: Record<string, string>) => void;
+  onSubmit: (input: Record<string, string>) => void | Promise<void>;
   onCancel: () => void;
 };
 
@@ -76,13 +76,24 @@ export const InboxItemActionInputModal = ({
     <StyledForm
       onSubmit={(event) => {
         event.preventDefault();
-        onSubmit(input);
+        void onSubmit(input);
       }}
     >
       {action.inputSchema.map((field) => (
         <StyledLabel key={field.key}>
           {field.label}
-          {field.type === 'LONG_TEXT' ? (
+          {field.type === 'BOOLEAN' ? (
+            <StyledInput
+              checked={input[field.key] === 'true'}
+              type="checkbox"
+              onChange={(event) =>
+                setInput((current) => ({
+                  ...current,
+                  [field.key]: String(event.target.checked),
+                }))
+              }
+            />
+          ) : field.type === 'LONG_TEXT' ? (
             <StyledTextArea
               value={input[field.key] ?? ''}
               onChange={(event) =>
@@ -108,10 +119,11 @@ export const InboxItemActionInputModal = ({
       ))}
       <StyledButtons>
         <Button
+          onClick={onCancel}
           size="small"
           title={t`Cancel`}
+          type="button"
           variant="secondary"
-          onClick={onCancel}
         />
         <Button
           accent="blue"

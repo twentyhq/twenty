@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Int, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -16,8 +17,8 @@ import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/i
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
 import { toInboxItemDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-dto.util';
+import { toInboxItemPayload } from 'src/engine/core-modules/inbox/utils/to-inbox-item-payload.util';
 import { toInboxItemTransition } from 'src/engine/core-modules/inbox/utils/to-inbox-item-transition.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -60,6 +61,23 @@ export class InboxItemResolver {
     });
 
     return inboxItems.map(toInboxItemDto);
+  }
+
+  // Looked up by id rather than by scope, so a surface showing one item keeps
+  // showing it after a transition moves it out of the scope it came from
+  @Query(() => InboxItemDTO, { nullable: true })
+  async myInboxItem(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
+  ): Promise<InboxItemDTO | null> {
+    const inboxItem = await this.inboxItemService.findOwnedItem({
+      inboxItemId,
+      workspaceId,
+      assigneeUserWorkspaceId: userWorkspaceId,
+    });
+
+    return isDefined(inboxItem) ? toInboxItemDto(inboxItem) : null;
   }
 
   @Query(() => InboxCountsDTO)
@@ -129,7 +147,7 @@ export class InboxItemResolver {
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
       actionKey,
-      input: input as InboxItemPayload | undefined,
+      input: toInboxItemPayload(input),
       expectedVersion,
     });
 

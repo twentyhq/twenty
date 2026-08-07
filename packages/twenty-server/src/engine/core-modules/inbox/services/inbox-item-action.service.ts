@@ -7,7 +7,33 @@ import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-i
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
 import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
+import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
 import { type InboxItemTransition } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
+
+const coerceField = (
+  field: InboxItemFieldSchema,
+  value: InboxItemPayload[string] | undefined,
+): InboxItemPayload[string] | undefined => {
+  if (!isDefined(value)) {
+    return undefined;
+  }
+
+  if (field.type === 'NUMBER') {
+    const parsed = Number(value);
+
+    if (Number.isNaN(parsed)) {
+      throw new BadRequestException(`${field.key} must be a number`);
+    }
+
+    return parsed;
+  }
+
+  if (field.type === 'BOOLEAN') {
+    return value === true || value === 'true';
+  }
+
+  return String(value);
+};
 
 // An action is a named shortcut to a transition, so executing one resolves the
 // name and hands the transition to the one place that applies them. The engine
@@ -82,13 +108,38 @@ export class InboxItemActionService {
     this.assertRequiredInputPresent({ action, input });
 
     if (transition.kind !== 'RESOLVE') {
+      if (isDefined(input) && Object.keys(input).length > 0) {
+        throw new BadRequestException(
+          `Action ${action.key} takes no input for ${transition.kind}`,
+        );
+      }
+
       return transition;
     }
 
     return {
       ...transition,
-      result: { ...(transition.result ?? {}), ...(input ?? {}) },
+      result: {
+        ...(transition.result ?? {}),
+        ...this.readDeclaredInput({ action, input }),
+      },
     };
+  }
+
+  // Only what the action declared gets through, coerced to the type it said it
+  // was, so a declared NUMBER cannot land in the result as the string "12"
+  private readDeclaredInput({
+    action,
+    input,
+  }: {
+    action: InboxItemAction;
+    input?: InboxItemPayload;
+  }): InboxItemPayload {
+    return Object.fromEntries(
+      (action.inputSchema ?? [])
+        .map((field) => [field.key, coerceField(field, input?.[field.key])])
+        .filter(([, value]) => isDefined(value)),
+    );
   }
 
   private assertRequiredInputPresent({

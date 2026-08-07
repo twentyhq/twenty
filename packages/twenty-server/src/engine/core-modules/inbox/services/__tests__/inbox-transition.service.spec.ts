@@ -1,11 +1,13 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -49,6 +51,7 @@ describe('InboxTransitionService', () => {
 
   const inboxItemRepository = { update: jest.fn() };
   const inboxItemService = { findOwnedItemOrThrow: jest.fn() };
+  const userWorkspaceRepository = { findOne: jest.fn() };
 
   const lastPartialUpdate = () =>
     inboxItemRepository.update.mock.calls[0][2] as Record<string, unknown>;
@@ -63,6 +66,9 @@ describe('InboxTransitionService', () => {
 
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
     inboxItemService.findOwnedItemOrThrow.mockResolvedValue(buildInboxItem());
+    userWorkspaceRepository.findOne.mockResolvedValue({
+      id: OTHER_USER_WORKSPACE_ID,
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -72,6 +78,10 @@ describe('InboxTransitionService', () => {
           useValue: inboxItemRepository,
         },
         { provide: InboxItemService, useValue: inboxItemService },
+        {
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: userWorkspaceRepository,
+        },
       ],
     }).compile();
 
@@ -270,6 +280,41 @@ describe('InboxTransitionService', () => {
   });
 
   describe('REASSIGN', () => {
+    it('should refuse a target that is not in the workspace', async () => {
+      // Prepare
+      userWorkspaceRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(
+        service.transition({
+          ...transitionArgs,
+          transition: {
+            kind: 'REASSIGN',
+            targetUserWorkspaceId: 'someone-elses-workspace',
+          },
+        }),
+      ).rejects.toThrow(BadRequestException);
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should read the item back as the new target rather than the actor', async () => {
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: {
+          kind: 'REASSIGN',
+          targetUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
+        },
+      });
+
+      // Assert
+      expect(inboxItemService.findOwnedItemOrThrow).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          assigneeUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
+        }),
+      );
+    });
+
     it('should hand the item to the new target unread and unclaimed', async () => {
       // Act
       await service.transition({
@@ -320,6 +365,16 @@ describe('InboxTransitionService', () => {
   });
 
   describe('REOPEN', () => {
+    it('should refuse to reopen an item that is already open', async () => {
+      // Act & Assert
+      await expect(
+        service.transition({
+          ...transitionArgs,
+          transition: { kind: 'REOPEN' },
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
     it('should clear the resolution and make the item unread again', async () => {
       // Prepare
       inboxItemService.findOwnedItemOrThrow.mockResolvedValue(

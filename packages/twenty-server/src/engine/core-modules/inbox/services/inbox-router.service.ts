@@ -237,11 +237,18 @@ export class InboxRouterService {
         ...(isDefined(args.preview) ? { preview: args.preview } : {}),
         ...(isDefined(args.payload) ? { payload: args.payload } : {}),
         status: InboxItemStatus.OPEN,
-        // New activity resurfaces a snoozed item and makes it unread again
+        // New activity resurfaces a snoozed item and makes it unread again,
+        // and a revived item must not carry how its previous life ended
         snoozedUntil: null,
         readAt: null,
         resolvedAt: null,
         resolvedByUserWorkspaceId: null,
+        outcome: null,
+        result: null,
+        cancellationReason: null,
+        claimedByUserWorkspaceId: null,
+        claimExpiresAt: null,
+        version: () => '"version" + 1',
       },
     );
 
@@ -316,6 +323,11 @@ export class InboxRouterService {
           status: InboxItemStatus.CANCELLED,
           cancellationReason: 'Thread removed',
           resolvedAt: new Date(),
+          snoozedUntil: null,
+          claimedByUserWorkspaceId: null,
+          claimExpiresAt: null,
+          // Bumped so an action opened before the thread went away loses
+          version: () => '"version" + 1',
         },
       );
     });

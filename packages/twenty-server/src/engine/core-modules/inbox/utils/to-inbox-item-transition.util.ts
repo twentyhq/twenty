@@ -3,8 +3,8 @@ import { BadRequestException } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
 import { type InboxItemTransition } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
+import { toInboxItemPayload } from 'src/engine/core-modules/inbox/utils/to-inbox-item-payload.util';
 
 // Narrows the flat GraphQL input into the discriminated union, so everything
 // downstream of the API boundary works with a transition that cannot be
@@ -43,7 +43,7 @@ export const toInboxItemTransition = (
         kind: 'RESOLVE',
         outcome: input.outcome,
         ...(isDefined(input.result)
-          ? { result: input.result as InboxItemPayload }
+          ? { result: toInboxItemPayload(input.result) }
           : {}),
       };
 

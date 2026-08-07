@@ -98,10 +98,7 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
     binding: InboxItemBinding.OCCURRENCE,
     defaultPriority: InboxItemPriority.NEEDS_ACTION,
     resolution: {
-      outcomes: [
-        { key: 'ACKNOWLEDGED', label: 'Acknowledged' },
-        { key: 'WONT_FIX', label: "Won't fix" },
-      ],
+      outcomes: [{ key: 'ACKNOWLEDGED', label: 'Acknowledged' }],
     },
     actions: [
       {

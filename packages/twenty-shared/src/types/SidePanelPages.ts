@@ -14,6 +14,7 @@ export enum SidePanelPages {
   SearchRecords = 'search-records',
   AskAI = 'ask-ai',
   ViewPreviousAiChats = 'view-previous-ai-chats',
+  ViewInboxItem = 'view-inbox-item',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
   PageLayoutTabSettings = 'page-layout-tab-settings',
   DashboardChartSettings = 'dashboard-chart-settings',

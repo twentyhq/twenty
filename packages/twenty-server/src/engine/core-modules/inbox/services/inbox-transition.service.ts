@@ -4,12 +4,16 @@ import {
   Injectable,
 } from '@nestjs/common';
 
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
 import { type InboxItemTransition } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -36,6 +40,8 @@ export class InboxTransitionService {
     @InjectWorkspaceScopedRepository(InboxItemEntity)
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
     private readonly inboxItemService: InboxItemService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async transition({
@@ -45,6 +51,13 @@ export class InboxTransitionService {
     transition,
     expectedVersion,
   }: TransitionInboxItemArgs): Promise<InboxItemEntity> {
+    if (transition.kind === 'REASSIGN') {
+      await this.assertTargetIsInWorkspace({
+        workspaceId,
+        targetUserWorkspaceId: transition.targetUserWorkspaceId,
+      });
+    }
+
     const inboxItem = await this.inboxItemService.findOwnedItemOrThrow({
       inboxItemId,
       workspaceId,
@@ -75,10 +88,15 @@ export class InboxTransitionService {
       );
     }
 
+    // A reassigned item now belongs to the target, so reading it back as the
+    // actor would report "not found" for a write that succeeded
     return this.inboxItemService.findOwnedItemOrThrow({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId: actorUserWorkspaceId,
+      assigneeUserWorkspaceId:
+        transition.kind === 'REASSIGN'
+          ? transition.targetUserWorkspaceId
+          : actorUserWorkspaceId,
     });
   }
 
@@ -162,6 +180,12 @@ export class InboxTransitionService {
         };
 
       case 'REOPEN':
+        if (inboxItem.status === InboxItemStatus.OPEN) {
+          throw new BadRequestException(
+            'Cannot REOPEN an inbox item that is already open',
+          );
+        }
+
         return {
           status: InboxItemStatus.OPEN,
           outcome: null,
@@ -173,6 +197,26 @@ export class InboxTransitionService {
           // A reopened item is asking for attention again
           readAt: null,
         };
+    }
+  }
+
+  // Reads are scoped by workspace and assignee together, so handing an item to
+  // someone outside the workspace would make it unreachable rather than moved
+  private async assertTargetIsInWorkspace({
+    workspaceId,
+    targetUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    targetUserWorkspaceId: string;
+  }): Promise<void> {
+    const target = await this.userWorkspaceRepository.findOne({
+      where: { id: targetUserWorkspaceId, workspaceId },
+    });
+
+    if (!isDefined(target)) {
+      throw new BadRequestException(
+        'Cannot reassign an inbox item outside the workspace',
+      );
     }
   }
 

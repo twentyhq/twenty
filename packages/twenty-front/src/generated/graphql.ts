@@ -479,6 +479,7 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   myInboxCounts: InboxCounts;
+  myInboxItem?: Maybe<InboxItem>;
   myInboxItems: Array<InboxItem>;
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
@@ -541,6 +542,11 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   personId: Scalars['UUID']['input'];
+};
+
+
+export type QueryMyInboxItemArgs = {
+  inboxItemId: Scalars['UUID']['input'];
 };
 
 
