@@ -20,6 +20,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 type PageLayoutSingleTabRendererProps = {
   pageLayoutId: string;
@@ -38,21 +39,43 @@ const PageLayoutSingleTabRendererContent = () => {
 };
 
 const PageLayoutSingleTabRendererInner = () => {
-  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const { featureFilteredPageLayoutTabs } =
     usePageLayoutTabsFilteredByFeatureFlags();
   const targetRecordIdentifier = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const sortedActiveTabs = sortTabsByPosition(
     featureFilteredPageLayoutTabs.filter((tab) => tab.isActive),
   );
-  const firstTab = sortedActiveTabs[0];
+  const firstTab = sortedActiveTabs.at(0);
 
-  const firstTabWithVisibleWidgets = usePageLayoutTabWithVisibleWidgetsOrThrow(
-    firstTab.id,
+  return (
+    <>
+      <SummaryCard
+        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+        objectRecordId={targetRecordIdentifier.id}
+        isInSidePanel={isInSidePanel}
+      />
+
+      {isDefined(firstTab) && (
+        <PageLayoutSingleTabRendererTabContent firstTabId={firstTab.id} />
+      )}
+    </>
   );
+};
+
+type PageLayoutSingleTabRendererTabContentProps = {
+  firstTabId: string;
+};
+
+const PageLayoutSingleTabRendererTabContent = ({
+  firstTabId,
+}: PageLayoutSingleTabRendererTabContentProps) => {
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const firstTabWithVisibleWidgets =
+    usePageLayoutTabWithVisibleWidgetsOrThrow(firstTabId);
 
   const layoutMode = getTabLayoutMode({
     tab: firstTabWithVisibleWidgets,
@@ -66,25 +89,17 @@ const PageLayoutSingleTabRendererInner = () => {
   });
 
   return (
-    <>
-      <SummaryCard
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        objectRecordId={targetRecordIdentifier.id}
-        isInSidePanel={isInSidePanel}
-      />
-
-      <PageLayoutContentProvider
-        value={{
-          tabId: firstTab.id,
-          layoutMode,
-          presentation,
-        }}
-      >
-        <PageLayoutWidgetDndProvider>
-          <PageLayoutContent />
-        </PageLayoutWidgetDndProvider>
-      </PageLayoutContentProvider>
-    </>
+    <PageLayoutContentProvider
+      value={{
+        tabId: firstTabId,
+        layoutMode,
+        presentation,
+      }}
+    >
+      <PageLayoutWidgetDndProvider>
+        <PageLayoutContent />
+      </PageLayoutWidgetDndProvider>
+    </PageLayoutContentProvider>
   );
 };
 
