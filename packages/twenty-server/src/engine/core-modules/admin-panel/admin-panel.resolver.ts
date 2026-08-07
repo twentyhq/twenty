@@ -94,6 +94,7 @@ import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-model
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { aiProviderModelConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.schema';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
@@ -619,6 +620,17 @@ export class AdminPanelResolver {
     @Args('modelConfig', { type: () => GraphQLJSON })
     modelConfig: AiProviderModelConfig,
   ): Promise<boolean> {
+    const validatedModelConfig =
+      aiProviderModelConfigSchema.safeParse(modelConfig);
+
+    if (!validatedModelConfig.success) {
+      throw new UserInputError(
+        `Invalid model configuration: ${validatedModelConfig.error.issues
+          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
+          .join(', ')}`,
+      );
+    }
+
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
@@ -633,18 +645,22 @@ export class AdminPanelResolver {
 
     const existingModels = existing.models ?? [];
     const alreadyExists = existingModels.some(
-      (model: AiProviderModelConfig) => model.name === modelConfig.name,
+      (model: AiProviderModelConfig) =>
+        model.name === validatedModelConfig.data.name,
     );
 
     if (alreadyExists) {
       throw new UserInputError(
-        `Model "${modelConfig.name}" already exists on provider "${providerName}"`,
+        `Model "${validatedModelConfig.data.name}" already exists on provider "${providerName}"`,
       );
     }
 
     customProviders[providerName] = {
       ...existing,
-      models: [...existingModels, { ...modelConfig, source: 'manual' }],
+      models: [
+        ...existingModels,
+        { ...validatedModelConfig.data, source: 'manual' },
+      ],
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
