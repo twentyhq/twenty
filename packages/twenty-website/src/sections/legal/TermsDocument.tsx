@@ -217,8 +217,8 @@ export function TermsDocument() {
         describes what we collect and how we use it. Where data protection laws
         such as the GDPR apply to Customer Data, we process it as your processor
         under our Data Processing Agreement, which you can review and sign in
-        your workspace settings, at{' '}
-        {'{workspace}.twenty.com/settings/legal/dpa'}. For any privacy question,
+        your workspace settings, at
+        your-workspace.twenty.com/settings/legal/dpa. For any privacy question,
         contact <a href="mailto:privacy@twenty.com">privacy@twenty.com</a>.
       </p>
       <p>
