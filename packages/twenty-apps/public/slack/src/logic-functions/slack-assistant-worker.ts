@@ -20,11 +20,14 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
+import { buildSlackRecordCardBlocks } from 'src/logic-functions/utils/build-slack-record-card-blocks';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
+import { fetchSlackRecordCardFieldLines } from 'src/logic-functions/utils/fetch-slack-record-card-field-lines';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { parseSlackRecordReferences } from 'src/logic-functions/utils/parse-slack-record-references';
 import { runSlackAssistantAgentWithProgress } from 'src/logic-functions/utils/run-slack-assistant-agent-with-progress';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
@@ -117,6 +120,19 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
+    const recordReferences = parseSlackRecordReferences({
+      responseText,
+      workspaceBaseUrl,
+    });
+
+    const recordCardBlocks = buildSlackRecordCardBlocks({
+      references: recordReferences,
+      fieldLinesByRecordId: await fetchSlackRecordCardFieldLines(
+        client,
+        recordReferences,
+      ),
+    });
+
     const durationMilliseconds = Date.now() - startedAt;
 
     const deliveryResult = await slackPostMessageHandler({
@@ -133,6 +149,7 @@ export const slackAssistantWorkerHandler = async (
           : buildSlackAssistantAnswerBlocks({
               responseText,
               durationMilliseconds,
+              recordCardBlocks,
             }),
     });
 
