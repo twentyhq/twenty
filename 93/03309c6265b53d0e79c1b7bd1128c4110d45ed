@@ -1,0 +1,31 @@
+packages/twenty-server/test/integration/microsoft/webhook/renewal-auth-failure.integration-spec.ts
+  s_2b7670ecc1dc5e::t_abd4be42f132e6 8
+  s_2b7670ecc1dc5e::t_bc8ffc0246aafa 46-61,67-72
+  s_2b7670ecc1dc5e::t_9cd7ecb0dbf77d 98,112-114,117-121,133
+  s_2b7670ecc1dc5e::t_4a40b2e0b4ab1b 24,29-30
+  s_a3e754529284c0::t_8006e2618dd1c3 31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "9303309c6265b53d0e79c1b7bd1128c4110d45ed",
+  "prompts": {},
+  "sessions": {
+    "s_2b7670ecc1dc5e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e55b6540-9312-4253-9083-9dcd99ff91ae",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    },
+    "s_a3e754529284c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e8958773-672f-42c5-a4a1-e47093da5857",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
