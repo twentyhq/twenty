@@ -1989,7 +1989,7 @@ type ClientConfig {
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
-  subdomainMinLength: Float!
+  subdomainMinLength: Float! @deprecated(reason: "Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend.")
   frontDomain: String!
   publicFunctionDomain: String
   analyticsEnabled: Boolean!
