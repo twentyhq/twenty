@@ -14,6 +14,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -73,7 +74,7 @@ export const RecordListRecordGroupSection = () => {
       currentRecordGroupId,
     );
 
-  if (recordGroupDefinition === undefined) {
+  if (!isDefined(recordGroupDefinition)) {
     return null;
   }
 
