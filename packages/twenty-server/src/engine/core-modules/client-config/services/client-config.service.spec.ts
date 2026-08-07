@@ -84,6 +84,7 @@ describe('ClientConfigService', () => {
             IS_MULTIWORKSPACE_ENABLED: true,
             IS_EMAIL_VERIFICATION_REQUIRED: true,
             DEFAULT_SUBDOMAIN: 'app',
+            SUBDOMAIN_MIN_LENGTH: 3,
             NODE_ENV: NodeEnvironment.DEVELOPMENT,
             SUPPORT_DRIVER: SupportDriver.FRONT,
             SUPPORT_FRONT_CHAT_ID: 'chat-123',
@@ -154,6 +155,7 @@ describe('ClientConfigService', () => {
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: true,
         defaultSubdomain: 'app',
+        subdomainMinLength: 3,
         frontDomain: 'app.twenty.com',
         publicFunctionDomain: null,
         support: {

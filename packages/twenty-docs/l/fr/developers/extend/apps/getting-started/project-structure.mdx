@@ -76,4 +76,4 @@ Le générateur de projet fige `twenty-sdk` et `twenty-client-sdk` sur sa propre
 
 Conserver l’un ou l’autre package dans `dependencies` l’intègre dans le bundle runtime de l’application installée, où il ne fait que l’alourdir inutilement. `twenty dev:build` émet un avertissement lorsque l’un ou l’autre est encore répertorié dans `dependencies`.
 
-Ajoutez les dépendances runtime propres à votre application (les bibliothèques que vos fonctions logiques importent réellement à l’exécution) dans `dependencies` comme d’habitude.
+Ajoutez les dépendances runtime propres à votre application (les bibliothèques que vos fonctions logiques importent réellement à l’exécution) dans `dependencies` comme d’habitude. Gardez l’arborescence légère : les `dependencies` sont installées dans une couche d’exécution limitée à 250 Mo décompressés, et une synchronisation ou une installation échoue avec une erreur de taille des dépendances au-delà de cette limite — les bibliothèques d’interface utilisateur et les outils de développement doivent aller dans `devDependencies`.

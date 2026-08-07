@@ -171,6 +171,10 @@ Aus Sicherheitsgründen sind Antwort-Header auf eine Allowlist beschränkt. Jede
 Der Statuscode muss ein gültiger HTTP-Statuscode sein (zwischen 100 und 599). Antwort-Header-Namen werden ohne Beachtung der Groß-/Kleinschreibung verglichen.
 </Note>
 
+#### Plattform-Fehlerantworten
+
+Zusätzlich zu den eigenen Antworten Ihres Handlers beantwortet die Plattform Routenaufrufe in einigen Situationen direkt: `404`, wenn die Route oder Funktion nicht existiert, `403`, wenn die Anwendung gestoppt ist, `429`, wenn das Ausführungslimit überschritten wird, und `422`, wenn die Produktions-`dependencies` der Anwendung zu groß sind, um installiert zu werden — siehe [Größenbeschränkungen für dependencies](/l/de/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Server-Route-Trigger
 
 `httpRouteTriggerSettings` stellt eine Funktion unter `/s/` bereit und ermittelt den Workspace aus dem Host der Anfrage — was funktioniert, wenn jeder Workspace seine eigene Domain hat. Drittanbieter hingegen liefern die Ereignisse jedes Mandanten an **eine** URL. Für diesen Fall verwende `serverRouteTriggerSettings`.
