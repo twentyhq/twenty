@@ -6,6 +6,7 @@ import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
@@ -14,6 +15,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { messages } from '~/locales/generated/en';
 import { WorkspaceSetup } from '~/pages/onboarding/WorkspaceSetup';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -69,6 +71,13 @@ const setIsOnboardingAiChatEnabled = (value: boolean) => {
   jotaiStore.set(isOnboardingAiChatEnabledState.atom, value);
 };
 
+const setIsWorkspaceCreator = (value: boolean) => {
+  jotaiStore.set(currentUserState.atom, {
+    ...mockedUserData,
+    isWorkspaceCreator: value,
+  });
+};
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <I18nProvider i18n={i18n}>{children}</I18nProvider>
@@ -80,6 +89,7 @@ describe('WorkspaceSetup', () => {
     sessionStorage.clear();
     resetJotaiStore();
     mockNavigate.mockClear();
+    setIsWorkspaceCreator(true);
   });
 
   it('should dress the chat for onboarding when the post-onboarding hint is set', () => {
@@ -150,6 +160,16 @@ describe('WorkspaceSetup', () => {
 
   it('should redirect home when the onboarding ai chat is disabled', () => {
     setIsOnboardingAiChatEnabled(false);
+
+    const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+
+    expect(queryByTestId('ai-chat-tab')).not.toBeInTheDocument();
+    expect(mockNavigate).toHaveBeenCalledWith(defaultHomePagePath);
+  });
+
+  it('should redirect home for an invitee', () => {
+    setIsOnboardingAiChatEnabled(true);
+    setIsWorkspaceCreator(false);
 
     const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
 

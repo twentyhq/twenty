@@ -36,6 +36,7 @@ type RenderHooksOptions = {
   isOnboardingAiChatEnabled?: boolean;
   isBookCallOnboardingStepEnabled?: boolean;
   isBookCallOnboardingStepPending?: boolean;
+  isWorkspaceCreator?: boolean;
 };
 
 const renderHooks = (
@@ -47,6 +48,7 @@ const renderHooks = (
     isOnboardingAiChatEnabled = false,
     isBookCallOnboardingStepEnabled = false,
     isBookCallOnboardingStepPending = false,
+    isWorkspaceCreator = true,
   }: RenderHooksOptions = {},
 ) => {
   jotaiStore.set(
@@ -92,6 +94,7 @@ const renderHooks = (
     result.current.setCurrentUser({
       ...mockedUserData,
       onboardingStatus,
+      isWorkspaceCreator,
       userVars: {
         ...mockedUserData.userVars,
         [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]:
@@ -373,6 +376,16 @@ describe('useSetNextOnboardingStatus', () => {
       });
     expect(isWelcomeAnimationVisible).toBe(true);
     expect(shouldOpenAiChatAfterOnboarding).toBe(true);
+  });
+
+  it('should not open the ai chat after onboarding for an invitee', () => {
+    const { isWelcomeAnimationVisible, shouldOpenAiChatAfterOnboarding } =
+      renderHooks(OnboardingStatus.INVITE_TEAM, {
+        isOnboardingAiChatEnabled: true,
+        isWorkspaceCreator: false,
+      });
+    expect(isWelcomeAnimationVisible).toBe(true);
+    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
   it('should still show the welcome animation when the ai chat is disabled', () => {
