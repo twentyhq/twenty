@@ -1629,6 +1629,7 @@ export interface ClientConfig {
     isMultiWorkspaceEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
     defaultSubdomain?: Scalars['String']
+    /** @deprecated Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend. */
     subdomainMinLength: Scalars['Float']
     frontDomain: Scalars['String']
     publicFunctionDomain?: Scalars['String']
@@ -4901,6 +4902,7 @@ export interface ClientConfigGenqlSelection{
     isMultiWorkspaceEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
     defaultSubdomain?: boolean | number
+    /** @deprecated Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend. */
     subdomainMinLength?: boolean | number
     frontDomain?: boolean | number
     publicFunctionDomain?: boolean | number
@@ -6943,7 +6945,7 @@ export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?:
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
-export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),messages?: (RunAgentMessageInput[] | null)}
+export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null)}
 
 export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String']}
 

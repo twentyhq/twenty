@@ -153,5 +153,32 @@ export default defineApplicationRole({
   **Evită buclele:** dacă apelezi `runAgent()` dintr-un declanșator de tip eveniment de bază de date `*.updated`, iar agentul actualizează aceeași înregistrare, restrânge declanșatorul cu `updatedFields` la un câmp pe care agentul nu îl scrie niciodată (de exemplu, URL-ul sursă) sau verifică dacă vreun câmp țintă este încă gol înainte de a apela `runAgent()`.
 </Warning>
 
+### Rulare în numele unui membru al spațiului de lucru
+
+Transmite `runAsWorkspaceMemberId` atunci când rularea este declanșată de o persoană — de exemplu, un chatbot care răspunde la un mesaj — astfel încât agentul să acționeze ca acel membru în loc să acționeze ca aplicația:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+Rularea este apoi limitată la ceea ce permit **atât** rolul agentului, cât și rolul membrului, înregistrările pe care le creează sunt atribuite acelui membru, iar permisiunile la nivel de rând ale membrului se aplică. Omite câmpul pentru rulările autonome (joburi programate, declanșatoare de evenimente din baza de date): acelea păstrează propriul rol al agentului.
+
+Aplicația ta este responsabilă să facă asocierea dintre persoana care a declanșat rularea și un membru al spațiului de lucru. A denumi unul necesită un token de acces al aplicației, iar ceea ce poate denumi un token depinde dacă acesta are sau nu un utilizator asociat:
+
+* Un token **fără niciun utilizator atașat** poate denumi orice membru. O funcție logică rulează cu unul, la fel și tokenurile emise prin `client_credentials` sau dintr-o cheie API.
+* Un token emis **în numele unui utilizator**, așa cum primește un front component, poate
+  denumi doar propriul membru al acelui utilizator.
+
+Orice altceva — o sesiune simplă de utilizator, o cheie API fără un token al aplicației — nu poate denumi deloc un membru.
+
+<Warning>
+  `runAgent()` aruncă o eroare atunci când membrul spațiului de lucru nu poate fi identificat — un membru necunoscut sau eliminat, ori unul fără niciun rol. Nu revine niciodată la
+  propriul rol al agentului, deoarece acest lucru ar acorda mai mult acces decât a cerut apelantul.
+</Warning>
+
 </Accordion>
 </AccordionGroup>

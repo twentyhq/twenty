@@ -61,7 +61,6 @@ export { RATING_VALUES } from './RatingValues';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';
 export { RESERVED_SUBDOMAINS } from './ReservedSubdomains';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
-export { DEFAULT_SUBDOMAIN_MIN_LENGTH } from './SubdomainMinLength';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';

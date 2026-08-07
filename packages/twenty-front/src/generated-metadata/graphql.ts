@@ -996,6 +996,7 @@ export type ClientConfig = {
   publicFunctionDomain?: Maybe<Scalars['String']['output']>;
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
+  /** @deprecated Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend. */
   subdomainMinLength: Scalars['Float']['output'];
   support: Support;
 };
@@ -5241,6 +5242,7 @@ export type RunAgentInput = {
   agentUniversalIdentifier: Scalars['String']['input'];
   messages?: InputMaybe<Array<RunAgentMessageInput>>;
   prompt?: InputMaybe<Scalars['String']['input']>;
+  runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type RunAgentMessageInput = {
