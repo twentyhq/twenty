@@ -9,5 +9,7 @@ export const getCommandMenuItemLabel = (
     return '';
   }
 
-  return i18n._(label);
+  // i18n._ overloads on descriptor vs id, so the union has to be narrowed
+  // before the call rather than passed through
+  return typeof label === 'string' ? i18n._(label) : i18n._(label);
 };
