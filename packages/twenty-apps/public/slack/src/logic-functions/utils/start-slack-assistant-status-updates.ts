@@ -24,7 +24,6 @@ export const startSlackAssistantStatusUpdates = ({
         return;
       }
 
-      // Chained so updates keep their order and the stopper awaits them all
       pendingUpdate = pendingUpdate.then(() =>
         setSlackAssistantStatus({
           slackChannelId,
