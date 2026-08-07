@@ -6,6 +6,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { ExpandedAiChatHeader } from '@/ai/expanded-chat/components/ExpandedAiChatHeader';
 import { ExpandedAiChatThreadRail } from '@/ai/expanded-chat/components/ExpandedAiChatThreadRail';
+import { ExpandedAiChatCollapseNavigationEffect } from '@/ai/expanded-chat/effect-components/ExpandedAiChatCollapseNavigationEffect';
 import { ExpandedAiChatSidePanelHandoffEffect } from '@/ai/expanded-chat/effect-components/ExpandedAiChatSidePanelHandoffEffect';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
@@ -52,6 +53,7 @@ export const ExpandedAiChat = () => {
   return (
     <StyledPanel>
       <ExpandedAiChatSidePanelHandoffEffect />
+      <ExpandedAiChatCollapseNavigationEffect />
       {!isMobile && <ExpandedAiChatThreadRail />}
       <StyledConversationColumn>
         <ExpandedAiChatHeader title={currentAiChatThreadTitle ?? t`Ask AI`} />

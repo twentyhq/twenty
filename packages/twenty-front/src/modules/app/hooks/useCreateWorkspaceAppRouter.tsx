@@ -117,7 +117,7 @@ const WorkspaceSetup = lazyWithPreload(() =>
   })),
 );
 
-const AiChatPage = lazyWithPreload(() =>
+const AiChatPage = lazy(() =>
   import('~/pages/ai/AiChatPage').then((module) => ({
     default: module.AiChatPage,
   })),
@@ -138,7 +138,6 @@ const preloadOnboardingPages = () => {
   BookCall.preload();
   ChooseYourPlan.preload();
   WorkspaceSetup.preload();
-  AiChatPage.preload();
 
   return null;
 };
