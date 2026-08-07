@@ -301,6 +301,42 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(container).not.toBeEmptyDOMElement();
   });
 
+  it('should keep the loading indicator while the workspace setup completion is still running', () => {
+    const messageParts = [
+      { type: 'step-start' },
+      {
+        type: 'tool-complete_workspace_setup',
+        toolCallId: 'tool-1',
+        input: {},
+        state: 'input-streaming',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    const { container } = renderAssistantRenderer(messageParts);
+
+    expect(container).not.toBeEmptyDOMElement();
+    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
+  });
+
+  it('should show a failed workspace setup completion instead of hiding it', () => {
+    const messageParts = [
+      { type: 'step-start' },
+      {
+        type: 'tool-complete_workspace_setup',
+        toolCallId: 'tool-1',
+        input: {},
+        state: 'output-error',
+        errorText: 'Tool execution failed',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'thinking-1',
+    );
+  });
+
   it('should flag the trailing thinking steps group while streaming', () => {
     const messageParts = [
       {

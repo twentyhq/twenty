@@ -51,4 +51,26 @@ describe('extractCompletedWorkspaceSetupToolParts', () => {
 
     expect(extractCompletedWorkspaceSetupToolParts(messageParts)).toEqual([]);
   });
+
+  it('should ignore the tool part when it errored', () => {
+    const messageParts = [
+      {
+        type: 'tool-complete_workspace_setup',
+        toolCallId: 'errored-call',
+        input: {},
+        state: 'output-error',
+        errorText: 'Tool execution failed',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    expect(extractCompletedWorkspaceSetupToolParts(messageParts)).toEqual([]);
+  });
+
+  it('should ignore an output that is not an object', () => {
+    const messageParts = [
+      { ...completedPart, output: 'done' },
+    ] as ExtendedUIMessagePart[];
+
+    expect(extractCompletedWorkspaceSetupToolParts(messageParts)).toEqual([]);
+  });
 });
