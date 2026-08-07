@@ -2,9 +2,15 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import {
+  GRID_POSITIONS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
@@ -164,10 +170,45 @@ describe('CalendarEvent standard metadata build', () => {
       Object.keys(
         STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs,
       ),
-    ).toEqual(['home', 'timeline']);
+    ).toEqual(['home', 'transcript', 'timeline']);
 
     expect(timelineWidget?.universalConfiguration).toMatchObject({
       configurationType: WidgetConfigurationType.TIMELINE,
+    });
+  });
+
+  it('configures the native transcript tab on the calendar event record page', () => {
+    const transcriptTabUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .transcript.universalIdentifier;
+    const transcriptWidgetUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .transcript.widgets.transcript.universalIdentifier;
+
+    const transcriptTab =
+      allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
+        transcriptTabUniversalIdentifier
+      ];
+    const transcriptWidget =
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        transcriptWidgetUniversalIdentifier
+      ];
+
+    expect(transcriptTab).toMatchObject({
+      title: 'Transcript',
+      icon: 'IconMicrophone',
+      position: 30,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    });
+    expect(transcriptWidget).toMatchObject({
+      title: 'Transcript',
+      type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+      pageLayoutTabUniversalIdentifier: transcriptTabUniversalIdentifier,
+      gridPosition: GRID_POSITIONS.FULL_WIDTH,
+      position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+      },
     });
   });
 

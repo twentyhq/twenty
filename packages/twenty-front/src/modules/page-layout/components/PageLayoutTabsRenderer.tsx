@@ -93,7 +93,7 @@ export const PageLayoutTabsRenderer = () => {
 
   const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
 
-  const activeTabExistsInCurrentPageLayout = currentPageLayout.tabs.some(
+  const activeTabExistsInRenderableTabs = sortedTabs.some(
     (tab) => tab.id === activeTabId,
   );
 
@@ -134,7 +134,7 @@ export const PageLayoutTabsRenderer = () => {
               )}
               defaultEnableXScroll={false}
             >
-              {isDefined(activeTabId) && activeTabExistsInCurrentPageLayout && (
+              {isDefined(activeTabId) && activeTabExistsInRenderableTabs && (
                 <PageLayoutMainContent tabId={activeTabId} />
               )}
             </ScrollWrapper>
