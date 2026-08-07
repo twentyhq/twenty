@@ -170,40 +170,40 @@ describe('CalendarEvent standard metadata build', () => {
       Object.keys(
         STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs,
       ),
-    ).toEqual(['home', 'timeline', 'transcript']);
+    ).toEqual(['home', 'timeline', 'callRecording']);
 
     expect(timelineWidget?.universalConfiguration).toMatchObject({
       configurationType: WidgetConfigurationType.TIMELINE,
     });
   });
 
-  it('configures the native transcript tab on the calendar event record page', () => {
-    const transcriptTabUniversalIdentifier =
+  it('configures the native call recording tab on the calendar event record page', () => {
+    const callRecordingTabUniversalIdentifier =
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-        .transcript.universalIdentifier;
+        .callRecording.universalIdentifier;
     const transcriptWidgetUniversalIdentifier =
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-        .transcript.widgets.transcript.universalIdentifier;
+        .callRecording.widgets.transcript.universalIdentifier;
 
-    const transcriptTab =
+    const callRecordingTab =
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        transcriptTabUniversalIdentifier
+        callRecordingTabUniversalIdentifier
       ];
     const transcriptWidget =
       allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
         transcriptWidgetUniversalIdentifier
       ];
 
-    expect(transcriptTab).toMatchObject({
-      title: 'Transcript',
-      icon: 'IconMicrophone',
+    expect(callRecordingTab).toMatchObject({
+      title: 'Call Recording',
+      icon: 'IconVideo',
       position: 40,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });
     expect(transcriptWidget).toMatchObject({
       title: 'Transcript',
       type: WidgetType.CALL_RECORDING_TRANSCRIPT,
-      pageLayoutTabUniversalIdentifier: transcriptTabUniversalIdentifier,
+      pageLayoutTabUniversalIdentifier: callRecordingTabUniversalIdentifier,
       gridPosition: GRID_POSITIONS.FULL_WIDTH,
       position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       universalConfiguration: {

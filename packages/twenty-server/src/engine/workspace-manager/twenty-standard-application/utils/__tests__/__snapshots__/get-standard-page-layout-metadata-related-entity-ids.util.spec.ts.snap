@@ -68,6 +68,14 @@ exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard pa
   "calendarEventRecordPage": {
     "id": "00000000-0000-0000-0000-000000000021",
     "tabs": {
+      "callRecording": {
+        "id": "00000000-0000-0000-0000-000000000028",
+        "widgets": {
+          "transcript": {
+            "id": "00000000-0000-0000-0000-000000000029",
+          },
+        },
+      },
       "home": {
         "id": "00000000-0000-0000-0000-000000000022",
         "widgets": {
@@ -87,14 +95,6 @@ exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard pa
         "widgets": {
           "timeline": {
             "id": "00000000-0000-0000-0000-000000000027",
-          },
-        },
-      },
-      "transcript": {
-        "id": "00000000-0000-0000-0000-000000000028",
-        "widgets": {
-          "transcript": {
-            "id": "00000000-0000-0000-0000-000000000029",
           },
         },
       },

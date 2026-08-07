@@ -71,19 +71,19 @@ const CALENDAR_EVENT_PAGE_TABS = {
     },
   },
   // position 30 is reserved for the upcoming Summary tab
-  transcript: {
+  callRecording: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-        .transcript.universalIdentifier,
-    title: 'Transcript',
+        .callRecording.universalIdentifier,
+    title: 'Call Recording',
     position: 40,
-    icon: 'IconMicrophone',
+    icon: 'IconVideo',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: {
       transcript: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
-            .tabs.transcript.widgets.transcript.universalIdentifier,
+            .tabs.callRecording.widgets.transcript.universalIdentifier,
         title: 'Transcript',
         type: WidgetType.CALL_RECORDING_TRANSCRIPT,
         gridPosition: GRID_POSITIONS.FULL_WIDTH,

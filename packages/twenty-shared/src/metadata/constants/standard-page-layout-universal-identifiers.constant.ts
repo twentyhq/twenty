@@ -451,7 +451,7 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           },
         },
       },
-      transcript: {
+      callRecording: {
         universalIdentifier: 'a3dff71b-ca06-4709-9b39-ca4f30108ab4',
         widgets: {
           transcript: {
