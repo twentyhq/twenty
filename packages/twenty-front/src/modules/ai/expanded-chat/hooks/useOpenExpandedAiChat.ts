@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
+import { useIsOnExpandedAiChatPage } from '@/ai/expanded-chat/hooks/useIsOnExpandedAiChatPage';
 import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -15,7 +16,7 @@ export const useOpenExpandedAiChat = () => {
     currentMobileNavigationDrawerState,
   );
 
-  const isOnExpandedAiChatPage = location.pathname === AppPath.AiChat;
+  const isOnExpandedAiChatPage = useIsOnExpandedAiChatPage();
 
   const openExpandedAiChat = () => {
     if (isOnExpandedAiChatPage) {

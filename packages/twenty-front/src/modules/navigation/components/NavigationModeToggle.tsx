@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -79,19 +79,18 @@ export const NavigationModeToggle = () => {
   const { theme } = useContext(ThemeContext);
   const store = useStore();
   const navigate = useNavigate();
-  const location = useLocation();
   const isSettingsPage = useIsSettingsPage();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const { openExpandedAiChat } = useOpenExpandedAiChat();
+  const { openExpandedAiChat, isOnExpandedAiChatPage } =
+    useOpenExpandedAiChat();
   const { openSettingsMenu } = useOpenSettingsMenu();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
-  const activeMode: NavigationMode =
-    location.pathname === AppPath.AiChat
-      ? 'inbox'
-      : isSettingsPage
-        ? 'studio'
-        : 'app';
+  const activeMode: NavigationMode = isOnExpandedAiChatPage
+    ? 'inbox'
+    : isSettingsPage
+      ? 'studio'
+      : 'app';
 
   // Both memorized locations can point at another non-app mode when the
   // user hopped between Inbox and Studio directly; the App segment must

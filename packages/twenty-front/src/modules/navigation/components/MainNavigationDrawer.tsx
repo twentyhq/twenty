@@ -1,7 +1,5 @@
-import { useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-
 import { ExpandedAiChatDrawerThreads } from '@/ai/expanded-chat/components/ExpandedAiChatDrawerThreads';
+import { useIsOnExpandedAiChatPage } from '@/ai/expanded-chat/hooks/useIsOnExpandedAiChatPage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { NavigationModeToggle } from '@/navigation/components/NavigationModeToggle';
@@ -12,9 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const location = useLocation();
-
-  const isOnExpandedAiChatPage = location.pathname === AppPath.AiChat;
+  const isOnExpandedAiChatPage = useIsOnExpandedAiChatPage();
 
   return (
     <NavigationDrawer
