@@ -1,3 +1,8 @@
+type SlackEventAuthorization = {
+  user_id?: string;
+  is_bot?: boolean;
+};
+
 type SlackInboundEvent = {
   type?: string;
   subtype?: string;
@@ -15,5 +20,6 @@ export type SlackEventsRequestBody = {
   challenge?: string;
   event_id?: string;
   team_id?: string;
+  authorizations?: SlackEventAuthorization[];
   event?: SlackInboundEvent;
 };

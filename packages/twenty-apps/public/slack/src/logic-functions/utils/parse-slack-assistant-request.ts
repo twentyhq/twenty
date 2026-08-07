@@ -4,8 +4,10 @@ import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack
 import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-assistant-request-draft.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { getSlackBotUserIdFromEventBody } from 'src/logic-functions/utils/get-slack-bot-user-id-from-event-body';
+import { stripSlackBotMention } from 'src/logic-functions/utils/strip-slack-bot-mention';
 
-const LEADING_BOT_MENTION_PATTERN = /^<@[A-Z0-9]+(\|[^>]*)?>\s*/;
+const LEADING_MENTION_PATTERN = /^<@([A-Z0-9]+)(\|[^>]*)?>/;
 
 type SlackInboundEvent = NonNullable<SlackEventsRequestBody['event']>;
 
@@ -47,19 +49,28 @@ const classifySlackAssistantEvent = (
   return null;
 };
 
-const stripLeadingBotMention = (text: string): string =>
-  text.replace(LEADING_BOT_MENTION_PATTERN, '').replace(/\s+/g, ' ').trim();
+const getBotUserIdFromLeadingMention = (text: string): string | undefined =>
+  text.trimStart().match(LEADING_MENTION_PATTERN)?.[1];
 
 const normalizeSlackRequestText = ({
   text,
   kind,
+  botUserId,
 }: {
   text: string;
   kind: SlackAssistantEventKind;
-}): string =>
-  kind === 'mention'
-    ? stripLeadingBotMention(text)
-    : text.replace(/\s+/g, ' ').trim();
+  botUserId: string | undefined;
+}): string => {
+  const resolvedBotUserId =
+    botUserId ??
+    (kind === 'mention' ? getBotUserIdFromLeadingMention(text) : undefined);
+
+  const strippedText = isNonEmptyString(resolvedBotUserId)
+    ? stripSlackBotMention({ text, botUserId: resolvedBotUserId })
+    : text;
+
+  return strippedText.replace(/\s+/g, ' ').trim();
+};
 
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
@@ -96,6 +107,7 @@ export const parseSlackAssistantRequest = (
   const requestText = normalizeSlackRequestText({
     text: event.text ?? '',
     kind,
+    botUserId: getSlackBotUserIdFromEventBody(body),
   });
 
   if (!isNonEmptyString(requestText)) {
