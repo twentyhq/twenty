@@ -9,10 +9,12 @@
 # Mac is running during the parallel-run period. That is the point: every push
 # rehearses the deploy and the schema upgrade before anyone depends on it.
 #
-# Production is still gated, but by the GitHub Environment rather than by the
-# trigger: `environment: production` should have required reviewers, so a
-# production deploy waits for a human even when a push started it. That keeps
-# promotion a human decision without giving up the rehearsal.
+# Promotion is already gated upstream: deploy-production.yml requires a reviewer
+# and only then moves the production-target pointer, which is what triggers this.
+# Gating again here would mean approving every deploy twice, and would in fact
+# fail: the production environment restricts deployments to protected branches,
+# and production-target is not one. So the environment is declared only for manual
+# dispatch, where no upstream approval has happened.
 #
 # Parallel-run safety rests on two flags set on the cloud production box:
 # CLOUD_DISABLE_CRON_JOBS=true and CLOUD_EMAIL_DRIVER=logger. Deploying code to
@@ -48,7 +50,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || (github.ref_name == 'production-target' && 'production' || 'staging') }}
+    # Empty for push-triggered runs: the approval already happened in
+    # deploy-production.yml before production-target moved.
+    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || '' }}
     steps:
       - uses: actions/checkout@v4
 
