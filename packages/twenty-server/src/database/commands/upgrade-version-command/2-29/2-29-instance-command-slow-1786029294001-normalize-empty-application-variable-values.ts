@@ -30,17 +30,10 @@ export class NormalizeEmptyApplicationVariableValuesSlowInstanceCommand
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  // Data-only: the columns this rewrites already exist.
   public async up(): Promise<void> {}
 
-  // Deliberately not reversible: re-encrypting the empty strings would restore
-  // rows that wrongly read as filled, which is the state being repaired.
   public async down(): Promise<void> {}
 
-  // Clearing a variable used to encrypt the empty string into a full envelope,
-  // so `isFilled` stayed true and the row kept counting as configured. '' is
-  // now the unset sentinel, so rewrite the legacy envelopes that decrypt to it.
-  // Idempotent: rows already holding '' are excluded by the LIKE filter.
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await this.normalizeApplicationRegistrationVariables(dataSource);
     await this.normalizeApplicationVariables(dataSource);
@@ -143,8 +136,6 @@ export class NormalizeEmptyApplicationVariableValuesSlowInstanceCommand
     this.logTally('applicationVariable', tally);
   }
 
-  // Returns the ciphertext alongside the id so the UPDATE can match on it and
-  // skip any row an operator filled while this migration was running.
   private collectRowsDecryptingToEmptyString({
     rows,
     tally,

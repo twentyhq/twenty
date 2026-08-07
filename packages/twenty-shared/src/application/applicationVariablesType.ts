@@ -34,8 +34,6 @@ export type ApplicationVariableValue =
 type TypedApplicationVariable = {
   type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];
-  // Keeps the variable declared so its stored value survives and is still
-  // injected, while dropping it from what a user is asked to configure.
   isDeprecated?: boolean;
 };
 

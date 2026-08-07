@@ -9,7 +9,6 @@ const wrapAsV2 = (plaintext: string): string =>
 
 const UNDECRYPTABLE_VALUE = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}deadbeef:GARBAGE`;
 
-// One SELECT batch per table, then an empty batch to end each cursor loop.
 const buildDataSource = (selectBatches: unknown[][]) => {
   const query = jest.fn(async (sql: string) =>
     sql.includes('SELECT') ? (selectBatches.shift() ?? []) : [],
