@@ -40,8 +40,8 @@ jest.mock('@/ai/components/AiChatTab', () => {
   };
 });
 
-jest.mock('@/onboarding/components/WorkspaceSetupHeader', () => ({
-  WorkspaceSetupHeader: ({ title }: { title: string }) => (
+jest.mock('@/ai/expanded-chat/components/ExpandedAiChatHeader', () => ({
+  ExpandedAiChatHeader: ({ title }: { title: string }) => (
     <div data-testid="header-title">{title}</div>
   ),
 }));
