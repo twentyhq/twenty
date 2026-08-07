@@ -211,6 +211,49 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     expect(system).not.toContain('create_one_workflow');
   });
 
+  it('intersects the agent role with the run-as role on the lazy path used by runAgent', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+    toolRegistry.buildToolIndex.mockResolvedValueOnce([]);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      messages: [{ role: 'user', content: 'test' }],
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+      runAsRoleId: 'run-as-role-id',
+      toolLoadingStrategy: 'lazy',
+    });
+
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledWith(
+      workspaceId,
+      agentRoleId,
+      expect.objectContaining({
+        rolePermissionConfig: {
+          intersectionOf: [agentRoleId, 'run-as-role-id'],
+        },
+      }),
+    );
+  });
+
+  it('leaves the lazy path on its default role resolution without a run-as role', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+    toolRegistry.buildToolIndex.mockResolvedValueOnce([]);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      messages: [{ role: 'user', content: 'test' }],
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+      toolLoadingStrategy: 'lazy',
+    });
+
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledWith(
+      workspaceId,
+      agentRoleId,
+      expect.objectContaining({ rolePermissionConfig: undefined }),
+    );
+  });
+
   it('does not resolve registry tools when the agent has no role (fail-closed)', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce(null);
 
@@ -348,7 +391,6 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
       expect(result.nativeWebSearchCallCount).toBe(0);
       expect(result.totalCostInDollars).toBeCloseTo(0.0042, 6);
-      // credits = dollars * 1_000_000
       expect(result.creditsUsedMicro).toBe(4200);
     });
 
@@ -369,8 +411,6 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
         ],
         usage: {
           ...baseUsage,
-          // inputTokens (100) is the full prompt: noCache(60) + cacheRead(10) +
-          // cacheCreation(30) — the emitted total must not add the 30 again
           inputTokenDetails: {
             noCacheTokens: 60,
             cacheReadTokens: 10,

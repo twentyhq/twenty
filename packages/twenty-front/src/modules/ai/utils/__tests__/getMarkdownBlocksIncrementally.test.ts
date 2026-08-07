@@ -38,7 +38,7 @@ const FIXTURES: Record<string, string> = {
     '# H1\n\ntext\n\n## H2\n\n- list\n- items\n\n> quote\n> more quote\n\nend',
   blockquotes: '> a\n\n> b\n\ntext',
   chatReferences:
-    'Check [[field:12345678-1234-5678-abcd-123456789012:Annual Revenue[[/field]] and\n\n- [[view:12345678-1234-5678-abcd-123456789012:All[[/view]]\n\n| [[object:company:Companies[[/object]] | x |\n|---|---|\n| a | b |',
+    'Check [[field:12345678-1234-5678-abcd-123456789012:Annual Revenue]] and\n\n- [[view:12345678-1234-5678-abcd-123456789012:All]]\n\n| [[object:company:Companies]] | x |\n|---|---|\n| a | b |',
   windowsLineEndings: 'line one\r\n\r\n- a\r\n\r\n- b\r\n\r\nend',
 };
 

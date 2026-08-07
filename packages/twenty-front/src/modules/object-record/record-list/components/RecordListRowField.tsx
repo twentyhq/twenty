@@ -2,11 +2,12 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME } from '@/object-record/record-list/constants/RecordListRowFieldAnchorClassName';
 import { RECORD_LIST_ROW_FIELD_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMaxWidth';
 import { RECORD_LIST_ROW_INPUT_ID_PREFIX } from '@/object-record/record-list/constants/RecordListRowInputIdPrefix';
 import { recordListHoveredFieldMetadataItemIdComponentState } from '@/object-record/record-list/states/recordListHoveredFieldMetadataItemIdComponentState';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
@@ -26,21 +27,17 @@ const StyledFieldContainer = styled.div`
 type RecordListRowFieldProps = {
   recordId: string;
   recordField: RecordField;
+  fieldDefinition: ColumnDefinition<FieldMetadata>;
 };
 
 export const RecordListRowField = ({
   recordId,
   recordField,
+  fieldDefinition,
 }: RecordListRowFieldProps) => {
-  const { fieldDefinitionByFieldMetadataItemId } =
-    useRecordIndexContextOrThrow();
-
   const setRecordListHoveredFieldMetadataItemId = useSetAtomComponentState(
     recordListHoveredFieldMetadataItemIdComponentState,
   );
-
-  const fieldDefinition =
-    fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
   return (
     <StyledFieldContainer

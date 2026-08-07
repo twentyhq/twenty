@@ -6,17 +6,20 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { logError } from '~/utils/logError';
 
-const StyledAddNewRow = styled.div`
+const StyledAddNewRow = styled.button`
   align-items: center;
+  background: transparent;
+  border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
@@ -25,6 +28,7 @@ const StyledAddNewRow = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: 24px;
   padding: 0 6px;
+  text-align: left;
 
   &:hover {
     background: ${themeCssVariables.background.transparent.lighter};
@@ -34,6 +38,7 @@ const StyledAddNewRow = styled.div`
 export const RecordListAddNew = () => {
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItem } = useRecordListContextOrThrow();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -70,21 +75,29 @@ export const RecordListAddNew = () => {
     return null;
   }
 
+  const handleCreateRecord = async () => {
+    try {
+      const groupFieldValues =
+        currentRecordGroupDefinition !== undefined &&
+        groupFieldMetadataItem !== undefined
+          ? {
+              [getFieldMetadataItemGqlFieldName(groupFieldMetadataItem)]:
+                currentRecordGroupDefinition.value,
+            }
+          : {};
+
+      await createNewIndexRecord({
+        position: 'last',
+        ...groupFieldValues,
+      });
+    } catch (error) {
+      logError(error);
+      enqueueErrorSnackBar({ message: t`Failed to create record` });
+    }
+  };
+
   return (
-    <StyledAddNewRow
-      onClick={() =>
-        createNewIndexRecord({
-          position: 'last',
-          ...(isDefined(currentRecordGroupDefinition) &&
-          isDefined(groupFieldMetadataItem)
-            ? {
-                [getFieldMetadataItemGqlFieldName(groupFieldMetadataItem)]:
-                  currentRecordGroupDefinition.value,
-              }
-            : {}),
-        })
-      }
-    >
+    <StyledAddNewRow type="button" onClick={handleCreateRecord}>
       <IconPlus
         stroke={theme.icon.stroke.sm}
         size={theme.icon.size.sm}

@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 
 import { App } from '@/app/components/App';
+import '@/app/utils/setupMonacoEnvironment';
 import { migrateTokenPairCookieToLocalStorage } from '@/auth/utils/migrateTokenPairCookieToLocalStorage';
 import { hydrateMetadataStore } from '@/metadata-store/storage/metadataStoreStorage';
 import '@fontsource/dm-mono/400.css';

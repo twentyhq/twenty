@@ -12,6 +12,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -104,15 +105,22 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
   );
 
-  const nonEmptyRecordFields = visibleRecordFieldsExceptLabelIdentifier.filter(
+  const nonEmptyRecordFields = visibleRecordFieldsExceptLabelIdentifier.flatMap(
     (recordField) => {
       const fieldDefinition =
         fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-      return !isFieldValueEmpty({
-        fieldDefinition,
-        fieldValue: recordStore[fieldDefinition.metadata.fieldName],
-      });
+      if (
+        !isDefined(fieldDefinition) ||
+        isFieldValueEmpty({
+          fieldDefinition,
+          fieldValue: recordStore[fieldDefinition.metadata.fieldName],
+        })
+      ) {
+        return [];
+      }
+
+      return [{ recordField, fieldDefinition }];
     },
   );
 
@@ -124,8 +132,25 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
   const hiddenFieldCount =
     nonEmptyRecordFields.length - displayedRecordFields.length;
 
+  const openRecord = () => openRecordFromIndexView({ recordId });
+
   return (
-    <StyledRowContainer onClick={() => openRecordFromIndexView({ recordId })}>
+    <StyledRowContainer
+      role="button"
+      tabIndex={0}
+      aria-label={t`Open record`}
+      onClick={openRecord}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) {
+          return;
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openRecord();
+        }
+      }}
+    >
       <StyledRow>
         <StyledRecordChipContainer>
           <StopPropagationContainer>
@@ -133,17 +158,18 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
               objectNameSingular={objectNameSingular}
               record={recordStore}
               variant={ChipVariant.Transparent}
-              onClick={() => openRecordFromIndexView({ recordId })}
+              onClick={openRecord}
               triggerEvent={'CLICK'}
             />
           </StopPropagationContainer>
         </StyledRecordChipContainer>
         <StyledFieldsContainer>
-          {displayedRecordFields.map((recordField) => (
+          {displayedRecordFields.map(({ recordField, fieldDefinition }) => (
             <RecordListRowField
               key={recordField.fieldMetadataItemId}
               recordId={recordId}
               recordField={recordField}
+              fieldDefinition={fieldDefinition}
             />
           ))}
           {hiddenFieldCount > 0 && (

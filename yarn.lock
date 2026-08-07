@@ -50026,6 +50026,7 @@ __metadata:
   dependencies:
     "@argos-ci/storybook": "npm:^6.0.6"
     "@base-ui/react": "npm:^1.5.0"
+    "@fontsource/inter": "npm:^5.2.8"
     "@monaco-editor/react": "npm:^4.7.0"
     "@prettier/sync": "npm:^0.5.2"
     "@radix-ui/colors": "npm:^3.0.0"

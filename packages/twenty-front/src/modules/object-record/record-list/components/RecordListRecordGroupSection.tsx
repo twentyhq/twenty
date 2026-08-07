@@ -12,27 +12,38 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { AnimatedLightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionHeader = styled.div`
   align-items: center;
-  cursor: pointer;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   height: 32px;
   margin-bottom: 2px;
 `;
 
-const StyledColumnHeader = styled.div`
+const StyledSectionToggle = styled.button`
   align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  height: 100%;
+  padding: 0;
+`;
+
+const StyledChevronContainer = styled.div<{ isExpanded: boolean }>`
+  align-items: center;
+  display: flex;
+  transform: rotate(${({ isExpanded }) => (isExpanded ? 0 : -90)}deg);
 `;
 
 export const RecordListRecordGroupSection = () => {
+  const { theme } = useContext(ThemeContext);
   const { objectMetadataItem } = useRecordListContextOrThrow();
 
   const currentRecordGroupId = useCurrentRecordGroupId();
@@ -62,35 +73,39 @@ export const RecordListRecordGroupSection = () => {
       currentRecordGroupId,
     );
 
-  if (!isDefined(recordGroupDefinition)) {
+  if (recordGroupDefinition === undefined) {
     return null;
   }
 
   return (
-    <StyledSectionHeader
-      onClick={() =>
-        setIsRecordListGroupSectionToggled((prevState) => !prevState)
-      }
-    >
-      <AnimatedLightIconButton
-        Icon={IconChevronDown}
-        size="small"
-        accent="secondary"
-        rotate={isRecordListGroupSectionToggled ? 0 : -90}
-      />
-      <StyledColumnHeader>
+    <StyledSectionHeader>
+      <StyledSectionToggle
+        type="button"
+        aria-expanded={isRecordListGroupSectionToggled}
+        aria-label={t`Toggle ${recordGroupDefinition.title} group`}
+        onClick={() =>
+          setIsRecordListGroupSectionToggled((prevState) => !prevState)
+        }
+      >
+        <StyledChevronContainer isExpanded={isRecordListGroupSectionToggled}>
+          <IconChevronDown
+            aria-hidden
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
+          />
+        </StyledChevronContainer>
         <RecordGroupChip
           recordGroupDefinition={recordGroupDefinition}
           fieldMetadataItem={recordIndexGroupFieldMetadataItem}
           valueTagWeight="medium"
         />
-        <RecordGroupAggregateDropdown
-          aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
-          dropdownId={`record-list-group-section-aggregate-dropdown-${currentRecordGroupId}`}
-          objectMetadataItem={objectMetadataItem}
-          aggregateLabel={recordIndexAggregateDisplayLabel}
-        />
-      </StyledColumnHeader>
+      </StyledSectionToggle>
+      <RecordGroupAggregateDropdown
+        aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
+        dropdownId={`record-list-group-section-aggregate-dropdown-${currentRecordGroupId}`}
+        objectMetadataItem={objectMetadataItem}
+        aggregateLabel={recordIndexAggregateDisplayLabel}
+      />
     </StyledSectionHeader>
   );
 };
