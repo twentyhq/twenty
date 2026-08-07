@@ -5,6 +5,7 @@ import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isField
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
+import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { recordListDisplayedFieldCountComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldCountComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -42,7 +43,7 @@ const StyledRow = styled.div`
 
 const StyledRecordChipContainer = styled.div`
   display: flex;
-  min-width: 176px;
+  min-width: ${RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH}px;
   overflow: hidden;
 `;
 
