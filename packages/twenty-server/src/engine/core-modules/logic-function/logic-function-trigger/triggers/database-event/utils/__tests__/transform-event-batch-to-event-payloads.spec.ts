@@ -424,6 +424,68 @@ describe('transformEventBatchToEventPayloads', () => {
     });
   });
 
+  describe('upserted event filtering', () => {
+    it('should filter upserted events by updatedFields the same way as updated events', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.upserted',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {}, updatedFields: ['gstin'] },
+          }),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.upserted',
+            updatedFields: ['gstin'],
+          },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(1);
+      expect((result[0].payload as ObjectRecordEvent).recordId).toBe('record-1');
+    });
+
+    it('should include all upserted events when no updatedFields filter is set', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.upserted',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {}, updatedFields: ['gstin'] },
+          }),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: { eventName: 'company.upserted' },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(2);
+    });
+  });
+
   describe('edge cases', () => {
     it('should return empty array when no logic functions provided', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
