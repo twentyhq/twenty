@@ -2,9 +2,10 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 
 const CONTEXT_MESSAGE_LIMIT = 15;
-// conversations.replies pages from the start of the thread, so fetch a wider
-// window and keep the tail to stay on the most recent turns
+// conversations.replies pages from the start of the thread, so walk every page
+// and keep the tail to stay on the most recent turns
 const THREAD_REPLIES_FETCH_LIMIT = 100;
+const THREAD_REPLIES_MAX_PAGES = 10;
 
 type SlackContextMessage = {
   ts?: string;
@@ -57,14 +58,30 @@ export const fetchSlackConversationContext = async ({
   );
 
   try {
-    const replies = await client.conversations.replies({
-      channel: channelId,
-      ts: threadTimestamp,
-      limit: THREAD_REPLIES_FETCH_LIMIT,
-    });
+    const messages: SlackContextMessage[] = [];
+    let cursor: string | undefined;
+
+    for (let page = 0; page < THREAD_REPLIES_MAX_PAGES; page++) {
+      const replies = await client.conversations.replies({
+        channel: channelId,
+        ts: threadTimestamp,
+        limit: THREAD_REPLIES_FETCH_LIMIT,
+        cursor,
+      });
+
+      messages.push(...(replies.messages ?? []));
+
+      const nextCursor = replies.response_metadata?.next_cursor;
+
+      if (!isNonEmptyString(nextCursor)) {
+        break;
+      }
+
+      cursor = nextCursor;
+    }
 
     return formatContextMessages({
-      messages: replies.messages ?? [],
+      messages,
       excludeMessageTimestamps: excludedTimestamps,
     });
   } catch {

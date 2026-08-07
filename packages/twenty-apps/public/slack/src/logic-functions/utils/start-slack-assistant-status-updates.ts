@@ -12,7 +12,7 @@ export const startSlackAssistantStatusUpdates = ({
   threadTimestamp: string;
 }): (() => Promise<void>) => {
   let isStopped = false;
-  let pendingUpdate: Promise<unknown> = setSlackAssistantStatus({
+  let pendingUpdate: Promise<void> = setSlackAssistantStatus({
     slackChannelId,
     threadTimestamp,
     status: SLACK_ASSISTANT_INITIAL_STATUS,
@@ -24,11 +24,14 @@ export const startSlackAssistantStatusUpdates = ({
         return;
       }
 
-      pendingUpdate = setSlackAssistantStatus({
-        slackChannelId,
-        threadTimestamp,
-        status: step.text,
-      });
+      // Chained so updates keep their order and the stopper awaits them all
+      pendingUpdate = pendingUpdate.then(() =>
+        setSlackAssistantStatus({
+          slackChannelId,
+          threadTimestamp,
+          status: step.text,
+        }),
+      );
     }, step.afterSeconds * 1000),
   );
 

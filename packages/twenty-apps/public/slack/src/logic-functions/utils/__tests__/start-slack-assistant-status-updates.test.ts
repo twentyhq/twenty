@@ -43,7 +43,7 @@ describe('startSlackAssistantStatusUpdates', () => {
   it('should walk through every status step in order', async () => {
     const stop = startSlackAssistantStatusUpdates(THREAD);
 
-    vi.runAllTimers();
+    await vi.runAllTimersAsync();
 
     const statuses = setSlackAssistantStatusMock.mock.calls.map(
       ([call]) => call.status,
