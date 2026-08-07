@@ -13,9 +13,9 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
 import { type InboxItemTransition } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 

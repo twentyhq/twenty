@@ -73,13 +73,9 @@ export const useInboxItemActions = () => {
     transition: InboxItemTransitionInput;
     expectedVersion?: number;
   }) => {
-    try {
-      await transitionInboxItemMutation({
-        variables: { inboxItemId, transition, expectedVersion },
-      });
-    } catch (error) {
-      logError(error);
-    }
+    await transitionInboxItemMutation({
+      variables: { inboxItemId, transition, expectedVersion },
+    });
   };
 
   const reopenInboxItem = async ({
@@ -106,13 +102,9 @@ export const useInboxItemActions = () => {
     input?: Record<string, unknown>;
     expectedVersion?: number;
   }) => {
-    try {
-      await executeInboxItemActionMutation({
-        variables: { inboxItemId, actionKey, input, expectedVersion },
-      });
-    } catch (error) {
-      logError(error);
-    }
+    await executeInboxItemActionMutation({
+      variables: { inboxItemId, actionKey, input, expectedVersion },
+    });
   };
 
   return {

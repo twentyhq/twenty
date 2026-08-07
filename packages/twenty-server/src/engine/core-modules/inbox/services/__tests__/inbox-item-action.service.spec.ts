@@ -37,6 +37,15 @@ const DECLARED_ACTIONS: InboxItemAction[] = [
     label: 'Snooze for an hour',
     transition: { kind: 'SNOOZE', durationMinutes: 60 },
   },
+  {
+    key: 'score',
+    label: 'Score',
+    inputSchema: [
+      { key: 'rating', label: 'Rating', type: 'NUMBER' },
+      { key: 'isUrgent', label: 'Is urgent', type: 'BOOLEAN' },
+    ],
+    transition: { kind: 'RESOLVE', outcome: 'SCORED' },
+  },
 ];
 
 const inboxItem = {
@@ -174,6 +183,46 @@ describe('InboxItemActionService', () => {
     // Act & Assert
     await expect(
       service.execute({ ...executeArgs, actionKey: 'nope' }),
+    ).rejects.toThrow(BadRequestException);
+  });
+
+  it('should coerce a declared number and boolean to their declared types', async () => {
+    // Act
+    await service.execute({
+      ...executeArgs,
+      actionKey: 'score',
+      input: { rating: '4', isUrgent: 'true' },
+    });
+
+    // Assert
+    expect(inboxTransitionService.transition).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transition: expect.objectContaining({
+          result: { rating: 4, isUrgent: true },
+        }),
+      }),
+    );
+  });
+
+  it('should refuse a blank number rather than resolving it as zero', async () => {
+    // Act & Assert
+    await expect(
+      service.execute({
+        ...executeArgs,
+        actionKey: 'score',
+        input: { rating: '  ' },
+      }),
+    ).rejects.toThrow(BadRequestException);
+  });
+
+  it('should refuse a boolean that is neither true nor false', async () => {
+    // Act & Assert
+    await expect(
+      service.execute({
+        ...executeArgs,
+        actionKey: 'score',
+        input: { isUrgent: 'yes' },
+      }),
     ).rejects.toThrow(BadRequestException);
   });
 });

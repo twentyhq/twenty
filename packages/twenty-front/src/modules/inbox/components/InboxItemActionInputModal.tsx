@@ -66,7 +66,15 @@ export const InboxItemActionInputModal = ({
   onCancel,
 }: InboxItemActionInputModalProps) => {
   const { t } = useLingui();
-  const [input, setInput] = useState<Record<string, string>>({});
+  // A checkbox is never blank, so a required BOOLEAN starts at false rather
+  // than reading as missing until it is toggled twice
+  const [input, setInput] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      action.inputSchema
+        .filter((field) => field.type === 'BOOLEAN')
+        .map((field) => [field.key, 'false']),
+    ),
+  );
 
   const isMissingRequiredField = action.inputSchema.some(
     (field) => field.isRequired && (input[field.key] ?? '') === '',

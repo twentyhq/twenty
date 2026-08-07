@@ -19,9 +19,14 @@ const coerceField = (
   }
 
   if (field.type === 'NUMBER') {
-    const parsed = Number(value);
+    // Number('') is 0 and Number(' ') is 0, so an empty field would silently
+    // resolve as zero rather than being reported as missing
+    const parsed =
+      typeof value === 'string' && value.trim() === ''
+        ? Number.NaN
+        : Number(value);
 
-    if (Number.isNaN(parsed)) {
+    if (!Number.isFinite(parsed)) {
       throw new BadRequestException(`${field.key} must be a number`);
     }
 
@@ -29,7 +34,15 @@ const coerceField = (
   }
 
   if (field.type === 'BOOLEAN') {
-    return value === true || value === 'true';
+    if (typeof value === 'boolean') {
+      return value;
+    }
+
+    if (value !== 'true' && value !== 'false') {
+      throw new BadRequestException(`${field.key} must be a boolean`);
+    }
+
+    return value === 'true';
   }
 
   return String(value);

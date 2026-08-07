@@ -1,10 +1,13 @@
 import { useCallback } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/icon';
 
 import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -18,6 +21,8 @@ export const useOpenInboxItem = () => {
   const { markInboxItemRead } = useInboxItemActions();
   const { openAskAiThread } = useOpenAskAiThread();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
+  const { getIcon } = useIcons();
   const setSelectedInboxItemId = useSetAtomState(selectedInboxItemIdState);
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
@@ -50,13 +55,23 @@ export const useOpenInboxItem = () => {
           objectNameSingular: objectMetadataItem.nameSingular,
           resetNavigationStack: true,
         });
+
+        return;
       }
 
-      // An item with no subject has nothing to open underneath, so the context
-      // bar in the side panel is the whole of it
+      // An item with no subject still opens the panel: the context bar and its
+      // actions are the whole of it
+      navigateSidePanel({
+        page: SidePanelPages.ViewInboxItem,
+        pageTitle: inboxItem.inboxItemType.label,
+        pageIcon: getIcon(inboxItem.inboxItemType.icon),
+        resetNavigationStack: true,
+      });
     },
     [
+      getIcon,
       markInboxItemRead,
+      navigateSidePanel,
       objectMetadataItemsByIdMap,
       openAskAiThread,
       openRecordInSidePanel,

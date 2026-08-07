@@ -1,3 +1,4 @@
+import { type ErrorLike } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -10,6 +11,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { InboxItemActionInputModal } from '@/inbox/components/InboxItemActionInputModal';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { useSelectedInboxItem } from '@/inbox/hooks/useSelectedInboxItem';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type InboxItemAction, InboxItemStatus } from '~/generated/graphql';
 
 const StyledBar = styled.div`
@@ -67,6 +69,7 @@ export const InboxItemContextBar = () => {
   const { getIcon } = useIcons();
   const { selectedInboxItem } = useSelectedInboxItem();
   const { executeInboxItemAction, reopenInboxItem } = useInboxItemActions();
+  const { enqueueErrorSnackBar } = useSnackBar();
   // Keyed by item, so switching selection while a form is open cannot submit
   // the old action against the new item
   const [pendingAction, setPendingAction] = useState<{
@@ -77,6 +80,18 @@ export const InboxItemContextBar = () => {
   if (!isDefined(selectedInboxItem)) {
     return null;
   }
+
+  const runAction = async (run: () => Promise<void>) => {
+    try {
+      await run();
+
+      return true;
+    } catch (error) {
+      enqueueErrorSnackBar({ apolloError: error as ErrorLike });
+
+      return false;
+    }
+  };
 
   const InboxItemIcon = getIcon(selectedInboxItem.inboxItemType.icon);
   const isResolved = selectedInboxItem.status !== InboxItemStatus.OPEN;
@@ -111,15 +126,20 @@ export const InboxItemContextBar = () => {
           action={pendingAction.action}
           onCancel={() => setPendingAction(null)}
           onSubmit={async (input) => {
-            // The form stays until the mutation lands, so a conflict does not
-            // silently swallow what was typed
-            await executeInboxItemAction({
-              inboxItemId: selectedInboxItem.id,
-              actionKey: pendingAction.action.key,
-              input,
-              expectedVersion: selectedInboxItem.version,
-            });
-            setPendingAction(null);
+            // The form stays open when the mutation fails, so a conflict does
+            // not silently swallow what was typed
+            const hasSucceeded = await runAction(() =>
+              executeInboxItemAction({
+                inboxItemId: selectedInboxItem.id,
+                actionKey: pendingAction.action.key,
+                input,
+                expectedVersion: selectedInboxItem.version,
+              }),
+            );
+
+            if (hasSucceeded) {
+              setPendingAction(null);
+            }
           }}
         />
       ) : (
@@ -127,10 +147,12 @@ export const InboxItemContextBar = () => {
           {isResolved ? (
             <Button
               onClick={() =>
-                void reopenInboxItem({
-                  inboxItemId: selectedInboxItem.id,
-                  expectedVersion: selectedInboxItem.version,
-                })
+                void runAction(() =>
+                  reopenInboxItem({
+                    inboxItemId: selectedInboxItem.id,
+                    expectedVersion: selectedInboxItem.version,
+                  }),
+                )
               }
               size="small"
               title={t`Move to inbox`}
@@ -151,11 +173,13 @@ export const InboxItemContextBar = () => {
                     return;
                   }
 
-                  void executeInboxItemAction({
-                    inboxItemId: selectedInboxItem.id,
-                    actionKey: action.key,
-                    expectedVersion: selectedInboxItem.version,
-                  });
+                  void runAction(() =>
+                    executeInboxItemAction({
+                      inboxItemId: selectedInboxItem.id,
+                      actionKey: action.key,
+                      expectedVersion: selectedInboxItem.version,
+                    }),
+                  );
                 }}
                 size="small"
                 title={action.label}
