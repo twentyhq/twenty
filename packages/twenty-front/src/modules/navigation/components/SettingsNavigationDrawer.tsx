@@ -1,4 +1,5 @@
 import { NavigationModeToggle } from '@/navigation/components/NavigationModeToggle';
+import { NewAiChatDrawerButton } from '@/navigation/components/NewAiChatDrawerButton';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
@@ -57,6 +58,7 @@ export const SettingsNavigationDrawer = ({
           />
         </NavigationDrawerSection>
       </StyledAdvancedToggleFixedContent>
+      <NewAiChatDrawerButton />
     </NavigationDrawer>
   );
 };

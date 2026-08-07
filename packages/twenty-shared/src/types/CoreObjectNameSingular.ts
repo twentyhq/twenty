@@ -19,6 +19,7 @@ export enum CoreObjectNameSingular {
   MessageThread = 'messageThread',
   Note = 'note',
   NoteTarget = 'noteTarget',
+  Notification = 'notification',
   Opportunity = 'opportunity',
   Person = 'person',
   Task = 'task',

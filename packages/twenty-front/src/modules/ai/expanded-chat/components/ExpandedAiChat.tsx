@@ -5,8 +5,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { ExpandedAiChatHeader } from '@/ai/expanded-chat/components/ExpandedAiChatHeader';
 import { ExpandedAiChatSidePanelHandoffEffect } from '@/ai/expanded-chat/effect-components/ExpandedAiChatSidePanelHandoffEffect';
+import { selectedInboxNotificationIdState } from '@/ai/expanded-chat/states/selectedInboxNotificationIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
+import { NotificationDetail } from '@/notification/components/NotificationDetail';
+import { useInboxNotifications } from '@/notification/hooks/useInboxNotifications';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -42,13 +45,31 @@ export const ExpandedAiChat = () => {
     currentAiChatThreadTitleComponentFamilyState,
     { threadId: currentAiChatThread },
   );
+  const selectedInboxNotificationId = useAtomStateValue(
+    selectedInboxNotificationIdState,
+  );
+  const { needsAttentionNotifications, updateNotifications } =
+    useInboxNotifications();
+
+  const selectedNotification = [
+    ...needsAttentionNotifications,
+    ...updateNotifications,
+  ].find((notification) => notification.id === selectedInboxNotificationId);
 
   return (
     <StyledPanel>
       <ExpandedAiChatSidePanelHandoffEffect />
-      <ExpandedAiChatHeader title={currentAiChatThreadTitle ?? t`Ask AI`} />
+      <ExpandedAiChatHeader
+        title={
+          selectedNotification?.title ?? currentAiChatThreadTitle ?? t`Ask AI`
+        }
+      />
       <StyledConversationContent>
-        <AiChatTab />
+        {selectedNotification ? (
+          <NotificationDetail notification={selectedNotification} />
+        ) : (
+          <AiChatTab />
+        )}
       </StyledConversationContent>
     </StyledPanel>
   );

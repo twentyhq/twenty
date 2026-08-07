@@ -1,8 +1,9 @@
-import { ExpandedAiChatDrawerThreads } from '@/ai/expanded-chat/components/ExpandedAiChatDrawerThreads';
+import { ExpandedAiChatDrawerContent } from '@/ai/expanded-chat/components/ExpandedAiChatDrawerContent';
 import { useIsOnExpandedAiChatPage } from '@/ai/expanded-chat/hooks/useIsOnExpandedAiChatPage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { NavigationModeToggle } from '@/navigation/components/NavigationModeToggle';
+import { NewAiChatDrawerButton } from '@/navigation/components/NewAiChatDrawerButton';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
@@ -22,11 +23,14 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       </NavigationDrawerFixedContent>
 
       {isOnExpandedAiChatPage ? (
-        <ExpandedAiChatDrawerThreads />
+        <ExpandedAiChatDrawerContent />
       ) : (
-        <NavigationDrawerScrollableContent>
-          <MainNavigationDrawerNavigationContent />
-        </NavigationDrawerScrollableContent>
+        <>
+          <NavigationDrawerScrollableContent>
+            <MainNavigationDrawerNavigationContent />
+          </NavigationDrawerScrollableContent>
+          <NewAiChatDrawerButton />
+        </>
       )}
     </NavigationDrawer>
   );

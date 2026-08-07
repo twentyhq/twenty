@@ -2,6 +2,7 @@ import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageCo
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { AiChatThreadClickBehaviorContext } from '@/ai/contexts/AiChatThreadClickBehaviorContext';
+import { selectedInboxNotificationIdState } from '@/ai/expanded-chat/states/selectedInboxNotificationIdState';
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -64,6 +65,7 @@ export const useAiChatThreadClick = (
     );
 
     if (threadClickBehavior === 'in-place') {
+      store.set(selectedInboxNotificationIdState.atom, null);
       return;
     }
 
