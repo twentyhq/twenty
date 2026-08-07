@@ -2,20 +2,21 @@ import { styled } from '@linaria/react';
 
 import { AiChatThreadsList } from '@/ai/components/AiChatThreadsList';
 import { AiChatThreadClickBehaviorContext } from '@/ai/contexts/AiChatThreadClickBehaviorContext';
-import { EXPANDED_AI_CHAT_THREAD_RAIL_WIDTH } from '@/ai/expanded-chat/constants/ExpandedAiChatThreadRailWidth';
 
-const StyledRail = styled.div`
+const StyledContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
-  flex-shrink: 0;
   min-height: 0;
-  width: ${EXPANDED_AI_CHAT_THREAD_RAIL_WIDTH}px;
 `;
 
-export const ExpandedAiChatThreadRail = () => (
-  <StyledRail>
+// Rendered as the navigation drawer content while the expanded chat is
+// open: the drawer becomes the inbox thread list, switching threads in
+// place instead of reopening the side panel.
+export const ExpandedAiChatDrawerThreads = () => (
+  <StyledContainer>
     <AiChatThreadClickBehaviorContext.Provider value="in-place">
       <AiChatThreadsList />
     </AiChatThreadClickBehaviorContext.Provider>
-  </StyledRail>
+  </StyledContainer>
 );
