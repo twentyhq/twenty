@@ -43,7 +43,7 @@ describe('NotificationEmitterService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('should insert an UNREAD notification for each workspace member', async () => {

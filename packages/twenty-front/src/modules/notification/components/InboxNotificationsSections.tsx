@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
+import { NotificationType } from 'twenty-shared/types';
 import {
   IconAlertTriangle,
   IconBell,
@@ -112,16 +113,16 @@ const StyledIconContainer = styled.div<{ isAlert: boolean }>`
 `;
 
 const getNotificationIcon = (notificationType: string) => {
-  if (notificationType === 'workflow_run_failed') {
+  if (notificationType === NotificationType.WorkflowRunFailed) {
     return IconAlertTriangle;
   }
   if (
-    notificationType === 'agent_question' ||
-    notificationType === 'approval_request'
+    notificationType === NotificationType.AgentQuestion ||
+    notificationType === NotificationType.ApprovalRequest
   ) {
     return IconSparkles;
   }
-  if (notificationType === 'thread_reply') {
+  if (notificationType === NotificationType.ThreadReply) {
     return IconMessage;
   }
   return IconBell;

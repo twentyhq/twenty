@@ -163,6 +163,8 @@ export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
+export type { NotificationStatus } from './NotificationStatus';
+export { NotificationType } from './NotificationType';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
 export { ObjectOpenRecordIn } from './ObjectOpenRecordIn';

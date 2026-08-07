@@ -1,6 +1,8 @@
+import { type NotificationStatus } from 'twenty-shared/types';
+
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export type NotificationStatus = 'UNREAD' | 'READ' | 'DONE';
+export type { NotificationStatus } from 'twenty-shared/types';
 
 export type Notification = ObjectRecord & {
   type: string;

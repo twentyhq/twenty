@@ -117,6 +117,7 @@ export class NotificationEmitterService {
           title,
           preview: preview ?? null,
           payload: payload ?? null,
+          ...(isDefined(requiresAction) ? { requiresAction } : {}),
           status: 'UNREAD',
         });
 

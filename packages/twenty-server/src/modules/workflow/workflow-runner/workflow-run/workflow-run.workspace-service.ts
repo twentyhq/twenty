@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
+import { type ActorMetadata, NotificationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -58,87 +58,103 @@ export class WorkflowRunWorkspaceService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
-            'workflowRun',
-            { shouldBypassPermissionChecks: true },
-          );
+    const workflowRun =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workflowRunRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+              workspaceId,
+              'workflowRun',
+              { shouldBypassPermissionChecks: true },
+            );
 
-        const workflowVersion =
-          await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-            workspaceId,
-            workflowVersionId,
+          const workflowVersion =
+            await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+              workspaceId,
+              workflowVersionId,
+            });
+
+          const workflowRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'workflow',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const workflow = await workflowRepository.findOne({
+            where: {
+              id: workflowVersion.workflowId,
+            },
           });
 
-        const workflowRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
+          if (!workflow) {
+            throw new WorkflowRunException(
+              'Workflow id is invalid',
+              WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+            );
+          }
+
+          const position = await this.recordPositionService.buildRecordPosition(
+            {
+              value: 'first',
+              objectMetadata: {
+                isCustom: false,
+                nameSingular: 'workflowRun',
+              },
+              workspaceId,
+            },
           );
 
-        const workflow = await workflowRepository.findOne({
-          where: {
-            id: workflowVersion.workflowId,
-          },
-        });
-
-        if (!workflow) {
-          throw new WorkflowRunException(
-            'Workflow id is invalid',
-            WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+          const initState = this.getInitState(
+            workflowVersion,
+            triggerPayload,
+            error,
           );
-        }
 
-        const position = await this.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowRun',
-          },
-          workspaceId,
-        });
+          const lastWorkflowRun = await workflowRunRepository.findOne({
+            where: {
+              workflowId: workflow.id,
+            },
+            order: { createdAt: 'desc' },
+          });
 
-        const initState = this.getInitState(
-          workflowVersion,
-          triggerPayload,
-          error,
-        );
+          const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
 
-        const lastWorkflowRun = await workflowRunRepository.findOne({
-          where: {
+          const workflowRunCount = workflowRunCountMatch
+            ? parseInt(workflowRunCountMatch[1], 10)
+            : 0;
+
+          const workflowRunToCreate = {
+            id: workflowRunId ?? v4(),
+            name: `#${workflowRunCount + 1} - ${workflow.name}`,
+            workflowVersionId,
+            createdBy,
             workflowId: workflow.id,
-          },
-          order: { createdAt: 'desc' },
-        });
+            status,
+            position,
+            state: initState,
+            enqueuedAt:
+              status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
+          };
 
-        const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
+          await workflowRunRepository.insert(workflowRunToCreate);
 
-        const workflowRunCount = workflowRunCountMatch
-          ? parseInt(workflowRunCountMatch[1], 10)
-          : 0;
+          return workflowRunToCreate;
+        },
+        authContext,
+      );
 
-        const workflowRun = {
-          id: workflowRunId ?? v4(),
-          name: `#${workflowRunCount + 1} - ${workflow.name}`,
-          workflowVersionId,
-          createdBy,
-          workflowId: workflow.id,
-          status,
-          position,
-          state: initState,
-          enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
-        };
+    // Runs can be created directly as FAILED (e.g. throttle rejection) and
+    // never go through endWorkflowRun
+    if (status === WorkflowRunStatus.FAILED) {
+      await this.emitWorkflowRunFailedNotification({
+        workflowRun,
+        workspaceId,
+        error,
+      });
+    }
 
-        await workflowRunRepository.insert(workflowRun);
-
-        return workflowRun.id;
-      },
-      authContext,
-    );
+    return workflowRun.id;
   }
 
   @WithLock('workflowRunId')
@@ -254,7 +270,7 @@ export class WorkflowRunWorkspaceService {
     workspaceId,
     error,
   }: {
-    workflowRun: WorkflowRunWorkspaceEntity;
+    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id' | 'name' | 'createdBy'>;
     workspaceId: string;
     error?: string;
   }) {
@@ -270,7 +286,7 @@ export class WorkflowRunWorkspaceService {
     await this.notificationEmitterService.emitToWorkspaceMembers({
       workspaceId,
       workspaceMemberIds: [workspaceMemberId],
-      type: 'workflow_run_failed',
+      type: NotificationType.WorkflowRunFailed,
       title: `${workflowName ?? 'Workflow'} run failed`,
       preview: error,
       requiresAction: true,
@@ -279,7 +295,7 @@ export class WorkflowRunWorkspaceService {
         workflowRunId: workflowRun.id,
         objectNameSingular: 'workflowRun',
       },
-      dedupeKey: `workflow_run_failed:${workflowRun.id}`,
+      dedupeKey: `${NotificationType.WorkflowRunFailed}:${workflowRun.id}`,
     });
   }
 
