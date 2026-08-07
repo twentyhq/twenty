@@ -29,7 +29,6 @@ describe('InboxItemTypeService', () => {
 
   const inboxItemTypeRepository = {
     findOne: jest.fn(),
-    find: jest.fn(),
     upsert: jest.fn(),
   };
 
@@ -41,7 +40,6 @@ describe('InboxItemTypeService', () => {
     jest.clearAllMocks();
 
     inboxItemTypeRepository.findOne.mockResolvedValue(existingType);
-    inboxItemTypeRepository.find.mockResolvedValue([existingType]);
     inboxItemTypeRepository.upsert.mockResolvedValue({ identifiers: [] });
     applicationRepository.findOne.mockResolvedValue({ id: APPLICATION_ID });
 
@@ -174,19 +172,6 @@ describe('InboxItemTypeService', () => {
 
       // Assert
       expect(inboxItemTypeRepository.upsert).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('findAll', () => {
-    it('should return the workspace types that are not soft deleted', async () => {
-      // Act
-      const result = await service.findAll({ workspaceId: WORKSPACE_ID });
-
-      // Assert
-      expect(inboxItemTypeRepository.find).toHaveBeenCalledWith(WORKSPACE_ID, {
-        where: { deletedAt: IsNull() },
-      });
-      expect(result).toEqual([existingType]);
     });
   });
 });

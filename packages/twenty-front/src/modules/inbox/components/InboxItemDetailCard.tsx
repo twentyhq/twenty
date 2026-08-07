@@ -101,7 +101,7 @@ export const InboxItemDetailCard = ({
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const { inboxItem, loading } = useInboxItemById(inboxItemId);
+  const { inboxItem, loading, error } = useInboxItemById(inboxItemId);
   const { executeInboxItemAction } = useInboxItemActions();
   const { openAskAiThread } = useOpenAskAiThread();
   const objectMetadataItemsByIdMap = useAtomStateValue(
@@ -109,11 +109,17 @@ export const InboxItemDetailCard = ({
   );
 
   if (!isDefined(inboxItem)) {
+    if (loading) {
+      return <StyledContainer />;
+    }
+
     return (
       <StyledContainer>
-        {!loading && (
-          <StyledEmptyState>{t`This inbox item is no longer available`}</StyledEmptyState>
-        )}
+        <StyledEmptyState>
+          {isDefined(error)
+            ? t`This inbox item could not be loaded`
+            : t`This inbox item is no longer available`}
+        </StyledEmptyState>
       </StyledContainer>
     );
   }

@@ -47,20 +47,30 @@ export const AiChatThreadsList = () => {
     dependencies: [switchToNewChat],
   });
 
-  const { needsActionItems, otherItems, loading, error } = useInboxItems();
+  const {
+    needsActionItems,
+    otherItems,
+    loading,
+    error,
+    hasMoreItems,
+    loadMoreItems,
+    isInboxEnabled,
+  } = useInboxItems();
 
   return (
     <>
       <AiChatThreadsListFocusEffect focusId={AI_CHAT_THREADS_LIST_FOCUS_ID} />
       <StyledContainer>
         <StyledThreadsContainer>
-          {isDefined(error) ? (
+          {!isInboxEnabled || isDefined(error) ? (
             <AiChatThreadsListFallback />
           ) : (
             <InboxList
               loading={loading}
               needsActionItems={needsActionItems}
               otherItems={otherItems}
+              hasMoreItems={hasMoreItems}
+              onLoadMoreItems={loadMoreItems}
             />
           )}
         </StyledThreadsContainer>

@@ -11,7 +11,8 @@ import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-const DEFAULT_INBOX_PAGE_SIZE = 100;
+export const DEFAULT_INBOX_PAGE_SIZE = 50;
+export const MAX_INBOX_PAGE_SIZE = 500;
 
 @Injectable()
 export class InboxItemService {
@@ -38,7 +39,7 @@ export class InboxItemService {
       },
       relations: { inboxItemType: true },
       order: { updatedAt: 'DESC' },
-      take: limit ?? DEFAULT_INBOX_PAGE_SIZE,
+      take: Math.min(limit ?? DEFAULT_INBOX_PAGE_SIZE, MAX_INBOX_PAGE_SIZE),
     });
   }
 
@@ -130,6 +131,9 @@ export class InboxItemService {
         resolvedAt: null,
         resolvedByUserWorkspaceId: null,
         snoozedUntil: null,
+        // A reopened item is asking for attention again, so it should count
+        // towards the unread badge
+        readAt: null,
       },
     );
   }
@@ -175,9 +179,14 @@ export class InboxItemService {
   ): Promise<InboxItemEntity> {
     const inboxItem = await this.findOwnedItemOrThrow(ownedItemArgs);
 
+    // The assignee is part of the write predicate, not just the preceding read,
+    // so a reassignment between the two cannot let the old owner mutate it
     await this.inboxItemRepository.update(
       ownedItemArgs.workspaceId,
-      { id: inboxItem.id },
+      {
+        id: inboxItem.id,
+        assigneeUserWorkspaceId: ownedItemArgs.assigneeUserWorkspaceId,
+      },
       partialUpdate,
     );
 

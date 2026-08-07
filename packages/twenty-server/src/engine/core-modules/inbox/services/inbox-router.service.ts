@@ -276,7 +276,14 @@ export class InboxRouterService {
     threadId: string;
     title: string;
   }): Promise<void> {
-    await this.inboxItemRepository.update(workspaceId, { threadId }, { title });
+    await this.runBestEffort('renameThreadItem', workspaceId, () =>
+      this.inboxItemRepository.update(
+        workspaceId,
+        { threadId },
+        // Keeping updatedAt as it was leaves the list ordered by real activity
+        { title, updatedAt: () => '"updatedAt"' },
+      ),
+    );
   }
 
   async dismissByThreadId({
@@ -286,11 +293,31 @@ export class InboxRouterService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    await this.inboxItemRepository.update(
-      workspaceId,
-      { threadId, status: InboxItemStatus.OPEN },
-      { status: InboxItemStatus.DISMISSED, resolvedAt: new Date() },
+    await this.runBestEffort('dismissByThreadId', workspaceId, () =>
+      this.inboxItemRepository.update(
+        workspaceId,
+        { threadId, status: InboxItemStatus.OPEN },
+        { status: InboxItemStatus.DISMISSED, resolvedAt: new Date() },
+      ),
     );
+  }
+
+  // The inbox is never allowed to fail the subsystem that feeds it: a chat or
+  // workflow operation must complete even when its inbox item cannot.
+  private async runBestEffort(
+    operation: string,
+    workspaceId: string,
+    run: () => Promise<unknown>,
+  ): Promise<void> {
+    try {
+      await run();
+    } catch (error) {
+      this.logger.warn(
+        `Failed to ${operation} in workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 }
 

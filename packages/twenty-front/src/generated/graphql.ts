@@ -531,6 +531,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 
 export type QueryMyInboxItemsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
   scope?: InputMaybe<InboxItemScope>;
 };
 

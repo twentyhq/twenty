@@ -12,7 +12,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
       `DO $$ BEGIN CREATE TYPE "core"."inboxItemType_binding_enum" AS ENUM ('SUBJECT', 'OCCURRENCE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
     await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."inboxItemType_defaultPriority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE', 'LOW'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+      `DO $$ BEGIN CREATE TYPE "core"."inboxItemType_defaultpriority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE', 'LOW'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
     await queryRunner.query(
       `DO $$ BEGIN CREATE TYPE "core"."inboxItem_status_enum" AS ENUM ('OPEN', 'DONE', 'DISMISSED'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
@@ -31,7 +31,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
         "label" character varying NOT NULL,
         "icon" character varying,
         "binding" "core"."inboxItemType_binding_enum" NOT NULL DEFAULT 'OCCURRENCE',
-        "defaultPriority" "core"."inboxItemType_defaultPriority_enum" NOT NULL DEFAULT 'UPDATE',
+        "defaultPriority" "core"."inboxItemType_defaultpriority_enum" NOT NULL DEFAULT 'UPDATE',
         "actions" jsonb NOT NULL DEFAULT '[]',
         "detailFrontComponentId" uuid,
         "deletedAt" TIMESTAMP WITH TIME ZONE,
@@ -125,7 +125,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
       `DROP TYPE IF EXISTS "core"."inboxItem_status_enum"`,
     );
     await queryRunner.query(
-      `DROP TYPE IF EXISTS "core"."inboxItemType_defaultPriority_enum"`,
+      `DROP TYPE IF EXISTS "core"."inboxItemType_defaultpriority_enum"`,
     );
     await queryRunner.query(
       `DROP TYPE IF EXISTS "core"."inboxItemType_binding_enum"`,

@@ -45,16 +45,6 @@ export class InboxItemTypeService {
     });
   }
 
-  async findAll({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<InboxItemTypeEntity[]> {
-    return this.inboxItemTypeRepository.find(workspaceId, {
-      where: { deletedAt: IsNull() },
-    });
-  }
-
   // Idempotent: identity is (workspaceId, universalIdentifier), so re-running
   // updates the declaration in place rather than duplicating it.
   async seedStandardTypes({

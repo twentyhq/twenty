@@ -9,7 +9,7 @@ import { useInboxItemClick } from '@/inbox/hooks/useInboxItemClick';
 import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
 const StyledInboxItem = styled.div<{ $isSelected: boolean }>`
   align-items: flex-start;
@@ -119,7 +119,15 @@ export const InboxListItem = ({ inboxItem }: InboxListItemProps) => {
   return (
     <StyledInboxItem
       $isSelected={selectedInboxItemId === inboxItem.id}
+      role="button"
+      tabIndex={0}
       onClick={() => handleInboxItemClick(inboxItem)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          handleInboxItemClick(inboxItem);
+        }
+      }}
     >
       <StyledInboxItemIcon $needsAction={needsAction}>
         <InboxItemIcon size={theme.icon.size.md} color="currentColor" />
@@ -131,7 +139,7 @@ export const InboxListItem = ({ inboxItem }: InboxListItemProps) => {
             {inboxItem.title}
           </StyledInboxItemTitle>
           <StyledInboxItemTimestamp>
-            {beautifyPastDateRelativeToNow(inboxItem.updatedAt)}
+            {beautifyPastDateRelativeToNowShort(inboxItem.updatedAt)}
           </StyledInboxItemTimestamp>
         </StyledInboxItemHeader>
         {isNonEmptyString(inboxItem.preview) && (

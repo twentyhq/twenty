@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -40,11 +40,16 @@ export class InboxItemResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('scope', { type: () => InboxItemScope, nullable: true })
     scope?: InboxItemScope,
+    // The client grows this to reach older items, so nothing falls off the
+    // end of the list without a way back to it.
+    @Args('limit', { type: () => Int, nullable: true })
+    limit?: number,
   ): Promise<InboxItemDTO[]> {
     const inboxItems = await this.inboxItemService.findMany({
       workspaceId,
       assigneeUserWorkspaceId: userWorkspaceId,
       scope: scope ?? InboxItemScope.INBOX,
+      limit,
     });
 
     return inboxItems.map(toInboxItemDto);

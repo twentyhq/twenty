@@ -10,7 +10,7 @@ export const useInboxItemById = (
 ) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading } = useQuery<
+  const { data, loading, error } = useQuery<
     { myInboxItems: InboxItem[] },
     { scope?: InboxItemScope }
   >(GET_MY_INBOX_ITEMS, {
@@ -24,5 +24,5 @@ export const useInboxItemById = (
       (candidateInboxItem) => candidateInboxItem.id === inboxItemId,
     ) ?? null;
 
-  return { inboxItem, loading };
+  return { inboxItem, loading, error };
 };

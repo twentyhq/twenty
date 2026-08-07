@@ -71,12 +71,15 @@ export const NavigationDrawerAiChatContent = () => {
     otherItems,
     loading: inboxLoading,
     error: inboxError,
+    hasMoreItems,
+    loadMoreItems,
+    isInboxEnabled,
   } = useInboxItems();
 
   // The inbox supersedes the thread list: a thread is one inbox item among
-  // others. The thread list stays as the fallback for workspaces where the
-  // inbox is not reachable.
-  if (!isDefined(inboxError)) {
+  // others. Until the flag is on, and if the inbox is ever unreachable, the
+  // thread list stays as the fallback.
+  if (isInboxEnabled && !isDefined(inboxError)) {
     return (
       <StyledContainer>
         <StyledThreadList>
@@ -84,6 +87,8 @@ export const NavigationDrawerAiChatContent = () => {
             loading={inboxLoading}
             needsActionItems={needsActionItems}
             otherItems={otherItems}
+            hasMoreItems={hasMoreItems}
+            onLoadMoreItems={loadMoreItems}
           />
         </StyledThreadList>
         <AiChatThreadDeleteConfirmationModal

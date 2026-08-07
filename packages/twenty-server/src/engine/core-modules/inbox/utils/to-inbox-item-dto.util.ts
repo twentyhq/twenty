@@ -16,8 +16,14 @@ const toActionDto = (action: InboxItemAction): InboxItemActionDTO => ({
   handlerKind: action.handler.kind,
 });
 
-export const toInboxItemDto = (inboxItem: InboxItemEntity): InboxItemDTO => {
-  const inboxItemType = inboxItem.inboxItemType as InboxItemTypeEntity;
+// Requires the type relation to be loaded, so a caller that forgot the join
+// fails at compile time rather than at render time.
+export type InboxItemWithType = Omit<InboxItemEntity, 'inboxItemType'> & {
+  inboxItemType: InboxItemTypeEntity;
+};
+
+export const toInboxItemDto = (inboxItem: InboxItemWithType): InboxItemDTO => {
+  const inboxItemType = inboxItem.inboxItemType;
 
   return {
     id: inboxItem.id,

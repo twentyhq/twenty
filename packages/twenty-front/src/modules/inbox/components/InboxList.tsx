@@ -3,8 +3,25 @@ import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemGroup } from '@/inbox/components/InboxItemGroup';
+import { InboxListSkeletonLoader } from '@/inbox/components/InboxListSkeletonLoader';
 import { groupInboxItemsByDate } from '@/inbox/utils/groupInboxItemsByDate';
+import { isDefined } from 'twenty-shared/utils';
 import { type InboxItem } from '~/generated/graphql';
+
+const StyledLoadMoreButton = styled.button`
+  background: none;
+  border: none;
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  font-family: inherit;
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[2]};
+  text-align: left;
+
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
+`;
 
 const StyledEmptyState = styled.div`
   align-items: center;
@@ -19,12 +36,16 @@ type InboxListProps = {
   loading: boolean;
   needsActionItems: InboxItem[];
   otherItems: InboxItem[];
+  hasMoreItems?: boolean;
+  onLoadMoreItems?: () => void;
 };
 
 export const InboxList = ({
   loading,
   needsActionItems,
   otherItems,
+  hasMoreItems = false,
+  onLoadMoreItems,
 }: InboxListProps) => {
   const { t } = useLingui();
 
@@ -32,7 +53,9 @@ export const InboxList = ({
   const hasNeedsActionSection = needsActionItems.length > 0;
 
   if (!hasNeedsActionSection && dateGroups.length === 0) {
-    return loading ? null : (
+    return loading ? (
+      <InboxListSkeletonLoader />
+    ) : (
       <StyledEmptyState>{t`Your inbox is empty`}</StyledEmptyState>
     );
   }
@@ -52,6 +75,11 @@ export const InboxList = ({
           inboxItems={dateGroup.inboxItems}
         />
       ))}
+      {hasMoreItems && isDefined(onLoadMoreItems) && (
+        <StyledLoadMoreButton type="button" onClick={onLoadMoreItems}>
+          {t`Load older`}
+        </StyledLoadMoreButton>
+      )}
     </>
   );
 };

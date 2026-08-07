@@ -14,7 +14,7 @@ const WORKSPACE_ID = 'workspace-id';
 const ASSIGNEE_USER_WORKSPACE_ID = 'assignee-user-workspace-id';
 const INBOX_ITEM_ID = 'inbox-item-id';
 const NOW = new Date('2026-08-07T10:00:00.000Z');
-const DEFAULT_INBOX_PAGE_SIZE = 100;
+const DEFAULT_INBOX_PAGE_SIZE = 50;
 
 const buildInboxItem = (
   overrides: Partial<InboxItemEntity> = {},
@@ -225,7 +225,10 @@ describe('InboxItemService', () => {
       // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: INBOX_ITEM_ID },
+        {
+          id: INBOX_ITEM_ID,
+          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        },
         {
           status: InboxItemStatus.DONE,
           resolvedAt: NOW,
@@ -266,7 +269,10 @@ describe('InboxItemService', () => {
       // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: INBOX_ITEM_ID },
+        {
+          id: INBOX_ITEM_ID,
+          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        },
         { snoozedUntil, readAt: NOW },
       );
     });
@@ -280,7 +286,10 @@ describe('InboxItemService', () => {
       // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: INBOX_ITEM_ID },
+        {
+          id: INBOX_ITEM_ID,
+          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        },
         { readAt: NOW },
       );
     });
@@ -294,12 +303,16 @@ describe('InboxItemService', () => {
       // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: INBOX_ITEM_ID },
+        {
+          id: INBOX_ITEM_ID,
+          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        },
         {
           status: InboxItemStatus.OPEN,
           resolvedAt: null,
           resolvedByUserWorkspaceId: null,
           snoozedUntil: null,
+          readAt: null,
         },
       );
     });

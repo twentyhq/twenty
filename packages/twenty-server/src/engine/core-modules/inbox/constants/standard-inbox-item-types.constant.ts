@@ -13,7 +13,7 @@ export type StandardInboxItemTypeKey =
 
 export type StandardInboxItemType = {
   universalIdentifier: string;
-  key: string;
+  key: StandardInboxItemTypeKey;
   label: string;
   icon: string;
   binding: InboxItemBinding;

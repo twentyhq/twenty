@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -17,6 +17,8 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 // the two before routing.
 @Injectable()
 export class WorkflowRunInboxService {
+  private readonly logger = new Logger(WorkflowRunInboxService.name);
+
   constructor(
     private readonly inboxRouterService: InboxRouterService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -26,7 +28,25 @@ export class WorkflowRunInboxService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  async onWorkflowRunFailed({
+  // Best effort: a run that already finished must not be reported as failing to
+  // finish because its inbox item could not be routed.
+  async onWorkflowRunFailed(args: {
+    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id' | 'name' | 'createdBy'>;
+    workspaceId: string;
+    error?: string;
+  }): Promise<void> {
+    try {
+      await this.routeFailedRun(args);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to route the inbox item for workflow run ${
+          args.workflowRun.id
+        }: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async routeFailedRun({
     workflowRun,
     workspaceId,
     error,

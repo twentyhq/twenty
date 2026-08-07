@@ -694,10 +694,13 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { threadId: THREAD_ID },
-        { title: 'A renamed conversation' },
+        expect.objectContaining({ title: 'A renamed conversation' }),
       );
 
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      // The list stays ordered by real activity, so the rename freezes updatedAt
+      expect(partialUpdate.updatedAt()).toBe('"updatedAt"');
 
       // A rename is not an attention event, so nothing else may move
       expect(partialUpdate).not.toHaveProperty('status');
