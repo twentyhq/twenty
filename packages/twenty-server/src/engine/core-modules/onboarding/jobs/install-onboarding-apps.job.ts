@@ -29,11 +29,6 @@ export class InstallOnboardingAppsJob {
     universalIdentifiers,
     userId,
   }: InstallOnboardingAppsJobData): Promise<void> {
-    await this.onboardingService.creditInstallAppsReward({
-      workspaceId,
-      rewardAppsCount: universalIdentifiers.length,
-    });
-
     let hasInstalledAnyApp = false;
 
     for (const universalIdentifier of universalIdentifiers) {
@@ -45,7 +40,18 @@ export class InstallOnboardingAppsJob {
       hasInstalledAnyApp = hasInstalledAnyApp || hasInstalledApp;
     }
 
-    if (isDefined(userId) && hasInstalledAnyApp) {
+    // Crediting a run that installed nothing would pay out again every time the
+    // user returns to the step and relaunches it.
+    if (!hasInstalledAnyApp) {
+      return;
+    }
+
+    await this.onboardingService.creditInstallAppsReward({
+      workspaceId,
+      rewardAppsCount: universalIdentifiers.length,
+    });
+
+    if (isDefined(userId)) {
       await this.onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled(
         { userId, workspaceId },
       );

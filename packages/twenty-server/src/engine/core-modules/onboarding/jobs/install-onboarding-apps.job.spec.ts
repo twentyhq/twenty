@@ -84,7 +84,7 @@ describe('InstallOnboardingAppsJob', () => {
     );
   });
 
-  it('should credit before attempting the installs', async () => {
+  it('should credit only once an install has succeeded', async () => {
     jest
       .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
       .mockImplementation(async (universalIdentifier) =>
@@ -105,10 +105,29 @@ describe('InstallOnboardingAppsJob', () => {
       applicationInstallService.installApplication as jest.Mock
     ).mock.invocationCallOrder[0];
 
-    expect(creditOrder).toBeLessThan(installOrder);
+    expect(installOrder).toBeLessThan(creditOrder);
   });
 
-  it('should credit even when an install fails', async () => {
+  it('should not credit again when a failed run is relaunched', async () => {
+    jest
+      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .mockResolvedValue(null);
+
+    await job.handle({
+      workspaceId,
+      universalIdentifiers: [callRecorderId],
+      userId,
+    });
+    await job.handle({
+      workspaceId,
+      universalIdentifiers: [callRecorderId],
+      userId,
+    });
+
+    expect(onboardingService.creditInstallAppsReward).not.toHaveBeenCalled();
+  });
+
+  it('should not credit when every install fails', async () => {
     jest
       .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
       .mockImplementation(async (universalIdentifier) =>
@@ -123,10 +142,7 @@ describe('InstallOnboardingAppsJob', () => {
       universalIdentifiers: [callRecorderId, peopleDataLabsId],
     });
 
-    expect(onboardingService.creditInstallAppsReward).toHaveBeenCalledWith({
-      workspaceId,
-      rewardAppsCount: 2,
-    });
+    expect(onboardingService.creditInstallAppsReward).not.toHaveBeenCalled();
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       2,
     );
