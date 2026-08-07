@@ -30,6 +30,7 @@ const StyledText = styled.p`
   font-size: ${themeCssVariables.font.size.md};
   line-height: ${themeCssVariables.text.lineHeight.lg};
   margin: 0;
+  overflow-wrap: break-word;
   white-space: pre-wrap;
 `;
 
