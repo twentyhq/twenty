@@ -33,7 +33,7 @@ const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   grid-template-columns: ${({ centerTitle }) =>
     centerTitle
       ? 'minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr)'
-      : 'minmax(0, auto) minmax(0, 1fr)'};
+      : 'minmax(0, 1fr) auto'};
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
