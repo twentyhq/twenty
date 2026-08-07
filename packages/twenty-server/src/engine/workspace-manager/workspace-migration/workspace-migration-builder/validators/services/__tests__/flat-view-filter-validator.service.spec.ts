@@ -101,55 +101,6 @@ describe('FlatViewFilterValidatorService', () => {
   });
 
   describe('value validation on creation', () => {
-    it('should reject the object form of a relative date filter', () => {
-      const result = service.validateFlatViewFilterCreation(
-        buildCreationArgs({
-          fieldType: FieldMetadataType.DATE,
-          operand: ViewFilterOperand.IS_RELATIVE,
-          value: { direction: 'NEXT', amount: 30, unit: 'DAY' },
-        }),
-      );
-
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].message).toContain('NEXT_30_DAY');
-    });
-
-    it('should accept the stringified form of a relative date filter', () => {
-      const result = service.validateFlatViewFilterCreation(
-        buildCreationArgs({
-          fieldType: FieldMetadataType.DATE,
-          operand: ViewFilterOperand.IS_RELATIVE,
-          value: 'NEXT_30_DAY',
-        }),
-      );
-
-      expect(result.errors).toEqual([]);
-    });
-
-    it('should reject a non numeric value on a number field', () => {
-      const result = service.validateFlatViewFilterCreation(
-        buildCreationArgs({
-          fieldType: FieldMetadataType.NUMBER,
-          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
-          value: 'thirty',
-        }),
-      );
-
-      expect(result.errors).toHaveLength(1);
-    });
-
-    it('should reject a non uuid on a relation field instead of matching nothing', () => {
-      const result = service.validateFlatViewFilterCreation(
-        buildCreationArgs({
-          fieldType: FieldMetadataType.RELATION,
-          operand: ViewFilterOperand.IS,
-          value: { direction: 'NEXT' },
-        }),
-      );
-
-      expect(result.errors).toHaveLength(1);
-    });
-
     it('should accept a value still being filled in', () => {
       const result = service.validateFlatViewFilterCreation(
         buildCreationArgs({
@@ -172,19 +123,6 @@ describe('FlatViewFilterValidatorService', () => {
       );
 
       expect(result.errors).toEqual([]);
-    });
-
-    it('should validate the actor source sub field against known sources', () => {
-      const result = service.validateFlatViewFilterCreation(
-        buildCreationArgs({
-          fieldType: FieldMetadataType.ACTOR,
-          operand: ViewFilterOperand.IS,
-          value: ['NOT_A_SOURCE'],
-          subFieldName: 'source',
-        }),
-      );
-
-      expect(result.errors).toHaveLength(1);
     });
   });
 

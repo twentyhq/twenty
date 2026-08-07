@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
@@ -417,7 +418,9 @@ export class FlatViewFilterValidatorService {
 
     return {
       code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-      message: t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${hint}`,
+      message: isNonEmptyString(hint)
+        ? t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${hint}`
+        : t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}".`,
       userFriendlyMessage: msg`Filter value is not valid for this operand`,
     };
   }

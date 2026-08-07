@@ -46,7 +46,9 @@ export const getFilterValueValidationIssue = ({
     return undefined;
   }
 
-  if (valueSchema.safeParse(stringifiedValue).success) {
+  const parseResult = valueSchema.safeParse(stringifiedValue);
+
+  if (parseResult.success) {
     return undefined;
   }
 
@@ -54,6 +56,9 @@ export const getFilterValueValidationIssue = ({
     stringifiedValue,
     operand,
     filterType,
-    hint: FILTER_VALUE_FORMAT_HINTS[operand] ?? '',
+    hint:
+      FILTER_VALUE_FORMAT_HINTS[operand] ??
+      parseResult.error.issues[0]?.message ??
+      '',
   };
 };

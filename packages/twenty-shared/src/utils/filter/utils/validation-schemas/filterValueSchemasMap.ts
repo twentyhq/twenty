@@ -154,6 +154,6 @@ export const FILTER_VALUE_FORMAT_HINTS: Partial<
   Record<ViewFilterOperand, string>
 > = {
   [ViewFilterOperand.IS_RELATIVE]:
-    'Expected a stringified relative date such as "NEXT_30_DAY", not an object.',
+    'Expected a stringified relative date such as "NEXT_30_DAY".',
   [ViewFilterOperand.VECTOR_SEARCH]: 'Expected a non empty search string.',
 };
