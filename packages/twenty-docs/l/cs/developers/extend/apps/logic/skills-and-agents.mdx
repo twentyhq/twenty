@@ -165,20 +165,20 @@ const { result } = await runAgent({
 
 Spuštění je pak omezeno na to, co povolují jak role agenta, tak role člena, záznamy, které vytvoří, jsou připsány tomuto členovi a uplatní se jeho oprávnění na úrovni řádků. Toto pole vynechejte u autonomních spuštění (plánované úlohy, spouštěče databázových událostí): ta si ponechají vlastní roli agenta.
 
-Vaše aplikace je zodpovědná za mapování osoby, která spuštění vyvolala, na člena pracovního prostoru. Pojmenování jednoho vyžaduje přístupový token aplikace a to, co může token
-pojmenovat, závisí na tom, zda nese uživatele:
+Vaše aplikace je zodpovědná za mapování osoby, která spuštění vyvolala, na člena pracovního prostoru. Pojmenování člena vyžaduje přístupový token aplikace a to, koho může token
+pojmenovat, závisí na tom, zda je navázán na uživatele:
 
 * Token, který **nemá přiřazeného žádného uživatele**, může pojmenovat libovolného člena. Logická funkce běží
-  s jedním a totéž platí pro tokeny získané přes `client_credentials` nebo z
-  API klíče.
-* Token vydaný **jménem uživatele**, jaký obdrží front komponenta, smí
+  s takovým tokenem a totéž platí pro tokeny vytvořené prostřednictvím `client_credentials` nebo z
+  klíče API.
+* Token vydaný **jménem uživatele**, jaký obdrží front-endová komponenta, smí
   pojmenovat pouze člena daného uživatele.
 
 Cokoli jiného — běžná uživatelská relace, API klíč bez tokenu aplikace — vůbec
 nesmí pojmenovat žádného člena.
 
 <Warning>
-  `runAgent()` vyvolá výjimku, pokud nelze workspace člena vyřešit — neznámý nebo odebraný člen, nebo člen bez role. Nikdy se nevrací zpět k
+  `runAgent()` vyvolá výjimku, pokud nelze člena pracovního prostoru určit — neznámý nebo odebraný člen, případně člen bez role. Nikdy se nevrací zpět k
   vlastní roli agenta, protože to by udělilo více oprávnění, než o která volající
   požádal.
 </Warning>

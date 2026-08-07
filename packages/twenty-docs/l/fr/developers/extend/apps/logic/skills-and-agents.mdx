@@ -168,8 +168,8 @@ const { result } = await runAgent({
 
 L’exécution est alors limitée à ce que les rôles de l’agent et du membre autorisent **tous deux**, les enregistrements qu’elle crée sont attribués à ce membre, et les autorisations au niveau des lignes du membre s’appliquent. Omettez ce champ pour les exécutions autonomes (tâches planifiées, déclencheurs d’événements de base de données) : celles-ci conservent le rôle propre de l’agent.
 
-Votre application est responsable de faire correspondre la personne qui a déclenché l’exécution à un membre de l’espace de travail. Nommer un membre nécessite un jeton d’accès d’application, et ce qu’un jeton peut
-nommer dépend du fait qu’il transporte ou non un utilisateur :
+Votre application est responsable de faire correspondre la personne qui a déclenché l’exécution à un membre de l’espace de travail. Nommer un membre nécessite un jeton d’accès de l’application, et ce qu’un jeton peut
+nommer dépend du fait qu’il soit ou non associé à un utilisateur :
 
 * Un jeton **sans utilisateur associé** peut nommer n’importe quel membre. Une fonction logique s’exécute
   avec un tel jeton, tout comme les jetons créés via `client_credentials` ou à partir d’une clé
