@@ -145,6 +145,40 @@ describe('Uninstall application logic function hook', () => {
     );
   }, 60000);
 
+  it('executes the installed hook when the registration manifest is unavailable', async () => {
+    await uploadInstalledManifestAndSyncApplication({
+      applicationUniversalIdentifier: appId,
+      manifest: buildManifestWithLogicFunction({
+        appId,
+        roleId,
+        logicFunctionId,
+        withUninstallHook: true,
+      }),
+    });
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."applicationRegistration"
+       SET "manifest" = NULL
+       WHERE "universalIdentifier" = $1`,
+      [appId],
+    );
+
+    const uninstallApplicationResponse = await uninstallApplication({
+      universalIdentifier: appId,
+      expectToFail: false,
+    });
+
+    expect(uninstallApplicationResponse.errors).toBeUndefined();
+    expect(uninstallApplicationResponse.data?.uninstallApplication).toBe(true);
+    expect(executeSpy).toHaveBeenCalledTimes(1);
+    expect(executeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        logicFunctionId: expect.any(String),
+        payload: { version: '1.0.0' },
+      }),
+    );
+  }, 60000);
+
   it('executes the hook declared by the installed manifest when the registration manifest advances', async () => {
     const installedManifest = buildManifestWithLogicFunction({
       appId,
