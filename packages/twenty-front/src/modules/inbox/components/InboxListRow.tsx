@@ -123,7 +123,7 @@ export const InboxListRow = ({
     <StyledRowContainer
       role="button"
       tabIndex={0}
-      aria-label={t`Open inbox item`}
+      aria-label={t`Open ${inboxItem.title}`}
       onClick={onClick}
       onKeyDown={(event) => {
         if (event.target !== event.currentTarget) {
