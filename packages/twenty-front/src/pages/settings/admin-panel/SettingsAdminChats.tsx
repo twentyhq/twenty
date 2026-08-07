@@ -33,6 +33,7 @@ export const SettingsAdminChats = () => {
     totalCount,
     hasMore,
     loading,
+    isShowMoreDisabled,
     error,
     handleShowMore,
   } = useAdminChatThreads();
@@ -82,7 +83,7 @@ export const SettingsAdminChats = () => {
                 title={t`Show more`}
                 Icon={IconDotsVertical}
                 onClick={handleShowMore}
-                disabled={loading}
+                disabled={isShowMoreDisabled}
                 size="small"
                 variant="secondary"
               />

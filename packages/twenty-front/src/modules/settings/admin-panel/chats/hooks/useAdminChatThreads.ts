@@ -64,7 +64,15 @@ export const useAdminChatThreads = () => {
   const totalCount = data?.getAdminChatThreads.totalCount ?? 0;
   const hasMore = data?.getAdminChatThreads.hasMore ?? false;
 
+  // Until the debounce catches up the query still holds the previous search, so
+  // a page fetched now would be merged into the results of the next one.
+  const isShowMoreDisabled = loading || searchQuery !== debouncedSearchQuery;
+
   const handleShowMore = async () => {
+    if (isShowMoreDisabled) {
+      return;
+    }
+
     try {
       await fetchMore({
         variables: {
@@ -107,6 +115,7 @@ export const useAdminChatThreads = () => {
     totalCount,
     hasMore,
     loading,
+    isShowMoreDisabled,
     error,
     handleShowMore,
   };
