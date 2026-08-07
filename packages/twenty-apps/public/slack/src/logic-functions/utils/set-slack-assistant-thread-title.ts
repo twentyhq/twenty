@@ -1,6 +1,5 @@
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 
-// Best-effort: a missing title never fails the run
 export const setSlackAssistantThreadTitle = async ({
   slackChannelId,
   threadTimestamp,

@@ -1,7 +1,5 @@
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 
-// Best-effort: the status is cosmetic and auto-expires, so failures never
-// block the run
 export const setSlackAssistantStatus = async ({
   slackChannelId,
   threadTimestamp,

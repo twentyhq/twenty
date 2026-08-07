@@ -10,8 +10,6 @@ type SlackAssistantRequestFailureResult = {
   reason: string;
 };
 
-// The failure text posts as a thread reply, which also clears the thread's
-// thinking status
 export const finishSlackAssistantRequestWithFailure = async ({
   client,
   requestId,
