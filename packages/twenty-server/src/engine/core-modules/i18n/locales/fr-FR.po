@@ -8022,6 +8022,12 @@ msgstr "La valeur de {fieldLabel} est déjà utilisée. Veuillez vérifier vos d
 msgid "This action is currently unavailable."
 msgstr ""
 
+#. js-lingui-id: jrTmnG
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This action is not available for your request."
+msgstr ""
+
 #. js-lingui-id: 4CW4iW
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This address cannot be removed from the suppression list."
@@ -8771,6 +8777,7 @@ msgstr "L'utilisateur a déjà un rôle attribué."
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 msgid "User does not have access to this workspace"
 msgstr "L'utilisateur n'a pas accès à cet espace de travail"
 
@@ -8803,6 +8810,7 @@ msgstr "L'ID de l'utilisateur est requis."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
 msgid "User is not a member of the workspace."
@@ -9680,6 +9688,7 @@ msgid "Workspace member name"
 msgstr "Nom du membre de l'espace de travail"
 
 #. js-lingui-id: rnnLQA
+#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Membre de l'espace de travail introuvable."
