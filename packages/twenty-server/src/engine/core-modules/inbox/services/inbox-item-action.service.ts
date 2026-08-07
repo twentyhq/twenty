@@ -163,7 +163,7 @@ export class InboxItemActionService {
     input?: InboxItemPayload;
   }): void {
     const missingField = action.inputSchema
-      ?.filter((field) => field.isRequired === true)
+      ?.filter((field) => field.isRequired)
       .find((field) => {
         const value = input?.[field.key];
 
