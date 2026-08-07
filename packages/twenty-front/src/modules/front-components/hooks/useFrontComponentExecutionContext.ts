@@ -3,10 +3,12 @@ import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveO
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
+  type FrontComponentStorageNamespace,
+  frontComponentStorageService,
 } from 'twenty-front-component-renderer';
 import {
   AppPath,
@@ -49,17 +51,20 @@ const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
+  applicationId,
   commandMenuItemId,
   selectedRecordIds,
   colorScheme,
 }: {
   frontComponentId: string;
+  applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  storageNamespace?: FrontComponentStorageNamespace;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
@@ -361,6 +366,54 @@ export const useFrontComponentExecutionContext = ({
       );
     };
 
+  const currentUserId = currentUser?.id;
+
+  const storageNamespace = useMemo(
+    () =>
+      isDefined(currentUserId)
+        ? { applicationId, userId: currentUserId }
+        : undefined,
+    [applicationId, currentUserId],
+  );
+
+  const requireStorageNamespace = (): FrontComponentStorageNamespace => {
+    if (!isDefined(storageNamespace)) {
+      throw new Error('Device storage requires a signed-in user');
+    }
+
+    return storageNamespace;
+  };
+
+  const storageSet: FrontComponentHostCommunicationApi['storageSet'] = async (
+    area,
+    key,
+    serializedValue,
+  ) => {
+    frontComponentStorageService.set({
+      ...requireStorageNamespace(),
+      area,
+      key,
+      serializedValue,
+    });
+  };
+
+  const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
+    async (area, key) => {
+      frontComponentStorageService.delete({
+        ...requireStorageNamespace(),
+        area,
+        key,
+      });
+    };
+
+  const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
+    async (area) => {
+      frontComponentStorageService.clear({
+        ...requireStorageNamespace(),
+        area,
+      });
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -372,10 +425,14 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      storageSet,
+      storageDelete,
+      storageClear,
     };
 
   return {
     executionContext,
     frontComponentHostCommunicationApi,
+    storageNamespace,
   };
 };

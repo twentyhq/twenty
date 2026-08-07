@@ -134,6 +134,8 @@ export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
 export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
+export { frontComponentStorageService } from './host/utils/frontComponentStorageService';
+export type { FrontComponentStorageNamespace } from './types/FrontComponentStorageNamespace';
 export type { ElementGeometrySnapshot } from './types/ElementGeometrySnapshot';
 export type { ViewportGeometrySnapshot } from './types/ViewportGeometrySnapshot';
 export type { GeometryUpdateBatch } from './types/GeometryUpdateBatch';

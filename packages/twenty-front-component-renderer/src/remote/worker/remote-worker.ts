@@ -16,9 +16,11 @@ import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLo
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { installStorageShims } from '@/polyfills/storage/utils/installStorageShims';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
+import { frontComponentStorageBridges } from '@/remote/worker/frontComponentStorageBridges';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
 import { installErrorEventBridge } from '@/remote/worker/utils/installErrorEventBridge';
@@ -51,6 +53,11 @@ installWindowGeometryPolyfill({
   geometryStore: workerGeometryStore,
 });
 
+installStorageShims({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  storageBridges: frontComponentStorageBridges,
+});
+
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
@@ -76,6 +83,10 @@ const workerExports: WorkerExports = {
         hostThread.imports,
       ),
     );
+
+    for (const storageBridge of Object.values(frontComponentStorageBridges)) {
+      storageBridge.flushPendingPersistOperations();
+    }
   },
   updateContext: async (context) => {
     setFrontComponentExecutionContext(context);

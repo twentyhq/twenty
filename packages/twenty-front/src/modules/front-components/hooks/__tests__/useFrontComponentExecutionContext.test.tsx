@@ -37,6 +37,10 @@ const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
+const mockStorageSnapshot = jest.fn();
+const mockStorageSet = jest.fn();
+const mockStorageDelete = jest.fn();
+const mockStorageClear = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
@@ -140,6 +144,15 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   }),
 }));
 
+jest.mock('twenty-front-component-renderer', () => ({
+  frontComponentStorageService: {
+    snapshot: (...args: unknown[]) => mockStorageSnapshot(...args),
+    set: (...args: unknown[]) => mockStorageSet(...args),
+    delete: (...args: unknown[]) => mockStorageDelete(...args),
+    clear: (...args: unknown[]) => mockStorageClear(...args),
+  },
+}));
+
 jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
   setRecordPageActiveTabId: (params: unknown) =>
     mockSetRecordPageActiveTabId(params),
@@ -148,18 +161,23 @@ jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
 const renderUseFrontComponentExecutionContext = (
   params: Omit<
     Parameters<typeof useFrontComponentExecutionContext>[0],
-    'colorScheme'
-  > & { colorScheme?: 'light' | 'dark' },
+    'colorScheme' | 'applicationId'
+  > & { colorScheme?: 'light' | 'dark'; applicationId?: string },
 ) =>
   renderHook(
     () =>
-      useFrontComponentExecutionContext({ colorScheme: 'light', ...params }),
+      useFrontComponentExecutionContext({
+        colorScheme: 'light',
+        applicationId: APPLICATION_ID,
+        ...params,
+      }),
     {
       wrapper: ({ children }) => I18nProvider({ i18n, children }),
     },
   );
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
+const APPLICATION_ID = 'application-test-id';
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 
 const parentViewAtom =
@@ -917,6 +935,113 @@ describe('useFrontComponentExecutionContext', () => {
       );
 
       dateNowSpy.mockRestore();
+    });
+  });
+
+  describe('storage', () => {
+    it('should namespace writes by application, user and area', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.storageSet(
+          'local',
+          'theme',
+          '"dark"',
+        );
+        await result.current.frontComponentHostCommunicationApi.storageSet(
+          'session',
+          'visits',
+          '2',
+        );
+      });
+
+      expect(mockStorageSet).toHaveBeenCalledWith({
+        applicationId: APPLICATION_ID,
+        userId: 'user-123',
+        area: 'local',
+        key: 'theme',
+        serializedValue: '"dark"',
+      });
+      expect(mockStorageSet).toHaveBeenCalledWith({
+        applicationId: APPLICATION_ID,
+        userId: 'user-123',
+        area: 'session',
+        key: 'visits',
+        serializedValue: '2',
+      });
+    });
+
+    it('should return the namespace used to seed the worker', () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      expect(result.current.storageNamespace).toEqual({
+        applicationId: APPLICATION_ID,
+        userId: 'user-123',
+      });
+    });
+
+    it('should keep the namespace referentially stable across renders', () => {
+      const { result, rerender } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const firstNamespace = result.current.storageNamespace;
+
+      rerender();
+
+      expect(result.current.storageNamespace).toBe(firstNamespace);
+    });
+
+    it('should forward delete and clear to the namespaced service', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.storageDelete(
+          'local',
+          'theme',
+        );
+        await result.current.frontComponentHostCommunicationApi.storageClear(
+          'session',
+        );
+      });
+
+      expect(mockStorageDelete).toHaveBeenCalledWith({
+        applicationId: APPLICATION_ID,
+        userId: 'user-123',
+        area: 'local',
+        key: 'theme',
+      });
+      expect(mockStorageClear).toHaveBeenCalledWith({
+        applicationId: APPLICATION_ID,
+        userId: 'user-123',
+        area: 'session',
+      });
+    });
+
+    it('should reject writes and expose no namespace when signed out', async () => {
+      mockCurrentUser = null;
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      expect(result.current.storageNamespace).toBeUndefined();
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.storageSet(
+          'local',
+          'theme',
+          '"dark"',
+        ),
+      ).rejects.toThrow('Device storage requires a signed-in user');
+
+      expect(mockStorageSet).not.toHaveBeenCalled();
     });
   });
 });
