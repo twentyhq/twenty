@@ -15,7 +15,10 @@ export const postSlackMessage = async (
 
   return await sendSlackMessageWithBodyFallbacks({
     messageText: parameters.messageText,
-    messageBody: { messageFormat: parameters.messageFormat },
+    messageBody: {
+      messageFormat: parameters.messageFormat,
+      messageBlocks: parameters.messageBlocks,
+    },
     failureMessage: 'Failed to post Slack message',
     sendMessage: async (bodyFields) => {
       const data = await client.chat.postMessage({
