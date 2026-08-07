@@ -2,6 +2,7 @@ import { type SlackPostEphemeralMessageInput } from 'src/logic-functions/types/s
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { normalizeSlackParentMessageTimestamp } from 'src/logic-functions/utils/normalize-slack-parent-message-timestamp';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
 export const slackPostEphemeralMessageHandler = async (
@@ -19,15 +20,20 @@ export const slackPostEphemeralMessageHandler = async (
 
   const { client } = slackClientResult;
 
+  const parentTimestamp = normalizeSlackParentMessageTimestamp(
+    parameters.parentMessageTimestamp,
+  );
+
   try {
-    const bodyFields = getSlackChatMessageBodyFields(
-      parameters.messageText,
-      parameters.messageFormat,
-    );
+    const bodyFields = getSlackChatMessageBodyFields({
+      messageText: parameters.messageText,
+      messageFormat: parameters.messageFormat,
+    });
 
     const postEphemeralPayload = {
       channel: parameters.slackChannelId,
       user: parameters.recipientSlackUserId,
+      thread_ts: parentTimestamp,
       ...bodyFields,
     };
 

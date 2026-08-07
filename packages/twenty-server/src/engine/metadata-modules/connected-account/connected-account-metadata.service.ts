@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
@@ -95,8 +96,7 @@ export class ConnectedAccountMetadataService {
     }
 
     if (
-      connectedAccount.visibility !== 'workspace' &&
-      connectedAccount.userWorkspaceId !== userWorkspaceId
+      !isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId })
     ) {
       throw new ConnectedAccountException(
         `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,

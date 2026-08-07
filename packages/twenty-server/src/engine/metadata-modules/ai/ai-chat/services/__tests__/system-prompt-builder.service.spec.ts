@@ -71,4 +71,37 @@ describe('SystemPromptBuilderService', () => {
       expect(result.endsWith('\n')).toBe(false);
     });
   });
+
+  describe('buildWorkspaceInstructionsSection', () => {
+    it('projects canonical TipTap JSON to Markdown', () => {
+      const result = buildService().buildWorkspaceInstructionsSection(
+        JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: 1 },
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 2 },
+              content: [{ type: 'text', text: 'Sales rules' }],
+            },
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Be concise.' }],
+            },
+          ],
+        }),
+      );
+
+      expect(result).toContain('## Sales rules\n\nBe concise.');
+      expect(result).not.toContain('"type":"doc"');
+    });
+
+    it('omits an empty canonical document', () => {
+      expect(
+        buildService().buildWorkspaceInstructionsSection(
+          JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 } }),
+        ),
+      ).toBe('');
+    });
+  });
 });

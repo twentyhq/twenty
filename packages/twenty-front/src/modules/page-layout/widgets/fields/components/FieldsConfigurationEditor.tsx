@@ -18,16 +18,16 @@ import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/
 import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
 import { type FieldsConfigurationDndData } from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
 import { type FieldsConfigurationGroupDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupDragData';
-import { type FieldsConfigurationGroupListEndDropData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupListEndDropData';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { IconNewSection } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -40,10 +40,6 @@ const StyledGroupsDroppable = styled.div`
 const StyledAddGroupButtonContainer = styled.div`
   border: 1px solid transparent;
 `;
-
-const GROUPS_END_DROP_DATA: FieldsConfigurationGroupListEndDropData = {
-  type: 'group-list-end',
-};
 
 type FieldsConfigurationEditorProps = {
   pageLayoutId: string;
@@ -81,12 +77,11 @@ export const FieldsConfigurationEditor = ({
     widgetId,
   });
 
-  const { draggingGroupId, handlers } = useFieldsConfigurationEditorDragAndDrop(
-    {
+  const { draggingGroupId, contextValues, handlers } =
+    useFieldsConfigurationEditorDragAndDrop({
       pageLayoutId,
       widgetId,
-    },
-  );
+    });
 
   const { toggleFieldVisibility } = useToggleFieldVisibilityInDraft({
     pageLayoutId,
@@ -165,55 +160,70 @@ export const FieldsConfigurationEditor = ({
   }
 
   return (
-    <DragDropProvider<FieldsConfigurationDndData>
-      sensors={DND_KIT_SENSORS}
-      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-      onDragStart={handlers.onDragStart}
-      onDragEnd={handlers.onDragEnd}
-    >
-      <StyledGroupsDroppable>
-        {sortedGroups.map((group, index) => {
-          const groupDragData: FieldsConfigurationGroupDragData = {
-            type: 'group',
-            groupId: group.id,
-            index,
-          };
+    <DragDropItemDndContext.Provider value={contextValues}>
+      <DragDropProvider<FieldsConfigurationDndData>
+        sensors={DND_KIT_SENSORS}
+        plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
+        onDragStart={handlers.onDragStart}
+        onDragMove={handlers.onDragMove}
+        onDragEnd={handlers.onDragEnd}
+      >
+        <StyledGroupsDroppable>
+          {sortedGroups.map((group, index) => {
+            const groupDragData: FieldsConfigurationGroupDragData = {
+              type: 'group',
+              groupId: group.id,
+              index,
+            };
 
-          return (
-            <DragDropItemSortableCell
-              key={group.id}
-              id={group.id}
-              index={index}
-              group={FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID}
-              data={groupDragData}
-              type={FIELDS_CONFIGURATION_GROUP_DND_TYPE}
-              accept={FIELDS_CONFIGURATION_GROUP_DND_TYPE}
-              hasTransition={false}
-              dropLine="horizontal"
-            >
-              <FieldsConfigurationGroupEditor
-                group={group}
-                objectMetadataItem={objectMetadataItem}
-                isDragging={draggingGroupId === group.id}
-                onAddGroup={() => handleAddGroup({ afterGroupId: group.id })}
-                onToggleFieldVisibility={(fieldMetadataId) =>
-                  toggleFieldVisibility(group.id, fieldMetadataId)
-                }
-                onRenameGroup={handleRenameGroup}
-                onDeleteGroup={handleDeleteGroup}
-                renamingGroupValue={renamingGroupValue}
-                onRenamingGroupValueChange={setRenamingGroupValue}
-                onStartRename={handleStartRename}
-              />
-            </DragDropItemSortableCell>
-          );
-        })}
+            return (
+              <Fragment key={group.id}>
+                <DragDropItemDropTarget
+                  index={index}
+                  droppableId={FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID}
+                  orientation="horizontal"
+                  compact
+                  seamAligned
+                />
+                <DragDropItemSortableCell
+                  id={group.id}
+                  index={index}
+                  group={FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID}
+                  data={groupDragData}
+                  type={FIELDS_CONFIGURATION_GROUP_DND_TYPE}
+                  accept={FIELDS_CONFIGURATION_GROUP_DND_TYPE}
+                  hasTransition={false}
+                  orientation="horizontal"
+                >
+                  <FieldsConfigurationGroupEditor
+                    group={group}
+                    objectMetadataItem={objectMetadataItem}
+                    isDragging={draggingGroupId === group.id}
+                    onAddGroup={() =>
+                      handleAddGroup({ afterGroupId: group.id })
+                    }
+                    onToggleFieldVisibility={(fieldMetadataId) =>
+                      toggleFieldVisibility(group.id, fieldMetadataId)
+                    }
+                    onRenameGroup={handleRenameGroup}
+                    onDeleteGroup={handleDeleteGroup}
+                    renamingGroupValue={renamingGroupValue}
+                    onRenamingGroupValueChange={setRenamingGroupValue}
+                    onStartRename={handleStartRename}
+                  />
+                </DragDropItemSortableCell>
+              </Fragment>
+            );
+          })}
 
-        <DragDropItemEndDropZone
-          id={`${FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID}-end`}
-          accept={FIELDS_CONFIGURATION_GROUP_DND_TYPE}
-          data={GROUPS_END_DROP_DATA}
-        >
+          <DragDropItemDropTarget
+            index={sortedGroups.length}
+            droppableId={FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID}
+            orientation="horizontal"
+            compact
+            seamAligned
+          />
+
           <StyledAddGroupButtonContainer>
             <MenuItem
               LeftIcon={IconNewSection}
@@ -223,8 +233,8 @@ export const FieldsConfigurationEditor = ({
               withIconContainerBackground={false}
             />
           </StyledAddGroupButtonContainer>
-        </DragDropItemEndDropZone>
-      </StyledGroupsDroppable>
-    </DragDropProvider>
+        </StyledGroupsDroppable>
+      </DragDropProvider>
+    </DragDropItemDndContext.Provider>
   );
 };

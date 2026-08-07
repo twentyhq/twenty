@@ -212,6 +212,8 @@ export type {
   EmailThreadConfiguration,
   MessageCampaignBodyConfiguration,
   MessageCampaignDetailsConfiguration,
+  CallRecordingSummaryConfiguration,
+  CallRecordingTranscriptConfiguration,
   CalendarConfiguration,
   WorkflowConfiguration,
   WorkflowVersionConfiguration,

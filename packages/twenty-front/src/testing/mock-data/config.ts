@@ -16,6 +16,7 @@ export const mockedClientConfig: ClientConfig = {
   },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
+  subdomainMinLength: 3,
   analyticsEnabled: true,
   support: {
     supportDriver: SupportDriver.FRONT,
@@ -68,4 +69,6 @@ export const mockedClientConfig: ClientConfig = {
   isClickHouseConfigured: false,
   isWorkspaceSchemaDDLLocked: false,
   isOnboardingAiChatEnabled: false,
+  isBookCallOnboardingStepEnabled: false,
+  isCompanyEnrichmentEnabled: false,
 };

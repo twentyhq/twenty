@@ -11,14 +11,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   CREDENTIALS_DURATION_IN_SECONDS,
+  LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS,
   LAMBDA_CLIENT_MAX_ATTEMPTS,
+  LAMBDA_CLIENT_MAX_SOCKETS,
+  LAMBDA_CLIENT_REQUEST_TIMEOUT_MS,
   LAMBDA_CLIENT_RETRY_MODE,
   UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 export class LambdaAwsClientService {
   private lambdaClient: Lambda | undefined;
+  private s3Client: S3Client | undefined;
+  private stsClient: STSClient | undefined;
   private assumeRoleCredentials:
     | { accessKeyId: string; secretAccessKey: string; sessionToken: string }
     | undefined;
@@ -39,22 +45,40 @@ export class LambdaAwsClientService {
         }),
         maxAttempts: LAMBDA_CLIENT_MAX_ATTEMPTS,
         retryMode: LAMBDA_CLIENT_RETRY_MODE,
+        requestHandler: buildAwsRequestHandlerOptions({
+          requestTimeoutMs: LAMBDA_CLIENT_REQUEST_TIMEOUT_MS,
+          connectionTimeoutMs: LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS,
+          maxSockets: LAMBDA_CLIENT_MAX_SOCKETS,
+        }),
       });
     }
 
     return this.lambdaClient;
   }
 
+  private async getS3Client(): Promise<S3Client> {
+    if (
+      !isDefined(this.s3Client) ||
+      (isDefined(this.options.subhostingRole) &&
+        this.areAssumeRoleCredentialsExpired())
+    ) {
+      this.s3Client = new S3Client({
+        region: this.options.layerBucketRegion,
+        credentials: isDefined(this.options.subhostingRole)
+          ? await this.getAssumeRoleCredentials()
+          : this.options.credentials,
+        requestHandler: buildAwsRequestHandlerOptions(),
+      });
+    }
+
+    return this.s3Client;
+  }
+
   async generatePresignedUploadUrl(
     s3Key: string,
     expiresIn: number = 300,
   ): Promise<string> {
-    const s3Client = new S3Client({
-      region: this.options.layerBucketRegion,
-      credentials: isDefined(this.options.subhostingRole)
-        ? await this.getAssumeRoleCredentials()
-        : this.options.credentials,
-    });
+    const s3Client = await this.getS3Client();
 
     const putCommand = new PutObjectCommand({
       Bucket: this.options.layerBucket,
@@ -107,7 +131,12 @@ export class LambdaAwsClientService {
   }
 
   private async refreshAssumeRoleCredentials() {
-    const stsClient = new STSClient({ region: this.options.region });
+    this.stsClient ??= new STSClient({
+      region: this.options.region,
+      requestHandler: buildAwsRequestHandlerOptions(),
+    });
+
+    const stsClient = this.stsClient;
 
     const assumeRoleCommand = new AssumeRoleCommand({
       RoleArn: this.options.subhostingRole,
@@ -137,6 +166,7 @@ export class LambdaAwsClientService {
     );
 
     this.lambdaClient = undefined;
+    this.s3Client = undefined;
   }
 
   private async getAssumeRoleCredentials() {

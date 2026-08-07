@@ -6,15 +6,17 @@ import { FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID } from '@/page-layout/widgets/
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
 import { type FieldsConfigurationDndData } from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
-import { type FieldsConfigurationFieldDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldDragData';
-import { type FieldsConfigurationGroupDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupDragData';
+import { type DragDropItemDndContextValue } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type DragStartEvent =
   DragDropProviderDragStartEvent<FieldsConfigurationDndData>;
+type DragMoveEvent = DragDropProviderDragMoveEvent<FieldsConfigurationDndData>;
 type DragEndEvent = DragDropProviderDragEndEvent<FieldsConfigurationDndData>;
 
 type UseFieldsConfigurationEditorDragAndDropParams = {
@@ -33,6 +35,8 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
 
   const draftGroups = fieldsWidgetGroupsDraft[widgetId] ?? [];
 
+  const sortedGroups = [...draftGroups].sort((a, b) => a.position - b.position);
+
   const { reorderGroups } = useReorderFieldsWidgetEditorGroups({
     pageLayoutId,
     widgetId,
@@ -44,44 +48,48 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
   });
 
   const [draggingGroupId, setDraggingGroupId] = useState<string | null>(null);
+  const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
+    number | null
+  >(null);
+  const [activeDroppableId, setActiveDroppableId] = useState<string | null>(
+    null,
+  );
 
-  const handleGroupDrop = ({
-    sourceData,
-    targetData,
-  }: {
-    sourceData: FieldsConfigurationGroupDragData;
-    targetData: FieldsConfigurationDndData;
-  }) => {
-    const sortedGroups = [...draftGroups].sort(
-      (a, b) => a.position - b.position,
-    );
-
-    // The drop line renders before the hovered group, so group targets insert
-    // the dragged group before them; the end drop zone appends it.
-    const dropTargetIndex =
-      targetData.type === 'group'
-        ? targetData.index
-        : targetData.type === 'group-list-end'
-          ? sortedGroups.length
-          : null;
-
-    if (!isDefined(dropTargetIndex)) {
-      return;
+  const getDroppableItemCount = (droppableId: string) => {
+    if (droppableId === FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID) {
+      return sortedGroups.length;
     }
 
+    const group = draftGroups.find((candidate) => candidate.id === droppableId);
+
+    return group?.fields.length ?? 0;
+  };
+
+  const clearActiveDropTarget = () => {
+    setActiveDropTargetIndex(null);
+    setActiveDroppableId(null);
+  };
+
+  const handleGroupDrop = ({
+    sourceIndex,
+    dropTargetIndex,
+  }: {
+    sourceIndex: number;
+    dropTargetIndex: number;
+  }) => {
     const destinationIndex = getDestinationIndex({
       dropTargetIndex,
-      sourceIndex: sourceData.index,
+      sourceIndex,
       sourceDroppableId: FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID,
       destinationDroppableId: FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID,
     });
 
-    if (destinationIndex === sourceData.index) {
+    if (destinationIndex === sourceIndex) {
       return;
     }
 
     const reorderedGroupIds = sortedGroups.map((group) => group.id);
-    const [movedGroupId] = reorderedGroupIds.splice(sourceData.index, 1);
+    const [movedGroupId] = reorderedGroupIds.splice(sourceIndex, 1);
     reorderedGroupIds.splice(destinationIndex, 0, movedGroupId);
 
     reorderGroups(reorderedGroupIds);
@@ -89,39 +97,30 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
 
   const handleFieldDrop = ({
     sourceData,
-    targetData,
+    destinationGroupId,
+    dropTargetIndex,
   }: {
-    sourceData: FieldsConfigurationFieldDragData;
-    targetData: FieldsConfigurationDndData;
+    sourceData: FieldsConfigurationDndData & { type: 'field' };
+    destinationGroupId: string;
+    dropTargetIndex: number;
   }) => {
-    if (targetData.type !== 'field' && targetData.type !== 'field-list-end') {
-      return;
-    }
-
     const destinationGroup = draftGroups.find(
-      (group) => group.id === targetData.groupId,
+      (group) => group.id === destinationGroupId,
     );
 
     if (!isDefined(destinationGroup)) {
       return;
     }
 
-    // The drop line renders before the hovered field, so field targets insert
-    // the dragged field before them; the end drop zone appends it to the group.
-    const dropTargetIndex =
-      targetData.type === 'field'
-        ? targetData.index
-        : destinationGroup.fields.length;
-
     const destinationIndex = getDestinationIndex({
       dropTargetIndex,
       sourceIndex: sourceData.index,
       sourceDroppableId: sourceData.groupId,
-      destinationDroppableId: targetData.groupId,
+      destinationDroppableId: destinationGroupId,
     });
 
     if (
-      targetData.groupId === sourceData.groupId &&
+      destinationGroupId === sourceData.groupId &&
       destinationIndex === sourceData.index
     ) {
       return;
@@ -129,13 +128,15 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
 
     moveField(
       sourceData.groupId,
-      targetData.groupId,
+      destinationGroupId,
       sourceData.index,
       destinationIndex,
     );
   };
 
   const onDragStart = (event: DragStartEvent) => {
+    clearActiveDropTarget();
+
     const sourceData = event.operation.source?.data as
       | FieldsConfigurationDndData
       | undefined;
@@ -145,29 +146,66 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
     }
   };
 
+  const onDragMove = (event: DragMoveEvent) => {
+    const resolvedDrop = resolveDropFromPointer({
+      target: event.operation.target,
+      pointer: event.operation.position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount,
+    });
+
+    setActiveDropTargetIndex(resolvedDrop?.dropTargetIndex ?? null);
+    setActiveDroppableId(resolvedDrop?.droppableId ?? null);
+  };
+
   const onDragEnd = (event: DragEndEvent) => {
     setDraggingGroupId(null);
+    clearActiveDropTarget();
 
     const sourceData = event.operation.source?.data as
       | FieldsConfigurationDndData
       | undefined;
-    const targetData = event.operation.target?.data as
-      | FieldsConfigurationDndData
-      | undefined;
 
-    if (event.canceled || !isDefined(sourceData) || !isDefined(targetData)) {
+    if (event.canceled || !isDefined(sourceData)) {
       return;
     }
 
-    if (sourceData.type === 'group') {
-      handleGroupDrop({ sourceData, targetData });
-    } else if (sourceData.type === 'field') {
-      handleFieldDrop({ sourceData, targetData });
+    const resolvedDrop = resolveDropFromPointer({
+      target: event.operation.target,
+      pointer: event.operation.position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount,
+    });
+
+    if (!isDefined(resolvedDrop)) {
+      return;
     }
+
+    if (
+      sourceData.type === 'group' &&
+      resolvedDrop.droppableId === FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID
+    ) {
+      handleGroupDrop({
+        sourceIndex: sourceData.index,
+        dropTargetIndex: resolvedDrop.dropTargetIndex,
+      });
+    } else if (sourceData.type === 'field') {
+      handleFieldDrop({
+        sourceData,
+        destinationGroupId: resolvedDrop.droppableId,
+        dropTargetIndex: resolvedDrop.dropTargetIndex,
+      });
+    }
+  };
+
+  const contextValues: DragDropItemDndContextValue = {
+    activeDropTargetIndex,
+    activeDroppableId,
   };
 
   return {
     draggingGroupId,
-    handlers: { onDragStart, onDragEnd },
+    contextValues,
+    handlers: { onDragStart, onDragMove, onDragEnd },
   };
 };

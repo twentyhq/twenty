@@ -447,27 +447,34 @@ describe('UserSessionService', () => {
     });
   });
 
-  describe('revokeSessionByIdForUser', () => {
-    it('should scope the lookup to the requesting user', async () => {
+  describe('revokeSessionByIdForUserWorkspace', () => {
+    it('should scope the lookup to the requesting user and workspace', async () => {
       const sessionId = randomUUID();
       const userId = randomUUID();
+      const workspaceId = randomUUID();
       const findOneBySpy = jest
         .spyOn(userSessionRepository, 'findOneBy')
         .mockResolvedValue(null);
 
       await expect(
-        service.revokeSessionByIdForUser({
+        service.revokeSessionByIdForUserWorkspace({
           sessionId,
           userId,
+          workspaceId,
           reason: UserSessionRevokedReason.UserRevoked,
         }),
       ).rejects.toThrow('Session not found');
 
-      expect(findOneBySpy).toHaveBeenCalledWith({ id: sessionId, userId });
+      expect(findOneBySpy).toHaveBeenCalledWith({
+        id: sessionId,
+        userId,
+        workspaceId,
+      });
     });
 
     it('should revoke a session the user owns and drop its cache entry', async () => {
       const userId = randomUUID();
+      const workspaceId = randomUUID();
       const session = buildActiveSession({ userId, tokenHash: 'owned-hash' });
 
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
@@ -475,9 +482,10 @@ describe('UserSessionService', () => {
         .spyOn(userSessionRepository, 'update')
         .mockResolvedValue({ affected: 1 } as never);
 
-      const wasRevoked = await service.revokeSessionByIdForUser({
+      const wasRevoked = await service.revokeSessionByIdForUserWorkspace({
         sessionId: session.id,
         userId,
+        workspaceId,
         reason: UserSessionRevokedReason.UserRevoked,
       });
 
@@ -568,6 +576,42 @@ describe('UserSessionService', () => {
       expect(queryBuilder.andWhere).not.toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({ exceptSessionId: expect.anything() }),
+      );
+    });
+
+    it('should narrow to one workspace when given one, and stay account-wide otherwise', async () => {
+      const userId = randomUUID();
+      const workspaceId = randomUUID();
+
+      const scopedQueryBuilder = mockRevokingQueryBuilder([
+        buildActiveSession({ userId, tokenHash: 'hash' }),
+      ]);
+
+      await service.revokeAllSessionsForUser({
+        userId,
+        workspaceId,
+        reason: UserSessionRevokedReason.UserRevoked,
+      });
+
+      expect(scopedQueryBuilder.andWhere).toHaveBeenCalledWith(
+        expect.any(String),
+        { workspaceId },
+      );
+
+      const accountWideQueryBuilder = mockRevokingQueryBuilder([
+        buildActiveSession({ userId, tokenHash: 'hash' }),
+      ]);
+
+      // Password change must reach every workspace, so an absent workspaceId
+      // has to stay unscoped rather than defaulting to one.
+      await service.revokeAllSessionsForUser({
+        userId,
+        reason: UserSessionRevokedReason.PasswordChanged,
+      });
+
+      expect(accountWideQueryBuilder.andWhere).not.toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ workspaceId: expect.anything() }),
       );
     });
 

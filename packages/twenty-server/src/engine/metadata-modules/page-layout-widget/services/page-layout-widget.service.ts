@@ -29,6 +29,7 @@ import {
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
+import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -121,7 +122,7 @@ export class PageLayoutWidgetService {
     }
   }
 
-  private async validateChartFieldReferences({
+  private async validateConfigurationFieldReferences({
     configuration,
     objectMetadataId,
     widgetTitle,
@@ -146,6 +147,13 @@ export class PageLayoutWidgetService {
       widgetTitle,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+    });
+
+    validateFieldConfigurationNestedRelationOrThrow({
+      widgetConfiguration: configuration,
+      widgetObjectMetadataId: objectMetadataId,
+      widgetTitle,
+      flatFieldMetadataMaps,
     });
   }
 
@@ -259,7 +267,7 @@ export class PageLayoutWidgetService {
       });
 
     if (isDefined(createInput.configuration)) {
-      await this.validateChartFieldReferences({
+      await this.validateConfigurationFieldReferences({
         configuration: createInput.configuration,
         objectMetadataId: createInput.objectMetadataId ?? null,
         widgetTitle: createInput.title,
@@ -378,12 +386,12 @@ export class PageLayoutWidgetService {
           workspaceCustomFlatApplication.universalIdentifier,
       });
 
-    const shouldValidateChartFields =
+    const shouldValidateConfigurationFields =
       isConfigurationBeingUpdated ||
       Object.prototype.hasOwnProperty.call(updateData, 'objectMetadataId') ||
       Object.prototype.hasOwnProperty.call(updateData, 'type');
 
-    if (shouldValidateChartFields) {
+    if (shouldValidateConfigurationFields) {
       const isObjectMetadataIdBeingUpdated =
         Object.prototype.hasOwnProperty.call(updateData, 'objectMetadataId');
       const effectiveConfiguration = isConfigurationBeingUpdated
@@ -396,7 +404,7 @@ export class PageLayoutWidgetService {
         processedUpdateData.title ?? existingWidget.title;
 
       if (isDefined(effectiveConfiguration)) {
-        await this.validateChartFieldReferences({
+        await this.validateConfigurationFieldReferences({
           configuration: effectiveConfiguration,
           objectMetadataId: effectiveObjectMetadataId,
           widgetTitle: effectiveWidgetTitle,

@@ -35,7 +35,7 @@ export const TooShortSubdomain: Story = {
     await userEvent.type(input, 'ab');
 
     const errorMessage = await canvas.findByText(
-      'Subdomain can not be shorter than 3 characters',
+      'Subdomain cannot be shorter than 3 characters',
     );
 
     await expect(errorMessage).toBeVisible();
