@@ -1,5 +1,5 @@
 const BLOCKED_ELEMENT_SELECTOR =
-  'script, iframe, frame, object, embed, link, meta, base, style, svg, math';
+  'script, iframe, frame, object, embed, link, meta, base, style, svg, math, template';
 
 const URL_ATTRIBUTE_NAMES = ['href', 'src', 'xlink:href', 'action'];
 
