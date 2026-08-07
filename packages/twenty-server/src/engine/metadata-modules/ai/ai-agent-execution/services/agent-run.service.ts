@@ -5,13 +5,16 @@ import {
   type RunAgentMessage,
   type RunAgentResult,
 } from 'twenty-shared/application';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
@@ -25,6 +28,7 @@ type RunAgentServiceInput = {
   agentUniversalIdentifier: string;
   prompt?: string | null;
   messages?: RunAgentMessage[] | null;
+  runAsWorkspaceMemberId?: string;
 };
 
 @Injectable()
@@ -32,6 +36,7 @@ export class AgentRunService {
   private readonly logger = new Logger(AgentRunService.name);
 
   constructor(
+    private readonly agentActorContextService: AgentActorContextService,
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly applicationService: ApplicationService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -41,10 +46,14 @@ export class AgentRunService {
   async run({
     workspace,
     requestUserWorkspaceId,
+    requestWorkspaceMemberId,
+    callerApplication,
     input,
   }: {
     workspace: FlatWorkspace;
     requestUserWorkspaceId: string | null;
+    requestWorkspaceMemberId: string | null;
+    callerApplication?: FlatApplication;
     input: RunAgentServiceInput;
   }): Promise<RunAgentResult> {
     const prompt = input.prompt;
@@ -73,6 +82,16 @@ export class AgentRunService {
       );
     }
 
+    if (
+      isDefined(callerApplication) &&
+      agent.applicationId !== callerApplication.id
+    ) {
+      throw new AiException(
+        `Agent ${input.agentUniversalIdentifier} belongs to another application`,
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
     const application = await this.applicationService.findById(
       agent.applicationId,
     );
@@ -83,7 +102,15 @@ export class AgentRunService {
       );
     }
 
-    const authContext: WorkspaceAuthContext = {
+    const runAsContext = await this.resolveRunAsContext({
+      runAsWorkspaceMemberId: input.runAsWorkspaceMemberId,
+      callerApplication,
+      requestUserWorkspaceId,
+      requestWorkspaceMemberId,
+      workspaceId: workspace.id,
+    });
+
+    const authContext: WorkspaceAuthContext = runAsContext?.authContext ?? {
       type: 'application',
       workspace,
       application,
@@ -95,9 +122,12 @@ export class AgentRunService {
           agent,
           messages,
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+          actorContext: runAsContext?.actorContext,
           authContext,
           workspaceId: workspace.id,
-          userWorkspaceId: requestUserWorkspaceId,
+          userWorkspaceId:
+            runAsContext?.authContext.userWorkspaceId ?? requestUserWorkspaceId,
+          runAsRoleId: runAsContext?.roleId,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
         },
@@ -128,5 +158,45 @@ export class AgentRunService {
         success: false,
       };
     }
+  }
+
+  private async resolveRunAsContext({
+    runAsWorkspaceMemberId,
+    callerApplication,
+    requestUserWorkspaceId,
+    requestWorkspaceMemberId,
+    workspaceId,
+  }: {
+    runAsWorkspaceMemberId?: string;
+    callerApplication?: FlatApplication;
+    requestUserWorkspaceId: string | null;
+    requestWorkspaceMemberId: string | null;
+    workspaceId: string;
+  }): Promise<RunAsWorkspaceMemberContext | undefined> {
+    if (!isDefined(runAsWorkspaceMemberId)) {
+      return undefined;
+    }
+
+    if (!isDefined(callerApplication)) {
+      throw new AiException(
+        'Running an agent as a workspace member requires an application access token',
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
+      );
+    }
+
+    if (
+      isDefined(requestUserWorkspaceId) &&
+      requestWorkspaceMemberId !== runAsWorkspaceMemberId
+    ) {
+      throw new AiException(
+        'An application token issued for a user can only run an agent as that user',
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
+      );
+    }
+
+    return this.agentActorContextService.buildRunAsWorkspaceMemberContext({
+      workspaceMemberId: runAsWorkspaceMemberId,
+      workspaceId,
+    });
   }
 }

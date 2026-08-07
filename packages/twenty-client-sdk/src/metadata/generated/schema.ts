@@ -6939,7 +6939,7 @@ export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?:
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
-export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),messages?: (RunAgentMessageInput[] | null)}
+export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null)}
 
 export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String']}
 

@@ -5239,6 +5239,7 @@ export type RunAgentInput = {
   agentUniversalIdentifier: Scalars['String']['input'];
   messages?: InputMaybe<Array<RunAgentMessageInput>>;
   prompt?: InputMaybe<Scalars['String']['input']>;
+  runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type RunAgentMessageInput = {
