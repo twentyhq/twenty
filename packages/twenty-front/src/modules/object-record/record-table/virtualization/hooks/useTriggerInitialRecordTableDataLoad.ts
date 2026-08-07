@@ -131,7 +131,15 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       store.set(isInitializingVirtualTableDataLoadingCallbackState, true);
 
       try {
-        store.set(isRecordTableInitialLoading, true);
+        const currentRecordIds = store.get(recordIndexAllRecordIds);
+
+        // Keep the already rendered rows visible while the (often cached)
+        // fetch resolves, so navigating back to a view does not flash a skeleton
+        const tableIsEmpty = currentRecordIds.length === 0;
+
+        if (tableIsEmpty) {
+          store.set(isRecordTableInitialLoading, true);
+        }
 
         resetTableFocuses();
 
@@ -149,10 +157,16 @@ export const useTriggerInitialRecordTableDataLoad = () => {
           'hidden',
         );
 
-        const currentRecordIds = store.get(recordIndexAllRecordIds);
-
         let records: ObjectRecord[] | null = null;
         let totalCount = 0;
+
+        const { records: findManyRecords, totalCount: findManyTotalCount } =
+          await findManyRecordsLazy();
+
+        records = findManyRecords;
+        totalCount = findManyTotalCount;
+
+        const recordIdsToClear = store.get(recordIndexAllRecordIds);
 
         const newRecordIdByRealIndex = new Map(
           store.get(recordIdByRealIndexCallbackState),
@@ -161,7 +175,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
           store.get(dataLoadingStatusByRealIndexCallbackState),
         );
 
-        for (const [realIndex] of currentRecordIds.entries()) {
+        for (const [realIndex] of recordIdsToClear.entries()) {
           newDataLoadingStatusByRealIndex.set(realIndex, 'not-loaded');
           newRecordIdByRealIndex.delete(realIndex);
         }
@@ -176,12 +190,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
           recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),
           [],
         );
-
-        const { records: findManyRecords, totalCount: findManyTotalCount } =
-          await findManyRecordsLazy();
-
-        records = findManyRecords;
-        totalCount = findManyTotalCount;
 
         store.set(
           totalNumberOfRecordsToVirtualizeCallbackState,
