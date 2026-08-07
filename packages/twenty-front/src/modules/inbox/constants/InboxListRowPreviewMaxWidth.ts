@@ -1,0 +1,1 @@
+export const INBOX_LIST_ROW_PREVIEW_MAX_WIDTH = 420;

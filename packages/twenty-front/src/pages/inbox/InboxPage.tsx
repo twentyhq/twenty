@@ -6,7 +6,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { InboxTable } from '@/inbox/components/InboxTable';
+import { InboxList } from '@/inbox/components/InboxList';
 import { useInboxItems } from '@/inbox/hooks/useInboxItems';
 import { useOpenInboxItem } from '@/inbox/hooks/useOpenInboxItem';
 import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
@@ -16,13 +16,13 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { InboxItemScope } from '~/generated/graphql';
 
-const StyledTablePane = styled.div`
+const StyledListPane = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
   overflow-y: auto;
-  padding: 0 ${themeCssVariables.spacing[4]};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledErrorState = styled.div`
@@ -73,11 +73,11 @@ export const InboxPage = () => {
         />
       }
     >
-      <StyledTablePane>
+      <StyledListPane>
         {isDefined(error) && inboxItems.length === 0 ? (
           <StyledErrorState>{t`Your inbox could not be loaded`}</StyledErrorState>
         ) : (
-          <InboxTable
+          <InboxList
             loading={isInitialLoading}
             inboxItems={inboxItems}
             needsActionItems={needsActionItems}
@@ -89,7 +89,7 @@ export const InboxPage = () => {
             onLoadMoreItems={loadMoreItems}
           />
         )}
-      </StyledTablePane>
+      </StyledListPane>
     </PageCardLayout>
   );
 };

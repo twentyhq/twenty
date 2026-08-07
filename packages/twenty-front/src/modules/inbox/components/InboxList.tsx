@@ -2,15 +2,20 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { INBOX_TABLE_GRID_TEMPLATE_COLUMNS } from '@/inbox/constants/InboxTableGridTemplateColumns';
-import { InboxTableRow } from '@/inbox/components/InboxTableRow';
+import { InboxListRow } from '@/inbox/components/InboxListRow';
+import { InboxListSection } from '@/inbox/components/InboxListSection';
 import { InboxListSkeletonLoader } from '@/inbox/components/InboxListSkeletonLoader';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { type InboxItem } from '~/generated/graphql';
+
+const StyledContainer = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[1]};
+`;
 
 const StyledLoadMoreButton = styled.button`
   align-self: flex-start;
@@ -37,7 +42,7 @@ const StyledEmptyState = styled.div`
   padding: ${themeCssVariables.spacing[10]};
 `;
 
-type InboxTableProps = {
+type InboxListProps = {
   loading: boolean;
   inboxItems: InboxItem[];
   needsActionItems: InboxItem[];
@@ -50,7 +55,7 @@ type InboxTableProps = {
   onLoadMoreItems: () => void;
 };
 
-export const InboxTable = ({
+export const InboxList = ({
   loading,
   inboxItems,
   needsActionItems,
@@ -60,7 +65,7 @@ export const InboxTable = ({
   shouldSplitByPriority,
   onInboxItemClick,
   onLoadMoreItems,
-}: InboxTableProps) => {
+}: InboxListProps) => {
   const { t } = useLingui();
 
   const hasNeedsActionSection =
@@ -77,9 +82,9 @@ export const InboxTable = ({
     );
   }
 
-  const renderRows = (inboxItems: InboxItem[]) =>
-    inboxItems.map((inboxItem) => (
-      <InboxTableRow
+  const renderRows = (rowItems: InboxItem[]) =>
+    rowItems.map((inboxItem) => (
+      <InboxListRow
         key={inboxItem.id}
         inboxItem={inboxItem}
         isSelected={selectedInboxItemId === inboxItem.id}
@@ -88,34 +93,32 @@ export const InboxTable = ({
     ));
 
   return (
-    <Table>
-      <TableRow gridTemplateColumns={INBOX_TABLE_GRID_TEMPLATE_COLUMNS}>
-        <TableHeader />
-        <TableHeader />
-        <TableHeader>{t`Type`}</TableHeader>
-        <TableHeader>{t`Title`}</TableHeader>
-        <TableHeader>{t`Preview`}</TableHeader>
-        <TableHeader align="right">{t`Updated`}</TableHeader>
-      </TableRow>
+    <StyledContainer>
       {hasNeedsActionSection ? (
         <>
-          <TableSection title={t`Needs attention`}>
+          <InboxListSection
+            title={t`Needs attention`}
+            itemCount={needsActionItems.length}
+          >
             {renderRows(needsActionItems)}
-          </TableSection>
+          </InboxListSection>
           {otherItems.length > 0 && (
-            <TableSection title={t`Everything else`}>
+            <InboxListSection
+              title={t`Everything else`}
+              itemCount={otherItems.length}
+            >
               {renderRows(otherItems)}
-            </TableSection>
+            </InboxListSection>
           )}
         </>
       ) : (
-        <TableBody>{renderRows(flatItems)}</TableBody>
+        renderRows(flatItems)
       )}
       {hasMoreItems && (
         <StyledLoadMoreButton type="button" onClick={onLoadMoreItems}>
           {t`Load older`}
         </StyledLoadMoreButton>
       )}
-    </Table>
+    </StyledContainer>
   );
 };
