@@ -163,7 +163,5 @@ export const remapRecordPageUniversalIdentifiersToPre229 = <T>(
       .join(pre229UniversalIdentifier);
   }
 
-  serialized = serialized.split('"key":"FIELDS_WIDGET"').join('"key":null');
-
   return JSON.parse(serialized) as T;
 };

@@ -1,8 +1,10 @@
 import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
+import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -75,7 +77,7 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
       objectMetadataApplicationUniversalIdentifier:
         updatedFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: updatedFlatObjectMetadata.universalIdentifier,
-      viewKey: ViewKey.FIELDS_WIDGET,
+      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
     });
 
     const recordPageFlatView =

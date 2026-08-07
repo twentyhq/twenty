@@ -29,7 +29,7 @@ export const computeStandardWorkflowAutomatedTriggerViews = (
         viewName: 'workflowAutomatedTriggerRecordPageFields',
         name: 'Workflow Automated Trigger Record Page Fields',
         type: ViewType.FIELDS_WIDGET,
-        key: ViewKey.FIELDS_WIDGET,
+        key: null,
         position: 0,
         icon: 'IconList',
       },

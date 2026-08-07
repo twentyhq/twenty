@@ -29,7 +29,7 @@ export const computeStandardMessageParticipantViews = (
         viewName: 'messageParticipantRecordPageFields',
         name: 'Message Participant Record Page Fields',
         type: ViewType.FIELDS_WIDGET,
-        key: ViewKey.FIELDS_WIDGET,
+        key: null,
         position: 0,
         icon: 'IconList',
       },

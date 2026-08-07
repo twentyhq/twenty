@@ -1,11 +1,8 @@
-import { type ViewKey } from 'twenty-shared/types';
-
 export type RecordPageReownUpdate = {
   id: string;
   update: {
     universalIdentifier?: string;
     isSystemSideEffect?: boolean;
-    key?: ViewKey;
     applicationId?: string;
   };
 };

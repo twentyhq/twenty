@@ -1,5 +1,3 @@
-import { ViewKey } from 'twenty-shared/types';
-
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ReconcileWorkspaceCustomRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-workspace-command-1786010741500-reconcile-workspace-custom-record-page.command';
 import {
@@ -177,7 +175,6 @@ describe('ReconcileWorkspaceCustomRecordPageCommand', () => {
       { id: SYSTEM_STACK.view.id, workspaceId: WORKSPACE_ID },
       {
         universalIdentifier: DERIVED.view,
-        key: ViewKey.FIELDS_WIDGET,
       },
     );
     expect(updateMocksByEntity.get(ViewFieldEntity)).toHaveBeenCalledWith(
@@ -288,7 +285,6 @@ describe('ReconcileWorkspaceCustomRecordPageCommand', () => {
         {
           ...SYSTEM_STACK.view,
           universalIdentifier: DERIVED.view,
-          key: ViewKey.FIELDS_WIDGET,
           viewFieldUniversalIdentifiers: [DERIVED.viewField],
         },
       ],

@@ -15,7 +15,7 @@ import { buildStandardObjectRecordPageFieldsView } from '@/metadata/utils/intern
 //   (getSystemViewUniversalIdentifier for the view,
 //   getSystemViewFieldUniversalIdentifier for each view field).
 // - FIELDS_WIDGET record-page view universal identifiers (keyed on
-//   ViewKey.FIELDS_WIDGET), their view fields and their view field groups are
+//   FIELDS_WIDGET_SYSTEM_VIEW_KEY), their view fields and their view field groups are
 //   deterministically derived by buildStandardObjectRecordPageFieldsView; the group
 //   names passed there MUST match the ones the server standard view-field-group
 //   builders assign.

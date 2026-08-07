@@ -1,4 +1,7 @@
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
+import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 import { ViewKey, ViewType } from 'twenty-shared/types';
 
 import { computeSystemViewToCreate } from '../compute-system-view-to-create.util';
@@ -11,7 +14,7 @@ const objectMetadata = {
 };
 
 describe('computeSystemViewToCreate', () => {
-  it.each([ViewKey.INDEX, ViewKey.FIELDS_WIDGET])(
+  it.each([ViewKey.INDEX, FIELDS_WIDGET_SYSTEM_VIEW_KEY])(
     'should derive the %s view universal identifier from the object',
     (viewKey) => {
       const result = computeSystemViewToCreate({
@@ -50,14 +53,15 @@ describe('computeSystemViewToCreate', () => {
     );
   });
 
-  it('should build a system-owned record-page view keyed on ViewKey.FIELDS_WIDGET', () => {
+  it('should build a system-owned record-page view with a null persisted key', () => {
     const result = computeSystemViewToCreate({
       applicationUniversalIdentifier,
       objectMetadata,
-      viewKey: ViewKey.FIELDS_WIDGET,
+      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
     });
 
-    expect(result.key).toBe(ViewKey.FIELDS_WIDGET);
+    // The record-page view key is derivation-only, never persisted.
+    expect(result.key).toBeNull();
     expect(result.type).toBe(ViewType.FIELDS_WIDGET);
     expect(result.name).toBe('Ticket Record Page Fields');
     expect(result.isSystemSideEffect).toBe(true);

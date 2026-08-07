@@ -162,7 +162,7 @@ const rocketIndexViewId = getSystemViewUniversalIdentifier({
 
 - `objectMetadataApplicationUniversalIdentifier` is the application owning the **object**, which is what the view is namespaced by.
 - `objectUniversalIdentifier` is the object the view lists.
-- `viewKey` is the system view key: `ViewKey.INDEX` for the main list view, `ViewKey.FIELDS_WIDGET` for the record-page fields widget view.
+- `viewKey` is the system view discriminator: `ViewKey.INDEX` for the main list view, `FIELDS_WIDGET_SYSTEM_VIEW_KEY` for the record-page fields widget view. The latter only keys the derivation and is never stored on the view row.
 
 The resolved id works anywhere a `viewUniversalIdentifier` is expected, such as a [`NavigationMenuItemType.VIEW`](/developers/extend/apps/layout/navigation-menu-items) sidebar entry. To simply open an object's main list, prefer `NavigationMenuItemType.OBJECT` with `targetObjectUniversalIdentifier`: it needs no derivation.
 
@@ -184,8 +184,7 @@ Note the first argument: a column is namespaced by the application owning the **
   System views and their columns are **server-owned**: resolve their identifiers
   to reference them, never to declare them. `key` on
   [`defineView()`](/developers/extend/apps/layout/views) is deprecated and
-  ignored, so a manifest view can never claim the `INDEX` or `FIELDS_WIDGET`
-  keys, and the server
+  ignored, so a manifest view can never claim the `INDEX` key, and the server
   already provisions a column for every field you add, so declaring your own
   `defineViewField()` for that same field on a system view conflicts with it.
 </Warning>

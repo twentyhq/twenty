@@ -1,11 +1,11 @@
 import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   getSystemViewFieldGroupUniversalIdentifier,
 } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -239,7 +239,7 @@ const computeRecordPageViewReownUpdates = ({
     objectMetadataApplicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
     objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-    viewKey: ViewKey.FIELDS_WIDGET,
+    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   });
 
   // The view identifier derives from the object alone, so a second view
@@ -265,10 +265,6 @@ const computeRecordPageViewReownUpdates = ({
   }
   if (!flatView.isSystemSideEffect) {
     viewUpdate.isSystemSideEffect = true;
-  }
-  // The key backfill bypasses the compare pipeline (key is toCompare: false).
-  if (flatView.key !== ViewKey.FIELDS_WIDGET) {
-    viewUpdate.key = ViewKey.FIELDS_WIDGET;
   }
 
   if (Object.keys(viewUpdate).length > 0) {
