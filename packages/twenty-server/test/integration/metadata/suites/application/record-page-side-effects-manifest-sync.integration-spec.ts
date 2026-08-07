@@ -10,6 +10,7 @@ import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/ut
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
@@ -73,7 +74,7 @@ const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
   getSystemViewUniversalIdentifier({
     objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
     objectUniversalIdentifier: TEST_OBJECT_ID,
-    viewKey: ViewKey.FIELDS_WIDGET,
+    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   });
 
 const DERIVED_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
@@ -115,7 +116,13 @@ const findTicketRecordPageView = async (objectMetadataId: string) => {
     expectToFail: false,
   });
 
-  return data?.getViews.find((view) => view.key === ViewKey.FIELDS_WIDGET);
+  // The key is never persisted for the record-page view: it resolves strictly
+  // by its derived universal identifier.
+  return data?.getViews.find(
+    (view) =>
+      view.universalIdentifier ===
+      DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
+  );
 };
 
 const findRecordPageViewFields = async (viewId: string) => {

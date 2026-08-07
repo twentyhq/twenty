@@ -1,4 +1,5 @@
 import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   getFieldUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
@@ -38,7 +39,7 @@ export const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.FIELDS_WIDGET,
+    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   });
 
 export const computeViewFieldUniversalIdentifier = ({
@@ -271,7 +272,7 @@ export const SYNCED_INDEX_VIEW: WorkspaceView = {
 export const SYNCED_RECORD_PAGE_VIEW: WorkspaceView = {
   id: 'view-db-id-2',
   universalIdentifier: DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
-  key: ViewKey.FIELDS_WIDGET,
+  key: null,
   type: ViewType.FIELDS_WIDGET,
   isSystemSideEffect: true,
 };

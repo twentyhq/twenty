@@ -33,7 +33,7 @@ export const computeStandardMessageChannelMessageAssociationViews = (
           viewName: 'messageChannelMessageAssociationRecordPageFields',
           name: 'Message Channel Message Association Record Page Fields',
           type: ViewType.FIELDS_WIDGET,
-          key: ViewKey.FIELDS_WIDGET,
+          key: null,
           position: 0,
           icon: 'IconList',
         },

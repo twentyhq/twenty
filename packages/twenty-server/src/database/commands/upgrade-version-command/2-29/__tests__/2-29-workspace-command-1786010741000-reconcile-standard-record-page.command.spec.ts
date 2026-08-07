@@ -1,4 +1,3 @@
-import { ViewKey } from 'twenty-shared/types';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -213,7 +212,6 @@ describe('ReconcileStandardRecordPageCommand', () => {
       { id: CURATED_STACK.view.id, workspaceId: WORKSPACE_ID },
       {
         universalIdentifier: DERIVED.view,
-        key: ViewKey.FIELDS_WIDGET,
       },
     );
     expect(updateMocksByEntity.get(ViewFieldEntity)).toHaveBeenCalledWith(
@@ -239,7 +237,6 @@ describe('ReconcileStandardRecordPageCommand', () => {
         {
           ...CURATED_STACK.view,
           universalIdentifier: DERIVED.view,
-          key: ViewKey.FIELDS_WIDGET,
           viewFieldUniversalIdentifiers: [DERIVED.viewField],
           viewFieldGroupUniversalIdentifiers: [DERIVED.generalGroup],
         },

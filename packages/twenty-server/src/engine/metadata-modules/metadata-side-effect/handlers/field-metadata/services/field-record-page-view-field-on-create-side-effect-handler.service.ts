@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -60,7 +60,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
       objectMetadataApplicationUniversalIdentifier:
         parentFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-      viewKey: ViewKey.FIELDS_WIDGET,
+      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
     });
 
     const parentObjectCreatedInSameBatch = isDefined(

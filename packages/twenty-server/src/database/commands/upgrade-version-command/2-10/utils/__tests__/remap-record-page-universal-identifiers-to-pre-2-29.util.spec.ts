@@ -26,7 +26,7 @@ describe('remapRecordPageUniversalIdentifiersToPre229', () => {
 
   it('should downgrade the FIELDS_WIDGET view key to the pre-2.29 null shape without touching the view type', () => {
     const remapped = remapRecordPageUniversalIdentifiersToPre229({
-      key: ViewKey.FIELDS_WIDGET,
+      key: null,
       type: ViewType.FIELDS_WIDGET,
       name: 'Call Recording Record Page Fields',
     });

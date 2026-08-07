@@ -29,7 +29,7 @@ export const computeStandardCallRecordingViews = (
         viewName: 'callRecordingRecordPageFields',
         name: 'Call Recording Record Page Fields',
         type: ViewType.FIELDS_WIDGET,
-        key: ViewKey.FIELDS_WIDGET,
+        key: null,
         position: 0,
         icon: 'IconList',
       },

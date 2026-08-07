@@ -79,7 +79,11 @@ export { getSystemRecordPageLayoutUniversalIdentifier } from './deterministic-id
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
 export { getSystemViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-system-view-field-group-universal-identifier.util';
 export { getSystemViewFieldUniversalIdentifier } from './deterministic-identifier/get-system-view-field-universal-identifier.util';
-export { getSystemViewUniversalIdentifier } from './deterministic-identifier/get-system-view-universal-identifier.util';
+export type { SystemViewKey } from './deterministic-identifier/get-system-view-universal-identifier.util';
+export {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  getSystemViewUniversalIdentifier,
+} from './deterministic-identifier/get-system-view-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';
 export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get-view-filter-universal-identifier.util';
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';

@@ -1,8 +1,8 @@
 import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
 
 import { ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
@@ -19,7 +19,7 @@ const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.FIELDS_WIDGET,
+    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   });
 
 const NEW_LABEL_VIEW_FIELD_UNIVERSAL_IDENTIFIER =

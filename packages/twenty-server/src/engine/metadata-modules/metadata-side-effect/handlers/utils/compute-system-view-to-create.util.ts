@@ -1,4 +1,8 @@
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
+import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  getSystemViewUniversalIdentifier,
+  type SystemViewKey,
+} from 'twenty-shared/application';
 import {
   ViewKey,
   ViewOpenRecordIn,
@@ -22,13 +26,13 @@ const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
     type: ViewType.TABLE,
     computeName: () => 'All {objectLabelPlural}',
   },
-  [ViewKey.FIELDS_WIDGET]: {
+  [FIELDS_WIDGET_SYSTEM_VIEW_KEY]: {
     type: ViewType.FIELDS_WIDGET,
     computeName: (objectMetadata: SystemViewObjectMetadata) =>
       `${objectMetadata.labelSingular} Record Page Fields`,
   },
 } as const satisfies Record<
-  ViewKey,
+  SystemViewKey,
   {
     type: ViewType;
     computeName: (objectMetadata: SystemViewObjectMetadata) => string;
@@ -42,7 +46,7 @@ export const computeSystemViewToCreate = ({
 }: {
   applicationUniversalIdentifier: string;
   objectMetadata: SystemViewObjectMetadata;
-  viewKey: ViewKey;
+  viewKey: SystemViewKey;
 }): UniversalFlatView & { id: string } => {
   const { type, computeName } = SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY[viewKey];
   const createdAt = new Date().toISOString();
@@ -51,7 +55,9 @@ export const computeSystemViewToCreate = ({
     id: v4(),
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
     name: computeName(objectMetadata),
-    key: viewKey,
+    // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
+    // universal identifier derivation.
+    key: viewKey === ViewKey.INDEX ? viewKey : null,
     icon: 'IconList',
     type,
     createdAt,

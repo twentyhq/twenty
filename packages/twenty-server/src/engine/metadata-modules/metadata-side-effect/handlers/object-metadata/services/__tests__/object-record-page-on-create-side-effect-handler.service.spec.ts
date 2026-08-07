@@ -1,10 +1,11 @@
 import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { ViewKey, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { ObjectRecordPageOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-on-create-side-effect-handler.service';
@@ -27,7 +28,7 @@ const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.FIELDS_WIDGET,
+    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   });
 
 const DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
@@ -112,7 +113,7 @@ describe('ObjectRecordPageOnCreateSideEffectHandlerService', () => {
     expect(views).toHaveLength(1);
     expect(views[0]).toMatchObject({
       universalIdentifier: DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
-      key: ViewKey.FIELDS_WIDGET,
+      key: null,
       type: ViewType.FIELDS_WIDGET,
       isSystemSideEffect: true,
       name: 'Ticket Record Page Fields',

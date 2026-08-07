@@ -45,7 +45,7 @@ export const computeStandardOpportunityViews = (
         viewName: 'opportunityRecordPageFields',
         name: 'Opportunity Record Page Fields',
         type: ViewType.FIELDS_WIDGET,
-        key: ViewKey.FIELDS_WIDGET,
+        key: null,
         position: 0,
         icon: 'IconList',
       },

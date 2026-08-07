@@ -1,9 +1,10 @@
 import {
+  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { FieldMetadataType, ViewKey, ViewType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-workspace-command-1786010742000-backfill-record-page.command';
@@ -39,7 +40,7 @@ const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier:
     EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.FIELDS_WIDGET,
+  viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
 });
 
 const STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER =
@@ -47,7 +48,7 @@ const STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.FIELDS_WIDGET,
+    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
   });
 
 const STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
@@ -230,7 +231,7 @@ describe('BackfillRecordPageCommand', () => {
 
     expect(createdView).toMatchObject({
       universalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
-      key: ViewKey.FIELDS_WIDGET,
+      key: null,
       type: ViewType.FIELDS_WIDGET,
       isSystemSideEffect: true,
     });
