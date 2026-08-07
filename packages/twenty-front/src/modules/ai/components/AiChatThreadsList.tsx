@@ -1,17 +1,23 @@
 import { styled } from '@linaria/react';
 
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
-import { AiChatThreadsListFallback } from '@/ai/components/AiChatThreadsListFallback';
+import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
+import { AiChatThreadGroup } from '@/ai/components/AiChatThreadGroup';
+import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { AiChatThreadsListFocusEffect } from '@/ai/components/AiChatThreadsListFocusEffect';
+import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AI_CHAT_THREADS_LIST_FOCUS_ID } from '@/ai/constants/AiChatThreadsListFocusId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { InboxList } from '@/inbox/components/InboxList';
-import { useInboxItems } from '@/inbox/hooks/useInboxItems';
+import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
+import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -28,6 +34,12 @@ const StyledThreadsContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledFlatThreadList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledButtonsContainer = styled.div`
@@ -47,32 +59,55 @@ export const AiChatThreadsList = () => {
     dependencies: [switchToNewChat],
   });
 
-  const {
-    needsActionItems,
-    otherItems,
-    loading,
-    error,
-    hasMoreItems,
-    loadMoreItems,
-    isInboxEnabled,
-  } = useInboxItems();
+  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
+  const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
+
+  if (loading && threads.length === 0) {
+    return <AiChatSkeletonLoader />;
+  }
+
+  const isGroupedByDate =
+    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
+  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
+  const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
+  const filterDropdown = (
+    <AiChatThreadFilterDropdown
+      surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
+    />
+  );
 
   return (
     <>
       <AiChatThreadsListFocusEffect focusId={AI_CHAT_THREADS_LIST_FOCUS_ID} />
       <StyledContainer>
         <StyledThreadsContainer>
-          {!isInboxEnabled || isDefined(error) ? (
-            <AiChatThreadsListFallback />
+          {shouldRenderDateGroups ? (
+            dateGroups.map((dateGroup, index) => (
+              <AiChatThreadGroup
+                key={dateGroup.id}
+                title={dateGroup.title}
+                threads={dateGroup.threads}
+                rightIcon={index === 0 ? filterDropdown : undefined}
+                alwaysShowRightIcon={index === 0}
+              />
+            ))
           ) : (
-            <InboxList
-              loading={loading}
-              needsActionItems={needsActionItems}
-              otherItems={otherItems}
-              hasMoreItems={hasMoreItems}
-              onLoadMoreItems={loadMoreItems}
-            />
+            <>
+              <NavigationDrawerSectionTitle
+                label={t`Recents`}
+                alwaysShowRightIcon
+                rightIcon={filterDropdown}
+              />
+              <StyledFlatThreadList>
+                {threads.map((thread) => (
+                  <AiChatThreadListItem key={thread.id} thread={thread} />
+                ))}
+              </StyledFlatThreadList>
+            </>
           )}
+          {hasNextPage ? (
+            <div ref={fetchMoreRef} style={{ minHeight: 1 }} />
+          ) : null}
         </StyledThreadsContainer>
         <StyledButtonsContainer>
           <Button

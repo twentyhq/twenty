@@ -39,7 +39,12 @@ export class InboxItemService {
       },
       relations: { inboxItemType: true },
       order: { updatedAt: 'DESC' },
-      take: Math.min(limit ?? DEFAULT_INBOX_PAGE_SIZE, MAX_INBOX_PAGE_SIZE),
+      // A non positive take reaches Postgres as "no limit", so the cap is
+      // clamped at both ends rather than only at the top
+      take: Math.max(
+        1,
+        Math.min(limit ?? DEFAULT_INBOX_PAGE_SIZE, MAX_INBOX_PAGE_SIZE),
+      ),
     });
   }
 

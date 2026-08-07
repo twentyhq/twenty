@@ -41,7 +41,9 @@ export class WorkflowRunInboxService {
       this.logger.warn(
         `Failed to route the inbox item for workflow run ${
           args.workflowRun.id
-        }: ${error instanceof Error ? error.message : String(error)}`,
+        } in workspace ${args.workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
     }
   }

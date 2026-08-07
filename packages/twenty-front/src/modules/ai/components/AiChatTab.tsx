@@ -11,10 +11,7 @@ import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { InboxItemDetailCard } from '@/inbox/components/InboxItemDetailCard';
-import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
@@ -35,7 +32,6 @@ export const AiChatTab = () => {
   const threadIdCreatedFromDraft = useAtomStateValue(
     threadIdCreatedFromDraftState,
   );
-  const selectedInboxItemId = useAtomStateValue(selectedInboxItemIdState);
   const draftKey = currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const editorSectionKey =
     draftKey !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY &&
@@ -54,23 +50,17 @@ export const AiChatTab = () => {
       <AgentChatHasBeenOpenedEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
       <AgentChatStreamingAutoScrollEffect />
-      {isDefined(selectedInboxItemId) ? (
-        <InboxItemDetailCard inboxItemId={selectedInboxItemId} />
-      ) : (
+      {isDraggingFile && (
+        <DropZone
+          setIsDraggingFile={setIsDraggingFile}
+          onUploadFiles={uploadFiles}
+        />
+      )}
+      {!isDraggingFile && (
         <>
-          {isDraggingFile && (
-            <DropZone
-              setIsDraggingFile={setIsDraggingFile}
-              onUploadFiles={uploadFiles}
-            />
-          )}
-          {!isDraggingFile && (
-            <>
-              <AiChatTabMessageList />
-              <AiChatQueuedMessages />
-              <AiChatEditorSection key={editorSectionKey} />
-            </>
-          )}
+          <AiChatTabMessageList />
+          <AiChatQueuedMessages />
+          <AiChatEditorSection key={editorSectionKey} />
         </>
       )}
     </StyledContainer>

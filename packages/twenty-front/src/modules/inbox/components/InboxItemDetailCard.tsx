@@ -14,6 +14,7 @@ import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { useInboxItemById } from '@/inbox/hooks/useInboxItemById';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type InboxItemScope } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledContainer = styled.div`
@@ -93,15 +94,17 @@ const StyledEmptyState = styled.div`
 
 type InboxItemDetailCardProps = {
   inboxItemId: string;
+  scope?: InboxItemScope;
 };
 
 export const InboxItemDetailCard = ({
   inboxItemId,
+  scope,
 }: InboxItemDetailCardProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const { inboxItem, loading, error } = useInboxItemById(inboxItemId);
+  const { inboxItem, loading, error } = useInboxItemById(inboxItemId, scope);
   const { executeInboxItemAction } = useInboxItemActions();
   const { openAskAiThread } = useOpenAskAiThread();
   const objectMetadataItemsByIdMap = useAtomStateValue(

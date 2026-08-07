@@ -11,10 +11,9 @@ import {
   type InboxSubject,
   type RouteInboxItemArgs,
 } from 'src/engine/core-modules/inbox/types/route-inbox-item.type';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-const POSTGRES_UNIQUE_VIOLATION = '23505';
 
 @Injectable()
 export class InboxRouterService {
@@ -142,7 +141,8 @@ export class InboxRouterService {
       const isConcurrentInsert =
         typeof error === 'object' &&
         isDefined(error) &&
-        (error as { code?: string }).code === POSTGRES_UNIQUE_VIOLATION;
+        (error as { code?: string }).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
 
       if (!isConcurrentInsert || !isDefined(dedupeKey)) {
         throw error;
