@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
@@ -23,6 +25,24 @@ jest.mock('@/ai/hooks/useChatThreads', () => ({
     hasNextPage: false,
     loading: false,
     fetchMoreRef: jest.fn(),
+  }),
+}));
+
+jest.mock('@/inbox/hooks/useInboxItems', () => ({
+  useInboxItems: () => ({
+    needsActionItems: [],
+    otherItems: [],
+    loading: false,
+    error: undefined,
+    refetch: jest.fn(),
+  }),
+}));
+
+jest.mock('@/inbox/hooks/useInboxCounts', () => ({
+  useInboxCounts: () => ({
+    inboxCounts: null,
+    loading: false,
+    error: undefined,
   }),
 }));
 
@@ -57,11 +77,13 @@ describe('AiChatThreadsList', () => {
     ]);
 
     render(
-      <JotaiProvider store={store}>
-        <MemoryRouter>
-          <AiChatThreadsList />
-        </MemoryRouter>
-      </JotaiProvider>,
+      <I18nProvider i18n={i18n}>
+        <JotaiProvider store={store}>
+          <MemoryRouter>
+            <AiChatThreadsList />
+          </MemoryRouter>
+        </JotaiProvider>
+      </I18nProvider>,
     );
 
     expect(screen.getByText('New chat')).toBeInTheDocument();

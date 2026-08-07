@@ -13,6 +13,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useContext } from 'react';
 
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { InboxUnreadBadge } from '@/inbox/components/InboxUnreadBadge';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -80,7 +81,14 @@ const StyledTabIcon = styled.div`
   display: flex;
   height: ${themeCssVariables.spacing[5]};
   justify-content: center;
+  position: relative;
   width: ${themeCssVariables.spacing[5]};
+`;
+
+const StyledTabBadge = styled.div`
+  position: absolute;
+  right: -6px;
+  top: -2px;
 `;
 
 const StyledNewChatIcon = styled.div`
@@ -258,6 +266,9 @@ export const MainNavigationDrawerTabsRow = ({
                     NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
                 )}
               />
+              <StyledTabBadge>
+                <InboxUnreadBadge />
+              </StyledTabBadge>
             </StyledTabIcon>
           </StyledTabWrapper>
         </StyledTabsPill>

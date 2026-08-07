@@ -13,7 +13,10 @@ import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { InboxList } from '@/inbox/components/InboxList';
+import { useInboxItems } from '@/inbox/hooks/useInboxItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -63,6 +66,32 @@ export const NavigationDrawerAiChatContent = () => {
   const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
 
   const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
+  const {
+    needsActionItems,
+    otherItems,
+    loading: inboxLoading,
+    error: inboxError,
+  } = useInboxItems();
+
+  // The inbox supersedes the thread list: a thread is one inbox item among
+  // others. The thread list stays as the fallback for workspaces where the
+  // inbox is not reachable.
+  if (!isDefined(inboxError)) {
+    return (
+      <StyledContainer>
+        <StyledThreadList>
+          <InboxList
+            loading={inboxLoading}
+            needsActionItems={needsActionItems}
+            otherItems={otherItems}
+          />
+        </StyledThreadList>
+        <AiChatThreadDeleteConfirmationModal
+          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+        />
+      </StyledContainer>
+    );
+  }
 
   if (loading && threads.length === 0) {
     return (

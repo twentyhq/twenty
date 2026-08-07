@@ -31,6 +31,7 @@ import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-ch
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
+import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
@@ -67,6 +68,7 @@ export class AgentChatStreamingService {
     private readonly fileUrlService: FileUrlService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
+    private readonly agentChatInboxService: AgentChatInboxService,
   ) {}
 
   async reapDeadStream({
@@ -594,6 +596,12 @@ export class AgentChatStreamingService {
         event: { type: 'question-answered' },
       })
       .catch(() => {});
+
+    await this.agentChatInboxService.onQuestionAnswered({
+      threadId,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
 
     return { streamId, turnId: resolved.turnId };
   }

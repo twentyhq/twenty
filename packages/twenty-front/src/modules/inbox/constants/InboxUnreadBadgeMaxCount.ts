@@ -1,0 +1,1 @@
+export const INBOX_UNREAD_BADGE_MAX_COUNT = 9;

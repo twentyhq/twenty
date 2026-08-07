@@ -66,6 +66,12 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
       { incrementCounterBy: jest.fn() } as never,
+      {
+        onThreadCreated: jest.fn(),
+        onTurnCompleted: jest.fn(),
+        onQuestionAnswered: jest.fn(),
+        onThreadRemoved: jest.fn(),
+      } as never,
     );
 
     return { service, threadRepository, messageQueueService, agentChatService };

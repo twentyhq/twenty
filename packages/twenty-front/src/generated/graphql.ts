@@ -186,6 +186,73 @@ export type GenerateSignedDpaResult = {
   downloadUrl: Scalars['String']['output'];
 };
 
+export type InboxCounts = {
+  __typename?: 'InboxCounts';
+  needsAction: Scalars['Int']['output'];
+  snoozed: Scalars['Int']['output'];
+  unread: Scalars['Int']['output'];
+};
+
+export type InboxItem = {
+  __typename?: 'InboxItem';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  inboxItemType: InboxItemType;
+  payload?: Maybe<Scalars['JSON']['output']>;
+  preview?: Maybe<Scalars['String']['output']>;
+  priority: InboxItemPriority;
+  readAt?: Maybe<Scalars['DateTime']['output']>;
+  snoozedUntil?: Maybe<Scalars['DateTime']['output']>;
+  status: InboxItemStatus;
+  subjectObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
+  subjectRecordId?: Maybe<Scalars['UUID']['output']>;
+  threadId?: Maybe<Scalars['UUID']['output']>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type InboxItemAction = {
+  __typename?: 'InboxItemAction';
+  handlerKind: Scalars['String']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  isPrimary: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+};
+
+export enum InboxItemBinding {
+  OCCURRENCE = 'OCCURRENCE',
+  SUBJECT = 'SUBJECT'
+}
+
+export enum InboxItemPriority {
+  LOW = 'LOW',
+  NEEDS_ACTION = 'NEEDS_ACTION',
+  UPDATE = 'UPDATE'
+}
+
+export enum InboxItemScope {
+  INBOX = 'INBOX',
+  RESOLVED = 'RESOLVED',
+  SNOOZED = 'SNOOZED'
+}
+
+export enum InboxItemStatus {
+  DISMISSED = 'DISMISSED',
+  DONE = 'DONE',
+  OPEN = 'OPEN'
+}
+
+export type InboxItemType = {
+  __typename?: 'InboxItemType';
+  actions: Array<InboxItemAction>;
+  binding: InboxItemBinding;
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+};
+
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String']['output'];
@@ -208,6 +275,7 @@ export enum MessageChannelVisibility {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
+  completeInboxItem: InboxItem;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -219,9 +287,13 @@ export type Mutation = {
   dismissReconnectAccountBanner: Scalars['Boolean']['output'];
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
+  executeInboxItemAction: InboxItem;
   generateSignedDpa: GenerateSignedDpaResult;
+  markInboxItemRead: InboxItem;
+  reopenInboxItem: InboxItem;
   retryWorkflowRun: WorkflowRun;
   runWorkflowVersion: RunWorkflowVersion;
+  snoozeInboxItem: InboxItem;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
@@ -234,6 +306,11 @@ export type Mutation = {
 
 export type MutationActivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationCompleteInboxItemArgs = {
+  inboxItemId: Scalars['UUID']['input'];
 };
 
 
@@ -287,8 +364,24 @@ export type MutationDuplicateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationExecuteInboxItemActionArgs = {
+  actionKey: Scalars['String']['input'];
+  inboxItemId: Scalars['UUID']['input'];
+};
+
+
 export type MutationGenerateSignedDpaArgs = {
   input: GenerateSignedDpaInput;
+};
+
+
+export type MutationMarkInboxItemReadArgs = {
+  inboxItemId: Scalars['UUID']['input'];
+};
+
+
+export type MutationReopenInboxItemArgs = {
+  inboxItemId: Scalars['UUID']['input'];
 };
 
 
@@ -299,6 +392,12 @@ export type MutationRetryWorkflowRunArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSnoozeInboxItemArgs = {
+  inboxItemId: Scalars['UUID']['input'];
+  snoozedUntil: Scalars['DateTime']['input'];
 };
 
 
@@ -365,6 +464,8 @@ export type Query = {
   /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
+  myInboxCounts: InboxCounts;
+  myInboxItems: Array<InboxItem>;
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
   workflowVersionContent: WorkflowVersionContent;
@@ -426,6 +527,11 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   personId: Scalars['UUID']['input'];
+};
+
+
+export type QueryMyInboxItemsArgs = {
+  scope?: InputMaybe<InboxItemScope>;
 };
 
 
