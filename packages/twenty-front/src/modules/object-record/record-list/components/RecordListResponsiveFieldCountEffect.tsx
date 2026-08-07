@@ -2,6 +2,7 @@ import { recordListDisplayedFieldCountComponentState } from '@/object-record/rec
 import { computeRecordListDisplayedFieldCount } from '@/object-record/record-list/utils/computeRecordListDisplayedFieldCount';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type RefObject, useLayoutEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordListResponsiveFieldCountEffectProps = {
   containerRef: RefObject<HTMLElement | null>;
@@ -17,7 +18,7 @@ export const RecordListResponsiveFieldCountEffect = ({
   useLayoutEffect(() => {
     const containerElement = containerRef.current;
 
-    if (containerElement === null) {
+    if (!isDefined(containerElement)) {
       return;
     }
 
