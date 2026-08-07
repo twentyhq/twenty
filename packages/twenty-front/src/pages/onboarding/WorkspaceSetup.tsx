@@ -5,6 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
@@ -40,6 +41,7 @@ const StyledContent = styled.div`
 export const WorkspaceSetup = () => {
   const { t } = useLingui();
   const { defaultHomePagePath } = useDefaultHomePagePath();
+  const currentUser = useAtomStateValue(currentUserState);
   const isOnboardingAiChatEnabled = useAtomStateValue(
     isOnboardingAiChatEnabledState,
   );
@@ -47,7 +49,7 @@ export const WorkspaceSetup = () => {
     shouldOpenAiChatAfterOnboardingState,
   );
 
-  if (!isOnboardingAiChatEnabled) {
+  if (!isOnboardingAiChatEnabled || currentUser?.isWorkspaceCreator !== true) {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
