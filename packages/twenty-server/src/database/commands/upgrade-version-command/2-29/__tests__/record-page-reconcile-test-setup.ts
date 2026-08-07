@@ -1,5 +1,5 @@
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
@@ -56,7 +56,7 @@ export const buildDerivedRecordPageStackUniversalIdentifiers = ({
     objectMetadataApplicationUniversalIdentifier:
       applicationUniversalIdentifier,
     objectUniversalIdentifier,
-    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+    viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
   });
   const viewField = getSystemViewFieldUniversalIdentifier({
     fieldMetadataApplicationUniversalIdentifier:

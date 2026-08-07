@@ -1,4 +1,4 @@
-import { FIELDS_WIDGET_SYSTEM_VIEW_KEY } from 'twenty-shared/application';
+import { SYSTEM_VIEW_KEYS } from 'twenty-shared/application';
 import { Injectable } from '@nestjs/common';
 
 import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
@@ -20,7 +20,7 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
     metadataName: 'objectMetadata',
     name: 'objectRecordPageOnCreate',
     description:
-      'When an object is created, provision its default record-page stack: the FIELDS_WIDGET record-page view ("{labelSingular} Record Page Fields", keyed on FIELDS_WIDGET_SYSTEM_VIEW_KEY) with one view field per displayable SYSTEM field (the label identifier is excluded: the record page displays it in the title), and the RECORD_PAGE page layout with its 5 tabs (Home/Timeline/Tasks/Notes/Files) and 5 widgets, of which the Home FIELDS widget references the record-page view by universal identifier. All entities are isSystemSideEffect with name-free deterministic universal identifiers, so an object rename keeps every identifier. View fields for caller-provided fields are owned by fieldRecordPageViewFieldOnCreate; both handlers derive positions from the same caller-input list so the layout is contiguous without ordering dependency. The engine always emits the system record-page stack, exactly like INDEX. Caller-defined custom RECORD_PAGE layouts (e.g. manifest apps authoring a record page for their own objects) are legitimate and coexist with it: the frontend displays a custom record page over the system one when defined, and identifier squatting on engine emissions is caught by the side-effect collision detector. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own curated record-page stack on the same derived identifiers.',
+      'When an object is created, provision its default record-page stack: the FIELDS_WIDGET record-page view ("{labelSingular} Record Page Fields", keyed on SYSTEM_VIEW_KEYS.FIELDS_WIDGET) with one view field per displayable SYSTEM field (the label identifier is excluded: the record page displays it in the title), and the RECORD_PAGE page layout with its 5 tabs (Home/Timeline/Tasks/Notes/Files) and 5 widgets, of which the Home FIELDS widget references the record-page view by universal identifier. All entities are isSystemSideEffect with name-free deterministic universal identifiers, so an object rename keeps every identifier. View fields for caller-provided fields are owned by fieldRecordPageViewFieldOnCreate; both handlers derive positions from the same caller-input list so the layout is contiguous without ordering dependency. The engine always emits the system record-page stack, exactly like INDEX. Caller-defined custom RECORD_PAGE layouts (e.g. manifest apps authoring a record page for their own objects) are legitimate and coexist with it: the frontend displays a custom record page over the system one when defined, and identifier squatting on engine emissions is caught by the side-effect collision detector. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own curated record-page stack on the same derived identifiers.',
   },
 ) {
   buildSideEffects({
@@ -34,7 +34,7 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
     const flatRecordPageViewToCreate = computeSystemViewToCreate({
       objectMetadata: sourceFlatObjectMetadata,
       applicationUniversalIdentifier,
-      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+      viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
     });
 
     const flatViewFieldsToCreate = computeSystemViewFieldsForCreatedObjectView({

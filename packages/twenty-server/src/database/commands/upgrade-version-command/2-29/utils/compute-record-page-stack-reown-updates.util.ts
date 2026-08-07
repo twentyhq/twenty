@@ -1,5 +1,5 @@
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
@@ -239,7 +239,7 @@ const computeRecordPageViewReownUpdates = ({
     objectMetadataApplicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
     objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+    viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
   });
 
   // The view identifier derives from the object alone, so a second view

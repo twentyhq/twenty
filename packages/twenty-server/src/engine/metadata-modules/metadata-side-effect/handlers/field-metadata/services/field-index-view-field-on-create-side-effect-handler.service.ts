@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  SYSTEM_VIEW_KEYS,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -60,7 +60,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       objectMetadataApplicationUniversalIdentifier:
         parentFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-      viewKey: ViewKey.INDEX,
+      viewKey: SYSTEM_VIEW_KEYS.INDEX,
     });
 
     const parentObjectCreatedInSameBatch = isDefined(

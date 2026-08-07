@@ -81,7 +81,7 @@ export { getSystemViewFieldGroupUniversalIdentifier } from './deterministic-iden
 export { getSystemViewFieldUniversalIdentifier } from './deterministic-identifier/get-system-view-field-universal-identifier.util';
 export type { SystemViewKey } from './deterministic-identifier/get-system-view-universal-identifier.util';
 export {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
 } from './deterministic-identifier/get-system-view-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';

@@ -1,5 +1,5 @@
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
@@ -40,7 +40,7 @@ const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier:
     EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
 });
 
 const STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER =
@@ -48,7 +48,7 @@ const STANDARD_DERIVED_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+    viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
   });
 
 const STANDARD_DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =

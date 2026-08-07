@@ -1,6 +1,6 @@
+import { SYSTEM_VIEW_KEYS } from 'twenty-shared/application';
 import { Injectable } from '@nestjs/common';
 
-import { ViewKey } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { computeSystemViewFieldsForCreatedObjectView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-for-created-object-view.util';
@@ -33,7 +33,7 @@ export class ObjectIndexViewOnCreateSideEffectHandlerService extends MetadataSid
     const flatIndexViewToCreate = computeSystemViewToCreate({
       objectMetadata: sourceFlatObjectMetadata,
       applicationUniversalIdentifier,
-      viewKey: ViewKey.INDEX,
+      viewKey: SYSTEM_VIEW_KEYS.INDEX,
     });
 
     const flatViewFieldsToCreate = computeSystemViewFieldsForCreatedObjectView({

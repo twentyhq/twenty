@@ -1,5 +1,5 @@
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
   type SystemViewKey,
 } from 'twenty-shared/application';
@@ -22,11 +22,11 @@ type SystemViewObjectMetadata = Pick<
 // The INDEX view name is a template resolved at display time; the record-page
 // view name is materialized at creation.
 const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
-  [ViewKey.INDEX]: {
+  [SYSTEM_VIEW_KEYS.INDEX]: {
     type: ViewType.TABLE,
     computeName: () => 'All {objectLabelPlural}',
   },
-  [FIELDS_WIDGET_SYSTEM_VIEW_KEY]: {
+  [SYSTEM_VIEW_KEYS.FIELDS_WIDGET]: {
     type: ViewType.FIELDS_WIDGET,
     computeName: (objectMetadata: SystemViewObjectMetadata) =>
       `${objectMetadata.labelSingular} Record Page Fields`,
@@ -57,7 +57,7 @@ export const computeSystemViewToCreate = ({
     name: computeName(objectMetadata),
     // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
     // universal identifier derivation.
-    key: viewKey === ViewKey.INDEX ? viewKey : null,
+    key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
     icon: 'IconList',
     type,
     createdAt,
