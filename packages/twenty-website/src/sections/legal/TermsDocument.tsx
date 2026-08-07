@@ -109,17 +109,31 @@ export function TermsDocument() {
       </p>
       <p>
         Commercial features of the self-hosted edition require a valid license
-        key purchased from us. License keys are licensed, not sold, are limited
-        to the plan, number of users, and term you purchased, and may not be
-        shared outside your organization. We may verify the validity of license
-        keys, which involves limited technical information as described in our
-        Privacy Policy; it never involves your CRM records.
+        key purchased from us. A license key grants your organization a
+        non-exclusive, non-transferable right to use those features for your
+        internal business purposes, for the plan, number of users, and
+        subscription term you purchased. License keys may not be shared outside
+        your organization. Licenses are counted per user: each user of your
+        instance requires a seat, and if your usage grows beyond the seats you
+        purchased, we will ask you to true it up rather than cut you off, and
+        you agree to do so promptly.
+      </p>
+      <p>
+        While your subscription is active, it includes the commercial features,
+        software updates, and the level of support included in your plan. We may
+        verify license keys automatically, which involves limited technical
+        information as described in our Privacy Policy; it never involves your
+        CRM records. When your subscription ends, the license key expires and
+        commercial features stop working, but your instance, your data, and
+        everything the open-source licenses grant you keep working on your own
+        servers.
       </p>
 
       <h2>3. Accounts and workspaces</h2>
       <p>
-        The Service is intended for professional use. You must be at least 18
-        years old to use it.
+        The Service is for business and professional use only: by using it, you
+        represent that you are acting for the purposes of a trade, business, or
+        profession, not as a consumer, and that you are at least 18 years old.
       </p>
       <p>
         You agree to provide accurate account information and keep it up to
@@ -178,7 +192,7 @@ export function TermsDocument() {
         expose API endpoints on the internet, and you may share content with
         people outside your workspace or distribute an app you have built to
         other workspaces. When you use such a feature, you direct us to display
-        or distribute that content to the audience you chose, our license from
+        or distribute that content to the audience you choose, our license from
         you extends to doing so, and recipients may view and use the content as
         you allow. You are responsible for what you make available this way,
         including its legality and your right to publish it.
@@ -412,10 +426,12 @@ export function TermsDocument() {
 
       <h2>13. Publicity</h2>
       <p>
-        We will only identify you or your organization as a Twenty customer, or
-        use your name or logo in our marketing, with your prior consent. You can
-        withdraw that consent at any time by emailing{' '}
-        <a href="mailto:contact@twenty.com">contact@twenty.com</a>.
+        We may identify you or your organization as a Twenty customer and
+        display your name and logo alongside other customers on our website and
+        in our marketing materials. If you would rather not appear there, tell
+        us at <a href="mailto:contact@twenty.com">contact@twenty.com</a> and we
+        will remove you. We will ask for your consent before publishing anything
+        more substantial about you, such as a case study or a quote.
       </p>
 
       <h2>14. Suspension</h2>
