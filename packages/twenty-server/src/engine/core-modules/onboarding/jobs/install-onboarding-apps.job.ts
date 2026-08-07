@@ -40,8 +40,6 @@ export class InstallOnboardingAppsJob {
       hasInstalledAnyApp = hasInstalledAnyApp || hasInstalledApp;
     }
 
-    // Crediting a run that installed nothing would pay out again every time the
-    // user returns to the step and relaunches it.
     if (!hasInstalledAnyApp) {
       return;
     }
