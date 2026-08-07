@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic ranker for the twenty-partner-application-triage skill.
+"""Deterministic ranker for the twenty-partner-triage skill.
 
 Ranks APPLICATION-stage partners by NET-NEW value vs the current VALIDATED set:
 geography and language we don't yet cover (weighted high), plus a "real Twenty
@@ -156,16 +156,11 @@ def score_one(rec, base):
 def rank(recs):
     validated = [r for r in recs if r.get("validationStage") == "VALIDATED"]
     apps = [r for r in recs if r.get("validationStage") == "APPLICATION"]
-    # Forward-compat: once callBookedAt exists, narrow to the un-booked (the chase set).
-    has_booked_field = any("callBookedAt" in r for r in recs)
-    if has_booked_field:
-        apps = [r for r in apps if not r.get("callBookedAt")]
     base = baseline(validated)
     ranked = sorted((score_one(r, base) for r in apps), key=lambda d: -d["score"])
     return {
         "validated_count": len(validated),
         "application_count": len(apps),
-        "booking_state_wired": has_booked_field,
         "coverage": {k: sorted(v) for k, v in base.items()},
         "ranked": ranked,
     }
