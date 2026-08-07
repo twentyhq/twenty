@@ -1,8 +1,7 @@
 import { Navigate } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ExpandedAiChat } from '@/ai/expanded-chat/components/ExpandedAiChat';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,12 +9,13 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const AiChatPage = () => {
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
-  // Permission flags are empty until the user workspace is hydrated; deciding
-  // before that would bounce authorized users visiting /chat directly.
-  if (!isDefined(currentUserWorkspace)) {
+  // Permission flags hydrate from a persisted snapshot before the current
+  // user refresh lands; deciding on them early would bounce users whose AI
+  // permission was granted since their last visit.
+  if (!isCurrentUserLoaded) {
     return null;
   }
 

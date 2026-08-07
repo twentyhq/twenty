@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -9,9 +9,17 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 export const ExpandedAiChatCollapseNavigationEffect = () => {
   const store = useStore();
   const isMobile = useIsMobile();
+  const isMobileRef = useRef(isMobile);
 
   useEffect(() => {
-    if (isMobile) {
+    isMobileRef.current = isMobile;
+  }, [isMobile]);
+
+  // Mount-once on purpose: collapsing and restoring must happen when
+  // entering and leaving the page, not on breakpoint changes, otherwise
+  // resizing to mobile mid-chat would pop the drawer open over the chat.
+  useEffect(() => {
+    if (isMobileRef.current) {
       return;
     }
 
@@ -22,12 +30,16 @@ export const ExpandedAiChatCollapseNavigationEffect = () => {
     store.set(isNavigationDrawerExpandedState.atom, false);
 
     return () => {
+      if (isMobileRef.current) {
+        return;
+      }
+
       store.set(
         isNavigationDrawerExpandedState.atom,
         wasNavigationDrawerExpanded,
       );
     };
-  }, [store, isMobile]);
+  }, [store]);
 
   return null;
 };
