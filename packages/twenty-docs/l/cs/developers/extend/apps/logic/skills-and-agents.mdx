@@ -151,5 +151,37 @@ export default defineApplicationRole({
   **Vyhněte se smyčkám:** pokud voláte `runAgent()` z databázového triggeru `*.updated` a agent aktualizuje stejný záznam, omezte trigger pomocí `updatedFields` na pole, do kterého agent nikdy nezapisuje (např. zdrojovou URL), nebo před voláním `runAgent()` zkontrolujte, zda je některé cílové pole stále prázdné.
 </Warning>
 
+### Spuštění jménem člena pracovního prostoru
+
+Předejte `runAsWorkspaceMemberId`, když je spuštění vyvoláno osobou — například chatbotem odpovídajícím na zprávu — aby agent jednal jako tento člen, nikoli jako aplikace:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+Spuštění je pak omezeno na to, co povolují jak role agenta, tak role člena, záznamy, které vytvoří, jsou připsány tomuto členovi a uplatní se jeho oprávnění na úrovni řádků. Toto pole vynechejte u autonomních spuštění (plánované úlohy, spouštěče databázových událostí): ta si ponechají vlastní roli agenta.
+
+Vaše aplikace je zodpovědná za mapování osoby, která spuštění vyvolala, na člena pracovního prostoru. Pojmenování jednoho vyžaduje přístupový token aplikace a to, co může token
+pojmenovat, závisí na tom, zda nese uživatele:
+
+* Token, který **nemá přiřazeného žádného uživatele**, může pojmenovat libovolného člena. Logická funkce běží
+  s jedním a totéž platí pro tokeny získané přes `client_credentials` nebo z
+  API klíče.
+* Token vydaný **jménem uživatele**, jaký obdrží front komponenta, smí
+  pojmenovat pouze člena daného uživatele.
+
+Cokoli jiného — běžná uživatelská relace, API klíč bez tokenu aplikace — vůbec
+nesmí pojmenovat žádného člena.
+
+<Warning>
+  `runAgent()` vyvolá výjimku, pokud nelze workspace člena vyřešit — neznámý nebo odebraný člen, nebo člen bez role. Nikdy se nevrací zpět k
+  vlastní roli agenta, protože to by udělilo více oprávnění, než o která volající
+  požádal.
+</Warning>
+
 </Accordion>
 </AccordionGroup>
