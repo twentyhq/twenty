@@ -12,17 +12,19 @@ export const useNotificationActions = () => {
   const setNotificationStatus = async (
     notificationId: string,
     status: NotificationStatus,
-  ) => {
+  ): Promise<boolean> => {
     try {
       await updateOneRecord({
         objectNameSingular: CoreObjectNameSingular.Notification,
         idToUpdate: notificationId,
         updateOneRecordInput: { status },
       });
+      return true;
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to update the notification`,
       });
+      return false;
     }
   };
 

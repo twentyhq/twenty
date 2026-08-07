@@ -108,8 +108,11 @@ export const NotificationDetail = ({
   };
 
   const handleMarkDone = async () => {
-    await markNotificationDone(notification.id);
-    setSelectedInboxNotificationId(null);
+    const didUpdate = await markNotificationDone(notification.id);
+
+    if (didUpdate) {
+      setSelectedInboxNotificationId(null);
+    }
   };
 
   const Icon = notification.requiresAction ? IconAlertTriangle : IconBell;
