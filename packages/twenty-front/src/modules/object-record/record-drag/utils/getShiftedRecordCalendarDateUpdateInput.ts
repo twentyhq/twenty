@@ -1,6 +1,5 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getShiftedRecordCalendarDate } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDate';
-import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetShiftedRecordCalendarDateUpdateInputArgs = {
@@ -24,10 +23,7 @@ export const getShiftedRecordCalendarDateUpdateInput = ({
     return { [calendarFieldName]: fallbackStartDate };
   }
 
-  const currentStartDate = Temporal.PlainDate.from(startDate);
-
   const shiftedDate = getShiftedRecordCalendarDate({
-    currentStartDate,
     dayOffset,
     startDate,
     endDate: isDefined(calendarEndFieldName)

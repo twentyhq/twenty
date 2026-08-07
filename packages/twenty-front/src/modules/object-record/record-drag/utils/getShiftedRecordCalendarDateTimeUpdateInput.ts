@@ -1,9 +1,5 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import {
-  getShiftedRecordCalendarDateTime,
-  type ShiftedRecordCalendarDateTime,
-} from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTime';
-import { Temporal } from 'temporal-polyfill';
+import { getShiftedRecordCalendarDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTime';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetShiftedRecordCalendarDateTimeUpdateInputArgs = {
@@ -29,22 +25,14 @@ export const getShiftedRecordCalendarDateTimeUpdateInput = ({
     return { [calendarFieldName]: fallbackStartDateTime };
   }
 
-  let shiftedDateTime: ShiftedRecordCalendarDateTime | null = null;
-  try {
-    const currentStartInstant = Temporal.Instant.from(startDateTime);
-
-    shiftedDateTime = getShiftedRecordCalendarDateTime({
-      currentStartInstant,
-      dayOffset,
-      startDateTime,
-      endDateTime: isDefined(calendarEndFieldName)
-        ? record[calendarEndFieldName]
-        : undefined,
-      timeZone,
-    });
-  } catch {
-    shiftedDateTime = null;
-  }
+  const shiftedDateTime = getShiftedRecordCalendarDateTime({
+    dayOffset,
+    startDateTime,
+    endDateTime: isDefined(calendarEndFieldName)
+      ? record[calendarEndFieldName]
+      : undefined,
+    timeZone,
+  });
 
   return {
     [calendarFieldName]:
