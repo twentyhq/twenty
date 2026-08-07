@@ -51,11 +51,34 @@ export default definePageLayout({
 
 ### 主なポイント
 
-* `type` は通常、特定のオブジェクトの詳細ビューをカスタマイズするために `'RECORD_PAGE'` を指定します。
+* `type` は `'RECORD_INDEX'`、`'RECORD_PAGE'`、`'DASHBOARD'`、`'STANDALONE_PAGE'` のいずれかです。 特定のオブジェクトの詳細ビューをカスタマイズするには `'RECORD_PAGE'` を使用します。
 * `objectUniversalIdentifier` は、このレイアウトを適用するオブジェクトを指定します。
-* 各 `tab` は、`title`、`position`、`layoutMode`（レコードページには `VERTICAL_LIST`、ダッシュボードには `GRID`）を持つページのセクションを定義します。 1 つのウィジェットのみを含むタブでは、そのウィジェットが自動的にフルブリードで表示され、複数のウィジェットがある場合はカードとして積み重なります。
+* 各 `tab` は、`title`、`position`、`layoutMode` を持つページのセクションを定義します。レコードページおよびスタンドアロンページには `VERTICAL_LIST`、ダッシュボードには `GRID` を使用します。 `VERTICAL_LIST` タブでは、1 つのウィジェットのみの場合はそのウィジェットがフルブリードでタブ全体に表示され、複数のウィジェットがある場合はカードとして積み重なります。 `GRID` タブでは、ウィジェットの数に関係なく、常に 12 列グリッド上でカードとして配置されます。そのため、1 つのウィジェットにページ全体を使わせたい場合は `VERTICAL_LIST` を選択します。
+* `layoutMode` を明示的に設定します。 `layoutMode` を省略すると、`STANDALONE_PAGE` では `VERTICAL_LIST`、それ以外では `GRID` が適用されますが、これはレコードページで望ましい動作であることはほとんどありません。
 * タブ内の各 `widget` は、[front component](/l/ja/developers/extend/apps/layout/front-components)、リレーションリスト、その他のビルトインウィジェットタイプをレンダリングできます。
 * タブの `position` は表示順を制御します。 組み込みタブの後にカスタムタブを配置するには、より大きな値（例：50）を使用します。
+
+### フィールド ウィジェット
+
+`FIELD` ウィジェットは、レコードの 1 つのフィールドをレンダリングします。 リレーションフィールドの場合、関連レコードの一覧を埋め込むこともできます。
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` は、レイアウトのオブジェクト上のフィールドのユニバーサル識別子を受け取ります。
+* `fieldDisplayMode` は `'FIELD'`、`'CARD'`、`'EDITOR'`、`'VIEW'`、`'TABLE'` のいずれかです。 `TABLE` は、1 対多のリレーションフィールドのレコードを一覧表示するビューを埋め込みます。
+* `nestedRelationFieldMetadataId` は任意で、リレーション先オブジェクト上の 1 対多リレーションフィールドのユニバーサル識別子を受け取り、2 ホップ先のリレーションにあるレコードを一覧表示するために使用されます（例: 会社ページでその会社の担当者が持つ商談を一覧表示する、または人物ページでその人物の所属する会社の商談を一覧表示する、など）。 最初のホップは 1 対多または多対 1 のリレーションフィールドのどちらでもかまいませんが、2 つ目は必ず 1 対多でなければなりません（ジャンクションリレーションはサポートされません）。また、`fieldDisplayMode: 'TABLE'` が必須であり、ネストされたウィジェットは常に埋め込みビューとしてレンダリングされるため、これを他の表示モードと組み合わせると検証エラーになります。
 
 ## definePageLayoutTab
 

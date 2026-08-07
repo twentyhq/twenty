@@ -6,7 +6,9 @@ import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/compon
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
+import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { Select } from '@/ui/input/components/Select';
@@ -55,6 +57,7 @@ export const EmailComposerFields = ({
   composerState,
   contextRecord,
 }: EmailComposerFieldsProps) => {
+  const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: { id: string; handle: string }[];
   }>(GET_MY_CONNECTED_ACCOUNTS);
@@ -138,9 +141,8 @@ export const EmailComposerFields = ({
         defaultValue={composerState.initialBody}
         onChange={composerState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
-        minHeight={120}
-        maxWidth={600}
-        contentType="html"
+        profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
+        onImageUpload={uploadEmailImage}
       />
       <EmailAttachmentsField
         label={t`Attachments`}

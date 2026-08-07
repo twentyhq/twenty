@@ -31,7 +31,6 @@ const buildApplication = (variableValue: string): Application => ({
   id: APP_ID,
   name: 'Test App',
   description: null,
-  logo: null,
   version: '1.0.0',
   universalIdentifier: 'test-app',
   applicationRegistrationId: null,

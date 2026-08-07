@@ -100,7 +100,7 @@ Poznámky ke schématu:
 </Accordion>
 <Accordion title="runAgent" description="Spuštění agenta z logické funkce">
 
-`runAgent()` umožňuje logické funkci spustit jednoho z agentů vaší aplikace (s jeho dovednostmi a nástroji). Identifikujte agenta pomocí `universalIdentifier`, který jste předali do `defineAgent()`:
+`runAgent()` umožňuje logické funkci spustit jednoho z agentů vaší aplikace (s jeho dovednostmi a nástroji). Identifikujte agenta pomocí `universalIdentifier`, který jste předali do `defineAgent()`. Předejte buď řetězec `prompt`, nebo historii konverzace `messages`, ale ne obojí zároveň:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,24 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+U vícekrokových botů (Slack, Discord, Teams, …) předejte historii vlákna jako `messages` místo jednoho `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Hlavní body:
+* Zadejte **přesně jednu** z možností: `prompt` (řetězec) nebo `messages` (1 až 100 položek
+  `{ role: 'user' | 'assistant', content: string }`).
 * Agent běží **synchronně** a může sám číst/aktualizovat záznamy pomocí vlastních nástrojů — `runAgent()` vrátí výsledek až po dokončení běhu.
 * Aplikace může spouštět pouze své vlastní agenty.
 * [Výchozí role](/l/cs/developers/extend/apps/config/roles) aplikace musí udělovat příznak oprávnění `AI` — přidejte `SystemPermissionFlag.AI` do `permissionFlagUniversalIdentifiers` (nebo nastavte `canAccessAllTools: true`).

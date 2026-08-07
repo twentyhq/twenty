@@ -74,6 +74,17 @@ export const useSaveRecordTableWidgetViews = () => {
           continue;
         }
 
+        // Every view-backed widget gets a draft seeded on entering edit mode;
+        // only the ones the user actually touched need an upsert.
+        if (
+          isDeeplyEqual(
+            recordTableWidgetViewPersisted[widget.id],
+            widgetViewDraft,
+          )
+        ) {
+          continue;
+        }
+
         const objectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
             objectMetadataItem.id === widgetViewDraft.view.objectMetadataId,
@@ -93,10 +104,10 @@ export const useSaveRecordTableWidgetViews = () => {
         };
 
         const persistedView = recordTableWidgetViewPersisted[widget.id]?.view;
-        const draftView = widgetViewDraft.view;
 
-        const draftViewSettings =
-          buildUpsertViewWidgetViewSettingsInput(draftView);
+        const draftViewSettings = buildUpsertViewWidgetViewSettingsInput(
+          widgetViewDraft.view,
+        );
 
         const hasViewSettingsChanges =
           !isDefined(persistedView) ||
@@ -126,6 +137,8 @@ export const useSaveRecordTableWidgetViews = () => {
                 positionInViewFilterGroup:
                   filter.positionInViewFilterGroup ?? undefined,
                 subFieldName: filter.subFieldName ?? undefined,
+                relationTargetFieldMetadataId:
+                  filter.relationTargetFieldMetadataId ?? undefined,
               })),
               viewFilterGroups: widgetViewDraft.viewFilterGroups.map(
                 (group) => ({

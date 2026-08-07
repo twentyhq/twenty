@@ -171,11 +171,14 @@ export class WorkspaceEntityManager extends EntityManager {
 
     if (rolePermissionConfig && 'intersectionOf' in rolePermissionConfig) {
       const allRolePermissions = rolePermissionConfig.intersectionOf.map(
-        (roleId: string) =>
-          this.getPermissionsForRole(roleId, objectPermissionsByRoleId),
+        (roleId: string) => objectPermissionsByRoleId?.[roleId],
       );
 
-      objectPermissions = computePermissionIntersection(allRolePermissions);
+      // defaultRoleId has no foreign key and can dangle. A bound that cannot
+      // be resolved denies rather than letting the rest decide alone.
+      objectPermissions = allRolePermissions.every(isDefined)
+        ? computePermissionIntersection(allRolePermissions)
+        : {};
     }
 
     const newRepository = new WorkspaceRepository<Entity>(

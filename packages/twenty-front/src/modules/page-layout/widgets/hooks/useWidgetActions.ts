@@ -71,7 +71,14 @@ export const useWidgetActions = ({
     isFieldRelation(fieldDefinition) &&
     fieldDefinition.metadata.relationType === RelationType.ONE_TO_MANY;
 
-  if (isOneToManyRelation) {
+  // "See all" links to the relation field's own index, which lists the first
+  // hop. A nested widget lists the second hop, so the link would point at a
+  // different object than the widget shows.
+  const isNestedRelationWidget =
+    isFieldWidget(widget) &&
+    isDefined(widget.configuration.nestedRelationFieldMetadataId);
+
+  if (isOneToManyRelation && !isNestedRelationWidget) {
     actions.push({
       id: 'see-all',
       position: 0,

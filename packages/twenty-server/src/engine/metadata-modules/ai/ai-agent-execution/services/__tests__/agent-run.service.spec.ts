@@ -4,6 +4,7 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -86,11 +87,102 @@ describe('AgentRunService', () => {
 
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({
+        messages: [{ role: 'user', content: input.prompt }],
         authContext: {
           type: 'application',
           workspace,
           application: { id: 'app-1' },
         },
+      }),
+    );
+  });
+
+  it('converts a prompt into a single user message', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: null,
+      input,
+    });
+
+    expect(
+      agentAsyncExecutorService.executeAgent.mock.calls[0][0].messages,
+    ).toEqual([{ role: 'user', content: input.prompt }]);
+  });
+
+  it('passes messages to the executor when messages are provided instead of prompt', async () => {
+    const messages = [
+      { role: 'user' as const, content: 'Hello' },
+      { role: 'assistant' as const, content: 'Hi there' },
+      { role: 'user' as const, content: 'What is the status?' },
+    ];
+
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input: {
+        agentUniversalIdentifier: 'agent-uid',
+        messages,
+      },
+    });
+
+    const executeAgentArgs =
+      agentAsyncExecutorService.executeAgent.mock.calls[0][0];
+
+    expect(executeAgentArgs.messages).toEqual(messages);
+    expect(executeAgentArgs.baseSystemPrompt).toBe(
+      AGENT_RUN_BASE_SYSTEM_PROMPT,
+    );
+    expect(executeAgentArgs.toolLoadingStrategy).toBe('lazy');
+    expect(executeAgentArgs.authContext).toEqual({
+      type: 'application',
+      workspace,
+      application: { id: 'app-1' },
+    });
+  });
+
+  it('throws when neither prompt nor messages are provided', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: null,
+        input: {
+          agentUniversalIdentifier: 'agent-uid',
+        },
+      }),
+    ).rejects.toThrow(/exactly one of prompt or messages/);
+
+    expect(agentRepository.findOne).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('throws when both prompt and messages are provided', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: null,
+        input: {
+          agentUniversalIdentifier: 'agent-uid',
+          prompt: 'Enrich record 123',
+          messages: [{ role: 'user', content: 'Hello' }],
+        },
+      }),
+    ).rejects.toThrow(/exactly one of prompt or messages/);
+
+    expect(agentRepository.findOne).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('runs the agent with the programmatic base system prompt', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: null,
+      input,
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+        toolLoadingStrategy: 'lazy',
       }),
     );
   });
@@ -110,6 +202,24 @@ describe('AgentRunService', () => {
     expect(result).toEqual({
       result: null,
       error: 'AI agent stopped: no more available credits.',
+      success: false,
+    });
+  });
+
+  it('returns a generic error result when agent execution throws instead of bubbling GraphQL errors', async () => {
+    agentAsyncExecutorService.executeAgent.mockRejectedValue(
+      new Error('Failed to process successful response'),
+    );
+
+    const result = await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input,
+    });
+
+    expect(result).toEqual({
+      result: null,
+      error: 'Agent execution failed.',
       success: false,
     });
   });

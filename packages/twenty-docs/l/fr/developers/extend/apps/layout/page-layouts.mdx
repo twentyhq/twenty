@@ -51,11 +51,34 @@ export default definePageLayout({
 
 ### Points clés
 
-* `type` est généralement `'RECORD_PAGE'` pour personnaliser la vue détaillée d'un objet spécifique.
+* `type` est l'un de `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` ou `'STANDALONE_PAGE'`. Utilisez `'RECORD_PAGE'` pour personnaliser la vue détaillée d'un objet spécifique.
 * `objectUniversalIdentifier` spécifie à quel objet cette mise en page s'applique.
-* Chaque `tab` définit une section de la page avec un `title`, une `position` et un `layoutMode` (`VERTICAL_LIST` pour les pages d'enregistrement, `GRID` pour les tableaux de bord). Un onglet contenant un seul widget l'affiche automatiquement en pleine largeur ; avec plusieurs widgets, ils sont empilés sous forme de cartes.
+* Chaque `tab` définit une section de la page avec un `title`, une `position` et un `layoutMode` : `VERTICAL_LIST` pour les pages d'enregistrement et les pages autonomes, `GRID` pour les tableaux de bord. Dans un onglet `VERTICAL_LIST`, un seul widget est affiché en pleine largeur et occupe tout l'onglet ; avec plusieurs widgets, ils sont empilés sous forme de cartes. Un onglet `GRID` dispose toujours ses widgets sous forme de cartes sur une grille de 12 colonnes, quel que soit leur nombre ; choisissez donc `VERTICAL_LIST` lorsque vous voulez qu'un seul widget remplisse la page.
+* Définissez `layoutMode` explicitement. Si vous l’omettez, vous obtenez `VERTICAL_LIST` sur une `STANDALONE_PAGE` et `GRID` partout ailleurs, ce qui est rarement ce que vous voulez sur une page d’enregistrement.
 * Chaque `widget` à l'intérieur d'un onglet peut afficher un [front component](/l/fr/developers/extend/apps/layout/front-components), une liste de relations ou d'autres types de widgets intégrés.
 * La `position` des onglets contrôle leur ordre. Utilisez des valeurs plus élevées (p. ex., 50) pour placer les onglets personnalisés après les onglets intégrés.
+
+### Widgets des champs
+
+Un widget `FIELD` affiche un champ de l’enregistrement. Pour les champs de relation, il peut également intégrer une liste d’enregistrements liés :
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` prend l’identifiant universel d’un champ sur l’objet de la mise en page.
+* `fieldDisplayMode` est l’une des valeurs suivantes : `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` ou `'TABLE'`. `TABLE` intègre une vue listant les enregistrements d’un champ de relation un-à-plusieurs.
+* `nestedRelationFieldMetadataId` est facultatif et prend l’identifiant universel d’un champ de relation un-à-plusieurs sur l’objet cible de la relation, afin de lister des enregistrements à deux sauts de relation (par exemple, une page Entreprise listant les opportunités des personnes de l’entreprise, ou une page Personne listant les opportunités de l’entreprise de la personne). Le premier saut peut être un champ de relation un-à-plusieurs ou plusieurs-à-un, le second doit être un-à-plusieurs (les relations de jonction ne sont pas prises en charge), et cela nécessite `fieldDisplayMode: 'TABLE'` — le combiner avec tout autre mode d’affichage constitue une erreur de validation, puisqu’un widget imbriqué est toujours rendu comme une vue intégrée.
 
 ## definePageLayoutTab
 

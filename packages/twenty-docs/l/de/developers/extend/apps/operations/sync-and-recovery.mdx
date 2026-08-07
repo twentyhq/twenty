@@ -121,5 +121,6 @@ Wenn etwas schiefläuft, ermöglichen Ihnen das Metadaten-Diff und benannte Fehl
 
 * **Manifest-Build-Fehler** – die CLI schlägt vor dem Sync fehl (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); beheben Sie den Quellcode Ihrer App.
 * **Sync-/Migrationsfehler** – der Build ist erfolgreich, aber das Anwenden des Diffs schlägt fehl und nennt die Entität und den `universalIdentifier`; beheben Sie die widersprüchlichen Metadaten.
+* **Abhängigkeitsgrößenfehler** — die Synchronisierung oder Installation schlägt fehl, weil die Produktions-`dependencies` der App zu groß sind, um sie als Runtime-Layer zu installieren (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); verschieben Sie Pakete, die Ihre Logikfunktionen zur Laufzeit nicht importieren (UI-Bibliotheken, Dev-Tools), in die `devDependencies`.
 * **App-Code-Laufzeitfehler** — die Synchronisierung ist erfolgreich, aber Ihre Logikfunktionen oder Komponenten verhalten sich zur Laufzeit unerwartet; überprüfen Sie die [Funktionsprotokolle](/l/de/developers/extend/apps/operations/cli).
 * **Lokaler Instanzzustand** — nichts davon trifft zu und der Workspace sieht immer noch falsch aus; arbeiten Sie die Wiederherstellungsleiter nach unten ab.

@@ -100,7 +100,7 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="ロジック関数からエージェントを実行する">
 
-`runAgent()` を使用すると、ロジック関数からアプリのエージェント（そのスキルやツールを含む）を実行できます。 `defineAgent()` に渡した `universalIdentifier` でエージェントを識別します:
+`runAgent()` を使用すると、ロジック関数からアプリのエージェント（そのスキルやツールを含む）を実行できます。 `defineAgent()` に渡した `universalIdentifier` でエージェントを識別します。 `prompt` 文字列または会話履歴である `messages` のいずれか一方のみを渡してください。両方は渡さないでください。
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,23 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+マルチターンのボット (Slack、Discord、Teams など) の場合は、単一の `prompt` ではなく、スレッド履歴を `messages` として渡してください。
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 主なポイント：
+* `prompt` (string) または `messages`（1～100 個の `{ role: 'user' | 'assistant', content: string }` エントリ）のうち、**ちょうど一つだけ**を指定してください。
 * エージェントは**同期的に**実行され、自身のツールを通じてレコードの読み取り/更新ができます。`runAgent()` は、実行が完了すると解決されます。
 * アプリは自分自身のエージェントのみを実行できます。
 * アプリの[デフォルトロール](/l/ja/developers/extend/apps/config/roles)には `AI` パーミッションフラグが付与されている必要があります — その `permissionFlagUniversalIdentifiers` に `SystemPermissionFlag.AI` を追加するか（または `canAccessAllTools: true` を設定します）。

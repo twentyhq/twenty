@@ -21,7 +21,7 @@ Heslo, které nastavíte během první instalace, se stane trvale uloženým v o
 ⚠️ VAROVÁNÍ: Následující kroky trvale SMAŽÍ veškerá data z databáze! ⚠️
 Pokračujte pouze v případě, že se jedná o novou instalaci bez důležitých dat.
 
-K aktualizaci `PG_DATABASE_PASSWORD` musíte:
+Chcete-li aktualizovat `PG_DATABASE_PASSWORD`, potřebujte:
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -31,7 +31,7 @@ docker compose up -d
 
 #### Nalezeny konce řádků CR [Windows]
 
-Je to způsobeno znaky konce řádku ve Windows a konfigurací gitu. Zkuste spustit:
+K tomu dochází díky znakům s liniovým jádrem Windows v kombinaci s konfigurací Git. Zkuste spustit:
 
 ```
 git config --global core.autocrlf false
@@ -43,11 +43,11 @@ Pak smažte úložiště a naklonujte jej znovu.
 
 Během instalace Twenty musíte nastavit svou postgres databázi s správnými schématy, rozšířeními a uživateli.
 Pokud se vám podaří spustit toto nastavování, měli byste mít ve své databázi schémata `default` a `metadata`.
-Pokud ne, ujistěte se, že na vašem počítači neběží více než jedna instance postgres.
+Pokud nemáte, ujistěte se, že na vašem počítači není spuštěna více než jedna PostgreSQL instance.
 
 #### Nelze najít modul 'twenty-emails' ani jeho odpovídající deklarace typů.
 
-Před spuštěním inicializace databáze musíte sestavit balíček `twenty-emails` s `npx nx run twenty-emails:build`
+Před inicializací databáze musíte vytvořit balíček `dvacet e-mailů` (`npx nx spustit dvacet e-mailů:build`).
 
 #### Chybí balíček twenty-x
 
@@ -55,7 +55,7 @@ Ujistěte se, že v kořenovém adresáři spouštíte `yarn` a poté spusťte `
 
 #### Lint při ukládání nefunguje
 
-Toto by mělo fungovat přímo s nainstalovaným rozšířením Oxc (`oxc.oxc-vscode`). Pokud to nefunguje, zkuste přidat toto do svého nastavení vscode (v rozsahu dev containeru):
+Toto by mělo fungovat přímo s nainstalovaným rozšířením Oxc (`oxc.oxc-vscode`). Pokud to nefunguje, zkuste to přidat do nastavení VS kódu (rozsah dev kontejneru):
 
 ```
 "editor.codeActionsOnSave": {
@@ -65,7 +65,7 @@ Toto by mělo fungovat přímo s nainstalovaným rozšířením Oxc (`oxc.oxc-vs
 }
 ```
 
-#### Při spuštění `npx nx start` nebo `npx nx start twenty-front` došlo k chybě nedostatku paměti
+#### Při běhu `npx nx start` nebo `npx nx start 21 front`, je vyhozena chyba mimo paměť
 
 Spusťte pouze služby, které potřebujete, místo `npx nx start`. Například pokud pracujete na serveru, spusťte pouze `npx nx worker twenty-server`
 
@@ -74,7 +74,7 @@ Pokud jste se pokusili spustit pouze `npx nx run twenty-server:start` na WSL a s
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
-Pro obejití proveďte níže uvedený příkaz v terminálu nebo jej přidejte do profilu .bashrc, aby se automatizovalo nastavení:
+Práce je spustit následující příkaz v terminálu, nebo ho přidat do profilu `.bashrc` tak, aby byl použit automaticky:
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
@@ -82,10 +82,10 @@ Příznak --max-old-space-size=8192 nastavuje horní limit 8 GB pro hromadu v No
 Odkaz: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
 **Pokud to nefunguje:**
-Analyzujte, které procesy vám zabírají většinu paměti na stroji. V Twenty jsme si všimli, že některá rozšíření VScode zabírala hodně paměti RAM, takže jsme je dočasně deaktivovali.
+Zjistit, které procesy přebírají většinu RAM. Ve dvaceti letech jsme si všimli, že některá rozšíření VS kódu zabírala spoustu RAM, takže jsme je dočasně zakázali.
 
 **Pokud to nefunguje:**
-Restartování počítače pomůže vyčistit zombie procesy.
+Restartování zařízení pomáhá vyčistit ducha procesy.
 
 #### Při běhu `npx nx start` se v protokolech objevují podivné [0] a [1]
 
@@ -99,19 +99,19 @@ Většinou je to proto, že `worker` neběží na pozadí. Zkuste spustit
 npx nx worker twenty-server
 ```
 
-#### Nelze připojit můj účet Microsoft 365
+#### Nelze připojit můj účet Microsoft 365 k dvaceti
 
 Většinou je to proto, že váš administrátor pro váš účet nepovolil licenci Microsoft 365. Zkontrolujte [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
 
 Pokud máte chybový kód `AADSTS50020`, pravděpodobně používáte osobní účet Microsoft. Tento přístup ještě není podporován. Více informací [zde](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### Při běhu `yarn` se v konzoli objevují varování
+#### Při běhu `yarn` se varování zobrazí v konzoli
 
 Varování informují o načítání dalších závislostí, které nejsou explicitně uvedeny v `package.json`, takže pokud se neobjeví žádná vážná chyba, vše by mělo fungovat podle očekávání.
 
-#### Když uživatel přistoupí na přihlašovací stránku, v protokolech se objeví chybová zpráva o neautorizovaném uživateli, který se snaží přistoupit k pracovnímu prostoru
+#### Když uživatel přistupuje na přihlašovací stránku, objeví se v záznamech chyba o neautorizovaném uživateli, který se snaží získat přístup k pracovnímu prostoru
 
-To je očekávané, protože uživatel je neautorizovaný, když je odhlášen, protože jeho identita není ověřena.
+To je očekáváno jako uživatel je neautorizovaný při odhlášení, protože jeho identita nebyla ověřena.
 
 #### Jak zkontrolovat, zda váš worker běží?
 
@@ -138,9 +138,9 @@ To je očekávané, protože uživatel je neautorizovaný, když je odhlášen, 
 
 * Pokud byla přijata **POST request**, váš worker běží úspěšně. V opačném případě je potřeba zkontrolovat váš worker.
 
-#### Front-end se nedaří spustit a vrací chybu TS5042: Možnost 'project' nelze kombinovat se zdrojovými soubory na příkazovém řádku
+#### Front-end se nespustí a chyba vrátí TS5042: Možnost 'project' nemůže být smíchána se zdrojovými soubory na příkazové řádce
 
-Zakomentujte plugin checker v `packages/twenty-ui/vite-config.ts` jako v příkladu níže
+Komentář kontrolního skriptu v `packages/twenty-ui/vite-config.ts`, jak je zobrazen v příkladu níže:
 
 ```
 plugins: [
@@ -166,13 +166,35 @@ plugins: [
 
 #### Administrační panel není přístupný
 
-Spusťte `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` v databázovém kontejneru pro získání přístupu k administračnímu panelu.
+Spusťte `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` v databázovém kontejneru, abyste získali přístup k administrátorskému panelu.
 
 #### Při spuštění workflow dojde k chybě "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
 
 V produkčním prostředí jsou logické funkce ve výchozím nastavení zakázané. Nastavte proměnnou prostředí `LOGIC_FUNCTION_TYPE` na `LOCAL` nebo `LAMBDA`, abyste je povolili. Toto lze nakonfigurovat pomocí proměnných prostředí nebo prostřednictvím proměnných databáze v administračním panelu. Podrobnosti najdete v [průvodci nastavením Logic Functions](/l/cs/developers/self-host/capabilities/setup#logic-functions-available-drivers).
 
-### Docker Compose jedním kliknutím
+#### Když napíšu zprávu v AI chatu, neodpoví okamžitě a musím aktualizovat stránku, abych viděl odpověď
+
+To znamená, že vaší reverzní proxy chybí konfigurace pro streamované API odpovědi. Níže je uveden příklad konfigurace Nginx:
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
+### Sestavení Dockeru
 
 #### Nelze se přihlásit
 
@@ -189,7 +211,7 @@ Pokud se nemůžete přihlásit po nastavení:
    docker compose up -d
    ```
 
-Poznámka: příkaz database:reset kompletně smaže vaši databázi a vytvoří ji znovu od základu.
+Všimněte si, že příkaz `database:reset` zcela vymaže databázi a znovu ji obnoví od nuly.
 
 #### Problémy s připojením za reverzní proxy
 

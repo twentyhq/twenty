@@ -7,7 +7,7 @@ import { RecordBoardColumnDndKitProvider } from '@/object-record/record-board/re
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
-import { DragDropItemDroppableSlot } from '@/ui/utilities/drag-and-drop/components/DragDropItemDroppableSlot';
+import { DragDropItemDropTargetSlot } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTargetSlot';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { ViewType } from '@/views/types/ViewType';
@@ -20,12 +20,9 @@ export const RecordBoardColumnDnd = () => {
 
   return (
     <RecordBoardColumnDndKitProvider>
-      <DragDropItemDroppableSlot
-        droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
-        index={0}
-      >
+      <DragDropItemDropTargetSlot>
         <DragDropItemDropTarget index={0} orientation="vertical" overlay />
-      </DragDropItemDroppableSlot>
+      </DragDropItemDropTargetSlot>
       {visibleRecordGroupIds.map((recordGroupId, index) => (
         <Fragment key={recordGroupId}>
           <DragDropItemSortableCell
@@ -42,16 +39,13 @@ export const RecordBoardColumnDnd = () => {
               />
             </RecordGroupContext.Provider>
           </DragDropItemSortableCell>
-          <DragDropItemDroppableSlot
-            droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
-            index={index + 1}
-          >
+          <DragDropItemDropTargetSlot>
             <DragDropItemDropTarget
               index={index + 1}
               orientation="vertical"
               overlay
             />
-          </DragDropItemDroppableSlot>
+          </DragDropItemDropTargetSlot>
         </Fragment>
       ))}
       <RecordBoardAddGroupColumn />

@@ -60,7 +60,7 @@ L'étape de build utilise esbuild pour produire un seul fichier autonome par fon
 
 **Les fonctions logiques** s'exécutent dans un environnement Node.js. Les modules intégrés de Node (`fs`, `path`, `crypto`, `http`, etc.) sont disponibles et n'ont pas besoin d'être installés.
 
-**Les composants frontaux** s'exécutent dans un Web Worker. Les modules intégrés de Node ne sont **pas** disponibles — seules les API du navigateur et les packages npm qui fonctionnent dans un environnement navigateur sont pris en charge.
+**Les composants frontaux** s'exécutent dans un Web Worker. Les modules intégrés de Node ne sont **pas** disponibles — seuls les packages npm qui fonctionnent dans un environnement navigateur sont pris en charge. Notez que le bac à sable implémente un DOM *partiel*, de sorte qu’un package peut être compilé sans erreur tout en échouant à l’exécution ; voir [Limitations actuelles](/l/fr/developers/extend/apps/layout/front-components#current-limitations).
 
 Les deux environnements disposent de `twenty-client-sdk/core` et `twenty-client-sdk/metadata` en tant que modules pré-fournis — ils ne sont pas intégrés au bundle mais résolus à l'exécution par le serveur.
 

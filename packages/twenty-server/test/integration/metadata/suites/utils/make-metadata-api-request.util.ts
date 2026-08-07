@@ -7,9 +7,11 @@ type GraphqlOperation = {
   variables?: Record<string, unknown>;
 };
 
+// Pass null for an unauthenticated request: undefined falls back to the
+// default token because parameter defaults apply to undefined, not null.
 export const makeMetadataAPIRequest = (
   graphqlOperation: GraphqlOperation,
-  token: string | undefined = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  token: string | null | undefined = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) => {
   const client = request(`http://localhost:${APP_PORT}`);
 

@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 Buradan `getConnection(connectedAccountId)` kullanarak yeni erişim belirtecini okuyun ve sağlayıcının API'sini (ör. Slack `auth.test`) çağırın veya [key-value store](/l/tr/developers/extend/apps/logic/key-value-store) ile bir eşleme kalıcı hale getirin.
+
+</Accordion>
+
+<Accordion title="Bağlantı kesildiğinde bir mantık fonksiyonu çalıştırın" description="Bir bağlantı kaldırıldığında temizleme işlemi yapın">
+
+Bir uygulamanın bağlanma anında talep ettiği her şey, bağlantı sona erdiğinde serbest bırakılmalıdır. Örneğin, bağlanırken bir `team_id` talep eden bir Slack entegrasyonu, başka bir çalışma alanının aynı Slack ekibini bağlayabilmesi için bu talebi serbest bırakmak zorundadır. Aynı uygulamadaki bir mantık fonksiyonuna referans vermesi için `onDisconnectLogicFunction` değerini ayarlayın; böylece `ConnectedAccount` silindikten hemen sonra çalışır.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Bağlanma kancası gibi, **bağlantısı kesilmekte olan çalışma alanında eşzamansız olarak** çalışır ve bağlantı kesme işlemini asla engellemez. İşleyici aynı payload biçimini alır:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Kanca çalıştığında `ConnectedAccount` zaten kaldırılmıştır, bu yüzden `getConnection(connectedAccountId)` artık sonuç döndürmez. Temizliğin ihtiyaç duyduğu her şey (`team_id`, harici abonelik kimliği gibi) bağlanma sırasında, `connectedAccountId` anahtarıyla [key-value store](/l/tr/developers/extend/apps/logic/key-value-store) içine yazılmış olmalıdır.
+
+Kanca, bir bağlantı kendi başına kaldırıldığında tetiklenir. Uygulamanın kaldırılması, bağlantılarını bunun yerine bir veritabanı zincirleme silme işlemiyle kaldırır, bu nedenle kanca burada çalışmaz. Bu yol için `defineApplication` üzerinde bir `uninstallLogicFunction` bildirin: bu işlev, uygulamanın meta verileri silinmeden önce çalışır, böylece hâlâ `listConnections` çağırabilir ve geride kalan her şeyi temizleyebilir.
 
 </Accordion>
 

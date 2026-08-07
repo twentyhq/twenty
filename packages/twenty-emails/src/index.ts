@@ -1,4 +1,9 @@
 export type { JSONContent } from '@tiptap/core';
+// Consumers must render through this package so there is a single resolved
+// react-email version: a second, independently pinned render can silently drift
+// onto an incompatible major and ship empty email bodies.
+export { render, toPlainText } from 'react-email';
+export * from './utils/render-email';
 export * from './emails/billing-subscription-renewing.email';
 export * from './emails/billing-trial-converting.email';
 export * from './emails/billing-trial-ending.email';

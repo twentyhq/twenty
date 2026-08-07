@@ -47,8 +47,13 @@ describe('GoogleAPIsService', () => {
     findOne: jest.fn(),
   };
 
+  const mockTransactionEntityRepository = {
+    save: jest.fn(),
+    update: jest.fn(),
+  };
+
   const mockTransactionManager = {
-    getRepository: jest.fn().mockReturnValue({ save: jest.fn() }),
+    getRepository: jest.fn().mockReturnValue(mockTransactionEntityRepository),
   };
 
   const mockMessageChannelRepository = {
@@ -297,6 +302,66 @@ describe('GoogleAPIsService', () => {
       expect(
         createMessageChannelService.createMessageChannel,
       ).toHaveBeenCalled();
+    });
+
+    it('should re-enable sync on existing channels when reconnecting an archived account', async () => {
+      mockTwentyConfigService.get.mockImplementation((key) => {
+        if (key === 'CALENDAR_PROVIDER_GOOGLE_ENABLED') return true;
+        if (key === 'MESSAGING_PROVIDER_GMAIL_ENABLED') return true;
+
+        return false;
+      });
+
+      const archivedConnectedAccount = {
+        id: 'archived-account-id',
+        handle: 'test@example.com',
+        userWorkspaceId: 'user-workspace-id',
+        provider: ConnectedAccountProvider.GOOGLE,
+        archivedAt: new Date('2026-01-01'),
+      } as ConnectedAccountEntity;
+
+      mockConnectedAccountRepository.findOne.mockResolvedValue(
+        archivedConnectedAccount,
+      );
+
+      mockWorkspaceMemberRepository.findOne.mockResolvedValue({
+        id: 'workspace-member-id',
+        userId: 'user-id',
+      });
+
+      mockMessageChannelRepository.find.mockResolvedValue([
+        {
+          id: 'message-channel-id',
+          connectedAccountId: 'archived-account-id',
+        },
+      ]);
+
+      mockCalendarChannelRepository.find.mockResolvedValue([
+        {
+          id: 'calendar-channel-id',
+          connectedAccountId: 'archived-account-id',
+        },
+      ]);
+
+      await service.refreshGoogleRefreshToken({
+        handle: 'test@example.com',
+        userId: 'user-id',
+        workspaceMemberId: 'workspace-member-id',
+        workspaceId: 'workspace-id',
+        accessToken: 'new-access-token' as PlaintextString,
+        refreshToken: 'new-refresh-token' as PlaintextString,
+        calendarVisibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+        messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      });
+
+      expect(mockTransactionEntityRepository.update).toHaveBeenCalledWith(
+        {
+          connectedAccountId: 'archived-account-id',
+          workspaceId: 'workspace-id',
+        },
+        { isSyncEnabled: true },
+      );
+      expect(mockTransactionEntityRepository.update).toHaveBeenCalledTimes(2);
     });
   });
 });

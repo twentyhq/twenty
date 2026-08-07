@@ -23,7 +23,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBrowserMaximize } from 'twenty-ui/icon';
+import { IconAddressBook } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -143,7 +143,7 @@ export const RecordShowSidePanelOpenRecordButton = ({
       variant="primary"
       accent="blue"
       size="small"
-      Icon={IconBrowserMaximize}
+      Icon={IconAddressBook}
       hotkeys={[getOsControlSymbol(), '⏎']}
       onClick={handleOpenRecord}
     />

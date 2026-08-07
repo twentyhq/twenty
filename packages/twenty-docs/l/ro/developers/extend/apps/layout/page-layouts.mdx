@@ -51,11 +51,34 @@ export default definePageLayout({
 
 ### Puncte cheie
 
-* `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+* `type` este unul dintre `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` sau `'STANDALONE_PAGE'`. Folosiți `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
 * `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
-* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`VERTICAL_LIST` pentru pagini ale înregistrărilor, `GRID` pentru dashboard-uri). Un tab care conține un singur widget îl afișează automat pe toată lățimea; cu mai multe widget-uri, acestea sunt aranjate în stivă, sub formă de carduri.
+* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode`: `VERTICAL_LIST` pentru pagini ale înregistrărilor și pagini independente, `GRID` pentru dashboard-uri. Într-un tab de tip `VERTICAL_LIST`, un singur widget este redat pe toată lățimea și ocupă întregul tab; cu mai multe widget-uri, acestea sunt aranjate în stivă, sub formă de carduri. Un tab de tip `GRID` așază întotdeauna widget-urile sub formă de carduri pe o grilă cu 12 coloane, indiferent de numărul lor, așa că alege `VERTICAL_LIST` atunci când vrei ca un singur widget să umple pagina.
+* Setează explicit `layoutMode`. Dacă îl omiți, vei obține `VERTICAL_LIST` pe un `STANDALONE_PAGE` și `GRID` în rest, ceea ce rareori îți dorești pe o pagină de înregistrare.
 * Fiecare `widget` dintr-o filă poate reda un [front component](/l/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.
 * `position` pe file le controlează ordinea. Folosește valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
+
+### Widget-uri Câmp
+
+Un widget `FIELD` redă un câmp al înregistrării. Pentru câmpurile de relație, acesta poate încorpora și o listă de înregistrări asociate:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` primește identificatorul universal al unui câmp de pe obiectul layout-ului.
+* `fieldDisplayMode` este unul dintre `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` sau `'TABLE'`. `TABLE` încorporează o vizualizare care listează înregistrările unui câmp de relație de tip unu-la-mulți.
+* `nestedRelationFieldMetadataId` este opțional și primește identificatorul universal al unui câmp de relație unu-la-mulți de pe obiectul țintă al relației, pentru a afișa în listă înregistrări aflate la două salturi de relație distanță (de ex., o pagină Company care afișează oportunitățile persoanelor companiei sau o pagină Person care afișează oportunitățile companiei persoanei). Primul salt poate fi un câmp de relație unu-la-mulți sau mulți-la-unu, al doilea trebuie să fie unu-la-mulți (relațiile de tip junction nu sunt acceptate) și necesită `fieldDisplayMode: 'TABLE'` — combinarea lui cu orice alt mod de afișare reprezintă o eroare de validare, deoarece un widget îmbricat este întotdeauna redat ca o vizualizare încorporată.
 
 ## definePageLayoutTab
 

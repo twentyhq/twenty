@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import bcrypt from 'bcrypt';
 import { type Repository } from 'typeorm';
+import { AppPath } from 'twenty-shared/types';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -12,12 +13,14 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { type ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -31,12 +34,19 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { AuthService } from './auth.service';
 
 jest.mock('bcrypt');
+
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
+  renderEmail: jest.fn().mockResolvedValue('rendered-email'),
+}));
 
 const twentyConfigServiceGetMock = jest.fn();
 
@@ -49,8 +59,10 @@ describe('AuthService', () => {
   let userWorkspaceService: UserWorkspaceService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let permissionsService: PermissionsService;
+  let refreshTokenService: RefreshTokenService;
+  let userSessionService: UserSessionService;
   let signInUpServiceMock: jest.Mocked<
-    Pick<SignInUpService, 'validatePassword'>
+    Pick<SignInUpService, 'validatePassword' | 'signUpWithoutWorkspace'>
   >;
 
   beforeEach(async () => {
@@ -67,6 +79,7 @@ describe('AuthService', () => {
           provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
+            update: jest.fn(),
           },
         },
         {
@@ -78,6 +91,7 @@ describe('AuthService', () => {
               where: jest.fn().mockReturnThis(),
               getOne: jest.fn().mockImplementation(() => null),
             }),
+            update: jest.fn(),
           },
         },
         {
@@ -90,11 +104,26 @@ describe('AuthService', () => {
         },
         {
           provide: DomainServerConfigService,
-          useValue: {},
+          useValue: {
+            getBaseUrl: jest.fn(() => new URL('https://app.twenty.com')),
+            buildBaseUrl: jest.fn(({ pathname, searchParams, hash }) =>
+              buildUrlWithPathnameAndSearchParams({
+                baseUrl: new URL('https://app.twenty.com'),
+                pathname,
+                searchParams,
+                hash,
+              }),
+            ),
+          },
         },
         {
-          provide: WorkspaceAgnosticTokenService,
-          useValue: {},
+          provide: SSOExchangeTokenService,
+          useValue: {
+            generateSSOExchangeToken: jest.fn().mockResolvedValue({
+              token: 'sso-exchange-token',
+              expiresAt: new Date(),
+            }),
+          },
         },
         {
           provide: GuardRedirectService,
@@ -105,6 +134,7 @@ describe('AuthService', () => {
           useValue: {
             validatePassword: jest.fn().mockResolvedValue(undefined),
             generateHash: jest.fn(),
+            signUpWithoutWorkspace: jest.fn(),
           },
         },
         {
@@ -115,7 +145,9 @@ describe('AuthService', () => {
         },
         {
           provide: EmailService,
-          useValue: {},
+          useValue: {
+            send: jest.fn(),
+          },
         },
         {
           provide: AccessTokenService,
@@ -123,7 +155,9 @@ describe('AuthService', () => {
         },
         {
           provide: RefreshTokenService,
-          useValue: {},
+          useValue: {
+            generateRefreshToken: jest.fn(),
+          },
         },
         {
           provide: UserWorkspaceService,
@@ -137,6 +171,7 @@ describe('AuthService', () => {
           provide: UserService,
           useValue: {
             hasUserAccessToWorkspaceOrThrow: jest.fn(),
+            findUserByEmailWithWorkspaces: jest.fn(),
           },
         },
         {
@@ -190,6 +225,12 @@ describe('AuthService', () => {
               .mockResolvedValue(undefined),
           },
         },
+        {
+          provide: UserSessionService,
+          useValue: {
+            revokeAllSessionsForUser: jest.fn().mockResolvedValue(0),
+          },
+        },
       ],
     }).compile();
 
@@ -208,9 +249,11 @@ describe('AuthService', () => {
       getRepositoryToken(UserEntity),
     );
     permissionsService = module.get<PermissionsService>(PermissionsService);
+    refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
     signInUpServiceMock = module.get(SignInUpService) as jest.Mocked<
-      Pick<SignInUpService, 'validatePassword'>
+      Pick<SignInUpService, 'validatePassword' | 'signUpWithoutWorkspace'>
     >;
+    userSessionService = module.get<UserSessionService>(UserSessionService);
   });
 
   beforeEach(() => {
@@ -674,6 +717,97 @@ describe('AuthService', () => {
       expect(result).toBeDefined();
       expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
       expect(spyAuthSsoService).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('signInUpWithSocialSSO - redirect without a target workspace', () => {
+    const socialSSOUser: GoogleRequest['user'] = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'John.Doe@twenty.com',
+      picture: 'picture',
+      action: 'list-available-workspaces',
+      returnToPath: '/settings/profile',
+    };
+
+    beforeEach(() => {
+      jest
+        .spyOn(userService, 'findUserByEmailWithWorkspaces')
+        .mockResolvedValue({ id: 'user-id' } as UserEntity);
+    });
+
+    it('should not mint a refresh token nor put credentials in the query string', async () => {
+      const url = await service.signInUpWithSocialSSO(
+        socialSSOUser,
+        AuthProviderEnum.Google,
+      );
+
+      expect(refreshTokenService.generateRefreshToken).not.toHaveBeenCalled();
+      expect([...new URL(url).searchParams.keys()]).toEqual(['returnToPath']);
+    });
+
+    it('should redirect with the sso exchange token in the url fragment', async () => {
+      const url = new URL(
+        await service.signInUpWithSocialSSO(
+          socialSSOUser,
+          AuthProviderEnum.Google,
+        ),
+      );
+
+      expect(
+        new URLSearchParams(url.hash.substring(1)).get('ssoExchangeToken'),
+      ).toBe('sso-exchange-token');
+      expect(url.pathname).toBe(AppPath.SignInUp);
+    });
+
+    it('should not sign the user up again when they already exist', async () => {
+      await service.signInUpWithSocialSSO(
+        socialSSOUser,
+        AuthProviderEnum.Google,
+      );
+
+      expect(signInUpServiceMock.signUpWithoutWorkspace).not.toHaveBeenCalled();
+    });
+  });
+  describe('updatePassword', () => {
+    const buildUserWithWorkspace = (userId: string) =>
+      ({
+        id: userId,
+        email: 'tim@twenty.com',
+        firstName: 'Tim',
+        lastName: 'Apple',
+        userWorkspaces: [{ locale: 'en' }],
+      }) as unknown as UserEntity;
+
+    it('should revoke every session for the user after a password change', async () => {
+      const userId = 'e2c1a1a2-0000-4000-8000-000000000001';
+
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(buildUserWithWorkspace(userId));
+
+      await service.updatePassword(userId, 'Str0ngPassw0rd!');
+
+      expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
+        userId,
+        reason: UserSessionRevokedReason.PasswordChanged,
+      });
+    });
+
+    it('should not revoke sessions when the new password is rejected', async () => {
+      const userId = 'e2c1a1a2-0000-4000-8000-000000000002';
+
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(buildUserWithWorkspace(userId));
+
+      await expect(service.updatePassword(userId, 'weak')).rejects.toThrow(
+        AuthException,
+      );
+
+      expect(
+        userSessionService.revokeAllSessionsForUser,
+      ).not.toHaveBeenCalled();
     });
   });
 });

@@ -55,3 +55,5 @@ Il **livello di layout** di un'app Twenty è tutto ciò che l'utente vede: dove 
 | **Menu comandi (Cmd+K)**                        | Un'azione rapida fissata o un comando nascosto                                                                                                            | `defineCommandMenuItem`                   |
 
 I componenti front-end vengono eseguiti all'interno di un Web Worker isolato usando Remote DOM: vengono renderizzati in modo nativo nella pagina (non all'interno di un iframe), ma non possono accedere direttamente alla pagina host o al DOM. La comunicazione con Twenty avviene tramite un'API host basata sul passaggio di messaggi.
+
+Sono ancora in fase di sviluppo attivo: la sandbox implementa un DOM parziale, quindi gli usi avanzati possono non funzionare. Vedi [Limitazioni attuali](/l/it/developers/extend/apps/layout/front-components#current-limitations).

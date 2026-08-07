@@ -522,7 +522,8 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
       const viewFields = computeFlatViewFieldsToCreate({
         objectFlatFieldMetadatas: objectFieldMetadatas,
         viewUniversalIdentifier: fieldsView.universalIdentifier,
-        flatApplication: twentyStandardFlatApplication,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
         labelIdentifierFieldMetadataUniversalIdentifier:
           customObject.labelIdentifierFieldMetadataUniversalIdentifier,
         excludeLabelIdentifier: true,

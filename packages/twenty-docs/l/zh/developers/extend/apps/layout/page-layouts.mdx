@@ -51,7 +51,7 @@ export default definePageLayout({
 
 ### 关键点
 
-* `type` 通常为 'RECORD_PAGE'，用于自定义特定对象的详情视图。
+* `type` 为 `'RECORD_INDEX'`、`'RECORD_PAGE'`、`'DASHBOARD'` 或 `'STANDALONE_PAGE'` 之一。 使用 `'RECORD_PAGE'` 来自定义特定对象的详情视图。
 * `objectUniversalIdentifier` 指定此布局适用于哪个对象。
 * 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（记录页面使用 `VERTICAL_LIST`，仪表板使用 `GRID`）。 包含单个小部件的选项卡会自动将其渲染为全宽显示；包含多个小部件时，它们会堆叠为卡片。
 * 选项卡内的每个 `widget` 可以渲染一个[前端组件](/l/zh/developers/extend/apps/layout/front-components)、关系列表或其他内置小部件类型。

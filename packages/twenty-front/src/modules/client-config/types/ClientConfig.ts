@@ -20,9 +20,12 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   calendarBookingPageId?: string;
+  isBookCallOnboardingStepEnabled: boolean;
+  isCompanyEnrichmentEnabled: boolean;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
   defaultSubdomain?: string;
+  subdomainMinLength: number;
   frontDomain: string;
   publicFunctionDomain?: string | null;
   isAttachmentPreviewEnabled: boolean;
@@ -33,12 +36,14 @@ export type ClientConfig = {
   isMicrosoftCalendarEnabled: boolean;
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
+  isCookieSessionEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
   isEmailingDomainInDemoMode: boolean;
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
-  onboarding: OnboardingConfig;
+  isOnboardingAiChatEnabled: boolean;
+  onboarding: OnboardingConfig | null;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

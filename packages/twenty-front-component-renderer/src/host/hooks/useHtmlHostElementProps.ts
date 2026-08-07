@@ -5,11 +5,13 @@ import {
   type SetEditableFocused,
 } from '@/host/contexts/FrontComponentInputFocusContext';
 import { useComposedElementRef } from '@/host/hooks/useComposedElementRef';
+import { useGeometryNodeRef } from '@/host/hooks/useGeometryNodeRef';
 import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
 import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
 import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
 import { createDropTargetGuardProps } from '@/host/utils/createDropTargetGuardProps';
 import { extractReactUnsupportedEventHandlers } from '@/host/utils/extractReactUnsupportedEventHandlers';
+import { getRemoteElementIdFromProps } from '@/host/utils/getRemoteElementIdFromProps';
 import { preventDefaultThenForwardToRemote } from '@/host/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
@@ -26,6 +28,8 @@ export const useHtmlHostElementProps = (
 ): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
 
+  const remoteElementId = getRemoteElementIdFromProps(props);
+
   const { reactUnsupportedEventHandlers, reactBindableProps } =
     extractReactUnsupportedEventHandlers(
       buildHostReactPropsFromRemoteProps(props, htmlTag),
@@ -35,8 +39,11 @@ export const useHtmlHostElementProps = (
     reactUnsupportedEventHandlers,
   );
 
+  const geometryNodeRef = useGeometryNodeRef(remoteElementId);
+
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
+    geometryNodeRef,
   ]);
 
   const hostEnforcedProps: Record<string, unknown> = {
