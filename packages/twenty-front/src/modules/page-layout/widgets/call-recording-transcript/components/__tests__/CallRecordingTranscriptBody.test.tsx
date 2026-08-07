@@ -8,8 +8,6 @@ const callRecording = {
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,
   transcript: null,
-  startedAt: null,
-  endedAt: null,
   createdAt: '2026-08-07T10:00:00.000Z',
 };
 

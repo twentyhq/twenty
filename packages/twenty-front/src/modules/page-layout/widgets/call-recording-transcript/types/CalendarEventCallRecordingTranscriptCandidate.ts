@@ -5,7 +5,5 @@ export type CalendarEventCallRecordingTranscriptCandidate = {
   id: string;
   status: CallRecordingStatus;
   transcript: unknown;
-  startedAt: string | null | undefined;
-  endedAt: string | null | undefined;
   createdAt: string | null | undefined;
 };

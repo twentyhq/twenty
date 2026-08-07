@@ -13,8 +13,6 @@ jest.mock(
           id: 'call-recording-id',
           status: CallRecordingStatus.COMPLETED,
           transcript: null,
-          startedAt: null,
-          endedAt: null,
           createdAt: '2026-08-07T00:00:00.000Z',
         },
         entries: Array.from({ length: 75 }, (_, entryIndex) => ({

@@ -18,8 +18,6 @@ const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS = {
   id: true,
   status: true,
   transcript: true,
-  startedAt: true,
-  endedAt: true,
   createdAt: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 

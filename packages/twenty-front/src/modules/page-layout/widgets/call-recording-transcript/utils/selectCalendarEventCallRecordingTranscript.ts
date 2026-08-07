@@ -64,8 +64,7 @@ const classifyCallRecordingTranscript = (
   return { state: 'MISSING', callRecording };
 };
 
-// callRecordings are expected in arrival order (createdAt ascending): show the
-// first readable transcript, else the first pending one, else the first recording.
+// callRecordings are expected in arrival order (createdAt ascending)
 export const selectCalendarEventCallRecordingTranscript = (
   callRecordings: CalendarEventCallRecordingTranscriptCandidate[],
 ): CalendarEventCallRecordingTranscriptSelection => {

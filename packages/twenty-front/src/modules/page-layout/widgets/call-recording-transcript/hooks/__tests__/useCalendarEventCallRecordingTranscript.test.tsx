@@ -16,13 +16,10 @@ const mockLayoutRenderingContext: {
   },
 };
 
-const requiredFields = [
-  'status',
-  'transcript',
-  'startedAt',
-  'endedAt',
-  'createdAt',
-].map((name) => ({ id: `${name}-field-id`, name }));
+const requiredFields = ['status', 'transcript', 'createdAt'].map((name) => ({
+  id: `${name}-field-id`,
+  name,
+}));
 
 const mockCallRecordingPermissions: {
   canReadObjectRecords: boolean;
@@ -73,8 +70,6 @@ const readyCallRecording = {
       words: [{ text: 'Hello', start_timestamp: { relative: 0 } }],
     },
   ],
-  startedAt: '2026-08-07T10:00:00.000Z',
-  endedAt: '2026-08-07T10:30:00.000Z',
   createdAt: '2026-08-07T09:55:00.000Z',
 };
 
@@ -106,8 +101,6 @@ describe('useCalendarEventCallRecordingTranscript', () => {
           id: true,
           status: true,
           transcript: true,
-          startedAt: true,
-          endedAt: true,
           createdAt: true,
         },
         skip: false,
