@@ -12,7 +12,8 @@ export const SidePanelExpandAiChatButton = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const { openExpandedAiChat, isOnExpandedAiChatPage } = useOpenExpandedAiChat();
+  const { openExpandedAiChat, isOnExpandedAiChatPage } =
+    useOpenExpandedAiChat();
 
   const isOnAskAiPage = sidePanelPage === SidePanelPages.AskAI;
 

@@ -8,7 +8,8 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const AskAiNavigationDrawerItem = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const { openExpandedAiChat, isOnExpandedAiChatPage } = useOpenExpandedAiChat();
+  const { openExpandedAiChat, isOnExpandedAiChatPage } =
+    useOpenExpandedAiChat();
 
   if (!hasAiPermission) {
     return null;
