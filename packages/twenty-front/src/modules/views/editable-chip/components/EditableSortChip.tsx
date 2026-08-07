@@ -3,7 +3,6 @@ import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortS
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -82,50 +81,48 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   }
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <SortOrFilterChip
-          key={recordSort.fieldMetadataId}
-          testId={recordSort.fieldMetadataId}
-          labelValue={fieldMetadataItem.label}
-          labelSubField={subFieldChoices.selectedLabel}
-          Icon={Icon}
-          onRemove={handleRemove}
-          type="sort"
-        />
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <MenuItemSelect
-              LeftIcon={IconArrowUp}
-              text={t`Ascending`}
-              selected={recordSort.direction === ViewSortDirection.ASC}
-              onClick={() => handleDirectionSelect(ViewSortDirection.ASC)}
-            />
-            <MenuItemSelect
-              LeftIcon={IconArrowDown}
-              text={t`Descending`}
-              selected={recordSort.direction === ViewSortDirection.DESC}
-              onClick={() => handleDirectionSelect(ViewSortDirection.DESC)}
-            />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
-            {subFieldChoices.options.map((option) => (
+    <SortOrFilterChip
+      key={recordSort.fieldMetadataId}
+      testId={recordSort.fieldMetadataId}
+      labelValue={fieldMetadataItem.label}
+      labelSubField={subFieldChoices.selectedLabel}
+      Icon={Icon}
+      onRemove={handleRemove}
+      type="sort"
+      dropdown={{
+        dropdownId,
+        dropdownComponents: (
+          <DropdownContent>
+            <DropdownMenuItemsContainer>
               <MenuItemSelect
-                key={option.value}
-                text={option.label}
-                selected={option.value === subFieldChoices.selectedValue}
-                onClick={() => handleSubFieldSelect(option.value)}
+                LeftIcon={IconArrowUp}
+                text={t`Ascending`}
+                selected={recordSort.direction === ViewSortDirection.ASC}
+                onClick={() => handleDirectionSelect(ViewSortDirection.ASC)}
               />
-            ))}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
+              <MenuItemSelect
+                LeftIcon={IconArrowDown}
+                text={t`Descending`}
+                selected={recordSort.direction === ViewSortDirection.DESC}
+                onClick={() => handleDirectionSelect(ViewSortDirection.DESC)}
+              />
+            </DropdownMenuItemsContainer>
+            <DropdownMenuSeparator />
+            <DropdownMenuItemsContainer>
+              {subFieldChoices.options.map((option) => (
+                <MenuItemSelect
+                  key={option.value}
+                  text={option.label}
+                  selected={option.value === subFieldChoices.selectedValue}
+                  onClick={() => handleSubFieldSelect(option.value)}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
+          </DropdownContent>
+        ),
+        dropdownOffset: { y: 8, x: 0 },
+        dropdownPlacement: 'bottom-start',
+      }}
     />
   );
 };

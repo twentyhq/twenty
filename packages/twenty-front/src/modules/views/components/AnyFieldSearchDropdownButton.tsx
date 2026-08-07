@@ -1,5 +1,3 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { AnyFieldSearchChip } from '@/views/components/AnyFieldSearchChip';
@@ -16,13 +14,14 @@ export const AnyFieldSearchDropdownButton = () => {
   };
 
   return (
-    <Dropdown
-      dropdownId={ANY_FIELD_SEARCH_DROPDOWN_ID}
-      clickableComponent={<AnyFieldSearchChip />}
-      dropdownComponents={<AnyFieldSearchDropdownContent />}
-      dropdownOffset={{ y: DROPDOWN_OFFSET_Y, x: 0 }}
-      dropdownPlacement="bottom-start"
-      onOpen={handleOpenAnyFieldSearchDropdown}
+    <AnyFieldSearchChip
+      dropdown={{
+        dropdownId: ANY_FIELD_SEARCH_DROPDOWN_ID,
+        dropdownComponents: <AnyFieldSearchDropdownContent />,
+        dropdownOffset: { y: DROPDOWN_OFFSET_Y, x: 0 },
+        dropdownPlacement: 'bottom-start',
+        onOpen: handleOpenAnyFieldSearchDropdown,
+      }}
     />
   );
 };
