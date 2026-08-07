@@ -41,6 +41,7 @@ on:
 permissions:
   contents: read
   id-token: write # required to mint the OIDC token for federation
+  packages: read # GITHUB_TOKEN cannot read a private GHCR package without this
 
 concurrency:
   # Never let two deploys race on the same box.
@@ -74,14 +75,18 @@ jobs:
       - name: Verify the image exists before touching the box
         run: |
           set -euo pipefail
-          TAG="ghcr.io/${{ github.repository_owner }}/twenty:${{ steps.target.outputs.sha }}"
+          # GHCR paths are case-sensitive and must be lowercase. The owner is
+          # mixed-case (SpeculativeTechnologies), so lowercase it rather than
+          # interpolating it straight in; a mixed-case path returns 403.
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          SHA="${{ steps.target.outputs.sha }}"
           TOKEN=$(curl -sSf -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
-            "https://ghcr.io/token?scope=repository:${{ github.repository_owner }}/twenty:pull&service=ghcr.io" \
+            "https://ghcr.io/token?scope=repository:$OWNER/twenty:pull&service=ghcr.io" \
             | python3 -c 'import json,sys; print(json.load(sys.stdin)["token"])')
           curl -sSfI -H "Authorization: Bearer $TOKEN" \
             -H "Accept: application/vnd.oci.image.index.v1+json,application/vnd.docker.distribution.manifest.list.v2+json" \
-            "https://ghcr.io/v2/${{ github.repository_owner }}/twenty/manifests/${{ steps.target.outputs.sha }}" >/dev/null
-          echo "image present: $TAG"
+            "https://ghcr.io/v2/$OWNER/twenty/manifests/$SHA" >/dev/null
+          echo "image present: ghcr.io/$OWNER/twenty:$SHA"
 
       - uses: google-github-actions/auth@v2
         with:
