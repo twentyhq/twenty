@@ -1,0 +1,50 @@
+packages/twenty-server/src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper.ts
+  s_a3e754529284c0::t_5b7ee3cbc56e5e 15-16,63-65
+  s_a3e754529284c0::t_a50472898abaaf 279-285
+packages/twenty-server/src/engine/subscriptions/subscriptions.module.ts
+  s_a3e754529284c0::t_22698794d7efcc 1,7,38
+packages/twenty-server/src/modules/messaging/common/query-hooks/messaging-query-hook.module.ts
+  s_a3e754529284c0::t_5b7ee3cbc56e5e 9,24
+packages/twenty-server/src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator.ts
+  s_a3e754529284c0::t_5b7ee3cbc56e5e 10-11
+packages/twenty-server/src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage.ts
+  s_a3e754529284c0::t_5b7ee3cbc56e5e 5,69,78,80-81,84,87-88
+  s_a3e754529284c0::t_60d7f1a917273e 45-48,65-68
+  s_a3e754529284c0::t_c5db7515a7ec12 71-77,85
+  s_a3e754529284c0::t_f2e7390cdb7ceb 86
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/calendar-event-visibility.post-query.hook.ts
+  s_a3e754529284c0::t_3cf48cd841e3fa 27
+  s_a3e754529284c0::t_5b7ee3cbc56e5e 1-14,16-24,34-35
+  s_a3e754529284c0::t_12425a57a3247a 15
+  s_a3e754529284c0::t_2599cb581690d5 25-26,28-33
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-query-hook.module.ts
+  s_a3e754529284c0::t_5b7ee3cbc56e5e 7,20
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/message-visibility.post-query.hook.ts
+  s_a3e754529284c0::t_be53180a975ceb 12
+  s_a3e754529284c0::t_5b7ee3cbc56e5e 1-11,13-14,16-24,34-35
+  s_a3e754529284c0::t_12425a57a3247a 15
+  s_a3e754529284c0::t_6b7abaf33767d7 25-26,28-33
+  s_a3e754529284c0::t_156f931762153d 27
+packages/twenty-server/test/integration/graphql/suites/message-channel-visibility.integration-spec.ts
+  s_a3e754529284c0::t_b4314f8f469340 18
+  s_a3e754529284c0::t_2f1fe548968946 1-17,19-316
+packages/twenty-server/src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/__tests__/workspace-query-hook.storage.spec.ts
+  s_a3e754529284c0::t_818ad645914109 1-128,130-131
+  s_a3e754529284c0::t_f46b84782c2f82 129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "fe1dc0593e1ef8b59bc7371380f6b747fa69baa7",
+  "prompts": {},
+  "sessions": {
+    "s_a3e754529284c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e8958773-672f-42c5-a4a1-e47093da5857",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
