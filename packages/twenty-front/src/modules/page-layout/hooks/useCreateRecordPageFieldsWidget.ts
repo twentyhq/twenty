@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
-import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
@@ -22,7 +22,8 @@ export const useCreateRecordPageFieldsWidget = () => {
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const { featureFilteredPageLayoutTabs } =
+    usePageLayoutTabsFilteredByFeatureFlags();
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
@@ -39,7 +40,9 @@ export const useCreateRecordPageFieldsWidget = () => {
   const createRecordPageFieldsWidget = useCallback(() => {
     const viewId = uuidv4();
 
-    const activeTab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
+    const activeTab = featureFilteredPageLayoutTabs.find(
+      (tab) => tab.id === tabId,
+    );
     const positionIndex = activeTab?.widgets.length ?? 0;
 
     const widgetId = uuidv4();
@@ -65,7 +68,7 @@ export const useCreateRecordPageFieldsWidget = () => {
       resetNavigationStack: true,
     });
   }, [
-    currentPageLayout.tabs,
+    featureFilteredPageLayoutTabs,
     navigatePageLayoutSidePanel,
     objectMetadataItem.id,
     pageLayoutDraftState,

@@ -5,6 +5,7 @@ import { type CalendarEventCallRecordingTranscriptCandidate } from '@/page-layou
 import { type CalendarEventCallRecordingTranscriptWidgetState } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptWidgetState';
 import { selectCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/utils/selectCalendarEventCallRecordingTranscript';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useEffect, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationGqlRecordFields,
@@ -12,7 +13,12 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+// Deliberate unpaginated selection window: an event has ~1 recording in
+// practice, and paging until a readable transcript appears would allow an
+// unbounded number of fetches on pathological data.
 const CALL_RECORDING_TRANSCRIPT_QUERY_LIMIT = 50;
+
+const CALL_RECORDING_TRANSCRIPT_PENDING_POLL_INTERVAL_MS = 30_000;
 
 const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS = {
   id: true,
@@ -26,9 +32,11 @@ const CALL_RECORDING_TRANSCRIPT_ORDER_BY: RecordGqlOperationOrderBy = [
   { id: 'AscNullsFirst' },
 ];
 
-const REQUIRED_CALL_RECORDING_FIELD_NAMES = Object.keys(
-  CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS,
-).filter((fieldName) => fieldName !== 'id');
+const REQUIRED_CALL_RECORDING_FIELD_NAMES = [
+  'status',
+  'transcript',
+  'createdAt',
+];
 
 export const useCalendarEventCallRecordingTranscript = (): {
   callRecordingTranscriptState: CalendarEventCallRecordingTranscriptWidgetState;
@@ -50,33 +58,40 @@ export const useCalendarEventCallRecordingTranscript = (): {
       ? targetRecordIdentifier.id
       : undefined;
 
-  const hasRequiredFieldReadPermission =
-    REQUIRED_CALL_RECORDING_FIELD_NAMES.every((fieldName) => {
-      const fieldMetadataItem = callRecordingObjectMetadataItem.fields.find(
-        (field) => field.name === fieldName,
-      );
+  const requiredFieldMetadataItems = REQUIRED_CALL_RECORDING_FIELD_NAMES.map(
+    (requiredFieldName) =>
+      callRecordingObjectMetadataItem.fields.find(
+        (field) => field.name === requiredFieldName,
+      ),
+  );
 
-      if (!isDefined(fieldMetadataItem)) {
-        return false;
-      }
+  const areRequiredFieldsDefined = requiredFieldMetadataItems.every(isDefined);
 
-      return (
+  const restrictedRequiredFieldNames = requiredFieldMetadataItems
+    .filter(isDefined)
+    .filter(
+      (fieldMetadataItem) =>
         callRecordingObjectPermissions.restrictedFields[fieldMetadataItem.id]
-          ?.canRead !== false
-      );
-    });
+          ?.canRead === false,
+    )
+    .map(
+      (fieldMetadataItem) => fieldMetadataItem.label || fieldMetadataItem.name,
+    );
 
   const hasCallRecordingTranscriptReadPermission =
     callRecordingObjectPermissions.canReadObjectRecords &&
-    hasRequiredFieldReadPermission;
+    restrictedRequiredFieldNames.length === 0;
 
   const shouldSkipQuery =
-    !isDefined(calendarEventId) || !hasCallRecordingTranscriptReadPermission;
+    !isDefined(calendarEventId) ||
+    !areRequiredFieldsDefined ||
+    !hasCallRecordingTranscriptReadPermission;
 
   const {
     records: callRecordings,
     loading,
     error,
+    refetch,
   } = useFindManyRecords<CalendarEventCallRecordingTranscriptCandidate>({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
     filter: isDefined(calendarEventId)
@@ -88,24 +103,70 @@ export const useCalendarEventCallRecordingTranscript = (): {
     skip: shouldSkipQuery,
   });
 
-  if (!isDefined(calendarEventId)) {
-    return { callRecordingTranscriptState: { state: 'UNSUPPORTED' } };
-  }
+  const callRecordingTranscriptSelection = useMemo(
+    () => selectCalendarEventCallRecordingTranscript(callRecordings),
+    [callRecordings],
+  );
 
-  if (!hasCallRecordingTranscriptReadPermission) {
-    return { callRecordingTranscriptState: { state: 'FORBIDDEN' } };
-  }
+  const getCallRecordingTranscriptState =
+    (): CalendarEventCallRecordingTranscriptWidgetState => {
+      if (!isDefined(calendarEventId)) {
+        return { state: 'UNSUPPORTED' };
+      }
 
-  if (isDefined(error)) {
-    return { callRecordingTranscriptState: { state: 'QUERY_ERROR' } };
-  }
+      if (!areRequiredFieldsDefined) {
+        return { state: 'UNAVAILABLE' };
+      }
 
-  if (loading) {
-    return { callRecordingTranscriptState: { state: 'LOADING' } };
-  }
+      if (!callRecordingObjectPermissions.canReadObjectRecords) {
+        return {
+          state: 'FORBIDDEN',
+          restriction: {
+            type: 'object',
+            objectName: callRecordingObjectMetadataItem.labelSingular,
+          },
+        };
+      }
 
-  return {
-    callRecordingTranscriptState:
-      selectCalendarEventCallRecordingTranscript(callRecordings),
-  };
+      if (restrictedRequiredFieldNames.length > 0) {
+        return {
+          state: 'FORBIDDEN',
+          restriction: {
+            type: 'field',
+            objectName: callRecordingObjectMetadataItem.labelSingular,
+            fieldNames: restrictedRequiredFieldNames,
+          },
+        };
+      }
+
+      if (isDefined(error)) {
+        return { state: 'QUERY_ERROR', error };
+      }
+
+      if (loading) {
+        return { state: 'LOADING' };
+      }
+
+      return callRecordingTranscriptSelection;
+    };
+
+  const callRecordingTranscriptState = getCallRecordingTranscriptState();
+
+  const isTranscriptPending = callRecordingTranscriptState.state === 'PENDING';
+
+  // Transcript processing finishes minutes after the recording lands, so keep
+  // refreshing while the selected recording is still pending.
+  useEffect(() => {
+    if (!isTranscriptPending) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      void refetch();
+    }, CALL_RECORDING_TRANSCRIPT_PENDING_POLL_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [isTranscriptPending, refetch]);
+
+  return { callRecordingTranscriptState };
 };

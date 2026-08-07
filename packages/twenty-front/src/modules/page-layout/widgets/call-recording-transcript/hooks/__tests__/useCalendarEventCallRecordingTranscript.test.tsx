@@ -3,6 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const mockUseFindManyRecords = jest.fn();
+const mockRefetch = jest.fn();
 
 const mockLayoutRenderingContext: {
   targetRecordIdentifier?: {
@@ -16,10 +17,21 @@ const mockLayoutRenderingContext: {
   },
 };
 
-const requiredFields = ['status', 'transcript', 'createdAt'].map((name) => ({
-  id: `${name}-field-id`,
-  name,
-}));
+const requiredFields = [
+  { id: 'status-field-id', name: 'status', label: 'Status' },
+  { id: 'transcript-field-id', name: 'transcript', label: 'Transcript' },
+  { id: 'createdAt-field-id', name: 'createdAt', label: 'Creation date' },
+];
+
+const mockCallRecordingObjectMetadataItem: {
+  id: string;
+  labelSingular: string;
+  fields: { id: string; name: string; label: string }[];
+} = {
+  id: 'call-recording-object-id',
+  labelSingular: 'Call Recording',
+  fields: requiredFields,
+};
 
 const mockCallRecordingPermissions: {
   canReadObjectRecords: boolean;
@@ -33,14 +45,12 @@ let findManyRecordsResult: {
   records: Record<string, unknown>[];
   loading: boolean;
   error: Error | undefined;
+  refetch: jest.Mock;
 };
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
-    objectMetadataItem: {
-      id: 'call-recording-object-id',
-      fields: requiredFields,
-    },
+    objectMetadataItem: mockCallRecordingObjectMetadataItem,
   }),
 }));
 
@@ -73,19 +83,28 @@ const readyCallRecording = {
   createdAt: '2026-08-07T09:55:00.000Z',
 };
 
+const pendingCallRecording = {
+  ...readyCallRecording,
+  status: CallRecordingStatus.PROCESSING,
+  transcript: { status: 'PENDING' },
+};
+
 describe('useCalendarEventCallRecordingTranscript', () => {
   beforeEach(() => {
     mockUseFindManyRecords.mockClear();
+    mockRefetch.mockClear();
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'calendar-event-id',
       targetObjectNameSingular: 'calendarEvent',
     };
+    mockCallRecordingObjectMetadataItem.fields = requiredFields;
     mockCallRecordingPermissions.canReadObjectRecords = true;
     mockCallRecordingPermissions.restrictedFields = {};
     findManyRecordsResult = {
       records: [],
       loading: false,
       error: undefined,
+      refetch: mockRefetch,
     };
   });
 
@@ -117,6 +136,7 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'FORBIDDEN',
+      restriction: { type: 'object', objectName: 'Call Recording' },
     });
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({ skip: true }),
@@ -134,7 +154,29 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'FORBIDDEN',
+      restriction: {
+        type: 'field',
+        objectName: 'Call Recording',
+        fieldNames: ['Transcript'],
+      },
     });
+  });
+
+  it('reports unavailability instead of a permission denial when a required field is missing', () => {
+    mockCallRecordingObjectMetadataItem.fields = requiredFields.filter(
+      (field) => field.name !== 'transcript',
+    );
+
+    const { result } = renderHook(() =>
+      useCalendarEventCallRecordingTranscript(),
+    );
+
+    expect(result.current.callRecordingTranscriptState).toEqual({
+      state: 'UNAVAILABLE',
+    });
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: true }),
+    );
   });
 
   it('fails safely outside a calendar event record page', () => {
@@ -186,7 +228,8 @@ describe('useCalendarEventCallRecordingTranscript', () => {
   });
 
   it('maps query failures without showing a no-recording state', () => {
-    findManyRecordsResult.error = new Error('Query failed');
+    const queryError = new Error('Query failed');
+    findManyRecordsResult.error = queryError;
 
     const { result } = renderHook(() =>
       useCalendarEventCallRecordingTranscript(),
@@ -194,17 +237,12 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'QUERY_ERROR',
+      error: queryError,
     });
   });
 
   it('reacts when a cached pending recording receives a transcript', () => {
-    findManyRecordsResult.records = [
-      {
-        ...readyCallRecording,
-        status: CallRecordingStatus.PROCESSING,
-        transcript: { status: 'PENDING' },
-      },
-    ];
+    findManyRecordsResult.records = [pendingCallRecording];
 
     const { result, rerender } = renderHook(() =>
       useCalendarEventCallRecordingTranscript(),
@@ -218,5 +256,36 @@ describe('useCalendarEventCallRecordingTranscript', () => {
     });
 
     expect(result.current.callRecordingTranscriptState.state).toBe('READY');
+  });
+
+  it('polls while the selected transcript is pending and stops once it is ready', () => {
+    jest.useFakeTimers();
+
+    try {
+      findManyRecordsResult.records = [pendingCallRecording];
+
+      const { rerender } = renderHook(() =>
+        useCalendarEventCallRecordingTranscript(),
+      );
+
+      act(() => {
+        jest.advanceTimersByTime(30_000);
+      });
+
+      expect(mockRefetch).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        findManyRecordsResult.records = [readyCallRecording];
+        rerender();
+      });
+
+      act(() => {
+        jest.advanceTimersByTime(30_000);
+      });
+
+      expect(mockRefetch).toHaveBeenCalledTimes(1);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });

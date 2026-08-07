@@ -1,7 +1,7 @@
 import { type CallRecordingStatus } from '~/generated/graphql';
 
 export type CalendarEventCallRecordingTranscriptCandidate = {
-  __typename: string;
+  __typename: 'CallRecording';
   id: string;
   status: CallRecordingStatus;
   transcript: unknown;

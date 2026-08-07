@@ -91,7 +91,7 @@ export const WidgetContentRenderer = ({
       return <MessageCampaignDetailsWidget />;
 
     case WidgetType.CALL_RECORDING_TRANSCRIPT:
-      return <CallRecordingTranscriptWidget />;
+      return <CallRecordingTranscriptWidget widgetId={widget.id} />;
 
     default:
       return null;

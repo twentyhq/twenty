@@ -1,5 +1,5 @@
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
@@ -9,16 +9,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const useIsCurrentWidgetLastOfTab = (widgetId: string): boolean => {
-  const { currentPageLayout } = useCurrentPageLayout();
+  const { featureFilteredPageLayoutTabs } =
+    usePageLayoutTabsFilteredByFeatureFlags();
   const isMobile = useIsMobile();
   const { isInSidePanel } = useLayoutRenderingContext();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  if (!isDefined(currentPageLayout)) {
-    return false;
-  }
-
-  const tab = currentPageLayout.tabs.find((tab) =>
+  const tab = featureFilteredPageLayoutTabs.find((tab) =>
     tab.widgets.some((widget) => widget.id === widgetId),
   );
 

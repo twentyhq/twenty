@@ -1,5 +1,4 @@
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
@@ -15,7 +14,6 @@ import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   tabId: string,
 ): PageLayoutTab => {
-  const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
   const { isInSidePanel, targetRecordIdentifier } = useLayoutRenderingContext();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
@@ -30,10 +28,6 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   const selectedRecords = isDefined(targetRecordIdentifier)
     ? [{ id: targetRecordIdentifier.id, status: targetRecordStatus }]
     : [];
-
-  if (!isDefined(currentPageLayout)) {
-    throw new Error('currentPageLayout is not defined');
-  }
 
   const tab = featureFilteredPageLayoutTabs.find((tab) => tab.id === tabId);
 
