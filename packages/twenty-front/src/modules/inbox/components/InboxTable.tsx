@@ -39,6 +39,7 @@ const StyledEmptyState = styled.div`
 
 type InboxTableProps = {
   loading: boolean;
+  inboxItems: InboxItem[];
   needsActionItems: InboxItem[];
   otherItems: InboxItem[];
   selectedInboxItemId: string | null;
@@ -51,6 +52,7 @@ type InboxTableProps = {
 
 export const InboxTable = ({
   loading,
+  inboxItems,
   needsActionItems,
   otherItems,
   selectedInboxItemId,
@@ -63,11 +65,11 @@ export const InboxTable = ({
 
   const hasNeedsActionSection =
     shouldSplitByPriority && needsActionItems.length > 0;
-  const flatItems = shouldSplitByPriority
-    ? otherItems
-    : [...needsActionItems, ...otherItems];
+  // Concatenating the priority buckets would bury a recent low priority item
+  // under an older one that needs action, so the flat path keeps the sort
+  const flatItems = shouldSplitByPriority ? otherItems : inboxItems;
 
-  if (needsActionItems.length === 0 && otherItems.length === 0) {
+  if (inboxItems.length === 0) {
     return loading ? (
       <InboxListSkeletonLoader />
     ) : (

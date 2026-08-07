@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
@@ -23,13 +25,27 @@ export class InboxRouterService {
     @InjectWorkspaceScopedRepository(InboxItemEntity)
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
     private readonly inboxItemTypeService: InboxItemTypeService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
+
+  // The flag has to gate the writes, not just the UI, or turning the inbox off
+  // still seeds types and accrues rows in every workspace
+  private async isInboxEnabled(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_INBOX_ENABLED,
+      workspaceId,
+    );
+  }
 
   // Routing never breaks the caller: a producer that cannot notify should still
   // complete its own work.
   async route(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
     try {
-      return await this.routeOrThrow(args);
+      if (!(await this.isInboxEnabled(args.workspaceId))) {
+        return null;
+      }
+
+      return await this.routeItem(args);
     } catch (error) {
       this.logger.warn(
         `Failed to route inbox item of type ${args.typeKey} in workspace ${
@@ -41,9 +57,7 @@ export class InboxRouterService {
     }
   }
 
-  async routeOrThrow(
-    args: RouteInboxItemArgs,
-  ): Promise<InboxItemEntity | null> {
+  async routeItem(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
     const inboxItemType = await this.inboxItemTypeService.findByKey({
       workspaceId: args.workspaceId,
       key: args.typeKey,
@@ -276,14 +290,18 @@ export class InboxRouterService {
     threadId: string;
     title: string;
   }): Promise<void> {
-    await this.runBestEffort('renameThreadItem', workspaceId, () =>
-      this.inboxItemRepository.update(
+    await this.runBestEffort('renameThreadItem', workspaceId, async () => {
+      if (!(await this.isInboxEnabled(workspaceId))) {
+        return;
+      }
+
+      await this.inboxItemRepository.update(
         workspaceId,
         { threadId },
         // Keeping updatedAt as it was leaves the list ordered by real activity
         { title, updatedAt: () => '"updatedAt"' },
-      ),
-    );
+      );
+    });
   }
 
   async dismissByThreadId({
@@ -293,13 +311,17 @@ export class InboxRouterService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    await this.runBestEffort('dismissByThreadId', workspaceId, () =>
-      this.inboxItemRepository.update(
+    await this.runBestEffort('dismissByThreadId', workspaceId, async () => {
+      if (!(await this.isInboxEnabled(workspaceId))) {
+        return;
+      }
+
+      await this.inboxItemRepository.update(
         workspaceId,
         { threadId, status: InboxItemStatus.OPEN },
         { status: InboxItemStatus.DISMISSED, resolvedAt: new Date() },
-      ),
-    );
+      );
+    });
   }
 
   // The inbox is never allowed to fail the subsystem that feeds it: a chat or

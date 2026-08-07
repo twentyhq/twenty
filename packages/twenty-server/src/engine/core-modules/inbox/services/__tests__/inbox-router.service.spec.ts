@@ -8,6 +8,7 @@ import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-it
 import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
@@ -76,6 +77,10 @@ describe('InboxRouterService', () => {
     findByKey: jest.fn(),
   };
 
+  const featureFlagService = {
+    isFeatureEnabled: jest.fn(),
+  };
+
   // Stands in for the rows the dedupe key currently holds, honouring the
   // optional status filter and the updatedAt DESC ordering the service asks for
   const stubFoldableRows = (rows: InboxItemEntity[]) => {
@@ -101,6 +106,7 @@ describe('InboxRouterService', () => {
     loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
 
     inboxItemTypeService.findByKey.mockResolvedValue(SUBJECT_TYPE);
+    featureFlagService.isFeatureEnabled.mockResolvedValue(true);
     stubFoldableRows([]);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
@@ -119,6 +125,10 @@ describe('InboxRouterService', () => {
           provide: InboxItemTypeService,
           useValue: inboxItemTypeService,
         },
+        {
+          provide: FeatureFlagService,
+          useValue: featureFlagService,
+        },
       ],
     }).compile();
 
@@ -133,10 +143,60 @@ describe('InboxRouterService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('routeOrThrow with a subject bound type', () => {
+  describe('feature flag gating', () => {
+    it('should write nothing at all when the inbox is disabled for the workspace', async () => {
+      // Prepare
+      featureFlagService.isFeatureEnabled.mockResolvedValue(false);
+
+      // Act
+      const result = await service.route({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A message from Alice',
+        subject: threadSubject,
+      });
+
+      // Assert: no seeding, no lookup, no write
+      expect(result).toBeNull();
+      expect(inboxItemTypeService.findByKey).not.toHaveBeenCalled();
+      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should not retitle a thread item when the inbox is disabled', async () => {
+      // Prepare
+      featureFlagService.isFeatureEnabled.mockResolvedValue(false);
+
+      // Act
+      await service.renameThreadItem({
+        workspaceId: WORKSPACE_ID,
+        threadId: THREAD_ID,
+        title: 'A renamed conversation',
+      });
+
+      // Assert
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should not dismiss thread items when the inbox is disabled', async () => {
+      // Prepare
+      featureFlagService.isFeatureEnabled.mockResolvedValue(false);
+
+      // Act
+      await service.dismissByThreadId({
+        workspaceId: WORKSPACE_ID,
+        threadId: THREAD_ID,
+      });
+
+      // Assert
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('routeItem with a subject bound type', () => {
     it('should insert an item keyed on the subject and assigned to the thread owner when no item exists yet', async () => {
       // Act
-      const result = await service.routeOrThrow({
+      const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message from Alice',
@@ -167,7 +227,7 @@ describe('InboxRouterService', () => {
 
     it('should derive the dedupe key from a record subject when the subject is a record', async () => {
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A record needs attention',
@@ -205,7 +265,7 @@ describe('InboxRouterService', () => {
       );
 
       // Act
-      const result = await service.routeOrThrow({
+      const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A newer message',
@@ -237,7 +297,7 @@ describe('InboxRouterService', () => {
 
     it('should fall back to the type label when the producer sends no title', async () => {
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         subject: threadSubject,
@@ -257,7 +317,7 @@ describe('InboxRouterService', () => {
       ]);
 
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         subject: threadSubject,
@@ -283,7 +343,7 @@ describe('InboxRouterService', () => {
       stubFoldableRows([buildInboxItem()]);
 
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'An urgent message',
@@ -310,7 +370,7 @@ describe('InboxRouterService', () => {
       ]);
 
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A reply on a resolved conversation',
@@ -373,7 +433,7 @@ describe('InboxRouterService', () => {
       ]);
 
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A reply on a conversation that also has a resolved item',
@@ -393,7 +453,7 @@ describe('InboxRouterService', () => {
     it('should throw when the type is subject bound and no subject is given', async () => {
       // Act & Assert
       await expect(
-        service.routeOrThrow({
+        service.routeItem({
           workspaceId: WORKSPACE_ID,
           typeKey: 'conversation',
           title: 'A message with no subject',
@@ -407,7 +467,7 @@ describe('InboxRouterService', () => {
     });
   });
 
-  describe('routeOrThrow with an occurrence bound type', () => {
+  describe('routeItem with an occurrence bound type', () => {
     beforeEach(() => {
       inboxItemTypeService.findByKey.mockResolvedValue(OCCURRENCE_TYPE);
     });
@@ -423,7 +483,7 @@ describe('InboxRouterService', () => {
       ]);
 
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed again',
@@ -460,7 +520,7 @@ describe('InboxRouterService', () => {
       ]);
 
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed again',
@@ -490,7 +550,7 @@ describe('InboxRouterService', () => {
 
     it('should always insert without looking for a foldable item when no dedupe key is given', async () => {
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed',
@@ -507,7 +567,7 @@ describe('InboxRouterService', () => {
     });
   });
 
-  describe('routeOrThrow concurrency recovery', () => {
+  describe('routeItem concurrency recovery', () => {
     it('should fold into the row the other producer created when the insert hits a unique violation', async () => {
       // Prepare
       const concurrentItem = buildInboxItem({ id: 'concurrent-item-id' });
@@ -521,7 +581,7 @@ describe('InboxRouterService', () => {
       inboxItemRepository.findOneBy.mockResolvedValue(concurrentItem);
 
       // Act
-      const result = await service.routeOrThrow({
+      const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message from Alice',
@@ -546,7 +606,7 @@ describe('InboxRouterService', () => {
 
       // Act & Assert
       await expect(
-        service.routeOrThrow({
+        service.routeItem({
           workspaceId: WORKSPACE_ID,
           typeKey: 'conversation',
           title: 'A message from Alice',
@@ -562,7 +622,7 @@ describe('InboxRouterService', () => {
 
       // Act & Assert
       await expect(
-        service.routeOrThrow({
+        service.routeItem({
           workspaceId: WORKSPACE_ID,
           typeKey: 'conversation',
           title: 'A message from Alice',
@@ -573,14 +633,14 @@ describe('InboxRouterService', () => {
     });
   });
 
-  describe('routeOrThrow assignee resolution', () => {
+  describe('routeItem assignee resolution', () => {
     it('should throw when the type key is unknown', async () => {
       // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue(null);
 
       // Act & Assert
       await expect(
-        service.routeOrThrow({
+        service.routeItem({
           workspaceId: WORKSPACE_ID,
           typeKey: 'not_a_type',
           title: 'A message from Alice',
@@ -592,7 +652,7 @@ describe('InboxRouterService', () => {
 
     it('should return null without inserting when no thread subject and no fallback assignee resolve a recipient', async () => {
       // Act
-      const result = await service.routeOrThrow({
+      const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message nobody owns',
@@ -607,7 +667,7 @@ describe('InboxRouterService', () => {
 
     it('should prefer the thread owner over the fallback assignee when both are available', async () => {
       // Act
-      await service.routeOrThrow({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message from Alice',
@@ -662,7 +722,7 @@ describe('InboxRouterService', () => {
       );
     });
 
-    it('should swallow the error that routeOrThrow raises for the same arguments', async () => {
+    it('should swallow the error that routeItem raises for the same arguments', async () => {
       // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue(null);
 
@@ -674,7 +734,7 @@ describe('InboxRouterService', () => {
       };
 
       // Act & Assert
-      await expect(service.routeOrThrow(args)).rejects.toThrow(
+      await expect(service.routeItem(args)).rejects.toThrow(
         'Unknown inbox item type not_a_type',
       );
       await expect(service.route(args)).resolves.toBeNull();

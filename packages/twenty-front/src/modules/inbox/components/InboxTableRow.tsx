@@ -88,7 +88,15 @@ export const InboxTableRow = ({
       gridTemplateColumns={INBOX_TABLE_GRID_TEMPLATE_COLUMNS}
       isSelected={isSelected}
       isClickable
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onClick();
+        }
+      }}
     >
       <TableCell>
         {isUnread ? <StyledUnreadDot /> : <StyledReadPlaceholder />}

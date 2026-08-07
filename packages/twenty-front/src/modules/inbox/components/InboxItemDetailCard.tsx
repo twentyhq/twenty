@@ -144,10 +144,12 @@ export const InboxItemDetailCard = ({
             />
           )}
           {inboxItem.inboxItemType.actions.map((action) => {
-            // A resolved item cannot be resolved again: the way back is Reopen
+            // A resolved item cannot be resolved or deferred again: snoozing
+            // one would set snoozedUntil without moving it out of Done
             if (
               isResolved &&
-              action.handlerKind === INBOX_ITEM_ACTION_HANDLER_KIND.COMPLETE
+              (action.handlerKind === INBOX_ITEM_ACTION_HANDLER_KIND.COMPLETE ||
+                action.handlerKind === INBOX_ITEM_ACTION_HANDLER_KIND.SNOOZE)
             ) {
               return null;
             }

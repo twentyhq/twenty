@@ -60,8 +60,11 @@ type TableRowProps = {
   isExpanded?: boolean;
   isClickable?: boolean;
   onClick?: () => void;
+  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
+  role?: string;
+  tabIndex?: number;
   to?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -79,8 +82,11 @@ export const TableRow = ({
   isExpanded,
   isClickable,
   onClick,
+  onKeyDown,
   onMouseEnter,
   onMouseLeave,
+  role,
+  tabIndex,
   to,
   className,
   style,
@@ -97,8 +103,11 @@ export const TableRow = ({
     isSelected={isSelected}
     isExpanded={isExpanded}
     onClick={onClick}
+    onKeyDown={onKeyDown}
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
+    role={role}
+    tabIndex={tabIndex}
     gridAutoColumns={gridAutoColumns}
     gridTemplateColumns={gridTemplateColumns}
     className={className}

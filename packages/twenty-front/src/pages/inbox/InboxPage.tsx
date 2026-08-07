@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -60,6 +61,7 @@ export const InboxPage = () => {
   const SectionIcon = inboxSection.Icon;
 
   const {
+    isInboxEnabled,
     inboxItems,
     needsActionItems,
     otherItems,
@@ -78,6 +80,12 @@ export const InboxPage = () => {
   const selectedInboxItem =
     inboxItems.find((inboxItem) => inboxItem.id === selectedInboxItemId) ??
     null;
+
+  // With the flag off the inbox is not a surface, so a direct visit lands on
+  // the app index rather than on an empty shell
+  if (!isInboxEnabled) {
+    return <Navigate to={AppPath.Index} replace />;
+  }
 
   const handleInboxItemClick = (inboxItem: InboxItem) => {
     if (!isDefined(inboxItem.readAt)) {
@@ -98,11 +106,12 @@ export const InboxPage = () => {
     >
       <StyledPanes>
         <StyledTablePane>
-          {isDefined(error) ? (
+          {isDefined(error) && inboxItems.length === 0 ? (
             <StyledErrorState>{t`Your inbox could not be loaded`}</StyledErrorState>
           ) : (
             <InboxTable
               loading={isInitialLoading}
+              inboxItems={inboxItems}
               needsActionItems={needsActionItems}
               otherItems={otherItems}
               selectedInboxItemId={selectedInboxItem?.id ?? null}
