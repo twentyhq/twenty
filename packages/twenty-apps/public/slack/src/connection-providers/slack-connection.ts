@@ -33,7 +33,6 @@ export default defineConnectionProvider({
       'groups:history',
       'im:history',
       'users:read',
-      // Agent surface: assistant.threads.* (statuses, titles, suggested prompts)
       'assistant:write',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
