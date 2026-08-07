@@ -680,6 +680,7 @@ export interface User {
     deletedWorkspaceMembers?: DeletedWorkspaceMember[]
     hasPassword: Scalars['Boolean']
     supportUserHash?: Scalars['String']
+    isWorkspaceCreator?: Scalars['Boolean']
     workspaces: UserWorkspace[]
     availableWorkspaces: AvailableWorkspaces
     __typename: 'User'
@@ -3898,6 +3899,7 @@ export interface UserGenqlSelection{
     deletedWorkspaceMembers?: DeletedWorkspaceMemberGenqlSelection
     hasPassword?: boolean | number
     supportUserHash?: boolean | number
+    isWorkspaceCreator?: boolean | number
     workspaces?: UserWorkspaceGenqlSelection
     availableWorkspaces?: AvailableWorkspacesGenqlSelection
     __typename?: boolean | number
