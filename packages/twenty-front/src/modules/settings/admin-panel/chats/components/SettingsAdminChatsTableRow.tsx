@@ -39,7 +39,7 @@ export const SettingsAdminChatsTableRow = ({
       gridAutoColumns={SETTINGS_ADMIN_CHATS_TABLE_GRID}
       isClickable
     >
-      <TableCell>
+      <TableCell minWidth="0" overflow="hidden">
         <OverflowingTextWithTooltip
           text={
             isNonEmptyString(thread.workspaceDisplayName)
@@ -48,12 +48,16 @@ export const SettingsAdminChatsTableRow = ({
           }
         />
       </TableCell>
-      <TableCell>
+      <TableCell minWidth="0" overflow="hidden">
         <OverflowingTextWithTooltip
           text={isNonEmptyString(thread.userEmail) ? thread.userEmail : '-'}
         />
       </TableCell>
-      <TableCell color={themeCssVariables.font.color.primary}>
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        minWidth="0"
+        overflow="hidden"
+      >
         <OverflowingTextWithTooltip
           text={isNonEmptyString(thread.title) ? thread.title : t`Untitled`}
         />
@@ -66,7 +70,7 @@ export const SettingsAdminChatsTableRow = ({
           thread.userReplyCount
         )}
       </TableCell>
-      <TableCell>
+      <TableCell minWidth="0" overflow="hidden">
         <StyledFlagsContainer>
           {thread.hasError && <Tag color="red" text={t`Error`} />}
           {isDefined(thread.deletedAt) && (
