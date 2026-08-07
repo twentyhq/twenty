@@ -56,12 +56,27 @@ const CALENDAR_EVENT_PAGE_TABS = {
       },
     },
   },
+  timeline: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .timeline.universalIdentifier,
+    ...TAB_PROPS.timeline,
+    widgets: {
+      timeline: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.timeline.widgets.timeline.universalIdentifier,
+        ...WIDGET_PROPS.timeline,
+      },
+    },
+  },
+  // position 30 is reserved for the upcoming Summary tab
   transcript: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
         .transcript.universalIdentifier,
     title: 'Transcript',
-    position: 30,
+    position: 40,
     icon: 'IconMicrophone',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: {
@@ -73,21 +88,6 @@ const CALENDAR_EVENT_PAGE_TABS = {
         type: WidgetType.CALL_RECORDING_TRANSCRIPT,
         gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-      },
-    },
-  },
-  timeline: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-        .timeline.universalIdentifier,
-    ...TAB_PROPS.timeline,
-    position: 40,
-    widgets: {
-      timeline: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
-            .tabs.timeline.widgets.timeline.universalIdentifier,
-        ...WIDGET_PROPS.timeline,
       },
     },
   },

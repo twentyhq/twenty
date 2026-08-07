@@ -21,10 +21,7 @@ export const CallRecordingTranscriptEntryList = ({
 }: CallRecordingTranscriptEntryListProps) => (
   <StyledEntryList>
     {entries.map((entry, entryIndex) => (
-      <CallRecordingTranscriptEntryListItem
-        key={`${entry.startSeconds ?? 'unknown'}-${entryIndex}`}
-        entry={entry}
-      />
+      <CallRecordingTranscriptEntryListItem key={entryIndex} entry={entry} />
     ))}
   </StyledEntryList>
 );

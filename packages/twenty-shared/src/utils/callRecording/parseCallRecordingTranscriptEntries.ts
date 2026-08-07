@@ -10,15 +10,12 @@ import {
   type CallRecordingParsedTranscriptEntry,
   type CallRecordingParsedTranscriptWord,
 } from '@/types/CallRecordingTranscript';
+import { isDefined } from '@/utils/validation';
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
   isObject(value) && !isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
-
-const isTranscriptRecord = (
-  candidate: Record<string, unknown> | undefined,
-): candidate is Record<string, unknown> => !isUndefined(candidate);
 
 const readRelativeTimestamp = (
   timestamp: Record<string, unknown> | undefined,
@@ -65,11 +62,9 @@ const readTranscriptEntry = (
 
   const words = candidate.words
     .map(asRecord)
-    .filter(isTranscriptRecord)
+    .filter(isDefined)
     .map(readTranscriptWord)
-    .filter(
-      (word): word is CallRecordingParsedTranscriptWord => !isUndefined(word),
-    );
+    .filter(isDefined);
 
   if (words.length === 0) {
     return undefined;
@@ -93,10 +88,7 @@ export const parseCallRecordingTranscriptEntries = (
 
   return transcript
     .map(asRecord)
-    .filter(isTranscriptRecord)
+    .filter(isDefined)
     .map(readTranscriptEntry)
-    .filter(
-      (entry): entry is CallRecordingParsedTranscriptEntry =>
-        !isUndefined(entry),
-    );
+    .filter(isDefined);
 };
