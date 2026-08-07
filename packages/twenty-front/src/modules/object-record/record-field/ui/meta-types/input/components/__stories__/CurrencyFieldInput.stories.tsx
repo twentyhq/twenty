@@ -43,7 +43,7 @@ const CurrencyFieldValueSetterEffect = ({
   amountMicros: number;
   numberFormat: NumberFormat;
 }) => {
-  const { setFieldValue } = useCurrencyField();
+  const { setFieldValue, setDraftValue } = useCurrencyField();
   const setFormatPreferences = useSetAtomState(
     workspaceMemberFormatPreferencesState,
   );
@@ -51,7 +51,17 @@ const CurrencyFieldValueSetterEffect = ({
   useEffect(() => {
     setFormatPreferences((previous) => ({ ...previous, numberFormat }));
     setFieldValue({ amountMicros, currencyCode: CurrencyCode.USD });
-  }, [setFieldValue, amountMicros, setFormatPreferences, numberFormat]);
+    setDraftValue({
+      amount: (amountMicros / 1000000).toString(),
+      currencyCode: CurrencyCode.USD,
+    });
+  }, [
+    setFieldValue,
+    setDraftValue,
+    amountMicros,
+    setFormatPreferences,
+    numberFormat,
+  ]);
 
   return <></>;
 };
