@@ -33,6 +33,7 @@ export default defineConnectionProvider({
       'groups:history',
       'im:history',
       'users:read',
+      'users:read.email',
       'assistant:write',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
