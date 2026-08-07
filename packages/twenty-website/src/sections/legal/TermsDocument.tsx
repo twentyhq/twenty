@@ -21,9 +21,10 @@ export function TermsDocument() {
           choose to share or publish it.
         </li>
         <li>
-          You can export your data at any time, and for 30 days after your
-          subscription ends. Because Twenty is open source, you can also leave
-          our cloud and run Twenty on your own servers.
+          You can export your data at any time while you are subscribed. If your
+          subscription ends, we keep your data for at least 14 days and warn you
+          by email before deleting it. Because Twenty is open source, you can
+          also leave our cloud and run Twenty on your own servers.
         </li>
         <li>
           The open-source software itself is governed by its open-source
@@ -219,10 +220,16 @@ export function TermsDocument() {
         Service.
       </p>
       <p>
-        You can export your Customer Data at any time using the Service&rsquo;s
-        export features and APIs. After your subscription ends, we will make
-        your Customer Data available for export for 30 days, after which we will
-        delete it as described in our Privacy Policy.
+        You can export your Customer Data at any time while your subscription or
+        trial is active, using the Service&rsquo;s export features and APIs.
+        When your subscription ends, your workspace is suspended and can no
+        longer be used, but we retain your Customer Data for at least 14 days
+        and email you a warning before deleting it. During that period you can
+        restore full access, including export, by reactivating your
+        subscription, or write to{' '}
+        <a href="mailto:contact@twenty.com">contact@twenty.com</a> and we will
+        provide you with an export. After that period, we delete your Customer
+        Data as described in our Privacy Policy.
       </p>
 
       <h2>5. Privacy, security and data processing</h2>
@@ -330,9 +337,11 @@ export function TermsDocument() {
       <h2>9. Trials, betas and free features</h2>
       <p>
         We may offer free trials of paid plans. When a trial ends, your
-        workspace continues on whatever paid or free option you have chosen; if
-        you choose none, we may suspend the workspace and, after giving you
-        notice and a chance to export your data, delete it.
+        workspace continues on whatever paid option you have chosen; if you
+        choose none, the workspace is suspended and then handled as described in
+        Section 4: your data is retained for at least 14 days, you are warned by
+        email, and you can subscribe to pick up where you left off or request an
+        export before deletion.
       </p>
       <p>
         Features labeled beta, preview, experimental, or similar are provided so
@@ -445,8 +454,11 @@ export function TermsDocument() {
       <p>
         Where practicable we will notify you before suspending, limit the
         suspension to what is necessary, and lift it promptly once the issue is
-        resolved. Suspension does not remove your right to export your Customer
-        Data, except where we are legally prevented from allowing it.
+        resolved. Suspension by itself does not delete any Customer Data. While
+        a workspace is suspended you may not be able to use the Service&rsquo;s
+        export features yourself, but you can request an export from us as
+        described in Section 4, unless we are legally prevented from providing
+        it.
       </p>
 
       <h2>15. Term and termination</h2>
@@ -465,14 +477,14 @@ export function TermsDocument() {
         refund prepaid fees for the period after discontinuation.
       </p>
       <p>
-        Upon termination, your right to use the Cloud Service ends, the export
-        window in Section 4 applies, and we then delete your Customer Data as
-        described in our Privacy Policy. Because Twenty is open source, you can
-        continue running Twenty on your own infrastructure with the data you
-        export. Provisions that by their nature should survive termination do
-        so, including the export and deletion commitments of Section 4, fees
-        owed for the period before termination, and Sections 11, 12, 16, 17, 18,
-        19, and 21.
+        Upon termination, your right to use the Cloud Service ends, the
+        retention and export terms of Section 4 apply, and we then delete your
+        Customer Data as described in our Privacy Policy. Because Twenty is open
+        source, you can continue running Twenty on your own infrastructure with
+        the data you export. Provisions that by their nature should survive
+        termination do so, including the retention, export, and deletion
+        commitments of Section 4, fees owed for the period before termination,
+        and Sections 11, 12, 16, 17, 18, 19, and 21.
       </p>
 
       <h2>16. Warranties and disclaimers</h2>
