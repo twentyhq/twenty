@@ -1,6 +1,7 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { getRecordCalendarWeekEventDropDateTime } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekEventDropDateTime';
+import { getRecordCalendarWeekEventDropShift } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekEventDropShift';
 import { getShiftedRecordCalendarWeekEventUpdateInput } from '@/object-record/record-calendar/week/utils/getShiftedRecordCalendarWeekEventUpdateInput';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -8,7 +9,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { Temporal } from 'temporal-polyfill';
+import { type Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -52,6 +53,7 @@ export const useProcessRecordCalendarWeekEventDrop = () => {
 
       const primaryOriginalStart = record[calendarFieldMetadataItem.name];
 
+      // The primary dragged record lands exactly where it was dropped.
       const shiftedDateTime = getRecordCalendarWeekEventDropDateTime({
         destinationDay,
         destinationMinutes,
@@ -89,22 +91,20 @@ export const useProcessRecordCalendarWeekEventDrop = () => {
           ? selectedRecordIds.filter((selectedId) => selectedId !== recordId)
           : [];
 
-      const primaryStartInstant = Temporal.Instant.from(primaryOriginalStart);
-      const primaryStartZoned =
-        primaryStartInstant.toZonedDateTimeISO(userTimezone);
+      // Measure how far the primary dragged record moved, then move every other
+      // selected record by that same amount.
+      const dropShift = getRecordCalendarWeekEventDropShift({
+        destinationDay,
+        destinationMinutes,
+        startDateTime: primaryOriginalStart,
+        timeZone: userTimezone,
+      });
 
-      const dayOffset = primaryStartZoned
-        .toPlainDate()
-        .until(destinationDay).days;
+      if (!isDefined(dropShift)) {
+        return;
+      }
 
-      const destinationTimeOfDayNanoseconds = BigInt(
-        Math.round(destinationMinutes * 60 * 1_000_000_000),
-      );
-      const originalTimeOfDayNanoseconds =
-        primaryStartInstant.epochNanoseconds -
-        primaryStartZoned.startOfDay().epochNanoseconds;
-      const timeOfDayDeltaNanoseconds =
-        destinationTimeOfDayNanoseconds - originalTimeOfDayNanoseconds;
+      const { dayOffset, timeOfDayDeltaNanoseconds } = dropShift;
 
       const calendarEndFieldName =
         calendarEndFieldMetadataItem?.type === FieldMetadataType.DATE_TIME
