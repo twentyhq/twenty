@@ -249,7 +249,7 @@ export class ApplicationManifestMigrationService {
     );
 
     if (!dryRun) {
-      await this.syncApplicationManifestReferences({
+      await this.syncDefaultRoleAndSettingsFrontComponent({
         manifest,
         workspaceId,
         ownerFlatApplication,
@@ -262,7 +262,7 @@ export class ApplicationManifestMigrationService {
     };
   }
 
-  private async syncApplicationManifestReferences({
+  private async syncDefaultRoleAndSettingsFrontComponent({
     manifest,
     workspaceId,
     ownerFlatApplication,
@@ -274,11 +274,9 @@ export class ApplicationManifestMigrationService {
     const {
       flatRoleMaps: refreshedFlatRoleMaps,
       flatFrontComponentMaps: refreshedFlatFrontComponentMaps,
-      flatLogicFunctionMaps: refreshedFlatLogicFunctionMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRoleMaps',
       'flatFrontComponentMaps',
-      'flatLogicFunctionMaps',
     ]);
 
     let defaultRoleId: string | null = null;
@@ -325,31 +323,9 @@ export class ApplicationManifestMigrationService {
       settingsCustomTabFrontComponentId = flatFrontComponent.id;
     }
 
-    let uninstallLogicFunctionId: string | null = null;
-
-    const uninstallLogicFunctionUniversalIdentifier =
-      manifest.application.uninstallLogicFunction?.universalIdentifier;
-
-    if (isDefined(uninstallLogicFunctionUniversalIdentifier)) {
-      const flatLogicFunction = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: refreshedFlatLogicFunctionMaps,
-        universalIdentifier: uninstallLogicFunctionUniversalIdentifier,
-      });
-
-      if (!isDefined(flatLogicFunction)) {
-        throw new ApplicationException(
-          `Failed to resolve logic function for uninstall logic function universalIdentifier ${uninstallLogicFunctionUniversalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      uninstallLogicFunctionId = flatLogicFunction.id;
-    }
-
     await this.applicationService.update(ownerFlatApplication.id, {
       workspaceId,
       settingsCustomTabFrontComponentId,
-      uninstallLogicFunctionId,
       ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
     });
   }

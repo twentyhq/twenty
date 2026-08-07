@@ -162,7 +162,6 @@ export class ApplicationSyncService {
       defaultRoleId: null,
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
-      uninstallLogicFunctionId: null,
       canBeUninstalled: true,
       autoUpgrade: false,
       isSdkLayerStale: false,
@@ -342,9 +341,9 @@ export class ApplicationSyncService {
   // migration is applied, the hook's logic function metadata, code, and the
   // application's data are gone, so nothing can be executed anymore. It is
   // best-effort cleanup: a failure must never prevent the application from
-  // being removed. The hook is resolved from uninstallLogicFunctionId, set at
-  // sync time from the installed version's manifest, never from the
-  // registration's latest published manifest which can be a different version.
+  // being removed. The workspace manifest is release-specific, while the
+  // application registration manifest can describe a newer release. The
+  // checksum guard below prevents using a manifest from an incomplete update.
   private async runUninstallHook({
     application,
     workspaceId,
@@ -352,21 +351,77 @@ export class ApplicationSyncService {
     application: ApplicationEntity;
     workspaceId: string;
   }): Promise<void> {
-    if (!isDefined(application.uninstallLogicFunctionId)) {
-      this.logger.log(
-        `No uninstall hook registered for application ${application.universalIdentifier}; skipping`,
-      );
-
-      return;
-    }
-
     try {
+      const installedManifest = JSON.parse(
+        (
+          await streamToBuffer(
+            await this.fileStorageService.readFile({
+              applicationUniversalIdentifier: application.universalIdentifier,
+              fileFolder: FileFolder.Source,
+              resourcePath: 'manifest.json',
+              workspaceId,
+            }),
+          )
+        ).toString('utf-8'),
+      ) as Manifest;
+
+      if (
+        installedManifest.application.universalIdentifier !==
+        application.universalIdentifier
+      ) {
+        this.logger.warn(
+          `Installed manifest application identifier does not match application ${application.universalIdentifier}; skipping uninstall hook`,
+        );
+
+        return;
+      }
+
+      if (
+        isDefined(application.packageJsonChecksum) &&
+        installedManifest.application.packageJsonChecksum !==
+          application.packageJsonChecksum
+      ) {
+        this.logger.warn(
+          `Installed manifest checksum does not match application ${application.universalIdentifier}; skipping uninstall hook`,
+        );
+
+        return;
+      }
+
+      const uninstallLogicFunction =
+        installedManifest.application.uninstallLogicFunction;
+
+      if (!isDefined(uninstallLogicFunction)) {
+        return;
+      }
+
+      const { flatLogicFunctionMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+        ]);
+
+      const flatLogicFunction =
+        flatLogicFunctionMaps.byUniversalIdentifier[
+          uninstallLogicFunction.universalIdentifier
+        ];
+
+      if (
+        !isDefined(flatLogicFunction) ||
+        flatLogicFunction.applicationId !== application.id
+      ) {
+        this.logger.warn(
+          `Uninstall logic function "${uninstallLogicFunction.universalIdentifier}" not found for application "${application.universalIdentifier}"; skipping hook`,
+        );
+
+        return;
+      }
+
       this.logger.log(
         `Executing uninstall hook for app ${application.universalIdentifier}`,
       );
 
       const result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: application.uninstallLogicFunctionId,
+        logicFunctionId: flatLogicFunction.id,
         workspaceId,
         payload: { version: application.version ?? undefined },
       });
