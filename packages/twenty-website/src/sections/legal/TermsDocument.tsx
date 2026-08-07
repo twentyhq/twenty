@@ -17,7 +17,8 @@ export function TermsDocument() {
       <ul>
         <li>
           You own your data. We only use it to provide the Service to you, and
-          we never make it available to other customers.
+          we never make it available to anyone outside your workspace unless you
+          choose to share or publish it.
         </li>
         <li>
           You can export your data at any time, and for 30 days after your
@@ -29,8 +30,9 @@ export function TermsDocument() {
           licenses, not by these Terms.
         </li>
         <li>
-          We do not use your data to train AI models, and we do not allow our AI
-          providers to do so.
+          We do not train AI models on your data. AI features send data to the
+          model provider chosen for your workspace, under that provider&rsquo;s
+          terms.
         </li>
         <li>
           Subscriptions renew automatically. You can cancel at any time,
@@ -132,6 +134,15 @@ export function TermsDocument() {
         join a workspace owned by an organization, that organization controls
         the workspace and its data, including your access to it.
       </p>
+      <p>
+        We will email you about your account and the operation of the Service,
+        such as invoices, security notices, and important changes; you will
+        receive these for as long as you have an account. We may also send you
+        occasional updates about what is new in Twenty, which you can opt out of
+        at any time using the unsubscribe link they contain. We do not send
+        third-party promotions and we do not share your contact details with
+        anyone for their marketing.
+      </p>
 
       <h2>4. Your data</h2>
       <p>
@@ -154,11 +165,23 @@ export function TermsDocument() {
       <p>
         <strong>Your Customer Data is private to your workspace.</strong> We do
         not make it available to other customers or to anyone outside your
-        workspace, and we do not use it for advertising or sell it. Within your
-        workspace, visibility is controlled by the roles and permissions your
-        administrators configure. Our personnel access Customer Data only when
-        needed to operate the Service, to respond to a support request, to
-        address a security or legal issue, or with your permission.
+        workspace, except as you direct through the sharing and publishing
+        features described below, and we do not use it for advertising or sell
+        it. Within your workspace, visibility is controlled by the roles and
+        permissions your administrators configure. Our personnel access Customer
+        Data only when needed to operate the Service, to respond to a support
+        request, to address a security or legal issue, or with your permission.
+      </p>
+      <p>
+        Some features are designed to make content available beyond your
+        workspace: for example, an app you install or build can publish pages or
+        expose API endpoints on the internet, and you may share content with
+        people outside your workspace or distribute an app you have built to
+        other workspaces. When you use such a feature, you direct us to display
+        or distribute that content to the audience you chose, our license from
+        you extends to doing so, and recipients may view and use the content as
+        you allow. You are responsible for what you make available this way,
+        including its legality and your right to publish it.
       </p>
       <p>
         Customer Data is your confidential information under Section 12, whether
@@ -193,7 +216,8 @@ export function TermsDocument() {
         Our <LocalizedLink href="/privacy-policy">Privacy Policy</LocalizedLink>{' '}
         describes what we collect and how we use it. Where data protection laws
         such as the GDPR apply to Customer Data, we process it as your processor
-        under our Data Processing Agreement, available on request at{' '}
+        under our <a href="/legal/dpa">Data Processing Agreement</a>. For any
+        privacy question, contact{' '}
         <a href="mailto:privacy@twenty.com">privacy@twenty.com</a>.
       </p>
       <p>
@@ -228,10 +252,14 @@ export function TermsDocument() {
       <h2>7. AI features</h2>
       <p>
         The Service includes optional AI-powered features, such as AI agents and
-        AI steps in workflows. When you use them, the relevant data is processed
-        by us and by the AI providers listed in our Trust Center, solely to
-        provide the feature to you. We do not use your Customer Data to train AI
-        models, and we do not permit our AI providers to use it to train theirs.
+        AI steps in workflows. When you use them, the relevant data is sent to
+        the AI model provider configured for your workspace, solely so the
+        feature can be provided. We do not use your Customer Data to train our
+        own AI models. How a model provider may use data depends on which
+        provider and model your workspace chooses: providers we offer by default
+        are listed in our Trust Center and process data under our agreements
+        with them, and where your workspace connects its own provider or model,
+        your agreement with that provider governs.
       </p>
       <p>
         AI output is generated by statistical models: it can be inaccurate,
