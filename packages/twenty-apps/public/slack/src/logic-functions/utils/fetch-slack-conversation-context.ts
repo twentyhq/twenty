@@ -16,24 +16,15 @@ type SlackContextMessage = {
 const formatContextMessages = ({
   messages,
   excludeMessageTimestamps,
-  excludeMessageTexts,
 }: {
   messages: ReadonlyArray<SlackContextMessage>;
   excludeMessageTimestamps: Set<string>;
-  excludeMessageTexts: Set<string>;
 }): string =>
   messages
     .filter((message) => {
       if (
         isNonEmptyString(message.ts) &&
         excludeMessageTimestamps.has(message.ts)
-      ) {
-        return false;
-      }
-
-      if (
-        isNonEmptyString(message.text) &&
-        excludeMessageTexts.has(message.text)
       ) {
         return false;
       }
@@ -55,18 +46,15 @@ export const fetchSlackConversationContext = async ({
   channelId,
   threadTimestamp,
   excludeMessageTimestamps = [],
-  excludeMessageTexts = [],
 }: {
   client: WebClient;
   channelId: string;
   threadTimestamp: string;
   excludeMessageTimestamps?: string[];
-  excludeMessageTexts?: string[];
 }): Promise<string | undefined> => {
   const excludedTimestamps = new Set(
     excludeMessageTimestamps.filter(isNonEmptyString),
   );
-  const excludedTexts = new Set(excludeMessageTexts.filter(isNonEmptyString));
 
   try {
     const replies = await client.conversations.replies({
@@ -78,7 +66,6 @@ export const fetchSlackConversationContext = async ({
     return formatContextMessages({
       messages: replies.messages ?? [],
       excludeMessageTimestamps: excludedTimestamps,
-      excludeMessageTexts: excludedTexts,
     });
   } catch {
     return undefined;
