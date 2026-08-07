@@ -9,9 +9,6 @@ const StyledContainer = styled.div`
   min-height: 0;
 `;
 
-// Rendered as part of the navigation drawer content while the expanded
-// chat is open; the surrounding drawer content provides the in-place
-// thread click behavior.
 export const ExpandedAiChatDrawerThreads = () => (
   <StyledContainer>
     <AiChatThreadsList />

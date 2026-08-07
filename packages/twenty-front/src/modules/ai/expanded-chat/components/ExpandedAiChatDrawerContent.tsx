@@ -11,8 +11,6 @@ const StyledContainer = styled.div`
   min-height: 0;
 `;
 
-// The inbox drawer: attention items first, then the conversation list.
-// Every thread click in here switches the conversation in place.
 export const ExpandedAiChatDrawerContent = () => (
   <StyledContainer>
     <AiChatThreadClickBehaviorContext.Provider value="in-place">
