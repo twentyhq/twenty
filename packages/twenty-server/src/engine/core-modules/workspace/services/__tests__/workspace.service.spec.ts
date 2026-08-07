@@ -31,6 +31,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
@@ -48,6 +49,7 @@ describe('WorkspaceService', () => {
   let billingSubscriptionService: BillingSubscriptionService;
   let userWorkspaceService: UserWorkspaceService;
   let flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
+  let applicationSyncService: ApplicationSyncService;
   let queryRunner: QueryRunner;
 
   beforeEach(async () => {
@@ -128,6 +130,12 @@ describe('WorkspaceService', () => {
           useValue: {},
         })),
         {
+          provide: ApplicationSyncService,
+          useValue: {
+            runUninstallHooksForWorkspaceApplications: jest.fn(),
+          },
+        },
+        {
           provide: WorkspaceCacheStorageService,
           useValue: {
             flush: jest.fn(),
@@ -205,6 +213,9 @@ describe('WorkspaceService', () => {
       module.get<WorkspaceManyOrAllFlatEntityMapsCacheService>(
         WorkspaceManyOrAllFlatEntityMapsCacheService,
       );
+    applicationSyncService = module.get<ApplicationSyncService>(
+      ApplicationSyncService,
+    );
   });
 
   afterEach(() => {
@@ -383,6 +394,61 @@ describe('WorkspaceService', () => {
       expect(dnsManagerService.deleteHostnameSilently).toHaveBeenCalledWith(
         customDomain,
       );
+    });
+
+    it('should run application uninstall hooks when soft deleting a workspace', async () => {
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+      } as WorkspaceEntity;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.deleteWorkspace(mockWorkspace.id, true);
+
+      expect(
+        applicationSyncService.runUninstallHooksForWorkspaceApplications,
+      ).toHaveBeenCalledWith({ workspaceId: mockWorkspace.id });
+    });
+
+    it('should run application uninstall hooks when hard deleting a workspace that was never soft deleted', async () => {
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+      } as WorkspaceEntity;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.deleteWorkspace(mockWorkspace.id, false);
+
+      expect(
+        applicationSyncService.runUninstallHooksForWorkspaceApplications,
+      ).toHaveBeenCalledWith({ workspaceId: mockWorkspace.id });
+    });
+
+    it('should not run application uninstall hooks again when hard deleting an already soft deleted workspace', async () => {
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+        deletedAt: new Date(),
+      } as WorkspaceEntity;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.deleteWorkspace(mockWorkspace.id, false);
+
+      expect(
+        applicationSyncService.runUninstallHooksForWorkspaceApplications,
+      ).not.toHaveBeenCalled();
     });
 
     it('should not delete the custom domain when soft deleting a workspace with a custom domain', async () => {

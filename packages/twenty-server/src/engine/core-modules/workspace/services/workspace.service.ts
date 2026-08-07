@@ -19,6 +19,7 @@ import {
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -141,6 +142,7 @@ export class WorkspaceService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationSyncService: ApplicationSyncService,
     private readonly preInstalledAppsService: PreInstalledAppsService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
@@ -550,6 +552,12 @@ export class WorkspaceService {
     });
 
     assert(workspace, 'Workspace not found');
+
+    if (!isDefined(workspace.deletedAt)) {
+      await this.applicationSyncService.runUninstallHooksForWorkspaceApplications(
+        { workspaceId: id },
+      );
+    }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
