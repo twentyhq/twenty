@@ -2,6 +2,7 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -55,11 +56,32 @@ const CALENDAR_EVENT_PAGE_TABS = {
       },
     },
   },
+  transcript: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .transcript.universalIdentifier,
+    title: 'Transcript',
+    position: 30,
+    icon: 'IconMicrophone',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      transcript: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.transcript.widgets.transcript.universalIdentifier,
+        title: 'Transcript',
+        type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      },
+    },
+  },
   timeline: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
         .timeline.universalIdentifier,
     ...TAB_PROPS.timeline,
+    position: 40,
     widgets: {
       timeline: {
         universalIdentifier:
