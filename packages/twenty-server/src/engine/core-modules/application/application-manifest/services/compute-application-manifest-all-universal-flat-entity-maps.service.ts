@@ -71,11 +71,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     ownerFlatApplication,
     now,
     workspaceId,
+    existingAllFlatEntityMaps,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     now: string;
     workspaceId: string;
+    existingAllFlatEntityMaps?: AllFlatEntityMaps;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -159,10 +161,17 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     for (const indexManifest of manifest.indexes ?? []) {
+      const existingObjectCandidate =
+        existingAllFlatEntityMaps?.flatObjectMetadataMaps
+          ?.byUniversalIdentifier[indexManifest.objectUniversalIdentifier];
+
       const flatObjectMetadata =
         allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
           indexManifest.objectUniversalIdentifier
-        ];
+        ] ??
+        (isDefined(existingObjectCandidate) && !existingObjectCandidate.isCustom
+          ? existingObjectCandidate
+          : undefined);
 
       if (!isDefined(flatObjectMetadata)) {
         throw new Error(
@@ -186,14 +195,35 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         nextCount,
       );
 
+      const appDefinedFields =
+        fieldsByObjectUniversalIdentifier.get(
+          flatObjectMetadata.universalIdentifier,
+        ) ?? [];
+
+      const existingFieldsForObject = (
+        Object.values(
+          existingAllFlatEntityMaps?.flatFieldMetadataMaps
+            ?.byUniversalIdentifier ?? {},
+        ) as (UniversalFlatFieldMetadata | undefined)[]
+      ).filter(
+        (
+          field: UniversalFlatFieldMetadata | undefined,
+        ): field is UniversalFlatFieldMetadata =>
+          isDefined(field) &&
+          field.objectMetadataUniversalIdentifier ===
+            flatObjectMetadata.universalIdentifier,
+      );
+
+      const objectFlatFieldMetadatas = [
+        ...appDefinedFields,
+        ...existingFieldsForObject,
+      ];
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: fromIndexManifestToUniversalFlatIndex({
           indexManifest,
           flatObjectMetadata,
-          objectFlatFieldMetadatas:
-            fieldsByObjectUniversalIdentifier.get(
-              flatObjectMetadata.universalIdentifier,
-            ) ?? [],
+          objectFlatFieldMetadatas,
           applicationUniversalIdentifier,
           now,
         }),
