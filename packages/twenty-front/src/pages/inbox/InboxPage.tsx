@@ -56,8 +56,6 @@ export const InboxPage = () => {
   const { openInboxItem } = useOpenInboxItem();
   const selectedInboxItemId = useAtomStateValue(selectedInboxItemIdState);
 
-  // Deriving the selection from the loaded page keeps the reading pane honest:
-  // switching section, resolving an item or losing it to a poll all drop it
   // With the flag off the inbox is not a surface, so a direct visit lands on
   // the app index rather than on an empty shell
   if (!isInboxEnabled) {
