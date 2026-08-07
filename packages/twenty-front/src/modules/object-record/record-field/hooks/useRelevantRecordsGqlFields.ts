@@ -13,6 +13,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useMemo } from 'react';
 import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
 
 type UseRecordsUsefulGqlFields = {
@@ -37,74 +38,88 @@ export const useRelevantRecordsGqlFields = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const visibleRecordFieldMetadataItems = visibleRecordFields
-    .map(
-      (field) =>
-        fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
-    )
-    .filter(isDefined);
+  // A new object identity here rebuilds the whole GraphQL document downstream,
+  // and this hook is instantiated several times per record index render tree
+  const additionalFieldMetadataIdsKey = additionalFieldMetadataIds.join(',');
 
-  const recordFilterFields = currentRecordFilters
-    .map((recordFilter) =>
-      objectMetadataItem.fields.find(
-        (field) => field.id === recordFilter.fieldMetadataId,
-      ),
-    )
-    .filter(isDefined);
+  return useMemo(() => {
+    const visibleRecordFieldMetadataItems = visibleRecordFields
+      .map(
+        (field) =>
+          fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
+      )
+      .filter(isDefined);
 
-  const additionalFieldMetadataItems = additionalFieldMetadataIds
-    .filter(isDefined)
-    .map(
-      (fieldMetadataId) =>
-        fieldMetadataItemByFieldMetadataItemId[fieldMetadataId],
-    )
-    .filter(isDefined);
+    const recordFilterFields = currentRecordFilters
+      .map((recordFilter) =>
+        objectMetadataItem.fields.find(
+          (field) => field.id === recordFilter.fieldMetadataId,
+        ),
+      )
+      .filter(isDefined);
 
-  const fieldMetadataItemsToUse = [
-    ...visibleRecordFieldMetadataItems,
-    ...(recordFilterFields ?? []),
-    ...additionalFieldMetadataItems,
-  ].filter(filterDuplicatesById);
+    const additionalFieldMetadataItems = additionalFieldMetadataIdsKey
+      .split(',')
+      .filter((fieldMetadataId) => fieldMetadataId !== '')
+      .map(
+        (fieldMetadataId) =>
+          fieldMetadataItemByFieldMetadataItemId[fieldMetadataId],
+      )
+      .filter(isDefined);
 
-  const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
+    const fieldMetadataItemsToUse = [
+      ...visibleRecordFieldMetadataItems,
+      ...recordFilterFields,
+      ...additionalFieldMetadataItems,
+    ].filter(filterDuplicatesById);
+
+    const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
+      objectMetadataItems,
+      fields: fieldMetadataItemsToUse,
+      depth: 1,
+    });
+
+    const labelIdentifierFieldMetadataItem =
+      getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+    const imageIdentifierFieldMetadataItem =
+      getImageIdentifierFieldMetadataItem(objectMetadataItem);
+
+    const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
+
+    const isObjectAnActivity =
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.Note ||
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.Task;
+
+    return {
+      id: true,
+      ...(isDefined(labelIdentifierFieldMetadataItem)
+        ? { [labelIdentifierFieldMetadataItem.name]: true }
+        : {}),
+      ...(isDefined(imageIdentifierFieldMetadataItem)
+        ? { [imageIdentifierFieldMetadataItem.name]: true }
+        : {}),
+      ...(hasPosition ? { position: true } : {}),
+      ...allDepthOneGqlFields,
+      createdAt: true,
+      updatedAt: true,
+      deletedAt: true,
+      noteTargets: generateActivityTargetGqlFields({
+        activityObjectNameSingular: CoreObjectNameSingular.Note,
+        objectMetadataItems,
+        loadRelations: isObjectAnActivity ? 'relations' : 'activity',
+      }),
+      taskTargets: generateActivityTargetGqlFields({
+        activityObjectNameSingular: CoreObjectNameSingular.Task,
+        objectMetadataItems,
+        loadRelations: isObjectAnActivity ? 'relations' : 'activity',
+      }),
+    };
+  }, [
+    visibleRecordFields,
+    currentRecordFilters,
+    fieldMetadataItemByFieldMetadataItemId,
+    objectMetadataItem,
     objectMetadataItems,
-    fields: fieldMetadataItemsToUse,
-    depth: 1,
-  });
-
-  const labelIdentifierFieldMetadataItem =
-    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-  const imageIdentifierFieldMetadataItem =
-    getImageIdentifierFieldMetadataItem(objectMetadataItem);
-
-  const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
-
-  const isObjectAnActivity =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Note ||
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Task;
-
-  return {
-    id: true,
-    ...(isDefined(labelIdentifierFieldMetadataItem)
-      ? { [labelIdentifierFieldMetadataItem.name]: true }
-      : {}),
-    ...(isDefined(imageIdentifierFieldMetadataItem)
-      ? { [imageIdentifierFieldMetadataItem.name]: true }
-      : {}),
-    ...(hasPosition ? { position: true } : {}),
-    ...allDepthOneGqlFields,
-    createdAt: true,
-    updatedAt: true,
-    deletedAt: true,
-    noteTargets: generateActivityTargetGqlFields({
-      activityObjectNameSingular: CoreObjectNameSingular.Note,
-      objectMetadataItems,
-      loadRelations: isObjectAnActivity ? 'relations' : 'activity',
-    }),
-    taskTargets: generateActivityTargetGqlFields({
-      activityObjectNameSingular: CoreObjectNameSingular.Task,
-      objectMetadataItems,
-      loadRelations: isObjectAnActivity ? 'relations' : 'activity',
-    }),
-  };
+    additionalFieldMetadataIdsKey,
+  ]);
 };
