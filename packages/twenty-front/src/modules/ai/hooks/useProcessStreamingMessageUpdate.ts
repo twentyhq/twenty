@@ -1,5 +1,7 @@
 import { useProcessUIToolCallMessage } from '@/ai/hooks/useProcessUIToolCallMessage';
+import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { isCompleteWorkspaceSetupToolPart } from '@/ai/utils/isCompleteWorkspaceSetupToolPart';
 import { isUIToolCallMessage } from '@/ai/utils/isUIToolCallMessage';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -12,6 +14,9 @@ export const useProcessStreamingMessageUpdate = () => {
   );
 
   const { processUIToolCallMessage } = useProcessUIToolCallMessage();
+
+  const { processWorkspaceSetupCompletion } =
+    useProcessWorkspaceSetupCompletion();
 
   const processStreamingMessageUpdate = (
     streamingMessage: ExtendedUIMessage,
@@ -38,6 +43,14 @@ export const useProcessStreamingMessageUpdate = () => {
 
     if (messageIsUIToolCall) {
       processUIToolCallMessage(streamingMessage);
+    }
+
+    const messageCompletesWorkspaceSetup = streamingMessage.parts.some(
+      isCompleteWorkspaceSetupToolPart,
+    );
+
+    if (messageCompletesWorkspaceSetup) {
+      processWorkspaceSetupCompletion(streamingMessage);
     }
   };
 

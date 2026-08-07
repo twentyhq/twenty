@@ -73,6 +73,25 @@ describe('useReturnFromExpandedAiChat', () => {
     );
   });
 
+  it('should prefer the destination path over the stored return location', () => {
+    jotaiStore.set(aiChatExpandedReturnLocationState.atom, '/objects/people');
+
+    const { result } = renderHook(
+      () =>
+        useReturnFromExpandedAiChat({
+          reopenSidePanel: true,
+          destinationPath: '/objects/opportunities',
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current();
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith('/objects/opportunities');
+  });
+
   it('should cancel the side panel continuation when closing', () => {
     jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
 

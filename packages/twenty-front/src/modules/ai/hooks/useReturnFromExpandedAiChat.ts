@@ -11,10 +11,12 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 type UseReturnFromExpandedAiChatParams = {
   reopenSidePanel: boolean;
+  destinationPath?: string;
 };
 
 export const useReturnFromExpandedAiChat = ({
   reopenSidePanel,
+  destinationPath,
 }: UseReturnFromExpandedAiChatParams) => {
   const store = useStore();
   const navigate = useNavigate();
@@ -31,12 +33,13 @@ export const useReturnFromExpandedAiChat = ({
     }
 
     const returnLocation = store.get(aiChatExpandedReturnLocationState.atom);
-    navigate(returnLocation ?? defaultHomePagePath);
+    navigate(destinationPath ?? returnLocation ?? defaultHomePagePath);
 
     store.set(aiChatExpandedReturnLocationState.atom, null);
     store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
   }, [
     reopenSidePanel,
+    destinationPath,
     openAskAiPage,
     closeSidePanelMenu,
     store,

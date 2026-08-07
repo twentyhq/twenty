@@ -11,6 +11,7 @@ export { AI_SDK_PACKAGE_LABELS } from './constants/ai-sdk-package-labels.const';
 export type { AiSdkPackage } from './constants/ai-sdk-packages.const';
 export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
+export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
