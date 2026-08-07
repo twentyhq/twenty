@@ -2,6 +2,7 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -66,6 +67,27 @@ const CALENDAR_EVENT_PAGE_TABS = {
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
             .tabs.timeline.widgets.timeline.universalIdentifier,
         ...WIDGET_PROPS.timeline,
+      },
+    },
+  },
+  // position 30 is reserved for the upcoming Summary tab
+  callRecording: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .callRecording.universalIdentifier,
+    title: 'Call Recording',
+    position: 40,
+    icon: 'IconVideo',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      transcript: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.callRecording.widgets.transcript.universalIdentifier,
+        title: 'Transcript',
+        type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       },
     },
   },

@@ -1,6 +1,7 @@
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
@@ -18,6 +19,8 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   const isMobile = useIsMobile();
   const { isInSidePanel, targetRecordIdentifier } = useLayoutRenderingContext();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const { featureFilteredPageLayoutTabs } =
+    usePageLayoutTabsFilteredByFeatureFlags();
 
   const targetRecordStatus = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
@@ -32,7 +35,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     throw new Error('currentPageLayout is not defined');
   }
 
-  const tab = currentPageLayout.tabs.find((t) => t.id === tabId);
+  const tab = featureFilteredPageLayoutTabs.find((tab) => tab.id === tabId);
 
   if (!isDefined(tab)) {
     throw new Error('Tab not found');
