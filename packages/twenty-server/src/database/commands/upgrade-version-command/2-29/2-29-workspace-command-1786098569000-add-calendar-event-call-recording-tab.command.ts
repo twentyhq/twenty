@@ -19,21 +19,21 @@ const CALENDAR_EVENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
     .universalIdentifier;
 
-const TRANSCRIPT_TAB_UNIVERSAL_IDENTIFIER =
+const CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .transcript.universalIdentifier;
+    .callRecording.universalIdentifier;
 
 const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .transcript.widgets.transcript.universalIdentifier;
+    .callRecording.widgets.transcript.universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.29.0', 1786098569000)
 @Command({
-  name: 'upgrade:2-29:add-calendar-event-transcript-tab',
+  name: 'upgrade:2-29:add-calendar-event-call-recording-tab',
   description:
-    'Add the Transcript tab and widget to the CalendarEvent record page in existing workspaces',
+    'Add the Call Recording tab and transcript widget to the CalendarEvent record page in existing workspaces',
 })
-export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -85,7 +85,7 @@ export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCo
       getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutTab>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatPageLayoutTabMaps,
         existingFlatEntityMaps: flatPageLayoutTabMaps,
-        universalIdentifiers: [TRANSCRIPT_TAB_UNIVERSAL_IDENTIFIER],
+        universalIdentifiers: [CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER],
       });
 
     const pageLayoutWidgetsToCreate =
@@ -101,14 +101,14 @@ export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCo
 
     if (totalOperationCount === 0) {
       this.logger.log(
-        `CalendarEvent record page already has the Transcript tab for workspace ${workspaceId}, skipping`,
+        `CalendarEvent record page already has the Call Recording tab for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Applying ${totalOperationCount} CalendarEvent Transcript tab operation(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Applying ${totalOperationCount} CalendarEvent Call Recording tab operation(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -139,7 +139,7 @@ export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCo
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to add the CalendarEvent Transcript tab for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to add the CalendarEvent Call Recording tab for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -148,7 +148,7 @@ export class AddCalendarEventTranscriptTabCommand extends ProvisionedWorkspaceCo
     }
 
     this.logger.log(
-      `Added the CalendarEvent Transcript tab for workspace ${workspaceId}`,
+      `Added the CalendarEvent Call Recording tab for workspace ${workspaceId}`,
     );
   }
 }
