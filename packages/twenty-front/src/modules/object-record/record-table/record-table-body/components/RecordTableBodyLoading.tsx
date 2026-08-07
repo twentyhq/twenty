@@ -11,9 +11,16 @@ import { RecordTableCellLoading } from '@/object-record/record-table/record-tabl
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+
+const LOADING_ROWS_BUFFER = 2;
 
 export const RecordTableBodyLoading = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
+
+  const numberOfLoadingRows =
+    Math.ceil(window.innerHeight / RECORD_TABLE_ROW_HEIGHT) +
+    LOADING_ROWS_BUFFER;
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
@@ -24,7 +31,7 @@ export const RecordTableBodyLoading = () => {
 
   return (
     <RecordTableBody>
-      {Array.from({ length: 80 }).map((_, rowIndex) => (
+      {Array.from({ length: numberOfLoadingRows }).map((_, rowIndex) => (
         <RecordTableRowContextProvider
           key={rowIndex}
           value={{
