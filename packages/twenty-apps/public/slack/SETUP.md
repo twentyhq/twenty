@@ -24,6 +24,7 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `groups:history` | assistant: thread follow-ups in private channels |
    | `im:history` | assistant: direct messages |
    | `users:read` | assistant: look up the requester's display name |
+   | `users:read.email` | assistant: match Slack users to Twenty workspace members (requested up front, not used yet) |
    | `assistant:write` | agent surface: `assistant.threads.*` (statuses, titles, suggested prompts) |
 
    Adding or removing scopes later means existing installs must re-authorize: disconnect and **Add connection** again.
