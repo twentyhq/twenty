@@ -1,12 +1,12 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
-import { type ViewKey } from '@/types/ViewKey';
 
-// Derivation-only discriminator of the system record-page fields view: it
-// keys the view universal identifier but is never persisted, unlike
-// ViewKey.INDEX which is also stored on the row.
-export const FIELDS_WIDGET_SYSTEM_VIEW_KEY = 'FIELDS_WIDGET' as const;
+export const SYSTEM_VIEW_KEYS = {
+  INDEX: 'INDEX',
+  FIELDS_WIDGET: 'FIELDS_WIDGET',
+} as const;
 
-export type SystemViewKey = ViewKey | typeof FIELDS_WIDGET_SYSTEM_VIEW_KEY;
+export type SystemViewKey =
+  (typeof SYSTEM_VIEW_KEYS)[keyof typeof SYSTEM_VIEW_KEYS];
 
 export const getSystemViewUniversalIdentifier = ({
   objectMetadataApplicationUniversalIdentifier,

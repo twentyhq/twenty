@@ -2,7 +2,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/application/
 import { getSystemViewFieldGroupUniversalIdentifier } from '@/application/deterministic-identifier/get-system-view-field-group-universal-identifier.util';
 import { getSystemViewFieldUniversalIdentifier } from '@/application/deterministic-identifier/get-system-view-field-universal-identifier.util';
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
 } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
 
@@ -33,7 +33,7 @@ export const buildStandardObjectRecordPageFieldsView = <
     objectMetadataApplicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier,
-    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+    viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
   });
 
   const viewFields = Object.fromEntries(

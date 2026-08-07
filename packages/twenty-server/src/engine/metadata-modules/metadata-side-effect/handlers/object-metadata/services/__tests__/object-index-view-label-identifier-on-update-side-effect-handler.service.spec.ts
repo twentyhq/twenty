@@ -1,5 +1,7 @@
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
+import {
+  SYSTEM_VIEW_KEYS,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 
 import { ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
@@ -13,7 +15,7 @@ const INDEX_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier:
     APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 
 const NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER =

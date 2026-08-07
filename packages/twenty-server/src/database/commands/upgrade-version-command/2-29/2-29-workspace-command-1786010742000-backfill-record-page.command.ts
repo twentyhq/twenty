@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
@@ -284,7 +284,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
       objectMetadataApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
       objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+      viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
     });
 
     const standardFlatView =
@@ -462,7 +462,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
       objectMetadataApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
       objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+      viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
     });
 
     if (
@@ -474,7 +474,7 @@ export class BackfillRecordPageCommand extends ProvisionedWorkspaceCommandRunner
         computeSystemViewToCreate({
           objectMetadata: flatObjectMetadata,
           applicationUniversalIdentifier,
-          viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+          viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
         }),
       );
     }

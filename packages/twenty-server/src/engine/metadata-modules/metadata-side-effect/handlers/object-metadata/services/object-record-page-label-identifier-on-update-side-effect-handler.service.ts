@@ -2,7 +2,7 @@ import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -77,7 +77,7 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
       objectMetadataApplicationUniversalIdentifier:
         updatedFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: updatedFlatObjectMetadata.universalIdentifier,
-      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+      viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
     });
 
     const recordPageFlatView =

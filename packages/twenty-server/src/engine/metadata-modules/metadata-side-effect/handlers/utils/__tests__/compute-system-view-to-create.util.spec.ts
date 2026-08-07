@@ -1,5 +1,5 @@
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey, ViewType } from 'twenty-shared/types';
@@ -14,7 +14,7 @@ const objectMetadata = {
 };
 
 describe('computeSystemViewToCreate', () => {
-  it.each([ViewKey.INDEX, FIELDS_WIDGET_SYSTEM_VIEW_KEY])(
+  it.each([ViewKey.INDEX, SYSTEM_VIEW_KEYS.FIELDS_WIDGET])(
     'should derive the %s view universal identifier from the object',
     (viewKey) => {
       const result = computeSystemViewToCreate({
@@ -38,7 +38,7 @@ describe('computeSystemViewToCreate', () => {
     const result = computeSystemViewToCreate({
       applicationUniversalIdentifier,
       objectMetadata,
-      viewKey: ViewKey.INDEX,
+      viewKey: SYSTEM_VIEW_KEYS.INDEX,
     });
 
     expect(result.key).toBe(ViewKey.INDEX);
@@ -57,7 +57,7 @@ describe('computeSystemViewToCreate', () => {
     const result = computeSystemViewToCreate({
       applicationUniversalIdentifier,
       objectMetadata,
-      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+      viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
     });
 
     // The record-page view key is derivation-only, never persisted.
@@ -71,12 +71,12 @@ describe('computeSystemViewToCreate', () => {
     const first = computeSystemViewToCreate({
       applicationUniversalIdentifier,
       objectMetadata,
-      viewKey: ViewKey.INDEX,
+      viewKey: SYSTEM_VIEW_KEYS.INDEX,
     });
     const second = computeSystemViewToCreate({
       applicationUniversalIdentifier,
       objectMetadata,
-      viewKey: ViewKey.INDEX,
+      viewKey: SYSTEM_VIEW_KEYS.INDEX,
     });
 
     expect(first.universalIdentifier).toBe(second.universalIdentifier);

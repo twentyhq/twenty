@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
@@ -60,7 +60,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
       objectMetadataApplicationUniversalIdentifier:
         parentFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-      viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+      viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
     });
 
     const parentObjectCreatedInSameBatch = isDefined(

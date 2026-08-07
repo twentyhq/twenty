@@ -1,3 +1,4 @@
+import { SYSTEM_VIEW_KEYS } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
 import { getSystemViewUniversalIdentifier } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
 import { ViewKey } from '@/types/ViewKey';
 
@@ -10,7 +11,7 @@ describe('getSystemViewUniversalIdentifier', () => {
       getSystemViewUniversalIdentifier({
         objectMetadataApplicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
-        viewKey: ViewKey.INDEX,
+        viewKey: SYSTEM_VIEW_KEYS.INDEX,
       }),
     ).toBe('3803a536-0158-554c-bfb4-e5492323e57f');
   });

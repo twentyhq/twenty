@@ -1,5 +1,5 @@
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getFieldUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
@@ -31,7 +31,7 @@ export const DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.INDEX,
+    viewKey: SYSTEM_VIEW_KEYS.INDEX,
   });
 
 export const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
@@ -39,7 +39,7 @@ export const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+    viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
   });
 
 export const computeViewFieldUniversalIdentifier = ({

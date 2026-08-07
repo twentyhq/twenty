@@ -1,9 +1,10 @@
 import {
+  SYSTEM_VIEW_KEYS,
   getFieldUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { ObjectIndexViewOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-on-create-side-effect-handler.service';
@@ -36,7 +37,7 @@ const DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.INDEX,
+    viewKey: SYSTEM_VIEW_KEYS.INDEX,
   });
 
 type PendingFieldMetadata = {

@@ -1,4 +1,4 @@
-import { FIELDS_WIDGET_SYSTEM_VIEW_KEY } from 'twenty-shared/application';
+import { SYSTEM_VIEW_KEYS } from 'twenty-shared/application';
 import { Command } from 'nest-commander';
 import { type FeatureFlagKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -513,7 +513,7 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
         objectMetadata: customObject,
         applicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
-        viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+        viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
       });
 
       const objectFieldMetadatas = Object.values(

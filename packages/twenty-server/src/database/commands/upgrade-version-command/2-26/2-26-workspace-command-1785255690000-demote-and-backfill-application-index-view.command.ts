@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import {
+  SYSTEM_VIEW_KEYS,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
@@ -223,7 +224,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
         objectMetadataApplicationUniversalIdentifier:
           flatObjectMetadata.applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-        viewKey: ViewKey.INDEX,
+        viewKey: SYSTEM_VIEW_KEYS.INDEX,
       });
 
       if (
@@ -239,7 +240,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
             objectMetadata: flatObjectMetadata,
             applicationUniversalIdentifier:
               flatObjectMetadata.applicationUniversalIdentifier,
-            viewKey: ViewKey.INDEX,
+            viewKey: SYSTEM_VIEW_KEYS.INDEX,
           }),
         );
       }

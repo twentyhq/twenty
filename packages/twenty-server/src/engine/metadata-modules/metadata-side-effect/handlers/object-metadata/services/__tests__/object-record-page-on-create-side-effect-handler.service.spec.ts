@@ -1,5 +1,5 @@
 import {
-  FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+  SYSTEM_VIEW_KEYS,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
@@ -28,7 +28,7 @@ const DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
     objectMetadataApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: FIELDS_WIDGET_SYSTEM_VIEW_KEY,
+    viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
   });
 
 const DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
