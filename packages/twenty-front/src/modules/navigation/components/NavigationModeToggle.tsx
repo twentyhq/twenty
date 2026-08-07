@@ -21,7 +21,8 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useInboxNotifications } from '@/notification/hooks/useInboxNotifications';
+import { InboxUnreadBadge } from '@/notification/components/InboxUnreadBadge';
+import { useIsNotificationObjectAvailable } from '@/notification/hooks/useIsNotificationObjectAvailable';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
@@ -37,18 +38,6 @@ const StyledToggleRow = styled.div`
   gap: ${themeCssVariables.spacing[0.5]};
   padding: 3px;
   width: 100%;
-`;
-
-const StyledUnreadBadge = styled.span`
-  background: ${themeCssVariables.color.blue};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${themeCssVariables.font.color.inverted};
-  font-size: 10px;
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  line-height: 14px;
-  min-width: 14px;
-  padding: 0 3px;
-  text-align: center;
 `;
 
 const StyledSegment = styled.button<{ isActive: boolean }>`
@@ -99,7 +88,7 @@ export const NavigationModeToggle = () => {
     useOpenExpandedAiChat();
   const { openSettingsMenu } = useOpenSettingsMenu();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const { unreadCount } = useInboxNotifications();
+  const isNotificationObjectAvailable = useIsNotificationObjectAvailable();
 
   const activeMode: NavigationMode = isOnExpandedAiChatPage
     ? 'inbox'
@@ -178,11 +167,9 @@ export const NavigationModeToggle = () => {
           >
             <Icon size={theme.icon.size.sm} />
             {label}
-            {mode === 'inbox' && unreadCount > 0 && (
-              <StyledUnreadBadge>
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </StyledUnreadBadge>
-            )}
+            {mode === 'inbox' &&
+              hasAiPermission &&
+              isNotificationObjectAvailable && <InboxUnreadBadge />}
           </StyledSegment>
         ))}
       </StyledToggleRow>

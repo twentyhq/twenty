@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { ExpandedAiChatDrawerThreads } from '@/ai/expanded-chat/components/ExpandedAiChatDrawerThreads';
+import { AiChatThreadClickBehaviorContext } from '@/ai/contexts/AiChatThreadClickBehaviorContext';
 import { InboxNotificationsSections } from '@/notification/components/InboxNotificationsSections';
 
 const StyledContainer = styled.div`
@@ -11,9 +12,12 @@ const StyledContainer = styled.div`
 `;
 
 // The inbox drawer: attention items first, then the conversation list.
+// Every thread click in here switches the conversation in place.
 export const ExpandedAiChatDrawerContent = () => (
   <StyledContainer>
-    <InboxNotificationsSections />
-    <ExpandedAiChatDrawerThreads />
+    <AiChatThreadClickBehaviorContext.Provider value="in-place">
+      <InboxNotificationsSections />
+      <ExpandedAiChatDrawerThreads />
+    </AiChatThreadClickBehaviorContext.Provider>
   </StyledContainer>
 );

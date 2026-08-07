@@ -10,12 +10,16 @@ import {
 } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { selectedInboxNotificationIdState } from '@/ai/expanded-chat/states/selectedInboxNotificationIdState';
+import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { useIsNotificationObjectAvailable } from '@/notification/hooks/useIsNotificationObjectAvailable';
 import { useInboxNotifications } from '@/notification/hooks/useInboxNotifications';
 import { useNotificationActions } from '@/notification/hooks/useNotificationActions';
 import { type Notification } from '@/notification/types/Notification';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -24,6 +28,8 @@ const StyledSections = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
+  max-height: 50%;
+  overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]} 0;
 `;
 
@@ -130,6 +136,10 @@ const InboxNotificationRow = ({
   const setSelectedInboxNotificationId = useSetAtomState(
     selectedInboxNotificationIdState,
   );
+  const agentChatVisibleThreads = useAtomStateValue(
+    agentChatVisibleThreadsSelector,
+  );
+  const { handleThreadClick } = useAiChatThreadClick();
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
   const { markNotificationRead } = useNotificationActions();
 
@@ -142,7 +152,18 @@ const InboxNotificationRow = ({
     }
 
     if (isNonEmptyString(notification.threadId)) {
+      const linkedThread = agentChatVisibleThreads.find(
+        (thread) => thread.id === notification.threadId,
+      );
+
       setSelectedInboxNotificationId(null);
+
+      if (linkedThread) {
+        // Initializes thread title and usage state like any thread click.
+        handleThreadClick(linkedThread);
+        return;
+      }
+
       switchThreadWithDraft(notification.threadId);
       return;
     }
@@ -171,18 +192,14 @@ const InboxNotificationRow = ({
   );
 };
 
-export const InboxNotificationsSections = () => {
+const InboxNotificationsSectionsContent = () => {
   const { t } = useLingui();
-  const {
-    isNotificationObjectAvailable,
-    needsAttentionNotifications,
-    updateNotifications,
-  } = useInboxNotifications();
+  const { needsAttentionNotifications, updateNotifications } =
+    useInboxNotifications();
 
   if (
-    !isNotificationObjectAvailable ||
-    (needsAttentionNotifications.length === 0 &&
-      updateNotifications.length === 0)
+    needsAttentionNotifications.length === 0 &&
+    updateNotifications.length === 0
   ) {
     return null;
   }
@@ -213,4 +230,17 @@ export const InboxNotificationsSections = () => {
       )}
     </StyledSections>
   );
+};
+
+// The availability shell keeps the query components from mounting (and
+// resolving missing object metadata) before the notification object has
+// synced to the workspace.
+export const InboxNotificationsSections = () => {
+  const isNotificationObjectAvailable = useIsNotificationObjectAvailable();
+
+  if (!isNotificationObjectAvailable) {
+    return null;
+  }
+
+  return <InboxNotificationsSectionsContent />;
 };

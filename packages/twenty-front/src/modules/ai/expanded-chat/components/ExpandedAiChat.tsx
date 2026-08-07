@@ -2,14 +2,15 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { ExpandedAiChatHeader } from '@/ai/expanded-chat/components/ExpandedAiChatHeader';
 import { ExpandedAiChatSidePanelHandoffEffect } from '@/ai/expanded-chat/effect-components/ExpandedAiChatSidePanelHandoffEffect';
 import { selectedInboxNotificationIdState } from '@/ai/expanded-chat/states/selectedInboxNotificationIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { NotificationDetail } from '@/notification/components/NotificationDetail';
-import { useInboxNotifications } from '@/notification/hooks/useInboxNotifications';
+import { SelectedInboxNotificationView } from '@/notification/components/SelectedInboxNotificationView';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -48,28 +49,24 @@ export const ExpandedAiChat = () => {
   const selectedInboxNotificationId = useAtomStateValue(
     selectedInboxNotificationIdState,
   );
-  const { needsAttentionNotifications, updateNotifications } =
-    useInboxNotifications();
 
-  const selectedNotification = [
-    ...needsAttentionNotifications,
-    ...updateNotifications,
-  ].find((notification) => notification.id === selectedInboxNotificationId);
+  if (isNonEmptyString(selectedInboxNotificationId)) {
+    return (
+      <StyledPanel>
+        <ExpandedAiChatSidePanelHandoffEffect />
+        <SelectedInboxNotificationView
+          notificationId={selectedInboxNotificationId}
+        />
+      </StyledPanel>
+    );
+  }
 
   return (
     <StyledPanel>
       <ExpandedAiChatSidePanelHandoffEffect />
-      <ExpandedAiChatHeader
-        title={
-          selectedNotification?.title ?? currentAiChatThreadTitle ?? t`Ask AI`
-        }
-      />
+      <ExpandedAiChatHeader title={currentAiChatThreadTitle ?? t`Ask AI`} />
       <StyledConversationContent>
-        {selectedNotification ? (
-          <NotificationDetail notification={selectedNotification} />
-        ) : (
-          <AiChatTab />
-        )}
+        <AiChatTab />
       </StyledConversationContent>
     </StyledPanel>
   );
