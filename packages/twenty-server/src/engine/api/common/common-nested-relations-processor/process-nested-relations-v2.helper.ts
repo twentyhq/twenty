@@ -12,6 +12,8 @@ import {
   createConcurrencyLimiter,
 } from 'src/engine/api/common/common-nested-relations-processor/utils/create-concurrency-limiter.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
+import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -58,7 +60,9 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
-  constructor() {}
+  constructor(
+    private readonly workspaceQueryHookService: WorkspaceQueryHookService,
+  ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
@@ -271,6 +275,13 @@ export class ProcessNestedRelationsV2Helper {
           targetObjectNameSingular,
         }),
       );
+
+    await this.workspaceQueryHookService.executePostQueryHooks(
+      authContext,
+      targetObjectNameSingular,
+      CommonQueryNames.FIND_MANY,
+      relationResults as ObjectRecord[],
+    );
 
     this.assignRelationResults({
       parentRecords: parentObjectRecords,

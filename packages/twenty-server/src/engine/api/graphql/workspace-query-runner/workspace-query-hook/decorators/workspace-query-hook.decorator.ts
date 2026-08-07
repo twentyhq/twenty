@@ -7,7 +7,8 @@ import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-r
 import { WORKSPACE_QUERY_HOOK_METADATA } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.constants';
 
 export type WorkspaceQueryHookKey =
-  `${string}.${WorkspaceResolverBuilderMethodNames}`;
+  | `${string}.${WorkspaceResolverBuilderMethodNames}`
+  | `${string}.*`;
 
 export interface WorkspaceQueryHookOptions {
   key: WorkspaceQueryHookKey;
