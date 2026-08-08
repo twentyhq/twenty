@@ -1,15 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Manifest } from 'twenty-shared/application';
-import { Repository } from 'typeorm';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
@@ -49,8 +46,6 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    @InjectRepository(ApplicationRegistrationEntity)
-    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
 
   public async synchronizeFromManifest({
@@ -346,7 +341,9 @@ export class ApplicationSyncService {
   // migration is applied, the hook's logic function metadata, code, and the
   // application's data are gone, so nothing can be executed anymore. It is
   // best-effort cleanup: a failure must never prevent the application from
-  // being removed.
+  // being removed. The workspace manifest is release-specific, while the
+  // application registration manifest can describe a newer release. The
+  // checksum guard below prevents using a manifest from an incomplete update.
   private async runUninstallHook({
     application,
     workspaceId,
@@ -354,17 +351,44 @@ export class ApplicationSyncService {
     application: ApplicationEntity;
     workspaceId: string;
   }): Promise<void> {
-    if (!isDefined(application.applicationRegistrationId)) {
-      return;
-    }
-
     try {
-      const appRegistration = await this.appRegistrationRepository.findOne({
-        where: { id: application.applicationRegistrationId },
-      });
+      const installedManifest = JSON.parse(
+        (
+          await streamToBuffer(
+            await this.fileStorageService.readFile({
+              applicationUniversalIdentifier: application.universalIdentifier,
+              fileFolder: FileFolder.Source,
+              resourcePath: 'manifest.json',
+              workspaceId,
+            }),
+          )
+        ).toString('utf-8'),
+      ) as Manifest;
+
+      if (
+        installedManifest.application.universalIdentifier !==
+        application.universalIdentifier
+      ) {
+        this.logger.warn(
+          `Installed manifest application identifier does not match application ${application.universalIdentifier}; skipping uninstall hook`,
+        );
+
+        return;
+      }
+
+      if (
+        installedManifest.application.packageJsonChecksum !==
+        application.packageJsonChecksum
+      ) {
+        this.logger.warn(
+          `Installed manifest checksum does not match application ${application.universalIdentifier}; skipping uninstall hook`,
+        );
+
+        return;
+      }
 
       const uninstallLogicFunction =
-        appRegistration?.manifest?.application.uninstallLogicFunction;
+        installedManifest.application.uninstallLogicFunction;
 
       if (!isDefined(uninstallLogicFunction)) {
         return;
@@ -380,7 +404,10 @@ export class ApplicationSyncService {
           uninstallLogicFunction.universalIdentifier
         ];
 
-      if (!isDefined(flatLogicFunction)) {
+      if (
+        !isDefined(flatLogicFunction) ||
+        flatLogicFunction.applicationId !== application.id
+      ) {
         this.logger.warn(
           `Uninstall logic function "${uninstallLogicFunction.universalIdentifier}" not found for application "${application.universalIdentifier}"; skipping hook`,
         );
