@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { In } from 'typeorm';
@@ -6,6 +5,7 @@ import { In } from 'typeorm';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
+import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import {
   buildInboxItemScopeCriteria,
@@ -168,7 +168,7 @@ describe('InboxItemService', () => {
       });
     });
 
-    it('should throw a NotFoundException when the item belongs to another assignee', async () => {
+    it('should refuse to read the item when the item belongs to another assignee', async () => {
       // Prepare
       // The assignee scoped lookup simply does not match another user's row
       inboxItemRepository.findOne.mockResolvedValue(null);
@@ -179,7 +179,9 @@ describe('InboxItemService', () => {
           ...ownedItemArgs,
           actorUserWorkspaceId: 'another-user-workspace-id',
         }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+      });
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
@@ -262,14 +264,14 @@ describe('InboxItemService', () => {
   });
 
   describe('markRead', () => {
-    it('should throw a NotFoundException and mutate nothing when the item is not owned by the caller', async () => {
+    it('should refuse and mutate nothing when the item is not owned by the caller', async () => {
       // Prepare
       inboxItemRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(service.markRead(ownedItemArgs)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.markRead(ownedItemArgs)).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+      });
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 

@@ -1,5 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
-
+import { InboxException } from 'src/engine/core-modules/inbox/inbox.exception';
 import { toInboxItemTransition } from 'src/engine/core-modules/inbox/utils/to-inbox-item-transition.util';
 
 describe('toInboxItemTransition', () => {
@@ -40,13 +39,13 @@ describe('toInboxItemTransition', () => {
         outcome: 'APPROVED',
         resurfaceInMinutes: 60,
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(InboxException);
   });
 
   it('should refuse a kind it does not know', () => {
     // Act & Assert
     expect(() => toInboxItemTransition({ kind: 'RESOLVE' })).toThrow(
-      BadRequestException,
+      InboxException,
     );
   });
 });

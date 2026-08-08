@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In } from 'typeorm';
@@ -6,6 +6,10 @@ import { type FindOptionsWhere, In } from 'typeorm';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import {
   buildInboxItemScopeCriteria,
   buildInboxItemUnreadCriteria,
@@ -159,7 +163,10 @@ export class InboxItemService {
     const inboxItem = await this.findVisibleItem(args);
 
     if (!isDefined(inboxItem)) {
-      throw new NotFoundException('Inbox item not found');
+      throw new InboxException(
+        'Inbox item not found',
+        InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+      );
     }
 
     return inboxItem;

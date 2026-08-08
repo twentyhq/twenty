@@ -1,13 +1,14 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import {
   type InboxItemTransition,
@@ -79,8 +80,9 @@ export class InboxTransitionService {
     );
 
     if (updateResult.affected === 0) {
-      throw new ConflictException(
+      throw new InboxException(
         `Inbox item ${inboxItemId} changed since it was read`,
+        InboxExceptionCode.INBOX_ITEM_CHANGED,
       );
     }
 
@@ -152,8 +154,12 @@ export class InboxTransitionService {
     toUserWorkspaceId: string | null,
   ): string | null {
     if (!isDefined(toUserWorkspaceId) && !isDefined(inboxItem.queueId)) {
-      throw new BadRequestException(
+      throw new InboxException(
         'An inbox item that belongs to no queue cannot be left unassigned',
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+        {
+          userFriendlyMessage: msg`Work that belongs to no shared inbox cannot be left unassigned.`,
+        },
       );
     }
 
@@ -174,8 +180,9 @@ export class InboxTransitionService {
     );
 
     if (!isDeclared) {
-      throw new BadRequestException(
+      throw new InboxException(
         `Unknown outcome ${outcome} for inbox item type ${inboxItem.inboxItemType.key}`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
       );
     }
 
@@ -188,8 +195,12 @@ export class InboxTransitionService {
       minutes <= 0 ||
       minutes > MAX_RESURFACE_MINUTES
     ) {
-      throw new BadRequestException(
+      throw new InboxException(
         `Resurfacing must be between 1 and ${MAX_RESURFACE_MINUTES} minutes away`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+        {
+          userFriendlyMessage: msg`Choose a time to come back to this that is less than a year away.`,
+        },
       );
     }
 

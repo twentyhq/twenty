@@ -11,6 +11,9 @@ import {
 export const InboxExceptionCode = appendCommonExceptionCode({
   UNKNOWN_INBOX_ITEM_TYPE: 'UNKNOWN_INBOX_ITEM_TYPE',
   UNKNOWN_INBOX_QUEUE: 'UNKNOWN_INBOX_QUEUE',
+  INBOX_ITEM_NOT_FOUND: 'INBOX_ITEM_NOT_FOUND',
+  INBOX_ITEM_CHANGED: 'INBOX_ITEM_CHANGED',
+  INVALID_INBOX_ACTION: 'INVALID_INBOX_ACTION',
 } as const);
 
 const getInboxExceptionUserFriendlyMessage = (
@@ -21,6 +24,12 @@ const getInboxExceptionUserFriendlyMessage = (
       return msg`This kind of inbox item is not declared.`;
     case InboxExceptionCode.UNKNOWN_INBOX_QUEUE:
       return msg`This shared inbox does not exist, or you are not a member.`;
+    case InboxExceptionCode.INBOX_ITEM_NOT_FOUND:
+      return msg`This inbox item no longer exists.`;
+    case InboxExceptionCode.INBOX_ITEM_CHANGED:
+      return msg`Someone else worked on this item. Reload and try again.`;
+    case InboxExceptionCode.INVALID_INBOX_ACTION:
+      return msg`This action cannot be run on this item.`;
     case InboxExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

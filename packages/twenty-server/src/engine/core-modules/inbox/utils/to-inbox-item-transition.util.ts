@@ -1,8 +1,10 @@
-import { BadRequestException } from '@nestjs/common';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import { type TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import {
   type InboxItemTransition,
   SELF_ASSIGNMENT,
@@ -19,8 +21,9 @@ export const toInboxItemTransition = (
     case 'CLEAR':
       // An outcome says how the item ended; a resurfacing time says it has not.
       if (isDefined(input.outcome) && isDefined(input.resurfaceInMinutes)) {
-        throw new BadRequestException(
+        throw new InboxException(
           'A clear that comes back cannot also carry an outcome',
+          InboxExceptionCode.INVALID_INBOX_ACTION,
         );
       }
 
@@ -50,6 +53,9 @@ export const toInboxItemTransition = (
       };
 
     default:
-      throw new BadRequestException(`Unknown transition kind ${input.kind}`);
+      throw new InboxException(
+        `Unknown transition kind ${input.kind}`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+      );
   }
 };

@@ -1,8 +1,8 @@
-import { BadRequestException, ConflictException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
@@ -126,7 +126,9 @@ describe('InboxTransitionService', () => {
           transition: { kind: 'CLEAR', outcome: 'APPROVED' },
           expectedVersion: 2,
         }),
-      ).rejects.toThrow(ConflictException);
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_CHANGED,
+      });
     });
 
     it('should apply without a version guard when the caller does not supply one', async () => {
@@ -212,7 +214,9 @@ describe('InboxTransitionService', () => {
           ...transitionArgs,
           transition: { kind: 'CLEAR', outcome: 'SHIPPED' },
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_ACTION,
+      });
     });
 
     it('should accept any outcome when the type declares none', async () => {
@@ -283,7 +287,9 @@ describe('InboxTransitionService', () => {
           ...transitionArgs,
           transition: { kind: 'CLEAR', resurfaceInMinutes: 0 },
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_ACTION,
+      });
     });
 
     it('should refuse a delay longer than a year', async () => {
@@ -293,7 +299,9 @@ describe('InboxTransitionService', () => {
           ...transitionArgs,
           transition: { kind: 'CLEAR', resurfaceInMinutes: 60 * 24 * 400 },
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_ACTION,
+      });
     });
   });
 
@@ -401,7 +409,9 @@ describe('InboxTransitionService', () => {
           ...transitionArgs,
           transition: { kind: 'ASSIGN', toUserWorkspaceId: null },
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_ACTION,
+      });
     });
 
     it('should hand an item to someone else unread, since they have not seen it', async () => {

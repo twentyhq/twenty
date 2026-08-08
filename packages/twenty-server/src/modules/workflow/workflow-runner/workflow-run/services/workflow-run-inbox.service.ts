@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
+import { reportToInbox } from 'src/engine/core-modules/inbox/utils/report-to-inbox.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -28,24 +29,16 @@ export class WorkflowRunInboxService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  // Best effort: a run that already finished must not be reported as failing to
-  // finish because its inbox item could not be routed.
   async onWorkflowRunFailed(args: {
     workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id' | 'name' | 'createdBy'>;
     workspaceId: string;
     error?: string;
   }): Promise<void> {
-    try {
-      await this.routeFailedRun(args);
-    } catch (error) {
-      this.logger.warn(
-        `Failed to route the inbox item for workflow run ${
-          args.workflowRun.id
-        } in workspace ${args.workspaceId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
+    await reportToInbox(
+      this.logger,
+      `failed workflow run ${args.workflowRun.id}`,
+      () => this.routeFailedRun(args),
+    );
   }
 
   private async routeFailedRun({

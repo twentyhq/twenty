@@ -1,8 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
@@ -27,7 +31,10 @@ const coerceField = (
         : Number(value);
 
     if (!Number.isFinite(parsed)) {
-      throw new BadRequestException(`${field.key} must be a number`);
+      throw new InboxException(
+        `${field.key} must be a number`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+      );
     }
 
     return parsed;
@@ -39,7 +46,10 @@ const coerceField = (
     }
 
     if (value !== 'true' && value !== 'false') {
-      throw new BadRequestException(`${field.key} must be a boolean`);
+      throw new InboxException(
+        `${field.key} must be a boolean`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+      );
     }
 
     return value === 'true';
@@ -85,14 +95,16 @@ export class InboxItemActionService {
     const action = this.findActionOrThrow({ inboxItem, actionKey });
 
     if (isDefined(action.navigation)) {
-      throw new BadRequestException(
+      throw new InboxException(
         `Action ${actionKey} is resolved by the client`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
       );
     }
 
     if (!isDefined(action.transition)) {
-      throw new BadRequestException(
+      throw new InboxException(
         `Action ${actionKey} declares neither a navigation nor a transition`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
       );
     }
 
@@ -171,8 +183,9 @@ export class InboxItemActionService {
       });
 
     if (isDefined(missingField)) {
-      throw new BadRequestException(
+      throw new InboxException(
         `Action ${action.key} requires ${missingField.key}`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
       );
     }
   }
@@ -189,8 +202,9 @@ export class InboxItemActionService {
     );
 
     if (!isDefined(action)) {
-      throw new BadRequestException(
+      throw new InboxException(
         `Unknown action ${actionKey} for this inbox item`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
       );
     }
 

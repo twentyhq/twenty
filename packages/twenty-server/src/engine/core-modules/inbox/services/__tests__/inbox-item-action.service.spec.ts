@@ -1,8 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/inbox-item-action.service';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
@@ -131,7 +131,9 @@ describe('InboxItemActionService', () => {
     // Act & Assert
     await expect(
       service.execute({ ...executeArgs, actionKey: 'requestChanges' }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toMatchObject({
+      code: InboxExceptionCode.INVALID_INBOX_ACTION,
+    });
     expect(inboxTransitionService.transition).not.toHaveBeenCalled();
   });
 
@@ -143,7 +145,9 @@ describe('InboxItemActionService', () => {
         actionKey: 'requestChanges',
         input: { feedback: '' },
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toMatchObject({
+      code: InboxExceptionCode.INVALID_INBOX_ACTION,
+    });
   });
 
   it('should pass an action that collects nothing through untouched', async () => {
@@ -176,7 +180,9 @@ describe('InboxItemActionService', () => {
     // Act & Assert
     await expect(
       service.execute({ ...executeArgs, actionKey: 'open' }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toMatchObject({
+      code: InboxExceptionCode.INVALID_INBOX_ACTION,
+    });
     expect(inboxTransitionService.transition).not.toHaveBeenCalled();
   });
 
@@ -184,7 +190,9 @@ describe('InboxItemActionService', () => {
     // Act & Assert
     await expect(
       service.execute({ ...executeArgs, actionKey: 'nope' }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toMatchObject({
+      code: InboxExceptionCode.INVALID_INBOX_ACTION,
+    });
   });
 
   it('should coerce a declared number and boolean to their declared types', async () => {
@@ -213,7 +221,9 @@ describe('InboxItemActionService', () => {
         actionKey: 'score',
         input: { rating: '  ' },
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toMatchObject({
+      code: InboxExceptionCode.INVALID_INBOX_ACTION,
+    });
   });
 
   it('should refuse a boolean that is neither true nor false', async () => {
@@ -224,6 +234,8 @@ describe('InboxItemActionService', () => {
         actionKey: 'score',
         input: { isUrgent: 'yes' },
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toMatchObject({
+      code: InboxExceptionCode.INVALID_INBOX_ACTION,
+    });
   });
 });

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
+import { reportToInbox } from 'src/engine/core-modules/inbox/utils/report-to-inbox.util';
 
 type ThreadContext = {
   threadId: string;
@@ -13,6 +14,8 @@ type ThreadContext = {
 // owner for its whole life: these calls fold into it rather than stacking up.
 @Injectable()
 export class AgentChatInboxService {
+  private readonly logger = new Logger(AgentChatInboxService.name);
+
   constructor(private readonly inboxRouterService: InboxRouterService) {}
 
   async onThreadCreated({
@@ -21,16 +24,18 @@ export class AgentChatInboxService {
     userWorkspaceId,
     title,
   }: ThreadContext & { title?: string }): Promise<void> {
-    await this.inboxRouterService.route({
-      workspaceId,
-      typeKey: INBOX_ITEM_TYPE_KEY.conversation,
-      title,
-      subject: {
-        kind: 'thread',
-        threadId,
-        ownerUserWorkspaceId: userWorkspaceId,
-      },
-    });
+    await reportToInbox(this.logger, `new thread ${threadId}`, () =>
+      this.inboxRouterService.route({
+        workspaceId,
+        typeKey: INBOX_ITEM_TYPE_KEY.conversation,
+        title,
+        subject: {
+          kind: 'thread',
+          threadId,
+          ownerUserWorkspaceId: userWorkspaceId,
+        },
+      }),
+    );
   }
 
   // The agent finished a turn. If it ended by asking something, the item
@@ -45,18 +50,23 @@ export class AgentChatInboxService {
     hasPendingQuestion: boolean;
     preview?: string;
   }): Promise<void> {
-    await this.inboxRouterService.route({
-      workspaceId,
-      typeKey: hasPendingQuestion
-        ? INBOX_ITEM_TYPE_KEY.agentQuestion
-        : INBOX_ITEM_TYPE_KEY.conversation,
-      preview,
-      subject: {
-        kind: 'thread',
-        threadId,
-        ownerUserWorkspaceId: userWorkspaceId,
-      },
-    });
+    await reportToInbox(
+      this.logger,
+      `completed turn on thread ${threadId}`,
+      () =>
+        this.inboxRouterService.route({
+          workspaceId,
+          typeKey: hasPendingQuestion
+            ? INBOX_ITEM_TYPE_KEY.agentQuestion
+            : INBOX_ITEM_TYPE_KEY.conversation,
+          preview,
+          subject: {
+            kind: 'thread',
+            threadId,
+            ownerUserWorkspaceId: userWorkspaceId,
+          },
+        }),
+    );
   }
 
   async onThreadTitleChanged({
@@ -66,11 +76,13 @@ export class AgentChatInboxService {
   }: Omit<ThreadContext, 'userWorkspaceId'> & {
     title: string;
   }): Promise<void> {
-    await this.inboxRouterService.renameThreadItem({
-      workspaceId,
-      threadId,
-      title,
-    });
+    await reportToInbox(this.logger, `renamed thread ${threadId}`, () =>
+      this.inboxRouterService.renameThreadItem({
+        workspaceId,
+        threadId,
+        title,
+      }),
+    );
   }
 
   // Answering a question is deliberately not reported here. The agent's next
@@ -83,6 +95,8 @@ export class AgentChatInboxService {
     threadId,
     workspaceId,
   }: Omit<ThreadContext, 'userWorkspaceId'>): Promise<void> {
-    await this.inboxRouterService.clearByThreadId({ workspaceId, threadId });
+    await reportToInbox(this.logger, `removed thread ${threadId}`, () =>
+      this.inboxRouterService.clearByThreadId({ workspaceId, threadId }),
+    );
   }
 }
