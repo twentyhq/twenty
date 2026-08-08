@@ -57,15 +57,15 @@ export const buildSlackRecordCardBlocks = ({
   references: SlackRecordReference[];
   fieldLinesByRecordId: Map<string, string[]>;
 }): KnownBlock[] => {
-  if (references.length === 0) {
+  // above the cap the records are passing mentions, not the answer's
+  // subject; a truncated sample of cards would only add noise
+  if (references.length === 0 || references.length > RECORD_CARD_MAX_COUNT) {
     return [];
   }
 
-  const cards = references
-    .slice(0, RECORD_CARD_MAX_COUNT)
-    .map((reference) =>
-      buildRecordCard(reference, fieldLinesByRecordId.get(reference.recordId)),
-    );
+  const cards = references.map((reference) =>
+    buildRecordCard(reference, fieldLinesByRecordId.get(reference.recordId)),
+  );
 
   return cards.length === 1 ? cards : [{ type: 'carousel', elements: cards }];
 };

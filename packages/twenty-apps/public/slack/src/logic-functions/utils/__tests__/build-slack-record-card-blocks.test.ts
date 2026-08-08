@@ -69,8 +69,21 @@ describe('buildSlackRecordCardBlocks', () => {
     ).toHaveLength(2);
   });
 
-  it('should cap the carousel at five cards', () => {
+  it('should render no cards when more records are referenced than the cap', () => {
     const references = Array.from({ length: 8 }, (_, index) =>
+      buildReference(index),
+    );
+
+    const blocks = buildSlackRecordCardBlocks({
+      references,
+      fieldLinesByRecordId: new Map(),
+    });
+
+    expect(blocks).toEqual([]);
+  });
+
+  it('should render a full carousel at exactly the cap', () => {
+    const references = Array.from({ length: 5 }, (_, index) =>
       buildReference(index),
     );
 
