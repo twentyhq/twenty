@@ -1814,6 +1814,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_AI_CHAT_PAGE_ENABLED = 'IS_AI_CHAT_PAGE_ENABLED',
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
   IS_CALENDAR_WEEK_VIEW_ENABLED = 'IS_CALENDAR_WEEK_VIEW_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
@@ -4503,6 +4504,7 @@ export type PublicFeatureFlag = {
 export type PublicFeatureFlagMetadata = {
   __typename?: 'PublicFeatureFlagMetadata';
   description: Scalars['String']['output'];
+  icon: Scalars['String']['output'];
   imagePath?: Maybe<Scalars['String']['output']>;
   label: Scalars['String']['output'];
 };

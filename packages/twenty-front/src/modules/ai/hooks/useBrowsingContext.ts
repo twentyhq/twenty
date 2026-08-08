@@ -4,6 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
@@ -23,7 +26,17 @@ export const useGetBrowsingContext = () => {
   const store = useStore();
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
-    const instanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
+    const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
+    const currentSidePanelPage = store
+      .get(sidePanelNavigationStackState.atom)
+      .at(-1);
+
+    const instanceId =
+      isCurrentPathAiChatPage() &&
+      isSidePanelOpened &&
+      isDefined(currentSidePanelPage)
+        ? currentSidePanelPage.pageId
+        : MAIN_CONTEXT_STORE_INSTANCE_ID;
 
     const pageType = store.get(
       contextStoreCurrentPageTypeComponentState.atomFamily({

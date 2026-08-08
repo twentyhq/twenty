@@ -11,11 +11,8 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCalendarContainer = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex: 1;
   flex-direction: column;

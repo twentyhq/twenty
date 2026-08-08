@@ -2,10 +2,12 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   jotaiStore,
@@ -60,13 +62,22 @@ const renderHooks = (pathname: string) => {
 
 describe('useAiModelOptions', () => {
   beforeEach(() => {
+    sessionStorage.clear();
     resetJotaiStore();
   });
 
-  it('should pin the workspace fast model on the workspace setup page', () => {
-    const result = renderHooks(AppPath.WorkspaceSetup);
+  it('should pin the workspace fast model during the onboarding chat', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+    const result = renderHooks(getAppPath(AppPath.AiChat, { threadId: null }));
 
     expect(result.current.pinnedOption?.label).toBe('GPT-5.6 Luna');
+  });
+
+  it('should pin the workspace smart model on a plain chat page', () => {
+    const result = renderHooks(getAppPath(AppPath.AiChat, { threadId: null }));
+
+    expect(result.current.pinnedOption?.label).toBe('GPT-5.2');
   });
 
   it('should pin the workspace smart model elsewhere', () => {

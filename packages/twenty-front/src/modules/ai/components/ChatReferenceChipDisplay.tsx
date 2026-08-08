@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useContext } from 'react';
+import { type MouseEvent, type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipVariant, LinkChip } from 'twenty-ui/data-display';
 
@@ -9,12 +9,14 @@ type ChatReferenceChipDisplayProps = {
   displayName: string;
   leftComponent: ReactNode;
   to?: string;
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
 };
 
 export const ChatReferenceChipDisplay = ({
   displayName,
   leftComponent,
   to,
+  onClick,
 }: ChatReferenceChipDisplayProps) => {
   const isNavigationEnabled = useContext(ChatReferenceNavigationEnabledContext);
 
@@ -35,6 +37,7 @@ export const ChatReferenceChipDisplay = ({
       label={displayName}
       emptyLabel={t`Untitled`}
       to={to}
+      onClick={onClick}
       variant={ChipVariant.Highlighted}
       leftComponent={leftComponent}
     />

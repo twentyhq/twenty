@@ -1446,7 +1446,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_INBOX_ENABLED'
+export type FeatureFlagKey = 'IS_AI_CHAT_PAGE_ENABLED' | 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_INBOX_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1600,6 +1600,7 @@ export interface ApiConfig {
 export interface PublicFeatureFlagMetadata {
     label: Scalars['String']
     description: Scalars['String']
+    icon: Scalars['String']
     imagePath?: Scalars['String']
     __typename: 'PublicFeatureFlagMetadata'
 }
@@ -4867,6 +4868,7 @@ export interface ApiConfigGenqlSelection{
 export interface PublicFeatureFlagMetadataGenqlSelection{
     label?: boolean | number
     description?: boolean | number
+    icon?: boolean | number
     imagePath?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9675,6 +9677,7 @@ export const enumDatabaseEventAction = {
 }
 
 export const enumFeatureFlagKey = {
+   IS_AI_CHAT_PAGE_ENABLED: 'IS_AI_CHAT_PAGE_ENABLED' as const,
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,

@@ -1,13 +1,14 @@
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -20,7 +21,7 @@ export const useAiChatThreadClick = (
   const setThreadIdCreatedFromDraft = useSetAtomState(
     threadIdCreatedFromDraftState,
   );
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
+  const { selectAiChatThread } = useSelectAiChatThread();
   const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
     currentAiChatThreadTitleComponentFamilyState,
   );
@@ -33,7 +34,7 @@ export const useAiChatThreadClick = (
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
 
-    switchThreadWithDraft(thread.id);
+    selectAiChatThread(thread.id);
 
     const clickedFamilyKey = { threadId: thread.id };
 
@@ -59,6 +60,10 @@ export const useAiChatThreadClick = (
           }
         : null,
     );
+
+    if (isCurrentPathAiChatPage()) {
+      return;
+    }
 
     openAskAiPage({
       resetNavigationStack,

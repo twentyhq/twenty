@@ -1800,6 +1800,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_AI_CHAT_PAGE_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -1969,6 +1970,7 @@ type ApiConfig {
 type PublicFeatureFlagMetadata {
   label: String!
   description: String!
+  icon: String!
   imagePath: String
 }
 
