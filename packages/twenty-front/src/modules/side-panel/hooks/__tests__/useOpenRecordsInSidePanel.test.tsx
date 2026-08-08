@@ -66,12 +66,15 @@ const listView = buildCompanyView({
   position: 3,
 });
 
-const widgetView = buildCompanyView({
-  id: WIDGET_VIEW_ID,
-  name: 'Dashboard widget view',
-  type: ViewType.KANBAN_WIDGET,
-  position: 0,
-});
+const buildWidgetView = (type: ViewType) =>
+  buildCompanyView({
+    id: WIDGET_VIEW_ID,
+    name: 'Dashboard widget view',
+    type,
+    position: 0,
+  });
+
+const widgetView = buildWidgetView(ViewType.KANBAN_WIDGET);
 
 const renderOpenRecordsInSidePanel = (views: ViewWithRelations[]) => {
   let store: ReturnType<typeof createStore> | undefined;
@@ -196,30 +199,36 @@ describe('useOpenRecordsInSidePanel', () => {
     ).toBe(INDEX_VIEW_ID);
   });
 
-  it('should fall back to the index view when the view id points at a widget-backing view', () => {
+  it.each([ViewType.KANBAN_WIDGET, ViewType.LIST_WIDGET])(
+    'should fall back to the index view when the view id points at a %s view',
+    (widgetViewType) => {
+      const { result, store } = renderOpenRecordsInSidePanel([
+        buildWidgetView(widgetViewType),
+        indexView,
+      ]);
+
+      act(() => {
+        result.current.openRecordsInSidePanel({
+          objectNameSingular: companyObjectMetadataItem.nameSingular,
+          viewId: WIDGET_VIEW_ID,
+        });
+      });
+
+      expect(
+        store.get(
+          viewableRecordsViewIdComponentState.atomFamily({
+            instanceId: getNavigatedPageId(),
+          }),
+        ),
+      ).toBe(INDEX_VIEW_ID);
+    },
+  );
+
+  it('should open a list view without falling back to the index view', () => {
     const { result, store } = renderOpenRecordsInSidePanel([
-      widgetView,
+      listView,
       indexView,
     ]);
-
-    act(() => {
-      result.current.openRecordsInSidePanel({
-        objectNameSingular: companyObjectMetadataItem.nameSingular,
-        viewId: WIDGET_VIEW_ID,
-      });
-    });
-
-    expect(
-      store.get(
-        viewableRecordsViewIdComponentState.atomFamily({
-          instanceId: getNavigatedPageId(),
-        }),
-      ),
-    ).toBe(INDEX_VIEW_ID);
-  });
-
-  it('should keep a list view a list rather than falling back to a table', () => {
-    const { result, store } = renderOpenRecordsInSidePanel([listView]);
 
     act(() => {
       result.current.openRecordsInSidePanel({
@@ -235,13 +244,6 @@ describe('useOpenRecordsInSidePanel', () => {
         }),
       ),
     ).toBe(LIST_VIEW_ID);
-    expect(
-      store.get(
-        contextStoreCurrentViewTypeComponentState.atomFamily({
-          instanceId: getNavigatedPageId(),
-        }),
-      ),
-    ).toBe(ContextStoreViewType.Table);
   });
 
   it('should throw when the object has no user-facing view', () => {

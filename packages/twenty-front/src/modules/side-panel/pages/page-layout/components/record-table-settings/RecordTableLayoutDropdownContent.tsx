@@ -1,9 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
-import {
-  type RecordTableWidgetLayoutViewType,
-  useRecordTableWidgetLayoutCallbacks,
-} from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
+import { getRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -14,14 +13,8 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconCalendar,
-  IconLayoutKanban,
-  IconList,
-  IconTable,
-} from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
 
@@ -38,6 +31,8 @@ export const RecordTableLayoutDropdownContent = ({
   objectMetadataId,
   currentLayoutViewType,
 }: RecordTableLayoutDropdownContentProps) => {
+  const { t } = useLingui();
+
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItemToFind) =>
@@ -77,6 +72,12 @@ export const RecordTableLayoutDropdownContent = ({
   const isKanbanAvailable = isDefined(defaultGroupByFieldMetadataItem);
   const isCalendarAvailable = isDefined(defaultCalendarFieldMetadataItem);
 
+  const layoutOptions = getRecordTableWidgetLayoutPickerOptions({
+    isKanbanAvailable,
+    isCalendarAvailable,
+    isListViewEnabled,
+  });
+
   const handleSelectLayout = (
     targetViewType: RecordTableWidgetLayoutViewType,
   ) => {
@@ -98,74 +99,35 @@ export const RecordTableLayoutDropdownContent = ({
     <DropdownMenuItemsContainer>
       <SelectableList
         selectableListInstanceId={dropdownId}
-        selectableItemIdArray={[
-          ViewType.TABLE_WIDGET,
-          ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
-          ...(isListViewEnabled ? [ViewType.LIST_WIDGET] : []),
-          ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
-        ]}
+        selectableItemIdArray={layoutOptions
+          .filter((layoutOption) => !layoutOption.isDisabled)
+          .map((layoutOption) => layoutOption.viewType)}
         focusId={dropdownId}
       >
-        <SelectableListItem
-          itemId={ViewType.TABLE_WIDGET}
-          onEnter={() => handleSelectLayout(ViewType.TABLE_WIDGET)}
-        >
-          <MenuItemSelect
-            text={t`Table`}
-            LeftIcon={IconTable}
-            selected={currentLayoutViewType === ViewType.TABLE_WIDGET}
-            focused={selectedItemId === ViewType.TABLE_WIDGET}
-            onClick={() => handleSelectLayout(ViewType.TABLE_WIDGET)}
-          />
-        </SelectableListItem>
-        <SelectableListItem
-          itemId={ViewType.KANBAN_WIDGET}
-          onEnter={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
-        >
-          <MenuItemSelect
-            text={t`Kanban`}
-            LeftIcon={IconLayoutKanban}
-            disabled={!isKanbanAvailable}
-            contextualText={
-              !isKanbanAvailable ? t`Needs a Select field` : undefined
-            }
-            contextualTextPosition="right"
-            selected={currentLayoutViewType === ViewType.KANBAN_WIDGET}
-            focused={selectedItemId === ViewType.KANBAN_WIDGET}
-            onClick={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
-          />
-        </SelectableListItem>
-        {isListViewEnabled && (
-          <SelectableListItem
-            itemId={ViewType.LIST_WIDGET}
-            onEnter={() => handleSelectLayout(ViewType.LIST_WIDGET)}
-          >
-            <MenuItemSelect
-              text={t`List`}
-              LeftIcon={IconList}
-              selected={currentLayoutViewType === ViewType.LIST_WIDGET}
-              focused={selectedItemId === ViewType.LIST_WIDGET}
-              onClick={() => handleSelectLayout(ViewType.LIST_WIDGET)}
-            />
-          </SelectableListItem>
+        {layoutOptions.map(
+          ({ viewType, Icon, label, isDisabled, unavailableReason }) => (
+            <SelectableListItem
+              key={viewType}
+              itemId={viewType}
+              onEnter={() => handleSelectLayout(viewType)}
+            >
+              <MenuItemSelect
+                text={t(label)}
+                LeftIcon={Icon}
+                disabled={isDisabled}
+                contextualText={
+                  isDefined(unavailableReason)
+                    ? t(unavailableReason)
+                    : undefined
+                }
+                contextualTextPosition="right"
+                selected={currentLayoutViewType === viewType}
+                focused={selectedItemId === viewType}
+                onClick={() => handleSelectLayout(viewType)}
+              />
+            </SelectableListItem>
+          ),
         )}
-        <SelectableListItem
-          itemId={ViewType.CALENDAR_WIDGET}
-          onEnter={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
-        >
-          <MenuItemSelect
-            text={t`Calendar`}
-            LeftIcon={IconCalendar}
-            disabled={!isCalendarAvailable}
-            contextualText={
-              !isCalendarAvailable ? t`Needs a Date field` : undefined
-            }
-            contextualTextPosition="right"
-            selected={currentLayoutViewType === ViewType.CALENDAR_WIDGET}
-            focused={selectedItemId === ViewType.CALENDAR_WIDGET}
-            onClick={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
-          />
-        </SelectableListItem>
       </SelectableList>
     </DropdownMenuItemsContainer>
   );

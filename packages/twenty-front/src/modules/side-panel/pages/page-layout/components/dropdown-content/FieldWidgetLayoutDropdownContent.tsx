@@ -6,11 +6,13 @@ import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
-import {
-  type RecordTableWidgetLayoutViewType,
-  useRecordTableWidgetLayoutCallbacks,
-} from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import {
+  getRecordTableWidgetLayoutViewType,
+  type RecordTableWidgetLayoutViewType,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
+import { getRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -28,11 +30,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type IconComponent,
-  IconCalendar,
   IconFileText,
   IconId,
-  IconLayoutKanban,
-  IconList,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
@@ -158,14 +157,15 @@ export const FieldWidgetLayoutDropdownContent = () => {
     FeatureFlagKey.IS_LIST_VIEW_ENABLED,
   );
 
-  const currentEmbeddedViewType: RecordTableWidgetLayoutViewType =
-    embeddedWidgetView?.type === ViewType.KANBAN_WIDGET
-      ? ViewType.KANBAN_WIDGET
-      : embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET
-        ? ViewType.CALENDAR_WIDGET
-        : embeddedWidgetView?.type === ViewType.LIST_WIDGET
-          ? ViewType.LIST_WIDGET
-          : ViewType.TABLE_WIDGET;
+  const currentEmbeddedViewType = getRecordTableWidgetLayoutViewType(
+    embeddedWidgetView?.type,
+  );
+
+  const layoutOptions = getRecordTableWidgetLayoutPickerOptions({
+    isKanbanAvailable,
+    isCalendarAvailable,
+    isListViewEnabled,
+  });
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -259,12 +259,9 @@ export const FieldWidgetLayoutDropdownContent = () => {
         selectableItemIdArray={[
           ...inlineDisplayModes,
           ...(hasEmbeddedViewLayouts
-            ? [
-                ViewType.TABLE_WIDGET,
-                ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
-                ...(isListViewEnabled ? [ViewType.LIST_WIDGET] : []),
-                ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
-              ]
+            ? layoutOptions
+                .filter((layoutOption) => !layoutOption.isDisabled)
+                .map((layoutOption) => layoutOption.viewType)
             : []),
         ]}
       >
@@ -287,82 +284,33 @@ export const FieldWidgetLayoutDropdownContent = () => {
             />
           </SelectableListItem>
         ))}
-        {hasEmbeddedViewLayouts && (
-          <>
-            <SelectableListItem
-              itemId={ViewType.TABLE_WIDGET}
-              onEnter={() => handleSelectViewLayout(ViewType.TABLE_WIDGET)}
-            >
-              <MenuItemSelect
-                text={t`Table`}
-                LeftIcon={IconTable}
-                selected={
-                  isTableDisplayMode &&
-                  currentEmbeddedViewType === ViewType.TABLE_WIDGET
-                }
-                focused={selectedItemId === ViewType.TABLE_WIDGET}
-                onClick={() => handleSelectViewLayout(ViewType.TABLE_WIDGET)}
-              />
-            </SelectableListItem>
-            <SelectableListItem
-              itemId={ViewType.KANBAN_WIDGET}
-              onEnter={() => handleSelectViewLayout(ViewType.KANBAN_WIDGET)}
-            >
-              <MenuItemSelect
-                text={t`Kanban`}
-                LeftIcon={IconLayoutKanban}
-                disabled={!isKanbanAvailable}
-                contextualText={
-                  !isKanbanAvailable ? t`Needs a Select field` : undefined
-                }
-                contextualTextPosition="right"
-                selected={
-                  isTableDisplayMode &&
-                  currentEmbeddedViewType === ViewType.KANBAN_WIDGET
-                }
-                focused={selectedItemId === ViewType.KANBAN_WIDGET}
-                onClick={() => handleSelectViewLayout(ViewType.KANBAN_WIDGET)}
-              />
-            </SelectableListItem>
-            {isListViewEnabled && (
+        {hasEmbeddedViewLayouts &&
+          layoutOptions.map(
+            ({ viewType, Icon, label, isDisabled, unavailableReason }) => (
               <SelectableListItem
-                itemId={ViewType.LIST_WIDGET}
-                onEnter={() => handleSelectViewLayout(ViewType.LIST_WIDGET)}
+                key={viewType}
+                itemId={viewType}
+                onEnter={() => handleSelectViewLayout(viewType)}
               >
                 <MenuItemSelect
-                  text={t`List`}
-                  LeftIcon={IconList}
-                  selected={
-                    isTableDisplayMode &&
-                    currentEmbeddedViewType === ViewType.LIST_WIDGET
+                  text={t(label)}
+                  LeftIcon={Icon}
+                  disabled={isDisabled}
+                  contextualText={
+                    isDefined(unavailableReason)
+                      ? t(unavailableReason)
+                      : undefined
                   }
-                  focused={selectedItemId === ViewType.LIST_WIDGET}
-                  onClick={() => handleSelectViewLayout(ViewType.LIST_WIDGET)}
+                  contextualTextPosition="right"
+                  selected={
+                    isTableDisplayMode && currentEmbeddedViewType === viewType
+                  }
+                  focused={selectedItemId === viewType}
+                  onClick={() => handleSelectViewLayout(viewType)}
                 />
               </SelectableListItem>
-            )}
-            <SelectableListItem
-              itemId={ViewType.CALENDAR_WIDGET}
-              onEnter={() => handleSelectViewLayout(ViewType.CALENDAR_WIDGET)}
-            >
-              <MenuItemSelect
-                text={t`Calendar`}
-                LeftIcon={IconCalendar}
-                disabled={!isCalendarAvailable}
-                contextualText={
-                  !isCalendarAvailable ? t`Needs a Date field` : undefined
-                }
-                contextualTextPosition="right"
-                selected={
-                  isTableDisplayMode &&
-                  currentEmbeddedViewType === ViewType.CALENDAR_WIDGET
-                }
-                focused={selectedItemId === ViewType.CALENDAR_WIDGET}
-                onClick={() => handleSelectViewLayout(ViewType.CALENDAR_WIDGET)}
-              />
-            </SelectableListItem>
-          </>
-        )}
+            ),
+          )}
       </SelectableList>
     </DropdownMenuItemsContainer>
   );

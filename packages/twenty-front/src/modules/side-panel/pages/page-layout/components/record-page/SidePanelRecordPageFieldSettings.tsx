@@ -7,6 +7,10 @@ import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfi
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import {
+  getRecordTableWidgetLayoutViewType,
+  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
@@ -28,12 +32,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconCalendar,
-  IconLayoutKanban,
   IconLayoutSidebarRight,
   IconList,
   IconListDetails,
-  IconTable,
 } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,
@@ -127,12 +128,11 @@ export const SidePanelRecordPageFieldSettings = () => {
     isDefined(targetObjectMetadataId) &&
     isDefined(currentViewId);
 
-  const isEmbeddedViewKanbanLayout =
-    embeddedWidgetView?.type === ViewType.KANBAN_WIDGET;
+  const embeddedViewLayoutViewType = getRecordTableWidgetLayoutViewType(
+    embeddedWidgetView?.type,
+  );
   const isEmbeddedViewCalendarLayout =
-    embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET;
-  const isEmbeddedViewListLayout =
-    embeddedWidgetView?.type === ViewType.LIST_WIDGET;
+    embeddedViewLayoutViewType === ViewType.CALENDAR_WIDGET;
   const embeddedViewHasGroupBy = isDefined(
     embeddedWidgetView?.mainGroupByFieldMetadataId,
   );
@@ -159,26 +159,17 @@ export const SidePanelRecordPageFieldSettings = () => {
     [FieldDisplayMode.TABLE]: t`Table`,
   };
 
+  const embeddedViewLayoutOption =
+    RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[embeddedViewLayoutViewType];
+
   const layoutLabel = isTableDisplayMode
-    ? isEmbeddedViewKanbanLayout
-      ? t`Kanban`
-      : isEmbeddedViewCalendarLayout
-        ? t`Calendar`
-        : isEmbeddedViewListLayout
-          ? t`List`
-          : t`Table`
+    ? t(embeddedViewLayoutOption.label)
     : isDefined(currentDisplayMode)
       ? (displayModeLabels[currentDisplayMode] ?? '')
       : '';
 
   const layoutRowIcon = isTableDisplayMode
-    ? isEmbeddedViewKanbanLayout
-      ? IconLayoutKanban
-      : isEmbeddedViewCalendarLayout
-        ? IconCalendar
-        : isEmbeddedViewListLayout
-          ? IconList
-          : IconTable
+    ? embeddedViewLayoutOption.Icon
     : IconLayoutSidebarRight;
 
   const selectableItemIds = [
