@@ -23,6 +23,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -62,6 +63,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ObjectMetadataToolsFactory,
     FlatFieldMetadataValidatorService,
     FlatFieldMetadataTypeValidatorService,
+    provideWorkspaceScopedRepository(IndexMetadataEntity),
   ],
   exports: [ObjectMetadataService, ObjectMetadataToolsFactory],
 })

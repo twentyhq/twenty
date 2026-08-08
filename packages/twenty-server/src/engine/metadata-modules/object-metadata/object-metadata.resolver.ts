@@ -23,6 +23,7 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -68,6 +69,8 @@ import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mo
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -86,10 +89,11 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(IndexMetadataEntity)
-    private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
+    @InjectWorkspaceScopedRepository(IndexMetadataEntity)
+    private readonly indexMetadataRepository: WorkspaceScopedRepository<IndexMetadataEntity>,
   ) {}
 
+  @UseGuards(NoPermissionGuard)
   @Query(() => ObjectConnectionDTO)
   async objects(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -121,6 +125,7 @@ export class ObjectMetadataResolver {
     });
   }
 
+  @UseGuards(NoPermissionGuard)
   @Query(() => ObjectMetadataDTO)
   async object(
     @Args('id', { type: () => UUIDScalarType }) id: string,
