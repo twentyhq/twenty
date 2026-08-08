@@ -6,17 +6,12 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { useStore } from 'jotai';
-import { matchPath } from 'react-router-dom';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 import { sleep } from '~/utils/sleep';
-
-// Read at processing time, not render time: tool calls are processed from
-// streaming effects whose closures can outlive a route change.
-const isOnAiChatPage = () =>
-  isDefined(matchPath(AppPath.AiChat, window.location.pathname));
 
 export const useProcessUIToolCallMessage = () => {
   const navigateApp = useNavigateApp();
@@ -82,7 +77,7 @@ export const useProcessUIToolCallMessage = () => {
 
           // List views have no side panel surface yet, so leaving the chat
           // page is required: the chat follows along in the side panel.
-          if (isOnAiChatPage()) {
+          if (isCurrentPathAiChatPage()) {
             openAskAiPage({ resetNavigationStack: true, force: true });
           }
 
@@ -93,7 +88,7 @@ export const useProcessUIToolCallMessage = () => {
           break;
         }
         case 'navigateToRecord': {
-          if (isOnAiChatPage()) {
+          if (isCurrentPathAiChatPage()) {
             openRecordInSidePanel({
               recordId: navigateAppOutput.recordId,
               objectNameSingular: navigateAppOutput.objectNameSingular,
@@ -121,7 +116,7 @@ export const useProcessUIToolCallMessage = () => {
             );
           }
 
-          if (isOnAiChatPage()) {
+          if (isCurrentPathAiChatPage()) {
             openAskAiPage({ resetNavigationStack: true, force: true });
           }
 

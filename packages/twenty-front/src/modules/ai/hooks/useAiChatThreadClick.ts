@@ -4,13 +4,15 @@ import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDr
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
-import { matchPath } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -35,10 +37,6 @@ export const useAiChatThreadClick = (
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const handleThreadClick = (thread: AgentChatThread) => {
-    const isOnAiChatPage = isDefined(
-      matchPath(AppPath.AiChat, window.location.pathname),
-    );
-
     setThreadIdCreatedFromDraft(null);
 
     switchThreadWithDraft(thread.id);
@@ -68,10 +66,19 @@ export const useAiChatThreadClick = (
         : null,
     );
 
-    // On the chat page the conversation is already in the main pane: close
-    // the panel the thread was picked from instead of opening panel chat.
-    if (isOnAiChatPage) {
-      void closeSidePanelMenu();
+    // On the chat page the conversation is already in the main pane: never
+    // open panel chat, and close the panel only when the thread was picked
+    // from the panel's history list — a click from the navigation drawer
+    // must not dismiss an open record/artifact panel.
+    if (isCurrentPathAiChatPage()) {
+      const isSidePanelShowingPreviousChats =
+        store.get(isSidePanelOpenedState.atom) &&
+        store.get(sidePanelPageState.atom) ===
+          SidePanelPages.ViewPreviousAiChats;
+
+      if (isSidePanelShowingPreviousChats) {
+        void closeSidePanelMenu();
+      }
 
       return;
     }
