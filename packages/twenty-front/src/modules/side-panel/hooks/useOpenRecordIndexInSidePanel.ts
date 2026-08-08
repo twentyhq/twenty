@@ -92,13 +92,18 @@ export const useOpenRecordIndexInSidePanel = () => {
         }),
         ContextStorePageType.Index,
       );
+      // Unlike getViewType, which folds calendar views into the table context
+      // for the main page, the artifact context describes the layout as
+      // rendered; calendar artifacts then send no browsing context.
       store.set(
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         view?.type === ViewType.KANBAN
           ? ContextStoreViewType.Kanban
-          : ContextStoreViewType.Table,
+          : view?.type === ViewType.CALENDAR
+            ? ContextStoreViewType.Calendar
+            : ContextStoreViewType.Table,
       );
 
       navigateSidePanelMenu({
