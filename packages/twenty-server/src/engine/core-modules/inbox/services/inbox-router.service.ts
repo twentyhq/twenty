@@ -7,6 +7,10 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import {
@@ -65,7 +69,10 @@ export class InboxRouterService {
     });
 
     if (!isDefined(inboxItemType)) {
-      throw new Error(`Unknown inbox item type ${args.typeKey}`);
+      throw new InboxException(
+        `Unknown inbox item type ${args.typeKey}`,
+        InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE,
+      );
     }
 
     const assigneeUserWorkspaceId = this.resolveAssignee(args);
@@ -80,8 +87,9 @@ export class InboxRouterService {
       inboxItemType.binding === InboxItemBinding.SUBJECT &&
       !isDefined(slotKey)
     ) {
-      throw new Error(
+      throw new InboxException(
         `Inbox item type ${args.typeKey} is subject bound and needs a subject`,
+        InboxExceptionCode.MISSING_SUBJECT,
       );
     }
 
