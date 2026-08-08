@@ -2,6 +2,7 @@ import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordTableWentFromEmptyToNotEmptyComponentState } from '@/object-record/record-table/states/recordTableWentFromEmptyToNotEmptyComponentState';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
@@ -9,10 +10,12 @@ import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record
 import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useStore } from 'jotai';
 import isEmpty from 'lodash.isempty';
 import { useEffect, useState } from 'react';
 
@@ -60,6 +63,14 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   );
 
   const { currentView } = useGetCurrentViewOnly();
+
+  const recordIndexAllRecordIdsCallbackState =
+    useAtomComponentSelectorCallbackState(
+      recordIndexAllRecordIdsComponentSelector,
+      recordTableId,
+    );
+
+  const store = useStore();
 
   useEffect(() => {
     if (isInitializingVirtualTableDataLoading) {
@@ -111,7 +122,14 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         }
       } else if (!isInitializedOnMount) {
         setIsInitializedOnMount(true);
-        await triggerInitialRecordTableDataLoad();
+
+        // A remount of an instance that still holds its rows does not need a reload
+        const hasRecordsAlreadyLoaded =
+          store.get(recordIndexAllRecordIdsCallbackState).length > 0;
+
+        if (!hasRecordsAlreadyLoaded) {
+          await triggerInitialRecordTableDataLoad();
+        }
       }
     })();
   }, [
@@ -131,6 +149,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     visibleRecordFields,
     isInitializedOnMount,
     setIsInitializedOnMount,
+    store,
+    recordIndexAllRecordIdsCallbackState,
   ]);
 
   return <></>;
