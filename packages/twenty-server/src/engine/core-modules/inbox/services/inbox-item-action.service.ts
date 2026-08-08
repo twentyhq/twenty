@@ -120,22 +120,18 @@ export class InboxItemActionService {
   }): InboxItemTransition {
     this.assertRequiredInputPresent({ action, input });
 
-    if (transition.kind !== 'RESOLVE') {
-      if (isDefined(input) && Object.keys(input).length > 0) {
-        throw new BadRequestException(
-          `Action ${action.key} takes no input for ${transition.kind}`,
-        );
-      }
+    const declaredInput = this.readDeclaredInput({ action, input });
 
+    if (
+      transition.kind !== 'CLEAR' ||
+      Object.keys(declaredInput).length === 0
+    ) {
       return transition;
     }
 
     return {
       ...transition,
-      result: {
-        ...(transition.result ?? {}),
-        ...this.readDeclaredInput({ action, input }),
-      },
+      result: { ...(transition.result ?? {}), ...declaredInput },
     };
   }
 

@@ -17,7 +17,7 @@ const DECLARED_ACTIONS: InboxItemAction[] = [
   {
     key: 'approve',
     label: 'Approve',
-    transition: { kind: 'RESOLVE', outcome: 'APPROVED' },
+    transition: { kind: 'CLEAR', outcome: 'APPROVED' },
   },
   {
     key: 'requestChanges',
@@ -30,12 +30,12 @@ const DECLARED_ACTIONS: InboxItemAction[] = [
         isRequired: true,
       },
     ],
-    transition: { kind: 'RESOLVE', outcome: 'CHANGES_REQUESTED' },
+    transition: { kind: 'CLEAR', outcome: 'CHANGES_REQUESTED' },
   },
   {
     key: 'snooze',
     label: 'Snooze for an hour',
-    transition: { kind: 'SNOOZE', durationMinutes: 60 },
+    transition: { kind: 'CLEAR', resurfaceInMinutes: 60 },
   },
   {
     key: 'score',
@@ -44,7 +44,7 @@ const DECLARED_ACTIONS: InboxItemAction[] = [
       { key: 'rating', label: 'Rating', type: 'NUMBER' },
       { key: 'isUrgent', label: 'Is urgent', type: 'BOOLEAN' },
     ],
-    transition: { kind: 'RESOLVE', outcome: 'SCORED' },
+    transition: { kind: 'CLEAR', outcome: 'SCORED' },
   },
 ];
 
@@ -101,7 +101,7 @@ describe('InboxItemActionService', () => {
       expect.objectContaining({
         inboxItemId: INBOX_ITEM_ID,
         actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
-        transition: { kind: 'RESOLVE', outcome: 'APPROVED', result: {} },
+        transition: { kind: 'CLEAR', outcome: 'APPROVED' },
       }),
     );
   });
@@ -118,7 +118,7 @@ describe('InboxItemActionService', () => {
     expect(inboxTransitionService.transition).toHaveBeenCalledWith(
       expect.objectContaining({
         transition: {
-          kind: 'RESOLVE',
+          kind: 'CLEAR',
           outcome: 'CHANGES_REQUESTED',
           result: { feedback: 'Make it shorter' },
         },
@@ -145,14 +145,14 @@ describe('InboxItemActionService', () => {
     ).rejects.toThrow(BadRequestException);
   });
 
-  it('should pass a non resolving transition through untouched', async () => {
+  it('should pass an action that collects nothing through untouched', async () => {
     // Act
     await service.execute({ ...executeArgs, actionKey: 'snooze' });
 
     // Assert
     expect(inboxTransitionService.transition).toHaveBeenCalledWith(
       expect.objectContaining({
-        transition: { kind: 'SNOOZE', durationMinutes: 60 },
+        transition: { kind: 'CLEAR', resurfaceInMinutes: 60 },
       }),
     );
   });

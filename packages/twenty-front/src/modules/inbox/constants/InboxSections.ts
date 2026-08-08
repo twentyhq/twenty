@@ -31,7 +31,7 @@ export const INBOX_SECTIONS: InboxSection[] = [
   },
   {
     slug: 'done',
-    scope: InboxItemScope.RESOLVED,
+    scope: InboxItemScope.DONE,
     label: msg`Done`,
     Icon: IconCheckbox,
   },

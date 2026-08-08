@@ -1,10 +1,10 @@
-import { sortInboxItemsByUpdatedAtDesc } from '@/inbox/utils/sortInboxItemsByUpdatedAtDesc';
+import { sortInboxItemsByLastEventAtDesc } from '@/inbox/utils/sortInboxItemsByLastEventAtDesc';
 import { type InboxItem } from '~/generated/graphql';
 
-const buildInboxItem = (id: string, updatedAt: string) =>
-  ({ id, updatedAt }) as InboxItem;
+const buildInboxItem = (id: string, lastEventAt: string) =>
+  ({ id, lastEventAt }) as InboxItem;
 
-describe('sortInboxItemsByUpdatedAtDesc', () => {
+describe('sortInboxItemsByLastEventAtDesc', () => {
   it('should put the most recently updated item first', () => {
     // Arrange
     const inboxItems = [
@@ -14,7 +14,7 @@ describe('sortInboxItemsByUpdatedAtDesc', () => {
     ];
 
     // Act
-    const sorted = sortInboxItemsByUpdatedAtDesc(inboxItems);
+    const sorted = sortInboxItemsByLastEventAtDesc(inboxItems);
 
     // Assert
     expect(sorted.map((inboxItem) => inboxItem.id)).toEqual([
@@ -32,7 +32,7 @@ describe('sortInboxItemsByUpdatedAtDesc', () => {
     ];
 
     // Act
-    sortInboxItemsByUpdatedAtDesc(inboxItems);
+    sortInboxItemsByLastEventAtDesc(inboxItems);
 
     // Assert
     expect(inboxItems.map((inboxItem) => inboxItem.id)).toEqual([
@@ -49,7 +49,7 @@ describe('sortInboxItemsByUpdatedAtDesc', () => {
     ];
 
     // Act
-    const sorted = sortInboxItemsByUpdatedAtDesc(inboxItems);
+    const sorted = sortInboxItemsByLastEventAtDesc(inboxItems);
 
     // Assert
     expect(sorted.map((inboxItem) => inboxItem.id)).toEqual([
@@ -60,6 +60,6 @@ describe('sortInboxItemsByUpdatedAtDesc', () => {
 
   it('should return an empty array unchanged', () => {
     // Act & Assert
-    expect(sortInboxItemsByUpdatedAtDesc([])).toEqual([]);
+    expect(sortInboxItemsByLastEventAtDesc([])).toEqual([]);
   });
 });

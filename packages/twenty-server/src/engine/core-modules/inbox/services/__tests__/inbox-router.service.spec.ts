@@ -1,13 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
-import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
-import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
@@ -17,26 +13,25 @@ const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
 const THREAD_OWNER_USER_WORKSPACE_ID = 'thread-owner-user-workspace-id';
 const FALLBACK_USER_WORKSPACE_ID = 'fallback-user-workspace-id';
-const SUBJECT_TYPE_ID = 'subject-type-id';
-const OCCURRENCE_TYPE_ID = 'occurrence-type-id';
+const CONVERSATION_TYPE_ID = 'conversation-type-id';
+const RUN_FAILED_TYPE_ID = 'run-failed-type-id';
 const EXISTING_ITEM_ID = 'existing-item-id';
 const INSERTED_ITEM_ID = 'inserted-item-id';
 const THREAD_SLOT_KEY = `thread:${THREAD_ID}`;
-const OCCURRENCE_SLOT_KEY = 'workflow-run:run-id';
+const RUN_SLOT_KEY = 'workflow-run:run-id';
+const NOW = new Date('2026-08-07T10:00:00.000Z');
 
-const SUBJECT_TYPE = {
-  id: SUBJECT_TYPE_ID,
+const CONVERSATION_TYPE = {
+  id: CONVERSATION_TYPE_ID,
   key: 'conversation',
   label: 'Conversation',
-  binding: InboxItemBinding.SUBJECT,
-  defaultPriority: InboxItemPriority.LOW,
+  defaultPriority: InboxItemPriority.UPDATE,
 } as InboxItemTypeEntity;
 
-const OCCURRENCE_TYPE = {
-  id: OCCURRENCE_TYPE_ID,
+const RUN_FAILED_TYPE = {
+  id: RUN_FAILED_TYPE_ID,
   key: 'workflow_run_failed',
   label: 'Workflow run failed',
-  binding: InboxItemBinding.OCCURRENCE,
   defaultPriority: InboxItemPriority.NEEDS_ACTION,
 } as InboxItemTypeEntity;
 
@@ -46,13 +41,13 @@ const buildInboxItem = (
   ({
     id: EXISTING_ITEM_ID,
     workspaceId: WORKSPACE_ID,
-    inboxItemTypeId: SUBJECT_TYPE_ID,
-    status: InboxItemStatus.OPEN,
-    priority: InboxItemPriority.LOW,
+    inboxItemTypeId: CONVERSATION_TYPE_ID,
+    priority: InboxItemPriority.UPDATE,
     title: 'An older message',
     assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
     slotKey: THREAD_SLOT_KEY,
-    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    lastEventAt: new Date('2026-01-01T00:00:00.000Z'),
+    clearedAt: null,
     ...overrides,
   }) as InboxItemEntity;
 
@@ -81,33 +76,16 @@ describe('InboxRouterService', () => {
     isFeatureEnabled: jest.fn(),
   };
 
-  // Stands in for the rows the slot currently holds, honouring the
-  // optional status filter and the updatedAt DESC ordering the service asks for
-  const stubFoldableRows = (rows: InboxItemEntity[]) => {
-    const rowsByRecency = [...rows].sort(
-      (firstRow, secondRow) =>
-        secondRow.updatedAt.getTime() - firstRow.updatedAt.getTime(),
-    );
-
-    inboxItemRepository.findOne.mockImplementation((_workspaceId, options) =>
-      Promise.resolve(
-        rowsByRecency.find(
-          (row) =>
-            !isDefined(options.where.status) ||
-            row.status === options.where.status,
-        ) ?? null,
-      ),
-    );
-  };
-
   beforeEach(async () => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+    jest.setSystemTime(NOW);
 
     loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
 
-    inboxItemTypeService.findByKey.mockResolvedValue(SUBJECT_TYPE);
+    inboxItemTypeService.findByKey.mockResolvedValue(CONVERSATION_TYPE);
     featureFlagService.isFeatureEnabled.mockResolvedValue(true);
-    stubFoldableRows([]);
+    inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
     inboxItemRepository.save.mockImplementation((_workspaceId, inboxItem) =>
@@ -137,6 +115,7 @@ describe('InboxRouterService', () => {
 
   afterEach(() => {
     loggerWarnSpy.mockRestore();
+    jest.useRealTimers();
   });
 
   it('should be defined', () => {
@@ -171,7 +150,7 @@ describe('InboxRouterService', () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
       // Act
-      await service.renameThreadItem({
+      await service.restateThreadItem({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
         title: 'A renamed conversation',
@@ -181,12 +160,12 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).toHaveBeenCalledTimes(1);
     });
 
-    it('should still cancel an existing item when the inbox is disabled', async () => {
+    it('should still clear an existing item when the inbox is disabled', async () => {
       // Prepare
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
       // Act
-      await service.dismissByThreadId({
+      await service.clearByThreadId({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
       });
@@ -196,7 +175,7 @@ describe('InboxRouterService', () => {
     });
   });
 
-  describe('routeItem with a subject bound type', () => {
+  describe('routeItem', () => {
     it('should insert an item keyed on the subject and assigned to the thread owner when no item exists yet', async () => {
       // Act
       const result = await service.routeItem({
@@ -212,12 +191,12 @@ describe('InboxRouterService', () => {
       // The workspace scope is the repository's first argument, never a column
       // in the payload
       expect(inboxItemRepository.save).toHaveBeenCalledWith(WORKSPACE_ID, {
-        inboxItemTypeId: SUBJECT_TYPE_ID,
-        status: InboxItemStatus.OPEN,
-        priority: InboxItemPriority.LOW,
+        inboxItemTypeId: CONVERSATION_TYPE_ID,
+        priority: InboxItemPriority.UPDATE,
         title: 'A message from Alice',
         preview: 'Hello there',
         payload: null,
+        lastEventAt: NOW,
         assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
         slotKey: THREAD_SLOT_KEY,
         threadId: THREAD_ID,
@@ -258,312 +237,38 @@ describe('InboxRouterService', () => {
       );
     });
 
-    it('should fold into the existing open item instead of inserting a second one when the subject already has an item', async () => {
+    it('should prefer a producer supplied slot over the subject when both are given', async () => {
       // Prepare
-      stubFoldableRows([
-        buildInboxItem({
-          readAt: new Date('2026-01-01T00:00:00.000Z'),
-          snoozedUntil: new Date('2026-02-01T00:00:00.000Z'),
-        }),
-      ]);
-      inboxItemRepository.findOneBy.mockResolvedValue(
-        buildInboxItem({ title: 'A newer message', readAt: null }),
-      );
-
-      // Act
-      const result = await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        typeKey: 'conversation',
-        title: 'A newer message',
-        subject: threadSubject,
-      });
-
-      // Assert
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
-      expect(inboxItemRepository.update).toHaveBeenCalledTimes(1);
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { id: EXISTING_ITEM_ID },
-        expect.objectContaining({
-          inboxItemTypeId: SUBJECT_TYPE_ID,
-          title: 'A newer message',
-          priority: InboxItemPriority.LOW,
-          status: InboxItemStatus.OPEN,
-          snoozedUntil: null,
-          readAt: null,
-        }),
-      );
-      expect(inboxItemRepository.findOneBy).toHaveBeenCalledWith(WORKSPACE_ID, {
-        id: EXISTING_ITEM_ID,
-      });
-      expect(result).toEqual(
-        expect.objectContaining({ title: 'A newer message' }),
-      );
-    });
-
-    it('should fall back to the type label when the producer sends no title', async () => {
-      // Act
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        typeKey: 'conversation',
-        subject: threadSubject,
-      });
-
-      // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        expect.objectContaining({ title: 'Conversation' }),
-      );
-    });
-
-    it('should leave the title, preview and payload untouched when folding without them', async () => {
-      // Prepare
-      stubFoldableRows([
-        buildInboxItem({ title: 'An older message', preview: 'Hello there' }),
-      ]);
-
-      // Act
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        typeKey: 'conversation',
-        subject: threadSubject,
-      });
-
-      // Assert
-      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
-
-      expect(partialUpdate).not.toHaveProperty('title');
-      expect(partialUpdate).not.toHaveProperty('preview');
-      expect(partialUpdate).not.toHaveProperty('payload');
-      expect(partialUpdate).toEqual(
-        expect.objectContaining({
-          status: InboxItemStatus.OPEN,
-          snoozedUntil: null,
-          readAt: null,
-        }),
-      );
-    });
-
-    it('should keep an explicitly requested priority when folding rather than the type default', async () => {
-      // Prepare
-      stubFoldableRows([buildInboxItem()]);
-
-      // Act
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        typeKey: 'conversation',
-        title: 'An urgent message',
-        priority: InboxItemPriority.NEEDS_ACTION,
-        subject: threadSubject,
-      });
-
-      // Assert
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { id: EXISTING_ITEM_ID },
-        expect.objectContaining({ priority: InboxItemPriority.NEEDS_ACTION }),
-      );
-    });
-
-    it('should fall back to an any status lookup so a resolved subject can be revived', async () => {
-      // Prepare
-      stubFoldableRows([
-        buildInboxItem({
-          status: InboxItemStatus.RESOLVED,
-          resolvedAt: new Date('2026-01-01T00:00:00.000Z'),
-          resolvedByUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-        }),
-      ]);
-
-      // Act
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        typeKey: 'conversation',
-        title: 'A reply on a resolved conversation',
-        subject: threadSubject,
-      });
-
-      // Assert
-      expect(inboxItemRepository.findOne).toHaveBeenNthCalledWith(
-        1,
-        WORKSPACE_ID,
-        {
-          where: {
-            assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-            slotKey: THREAD_SLOT_KEY,
-            status: InboxItemStatus.OPEN,
-          },
-          order: { updatedAt: 'DESC' },
-        },
-      );
-      expect(inboxItemRepository.findOne).toHaveBeenNthCalledWith(
-        2,
-        WORKSPACE_ID,
-        {
-          where: {
-            assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-            slotKey: THREAD_SLOT_KEY,
-          },
-          order: { updatedAt: 'DESC' },
-        },
-      );
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { id: EXISTING_ITEM_ID },
-        expect.objectContaining({
-          status: InboxItemStatus.OPEN,
-          resolvedAt: null,
-          resolvedByUserWorkspaceId: null,
-          readAt: null,
-          snoozedUntil: null,
-        }),
-      );
-    });
-
-    it('should fold into the open item when a more recently updated done item shares the slot', async () => {
-      // Prepare
-      // Reviving the done row instead would leave two open rows on one key and
-      // collide on IDX_INBOX_ITEM_SLOT_KEY_OPEN_UNIQUE
-      stubFoldableRows([
-        buildInboxItem({
-          id: 'open-item-id',
-          status: InboxItemStatus.OPEN,
-          updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-        }),
-        buildInboxItem({
-          id: 'done-item-id',
-          status: InboxItemStatus.RESOLVED,
-          updatedAt: new Date('2026-02-01T00:00:00.000Z'),
-        }),
-      ]);
-
-      // Act
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        typeKey: 'conversation',
-        title: 'A reply on a conversation that also has a resolved item',
-        subject: threadSubject,
-      });
-
-      // Assert
-      expect(inboxItemRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { id: 'open-item-id' },
-        expect.objectContaining({ status: InboxItemStatus.OPEN }),
-      );
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
-    });
-
-    it('should throw when the type is subject bound and no subject is given', async () => {
-      // Act & Assert
-      await expect(
-        service.routeItem({
-          workspaceId: WORKSPACE_ID,
-          typeKey: 'conversation',
-          title: 'A message with no subject',
-          target: {
-            kind: 'userWorkspace',
-            userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
-          },
-        }),
-      ).rejects.toThrow(
-        'Inbox item type conversation is subject bound and needs a subject',
-      );
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
-      expect(inboxItemRepository.update).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('routeItem with an occurrence bound type', () => {
-    beforeEach(() => {
-      inboxItemTypeService.findByKey.mockResolvedValue(OCCURRENCE_TYPE);
-    });
-
-    it('should scope the lookup to open items and fold into one when the occurrence is still open', async () => {
-      // Prepare
-      stubFoldableRows([
-        buildInboxItem({
-          inboxItemTypeId: OCCURRENCE_TYPE_ID,
-          slotKey: OCCURRENCE_SLOT_KEY,
-          assigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
-        }),
-      ]);
+      inboxItemTypeService.findByKey.mockResolvedValue(RUN_FAILED_TYPE);
 
       // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
-        title: 'A workflow run failed again',
-        slotKey: OCCURRENCE_SLOT_KEY,
+        title: 'A workflow run failed',
+        slotKey: RUN_SLOT_KEY,
         target: {
           kind: 'userWorkspace',
           userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
         },
-      });
-
-      // Assert
-      expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
-        where: {
-          assigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
-          slotKey: OCCURRENCE_SLOT_KEY,
-          status: InboxItemStatus.OPEN,
-        },
-        order: { updatedAt: 'DESC' },
-      });
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { id: EXISTING_ITEM_ID },
-        expect.objectContaining({ status: InboxItemStatus.OPEN }),
-      );
-    });
-
-    it('should insert a new item rather than revive the resolved one when the occurrence is already done', async () => {
-      // Prepare
-      stubFoldableRows([
-        buildInboxItem({
-          inboxItemTypeId: OCCURRENCE_TYPE_ID,
-          slotKey: OCCURRENCE_SLOT_KEY,
-          assigneeUserWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
-          status: InboxItemStatus.RESOLVED,
-        }),
-      ]);
-
-      // Act
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        typeKey: 'workflow_run_failed',
-        title: 'A workflow run failed again',
-        slotKey: OCCURRENCE_SLOT_KEY,
-        target: {
-          kind: 'userWorkspace',
-          userWorkspaceId: FALLBACK_USER_WORKSPACE_ID,
+        subject: {
+          kind: 'record',
+          objectMetadataId: 'object-metadata-id',
+          recordId: 'record-id',
         },
       });
 
       // Assert
-      // An occurrence never falls back to the any status lookup, so the done
-      // row stays invisible and a fresh item is created
-      expect(inboxItemRepository.findOne).toHaveBeenCalledTimes(1);
-
-      const [, findOneOptions] = inboxItemRepository.findOne.mock.calls[0];
-
-      expect(findOneOptions.where.status).toBe(InboxItemStatus.OPEN);
-      expect(inboxItemRepository.update).not.toHaveBeenCalled();
       expect(inboxItemRepository.save).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({
-          inboxItemTypeId: OCCURRENCE_TYPE_ID,
-          slotKey: OCCURRENCE_SLOT_KEY,
-          status: InboxItemStatus.OPEN,
-          priority: InboxItemPriority.NEEDS_ACTION,
-        }),
+        expect.objectContaining({ slotKey: RUN_SLOT_KEY }),
       );
     });
 
-    it('should always insert without looking for a foldable item when no slot is given', async () => {
+    it('should always insert without looking for an existing item when no slot resolves', async () => {
+      // Prepare
+      inboxItemTypeService.findByKey.mockResolvedValue(RUN_FAILED_TYPE);
+
       // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
@@ -583,6 +288,133 @@ describe('InboxRouterService', () => {
         expect.objectContaining({ slotKey: null }),
       );
     });
+
+    it('should fold into the item holding the slot instead of inserting a second one', async () => {
+      // Prepare
+      inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
+      inboxItemRepository.findOneBy.mockResolvedValue(
+        buildInboxItem({ title: 'A newer message' }),
+      );
+
+      // Act
+      const result = await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A newer message',
+        subject: threadSubject,
+      });
+
+      // Assert
+      expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
+        where: {
+          assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
+          slotKey: THREAD_SLOT_KEY,
+        },
+      });
+      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: EXISTING_ITEM_ID },
+        expect.objectContaining({
+          inboxItemTypeId: CONVERSATION_TYPE_ID,
+          title: 'A newer message',
+          priority: InboxItemPriority.UPDATE,
+          lastEventAt: NOW,
+        }),
+      );
+      expect(result).toEqual(
+        expect.objectContaining({ title: 'A newer message' }),
+      );
+    });
+
+    // The whole point of comparing lastEventAt against clearedAt: a producer
+    // reports what happened and never has to undo the assignee's decision.
+    it('should revive a cleared item by moving the event past the clear, touching nothing else', async () => {
+      // Prepare
+      inboxItemRepository.findOne.mockResolvedValue(
+        buildInboxItem({
+          clearedAt: new Date('2026-02-01T00:00:00.000Z'),
+          clearedByUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
+          resurfaceAt: new Date('2026-03-01T00:00:00.000Z'),
+          readAt: new Date('2026-02-01T00:00:00.000Z'),
+          outcome: 'DONE',
+        }),
+      );
+
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A reply on a conversation that was done',
+        subject: threadSubject,
+      });
+
+      // Assert
+      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      expect(partialUpdate.lastEventAt).toEqual(NOW);
+      expect(partialUpdate).not.toHaveProperty('clearedAt');
+      expect(partialUpdate).not.toHaveProperty('clearedByUserWorkspaceId');
+      expect(partialUpdate).not.toHaveProperty('resurfaceAt');
+      expect(partialUpdate).not.toHaveProperty('readAt');
+    });
+
+    it('should fall back to the type label when the producer sends no title', async () => {
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        subject: threadSubject,
+      });
+
+      // Assert
+      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ title: 'Conversation' }),
+      );
+    });
+
+    it('should leave the title, preview and payload untouched when folding without them', async () => {
+      // Prepare
+      inboxItemRepository.findOne.mockResolvedValue(
+        buildInboxItem({ title: 'An older message', preview: 'Hello there' }),
+      );
+
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        subject: threadSubject,
+      });
+
+      // Assert
+      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      expect(partialUpdate).not.toHaveProperty('title');
+      expect(partialUpdate).not.toHaveProperty('preview');
+      expect(partialUpdate).not.toHaveProperty('payload');
+    });
+
+    it('should keep an explicitly requested priority when folding rather than the type default', async () => {
+      // Prepare
+      inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
+
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'An urgent message',
+        priority: InboxItemPriority.NEEDS_ACTION,
+        subject: threadSubject,
+      });
+
+      // Assert
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: EXISTING_ITEM_ID },
+        expect.objectContaining({ priority: InboxItemPriority.NEEDS_ACTION }),
+      );
+    });
   });
 
   describe('routeItem concurrency recovery', () => {
@@ -592,7 +424,7 @@ describe('InboxRouterService', () => {
 
       inboxItemRepository.save.mockImplementationOnce(() => {
         // The other producer's row lands between our lookup and our insert
-        stubFoldableRows([concurrentItem]);
+        inboxItemRepository.findOne.mockResolvedValue(concurrentItem);
 
         return Promise.reject({ code: '23505' });
       });
@@ -634,7 +466,7 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
-    it('should rethrow when the unique violation leaves no foldable row behind', async () => {
+    it('should rethrow when the unique violation leaves no row behind', async () => {
       // Prepare
       inboxItemRepository.save.mockRejectedValueOnce({ code: '23505' });
 
@@ -762,10 +594,10 @@ describe('InboxRouterService', () => {
     });
   });
 
-  describe('renameThreadItem', () => {
-    it('should retitle every item of the thread without resurfacing or rereading it', async () => {
+  describe('restateThreadItem', () => {
+    it('should retitle every item of the thread without touching what happened to it', async () => {
       // Act
-      await service.renameThreadItem({
+      await service.restateThreadItem({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
         title: 'A renamed conversation',
@@ -775,27 +607,40 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { threadId: THREAD_ID },
-        expect.objectContaining({ title: 'A renamed conversation' }),
+        { title: 'A renamed conversation' },
       );
-
-      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
-
-      // The list stays ordered by real activity, so the rename freezes updatedAt
-      expect(partialUpdate.updatedAt()).toBe('"updatedAt"');
-
-      // A rename is not an attention event, so nothing else may move
-      expect(partialUpdate).not.toHaveProperty('status');
-      expect(partialUpdate).not.toHaveProperty('readAt');
-      expect(partialUpdate).not.toHaveProperty('snoozedUntil');
-      expect(partialUpdate).not.toHaveProperty('inboxItemTypeId');
       expect(inboxItemRepository.save).not.toHaveBeenCalled();
+    });
+
+    // Answering a question is the person acting, not something happening to
+    // them, so it reclassifies the item without resurfacing or unreading it
+    it('should change the type without moving the event clock', async () => {
+      // Prepare
+      inboxItemTypeService.findByKey.mockResolvedValue(CONVERSATION_TYPE);
+
+      // Act
+      await service.restateThreadItem({
+        workspaceId: WORKSPACE_ID,
+        threadId: THREAD_ID,
+        typeKey: 'conversation',
+      });
+
+      // Assert
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { threadId: THREAD_ID },
+        {
+          inboxItemTypeId: CONVERSATION_TYPE_ID,
+          priority: InboxItemPriority.UPDATE,
+        },
+      );
     });
   });
 
-  describe('dismissByThreadId', () => {
-    it('should dismiss only the open items of the thread', async () => {
+  describe('clearByThreadId', () => {
+    it('should clear the thread items with nobody as the actor', async () => {
       // Act
-      await service.dismissByThreadId({
+      await service.clearByThreadId({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
       });
@@ -803,8 +648,12 @@ describe('InboxRouterService', () => {
       // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { threadId: THREAD_ID, status: InboxItemStatus.OPEN },
-        expect.objectContaining({ status: InboxItemStatus.CANCELLED }),
+        { threadId: THREAD_ID },
+        expect.objectContaining({
+          clearedAt: NOW,
+          clearedByUserWorkspaceId: null,
+          resurfaceAt: null,
+        }),
       );
     });
   });

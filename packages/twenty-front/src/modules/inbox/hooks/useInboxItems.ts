@@ -6,7 +6,7 @@ import { INBOX_ITEMS_PAGE_SIZE } from '@/inbox/constants/InboxItemsPageSize';
 import { INBOX_ITEMS_POLL_INTERVAL } from '@/inbox/constants/InboxItemsPollInterval';
 import { GET_MY_INBOX_ITEMS } from '@/inbox/graphql/queries/getMyInboxItems';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
-import { sortInboxItemsByUpdatedAtDesc } from '@/inbox/utils/sortInboxItemsByUpdatedAtDesc';
+import { sortInboxItemsByLastEventAtDesc } from '@/inbox/utils/sortInboxItemsByLastEventAtDesc';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
   type InboxItem,
@@ -32,7 +32,9 @@ export const useInboxItems = (scope?: InboxItemScope) => {
     skip: !isInboxEnabled,
   });
 
-  const fetchedItems = sortInboxItemsByUpdatedAtDesc(data?.myInboxItems ?? []);
+  const fetchedItems = sortInboxItemsByLastEventAtDesc(
+    data?.myInboxItems ?? [],
+  );
   const hasMoreItems = fetchedItems.length > limit;
   const inboxItems = fetchedItems.slice(0, limit);
 

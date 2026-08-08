@@ -5,7 +5,7 @@ const buildInboxItem = (id: string) => ({ id }) as InboxItem;
 
 const needsActionItems = [buildInboxItem('needs-action')];
 const otherItems = [buildInboxItem('newer-but-quiet')];
-// The list is sorted by updatedAt, so a quiet item can sort above a loud one
+// The list is sorted by lastEventAt, so a quiet item can sort above a loud one
 const inboxItems = [...otherItems, ...needsActionItems];
 
 describe('getRenderedInboxItemOrder', () => {

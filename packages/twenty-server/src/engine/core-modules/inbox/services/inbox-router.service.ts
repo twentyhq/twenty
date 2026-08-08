@@ -6,12 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
-import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import {
   InboxException,
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
-import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import {
   type InboxSubject,
@@ -21,6 +19,8 @@ import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-r
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+// The producers' side of the item. Everything here reports that something
+// happened; nothing here decides whether the assignee is done with it.
 @Injectable()
 export class InboxRouterService {
   private readonly logger = new Logger(InboxRouterService.name);
@@ -81,23 +81,14 @@ export class InboxRouterService {
       return null;
     }
 
-    const slotKey = this.resolveSlotKey({ args, inboxItemType });
-
-    if (
-      inboxItemType.binding === InboxItemBinding.SUBJECT &&
-      !isDefined(slotKey)
-    ) {
-      throw new InboxException(
-        `Inbox item type ${args.typeKey} is subject bound and needs a subject`,
-        InboxExceptionCode.MISSING_SUBJECT,
-      );
-    }
-
     return this.upsertItem({
       args,
       inboxItemType,
       assigneeUserWorkspaceId,
-      slotKey,
+      // One item per subject for the subject's whole life, unless the producer
+      // knows better and names its own slot. A producer whose events are each
+      // separate work names no slot and gets an item per call.
+      slotKey: args.slotKey ?? this.resolveSubjectKey(args.subject),
     });
   }
 
@@ -111,22 +102,8 @@ export class InboxRouterService {
     return args.target?.userWorkspaceId ?? null;
   }
 
-  private resolveSlotKey({
-    args,
-    inboxItemType,
-  }: {
-    args: RouteInboxItemArgs;
-    inboxItemType: InboxItemTypeEntity;
-  }): string | null {
-    if (isDefined(args.slotKey)) {
-      return args.slotKey;
-    }
-
-    if (inboxItemType.binding === InboxItemBinding.OCCURRENCE) {
-      return null;
-    }
-
-    return isDefined(args.subject) ? buildSubjectKey(args.subject) : null;
+  private resolveSubjectKey(subject?: InboxSubject): string | null {
+    return isDefined(subject) ? buildSubjectKey(subject) : null;
   }
 
   private async upsertItem({
@@ -141,11 +118,10 @@ export class InboxRouterService {
     slotKey: string | null;
   }): Promise<InboxItemEntity | null> {
     const existingItem = isDefined(slotKey)
-      ? await this.findFoldableItem({
+      ? await this.findItemInSlot({
           workspaceId: args.workspaceId,
           assigneeUserWorkspaceId,
           slotKey,
-          binding: inboxItemType.binding,
         })
       : null;
 
@@ -171,12 +147,11 @@ export class InboxRouterService {
         throw error;
       }
 
-      // Another producer won the race for this key; fold into its item.
-      const concurrentItem = await this.findFoldableItem({
+      // Another producer won the race for this slot; fold into its item.
+      const concurrentItem = await this.findItemInSlot({
         workspaceId: args.workspaceId,
         assigneeUserWorkspaceId,
         slotKey,
-        binding: inboxItemType.binding,
       });
 
       if (!isDefined(concurrentItem)) {
@@ -191,41 +166,25 @@ export class InboxRouterService {
     }
   }
 
-  // A subject keeps one item across its whole life, so a resolved one is
-  // revived rather than duplicated. An occurrence only folds while still open.
-  private async findFoldableItem({
+  // At most one row can hold a slot, so there is nothing to disambiguate: a
+  // cleared item is the same item, waiting for its next event.
+  private async findItemInSlot({
     workspaceId,
     assigneeUserWorkspaceId,
     slotKey,
-    binding,
   }: {
     workspaceId: string;
     assigneeUserWorkspaceId: string;
     slotKey: string;
-    binding: InboxItemBinding;
   }): Promise<InboxItemEntity | null> {
-    const openItem = await this.inboxItemRepository.findOne(workspaceId, {
-      where: {
-        assigneeUserWorkspaceId,
-        slotKey,
-        status: InboxItemStatus.OPEN,
-      },
-      order: { updatedAt: 'DESC' },
-    });
-
-    if (isDefined(openItem) || binding === InboxItemBinding.OCCURRENCE) {
-      return openItem;
-    }
-
-    // Only reached for a subject with no open item left. Reviving a resolved
-    // one while an open one still holds the key would collide on
-    // IDX_INBOX_ITEM_DEDUPE_KEY_OPEN_UNIQUE, so the open row always wins.
     return this.inboxItemRepository.findOne(workspaceId, {
       where: { assigneeUserWorkspaceId, slotKey },
-      order: { updatedAt: 'DESC' },
     });
   }
 
+  // A new event on an item that was already cleared brings it back on its own:
+  // lastEventAt moves past clearedAt and every read agrees it wants attention
+  // again. Nothing here has to undo what the assignee did.
   private async foldIntoItem({
     existingItem,
     args,
@@ -244,18 +203,7 @@ export class InboxRouterService {
         ...(isDefined(args.title) ? { title: args.title } : {}),
         ...(isDefined(args.preview) ? { preview: args.preview } : {}),
         ...(isDefined(args.payload) ? { payload: args.payload } : {}),
-        status: InboxItemStatus.OPEN,
-        // New activity resurfaces a snoozed item and makes it unread again,
-        // and a revived item must not carry how its previous life ended
-        snoozedUntil: null,
-        readAt: null,
-        resolvedAt: null,
-        resolvedByUserWorkspaceId: null,
-        outcome: null,
-        result: null,
-        cancellationReason: null,
-        claimedByUserWorkspaceId: null,
-        claimExpiresAt: null,
+        lastEventAt: new Date(),
         version: () => '"version" + 1',
       },
     );
@@ -278,11 +226,11 @@ export class InboxRouterService {
   }): Promise<InboxItemEntity> {
     return this.inboxItemRepository.save(args.workspaceId, {
       inboxItemTypeId: inboxItemType.id,
-      status: InboxItemStatus.OPEN,
       priority: args.priority ?? inboxItemType.defaultPriority,
       title: args.title ?? inboxItemType.label,
       preview: args.preview ?? null,
       payload: args.payload ?? null,
+      lastEventAt: new Date(),
       assigneeUserWorkspaceId,
       slotKey,
       threadId: args.subject?.kind === 'thread' ? args.subject.threadId : null,
@@ -293,47 +241,62 @@ export class InboxRouterService {
     });
   }
 
-  // A rename is not new activity: it retitles the item in place and touches
-  // nothing else, so a read, snoozed or resolved item stays exactly as it was.
-  // Resolved items keep their title in sync too, so the retitle is not scoped
-  // to open ones.
-  async renameThreadItem({
+  // Corrects what an item says it is without claiming its subject did
+  // anything. Renaming a thread and folding a question back into a plain
+  // conversation are both this: lastEventAt stays put, so the item keeps its
+  // place in the list, a cleared one stays cleared, and a read one stays read.
+  async restateThreadItem({
     workspaceId,
     threadId,
     title,
+    typeKey,
   }: {
     workspaceId: string;
     threadId: string;
-    title: string;
+    title?: string;
+    typeKey?: string;
   }): Promise<void> {
-    await this.runBestEffort('renameThreadItem', workspaceId, async () => {
+    await this.runBestEffort('restateThreadItem', workspaceId, async () => {
+      const inboxItemType = isDefined(typeKey)
+        ? await this.inboxItemTypeService.findByKey({
+            workspaceId,
+            key: typeKey,
+          })
+        : null;
+
       await this.inboxItemRepository.update(
         workspaceId,
         { threadId },
-        // Keeping updatedAt as it was leaves the list ordered by real activity
-        { title, updatedAt: () => '"updatedAt"' },
+        {
+          ...(isDefined(title) ? { title } : {}),
+          ...(isDefined(inboxItemType)
+            ? {
+                inboxItemTypeId: inboxItemType.id,
+                priority: inboxItemType.defaultPriority,
+              }
+            : {}),
+        },
       );
     });
   }
 
-  async dismissByThreadId({
+  // The subject is gone, so nothing will ever bring this back. Cleared by
+  // nobody, which is how a disappearance is told apart from someone's decision.
+  async clearByThreadId({
     workspaceId,
     threadId,
   }: {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    await this.runBestEffort('dismissByThreadId', workspaceId, async () => {
+    await this.runBestEffort('clearByThreadId', workspaceId, async () => {
       await this.inboxItemRepository.update(
         workspaceId,
-        { threadId, status: InboxItemStatus.OPEN },
+        { threadId },
         {
-          status: InboxItemStatus.CANCELLED,
-          cancellationReason: 'Thread removed',
-          resolvedAt: new Date(),
-          snoozedUntil: null,
-          claimedByUserWorkspaceId: null,
-          claimExpiresAt: null,
+          clearedAt: new Date(),
+          clearedByUserWorkspaceId: null,
+          resurfaceAt: null,
           // Bumped so an action opened before the thread went away loses
           version: () => '"version" + 1',
         },

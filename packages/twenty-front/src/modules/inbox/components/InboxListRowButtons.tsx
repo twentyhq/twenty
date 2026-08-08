@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { type InboxItem, InboxItemStatus } from '~/generated/graphql';
+import { type InboxItem, InboxItemScope } from '~/generated/graphql';
 
 const StyledButtons = styled.div`
   align-items: center;
@@ -32,7 +32,7 @@ export const InboxListRowButtons = ({
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const inlineActions =
-    inboxItem.status === InboxItemStatus.OPEN
+    inboxItem.scope !== InboxItemScope.DONE
       ? inboxItem.inboxItemType.actions.filter(
           (action) =>
             isDefined(action.transitionKind) && action.inputSchema.length === 0,

@@ -11,7 +11,6 @@ import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inb
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 // Leaf module: producers import it, it imports none of them. That keeps the
@@ -22,7 +21,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       InboxItemEntity,
       InboxItemTypeEntity,
       ApplicationEntity,
-      UserWorkspaceEntity,
     ]),
     FeatureFlagModule,
   ],

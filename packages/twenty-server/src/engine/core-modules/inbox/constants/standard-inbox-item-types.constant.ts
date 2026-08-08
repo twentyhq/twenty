@@ -1,4 +1,3 @@
-import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
 import { type InboxItemResolution } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
@@ -18,7 +17,6 @@ export type StandardInboxItemType = {
   key: StandardInboxItemTypeKey;
   label: string;
   icon: string;
-  binding: InboxItemBinding;
   defaultPriority: InboxItemPriority;
   actions: InboxItemAction[];
   resolution?: InboxItemResolution;
@@ -34,8 +32,7 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
     key: INBOX_ITEM_TYPE_KEY.conversation,
     label: 'Conversation',
     icon: 'IconMessageCircle',
-    binding: InboxItemBinding.SUBJECT,
-    defaultPriority: InboxItemPriority.LOW,
+    defaultPriority: InboxItemPriority.UPDATE,
     resolution: {
       outcomes: [{ key: 'DONE', label: 'Done' }],
     },
@@ -49,7 +46,7 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
       {
         key: 'done',
         label: 'Mark done',
-        transition: { kind: 'RESOLVE', outcome: 'DONE' },
+        transition: { kind: 'CLEAR', outcome: 'DONE' },
       },
     ],
   },
@@ -58,7 +55,6 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
     key: INBOX_ITEM_TYPE_KEY.agentQuestion,
     label: 'Question from an agent',
     icon: 'IconHelpCircle',
-    binding: InboxItemBinding.SUBJECT,
     defaultPriority: InboxItemPriority.NEEDS_ACTION,
     resolution: {
       outcomes: [
@@ -86,7 +82,7 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
       {
         key: 'snooze',
         label: 'Snooze for an hour',
-        transition: { kind: 'SNOOZE', durationMinutes: 60 },
+        transition: { kind: 'CLEAR', resurfaceInMinutes: 60 },
       },
     ],
   },
@@ -95,7 +91,6 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
     key: INBOX_ITEM_TYPE_KEY.workflowRunFailed,
     label: 'Workflow run failed',
     icon: 'IconAlertTriangle',
-    binding: InboxItemBinding.OCCURRENCE,
     defaultPriority: InboxItemPriority.NEEDS_ACTION,
     resolution: {
       outcomes: [{ key: 'ACKNOWLEDGED', label: 'Acknowledged' }],
@@ -110,7 +105,7 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
       {
         key: 'acknowledge',
         label: 'Mark done',
-        transition: { kind: 'RESOLVE', outcome: 'ACKNOWLEDGED' },
+        transition: { kind: 'CLEAR', outcome: 'ACKNOWLEDGED' },
       },
     ],
   },
@@ -119,7 +114,6 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
     key: INBOX_ITEM_TYPE_KEY.approval,
     label: 'Approval',
     icon: 'IconCircleCheck',
-    binding: InboxItemBinding.OCCURRENCE,
     defaultPriority: InboxItemPriority.NEEDS_ACTION,
     resolution: {
       outcomes: [
@@ -148,7 +142,7 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
         key: 'approve',
         label: 'Approve',
         isPrimary: true,
-        transition: { kind: 'RESOLVE', outcome: 'APPROVED' },
+        transition: { kind: 'CLEAR', outcome: 'APPROVED' },
       },
       {
         key: 'requestChanges',
@@ -161,13 +155,13 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
             isRequired: true,
           },
         ],
-        transition: { kind: 'RESOLVE', outcome: 'CHANGES_REQUESTED' },
+        transition: { kind: 'CLEAR', outcome: 'CHANGES_REQUESTED' },
       },
       {
         key: 'reject',
         label: 'Reject',
         inputSchema: [{ key: 'reason', label: 'Reason', type: 'TEXT' }],
-        transition: { kind: 'RESOLVE', outcome: 'REJECTED' },
+        transition: { kind: 'CLEAR', outcome: 'REJECTED' },
       },
     ],
   },

@@ -1,13 +1,14 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { In, IsNull, LessThanOrEqual, MoreThan, Or } from 'typeorm';
-
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
-import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
+import {
+  buildInboxItemScopeCriteria,
+  buildInboxItemUnreadCriteria,
+} from 'src/engine/core-modules/inbox/utils/inbox-item-scope.util';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -23,13 +24,12 @@ const buildInboxItem = (
     id: INBOX_ITEM_ID,
     workspaceId: WORKSPACE_ID,
     assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-    status: InboxItemStatus.OPEN,
     priority: InboxItemPriority.UPDATE,
     title: 'A message from Alice',
+    lastEventAt: NOW,
+    clearedAt: null,
+    resurfaceAt: null,
     readAt: null,
-    snoozedUntil: null,
-    resolvedAt: null,
-    resolvedByUserWorkspaceId: null,
     ...overrides,
   }) as InboxItemEntity;
 
@@ -72,12 +72,35 @@ describe('InboxItemService', () => {
     service = module.get<InboxItemService>(InboxItemService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('findMany', () => {
-    it('should exclude items snoozed into the future when the scope is INBOX', async () => {
+    it.each([
+      InboxItemScope.INBOX,
+      InboxItemScope.SNOOZED,
+      InboxItemScope.DONE,
+    ])('should filter by the one scope predicate for %s', async (scope) => {
+      // Act
+      await service.findMany({
+        workspaceId: WORKSPACE_ID,
+        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        scope,
+      });
+
+      // Assert
+      // The workspace scope is the repository's first argument; the assignee
+      // scope stays an explicit predicate this service owns
+      const [, findOptions] = inboxItemRepository.find.mock.calls[0];
+
+      expect(findOptions.where).toEqual({
+        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        ...buildInboxItemScopeCriteria(scope, NOW),
+      });
+    });
+
+    it('should order by when the subject last did something, not by when the row changed', async () => {
       // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
@@ -86,54 +109,14 @@ describe('InboxItemService', () => {
       });
 
       // Assert
-      // The workspace scope is the repository's first argument; the assignee
-      // scope stays an explicit predicate this service owns
-      expect(inboxItemRepository.find).toHaveBeenCalledWith(WORKSPACE_ID, {
-        where: {
-          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-          status: InboxItemStatus.OPEN,
-          snoozedUntil: Or(IsNull(), LessThanOrEqual(NOW)),
-        },
-        relations: { inboxItemType: true },
-        order: { updatedAt: 'DESC' },
-        take: DEFAULT_INBOX_PAGE_SIZE,
-      });
-    });
-
-    it('should return only open items snoozed into the future when the scope is SNOOZED', async () => {
-      // Act
-      await service.findMany({
-        workspaceId: WORKSPACE_ID,
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        scope: InboxItemScope.SNOOZED,
-      });
-
-      // Assert
-      const [, findOptions] = inboxItemRepository.find.mock.calls[0];
-
-      expect(findOptions.where).toEqual({
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        status: InboxItemStatus.OPEN,
-        snoozedUntil: MoreThan(NOW),
-      });
-    });
-
-    it('should return done and dismissed items regardless of snoozing when the scope is RESOLVED', async () => {
-      // Act
-      await service.findMany({
-        workspaceId: WORKSPACE_ID,
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        scope: InboxItemScope.RESOLVED,
-      });
-
-      // Assert
-      const [, findOptions] = inboxItemRepository.find.mock.calls[0];
-
-      expect(findOptions.where).toEqual({
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        status: In([InboxItemStatus.RESOLVED, InboxItemStatus.CANCELLED]),
-      });
-      expect('snoozedUntil' in findOptions.where).toBe(false);
+      expect(inboxItemRepository.find).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({
+          order: { lastEventAt: 'DESC' },
+          relations: { inboxItemType: true },
+          take: DEFAULT_INBOX_PAGE_SIZE,
+        }),
+      );
     });
 
     it('should cap the page size to the given limit when a limit is provided', async () => {
@@ -209,7 +192,7 @@ describe('InboxItemService', () => {
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
-    it('should only stamp readAt when the item is owned', async () => {
+    it('should only stamp readAt, leaving the event that ordered the list alone', async () => {
       // Act
       await service.markRead(ownedItemArgs);
 
@@ -220,18 +203,8 @@ describe('InboxItemService', () => {
           id: INBOX_ITEM_ID,
           assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
         },
-        expect.objectContaining({ readAt: NOW }),
+        { readAt: NOW },
       );
-    });
-
-    it('should leave updatedAt alone so reading does not reorder the list', async () => {
-      // Act
-      await service.markRead(ownedItemArgs);
-
-      // Assert
-      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
-
-      expect(partialUpdate.updatedAt()).toBe('"updatedAt"');
     });
   });
 
@@ -263,15 +236,14 @@ describe('InboxItemService', () => {
       // Assert
       const visibleCriteria = {
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        status: InboxItemStatus.OPEN,
-        snoozedUntil: Or(IsNull(), LessThanOrEqual(NOW)),
+        ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, NOW),
       };
 
       expect(inboxItemRepository.count).toHaveBeenCalledTimes(3);
       expect(inboxItemRepository.count).toHaveBeenNthCalledWith(
         1,
         WORKSPACE_ID,
-        { where: { ...visibleCriteria, readAt: IsNull() } },
+        { where: { ...visibleCriteria, ...buildInboxItemUnreadCriteria() } },
       );
       expect(inboxItemRepository.count).toHaveBeenNthCalledWith(
         2,
@@ -289,8 +261,7 @@ describe('InboxItemService', () => {
         {
           where: {
             assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-            status: InboxItemStatus.OPEN,
-            snoozedUntil: MoreThan(NOW),
+            ...buildInboxItemScopeCriteria(InboxItemScope.SNOOZED, NOW),
           },
         },
       );

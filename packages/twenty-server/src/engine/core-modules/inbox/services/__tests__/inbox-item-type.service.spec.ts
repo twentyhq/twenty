@@ -10,7 +10,6 @@ import {
   STANDARD_INBOX_ITEM_TYPES,
 } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
-import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -21,7 +20,6 @@ const existingType = {
   id: 'inbox-item-type-id',
   workspaceId: WORKSPACE_ID,
   key: INBOX_ITEM_TYPE_KEY.conversation,
-  binding: InboxItemBinding.SUBJECT,
 } as InboxItemTypeEntity;
 
 describe('InboxItemTypeService', () => {
@@ -147,12 +145,10 @@ describe('InboxItemTypeService', () => {
           expect.objectContaining({
             applicationId: APPLICATION_ID,
             key: INBOX_ITEM_TYPE_KEY.conversation,
-            binding: InboxItemBinding.SUBJECT,
           }),
           expect.objectContaining({
             applicationId: APPLICATION_ID,
             key: INBOX_ITEM_TYPE_KEY.workflowRunFailed,
-            binding: InboxItemBinding.OCCURRENCE,
           }),
         ]),
       );

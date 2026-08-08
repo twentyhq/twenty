@@ -29,7 +29,7 @@ export const useOpenInboxItemInSidePanel = () => {
 
   const openInboxItemInSidePanel = useCallback(
     (inboxItem: InboxItem) => {
-      if (!isDefined(inboxItem.readAt)) {
+      if (inboxItem.isUnread) {
         void markInboxItemRead({ inboxItemId: inboxItem.id });
       }
 

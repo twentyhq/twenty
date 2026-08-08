@@ -14,9 +14,7 @@ type InboxItemTransitionInput = {
   kind: string;
   outcome?: string;
   result?: Record<string, unknown>;
-  reason?: string;
-  targetUserWorkspaceId?: string;
-  durationMinutes?: number;
+  resurfaceInMinutes?: number;
 };
 
 export const useInboxItemActions = () => {

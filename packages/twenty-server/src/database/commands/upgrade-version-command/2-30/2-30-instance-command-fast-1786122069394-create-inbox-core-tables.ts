@@ -9,16 +9,10 @@ export class CreateInboxCoreTablesFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."inboxItemType_binding_enum" AS ENUM ('SUBJECT', 'OCCURRENCE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+      `DO $$ BEGIN CREATE TYPE "core"."inboxItemType_defaultpriority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
     await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."inboxItemType_defaultpriority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE', 'LOW'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
-    );
-    await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."inboxItem_status_enum" AS ENUM ('OPEN', 'DONE', 'DISMISSED'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
-    );
-    await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."inboxItem_priority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE', 'LOW'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+      `DO $$ BEGIN CREATE TYPE "core"."inboxItem_priority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
 
     await queryRunner.query(
@@ -30,9 +24,9 @@ export class CreateInboxCoreTablesFastInstanceCommand
         "key" character varying NOT NULL,
         "label" character varying NOT NULL,
         "icon" character varying,
-        "binding" "core"."inboxItemType_binding_enum" NOT NULL DEFAULT 'OCCURRENCE',
         "defaultPriority" "core"."inboxItemType_defaultpriority_enum" NOT NULL DEFAULT 'UPDATE',
         "actions" jsonb NOT NULL DEFAULT '[]',
+        "resolution" jsonb,
         "detailFrontComponentId" uuid,
         "deletedAt" TIMESTAMP WITH TIME ZONE,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -58,26 +52,31 @@ export class CreateInboxCoreTablesFastInstanceCommand
         ON "core"."inboxItemType" ("applicationId")`,
     );
 
+    // No status column: lastEventAt is written by producers, clearedAt by the
+    // assignee, and whether the item wants attention is the comparison.
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."inboxItem" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "workspaceId" uuid NOT NULL,
         "inboxItemTypeId" uuid NOT NULL,
-        "status" "core"."inboxItem_status_enum" NOT NULL DEFAULT 'OPEN',
         "priority" "core"."inboxItem_priority_enum" NOT NULL DEFAULT 'UPDATE',
         "title" character varying NOT NULL,
         "preview" character varying,
         "payload" jsonb,
+        "lastEventAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "clearedAt" TIMESTAMP WITH TIME ZONE,
+        "resurfaceAt" TIMESTAMP WITH TIME ZONE,
+        "clearedByUserWorkspaceId" uuid,
+        "outcome" character varying,
+        "result" jsonb,
         "readAt" TIMESTAMP WITH TIME ZONE,
-        "snoozedUntil" TIMESTAMP WITH TIME ZONE,
         "threadId" uuid,
         "subjectObjectMetadataId" uuid,
         "subjectRecordId" uuid,
         "assigneeUserWorkspaceId" uuid,
         "assigneeAgentId" uuid,
-        "dedupeKey" character varying,
-        "resolvedAt" TIMESTAMP WITH TIME ZONE,
-        "resolvedByUserWorkspaceId" uuid,
+        "slotKey" character varying,
+        "version" integer NOT NULL DEFAULT 1,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_inboxItem_id" PRIMARY KEY ("id"),
@@ -94,16 +93,16 @@ export class CreateInboxCoreTablesFastInstanceCommand
       )`,
     );
 
-    // One live item per dedupe key and assignee: this is what makes concurrent
-    // producers fold into a single item instead of duplicating it.
+    // One row per slot for the slot's whole life, cleared or not. Concurrent
+    // producers collide here and fold instead of duplicating.
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_DEDUPE_KEY_OPEN_UNIQUE"
-        ON "core"."inboxItem" ("workspaceId", "assigneeUserWorkspaceId", "dedupeKey")
-        WHERE "status" = 'OPEN' AND "dedupeKey" IS NOT NULL AND "assigneeUserWorkspaceId" IS NOT NULL`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_SLOT_KEY_UNIQUE"
+        ON "core"."inboxItem" ("workspaceId", "assigneeUserWorkspaceId", "slotKey")
+        WHERE "slotKey" IS NOT NULL AND "assigneeUserWorkspaceId" IS NOT NULL`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_STATUS"
-        ON "core"."inboxItem" ("assigneeUserWorkspaceId", "status")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_LAST_EVENT_AT"
+        ON "core"."inboxItem" ("assigneeUserWorkspaceId", "lastEventAt")`,
     );
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_WORKSPACE_ID"
@@ -122,13 +121,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
       `DROP TYPE IF EXISTS "core"."inboxItem_priority_enum"`,
     );
     await queryRunner.query(
-      `DROP TYPE IF EXISTS "core"."inboxItem_status_enum"`,
-    );
-    await queryRunner.query(
       `DROP TYPE IF EXISTS "core"."inboxItemType_defaultpriority_enum"`,
-    );
-    await queryRunner.query(
-      `DROP TYPE IF EXISTS "core"."inboxItemType_binding_enum"`,
     );
   }
 }

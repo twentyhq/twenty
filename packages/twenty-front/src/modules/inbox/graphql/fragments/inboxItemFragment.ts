@@ -3,7 +3,8 @@ import { gql } from '@apollo/client';
 export const INBOX_ITEM_FRAGMENT = gql`
   fragment InboxItemFields on InboxItem {
     id
-    status
+    scope
+    isUnread
     priority
     version
     title
@@ -11,22 +12,15 @@ export const INBOX_ITEM_FRAGMENT = gql`
     payload
     outcome
     result
-    cancellationReason
-    readAt
-    snoozedUntil
-    claimedByUserWorkspaceId
-    claimExpiresAt
+    lastEventAt
     threadId
     subjectObjectMetadataId
     subjectRecordId
-    createdAt
-    updatedAt
     inboxItemType {
       id
       key
       label
       icon
-      binding
       actions {
         key
         label

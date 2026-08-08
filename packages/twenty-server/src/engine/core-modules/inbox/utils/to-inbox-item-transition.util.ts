@@ -13,52 +13,17 @@ export const toInboxItemTransition = (
   input: TransitionInboxItemInput,
 ): InboxItemTransition => {
   switch (input.kind) {
-    case 'CLAIM':
+    case 'CLEAR':
       return {
-        kind: 'CLAIM',
-        ...(isDefined(input.durationMinutes)
-          ? { leaseDurationMinutes: input.durationMinutes }
-          : {}),
-      };
-
-    case 'RELEASE':
-      return { kind: 'RELEASE' };
-
-    case 'REASSIGN':
-      if (!isDefined(input.targetUserWorkspaceId)) {
-        throw new BadRequestException('REASSIGN needs a target');
-      }
-
-      return {
-        kind: 'REASSIGN',
-        targetUserWorkspaceId: input.targetUserWorkspaceId,
-      };
-
-    case 'RESOLVE':
-      if (!isDefined(input.outcome)) {
-        throw new BadRequestException('RESOLVE needs an outcome');
-      }
-
-      return {
-        kind: 'RESOLVE',
-        outcome: input.outcome,
+        kind: 'CLEAR',
+        ...(isDefined(input.outcome) ? { outcome: input.outcome } : {}),
         ...(isDefined(input.result)
           ? { result: toInboxItemPayload(input.result) }
           : {}),
+        ...(isDefined(input.resurfaceInMinutes)
+          ? { resurfaceInMinutes: input.resurfaceInMinutes }
+          : {}),
       };
-
-    case 'CANCEL':
-      return {
-        kind: 'CANCEL',
-        ...(isDefined(input.reason) ? { reason: input.reason } : {}),
-      };
-
-    case 'SNOOZE':
-      if (!isDefined(input.durationMinutes)) {
-        throw new BadRequestException('SNOOZE needs a duration');
-      }
-
-      return { kind: 'SNOOZE', durationMinutes: input.durationMinutes };
 
     case 'REOPEN':
       return { kind: 'REOPEN' };

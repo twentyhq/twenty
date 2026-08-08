@@ -1,18 +1,14 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
-import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
 const ACTOR_USER_WORKSPACE_ID = 'actor-user-workspace-id';
-const OTHER_USER_WORKSPACE_ID = 'other-user-workspace-id';
 const INBOX_ITEM_ID = 'inbox-item-id';
 const NOW = new Date('2026-08-07T10:00:00.000Z');
 
@@ -35,7 +31,8 @@ const buildInboxItem = (
     workspaceId: WORKSPACE_ID,
     assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
     inboxItemType: APPROVAL_TYPE,
-    status: InboxItemStatus.OPEN,
+    lastEventAt: new Date('2026-08-07T09:00:00.000Z'),
+    clearedAt: null,
     version: 3,
     ...overrides,
   }) as InboxItemEntity;
@@ -51,7 +48,6 @@ describe('InboxTransitionService', () => {
 
   const inboxItemRepository = { update: jest.fn() };
   const inboxItemService = { findOwnedItemOrThrow: jest.fn() };
-  const userWorkspaceRepository = { findOne: jest.fn() };
 
   const lastPartialUpdate = () =>
     inboxItemRepository.update.mock.calls[0][2] as Record<string, unknown>;
@@ -66,9 +62,6 @@ describe('InboxTransitionService', () => {
 
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
     inboxItemService.findOwnedItemOrThrow.mockResolvedValue(buildInboxItem());
-    userWorkspaceRepository.findOne.mockResolvedValue({
-      id: OTHER_USER_WORKSPACE_ID,
-    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -78,10 +71,6 @@ describe('InboxTransitionService', () => {
           useValue: inboxItemRepository,
         },
         { provide: InboxItemService, useValue: inboxItemService },
-        {
-          provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: userWorkspaceRepository,
-        },
       ],
     }).compile();
 
@@ -97,7 +86,7 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'RESOLVE', outcome: 'APPROVED' },
+        transition: { kind: 'CLEAR', outcome: 'APPROVED' },
         expectedVersion: 3,
       });
 
@@ -109,7 +98,7 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'RELEASE' },
+        transition: { kind: 'CLEAR' },
       });
 
       // Assert
@@ -126,7 +115,7 @@ describe('InboxTransitionService', () => {
       await expect(
         service.transition({
           ...transitionArgs,
-          transition: { kind: 'RESOLVE', outcome: 'APPROVED' },
+          transition: { kind: 'CLEAR', outcome: 'APPROVED' },
           expectedVersion: 2,
         }),
       ).rejects.toThrow(ConflictException);
@@ -136,7 +125,7 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'RELEASE' },
+        transition: { kind: 'CLEAR' },
       });
 
       // Assert
@@ -144,13 +133,42 @@ describe('InboxTransitionService', () => {
     });
   });
 
-  describe('RESOLVE', () => {
+  describe('CLEAR', () => {
+    it('should stamp who cleared it and when, and count as having seen it', async () => {
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: { kind: 'CLEAR' },
+      });
+
+      // Assert
+      expect(lastPartialUpdate()).toEqual(
+        expect.objectContaining({
+          clearedAt: NOW,
+          clearedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+          resurfaceAt: null,
+          readAt: NOW,
+        }),
+      );
+    });
+
+    it('should never write lastEventAt, which only producers own', async () => {
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: { kind: 'CLEAR' },
+      });
+
+      // Assert
+      expect(lastPartialUpdate()).not.toHaveProperty('lastEventAt');
+    });
+
     it('should record the outcome and its result', async () => {
       // Act
       await service.transition({
         ...transitionArgs,
         transition: {
-          kind: 'RESOLVE',
+          kind: 'CLEAR',
           outcome: 'REJECTED',
           result: { reason: 'Not this quarter' },
         },
@@ -159,10 +177,8 @@ describe('InboxTransitionService', () => {
       // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
-          status: InboxItemStatus.RESOLVED,
           outcome: 'REJECTED',
           result: { reason: 'Not this quarter' },
-          resolvedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
         }),
       );
     });
@@ -172,7 +188,7 @@ describe('InboxTransitionService', () => {
       await expect(
         service.transition({
           ...transitionArgs,
-          transition: { kind: 'RESOLVE', outcome: 'SHIPPED' },
+          transition: { kind: 'CLEAR', outcome: 'SHIPPED' },
         }),
       ).rejects.toThrow(BadRequestException);
     });
@@ -191,7 +207,7 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'RESOLVE', outcome: 'ANYTHING' },
+        transition: { kind: 'CLEAR', outcome: 'ANYTHING' },
       });
 
       // Assert
@@ -200,185 +216,69 @@ describe('InboxTransitionService', () => {
       );
     });
 
-    it('should refuse to resolve an item that already ended', async () => {
+    it('should apply to an item that was already cleared, since clearing is not a state change', async () => {
       // Prepare
       inboxItemService.findOwnedItemOrThrow.mockResolvedValue(
-        buildInboxItem({ status: InboxItemStatus.RESOLVED }),
+        buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
-      // Act & Assert
-      await expect(
-        service.transition({
-          ...transitionArgs,
-          transition: { kind: 'RESOLVE', outcome: 'APPROVED' },
-        }),
-      ).rejects.toThrow(BadRequestException);
-    });
-  });
-
-  describe('CANCEL', () => {
-    it('should keep the reason and clear the snooze', async () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CANCEL', reason: 'No longer relevant' },
+        transition: { kind: 'CLEAR', outcome: 'APPROVED' },
       });
 
       // Assert
       expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({
-          status: InboxItemStatus.CANCELLED,
-          cancellationReason: 'No longer relevant',
-          snoozedUntil: null,
-        }),
+        expect.objectContaining({ clearedAt: NOW }),
       );
     });
   });
 
-  describe('CLAIM and RELEASE', () => {
-    it('should lease the item to the actor for the requested duration', async () => {
+  describe('CLEAR with a resurfacing time', () => {
+    it('should be a clear that expires rather than a state of its own', async () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CLAIM', leaseDurationMinutes: 15 },
+        transition: { kind: 'CLEAR', resurfaceInMinutes: 60 },
       });
 
       // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
-          claimedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
-          claimExpiresAt: new Date('2026-08-07T10:15:00.000Z'),
-        }),
-      );
-    });
-
-    it('should give the item back on release', async () => {
-      // Act
-      await service.transition({
-        ...transitionArgs,
-        transition: { kind: 'RELEASE' },
-      });
-
-      // Assert
-      expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({
-          claimedByUserWorkspaceId: null,
-          claimExpiresAt: null,
-        }),
-      );
-    });
-
-    it('should refuse a lease longer than a year', async () => {
-      // Act & Assert
-      await expect(
-        service.transition({
-          ...transitionArgs,
-          transition: { kind: 'CLAIM', leaseDurationMinutes: 60 * 24 * 400 },
-        }),
-      ).rejects.toThrow(BadRequestException);
-    });
-  });
-
-  describe('REASSIGN', () => {
-    it('should refuse a target that is not in the workspace', async () => {
-      // Prepare
-      userWorkspaceRepository.findOne.mockResolvedValue(null);
-
-      // Act & Assert
-      await expect(
-        service.transition({
-          ...transitionArgs,
-          transition: {
-            kind: 'REASSIGN',
-            targetUserWorkspaceId: 'someone-elses-workspace',
-          },
-        }),
-      ).rejects.toThrow(BadRequestException);
-      expect(inboxItemRepository.update).not.toHaveBeenCalled();
-    });
-
-    it('should read the item back as the new target rather than the actor', async () => {
-      // Act
-      await service.transition({
-        ...transitionArgs,
-        transition: {
-          kind: 'REASSIGN',
-          targetUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        },
-      });
-
-      // Assert
-      expect(inboxItemService.findOwnedItemOrThrow).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          assigneeUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        }),
-      );
-    });
-
-    it('should hand the item to the new target unread and unclaimed', async () => {
-      // Act
-      await service.transition({
-        ...transitionArgs,
-        transition: {
-          kind: 'REASSIGN',
-          targetUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        },
-      });
-
-      // Assert
-      expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({
-          assigneeUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
-          readAt: null,
-          claimedByUserWorkspaceId: null,
-        }),
-      );
-    });
-  });
-
-  describe('SNOOZE', () => {
-    it('should defer the item and mark it read', async () => {
-      // Act
-      await service.transition({
-        ...transitionArgs,
-        transition: { kind: 'SNOOZE', durationMinutes: 60 },
-      });
-
-      // Assert
-      expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({
-          snoozedUntil: new Date('2026-08-07T11:00:00.000Z'),
+          clearedAt: NOW,
+          resurfaceAt: new Date('2026-08-07T11:00:00.000Z'),
           readAt: NOW,
         }),
       );
     });
 
-    it('should refuse a non positive duration', async () => {
+    it('should refuse a non positive delay', async () => {
       // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
-          transition: { kind: 'SNOOZE', durationMinutes: 0 },
+          transition: { kind: 'CLEAR', resurfaceInMinutes: 0 },
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should refuse a delay longer than a year', async () => {
+      // Act & Assert
+      await expect(
+        service.transition({
+          ...transitionArgs,
+          transition: { kind: 'CLEAR', resurfaceInMinutes: 60 * 24 * 400 },
         }),
       ).rejects.toThrow(BadRequestException);
     });
   });
 
   describe('REOPEN', () => {
-    it('should refuse to reopen an item that is already open', async () => {
-      // Act & Assert
-      await expect(
-        service.transition({
-          ...transitionArgs,
-          transition: { kind: 'REOPEN' },
-        }),
-      ).rejects.toThrow(BadRequestException);
-    });
-
-    it('should clear the resolution and make the item unread again', async () => {
+    it('should undo the clear and how it ended', async () => {
       // Prepare
       inboxItemService.findOwnedItemOrThrow.mockResolvedValue(
-        buildInboxItem({ status: InboxItemStatus.RESOLVED }),
+        buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
       // Act
@@ -390,13 +290,29 @@ describe('InboxTransitionService', () => {
       // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
-          status: InboxItemStatus.OPEN,
+          clearedAt: null,
+          clearedByUserWorkspaceId: null,
+          resurfaceAt: null,
           outcome: null,
           result: null,
-          cancellationReason: null,
-          readAt: null,
         }),
       );
+    });
+
+    it('should leave readAt alone, since moving something back is not a reason to unread it', async () => {
+      // Prepare
+      inboxItemService.findOwnedItemOrThrow.mockResolvedValue(
+        buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
+      );
+
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: { kind: 'REOPEN' },
+      });
+
+      // Assert
+      expect(lastPartialUpdate()).not.toHaveProperty('readAt');
     });
   });
 
@@ -405,7 +321,7 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'RELEASE' },
+        transition: { kind: 'CLEAR' },
       });
 
       // Assert

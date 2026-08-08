@@ -600,7 +600,6 @@ export class AgentChatStreamingService {
     await this.agentChatInboxService.onQuestionAnswered({
       threadId,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
 
     return { streamId, turnId: resolved.turnId };

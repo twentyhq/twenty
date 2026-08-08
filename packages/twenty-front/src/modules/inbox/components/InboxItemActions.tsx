@@ -11,7 +11,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type InboxItem,
   type InboxItemAction,
-  InboxItemStatus,
+  InboxItemScope,
 } from '~/generated/graphql';
 
 const StyledActions = styled.div`
@@ -33,7 +33,7 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
     action: InboxItemAction;
   } | null>(null);
 
-  const isResolved = inboxItem.status !== InboxItemStatus.OPEN;
+  const isDone = inboxItem.scope === InboxItemScope.DONE;
 
   // Navigation actions are redundant here: the thing they would open is
   // already on screen underneath.
@@ -70,7 +70,7 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
 
   return (
     <StyledActions>
-      {isResolved ? (
+      {isDone ? (
         <Button
           onClick={() => {
             void reopenInboxItem({

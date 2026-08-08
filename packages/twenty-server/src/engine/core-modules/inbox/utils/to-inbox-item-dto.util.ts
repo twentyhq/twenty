@@ -13,6 +13,10 @@ import {
   type InboxItemFieldSchema,
   type InboxItemOutcome,
 } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
+import {
+  getInboxItemScope,
+  isInboxItemUnread,
+} from 'src/engine/core-modules/inbox/utils/inbox-item-scope.util';
 
 const toFieldDto = (field: InboxItemFieldSchema): InboxItemFieldDTO => ({
   key: field.key,
@@ -52,14 +56,14 @@ export const toInboxItemDto = (inboxItem: InboxItemWithType): InboxItemDTO => {
       key: inboxItemType.key,
       label: inboxItemType.label,
       icon: inboxItemType.icon,
-      binding: inboxItemType.binding,
       actions: (isDefined(inboxItemType.actions)
         ? inboxItemType.actions
         : []
       ).map(toActionDto),
       outcomes: (inboxItemType.resolution?.outcomes ?? []).map(toOutcomeDto),
     },
-    status: inboxItem.status,
+    scope: getInboxItemScope(inboxItem, new Date()),
+    isUnread: isInboxItemUnread(inboxItem),
     priority: inboxItem.priority,
     version: inboxItem.version,
     title: inboxItem.title,
@@ -67,15 +71,9 @@ export const toInboxItemDto = (inboxItem: InboxItemWithType): InboxItemDTO => {
     payload: inboxItem.payload,
     outcome: inboxItem.outcome,
     result: inboxItem.result,
-    cancellationReason: inboxItem.cancellationReason,
-    readAt: inboxItem.readAt,
-    snoozedUntil: inboxItem.snoozedUntil,
-    claimedByUserWorkspaceId: inboxItem.claimedByUserWorkspaceId,
-    claimExpiresAt: inboxItem.claimExpiresAt,
+    lastEventAt: inboxItem.lastEventAt,
     threadId: inboxItem.threadId,
     subjectObjectMetadataId: inboxItem.subjectObjectMetadataId,
     subjectRecordId: inboxItem.subjectRecordId,
-    createdAt: inboxItem.createdAt,
-    updatedAt: inboxItem.updatedAt,
   };
 };

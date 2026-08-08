@@ -10,7 +10,6 @@ import {
 
 export const InboxExceptionCode = appendCommonExceptionCode({
   UNKNOWN_INBOX_ITEM_TYPE: 'UNKNOWN_INBOX_ITEM_TYPE',
-  MISSING_SUBJECT: 'MISSING_SUBJECT',
 } as const);
 
 const getInboxExceptionUserFriendlyMessage = (
@@ -19,8 +18,6 @@ const getInboxExceptionUserFriendlyMessage = (
   switch (code) {
     case InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE:
       return msg`This kind of inbox item is not declared.`;
-    case InboxExceptionCode.MISSING_SUBJECT:
-      return msg`This inbox item needs a subject.`;
     case InboxExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

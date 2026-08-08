@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, LessThanOrEqual, MoreThan, Or } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
-import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
+import {
+  buildInboxItemScopeCriteria,
+  buildInboxItemUnreadCriteria,
+} from 'src/engine/core-modules/inbox/utils/inbox-item-scope.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -14,7 +16,7 @@ export const DEFAULT_INBOX_PAGE_SIZE = 50;
 export const MAX_INBOX_PAGE_SIZE = 500;
 
 // Reads and the one mutation that is not a transition. Everything that changes
-// an item's state lives in InboxTransitionService.
+// where an item sits lives in InboxTransitionService.
 @Injectable()
 export class InboxItemService {
   constructor(
@@ -36,10 +38,10 @@ export class InboxItemService {
     return this.inboxItemRepository.find(workspaceId, {
       where: {
         assigneeUserWorkspaceId,
-        ...this.buildScopeCriteria(scope),
+        ...buildInboxItemScopeCriteria(scope, new Date()),
       },
       relations: { inboxItemType: true },
-      order: { updatedAt: 'DESC' },
+      order: { lastEventAt: 'DESC' },
       // A non positive take reaches Postgres as "no limit", so the cap is
       // clamped at both ends rather than only at the top
       take: Math.max(
@@ -56,28 +58,23 @@ export class InboxItemService {
     workspaceId: string;
     assigneeUserWorkspaceId: string;
   }): Promise<{ unread: number; needsAction: number; snoozed: number }> {
+    const now = new Date();
     const visibleCriteria = {
       assigneeUserWorkspaceId,
-      ...this.buildScopeCriteria(InboxItemScope.INBOX),
+      ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, now),
     };
 
     const [unread, needsAction, snoozed] = await Promise.all([
       this.inboxItemRepository.count(workspaceId, {
-        where: {
-          ...visibleCriteria,
-          readAt: IsNull(),
-        },
+        where: { ...visibleCriteria, ...buildInboxItemUnreadCriteria() },
       }),
       this.inboxItemRepository.count(workspaceId, {
-        where: {
-          ...visibleCriteria,
-          priority: InboxItemPriority.NEEDS_ACTION,
-        },
+        where: { ...visibleCriteria, priority: InboxItemPriority.NEEDS_ACTION },
       }),
       this.inboxItemRepository.count(workspaceId, {
         where: {
           assigneeUserWorkspaceId,
-          ...this.buildScopeCriteria(InboxItemScope.SNOOZED),
+          ...buildInboxItemScopeCriteria(InboxItemScope.SNOOZED, now),
         },
       }),
     ]);
@@ -85,9 +82,8 @@ export class InboxItemService {
     return { unread, needsAction, snoozed };
   }
 
-  // Reading an item is not activity on it, so the list stays ordered by what
-  // actually happened rather than by what the assignee last looked at. It is
-  // also not a transition: it does not move the item or bump its version.
+  // Reading an item is not activity on it: it moves nothing and bumps no
+  // version. The list stays ordered by lastEventAt, which only producers write.
   async markRead({
     inboxItemId,
     workspaceId,
@@ -102,7 +98,7 @@ export class InboxItemService {
     await this.inboxItemRepository.update(
       workspaceId,
       { id: inboxItem.id, assigneeUserWorkspaceId },
-      { readAt: new Date(), updatedAt: () => '"updatedAt"' },
+      { readAt: new Date() },
     );
 
     return this.findOwnedItemOrThrow({
@@ -139,27 +135,6 @@ export class InboxItemService {
     }
 
     return inboxItem;
-  }
-
-  private buildScopeCriteria(scope: InboxItemScope) {
-    const now = new Date();
-
-    switch (scope) {
-      case InboxItemScope.INBOX:
-        return {
-          status: InboxItemStatus.OPEN,
-          snoozedUntil: Or(IsNull(), LessThanOrEqual(now)),
-        };
-      case InboxItemScope.SNOOZED:
-        return {
-          status: InboxItemStatus.OPEN,
-          snoozedUntil: MoreThan(now),
-        };
-      case InboxItemScope.RESOLVED:
-        return {
-          status: In([InboxItemStatus.RESOLVED, InboxItemStatus.CANCELLED]),
-        };
-    }
   }
 }
 

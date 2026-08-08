@@ -59,8 +59,6 @@ export class AgentChatInboxService {
     });
   }
 
-  // A rename is not a new attention event, so it must not resurface the item,
-  // mark it unread, or change what kind of work it represents.
   async onThreadTitleChanged({
     threadId,
     workspaceId,
@@ -68,26 +66,24 @@ export class AgentChatInboxService {
   }: Omit<ThreadContext, 'userWorkspaceId'> & {
     title: string;
   }): Promise<void> {
-    await this.inboxRouterService.renameThreadItem({
+    await this.inboxRouterService.restateThreadItem({
       workspaceId,
       threadId,
       title,
     });
   }
 
+  // The person answered, so the item stops being a question. Their own answer
+  // is not something that happened to them, so it must not resurface the item
+  // or mark it unread; the agent's next turn is what does that.
   async onQuestionAnswered({
     threadId,
     workspaceId,
-    userWorkspaceId,
-  }: ThreadContext): Promise<void> {
-    await this.inboxRouterService.route({
+  }: Omit<ThreadContext, 'userWorkspaceId'>): Promise<void> {
+    await this.inboxRouterService.restateThreadItem({
       workspaceId,
+      threadId,
       typeKey: INBOX_ITEM_TYPE_KEY.conversation,
-      subject: {
-        kind: 'thread',
-        threadId,
-        ownerUserWorkspaceId: userWorkspaceId,
-      },
     });
   }
 
@@ -95,6 +91,6 @@ export class AgentChatInboxService {
     threadId,
     workspaceId,
   }: Omit<ThreadContext, 'userWorkspaceId'>): Promise<void> {
-    await this.inboxRouterService.dismissByThreadId({ workspaceId, threadId });
+    await this.inboxRouterService.clearByThreadId({ workspaceId, threadId });
   }
 }

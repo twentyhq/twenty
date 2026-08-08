@@ -23,8 +23,8 @@ export type UpsertInboxItemArgs = {
   subject?: InboxSubject;
   // The slot an item occupies for its target. Two upserts naming the same slot
   // are the same piece of work, so the second folds into the first instead of
-  // stacking a duplicate. For subject bound types it is derived from the
-  // subject when omitted; an occurrence keeps none unless one is supplied.
+  // stacking a duplicate. Derived from the subject when omitted, so a producer
+  // only names one to fold on something other than the subject.
   slotKey?: string;
   // Producers describe work; they do not choose recipients. This is only read
   // for subjects that carry no owner of their own.

@@ -105,7 +105,7 @@ export const InboxItemPage = () => {
   const { hasPrevious, hasNext, position, total, goToPrevious, goToNext } =
     useInboxItemPagination({ inboxSection, inboxItemId });
 
-  const isUnread = isDefined(inboxItem) && !isDefined(inboxItem.readAt);
+  const isUnread = inboxItem?.isUnread === true;
 
   if (!isInboxEnabled) {
     return <Navigate to={AppPath.Index} replace />;

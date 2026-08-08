@@ -71,7 +71,6 @@ export class InboxItemTypeService {
         key: standardType.key,
         label: standardType.label,
         icon: standardType.icon,
-        binding: standardType.binding,
         defaultPriority: standardType.defaultPriority,
         actions: standardType.actions,
         resolution: standardType.resolution ?? null,

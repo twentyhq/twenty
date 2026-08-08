@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -32,8 +31,8 @@ const StyledRowContainer = styled.div`
     display: flex;
   }
 
-  &:hover .inbox-list-row-updated-at,
-  &:focus-within .inbox-list-row-updated-at {
+  &:hover .inbox-list-row-last-event-at,
+  &:focus-within .inbox-list-row-last-event-at {
     display: none;
   }
 `;
@@ -112,7 +111,7 @@ const StyledPreview = styled.div`
   white-space: nowrap;
 `;
 
-const StyledUpdatedAt = styled.div`
+const StyledLastEventAt = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
   margin-left: auto;
@@ -140,7 +139,6 @@ export const InboxListRow = ({
   const { getIcon } = useIcons();
 
   const InboxItemIcon = getIcon(inboxItem.inboxItemType.icon);
-  const isUnread = !isDefined(inboxItem.readAt);
   const needsAction = inboxItem.priority === InboxItemPriority.NEEDS_ACTION;
 
   return (
@@ -162,19 +160,21 @@ export const InboxListRow = ({
             }
           }}
         >
-          {isUnread ? <StyledUnreadDot /> : <StyledReadPlaceholder />}
+          {inboxItem.isUnread ? <StyledUnreadDot /> : <StyledReadPlaceholder />}
           <StyledTypeIcon needsAction={needsAction}>
             <InboxItemIcon size={theme.icon.size.md} color="currentColor" />
           </StyledTypeIcon>
           <StyledTitleContainer>
-            <StyledTitle isUnread={isUnread}>{inboxItem.title}</StyledTitle>
+            <StyledTitle isUnread={inboxItem.isUnread}>
+              {inboxItem.title}
+            </StyledTitle>
           </StyledTitleContainer>
           {isNonEmptyString(inboxItem.preview) && (
             <StyledPreview>{inboxItem.preview}</StyledPreview>
           )}
-          <StyledUpdatedAt className="inbox-list-row-updated-at">
-            {beautifyPastDateRelativeToNowShort(inboxItem.updatedAt)}
-          </StyledUpdatedAt>
+          <StyledLastEventAt className="inbox-list-row-last-event-at">
+            {beautifyPastDateRelativeToNowShort(inboxItem.lastEventAt)}
+          </StyledLastEventAt>
         </StyledOpenTarget>
         <StyledButtonsSlot className="inbox-list-row-buttons">
           <InboxListRowButtons

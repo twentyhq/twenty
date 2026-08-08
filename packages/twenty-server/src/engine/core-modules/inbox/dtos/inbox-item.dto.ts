@@ -2,9 +2,8 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
-import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
-import { InboxItemStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-status.enum';
+import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('InboxItemField')
@@ -73,9 +72,6 @@ export class InboxItemTypeDTO {
   @Field(() => String, { nullable: true })
   icon: string | null;
 
-  @Field(() => InboxItemBinding)
-  binding: InboxItemBinding;
-
   @Field(() => [InboxItemActionDTO])
   actions: InboxItemActionDTO[];
 
@@ -91,8 +87,13 @@ export class InboxItemDTO {
   @Field(() => InboxItemTypeDTO)
   inboxItemType: InboxItemTypeDTO;
 
-  @Field(() => InboxItemStatus)
-  status: InboxItemStatus;
+  // Where the item currently sits, evaluated server side. The client never
+  // recomputes it, so there is one place that decides what is handled.
+  @Field(() => InboxItemScope)
+  scope: InboxItemScope;
+
+  @Field(() => Boolean)
+  isUnread: boolean;
 
   @Field(() => InboxItemPriority)
   priority: InboxItemPriority;
@@ -117,20 +118,9 @@ export class InboxItemDTO {
   @Field(() => GraphQLJSON, { nullable: true })
   result: Record<string, unknown> | null;
 
-  @Field(() => String, { nullable: true })
-  cancellationReason: string | null;
-
-  @Field(() => Date, { nullable: true })
-  readAt: Date | null;
-
-  @Field(() => Date, { nullable: true })
-  snoozedUntil: Date | null;
-
-  @Field(() => UUIDScalarType, { nullable: true })
-  claimedByUserWorkspaceId: string | null;
-
-  @Field(() => Date, { nullable: true })
-  claimExpiresAt: Date | null;
+  // When the subject last did something. Also what the list is ordered by.
+  @Field(() => Date)
+  lastEventAt: Date;
 
   @Field(() => UUIDScalarType, { nullable: true })
   threadId: string | null;
@@ -140,12 +130,6 @@ export class InboxItemDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   subjectRecordId: string | null;
-
-  @Field(() => Date)
-  createdAt: Date;
-
-  @Field(() => Date)
-  updatedAt: Date;
 }
 
 @ObjectType('InboxCounts')

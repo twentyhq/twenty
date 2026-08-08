@@ -23,19 +23,9 @@ export class TransitionInboxItemInput {
   @IsOptional()
   result?: Record<string, unknown>;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  reason?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  targetUserWorkspaceId?: string;
-
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(1)
-  durationMinutes?: number;
+  resurfaceInMinutes?: number;
 }

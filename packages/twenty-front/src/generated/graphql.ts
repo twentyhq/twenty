@@ -195,25 +195,20 @@ export type InboxCounts = {
 
 export type InboxItem = {
   __typename?: 'InboxItem';
-  cancellationReason?: Maybe<Scalars['String']['output']>;
-  claimExpiresAt?: Maybe<Scalars['DateTime']['output']>;
-  claimedByUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   inboxItemType: InboxItemType;
+  isUnread: Scalars['Boolean']['output'];
+  lastEventAt: Scalars['DateTime']['output'];
   outcome?: Maybe<Scalars['String']['output']>;
   payload?: Maybe<Scalars['JSON']['output']>;
   preview?: Maybe<Scalars['String']['output']>;
   priority: InboxItemPriority;
-  readAt?: Maybe<Scalars['DateTime']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
-  snoozedUntil?: Maybe<Scalars['DateTime']['output']>;
-  status: InboxItemStatus;
+  scope: InboxItemScope;
   subjectObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   subjectRecordId?: Maybe<Scalars['UUID']['output']>;
   threadId?: Maybe<Scalars['UUID']['output']>;
   title: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
   version: Scalars['Int']['output'];
 };
 
@@ -227,11 +222,6 @@ export type InboxItemAction = {
   navigationKind?: Maybe<Scalars['String']['output']>;
   transitionKind?: Maybe<Scalars['String']['output']>;
 };
-
-export enum InboxItemBinding {
-  OCCURRENCE = 'OCCURRENCE',
-  SUBJECT = 'SUBJECT'
-}
 
 export type InboxItemField = {
   __typename?: 'InboxItemField';
@@ -248,27 +238,19 @@ export type InboxItemOutcome = {
 };
 
 export enum InboxItemPriority {
-  LOW = 'LOW',
   NEEDS_ACTION = 'NEEDS_ACTION',
   UPDATE = 'UPDATE'
 }
 
 export enum InboxItemScope {
+  DONE = 'DONE',
   INBOX = 'INBOX',
-  RESOLVED = 'RESOLVED',
   SNOOZED = 'SNOOZED'
-}
-
-export enum InboxItemStatus {
-  CANCELLED = 'CANCELLED',
-  OPEN = 'OPEN',
-  RESOLVED = 'RESOLVED'
 }
 
 export type InboxItemType = {
   __typename?: 'InboxItemType';
   actions: Array<InboxItemAction>;
-  binding: InboxItemBinding;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   key: Scalars['String']['output'];
@@ -732,12 +714,10 @@ export type TimelineThreadsWithTotal = {
 };
 
 export type TransitionInboxItemInput = {
-  durationMinutes?: InputMaybe<Scalars['Int']['input']>;
   kind: Scalars['String']['input'];
   outcome?: InputMaybe<Scalars['String']['input']>;
-  reason?: InputMaybe<Scalars['String']['input']>;
   result?: InputMaybe<Scalars['JSON']['input']>;
-  targetUserWorkspaceId?: InputMaybe<Scalars['String']['input']>;
+  resurfaceInMinutes?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UuidFilter = {

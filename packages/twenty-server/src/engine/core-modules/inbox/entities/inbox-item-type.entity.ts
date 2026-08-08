@@ -11,7 +11,6 @@ import {
 
 import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-30/create-inbox-core-tables-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { InboxItemBinding } from 'src/engine/core-modules/inbox/enums/inbox-item-binding.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
 import { type InboxItemResolution } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
@@ -20,9 +19,9 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// Declares one kind of work that can land in an inbox: how it binds to its
-// subject, how it renders, and which actions it offers. Syncable so that the
-// built-in types and app-declared types share one shape and one identity space.
+// Declares one kind of work that can land in an inbox: how it renders, and
+// which actions it offers. Syncable so that the built-in types and app-declared
+// types share one shape and one identity space.
 @Entity({ name: 'inboxItemType', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
@@ -73,14 +72,6 @@ export class InboxItemTypeEntity {
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
-
-  @Column({
-    type: 'enum',
-    enum: Object.values(InboxItemBinding),
-    nullable: false,
-    default: InboxItemBinding.OCCURRENCE,
-  })
-  binding: InboxItemBinding;
 
   @Column({
     type: 'enum',
