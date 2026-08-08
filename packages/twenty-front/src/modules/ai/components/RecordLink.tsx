@@ -43,8 +43,6 @@ export const RecordLink = ({
     <ChatReferenceChipDisplay
       displayName={displayName}
       to={getLinkToShowPage(objectNameSingular, { id: recordId })}
-      // Plain link outside the chat page so the chip keeps native link
-      // behavior; on the chat page the placement decides where it lands.
       onClick={isCurrentPathAiChatPage() ? handleOpenRecordTarget : undefined}
       leftComponent={
         <AvatarOrIcon

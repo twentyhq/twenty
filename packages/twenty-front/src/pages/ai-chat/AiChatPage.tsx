@@ -49,9 +49,6 @@ export const AiChatPage = () => {
     shouldOpenAiChatAfterOnboardingState,
   );
 
-  // Onboarding lands here regardless of the feature flag: the page is the
-  // onboarding chat's host since the standalone workspace-setup page was
-  // removed.
   if (!isAiChatPageEnabled && !shouldOpenAiChatAfterOnboarding) {
     return <Navigate to={defaultHomePagePath} replace />;
   }

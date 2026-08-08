@@ -95,8 +95,6 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
     expect(switchThreadWithDraftMock).not.toHaveBeenCalled();
   });
 
-  // A selection that did not project — the startup restore, which
-  // deliberately leaves the URL alone — must not win over a deep link.
   it('should restore the url thread when a selection bypassed the projection', () => {
     jotaiStore.set(currentAiChatThreadState.atom, null);
 

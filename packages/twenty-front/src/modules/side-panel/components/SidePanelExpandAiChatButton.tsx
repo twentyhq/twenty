@@ -35,9 +35,6 @@ export const SidePanelExpandAiChatButton = () => {
   const handleClick = () => {
     void closeSidePanelMenu();
 
-    // The chat page's history entry remembers where expansion started, so
-    // collapsing returns there even after the entry survives thread
-    // switches or a reload.
     navigateApp(
       AppPath.AiChat,
       {

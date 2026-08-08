@@ -12,9 +12,6 @@ type UseReturnFromExpandedAiChatParams = {
   reopenSidePanel: boolean;
 };
 
-// Leaving the chat page continues the conversation in the side panel
-// through SidePanelAskAiHandoffEffect; collapsing only needs to navigate,
-// while closing clears the continuation marker so the handoff stays silent.
 export const useReturnFromExpandedAiChat = ({
   reopenSidePanel,
 }: UseReturnFromExpandedAiChatParams) => {

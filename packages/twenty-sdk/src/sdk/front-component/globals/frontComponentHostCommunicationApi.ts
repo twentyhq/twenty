@@ -6,12 +6,6 @@ import {
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
-// AppPath and SidePanelPages are bundled into this package's published
-// typings as standalone `declare enum`s rather than as imports. A consumer
-// that also holds twenty-shared's copy only typechecks against these while
-// the two member sets agree, so adding a member to either enum breaks every
-// assignment across this boundary until both are rebuilt together — not just
-// assignments of the new member.
 export type NavigateFunction = <T extends AppPath>(
   to: T,
   params?: Parameters<typeof getAppPath<T>>[1],

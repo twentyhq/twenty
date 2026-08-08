@@ -9,12 +9,6 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
-// The single place deciding where a target surfaced from the chat lands.
-// On the chat page the conversation keeps the main pane and targets open in
-// the side panel as artifacts; everywhere else they navigate the workspace.
-// The onboarding conversation is the exception: its purpose is to build the
-// workspace and hand the user over to it, so its targets navigate — the
-// chat then continues in the side panel through the handoff.
 export const useChatTargetNavigation = () => {
   const store = useStore();
   const navigateApp = useNavigateApp();

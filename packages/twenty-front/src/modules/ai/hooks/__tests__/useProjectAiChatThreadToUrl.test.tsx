@@ -52,8 +52,6 @@ describe('useProjectAiChatThreadToUrl', () => {
     );
   });
 
-  // The expand button records where it came from on the history entry, so a
-  // thread switch must carry it forward or collapsing loses its way back.
   it('should carry the history entry state forward', () => {
     window.history.pushState(
       { usr: { returnLocation: '/objects/people' } },
@@ -75,8 +73,6 @@ describe('useProjectAiChatThreadToUrl', () => {
     );
   });
 
-  // Reading the entry at call time is what keeps a callback that outlived its
-  // render — a send that awaited a thread id — from replaying stale state.
   it('should read the entry state as it is when called, not when rendered', () => {
     window.history.pushState(null, '', '/chat');
 

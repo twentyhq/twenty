@@ -23,7 +23,6 @@ export const useOpenAskAiPageInSidePanel = () => {
     }: {
       resetNavigationStack?: boolean;
     } = {}) => {
-      // The chat page already shows the conversation in the main pane.
       if (isCurrentPathAiChatPage()) {
         return;
       }

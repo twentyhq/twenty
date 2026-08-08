@@ -17,11 +17,6 @@ import { viewableRecordIndexViewIdComponentState } from '@/side-panel/pages/reco
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 
-// Unlike getViewType, which folds calendar views into the table context for
-// the main page, the artifact context describes the layout as rendered;
-// calendar artifacts then send no browsing context. Widget variants cannot
-// be resolved from the user-facing view pool below, but map to the layout
-// they would render as so the mapping stays exhaustive.
 const getArtifactContextStoreViewType = (viewType: ViewType) => {
   switch (viewType) {
     case ViewType.TABLE:
@@ -66,9 +61,6 @@ export const useOpenRecordIndexInSidePanel = () => {
         );
       }
 
-      // User-facing views only, sorted by position; a view id that is
-      // unknown or points at a widget-backing view falls back to the
-      // object's index view.
       const objectViews = store.get(
         viewsFromObjectMetadataItemFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,
@@ -101,8 +93,6 @@ export const useOpenRecordIndexInSidePanel = () => {
         resolvedView.id,
       );
 
-      // Artifact pages publish their browsing context under their own page
-      // instance id, so the chat receives the artifact as its context.
       store.set(
         contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,

@@ -4,8 +4,6 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/should
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
-// The workspace setup chat is the onboarding conversation, hosted on the
-// chat page since the standalone workspace-setup page was removed.
 export const useIsWorkspaceSetupChat = () => {
   const { pathname } = useLocation();
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
