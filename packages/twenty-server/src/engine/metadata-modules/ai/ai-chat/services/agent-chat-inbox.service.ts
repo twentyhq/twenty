@@ -24,17 +24,20 @@ export class AgentChatInboxService {
     userWorkspaceId,
     title,
   }: ThreadContext & { title?: string }): Promise<void> {
-    await reportToInbox(this.logger, `new thread ${threadId}`, () =>
-      this.inboxRouterService.route({
-        workspaceId,
-        typeKey: INBOX_ITEM_TYPE_KEY.conversation,
-        title,
-        subject: {
-          kind: 'thread',
-          threadId,
-          ownerUserWorkspaceId: userWorkspaceId,
-        },
-      }),
+    await reportToInbox(
+      this.logger,
+      `new thread ${threadId} in workspace ${workspaceId}`,
+      () =>
+        this.inboxRouterService.route({
+          workspaceId,
+          typeKey: INBOX_ITEM_TYPE_KEY.conversation,
+          title,
+          subject: {
+            kind: 'thread',
+            threadId,
+            ownerUserWorkspaceId: userWorkspaceId,
+          },
+        }),
     );
   }
 
@@ -52,7 +55,7 @@ export class AgentChatInboxService {
   }): Promise<void> {
     await reportToInbox(
       this.logger,
-      `completed turn on thread ${threadId}`,
+      `completed turn on thread ${threadId} in workspace ${workspaceId}`,
       () =>
         this.inboxRouterService.route({
           workspaceId,
@@ -76,12 +79,15 @@ export class AgentChatInboxService {
   }: Omit<ThreadContext, 'userWorkspaceId'> & {
     title: string;
   }): Promise<void> {
-    await reportToInbox(this.logger, `renamed thread ${threadId}`, () =>
-      this.inboxRouterService.renameThreadItem({
-        workspaceId,
-        threadId,
-        title,
-      }),
+    await reportToInbox(
+      this.logger,
+      `renamed thread ${threadId} in workspace ${workspaceId}`,
+      () =>
+        this.inboxRouterService.renameThreadItem({
+          workspaceId,
+          threadId,
+          title,
+        }),
     );
   }
 
@@ -95,8 +101,10 @@ export class AgentChatInboxService {
     threadId,
     workspaceId,
   }: Omit<ThreadContext, 'userWorkspaceId'>): Promise<void> {
-    await reportToInbox(this.logger, `removed thread ${threadId}`, () =>
-      this.inboxRouterService.clearByThreadId({ workspaceId, threadId }),
+    await reportToInbox(
+      this.logger,
+      `removed thread ${threadId} in workspace ${workspaceId}`,
+      () => this.inboxRouterService.clearByThreadId({ workspaceId, threadId }),
     );
   }
 }

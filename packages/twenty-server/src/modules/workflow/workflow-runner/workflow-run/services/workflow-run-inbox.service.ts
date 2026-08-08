@@ -36,7 +36,7 @@ export class WorkflowRunInboxService {
   }): Promise<void> {
     await reportToInbox(
       this.logger,
-      `failed workflow run ${args.workflowRun.id}`,
+      `failed workflow run ${args.workflowRun.id} in workspace ${args.workspaceId}`,
       () => this.routeFailedRun(args),
     );
   }

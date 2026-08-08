@@ -14,6 +14,7 @@ import {
   InboxQueueDTO,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item.dto';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
+import { InboxGraphqlApiExceptionFilter } from 'src/engine/core-modules/inbox/filters/inbox-graphql-api-exception.filter';
 import {
   InboxException,
   InboxExceptionCode,
@@ -44,7 +45,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(AuthGraphqlApiExceptionFilter, InboxGraphqlApiExceptionFilter)
 export class InboxItemResolver {
   constructor(
     private readonly inboxItemService: InboxItemService,
