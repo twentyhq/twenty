@@ -7,11 +7,10 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
-import { useLocation } from 'react-router-dom';
+import { matchPath } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -34,10 +33,12 @@ export const useAiChatThreadClick = (
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const location = useLocation();
-  const isOnAiChatPage = isMatchingLocation(location, AppPath.AiChat);
 
   const handleThreadClick = (thread: AgentChatThread) => {
+    const isOnAiChatPage = isDefined(
+      matchPath(AppPath.AiChat, window.location.pathname),
+    );
+
     setThreadIdCreatedFromDraft(null);
 
     switchThreadWithDraft(thread.id);

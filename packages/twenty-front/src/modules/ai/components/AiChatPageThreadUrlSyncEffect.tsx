@@ -32,10 +32,15 @@ export const AiChatPageThreadUrlSyncEffect = () => {
       store.get(aiChatPageLastHandledThreadIdParamState.atom) !== threadIdParam;
     store.set(aiChatPageLastHandledThreadIdParamState.atom, threadIdParam);
 
-    // The URL wins when its param changed: deep link, initial mount and
-    // browser back/forward.
-    if (hasThreadIdParamChanged && isDefined(threadIdParam)) {
-      if (isValidUuid(threadIdParam) && threadIdParam !== currentAiChatThread) {
+    // The URL wins when its param changed to a valid thread id: deep link,
+    // initial mount and browser back/forward. A malformed param falls
+    // through so the thread state normalizes the URL instead.
+    if (
+      hasThreadIdParamChanged &&
+      isDefined(threadIdParam) &&
+      isValidUuid(threadIdParam)
+    ) {
+      if (threadIdParam !== currentAiChatThread) {
         switchThreadWithDraft(threadIdParam);
       }
       return;

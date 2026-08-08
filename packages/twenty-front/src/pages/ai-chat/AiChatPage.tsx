@@ -1,17 +1,29 @@
 import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
-import { PageBody } from '@/ui/layout/page/components/PageBody';
-import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+
+const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
+
+const StyledPanel = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE} 0 0
+    ${PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE};
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+`;
 
 const StyledCenteredChatContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 100%;
   margin: 0 auto;
   max-width: 768px;
   min-height: 0;
@@ -20,15 +32,13 @@ const StyledCenteredChatContainer = styled.div`
 
 export const AiChatPage = () => {
   return (
-    <PageContainer>
+    <StyledPanel>
       <AiChatPageThreadUrlSyncEffect />
       <AiChatPageCloseAskAiPanelEffect />
       <AiChatPageHeader />
-      <PageBody>
-        <StyledCenteredChatContainer>
-          <AiChatTab />
-        </StyledCenteredChatContainer>
-      </PageBody>
-    </PageContainer>
+      <StyledCenteredChatContainer>
+        <AiChatTab />
+      </StyledCenteredChatContainer>
+    </StyledPanel>
   );
 };

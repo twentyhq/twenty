@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -20,20 +19,15 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
-const createWrapper =
-  (initialPath: string) =>
-  ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={jotaiStore}>
-      <MemoryRouter initialEntries={[initialPath]}>{children}</MemoryRouter>
-    </JotaiProvider>
-  );
-
-const Wrapper = createWrapper('/objects/companies');
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+);
 
 describe('useOpenAskAiPageInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jotaiStore.set(isSidePanelOpenedState.atom, false);
+    window.history.pushState({}, '', '/objects/companies');
   });
 
   it('should navigate to AskAI page with correct defaults', () => {
@@ -91,8 +85,10 @@ describe('useOpenAskAiPageInSidePanel', () => {
   });
 
   it('should not open the panel AskAI page while on the AI chat page', () => {
+    window.history.pushState({}, '', '/chat');
+
     const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
-      wrapper: createWrapper('/chat'),
+      wrapper: Wrapper,
     });
 
     act(() => {
@@ -103,8 +99,14 @@ describe('useOpenAskAiPageInSidePanel', () => {
   });
 
   it('should open the panel AskAI page on the AI chat page when forced', () => {
+    window.history.pushState(
+      {},
+      '',
+      '/chat/6a3b0e10-0b1f-4c62-a2f8-3e1d2c4b5a69',
+    );
+
     const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
-      wrapper: createWrapper('/chat/6a3b0e10-0b1f-4c62-a2f8-3e1d2c4b5a69'),
+      wrapper: Wrapper,
     });
 
     act(() => {
