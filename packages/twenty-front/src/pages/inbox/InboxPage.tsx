@@ -8,7 +8,8 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxList } from '@/inbox/components/InboxList';
 import { useInboxItems } from '@/inbox/hooks/useInboxItems';
-import { useOpenInboxItem } from '@/inbox/hooks/useOpenInboxItem';
+import { useOpenInboxItemFullPage } from '@/inbox/hooks/useOpenInboxItemFullPage';
+import { useOpenInboxItemInSidePanel } from '@/inbox/hooks/useOpenInboxItemInSidePanel';
 import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
 import { findInboxSectionBySlug } from '@/inbox/utils/findInboxSectionBySlug';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -53,7 +54,8 @@ export const InboxPage = () => {
     hasMoreItems,
     loadMoreItems,
   } = useInboxItems(inboxSection.scope);
-  const { openInboxItem } = useOpenInboxItem();
+  const { openInboxItemFullPage } = useOpenInboxItemFullPage(inboxSection);
+  const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
   const selectedInboxItemId = useAtomStateValue(selectedInboxItemIdState);
 
   // With the flag off the inbox is not a surface, so a direct visit lands on
@@ -83,7 +85,10 @@ export const InboxPage = () => {
             selectedInboxItemId={selectedInboxItemId}
             hasMoreItems={hasMoreItems}
             shouldSplitByPriority={inboxSection.scope === InboxItemScope.INBOX}
-            onInboxItemClick={openInboxItem}
+            onInboxItemClick={(inboxItem) =>
+              openInboxItemFullPage(inboxItem, inboxItems)
+            }
+            onInboxItemOpenInSidePanel={openInboxItemInSidePanel}
             onLoadMoreItems={loadMoreItems}
           />
         )}

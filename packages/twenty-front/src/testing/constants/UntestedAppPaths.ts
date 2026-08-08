@@ -8,4 +8,5 @@ export const UNTESTED_APP_PATHS = [
   AppPath.Dpa,
   AppPath.InboxPage,
   AppPath.InboxSectionPage,
+  AppPath.InboxItemPage,
 ];

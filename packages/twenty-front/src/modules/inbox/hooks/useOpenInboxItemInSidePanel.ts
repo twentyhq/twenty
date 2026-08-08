@@ -13,11 +13,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type InboxItem } from '~/generated/graphql';
 
-// Opening an item opens the thing it is about, in the same side panel a record
-// opens in. The notification context and its actions ride above it rather than
-// standing in for it, so a failed run looks like a run and a conversation
-// comes with its composer.
-export const useOpenInboxItem = () => {
+// The secondary way in: the item's subject opens in the same side panel a
+// record opens in, with the notification context riding above it. The primary
+// way is the focused page, which owns the same chrome at full width.
+export const useOpenInboxItemInSidePanel = () => {
   const { markInboxItemRead } = useInboxItemActions();
   const { openAskAiThread } = useOpenAskAiThread();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -28,7 +27,7 @@ export const useOpenInboxItem = () => {
     objectMetadataItemsByIdMapSelector,
   );
 
-  const openInboxItem = useCallback(
+  const openInboxItemInSidePanel = useCallback(
     (inboxItem: InboxItem) => {
       if (!isDefined(inboxItem.readAt)) {
         void markInboxItemRead({ inboxItemId: inboxItem.id });
@@ -79,5 +78,5 @@ export const useOpenInboxItem = () => {
     ],
   );
 
-  return { openInboxItem };
+  return { openInboxItemInSidePanel };
 };

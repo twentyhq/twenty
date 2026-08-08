@@ -113,6 +113,12 @@ const StandalonePageLayoutPage = lazy(() =>
   })),
 );
 
+const InboxItemPage = lazy(() =>
+  import('~/pages/inbox/InboxItemPage').then((module) => ({
+    default: module.InboxItemPage,
+  })),
+);
+
 const InboxPage = lazy(() =>
   import('~/pages/inbox/InboxPage').then((module) => ({
     default: module.InboxPage,
@@ -207,6 +213,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <InboxPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.InboxItemPage}
+                element={
+                  <LazyRoute>
+                    <InboxItemPage />
                   </LazyRoute>
                 }
               />

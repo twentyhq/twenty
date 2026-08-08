@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
 import { INBOX_LIST_ROW_PREVIEW_MAX_WIDTH } from '@/inbox/constants/InboxListRowPreviewMaxWidth';
 import { INBOX_LIST_ROW_SUBJECT_WIDTH } from '@/inbox/constants/InboxListRowSubjectWidth';
 import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
@@ -14,6 +15,14 @@ import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 const StyledRowContainer = styled.div`
   cursor: pointer;
   padding-bottom: 2px;
+
+  &:hover .inbox-list-row-buttons {
+    display: flex;
+  }
+
+  &:hover .inbox-list-row-updated-at {
+    display: none;
+  }
 
   &:hover > div {
     background: ${themeCssVariables.background.transparent.lighter};
@@ -101,16 +110,23 @@ const StyledUpdatedAt = styled.div`
   flex-shrink: 0;
 `;
 
+const StyledButtonsSlot = styled.div`
+  display: none;
+  flex-shrink: 0;
+`;
+
 type InboxListRowProps = {
   inboxItem: InboxItem;
   isSelected: boolean;
   onClick: () => void;
+  onOpenInSidePanel: () => void;
 };
 
 export const InboxListRow = ({
   inboxItem,
   isSelected,
   onClick,
+  onOpenInSidePanel,
 }: InboxListRowProps) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
@@ -149,9 +165,15 @@ export const InboxListRow = ({
             <StyledPreview>{inboxItem.preview}</StyledPreview>
           )}
         </StyledSubjectContainer>
-        <StyledUpdatedAt>
+        <StyledUpdatedAt className="inbox-list-row-updated-at">
           {beautifyPastDateRelativeToNowShort(inboxItem.updatedAt)}
         </StyledUpdatedAt>
+        <StyledButtonsSlot className="inbox-list-row-buttons">
+          <InboxListRowButtons
+            inboxItem={inboxItem}
+            onOpenInSidePanel={onOpenInSidePanel}
+          />
+        </StyledButtonsSlot>
       </StyledRow>
     </StyledRowContainer>
   );
