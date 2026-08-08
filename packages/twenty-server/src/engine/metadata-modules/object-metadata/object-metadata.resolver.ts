@@ -56,10 +56,7 @@ import { ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadat
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
-import {
-  applyMetadataFilterToQueryBuilder,
-  type MetadataFilter,
-} from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
+import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
 import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
@@ -112,7 +109,7 @@ export class ObjectMetadataResolver {
     applyMetadataFilterToQueryBuilder({
       whereBuilder: queryBuilder,
       alias: 'objectMetadata',
-      filter: filter as MetadataFilter,
+      filter,
       columnByFilterField: OBJECT_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 
@@ -166,7 +163,7 @@ export class ObjectMetadataResolver {
     applyMetadataFilterToQueryBuilder({
       whereBuilder: queryBuilder,
       alias: 'fieldMetadata',
-      filter: filter as MetadataFilter,
+      filter,
       columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 
@@ -201,7 +198,7 @@ export class ObjectMetadataResolver {
     applyMetadataFilterToQueryBuilder({
       whereBuilder: queryBuilder,
       alias: 'indexMetadata',
-      filter: filter as MetadataFilter,
+      filter,
       columnByFilterField: INDEX_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 

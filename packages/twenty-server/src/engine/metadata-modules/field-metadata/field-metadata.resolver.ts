@@ -44,10 +44,7 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
-import {
-  applyMetadataFilterToQueryBuilder,
-  type MetadataFilter,
-} from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
+import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
@@ -95,7 +92,7 @@ export class FieldMetadataResolver {
     applyMetadataFilterToQueryBuilder({
       whereBuilder: queryBuilder,
       alias: 'fieldMetadata',
-      filter: filter as MetadataFilter,
+      filter,
       columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 

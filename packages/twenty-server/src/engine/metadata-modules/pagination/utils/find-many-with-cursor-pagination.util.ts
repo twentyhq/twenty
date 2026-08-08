@@ -13,7 +13,7 @@ import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/d
 type EntityWithId = ObjectLiteral & { id: string };
 
 const decodeCursorIdOrThrow = (cursor: string): string => {
-  let cursorData: { id?: string };
+  let cursorData: unknown;
 
   try {
     cursorData = decodeCursor(cursor);
@@ -21,11 +21,18 @@ const decodeCursorIdOrThrow = (cursor: string): string => {
     throw new UserInputError(`Invalid cursor: ${cursor}`);
   }
 
-  if (!isDefined(cursorData.id)) {
+  // Decoded JSON can be any value (null, number, array...) — only accept an
+  // object carrying a string id, so malformed cursors stay user-input errors.
+  if (
+    typeof cursorData !== 'object' ||
+    cursorData === null ||
+    Array.isArray(cursorData) ||
+    typeof (cursorData as { id?: unknown }).id !== 'string'
+  ) {
     throw new UserInputError(`Invalid cursor: ${cursor}`);
   }
 
-  return cursorData.id;
+  return (cursorData as { id: string }).id;
 };
 
 // Cursor pagination over core metadata entities, replacing the resolvers
@@ -59,6 +66,10 @@ export const findManyWithCursorPagination = async <
 
   if (isDefined(last) && isDefined(after)) {
     throw new UserInputError('Cannot use last with after');
+  }
+
+  if (isDefined(after) && isDefined(before)) {
+    throw new UserInputError('Cannot use both after and before');
   }
 
   if ((isDefined(first) && first < 0) || (isDefined(last) && last < 0)) {
@@ -117,8 +128,10 @@ export const findManyWithCursorPagination = async <
   return {
     edges,
     pageInfo: {
-      hasNextPage,
-      hasPreviousPage,
+      // Paging past a cursor implies records on the other side of it, matching
+      // the auto-generated resolvers this replaces.
+      hasNextPage: isForwardPagination ? hasNextPage : isDefined(before),
+      hasPreviousPage: isForwardPagination ? isDefined(after) : hasPreviousPage,
       startCursor: edges.length > 0 ? edges[0].cursor : null,
       endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
     },

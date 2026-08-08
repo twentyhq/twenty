@@ -20,14 +20,16 @@ export type MetadataFilterComparison = {
   isNot?: boolean | null;
 };
 
-export type MetadataFilter = {
-  and?: MetadataFilter[];
-  or?: MetadataFilter[];
-} & {
-  [filterField: string]:
-    | MetadataFilterComparison
-    | MetadataFilter[]
-    | undefined;
+// invertBooleanValues supports deprecated boolean aliases whose backing
+// column has the opposite meaning (isUIReadOnly filters run against
+// isUIEditable, since the legacy column is no longer written).
+export type MetadataFilterColumn =
+  | string
+  | { column: string; invertBooleanValues: true };
+
+type MetadataFilterShape = {
+  and?: MetadataFilterShape[];
+  or?: MetadataFilterShape[];
 };
 
 type ParameterCounter = { value: number };
@@ -42,6 +44,16 @@ const buildBooleanCondition = (
   }
 
   return `${column} ${operator} ${value ? 'TRUE' : 'FALSE'}`;
+};
+
+const invertBooleanComparisonValue = (
+  value: boolean | null | undefined,
+): boolean | null | undefined => {
+  if (typeof value === 'boolean') {
+    return !value;
+  }
+
+  return value;
 };
 
 const applyComparisonToQueryBuilder = ({
@@ -97,7 +109,9 @@ const applyComparisonToQueryBuilder = ({
 
       whereBuilder.andWhere(
         `${column}::text ${sqlOperator} :${parameterName}`,
-        { [parameterName]: value },
+        {
+          [parameterName]: value,
+        },
       );
     }
   }
@@ -139,7 +153,9 @@ const applyComparisonToQueryBuilder = ({
 // into TypeORM query builder conditions. Top-level field conditions, `and`
 // entries and `or` groups are combined with AND, matching the semantics of the
 // auto-generated resolvers this replaces.
-export const applyMetadataFilterToQueryBuilder = ({
+export const applyMetadataFilterToQueryBuilder = <
+  TFilter extends MetadataFilterShape,
+>({
   whereBuilder,
   alias,
   filter,
@@ -148,8 +164,8 @@ export const applyMetadataFilterToQueryBuilder = ({
 }: {
   whereBuilder: WhereExpressionBuilder;
   alias: string;
-  filter: MetadataFilter;
-  columnByFilterField: Record<string, string>;
+  filter: TFilter;
+  columnByFilterField: Record<string, MetadataFilterColumn>;
   parameterCounter?: ParameterCounter;
 }): void => {
   for (const [filterField, filterValue] of Object.entries(filter)) {
@@ -158,7 +174,7 @@ export const applyMetadataFilterToQueryBuilder = ({
     }
 
     if (filterField === 'and') {
-      for (const subFilter of filterValue as MetadataFilter[]) {
+      for (const subFilter of filterValue as TFilter[]) {
         whereBuilder.andWhere(
           new Brackets((subWhereBuilder) =>
             applyMetadataFilterToQueryBuilder({
@@ -177,7 +193,7 @@ export const applyMetadataFilterToQueryBuilder = ({
     if (filterField === 'or') {
       whereBuilder.andWhere(
         new Brackets((orWhereBuilder) => {
-          for (const subFilter of filterValue as MetadataFilter[]) {
+          for (const subFilter of filterValue as TFilter[]) {
             orWhereBuilder.orWhere(
               new Brackets((subWhereBuilder) =>
                 applyMetadataFilterToQueryBuilder({
@@ -195,16 +211,28 @@ export const applyMetadataFilterToQueryBuilder = ({
       continue;
     }
 
-    const column = columnByFilterField[filterField];
+    const filterColumn = columnByFilterField[filterField];
 
-    if (!isDefined(column)) {
+    if (!isDefined(filterColumn)) {
       throw new UserInputError(`Unknown filter field: ${filterField}`);
+    }
+
+    const column =
+      typeof filterColumn === 'string' ? filterColumn : filterColumn.column;
+    let comparison = filterValue as MetadataFilterComparison;
+
+    if (typeof filterColumn !== 'string' && filterColumn.invertBooleanValues) {
+      comparison = {
+        ...comparison,
+        is: invertBooleanComparisonValue(comparison.is),
+        isNot: invertBooleanComparisonValue(comparison.isNot),
+      };
     }
 
     applyComparisonToQueryBuilder({
       whereBuilder,
       column: `"${alias}"."${column}"`,
-      comparison: filterValue as MetadataFilterComparison,
+      comparison,
       parameterCounter,
     });
   }
