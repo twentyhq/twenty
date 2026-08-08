@@ -12,7 +12,10 @@ import {
   getRecordTableWidgetLayoutViewType,
   type RecordTableWidgetLayoutViewType,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
-import { getRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
+import {
+  getRecordTableWidgetLayoutPickerOptions,
+  isSelectableLayout,
+} from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -36,11 +39,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FeatureFlagKey,
-  FieldDisplayMode,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey, FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.FIELD]: IconListDetails,
@@ -50,10 +49,9 @@ const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.TABLE]: IconTable,
 };
 
-// One flat picker: inline display modes (Field / Card / Editor) followed by the
-// embedded-view layouts (Table / Kanban / Calendar). Picking a layout selects
-// the TABLE display mode under the hood — users choose "Kanban" directly
-// instead of "Table" first and a layout second.
+// One flat picker: inline display modes followed by the embedded-view layouts.
+// Picking a layout selects the TABLE display mode under the hood — users choose
+// "Kanban" directly instead of "Table" first and a layout second.
 export const FieldWidgetLayoutDropdownContent = () => {
   const { t } = useLingui();
 
@@ -204,10 +202,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
     if (!isDefined(widgetInEditMode)) {
       return;
     }
-    if (targetViewType === ViewType.KANBAN_WIDGET && !isKanbanAvailable) {
-      return;
-    }
-    if (targetViewType === ViewType.CALENDAR_WIDGET && !isCalendarAvailable) {
+    if (!isSelectableLayout(layoutOptions, targetViewType)) {
       return;
     }
 

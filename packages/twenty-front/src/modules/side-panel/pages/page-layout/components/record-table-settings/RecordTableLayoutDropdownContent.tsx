@@ -2,7 +2,10 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
-import { getRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
+import {
+  getRecordTableWidgetLayoutPickerOptions,
+  isSelectableLayout,
+} from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -16,7 +19,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type RecordTableLayoutDropdownContentProps = {
   pageLayoutId: string;
@@ -81,10 +84,7 @@ export const RecordTableLayoutDropdownContent = ({
   const handleSelectLayout = (
     targetViewType: RecordTableWidgetLayoutViewType,
   ) => {
-    if (targetViewType === ViewType.KANBAN_WIDGET && !isKanbanAvailable) {
-      return;
-    }
-    if (targetViewType === ViewType.CALENDAR_WIDGET && !isCalendarAvailable) {
+    if (!isSelectableLayout(layoutOptions, targetViewType)) {
       return;
     }
     handleLayoutChange({

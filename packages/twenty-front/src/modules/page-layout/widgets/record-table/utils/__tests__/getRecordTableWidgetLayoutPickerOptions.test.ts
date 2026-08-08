@@ -1,4 +1,7 @@
-import { getRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
+import {
+  getRecordTableWidgetLayoutPickerOptions,
+  isSelectableLayout,
+} from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewType } from '~/generated-metadata/graphql';
 
@@ -54,6 +57,19 @@ describe('getRecordTableWidgetLayoutPickerOptions', () => {
       expect(isDefined(option?.unavailableReason)).toBe(true);
     },
   );
+
+  it('should refuse a layout the picker disabled or never offered', () => {
+    const options = getRecordTableWidgetLayoutPickerOptions({
+      isKanbanAvailable: false,
+      isCalendarAvailable: true,
+      isListViewEnabled: false,
+    });
+
+    expect(isSelectableLayout(options, ViewType.TABLE_WIDGET)).toBe(true);
+    expect(isSelectableLayout(options, ViewType.CALENDAR_WIDGET)).toBe(true);
+    expect(isSelectableLayout(options, ViewType.KANBAN_WIDGET)).toBe(false);
+    expect(isSelectableLayout(options, ViewType.LIST_WIDGET)).toBe(false);
+  });
 
   it('should never disable the table or list layouts', () => {
     const options = getRecordTableWidgetLayoutPickerOptions({

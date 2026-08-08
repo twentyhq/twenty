@@ -8,7 +8,7 @@ import { msg } from '@lingui/core/macro';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ViewType } from '~/generated-metadata/graphql';
 
-type RecordTableWidgetLayoutPickerOption = {
+export type RecordTableWidgetLayoutPickerOption = {
   viewType: RecordTableWidgetLayoutViewType;
   Icon: IconComponent;
   label: MessageDescriptor;
@@ -45,3 +45,14 @@ export const getRecordTableWidgetLayoutPickerOptions = ({
           ? msg`Needs a Date field`
           : undefined,
   }));
+
+// A layout that is hidden or disabled must not be applied even if its row is
+// reached by keyboard, so selection asks the same options the picker renders.
+export const isSelectableLayout = (
+  layoutOptions: RecordTableWidgetLayoutPickerOption[],
+  viewType: RecordTableWidgetLayoutViewType,
+): boolean =>
+  layoutOptions.some(
+    (layoutOption) =>
+      layoutOption.viewType === viewType && !layoutOption.isDisabled,
+  );
