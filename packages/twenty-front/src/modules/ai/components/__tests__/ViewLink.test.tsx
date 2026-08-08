@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { ViewLink } from '@/ai/components/ViewLink';
@@ -6,6 +6,14 @@ import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
+
+const openViewTargetMock = jest.fn();
+
+jest.mock('@/ai/hooks/useChatTargetNavigation', () => ({
+  useChatTargetNavigation: () => ({
+    openViewTarget: openViewTargetMock,
+  }),
+}));
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
@@ -43,6 +51,44 @@ const renderViewLink = ({
 };
 
 describe('ViewLink', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    window.history.pushState({}, '', '/objects/companies');
+  });
+
+  it('should open the view as an artifact on a plain click on the chat page', () => {
+    window.history.pushState({}, '', '/chat');
+
+    renderViewLink({
+      viewId: VIEW_ID,
+      displayName: 'All Companies',
+      views: [allCompaniesView],
+    });
+
+    const link = screen.getByText('All Companies').closest('a') as HTMLElement;
+    fireEvent.mouseDown(link);
+    fireEvent.click(link);
+
+    expect(openViewTargetMock).toHaveBeenCalledWith({
+      objectNameSingular: companyObjectMetadataItem.nameSingular,
+      viewId: VIEW_ID,
+    });
+  });
+
+  it('should not open an artifact on click outside the chat page', () => {
+    renderViewLink({
+      viewId: VIEW_ID,
+      displayName: 'All Companies',
+      views: [allCompaniesView],
+    });
+
+    const link = screen.getByText('All Companies').closest('a') as HTMLElement;
+    fireEvent.mouseDown(link);
+    fireEvent.click(link);
+
+    expect(openViewTargetMock).not.toHaveBeenCalled();
+  });
+
   it('should link a view to its object index page', () => {
     renderViewLink({
       viewId: VIEW_ID,

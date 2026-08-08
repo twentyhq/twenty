@@ -1,13 +1,18 @@
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -20,7 +25,7 @@ export const useAiChatThreadClick = (
   const setThreadIdCreatedFromDraft = useSetAtomState(
     threadIdCreatedFromDraftState,
   );
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
+  const { selectAiChatThread } = useSelectAiChatThread();
   const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
     currentAiChatThreadTitleComponentFamilyState,
   );
@@ -29,11 +34,12 @@ export const useAiChatThreadClick = (
   );
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
 
-    switchThreadWithDraft(thread.id);
+    selectAiChatThread(thread.id);
 
     const clickedFamilyKey = { threadId: thread.id };
 
@@ -59,6 +65,19 @@ export const useAiChatThreadClick = (
           }
         : null,
     );
+
+    if (isCurrentPathAiChatPage()) {
+      const isSidePanelShowingPreviousChats =
+        store.get(isSidePanelOpenedState.atom) &&
+        store.get(sidePanelPageState.atom) ===
+          SidePanelPages.ViewPreviousAiChats;
+
+      if (isSidePanelShowingPreviousChats) {
+        void closeSidePanelMenu();
+      }
+
+      return;
+    }
 
     openAskAiPage({
       resetNavigationStack,
