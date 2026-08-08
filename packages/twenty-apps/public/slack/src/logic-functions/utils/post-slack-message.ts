@@ -18,6 +18,7 @@ export const postSlackMessage = async (
     messageBody: {
       messageFormat: parameters.messageFormat,
       messageBlocks: parameters.messageBlocks,
+      messageAttachments: parameters.messageAttachments,
     },
     failureMessage: 'Failed to post Slack message',
     sendMessage: async (bodyFields) => {

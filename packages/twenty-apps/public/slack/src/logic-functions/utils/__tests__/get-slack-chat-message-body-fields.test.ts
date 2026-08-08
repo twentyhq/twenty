@@ -40,6 +40,32 @@ describe('getSlackChatMessageBodyFields', () => {
     ).toEqual({ blocks: messageBlocks, text: 'hello' });
   });
 
+  it('should include attachments only alongside blocks', () => {
+    const messageBlocks: KnownBlock[] = [{ type: 'markdown', text: 'hello' }];
+    const messageAttachments = [{ color: '#3E63DD', fallback: 'Acme' }];
+
+    expect(
+      getSlackChatMessageBodyFields({
+        messageText: 'hello',
+        messageFormat: 'markdown',
+        messageBlocks,
+        messageAttachments,
+      }),
+    ).toEqual({
+      blocks: messageBlocks,
+      text: 'hello',
+      attachments: messageAttachments,
+    });
+
+    expect(
+      getSlackChatMessageBodyFields({
+        messageText: 'hello',
+        messageFormat: 'markdown',
+        messageAttachments,
+      }),
+    ).toEqual({ markdown_text: 'hello' });
+  });
+
   it('should ignore an empty blocks array and honour the format instead', () => {
     expect(
       getSlackChatMessageBodyFields({
