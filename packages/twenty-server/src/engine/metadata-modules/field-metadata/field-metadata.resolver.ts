@@ -80,9 +80,14 @@ export class FieldMetadataResolver {
     @Args('paging', {
       type: () => CursorPagingInput,
       defaultValue: { first: 10 },
+      description: 'Limit or page results.',
     })
     paging: CursorPagingInput,
-    @Args('filter', { type: () => FieldFilterInput, defaultValue: {} })
+    @Args('filter', {
+      type: () => FieldFilterInput,
+      defaultValue: {},
+      description: 'Specify to filter the records returned.',
+    })
     filter: FieldFilterInput,
   ): Promise<CursorConnection<FieldMetadataEntity>> {
     const queryBuilder = this.fieldMetadataRepository
@@ -108,7 +113,11 @@ export class FieldMetadataResolver {
   @UseGuards(NoPermissionGuard)
   @Query(() => FieldMetadataDTO)
   async field(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('id', {
+      type: () => UUIDScalarType,
+      description: 'The id of the record to find.',
+    })
+    id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<FieldMetadataEntity> {
     const fieldMetadata = await this.fieldMetadataRepository.findOne({

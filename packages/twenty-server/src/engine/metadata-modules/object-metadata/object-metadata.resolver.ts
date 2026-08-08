@@ -97,9 +97,14 @@ export class ObjectMetadataResolver {
     @Args('paging', {
       type: () => CursorPagingInput,
       defaultValue: { first: 10 },
+      description: 'Limit or page results.',
     })
     paging: CursorPagingInput,
-    @Args('filter', { type: () => ObjectFilterInput, defaultValue: {} })
+    @Args('filter', {
+      type: () => ObjectFilterInput,
+      defaultValue: {},
+      description: 'Specify to filter the records returned.',
+    })
     filter: ObjectFilterInput,
   ): Promise<CursorConnection<ObjectMetadataEntity>> {
     const queryBuilder = this.objectMetadataRepository
@@ -125,7 +130,11 @@ export class ObjectMetadataResolver {
   @UseGuards(NoPermissionGuard)
   @Query(() => ObjectMetadataDTO)
   async object(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('id', {
+      type: () => UUIDScalarType,
+      description: 'The id of the record to find.',
+    })
+    id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ObjectMetadataEntity> {
     const objectMetadata = await this.objectMetadataRepository.findOne({
@@ -148,9 +157,14 @@ export class ObjectMetadataResolver {
     @Args('paging', {
       type: () => CursorPagingInput,
       defaultValue: { first: 10 },
+      description: 'Limit or page results.',
     })
     paging: CursorPagingInput,
-    @Args('filter', { type: () => FieldFilterInput, defaultValue: {} })
+    @Args('filter', {
+      type: () => FieldFilterInput,
+      defaultValue: {},
+      description: 'Specify to filter the records returned.',
+    })
     filter: FieldFilterInput,
   ): Promise<CursorConnection<FieldMetadataEntity>> {
     const queryBuilder = this.fieldMetadataRepository
@@ -183,9 +197,14 @@ export class ObjectMetadataResolver {
     @Args('paging', {
       type: () => CursorPagingInput,
       defaultValue: { first: 10 },
+      description: 'Limit or page results.',
     })
     paging: CursorPagingInput,
-    @Args('filter', { type: () => IndexFilterInput, defaultValue: {} })
+    @Args('filter', {
+      type: () => IndexFilterInput,
+      defaultValue: {},
+      description: 'Specify to filter the records returned.',
+    })
     filter: IndexFilterInput,
   ): Promise<CursorConnection<IndexMetadataEntity>> {
     const queryBuilder = this.indexMetadataRepository
