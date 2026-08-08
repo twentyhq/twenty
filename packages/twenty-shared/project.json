@@ -74,6 +74,16 @@
       ],
       "options": { "command": "tsx {projectRoot}/scripts/generateBarrels.ts" }
     },
+    "generateIconNames": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/scripts/generateIconNames.ts",
+        "{workspaceRoot}/packages/twenty-ui/src/icon/providers/internal/AllIcons.ts"
+      ],
+      "outputs": ["{projectRoot}/src/types/IconName.ts"],
+      "options": { "command": "tsx {projectRoot}/scripts/generateIconNames.ts" }
+    },
     "typecheck": {},
     "test": {},
     "lint": { "options": {}, "configurations": { "fix": {} } },

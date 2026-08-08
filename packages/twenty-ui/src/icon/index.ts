@@ -495,3 +495,4 @@ export { ThinkingOrbitLoaderIcon } from './components/ThinkingOrbitLoaderIcon';
 export { useIcons } from './hooks/useIcons';
 export { IconsProvider } from './providers/IconsProvider';
 export type { IconComponentProps, IconComponent } from './types/IconComponent';
+export type { ResolvableIconName } from './providers/internal/AllIcons';

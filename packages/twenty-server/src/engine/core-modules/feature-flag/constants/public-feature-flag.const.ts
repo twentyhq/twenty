@@ -1,9 +1,9 @@
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, type IconName } from 'twenty-shared/types';
 
 type FeatureFlagMetadata = {
   label: string;
   description: string;
-  icon: string;
+  icon: IconName;
   imagePath?: string;
 };
 
