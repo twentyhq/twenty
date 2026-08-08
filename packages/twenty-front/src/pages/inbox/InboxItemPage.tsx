@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,9 +15,9 @@ import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemActions } from '@/inbox/components/InboxItemActions';
+import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEffect';
 import { InboxItemSubject } from '@/inbox/components/InboxItemSubject';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
-import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { useInboxItemPagination } from '@/inbox/hooks/useInboxItemPagination';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { useOpenInboxItemInSidePanel } from '@/inbox/hooks/useOpenInboxItemInSidePanel';
@@ -99,7 +99,6 @@ export const InboxItemPage = () => {
   const isInboxEnabled = useIsInboxEnabled();
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
   const { inboxItem, loading, error } = useInboxItem(inboxItemId);
-  const { markInboxItemRead } = useInboxItemActions();
   const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
   const { getIcon } = useIcons();
 
@@ -107,12 +106,6 @@ export const InboxItemPage = () => {
     useInboxItemPagination({ inboxSection, inboxItemId });
 
   const isUnread = isDefined(inboxItem) && !isDefined(inboxItem.readAt);
-
-  useEffect(() => {
-    if (isUnread && isDefined(inboxItemId)) {
-      void markInboxItemRead({ inboxItemId });
-    }
-  }, [isUnread, inboxItemId, markInboxItemRead]);
 
   if (!isInboxEnabled) {
     return <Navigate to={AppPath.Index} replace />;
@@ -189,6 +182,10 @@ export const InboxItemPage = () => {
       }
     >
       <StyledBody>
+        <InboxItemMarkReadEffect
+          inboxItemId={inboxItemId}
+          isUnread={isUnread}
+        />
         <StyledContext>
           <StyledTypeLabel>
             <InboxItemIcon size={theme.icon.size.sm} color="currentColor" />

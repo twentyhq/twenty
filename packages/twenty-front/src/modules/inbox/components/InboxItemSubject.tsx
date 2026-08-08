@@ -1,11 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatTab } from '@/ai/components/AiChatTab';
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { InboxItemThreadSubjectEffect } from '@/inbox/components/InboxItemThreadSubjectEffect';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -34,23 +33,12 @@ const StyledEmptySubject = styled.div`
   padding: ${themeCssVariables.spacing[10]};
 `;
 
-const InboxItemThreadSubject = ({ threadId }: { threadId: string }) => {
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
-
-  // The chat reads its thread from global state rather than from props, so the
-  // page points it at this item's thread on the way in
-  useEffect(() => {
-    if (isValidUuid(threadId)) {
-      switchThreadWithDraft(threadId);
-    }
-  }, [threadId, switchThreadWithDraft]);
-
-  return (
-    <StyledSubject>
-      <AiChatTab />
-    </StyledSubject>
-  );
-};
+const InboxItemThreadSubject = ({ threadId }: { threadId: string }) => (
+  <StyledSubject>
+    <InboxItemThreadSubjectEffect threadId={threadId} />
+    <AiChatTab />
+  </StyledSubject>
+);
 
 const InboxItemRecordSubject = ({
   recordId,

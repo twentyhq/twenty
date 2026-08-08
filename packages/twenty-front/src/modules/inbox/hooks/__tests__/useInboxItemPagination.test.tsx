@@ -5,8 +5,8 @@ import { useInboxItemPagination } from '@/inbox/hooks/useInboxItemPagination';
 
 const mockNavigate = jest.fn();
 
-jest.mock('~/hooks/useNavigateApp', () => ({
-  useNavigateApp: () => mockNavigate,
+jest.mock('react-router-dom', () => ({
+  useNavigate: () => mockNavigate,
 }));
 
 let mockInboxItemOrder: {
@@ -90,10 +90,9 @@ describe('useInboxItemPagination', () => {
     result.current.goToNext();
 
     // Assert
-    expect(mockNavigate).toHaveBeenCalledWith(expect.anything(), {
-      inboxSectionSlug: DEFAULT_INBOX_SECTION.slug,
-      inboxItemId: 'third',
-    });
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/inbox/${DEFAULT_INBOX_SECTION.slug}/third`,
+    );
   });
 
   it('should ignore a snapshot captured in another section', () => {

@@ -46,7 +46,6 @@ export class InboxItemActionDTO {
   @Field(() => String, { nullable: true })
   transitionKind: string | null;
 
-  // What the client has to collect before sending the action back
   @Field(() => [InboxItemFieldDTO])
   inputSchema: InboxItemFieldDTO[];
 }

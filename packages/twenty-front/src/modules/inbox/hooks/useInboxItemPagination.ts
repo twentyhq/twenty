@@ -1,12 +1,11 @@
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AppPath } from 'twenty-shared/types';
-
 import { type InboxSection } from '@/inbox/constants/InboxSections';
 import { inboxItemOrderState } from '@/inbox/states/inboxItemOrderState';
+import { getInboxItemPath } from '@/inbox/utils/getInboxItemPath';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigate } from 'react-router-dom';
 
 // Paging is over the order the list was showing when the item was opened, not
 // over a live query. Inbox items are core-schema and paged by myInboxItems, so
@@ -18,7 +17,7 @@ export const useInboxItemPagination = ({
   inboxSection: InboxSection;
   inboxItemId?: string;
 }) => {
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const inboxItemOrder = useAtomStateValue(inboxItemOrderState);
 
   // A snapshot taken in another section says nothing about where this item
@@ -46,10 +45,7 @@ export const useInboxItemPagination = ({
         return;
       }
 
-      navigate(AppPath.InboxItemPage, {
-        inboxSectionSlug: inboxSection.slug,
-        inboxItemId: targetInboxItemId,
-      });
+      navigate(getInboxItemPath(inboxSection, targetInboxItemId));
     },
     [navigate, inboxSection],
   );

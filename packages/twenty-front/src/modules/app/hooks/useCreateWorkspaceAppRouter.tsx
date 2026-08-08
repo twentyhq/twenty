@@ -13,6 +13,7 @@ import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
+import { INBOX_ITEM_PAGE_PATH } from '@/inbox/constants/InboxItemPagePath';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import indexAppPath from '@/navigation/utils/indexAppPath';
@@ -217,7 +218,7 @@ const createWorkspaceAppRouter = (
                 }
               />
               <Route
-                path={AppPath.InboxItemPage}
+                path={INBOX_ITEM_PAGE_PATH}
                 element={
                   <LazyRoute>
                     <InboxItemPage />
