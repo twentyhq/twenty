@@ -10,6 +10,7 @@ type WidgetCardContentStyledProps = {
   isInVerticalListTab: boolean;
   isMobile: boolean;
   hasBoundedHeight: boolean;
+  hasInteractiveContent: boolean;
 };
 
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
@@ -17,14 +18,36 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
     variant === 'record-page' && isInVerticalListTab && !isMobile
       ? themeCssVariables.background.secondary
       : 'transparent'};
-  border: ${({ variant, isEditable }) =>
-    variant === 'record-page' || (variant === 'side-column' && isEditable)
-      ? `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
-  border-radius: ${({ variant, isEditable }) =>
-    variant === 'record-page' || (variant === 'side-column' && isEditable)
-      ? themeCssVariables.border.radius.md
-      : '0'};
+  border: ${({ variant, isEditable, hasInteractiveContent }) => {
+    if (
+      variant === 'record-page' ||
+      (variant === 'side-column' && isEditable)
+    ) {
+      return `1px solid ${themeCssVariables.border.color.medium}`;
+    }
+    if (
+      hasInteractiveContent &&
+      (variant === 'dashboard' || variant === 'standalone')
+    ) {
+      return `1px solid ${themeCssVariables.border.color.light}`;
+    }
+    return 'none';
+  }};
+  border-radius: ${({ variant, isEditable, hasInteractiveContent }) => {
+    if (
+      variant === 'record-page' ||
+      (variant === 'side-column' && isEditable)
+    ) {
+      return themeCssVariables.border.radius.md;
+    }
+    if (
+      hasInteractiveContent &&
+      (variant === 'dashboard' || variant === 'standalone')
+    ) {
+      return themeCssVariables.border.radius.sm;
+    }
+    return '0';
+  }};
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -98,6 +121,7 @@ export const WidgetCardContent = ({
       isInVerticalListTab={isInVerticalListTab}
       isMobile={isMobile}
       hasBoundedHeight={hasBoundedHeight}
+      hasInteractiveContent={hasInteractiveContent}
       className={className}
       onClick={handleContentClick}
     >
