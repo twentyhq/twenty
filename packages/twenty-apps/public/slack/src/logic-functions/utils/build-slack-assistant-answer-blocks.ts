@@ -5,14 +5,14 @@ import { formatSlackAssistantDuration } from 'src/logic-functions/utils/format-s
 export const buildSlackAssistantAnswerBlocks = ({
   responseText,
   durationMilliseconds,
-  recordCardBlocks = [],
+  recordBlocks = [],
 }: {
   responseText: string;
   durationMilliseconds: number;
-  recordCardBlocks?: KnownBlock[];
+  recordBlocks?: KnownBlock[];
 }): KnownBlock[] => [
   { type: 'markdown', text: responseText },
-  ...recordCardBlocks,
+  ...recordBlocks,
   {
     type: 'context',
     elements: [

@@ -20,9 +20,9 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
-import { buildSlackRecordCardBlocks } from 'src/logic-functions/utils/build-slack-record-card-blocks';
+import { buildSlackRecordBlocks } from 'src/logic-functions/utils/build-slack-record-blocks';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
-import { fetchSlackRecordCardFieldLines } from 'src/logic-functions/utils/fetch-slack-record-card-field-lines';
+import { fetchSlackRecordDetails } from 'src/logic-functions/utils/fetch-slack-record-details';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
@@ -129,9 +129,9 @@ export const slackAssistantWorkerHandler = async (
       ? parseSlackRecordReferences({ responseText, workspaceBaseUrl })
       : [];
 
-    const recordCardBlocks = buildSlackRecordCardBlocks({
+    const recordBlocks = buildSlackRecordBlocks({
       references: recordReferences,
-      fieldLinesByRecordId: await fetchSlackRecordCardFieldLines(
+      detailsByRecordId: await fetchSlackRecordDetails(
         client,
         recordReferences,
       ),
@@ -151,7 +151,7 @@ export const slackAssistantWorkerHandler = async (
         ? buildSlackAssistantAnswerBlocks({
             responseText,
             durationMilliseconds,
-            recordCardBlocks,
+            recordBlocks,
           })
         : undefined,
     });

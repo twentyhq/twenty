@@ -30,20 +30,23 @@ describe('buildSlackAssistantAnswerBlocks', () => {
     expect(markdownBlock).toEqual({ type: 'markdown', text: responseText });
   });
 
-  it('should place record card blocks between the answer and the footer', () => {
-    const recordCardBlocks = [
-      { type: 'card' as const, title: { type: 'mrkdwn' as const, text: 'Acme' } },
+  it('should place record blocks between the answer and the footer', () => {
+    const recordBlocks = [
+      {
+        type: 'section' as const,
+        text: { type: 'mrkdwn' as const, text: '*Acme*' },
+      },
     ];
 
     const blocks = buildSlackAssistantAnswerBlocks({
       responseText: 'Here is Acme.',
       durationMilliseconds: 1000,
-      recordCardBlocks,
+      recordBlocks,
     });
 
     expect(blocks.map((block) => block.type)).toEqual([
       'markdown',
-      'card',
+      'section',
       'context',
     ]);
   });

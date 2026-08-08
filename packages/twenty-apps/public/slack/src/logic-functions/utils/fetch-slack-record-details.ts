@@ -1,10 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import {
+  type SlackRecordDetails,
+  type SlackRecordField,
+} from 'src/logic-functions/types/slack-record-details.type';
 import { type SlackRecordReference } from 'src/logic-functions/types/slack-record-reference.type';
 import { formatSlackRecordAmount } from 'src/logic-functions/utils/format-slack-record-amount';
 import { formatSlackRecordDate } from 'src/logic-functions/utils/format-slack-record-date';
 import { formatSlackRecordSelectValue } from 'src/logic-functions/utils/format-slack-record-select-value';
+import { getCompanyFaviconUrl } from 'src/logic-functions/utils/get-company-favicon-url';
 
 type CurrencyValue = {
   amountMicros?: string | number | null;
@@ -25,10 +30,10 @@ type RecordNode = {
   dueAt?: string | null;
 };
 
-const buildCurrencyLine = (
+const buildCurrencyField = (
   label: string,
   currencyValue: CurrencyValue | null | undefined,
-): string | undefined => {
+): SlackRecordField | undefined => {
   const rawAmountMicros = currencyValue?.amountMicros;
 
   if (rawAmountMicros === null || rawAmountMicros === undefined) {
@@ -41,46 +46,55 @@ const buildCurrencyLine = (
     return undefined;
   }
 
-  return `${label}: ${formatSlackRecordAmount({
-    amountMicros,
-    currencyCode: currencyValue?.currencyCode ?? undefined,
-  })}`;
+  return {
+    label,
+    value: formatSlackRecordAmount({
+      amountMicros,
+      currencyCode: currencyValue?.currencyCode ?? undefined,
+    }),
+  };
 };
 
-const buildDateLine = (
+const buildDateField = (
   label: string,
   isoDate: string | null | undefined,
-): string | undefined => {
+): SlackRecordField | undefined => {
   if (!isNonEmptyString(isoDate)) {
     return undefined;
   }
 
   const formattedDate = formatSlackRecordDate(isoDate);
 
-  return formattedDate === undefined ? undefined : `${label}: ${formattedDate}`;
+  return formattedDate === undefined
+    ? undefined
+    : { label, value: formattedDate };
 };
 
-const buildSelectLine = (
+const buildSelectField = (
   label: string,
   value: string | null | undefined,
-): string | undefined =>
+): SlackRecordField | undefined =>
   isNonEmptyString(value)
-    ? `${label}: ${formatSlackRecordSelectValue(value)}`
+    ? { label, value: formatSlackRecordSelectValue(value) }
     : undefined;
 
-const buildTextLine = (
+const buildTextField = (
   label: string,
   value: string | null | undefined,
-): string | undefined =>
-  isNonEmptyString(value) ? `${label}: ${value}` : undefined;
+): SlackRecordField | undefined =>
+  isNonEmptyString(value) ? { label, value } : undefined;
 
-// headline fields per standard object; custom objects fall back to a bare card
-const RECORD_CARD_QUERY_CONFIGS: Record<
+const isRecordField = (
+  field: SlackRecordField | undefined,
+): field is SlackRecordField => field !== undefined;
+
+// headline fields per standard object; custom objects render without details
+const RECORD_DETAIL_QUERY_CONFIGS: Record<
   string,
   {
     queryFieldName: string;
     selection: object;
-    buildFieldLines: (node: RecordNode) => (string | undefined)[];
+    buildDetails: (node: RecordNode) => SlackRecordDetails;
   }
 > = {
   opportunity: {
@@ -90,11 +104,13 @@ const RECORD_CARD_QUERY_CONFIGS: Record<
       amount: { amountMicros: true, currencyCode: true },
       closeDate: true,
     },
-    buildFieldLines: (node) => [
-      buildSelectLine('Stage', node.stage),
-      buildCurrencyLine('Amount', node.amount),
-      buildDateLine('Close date', node.closeDate),
-    ],
+    buildDetails: (node) => ({
+      fields: [
+        buildSelectField('Stage', node.stage),
+        buildCurrencyField('Amount', node.amount),
+        buildDateField('Close date', node.closeDate),
+      ].filter(isRecordField),
+    }),
   },
   company: {
     queryFieldName: 'companies',
@@ -102,10 +118,13 @@ const RECORD_CARD_QUERY_CONFIGS: Record<
       domainName: { primaryLinkUrl: true },
       annualRevenue: { amountMicros: true, currencyCode: true },
     },
-    buildFieldLines: (node) => [
-      buildTextLine('Domain', node.domainName?.primaryLinkUrl),
-      buildCurrencyLine('Annual revenue', node.annualRevenue),
-    ],
+    buildDetails: (node) => ({
+      fields: [
+        buildTextField('Domain', node.domainName?.primaryLinkUrl),
+        buildCurrencyField('Annual revenue', node.annualRevenue),
+      ].filter(isRecordField),
+      imageUrl: getCompanyFaviconUrl(node.domainName?.primaryLinkUrl),
+    }),
   },
   person: {
     queryFieldName: 'people',
@@ -114,11 +133,13 @@ const RECORD_CARD_QUERY_CONFIGS: Record<
       emails: { primaryEmail: true },
       company: { name: true },
     },
-    buildFieldLines: (node) => [
-      buildTextLine('Role', node.jobTitle),
-      buildTextLine('Email', node.emails?.primaryEmail),
-      buildTextLine('Company', node.company?.name),
-    ],
+    buildDetails: (node) => ({
+      fields: [
+        buildTextField('Role', node.jobTitle),
+        buildTextField('Email', node.emails?.primaryEmail),
+        buildTextField('Company', node.company?.name),
+      ].filter(isRecordField),
+    }),
   },
   task: {
     queryFieldName: 'tasks',
@@ -126,18 +147,20 @@ const RECORD_CARD_QUERY_CONFIGS: Record<
       status: true,
       dueAt: true,
     },
-    buildFieldLines: (node) => [
-      buildSelectLine('Status', node.status),
-      buildDateLine('Due', node.dueAt),
-    ],
+    buildDetails: (node) => ({
+      fields: [
+        buildSelectField('Status', node.status),
+        buildDateField('Due', node.dueAt),
+      ].filter(isRecordField),
+    }),
   },
 };
 
-export const fetchSlackRecordCardFieldLines = async (
+export const fetchSlackRecordDetails = async (
   client: CoreApiClient,
   references: SlackRecordReference[],
-): Promise<Map<string, string[]>> => {
-  const fieldLinesByRecordId = new Map<string, string[]>();
+): Promise<Map<string, SlackRecordDetails>> => {
+  const detailsByRecordId = new Map<string, SlackRecordDetails>();
 
   const referencesByObjectName = new Map<string, SlackRecordReference[]>();
 
@@ -153,7 +176,7 @@ export const fetchSlackRecordCardFieldLines = async (
   await Promise.all(
     [...referencesByObjectName.entries()].map(
       async ([objectNameSingular, objectReferences]) => {
-        const config = RECORD_CARD_QUERY_CONFIGS[objectNameSingular];
+        const config = RECORD_DETAIL_QUERY_CONFIGS[objectNameSingular];
 
         if (config === undefined) {
           return;
@@ -184,17 +207,14 @@ export const fetchSlackRecordCardFieldLines = async (
               continue;
             }
 
-            fieldLinesByRecordId.set(
-              node.id,
-              config.buildFieldLines(node).filter(isNonEmptyString),
-            );
+            detailsByRecordId.set(node.id, config.buildDetails(node));
           }
         } catch {
-          // cards degrade to name and link when headline fields cannot be read
+          // records without readable details render as plain prose links only
         }
       },
     ),
   );
 
-  return fieldLinesByRecordId;
+  return detailsByRecordId;
 };
