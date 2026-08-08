@@ -1,6 +1,4 @@
 import { act, renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -14,26 +12,16 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 
 const THREAD_A = '11111111-1111-4111-8111-111111111111';
 
-// The hook decides whether to write from window.location at call time, since
-// it can run from an async callback that outlived a route change, and reads
-// the history entry's state from the router.
-const getWrapper =
-  (initialEntry: { pathname: string; state?: unknown }) =>
-  ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[initialEntry]}>{children}</MemoryRouter>
-  );
-
 describe('useProjectAiChatThreadToUrl', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.history.pushState(null, '', '/');
   });
 
   it('should write the selected thread into the chat url', () => {
-    window.history.pushState({}, '', '/chat');
+    window.history.pushState(null, '', '/chat');
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl(), {
-      wrapper: getWrapper({ pathname: '/chat' }),
-    });
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
 
     act(() => {
       result.current.projectAiChatThreadToUrl(THREAD_A);
@@ -48,11 +36,9 @@ describe('useProjectAiChatThreadToUrl', () => {
   });
 
   it('should clear the url param for a draft thread', () => {
-    window.history.pushState({}, '', `/chat/${THREAD_A}`);
+    window.history.pushState(null, '', `/chat/${THREAD_A}`);
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl(), {
-      wrapper: getWrapper({ pathname: `/chat/${THREAD_A}` }),
-    });
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
 
     act(() => {
       result.current.projectAiChatThreadToUrl(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
@@ -69,14 +55,13 @@ describe('useProjectAiChatThreadToUrl', () => {
   // The expand button records where it came from on the history entry, so a
   // thread switch must carry it forward or collapsing loses its way back.
   it('should carry the history entry state forward', () => {
-    window.history.pushState({}, '', '/chat');
+    window.history.pushState(
+      { usr: { returnLocation: '/objects/people' } },
+      '',
+      '/chat',
+    );
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl(), {
-      wrapper: getWrapper({
-        pathname: '/chat',
-        state: { returnLocation: '/objects/people' },
-      }),
-    });
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
 
     act(() => {
       result.current.projectAiChatThreadToUrl(THREAD_A);
@@ -90,12 +75,35 @@ describe('useProjectAiChatThreadToUrl', () => {
     );
   });
 
-  it('should leave the url alone outside the chat page', () => {
-    window.history.pushState({}, '', '/objects/companies');
+  // Reading the entry at call time is what keeps a callback that outlived its
+  // render — a send that awaited a thread id — from replaying stale state.
+  it('should read the entry state as it is when called, not when rendered', () => {
+    window.history.pushState(null, '', '/chat');
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl(), {
-      wrapper: getWrapper({ pathname: '/objects/companies' }),
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+
+    window.history.pushState(
+      { usr: { returnLocation: '/objects/companies' } },
+      '',
+      '/chat',
+    );
+
+    act(() => {
+      result.current.projectAiChatThreadToUrl(THREAD_A);
     });
+
+    expect(navigateAppMock).toHaveBeenCalledWith(
+      AppPath.AiChat,
+      { threadId: THREAD_A },
+      undefined,
+      { replace: true, state: { returnLocation: '/objects/companies' } },
+    );
+  });
+
+  it('should leave the url alone outside the chat page', () => {
+    window.history.pushState(null, '', '/objects/companies');
+
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
 
     act(() => {
       result.current.projectAiChatThreadToUrl(THREAD_A);
