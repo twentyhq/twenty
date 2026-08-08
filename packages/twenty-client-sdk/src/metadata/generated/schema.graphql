@@ -951,6 +951,7 @@ type User {
   workspaceMember: WorkspaceMember
   userWorkspaces: [UserWorkspace!]!
   onboardingStatus: OnboardingStatus
+  previousOnboardingStatus: OnboardingStatus
   currentWorkspace: Workspace
   currentUserWorkspace: UserWorkspace
   userVars: JSONObject
@@ -1773,6 +1774,14 @@ type BillingUpdate {
 type InviteSuggestion {
   email: String!
   displayName: String
+}
+
+type OnboardingStepNavigation {
+  """Onboarding status the user landed on"""
+  onboardingStatus: OnboardingStatus
+
+  """Step the user can go back to from there, if any"""
+  previousOnboardingStatus: OnboardingStatus
 }
 
 type OnboardingStepSuccess {
@@ -3505,9 +3514,10 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
-  skipSyncEmailOnboardingStep: OnboardingStepSuccess!
-  completeBookCallOnboardingStep: OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
+  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!

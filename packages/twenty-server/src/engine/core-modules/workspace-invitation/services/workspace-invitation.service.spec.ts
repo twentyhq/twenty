@@ -14,7 +14,10 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
+import {
+  WorkspaceInvitationException,
+  WorkspaceInvitationExceptionCode,
+} from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
@@ -93,7 +96,7 @@ describe('WorkspaceInvitationService', () => {
         {
           provide: OnboardingService,
           useValue: {
-            setOnboardingInviteTeamPending: jest.fn(),
+            completeOnboardingInviteTeamStep: jest.fn(),
             isOnboardingInviteTeamPending: jest.fn().mockResolvedValue(false),
           },
         },
@@ -193,6 +196,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',
@@ -208,7 +212,7 @@ describe('WorkspaceInvitationService', () => {
         .mockReturnValue('http://localhost:3000');
       jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
       jest
-        .spyOn(onboardingService, 'setOnboardingInviteTeamPending')
+        .spyOn(onboardingService, 'completeOnboardingInviteTeamStep')
         .mockResolvedValue({} as any);
 
       const result = await service.sendInvitations(
@@ -221,10 +225,59 @@ describe('WorkspaceInvitationService', () => {
       expect(result.result.length).toBe(2);
       expect(emailService.send).toHaveBeenCalledTimes(2);
       expect(
-        onboardingService.setOnboardingInviteTeamPending,
+        onboardingService.completeOnboardingInviteTeamStep,
       ).toHaveBeenCalledWith({
+        userId: sender.userId,
         workspaceId: workspace.id,
-        value: false,
+        hasSentInvitations: true,
+      });
+    });
+
+    it('should keep the invite-team step reversible when every invitation fails', async () => {
+      const emails = ['test1@example.com', 'test2@example.com'];
+      const workspace = {
+        id: 'workspace-id',
+        inviteHash: 'invite-hash',
+        displayName: 'Test Workspace',
+      } as WorkspaceEntity;
+      const sender = {
+        userId: 'sender-user-id',
+        userEmail: 'sender@example.com',
+        name: { firstName: 'Sender' },
+        locale: 'en',
+      };
+
+      jest
+        .spyOn(service, 'createWorkspaceInvitation')
+        .mockRejectedValue(
+          new WorkspaceInvitationException(
+            'Invitation already exists',
+            WorkspaceInvitationExceptionCode.INVITATION_ALREADY_EXIST,
+          ),
+        );
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockReturnValue('http://localhost:3000');
+      jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
+      jest
+        .spyOn(onboardingService, 'completeOnboardingInviteTeamStep')
+        .mockResolvedValue({} as any);
+
+      const result = await service.sendInvitations(
+        emails,
+        workspace,
+        sender as WorkspaceMemberWorkspaceEntity,
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.result.length).toBe(0);
+      expect(emailService.send).not.toHaveBeenCalled();
+      expect(
+        onboardingService.completeOnboardingInviteTeamStep,
+      ).toHaveBeenCalledWith({
+        userId: sender.userId,
+        workspaceId: workspace.id,
+        hasSentInvitations: false,
       });
     });
 
@@ -235,6 +288,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',
@@ -280,6 +334,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',
@@ -374,6 +429,7 @@ describe('WorkspaceInvitationService', () => {
         displayName: 'Test Workspace',
       } as WorkspaceEntity;
       const sender = {
+        userId: 'sender-user-id',
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
         locale: 'en',

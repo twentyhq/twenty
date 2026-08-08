@@ -673,6 +673,7 @@ export interface User {
     workspaceMember?: WorkspaceMember
     userWorkspaces: UserWorkspace[]
     onboardingStatus?: OnboardingStatus
+    previousOnboardingStatus?: OnboardingStatus
     currentWorkspace?: Workspace
     currentUserWorkspace?: UserWorkspace
     userVars?: Scalars['JSONObject']
@@ -1416,6 +1417,14 @@ export interface InviteSuggestion {
     email: Scalars['String']
     displayName?: Scalars['String']
     __typename: 'InviteSuggestion'
+}
+
+export interface OnboardingStepNavigation {
+    /** Onboarding status the user landed on */
+    onboardingStatus?: OnboardingStatus
+    /** Step the user can go back to from there, if any */
+    previousOnboardingStatus?: OnboardingStatus
+    __typename: 'OnboardingStepNavigation'
 }
 
 export interface OnboardingStepSuccess {
@@ -3018,6 +3027,7 @@ export interface Mutation {
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
+    goBackToPreviousOnboardingStep: OnboardingStepNavigation
     updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
     createSubscriptionPaymentIntent: BillingPaymentIntent
@@ -3893,6 +3903,7 @@ export interface UserGenqlSelection{
     workspaceMember?: WorkspaceMemberGenqlSelection
     userWorkspaces?: UserWorkspaceGenqlSelection
     onboardingStatus?: boolean | number
+    previousOnboardingStatus?: boolean | number
     currentWorkspace?: WorkspaceGenqlSelection
     currentUserWorkspace?: UserWorkspaceGenqlSelection
     userVars?: boolean | number
@@ -4672,6 +4683,15 @@ export interface BillingUpdateGenqlSelection{
 export interface InviteSuggestionGenqlSelection{
     email?: boolean | number
     displayName?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface OnboardingStepNavigationGenqlSelection{
+    /** Onboarding status the user landed on */
+    onboardingStatus?: boolean | number
+    /** Step the user can go back to from there, if any */
+    previousOnboardingStatus?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6408,9 +6428,10 @@ export interface MutationGenqlSelection{
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
     revokeAllOtherUserSessions?: boolean | number
-    skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
-    completeBookCallOnboardingStep?: OnboardingStepSuccessGenqlSelection
-    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][]} })
+    skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
+    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
+    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
+    goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
@@ -7905,6 +7926,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isInviteSuggestion = (obj?: { __typename?: any } | null): obj is InviteSuggestion => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
       return InviteSuggestion_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const OnboardingStepNavigation_possibleTypes: string[] = ['OnboardingStepNavigation']
+    export const isOnboardingStepNavigation = (obj?: { __typename?: any } | null): obj is OnboardingStepNavigation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepNavigation"')
+      return OnboardingStepNavigation_possibleTypes.includes(obj.__typename)
     }
     
 
