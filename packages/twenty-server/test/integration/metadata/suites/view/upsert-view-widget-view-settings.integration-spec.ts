@@ -208,7 +208,7 @@ describe('upsertViewWidget view settings', () => {
       gqlFields: VIEW_SETTINGS_GQL_FIELDS,
     });
 
-    expect(data.upsertViewWidgetViewSettings.type).toBe(ViewType.LIST_WIDGET);
+    expect(data.upsertViewWidget.type).toBe(ViewType.LIST_WIDGET);
   });
 
   it('should reject switching to KANBAN_WIDGET without a main group by field', async () => {
