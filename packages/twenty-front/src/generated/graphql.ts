@@ -195,13 +195,13 @@ export type InboxCounts = {
 
 export type InboxItem = {
   __typename?: 'InboxItem';
-  id: Scalars['UUID']['output'];
-  inboxItemType: InboxItemType;
-  isUnread: Scalars['Boolean']['output'];
-  lastEventAt: Scalars['DateTime']['output'];
   assigneeUserId?: Maybe<Scalars['UUID']['output']>;
   assigneeUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  id: Scalars['UUID']['output'];
+  inboxItemType: InboxItemType;
   isAssignedToMe: Scalars['Boolean']['output'];
+  isUnread: Scalars['Boolean']['output'];
+  lastEventAt: Scalars['DateTime']['output'];
   outcome?: Maybe<Scalars['String']['output']>;
   payload?: Maybe<Scalars['JSON']['output']>;
   preview?: Maybe<Scalars['String']['output']>;
@@ -246,16 +246,6 @@ export enum InboxItemPriority {
   UPDATE = 'UPDATE'
 }
 
-export type InboxQueue = {
-  __typename?: 'InboxQueue';
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  needsAction: Scalars['Int']['output'];
-  slug: Scalars['String']['output'];
-  unread: Scalars['Int']['output'];
-};
-
 export enum InboxItemScope {
   DONE = 'DONE',
   INBOX = 'INBOX',
@@ -270,6 +260,16 @@ export type InboxItemType = {
   key: Scalars['String']['output'];
   label: Scalars['String']['output'];
   outcomes: Array<InboxItemOutcome>;
+};
+
+export type InboxQueue = {
+  __typename?: 'InboxQueue';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  needsAction: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  unread: Scalars['Int']['output'];
 };
 
 export type LinkMetadata = {
@@ -542,6 +542,11 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 };
 
 
+export type QueryMyInboxCountsArgs = {
+  queueSlug?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryMyInboxItemArgs = {
   inboxItemId: Scalars['UUID']['input'];
 };
@@ -551,10 +556,6 @@ export type QueryMyInboxItemsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   queueSlug?: InputMaybe<Scalars['String']['input']>;
   scope?: InputMaybe<InboxItemScope>;
-};
-
-export type QueryMyInboxCountsArgs = {
-  queueSlug?: InputMaybe<Scalars['String']['input']>;
 };
 
 
