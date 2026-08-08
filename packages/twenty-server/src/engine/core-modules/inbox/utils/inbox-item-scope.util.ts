@@ -44,10 +44,17 @@ export const isInboxItemUnread = (inboxItem: InboxItemAttention): boolean =>
   !isDefined(inboxItem.readAt) ||
   toTime(inboxItem.lastEventAt) > toTime(inboxItem.readAt);
 
-// TypeORM hands the callback one fully qualified column, so the others in the
-// same predicate are built from its table.
-const siblingColumn = (columnAlias: string, column: string): string =>
-  `${columnAlias.slice(0, columnAlias.lastIndexOf('.'))}."${column}"`;
+// TypeORM hands the callback one qualified column, so the others in the same
+// predicate are built from its table. The quoting it uses is not guaranteed, so
+// the table is unquoted and requoted rather than passed through: an unquoted
+// alias reaches Postgres as a missing FROM-clause entry.
+const siblingColumn = (columnAlias: string, column: string): string => {
+  const tableAlias = columnAlias
+    .slice(0, columnAlias.lastIndexOf('.'))
+    .replace(/"/g, '');
+
+  return `"${tableAlias}"."${column}"`;
+};
 
 const clearIsCurrentSql = (clearedAt: string): string =>
   `(${clearedAt} IS NOT NULL AND ${siblingColumn(clearedAt, 'lastEventAt')} <= ${clearedAt})`;

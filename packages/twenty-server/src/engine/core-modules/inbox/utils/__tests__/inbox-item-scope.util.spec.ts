@@ -114,7 +114,7 @@ describe('buildInboxItemScopeCriteria', () => {
     column: string,
   ): string =>
     (criteria[column] as FindOperator<unknown>).getSql?.(
-      `"item"."${column}"`,
+      `"InboxItemEntity"."${column}"`,
     ) ?? '';
 
   it('should compare the clear against the event rather than reading a stored verdict', () => {
@@ -126,7 +126,7 @@ describe('buildInboxItemScopeCriteria', () => {
 
     // Assert
     expect(sql).toBe(
-      '(NOT ("item"."clearedAt" IS NOT NULL AND "item"."lastEventAt" <= "item"."clearedAt") OR "item"."resurfaceAt" <= :now)',
+      '(NOT ("InboxItemEntity"."clearedAt" IS NOT NULL AND "InboxItemEntity"."lastEventAt" <= "InboxItemEntity"."clearedAt") OR "InboxItemEntity"."resurfaceAt" <= :now)',
     );
   });
 
@@ -139,11 +139,24 @@ describe('buildInboxItemScopeCriteria', () => {
     // Both stand on the same clear-is-current test, so it is pinned rather
     // than only compared to itself
     const clearIsCurrent =
-      '("item"."clearedAt" IS NOT NULL AND "item"."lastEventAt" <= "item"."clearedAt")';
+      '("InboxItemEntity"."clearedAt" IS NOT NULL AND "InboxItemEntity"."lastEventAt" <= "InboxItemEntity"."clearedAt")';
 
     expect(renderSql(snoozed, 'clearedAt')).toBe(clearIsCurrent);
     expect(renderSql(done, 'clearedAt')).toBe(clearIsCurrent);
     expect(snoozed.resurfaceAt).not.toEqual(done.resurfaceAt);
+  });
+
+  // The alias TypeORM passes is not guaranteed to be quoted, and an unquoted
+  // table reference reaches Postgres as a missing FROM-clause entry
+  it('should quote the sibling table however the alias arrives', () => {
+    // Act
+    const criteria = buildInboxItemScopeCriteria(InboxItemScope.DONE, NOW);
+    const sql = (criteria.clearedAt as FindOperator<unknown>).getSql?.(
+      'InboxItemEntity."clearedAt"',
+    );
+
+    // Assert
+    expect(sql).toContain('"InboxItemEntity"."lastEventAt"');
   });
 
   it('should read unread off the same comparison', () => {
@@ -152,7 +165,7 @@ describe('buildInboxItemScopeCriteria', () => {
 
     // Assert
     expect(sql).toBe(
-      '("item"."readAt" IS NULL OR "item"."lastEventAt" > "item"."readAt")',
+      '("InboxItemEntity"."readAt" IS NULL OR "InboxItemEntity"."lastEventAt" > "InboxItemEntity"."readAt")',
     );
   });
 });
