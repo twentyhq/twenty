@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client/react';
+import { useCallback } from 'react';
 
 import { EXECUTE_INBOX_ITEM_ACTION } from '@/inbox/graphql/mutations/executeInboxItemAction';
 import { MARK_INBOX_ITEM_READ } from '@/inbox/graphql/mutations/markInboxItemRead';
@@ -50,62 +51,72 @@ export const useInboxItemActions = () => {
     }
   >(EXECUTE_INBOX_ITEM_ACTION, mutationOptions);
 
-  const markInboxItemRead = async ({
-    inboxItemId,
-  }: {
-    inboxItemId: string;
-  }) => {
-    try {
-      await markInboxItemReadMutation({ variables: { inboxItemId } });
-    } catch (error) {
-      logError(error);
-    }
-  };
+  // Memoized because an effect marks an item read on open, and a function
+  // whose identity changed every render would fire that mutation repeatedly.
+  const markInboxItemRead = useCallback(
+    async ({ inboxItemId }: { inboxItemId: string }) => {
+      try {
+        await markInboxItemReadMutation({ variables: { inboxItemId } });
+      } catch (error) {
+        logError(error);
+      }
+    },
+    [markInboxItemReadMutation],
+  );
 
   // The one way an item changes state. Everything else is a named shortcut to
   // a transition, resolved server side from the type's declared actions.
-  const transitionInboxItem = async ({
-    inboxItemId,
-    transition,
-    expectedVersion,
-  }: {
-    inboxItemId: string;
-    transition: InboxItemTransitionInput;
-    expectedVersion?: number;
-  }) => {
-    await transitionInboxItemMutation({
-      variables: { inboxItemId, transition, expectedVersion },
-    });
-  };
-
-  const reopenInboxItem = async ({
-    inboxItemId,
-    expectedVersion,
-  }: {
-    inboxItemId: string;
-    expectedVersion?: number;
-  }) =>
-    transitionInboxItem({
+  const transitionInboxItem = useCallback(
+    async ({
       inboxItemId,
-      transition: { kind: 'REOPEN' },
+      transition,
       expectedVersion,
-    });
+    }: {
+      inboxItemId: string;
+      transition: InboxItemTransitionInput;
+      expectedVersion?: number;
+    }) => {
+      await transitionInboxItemMutation({
+        variables: { inboxItemId, transition, expectedVersion },
+      });
+    },
+    [transitionInboxItemMutation],
+  );
 
-  const executeInboxItemAction = async ({
-    inboxItemId,
-    actionKey,
-    input,
-    expectedVersion,
-  }: {
-    inboxItemId: string;
-    actionKey: string;
-    input?: Record<string, unknown>;
-    expectedVersion?: number;
-  }) => {
-    await executeInboxItemActionMutation({
-      variables: { inboxItemId, actionKey, input, expectedVersion },
-    });
-  };
+  const reopenInboxItem = useCallback(
+    async ({
+      inboxItemId,
+      expectedVersion,
+    }: {
+      inboxItemId: string;
+      expectedVersion?: number;
+    }) =>
+      transitionInboxItem({
+        inboxItemId,
+        transition: { kind: 'REOPEN' },
+        expectedVersion,
+      }),
+    [transitionInboxItem],
+  );
+
+  const executeInboxItemAction = useCallback(
+    async ({
+      inboxItemId,
+      actionKey,
+      input,
+      expectedVersion,
+    }: {
+      inboxItemId: string;
+      actionKey: string;
+      input?: Record<string, unknown>;
+      expectedVersion?: number;
+    }) => {
+      await executeInboxItemActionMutation({
+        variables: { inboxItemId, actionKey, input, expectedVersion },
+      });
+    },
+    [executeInboxItemActionMutation],
+  );
 
   return {
     markInboxItemRead,

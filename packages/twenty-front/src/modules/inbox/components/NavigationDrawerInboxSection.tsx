@@ -6,21 +6,15 @@ import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
 import { INBOX_SUB_SECTIONS } from '@/inbox/constants/InboxSubSections';
 import { useInboxCounts } from '@/inbox/hooks/useInboxCounts';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
+import { INBOX_ROOT_PATH } from '@/inbox/constants/InboxRootPath';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { isInboxSectionActive } from '@/inbox/utils/isInboxSectionActive';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { InboxItemScope } from '~/generated/graphql';
-
-const INBOX_NAVIGATION_SECTION_ID = 'Inbox';
 
 export const NavigationDrawerInboxSection = () => {
   const { t } = useLingui();
@@ -28,19 +22,17 @@ export const NavigationDrawerInboxSection = () => {
   const isInboxEnabled = useIsInboxEnabled();
   const { inboxCounts } = useInboxCounts();
 
-  const { toggleNavigationSection } = useNavigationSection(
-    INBOX_NAVIGATION_SECTION_ID,
-  );
-  const isNavigationSectionOpen = useAtomFamilyStateValue(
-    isNavigationSectionOpenFamilyState,
-    INBOX_NAVIGATION_SECTION_ID,
-  );
-
   if (!isInboxEnabled) {
     return null;
   }
 
   const inboxPath = getInboxSectionPath(DEFAULT_INBOX_SECTION);
+  // Snoozed and Done are somewhere you go once you are in the inbox, so they
+  // stay out of the way until you are
+  const isInboxSurfaceActive = isInboxSectionActive({
+    pathname: location.pathname,
+    inboxSectionPath: INBOX_ROOT_PATH,
+  });
   const selectedSubSectionIndex = INBOX_SUB_SECTIONS.findIndex(
     (inboxSubSection) =>
       isInboxSectionActive({
@@ -51,35 +43,28 @@ export const NavigationDrawerInboxSection = () => {
 
   return (
     <NavigationDrawerSection>
-      <NavigationDrawerAnimatedCollapseWrapper>
-        <NavigationDrawerSectionTitle
-          label={t`Inbox`}
-          onClick={toggleNavigationSection}
-          isOpen={isNavigationSectionOpen}
+      <NavigationDrawerItemsCollapsableContainer isGroup>
+        <NavigationDrawerItem
+          label={t(DEFAULT_INBOX_SECTION.label)}
+          Icon={DEFAULT_INBOX_SECTION.Icon}
+          to={inboxPath}
+          active={isInboxSectionActive({
+            pathname: location.pathname,
+            inboxSectionPath: inboxPath,
+          })}
+          secondaryLabel={
+            (inboxCounts?.unread ?? 0) > 0
+              ? String(inboxCounts?.unread)
+              : undefined
+          }
         />
-      </NavigationDrawerAnimatedCollapseWrapper>
-      <AnimatedExpandableContainer
-        isExpanded={isNavigationSectionOpen}
-        dimension="height"
-        mode="fit-content"
-        containAnimation
-        initial={false}
-      >
-        <NavigationDrawerItemsCollapsableContainer isGroup>
-          <NavigationDrawerItem
-            label={t(DEFAULT_INBOX_SECTION.label)}
-            Icon={DEFAULT_INBOX_SECTION.Icon}
-            to={inboxPath}
-            active={isInboxSectionActive({
-              pathname: location.pathname,
-              inboxSectionPath: inboxPath,
-            })}
-            secondaryLabel={
-              (inboxCounts?.unread ?? 0) > 0
-                ? String(inboxCounts?.unread)
-                : undefined
-            }
-          />
+        <AnimatedExpandableContainer
+          isExpanded={isInboxSurfaceActive}
+          dimension="height"
+          mode="fit-content"
+          containAnimation
+          initial={false}
+        >
           {INBOX_SUB_SECTIONS.map((inboxSubSection, index) => {
             const subSectionPath = getInboxSectionPath(inboxSubSection);
             const snoozedCount =
@@ -108,8 +93,8 @@ export const NavigationDrawerInboxSection = () => {
               />
             );
           })}
-        </NavigationDrawerItemsCollapsableContainer>
-      </AnimatedExpandableContainer>
+        </AnimatedExpandableContainer>
+      </NavigationDrawerItemsCollapsableContainer>
     </NavigationDrawerSection>
   );
 };
