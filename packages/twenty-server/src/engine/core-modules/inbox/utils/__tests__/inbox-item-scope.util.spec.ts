@@ -35,10 +35,7 @@ describe('getInboxItemScope', () => {
 
   it('should report a cleared item as done', () => {
     // Act
-    const scope = getInboxItemScope(
-      buildInboxItem({ clearedAt: NOW }),
-      NOW,
-    );
+    const scope = getInboxItemScope(buildInboxItem({ clearedAt: NOW }), NOW);
 
     // Assert
     expect(scope).toBe(InboxItemScope.DONE);
@@ -139,9 +136,7 @@ describe('buildInboxItemScopeCriteria', () => {
     const done = buildInboxItemScopeCriteria(InboxItemScope.DONE, NOW);
 
     // Assert
-    expect(renderSql(snoozed, 'clearedAt')).toBe(
-      renderSql(done, 'clearedAt'),
-    );
+    expect(renderSql(snoozed, 'clearedAt')).toBe(renderSql(done, 'clearedAt'));
     expect(snoozed.resurfaceAt).not.toEqual(done.resurfaceAt);
   });
 
