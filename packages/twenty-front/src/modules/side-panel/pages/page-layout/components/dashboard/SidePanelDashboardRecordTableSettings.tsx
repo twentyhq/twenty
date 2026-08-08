@@ -133,11 +133,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
   const isKanbanLayout = widgetView?.type === ViewType.KANBAN_WIDGET;
   const isCalendarLayout = widgetView?.type === ViewType.CALENDAR_WIDGET;
+  const isListLayout = widgetView?.type === ViewType.LIST_WIDGET;
   const currentLayoutViewType = isKanbanLayout
     ? ViewType.KANBAN_WIDGET
     : isCalendarLayout
       ? ViewType.CALENDAR_WIDGET
-      : ViewType.TABLE_WIDGET;
+      : isListLayout
+        ? ViewType.LIST_WIDGET
+        : ViewType.TABLE_WIDGET;
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
 

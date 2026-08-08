@@ -16,6 +16,7 @@ import {
 export type RecordTableWidgetLayoutViewType =
   | ViewType.TABLE_WIDGET
   | ViewType.KANBAN_WIDGET
+  | ViewType.LIST_WIDGET
   | ViewType.CALENDAR_WIDGET;
 
 type UseRecordTableWidgetLayoutCallbacksParams = {

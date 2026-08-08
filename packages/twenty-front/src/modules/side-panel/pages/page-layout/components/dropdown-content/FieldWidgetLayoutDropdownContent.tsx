@@ -25,17 +25,23 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type IconComponent,
   IconCalendar,
   IconFileText,
   IconId,
   IconLayoutKanban,
+  IconList,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  FieldDisplayMode,
+  ViewType,
+} from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.FIELD]: IconListDetails,
@@ -148,12 +154,18 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
   const isTableDisplayMode = currentDisplayMode === FieldDisplayMode.TABLE;
 
+  const isListViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_LIST_VIEW_ENABLED,
+  );
+
   const currentEmbeddedViewType: RecordTableWidgetLayoutViewType =
     embeddedWidgetView?.type === ViewType.KANBAN_WIDGET
       ? ViewType.KANBAN_WIDGET
       : embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET
         ? ViewType.CALENDAR_WIDGET
-        : ViewType.TABLE_WIDGET;
+        : embeddedWidgetView?.type === ViewType.LIST_WIDGET
+          ? ViewType.LIST_WIDGET
+          : ViewType.TABLE_WIDGET;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -250,6 +262,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
             ? [
                 ViewType.TABLE_WIDGET,
                 ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
+                ...(isListViewEnabled ? [ViewType.LIST_WIDGET] : []),
                 ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
               ]
             : []),
@@ -311,6 +324,23 @@ export const FieldWidgetLayoutDropdownContent = () => {
                 onClick={() => handleSelectViewLayout(ViewType.KANBAN_WIDGET)}
               />
             </SelectableListItem>
+            {isListViewEnabled && (
+              <SelectableListItem
+                itemId={ViewType.LIST_WIDGET}
+                onEnter={() => handleSelectViewLayout(ViewType.LIST_WIDGET)}
+              >
+                <MenuItemSelect
+                  text={t`List`}
+                  LeftIcon={IconList}
+                  selected={
+                    isTableDisplayMode &&
+                    currentEmbeddedViewType === ViewType.LIST_WIDGET
+                  }
+                  focused={selectedItemId === ViewType.LIST_WIDGET}
+                  onClick={() => handleSelectViewLayout(ViewType.LIST_WIDGET)}
+                />
+              </SelectableListItem>
+            )}
             <SelectableListItem
               itemId={ViewType.CALENDAR_WIDGET}
               onEnter={() => handleSelectViewLayout(ViewType.CALENDAR_WIDGET)}

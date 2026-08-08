@@ -2,6 +2,7 @@ import { getContextStoreViewType } from '@/context-store/utils/getContextStoreVi
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { RecordBoardWidget } from '@/object-record/record-board-widget/components/RecordBoardWidget';
 import { RecordCalendarWidget } from '@/object-record/record-calendar-widget/components/RecordCalendarWidget';
+import { RecordListWidget } from '@/object-record/record-list-widget/components/RecordListWidget';
 import { RecordTableWidget } from '@/object-record/record-table-widget/components/RecordTableWidget';
 import { RecordTableWidgetProvider } from '@/object-record/record-table-widget/components/RecordTableWidgetProvider';
 import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
@@ -63,6 +64,7 @@ export const RecordTableWidgetRendererContent = ({
 
   const isKanbanLayout = widgetViewLayout === ViewType.KANBAN;
   const isCalendarLayout = widgetViewLayout === ViewType.CALENDAR;
+  const isListLayout = widgetViewLayout === ViewType.LIST;
 
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
@@ -98,6 +100,8 @@ export const RecordTableWidgetRendererContent = ({
         <RecordBoardWidget isReadOnly={isReadOnly} />
       ) : isCalendarLayout ? (
         <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />
+      ) : isListLayout ? (
+        <RecordListWidget />
       ) : (
         <RecordTableWidget
           isReadOnly={isReadOnly}

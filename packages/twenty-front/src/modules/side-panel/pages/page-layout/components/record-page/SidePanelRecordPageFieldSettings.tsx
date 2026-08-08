@@ -131,6 +131,8 @@ export const SidePanelRecordPageFieldSettings = () => {
     embeddedWidgetView?.type === ViewType.KANBAN_WIDGET;
   const isEmbeddedViewCalendarLayout =
     embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET;
+  const isEmbeddedViewListLayout =
+    embeddedWidgetView?.type === ViewType.LIST_WIDGET;
   const embeddedViewHasGroupBy = isDefined(
     embeddedWidgetView?.mainGroupByFieldMetadataId,
   );
@@ -162,7 +164,9 @@ export const SidePanelRecordPageFieldSettings = () => {
       ? t`Kanban`
       : isEmbeddedViewCalendarLayout
         ? t`Calendar`
-        : t`Table`
+        : isEmbeddedViewListLayout
+          ? t`List`
+          : t`Table`
     : isDefined(currentDisplayMode)
       ? (displayModeLabels[currentDisplayMode] ?? '')
       : '';
@@ -172,7 +176,9 @@ export const SidePanelRecordPageFieldSettings = () => {
       ? IconLayoutKanban
       : isEmbeddedViewCalendarLayout
         ? IconCalendar
-        : IconTable
+        : isEmbeddedViewListLayout
+          ? IconList
+          : IconTable
     : IconLayoutSidebarRight;
 
   const selectableItemIds = [

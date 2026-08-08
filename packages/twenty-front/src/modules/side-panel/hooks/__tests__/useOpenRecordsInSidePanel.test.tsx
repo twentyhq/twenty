@@ -31,6 +31,7 @@ const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const INDEX_VIEW_ID = '11111111-1111-4111-8111-111111111111';
 const KANBAN_VIEW_ID = '22222222-2222-4222-8222-222222222222';
 const WIDGET_VIEW_ID = '33333333-3333-4333-8333-333333333333';
+const LIST_VIEW_ID = '44444444-4444-4444-8444-444444444444';
 
 const buildCompanyView = (view: Partial<ViewWithRelations>) =>
   ({
@@ -56,6 +57,13 @@ const kanbanView = buildCompanyView({
   name: 'Companies by Stage',
   type: ViewType.KANBAN,
   position: 2,
+});
+
+const listView = buildCompanyView({
+  id: LIST_VIEW_ID,
+  name: 'Companies list',
+  type: ViewType.LIST,
+  position: 3,
 });
 
 const widgetView = buildCompanyView({
@@ -208,6 +216,32 @@ describe('useOpenRecordsInSidePanel', () => {
         }),
       ),
     ).toBe(INDEX_VIEW_ID);
+  });
+
+  it('should keep a list view a list rather than falling back to a table', () => {
+    const { result, store } = renderOpenRecordsInSidePanel([listView]);
+
+    act(() => {
+      result.current.openRecordsInSidePanel({
+        objectNameSingular: companyObjectMetadataItem.nameSingular,
+        viewId: LIST_VIEW_ID,
+      });
+    });
+
+    expect(
+      store.get(
+        viewableRecordsViewIdComponentState.atomFamily({
+          instanceId: getNavigatedPageId(),
+        }),
+      ),
+    ).toBe(LIST_VIEW_ID);
+    expect(
+      store.get(
+        contextStoreCurrentViewTypeComponentState.atomFamily({
+          instanceId: getNavigatedPageId(),
+        }),
+      ),
+    ).toBe(ContextStoreViewType.Table);
   });
 
   it('should throw when the object has no user-facing view', () => {

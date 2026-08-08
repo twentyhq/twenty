@@ -13,11 +13,17 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCalendar, IconLayoutKanban, IconTable } from 'twenty-ui/icon';
+import {
+  IconCalendar,
+  IconLayoutKanban,
+  IconList,
+  IconTable,
+} from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ViewType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
 
 type RecordTableLayoutDropdownContentProps = {
   pageLayoutId: string;
@@ -64,6 +70,10 @@ export const RecordTableLayoutDropdownContent = ({
       isFieldMetadataItemAvailableAsCalendarField,
     ) ?? null;
 
+  const isListViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_LIST_VIEW_ENABLED,
+  );
+
   const isKanbanAvailable = isDefined(defaultGroupByFieldMetadataItem);
   const isCalendarAvailable = isDefined(defaultCalendarFieldMetadataItem);
 
@@ -91,6 +101,7 @@ export const RecordTableLayoutDropdownContent = ({
         selectableItemIdArray={[
           ViewType.TABLE_WIDGET,
           ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
+          ...(isListViewEnabled ? [ViewType.LIST_WIDGET] : []),
           ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
         ]}
         focusId={dropdownId}
@@ -124,6 +135,20 @@ export const RecordTableLayoutDropdownContent = ({
             onClick={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
           />
         </SelectableListItem>
+        {isListViewEnabled && (
+          <SelectableListItem
+            itemId={ViewType.LIST_WIDGET}
+            onEnter={() => handleSelectLayout(ViewType.LIST_WIDGET)}
+          >
+            <MenuItemSelect
+              text={t`List`}
+              LeftIcon={IconList}
+              selected={currentLayoutViewType === ViewType.LIST_WIDGET}
+              focused={selectedItemId === ViewType.LIST_WIDGET}
+              onClick={() => handleSelectLayout(ViewType.LIST_WIDGET)}
+            />
+          </SelectableListItem>
+        )}
         <SelectableListItem
           itemId={ViewType.CALENDAR_WIDGET}
           onEnter={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}

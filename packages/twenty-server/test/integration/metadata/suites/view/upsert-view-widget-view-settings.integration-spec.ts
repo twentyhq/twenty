@@ -196,6 +196,21 @@ describe('upsertViewWidget view settings', () => {
     );
   });
 
+  it('should switch the widget view to LIST_WIDGET', async () => {
+    const { data } = await upsertViewWidget({
+      expectToFail: false,
+      input: {
+        widgetId,
+        view: {
+          type: ViewType.LIST_WIDGET,
+        },
+      },
+      gqlFields: VIEW_SETTINGS_GQL_FIELDS,
+    });
+
+    expect(data.upsertViewWidgetViewSettings.type).toBe(ViewType.LIST_WIDGET);
+  });
+
   it('should reject switching to KANBAN_WIDGET without a main group by field', async () => {
     const { errors } = await upsertViewWidget({
       expectToFail: true,
