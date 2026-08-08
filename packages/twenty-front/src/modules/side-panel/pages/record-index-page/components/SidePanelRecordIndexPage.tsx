@@ -37,21 +37,21 @@ export const SidePanelRecordIndexPage = () => {
     throw new Error('View id is not defined');
   }
 
+  const widgetInstanceId = `side-panel-record-index-${sidePanelPageInstanceContext?.instanceId}`;
+
   return (
     <StyledContainer>
       {/* The widget machinery is shared with dashboards, whose page provides
           the page layout scope and edit mode context; the side panel hosts a
           synthetic layout scope and is never in edit mode. */}
       <PageLayoutComponentInstanceContext.Provider
-        value={{
-          instanceId: `side-panel-record-index-${sidePanelPageInstanceContext?.instanceId}`,
-        }}
+        value={{ instanceId: widgetInstanceId }}
       >
         <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
           <RecordTableWidgetRendererContent
             objectMetadataId={viewableRecordIndexObjectMetadataId}
             viewId={viewableRecordIndexViewId}
-            widgetId={`side-panel-record-index-${sidePanelPageInstanceContext?.instanceId}`}
+            widgetId={widgetInstanceId}
           />
         </PageLayoutEditModeProviderContext>
       </PageLayoutComponentInstanceContext.Provider>
