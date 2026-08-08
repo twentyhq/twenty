@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -13,6 +13,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const AiChatPageThreadUrlSyncEffect = () => {
   const { threadId } = useParams();
+  const { state: locationState } = useLocation();
   const threadIdParam = threadId ?? null;
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
@@ -52,11 +53,13 @@ export const AiChatPageThreadUrlSyncEffect = () => {
       isValidUuid(currentAiChatThread) &&
       currentAiChatThread !== threadIdParam
     ) {
+      // Replacing the entry keeps its state, so the return location set by
+      // the expand button survives thread switches.
       navigateApp(
         AppPath.AiChat,
         { threadId: currentAiChatThread },
         undefined,
-        { replace: true },
+        { replace: true, state: locationState },
       );
       return;
     }
@@ -67,6 +70,7 @@ export const AiChatPageThreadUrlSyncEffect = () => {
     ) {
       navigateApp(AppPath.AiChat, { threadId: null }, undefined, {
         replace: true,
+        state: locationState,
       });
     }
   }, [
@@ -75,6 +79,7 @@ export const AiChatPageThreadUrlSyncEffect = () => {
     switchThreadWithDraft,
     navigateApp,
     store,
+    locationState,
   ]);
 
   return null;

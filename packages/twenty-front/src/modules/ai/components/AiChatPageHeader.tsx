@@ -8,6 +8,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { v4 } from 'uuid';
 
+import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { AiChatCollapseButton } from '@/ai/components/AiChatCollapseButton';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
@@ -42,7 +43,11 @@ const StyledHeaderTitle = styled.div`
   white-space: nowrap;
 `;
 
-export const AiChatPageHeader = () => {
+type AiChatPageHeaderProps = {
+  isOnboarding: boolean;
+};
+
+export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
@@ -67,23 +72,30 @@ export const AiChatPageHeader = () => {
       )}
       <StyledHeaderTitle>
         <IconSparkles size={theme.icon.size.md} />
-        {t`Ask AI`}
+        {isOnboarding ? t`Onboarding` : t`Ask AI`}
       </StyledHeaderTitle>
-      <IconButton
-        Icon={IconHistory}
-        size="small"
-        variant="tertiary"
-        onClick={handleOpenPreviousChats}
-        ariaLabel={t`View Previous AI Chats`}
-      />
-      <IconButton
-        Icon={IconEdit}
-        size="small"
-        variant="tertiary"
-        onClick={() => switchToNewChat()}
-        ariaLabel={t`New conversation`}
-      />
+      {/* The onboarding conversation is single-threaded: switching or
+          starting threads would abandon the workspace setup. */}
+      {!isOnboarding && (
+        <>
+          <IconButton
+            Icon={IconHistory}
+            size="small"
+            variant="tertiary"
+            onClick={handleOpenPreviousChats}
+            ariaLabel={t`View Previous AI Chats`}
+          />
+          <IconButton
+            Icon={IconEdit}
+            size="small"
+            variant="tertiary"
+            onClick={() => switchToNewChat()}
+            ariaLabel={t`New conversation`}
+          />
+        </>
+      )}
       <AiChatCollapseButton />
+      {isOnboarding && <AiChatCloseButton />}
     </StyledHeader>
   );
 };

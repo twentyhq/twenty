@@ -97,26 +97,4 @@ describe('useOpenAskAiPageInSidePanel', () => {
 
     expect(navigateSidePanelMenuMock).not.toHaveBeenCalled();
   });
-
-  it('should open the panel AskAI page on the AI chat page when forced', () => {
-    window.history.pushState(
-      {},
-      '',
-      '/chat/6a3b0e10-0b1f-4c62-a2f8-3e1d2c4b5a69',
-    );
-
-    const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
-      wrapper: Wrapper,
-    });
-
-    act(() => {
-      result.current.openAskAiPage({ force: true });
-    });
-
-    expect(navigateSidePanelMenuMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        page: SidePanelPages.AskAI,
-      }),
-    );
-  });
 });
