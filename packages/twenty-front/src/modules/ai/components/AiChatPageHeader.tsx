@@ -1,18 +1,15 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
-import { IconEdit, IconHistory, IconSparkles } from 'twenty-ui/icon';
+import { IconEdit, IconSparkles } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { v4 } from 'uuid';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { AiChatCollapseButton } from '@/ai/components/AiChatCollapseButton';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
@@ -52,18 +49,7 @@ export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
-  const { navigateSidePanelMenu } = useSidePanelMenu();
   const { switchToNewChat } = useSwitchToNewAiChat();
-
-  const handleOpenPreviousChats = () => {
-    navigateSidePanelMenu({
-      page: SidePanelPages.ViewPreviousAiChats,
-      pageTitle: t`View Previous AI Chats`,
-      pageIcon: IconHistory,
-      pageId: v4(),
-      resetNavigationStack: true,
-    });
-  };
 
   return (
     <StyledHeader>
@@ -77,22 +63,13 @@ export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
       {/* The onboarding conversation is single-threaded: switching or
           starting threads would abandon the workspace setup. */}
       {!isOnboarding && (
-        <>
-          <IconButton
-            Icon={IconHistory}
-            size="small"
-            variant="tertiary"
-            onClick={handleOpenPreviousChats}
-            ariaLabel={t`View Previous AI Chats`}
-          />
-          <IconButton
-            Icon={IconEdit}
-            size="small"
-            variant="tertiary"
-            onClick={() => switchToNewChat()}
-            ariaLabel={t`New conversation`}
-          />
-        </>
+        <IconButton
+          Icon={IconEdit}
+          size="small"
+          variant="tertiary"
+          onClick={() => switchToNewChat()}
+          ariaLabel={t`New conversation`}
+        />
       )}
       <AiChatCollapseButton />
       {isOnboarding && <AiChatCloseButton />}
