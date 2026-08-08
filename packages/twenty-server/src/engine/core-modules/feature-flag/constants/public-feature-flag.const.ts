@@ -19,6 +19,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Full-Page AI Chat',
       description:
         'Open the AI chat as a full page, with the records it surfaces appearing in the side panel',
+      icon: 'IconSparkles',
     },
   },
   {
