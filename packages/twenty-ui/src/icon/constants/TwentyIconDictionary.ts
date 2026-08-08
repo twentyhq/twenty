@@ -1,3 +1,5 @@
+import { type ResolvableIconName } from '@ui/icon/providers/internal/AllIcons';
+
 export const TWENTY_ICON_DICTIONARY_FIGMA_URL =
   'https://www.figma.com/design/xt8O9mFeLl46C5InWwoMrN/Twenty?node-id=43908-39914';
 
@@ -20,7 +22,7 @@ export type TwentyIconDictionaryEntry = {
   key: string;
   label: string;
   category: TwentyIconDictionaryCategory;
-  iconName: `Icon${string}`;
+  iconName: ResolvableIconName;
   tablerName: string;
   keywords: readonly [string, ...string[]];
   useWhen: string;
