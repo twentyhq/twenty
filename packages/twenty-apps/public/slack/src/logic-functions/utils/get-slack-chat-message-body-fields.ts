@@ -7,9 +7,16 @@ export const getSlackChatMessageBodyFields = ({
   messageText,
   messageFormat,
   messageBlocks,
+  messageAttachments,
 }: { messageText: string } & SlackMessageBody): SlackChatMessageBodyFields => {
   if (isNonEmptyArray(messageBlocks)) {
-    return { blocks: messageBlocks, text: messageText };
+    return {
+      blocks: messageBlocks,
+      text: messageText,
+      ...(isNonEmptyArray(messageAttachments)
+        ? { attachments: messageAttachments }
+        : {}),
+    };
   }
 
   switch (messageFormat) {

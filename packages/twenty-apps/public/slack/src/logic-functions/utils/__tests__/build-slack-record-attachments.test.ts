@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type SlackRecordDetails } from 'src/logic-functions/types/slack-record-details.type';
 import { type SlackRecordReference } from 'src/logic-functions/types/slack-record-reference.type';
-import { buildSlackRecordBlocks } from 'src/logic-functions/utils/build-slack-record-blocks';
+import { buildSlackRecordAttachments } from 'src/logic-functions/utils/build-slack-record-attachments';
 
 const buildReference = (index: number): SlackRecordReference => ({
   objectNameSingular: 'company',
@@ -18,20 +18,20 @@ const buildDetails = (
   ...overrides,
 });
 
-describe('buildSlackRecordBlocks', () => {
-  it('should return no blocks without references', () => {
+describe('buildSlackRecordAttachments', () => {
+  it('should return no attachments without references', () => {
     expect(
-      buildSlackRecordBlocks({
+      buildSlackRecordAttachments({
         references: [],
         detailsByRecordId: new Map(),
       }),
     ).toEqual([]);
   });
 
-  it('should render a record as an unfurl-style section with a linked name and field grid', () => {
+  it('should render a record as an accent-bar attachment with a linked name and field grid', () => {
     const reference = buildReference(1);
 
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references: [reference],
       detailsByRecordId: new Map([
         [
@@ -46,16 +46,22 @@ describe('buildSlackRecordBlocks', () => {
       ]),
     });
 
-    expect(blocks).toEqual([
+    expect(attachments).toEqual([
       {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `*<${reference.recordUrl}|Company 1>*   ·   Company`,
-        },
-        fields: [
-          { type: 'mrkdwn', text: '*Domain*\nacme.com' },
-          { type: 'mrkdwn', text: '*Annual revenue*\n$2,000,000' },
+        color: '#3E63DD',
+        fallback: 'Company 1',
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `*<${reference.recordUrl}|Company 1>*   ·   Company`,
+            },
+            fields: [
+              { type: 'mrkdwn', text: '*Domain*\nacme.com' },
+              { type: 'mrkdwn', text: '*Annual revenue*\n$2,000,000' },
+            ],
+          },
         ],
       },
     ]);
@@ -64,7 +70,7 @@ describe('buildSlackRecordBlocks', () => {
   it('should attach the company logo as an accessory image when resolved', () => {
     const reference = buildReference(1);
 
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references: [reference],
       detailsByRecordId: new Map([
         [
@@ -74,7 +80,7 @@ describe('buildSlackRecordBlocks', () => {
       ]),
     });
 
-    expect(blocks[0]).toMatchObject({
+    expect(attachments[0].blocks?.[0]).toMatchObject({
       accessory: {
         type: 'image',
         image_url: 'https://favicon.example/acme.png',
@@ -83,11 +89,11 @@ describe('buildSlackRecordBlocks', () => {
     });
   });
 
-  it('should skip records that resolved no fields instead of rendering an empty frame', () => {
+  it('should skip records that resolved no fields instead of rendering an empty bar', () => {
     const withFields = buildReference(1);
     const withoutFields = buildReference(2);
 
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references: [withFields, withoutFields],
       detailsByRecordId: new Map([
         [withFields.recordId, buildDetails()],
@@ -95,51 +101,49 @@ describe('buildSlackRecordBlocks', () => {
       ]),
     });
 
-    expect(blocks).toHaveLength(1);
-    expect(blocks[0].type).toBe('section');
+    expect(attachments).toHaveLength(1);
+    expect(attachments[0].fallback).toBe('Company 1');
   });
 
   it('should render nothing when no record resolved fields', () => {
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references: [buildReference(1)],
       detailsByRecordId: new Map(),
     });
 
-    expect(blocks).toEqual([]);
+    expect(attachments).toEqual([]);
   });
 
-  it('should separate multiple records with dividers', () => {
+  it('should render one attachment per record', () => {
     const references = [buildReference(1), buildReference(2), buildReference(3)];
 
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references,
       detailsByRecordId: new Map(
         references.map((reference) => [reference.recordId, buildDetails()]),
       ),
     });
 
-    expect(blocks.map((block) => block.type)).toEqual([
-      'section',
-      'divider',
-      'section',
-      'divider',
-      'section',
+    expect(attachments.map((attachment) => attachment.fallback)).toEqual([
+      'Company 1',
+      'Company 2',
+      'Company 3',
     ]);
   });
 
-  it('should render no blocks when more records are referenced than the cap', () => {
+  it('should render no attachments when more records are referenced than the cap', () => {
     const references = Array.from({ length: 8 }, (_, index) =>
       buildReference(index),
     );
 
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references,
       detailsByRecordId: new Map(
         references.map((reference) => [reference.recordId, buildDetails()]),
       ),
     });
 
-    expect(blocks).toEqual([]);
+    expect(attachments).toEqual([]);
   });
 
   it('should escape mrkdwn control characters in names and field values', () => {
@@ -148,7 +152,7 @@ describe('buildSlackRecordBlocks', () => {
       recordName: 'Acme <Group> & Co',
     };
 
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references: [reference],
       detailsByRecordId: new Map([
         [
@@ -160,7 +164,7 @@ describe('buildSlackRecordBlocks', () => {
       ]),
     });
 
-    expect(blocks[0]).toMatchObject({
+    expect(attachments[0].blocks?.[0]).toMatchObject({
       text: {
         text: `*<${reference.recordUrl}|Acme &lt;Group&gt; &amp; Co>*   ·   Company`,
       },
@@ -174,16 +178,16 @@ describe('buildSlackRecordBlocks', () => {
       recordName: `${'x'.repeat(146)} & Co`,
     };
 
-    const blocks = buildSlackRecordBlocks({
+    const attachments = buildSlackRecordAttachments({
       references: [reference],
       detailsByRecordId: new Map([[reference.recordId, buildDetails()]]),
     });
 
-    const text = (blocks[0] as { text: { text: string } }).text.text;
-    const linkedName = text.slice(
-      text.indexOf('|') + 1,
-      text.indexOf('>*'),
-    );
+    const section = attachments[0].blocks?.[0] as {
+      text: { text: string };
+    };
+    const text = section.text.text;
+    const linkedName = text.slice(text.indexOf('|') + 1, text.indexOf('>*'));
 
     expect(linkedName.length).toBeLessThanOrEqual(150);
     expect(linkedName).not.toMatch(/&(?!amp;|lt;|gt;)/);

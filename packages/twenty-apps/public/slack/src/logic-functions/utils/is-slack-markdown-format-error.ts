@@ -5,6 +5,7 @@ import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-er
 const SLACK_MARKDOWN_FORMAT_ERROR_CODES = new Set([
   'invalid_arguments',
   'invalid_blocks',
+  'invalid_attachments',
 ]);
 
 export const isSlackMarkdownFormatError = (error: unknown): boolean => {

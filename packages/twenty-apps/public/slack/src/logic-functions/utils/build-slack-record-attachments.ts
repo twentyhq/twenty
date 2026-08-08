@@ -1,4 +1,4 @@
-import { type KnownBlock, type SectionBlock } from '@slack/web-api';
+import { type MessageAttachment, type SectionBlock } from '@slack/web-api';
 import { isNonEmptyArray } from '@sniptt/guards';
 
 import {
@@ -7,7 +7,10 @@ import {
 } from 'src/logic-functions/types/slack-record-details.type';
 import { type SlackRecordReference } from 'src/logic-functions/types/slack-record-reference.type';
 
-const RECORD_BLOCK_MAX_COUNT = 5;
+// Twenty's accent (Radix indigo9), rendered as the attachment's left bar
+const RECORD_ACCENT_COLOR = '#3E63DD';
+
+const RECORD_ATTACHMENT_MAX_COUNT = 5;
 const RECORD_NAME_MAX_LENGTH = 150;
 
 const ELLIPSIS = '…';
@@ -41,8 +44,9 @@ const escapeAndTruncate = (rawText: string, maxLength: number): string => {
 const buildFieldText = (field: SlackRecordField): string =>
   `*${escapeSlackMrkdwn(field.label)}*\n${escapeSlackMrkdwn(field.value)}`;
 
-// the Salesforce-unfurl look: bold linked name, object type, a muted
-// label-over-value field grid, and the company logo when there is one
+// the classic Slack record look: an accent-bar attachment holding a bold
+// linked name, the object type, a label-over-value field grid, and the
+// company logo when there is one
 const buildRecordSection = (
   reference: SlackRecordReference,
   details: SlackRecordDetails,
@@ -75,35 +79,37 @@ const buildRecordSection = (
   };
 };
 
-export const buildSlackRecordBlocks = ({
+export const buildSlackRecordAttachments = ({
   references,
   detailsByRecordId,
 }: {
   references: SlackRecordReference[];
   detailsByRecordId: Map<string, SlackRecordDetails>;
-}): KnownBlock[] => {
+}): MessageAttachment[] => {
   // above the cap the records are passing mentions, not the answer's
   // subject; a truncated sample would only add noise
   if (
     !isNonEmptyArray(references) ||
-    references.length > RECORD_BLOCK_MAX_COUNT
+    references.length > RECORD_ATTACHMENT_MAX_COUNT
   ) {
     return [];
   }
 
   // a record with no readable fields would only repeat the prose link,
   // so it renders nothing
-  const sections = references.flatMap((reference) => {
+  return references.flatMap((reference) => {
     const details = detailsByRecordId.get(reference.recordId);
 
     if (details === undefined || !isNonEmptyArray(details.fields)) {
       return [];
     }
 
-    return [buildRecordSection(reference, details)];
+    return [
+      {
+        color: RECORD_ACCENT_COLOR,
+        fallback: reference.recordName,
+        blocks: [buildRecordSection(reference, details)],
+      },
+    ];
   });
-
-  return sections.flatMap((section, index) =>
-    index === 0 ? [section] : [{ type: 'divider' }, section],
-  );
 };

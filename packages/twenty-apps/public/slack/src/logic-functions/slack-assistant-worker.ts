@@ -20,7 +20,7 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
-import { buildSlackRecordBlocks } from 'src/logic-functions/utils/build-slack-record-blocks';
+import { buildSlackRecordAttachments } from 'src/logic-functions/utils/build-slack-record-attachments';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackRecordDetails } from 'src/logic-functions/utils/fetch-slack-record-details';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
@@ -129,7 +129,7 @@ export const slackAssistantWorkerHandler = async (
       ? parseSlackRecordReferences({ responseText, workspaceBaseUrl })
       : [];
 
-    const recordBlocks = buildSlackRecordBlocks({
+    const recordAttachments = buildSlackRecordAttachments({
       references: recordReferences,
       detailsByRecordId: await fetchSlackRecordDetails(
         client,
@@ -151,9 +151,9 @@ export const slackAssistantWorkerHandler = async (
         ? buildSlackAssistantAnswerBlocks({
             responseText,
             durationMilliseconds,
-            recordBlocks,
           })
         : undefined,
+      messageAttachments: isWithinBlockLimit ? recordAttachments : undefined,
     });
 
     if (!deliveryResult.success) {
