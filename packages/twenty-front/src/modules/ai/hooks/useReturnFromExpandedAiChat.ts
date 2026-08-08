@@ -1,46 +1,45 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 type UseReturnFromExpandedAiChatParams = {
   reopenSidePanel: boolean;
 };
 
+// Leaving the chat page continues the conversation in the side panel
+// through SidePanelAskAiHandoffEffect; collapsing only needs to navigate,
+// while closing clears the continuation marker so the handoff stays silent.
 export const useReturnFromExpandedAiChat = ({
   reopenSidePanel,
 }: UseReturnFromExpandedAiChatParams) => {
   const store = useStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
+  const returnLocation = getExpandedAiChatReturnLocation(location.state);
+
   return useCallback(() => {
-    if (reopenSidePanel) {
-      openAskAiPage({ resetNavigationStack: true, force: true });
-    } else {
+    if (!reopenSidePanel) {
       store.set(shouldContinueAiChatInSidePanelState.atom, false);
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       void closeSidePanelMenu();
     }
 
-    const returnLocation = store.get(aiChatExpandedReturnLocationState.atom);
     navigate(returnLocation ?? defaultHomePagePath);
-
-    store.set(aiChatExpandedReturnLocationState.atom, null);
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
   }, [
     reopenSidePanel,
-    openAskAiPage,
     closeSidePanelMenu,
     store,
     navigate,
+    returnLocation,
     defaultHomePagePath,
   ]);
 };
