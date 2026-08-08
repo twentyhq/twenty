@@ -1,10 +1,14 @@
 import { styled } from '@linaria/react';
+import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
 
@@ -31,6 +35,15 @@ const StyledCenteredChatContainer = styled.div`
 `;
 
 export const AiChatPage = () => {
+  const { defaultHomePagePath } = useDefaultHomePagePath();
+  const isAiChatPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_PAGE_ENABLED,
+  );
+
+  if (!isAiChatPageEnabled) {
+    return <Navigate to={defaultHomePagePath} replace />;
+  }
+
   return (
     <StyledPanel>
       <AiChatPageThreadUrlSyncEffect />

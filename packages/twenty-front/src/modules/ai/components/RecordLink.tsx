@@ -1,7 +1,7 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
+import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AvatarOrIcon } from 'twenty-ui/data-display';
@@ -26,14 +26,14 @@ export const RecordLink = ({
     },
   );
 
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { openRecordTarget } = useChatTargetNavigation();
 
   if (!objectMetadataItem || !isNonEmptyString(recordId)) {
     return <span>{displayName}</span>;
   }
 
-  const handleOpenInSidePanel = () => {
-    openRecordInSidePanel({
+  const handleOpenRecordTarget = () => {
+    openRecordTarget({
       recordId,
       objectNameSingular,
     });
@@ -43,9 +43,9 @@ export const RecordLink = ({
     <ChatReferenceChipDisplay
       displayName={displayName}
       to={getLinkToShowPage(objectNameSingular, { id: recordId })}
-      // On the chat page the conversation keeps the main pane: records the
-      // chat references open in the side panel, like the agent's navigation.
-      onClick={isCurrentPathAiChatPage() ? handleOpenInSidePanel : undefined}
+      // Plain link outside the chat page so the chip keeps native link
+      // behavior; on the chat page the placement decides where it lands.
+      onClick={isCurrentPathAiChatPage() ? handleOpenRecordTarget : undefined}
       leftComponent={
         <AvatarOrIcon
           placeholder={displayName}

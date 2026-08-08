@@ -12,6 +12,8 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const SidePanelExpandAiChatButton = () => {
@@ -25,10 +27,13 @@ export const SidePanelExpandAiChatButton = () => {
   const setAiChatExpandedReturnLocation = useSetAtomState(
     aiChatExpandedReturnLocationState,
   );
+  const isAiChatPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_PAGE_ENABLED,
+  );
 
   const isOnAskAiPage = sidePanelPage === SidePanelPages.AskAI;
 
-  if (isMobile || !isOnAskAiPage) {
+  if (!isAiChatPageEnabled || isMobile || !isOnAskAiPage) {
     return null;
   }
 
