@@ -6,11 +6,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
+import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type InboxItem } from '~/generated/graphql';
 
@@ -66,15 +68,22 @@ const InboxItemRecordSubject = ({
       <CommandMenuComponentInstanceContext.Provider
         value={{ instanceId: `inbox-item-record-${recordId}` }}
       >
-        <StyledSubject>
-          <PageLayoutRecordPageRenderer
-            targetRecordIdentifier={{
-              id: recordId,
-              targetObjectNameSingular: objectNameSingular,
-            }}
-            isInSidePanel={false}
-          />
-        </StyledSubject>
+        <TimelineActivityContext.Provider value={{ recordId }}>
+          <StyledSubject>
+            <PageLayoutRecordPageRenderer
+              targetRecordIdentifier={{
+                id: recordId,
+                targetObjectNameSingular: objectNameSingular,
+              }}
+              isInSidePanel={false}
+            />
+            <RecordShowPageSSESubscribeEffect
+              objectNameSingular={objectNameSingular}
+              recordId={recordId}
+              queryScope="record-show"
+            />
+          </StyledSubject>
+        </TimelineActivityContext.Provider>
       </CommandMenuComponentInstanceContext.Provider>
     </ContextStoreComponentInstanceContext.Provider>
   </RecordComponentInstanceContextsWrapper>

@@ -21,16 +21,23 @@ export const useInboxItemPagination = ({
   const navigate = useNavigateApp();
   const inboxItemOrder = useAtomStateValue(inboxItemOrderState);
 
+  // A snapshot taken in another section says nothing about where this item
+  // sits, so it is ignored rather than paged through
+  const inboxItemIds =
+    inboxItemOrder?.inboxSectionSlug === inboxSection.slug
+      ? inboxItemOrder.inboxItemIds
+      : [];
+
   const currentIndex = isDefined(inboxItemId)
-    ? inboxItemOrder.indexOf(inboxItemId)
+    ? inboxItemIds.indexOf(inboxItemId)
     : -1;
   const isInOrder = currentIndex !== -1;
 
   const previousInboxItemId = isInOrder
-    ? inboxItemOrder[currentIndex - 1]
+    ? inboxItemIds[currentIndex - 1]
     : undefined;
   const nextInboxItemId = isInOrder
-    ? inboxItemOrder[currentIndex + 1]
+    ? inboxItemIds[currentIndex + 1]
     : undefined;
 
   const navigateToInboxItem = useCallback(
@@ -53,7 +60,7 @@ export const useInboxItemPagination = ({
     hasPrevious: isDefined(previousInboxItemId),
     hasNext: isDefined(nextInboxItemId),
     position: isInOrder ? currentIndex + 1 : undefined,
-    total: isInOrder ? inboxItemOrder.length : undefined,
+    total: isInOrder ? inboxItemIds.length : undefined,
     goToPrevious: () => navigateToInboxItem(previousInboxItemId),
     goToNext: () => navigateToInboxItem(nextInboxItemId),
   };

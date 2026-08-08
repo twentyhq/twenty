@@ -12,7 +12,7 @@ export const useInboxItem = (inboxItemId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
 
-  const { data, loading } = useQuery<
+  const { data, loading, error } = useQuery<
     { myInboxItem: InboxItem | null },
     { inboxItemId: string }
   >(GET_MY_INBOX_ITEM, {
@@ -24,5 +24,6 @@ export const useInboxItem = (inboxItemId?: string) => {
   return {
     inboxItem: data?.myInboxItem ?? null,
     loading: loading && !isDefined(data),
+    error,
   };
 };

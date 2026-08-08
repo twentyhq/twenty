@@ -12,6 +12,7 @@ import { useOpenInboxItemFullPage } from '@/inbox/hooks/useOpenInboxItemFullPage
 import { useOpenInboxItemInSidePanel } from '@/inbox/hooks/useOpenInboxItemInSidePanel';
 import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
 import { findInboxSectionBySlug } from '@/inbox/utils/findInboxSectionBySlug';
+import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrder';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -86,7 +87,16 @@ export const InboxPage = () => {
             hasMoreItems={hasMoreItems}
             shouldSplitByPriority={inboxSection.scope === InboxItemScope.INBOX}
             onInboxItemClick={(inboxItem) =>
-              openInboxItemFullPage(inboxItem, inboxItems)
+              openInboxItemFullPage(
+                inboxItem,
+                getRenderedInboxItemOrder({
+                  inboxItems,
+                  needsActionItems,
+                  otherItems,
+                  shouldSplitByPriority:
+                    inboxSection.scope === InboxItemScope.INBOX,
+                }),
+              )
             }
             onInboxItemOpenInSidePanel={openInboxItemInSidePanel}
             onLoadMoreItems={loadMoreItems}

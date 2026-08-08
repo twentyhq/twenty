@@ -98,7 +98,7 @@ export const InboxItemPage = () => {
 
   const isInboxEnabled = useIsInboxEnabled();
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
-  const { inboxItem, loading } = useInboxItem(inboxItemId);
+  const { inboxItem, loading, error } = useInboxItem(inboxItemId);
   const { markInboxItemRead } = useInboxItemActions();
   const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
   const { getIcon } = useIcons();
@@ -129,7 +129,11 @@ export const InboxItemPage = () => {
         }
       >
         <StyledMissing>
-          {loading ? t`Loading` : t`This item is no longer in your inbox`}
+          {loading
+            ? t`Loading`
+            : isDefined(error)
+              ? t`This item could not be loaded`
+              : t`This item is no longer in your inbox`}
         </StyledMissing>
       </PageCardLayout>
     );

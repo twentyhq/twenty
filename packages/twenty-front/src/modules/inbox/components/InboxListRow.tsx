@@ -16,20 +16,25 @@ const StyledRowContainer = styled.div`
   cursor: pointer;
   padding-bottom: 2px;
 
-  &:hover .inbox-list-row-buttons {
-    display: flex;
-  }
-
-  &:hover .inbox-list-row-updated-at {
-    display: none;
-  }
-
-  &:hover > div {
+  &:hover > div,
+  &:focus-within > div {
     background: ${themeCssVariables.background.transparent.lighter};
   }
 
   &:active > div {
     background: ${themeCssVariables.accent.quaternary};
+  }
+
+  // Keyboard users reach the row's controls by tabbing, so focus has to reveal
+  // them the way hovering does
+  &:hover .inbox-list-row-buttons,
+  &:focus-within .inbox-list-row-buttons {
+    display: flex;
+  }
+
+  &:hover .inbox-list-row-updated-at,
+  &:focus-within .inbox-list-row-updated-at {
+    display: none;
   }
 `;
 
@@ -45,20 +50,13 @@ const StyledRow = styled.div<{ isSelected: boolean }>`
   padding: 0 6px;
 `;
 
-const StyledSubjectContainer = styled.div`
+// The controls are siblings of this rather than descendants, so a nested
+// button never loses its semantics inside another button.
+const StyledOpenTarget = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
   gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledTitleContainer = styled.div`
-  align-items: baseline;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  max-width: ${INBOX_LIST_ROW_SUBJECT_WIDTH}px;
   min-width: 0;
   overflow: hidden;
 `;
@@ -84,6 +82,15 @@ const StyledTypeIcon = styled.div<{ needsAction: boolean }>`
       : themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
+`;
+
+const StyledTitleContainer = styled.div`
+  align-items: baseline;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  max-width: ${INBOX_LIST_ROW_SUBJECT_WIDTH}px;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const StyledTitle = styled.div<{ isUnread: boolean }>`
@@ -136,24 +143,24 @@ export const InboxListRow = ({
   const needsAction = inboxItem.priority === InboxItemPriority.NEEDS_ACTION;
 
   return (
-    <StyledRowContainer
-      role="button"
-      tabIndex={0}
-      aria-label={t`Open ${inboxItem.title}`}
-      onClick={onClick}
-      onKeyDown={(event) => {
-        if (event.target !== event.currentTarget) {
-          return;
-        }
-
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onClick();
-        }
-      }}
-    >
+    <StyledRowContainer>
       <StyledRow isSelected={isSelected}>
-        <StyledSubjectContainer>
+        <StyledOpenTarget
+          role="button"
+          tabIndex={0}
+          aria-label={t`Open ${inboxItem.title}`}
+          onClick={onClick}
+          onKeyDown={(event) => {
+            if (event.target !== event.currentTarget) {
+              return;
+            }
+
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              onClick();
+            }
+          }}
+        >
           {isUnread ? <StyledUnreadDot /> : <StyledReadPlaceholder />}
           <StyledTypeIcon needsAction={needsAction}>
             <InboxItemIcon size={theme.icon.size.md} color="currentColor" />
@@ -164,7 +171,7 @@ export const InboxListRow = ({
           {isNonEmptyString(inboxItem.preview) && (
             <StyledPreview>{inboxItem.preview}</StyledPreview>
           )}
-        </StyledSubjectContainer>
+        </StyledOpenTarget>
         <StyledUpdatedAt className="inbox-list-row-updated-at">
           {beautifyPastDateRelativeToNowShort(inboxItem.updatedAt)}
         </StyledUpdatedAt>

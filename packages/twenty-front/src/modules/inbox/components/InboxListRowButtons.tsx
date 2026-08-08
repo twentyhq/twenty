@@ -6,17 +6,11 @@ import { Button, LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type InboxItem, InboxItemStatus } from '~/generated/graphql';
 
 const StyledButtons = styled.div`
   align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-// The row is itself a button, so anything nested has to stop the click from
-// also opening the item.
-const StyledStopPropagation = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
@@ -35,6 +29,7 @@ export const InboxListRowButtons = ({
 }: InboxListRowButtonsProps) => {
   const { t } = useLingui();
   const { executeInboxItemAction } = useInboxItemActions();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const inlineActions =
     inboxItem.status === InboxItemStatus.OPEN
@@ -46,34 +41,30 @@ export const InboxListRowButtons = ({
 
   return (
     <StyledButtons>
-      <StyledStopPropagation
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
-      >
-        {inlineActions.map((action) => (
-          <Button
-            key={action.key}
-            onClick={() =>
-              void executeInboxItemAction({
-                inboxItemId: inboxItem.id,
-                actionKey: action.key,
-                expectedVersion: inboxItem.version,
-              })
-            }
-            size="small"
-            title={action.label}
-            variant="secondary"
-          />
-        ))}
-        <LightIconButton
-          Icon={IconLayoutSidebarRightExpand}
-          accent="secondary"
-          aria-label={t`Open ${inboxItem.title} in side panel`}
-          onClick={onOpenInSidePanel}
+      {inlineActions.map((action) => (
+        <Button
+          key={action.key}
+          onClick={() =>
+            void executeInboxItemAction({
+              inboxItemId: inboxItem.id,
+              actionKey: action.key,
+              expectedVersion: inboxItem.version,
+            }).catch(() =>
+              enqueueErrorSnackBar({ message: t`That could not be applied` }),
+            )
+          }
           size="small"
+          title={action.label}
+          variant="secondary"
         />
-      </StyledStopPropagation>
+      ))}
+      <LightIconButton
+        Icon={IconLayoutSidebarRightExpand}
+        accent="secondary"
+        aria-label={t`Open ${inboxItem.title} in side panel`}
+        onClick={onOpenInSidePanel}
+        size="small"
+      />
     </StyledButtons>
   );
 };

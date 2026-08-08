@@ -9,7 +9,10 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigate,
 }));
 
-let mockInboxItemOrder: string[] = [];
+let mockInboxItemOrder: {
+  inboxSectionSlug: string;
+  inboxItemIds: string[];
+} | null = null;
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => mockInboxItemOrder,
@@ -26,7 +29,10 @@ const renderPagination = (inboxItemId?: string) =>
 describe('useInboxItemPagination', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInboxItemOrder = ['first', 'second', 'third'];
+    mockInboxItemOrder = {
+      inboxSectionSlug: DEFAULT_INBOX_SECTION.slug,
+      inboxItemIds: ['first', 'second', 'third'],
+    };
   });
 
   it('should report its position within the snapshotted order', () => {
@@ -88,6 +94,33 @@ describe('useInboxItemPagination', () => {
       inboxSectionSlug: DEFAULT_INBOX_SECTION.slug,
       inboxItemId: 'third',
     });
+  });
+
+  it('should ignore a snapshot captured in another section', () => {
+    // Arrange
+    mockInboxItemOrder = {
+      inboxSectionSlug: 'done',
+      inboxItemIds: ['first', 'second', 'third'],
+    };
+
+    // Act
+    const { result } = renderPagination('second');
+
+    // Assert
+    expect(result.current.hasPrevious).toBe(false);
+    expect(result.current.hasNext).toBe(false);
+    expect(result.current.position).toBeUndefined();
+  });
+
+  it('should offer no navigation with no snapshot at all', () => {
+    // Arrange
+    mockInboxItemOrder = null;
+
+    // Act
+    const { result } = renderPagination('second');
+
+    // Assert
+    expect(result.current.hasNext).toBe(false);
   });
 
   it('should not navigate past the end of the order', () => {

@@ -7,6 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemActionInputModal } from '@/inbox/components/InboxItemActionInputModal';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type InboxItem,
   type InboxItemAction,
@@ -24,6 +25,7 @@ const StyledActions = styled.div`
 export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
   const { t } = useLingui();
   const { executeInboxItemAction, reopenInboxItem } = useInboxItemActions();
+  const { enqueueErrorSnackBar } = useSnackBar();
   // Keyed by item, so switching selection while a form is open cannot submit
   // the old action against the new item
   const [pendingAction, setPendingAction] = useState<{
@@ -39,23 +41,27 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
     isDefined(action.transitionKind),
   );
 
-  if (
-    isDefined(pendingAction) &&
-    pendingAction.inboxItemId === inboxItem.id
-  ) {
+  if (isDefined(pendingAction) && pendingAction.inboxItemId === inboxItem.id) {
     return (
       <InboxItemActionInputModal
         action={pendingAction.action}
         onCancel={() => setPendingAction(null)}
         onSubmit={async (input) => {
-          // The form stays until the mutation lands, so a conflict does not
-          // silently swallow what was typed
-          await executeInboxItemAction({
-            inboxItemId: inboxItem.id,
-            actionKey: pendingAction.action.key,
-            input,
-            expectedVersion: inboxItem.version,
-          });
+          // The form stays open when the mutation fails, so a conflict does
+          // not silently swallow what was typed
+          try {
+            await executeInboxItemAction({
+              inboxItemId: inboxItem.id,
+              actionKey: pendingAction.action.key,
+              input,
+              expectedVersion: inboxItem.version,
+            });
+          } catch {
+            enqueueErrorSnackBar({ message: t`That could not be applied` });
+
+            return;
+          }
+
           setPendingAction(null);
         }}
       />
@@ -66,12 +72,14 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
     <StyledActions>
       {isResolved ? (
         <Button
-          onClick={() =>
+          onClick={() => {
             void reopenInboxItem({
               inboxItemId: inboxItem.id,
               expectedVersion: inboxItem.version,
-            })
-          }
+            }).catch(() =>
+              enqueueErrorSnackBar({ message: t`That could not be applied` }),
+            );
+          }}
           size="small"
           title={t`Move to inbox`}
           variant="secondary"
@@ -92,7 +100,9 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
                 inboxItemId: inboxItem.id,
                 actionKey: action.key,
                 expectedVersion: inboxItem.version,
-              });
+              }).catch(() =>
+                enqueueErrorSnackBar({ message: t`That could not be applied` }),
+              );
             }}
             size="small"
             title={action.label}

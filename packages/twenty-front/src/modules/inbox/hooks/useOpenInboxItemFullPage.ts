@@ -17,7 +17,10 @@ export const useOpenInboxItemFullPage = (inboxSection: InboxSection) => {
 
   const openInboxItemFullPage = useCallback(
     (inboxItem: InboxItem, orderedInboxItems: InboxItem[]) => {
-      setInboxItemOrder(orderedInboxItems.map((item) => item.id));
+      setInboxItemOrder({
+        inboxSectionSlug: inboxSection.slug,
+        inboxItemIds: orderedInboxItems.map((item) => item.id),
+      });
 
       navigate(AppPath.InboxItemPage, {
         inboxSectionSlug: inboxSection.slug,
