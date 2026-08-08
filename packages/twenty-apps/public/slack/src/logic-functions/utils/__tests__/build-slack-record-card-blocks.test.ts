@@ -97,6 +97,26 @@ describe('buildSlackRecordCardBlocks', () => {
     ).toHaveLength(5);
   });
 
+  it('should truncate long names without splitting an escaped entity', () => {
+    const reference = {
+      ...buildReference(1),
+      recordName: `${'x'.repeat(146)} & Co`,
+    };
+
+    const blocks = buildSlackRecordCardBlocks({
+      references: [reference],
+      fieldLinesByRecordId: new Map(),
+    });
+
+    const title = (
+      blocks[0] as { title: { text: string } }
+    ).title.text;
+
+    expect(title.length).toBeLessThanOrEqual(150);
+    expect(title).not.toMatch(/&(?!amp;|lt;|gt;)/);
+    expect(title.endsWith('…')).toBe(true);
+  });
+
   it('should escape mrkdwn control characters in record names', () => {
     const reference = {
       ...buildReference(1),

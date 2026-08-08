@@ -60,6 +60,22 @@ describe('parseSlackRecordReferences', () => {
     expect(references).toEqual([]);
   });
 
+  it('should match custom object names containing digits', () => {
+    const references = parseSlackRecordReferences({
+      responseText: `See [Rocket v2](${BASE_URL}/object/rocket2/${COMPANY_ID}).`,
+      workspaceBaseUrl: BASE_URL,
+    });
+
+    expect(references).toEqual([
+      {
+        objectNameSingular: 'rocket2',
+        recordId: COMPANY_ID,
+        recordName: 'Rocket v2',
+        recordUrl: `${BASE_URL}/object/rocket2/${COMPANY_ID}`,
+      },
+    ]);
+  });
+
   it('should return nothing when the workspace URL is unknown', () => {
     const references = parseSlackRecordReferences({
       responseText: `[Acme](${BASE_URL}/object/company/${COMPANY_ID})`,

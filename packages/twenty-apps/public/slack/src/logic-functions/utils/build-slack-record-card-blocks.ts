@@ -8,11 +8,33 @@ const CARD_TITLE_MAX_LENGTH = 150;
 const CARD_BODY_MAX_LENGTH = 200;
 const RECORD_CARD_MAX_COUNT = 5;
 
+const ELLIPSIS = '…';
+
 const escapeSlackMrkdwn = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-const truncate = (text: string, maxLength: number): string =>
-  text.length <= maxLength ? text : `${text.slice(0, maxLength - 1)}…`;
+// truncates the raw text so the escaped result fits the limit without
+// splitting an &amp;-style entity or a surrogate pair
+const escapeAndTruncate = (rawText: string, maxLength: number): string => {
+  const escaped = escapeSlackMrkdwn(rawText);
+
+  if (escaped.length <= maxLength) {
+    return escaped;
+  }
+
+  const codePoints = [...rawText];
+
+  for (let end = codePoints.length - 1; end > 0; end--) {
+    const candidate =
+      escapeSlackMrkdwn(codePoints.slice(0, end).join('')) + ELLIPSIS;
+
+    if (candidate.length <= maxLength) {
+      return candidate;
+    }
+  }
+
+  return ELLIPSIS;
+};
 
 const buildRecordCard = (
   reference: SlackRecordReference,
@@ -26,17 +48,14 @@ const buildRecordCard = (
     type: 'card',
     title: {
       type: 'mrkdwn',
-      text: truncate(escapeSlackMrkdwn(reference.recordName), CARD_TITLE_MAX_LENGTH),
+      text: escapeAndTruncate(reference.recordName, CARD_TITLE_MAX_LENGTH),
     },
     subtitle: { type: 'mrkdwn', text: escapeSlackMrkdwn(objectLabel) },
     ...(isNonEmptyArray(fieldLines)
       ? {
           body: {
             type: 'mrkdwn',
-            text: truncate(
-              fieldLines.map(escapeSlackMrkdwn).join('\n'),
-              CARD_BODY_MAX_LENGTH,
-            ),
+            text: escapeAndTruncate(fieldLines.join('\n'), CARD_BODY_MAX_LENGTH),
           },
         }
       : {}),
@@ -59,7 +78,10 @@ export const buildSlackRecordCardBlocks = ({
 }): KnownBlock[] => {
   // above the cap the records are passing mentions, not the answer's
   // subject; a truncated sample of cards would only add noise
-  if (references.length === 0 || references.length > RECORD_CARD_MAX_COUNT) {
+  if (
+    !isNonEmptyArray(references) ||
+    references.length > RECORD_CARD_MAX_COUNT
+  ) {
     return [];
   }
 

@@ -96,7 +96,7 @@ describe('fetchSlackRecordCardFieldLines', () => {
             node: {
               id: COMPANY_ID,
               domainName: { primaryLinkUrl: '' },
-              employees: null,
+              annualRevenue: null,
             },
           },
         ],
@@ -109,6 +109,58 @@ describe('fetchSlackRecordCardFieldLines', () => {
     );
 
     expect(fieldLines.get(COMPANY_ID)).toEqual([]);
+  });
+
+  it('should not render a zero amount when amountMicros is null', async () => {
+    const queryMock = vi.fn().mockResolvedValue({
+      opportunities: {
+        edges: [
+          {
+            node: {
+              id: OPPORTUNITY_ID,
+              stage: 'PROPOSAL',
+              amount: { amountMicros: null, currencyCode: 'USD' },
+              closeDate: null,
+            },
+          },
+        ],
+      },
+    });
+
+    const fieldLines = await fetchSlackRecordCardFieldLines(
+      buildClient(queryMock),
+      [buildReference('opportunity', OPPORTUNITY_ID)],
+    );
+
+    expect(fieldLines.get(OPPORTUNITY_ID)).toEqual(['Stage: Proposal']);
+  });
+
+  it('should resolve company and relation fields for a person', async () => {
+    const queryMock = vi.fn().mockResolvedValue({
+      people: {
+        edges: [
+          {
+            node: {
+              id: COMPANY_ID,
+              jobTitle: 'CTO',
+              emails: { primaryEmail: 'jane@acme.com' },
+              company: { name: 'Acme Corp' },
+            },
+          },
+        ],
+      },
+    });
+
+    const fieldLines = await fetchSlackRecordCardFieldLines(
+      buildClient(queryMock),
+      [buildReference('person', COMPANY_ID)],
+    );
+
+    expect(fieldLines.get(COMPANY_ID)).toEqual([
+      'Role: CTO',
+      'Email: jane@acme.com',
+      'Company: Acme Corp',
+    ]);
   });
 
   it('should return no field lines when the query fails', async () => {

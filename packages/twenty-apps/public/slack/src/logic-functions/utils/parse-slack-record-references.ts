@@ -19,7 +19,7 @@ export const parseSlackRecordReferences = ({
   }
 
   const recordLinkPattern = new RegExp(
-    `\\[([^\\]\\n]+)\\]\\((${escapeForRegExp(workspaceBaseUrl)}/object/([a-zA-Z]+)/(${UUID_PATTERN}))\\)`,
+    `\\[([^\\]\\n]+)\\]\\((${escapeForRegExp(workspaceBaseUrl)}/object/([a-zA-Z][a-zA-Z0-9]*)/(${UUID_PATTERN}))\\)`,
     'gi',
   );
 

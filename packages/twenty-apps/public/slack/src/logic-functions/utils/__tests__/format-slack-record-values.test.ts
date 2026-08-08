@@ -13,6 +13,12 @@ describe('formatSlackRecordSelectValue', () => {
   it('should leave values that are not option api names untouched', () => {
     expect(formatSlackRecordSelectValue('Won deal')).toBe('Won deal');
   });
+
+  it('should keep acronym-like segments with digits uppercase', () => {
+    expect(formatSlackRecordSelectValue('B2B')).toBe('B2B');
+    expect(formatSlackRecordSelectValue('B2B_SALES')).toBe('B2B sales');
+    expect(formatSlackRecordSelectValue('NEW_B2B_LEAD')).toBe('New B2B lead');
+  });
 });
 
 describe('formatSlackRecordAmount', () => {
@@ -29,6 +35,15 @@ describe('formatSlackRecordAmount', () => {
     expect(
       formatSlackRecordAmount({ amountMicros: 458640000, currencyCode: 'EUR' }),
     ).toBe('€458.64');
+  });
+
+  it('should respect currencies without minor units', () => {
+    expect(
+      formatSlackRecordAmount({
+        amountMicros: 12500000000,
+        currencyCode: 'JPY',
+      }),
+    ).toBe('¥12,500');
   });
 
   it('should fall back to a plain number for an unknown currency code', () => {

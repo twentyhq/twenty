@@ -6,33 +6,44 @@ import { formatSlackRecordAmount } from 'src/logic-functions/utils/format-slack-
 import { formatSlackRecordDate } from 'src/logic-functions/utils/format-slack-record-date';
 import { formatSlackRecordSelectValue } from 'src/logic-functions/utils/format-slack-record-select-value';
 
+type CurrencyValue = {
+  amountMicros?: string | number | null;
+  currencyCode?: string | null;
+};
+
 type RecordNode = {
   id?: string;
   stage?: string | null;
-  amount?: {
-    amountMicros?: string | number | null;
-    currencyCode?: string | null;
-  } | null;
+  amount?: CurrencyValue | null;
   closeDate?: string | null;
   domainName?: { primaryLinkUrl?: string | null } | null;
-  employees?: number | null;
+  annualRevenue?: CurrencyValue | null;
   jobTitle?: string | null;
-  city?: string | null;
   emails?: { primaryEmail?: string | null } | null;
+  company?: { name?: string | null } | null;
   status?: string | null;
   dueAt?: string | null;
 };
 
-const buildAmountLine = (node: RecordNode): string | undefined => {
-  const amountMicros = Number(node.amount?.amountMicros);
+const buildCurrencyLine = (
+  label: string,
+  currencyValue: CurrencyValue | null | undefined,
+): string | undefined => {
+  const rawAmountMicros = currencyValue?.amountMicros;
+
+  if (rawAmountMicros === null || rawAmountMicros === undefined) {
+    return undefined;
+  }
+
+  const amountMicros = Number(rawAmountMicros);
 
   if (!Number.isFinite(amountMicros)) {
     return undefined;
   }
 
-  return `Amount: ${formatSlackRecordAmount({
+  return `${label}: ${formatSlackRecordAmount({
     amountMicros,
-    currencyCode: node.amount?.currencyCode ?? undefined,
+    currencyCode: currencyValue?.currencyCode ?? undefined,
   })}`;
 };
 
@@ -59,11 +70,9 @@ const buildSelectLine = (
 
 const buildTextLine = (
   label: string,
-  value: string | number | null | undefined,
+  value: string | null | undefined,
 ): string | undefined =>
-  value === null || value === undefined || value === ''
-    ? undefined
-    : `${label}: ${value}`;
+  isNonEmptyString(value) ? `${label}: ${value}` : undefined;
 
 // headline fields per standard object; custom objects fall back to a bare card
 const RECORD_CARD_QUERY_CONFIGS: Record<
@@ -83,7 +92,7 @@ const RECORD_CARD_QUERY_CONFIGS: Record<
     },
     buildFieldLines: (node) => [
       buildSelectLine('Stage', node.stage),
-      buildAmountLine(node),
+      buildCurrencyLine('Amount', node.amount),
       buildDateLine('Close date', node.closeDate),
     ],
   },
@@ -91,24 +100,24 @@ const RECORD_CARD_QUERY_CONFIGS: Record<
     queryFieldName: 'companies',
     selection: {
       domainName: { primaryLinkUrl: true },
-      employees: true,
+      annualRevenue: { amountMicros: true, currencyCode: true },
     },
     buildFieldLines: (node) => [
       buildTextLine('Domain', node.domainName?.primaryLinkUrl),
-      buildTextLine('Employees', node.employees),
+      buildCurrencyLine('Annual revenue', node.annualRevenue),
     ],
   },
   person: {
     queryFieldName: 'people',
     selection: {
       jobTitle: true,
-      city: true,
       emails: { primaryEmail: true },
+      company: { name: true },
     },
     buildFieldLines: (node) => [
       buildTextLine('Role', node.jobTitle),
       buildTextLine('Email', node.emails?.primaryEmail),
-      buildTextLine('City', node.city),
+      buildTextLine('Company', node.company?.name),
     ],
   },
   task: {

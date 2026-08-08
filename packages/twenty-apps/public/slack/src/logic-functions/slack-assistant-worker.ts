@@ -120,10 +120,14 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    const recordReferences = parseSlackRecordReferences({
-      responseText,
-      workspaceBaseUrl,
-    });
+    // over the markdown block limit the answer posts without blocks, so
+    // skip the record-card queries entirely
+    const isWithinBlockLimit =
+      responseText.length <= SLACK_MARKDOWN_BLOCK_MAX_LENGTH;
+
+    const recordReferences = isWithinBlockLimit
+      ? parseSlackRecordReferences({ responseText, workspaceBaseUrl })
+      : [];
 
     const recordCardBlocks = buildSlackRecordCardBlocks({
       references: recordReferences,
@@ -143,14 +147,13 @@ export const slackAssistantWorkerHandler = async (
       }),
       parentMessageTimestamp,
       messageFormat: 'markdown',
-      messageBlocks:
-        responseText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH
-          ? undefined
-          : buildSlackAssistantAnswerBlocks({
-              responseText,
-              durationMilliseconds,
-              recordCardBlocks,
-            }),
+      messageBlocks: isWithinBlockLimit
+        ? buildSlackAssistantAnswerBlocks({
+            responseText,
+            durationMilliseconds,
+            recordCardBlocks,
+          })
+        : undefined,
     });
 
     if (!deliveryResult.success) {
