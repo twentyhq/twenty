@@ -32,7 +32,7 @@ describe('transformPhonesValue', () => {
       },
     });
 
-    expect(result?.additionalPhones).toBe(JSON.stringify([{ number: null }]));
+    expect(result?.additionalPhones).toBe(null);
   });
 
   it('should parse a valid international phone number into its canonical parts', () => {
@@ -62,6 +62,54 @@ describe('transformPhonesValue', () => {
       primaryPhoneCallingCode: '+1',
       primaryPhoneCountryCode: 'US',
     });
+  });
+
+  it('should drop additionalPhones entries that are missing a number entirely, unlike an explicit empty string', () => {
+    const result = transformPhonesValue({
+      input: {
+        primaryPhoneNumber: '',
+        additionalPhones: [
+          {},
+          { number: '+442071838750', callingCode: '+44', countryCode: 'GB' },
+        ],
+      },
+    });
+
+    expect(result?.additionalPhones).toBe(
+      JSON.stringify([
+        { countryCode: 'GB', callingCode: '+44', number: '2071838750' },
+      ]),
+    );
+  });
+
+  it('should drop null entries inside additionalPhones instead of throwing', () => {
+    const result = transformPhonesValue({
+      input: {
+        primaryPhoneNumber: '',
+        additionalPhones: [
+          // @ts-expect-error null is not a valid AdditionalPhoneMetadata entry, but the API must tolerate it
+          null,
+          { number: '+442071838750', callingCode: '+44', countryCode: 'GB' },
+        ],
+      },
+    });
+
+    expect(result?.additionalPhones).toBe(
+      JSON.stringify([
+        { countryCode: 'GB', callingCode: '+44', number: '2071838750' },
+      ]),
+    );
+  });
+
+  it('should normalize additionalPhones to null when every entry is missing a number', () => {
+    const result = transformPhonesValue({
+      input: {
+        primaryPhoneNumber: '',
+        additionalPhones: [{}],
+      },
+    });
+
+    expect(result?.additionalPhones).toBeNull();
   });
 
   it('should accept additionalPhones as an array of phone objects', () => {

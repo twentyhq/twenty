@@ -8,6 +8,7 @@ import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
+import { z } from 'zod';
 import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
@@ -116,18 +117,31 @@ export const PhonesDisplay = ({
   );
 };
 
-const parseAdditionalPhones = (additionalPhones?: any) => {
+const additionalPhoneSchema = z.object({
+  number: z.string().min(1),
+  callingCode: z.string().optional(),
+  countryCode: z.string().optional(),
+});
+
+const parseAdditionalPhonesArray = (additionalPhones: unknown[]) =>
+  additionalPhones
+    .map((phone) => additionalPhoneSchema.safeParse(phone))
+    .filter((result) => result.success)
+    .map((result) => result.data);
+
+const parseAdditionalPhones = (additionalPhones?: unknown) => {
   if (!additionalPhones) {
     return [];
   }
 
-  if (typeof additionalPhones === 'object') {
-    return additionalPhones;
+  if (Array.isArray(additionalPhones)) {
+    return parseAdditionalPhonesArray(additionalPhones);
   }
 
   if (typeof additionalPhones === 'string') {
     try {
-      return JSON.parse(additionalPhones);
+      const parsed = JSON.parse(additionalPhones);
+      return Array.isArray(parsed) ? parseAdditionalPhonesArray(parsed) : [];
     } catch (error) {
       logError(t`Error parsing additional phones: ${String(error)}`);
     }
