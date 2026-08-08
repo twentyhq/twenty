@@ -136,7 +136,13 @@ describe('buildInboxItemScopeCriteria', () => {
     const done = buildInboxItemScopeCriteria(InboxItemScope.DONE, NOW);
 
     // Assert
-    expect(renderSql(snoozed, 'clearedAt')).toBe(renderSql(done, 'clearedAt'));
+    // Both stand on the same clear-is-current test, so it is pinned rather
+    // than only compared to itself
+    const clearIsCurrent =
+      '("item"."clearedAt" IS NOT NULL AND "item"."lastEventAt" <= "item"."clearedAt")';
+
+    expect(renderSql(snoozed, 'clearedAt')).toBe(clearIsCurrent);
+    expect(renderSql(done, 'clearedAt')).toBe(clearIsCurrent);
     expect(snoozed.resurfaceAt).not.toEqual(done.resurfaceAt);
   });
 

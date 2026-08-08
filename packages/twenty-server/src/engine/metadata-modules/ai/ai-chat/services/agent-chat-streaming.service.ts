@@ -597,11 +597,6 @@ export class AgentChatStreamingService {
       })
       .catch(() => {});
 
-    await this.agentChatInboxService.onQuestionAnswered({
-      threadId,
-      workspaceId: workspace.id,
-    });
-
     return { streamId, turnId: resolved.turnId };
   }
 

@@ -53,7 +53,9 @@ export class CreateInboxCoreTablesFastInstanceCommand
     );
 
     // No status column: lastEventAt is written by producers, clearedAt by the
-    // assignee, and whether the item wants attention is the comparison.
+    // assignee, and whether the item wants attention is the comparison. Both
+    // are stamped with the database clock so the comparison reflects the order
+    // Postgres saw the writes in rather than any app server's clock.
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."inboxItem" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -63,7 +65,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
         "title" character varying NOT NULL,
         "preview" character varying,
         "payload" jsonb,
-        "lastEventAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "lastEventAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT clock_timestamp(),
         "clearedAt" TIMESTAMP WITH TIME ZONE,
         "resurfaceAt" TIMESTAMP WITH TIME ZONE,
         "clearedByUserWorkspaceId" uuid,
@@ -73,15 +75,12 @@ export class CreateInboxCoreTablesFastInstanceCommand
         "threadId" uuid,
         "subjectObjectMetadataId" uuid,
         "subjectRecordId" uuid,
-        "assigneeUserWorkspaceId" uuid,
-        "assigneeAgentId" uuid,
+        "assigneeUserWorkspaceId" uuid NOT NULL,
         "slotKey" character varying,
         "version" integer NOT NULL DEFAULT 1,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_inboxItem_id" PRIMARY KEY ("id"),
-        CONSTRAINT "CHK_INBOX_ITEM_SINGLE_ASSIGNEE"
-          CHECK (("assigneeUserWorkspaceId" IS NOT NULL) != ("assigneeAgentId" IS NOT NULL)),
         CONSTRAINT "FK_INBOX_ITEM_WORKSPACE_ID" FOREIGN KEY ("workspaceId")
           REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
         CONSTRAINT "FK_INBOX_ITEM_INBOX_ITEM_TYPE_ID" FOREIGN KEY ("inboxItemTypeId")
@@ -98,7 +97,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_SLOT_KEY_UNIQUE"
         ON "core"."inboxItem" ("workspaceId", "assigneeUserWorkspaceId", "slotKey")
-        WHERE "slotKey" IS NOT NULL AND "assigneeUserWorkspaceId" IS NOT NULL`,
+        WHERE "slotKey" IS NOT NULL`,
     );
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_LAST_EVENT_AT"

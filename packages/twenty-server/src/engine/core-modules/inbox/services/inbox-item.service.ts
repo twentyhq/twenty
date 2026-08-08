@@ -24,21 +24,25 @@ export class InboxItemService {
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
   ) {}
 
+  // The caller supplies `now` so that selecting a scope and reporting a scope
+  // use the same instant, and a resurfacing time cannot elapse mid request.
   async findMany({
     workspaceId,
     assigneeUserWorkspaceId,
     scope,
+    now,
     limit,
   }: {
     workspaceId: string;
     assigneeUserWorkspaceId: string;
     scope: InboxItemScope;
+    now: Date;
     limit?: number;
   }): Promise<InboxItemEntity[]> {
     return this.inboxItemRepository.find(workspaceId, {
       where: {
         assigneeUserWorkspaceId,
-        ...buildInboxItemScopeCriteria(scope, new Date()),
+        ...buildInboxItemScopeCriteria(scope, now),
       },
       relations: { inboxItemType: true },
       order: { lastEventAt: 'DESC' },
@@ -54,11 +58,12 @@ export class InboxItemService {
   async countByScope({
     workspaceId,
     assigneeUserWorkspaceId,
+    now,
   }: {
     workspaceId: string;
     assigneeUserWorkspaceId: string;
+    now: Date;
   }): Promise<{ unread: number; needsAction: number; snoozed: number }> {
-    const now = new Date();
     const visibleCriteria = {
       assigneeUserWorkspaceId,
       ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, now),
@@ -98,7 +103,8 @@ export class InboxItemService {
     await this.inboxItemRepository.update(
       workspaceId,
       { id: inboxItem.id, assigneeUserWorkspaceId },
-      { readAt: new Date() },
+      // Database clock, since unread is this against lastEventAt
+      { readAt: () => 'clock_timestamp()' },
     );
 
     return this.findOwnedItemOrThrow({

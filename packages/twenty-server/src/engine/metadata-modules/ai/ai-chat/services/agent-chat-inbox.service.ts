@@ -66,26 +66,18 @@ export class AgentChatInboxService {
   }: Omit<ThreadContext, 'userWorkspaceId'> & {
     title: string;
   }): Promise<void> {
-    await this.inboxRouterService.restateThreadItem({
+    await this.inboxRouterService.renameThreadItem({
       workspaceId,
       threadId,
       title,
     });
   }
 
-  // The person answered, so the item stops being a question. Their own answer
-  // is not something that happened to them, so it must not resurface the item
-  // or mark it unread; the agent's next turn is what does that.
-  async onQuestionAnswered({
-    threadId,
-    workspaceId,
-  }: Omit<ThreadContext, 'userWorkspaceId'>): Promise<void> {
-    await this.inboxRouterService.restateThreadItem({
-      workspaceId,
-      threadId,
-      typeKey: INBOX_ITEM_TYPE_KEY.conversation,
-    });
-  }
+  // Answering a question is deliberately not reported here. The agent's next
+  // turn is what says whether one is still pending, and it says so with an
+  // event behind it. Reporting the answer as well would be a blind overwrite
+  // racing that turn, and it would read as "no question pending" even when the
+  // resume never ran.
 
   async onThreadRemoved({
     threadId,

@@ -89,22 +89,25 @@ export class InboxTransitionService {
     actorUserWorkspaceId: string;
     transition: InboxItemTransition;
   }): QueryDeepPartialEntity<InboxItemEntity> {
-    const now = new Date();
-
     switch (transition.kind) {
       case 'CLEAR':
         return {
-          clearedAt: now,
+          // Stamped by the database, like the events these are compared
+          // against, so a clear racing an incoming event resolves on the order
+          // Postgres saw them rather than on this process's clock
+          clearedAt: () => 'clock_timestamp()',
           clearedByUserWorkspaceId: actorUserWorkspaceId,
+          // Only ever compared against a reading request's own clock, so it is
+          // the one timestamp here that belongs to this process
           resurfaceAt: isDefined(transition.resurfaceInMinutes)
-            ? this.addMinutes(now, transition.resurfaceInMinutes)
+            ? this.inMinutes(transition.resurfaceInMinutes)
             : null,
           outcome: isDefined(transition.outcome)
             ? this.readOutcome(inboxItem, transition.outcome)
             : null,
           result: transition.result ?? null,
           // Clearing something means having seen it
-          readAt: now,
+          readAt: () => 'clock_timestamp()',
         };
 
       case 'REOPEN':
@@ -140,7 +143,7 @@ export class InboxTransitionService {
     return outcome;
   }
 
-  private addMinutes(from: Date, minutes: number): Date {
+  private inMinutes(minutes: number): Date {
     if (
       !Number.isFinite(minutes) ||
       minutes <= 0 ||
@@ -151,6 +154,6 @@ export class InboxTransitionService {
       );
     }
 
-    return new Date(from.getTime() + minutes * 60 * 1000);
+    return new Date(Date.now() + minutes * 60 * 1000);
   }
 }

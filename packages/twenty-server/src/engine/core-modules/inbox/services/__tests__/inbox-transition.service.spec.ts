@@ -134,7 +134,7 @@ describe('InboxTransitionService', () => {
   });
 
   describe('CLEAR', () => {
-    it('should stamp who cleared it and when, and count as having seen it', async () => {
+    it('should stamp who cleared it and count as having seen it', async () => {
       // Act
       await service.transition({
         ...transitionArgs,
@@ -144,12 +144,26 @@ describe('InboxTransitionService', () => {
       // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
-          clearedAt: NOW,
           clearedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
           resurfaceAt: null,
-          readAt: NOW,
         }),
       );
+    });
+
+    // Both sides of the comparison have to come from one clock, and the events
+    // are stamped by Postgres, so the clear has to be too
+    it('should let the database stamp the columns compared against the event', async () => {
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: { kind: 'CLEAR' },
+      });
+
+      // Assert
+      const partialUpdate = lastPartialUpdate() as Record<string, () => string>;
+
+      expect(partialUpdate.clearedAt()).toBe('clock_timestamp()');
+      expect(partialUpdate.readAt()).toBe('clock_timestamp()');
     });
 
     it('should never write lastEventAt, which only producers own', async () => {
@@ -229,9 +243,9 @@ describe('InboxTransitionService', () => {
       });
 
       // Assert
-      expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({ clearedAt: NOW }),
-      );
+      const partialUpdate = lastPartialUpdate() as Record<string, () => string>;
+
+      expect(partialUpdate.clearedAt()).toBe('clock_timestamp()');
     });
   });
 
@@ -244,11 +258,12 @@ describe('InboxTransitionService', () => {
       });
 
       // Assert
+      // The resurfacing time is the one timestamp on this side that is not the
+      // database's, because it is only ever compared against a reading
+      // request's own clock
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
-          clearedAt: NOW,
           resurfaceAt: new Date('2026-08-07T11:00:00.000Z'),
-          readAt: NOW,
         }),
       );
     });

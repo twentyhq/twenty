@@ -53,14 +53,16 @@ export class InboxItemResolver {
     @Args('limit', { type: () => Int, nullable: true })
     limit?: number,
   ): Promise<InboxItemDTO[]> {
+    const now = new Date();
     const inboxItems = await this.inboxItemService.findMany({
       workspaceId,
       assigneeUserWorkspaceId: userWorkspaceId,
       scope: scope ?? InboxItemScope.INBOX,
+      now,
       limit,
     });
 
-    return inboxItems.map(toInboxItemDto);
+    return inboxItems.map((inboxItem) => toInboxItemDto(inboxItem, now));
   }
 
   // Looked up by id rather than by scope, so a surface showing one item keeps
@@ -77,7 +79,7 @@ export class InboxItemResolver {
       assigneeUserWorkspaceId: userWorkspaceId,
     });
 
-    return isDefined(inboxItem) ? toInboxItemDto(inboxItem) : null;
+    return isDefined(inboxItem) ? toInboxItemDto(inboxItem, new Date()) : null;
   }
 
   @Query(() => InboxCountsDTO)
@@ -88,6 +90,7 @@ export class InboxItemResolver {
     return this.inboxItemService.countByScope({
       workspaceId,
       assigneeUserWorkspaceId: userWorkspaceId,
+      now: new Date(),
     });
   }
 
@@ -103,7 +106,7 @@ export class InboxItemResolver {
       assigneeUserWorkspaceId: userWorkspaceId,
     });
 
-    return toInboxItemDto(inboxItem);
+    return toInboxItemDto(inboxItem, new Date());
   }
 
   @Mutation(() => InboxItemDTO)
@@ -126,7 +129,7 @@ export class InboxItemResolver {
       expectedVersion,
     });
 
-    return toInboxItemDto(inboxItem);
+    return toInboxItemDto(inboxItem, new Date());
   }
 
   // Ergonomic wrapper: names one of the type's declared actions instead of
@@ -151,6 +154,6 @@ export class InboxItemResolver {
       expectedVersion,
     });
 
-    return toInboxItemDto(inboxItem);
+    return toInboxItemDto(inboxItem, new Date());
   }
 }

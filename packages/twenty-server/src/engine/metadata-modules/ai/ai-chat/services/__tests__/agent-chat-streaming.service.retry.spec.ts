@@ -69,7 +69,6 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       {
         onThreadCreated: jest.fn(),
         onTurnCompleted: jest.fn(),
-        onQuestionAnswered: jest.fn(),
         onThreadRemoved: jest.fn(),
       } as never,
     );

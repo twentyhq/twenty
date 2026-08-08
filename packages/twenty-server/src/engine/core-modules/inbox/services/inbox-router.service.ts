@@ -185,6 +185,10 @@ export class InboxRouterService {
   // A new event on an item that was already cleared brings it back on its own:
   // lastEventAt moves past clearedAt and every read agrees it wants attention
   // again. Nothing here has to undo what the assignee did.
+  //
+  // The timestamp is the database's, not this process's. What matters is which
+  // of the two writes reached Postgres last, and app servers do not share a
+  // clock with it or with each other.
   private async foldIntoItem({
     existingItem,
     args,
@@ -203,7 +207,7 @@ export class InboxRouterService {
         ...(isDefined(args.title) ? { title: args.title } : {}),
         ...(isDefined(args.preview) ? { preview: args.preview } : {}),
         ...(isDefined(args.payload) ? { payload: args.payload } : {}),
-        lastEventAt: new Date(),
+        lastEventAt: () => 'clock_timestamp()',
         version: () => '"version" + 1',
       },
     );
@@ -230,7 +234,6 @@ export class InboxRouterService {
       title: args.title ?? inboxItemType.label,
       preview: args.preview ?? null,
       payload: args.payload ?? null,
-      lastEventAt: new Date(),
       assigneeUserWorkspaceId,
       slotKey,
       threadId: args.subject?.kind === 'thread' ? args.subject.threadId : null,
@@ -241,41 +244,23 @@ export class InboxRouterService {
     });
   }
 
-  // Corrects what an item says it is without claiming its subject did
-  // anything. Renaming a thread and folding a question back into a plain
-  // conversation are both this: lastEventAt stays put, so the item keeps its
-  // place in the list, a cleared one stays cleared, and a read one stays read.
-  async restateThreadItem({
+  // A rename is not something that happened to the subject, so it leaves
+  // lastEventAt alone: the item keeps its place in the list, a cleared one
+  // stays cleared and a read one stays read.
+  async renameThreadItem({
     workspaceId,
     threadId,
     title,
-    typeKey,
   }: {
     workspaceId: string;
     threadId: string;
-    title?: string;
-    typeKey?: string;
+    title: string;
   }): Promise<void> {
-    await this.runBestEffort('restateThreadItem', workspaceId, async () => {
-      const inboxItemType = isDefined(typeKey)
-        ? await this.inboxItemTypeService.findByKey({
-            workspaceId,
-            key: typeKey,
-          })
-        : null;
-
+    await this.runBestEffort('renameThreadItem', workspaceId, async () => {
       await this.inboxItemRepository.update(
         workspaceId,
         { threadId },
-        {
-          ...(isDefined(title) ? { title } : {}),
-          ...(isDefined(inboxItemType)
-            ? {
-                inboxItemTypeId: inboxItemType.id,
-                priority: inboxItemType.defaultPriority,
-              }
-            : {}),
-        },
+        { title },
       );
     });
   }
@@ -294,7 +279,7 @@ export class InboxRouterService {
         workspaceId,
         { threadId },
         {
-          clearedAt: new Date(),
+          clearedAt: () => 'clock_timestamp()',
           clearedByUserWorkspaceId: null,
           resurfaceAt: null,
           // Bumped so an action opened before the thread went away loses

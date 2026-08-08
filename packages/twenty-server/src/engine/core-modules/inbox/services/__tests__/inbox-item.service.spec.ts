@@ -87,6 +87,7 @@ describe('InboxItemService', () => {
         workspaceId: WORKSPACE_ID,
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
         scope,
+        now: NOW,
       });
 
       // Assert
@@ -106,6 +107,7 @@ describe('InboxItemService', () => {
         workspaceId: WORKSPACE_ID,
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
         scope: InboxItemScope.INBOX,
+        now: NOW,
       });
 
       // Assert
@@ -125,6 +127,7 @@ describe('InboxItemService', () => {
         workspaceId: WORKSPACE_ID,
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
         scope: InboxItemScope.INBOX,
+        now: NOW,
         limit: 5,
       });
 
@@ -197,14 +200,16 @@ describe('InboxItemService', () => {
       await service.markRead(ownedItemArgs);
 
       // Assert
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        {
-          id: INBOX_ITEM_ID,
-          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        },
-        { readAt: NOW },
-      );
+      const [, predicate, partialUpdate] =
+        inboxItemRepository.update.mock.calls[0];
+
+      expect(predicate).toEqual({
+        id: INBOX_ITEM_ID,
+        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+      });
+      expect(Object.keys(partialUpdate)).toEqual(['readAt']);
+      // Stamped by the database, since unread compares it against lastEventAt
+      expect(partialUpdate.readAt()).toBe('clock_timestamp()');
     });
   });
 
@@ -220,6 +225,7 @@ describe('InboxItemService', () => {
       const result = await service.countByScope({
         workspaceId: WORKSPACE_ID,
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        now: NOW,
       });
 
       // Assert
@@ -231,6 +237,7 @@ describe('InboxItemService', () => {
       await service.countByScope({
         workspaceId: WORKSPACE_ID,
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        now: NOW,
       });
 
       // Assert

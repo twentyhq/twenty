@@ -1,5 +1,4 @@
 import {
-  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -34,20 +33,13 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
 })
-@Check(
-  'CHK_INBOX_ITEM_SINGLE_ASSIGNEE',
-  '("assigneeUserWorkspaceId" IS NOT NULL) != ("assigneeAgentId" IS NOT NULL)',
-)
 // One row per slot and assignee, for the slot's whole life. Concurrent
 // producers collide here and fold instead of duplicating, and a cleared item is
 // revived by the next event rather than replaced by a second row.
 @Index(
   'IDX_INBOX_ITEM_SLOT_KEY_UNIQUE',
   ['workspaceId', 'assigneeUserWorkspaceId', 'slotKey'],
-  {
-    unique: true,
-    where: `"slotKey" IS NOT NULL AND "assigneeUserWorkspaceId" IS NOT NULL`,
-  },
+  { unique: true, where: `"slotKey" IS NOT NULL` },
 )
 @Index('IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_LAST_EVENT_AT', [
   'assigneeUserWorkspaceId',
@@ -98,7 +90,15 @@ export class InboxItemEntity {
 
   // Written by producers only. Also what the list is ordered by, so retitling
   // or reading an item cannot reorder it.
-  @Column({ type: 'timestamptz', nullable: false, default: () => 'now()' })
+  //
+  // Everything compared against this one is stamped by the database rather
+  // than by whichever app server handled the request, so the comparison
+  // reflects which write Postgres saw last and not whose clock ran fast.
+  @Column({
+    type: 'timestamptz',
+    nullable: false,
+    default: () => 'clock_timestamp()',
+  })
   lastEventAt: Date;
 
   // Written by the assignee only. Null means never cleared; an older value than
@@ -107,7 +107,8 @@ export class InboxItemEntity {
   clearedAt: Date | null;
 
   // A clear that expires. This is what a snooze is: the item comes back when
-  // this passes, or sooner if its subject does something first.
+  // this passes, or sooner if its subject does something first. Compared only
+  // against the reading request's own clock, never against lastEventAt.
   @Column({ type: 'timestamptz', nullable: true })
   resurfaceAt: Date | null;
 
@@ -144,18 +145,17 @@ export class InboxItemEntity {
   @Column({ nullable: true, type: 'uuid' })
   subjectRecordId: string | null;
 
-  @Column({ nullable: true, type: 'uuid' })
-  assigneeUserWorkspaceId: string | null;
+  // An item always belongs to exactly one person. The router refuses to create
+  // one it cannot address, so there is no such thing as an unassigned item.
+  @Column({ nullable: false, type: 'uuid' })
+  assigneeUserWorkspaceId: string;
 
   @ManyToOne(() => UserWorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'assigneeUserWorkspaceId',
     foreignKeyConstraintName: 'FK_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID',
   })
-  assigneeUserWorkspace: EntityRelation<UserWorkspaceEntity> | null;
-
-  @Column({ nullable: true, type: 'uuid' })
-  assigneeAgentId: string | null;
+  assigneeUserWorkspace: EntityRelation<UserWorkspaceEntity>;
 
   // Two upserts naming the same slot are the same piece of work. This is the
   // whole folding rule: one item per slot, and no slot means one item per call.

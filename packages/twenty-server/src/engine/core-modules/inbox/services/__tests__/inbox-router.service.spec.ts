@@ -150,7 +150,7 @@ describe('InboxRouterService', () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
       // Act
-      await service.restateThreadItem({
+      await service.renameThreadItem({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
         title: 'A renamed conversation',
@@ -196,7 +196,6 @@ describe('InboxRouterService', () => {
         title: 'A message from Alice',
         preview: 'Hello there',
         payload: null,
-        lastEventAt: NOW,
         assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
         slotKey: THREAD_SLOT_KEY,
         threadId: THREAD_ID,
@@ -319,9 +318,12 @@ describe('InboxRouterService', () => {
           inboxItemTypeId: CONVERSATION_TYPE_ID,
           title: 'A newer message',
           priority: InboxItemPriority.UPDATE,
-          lastEventAt: NOW,
         }),
       );
+
+      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      expect(partialUpdate.lastEventAt()).toBe('clock_timestamp()');
       expect(result).toEqual(
         expect.objectContaining({ title: 'A newer message' }),
       );
@@ -352,7 +354,7 @@ describe('InboxRouterService', () => {
       // Assert
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
 
-      expect(partialUpdate.lastEventAt).toEqual(NOW);
+      expect(partialUpdate.lastEventAt()).toBe('clock_timestamp()');
       expect(partialUpdate).not.toHaveProperty('clearedAt');
       expect(partialUpdate).not.toHaveProperty('clearedByUserWorkspaceId');
       expect(partialUpdate).not.toHaveProperty('resurfaceAt');
@@ -594,10 +596,10 @@ describe('InboxRouterService', () => {
     });
   });
 
-  describe('restateThreadItem', () => {
+  describe('renameThreadItem', () => {
     it('should retitle every item of the thread without touching what happened to it', async () => {
       // Act
-      await service.restateThreadItem({
+      await service.renameThreadItem({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
         title: 'A renamed conversation',
@@ -611,30 +613,6 @@ describe('InboxRouterService', () => {
       );
       expect(inboxItemRepository.save).not.toHaveBeenCalled();
     });
-
-    // Answering a question is the person acting, not something happening to
-    // them, so it reclassifies the item without resurfacing or unreading it
-    it('should change the type without moving the event clock', async () => {
-      // Prepare
-      inboxItemTypeService.findByKey.mockResolvedValue(CONVERSATION_TYPE);
-
-      // Act
-      await service.restateThreadItem({
-        workspaceId: WORKSPACE_ID,
-        threadId: THREAD_ID,
-        typeKey: 'conversation',
-      });
-
-      // Assert
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { threadId: THREAD_ID },
-        {
-          inboxItemTypeId: CONVERSATION_TYPE_ID,
-          priority: InboxItemPriority.UPDATE,
-        },
-      );
-    });
   });
 
   describe('clearByThreadId', () => {
@@ -646,11 +624,11 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { threadId: THREAD_ID },
+      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      expect(partialUpdate.clearedAt()).toBe('clock_timestamp()');
+      expect(partialUpdate).toEqual(
         expect.objectContaining({
-          clearedAt: NOW,
           clearedByUserWorkspaceId: null,
           resurfaceAt: null,
         }),

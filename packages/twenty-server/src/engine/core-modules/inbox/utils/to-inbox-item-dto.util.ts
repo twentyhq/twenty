@@ -46,7 +46,12 @@ export type InboxItemWithType = Omit<InboxItemEntity, 'inboxItemType'> & {
   inboxItemType: InboxItemTypeEntity;
 };
 
-export const toInboxItemDto = (inboxItem: InboxItemWithType): InboxItemDTO => {
+// `now` comes from the request rather than from here, so every item in one
+// response is placed against the same instant as the query that selected it.
+export const toInboxItemDto = (
+  inboxItem: InboxItemWithType,
+  now: Date,
+): InboxItemDTO => {
   const inboxItemType = inboxItem.inboxItemType;
 
   return {
@@ -62,7 +67,7 @@ export const toInboxItemDto = (inboxItem: InboxItemWithType): InboxItemDTO => {
       ).map(toActionDto),
       outcomes: (inboxItemType.resolution?.outcomes ?? []).map(toOutcomeDto),
     },
-    scope: getInboxItemScope(inboxItem, new Date()),
+    scope: getInboxItemScope(inboxItem, now),
     isUnread: isInboxItemUnread(inboxItem),
     priority: inboxItem.priority,
     version: inboxItem.version,
