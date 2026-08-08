@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { ContextStorePageType, SidePanelPages } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -9,31 +9,13 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { getContextStoreViewType } from '@/context-store/utils/getContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { viewableRecordsObjectMetadataIdComponentState } from '@/side-panel/pages/records-page/states/viewableRecordsObjectMetadataIdComponentState';
 import { viewableRecordsViewIdComponentState } from '@/side-panel/pages/records-page/states/viewableRecordsViewIdComponentState';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
-import { ViewKey, ViewType } from '~/generated-metadata/graphql';
-
-const getArtifactContextStoreViewType = (viewType: ViewType) => {
-  switch (viewType) {
-    case ViewType.TABLE:
-    case ViewType.TABLE_WIDGET:
-    case ViewType.LIST:
-    case ViewType.FIELDS_WIDGET:
-      return ContextStoreViewType.Table;
-    case ViewType.KANBAN:
-    case ViewType.KANBAN_WIDGET:
-      return ContextStoreViewType.Kanban;
-    case ViewType.CALENDAR:
-    case ViewType.CALENDAR_WIDGET:
-      return ContextStoreViewType.Calendar;
-    default:
-      return assertUnreachable(viewType);
-  }
-};
+import { ViewKey } from '~/generated-metadata/graphql';
 
 export const useOpenRecordsInSidePanel = () => {
   const store = useStore();
@@ -115,7 +97,7 @@ export const useOpenRecordsInSidePanel = () => {
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        getArtifactContextStoreViewType(resolvedView.type),
+        getContextStoreViewType(resolvedView.type),
       );
 
       navigateSidePanelMenu({
