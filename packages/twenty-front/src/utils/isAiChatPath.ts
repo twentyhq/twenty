@@ -1,6 +1,6 @@
-import { matchPath } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+
+import { isMatchingPathname } from '~/utils/isMatchingPathname';
 
 export const isAiChatPath = (pathname: string) =>
-  isDefined(matchPath(AppPath.AiChat, pathname));
+  isMatchingPathname(pathname, AppPath.AiChat);
