@@ -27,8 +27,6 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
     resetJotaiStore();
   });
 
-  // The reachable case: collapsing opens the panel chat and leaves the page,
-  // so pressing Back returns here with the same conversation in the panel.
   it('should dismiss a panel chat the browser navigated back onto', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
     jotaiStore.set(sidePanelPageState.atom, SidePanelPages.AskAI);
@@ -56,8 +54,6 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
   });
 
-  // A handoff opens the panel chat on the way out of the page; reading the
-  // panel once on mount is what keeps this from fighting it.
   it('should not fight a panel chat opened after mount', () => {
     render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
 

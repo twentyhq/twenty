@@ -9,8 +9,6 @@ type ChatReferenceChipDisplayProps = {
   displayName: string;
   leftComponent: ReactNode;
   to?: string;
-  // When provided, a plain click runs it instead of navigating to `to`;
-  // modifier-clicks still open `to` in a new tab.
   onClick?: (event: MouseEvent<HTMLElement>) => void;
 };
 

@@ -66,10 +66,6 @@ export const useAiChatThreadClick = (
         : null,
     );
 
-    // On the chat page the conversation is already in the main pane: never
-    // open panel chat, and close the panel only when the thread was picked
-    // from the panel's history list — a click from the navigation drawer
-    // must not dismiss an open record/artifact panel.
     if (isCurrentPathAiChatPage()) {
       const isSidePanelShowingPreviousChats =
         store.get(isSidePanelOpenedState.atom) &&

@@ -58,7 +58,6 @@ describe('useReturnFromExpandedAiChat', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    // The side panel handoff consumes the marker on the navigation itself.
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       true,
     );

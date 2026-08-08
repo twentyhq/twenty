@@ -11,10 +11,6 @@ type SidePanelAskAiHandoffEffectProps = {
   onContinueChatFromFullWidth: () => void;
 };
 
-// Consumes the chat page's continuation marker on the navigation that
-// leaves it: the conversation reopens in the side panel, shrinking from the
-// full width it occupied. A layout effect reads the marker before the chat
-// page's unmount cleanup resets it.
 export const SidePanelAskAiHandoffEffect = ({
   onContinueChatFromFullWidth,
 }: SidePanelAskAiHandoffEffectProps) => {

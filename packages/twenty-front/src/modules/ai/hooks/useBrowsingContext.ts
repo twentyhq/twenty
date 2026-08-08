@@ -31,10 +31,6 @@ export const useGetBrowsingContext = () => {
       .get(sidePanelNavigationStackState.atom)
       .at(-1);
 
-    // What the user is looking at: on the chat page the conversation owns
-    // the main pane, so the browsing context is the side panel artifact —
-    // artifact pages publish their context under their own page instance.
-    // Everywhere else it is the main pane.
     const instanceId =
       isCurrentPathAiChatPage() &&
       isSidePanelOpened &&
