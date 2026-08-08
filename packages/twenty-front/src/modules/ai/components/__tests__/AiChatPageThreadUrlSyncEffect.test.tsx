@@ -69,7 +69,7 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
       AppPath.AiChat,
       { threadId: THREAD_B },
       undefined,
-      { replace: true },
+      { replace: true, state: null },
     );
   });
 
@@ -87,7 +87,7 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
       AppPath.AiChat,
       { threadId: THREAD_B },
       undefined,
-      { replace: true },
+      { replace: true, state: null },
     );
   });
 
@@ -108,7 +108,7 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
       AppPath.AiChat,
       { threadId: null },
       undefined,
-      { replace: true },
+      { replace: true, state: null },
     );
   });
 
@@ -122,7 +122,35 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
       AppPath.AiChat,
       { threadId: THREAD_B },
       undefined,
-      { replace: true },
+      { replace: true, state: null },
+    );
+  });
+
+  it('should carry the history entry state through URL replacements', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_B);
+
+    render(
+      <JotaiProvider store={jotaiStore}>
+        <MemoryRouter
+          initialEntries={[
+            { pathname: '/chat', state: { returnLocation: '/objects/people' } },
+          ]}
+        >
+          <Routes>
+            <Route
+              path={AppPath.AiChat}
+              element={<AiChatPageThreadUrlSyncEffect />}
+            />
+          </Routes>
+        </MemoryRouter>
+      </JotaiProvider>,
+    );
+
+    expect(navigateAppMock).toHaveBeenCalledWith(
+      AppPath.AiChat,
+      { threadId: THREAD_B },
+      undefined,
+      { replace: true, state: { returnLocation: '/objects/people' } },
     );
   });
 });

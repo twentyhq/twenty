@@ -6,12 +6,10 @@ import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -24,9 +22,6 @@ export const SidePanelExpandAiChatButton = () => {
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const setAiChatExpandedReturnLocation = useSetAtomState(
-    aiChatExpandedReturnLocationState,
-  );
   const isAiChatPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_PAGE_ENABLED,
   );
@@ -38,18 +33,26 @@ export const SidePanelExpandAiChatButton = () => {
   }
 
   const handleClick = () => {
-    setAiChatExpandedReturnLocation(
-      `${location.pathname}${location.search}${location.hash}`,
-    );
-
     void closeSidePanelMenu();
 
-    navigateApp(AppPath.AiChat, {
-      threadId:
-        isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)
-          ? currentAiChatThread
-          : null,
-    });
+    // The chat page's history entry remembers where expansion started, so
+    // collapsing returns there even after the entry survives thread
+    // switches or a reload.
+    navigateApp(
+      AppPath.AiChat,
+      {
+        threadId:
+          isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)
+            ? currentAiChatThread
+            : null,
+      },
+      undefined,
+      {
+        state: {
+          returnLocation: `${location.pathname}${location.search}${location.hash}`,
+        },
+      },
+    );
   };
 
   return (

@@ -160,9 +160,11 @@ export const PageChangeEffect = () => {
         clearReturnToPath();
       }
 
+      // Any forced redirect that does not land on the chat page cancels the
+      // post-onboarding chat hint.
       if (
         store.get(shouldOpenAiChatAfterOnboardingState.atom) &&
-        pageChangeEffectNavigateLocation !== AppPath.WorkspaceSetup
+        !isDefined(matchPath(AppPath.AiChat, pageChangeEffectNavigateLocation))
       ) {
         store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       }

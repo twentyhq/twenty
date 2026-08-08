@@ -2641,11 +2641,11 @@ msgid "Ascending"
 msgstr "升序"
 
 #. js-lingui-id: xWEvuo
+#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
-#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "询问 AI"
 
@@ -12415,6 +12415,7 @@ msgid "New Company"
 msgstr "新建公司"
 
 #. js-lingui-id: +HY5kX
+#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
 msgstr "新会话"
@@ -13784,8 +13785,8 @@ msgid "On which object(s) should this trigger be available"
 msgstr "此触发器应在哪些对象上可用"
 
 #. js-lingui-id: gukxZ5
+#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Onboarding"
 msgstr ""
 
@@ -20526,6 +20527,8 @@ msgid "View not shared"
 msgstr "视图未共享"
 
 #. js-lingui-id: ecVcAx
+#: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "查看历史人工智能对话"

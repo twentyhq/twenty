@@ -20,14 +20,11 @@ export const useOpenAskAiPageInSidePanel = () => {
   const openAskAiPage = useCallback(
     ({
       resetNavigationStack,
-      force = false,
     }: {
       resetNavigationStack?: boolean;
-      // The chat page already shows the conversation in the main pane; only
-      // callers that are navigating away from it may force the panel open.
-      force?: boolean;
     } = {}) => {
-      if (isCurrentPathAiChatPage() && !force) {
+      // The chat page already shows the conversation in the main pane.
+      if (isCurrentPathAiChatPage()) {
         return;
       }
 

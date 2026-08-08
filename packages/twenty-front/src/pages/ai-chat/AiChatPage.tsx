@@ -3,10 +3,16 @@ import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
+import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
+import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -39,8 +45,14 @@ export const AiChatPage = () => {
   const isAiChatPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_PAGE_ENABLED,
   );
+  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
+    shouldOpenAiChatAfterOnboardingState,
+  );
 
-  if (!isAiChatPageEnabled) {
+  // Onboarding lands here regardless of the feature flag: the page is the
+  // onboarding chat's host since the standalone workspace-setup page was
+  // removed.
+  if (!isAiChatPageEnabled && !shouldOpenAiChatAfterOnboarding) {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
@@ -48,9 +60,19 @@ export const AiChatPage = () => {
     <StyledPanel>
       <AiChatPageThreadUrlSyncEffect />
       <AiChatPageCloseAskAiPanelEffect />
-      <AiChatPageHeader />
+      <AiChatPageContinueInSidePanelEffect />
+      {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
+      <AiChatPageHeader isOnboarding={shouldOpenAiChatAfterOnboarding} />
       <StyledCenteredChatContainer>
-        <AiChatTab />
+        <AiChatMessageListPreambleContext.Provider
+          value={
+            shouldOpenAiChatAfterOnboarding ? (
+              <WorkspaceSetupChatPreamble />
+            ) : null
+          }
+        >
+          <AiChatTab />
+        </AiChatMessageListPreambleContext.Provider>
       </StyledCenteredChatContainer>
     </StyledPanel>
   );
