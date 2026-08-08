@@ -1,5 +1,6 @@
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
+import { useEffect } from 'react';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
@@ -28,7 +29,9 @@ let navigateToThread: ((threadId: string) => void) | undefined;
 const RouteUnderTest = () => {
   const navigate = useNavigate();
 
-  navigateToThread = (threadId: string) => navigate(`/chat/${threadId}`);
+  useEffect(() => {
+    navigateToThread = (threadId: string) => navigate(`/chat/${threadId}`);
+  }, [navigate]);
 
   return <AiChatPageThreadUrlSyncEffect />;
 };
