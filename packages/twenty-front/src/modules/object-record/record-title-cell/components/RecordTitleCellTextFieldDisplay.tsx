@@ -7,7 +7,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -43,7 +42,8 @@ export const RecordTitleCellSingleTextDisplayMode = ({
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const fieldValue = recordStore?.[fieldDefinition.metadata.fieldName];
-  const isEmpty = !isDefined(fieldValue) || fieldValue.trim() === '';
+  const isEmpty =
+    typeof fieldValue !== 'string' || fieldValue.trim() === '';
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
