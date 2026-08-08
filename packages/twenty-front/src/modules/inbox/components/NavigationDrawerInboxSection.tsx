@@ -68,42 +68,44 @@ export const NavigationDrawerInboxSection = () => {
               : undefined
           }
         />
-        <AnimatedExpandableContainer
-          isExpanded={isInboxSurfaceActive}
-          dimension="height"
-          mode="fit-content"
-          containAnimation
-          initial={false}
-        >
-          {INBOX_SUB_SECTIONS.map((inboxSubSection, index) => {
-            const subSectionPath = getInboxSectionPath(inboxSubSection);
-            const snoozedCount =
-              inboxSubSection.scope === InboxItemScope.SNOOZED
-                ? inboxCounts?.snoozed
-                : undefined;
+        <StyledExpandableWrapper>
+          <AnimatedExpandableContainer
+            isExpanded={isInboxSurfaceActive}
+            dimension="height"
+            mode="fit-content"
+            containAnimation
+            initial={false}
+          >
+            {INBOX_SUB_SECTIONS.map((inboxSubSection, index) => {
+              const subSectionPath = getInboxSectionPath(inboxSubSection);
+              const snoozedCount =
+                inboxSubSection.scope === InboxItemScope.SNOOZED
+                  ? inboxCounts?.snoozed
+                  : undefined;
 
-            return (
-              <NavigationDrawerSubItem
-                key={inboxSubSection.slug}
-                label={t(inboxSubSection.label)}
-                Icon={inboxSubSection.Icon}
-                to={subSectionPath}
-                active={isInboxSectionActive({
-                  pathname: location.pathname,
-                  inboxSectionPath: subSectionPath,
-                })}
-                subItemState={getNavigationSubItemLeftAdornment({
-                  index,
-                  arrayLength: INBOX_SUB_SECTIONS.length,
-                  selectedIndex: selectedSubSectionIndex,
-                })}
-                secondaryLabel={
-                  (snoozedCount ?? 0) > 0 ? String(snoozedCount) : undefined
-                }
-              />
-            );
-          })}
-        </AnimatedExpandableContainer>
+              return (
+                <NavigationDrawerSubItem
+                  key={inboxSubSection.slug}
+                  label={t(inboxSubSection.label)}
+                  Icon={inboxSubSection.Icon}
+                  to={subSectionPath}
+                  active={isInboxSectionActive({
+                    pathname: location.pathname,
+                    inboxSectionPath: subSectionPath,
+                  })}
+                  subItemState={getNavigationSubItemLeftAdornment({
+                    index,
+                    arrayLength: INBOX_SUB_SECTIONS.length,
+                    selectedIndex: selectedSubSectionIndex,
+                  })}
+                  secondaryLabel={
+                    (snoozedCount ?? 0) > 0 ? String(snoozedCount) : undefined
+                  }
+                />
+              );
+            })}
+          </AnimatedExpandableContainer>
+        </StyledExpandableWrapper>
       </NavigationDrawerItemsCollapsableContainer>
     </NavigationDrawerSection>
   );
