@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
 import { ViewType } from '~/generated-metadata/graphql';
 
@@ -92,7 +93,7 @@ jest.mock('twenty-ui/navigation', () => ({
 }));
 
 const renderDropdown = (
-  currentLayoutViewType = ViewType.TABLE_WIDGET as never,
+  currentLayoutViewType: RecordTableWidgetLayoutViewType = ViewType.TABLE_WIDGET,
 ) =>
   render(
     <I18nProvider i18n={i18n}>
@@ -133,7 +134,7 @@ describe('RecordTableLayoutDropdownContent', () => {
   });
 
   it('should mark the current layout as selected', () => {
-    renderDropdown(ViewType.LIST_WIDGET as never);
+    renderDropdown(ViewType.LIST_WIDGET);
 
     expect(screen.getByText('List').closest('button')?.dataset.selected).toBe(
       'true',
