@@ -115,6 +115,7 @@ const StyledPreview = styled.div`
 const StyledUpdatedAt = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
+  margin-left: auto;
 `;
 
 const StyledButtonsSlot = styled.div`
@@ -171,10 +172,10 @@ export const InboxListRow = ({
           {isNonEmptyString(inboxItem.preview) && (
             <StyledPreview>{inboxItem.preview}</StyledPreview>
           )}
+          <StyledUpdatedAt className="inbox-list-row-updated-at">
+            {beautifyPastDateRelativeToNowShort(inboxItem.updatedAt)}
+          </StyledUpdatedAt>
         </StyledOpenTarget>
-        <StyledUpdatedAt className="inbox-list-row-updated-at">
-          {beautifyPastDateRelativeToNowShort(inboxItem.updatedAt)}
-        </StyledUpdatedAt>
         <StyledButtonsSlot className="inbox-list-row-buttons">
           <InboxListRowButtons
             inboxItem={inboxItem}

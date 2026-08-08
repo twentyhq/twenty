@@ -7,6 +7,7 @@ import { INBOX_SUB_SECTIONS } from '@/inbox/constants/InboxSubSections';
 import { useInboxCounts } from '@/inbox/hooks/useInboxCounts';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
+import { isInboxSectionActive } from '@/inbox/utils/isInboxSectionActive';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -42,7 +43,10 @@ export const NavigationDrawerInboxSection = () => {
   const inboxPath = getInboxSectionPath(DEFAULT_INBOX_SECTION);
   const selectedSubSectionIndex = INBOX_SUB_SECTIONS.findIndex(
     (inboxSubSection) =>
-      location.pathname.startsWith(getInboxSectionPath(inboxSubSection)),
+      isInboxSectionActive({
+        pathname: location.pathname,
+        inboxSectionPath: getInboxSectionPath(inboxSubSection),
+      }),
   );
 
   return (
@@ -66,7 +70,10 @@ export const NavigationDrawerInboxSection = () => {
             label={t(DEFAULT_INBOX_SECTION.label)}
             Icon={DEFAULT_INBOX_SECTION.Icon}
             to={inboxPath}
-            active={location.pathname.startsWith(inboxPath)}
+            active={isInboxSectionActive({
+              pathname: location.pathname,
+              inboxSectionPath: inboxPath,
+            })}
             secondaryLabel={
               (inboxCounts?.unread ?? 0) > 0
                 ? String(inboxCounts?.unread)
@@ -86,7 +93,10 @@ export const NavigationDrawerInboxSection = () => {
                 label={t(inboxSubSection.label)}
                 Icon={inboxSubSection.Icon}
                 to={subSectionPath}
-                active={location.pathname.startsWith(subSectionPath)}
+                active={isInboxSectionActive({
+                  pathname: location.pathname,
+                  inboxSectionPath: subSectionPath,
+                })}
                 subItemState={getNavigationSubItemLeftAdornment({
                   index,
                   arrayLength: INBOX_SUB_SECTIONS.length,
