@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -28,11 +29,11 @@ export const SidePanelRecordIndexPage = () => {
     SidePanelPageComponentInstanceContext,
   );
 
-  if (!viewableRecordIndexObjectMetadataId) {
+  if (!isDefined(viewableRecordIndexObjectMetadataId)) {
     throw new Error('Object metadata id is not defined');
   }
 
-  if (!viewableRecordIndexViewId) {
+  if (!isDefined(viewableRecordIndexViewId)) {
     throw new Error('View id is not defined');
   }
 
@@ -46,9 +47,7 @@ export const SidePanelRecordIndexPage = () => {
           instanceId: `side-panel-record-index-${sidePanelPageInstanceContext?.instanceId}`,
         }}
       >
-        <PageLayoutEditModeProviderContext
-          value={{ isInEditMode: false }}
-        >
+        <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
           <RecordTableWidgetRendererContent
             objectMetadataId={viewableRecordIndexObjectMetadataId}
             viewId={viewableRecordIndexViewId}

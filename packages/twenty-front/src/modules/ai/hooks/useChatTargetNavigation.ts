@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { getObjectMetadataItemBySingularNameOrThrow } from '@/object-metadata/utils/getObjectMetadataItemBySingularNameOrThrow';
 import { useOpenRecordIndexInSidePanel } from '@/side-panel/hooks/useOpenRecordIndexInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -55,18 +55,10 @@ export const useChatTargetNavigation = () => {
       return;
     }
 
-    const objectMetadataItem = store.get(
-      objectMetadataItemFamilySelector.selectorFamily({
-        objectName: objectNameSingular,
-        objectNameType: 'singular',
-      }),
+    const objectMetadataItem = getObjectMetadataItemBySingularNameOrThrow(
+      store,
+      objectNameSingular,
     );
-
-    if (!isDefined(objectMetadataItem)) {
-      throw new Error(
-        `Object with singular name ${objectNameSingular} not found, cannot navigate to its records.`,
-      );
-    }
 
     navigateApp(
       AppPath.RecordIndexPage,
