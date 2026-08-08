@@ -1,26 +1,51 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Context, Mutation, Parent, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  NotFoundError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
+import {
+  FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
+  FieldFilterInput,
+} from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { FieldConnectionDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata-connection.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
+import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
+import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
+import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
@@ -44,7 +69,82 @@ export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly i18nService: I18nService,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
+
+  @UseGuards(NoPermissionGuard)
+  @Query(() => FieldConnectionDTO)
+  async fields(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('paging', {
+      type: () => CursorPagingInput,
+      defaultValue: { first: 10 },
+      description: 'Limit or page results.',
+    })
+    paging: CursorPagingInput,
+    @Args('filter', {
+      type: () => FieldFilterInput,
+      defaultValue: {},
+      description: 'Specify to filter the records returned.',
+    })
+    filter: FieldFilterInput,
+  ): Promise<CursorConnection<FieldMetadataEntity>> {
+    const queryBuilder = this.fieldMetadataRepository
+      .createQueryBuilder('fieldMetadata')
+      .where('"fieldMetadata"."workspaceId" = :workspaceId', { workspaceId });
+
+    applyMetadataFilterToQueryBuilder({
+      whereBuilder: queryBuilder,
+      alias: 'fieldMetadata',
+      filter,
+      columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
+    });
+
+    return findManyWithCursorPagination({
+      queryBuilder,
+      alias: 'fieldMetadata',
+      paging,
+      defaultResultSize: 10,
+      maxResultsSize: 1000,
+    });
+  }
+
+  @UseGuards(NoPermissionGuard)
+  @Query(() => FieldMetadataDTO)
+  async field(
+    @Args('id', {
+      type: () => UUIDScalarType,
+      description: 'The id of the record to find.',
+    })
+    id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<FieldMetadataEntity> {
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (!isDefined(fieldMetadata)) {
+      throw new NotFoundError(
+        `Unable to find FieldMetadataEntity with id: ${id}`,
+      );
+    }
+
+    return fieldMetadata;
+  }
+
+  @ResolveField(() => ObjectMetadataDTO, { nullable: true })
+  async object(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Parent()
+    { objectMetadataId }: Pick<FieldMetadataDTO, 'objectMetadataId'>,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<ObjectMetadataDTO | null> {
+    return context.loaders.objectMetadataLoader.load({
+      workspaceId: workspace.id,
+      objectMetadataId,
+    });
+  }
 
   @ResolveField(() => Boolean, {
     nullable: true,
