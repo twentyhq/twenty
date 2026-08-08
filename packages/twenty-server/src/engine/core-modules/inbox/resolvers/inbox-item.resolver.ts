@@ -11,10 +11,19 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import {
   InboxCountsDTO,
   InboxItemDTO,
+  InboxQueueDTO,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item.dto';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/inbox-item-action.service';
-import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
+import {
+  type InboxReadScope,
+  InboxItemService,
+} from 'src/engine/core-modules/inbox/services/inbox-item.service';
+import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
 import { toInboxItemDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-dto.util';
@@ -27,10 +36,11 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-// Every operation is scoped to the caller's own items by construction: the
-// assignee is taken from the auth context, never from the request.
-// NoPermissionGuard: the inbox needs no permission flag because a member can
-// only ever reach their own items, never anybody else's.
+// Every operation is scoped to what the caller can reach by construction: their
+// own items, plus the queues they belong to. Both come from the auth context,
+// never from the request.
+// NoPermissionGuard: the inbox needs no permission flag because reachability is
+// decided by assignment and queue membership rather than by object permissions.
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
@@ -39,6 +49,7 @@ export class InboxItemResolver {
   constructor(
     private readonly inboxItemService: InboxItemService,
     private readonly inboxItemActionService: InboxItemActionService,
+    private readonly inboxQueueService: InboxQueueService,
     private readonly inboxTransitionService: InboxTransitionService,
   ) {}
 
@@ -48,6 +59,9 @@ export class InboxItemResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('scope', { type: () => InboxItemScope, nullable: true })
     scope?: InboxItemScope,
+    // Naming a queue reads that shared inbox instead of the caller's own
+    @Args('queueSlug', { type: () => String, nullable: true })
+    queueSlug?: string,
     // The client grows this to reach older items, so nothing falls off the
     // end of the list without a way back to it.
     @Args('limit', { type: () => Int, nullable: true })
@@ -56,13 +70,20 @@ export class InboxItemResolver {
     const now = new Date();
     const inboxItems = await this.inboxItemService.findMany({
       workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      readScope: await this.resolveReadScope({
+        workspaceId,
+        userWorkspaceId,
+        queueSlug,
+      }),
       scope: scope ?? InboxItemScope.INBOX,
       now,
       limit,
     });
 
-    return inboxItems.map((inboxItem) => toInboxItemDto(inboxItem, now));
+    return inboxItems.map((inboxItem) =>
+      toInboxItemDto(inboxItem, now, userWorkspaceId),
+    );
   }
 
   // Looked up by id rather than by scope, so a surface showing one item keeps
@@ -73,25 +94,71 @@ export class InboxItemResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
   ): Promise<InboxItemDTO | null> {
-    const inboxItem = await this.inboxItemService.findOwnedItem({
+    const inboxItem = await this.inboxItemService.findVisibleItem({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+        workspaceId,
+        userWorkspaceId,
+      }),
     });
 
-    return isDefined(inboxItem) ? toInboxItemDto(inboxItem, new Date()) : null;
+    return isDefined(inboxItem)
+      ? toInboxItemDto(inboxItem, new Date(), userWorkspaceId)
+      : null;
   }
 
   @Query(() => InboxCountsDTO)
   async myInboxCounts(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('queueSlug', { type: () => String, nullable: true })
+    queueSlug?: string,
   ): Promise<InboxCountsDTO> {
     return this.inboxItemService.countByScope({
       workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      readScope: await this.resolveReadScope({
+        workspaceId,
+        userWorkspaceId,
+        queueSlug,
+      }),
       now: new Date(),
     });
+  }
+
+  // The shared inboxes this person watches, badged the same way their own is
+  @Query(() => [InboxQueueDTO])
+  async myInboxQueues(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<InboxQueueDTO[]> {
+    const now = new Date();
+    const queues = await this.inboxQueueService.findMemberQueues({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return Promise.all(
+      queues.map(async (queue) => {
+        const counts = await this.inboxItemService.countByScope({
+          workspaceId,
+          actorUserWorkspaceId: userWorkspaceId,
+          readScope: { kind: 'queue', queueId: queue.id },
+          now,
+        });
+
+        return {
+          id: queue.id,
+          name: queue.name,
+          slug: queue.slug,
+          icon: queue.icon,
+          unread: counts.unread,
+          needsAction: counts.needsAction,
+        };
+      }),
+    );
   }
 
   @Mutation(() => InboxItemDTO)
@@ -103,10 +170,14 @@ export class InboxItemResolver {
     const inboxItem = await this.inboxItemService.markRead({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId: userWorkspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+        workspaceId,
+        userWorkspaceId,
+      }),
     });
 
-    return toInboxItemDto(inboxItem, new Date());
+    return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
   }
 
   @Mutation(() => InboxItemDTO)
@@ -125,11 +196,15 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
+      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+        workspaceId,
+        userWorkspaceId,
+      }),
       transition: toInboxItemTransition(transition),
       expectedVersion,
     });
 
-    return toInboxItemDto(inboxItem, new Date());
+    return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
   }
 
   // Ergonomic wrapper: names one of the type's declared actions instead of
@@ -149,11 +224,46 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
+      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+        workspaceId,
+        userWorkspaceId,
+      }),
       actionKey,
       input: toInboxItemPayload(input),
       expectedVersion,
     });
 
-    return toInboxItemDto(inboxItem, new Date());
+    return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
+  }
+
+  // Reading a queue you do not belong to is indistinguishable from reading one
+  // that does not exist, so membership is resolved before the scope is built.
+  private async resolveReadScope({
+    workspaceId,
+    userWorkspaceId,
+    queueSlug,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    queueSlug?: string;
+  }): Promise<InboxReadScope> {
+    if (!isDefined(queueSlug)) {
+      return { kind: 'personal' };
+    }
+
+    const queue = await this.inboxQueueService.findMemberQueueBySlug({
+      workspaceId,
+      userWorkspaceId,
+      slug: queueSlug,
+    });
+
+    if (!isDefined(queue)) {
+      throw new InboxException(
+        `Unknown inbox queue ${queueSlug}`,
+        InboxExceptionCode.UNKNOWN_INBOX_QUEUE,
+      );
+    }
+
+    return { kind: 'queue', queueId: queue.id };
   }
 }

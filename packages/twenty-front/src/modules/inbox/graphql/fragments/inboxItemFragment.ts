@@ -13,6 +13,10 @@ export const INBOX_ITEM_FRAGMENT = gql`
     outcome
     result
     lastEventAt
+    queueId
+    assigneeUserWorkspaceId
+    isAssignedToMe
+    assigneeUserId
     threadId
     subjectObjectMetadataId
     subjectRecordId

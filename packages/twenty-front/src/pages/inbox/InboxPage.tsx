@@ -4,10 +4,12 @@ import { useContext } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxList } from '@/inbox/components/InboxList';
 import { useInboxItems } from '@/inbox/hooks/useInboxItems';
+import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
 import { useOpenInboxItemFullPage } from '@/inbox/hooks/useOpenInboxItemFullPage';
 import { useOpenInboxItemInSidePanel } from '@/inbox/hooks/useOpenInboxItemInSidePanel';
 import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
@@ -40,10 +42,19 @@ const StyledErrorState = styled.div`
 export const InboxPage = () => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
-  const { inboxSectionSlug } = useParams<{ inboxSectionSlug?: string }>();
+  const { inboxSectionSlug, inboxQueueSlug } = useParams<{
+    inboxSectionSlug?: string;
+    inboxQueueSlug?: string;
+  }>();
+  const { getIcon } = useIcons();
+  const { inboxQueues } = useInboxQueues();
 
+  // A shared inbox is the same list read through a queue, so the page differs
+  // only in what it is called and which items it asks for.
+  const inboxQueue = inboxQueues.find((queue) => queue.slug === inboxQueueSlug);
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
-  const SectionIcon = inboxSection.Icon;
+  const QueueIcon = getIcon(inboxQueue?.icon);
+  const SectionIcon = isDefined(inboxQueueSlug) ? QueueIcon : inboxSection.Icon;
 
   const {
     isInboxEnabled,
@@ -54,10 +65,16 @@ export const InboxPage = () => {
     error,
     hasMoreItems,
     loadMoreItems,
-  } = useInboxItems(inboxSection.scope);
+  } = useInboxItems(
+    isDefined(inboxQueueSlug) ? InboxItemScope.INBOX : inboxSection.scope,
+    inboxQueueSlug,
+  );
   const { openInboxItemFullPage } = useOpenInboxItemFullPage(inboxSection);
   const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
   const selectedInboxItemId = useAtomStateValue(selectedInboxItemIdState);
+
+  const shouldSplitByPriority =
+    isDefined(inboxQueueSlug) || inboxSection.scope === InboxItemScope.INBOX;
 
   // With the flag off the inbox is not a surface, so a direct visit lands on
   // the app index rather than on an empty shell
@@ -70,7 +87,7 @@ export const InboxPage = () => {
       header={
         <PageCardHeader
           icon={<SectionIcon size={theme.icon.size.md} />}
-          title={t(inboxSection.label)}
+          title={inboxQueue?.name ?? t(inboxSection.label)}
         />
       }
     >
@@ -85,7 +102,7 @@ export const InboxPage = () => {
             otherItems={otherItems}
             selectedInboxItemId={selectedInboxItemId}
             hasMoreItems={hasMoreItems}
-            shouldSplitByPriority={inboxSection.scope === InboxItemScope.INBOX}
+            shouldSplitByPriority={shouldSplitByPriority}
             onInboxItemClick={(inboxItem) =>
               openInboxItemFullPage(
                 inboxItem,
@@ -93,8 +110,7 @@ export const InboxPage = () => {
                   inboxItems,
                   needsActionItems,
                   otherItems,
-                  shouldSplitByPriority:
-                    inboxSection.scope === InboxItemScope.INBOX,
+                  shouldSplitByPriority,
                 }),
               )
             }

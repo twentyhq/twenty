@@ -63,18 +63,19 @@ const executeArgs = {
   inboxItemId: INBOX_ITEM_ID,
   workspaceId: WORKSPACE_ID,
   actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+  memberQueueIds: [],
 };
 
 describe('InboxItemActionService', () => {
   let service: InboxItemActionService;
 
-  const inboxItemService = { findOwnedItemOrThrow: jest.fn() };
+  const inboxItemService = { findVisibleItemOrThrow: jest.fn() };
   const inboxTransitionService = { transition: jest.fn() };
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    inboxItemService.findOwnedItemOrThrow.mockResolvedValue(inboxItem);
+    inboxItemService.findVisibleItemOrThrow.mockResolvedValue(inboxItem);
     inboxTransitionService.transition.mockResolvedValue(inboxItem);
 
     const module: TestingModule = await Test.createTestingModule({

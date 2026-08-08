@@ -3,7 +3,10 @@ import { BadRequestException } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
-import { type InboxItemTransition } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
+import {
+  type InboxItemTransition,
+  SELF_ASSIGNMENT,
+} from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 import { toInboxItemPayload } from 'src/engine/core-modules/inbox/utils/to-inbox-item-payload.util';
 
 // Narrows the flat GraphQL input into the discriminated union, so everything
@@ -34,6 +37,17 @@ export const toInboxItemTransition = (
 
     case 'REOPEN':
       return { kind: 'REOPEN' };
+
+    // Absent means "me", null means "nobody", an id means "them". Taking work
+    // out of a queue is the common case and needs no id from the client.
+    case 'ASSIGN':
+      return {
+        kind: 'ASSIGN',
+        toUserWorkspaceId:
+          'toUserWorkspaceId' in input
+            ? (input.toUserWorkspaceId ?? null)
+            : SELF_ASSIGNMENT,
+      };
 
     default:
       throw new BadRequestException(`Unknown transition kind ${input.kind}`);

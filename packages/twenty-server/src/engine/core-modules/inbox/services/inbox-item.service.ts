@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
@@ -15,6 +16,11 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export const DEFAULT_INBOX_PAGE_SIZE = 50;
 export const MAX_INBOX_PAGE_SIZE = 500;
 
+// Which inbox is being read: someone's own, or one shared queue they watch.
+export type InboxReadScope =
+  | { kind: 'personal' }
+  | { kind: 'queue'; queueId: string };
+
 // Reads and the one mutation that is not a transition. Everything that changes
 // where an item sits lives in InboxTransitionService.
 @Injectable()
@@ -28,23 +34,25 @@ export class InboxItemService {
   // use the same instant, and a resurfacing time cannot elapse mid request.
   async findMany({
     workspaceId,
-    assigneeUserWorkspaceId,
+    actorUserWorkspaceId,
+    readScope,
     scope,
     now,
     limit,
   }: {
     workspaceId: string;
-    assigneeUserWorkspaceId: string;
+    actorUserWorkspaceId: string;
+    readScope: InboxReadScope;
     scope: InboxItemScope;
     now: Date;
     limit?: number;
   }): Promise<InboxItemEntity[]> {
     return this.inboxItemRepository.find(workspaceId, {
       where: {
-        assigneeUserWorkspaceId,
+        ...this.buildReadScopeCriteria({ readScope, actorUserWorkspaceId }),
         ...buildInboxItemScopeCriteria(scope, now),
       },
-      relations: { inboxItemType: true },
+      relations: { inboxItemType: true, assigneeUserWorkspace: true },
       order: { lastEventAt: 'DESC' },
       // A non positive take reaches Postgres as "no limit", so the cap is
       // clamped at both ends rather than only at the top
@@ -57,15 +65,21 @@ export class InboxItemService {
 
   async countByScope({
     workspaceId,
-    assigneeUserWorkspaceId,
+    actorUserWorkspaceId,
+    readScope,
     now,
   }: {
     workspaceId: string;
-    assigneeUserWorkspaceId: string;
+    actorUserWorkspaceId: string;
+    readScope: InboxReadScope;
     now: Date;
   }): Promise<{ unread: number; needsAction: number; snoozed: number }> {
+    const readScopeCriteria = this.buildReadScopeCriteria({
+      readScope,
+      actorUserWorkspaceId,
+    });
     const visibleCriteria = {
-      assigneeUserWorkspaceId,
+      ...readScopeCriteria,
       ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, now),
     };
 
@@ -78,7 +92,7 @@ export class InboxItemService {
       }),
       this.inboxItemRepository.count(workspaceId, {
         where: {
-          assigneeUserWorkspaceId,
+          ...readScopeCriteria,
           ...buildInboxItemScopeCriteria(InboxItemScope.SNOOZED, now),
         },
       }),
@@ -92,49 +106,57 @@ export class InboxItemService {
   async markRead({
     inboxItemId,
     workspaceId,
-    assigneeUserWorkspaceId,
-  }: OwnedItemArgs): Promise<InboxItemEntity> {
-    const inboxItem = await this.findOwnedItemOrThrow({
+    actorUserWorkspaceId,
+    memberQueueIds,
+  }: VisibleItemArgs): Promise<InboxItemEntity> {
+    const inboxItem = await this.findVisibleItemOrThrow({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId,
+      actorUserWorkspaceId,
+      memberQueueIds,
     });
 
     await this.inboxItemRepository.update(
       workspaceId,
-      { id: inboxItem.id, assigneeUserWorkspaceId },
+      this.buildWriteScope({ inboxItem, actorUserWorkspaceId, memberQueueIds }),
       // Database clock, since unread is this against lastEventAt
       { readAt: () => 'clock_timestamp()' },
     );
 
-    return this.findOwnedItemOrThrow({
+    return this.findVisibleItemOrThrow({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId,
+      actorUserWorkspaceId,
+      memberQueueIds,
     });
   }
 
-  async findOwnedItem({
+  // Visible means addressed to you, or sitting in a queue you watch. Queue
+  // membership is the only thing keeping one team out of another's inbox.
+  async findVisibleItem({
     inboxItemId,
     workspaceId,
-    assigneeUserWorkspaceId,
-  }: OwnedItemArgs): Promise<InboxItemEntity | null> {
+    actorUserWorkspaceId,
+    memberQueueIds,
+  }: VisibleItemArgs): Promise<InboxItemEntity | null> {
     return this.inboxItemRepository.findOne(workspaceId, {
-      where: { id: inboxItemId, assigneeUserWorkspaceId },
-      relations: { inboxItemType: true },
+      where: [
+        {
+          id: inboxItemId,
+          assigneeUserWorkspaceId: actorUserWorkspaceId,
+        },
+        ...(memberQueueIds.length > 0
+          ? [{ id: inboxItemId, queueId: In(memberQueueIds) }]
+          : []),
+      ],
+      relations: { inboxItemType: true, assigneeUserWorkspace: true },
     });
   }
 
-  async findOwnedItemOrThrow({
-    inboxItemId,
-    workspaceId,
-    assigneeUserWorkspaceId,
-  }: OwnedItemArgs): Promise<InboxItemEntity> {
-    const inboxItem = await this.findOwnedItem({
-      inboxItemId,
-      workspaceId,
-      assigneeUserWorkspaceId,
-    });
+  async findVisibleItemOrThrow(
+    args: VisibleItemArgs,
+  ): Promise<InboxItemEntity> {
+    const inboxItem = await this.findVisibleItem(args);
 
     if (!isDefined(inboxItem)) {
       throw new NotFoundException('Inbox item not found');
@@ -142,10 +164,41 @@ export class InboxItemService {
 
     return inboxItem;
   }
+
+  // A write is scoped by the same rule that made the item readable, so losing
+  // access between the read and the write means updating nothing.
+  buildWriteScope({
+    inboxItem,
+    actorUserWorkspaceId,
+    memberQueueIds,
+  }: {
+    inboxItem: InboxItemEntity;
+    actorUserWorkspaceId: string;
+    memberQueueIds: string[];
+  }): FindOptionsWhere<InboxItemEntity> {
+    return isDefined(inboxItem.queueId)
+      ? { id: inboxItem.id, queueId: In(memberQueueIds) }
+      : { id: inboxItem.id, assigneeUserWorkspaceId: actorUserWorkspaceId };
+  }
+
+  private buildReadScopeCriteria({
+    readScope,
+    actorUserWorkspaceId,
+  }: {
+    readScope: InboxReadScope;
+    actorUserWorkspaceId: string;
+  }): FindOptionsWhere<InboxItemEntity> {
+    // A personal inbox shows what is yours, including work you took out of a
+    // queue. A queue shows everything addressed to it, taken or not.
+    return readScope.kind === 'personal'
+      ? { assigneeUserWorkspaceId: actorUserWorkspaceId }
+      : { queueId: readScope.queueId };
+  }
 }
 
-type OwnedItemArgs = {
+type VisibleItemArgs = {
   inboxItemId: string;
   workspaceId: string;
-  assigneeUserWorkspaceId: string;
+  actorUserWorkspaceId: string;
+  memberQueueIds: string[];
 };

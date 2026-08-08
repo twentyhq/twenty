@@ -41,13 +41,17 @@ const transitionArgs = {
   inboxItemId: INBOX_ITEM_ID,
   workspaceId: WORKSPACE_ID,
   actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+  memberQueueIds: [],
 };
 
 describe('InboxTransitionService', () => {
   let service: InboxTransitionService;
 
   const inboxItemRepository = { update: jest.fn() };
-  const inboxItemService = { findOwnedItemOrThrow: jest.fn() };
+  const inboxItemService = {
+    findVisibleItemOrThrow: jest.fn(),
+    buildWriteScope: jest.fn(),
+  };
 
   const lastPartialUpdate = () =>
     inboxItemRepository.update.mock.calls[0][2] as Record<string, unknown>;
@@ -61,7 +65,11 @@ describe('InboxTransitionService', () => {
     jest.setSystemTime(NOW);
 
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
-    inboxItemService.findOwnedItemOrThrow.mockResolvedValue(buildInboxItem());
+    inboxItemService.findVisibleItemOrThrow.mockResolvedValue(buildInboxItem());
+    inboxItemService.buildWriteScope.mockReturnValue({
+      id: INBOX_ITEM_ID,
+      assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -209,7 +217,7 @@ describe('InboxTransitionService', () => {
 
     it('should accept any outcome when the type declares none', async () => {
       // Prepare
-      inboxItemService.findOwnedItemOrThrow.mockResolvedValue(
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({
           inboxItemType: {
             id: 'type-id',
@@ -232,7 +240,7 @@ describe('InboxTransitionService', () => {
 
     it('should apply to an item that was already cleared, since clearing is not a state change', async () => {
       // Prepare
-      inboxItemService.findOwnedItemOrThrow.mockResolvedValue(
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
@@ -292,7 +300,7 @@ describe('InboxTransitionService', () => {
   describe('REOPEN', () => {
     it('should undo the clear and how it ended', async () => {
       // Prepare
-      inboxItemService.findOwnedItemOrThrow.mockResolvedValue(
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
@@ -316,7 +324,7 @@ describe('InboxTransitionService', () => {
 
     it('should leave readAt alone, since moving something back is not a reason to unread it', async () => {
       // Prepare
-      inboxItemService.findOwnedItemOrThrow.mockResolvedValue(
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
@@ -328,6 +336,91 @@ describe('InboxTransitionService', () => {
 
       // Assert
       expect(lastPartialUpdate()).not.toHaveProperty('readAt');
+    });
+  });
+
+  describe('ASSIGN', () => {
+    const QUEUE_ITEM = () =>
+      buildInboxItem({
+        queueId: 'support-queue-id',
+        assigneeUserWorkspaceId: null,
+      });
+
+    it('should let someone take a queue item', async () => {
+      // Prepare
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(QUEUE_ITEM());
+
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: {
+          kind: 'ASSIGN',
+          toUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        },
+      });
+
+      // Assert
+      expect(lastPartialUpdate()).toEqual(
+        expect.objectContaining({
+          assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        }),
+      );
+    });
+
+    it('should give a queue item back by assigning it to nobody', async () => {
+      // Prepare
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
+        buildInboxItem({
+          queueId: 'support-queue-id',
+          assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        }),
+      );
+
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: { kind: 'ASSIGN', toUserWorkspaceId: null },
+      });
+
+      // Assert
+      expect(lastPartialUpdate()).toEqual(
+        expect.objectContaining({ assigneeUserWorkspaceId: null }),
+      );
+    });
+
+    // Work is never left with no inbox to sit in
+    it('should refuse to unassign an item that has no queue behind it', async () => {
+      // Prepare
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
+        buildInboxItem({ queueId: null }),
+      );
+
+      // Act & Assert
+      await expect(
+        service.transition({
+          ...transitionArgs,
+          transition: { kind: 'ASSIGN', toUserWorkspaceId: null },
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should hand an item to someone else unread, since they have not seen it', async () => {
+      // Prepare
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(QUEUE_ITEM());
+
+      // Act
+      await service.transition({
+        ...transitionArgs,
+        transition: { kind: 'ASSIGN', toUserWorkspaceId: 'someone-else' },
+      });
+
+      // Assert
+      expect(lastPartialUpdate()).toEqual(
+        expect.objectContaining({
+          assigneeUserWorkspaceId: 'someone-else',
+          readAt: null,
+        }),
+      );
     });
   });
 

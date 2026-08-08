@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,6 +12,7 @@ import {
 
 import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-30/create-inbox-core-tables-upgrade-command-name.constant';
 import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
+import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -33,18 +35,31 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
 })
-// One row per slot and assignee, for the slot's whole life. Concurrent
-// producers collide here and fold instead of duplicating, and a cleared item is
-// revived by the next event rather than replaced by a second row.
+// Work never vanishes. An item is addressed to a shared queue, to one person,
+// or to both, and the database refuses the fourth case.
+@Check(
+  'CHK_INBOX_ITEM_ADDRESSED',
+  '("queueId" IS NOT NULL) OR ("assigneeUserWorkspaceId" IS NOT NULL)',
+)
+// One row per slot per inbox, for the slot's whole life. Concurrent producers
+// collide here and fold instead of duplicating, and a cleared item is revived
+// by the next event rather than replaced by a second row. A queue's slot belongs
+// to the queue, so taking an item does not move it to a different slot.
+@Index(
+  'IDX_INBOX_ITEM_QUEUE_SLOT_KEY_UNIQUE',
+  ['workspaceId', 'queueId', 'slotKey'],
+  { unique: true, where: `"slotKey" IS NOT NULL AND "queueId" IS NOT NULL` },
+)
 @Index(
   'IDX_INBOX_ITEM_SLOT_KEY_UNIQUE',
   ['workspaceId', 'assigneeUserWorkspaceId', 'slotKey'],
-  { unique: true, where: `"slotKey" IS NOT NULL` },
+  { unique: true, where: `"slotKey" IS NOT NULL AND "queueId" IS NULL` },
 )
 @Index('IDX_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID_LAST_EVENT_AT', [
   'assigneeUserWorkspaceId',
   'lastEventAt',
 ])
+@Index('IDX_INBOX_ITEM_QUEUE_ID_LAST_EVENT_AT', ['queueId', 'lastEventAt'])
 @Index('IDX_INBOX_ITEM_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_INBOX_ITEM_THREAD_ID', ['threadId'])
 export class InboxItemEntity {
@@ -145,17 +160,29 @@ export class InboxItemEntity {
   @Column({ nullable: true, type: 'uuid' })
   subjectRecordId: string | null;
 
-  // An item always belongs to exactly one person. The router refuses to create
-  // one it cannot address, so there is no such thing as an unassigned item.
-  @Column({ nullable: false, type: 'uuid' })
-  assigneeUserWorkspaceId: string;
+  // The shared inbox this belongs to, if it is shared work. It stays set after
+  // someone takes the item, so a claimed conversation is still the queue's.
+  @Column({ nullable: true, type: 'uuid' })
+  queueId: string | null;
+
+  @ManyToOne(() => InboxQueueEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({
+    name: 'queueId',
+    foreignKeyConstraintName: 'FK_INBOX_ITEM_QUEUE_ID',
+  })
+  queue: EntityRelation<InboxQueueEntity> | null;
+
+  // Who has taken it. Null on a queue item means nobody has yet, which is a
+  // state the queue exists to represent rather than a missing value.
+  @Column({ nullable: true, type: 'uuid' })
+  assigneeUserWorkspaceId: string | null;
 
   @ManyToOne(() => UserWorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'assigneeUserWorkspaceId',
     foreignKeyConstraintName: 'FK_INBOX_ITEM_ASSIGNEE_USER_WORKSPACE_ID',
   })
-  assigneeUserWorkspace: EntityRelation<UserWorkspaceEntity>;
+  assigneeUserWorkspace: EntityRelation<UserWorkspaceEntity> | null;
 
   // Two upserts naming the same slot are the same piece of work. This is the
   // whole folding rule: one item per slot, and no slot means one item per call.

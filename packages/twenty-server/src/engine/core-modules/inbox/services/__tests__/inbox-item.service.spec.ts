@@ -1,6 +1,8 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { In } from 'typeorm';
+
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
@@ -36,7 +38,8 @@ const buildInboxItem = (
 const ownedItemArgs = {
   inboxItemId: INBOX_ITEM_ID,
   workspaceId: WORKSPACE_ID,
-  assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+  actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+  memberQueueIds: [],
 };
 
 describe('InboxItemService', () => {
@@ -85,7 +88,8 @@ describe('InboxItemService', () => {
       // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: { kind: 'personal' },
         scope,
         now: NOW,
       });
@@ -105,7 +109,8 @@ describe('InboxItemService', () => {
       // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: { kind: 'personal' },
         scope: InboxItemScope.INBOX,
         now: NOW,
       });
@@ -115,7 +120,7 @@ describe('InboxItemService', () => {
         WORKSPACE_ID,
         expect.objectContaining({
           order: { lastEventAt: 'DESC' },
-          relations: { inboxItemType: true },
+          relations: { inboxItemType: true, assigneeUserWorkspace: true },
           take: DEFAULT_INBOX_PAGE_SIZE,
         }),
       );
@@ -125,7 +130,8 @@ describe('InboxItemService', () => {
       // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: { kind: 'personal' },
         scope: InboxItemScope.INBOX,
         now: NOW,
         limit: 5,
@@ -139,7 +145,7 @@ describe('InboxItemService', () => {
     });
   });
 
-  describe('findOwnedItemOrThrow', () => {
+  describe('findVisibleItemOrThrow', () => {
     it('should scope the lookup to the caller when the item is owned', async () => {
       // Prepare
       const inboxItem = buildInboxItem();
@@ -147,16 +153,18 @@ describe('InboxItemService', () => {
       inboxItemRepository.findOne.mockResolvedValue(inboxItem);
 
       // Act
-      const result = await service.findOwnedItemOrThrow(ownedItemArgs);
+      const result = await service.findVisibleItemOrThrow(ownedItemArgs);
 
       // Assert
       expect(result).toEqual(inboxItem);
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
-        where: {
-          id: INBOX_ITEM_ID,
-          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        },
-        relations: { inboxItemType: true },
+        where: [
+          {
+            id: INBOX_ITEM_ID,
+            assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+          },
+        ],
+        relations: { inboxItemType: true, assigneeUserWorkspace: true },
       });
     });
 
@@ -167,19 +175,89 @@ describe('InboxItemService', () => {
 
       // Act & Assert
       await expect(
-        service.findOwnedItemOrThrow({
+        service.findVisibleItemOrThrow({
           ...ownedItemArgs,
-          assigneeUserWorkspaceId: 'another-user-workspace-id',
+          actorUserWorkspaceId: 'another-user-workspace-id',
         }),
       ).rejects.toThrow(NotFoundException);
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
-          where: expect.objectContaining({
-            assigneeUserWorkspaceId: 'another-user-workspace-id',
-          }),
+          where: [
+            expect.objectContaining({
+              assigneeUserWorkspaceId: 'another-user-workspace-id',
+            }),
+          ],
         }),
       );
+    });
+  });
+
+  describe('queue visibility', () => {
+    // Membership is the only thing keeping one team out of another's inbox
+    it('should reach an item through a queue the caller belongs to', async () => {
+      // Act
+      await service.findVisibleItem({
+        ...ownedItemArgs,
+        memberQueueIds: ['support-queue-id'],
+      });
+
+      // Assert
+      const [, findOptions] = inboxItemRepository.findOne.mock.calls[0];
+
+      expect(findOptions.where).toEqual([
+        {
+          id: INBOX_ITEM_ID,
+          assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        },
+        { id: INBOX_ITEM_ID, queueId: In(['support-queue-id']) },
+      ]);
+    });
+
+    it('should offer no queue path at all when the caller belongs to none', async () => {
+      // Act
+      await service.findVisibleItem(ownedItemArgs);
+
+      // Assert
+      const [, findOptions] = inboxItemRepository.findOne.mock.calls[0];
+
+      expect(findOptions.where).toHaveLength(1);
+    });
+
+    it('should read a shared inbox by the queue rather than by who holds each item', async () => {
+      // Act
+      await service.findMany({
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: { kind: 'queue', queueId: 'support-queue-id' },
+        scope: InboxItemScope.INBOX,
+        now: NOW,
+      });
+
+      // Assert
+      const [, findOptions] = inboxItemRepository.find.mock.calls[0];
+
+      expect(findOptions.where).toEqual({
+        queueId: 'support-queue-id',
+        ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, NOW),
+      });
+    });
+
+    // A write is scoped by whatever made the item readable, so a queue item
+    // stays writable after someone else takes it
+    it('should scope a write to the queue when the item belongs to one', () => {
+      // Act
+      const writeScope = service.buildWriteScope({
+        inboxItem: { id: INBOX_ITEM_ID, queueId: 'support-queue-id' } as never,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        memberQueueIds: ['support-queue-id'],
+      });
+
+      // Assert
+      expect(writeScope).toEqual({
+        id: INBOX_ITEM_ID,
+        queueId: In(['support-queue-id']),
+      });
     });
   });
 
@@ -224,7 +302,8 @@ describe('InboxItemService', () => {
       // Act
       const result = await service.countByScope({
         workspaceId: WORKSPACE_ID,
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: { kind: 'personal' },
         now: NOW,
       });
 
@@ -236,7 +315,8 @@ describe('InboxItemService', () => {
       // Act
       await service.countByScope({
         workspaceId: WORKSPACE_ID,
-        assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: { kind: 'personal' },
         now: NOW,
       });
 

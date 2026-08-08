@@ -1,18 +1,22 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
+import { useIcons } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
 import { INBOX_SUB_SECTIONS } from '@/inbox/constants/InboxSubSections';
 import { useInboxCounts } from '@/inbox/hooks/useInboxCounts';
+import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { INBOX_ROOT_PATH } from '@/inbox/constants/InboxRootPath';
+import { getInboxQueuePath } from '@/inbox/utils/getInboxQueuePath';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { isInboxSectionActive } from '@/inbox/utils/isInboxSectionActive';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { InboxItemScope } from '~/generated/graphql';
@@ -31,6 +35,8 @@ export const NavigationDrawerInboxSection = () => {
   const location = useLocation();
   const isInboxEnabled = useIsInboxEnabled();
   const { inboxCounts } = useInboxCounts();
+  const { inboxQueues } = useInboxQueues();
+  const { getIcon } = useIcons();
 
   if (!isInboxEnabled) {
     return null;
@@ -107,6 +113,32 @@ export const NavigationDrawerInboxSection = () => {
           </AnimatedExpandableContainer>
         </StyledExpandableWrapper>
       </NavigationDrawerItemsCollapsableContainer>
+      {/* Shared inboxes sit alongside your own rather than inside it: work in
+          them is nobody's until someone takes it. */}
+      {inboxQueues.length > 0 && (
+        <>
+          <NavigationDrawerSectionTitle label={t`Shared`} />
+          {inboxQueues.map((inboxQueue) => {
+            const queuePath = getInboxQueuePath(inboxQueue.slug);
+
+            return (
+              <NavigationDrawerItem
+                key={inboxQueue.id}
+                label={inboxQueue.name}
+                Icon={getIcon(inboxQueue.icon)}
+                to={queuePath}
+                active={isInboxSectionActive({
+                  pathname: location.pathname,
+                  inboxSectionPath: queuePath,
+                })}
+                secondaryLabel={
+                  inboxQueue.unread > 0 ? String(inboxQueue.unread) : undefined
+                }
+              />
+            );
+          })}
+        </>
+      )}
     </NavigationDrawerSection>
   );
 };

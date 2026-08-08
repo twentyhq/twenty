@@ -9,7 +9,10 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
-import { type InboxItemTransition } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
+import {
+  type InboxItemTransition,
+  SELF_ASSIGNMENT,
+} from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -19,6 +22,7 @@ export type TransitionInboxItemArgs = {
   inboxItemId: string;
   workspaceId: string;
   actorUserWorkspaceId: string;
+  memberQueueIds: string[];
   transition: InboxItemTransition;
   // Optimistic concurrency. Omitted means "apply regardless", which is what a
   // producer wants; a UI that read the item should always pass what it read.
@@ -39,22 +43,29 @@ export class InboxTransitionService {
     inboxItemId,
     workspaceId,
     actorUserWorkspaceId,
+    memberQueueIds,
     transition,
     expectedVersion,
   }: TransitionInboxItemArgs): Promise<InboxItemEntity> {
-    const inboxItem = await this.inboxItemService.findOwnedItemOrThrow({
+    const visibleItemArgs = {
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId: actorUserWorkspaceId,
-    });
+      actorUserWorkspaceId,
+      memberQueueIds,
+    };
+    const inboxItem =
+      await this.inboxItemService.findVisibleItemOrThrow(visibleItemArgs);
 
     // The version guard lives in the WHERE clause, so losing the race means
     // updating nothing rather than overwriting the winner
     const updateResult = await this.inboxItemRepository.update(
       workspaceId,
       {
-        id: inboxItem.id,
-        assigneeUserWorkspaceId: actorUserWorkspaceId,
+        ...this.inboxItemService.buildWriteScope({
+          inboxItem,
+          actorUserWorkspaceId,
+          memberQueueIds,
+        }),
         ...(isDefined(expectedVersion) ? { version: expectedVersion } : {}),
       },
       {
@@ -73,11 +84,7 @@ export class InboxTransitionService {
       );
     }
 
-    return this.inboxItemService.findOwnedItemOrThrow({
-      inboxItemId,
-      workspaceId,
-      assigneeUserWorkspaceId: actorUserWorkspaceId,
-    });
+    return this.inboxItemService.findVisibleItemOrThrow(visibleItemArgs);
   }
 
   private buildPartialUpdate({
@@ -118,7 +125,39 @@ export class InboxTransitionService {
           outcome: null,
           result: null,
         };
+
+      case 'ASSIGN': {
+        const assignee = this.readAssignee(
+          inboxItem,
+          transition.toUserWorkspaceId === SELF_ASSIGNMENT
+            ? actorUserWorkspaceId
+            : transition.toUserWorkspaceId,
+        );
+
+        return {
+          assigneeUserWorkspaceId: assignee,
+          // Handing work to someone is not something they have seen yet
+          ...(assignee === inboxItem.assigneeUserWorkspaceId
+            ? {}
+            : { readAt: null }),
+        };
+      }
     }
+  }
+
+  // Work cannot be left unaddressed, so an item with no queue behind it has
+  // nowhere to be given back to.
+  private readAssignee(
+    inboxItem: InboxItemEntity,
+    toUserWorkspaceId: string | null,
+  ): string | null {
+    if (!isDefined(toUserWorkspaceId) && !isDefined(inboxItem.queueId)) {
+      throw new BadRequestException(
+        'An inbox item that belongs to no queue cannot be left unassigned',
+      );
+    }
+
+    return toUserWorkspaceId;
   }
 
   // The type decides which outcomes exist. A type that declares none accepts

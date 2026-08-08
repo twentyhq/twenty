@@ -62,6 +62,7 @@ export class InboxItemActionService {
     inboxItemId,
     workspaceId,
     actorUserWorkspaceId,
+    memberQueueIds,
     actionKey,
     input,
     expectedVersion,
@@ -69,14 +70,16 @@ export class InboxItemActionService {
     inboxItemId: string;
     workspaceId: string;
     actorUserWorkspaceId: string;
+    memberQueueIds: string[];
     actionKey: string;
     input?: InboxItemPayload;
     expectedVersion?: number;
   }): Promise<InboxItemEntity> {
-    const inboxItem = await this.inboxItemService.findOwnedItemOrThrow({
+    const inboxItem = await this.inboxItemService.findVisibleItemOrThrow({
       inboxItemId,
       workspaceId,
-      assigneeUserWorkspaceId: actorUserWorkspaceId,
+      actorUserWorkspaceId,
+      memberQueueIds,
     });
 
     const action = this.findActionOrThrow({ inboxItem, actionKey });
@@ -97,6 +100,7 @@ export class InboxItemActionService {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
+      memberQueueIds,
       expectedVersion,
       transition: this.applyInput({
         transition: action.transition,

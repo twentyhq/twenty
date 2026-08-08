@@ -1,4 +1,6 @@
 import { Logger } from '@nestjs/common';
+
+import { IsNull } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
@@ -6,6 +8,7 @@ import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-it
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
+import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -19,6 +22,8 @@ const EXISTING_ITEM_ID = 'existing-item-id';
 const INSERTED_ITEM_ID = 'inserted-item-id';
 const THREAD_SLOT_KEY = `thread:${THREAD_ID}`;
 const RUN_SLOT_KEY = 'workflow-run:run-id';
+const TRIAGE_QUEUE_ID = 'triage-queue-id';
+const SUPPORT_QUEUE_ID = 'support-queue-id';
 const NOW = new Date('2026-08-07T10:00:00.000Z');
 
 const CONVERSATION_TYPE = {
@@ -76,6 +81,10 @@ describe('InboxRouterService', () => {
     isFeatureEnabled: jest.fn(),
   };
 
+  const inboxQueueService = {
+    findOrCreateDefaultQueue: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -85,6 +94,9 @@ describe('InboxRouterService', () => {
 
     inboxItemTypeService.findByKey.mockResolvedValue(CONVERSATION_TYPE);
     featureFlagService.isFeatureEnabled.mockResolvedValue(true);
+    inboxQueueService.findOrCreateDefaultQueue.mockResolvedValue({
+      id: TRIAGE_QUEUE_ID,
+    });
     inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
@@ -102,6 +114,10 @@ describe('InboxRouterService', () => {
         {
           provide: InboxItemTypeService,
           useValue: inboxItemTypeService,
+        },
+        {
+          provide: InboxQueueService,
+          useValue: inboxQueueService,
         },
         {
           provide: FeatureFlagService,
@@ -196,6 +212,7 @@ describe('InboxRouterService', () => {
         title: 'A message from Alice',
         preview: 'Hello there',
         payload: null,
+        queueId: null,
         assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
         slotKey: THREAD_SLOT_KEY,
         threadId: THREAD_ID,
@@ -306,6 +323,7 @@ describe('InboxRouterService', () => {
       // Assert
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
         where: {
+          queueId: IsNull(),
           assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
           slotKey: THREAD_SLOT_KEY,
         },
@@ -502,19 +520,62 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.save).not.toHaveBeenCalled();
     });
 
-    it('should return null without inserting when no thread subject and no fallback assignee resolve a recipient', async () => {
+    // Work that no rule can address used to be dropped on the floor. It now
+    // lands somewhere a human can find it.
+    it('should send work nobody can be found for to the triage queue', async () => {
       // Act
-      const result = await service.routeItem({
+      await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message nobody owns',
       });
 
       // Assert
-      expect(result).toBeNull();
-      expect(inboxItemRepository.findOne).not.toHaveBeenCalled();
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
-      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({
+          queueId: TRIAGE_QUEUE_ID,
+          assigneeUserWorkspaceId: null,
+        }),
+      );
+    });
+
+    it('should address work to the queue a producer named, with nobody holding it', async () => {
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A support request',
+        target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
+      });
+
+      // Assert
+      expect(inboxQueueService.findOrCreateDefaultQueue).not.toHaveBeenCalled();
+      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({
+          queueId: SUPPORT_QUEUE_ID,
+          assigneeUserWorkspaceId: null,
+        }),
+      );
+    });
+
+    // The slot belongs to the queue, so whoever currently holds the item is
+    // irrelevant to whether the next event folds into it
+    it('should look a queue slot up by the queue rather than by who holds it', async () => {
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A second message on the same request',
+        slotKey: RUN_SLOT_KEY,
+        target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
+      });
+
+      // Assert
+      expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
+        where: { queueId: SUPPORT_QUEUE_ID, slotKey: RUN_SLOT_KEY },
+      });
     });
 
     it('should prefer the thread owner over the fallback assignee when both are available', async () => {

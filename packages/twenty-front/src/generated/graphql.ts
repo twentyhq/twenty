@@ -199,10 +199,14 @@ export type InboxItem = {
   inboxItemType: InboxItemType;
   isUnread: Scalars['Boolean']['output'];
   lastEventAt: Scalars['DateTime']['output'];
+  assigneeUserId?: Maybe<Scalars['UUID']['output']>;
+  assigneeUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  isAssignedToMe: Scalars['Boolean']['output'];
   outcome?: Maybe<Scalars['String']['output']>;
   payload?: Maybe<Scalars['JSON']['output']>;
   preview?: Maybe<Scalars['String']['output']>;
   priority: InboxItemPriority;
+  queueId?: Maybe<Scalars['UUID']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
   scope: InboxItemScope;
   subjectObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -241,6 +245,16 @@ export enum InboxItemPriority {
   NEEDS_ACTION = 'NEEDS_ACTION',
   UPDATE = 'UPDATE'
 }
+
+export type InboxQueue = {
+  __typename?: 'InboxQueue';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  needsAction: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
+  unread: Scalars['Int']['output'];
+};
 
 export enum InboxItemScope {
   DONE = 'DONE',
@@ -463,6 +477,7 @@ export type Query = {
   myInboxCounts: InboxCounts;
   myInboxItem?: Maybe<InboxItem>;
   myInboxItems: Array<InboxItem>;
+  myInboxQueues: Array<InboxQueue>;
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
   workflowVersionContent: WorkflowVersionContent;
@@ -534,7 +549,12 @@ export type QueryMyInboxItemArgs = {
 
 export type QueryMyInboxItemsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
+  queueSlug?: InputMaybe<Scalars['String']['input']>;
   scope?: InputMaybe<InboxItemScope>;
+};
+
+export type QueryMyInboxCountsArgs = {
+  queueSlug?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -718,6 +738,7 @@ export type TransitionInboxItemInput = {
   outcome?: InputMaybe<Scalars['String']['input']>;
   result?: InputMaybe<Scalars['JSON']['input']>;
   resurfaceInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  toUserWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type UuidFilter = {

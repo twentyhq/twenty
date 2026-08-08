@@ -6,18 +6,19 @@ import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type InboxCounts } from '~/generated/graphql';
 
-export const useInboxCounts = () => {
+export const useInboxCounts = (queueSlug?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
 
-  const { data, loading, error } = useQuery<{ myInboxCounts: InboxCounts }>(
-    GET_MY_INBOX_COUNTS,
-    {
-      client: apolloCoreClient,
-      pollInterval: INBOX_ITEMS_POLL_INTERVAL,
-      skip: !isInboxEnabled,
-    },
-  );
+  const { data, loading, error } = useQuery<
+    { myInboxCounts: InboxCounts },
+    { queueSlug?: string }
+  >(GET_MY_INBOX_COUNTS, {
+    client: apolloCoreClient,
+    variables: { queueSlug },
+    pollInterval: INBOX_ITEMS_POLL_INTERVAL,
+    skip: !isInboxEnabled,
+  });
 
   return {
     inboxCounts: data?.myInboxCounts ?? null,

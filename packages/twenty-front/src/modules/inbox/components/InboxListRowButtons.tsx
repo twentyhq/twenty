@@ -28,7 +28,7 @@ export const InboxListRowButtons = ({
   onOpenInSidePanel,
 }: InboxListRowButtonsProps) => {
   const { t } = useLingui();
-  const { executeInboxItemAction } = useInboxItemActions();
+  const { executeInboxItemAction, assignInboxItem } = useInboxItemActions();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const inlineActions =
@@ -39,8 +39,46 @@ export const InboxListRowButtons = ({
         )
       : [];
 
+  // Taking work out of a shared inbox is the one action that is about who owns
+  // it rather than what it is, so it is offered before the type's own actions.
+  const isInQueue = isDefined(inboxItem.queueId);
+
+  const takeInboxItem = () =>
+    void assignInboxItem({
+      inboxItemId: inboxItem.id,
+      expectedVersion: inboxItem.version,
+    }).catch(() =>
+      enqueueErrorSnackBar({ message: t`That could not be applied` }),
+    );
+
+  const giveInboxItemBack = () =>
+    void assignInboxItem({
+      inboxItemId: inboxItem.id,
+      toUserWorkspaceId: null,
+      expectedVersion: inboxItem.version,
+    }).catch(() =>
+      enqueueErrorSnackBar({ message: t`That could not be applied` }),
+    );
+
   return (
     <StyledButtons>
+      {isInQueue && !inboxItem.isAssignedToMe && (
+        <Button
+          accent="blue"
+          onClick={takeInboxItem}
+          size="small"
+          title={t`Take`}
+          variant="secondary"
+        />
+      )}
+      {isInQueue && inboxItem.isAssignedToMe && (
+        <Button
+          onClick={giveInboxItemBack}
+          size="small"
+          title={t`Give back`}
+          variant="secondary"
+        />
+      )}
       {inlineActions.map((action) => (
         <Button
           key={action.key}

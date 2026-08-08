@@ -51,6 +51,7 @@ export type InboxItemWithType = Omit<InboxItemEntity, 'inboxItemType'> & {
 export const toInboxItemDto = (
   inboxItem: InboxItemWithType,
   now: Date,
+  actorUserWorkspaceId: string,
 ): InboxItemDTO => {
   const inboxItemType = inboxItem.inboxItemType;
 
@@ -77,6 +78,10 @@ export const toInboxItemDto = (
     outcome: inboxItem.outcome,
     result: inboxItem.result,
     lastEventAt: inboxItem.lastEventAt,
+    queueId: inboxItem.queueId,
+    assigneeUserWorkspaceId: inboxItem.assigneeUserWorkspaceId,
+    isAssignedToMe: inboxItem.assigneeUserWorkspaceId === actorUserWorkspaceId,
+    assigneeUserId: inboxItem.assigneeUserWorkspace?.userId ?? null,
     threadId: inboxItem.threadId,
     subjectObjectMetadataId: inboxItem.subjectObjectMetadataId,
     subjectRecordId: inboxItem.subjectRecordId,

@@ -15,6 +15,7 @@ type InboxItemTransitionInput = {
   outcome?: string;
   result?: Record<string, unknown>;
   resurfaceInMinutes?: number;
+  toUserWorkspaceId?: string | null;
 };
 
 export const useInboxItemActions = () => {
@@ -81,6 +82,32 @@ export const useInboxItemActions = () => {
     [transitionInboxItemMutation],
   );
 
+  // Taking, handing over and giving back are the same transition with a
+  // different target, so the UI offers three buttons over one mutation.
+  const assignInboxItem = useCallback(
+    async ({
+      inboxItemId,
+      toUserWorkspaceId,
+      expectedVersion,
+    }: {
+      inboxItemId: string;
+      // Omitted takes the item; null gives it back to the queue.
+      toUserWorkspaceId?: string | null;
+      expectedVersion?: number;
+    }) =>
+      transitionInboxItemMutation({
+        variables: {
+          inboxItemId,
+          transition: {
+            kind: 'ASSIGN',
+            ...(toUserWorkspaceId === undefined ? {} : { toUserWorkspaceId }),
+          },
+          expectedVersion,
+        },
+      }),
+    [transitionInboxItemMutation],
+  );
+
   const reopenInboxItem = useCallback(
     async ({
       inboxItemId,
@@ -119,6 +146,7 @@ export const useInboxItemActions = () => {
   return {
     markInboxItemRead,
     transitionInboxItem,
+    assignInboxItem,
     reopenInboxItem,
     executeInboxItemAction,
   };

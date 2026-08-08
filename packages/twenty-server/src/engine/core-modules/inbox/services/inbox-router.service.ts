@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
@@ -11,6 +12,7 @@ import {
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
+import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import {
   type InboxSubject,
   type RouteInboxItemArgs,
@@ -29,6 +31,7 @@ export class InboxRouterService {
     @InjectWorkspaceScopedRepository(InboxItemEntity)
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
     private readonly inboxItemTypeService: InboxItemTypeService,
+    private readonly inboxQueueService: InboxQueueService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -75,16 +78,10 @@ export class InboxRouterService {
       );
     }
 
-    const assigneeUserWorkspaceId = this.resolveAssignee(args);
-
-    if (!isDefined(assigneeUserWorkspaceId)) {
-      return null;
-    }
-
     return this.upsertItem({
       args,
       inboxItemType,
-      assigneeUserWorkspaceId,
+      address: await this.resolveAddress(args),
       // One item per subject for the subject's whole life, unless the producer
       // knows better and names its own slot. A producer whose events are each
       // separate work names no slot and gets an item per call.
@@ -94,12 +91,35 @@ export class InboxRouterService {
 
   // Where routing policy lives. Rules are code today; a workspace-configurable
   // rule set plugs in here without touching producers.
-  private resolveAssignee(args: RouteInboxItemArgs): string | null {
+  //
+  // Anything it cannot address goes to the triage queue rather than nowhere. A
+  // producer that reports work is entitled to assume the work landed.
+  private async resolveAddress(
+    args: RouteInboxItemArgs,
+  ): Promise<InboxItemAddress> {
     if (args.subject?.kind === 'thread') {
-      return args.subject.ownerUserWorkspaceId;
+      return {
+        kind: 'person',
+        assigneeUserWorkspaceId: args.subject.ownerUserWorkspaceId,
+      };
     }
 
-    return args.target?.userWorkspaceId ?? null;
+    if (args.target?.kind === 'userWorkspace') {
+      return {
+        kind: 'person',
+        assigneeUserWorkspaceId: args.target.userWorkspaceId,
+      };
+    }
+
+    if (args.target?.kind === 'queue') {
+      return { kind: 'queue', queueId: args.target.queueId };
+    }
+
+    const defaultQueue = await this.inboxQueueService.findOrCreateDefaultQueue({
+      workspaceId: args.workspaceId,
+    });
+
+    return { kind: 'queue', queueId: defaultQueue.id };
   }
 
   private resolveSubjectKey(subject?: InboxSubject): string | null {
@@ -109,18 +129,18 @@ export class InboxRouterService {
   private async upsertItem({
     args,
     inboxItemType,
-    assigneeUserWorkspaceId,
+    address,
     slotKey,
   }: {
     args: RouteInboxItemArgs;
     inboxItemType: InboxItemTypeEntity;
-    assigneeUserWorkspaceId: string;
+    address: InboxItemAddress;
     slotKey: string | null;
   }): Promise<InboxItemEntity | null> {
     const existingItem = isDefined(slotKey)
       ? await this.findItemInSlot({
           workspaceId: args.workspaceId,
-          assigneeUserWorkspaceId,
+          address,
           slotKey,
         })
       : null;
@@ -133,7 +153,7 @@ export class InboxRouterService {
       return await this.insertItem({
         args,
         inboxItemType,
-        assigneeUserWorkspaceId,
+        address,
         slotKey,
       });
     } catch (error) {
@@ -150,7 +170,7 @@ export class InboxRouterService {
       // Another producer won the race for this slot; fold into its item.
       const concurrentItem = await this.findItemInSlot({
         workspaceId: args.workspaceId,
-        assigneeUserWorkspaceId,
+        address,
         slotKey,
       });
 
@@ -166,19 +186,28 @@ export class InboxRouterService {
     }
   }
 
-  // At most one row can hold a slot, so there is nothing to disambiguate: a
-  // cleared item is the same item, waiting for its next event.
+  // At most one row can hold a slot in one inbox, so there is nothing to
+  // disambiguate: a cleared item is the same item, waiting for its next event.
+  // A queue's slot is looked up by the queue, never by who currently holds it,
+  // so taking an item cannot split its slot in two.
   private async findItemInSlot({
     workspaceId,
-    assigneeUserWorkspaceId,
+    address,
     slotKey,
   }: {
     workspaceId: string;
-    assigneeUserWorkspaceId: string;
+    address: InboxItemAddress;
     slotKey: string;
   }): Promise<InboxItemEntity | null> {
     return this.inboxItemRepository.findOne(workspaceId, {
-      where: { assigneeUserWorkspaceId, slotKey },
+      where:
+        address.kind === 'queue'
+          ? { queueId: address.queueId, slotKey }
+          : {
+              queueId: IsNull(),
+              assigneeUserWorkspaceId: address.assigneeUserWorkspaceId,
+              slotKey,
+            },
     });
   }
 
@@ -220,12 +249,12 @@ export class InboxRouterService {
   private async insertItem({
     args,
     inboxItemType,
-    assigneeUserWorkspaceId,
+    address,
     slotKey,
   }: {
     args: RouteInboxItemArgs;
     inboxItemType: InboxItemTypeEntity;
-    assigneeUserWorkspaceId: string;
+    address: InboxItemAddress;
     slotKey: string | null;
   }): Promise<InboxItemEntity> {
     return this.inboxItemRepository.save(args.workspaceId, {
@@ -234,7 +263,9 @@ export class InboxRouterService {
       title: args.title ?? inboxItemType.label,
       preview: args.preview ?? null,
       payload: args.payload ?? null,
-      assigneeUserWorkspaceId,
+      queueId: address.kind === 'queue' ? address.queueId : null,
+      assigneeUserWorkspaceId:
+        address.kind === 'person' ? address.assigneeUserWorkspaceId : null,
       slotKey,
       threadId: args.subject?.kind === 'thread' ? args.subject.threadId : null,
       subjectObjectMetadataId:
@@ -307,6 +338,12 @@ export class InboxRouterService {
     }
   }
 }
+
+// Which inbox a producer addressed an item to. One or the other, never
+// neither: an item only gains both when someone takes it out of a queue.
+type InboxItemAddress =
+  | { kind: 'queue'; queueId: string }
+  | { kind: 'person'; assigneeUserWorkspaceId: string };
 
 export const buildSubjectKey = (subject: InboxSubject): string =>
   subject.kind === 'thread'

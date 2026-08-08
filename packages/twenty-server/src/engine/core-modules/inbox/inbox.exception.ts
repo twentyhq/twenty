@@ -10,6 +10,7 @@ import {
 
 export const InboxExceptionCode = appendCommonExceptionCode({
   UNKNOWN_INBOX_ITEM_TYPE: 'UNKNOWN_INBOX_ITEM_TYPE',
+  UNKNOWN_INBOX_QUEUE: 'UNKNOWN_INBOX_QUEUE',
 } as const);
 
 const getInboxExceptionUserFriendlyMessage = (
@@ -18,6 +19,8 @@ const getInboxExceptionUserFriendlyMessage = (
   switch (code) {
     case InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE:
       return msg`This kind of inbox item is not declared.`;
+    case InboxExceptionCode.UNKNOWN_INBOX_QUEUE:
+      return msg`This shared inbox does not exist, or you are not a member.`;
     case InboxExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

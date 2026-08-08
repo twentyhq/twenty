@@ -79,6 +79,28 @@ export class InboxItemTypeDTO {
   outcomes: InboxItemOutcomeDTO[];
 }
 
+// A shared inbox, with the counts the navigation needs to badge it.
+@ObjectType('InboxQueue')
+export class InboxQueueDTO {
+  @Field(() => UUIDScalarType)
+  id: string;
+
+  @Field(() => String)
+  name: string;
+
+  @Field(() => String)
+  slug: string;
+
+  @Field(() => String, { nullable: true })
+  icon: string | null;
+
+  @Field(() => Int)
+  unread: number;
+
+  @Field(() => Int)
+  needsAction: number;
+}
+
 @ObjectType('InboxItem')
 export class InboxItemDTO {
   @Field(() => UUIDScalarType)
@@ -121,6 +143,24 @@ export class InboxItemDTO {
   // When the subject last did something. Also what the list is ordered by.
   @Field(() => Date)
   lastEventAt: Date;
+
+  // Set when the item belongs to a shared inbox, whether or not anyone has
+  // taken it yet.
+  @Field(() => UUIDScalarType, { nullable: true })
+  queueId: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  assigneeUserWorkspaceId: string | null;
+
+  // Computed server side like scope and isUnread, so the client never has to
+  // know its own user workspace id to tell whose work this is.
+  @Field(() => Boolean)
+  isAssignedToMe: boolean;
+
+  // The workspace member behind the assignee, so a shared list can show a face
+  // without the client resolving user workspaces itself.
+  @Field(() => UUIDScalarType, { nullable: true })
+  assigneeUserId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
   threadId: string | null;

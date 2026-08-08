@@ -5,12 +5,11 @@ export type InboxSubject =
   | { kind: 'thread'; threadId: string; ownerUserWorkspaceId: string }
   | { kind: 'record'; objectMetadataId: string; recordId: string };
 
-// Who the work is for. A user today; an agent or a queue is the same field
-// with another kind, which is why it is a ref rather than a bare id.
-export type InboxPrincipalRef = {
-  kind: 'userWorkspace';
-  userWorkspaceId: string;
-};
+// Who the work is for. A person, or a shared queue that several people watch.
+// A producer names one of these; it never resolves the recipient itself.
+export type InboxPrincipalRef =
+  | { kind: 'userWorkspace'; userWorkspaceId: string }
+  | { kind: 'queue'; queueId: string };
 
 export type UpsertInboxItemArgs = {
   workspaceId: string;
@@ -27,7 +26,8 @@ export type UpsertInboxItemArgs = {
   // only names one to fold on something other than the subject.
   slotKey?: string;
   // Producers describe work; they do not choose recipients. This is only read
-  // for subjects that carry no owner of their own.
+  // for subjects that carry no owner of their own. When it resolves to nobody,
+  // the item lands in the workspace's triage queue rather than being dropped.
   target?: InboxPrincipalRef;
   priority?: InboxItemPriority;
 };

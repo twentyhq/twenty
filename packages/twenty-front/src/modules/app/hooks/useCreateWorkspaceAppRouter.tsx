@@ -14,6 +14,7 @@ import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
 import { INBOX_ITEM_PAGE_PATH } from '@/inbox/constants/InboxItemPagePath';
+import { INBOX_QUEUE_PAGE_PATH } from '@/inbox/constants/InboxQueuePagePath';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import indexAppPath from '@/navigation/utils/indexAppPath';
@@ -211,6 +212,16 @@ const createWorkspaceAppRouter = (
               />
               <Route
                 path={AppPath.InboxSectionPage}
+                element={
+                  <LazyRoute>
+                    <InboxPage />
+                  </LazyRoute>
+                }
+              />
+              {/* Static "q" outranks the item route's dynamic segments, so a
+                  shared inbox is never mistaken for an item id. */}
+              <Route
+                path={INBOX_QUEUE_PAGE_PATH}
                 element={
                   <LazyRoute>
                     <InboxPage />
