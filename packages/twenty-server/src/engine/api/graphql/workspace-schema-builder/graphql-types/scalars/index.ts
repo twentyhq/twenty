@@ -9,6 +9,7 @@ import { UUIDScalarType } from './uuid.scalar';
 
 export * from './big-float.scalar';
 export * from './big-int.scalar';
+export * from './connection-cursor.scalar';
 export * from './cursor.scalar';
 
 export * from './date.scalar';
