@@ -1,9 +1,8 @@
-import { matchPath, useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { useLocation } from 'react-router-dom';
 
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
 // The workspace setup chat is the onboarding conversation, hosted on the
 // chat page since the standalone workspace-setup page was removed.
@@ -13,8 +12,5 @@ export const useIsWorkspaceSetupChat = () => {
     shouldOpenAiChatAfterOnboardingState,
   );
 
-  return (
-    shouldOpenAiChatAfterOnboarding &&
-    isDefined(matchPath(AppPath.AiChat, pathname))
-  );
+  return shouldOpenAiChatAfterOnboarding && isAiChatPath(pathname);
 };

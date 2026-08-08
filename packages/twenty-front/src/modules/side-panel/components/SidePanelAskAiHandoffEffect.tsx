@@ -1,12 +1,11 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
-import { matchPath, useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { useLocation } from 'react-router-dom';
 
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
 type SidePanelAskAiHandoffEffectProps = {
   onContinueChatFromFullWidth: () => void;
@@ -24,7 +23,7 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (isDefined(matchPath(AppPath.AiChat, pathname))) {
+    if (isAiChatPath(pathname)) {
       return;
     }
 
