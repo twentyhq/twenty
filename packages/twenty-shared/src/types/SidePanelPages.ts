@@ -1,6 +1,7 @@
 export enum SidePanelPages {
   CommandMenuDisplay = 'command-menu-display',
   ViewRecord = 'view-record',
+  ViewRecordIndex = 'view-record-index',
   MergeRecords = 'merge-records',
   UpdateRecords = 'update-records',
   EditRichText = 'edit-rich-text',

@@ -1,17 +1,21 @@
-import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useOpenRecordIndexInSidePanel } from '@/side-panel/hooks/useOpenRecordIndexInSidePanel';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 // The single place deciding where a target surfaced from the chat lands.
-// On the chat page the conversation keeps the main pane: records open in
-// the side panel; targets without a side panel surface navigate the
-// workspace, with the conversation following in the side panel.
+// On the chat page the conversation keeps the main pane and targets open in
+// the side panel as artifacts; everywhere else they navigate the workspace.
 export const useChatTargetNavigation = () => {
+  const store = useStore();
   const navigateApp = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const { openRecordIndexInSidePanel } = useOpenRecordIndexInSidePanel();
 
   const openRecordTarget = ({
     recordId,
@@ -35,18 +39,41 @@ export const useChatTargetNavigation = () => {
     });
   };
 
-  const navigateFromChat: typeof navigateApp = (
-    to,
-    params,
-    queryParams,
-    options,
-  ) => {
+  const openViewTarget = ({
+    objectNameSingular,
+    viewId,
+  }: {
+    objectNameSingular: string;
+    viewId?: string;
+  }) => {
     if (isCurrentPathAiChatPage()) {
-      openAskAiPage({ resetNavigationStack: true, force: true });
+      openRecordIndexInSidePanel({
+        objectNameSingular,
+        viewId,
+      });
+
+      return;
     }
 
-    return navigateApp(to, params, queryParams, options);
+    const objectMetadataItem = store.get(
+      objectMetadataItemFamilySelector.selectorFamily({
+        objectName: objectNameSingular,
+        objectNameType: 'singular',
+      }),
+    );
+
+    if (!isDefined(objectMetadataItem)) {
+      throw new Error(
+        `Object with singular name ${objectNameSingular} not found, cannot navigate to its records.`,
+      );
+    }
+
+    navigateApp(
+      AppPath.RecordIndexPage,
+      { objectNamePlural: objectMetadataItem.namePlural },
+      isDefined(viewId) ? { viewId } : undefined,
+    );
   };
 
-  return { openRecordTarget, navigateFromChat };
+  return { openRecordTarget, openViewTarget };
 };

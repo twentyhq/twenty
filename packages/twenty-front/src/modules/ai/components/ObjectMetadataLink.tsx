@@ -20,7 +20,7 @@ export const ObjectMetadataLink = ({
   displayName,
 }: ObjectMetadataLinkProps) => {
   const theme = useTheme();
-  const { navigateFromChat } = useChatTargetNavigation();
+  const { openViewTarget } = useChatTargetNavigation();
 
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -30,10 +30,10 @@ export const ObjectMetadataLink = ({
     },
   );
 
-  const handleNavigateFromChat = isDefined(objectMetadataItem)
+  const handleOpenViewTarget = isDefined(objectMetadataItem)
     ? () => {
-        navigateFromChat(AppPath.RecordIndexPage, {
-          objectNamePlural: objectMetadataItem.namePlural,
+        openViewTarget({
+          objectNameSingular: objectMetadataItem.nameSingular,
         });
       }
     : undefined;
@@ -48,9 +48,7 @@ export const ObjectMetadataLink = ({
             })
           : undefined
       }
-      // Object pages have no side panel surface: leaving the chat page hands
-      // the conversation to the side panel before navigating.
-      onClick={isCurrentPathAiChatPage() ? handleNavigateFromChat : undefined}
+      onClick={isCurrentPathAiChatPage() ? handleOpenViewTarget : undefined}
       leftComponent={
         <ObjectMetadataIcon
           objectMetadataItem={
