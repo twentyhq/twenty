@@ -1,10 +1,12 @@
 import { SLACK_ASSISTANT_TRANSIENT_TEXTS } from 'src/logic-functions/constants/slack-assistant-transient-texts';
-import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
+import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
+import { fetchSlackConversationMessages } from 'src/logic-functions/utils/fetch-slack-conversation-messages';
 import { fetchSlackRequesterName } from 'src/logic-functions/utils/fetch-slack-requester-name';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 
 type SlackAssistantContext = {
-  conversationContext: string | undefined;
+  conversationMessages: SlackAssistantAgentMessage[] | undefined;
   requesterName: string | undefined;
 };
 
@@ -24,22 +26,27 @@ export const fetchSlackAssistantContext = async ({
   const slackClientResult = await getSlackClient();
 
   if (!slackClientResult.success) {
-    return { conversationContext: undefined, requesterName: undefined };
+    return { conversationMessages: undefined, requesterName: undefined };
   }
 
   const { client } = slackClientResult;
 
-  const [conversationContext, requesterName] = await Promise.all([
-    fetchSlackConversationContext({
+  const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
+    () => undefined,
+  );
+
+  const [conversationMessages, requesterName] = await Promise.all([
+    fetchSlackConversationMessages({
       client,
       channelId: slackChannelId,
       threadTimestamp: parentMessageTimestamp,
       isDirectMessage,
+      assistantBotUserId,
       excludeMessageTimestamps,
       excludeMessageTexts: SLACK_ASSISTANT_TRANSIENT_TEXTS,
     }),
     fetchSlackRequesterName({ client, slackUserId }),
   ]);
 
-  return { conversationContext, requesterName };
+  return { conversationMessages, requesterName };
 };
