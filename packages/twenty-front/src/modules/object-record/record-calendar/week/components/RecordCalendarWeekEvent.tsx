@@ -13,6 +13,7 @@ import { getRecordCalendarWeekTimedEventHeight } from '@/object-record/record-ca
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useDraggable } from '@dnd-kit/react';
@@ -30,6 +31,7 @@ const RECORD_CALENDAR_WEEK_EVENT_EXPANDED_MIN_HEIGHT =
   RECORD_CALENDAR_WEEK_EVENT_TIME_ROW_HEIGHT;
 
 const StyledEventPositioner = styled.div<{
+  $isDragSourceFaded: boolean;
   columnCount: number;
   columnIndex: number;
   heightInPixels: number;
@@ -47,6 +49,8 @@ const StyledEventPositioner = styled.div<{
           columnIndex,
         }).left};
   min-width: 0;
+  opacity: ${({ $isDragSourceFaded }) =>
+    $isDragSourceFaded ? DRAG_SOURCE_OPACITY : 1};
   overflow: hidden;
   position: ${({ isAllDay }) => (isAllDay ? 'relative' : 'absolute')};
   right: auto;
@@ -257,6 +261,7 @@ export const RecordCalendarWeekEvent = ({
   return (
     <StyledEventPositioner
       ref={draggableRef}
+      $isDragSourceFaded={isDragSource}
       columnCount={columnCount}
       columnIndex={columnIndex}
       heightInPixels={heightInPixels}

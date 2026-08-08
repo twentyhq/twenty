@@ -5,11 +5,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupHeader } from '@/onboarding/components/WorkspaceSetupHeader';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
+import { WorkspaceSetupChatSidePanelHandoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelHandoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -39,6 +41,7 @@ const StyledContent = styled.div`
 export const WorkspaceSetup = () => {
   const { t } = useLingui();
   const { defaultHomePagePath } = useDefaultHomePagePath();
+  const currentUser = useAtomStateValue(currentUserState);
   const isOnboardingAiChatEnabled = useAtomStateValue(
     isOnboardingAiChatEnabledState,
   );
@@ -46,7 +49,7 @@ export const WorkspaceSetup = () => {
     shouldOpenAiChatAfterOnboardingState,
   );
 
-  if (!isOnboardingAiChatEnabled) {
+  if (!isOnboardingAiChatEnabled || currentUser?.isWorkspaceCreator !== true) {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
@@ -59,6 +62,7 @@ export const WorkspaceSetup = () => {
     <StyledPanel>
       <WorkspaceSetupHeader title={title} />
       <StyledContent>
+        <WorkspaceSetupChatSidePanelHandoffEffect />
         {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
         <AiChatMessageListPreambleContext.Provider value={preamble}>
           <AiChatTab />

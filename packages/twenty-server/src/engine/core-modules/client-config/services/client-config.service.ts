@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
+import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -25,6 +27,10 @@ import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/co
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
+// Served only so front bundles cached from the previous release keep booting; the
+// subdomain minimum is now fixed at 1 and nothing reads this value anymore.
+const DEPRECATED_SUBDOMAIN_MIN_LENGTH = 1;
+
 @Injectable()
 export class ClientConfigService {
   constructor(
@@ -46,6 +52,12 @@ export class ClientConfigService {
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
     const calendarBookingPageId = this.twentyConfigService.get(
       'CALENDAR_BOOKING_PAGE_ID',
+    );
+    const isBookCallOnboardingStepEnabled = isDefined(
+      readBookCallStepMinEmployeeCount(this.twentyConfigService),
+    );
+    const isCompanyEnrichmentEnabled = readIsCompanyEnrichmentEnabled(
+      this.twentyConfigService,
     );
 
     const isEmailingDomainInDemoMode =
@@ -198,6 +210,7 @@ export class ClientConfigService {
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
+      subdomainMinLength: DEPRECATED_SUBDOMAIN_MIN_LENGTH,
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
@@ -284,6 +297,8 @@ export class ClientConfigService {
       calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
         ? calendarBookingPageId
         : undefined,
+      isBookCallOnboardingStepEnabled,
+      isCompanyEnrichmentEnabled,
       isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(

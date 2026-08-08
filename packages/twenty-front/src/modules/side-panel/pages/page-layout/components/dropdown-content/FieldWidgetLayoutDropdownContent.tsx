@@ -1,8 +1,10 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { RecordTableWidgetViewDraftInitEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftInitEffect';
+import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
+import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import {
   type RecordTableWidgetLayoutViewType,
@@ -33,11 +35,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FieldDisplayMode,
-  ViewType,
-  type FieldConfiguration,
-} from '~/generated-metadata/graphql';
+import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.FIELD]: IconListDetails,
@@ -64,10 +62,27 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
   const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
+  const currentNestedRelationFieldMetadataId =
+    fieldConfiguration?.nestedRelationFieldMetadataId;
   const currentViewId = fieldConfiguration?.viewId ?? null;
 
   const { fieldMetadataItem } = useFieldMetadataItemById(
     currentFieldMetadataId ?? '',
+  );
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const resolvedNestedRelation = resolveFieldWidgetNestedRelation({
+    objectMetadataItems,
+    relationTargetObjectMetadataId:
+      fieldMetadataItem?.relation?.targetObjectMetadata.id,
+    nestedRelationFieldMetadataId: currentNestedRelationFieldMetadataId,
+  });
+
+  // Gate on the configured id, not on resolution success: a widget whose
+  // second hop was deleted must not fall back to first-hop behavior.
+  const isNestedRelationWidget = isDefined(
+    currentNestedRelationFieldMetadataId,
   );
 
   const availableDisplayModes = fieldMetadataItem
@@ -77,23 +92,40 @@ export const FieldWidgetLayoutDropdownContent = () => {
       )
     : [FieldDisplayMode.FIELD];
 
-  const inlineDisplayModes = availableDisplayModes.filter(
-    (displayMode) => displayMode !== FieldDisplayMode.TABLE,
-  );
+  // A nested relation widget only makes sense as an embedded view: inline
+  // display modes would render the first hop's relation field, contradicting
+  // the widget's two-hop title.
+  const inlineDisplayModes = isNestedRelationWidget
+    ? []
+    : availableDisplayModes.filter(
+        (displayMode) => displayMode !== FieldDisplayMode.TABLE,
+      );
   const hasEmbeddedViewLayouts = availableDisplayModes.includes(
     FieldDisplayMode.TABLE,
   );
 
-  const targetObjectMetadataId =
-    fieldMetadataItem?.relation?.targetObjectMetadata.id;
-  const inverseFieldMetadataId =
-    fieldMetadataItem?.relation?.targetFieldMetadata.id;
+  // A configured but unresolvable second hop yields no traversal at all, so a
+  // stale nested widget cannot fall back to scoping by its first hop.
+  const relationTraversal =
+    isNestedRelationWidget && !isDefined(resolvedNestedRelation)
+      ? undefined
+      : getFieldWidgetRelationTraversal({
+          sourceFieldMetadataItem: fieldMetadataItem,
+          nestedRelationFieldMetadataItem:
+            resolvedNestedRelation?.nestedRelationFieldMetadataItem,
+        });
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const targetObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItemToFind) =>
-      objectMetadataItemToFind.id === targetObjectMetadataId,
-  );
+  const targetObjectMetadataId = relationTraversal?.targetObjectMetadataId;
+  const inverseFieldMetadataId = relationTraversal?.inverseFieldMetadataId;
+  const relationTargetFieldMetadataId =
+    relationTraversal?.relationTargetFieldMetadataId ?? null;
+
+  const targetObjectMetadataItem = isNestedRelationWidget
+    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem
+    : objectMetadataItems.find(
+        (objectMetadataItemToFind) =>
+          objectMetadataItemToFind.id === targetObjectMetadataId,
+      );
 
   const defaultGroupByFieldMetadataItem =
     (targetObjectMetadataItem?.readableFields ?? []).find(
@@ -172,11 +204,12 @@ export const FieldWidgetLayoutDropdownContent = () => {
       isDefined(targetObjectMetadataId) &&
       isDefined(inverseFieldMetadataId)
     ) {
-      const viewId = addDraftViewForFieldRelationTableWidget(
-        widgetInEditMode.id,
+      const viewId = addDraftViewForFieldRelationTableWidget({
+        widgetId: widgetInEditMode.id,
         targetObjectMetadataId,
         inverseFieldMetadataId,
-      );
+        relationTargetFieldMetadataId,
+      });
 
       updateCurrentWidgetConfig({
         configToUpdate: {
@@ -208,16 +241,6 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
   return (
     <DropdownMenuItemsContainer>
-      {/* The widget's draft snapshot is normally seeded by the table-family
-          renderer; while displayed as Field/Card that renderer isn't mounted,
-          so seed the draft here (idempotent) for direct e.g. Card -> Kanban
-          switches. */}
-      {isDefined(currentViewId) && isDefined(widgetInEditMode) && (
-        <RecordTableWidgetViewDraftInitEffect
-          widgetId={widgetInEditMode.id}
-          viewId={currentViewId}
-        />
-      )}
       <SelectableList
         selectableListInstanceId={dropdownId}
         focusId={dropdownId}

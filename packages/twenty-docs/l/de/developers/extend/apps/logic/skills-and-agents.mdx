@@ -100,7 +100,7 @@ Schema-Hinweise:
 </Accordion>
 <Accordion title="runAgent" description="Einen Agenten aus einer Logikfunktion ausführen">
 
-`runAgent()` ermöglicht es einer Logikfunktion, einen der Agenten Ihrer App auszuführen (mit seinen Fähigkeiten und Tools). Identifizieren Sie den Agenten über den `universalIdentifier`, den Sie an `defineAgent()` übergeben haben:
+`runAgent()` ermöglicht es einer Logikfunktion, einen der Agenten Ihrer App auszuführen (mit seinen Fähigkeiten und Tools). Identifizieren Sie den Agenten über den `universalIdentifier`, den Sie an `defineAgent()` übergeben haben. Übergeben Sie entweder einen `prompt`-String oder einen `messages`-Konversationsverlauf – nicht beides:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,24 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Für Multi-Turn-Bots (Slack, Discord, Teams, …) übergeben Sie den Thread-Verlauf als `messages` anstelle eines einzelnen `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Hauptpunkte:
+* Geben Sie **genau eines** von `prompt` (string) oder `messages` (1 bis 100 Einträge
+  von `{ role: 'user' | 'assistant', content: string }`) an.
 * Der Agent wird **synchron** ausgeführt und kann selbst Datensätze über seine eigenen Tools lesen/aktualisieren — `runAgent()` wird aufgelöst, sobald die Ausführung abgeschlossen ist.
 * Eine App kann nur ihre eigenen Agenten ausführen.
 * Die [Standardrolle](/l/de/developers/extend/apps/config/roles) der App muss das Berechtigungsflag `AI` gewähren — fügen Sie `SystemPermissionFlag.AI` zu ihren `permissionFlagUniversalIdentifiers` hinzu (oder setzen Sie `canAccessAllTools: true`).
@@ -132,6 +149,38 @@ export default defineApplicationRole({
 
 <Warning>
   **Vermeiden Sie Schleifen:** Wenn Sie `runAgent()` von einem `*.updated`-Datenbankereignis-Trigger aus aufrufen und der Agent denselben Datensatz aktualisiert, schränken Sie den Trigger mit `updatedFields` auf ein Feld ein, das der Agent niemals beschreibt (z. B. die Quell-URL), oder prüfen Sie, ob eines der Zielfelder noch leer ist, bevor Sie `runAgent()` aufrufen.
+</Warning>
+
+### Ausführung im Namen eines Arbeitsbereichsmitglieds
+
+Übergeben Sie `runAsWorkspaceMemberId`, wenn die Ausführung von einer Person ausgelöst wird – zum Beispiel von einem Chatbot, der auf eine Nachricht antwortet –, damit der Agent als dieses Mitglied und nicht als die App agiert:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+Die Ausführung ist dann auf das beschränkt, was sowohl die Rolle des Agenten als auch die des Mitglieds erlauben; die dabei erstellten Datensätze werden diesem Mitglied zugeordnet, und die Berechtigungen auf Zeilenebene des Mitglieds gelten. Lassen Sie das Feld bei autonomen Ausführungen weg (geplante Jobs, Datenbankereignis-Trigger): Diese behalten die eigene Rolle des Agenten bei.
+
+Ihre App ist dafür verantwortlich, die Person, die die Ausführung ausgelöst hat, einem Arbeitsbereichsmitglied zuzuordnen. Das Benennen eines Mitglieds erfordert ein App-Zugriffstoken, und was ein Token benennen darf, hängt davon ab, ob ihm ein Benutzer zugeordnet ist:
+
+* Ein Token **ohne angehängten Benutzer** kann jedes Mitglied benennen. Eine Logikfunktion läuft
+  mit einem solchen, und ebenso gilt dies für Token, die über `client_credentials` oder aus einem API-
+  Schlüssel ausgestellt werden.
+* Ein Token, das **im Namen eines Benutzers** ausgestellt wird, wie es eine Frontkomponente erhält, darf
+  nur das eigene Mitglied dieses Benutzers benennen.
+
+Alles andere — eine einfache Benutzersitzung, ein API-Schlüssel ohne App-Token — darf
+überhaupt kein Mitglied benennen.
+
+<Warning>
+  `runAgent()` löst eine Ausnahme aus, wenn das Arbeitsbereichsmitglied nicht aufgelöst werden kann — ein
+  unbekanntes oder entferntes Mitglied oder eines ohne Rolle. Es greift niemals auf die
+  eigene Rolle des Agenten zurück, da dies mehr Zugriff gewähren würde, als der Aufrufer angefordert
+  hat.
 </Warning>
 
 </Accordion>

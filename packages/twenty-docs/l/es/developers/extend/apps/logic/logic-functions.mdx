@@ -172,6 +172,10 @@ Por razones de seguridad, los encabezados de la respuesta están restringidos a 
 El código de estado debe ser un código de estado HTTP válido (entre 100 y 599). Los nombres de los encabezados de respuesta se comparan sin distinguir mayúsculas de minúsculas.
 </Note>
 
+#### Respuestas de error de la plataforma
+
+Más allá de las propias respuestas de tu controlador, la plataforma responde directamente a las llamadas de ruta en algunas situaciones: `404` cuando la ruta o la función no existe, `403` cuando la aplicación está detenida, `429` cuando se alcanza el límite de velocidad de ejecución y `422` cuando las `dependencies` de producción de la aplicación son demasiado grandes para instalarlas; consulta [límites de tamaño de dependencias](/l/es/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Disparador de ruta de servidor
 
 `httpRouteTriggerSettings` expone una función bajo `/s/` y resuelve el espacio de trabajo a partir del host de la solicitud — lo cual funciona cuando cada espacio de trabajo tiene su propio dominio. Los proveedores de terceros, sin embargo, entregan los eventos de cada inquilino a **una** URL. Para ese caso, usa `serverRouteTriggerSettings`.

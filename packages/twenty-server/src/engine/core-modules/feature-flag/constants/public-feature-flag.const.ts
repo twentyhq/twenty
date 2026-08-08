@@ -29,6 +29,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
+    key: FeatureFlagKey.IS_LIST_VIEW_ENABLED,
+    metadata: {
+      label: 'List View',
+      description:
+        'Display records in a list layout with collapsible groups and inline fields',
+    },
+  },
+  {
     key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
     metadata: {
       label: 'Settings Discovery Hero',

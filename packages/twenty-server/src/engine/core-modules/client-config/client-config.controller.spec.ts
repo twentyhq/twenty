@@ -68,6 +68,7 @@ describe('ClientConfigController', () => {
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
+        subdomainMinLength: 1,
         frontDomain: 'localhost',
         publicFunctionDomain: null,
         support: {
@@ -105,6 +106,8 @@ describe('ClientConfigController', () => {
         isImapSmtpCaldavEnabled: false,
         isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
+        isBookCallOnboardingStepEnabled: false,
+        isCompanyEnrichmentEnabled: false,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,

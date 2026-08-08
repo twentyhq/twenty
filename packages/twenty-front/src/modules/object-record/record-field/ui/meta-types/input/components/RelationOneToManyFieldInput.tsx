@@ -263,7 +263,6 @@ export const RelationOneToManyFieldInput = () => {
       createNewRecordAndOpenSidePanel,
       createTargetRecord,
       createJunctionRecord,
-      fieldName,
       instanceId,
       isMorphJunction,
       isJunctionRelation,

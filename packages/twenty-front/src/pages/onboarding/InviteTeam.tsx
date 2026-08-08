@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Controller } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
+import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -124,6 +125,7 @@ export const InviteTeam = () => {
         <StyledFooter>
           <MainButton
             title={t`Invite`}
+            Icon={() => (isSubmitting || isNavigating ? <Loader /> : null)}
             disabled={!isValid || isSubmitting || isNavigating}
             onClick={handleSubmit(onSubmit)}
             fullWidth

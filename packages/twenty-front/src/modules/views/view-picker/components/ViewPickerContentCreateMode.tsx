@@ -61,6 +61,9 @@ export const ViewPickerContentCreateMode = () => {
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
+  const isListViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_LIST_VIEW_ENABLED,
+  );
 
   const viewObjectMetadataId = useAtomComponentStateValue(
     viewObjectMetadataIdComponentState,
@@ -200,7 +203,9 @@ export const ViewPickerContentCreateMode = () => {
               setViewPickerIsDirty(true);
               setViewPickerType(value);
             }}
-            options={VIEW_PICKER_TYPE_SELECT_OPTIONS.map((option) => ({
+            options={VIEW_PICKER_TYPE_SELECT_OPTIONS.filter(
+              (option) => option.value !== ViewType.LIST || isListViewEnabled,
+            ).map((option) => ({
               ...option,
               label: t(option.label),
             }))}

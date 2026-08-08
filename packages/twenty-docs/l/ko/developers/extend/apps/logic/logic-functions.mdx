@@ -171,6 +171,10 @@ const handler = async (event: RoutePayload) => {
 상태 코드는 유효한 HTTP 상태 코드(100에서 599 사이)여야 합니다. 응답 헤더 이름은 대소문자를 구분하지 않습니다.
 </Note>
 
+#### 플랫폼 오류 응답
+
+핸들러 자체의 응답 외에도, 플랫폼은 일부 상황에서 라우트 호출에 직접 응답합니다. 라우트나 함수가 존재하지 않을 때는 `404`, 애플리케이션이 중지된 상태일 때는 `403`, 실행 속도 제한에 도달했을 때는 `429`, 애플리케이션의 프로덕션 `dependencies`가 너무 커서 설치할 수 없을 때는 `422`를 반환합니다. 자세한 내용은 [dependencies size limits](/l/ko/developers/extend/apps/getting-started/project-structure#dependencies)를 참조하세요.
+
 #### 서버 라우트 트리거
 
 `httpRouteTriggerSettings`는 `/s/` 아래에 함수를 노출하고 요청 호스트에서 워크스페이스를 해석합니다. 이는 각 워크스페이스가 자체 도메인을 가질 때 동작합니다. 그러나 타사 공급자는 모든 테넌트의 이벤트를 **하나의** URL로 전달합니다. 그 경우에는 `serverRouteTriggerSettings`를 사용하세요.

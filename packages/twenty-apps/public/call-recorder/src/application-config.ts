@@ -10,6 +10,7 @@ import { CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/consta
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-noone-joined-timeout-seconds-app-variable-universal-identifier';
 import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-additional-summary-prompt-app-variable-universal-identifier';
 import { CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-summary-enabled-app-variable-universal-identifier';
+import { CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-transcript-provider-app-variable-universal-identifier';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-use-workspace-logo-app-variable-universal-identifier';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-waiting-room-timeout-seconds-app-variable-universal-identifier';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-image-background-env-var-name';
@@ -22,6 +23,7 @@ import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/log
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
 import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-additional-summary-prompt-env-var-name';
 import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-enabled-env-var-name';
+import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
@@ -30,6 +32,7 @@ import { DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES } from 'src/logic-functions/co
 import { DEFAULT_CALL_RECORDER_NAME } from 'src/logic-functions/constants/default-call-recorder-name';
 import { DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS } from 'src/logic-functions/constants/default-call-recorder-recording-retention-hours';
 import { DEFAULT_CALL_RECORDER_SUMMARY_ENABLED } from 'src/logic-functions/constants/default-call-recorder-summary-enabled';
+import { DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER } from 'src/logic-functions/constants/default-call-recorder-transcript-provider';
 import { DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO } from 'src/logic-functions/constants/default-call-recorder-use-workspace-logo';
 import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-recall-region';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
@@ -87,6 +90,19 @@ export default defineApplication({
       isSecret: false,
       type: FieldType.NUMBER,
       value: CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS,
+    },
+    [CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'Speech-to-text provider used to transcribe recordings once the call ends. Recall.ai transcription needs no extra setup. Gladia re-detects the spoken language per utterance, which transcribes mixed-language calls more accurately, but requires a Gladia API key in the Recall.ai dashboard (Transcription > Gladia) for each region in use.',
+      isSecret: false,
+      type: FieldType.SELECT,
+      options: [
+        { label: 'Recall.ai', value: 'recallai_async' },
+        { label: 'Gladia (multilingual)', value: 'gladia_v2_async' },
+      ],
+      value: DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER,
     },
     [CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:

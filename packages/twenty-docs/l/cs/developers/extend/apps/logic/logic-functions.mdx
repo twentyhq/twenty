@@ -172,6 +172,10 @@ Z bezpečnostních důvodů jsou hlavičky odpovědi omezeny na seznam povolený
 Stavový kód musí být platný stavový kód HTTP (mezi 100 a 599). Názvy hlaviček odpovědi se porovnávají bez rozlišení velikosti písmen.
 </Note>
 
+#### Chybové odpovědi platformy
+
+Kromě vlastních odpovědí vašeho handleru platforma v některých situacích odpovídá na volání rout přímo: `404`, když route nebo funkce neexistuje, `403`, když je aplikace zastavena, `429`, když je dosaženo limitu rychlosti vykonávání, a `422`, když jsou produkční `dependencies` aplikace příliš velké na to, aby se nainstalovaly — viz [dependencies size limits](/l/cs/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Spouštěč serverové trasy
 
 `httpRouteTriggerSettings` zpřístupňuje funkci pod `/s/` a workspace určuje z hostitele požadavku — což funguje, když má každý workspace svou vlastní doménu. Poskytovatelé třetích stran však doručují události každého tenanta na **jednu** adresu URL. Pro tento případ použijte `serverRouteTriggerSettings`.
