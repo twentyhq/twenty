@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -15,6 +16,15 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { InboxItemScope } from '~/generated/graphql';
+
+// The collapsed drawer constrains its group to a narrow rail, which would clip
+// the nested rows while they animate open. Folder navigation opts out the same
+// way.
+const StyledExpandableWrapper = styled.div`
+  & > div {
+    overflow: visible !important;
+  }
+`;
 
 export const NavigationDrawerInboxSection = () => {
   const { t } = useLingui();
