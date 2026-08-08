@@ -17,7 +17,7 @@ type ViewLinkProps = {
 export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { navigateFromChat } = useChatTargetNavigation();
+  const { openViewTarget } = useChatTargetNavigation();
 
   const { view } = useViewById(viewId);
   const objectMetadataItemsByIdMap = useAtomStateValue(
@@ -34,12 +34,11 @@ export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
 
   const Icon = getIcon(view.icon);
 
-  const handleNavigateFromChat = () => {
-    navigateFromChat(
-      AppPath.RecordIndexPage,
-      { objectNamePlural: objectMetadataItem.namePlural },
-      { viewId },
-    );
+  const handleOpenViewTarget = () => {
+    openViewTarget({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      viewId,
+    });
   };
 
   return (
@@ -50,9 +49,7 @@ export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
         { objectNamePlural: objectMetadataItem.namePlural },
         { viewId },
       )}
-      // Views have no side panel surface: leaving the chat page hands the
-      // conversation to the side panel before navigating.
-      onClick={isCurrentPathAiChatPage() ? handleNavigateFromChat : undefined}
+      onClick={isCurrentPathAiChatPage() ? handleOpenViewTarget : undefined}
       leftComponent={
         <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }

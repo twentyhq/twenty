@@ -1,19 +1,15 @@
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
 import { extractUIToolCallParts } from '@/ai/utils/extractUIToolCallParts';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 export const useProcessUIToolCallMessage = () => {
-  const { openRecordTarget, navigateFromChat } = useChatTargetNavigation();
-
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const { openRecordTarget, openViewTarget } = useChatTargetNavigation();
 
   const processedToolExecutionPartIdsCallbackState =
     useAtomComponentStateCallbackState(
@@ -59,19 +55,8 @@ export const useProcessUIToolCallMessage = () => {
 
       switch (navigateAppOutput.action) {
         case 'navigateToObject': {
-          const objectNamePlural = objectMetadataItems.find(
-            (item) =>
-              item.nameSingular === navigateAppOutput.objectNameSingular,
-          )?.namePlural;
-
-          if (!isDefined(objectNamePlural)) {
-            throw new Error(
-              `Object with singular name ${navigateAppOutput.objectNameSingular} not found, cannot navigate to object page from chat.`,
-            );
-          }
-
-          navigateFromChat(AppPath.RecordIndexPage, {
-            objectNamePlural: objectNamePlural,
+          openViewTarget({
+            objectNameSingular: navigateAppOutput.objectNameSingular,
           });
 
           break;
@@ -85,22 +70,10 @@ export const useProcessUIToolCallMessage = () => {
           break;
         }
         case 'navigateToView': {
-          const viewObjectNamePlural = objectMetadataItems.find(
-            (item) =>
-              item.nameSingular === navigateAppOutput.objectNameSingular,
-          )?.namePlural;
-
-          if (!isDefined(viewObjectNamePlural)) {
-            throw new Error(
-              `Object with singular name ${navigateAppOutput.objectNameSingular} not found, cannot navigate to view from chat.`,
-            );
-          }
-
-          navigateFromChat(
-            AppPath.RecordIndexPage,
-            { objectNamePlural: viewObjectNamePlural },
-            { viewId: navigateAppOutput.viewId },
-          );
+          openViewTarget({
+            objectNameSingular: navigateAppOutput.objectNameSingular,
+            viewId: navigateAppOutput.viewId,
+          });
 
           break;
         }
