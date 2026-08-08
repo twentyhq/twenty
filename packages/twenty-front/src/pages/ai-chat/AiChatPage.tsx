@@ -1,19 +1,20 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
+import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
+import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
+import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
+import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
-import { WorkspaceSetupHeader } from '@/onboarding/components/WorkspaceSetupHeader';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
-import { WorkspaceSetupChatSidePanelHandoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelHandoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
 
@@ -29,45 +30,47 @@ const StyledPanel = styled.div`
   overflow: hidden;
 `;
 
-const StyledContent = styled.div`
+const StyledCenteredChatContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  margin: 0 auto;
+  max-width: 768px;
   min-height: 0;
-  overflow-x: clip;
   width: 100%;
 `;
 
-export const WorkspaceSetup = () => {
-  const { t } = useLingui();
+export const AiChatPage = () => {
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const currentUser = useAtomStateValue(currentUserState);
-  const isOnboardingAiChatEnabled = useAtomStateValue(
-    isOnboardingAiChatEnabledState,
+  const isAiChatPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_PAGE_ENABLED,
   );
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
     shouldOpenAiChatAfterOnboardingState,
   );
 
-  if (!isOnboardingAiChatEnabled || currentUser?.isWorkspaceCreator !== true) {
+  if (!isAiChatPageEnabled && !shouldOpenAiChatAfterOnboarding) {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
-  const title = shouldOpenAiChatAfterOnboarding ? t`Onboarding` : t`Ask AI`;
-  const preamble = shouldOpenAiChatAfterOnboarding ? (
-    <WorkspaceSetupChatPreamble />
-  ) : null;
-
   return (
     <StyledPanel>
-      <WorkspaceSetupHeader title={title} />
-      <StyledContent>
-        <WorkspaceSetupChatSidePanelHandoffEffect />
-        {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
-        <AiChatMessageListPreambleContext.Provider value={preamble}>
+      <AiChatPageThreadUrlSyncEffect />
+      <AiChatPageCloseAskAiPanelEffect />
+      <AiChatPageContinueInSidePanelEffect />
+      {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
+      <AiChatPageHeader isOnboarding={shouldOpenAiChatAfterOnboarding} />
+      <StyledCenteredChatContainer>
+        <AiChatMessageListPreambleContext.Provider
+          value={
+            shouldOpenAiChatAfterOnboarding ? (
+              <WorkspaceSetupChatPreamble />
+            ) : null
+          }
+        >
           <AiChatTab />
         </AiChatMessageListPreambleContext.Provider>
-      </StyledContent>
+      </StyledCenteredChatContainer>
     </StyledPanel>
   );
 };

@@ -6,16 +6,13 @@ import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { messages } from '~/locales/generated/en';
-import { WorkspaceSetup } from '~/pages/onboarding/WorkspaceSetup';
-import { mockedUserData } from '~/testing/mock-data/users';
+import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -24,6 +21,12 @@ const defaultHomePagePath = '/objects/companies';
 
 jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
   useDefaultHomePagePath: () => ({ defaultHomePagePath }),
+}));
+
+let isAiChatPageEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => isAiChatPageEnabled,
 }));
 
 jest.mock('@/ai/components/AiChatTab', () => {
@@ -40,10 +43,21 @@ jest.mock('@/ai/components/AiChatTab', () => {
   };
 });
 
-jest.mock('@/onboarding/components/WorkspaceSetupHeader', () => ({
-  WorkspaceSetupHeader: ({ title }: { title: string }) => (
-    <div data-testid="header-title">{title}</div>
-  ),
+const headerMock = jest.fn();
+
+jest.mock('@/ai/components/AiChatPageHeader', () => ({
+  AiChatPageHeader: ({ isOnboarding }: { isOnboarding: boolean }) => {
+    headerMock(isOnboarding);
+    return null;
+  },
+}));
+
+jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
+  AiChatPageThreadUrlSyncEffect: () => null,
+}));
+
+jest.mock('@/ai/components/AiChatPageCloseAskAiPanelEffect', () => ({
+  AiChatPageCloseAskAiPanelEffect: () => null,
 }));
 
 jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
@@ -67,75 +81,63 @@ jest.mock('react-router-dom', () => ({
   },
 }));
 
-const setIsOnboardingAiChatEnabled = (value: boolean) => {
-  jotaiStore.set(isOnboardingAiChatEnabledState.atom, value);
-};
-
-const setIsWorkspaceCreator = (value: boolean) => {
-  jotaiStore.set(currentUserState.atom, {
-    ...mockedUserData,
-    isWorkspaceCreator: value,
-  });
-};
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <I18nProvider i18n={i18n}>{children}</I18nProvider>
   </JotaiProvider>
 );
 
-describe('WorkspaceSetup', () => {
+describe('AiChatPage', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     sessionStorage.clear();
     resetJotaiStore();
-    mockNavigate.mockClear();
-    setIsWorkspaceCreator(true);
+    isAiChatPageEnabled = true;
   });
 
   it('should dress the chat for onboarding when the post-onboarding hint is set', () => {
-    setIsOnboardingAiChatEnabled(true);
     jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
-    const { getByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+    const { getByTestId } = render(<AiChatPage />, { wrapper: Wrapper });
 
     expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
     expect(getByTestId('preamble')).toBeInTheDocument();
-    expect(getByTestId('header-title')).toHaveTextContent('Onboarding');
+    expect(getByTestId('chat-kickoff-effect')).toBeInTheDocument();
+    expect(headerMock).toHaveBeenCalledWith(true);
   });
 
   it('should render a plain chat when the post-onboarding hint is not set', () => {
-    setIsOnboardingAiChatEnabled(true);
-
-    const { getByTestId, queryByTestId } = render(<WorkspaceSetup />, {
+    const { getByTestId, queryByTestId } = render(<AiChatPage />, {
       wrapper: Wrapper,
     });
 
     expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
     expect(queryByTestId('preamble')).not.toBeInTheDocument();
-    expect(getByTestId('header-title')).toHaveTextContent('Ask AI');
+    expect(queryByTestId('chat-kickoff-effect')).not.toBeInTheDocument();
+    expect(headerMock).toHaveBeenCalledWith(false);
   });
 
-  it('should mount the chat kickoff effect when the post-onboarding hint is set', () => {
-    setIsOnboardingAiChatEnabled(true);
+  it('should host the onboarding chat even when the chat page flag is disabled', () => {
+    isAiChatPageEnabled = false;
     jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
-    const { getByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+    const { getByTestId } = render(<AiChatPage />, { wrapper: Wrapper });
 
-    expect(getByTestId('chat-kickoff-effect')).toBeInTheDocument();
+    expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('should not mount the chat kickoff effect when the post-onboarding hint is not set', () => {
-    setIsOnboardingAiChatEnabled(true);
+  it('should redirect home when the flag is disabled outside onboarding', () => {
+    isAiChatPageEnabled = false;
 
-    const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+    const { queryByTestId } = render(<AiChatPage />, { wrapper: Wrapper });
 
-    expect(queryByTestId('chat-kickoff-effect')).not.toBeInTheDocument();
+    expect(queryByTestId('ai-chat-tab')).not.toBeInTheDocument();
+    expect(mockNavigate).toHaveBeenCalledWith(defaultHomePagePath);
   });
 
   it('should mark the chat for side panel continuation while mounted', () => {
-    setIsOnboardingAiChatEnabled(true);
-
-    const { unmount } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+    const { unmount } = render(<AiChatPage />, { wrapper: Wrapper });
 
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       true,
@@ -146,34 +148,5 @@ describe('WorkspaceSetup', () => {
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       false,
     );
-  });
-
-  it('should not mark the chat for side panel continuation when the onboarding ai chat is disabled', () => {
-    setIsOnboardingAiChatEnabled(false);
-
-    render(<WorkspaceSetup />, { wrapper: Wrapper });
-
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
-      false,
-    );
-  });
-
-  it('should redirect home when the onboarding ai chat is disabled', () => {
-    setIsOnboardingAiChatEnabled(false);
-
-    const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
-
-    expect(queryByTestId('ai-chat-tab')).not.toBeInTheDocument();
-    expect(mockNavigate).toHaveBeenCalledWith(defaultHomePagePath);
-  });
-
-  it('should redirect home for an invitee', () => {
-    setIsOnboardingAiChatEnabled(true);
-    setIsWorkspaceCreator(false);
-
-    const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
-
-    expect(queryByTestId('ai-chat-tab')).not.toBeInTheDocument();
-    expect(mockNavigate).toHaveBeenCalledWith(defaultHomePagePath);
   });
 });

@@ -1,4 +1,4 @@
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { getContextStoreViewType } from '@/context-store/utils/getContextStoreViewType';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { RecordBoardWidget } from '@/object-record/record-board-widget/components/RecordBoardWidget';
 import { RecordCalendarWidget } from '@/object-record/record-calendar-widget/components/RecordCalendarWidget';
@@ -92,13 +92,7 @@ export const RecordTableWidgetRendererContent = ({
       recordLimit={recordLimit}
       instanceIdSuffix={instanceIdSuffix}
       nestedRelationCreateThrough={nestedRelationCreateThrough}
-      contextStoreViewType={
-        isKanbanLayout
-          ? ContextStoreViewType.Kanban
-          : isCalendarLayout
-            ? ContextStoreViewType.Calendar
-            : ContextStoreViewType.Table
-      }
+      contextStoreViewType={getContextStoreViewType(widgetViewLayout)}
     >
       {isKanbanLayout ? (
         <RecordBoardWidget isReadOnly={isReadOnly} />

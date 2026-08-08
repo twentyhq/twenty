@@ -14,6 +14,15 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
+    key: FeatureFlagKey.IS_AI_CHAT_PAGE_ENABLED,
+    metadata: {
+      label: 'Full-Page AI Chat',
+      description:
+        'Open the AI chat as a full page, with the records it surfaces appearing in the side panel',
+      icon: 'IconSparkles',
+    },
+  },
+  {
     key: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
     metadata: {
       label: 'Calendar Day and Week Views',
