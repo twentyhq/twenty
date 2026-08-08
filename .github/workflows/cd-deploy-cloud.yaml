@@ -100,7 +100,18 @@ jobs:
           set -euo pipefail
           VM="${{ steps.target.outputs.vm }}"
           ZONE="${{ vars.GCP_ZONE }}"
+          # GCP refuses `instances start` while a box is still STOPPING, and a
+          # deploy fired moments after someone stopped staging lands exactly
+          # there. Wait for a settled state before deciding what to do.
           STATUS=$(gcloud compute instances describe "$VM" --zone "$ZONE" --format='value(status)')
+          for i in $(seq 1 30); do
+            case "$STATUS" in
+              RUNNING|TERMINATED|SUSPENDED) break ;;
+            esac
+            echo "$VM is $STATUS; waiting for a settled state ($i/30)"
+            sleep 10
+            STATUS=$(gcloud compute instances describe "$VM" --zone "$ZONE" --format='value(status)')
+          done
           echo "$VM is $STATUS"
           if [ "$STATUS" != "RUNNING" ]; then
             gcloud compute instances start "$VM" --zone "$ZONE"
