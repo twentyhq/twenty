@@ -2641,11 +2641,11 @@ msgid "Ascending"
 msgstr "Ascendente"
 
 #. js-lingui-id: xWEvuo
+#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
-#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "Chiedi a AI"
 
@@ -12425,7 +12425,6 @@ msgid "New Approved Access Domain"
 msgstr "Nuovo dominio di accesso approvato"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatThreadsList.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
@@ -12438,6 +12437,7 @@ msgid "New Company"
 msgstr "Nuova azienda"
 
 #. js-lingui-id: +HY5kX
+#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
 msgstr "Nuova conversazione"
@@ -13807,8 +13807,8 @@ msgid "On which object(s) should this trigger be available"
 msgstr "Su quale(i) oggetto(i) dovrebbe essere disponibile questo trigger"
 
 #. js-lingui-id: gukxZ5
+#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Onboarding"
 msgstr ""
 
@@ -15167,7 +15167,6 @@ msgid "Recent Users"
 msgstr "Utenti recenti"
 
 #. js-lingui-id: AQbgLJ
-#: src/modules/ai/components/AiChatThreadsList.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
 msgid "Recents"
 msgstr "Recenti"
@@ -20579,11 +20578,6 @@ msgstr "Visualizza lavori"
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
 msgid "View not shared"
 msgstr "Vista non condivisa"
-
-#. js-lingui-id: ecVcAx
-#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-msgid "View Previous AI Chats"
-msgstr "Vedi chat AI precedenti"
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
