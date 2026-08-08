@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { ContextStorePageType, SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -14,22 +14,30 @@ import { getObjectMetadataItemBySingularNameOrThrow } from '@/object-metadata/ut
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { viewableRecordIndexObjectMetadataIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexObjectMetadataIdComponentState';
 import { viewableRecordIndexViewIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexViewIdComponentState';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 
 // Unlike getViewType, which folds calendar views into the table context for
 // the main page, the artifact context describes the layout as rendered;
-// calendar artifacts then send no browsing context.
-const getArtifactContextStoreViewType = (viewType?: ViewType) => {
-  if (viewType === ViewType.KANBAN) {
-    return ContextStoreViewType.Kanban;
+// calendar artifacts then send no browsing context. Widget variants cannot
+// be resolved from the user-facing view pool below, but map to the layout
+// they would render as so the mapping stays exhaustive.
+const getArtifactContextStoreViewType = (viewType: ViewType) => {
+  switch (viewType) {
+    case ViewType.TABLE:
+    case ViewType.TABLE_WIDGET:
+    case ViewType.LIST:
+    case ViewType.FIELDS_WIDGET:
+      return ContextStoreViewType.Table;
+    case ViewType.KANBAN:
+    case ViewType.KANBAN_WIDGET:
+      return ContextStoreViewType.Kanban;
+    case ViewType.CALENDAR:
+    case ViewType.CALENDAR_WIDGET:
+      return ContextStoreViewType.Calendar;
+    default:
+      return assertUnreachable(viewType);
   }
-
-  if (viewType === ViewType.CALENDAR) {
-    return ContextStoreViewType.Calendar;
-  }
-
-  return ContextStoreViewType.Table;
 };
 
 export const useOpenRecordIndexInSidePanel = () => {
@@ -50,27 +58,25 @@ export const useOpenRecordIndexInSidePanel = () => {
         objectNameSingular,
       });
 
-      const views = store.get(viewsSelector.atom);
-      const objectViews = views.filter(
-        (view) =>
-          view.objectMetadataId === objectMetadataItem.id &&
-          view.type !== ViewType.FIELDS_WIDGET,
+      // User-facing views only, sorted by position; a view id that is
+      // unknown or points at a widget-backing view falls back to the
+      // object's index view.
+      const objectViews = store.get(
+        viewsFromObjectMetadataItemFamilySelector.selectorFamily({
+          objectMetadataItemId: objectMetadataItem.id,
+        }),
       );
 
-      const resolvedViewId =
-        viewId ??
-        objectViews.find((view) => view.key === ViewKey.INDEX)?.id ??
-        objectViews[0]?.id;
+      const resolvedView =
+        objectViews.find((view) => view.id === viewId) ??
+        objectViews.find((view) => view.key === ViewKey.INDEX) ??
+        objectViews[0];
 
-      if (!isDefined(resolvedViewId)) {
+      if (!isDefined(resolvedView)) {
         throw new Error(
           `No view found for object ${objectNameSingular}, cannot open its records in the side panel.`,
         );
       }
-
-      const view = views.find(
-        (candidateView) => candidateView.id === resolvedViewId,
-      );
 
       const pageComponentInstanceId = v4();
 
@@ -84,7 +90,7 @@ export const useOpenRecordIndexInSidePanel = () => {
         viewableRecordIndexViewIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        resolvedViewId,
+        resolvedView.id,
       );
 
       // Artifact pages publish their browsing context under their own page
@@ -99,7 +105,7 @@ export const useOpenRecordIndexInSidePanel = () => {
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        resolvedViewId,
+        resolvedView.id,
       );
       store.set(
         contextStoreCurrentPageTypeComponentState.atomFamily({
@@ -111,13 +117,13 @@ export const useOpenRecordIndexInSidePanel = () => {
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        getArtifactContextStoreViewType(view?.type),
+        getArtifactContextStoreViewType(resolvedView.type),
       );
 
       navigateSidePanelMenu({
         page: SidePanelPages.ViewRecordIndex,
-        pageTitle: view?.name ?? objectMetadataItem.labelPlural,
-        pageIcon: getIcon(view?.icon ?? objectMetadataItem.icon ?? 'IconList'),
+        pageTitle: resolvedView.name,
+        pageIcon: getIcon(resolvedView.icon),
         pageId: pageComponentInstanceId,
       });
     },
