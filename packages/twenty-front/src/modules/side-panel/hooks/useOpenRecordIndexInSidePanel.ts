@@ -17,6 +17,21 @@ import { viewableRecordIndexViewIdComponentState } from '@/side-panel/pages/reco
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 
+// Unlike getViewType, which folds calendar views into the table context for
+// the main page, the artifact context describes the layout as rendered;
+// calendar artifacts then send no browsing context.
+const getArtifactContextStoreViewType = (viewType?: ViewType) => {
+  if (viewType === ViewType.KANBAN) {
+    return ContextStoreViewType.Kanban;
+  }
+
+  if (viewType === ViewType.CALENDAR) {
+    return ContextStoreViewType.Calendar;
+  }
+
+  return ContextStoreViewType.Table;
+};
+
 export const useOpenRecordIndexInSidePanel = () => {
   const store = useStore();
   const { getIcon } = useIcons();
@@ -30,10 +45,10 @@ export const useOpenRecordIndexInSidePanel = () => {
       objectNameSingular: string;
       viewId?: string;
     }) => {
-      const objectMetadataItem = getObjectMetadataItemBySingularNameOrThrow(
+      const objectMetadataItem = getObjectMetadataItemBySingularNameOrThrow({
         store,
         objectNameSingular,
-      );
+      });
 
       const views = store.get(viewsSelector.atom);
       const objectViews = views.filter(
@@ -92,18 +107,11 @@ export const useOpenRecordIndexInSidePanel = () => {
         }),
         ContextStorePageType.Index,
       );
-      // Unlike getViewType, which folds calendar views into the table context
-      // for the main page, the artifact context describes the layout as
-      // rendered; calendar artifacts then send no browsing context.
       store.set(
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        view?.type === ViewType.KANBAN
-          ? ContextStoreViewType.Kanban
-          : view?.type === ViewType.CALENDAR
-            ? ContextStoreViewType.Calendar
-            : ContextStoreViewType.Table,
+        getArtifactContextStoreViewType(view?.type),
       );
 
       navigateSidePanelMenu({

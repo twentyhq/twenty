@@ -55,10 +55,10 @@ export const useChatTargetNavigation = () => {
       return;
     }
 
-    const objectMetadataItem = getObjectMetadataItemBySingularNameOrThrow(
+    const objectMetadataItem = getObjectMetadataItemBySingularNameOrThrow({
       store,
       objectNameSingular,
-    );
+    });
 
     navigateApp(
       AppPath.RecordIndexPage,
