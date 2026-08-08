@@ -10,44 +10,30 @@ type WidgetCardContentStyledProps = {
   isInVerticalListTab: boolean;
   isMobile: boolean;
   hasBoundedHeight: boolean;
-  hasInteractiveContent: boolean;
 };
+
+const StyledRecordWidgetOutline = styled.div`
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+`;
 
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   background-color: ${({ variant, isInVerticalListTab, isMobile }) =>
     variant === 'record-page' && isInVerticalListTab && !isMobile
       ? themeCssVariables.background.secondary
       : 'transparent'};
-  border: ${({ variant, isEditable, hasInteractiveContent }) => {
-    if (
-      variant === 'record-page' ||
-      (variant === 'side-column' && isEditable)
-    ) {
-      return `1px solid ${themeCssVariables.border.color.medium}`;
-    }
-    if (
-      hasInteractiveContent &&
-      (variant === 'dashboard' || variant === 'standalone')
-    ) {
-      return `1px solid ${themeCssVariables.border.color.light}`;
-    }
-    return 'none';
-  }};
-  border-radius: ${({ variant, isEditable, hasInteractiveContent }) => {
-    if (
-      variant === 'record-page' ||
-      (variant === 'side-column' && isEditable)
-    ) {
-      return themeCssVariables.border.radius.md;
-    }
-    if (
-      hasInteractiveContent &&
-      (variant === 'dashboard' || variant === 'standalone')
-    ) {
-      return themeCssVariables.border.radius.sm;
-    }
-    return '0';
-  }};
+  border: ${({ variant, isEditable }) =>
+    variant === 'record-page' || (variant === 'side-column' && isEditable)
+      ? `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
+  border-radius: ${({ variant, isEditable }) =>
+    variant === 'record-page' || (variant === 'side-column' && isEditable)
+      ? themeCssVariables.border.radius.md
+      : '0'};
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -121,11 +107,14 @@ export const WidgetCardContent = ({
       isInVerticalListTab={isInVerticalListTab}
       isMobile={isMobile}
       hasBoundedHeight={hasBoundedHeight}
-      hasInteractiveContent={hasInteractiveContent}
       className={className}
       onClick={handleContentClick}
     >
-      {children}
+      {hasInteractiveContent ? (
+        <StyledRecordWidgetOutline>{children}</StyledRecordWidgetOutline>
+      ) : (
+        children
+      )}
     </StyledWidgetCardContent>
   );
 };
