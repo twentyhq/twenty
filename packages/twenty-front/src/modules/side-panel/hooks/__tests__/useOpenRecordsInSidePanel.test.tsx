@@ -7,8 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useOpenRecordIndexInSidePanel } from '@/side-panel/hooks/useOpenRecordIndexInSidePanel';
-import { viewableRecordIndexViewIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexViewIdComponentState';
+import { useOpenRecordsInSidePanel } from '@/side-panel/hooks/useOpenRecordsInSidePanel';
+import { viewableRecordsViewIdComponentState } from '@/side-panel/pages/records-page/states/viewableRecordsViewIdComponentState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -65,7 +65,7 @@ const widgetView = buildCompanyView({
   position: 0,
 });
 
-const renderOpenRecordIndexInSidePanel = (views: ViewWithRelations[]) => {
+const renderOpenRecordsInSidePanel = (views: ViewWithRelations[]) => {
   let store: ReturnType<typeof createStore> | undefined;
 
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -76,7 +76,7 @@ const renderOpenRecordIndexInSidePanel = (views: ViewWithRelations[]) => {
     },
   });
 
-  const { result } = renderHook(() => useOpenRecordIndexInSidePanel(), {
+  const { result } = renderHook(() => useOpenRecordsInSidePanel(), {
     wrapper: Wrapper,
   });
 
@@ -90,19 +90,19 @@ const renderOpenRecordIndexInSidePanel = (views: ViewWithRelations[]) => {
 const getNavigatedPageId = () =>
   navigateSidePanelMenuMock.mock.calls[0][0].pageId as string;
 
-describe('useOpenRecordIndexInSidePanel', () => {
+describe('useOpenRecordsInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should open the requested view when the view id is user-facing', () => {
-    const { result, store } = renderOpenRecordIndexInSidePanel([
+    const { result, store } = renderOpenRecordsInSidePanel([
       indexView,
       kanbanView,
     ]);
 
     act(() => {
-      result.current.openRecordIndexInSidePanel({
+      result.current.openRecordsInSidePanel({
         objectNameSingular: companyObjectMetadataItem.nameSingular,
         viewId: KANBAN_VIEW_ID,
       });
@@ -110,7 +110,7 @@ describe('useOpenRecordIndexInSidePanel', () => {
 
     expect(navigateSidePanelMenuMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        page: SidePanelPages.ViewRecordIndex,
+        page: SidePanelPages.ViewRecords,
         pageTitle: 'Companies by Stage',
       }),
     );
@@ -119,7 +119,7 @@ describe('useOpenRecordIndexInSidePanel', () => {
 
     expect(
       store.get(
-        viewableRecordIndexViewIdComponentState.atomFamily({
+        viewableRecordsViewIdComponentState.atomFamily({
           instanceId: pageId,
         }),
       ),
@@ -134,13 +134,13 @@ describe('useOpenRecordIndexInSidePanel', () => {
   });
 
   it('should fall back to the index view when no view id is given', () => {
-    const { result, store } = renderOpenRecordIndexInSidePanel([
+    const { result, store } = renderOpenRecordsInSidePanel([
       kanbanView,
       indexView,
     ]);
 
     act(() => {
-      result.current.openRecordIndexInSidePanel({
+      result.current.openRecordsInSidePanel({
         objectNameSingular: companyObjectMetadataItem.nameSingular,
       });
     });
@@ -149,7 +149,7 @@ describe('useOpenRecordIndexInSidePanel', () => {
 
     expect(
       store.get(
-        viewableRecordIndexViewIdComponentState.atomFamily({
+        viewableRecordsViewIdComponentState.atomFamily({
           instanceId: pageId,
         }),
       ),
@@ -164,7 +164,7 @@ describe('useOpenRecordIndexInSidePanel', () => {
   });
 
   it('should fall back to the first view by position when the object has no index view', () => {
-    const { result, store } = renderOpenRecordIndexInSidePanel([
+    const { result, store } = renderOpenRecordsInSidePanel([
       buildCompanyView({
         id: KANBAN_VIEW_ID,
         type: ViewType.KANBAN,
@@ -174,14 +174,14 @@ describe('useOpenRecordIndexInSidePanel', () => {
     ]);
 
     act(() => {
-      result.current.openRecordIndexInSidePanel({
+      result.current.openRecordsInSidePanel({
         objectNameSingular: companyObjectMetadataItem.nameSingular,
       });
     });
 
     expect(
       store.get(
-        viewableRecordIndexViewIdComponentState.atomFamily({
+        viewableRecordsViewIdComponentState.atomFamily({
           instanceId: getNavigatedPageId(),
         }),
       ),
@@ -189,13 +189,13 @@ describe('useOpenRecordIndexInSidePanel', () => {
   });
 
   it('should fall back to the index view when the view id points at a widget-backing view', () => {
-    const { result, store } = renderOpenRecordIndexInSidePanel([
+    const { result, store } = renderOpenRecordsInSidePanel([
       widgetView,
       indexView,
     ]);
 
     act(() => {
-      result.current.openRecordIndexInSidePanel({
+      result.current.openRecordsInSidePanel({
         objectNameSingular: companyObjectMetadataItem.nameSingular,
         viewId: WIDGET_VIEW_ID,
       });
@@ -203,7 +203,7 @@ describe('useOpenRecordIndexInSidePanel', () => {
 
     expect(
       store.get(
-        viewableRecordIndexViewIdComponentState.atomFamily({
+        viewableRecordsViewIdComponentState.atomFamily({
           instanceId: getNavigatedPageId(),
         }),
       ),
@@ -211,10 +211,10 @@ describe('useOpenRecordIndexInSidePanel', () => {
   });
 
   it('should throw when the object has no user-facing view', () => {
-    const { result } = renderOpenRecordIndexInSidePanel([widgetView]);
+    const { result } = renderOpenRecordsInSidePanel([widgetView]);
 
     expect(() =>
-      result.current.openRecordIndexInSidePanel({
+      result.current.openRecordsInSidePanel({
         objectNameSingular: companyObjectMetadataItem.nameSingular,
       }),
     ).toThrow('No view found for object company');
@@ -223,10 +223,10 @@ describe('useOpenRecordIndexInSidePanel', () => {
   });
 
   it('should publish the index page type as the artifact browsing context', () => {
-    const { result, store } = renderOpenRecordIndexInSidePanel([indexView]);
+    const { result, store } = renderOpenRecordsInSidePanel([indexView]);
 
     act(() => {
-      result.current.openRecordIndexInSidePanel({
+      result.current.openRecordsInSidePanel({
         objectNameSingular: companyObjectMetadataItem.nameSingular,
       });
     });

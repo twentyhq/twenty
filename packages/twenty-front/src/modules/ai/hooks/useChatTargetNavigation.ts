@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { useOpenRecordIndexInSidePanel } from '@/side-panel/hooks/useOpenRecordIndexInSidePanel';
+import { useOpenRecordsInSidePanel } from '@/side-panel/hooks/useOpenRecordsInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
@@ -13,7 +13,7 @@ export const useChatTargetNavigation = () => {
   const store = useStore();
   const navigateApp = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const { openRecordIndexInSidePanel } = useOpenRecordIndexInSidePanel();
+  const { openRecordsInSidePanel } = useOpenRecordsInSidePanel();
 
   const isArtifactSurface = () =>
     isCurrentPathAiChatPage() &&
@@ -49,7 +49,7 @@ export const useChatTargetNavigation = () => {
     viewId?: string;
   }) => {
     if (isArtifactSurface()) {
-      openRecordIndexInSidePanel({
+      openRecordsInSidePanel({
         objectNameSingular,
         viewId,
       });

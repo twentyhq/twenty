@@ -12,8 +12,8 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { viewableRecordIndexObjectMetadataIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexObjectMetadataIdComponentState';
-import { viewableRecordIndexViewIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexViewIdComponentState';
+import { viewableRecordsObjectMetadataIdComponentState } from '@/side-panel/pages/records-page/states/viewableRecordsObjectMetadataIdComponentState';
+import { viewableRecordsViewIdComponentState } from '@/side-panel/pages/records-page/states/viewableRecordsViewIdComponentState';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 
@@ -35,12 +35,12 @@ const getArtifactContextStoreViewType = (viewType: ViewType) => {
   }
 };
 
-export const useOpenRecordIndexInSidePanel = () => {
+export const useOpenRecordsInSidePanel = () => {
   const store = useStore();
   const { getIcon } = useIcons();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const openRecordIndexInSidePanel = useCallback(
+  const openRecordsInSidePanel = useCallback(
     ({
       objectNameSingular,
       viewId,
@@ -81,13 +81,13 @@ export const useOpenRecordIndexInSidePanel = () => {
       const pageComponentInstanceId = v4();
 
       store.set(
-        viewableRecordIndexObjectMetadataIdComponentState.atomFamily({
+        viewableRecordsObjectMetadataIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         objectMetadataItem.id,
       );
       store.set(
-        viewableRecordIndexViewIdComponentState.atomFamily({
+        viewableRecordsViewIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         resolvedView.id,
@@ -119,7 +119,7 @@ export const useOpenRecordIndexInSidePanel = () => {
       );
 
       navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecordIndex,
+        page: SidePanelPages.ViewRecords,
         pageTitle: resolvedView.name,
         pageIcon: getIcon(resolvedView.icon),
         pageId: pageComponentInstanceId,
@@ -128,5 +128,5 @@ export const useOpenRecordIndexInSidePanel = () => {
     [store, getIcon, navigateSidePanelMenu],
   );
 
-  return { openRecordIndexInSidePanel };
+  return { openRecordsInSidePanel };
 };

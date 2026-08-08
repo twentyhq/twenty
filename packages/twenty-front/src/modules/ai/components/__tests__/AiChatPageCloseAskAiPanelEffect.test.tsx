@@ -38,7 +38,7 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
 
   it('should leave an open artifact panel alone', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
-    jotaiStore.set(sidePanelPageState.atom, SidePanelPages.ViewRecordIndex);
+    jotaiStore.set(sidePanelPageState.atom, SidePanelPages.ViewRecords);
 
     render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
 

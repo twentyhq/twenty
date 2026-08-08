@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
-import { viewableRecordIndexObjectMetadataIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexObjectMetadataIdComponentState';
-import { viewableRecordIndexViewIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexViewIdComponentState';
+import { viewableRecordsObjectMetadataIdComponentState } from '@/side-panel/pages/records-page/states/viewableRecordsObjectMetadataIdComponentState';
+import { viewableRecordsViewIdComponentState } from '@/side-panel/pages/records-page/states/viewableRecordsViewIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -18,26 +18,26 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const SidePanelRecordIndexPage = () => {
-  const viewableRecordIndexObjectMetadataId = useAtomComponentStateValue(
-    viewableRecordIndexObjectMetadataIdComponentState,
+export const SidePanelRecordsPage = () => {
+  const viewableRecordsObjectMetadataId = useAtomComponentStateValue(
+    viewableRecordsObjectMetadataIdComponentState,
   );
-  const viewableRecordIndexViewId = useAtomComponentStateValue(
-    viewableRecordIndexViewIdComponentState,
+  const viewableRecordsViewId = useAtomComponentStateValue(
+    viewableRecordsViewIdComponentState,
   );
   const sidePanelPageInstanceContext = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   );
 
-  if (!isDefined(viewableRecordIndexObjectMetadataId)) {
+  if (!isDefined(viewableRecordsObjectMetadataId)) {
     throw new Error('Object metadata id is not defined');
   }
 
-  if (!isDefined(viewableRecordIndexViewId)) {
+  if (!isDefined(viewableRecordsViewId)) {
     throw new Error('View id is not defined');
   }
 
-  const widgetInstanceId = `side-panel-record-index-${sidePanelPageInstanceContext?.instanceId}`;
+  const widgetInstanceId = `side-panel-records-${sidePanelPageInstanceContext?.instanceId}`;
 
   return (
     <StyledContainer>
@@ -49,8 +49,8 @@ export const SidePanelRecordIndexPage = () => {
       >
         <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
           <RecordTableWidgetRendererContent
-            objectMetadataId={viewableRecordIndexObjectMetadataId}
-            viewId={viewableRecordIndexViewId}
+            objectMetadataId={viewableRecordsObjectMetadataId}
+            viewId={viewableRecordsViewId}
             widgetId={widgetInstanceId}
           />
         </PageLayoutEditModeProviderContext>
