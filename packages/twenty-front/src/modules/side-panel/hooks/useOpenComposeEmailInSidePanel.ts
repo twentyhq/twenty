@@ -9,6 +9,7 @@ import { type EmailComposerContextRecord } from '@/activities/emails/recipients/
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { composeEmailConnectedAccountIdComponentState } from '@/side-panel/pages/compose-email/states/composeEmailConnectedAccountIdComponentState';
 import { composeEmailContextRecordComponentState } from '@/side-panel/pages/compose-email/states/composeEmailContextRecordComponentState';
+import { composeEmailDefaultBccComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultBccComponentState';
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
@@ -18,6 +19,7 @@ type OpenComposeEmailParams = {
   threadId?: string;
   connectedAccountId: string;
   defaultTo?: string;
+  defaultBcc?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
   contextRecord?: EmailComposerContextRecord;
@@ -47,6 +49,13 @@ export const useOpenComposeEmailInSidePanel = () => {
           instanceId: pageId,
         }),
         params.defaultTo ?? '',
+      );
+
+      store.set(
+        composeEmailDefaultBccComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        params.defaultBcc ?? '',
       );
 
       store.set(
