@@ -1,7 +1,7 @@
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -25,7 +25,7 @@ export const useAiChatThreadClick = (
   const setThreadIdCreatedFromDraft = useSetAtomState(
     threadIdCreatedFromDraftState,
   );
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
+  const { selectAiChatThread } = useSelectAiChatThread();
   const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
     currentAiChatThreadTitleComponentFamilyState,
   );
@@ -39,7 +39,7 @@ export const useAiChatThreadClick = (
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
 
-    switchThreadWithDraft(thread.id);
+    selectAiChatThread(thread.id);
 
     const clickedFamilyKey = { threadId: thread.id };
 

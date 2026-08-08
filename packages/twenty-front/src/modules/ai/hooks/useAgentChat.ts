@@ -20,6 +20,7 @@ import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import {
@@ -50,6 +51,7 @@ export const useAgentChat = (
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
 
   const setAgentChatUploadedFiles = useSetAtomState(
@@ -99,6 +101,7 @@ export const useAgentChat = (
 
     if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       setCurrentAiChatThread(threadId);
+      projectAiChatThreadToUrl(threadId);
     }
 
     setAgentChatInput('');

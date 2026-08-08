@@ -1,21 +1,14 @@
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-
-const navigateAppMock = jest.fn();
-
-jest.mock('~/hooks/useNavigateApp', () => ({
-  useNavigateApp: () => navigateAppMock,
-}));
 
 const switchThreadWithDraftMock = jest.fn((toThreadId: string) => {
   jotaiStore.set(currentAiChatThreadState.atom, toThreadId);
@@ -29,6 +22,16 @@ jest.mock('@/ai/hooks/useSwitchAgentChatThreadWithDraft', () => ({
 
 const THREAD_A = '11111111-1111-4111-8111-111111111111';
 const THREAD_B = '22222222-2222-4222-8222-222222222222';
+
+let navigateToThread: ((threadId: string) => void) | undefined;
+
+const RouteUnderTest = () => {
+  const navigate = useNavigate();
+
+  navigateToThread = (threadId: string) => navigate(`/chat/${threadId}`);
+
+  return <AiChatPageThreadUrlSyncEffect />;
+};
 
 const renderEffectAt = (initialPath: string) =>
   render(
@@ -48,109 +51,77 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
+    navigateToThread = undefined;
   });
 
-  it('should switch to the thread from the URL on a deep link', () => {
+  it('should adopt the thread from the URL on a deep link', () => {
     jotaiStore.set(currentAiChatThreadState.atom, null);
 
     renderEffectAt(`/chat/${THREAD_A}`);
 
     expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
-    expect(navigateAppMock).not.toHaveBeenCalled();
   });
 
-  it('should write the current thread into the URL by replacement', () => {
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_B);
-
-    renderEffectAt('/chat');
-
-    expect(switchThreadWithDraftMock).not.toHaveBeenCalled();
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
-      { threadId: THREAD_B },
-      undefined,
-      { replace: true, state: null },
-    );
-  });
-
-  it('should update the URL when the thread changes while mounted', () => {
+  it('should adopt the thread the browser navigated to', () => {
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_A);
-
-    renderEffectAt(`/chat/${THREAD_A}`);
-    navigateAppMock.mockClear();
-
-    act(() => {
-      jotaiStore.set(currentAiChatThreadState.atom, THREAD_B);
-    });
-
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
-      { threadId: THREAD_B },
-      undefined,
-      { replace: true, state: null },
-    );
-  });
-
-  it('should clear the URL param when switching to a new chat draft', () => {
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_A);
-
-    renderEffectAt(`/chat/${THREAD_A}`);
-    navigateAppMock.mockClear();
-
-    act(() => {
-      jotaiStore.set(
-        currentAiChatThreadState.atom,
-        AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-      );
-    });
-
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
-      { threadId: null },
-      undefined,
-      { replace: true, state: null },
-    );
-  });
-
-  it('should normalize a malformed thread param from the current thread', () => {
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_B);
-
-    renderEffectAt('/chat/not-a-thread-id');
-
-    expect(switchThreadWithDraftMock).not.toHaveBeenCalled();
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
-      { threadId: THREAD_B },
-      undefined,
-      { replace: true, state: null },
-    );
-  });
-
-  it('should carry the history entry state through URL replacements', () => {
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_B);
 
     render(
       <JotaiProvider store={jotaiStore}>
-        <MemoryRouter
-          initialEntries={[
-            { pathname: '/chat', state: { returnLocation: '/objects/people' } },
-          ]}
-        >
+        <MemoryRouter initialEntries={[`/chat/${THREAD_A}`]}>
           <Routes>
-            <Route
-              path={AppPath.AiChat}
-              element={<AiChatPageThreadUrlSyncEffect />}
-            />
+            <Route path={AppPath.AiChat} element={<RouteUnderTest />} />
           </Routes>
         </MemoryRouter>
       </JotaiProvider>,
     );
 
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
-      { threadId: THREAD_B },
-      undefined,
-      { replace: true, state: { returnLocation: '/objects/people' } },
-    );
+    expect(switchThreadWithDraftMock).not.toHaveBeenCalled();
+
+    act(() => {
+      navigateToThread?.(THREAD_B);
+    });
+
+    expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_B);
+  });
+
+  it('should do nothing when the URL already names the selected thread', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_A);
+
+    renderEffectAt(`/chat/${THREAD_A}`);
+
+    expect(switchThreadWithDraftMock).not.toHaveBeenCalled();
+  });
+
+  // A selection that did not project — the startup restore, which
+  // deliberately leaves the URL alone — must not win over a deep link.
+  it('should restore the url thread when a selection bypassed the projection', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, null);
+
+    renderEffectAt(`/chat/${THREAD_A}`);
+
+    switchThreadWithDraftMock.mockClear();
+
+    act(() => {
+      jotaiStore.set(currentAiChatThreadState.atom, THREAD_B);
+    });
+
+    expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
+  });
+
+  it('should ignore a malformed thread param and keep the selection', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_B);
+
+    renderEffectAt('/chat/not-a-thread-id');
+
+    expect(switchThreadWithDraftMock).not.toHaveBeenCalled();
+    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(THREAD_B);
+  });
+
+  it('should leave a bare chat url alone', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_A);
+
+    renderEffectAt('/chat');
+
+    expect(switchThreadWithDraftMock).not.toHaveBeenCalled();
   });
 });
