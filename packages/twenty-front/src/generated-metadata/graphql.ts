@@ -4502,6 +4502,7 @@ export type PublicFeatureFlag = {
 export type PublicFeatureFlagMetadata = {
   __typename?: 'PublicFeatureFlagMetadata';
   description: Scalars['String']['output'];
+  icon: Scalars['String']['output'];
   imagePath?: Maybe<Scalars['String']['output']>;
   label: Scalars['String']['output'];
 };
