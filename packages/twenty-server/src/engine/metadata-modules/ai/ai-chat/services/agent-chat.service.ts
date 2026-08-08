@@ -14,6 +14,7 @@ import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
@@ -75,6 +76,7 @@ export class AgentChatService {
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly codeInterpreterService: CodeInterpreterService,
+    private readonly agentChatInboxService: AgentChatInboxService,
   ) {}
 
   async createThread({
@@ -107,6 +109,13 @@ export class AgentChatService {
           },
         },
       ],
+    });
+
+    await this.agentChatInboxService.onThreadCreated({
+      threadId: savedThread.id,
+      workspaceId,
+      userWorkspaceId,
+      title: savedThread.title ?? undefined,
     });
 
     return savedThread;
@@ -855,6 +864,12 @@ export class AgentChatService {
 
     await this.broadcastThreadUpdated(updated, ['title'], userWorkspaceId);
 
+    await this.agentChatInboxService.onThreadTitleChanged({
+      threadId,
+      workspaceId,
+      title: trimmed,
+    });
+
     return updated;
   }
 
@@ -893,6 +908,8 @@ export class AgentChatService {
     thread.activeStreamId = null;
 
     await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
+
+    await this.agentChatInboxService.onThreadRemoved({ threadId, workspaceId });
 
     this.releaseThreadSandboxBestEffort(workspaceId, threadId);
 

@@ -26,6 +26,9 @@ export enum AppPath {
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
   PageLayoutPage = '/page/:pageLayoutId',
 
+  InboxPage = '/inbox',
+  InboxSectionPage = '/inbox/:inboxSectionSlug',
+
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,
   Developers = `developers`,

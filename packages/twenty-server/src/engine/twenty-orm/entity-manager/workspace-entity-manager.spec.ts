@@ -251,6 +251,7 @@ describe('WorkspaceEntityManager', () => {
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_WORKFLOW_VERSION_IN_CORE_ENABLED: false,
         IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: false,
+        IS_INBOX_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -37,6 +38,7 @@ import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-s
 import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
+import { AgentChatInboxService } from './services/agent-chat-inbox.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
@@ -53,6 +55,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ]),
     AiAgentExecutionModule,
     BillingModule,
+    InboxModule,
     ThrottlerModule,
     FileModule,
     PermissionsModule,
@@ -77,6 +80,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentChatService,
+    AgentChatInboxService,
     AgentChatStreamingService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,

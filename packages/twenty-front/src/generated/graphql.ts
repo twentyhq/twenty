@@ -186,6 +186,78 @@ export type GenerateSignedDpaResult = {
   downloadUrl: Scalars['String']['output'];
 };
 
+export type InboxCounts = {
+  __typename?: 'InboxCounts';
+  needsAction: Scalars['Int']['output'];
+  snoozed: Scalars['Int']['output'];
+  unread: Scalars['Int']['output'];
+};
+
+export type InboxItem = {
+  __typename?: 'InboxItem';
+  id: Scalars['UUID']['output'];
+  inboxItemType: InboxItemType;
+  isUnread: Scalars['Boolean']['output'];
+  lastEventAt: Scalars['DateTime']['output'];
+  outcome?: Maybe<Scalars['String']['output']>;
+  payload?: Maybe<Scalars['JSON']['output']>;
+  preview?: Maybe<Scalars['String']['output']>;
+  priority: InboxItemPriority;
+  result?: Maybe<Scalars['JSON']['output']>;
+  scope: InboxItemScope;
+  subjectObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
+  subjectRecordId?: Maybe<Scalars['UUID']['output']>;
+  threadId?: Maybe<Scalars['UUID']['output']>;
+  title: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+};
+
+export type InboxItemAction = {
+  __typename?: 'InboxItemAction';
+  icon?: Maybe<Scalars['String']['output']>;
+  inputSchema: Array<InboxItemField>;
+  isPrimary: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  navigationKind?: Maybe<Scalars['String']['output']>;
+  transitionKind?: Maybe<Scalars['String']['output']>;
+};
+
+export type InboxItemField = {
+  __typename?: 'InboxItemField';
+  isRequired: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
+export type InboxItemOutcome = {
+  __typename?: 'InboxItemOutcome';
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+};
+
+export enum InboxItemPriority {
+  NEEDS_ACTION = 'NEEDS_ACTION',
+  UPDATE = 'UPDATE'
+}
+
+export enum InboxItemScope {
+  DONE = 'DONE',
+  INBOX = 'INBOX',
+  SNOOZED = 'SNOOZED'
+}
+
+export type InboxItemType = {
+  __typename?: 'InboxItemType';
+  actions: Array<InboxItemAction>;
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  outcomes: Array<InboxItemOutcome>;
+};
+
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String']['output'];
@@ -219,12 +291,15 @@ export type Mutation = {
   dismissReconnectAccountBanner: Scalars['Boolean']['output'];
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
+  executeInboxItemAction: InboxItem;
   generateSignedDpa: GenerateSignedDpaResult;
+  markInboxItemRead: InboxItem;
   retryWorkflowRun: WorkflowRun;
   runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  transitionInboxItem: InboxItem;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -287,8 +362,21 @@ export type MutationDuplicateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationExecuteInboxItemActionArgs = {
+  actionKey: Scalars['String']['input'];
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+  input?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+
 export type MutationGenerateSignedDpaArgs = {
   input: GenerateSignedDpaInput;
+};
+
+
+export type MutationMarkInboxItemReadArgs = {
+  inboxItemId: Scalars['UUID']['input'];
 };
 
 
@@ -314,6 +402,13 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationTestHttpRequestArgs = {
   input: TestHttpRequestInput;
+};
+
+
+export type MutationTransitionInboxItemArgs = {
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+  transition: TransitionInboxItemInput;
 };
 
 
@@ -365,6 +460,9 @@ export type Query = {
   /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
+  myInboxCounts: InboxCounts;
+  myInboxItem?: Maybe<InboxItem>;
+  myInboxItems: Array<InboxItem>;
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
   workflowVersionContent: WorkflowVersionContent;
@@ -426,6 +524,17 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   personId: Scalars['UUID']['input'];
+};
+
+
+export type QueryMyInboxItemArgs = {
+  inboxItemId: Scalars['UUID']['input'];
+};
+
+
+export type QueryMyInboxItemsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  scope?: InputMaybe<InboxItemScope>;
 };
 
 
@@ -602,6 +711,13 @@ export type TimelineThreadsWithTotal = {
   relatedPersonIds: Array<Scalars['UUID']['output']>;
   timelineThreads: Array<TimelineThread>;
   totalNumberOfThreads: Scalars['Int']['output'];
+};
+
+export type TransitionInboxItemInput = {
+  kind: Scalars['String']['input'];
+  outcome?: InputMaybe<Scalars['String']['input']>;
+  result?: InputMaybe<Scalars['JSON']['input']>;
+  resurfaceInMinutes?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UuidFilter = {

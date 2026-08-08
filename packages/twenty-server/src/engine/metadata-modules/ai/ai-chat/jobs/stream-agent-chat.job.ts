@@ -34,6 +34,8 @@ import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
+import { findFirstTextPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-first-text-part.util';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
@@ -71,6 +73,7 @@ export class StreamAgentChatJob {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
+    private readonly agentChatInboxService: AgentChatInboxService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -755,6 +758,14 @@ export class StreamAgentChatJob {
     if (!totalsUpdate.affected) {
       return;
     }
+
+    await this.agentChatInboxService.onTurnCompleted({
+      threadId,
+      workspaceId,
+      userWorkspaceId,
+      hasPendingQuestion: isDefined(pendingQuestionPart),
+      preview: findFirstTextPart(responseMessage.parts),
+    });
 
     if (hasText && !isAborted && !isDefined(pendingQuestionPart)) {
       this.metricsService.incrementCounterBy({

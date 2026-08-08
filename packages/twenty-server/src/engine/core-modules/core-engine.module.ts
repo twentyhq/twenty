@@ -41,6 +41,7 @@ import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { ImapSmtpCaldavModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
 import { ImpersonationModule } from 'src/engine/core-modules/impersonation/impersonation.module';
+import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LoggerModule } from 'src/engine/core-modules/logger/logger.module';
 import { loggerModuleFactory } from 'src/engine/core-modules/logger/logger.module-factory';
@@ -126,6 +127,7 @@ import { FileModule } from './file/file.module';
     ActorModule,
     TelemetryModule,
     AdminPanelModule,
+    InboxModule,
     LabModule,
     RoleModule,
     RedisClientModule,

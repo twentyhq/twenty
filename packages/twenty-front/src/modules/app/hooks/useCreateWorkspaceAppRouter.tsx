@@ -12,6 +12,9 @@ import { LazyRoute } from '@/app/components/LazyRoute';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
+import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
+import { INBOX_ITEM_PAGE_PATH } from '@/inbox/constants/InboxItemPagePath';
+import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { OnboardingActivationOutlet } from '@/onboarding/components/OnboardingActivationOutlet';
@@ -111,6 +114,18 @@ const StandalonePageLayoutPage = lazy(() =>
   })),
 );
 
+const InboxItemPage = lazy(() =>
+  import('~/pages/inbox/InboxItemPage').then((module) => ({
+    default: module.InboxItemPage,
+  })),
+);
+
+const InboxPage = lazy(() =>
+  import('~/pages/inbox/InboxPage').then((module) => ({
+    default: module.InboxPage,
+  })),
+);
+
 const WorkspaceSetup = lazyWithPreload(() =>
   import('~/pages/onboarding/WorkspaceSetup').then((module) => ({
     default: module.WorkspaceSetup,
@@ -182,6 +197,31 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <StandalonePageLayoutPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.InboxPage}
+                element={
+                  <Navigate
+                    to={getInboxSectionPath(DEFAULT_INBOX_SECTION)}
+                    replace
+                  />
+                }
+              />
+              <Route
+                path={AppPath.InboxSectionPage}
+                element={
+                  <LazyRoute>
+                    <InboxPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={INBOX_ITEM_PAGE_PATH}
+                element={
+                  <LazyRoute>
+                    <InboxItemPage />
                   </LazyRoute>
                 }
               />
