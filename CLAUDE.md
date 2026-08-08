@@ -215,9 +215,15 @@ Before modifying code, configuration, schema, or deployment files:
 3. Follow this file for code conventions and repository commands.
 4. Read the applicable environment guide under `deploy/` before touching
    development, staging, or production tooling.
+5. For anything about the **deployed** CRM — the cloud boxes, deploys, backups,
+   restores, DNS, or incident response — read the private
+   `SpeculativeTechnologies/crm-ops` repository. Production runs on Google Cloud
+   behind a Cloudflare tunnel, and none of that is documented in this repository.
+   Start with its `deploy/CLOUD-OPS.md`.
 
 Keep detailed procedures in those files. Do not duplicate or silently replace
-them here.
+them here. Operational detail about production belongs in `crm-ops`, which is
+private because it describes a live system; this repository is public.
 
 ### Operating contract
 
