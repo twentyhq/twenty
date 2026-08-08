@@ -1,32 +1,34 @@
 import { useLingui } from '@lingui/react/macro';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const SidePanelExpandAiChatButton = () => {
   const { t } = useLingui();
-  const navigate = useNavigate();
+  const navigateApp = useNavigateApp();
   const location = useLocation();
   const isMobile = useIsMobile();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const isOnboardingAiChatEnabled = useAtomStateValue(
-    isOnboardingAiChatEnabledState,
-  );
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const setAiChatExpandedReturnLocation = useSetAtomState(
     aiChatExpandedReturnLocationState,
   );
 
   const isOnAskAiPage = sidePanelPage === SidePanelPages.AskAI;
 
-  if (!isOnboardingAiChatEnabled || isMobile || !isOnAskAiPage) {
+  if (isMobile || !isOnAskAiPage) {
     return null;
   }
 
@@ -34,7 +36,15 @@ export const SidePanelExpandAiChatButton = () => {
     setAiChatExpandedReturnLocation(
       `${location.pathname}${location.search}${location.hash}`,
     );
-    navigate(AppPath.WorkspaceSetup);
+
+    void closeSidePanelMenu();
+
+    navigateApp(AppPath.AiChat, {
+      threadId:
+        isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)
+          ? currentAiChatThread
+          : null,
+    });
   };
 
   return (

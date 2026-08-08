@@ -45,6 +45,7 @@ export const MainContextStoreProvider = () => {
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
+  const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
@@ -108,10 +109,14 @@ export const MainContextStoreProvider = () => {
     firstAvailableViewId,
   );
 
+  // The AI chat page is included so that leaving the workspace for the chat
+  // clears the main context store: the agent must not receive a stale
+  // browsing context describing a page the user is no longer on.
   const shouldComputeContextStore =
     (isRecordIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
+      isAiChatPage ||
       isSettingsPage) &&
     metadataStore.status === 'up-to-date';
 

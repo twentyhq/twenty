@@ -61,6 +61,7 @@ describe('useReturnFromExpandedAiChat', () => {
 
     expect(openAskAiPageMock).toHaveBeenCalledWith({
       resetNavigationStack: true,
+      force: true,
     });
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');

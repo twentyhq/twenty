@@ -5,9 +5,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
+import { useLocation } from 'react-router-dom';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useOpenAskAiPageInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
@@ -15,13 +17,23 @@ export const useOpenAskAiPageInSidePanel = () => {
   const setHasAgentChatBeenOpened = useSetAtomState(
     hasAgentChatBeenOpenedState,
   );
+  const location = useLocation();
+  const isOnAiChatPage = isMatchingLocation(location, AppPath.AiChat);
 
   const openAskAiPage = useCallback(
     ({
       resetNavigationStack,
+      force = false,
     }: {
       resetNavigationStack?: boolean;
+      // The chat page already shows the conversation in the main pane; only
+      // callers that are navigating away from it may force the panel open.
+      force?: boolean;
     } = {}) => {
+      if (isOnAiChatPage && !force) {
+        return;
+      }
+
       const shouldReset =
         resetNavigationStack !== undefined
           ? resetNavigationStack
@@ -37,7 +49,12 @@ export const useOpenAskAiPageInSidePanel = () => {
         resetNavigationStack: shouldReset,
       });
     },
-    [navigateSidePanelMenu, isSidePanelOpened, setHasAgentChatBeenOpened],
+    [
+      navigateSidePanelMenu,
+      isSidePanelOpened,
+      setHasAgentChatBeenOpened,
+      isOnAiChatPage,
+    ],
   );
 
   return {

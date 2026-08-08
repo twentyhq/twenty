@@ -117,6 +117,12 @@ const WorkspaceSetup = lazyWithPreload(() =>
   })),
 );
 
+const AiChatPage = lazy(() =>
+  import('~/pages/ai-chat/AiChatPage').then((module) => ({
+    default: module.AiChatPage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -182,6 +188,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <StandalonePageLayoutPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.AiChat}
+                element={
+                  <LazyRoute>
+                    <AiChatPage />
                   </LazyRoute>
                 }
               />

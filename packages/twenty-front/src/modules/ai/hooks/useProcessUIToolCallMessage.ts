@@ -1,17 +1,27 @@
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
 import { extractUIToolCallParts } from '@/ai/utils/extractUIToolCallParts';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { useStore } from 'jotai';
+import { matchPath } from 'react-router-dom';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { sleep } from '~/utils/sleep';
 
+// Read at processing time, not render time: tool calls are processed from
+// streaming effects whose closures can outlive a route change.
+const isOnAiChatPage = () =>
+  isDefined(matchPath(AppPath.AiChat, window.location.pathname));
+
 export const useProcessUIToolCallMessage = () => {
   const navigateApp = useNavigateApp();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -70,6 +80,12 @@ export const useProcessUIToolCallMessage = () => {
             );
           }
 
+          // List views have no side panel surface yet, so leaving the chat
+          // page is required: the chat follows along in the side panel.
+          if (isOnAiChatPage()) {
+            openAskAiPage({ resetNavigationStack: true, force: true });
+          }
+
           navigateApp(AppPath.RecordIndexPage, {
             objectNamePlural: objectNamePlural,
           });
@@ -77,6 +93,15 @@ export const useProcessUIToolCallMessage = () => {
           break;
         }
         case 'navigateToRecord': {
+          if (isOnAiChatPage()) {
+            openRecordInSidePanel({
+              recordId: navigateAppOutput.recordId,
+              objectNameSingular: navigateAppOutput.objectNameSingular,
+            });
+
+            break;
+          }
+
           navigateApp(AppPath.RecordShowPage, {
             objectNameSingular: navigateAppOutput.objectNameSingular,
             objectRecordId: navigateAppOutput.recordId,
@@ -94,6 +119,10 @@ export const useProcessUIToolCallMessage = () => {
             throw new Error(
               `Object with singular name ${navigateAppOutput.objectNameSingular} not found, cannot navigate to view from chat.`,
             );
+          }
+
+          if (isOnAiChatPage()) {
+            openAskAiPage({ resetNavigationStack: true, force: true });
           }
 
           navigateApp(

@@ -3,11 +3,15 @@ import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/curren
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
+import { useLocation } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -29,6 +33,9 @@ export const useAiChatThreadClick = (
   );
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const location = useLocation();
+  const isOnAiChatPage = isMatchingLocation(location, AppPath.AiChat);
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
@@ -59,6 +66,14 @@ export const useAiChatThreadClick = (
           }
         : null,
     );
+
+    // On the chat page the conversation is already in the main pane: close
+    // the panel the thread was picked from instead of opening panel chat.
+    if (isOnAiChatPage) {
+      void closeSidePanelMenu();
+
+      return;
+    }
 
     openAskAiPage({
       resetNavigationStack,

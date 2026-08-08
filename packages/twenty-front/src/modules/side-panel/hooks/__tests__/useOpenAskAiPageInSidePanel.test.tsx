@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -19,9 +20,15 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-);
+const createWrapper =
+  (initialPath: string) =>
+  ({ children }: { children: ReactNode }) => (
+    <JotaiProvider store={jotaiStore}>
+      <MemoryRouter initialEntries={[initialPath]}>{children}</MemoryRouter>
+    </JotaiProvider>
+  );
+
+const Wrapper = createWrapper('/objects/companies');
 
 describe('useOpenAskAiPageInSidePanel', () => {
   beforeEach(() => {
@@ -79,6 +86,34 @@ describe('useOpenAskAiPageInSidePanel', () => {
     expect(navigateSidePanelMenuMock).toHaveBeenCalledWith(
       expect.objectContaining({
         resetNavigationStack: true,
+      }),
+    );
+  });
+
+  it('should not open the panel AskAI page while on the AI chat page', () => {
+    const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
+      wrapper: createWrapper('/chat'),
+    });
+
+    act(() => {
+      result.current.openAskAiPage();
+    });
+
+    expect(navigateSidePanelMenuMock).not.toHaveBeenCalled();
+  });
+
+  it('should open the panel AskAI page on the AI chat page when forced', () => {
+    const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
+      wrapper: createWrapper('/chat/6a3b0e10-0b1f-4c62-a2f8-3e1d2c4b5a69'),
+    });
+
+    act(() => {
+      result.current.openAskAiPage({ force: true });
+    });
+
+    expect(navigateSidePanelMenuMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: SidePanelPages.AskAI,
       }),
     );
   });

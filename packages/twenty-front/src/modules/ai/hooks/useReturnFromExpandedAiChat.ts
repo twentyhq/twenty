@@ -24,7 +24,7 @@ export const useReturnFromExpandedAiChat = ({
 
   return useCallback(() => {
     if (reopenSidePanel) {
-      openAskAiPage({ resetNavigationStack: true });
+      openAskAiPage({ resetNavigationStack: true, force: true });
     } else {
       store.set(shouldContinueAiChatInSidePanelState.atom, false);
       void closeSidePanelMenu();
