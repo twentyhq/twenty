@@ -10,7 +10,7 @@ import { contextStoreCurrentPageTypeComponentState } from '@/context-store/state
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { getObjectMetadataItemBySingularNameOrThrow } from '@/object-metadata/utils/getObjectMetadataItemBySingularNameOrThrow';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { viewableRecordIndexObjectMetadataIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexObjectMetadataIdComponentState';
 import { viewableRecordIndexViewIdComponentState } from '@/side-panel/pages/record-index-page/states/viewableRecordIndexViewIdComponentState';
@@ -53,10 +53,18 @@ export const useOpenRecordIndexInSidePanel = () => {
       objectNameSingular: string;
       viewId?: string;
     }) => {
-      const objectMetadataItem = getObjectMetadataItemBySingularNameOrThrow({
-        store,
-        objectNameSingular,
-      });
+      const objectMetadataItem = store.get(
+        objectMetadataItemFamilySelector.selectorFamily({
+          objectName: objectNameSingular,
+          objectNameType: 'singular',
+        }),
+      );
+
+      if (!isDefined(objectMetadataItem)) {
+        throw new Error(
+          `Object with singular name ${objectNameSingular} not found, cannot open its records in the side panel.`,
+        );
+      }
 
       // User-facing views only, sorted by position; a view id that is
       // unknown or points at a widget-backing view falls back to the
