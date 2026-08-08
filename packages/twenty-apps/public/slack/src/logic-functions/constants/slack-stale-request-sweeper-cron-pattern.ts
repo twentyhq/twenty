@@ -1,0 +1,1 @@
+export const SLACK_STALE_REQUEST_SWEEPER_CRON_PATTERN = '*/5 * * * *';
