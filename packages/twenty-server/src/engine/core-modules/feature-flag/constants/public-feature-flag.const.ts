@@ -3,6 +3,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 type FeatureFlagMetadata = {
   label: string;
   description: string;
+  icon: string;
   imagePath?: string;
 };
 
@@ -18,6 +19,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Calendar Day and Week Views',
       description:
         'Display calendar records in daily or weekly layouts with optional end dates',
+      icon: 'IconCalendarWeek',
     },
   },
   {
@@ -26,6 +28,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Junction Relations',
       description:
         'Enable many-to-many relations through junction tables configuration',
+      icon: 'IconRelationManyToMany',
     },
   },
   {
@@ -34,6 +37,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'List View',
       description:
         'Display records in a list layout with collapsible groups and inline fields',
+      icon: 'IconList',
     },
   },
   {
@@ -42,6 +46,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Settings Discovery Hero',
       description:
         'Show the per-page hero illustration + video walkthrough modal on settings pages',
+      icon: 'IconSparkles',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

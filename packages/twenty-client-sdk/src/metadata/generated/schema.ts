@@ -1600,6 +1600,7 @@ export interface ApiConfig {
 export interface PublicFeatureFlagMetadata {
     label: Scalars['String']
     description: Scalars['String']
+    icon: Scalars['String']
     imagePath?: Scalars['String']
     __typename: 'PublicFeatureFlagMetadata'
 }
@@ -4867,6 +4868,7 @@ export interface ApiConfigGenqlSelection{
 export interface PublicFeatureFlagMetadataGenqlSelection{
     label?: boolean | number
     description?: boolean | number
+    icon?: boolean | number
     imagePath?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
