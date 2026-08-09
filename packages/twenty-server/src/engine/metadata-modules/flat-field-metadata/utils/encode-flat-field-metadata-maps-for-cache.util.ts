@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   FLAT_FIELD_METADATA_EMPTY_ARRAY_KEY_SET,
   FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY,
@@ -34,7 +36,7 @@ export const encodeFlatFieldMetadataMapsForCache = (
   for (const [universalIdentifier, flatFieldMetadata] of Object.entries(
     flatEntityMaps.byUniversalIdentifier,
   )) {
-    if (flatFieldMetadata === undefined) {
+    if (!isDefined(flatFieldMetadata)) {
       continue;
     }
 
