@@ -23,6 +23,6 @@ export const INDEX_FILTER_COLUMN_BY_FILTER_FIELD: Record<
   string,
   MetadataFilterColumn
 > = {
-  id: 'id',
-  isCustom: 'isCustom',
+  id: { column: 'id', type: 'uuid' },
+  isCustom: { column: 'isCustom', type: 'boolean' },
 };

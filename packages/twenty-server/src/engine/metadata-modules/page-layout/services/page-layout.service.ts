@@ -56,7 +56,11 @@ export class PageLayoutService {
       flatPageLayoutMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((layout) => !isDefined(layout.deletedAt));
+      .filter((layout) => !isDefined(layout.deletedAt))
+      .sort(
+        (a, b) =>
+          a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
+      );
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
@@ -99,7 +103,11 @@ export class PageLayoutService {
           : true;
 
         return isNotDeleted && matchesObjectMetadataId && matchesPageLayoutType;
-      });
+      })
+      .sort(
+        (a, b) =>
+          a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
+      );
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(

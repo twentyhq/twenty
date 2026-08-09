@@ -466,7 +466,7 @@ export class ViewService {
           viewTypes.includes(flatView.type),
       )
       .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
-      .sort((a, b) => a.position - b.position);
+      .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 
   async findByWorkspaceId(

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,8 @@ import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -64,12 +67,13 @@ export class ViewController {
   @Get()
   @UseGuards(CustomPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
-  ): Promise<ViewDTO[]> {
+  ) {
     const views = objectMetadataId
       ? await this.viewService.findByObjectMetadataIdWithRelations(
           workspace.id,
@@ -81,7 +85,16 @@ export class ViewController {
           userWorkspaceId,
         );
 
-    return this.processViewsWithTemplates(views, workspace.id, locale);
+    const page = paginateMetadataRestItems({ items: views, request });
+
+    return {
+      ...page,
+      data: await this.processViewsWithTemplates(
+        page.data,
+        workspace.id,
+        locale,
+      ),
+    };
   }
 
   @Get(':id')

@@ -41,6 +41,7 @@ import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/rel
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
@@ -48,6 +49,7 @@ import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/p
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -71,6 +73,7 @@ export class FieldMetadataResolver {
     private readonly i18nService: I18nService,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
   ) {}
 
   @UseGuards(NoPermissionGuard)
@@ -89,7 +92,7 @@ export class FieldMetadataResolver {
       description: 'Specify to filter the records returned.',
     })
     filter: FieldFilterInput,
-  ): Promise<CursorConnection<FieldMetadataEntity>> {
+  ): Promise<CursorConnection<FieldMetadataDTO>> {
     const queryBuilder = this.fieldMetadataRepository
       .createQueryBuilder('fieldMetadata')
       .where('"fieldMetadata"."workspaceId" = :workspaceId', { workspaceId });
@@ -101,13 +104,24 @@ export class FieldMetadataResolver {
       columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 
-    return findManyWithCursorPagination({
+    const connection = await findManyWithCursorPagination({
       queryBuilder,
       alias: 'fieldMetadata',
       paging,
-      defaultResultSize: 10,
-      maxResultsSize: 1000,
     });
+    const uniqueFieldMetadataIds =
+      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
+
+    return {
+      ...connection,
+      edges: connection.edges.map((edge) => ({
+        ...edge,
+        node: fromFieldMetadataEntityToFieldMetadataDto(
+          edge.node,
+          uniqueFieldMetadataIds,
+        ),
+      })),
+    };
   }
 
   @UseGuards(NoPermissionGuard)
@@ -119,7 +133,7 @@ export class FieldMetadataResolver {
     })
     id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FieldMetadataEntity> {
+  ): Promise<FieldMetadataDTO> {
     const fieldMetadata = await this.fieldMetadataRepository.findOne({
       where: { id, workspaceId },
     });
@@ -130,7 +144,13 @@ export class FieldMetadataResolver {
       );
     }
 
-    return fieldMetadata;
+    const uniqueFieldMetadataIds =
+      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
+
+    return fromFieldMetadataEntityToFieldMetadataDto(
+      fieldMetadata,
+      uniqueFieldMetadataIds,
+    );
   }
 
   @ResolveField(() => ObjectMetadataDTO, { nullable: true })

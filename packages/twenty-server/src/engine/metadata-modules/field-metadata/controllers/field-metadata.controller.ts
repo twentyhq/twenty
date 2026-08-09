@@ -20,9 +20,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
-import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
-import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
-import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
 import {
   paginateByIdCursor,
   type RestCursorPageInfo,
@@ -50,13 +47,11 @@ import {
   toLegacyFieldMetadataCreateResponse,
   toLegacyFieldMetadataDeleteResponse,
   toLegacyFieldMetadataFindOneResponse,
-  toLegacyFieldMetadataListResponse,
   toLegacyFieldMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
+import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/fields`)
@@ -78,19 +73,8 @@ export class FieldMetadataController {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
   ) {}
-
-  private async loadUniqueFieldMetadataIds(
-    workspaceId: string,
-  ): Promise<ReadonlySet<string>> {
-    const { flatIndexMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatIndexMaps'] },
-      );
-
-    return computeUniqueFieldMetadataIdsFromFlatIndexMaps(flatIndexMaps);
-  }
 
   @Get()
   async findMany(
@@ -100,13 +84,11 @@ export class FieldMetadataController {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.fieldMetadataRepository,
       workspaceId,
-      limit: parseLimitRestRequest(request),
-      startingAfter: parseStartingAfterRestRequest(request),
-      endingBefore: parseEndingBeforeRestRequest(request),
+      request,
     });
 
     const uniqueFieldMetadataIds =
-      await this.loadUniqueFieldMetadataIds(workspaceId);
+      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
 
     const result: {
       data: FieldMetadataDTO[];
@@ -120,9 +102,7 @@ export class FieldMetadataController {
       totalCount,
     };
 
-    return (await this.isNewMetadataFormat(workspaceId))
-      ? result
-      : toLegacyFieldMetadataListResponse(result);
+    return result;
   }
 
   @Get(':id')
@@ -142,7 +122,7 @@ export class FieldMetadataController {
     }
 
     const uniqueFieldMetadataIds =
-      await this.loadUniqueFieldMetadataIds(workspaceId);
+      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
     const result = fromFieldMetadataEntityToFieldMetadataDto(
       field,
       uniqueFieldMetadataIds,

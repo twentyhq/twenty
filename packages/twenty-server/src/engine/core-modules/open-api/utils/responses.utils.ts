@@ -1,10 +1,12 @@
+import { type OpenAPIV3_1 } from 'openapi-types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const getFindManyResponse200 = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-) => {
+  directData = false,
+): OpenAPIV3_1.ResponseObject => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
   )}ForResponse`;
@@ -17,25 +19,31 @@ export const getFindManyResponse200 = (
           type: 'object',
           properties: {
             data: {
-              type: 'object',
-              properties: {
-                [item.namePlural]: {
-                  type: 'array',
-                  items: {
-                    $ref: schemaRef,
-                  },
-                },
-              },
+              ...(directData
+                ? {
+                    type: 'array',
+                    items: { $ref: schemaRef },
+                  }
+                : {
+                    type: 'object',
+                    properties: {
+                      [item.namePlural]: {
+                        type: 'array',
+                        items: { $ref: schemaRef },
+                      },
+                    },
+                  }),
             },
             pageInfo: {
               type: 'object',
               properties: {
                 hasNextPage: { type: 'boolean' },
+                hasPreviousPage: { type: 'boolean' },
                 startCursor: {
-                  type: 'string',
+                  type: ['string', 'null'],
                 },
                 endCursor: {
-                  type: 'string',
+                  type: ['string', 'null'],
                 },
               },
             },

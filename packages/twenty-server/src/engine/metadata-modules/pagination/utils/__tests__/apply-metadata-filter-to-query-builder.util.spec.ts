@@ -1,7 +1,10 @@
 import { Brackets, type WhereExpressionBuilder } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
+import {
+  applyMetadataFilterToItems,
+  applyMetadataFilterToQueryBuilder,
+} from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
 
 class FakeWhereBuilder {
   conditions: string[] = [];
@@ -58,8 +61,8 @@ const applyFilter = (
   columnByFilterField: Parameters<
     typeof applyMetadataFilterToQueryBuilder
   >[0]['columnByFilterField'] = {
-    id: 'id',
-    isActive: 'isActive',
+    id: { column: 'id', type: 'uuid' },
+    isActive: { column: 'isActive', type: 'boolean' },
   },
 ) => {
   const whereBuilder = new FakeWhereBuilder();
@@ -117,7 +120,11 @@ describe('applyMetadataFilterToQueryBuilder', () => {
 
   it('inverts boolean values for columns flagged with invertBooleanValues', () => {
     const columnByFilterField = {
-      isUIReadOnly: { column: 'isUIEditable', invertBooleanValues: true },
+      isUIReadOnly: {
+        column: 'isUIEditable',
+        type: 'boolean',
+        invertBooleanValues: true,
+      },
     } as const;
 
     expect(
@@ -161,6 +168,38 @@ describe('applyMetadataFilterToQueryBuilder', () => {
     expect(() => applyFilter({ unknownField: { eq: 'x' } })).toThrow(
       UserInputError,
     );
+  });
+
+  it('rejects boolean is operators on UUID columns before reaching postgres', () => {
+    expect(() => applyFilter({ id: { is: true } })).toThrow(UserInputError);
+  });
+
+  it('applies the same filter semantics to batched in-memory relations', () => {
+    type TestFilter = {
+      and?: TestFilter[];
+      id?: { gt?: string; lt?: string };
+      isActive?: { is?: boolean };
+    };
+
+    const items = [
+      { id: 'a', isActive: true },
+      { id: 'b', isActive: false },
+      { id: 'c', isActive: true },
+    ];
+
+    expect(
+      applyMetadataFilterToItems<(typeof items)[number], TestFilter>({
+        items,
+        filter: {
+          and: [{ isActive: { is: true } }],
+          id: { gt: 'a', lt: 'c' },
+        },
+        columnByFilterField: {
+          id: { column: 'id', type: 'uuid' },
+          isActive: { column: 'isActive', type: 'boolean' },
+        },
+      }),
+    ).toEqual([]);
   });
 
   it('ignores undefined filter values', () => {

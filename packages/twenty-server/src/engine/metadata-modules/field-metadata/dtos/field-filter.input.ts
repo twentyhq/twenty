@@ -35,13 +35,17 @@ export const FIELD_FILTER_COLUMN_BY_FILTER_FIELD: Record<
   string,
   MetadataFilterColumn
 > = {
-  id: 'id',
-  isActive: 'isActive',
-  isSystem: 'isSystem',
-  isUIEditable: 'isUIEditable',
+  id: { column: 'id', type: 'uuid' },
+  isActive: { column: 'isActive', type: 'boolean' },
+  isSystem: { column: 'isSystem', type: 'boolean' },
+  isUIEditable: { column: 'isUIEditable', type: 'boolean' },
   // The legacy isUIReadOnly column is no longer written since the 2.13
   // rename, so the deprecated filter runs inverted against isUIEditable,
   // consistent with how the field itself is resolved.
-  isUIReadOnly: { column: 'isUIEditable', invertBooleanValues: true },
-  objectMetadataId: 'objectMetadataId',
+  isUIReadOnly: {
+    column: 'isUIEditable',
+    type: 'boolean',
+    invertBooleanValues: true,
+  },
+  objectMetadataId: { column: 'objectMetadataId', type: 'uuid' },
 };

@@ -31,14 +31,12 @@ import {
   FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
   FieldFilterInput,
 } from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import {
   INDEX_FILTER_COLUMN_BY_FILTER_FIELD,
   IndexFilterInput,
 } from 'src/engine/metadata-modules/index-metadata/dtos/index-filter.input';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -56,8 +54,14 @@ import { ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadat
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
-import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
-import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
+import {
+  applyMetadataFilterToItems,
+  applyMetadataFilterToQueryBuilder,
+} from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
+import {
+  findManyItemsWithCursorPagination,
+  findManyWithCursorPagination,
+} from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
 import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -66,8 +70,6 @@ import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mo
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -84,10 +86,6 @@ export class ObjectMetadataResolver {
     private readonly i18nService: I18nService,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectWorkspaceScopedRepository(IndexMetadataEntity)
-    private readonly indexMetadataRepository: WorkspaceScopedRepository<IndexMetadataEntity>,
   ) {}
 
   @UseGuards(NoPermissionGuard)
@@ -122,8 +120,6 @@ export class ObjectMetadataResolver {
       queryBuilder,
       alias: 'objectMetadata',
       paging,
-      defaultResultSize: 10,
-      maxResultsSize: 1000,
     });
   }
 
@@ -152,8 +148,9 @@ export class ObjectMetadataResolver {
 
   @ResolveField(() => ObjectFieldsConnectionDTO)
   async fields(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: Pick<ObjectMetadataDTO, 'id'>,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
     @Args('paging', {
       type: () => CursorPagingInput,
       defaultValue: { first: 10 },
@@ -166,34 +163,29 @@ export class ObjectMetadataResolver {
       description: 'Specify to filter the records returned.',
     })
     filter: FieldFilterInput,
-  ): Promise<CursorConnection<FieldMetadataEntity>> {
-    const queryBuilder = this.fieldMetadataRepository
-      .createQueryBuilder('fieldMetadata')
-      .where('"fieldMetadata"."workspaceId" = :workspaceId', { workspaceId })
-      .andWhere('"fieldMetadata"."objectMetadataId" = :objectMetadataId', {
-        objectMetadataId: objectMetadata.id,
-      });
-
-    applyMetadataFilterToQueryBuilder({
-      whereBuilder: queryBuilder,
-      alias: 'fieldMetadata',
+  ): Promise<CursorConnection<FieldMetadataDTO>> {
+    const fieldMetadatas = await context.loaders.fieldMetadataLoader.load({
+      objectMetadata,
+      workspaceId: workspace.id,
+      locale: context.req.locale,
+    });
+    const filteredFieldMetadatas = applyMetadataFilterToItems({
+      items: fieldMetadatas,
       filter,
       columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 
-    return findManyWithCursorPagination({
-      queryBuilder,
-      alias: 'fieldMetadata',
+    return findManyItemsWithCursorPagination({
+      items: filteredFieldMetadatas,
       paging,
-      defaultResultSize: 10,
-      maxResultsSize: 1000,
     });
   }
 
   @ResolveField(() => ObjectIndexMetadatasConnectionDTO)
   async indexMetadatas(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent() objectMetadata: Pick<ObjectMetadataDTO, 'id'>,
+    @Context() context: { loaders: IDataloaders },
     @Args('paging', {
       type: () => CursorPagingInput,
       defaultValue: { first: 10 },
@@ -206,27 +198,20 @@ export class ObjectMetadataResolver {
       description: 'Specify to filter the records returned.',
     })
     filter: IndexFilterInput,
-  ): Promise<CursorConnection<IndexMetadataEntity>> {
-    const queryBuilder = this.indexMetadataRepository
-      .createQueryBuilder('indexMetadata')
-      .where('"indexMetadata"."workspaceId" = :workspaceId', { workspaceId })
-      .andWhere('"indexMetadata"."objectMetadataId" = :objectMetadataId', {
-        objectMetadataId: objectMetadata.id,
-      });
-
-    applyMetadataFilterToQueryBuilder({
-      whereBuilder: queryBuilder,
-      alias: 'indexMetadata',
+  ): Promise<CursorConnection<IndexMetadataDTO>> {
+    const indexMetadatas = await context.loaders.indexMetadataLoader.load({
+      objectMetadata,
+      workspaceId: workspace.id,
+    });
+    const filteredIndexMetadatas = applyMetadataFilterToItems({
+      items: indexMetadatas,
       filter,
       columnByFilterField: INDEX_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 
-    return findManyWithCursorPagination({
-      queryBuilder,
-      alias: 'indexMetadata',
+    return findManyItemsWithCursorPagination({
+      items: filteredIndexMetadatas,
       paging,
-      defaultResultSize: 10,
-      maxResultsSize: 1000,
     });
   }
 

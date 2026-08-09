@@ -130,14 +130,16 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           const aggregateQueryBuilder = duplicateRecordsQueryBuilder.clone();
           const totalCount = await aggregateQueryBuilder.getCount();
 
-          const { startCursor, endCursor } = getPageInfo(
-            duplicates,
-            [{ id: OrderByDirection.AscNullsFirst }],
-            QUERY_MAX_RECORDS,
-            true,
+          const { startCursor, endCursor } = getPageInfo({
+            records: duplicates,
+            orderBy: [{ id: OrderByDirection.AscNullsFirst }],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+            },
             flatObjectMetadata,
             flatFieldMetadataMaps,
-          );
+          });
 
           return {
             records: duplicates,

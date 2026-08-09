@@ -24,12 +24,12 @@ export type MetadataFilterComparison = {
 // column has the opposite meaning (isUIReadOnly filters run against
 // isUIEditable, since the legacy column is no longer written).
 export type MetadataFilterColumn =
-  | string
-  | { column: string; invertBooleanValues: true };
+  | { column: string; type: 'uuid' }
+  | { column: string; type: 'boolean'; invertBooleanValues?: true };
 
-type MetadataFilterShape = {
-  and?: MetadataFilterShape[];
-  or?: MetadataFilterShape[];
+type MetadataFilterShape<TFilter> = {
+  and?: TFilter[];
+  or?: TFilter[];
 };
 
 type ParameterCounter = { value: number };
@@ -54,6 +54,35 @@ const invertBooleanComparisonValue = (
   }
 
   return value;
+};
+
+const normalizeMetadataComparison = ({
+  comparison,
+  column,
+}: {
+  comparison: MetadataFilterComparison;
+  column: MetadataFilterColumn;
+}): MetadataFilterComparison => {
+  const normalizedComparison = { ...comparison };
+
+  if (column.type === 'boolean' && column.invertBooleanValues) {
+    normalizedComparison.is = invertBooleanComparisonValue(comparison.is);
+    normalizedComparison.isNot = invertBooleanComparisonValue(comparison.isNot);
+  }
+
+  if (
+    column.type === 'uuid' &&
+    ((normalizedComparison.is !== undefined &&
+      normalizedComparison.is !== null) ||
+      (normalizedComparison.isNot !== undefined &&
+        normalizedComparison.isNot !== null))
+  ) {
+    throw new UserInputError(
+      'UUID is/isNot comparisons only support null values',
+    );
+  }
+
+  return normalizedComparison;
 };
 
 const applyComparisonToQueryBuilder = ({
@@ -151,10 +180,10 @@ const applyComparisonToQueryBuilder = ({
 
 // Translates a nestjs-query style filter ({ and, or, field: { eq, in, ... } })
 // into TypeORM query builder conditions. Top-level field conditions, `and`
-// entries and `or` groups are combined with AND, matching the semantics of the
-// auto-generated resolvers this replaces.
+// entries and separate comparisons on one field are combined with AND; `or`
+// groups are bracketed and combined with OR.
 export const applyMetadataFilterToQueryBuilder = <
-  TFilter extends MetadataFilterShape,
+  TFilter extends MetadataFilterShape<TFilter>,
 >({
   whereBuilder,
   alias,
@@ -217,17 +246,11 @@ export const applyMetadataFilterToQueryBuilder = <
       throw new UserInputError(`Unknown filter field: ${filterField}`);
     }
 
-    const column =
-      typeof filterColumn === 'string' ? filterColumn : filterColumn.column;
-    let comparison = filterValue as MetadataFilterComparison;
-
-    if (typeof filterColumn !== 'string' && filterColumn.invertBooleanValues) {
-      comparison = {
-        ...comparison,
-        is: invertBooleanComparisonValue(comparison.is),
-        isNot: invertBooleanComparisonValue(comparison.isNot),
-      };
-    }
+    const { column } = filterColumn;
+    const comparison = normalizeMetadataComparison({
+      comparison: filterValue as MetadataFilterComparison,
+      column: filterColumn,
+    });
 
     applyComparisonToQueryBuilder({
       whereBuilder,
@@ -237,3 +260,213 @@ export const applyMetadataFilterToQueryBuilder = <
     });
   }
 };
+
+const matchesSqlLikePattern = (value: string, pattern: string): boolean => {
+  const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regularExpressionPattern = escapedPattern
+    .replace(/%/g, '.*')
+    .replace(/_/g, '.');
+
+  return new RegExp(`^${regularExpressionPattern}$`).test(value);
+};
+
+const matchesMetadataComparison = ({
+  value,
+  comparison,
+  column,
+}: {
+  value: unknown;
+  comparison: MetadataFilterComparison;
+  column: MetadataFilterColumn;
+}): boolean => {
+  const normalizedComparison = normalizeMetadataComparison({
+    comparison,
+    column,
+  });
+
+  const stringValue = typeof value === 'string' ? value : undefined;
+  const simpleComparisons: [
+    keyof MetadataFilterComparison,
+    (comparisonValue: unknown) => boolean,
+  ][] = [
+    ['eq', (comparisonValue) => value === comparisonValue],
+    ['neq', (comparisonValue) => value !== comparisonValue],
+    [
+      'gt',
+      (comparisonValue) =>
+        isDefined(stringValue) &&
+        typeof comparisonValue === 'string' &&
+        stringValue > comparisonValue,
+    ],
+    [
+      'gte',
+      (comparisonValue) =>
+        isDefined(stringValue) &&
+        typeof comparisonValue === 'string' &&
+        stringValue >= comparisonValue,
+    ],
+    [
+      'lt',
+      (comparisonValue) =>
+        isDefined(stringValue) &&
+        typeof comparisonValue === 'string' &&
+        stringValue < comparisonValue,
+    ],
+    [
+      'lte',
+      (comparisonValue) =>
+        isDefined(stringValue) &&
+        typeof comparisonValue === 'string' &&
+        stringValue <= comparisonValue,
+    ],
+  ];
+
+  for (const [comparisonKey, matches] of simpleComparisons) {
+    const comparisonValue = normalizedComparison[comparisonKey];
+
+    if (isDefined(comparisonValue) && !matches(comparisonValue)) {
+      return false;
+    }
+  }
+
+  const likeComparisons: [keyof MetadataFilterComparison, boolean, boolean][] =
+    [
+      ['like', false, false],
+      ['notLike', false, true],
+      ['iLike', true, false],
+      ['notILike', true, true],
+    ];
+
+  for (const [comparisonKey, caseInsensitive, negate] of likeComparisons) {
+    const comparisonValue = normalizedComparison[comparisonKey];
+
+    if (!isDefined(comparisonValue)) {
+      continue;
+    }
+
+    if (!isDefined(stringValue) || typeof comparisonValue !== 'string') {
+      return false;
+    }
+
+    const candidate = caseInsensitive ? stringValue.toLowerCase() : stringValue;
+    const pattern = caseInsensitive
+      ? comparisonValue.toLowerCase()
+      : comparisonValue;
+    const matches = matchesSqlLikePattern(candidate, pattern);
+
+    if (negate ? matches : !matches) {
+      return false;
+    }
+  }
+
+  if (
+    isDefined(normalizedComparison.in) &&
+    !normalizedComparison.in.includes(value)
+  ) {
+    return false;
+  }
+
+  if (
+    isDefined(normalizedComparison.notIn) &&
+    normalizedComparison.notIn.includes(value)
+  ) {
+    return false;
+  }
+
+  if (
+    normalizedComparison.is !== undefined &&
+    (normalizedComparison.is === null
+      ? value !== null && value !== undefined
+      : value !== normalizedComparison.is)
+  ) {
+    return false;
+  }
+
+  if (
+    normalizedComparison.isNot !== undefined &&
+    (normalizedComparison.isNot === null
+      ? value === null || value === undefined
+      : value === normalizedComparison.isNot)
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
+export const applyMetadataFilterToItems = <
+  TEntity extends { id: string },
+  TFilter extends MetadataFilterShape<TFilter>,
+>({
+  items,
+  filter,
+  columnByFilterField,
+}: {
+  items: TEntity[];
+  filter: TFilter;
+  columnByFilterField: Record<string, MetadataFilterColumn>;
+}): TEntity[] =>
+  items.filter((item) => {
+    for (const [filterField, filterValue] of Object.entries(filter)) {
+      if (!isDefined(filterValue)) {
+        continue;
+      }
+
+      if (filterField === 'and') {
+        if (
+          !(filterValue as TFilter[]).every(
+            (subFilter) =>
+              applyMetadataFilterToItems({
+                items: [item],
+                filter: subFilter,
+                columnByFilterField,
+              }).length === 1,
+          )
+        ) {
+          return false;
+        }
+
+        continue;
+      }
+
+      if (filterField === 'or') {
+        const subFilters = filterValue as TFilter[];
+
+        if (
+          subFilters.length > 0 &&
+          !subFilters.some(
+            (subFilter) =>
+              applyMetadataFilterToItems({
+                items: [item],
+                filter: subFilter,
+                columnByFilterField,
+              }).length === 1,
+          )
+        ) {
+          return false;
+        }
+
+        continue;
+      }
+
+      const column = columnByFilterField[filterField];
+
+      if (!isDefined(column)) {
+        throw new UserInputError(`Unknown filter field: ${filterField}`);
+      }
+
+      const value = (item as unknown as Record<string, unknown>)[column.column];
+
+      if (
+        !matchesMetadataComparison({
+          value,
+          comparison: filterValue as MetadataFilterComparison,
+          column,
+        })
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  });
