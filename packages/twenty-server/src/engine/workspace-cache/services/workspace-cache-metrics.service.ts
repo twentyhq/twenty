@@ -16,6 +16,7 @@ import {
   computeLocalCacheStats,
 } from 'src/engine/workspace-cache/utils/compute-local-cache-stats.util';
 import { deepSizeBytes } from 'src/engine/workspace-cache/utils/deep-size-bytes.util';
+import { getProviderFromCacheKey } from 'src/engine/workspace-cache/utils/get-provider-from-cache-key.util';
 
 type LocalCache = ReadonlyMap<
   string,
@@ -153,7 +154,7 @@ export class WorkspaceCacheMetricsService {
     > = {};
 
     for (const [key, entry] of localCache) {
-      const provider = key.slice(0, key.lastIndexOf(':'));
+      const provider = getProviderFromCacheKey(key);
       const stats = (perProvider[provider] ??= {
         count: 0,
         sampledBytes: 0,
