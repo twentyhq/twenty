@@ -1,15 +1,7 @@
 import {
+  getRecordTableWidgetLayout,
   getRecordTableWidgetLayoutViewType,
-  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
-  type RecordTableWidgetLayoutViewType,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
-import {
-  IconCalendar,
-  type IconComponent,
-  IconLayoutKanban,
-  IconList,
-  IconTable,
-} from 'twenty-ui/icon';
 import { ViewType } from '~/generated-metadata/graphql';
 
 describe('getRecordTableWidgetLayoutViewType', () => {
@@ -37,15 +29,28 @@ describe('getRecordTableWidgetLayoutViewType', () => {
   });
 });
 
-describe('RECORD_TABLE_WIDGET_LAYOUT_OPTIONS', () => {
-  it.each<[RecordTableWidgetLayoutViewType, IconComponent]>([
-    [ViewType.TABLE_WIDGET, IconTable],
-    [ViewType.KANBAN_WIDGET, IconLayoutKanban],
-    [ViewType.LIST_WIDGET, IconList],
-    [ViewType.CALENDAR_WIDGET, IconCalendar],
-  ])('should give %s its own icon', (viewType, expectedIcon) => {
-    expect(RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[viewType].Icon).toBe(
-      expectedIcon,
-    );
+describe('getRecordTableWidgetLayout', () => {
+  it.each([
+    [ViewType.TABLE_WIDGET, ViewType.TABLE],
+    [ViewType.KANBAN_WIDGET, ViewType.KANBAN],
+    [ViewType.LIST_WIDGET, ViewType.LIST],
+    [ViewType.CALENDAR_WIDGET, ViewType.CALENDAR],
+  ])('should reduce %s to the %s layout', (viewType, expectedLayout) => {
+    expect(getRecordTableWidgetLayout(viewType)).toBe(expectedLayout);
   });
+
+  // A widget backed by a plain view keeps that view's layout.
+  it.each([
+    [ViewType.LIST, ViewType.LIST],
+    [ViewType.KANBAN, ViewType.KANBAN],
+  ])('should keep the %s layout of a non-widget view', (viewType, expected) => {
+    expect(getRecordTableWidgetLayout(viewType)).toBe(expected);
+  });
+
+  it.each([ViewType.FIELDS_WIDGET, undefined, null])(
+    'should fall back to the table layout for %s',
+    (viewType) => {
+      expect(getRecordTableWidgetLayout(viewType)).toBe(ViewType.TABLE);
+    },
+  );
 });

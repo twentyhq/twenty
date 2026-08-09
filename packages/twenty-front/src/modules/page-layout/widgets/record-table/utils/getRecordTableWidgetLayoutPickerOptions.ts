@@ -5,6 +5,7 @@ import {
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ViewType } from '~/generated-metadata/graphql';
 
@@ -29,30 +30,42 @@ export const getRecordTableWidgetLayoutPickerOptions = ({
   isKanbanAvailable,
   isCalendarAvailable,
   isListViewEnabled,
-}: GetRecordTableWidgetLayoutPickerOptionsParams): RecordTableWidgetLayoutPickerOption[] =>
-  RECORD_TABLE_WIDGET_LAYOUT_VIEW_TYPES.filter(
+}: GetRecordTableWidgetLayoutPickerOptionsParams): RecordTableWidgetLayoutPickerOption[] => {
+  const unavailableReasonByViewType: Partial<
+    Record<RecordTableWidgetLayoutViewType, MessageDescriptor>
+  > = {
+    ...(isKanbanAvailable
+      ? {}
+      : { [ViewType.KANBAN_WIDGET]: msg`Needs a Select field` }),
+    ...(isCalendarAvailable
+      ? {}
+      : { [ViewType.CALENDAR_WIDGET]: msg`Needs a Date field` }),
+  };
+
+  return RECORD_TABLE_WIDGET_LAYOUT_VIEW_TYPES.filter(
     (viewType) => viewType !== ViewType.LIST_WIDGET || isListViewEnabled,
-  ).map((viewType) => ({
-    viewType,
-    ...RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[viewType],
-    isDisabled:
-      (viewType === ViewType.KANBAN_WIDGET && !isKanbanAvailable) ||
-      (viewType === ViewType.CALENDAR_WIDGET && !isCalendarAvailable),
-    unavailableReason:
-      viewType === ViewType.KANBAN_WIDGET && !isKanbanAvailable
-        ? msg`Needs a Select field`
-        : viewType === ViewType.CALENDAR_WIDGET && !isCalendarAvailable
-          ? msg`Needs a Date field`
-          : undefined,
-  }));
+  ).map((viewType) => {
+    const unavailableReason = unavailableReasonByViewType[viewType];
+
+    return {
+      viewType,
+      ...RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[viewType],
+      isDisabled: isDefined(unavailableReason),
+      unavailableReason,
+    };
+  });
+};
+
+export const getSelectableLayoutViewTypes = (
+  layoutOptions: RecordTableWidgetLayoutPickerOption[],
+): RecordTableWidgetLayoutViewType[] =>
+  layoutOptions
+    .filter((layoutOption) => !layoutOption.isDisabled)
+    .map((layoutOption) => layoutOption.viewType);
 
 // A layout that is hidden or disabled must not be applied even if its row is
 // reached by keyboard, so selection asks the same options the picker renders.
 export const isSelectableLayout = (
   layoutOptions: RecordTableWidgetLayoutPickerOption[],
   viewType: RecordTableWidgetLayoutViewType,
-): boolean =>
-  layoutOptions.some(
-    (layoutOption) =>
-      layoutOption.viewType === viewType && !layoutOption.isDisabled,
-  );
+): boolean => getSelectableLayoutViewTypes(layoutOptions).includes(viewType);

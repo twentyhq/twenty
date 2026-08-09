@@ -77,15 +77,10 @@ describe('getRecordTableWidgetLayoutPickerOptions', () => {
       isCalendarAvailable: false,
       isListViewEnabled: true,
     });
+    const isDisabled = (viewType: ViewType) =>
+      options.find((option) => option.viewType === viewType)?.isDisabled;
 
-    expect(
-      options
-        .filter((option) =>
-          [ViewType.TABLE_WIDGET, ViewType.LIST_WIDGET].includes(
-            option.viewType,
-          ),
-        )
-        .map((option) => option.isDisabled),
-    ).toEqual([false, false]);
+    expect(isDisabled(ViewType.TABLE_WIDGET)).toBe(false);
+    expect(isDisabled(ViewType.LIST_WIDGET)).toBe(false);
   });
 });

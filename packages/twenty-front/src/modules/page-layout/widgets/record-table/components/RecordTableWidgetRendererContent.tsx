@@ -8,11 +8,16 @@ import { RecordTableWidgetProvider } from '@/object-record/record-table-widget/c
 import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { recordTableWidgetViewDraftByWidgetIdComponentFamilySelector } from '@/page-layout/states/selectors/recordTableWidgetViewDraftByWidgetIdComponentFamilySelector';
+import {
+  getRecordTableWidgetLayout,
+  type RecordTableWidgetLayout,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   ViewCalendarLayout,
@@ -58,13 +63,9 @@ export const RecordTableWidgetRendererContent = ({
       ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
       : persistedView;
 
-  const widgetViewLayout = getViewLayoutFromViewType(
-    widgetView?.type ?? ViewType.TABLE_WIDGET,
-  );
+  const widgetViewLayout = getRecordTableWidgetLayout(widgetView?.type);
 
-  const isKanbanLayout = widgetViewLayout === ViewType.KANBAN;
   const isCalendarLayout = widgetViewLayout === ViewType.CALENDAR;
-  const isListLayout = widgetViewLayout === ViewType.LIST;
 
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
@@ -86,6 +87,22 @@ export const RecordTableWidgetRendererContent = ({
   // widget calendars editable. Object permissions still gate the drag.
   const calendarIsReadOnly = !canEditCalendar;
 
+  // Keyed rather than chained so a layout added to RECORD_TABLE_WIDGET_LAYOUTS
+  // fails to compile here instead of silently rendering as a table.
+  const renderWidgetForLayout = {
+    [ViewType.TABLE]: () => (
+      <RecordTableWidget
+        isReadOnly={isReadOnly}
+        isEmptyStateHidden={isEmptyStateHidden}
+      />
+    ),
+    [ViewType.KANBAN]: () => <RecordBoardWidget isReadOnly={isReadOnly} />,
+    [ViewType.LIST]: () => <RecordListWidget />,
+    [ViewType.CALENDAR]: () => (
+      <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />
+    ),
+  } satisfies Record<RecordTableWidgetLayout, () => ReactNode>;
+
   return (
     <RecordTableWidgetProvider
       objectNameSingular={objectMetadataItem.nameSingular}
@@ -96,18 +113,7 @@ export const RecordTableWidgetRendererContent = ({
       nestedRelationCreateThrough={nestedRelationCreateThrough}
       contextStoreViewType={getContextStoreViewType(widgetViewLayout)}
     >
-      {isKanbanLayout ? (
-        <RecordBoardWidget isReadOnly={isReadOnly} />
-      ) : isCalendarLayout ? (
-        <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />
-      ) : isListLayout ? (
-        <RecordListWidget />
-      ) : (
-        <RecordTableWidget
-          isReadOnly={isReadOnly}
-          isEmptyStateHidden={isEmptyStateHidden}
-        />
-      )}
+      {renderWidgetForLayout[widgetViewLayout]()}
     </RecordTableWidgetProvider>
   );
 };
