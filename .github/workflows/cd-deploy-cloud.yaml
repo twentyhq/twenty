@@ -23,6 +23,14 @@
 # quiesced.
 name: cd-deploy-cloud
 
+# The correlation id is how the workflow that dispatched this one finds it again,
+# since the dispatch API returns nothing to identify the run it created. It is
+# empty for the other two triggers, which nobody is waiting on.
+run-name: >-
+  cd-deploy-cloud
+  ${{ github.event.inputs.environment || github.event.client_payload.environment || github.ref_name }}
+  ${{ github.event.client_payload.correlation_id }}
+
 on:
   # Kept for a pointer moved by hand. It does not fire for the deploy workflows:
   # they move the pointers with GITHUB_TOKEN, and GitHub suppresses push events

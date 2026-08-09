@@ -31,7 +31,12 @@ jobs:
       contents: write
       deployments: write
       packages: read
+      actions: read # to read the cd-deploy-cloud run this waits on
     steps:
+      # Only for .github/actions/deploy-cloud-box; nothing here builds anything.
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Resolve ref to a commit
         id: resolve
         env:
@@ -78,22 +83,17 @@ jobs:
           fi
           echo "staging-target now points at ${SHA}"
 
-      - name: Tell the cloud box to deploy
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          SHA: ${{ steps.resolve.outputs.sha }}
-        run: |
-          # The Mac converges by polling the ref above. The cloud box does not
-          # poll, and the push event that would have told it never fires from
-          # GITHUB_TOKEN, so it is asked directly. Both hosts stay in step for
-          # as long as the parallel run lasts; when the Mac retires, the ref
-          # move goes and this stays.
-          gh api --method POST "repos/${REPO}/dispatches" \
-            -f event_type=deploy-cloud \
-            -F "client_payload[environment]=staging" \
-            -F "client_payload[sha]=$SHA" >/dev/null
-          echo "asked cd-deploy-cloud to put ${SHA} on staging"
+      # The Mac converges by polling the ref above. The cloud box does not poll,
+      # and the push event that would have told it never fires from GITHUB_TOKEN,
+      # so it is asked directly and waited on. Both hosts stay in step for as
+      # long as the parallel run lasts; when the Mac retires, the ref move goes
+      # and this stays.
+      - name: Deploy the cloud box
+        uses: ./.github/actions/deploy-cloud-box
+        with:
+          environment: staging
+          sha: ${{ steps.resolve.outputs.sha }}
+          token: ${{ github.token }}
 
       - name: Record the deployment
         env:
@@ -132,6 +132,6 @@ jobs:
             }')"
           id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<<"$body")"
           gh api --method POST "repos/${REPO}/deployments/${id}/statuses" \
-            -f state=in_progress \
-            -f description="waiting for the staging host to converge" >/dev/null
+            -f state=success \
+            -f description="on the staging box; the Mac converges separately" >/dev/null
           echo "Deployment ${id} recorded for ${SHA}"

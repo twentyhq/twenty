@@ -1,0 +1,90 @@
+name: Deploy a cloud box
+description: >
+  Asks cd-deploy-cloud to put a commit on the staging or production box, then
+  waits for it and adopts its result. Shared by deploy-staging.yml and
+  deploy-production.yml so that "Deploy to production" is not green while the
+  box is still running the previous image, which it was until this existed.
+
+inputs:
+  environment:
+    description: Which box to deploy, staging or production.
+    required: true
+  sha:
+    description: 40-character commit SHA to deploy.
+    required: true
+  token:
+    description: Token used to dispatch and to read the resulting run.
+    required: true
+  timeout_minutes:
+    description: How long to wait before giving up on the deploy finishing.
+    required: false
+    default: '30'
+
+runs:
+  using: composite
+  steps:
+    - name: Ask cd-deploy-cloud to deploy
+      id: dispatch
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REPO: ${{ github.repository }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        SHA: ${{ inputs.sha }}
+      run: |
+        set -euo pipefail
+        # The dispatch API returns nothing to identify the run it creates, so a
+        # correlation id rides along in the payload and cd-deploy-cloud puts it
+        # in its run name. Run id plus attempt is unique without needing a
+        # random source, and survives a re-run of this workflow.
+        correlation_id="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+        gh api --method POST "repos/${REPO}/dispatches" \
+          -f event_type=deploy-cloud \
+          -F "client_payload[environment]=${ENVIRONMENT}" \
+          -F "client_payload[sha]=${SHA}" \
+          -F "client_payload[correlation_id]=${correlation_id}" >/dev/null
+        echo "correlation_id=${correlation_id}" >>"$GITHUB_OUTPUT"
+        echo "asked cd-deploy-cloud to put ${SHA} on ${ENVIRONMENT} (${correlation_id})"
+
+    - name: Wait for it to finish
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REPO: ${{ github.repository }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        CORRELATION_ID: ${{ steps.dispatch.outputs.correlation_id }}
+        TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
+      run: |
+        set -euo pipefail
+        deadline=$(( $(date +%s) + TIMEOUT_MINUTES * 60 ))
+        run_id=""
+        while [ "$(date +%s)" -lt "$deadline" ]; do
+          if [ -z "$run_id" ]; then
+            # display_title is the rendered run-name, which carries the id.
+            run_id="$(gh api \
+              "repos/${REPO}/actions/workflows/cd-deploy-cloud.yaml/runs?event=repository_dispatch&per_page=30" \
+              --jq "[.workflow_runs[] | select(.display_title | contains(\"${CORRELATION_ID}\"))] | first | .id // empty")"
+            if [ -z "$run_id" ]; then
+              echo "waiting for the run to appear"
+              sleep 10
+              continue
+            fi
+            echo "watching run ${run_id}: $(gh run view "$run_id" --repo "$REPO" --json url --jq .url)"
+          fi
+
+          read -r status conclusion <<<"$(gh api "repos/${REPO}/actions/runs/${run_id}" \
+            --jq '"\(.status) \(.conclusion // "")"')"
+          if [ "$status" = "completed" ]; then
+            echo "cd-deploy-cloud finished: ${conclusion}"
+            # Adopting the conclusion is the whole point: a rolled-back deploy
+            # must not leave a green promotion behind it.
+            [ "$conclusion" = "success" ] || exit 1
+            exit 0
+          fi
+          echo "cd-deploy-cloud is ${status}"
+          sleep 15
+        done
+
+        echo "::error::cd-deploy-cloud did not finish within ${TIMEOUT_MINUTES} minutes."
+        echo "The box may still be mid-deploy. Check the run before deploying again."
+        exit 1
