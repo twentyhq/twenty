@@ -2,6 +2,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
@@ -62,7 +63,9 @@ export const FieldWidgetLayoutDropdownContent = () => {
     | FieldConfiguration
     | undefined;
 
-  const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
+  const currentDisplayMode = isDefined(fieldConfiguration)
+    ? getFieldWidgetEffectiveDisplayMode(fieldConfiguration)
+    : undefined;
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
   const currentNestedRelationFieldMetadataId =
     fieldConfiguration?.nestedRelationFieldMetadataId;
@@ -102,9 +105,6 @@ export const FieldWidgetLayoutDropdownContent = () => {
     : availableDisplayModes.filter(
         (displayMode) => displayMode !== FieldDisplayMode.TABLE,
       );
-  const hasEmbeddedViewLayouts = availableDisplayModes.includes(
-    FieldDisplayMode.TABLE,
-  );
 
   // A configured but unresolvable second hop yields no traversal at all, so a
   // stale nested widget cannot fall back to scoping by its first hop.
@@ -121,6 +121,14 @@ export const FieldWidgetLayoutDropdownContent = () => {
   const inverseFieldMetadataId = relationTraversal?.inverseFieldMetadataId;
   const relationTargetFieldMetadataId =
     relationTraversal?.relationTargetFieldMetadataId ?? null;
+
+  // Every embedded layout renders a view scoped by the relation's inverse
+  // field, so a relation the traversal cannot resolve offers none of them
+  // rather than entries that would leave the widget with nothing to render.
+  const hasEmbeddedViewLayouts =
+    availableDisplayModes.includes(FieldDisplayMode.TABLE) &&
+    isDefined(targetObjectMetadataId) &&
+    isDefined(inverseFieldMetadataId);
 
   const targetObjectMetadataItem = isNestedRelationWidget
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem
@@ -188,31 +196,31 @@ export const FieldWidgetLayoutDropdownContent = () => {
       return;
     }
 
-    if (
-      !isDefined(currentViewId) &&
-      isDefined(targetObjectMetadataId) &&
-      isDefined(inverseFieldMetadataId)
-    ) {
-      const viewId = addDraftViewForFieldRelationTableWidget({
-        widgetId: widgetInEditMode.id,
-        targetObjectMetadataId,
-        inverseFieldMetadataId,
-        relationTargetFieldMetadataId,
-      });
+    const viewId =
+      currentViewId ??
+      (isDefined(targetObjectMetadataId) && isDefined(inverseFieldMetadataId)
+        ? addDraftViewForFieldRelationTableWidget({
+            widgetId: widgetInEditMode.id,
+            targetObjectMetadataId,
+            inverseFieldMetadataId,
+            relationTargetFieldMetadataId,
+          })
+        : undefined);
 
-      updateCurrentWidgetConfig({
-        configToUpdate: {
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-          viewId,
-        },
-      });
-    } else {
-      updateCurrentWidgetConfig({
-        configToUpdate: {
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-        },
-      });
+    // Creating the draft view still fails if the target object is not loaded,
+    // and switching to the table display mode without one would leave the
+    // widget with nothing to render, so it keeps the display mode it has.
+    if (!isDefined(viewId)) {
+      closeDropdown();
+      return;
     }
+
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        fieldDisplayMode: FieldDisplayMode.TABLE,
+        viewId,
+      },
+    });
 
     handleLayoutChange({
       targetViewType,

@@ -1,23 +1,25 @@
 import { recordListDisplayedFieldCountComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldCountComponentState';
 import { computeRecordListDisplayedFieldCount } from '@/object-record/record-list/utils/computeRecordListDisplayedFieldCount';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { type RefObject, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordListResponsiveFieldCountEffectProps = {
-  containerRef: RefObject<HTMLElement | null>;
+  containerElement: HTMLElement | null;
 };
 
+// Takes the element rather than a ref: React attaches a parent's ref only after
+// its children's layout effects have run, so a ref read here on mount is still
+// null and the list would keep its default field count until something else
+// happened to re-run the effect.
 export const RecordListResponsiveFieldCountEffect = ({
-  containerRef,
+  containerElement,
 }: RecordListResponsiveFieldCountEffectProps) => {
   const setRecordListDisplayedFieldCount = useSetAtomComponentState(
     recordListDisplayedFieldCountComponentState,
   );
 
   useLayoutEffect(() => {
-    const containerElement = containerRef.current;
-
     if (!isDefined(containerElement)) {
       return;
     }
@@ -35,7 +37,7 @@ export const RecordListResponsiveFieldCountEffect = ({
     resizeObserver.observe(containerElement);
 
     return () => resizeObserver.disconnect();
-  }, [containerRef, setRecordListDisplayedFieldCount]);
+  }, [containerElement, setRecordListDisplayedFieldCount]);
 
   return null;
 };
