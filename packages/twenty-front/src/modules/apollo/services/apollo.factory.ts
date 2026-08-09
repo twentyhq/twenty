@@ -310,6 +310,12 @@ export class ApolloFactory implements ApolloManager {
           return;
         }
 
+        // oxlint-disable-next-line no-console
+        console.log(
+          `Opaque network error on ${uri}, probing for an auth proxy redirect`,
+          error,
+        );
+
         if (!authProxyProbePromise) {
           authProxyProbePromise = isAuthProxyRedirect(uri).finally(() => {
             authProxyProbePromise = null;

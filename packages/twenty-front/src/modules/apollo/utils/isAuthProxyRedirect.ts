@@ -16,8 +16,16 @@ export const isAuthProxyRedirect = async (
       cache: 'no-store',
     });
 
+    // oxlint-disable-next-line no-console
+    console.log(
+      `Auth proxy probe on ${probeUrl}: type=${response.type} status=${response.status}`,
+    );
+
     return response.type === 'opaqueredirect';
-  } catch {
+  } catch (error) {
+    // oxlint-disable-next-line no-console
+    console.log(`Auth proxy probe on ${probeUrl} threw`, error);
+
     return false;
   }
 };
