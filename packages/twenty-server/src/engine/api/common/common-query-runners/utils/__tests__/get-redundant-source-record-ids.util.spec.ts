@@ -28,6 +28,58 @@ describe('getRedundantSourceRecordIds', () => {
     expect(redundantIds).toEqual(['source-target-id']);
   });
 
+  it('ignores per-row values the database fills in itself', () => {
+    const redundantIds = getRedundantSourceRecordIds({
+      records: [
+        {
+          id: 'survivor-target-id',
+          targetPersonId: survivorPersonId,
+          noteId: 'note-id',
+          position: -2,
+          searchVector: "'survivor-target-id':1",
+          createdBy: { source: 'MANUAL', name: 'Jane Austen' },
+        },
+        {
+          id: 'source-target-id',
+          targetPersonId: sourcePersonId,
+          noteId: 'note-id',
+          position: -1,
+          searchVector: "'source-target-id':1",
+          createdBy: { source: 'MANUAL', name: 'Jane Austen' },
+        },
+      ],
+      sourcePersonIds: [sourcePersonId],
+      survivorPersonId,
+      personRelationIdFieldName: 'targetPersonId',
+    });
+
+    expect(redundantIds).toEqual(['source-target-id']);
+  });
+
+  it('keeps records that differ on a meaningful field', () => {
+    const redundantIds = getRedundantSourceRecordIds({
+      records: [
+        {
+          id: 'survivor-target-id',
+          targetPersonId: survivorPersonId,
+          noteId: 'note-id',
+          searchVector: "'shared':1",
+        },
+        {
+          id: 'source-target-id',
+          targetPersonId: sourcePersonId,
+          noteId: 'other-note-id',
+          searchVector: "'shared':1",
+        },
+      ],
+      sourcePersonIds: [sourcePersonId],
+      survivorPersonId,
+      personRelationIdFieldName: 'targetPersonId',
+    });
+
+    expect(redundantIds).toEqual([]);
+  });
+
   it('keeps equivalent records when none already belongs to the survivor', () => {
     const redundantIds = getRedundantSourceRecordIds({
       records: [

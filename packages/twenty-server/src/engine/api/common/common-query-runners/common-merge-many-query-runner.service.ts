@@ -21,6 +21,10 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import {
+  type PersonAvatarFileHandover,
+  getPersonAvatarFileHandover,
+} from 'src/engine/api/common/common-query-runners/utils/get-person-avatar-file-handover.util';
 import { getRedundantSourceRecordIds } from 'src/engine/api/common/common-query-runners/utils/get-redundant-source-record-ids.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -41,6 +45,7 @@ import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/ut
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { PersonRecordMergeEntity } from 'src/engine/core-modules/person-duplicate-review/entities/person-record-merge.entity';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -96,6 +101,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
 
+    const personAvatarFileHandover = this.isPersonObject(flatObjectMetadata)
+      ? getPersonAvatarFileHandover({
+          mergedAvatarFile: mergedData.avatarFile,
+          recordsToMerge,
+          survivorPersonId: priorityRecord.id,
+        })
+      : null;
+
     const updatedRecord =
       await queryRunnerContext.workspaceDataSource.transaction(
         (transactionManager: WorkspaceEntityManager) =>
@@ -105,6 +118,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
             idsToDelete,
             priorityRecordId: priorityRecord.id,
             mergedData,
+            personAvatarFileHandover,
           }),
       );
 
@@ -133,12 +147,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       idsToDelete,
       priorityRecordId,
       mergedData,
+      personAvatarFileHandover,
     }: {
       args: CommonExtendedInput<MergeManyQueryArgs>;
       queryRunnerContext: CommonExtendedQueryRunnerContext;
       idsToDelete: string[];
       priorityRecordId: string;
       mergedData: Partial<ObjectRecord>;
+      personAvatarFileHandover: PersonAvatarFileHandover | null;
     },
   ): Promise<ObjectRecord> {
     const {
@@ -169,6 +185,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         queryRunnerContext,
         idsToDelete,
         priorityRecordId,
+      );
+    }
+
+    if (isDefined(personAvatarFileHandover)) {
+      await this.releasePersonAvatarFileOwnership(
+        transactionRepository,
+        personAvatarFileHandover.previousOwnerPersonIds,
       );
     }
 
@@ -204,13 +227,81 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         .execute();
     }
 
-    return this.updatePriorityRecord(
-      args,
+    if (!isDefined(personAvatarFileHandover)) {
+      return this.updatePriorityRecord(
+        args,
+        queryRunnerContext,
+        transactionRepository,
+        priorityRecordId,
+        mergedData,
+      );
+    }
+
+    // The FILES sync only accepts a file as an addition while it is still marked temporary,
+    // which is what an upload looks like just before it lands on a record. Put the handed
+    // over file back in that state so the survivor's update claims it the ordinary way; the
+    // sync marks it permanent again, and a failure here restores it rather than leaving it
+    // looking like an abandoned upload for the cleanup job to collect.
+    await this.setPersonAvatarFilesTemporary(
       queryRunnerContext,
-      transactionRepository,
-      priorityRecordId,
-      mergedData,
+      personAvatarFileHandover.fileIdsToClaim,
+      true,
     );
+
+    try {
+      return await this.updatePriorityRecord(
+        args,
+        queryRunnerContext,
+        transactionRepository,
+        priorityRecordId,
+        mergedData,
+      );
+    } catch (error) {
+      await this.setPersonAvatarFilesTemporary(
+        queryRunnerContext,
+        personAvatarFileHandover.fileIdsToClaim,
+        false,
+      );
+
+      throw error;
+    }
+  }
+
+  // A null value makes the FILES sync skip the field entirely, so the absorbed record lets go
+  // of the avatar without the file being soft deleted along with it. Clearing it with an empty
+  // array instead would read as a removal and take the file the survivor is about to claim.
+  private async releasePersonAvatarFileOwnership(
+    repository: WorkspaceRepository<ObjectLiteral>,
+    previousOwnerPersonIds: string[],
+  ): Promise<void> {
+    if (previousOwnerPersonIds.length === 0) {
+      return;
+    }
+
+    await repository
+      .createQueryBuilder('person')
+      .update()
+      .set({ avatarFile: null })
+      .where({ id: In(previousOwnerPersonIds) })
+      .returning(['id'])
+      .execute();
+  }
+
+  private async setPersonAvatarFilesTemporary(
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+    fileIds: string[],
+    isTemporaryFile: boolean,
+  ): Promise<void> {
+    if (fileIds.length === 0) {
+      return;
+    }
+
+    await queryRunnerContext.workspaceDataSource.coreDataSource
+      .getRepository(FileEntity)
+      .update(
+        { id: In(fileIds) },
+        { settings: { isTemporaryFile, toDelete: false } },
+      );
   }
 
   private async releaseAbsorbedPersonUniqueValues(
@@ -501,8 +592,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     for (const field of Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined)) {
+      // Notes, tasks, timeline activities and attachments reach a person through a morph
+      // relation, so restricting this to plain relations left them behind on the absorbed
+      // record and the merge silently dropped them.
       if (
-        !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
+        !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
+        !isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION)
+      ) {
+        continue;
+      }
+
+      if (
         field.relationTargetObjectMetadataId !== flatObjectMetadata.id ||
         !field.isActive
       ) {
@@ -641,6 +741,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       .createQueryBuilder(objectNameSingular)
       .delete()
       .whereInIds(redundantSourceRecordIds)
+      .returning(['id'])
       .execute();
   }
 
