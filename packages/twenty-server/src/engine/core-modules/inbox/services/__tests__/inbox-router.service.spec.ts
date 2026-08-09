@@ -6,6 +6,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
+import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
@@ -198,6 +199,60 @@ describe('InboxRouterService', () => {
 
       // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // route() is best effort for producers; routeOrThrow() is for callers whose
+  // whole purpose was the item, so it reports the failure instead of a null
+  describe('routeOrThrow', () => {
+    it('should throw rather than return null when the inbox is disabled', async () => {
+      // Prepare
+      featureFlagService.isFeatureEnabled.mockResolvedValue(false);
+
+      // Act
+      const routeOrThrow = service.routeOrThrow({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'approval',
+        title: 'Approve the discount',
+      });
+
+      // Assert
+      await expect(routeOrThrow).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_DISABLED,
+      });
+      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw when the item could not be written', async () => {
+      // Prepare: a fold whose re-read comes back empty
+      inboxItemRepository.findOne.mockResolvedValue({ id: EXISTING_ITEM_ID });
+      inboxItemRepository.findOneBy.mockResolvedValue(null);
+
+      // Act
+      const routeOrThrow = service.routeOrThrow({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A message from Alice',
+        subject: threadSubject,
+      });
+
+      // Assert
+      await expect(routeOrThrow).rejects.toMatchObject({
+        code: InboxExceptionCode.INTERNAL_SERVER_ERROR,
+      });
+    });
+
+    it('should return the item when routing succeeds', async () => {
+      // Act
+      const inboxItem = await service.routeOrThrow({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A message from Alice',
+        subject: threadSubject,
+      });
+
+      // Assert
+      expect(inboxItem).toBeDefined();
     });
   });
 

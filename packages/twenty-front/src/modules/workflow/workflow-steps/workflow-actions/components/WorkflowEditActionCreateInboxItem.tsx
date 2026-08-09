@@ -11,6 +11,7 @@ import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowCreateInboxItemAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 
 type CreateInboxItemFormData = {
@@ -105,52 +106,55 @@ export const WorkflowEditActionCreateInboxItem = ({
   );
 
   return (
-    <WorkflowStepBody>
-      <FormTextFieldInput
-        label={t`Title`}
-        placeholder={t`What the item says in the inbox`}
-        defaultValue={formData.title}
-        onChange={(value) => handleFieldChange('title', value)}
-        readonly={readonly}
-        VariablePicker={WorkflowVariablePicker}
-      />
-      <FormTextFieldInput
-        label={t`Preview`}
-        placeholder={t`A second line of context`}
-        defaultValue={formData.preview}
-        onChange={(value) => handleFieldChange('preview', value)}
-        readonly={readonly}
-        VariablePicker={WorkflowVariablePicker}
-      />
-      <FormSelectFieldInput
-        label={t`Kind of work`}
-        hint={t`Decides the actions offered on the item`}
-        options={typeOptions}
-        defaultValue={formData.typeKey}
-        onChange={(value) => handleFieldChange('typeKey', value ?? '')}
-        readonly={readonly}
-      />
-      <FormSelectFieldInput
-        label={t`Assignee`}
-        hint={t`Leave empty to route by the workspace settings`}
-        options={workspaceMemberOptions}
-        defaultValue={formData.assigneeWorkspaceMemberId}
-        onChange={(value) =>
-          handleFieldChange('assigneeWorkspaceMemberId', value ?? '')
-        }
-        readonly={readonly}
-        isNullable
-        VariablePicker={WorkflowVariablePicker}
-      />
-      <FormSelectFieldInput
-        label={t`Shared inbox`}
-        hint={t`Used when no assignee is named`}
-        options={queueOptions}
-        defaultValue={formData.queueId}
-        onChange={(value) => handleFieldChange('queueId', value ?? '')}
-        readonly={readonly}
-        isNullable
-      />
-    </WorkflowStepBody>
+    <>
+      <WorkflowStepBody>
+        <FormTextFieldInput
+          label={t`Title`}
+          placeholder={t`What the item says in the inbox`}
+          defaultValue={formData.title}
+          onChange={(value) => handleFieldChange('title', value)}
+          readonly={readonly}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormTextFieldInput
+          label={t`Preview`}
+          placeholder={t`A second line of context`}
+          defaultValue={formData.preview}
+          onChange={(value) => handleFieldChange('preview', value)}
+          readonly={readonly}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormSelectFieldInput
+          label={t`Kind of work`}
+          hint={t`Decides the actions offered on the item`}
+          options={typeOptions}
+          defaultValue={formData.typeKey}
+          onChange={(value) => handleFieldChange('typeKey', value ?? '')}
+          readonly={readonly}
+        />
+        <FormSelectFieldInput
+          label={t`Assignee`}
+          hint={t`Leave empty to route by the workspace settings`}
+          options={workspaceMemberOptions}
+          defaultValue={formData.assigneeWorkspaceMemberId}
+          onChange={(value) =>
+            handleFieldChange('assigneeWorkspaceMemberId', value ?? '')
+          }
+          readonly={readonly}
+          isNullable
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <FormSelectFieldInput
+          label={t`Shared inbox`}
+          hint={t`Used when no assignee is named`}
+          options={queueOptions}
+          defaultValue={formData.queueId}
+          onChange={(value) => handleFieldChange('queueId', value ?? '')}
+          readonly={readonly}
+          isNullable
+        />
+      </WorkflowStepBody>
+      {!readonly && <WorkflowStepFooter stepId={action.id} />}
+    </>
   );
 };

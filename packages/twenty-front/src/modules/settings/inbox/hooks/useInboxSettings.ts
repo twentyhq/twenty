@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import {
   CREATE_INBOX_QUEUE,
   DELETE_INBOX_QUEUE,
@@ -16,7 +16,6 @@ import {
   type InboxItemTypeSettings,
   type InboxQueueSettings,
 } from '~/generated/graphql';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 const INBOX_SETTINGS_REFETCH_QUERIES = [
   'GetInboxQueueSettings',
@@ -30,9 +29,7 @@ export const useInboxSettings = () => {
 
   // The queries are flag-guarded server-side, so asking with the flag off is a
   // GraphQL error rather than an empty list.
-  const isInboxFeatureEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INBOX_ENABLED,
-  );
+  const isInboxFeatureEnabled = useIsInboxEnabled();
 
   const mutationOptions = {
     client: apolloCoreClient,
