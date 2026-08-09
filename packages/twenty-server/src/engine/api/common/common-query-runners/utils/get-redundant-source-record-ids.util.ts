@@ -1,11 +1,17 @@
 import isEqual from 'lodash.isequal';
 import { type ObjectLiteral } from 'typeorm';
 
+// Values the database derives per row rather than per interaction. searchVector matters most:
+// it is built from the record id, so leaving it in made every comparison unequal and nothing
+// was ever recognised as redundant. Attribution is deliberately not in here, so a differing
+// createdBy still keeps both rows.
 const GENERATED_PERSON_RELATION_FIELD_NAMES = new Set([
   'id',
   'createdAt',
   'updatedAt',
   'deletedAt',
+  'position',
+  'searchVector',
 ]);
 
 const getComparableRecord = (

@@ -10,10 +10,18 @@ import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
+import { STANDARD_OBJECT_FIELDS } from 'twenty-shared/metadata';
+
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+
+const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
+const AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECT_FIELDS.person.avatarFile.universalIdentifier;
 
 describe('people merge resolvers (integration)', () => {
   let createdPersonIdsForCleaning: string[] = [];
+  let createdFileIdsForCleaning: string[] = [];
   let createdOpportunityIdsForCleaning: string[] = [];
   let createdNoteIdsForCleaning: string[] = [];
   let createdNoteTargetIdsForCleaning: string[] = [];
@@ -36,6 +44,14 @@ describe('people merge resolvers (integration)', () => {
       await deleteRecordsByIds('person', createdPersonIdsForCleaning);
     }
 
+    if (createdFileIdsForCleaning.length > 0) {
+      await global.testDataSource.query(
+        'DELETE FROM core."file" WHERE "id" = ANY($1)',
+        [createdFileIdsForCleaning],
+      );
+    }
+
+    createdFileIdsForCleaning = [];
     createdOpportunityIdsForCleaning = [];
     createdNoteIdsForCleaning = [];
     createdNoteTargetIdsForCleaning = [];
@@ -339,6 +355,106 @@ describe('people merge resolvers (integration)', () => {
 
       expect(provenanceRows).toHaveLength(1);
       expect(provenanceRows[0].mergedByWorkspaceMemberId).toBeTruthy();
+    });
+
+    it('should hand an absorbed avatar file over to the survivor', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: {
+              firstName: 'Avatar',
+              lastName: 'Survivor',
+            },
+          },
+          {
+            name: {
+              firstName: 'Avatar',
+              lastName: 'Absorbed',
+            },
+          },
+        ],
+      });
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+      const [survivorPersonId, absorbedPersonId] = createdPersonIds;
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      const avatarFileId = randomUUID();
+
+      createdFileIdsForCleaning.push(avatarFileId);
+
+      await global.testDataSource.query(
+        `INSERT INTO core."file" ("id", "workspaceId", "path", "size", "mimeType", "settings", "status")
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [
+          avatarFileId,
+          TEST_WORKSPACE_ID,
+          `${TEST_WORKSPACE_ID}/${AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER}/${avatarFileId}.png`,
+          1024,
+          'image/png',
+          JSON.stringify({ toDelete: false, isTemporaryFile: false }),
+          'UPLOADED',
+        ],
+      );
+
+      // Attach it straight to the column: a synced photo is already permanent by the time
+      // anyone merges, which is exactly the state the FILES field sync refuses to re-add.
+      await global.testDataSource.query(
+        `UPDATE "${TEST_SCHEMA_NAME}"."person" SET "avatarFile" = $1 WHERE "id" = $2`,
+        [
+          JSON.stringify([
+            { fileId: avatarFileId, label: 'avatar', extension: '.png' },
+          ]),
+          absorbedPersonId,
+        ],
+      );
+
+      const mergeOperation = mergeManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        ids: createdPersonIds,
+        conflictPriorityIndex: 0,
+      });
+      const mergeResponse = await makeGraphqlAPIRequest(mergeOperation);
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+      expect(mergeResponse.body.data.mergePeople.id).toBe(survivorPersonId);
+      expect(mergeResponse.body.data.mergePeople.avatarFile).toEqual([
+        expect.objectContaining({ fileId: avatarFileId }),
+      ]);
+
+      const [survivorRow] = await global.testDataSource.query(
+        `SELECT "avatarFile" FROM "${TEST_SCHEMA_NAME}"."person" WHERE "id" = $1`,
+        [survivorPersonId],
+      );
+
+      expect(survivorRow.avatarFile).toEqual([
+        expect.objectContaining({ fileId: avatarFileId }),
+      ]);
+
+      const [absorbedRow] = await global.testDataSource.query(
+        `SELECT "avatarFile" FROM "${TEST_SCHEMA_NAME}"."person" WHERE "id" = $1`,
+        [absorbedPersonId],
+      );
+
+      expect(absorbedRow.avatarFile).toBeNull();
+
+      const [fileRow] = await global.testDataSource.query(
+        'SELECT "deletedAt", "settings" FROM core."file" WHERE "id" = $1',
+        [avatarFileId],
+      );
+
+      expect(fileRow.deletedAt).toBeNull();
+      expect(fileRow.settings.isTemporaryFile).toBe(false);
     });
 
     it('should clear absorbed emails across sequential and multi-person merges', async () => {
