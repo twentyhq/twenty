@@ -457,6 +457,89 @@ describe('people merge resolvers (integration)', () => {
       expect(fileRow.settings.isTemporaryFile).toBe(false);
     });
 
+    it('should merge a person whose related records exceed the update batch cap', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: { firstName: 'Busy', lastName: 'Survivor' },
+            emails: {
+              primaryEmail: 'busy-survivor@example.com',
+              additionalEmails: [],
+            },
+          },
+          {
+            name: { firstName: 'Busy', lastName: 'Absorbed' },
+            emails: {
+              primaryEmail: 'busy-absorbed@example.com',
+              additionalEmails: [],
+            },
+          },
+        ],
+      });
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+      const [survivorPersonId, absorbedPersonId] = createdPersonIds;
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      // A person auto-created by email and calendar sync carries far more
+      // related rows than the update builder's per-statement cap, which is
+      // what used to fail the whole merge. Inserted with SQL because creating
+      // this many through the API would trip the same kind of limit.
+      const timelineActivityCount = 250;
+      const timelineActivityIds = Array.from(
+        { length: timelineActivityCount },
+        () => randomUUID(),
+      );
+
+      createdTimelineActivityIdsForCleaning.push(...timelineActivityIds);
+
+      await global.testDataSource.query(
+        `INSERT INTO "${TEST_SCHEMA_NAME}"."timelineActivity"
+           ("id", "targetPersonId", "name", "happensAt")
+         SELECT ids.id, $2, 'message.linked', now()
+         FROM unnest($1::uuid[]) AS ids(id)`,
+        [timelineActivityIds, absorbedPersonId],
+      );
+
+      const mergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [survivorPersonId, absorbedPersonId],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+      expect(mergeResponse.body.data.mergePeople.id).toBe(survivorPersonId);
+
+      const [{ count: repointedCount }] = await global.testDataSource.query(
+        `SELECT count(*)::int AS count
+         FROM "${TEST_SCHEMA_NAME}"."timelineActivity"
+         WHERE "targetPersonId" = $1 AND "id" = ANY($2::uuid[])`,
+        [survivorPersonId, timelineActivityIds],
+      );
+
+      expect(repointedCount).toBe(timelineActivityCount);
+
+      const [{ count: leftBehindCount }] = await global.testDataSource.query(
+        `SELECT count(*)::int AS count
+         FROM "${TEST_SCHEMA_NAME}"."timelineActivity"
+         WHERE "targetPersonId" = $1`,
+        [absorbedPersonId],
+      );
+
+      expect(leftBehindCount).toBe(0);
+    });
+
     it('should clear absorbed emails across sequential and multi-person merges', async () => {
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
