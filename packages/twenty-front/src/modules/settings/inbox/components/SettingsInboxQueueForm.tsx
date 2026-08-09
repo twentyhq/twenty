@@ -21,7 +21,7 @@ const StyledNameInput = styled.div`
 export type InboxQueueDraft = {
   name: string;
   icon: string;
-  memberUserWorkspaceIds: string[];
+  memberWorkspaceMemberIds: string[];
 };
 
 // One form for creating and editing, because both collect the same three
@@ -64,9 +64,9 @@ export const SettingsInboxQueueForm = ({
           description={t`Work sent here belongs to everyone who watches it until someone takes it`}
         />
         <SettingsInboxQueueMemberPicker
-          selectedUserWorkspaceIds={draft.memberUserWorkspaceIds}
-          onChange={(memberUserWorkspaceIds) =>
-            onChange({ ...draft, memberUserWorkspaceIds })
+          selectedWorkspaceMemberIds={draft.memberWorkspaceMemberIds}
+          onChange={(memberWorkspaceMemberIds) =>
+            onChange({ ...draft, memberWorkspaceMemberIds })
           }
         />
       </Section>

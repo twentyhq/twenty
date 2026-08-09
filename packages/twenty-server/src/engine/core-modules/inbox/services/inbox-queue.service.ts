@@ -6,7 +6,7 @@ import {
   getSubdomainSlugFromDisplayName,
   isDefined,
 } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { type FindOptionsWhere, In, Repository } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxQueueMemberEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-member.entity';
@@ -17,6 +17,9 @@ import {
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -33,6 +36,7 @@ export class InboxQueueService {
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   // The queues a person watches. This is also the set of queues whose items
@@ -170,12 +174,12 @@ export class InboxQueueService {
     workspaceId,
     name,
     icon,
-    memberUserWorkspaceIds,
+    memberWorkspaceMemberIds,
   }: {
     workspaceId: string;
     name: string;
     icon?: string | null;
-    memberUserWorkspaceIds: string[];
+    memberWorkspaceMemberIds: string[];
   }): Promise<InboxQueueEntity> {
     const queue = await this.inboxQueueRepository.save(workspaceId, {
       name,
@@ -187,7 +191,7 @@ export class InboxQueueService {
     await this.setMembers({
       workspaceId,
       queueId: queue.id,
-      memberUserWorkspaceIds,
+      memberWorkspaceMemberIds,
     });
 
     return queue;
@@ -258,54 +262,139 @@ export class InboxQueueService {
   async setMembers({
     workspaceId,
     queueId,
-    memberUserWorkspaceIds,
+    memberWorkspaceMemberIds,
   }: {
     workspaceId: string;
     queueId: string;
-    memberUserWorkspaceIds: string[];
+    memberWorkspaceMemberIds: string[];
   }): Promise<void> {
-    // Membership is read access, so an id that does not belong to this
-    // workspace is dropped rather than trusted: the caller names people, it
-    // does not get to invent them.
-    const workspaceMemberIds = await this.keepWorkspaceMembers({
+    // Membership is read access, so the translation doubles as the check: an id
+    // that is not a member of this workspace resolves to nothing.
+    const userWorkspaceIds = await this.toUserWorkspaceIds({
       workspaceId,
-      userWorkspaceIds: memberUserWorkspaceIds,
+      workspaceMemberIds: memberWorkspaceMemberIds,
     });
 
     await this.inboxQueueMemberRepository.delete(workspaceId, { queueId });
 
-    if (workspaceMemberIds.length === 0) {
+    if (userWorkspaceIds.length === 0) {
       return;
     }
 
     await this.inboxQueueMemberRepository.saveMany(
       workspaceId,
-      workspaceMemberIds.map((userWorkspaceId) => ({
+      userWorkspaceIds.map((userWorkspaceId) => ({
         queueId,
         userWorkspaceId,
       })),
     );
   }
 
-  private async keepWorkspaceMembers({
+  // The inbox stores membership against the core identity, but everything that
+  // administers it speaks workspace members, so the two are translated here
+  // rather than leaking userWorkspaceId into the client.
+  async toUserWorkspaceIds({
     workspaceId,
-    userWorkspaceIds,
+    workspaceMemberIds,
   }: {
     workspaceId: string;
-    userWorkspaceIds: string[];
+    workspaceMemberIds: string[];
   }): Promise<string[]> {
-    const uniqueIds = [...new Set(userWorkspaceIds)];
+    const userIds = await this.findUserIdsOfWorkspaceMembers({
+      workspaceId,
+      workspaceMemberIds,
+    });
+
+    if (userIds.length === 0) {
+      return [];
+    }
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: { userId: In(userIds), workspaceId },
+      select: { id: true },
+    });
+
+    return userWorkspaces.map((userWorkspace) => userWorkspace.id);
+  }
+
+  async toWorkspaceMemberIdsByUserWorkspaceId({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<Map<string, string>> {
+    const [userWorkspaces, workspaceMembers] = await Promise.all([
+      this.userWorkspaceRepository.find({
+        where: { workspaceId },
+        select: { id: true, userId: true },
+      }),
+      this.findWorkspaceMembers({ workspaceId }),
+    ]);
+
+    const workspaceMemberIdByUserId = new Map(
+      workspaceMembers.map((workspaceMember) => [
+        workspaceMember.userId,
+        workspaceMember.id,
+      ]),
+    );
+
+    return userWorkspaces.reduce((workspaceMemberIdByUserWorkspaceId, uw) => {
+      const workspaceMemberId = workspaceMemberIdByUserId.get(uw.userId);
+
+      if (isDefined(workspaceMemberId)) {
+        workspaceMemberIdByUserWorkspaceId.set(uw.id, workspaceMemberId);
+      }
+
+      return workspaceMemberIdByUserWorkspaceId;
+    }, new Map<string, string>());
+  }
+
+  private async findUserIdsOfWorkspaceMembers({
+    workspaceId,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    workspaceMemberIds: string[];
+  }): Promise<string[]> {
+    const uniqueIds = [...new Set(workspaceMemberIds)];
 
     if (uniqueIds.length === 0) {
       return [];
     }
 
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: { id: In(uniqueIds), workspaceId },
-      select: { id: true },
+    const workspaceMembers = await this.findWorkspaceMembers({
+      workspaceId,
+      where: { id: In(uniqueIds) },
     });
 
-    return userWorkspaces.map((userWorkspace) => userWorkspace.id);
+    return workspaceMembers
+      .map((workspaceMember) => workspaceMember.userId)
+      .filter(isDefined);
+  }
+
+  // Workspace members live in the workspace schema, so reading them needs a
+  // workspace context the settings request does not carry on its own.
+  private async findWorkspaceMembers({
+    workspaceId,
+    where,
+  }: {
+    workspaceId: string;
+    where?: FindOptionsWhere<WorkspaceMemberWorkspaceEntity>;
+  }): Promise<WorkspaceMemberWorkspaceEntity[]> {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workspaceMemberRepository.find(
+          isDefined(where) ? { where } : {},
+        );
+      },
+      buildSystemAuthContext(workspaceId),
+    );
   }
 
   private async findQueueOrThrow({

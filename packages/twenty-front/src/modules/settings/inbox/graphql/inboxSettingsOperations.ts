@@ -7,7 +7,7 @@ const INBOX_QUEUE_SETTINGS_FRAGMENT = gql`
     slug
     icon
     isDefault
-    memberUserWorkspaceIds
+    memberWorkspaceMemberIds
   }
 `;
 

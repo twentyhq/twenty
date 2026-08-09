@@ -21,11 +21,11 @@ export const SettingsInboxQueueNew = () => {
   const [draft, setDraft] = useState<InboxQueueDraft>({
     name: '',
     icon: 'IconInbox',
-    memberUserWorkspaceIds: [],
+    memberWorkspaceMemberIds: [],
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  const goBack = () => navigateSettings(SettingsPath.Inbox);
+  const goBack = () => navigateSettings(SettingsPath.WorkspaceCommunications);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -34,7 +34,7 @@ export const SettingsInboxQueueNew = () => {
       await createInboxQueue({
         name: draft.name.trim(),
         icon: draft.icon,
-        memberUserWorkspaceIds: draft.memberUserWorkspaceIds,
+        memberWorkspaceMemberIds: draft.memberWorkspaceMemberIds,
       });
       goBack();
     } finally {
@@ -47,7 +47,10 @@ export const SettingsInboxQueueNew = () => {
       title={t`New shared inbox`}
       links={[
         { children: t`Workspace`, href: getSettingsPath(SettingsPath.General) },
-        { children: t`Inbox`, href: getSettingsPath(SettingsPath.Inbox) },
+        {
+          children: t`Communication`,
+          href: getSettingsPath(SettingsPath.WorkspaceCommunications),
+        },
         { children: t`New` },
       ]}
       actionButton={

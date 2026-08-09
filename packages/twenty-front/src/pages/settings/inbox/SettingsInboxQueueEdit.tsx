@@ -47,19 +47,22 @@ export const SettingsInboxQueueEdit = () => {
       setDraft({
         name: inboxQueue.name,
         icon: inboxQueue.icon ?? 'IconInbox',
-        memberUserWorkspaceIds: inboxQueue.memberUserWorkspaceIds,
+        memberWorkspaceMemberIds: inboxQueue.memberWorkspaceMemberIds,
       });
     }
   }, [inboxQueue, draft]);
 
-  const goBack = () => navigateSettings(SettingsPath.Inbox);
+  const goBack = () => navigateSettings(SettingsPath.WorkspaceCommunications);
 
   if (!loading && !isDefined(inboxQueue)) {
     return (
       <SettingsPageLayout
         title={t`Shared inbox`}
         links={[
-          { children: t`Inbox`, href: getSettingsPath(SettingsPath.Inbox) },
+          {
+            children: t`Communication`,
+            href: getSettingsPath(SettingsPath.WorkspaceCommunications),
+          },
         ]}
       >
         <SettingsPageContainer>
@@ -86,7 +89,7 @@ export const SettingsInboxQueueEdit = () => {
       });
       await setInboxQueueMembers({
         queueId: inboxQueue.id,
-        memberUserWorkspaceIds: draft.memberUserWorkspaceIds,
+        memberWorkspaceMemberIds: draft.memberWorkspaceMemberIds,
       });
       goBack();
     } finally {
@@ -104,7 +107,10 @@ export const SettingsInboxQueueEdit = () => {
       title={inboxQueue.name}
       links={[
         { children: t`Workspace`, href: getSettingsPath(SettingsPath.General) },
-        { children: t`Inbox`, href: getSettingsPath(SettingsPath.Inbox) },
+        {
+          children: t`Communication`,
+          href: getSettingsPath(SettingsPath.WorkspaceCommunications),
+        },
         { children: inboxQueue.name },
       ]}
       actionButton={

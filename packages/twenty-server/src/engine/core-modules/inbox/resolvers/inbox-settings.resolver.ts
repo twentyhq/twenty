@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
@@ -66,15 +67,26 @@ export class InboxSettingsResolver {
   async inboxQueueSettings(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InboxQueueSettingsDTO[]> {
-    const [queues, memberIdsByQueue] = await Promise.all([
-      this.inboxQueueService.findAllQueues({ workspaceId: workspace.id }),
-      this.inboxQueueService.findQueueMemberIdsByQueue({
-        workspaceId: workspace.id,
-      }),
-    ]);
+    const [queues, memberIdsByQueue, workspaceMemberIdByUserWorkspaceId] =
+      await Promise.all([
+        this.inboxQueueService.findAllQueues({ workspaceId: workspace.id }),
+        this.inboxQueueService.findQueueMemberIdsByQueue({
+          workspaceId: workspace.id,
+        }),
+        this.inboxQueueService.toWorkspaceMemberIdsByUserWorkspaceId({
+          workspaceId: workspace.id,
+        }),
+      ]);
 
     return queues.map((queue) =>
-      this.toDto(queue, memberIdsByQueue.get(queue.id) ?? []),
+      this.toDto(
+        queue,
+        (memberIdsByQueue.get(queue.id) ?? [])
+          .map((userWorkspaceId) =>
+            workspaceMemberIdByUserWorkspaceId.get(userWorkspaceId),
+          )
+          .filter(isDefined),
+      ),
     );
   }
 
@@ -88,7 +100,7 @@ export class InboxSettingsResolver {
       workspaceId: workspace.id,
       name: input.name,
       icon: input.icon,
-      memberUserWorkspaceIds: input.memberUserWorkspaceIds ?? [],
+      memberWorkspaceMemberIds: input.memberWorkspaceMemberIds ?? [],
     });
 
     return this.readQueueSettings(workspace.id, queue);
@@ -119,7 +131,7 @@ export class InboxSettingsResolver {
     await this.inboxQueueService.setMembers({
       workspaceId: workspace.id,
       queueId: input.queueId,
-      memberUserWorkspaceIds: input.memberUserWorkspaceIds,
+      memberWorkspaceMemberIds: input.memberWorkspaceMemberIds,
     });
 
     const queues = await this.inboxQueueService.findAllQueues({
@@ -175,15 +187,27 @@ export class InboxSettingsResolver {
     workspaceId: string,
     queue: InboxQueueEntity,
   ): Promise<InboxQueueSettingsDTO> {
-    const memberIdsByQueue =
-      await this.inboxQueueService.findQueueMemberIdsByQueue({ workspaceId });
+    const [memberIdsByQueue, workspaceMemberIdByUserWorkspaceId] =
+      await Promise.all([
+        this.inboxQueueService.findQueueMemberIdsByQueue({ workspaceId }),
+        this.inboxQueueService.toWorkspaceMemberIdsByUserWorkspaceId({
+          workspaceId,
+        }),
+      ]);
 
-    return this.toDto(queue, memberIdsByQueue.get(queue.id) ?? []);
+    return this.toDto(
+      queue,
+      (memberIdsByQueue.get(queue.id) ?? [])
+        .map((userWorkspaceId) =>
+          workspaceMemberIdByUserWorkspaceId.get(userWorkspaceId),
+        )
+        .filter(isDefined),
+    );
   }
 
   private toDto(
     queue: InboxQueueEntity,
-    memberUserWorkspaceIds: string[],
+    memberWorkspaceMemberIds: string[],
   ): InboxQueueSettingsDTO {
     return {
       id: queue.id,
@@ -191,7 +215,7 @@ export class InboxSettingsResolver {
       slug: queue.slug,
       icon: queue.icon,
       isDefault: queue.isDefault,
-      memberUserWorkspaceIds,
+      memberWorkspaceMemberIds,
     };
   }
 }

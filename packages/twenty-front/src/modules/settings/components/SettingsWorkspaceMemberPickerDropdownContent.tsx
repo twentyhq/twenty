@@ -6,19 +6,19 @@ import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
+type SettingsWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
   searchFilter: string;
   filteredWorkspaceMembers: SearchRecord[];
   onSelect: (workspaceMember: PartialWorkspaceMember) => void;
 };
 
-export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
+export const SettingsWorkspaceMemberPickerDropdownContent = ({
   loading,
   searchFilter,
   filteredWorkspaceMembers,
   onSelect,
-}: SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps) => {
+}: SettingsWorkspaceMemberPickerDropdownContentProps) => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );

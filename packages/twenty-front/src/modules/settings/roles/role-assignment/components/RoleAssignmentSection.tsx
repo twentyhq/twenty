@@ -1,6 +1,6 @@
 import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
 import { SettingsRoleAssignmentTable } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTable';
-import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
+import { SettingsWorkspaceMemberPickerDropdown } from '@/settings/components/SettingsWorkspaceMemberPickerDropdown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
@@ -90,7 +90,7 @@ export const RoleAssignmentSection = ({
           }
           dropdownComponents={
             roleTargetType === 'member' ? (
-              <SettingsRoleAssignmentWorkspaceMemberPickerDropdown
+              <SettingsWorkspaceMemberPickerDropdown
                 excludedWorkspaceMemberIds={excludedIds}
                 onSelect={(roleTarget: PartialWorkspaceMember) => {
                   closeDropdown(config.dropdownId);

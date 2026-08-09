@@ -7,12 +7,15 @@ import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-q
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
 const QUEUE_ID = 'queue-id';
 const TRIAGE_QUEUE_ID = 'triage-queue-id';
 const MEMBER_ID = 'user-workspace-id';
+const USER_ID = 'user-id';
+const WORKSPACE_MEMBER_ID = 'workspace-member-id';
 
 describe('InboxQueueService', () => {
   let service: InboxQueueService;
@@ -32,6 +35,11 @@ describe('InboxQueueService', () => {
   };
   const inboxItemRepository = { update: jest.fn() };
   const userWorkspaceRepository = { find: jest.fn() };
+  const workspaceMemberRepository = { find: jest.fn() };
+  const globalWorkspaceOrmManager = {
+    getRepository: jest.fn().mockResolvedValue(workspaceMemberRepository),
+    executeInWorkspaceContext: jest.fn((run: () => unknown) => run()),
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -48,7 +56,12 @@ describe('InboxQueueService', () => {
       ...queue,
     }));
     inboxQueueMemberRepository.find.mockResolvedValue([]);
-    userWorkspaceRepository.find.mockResolvedValue([{ id: MEMBER_ID }]);
+    userWorkspaceRepository.find.mockResolvedValue([
+      { id: MEMBER_ID, userId: USER_ID },
+    ]);
+    workspaceMemberRepository.find.mockResolvedValue([
+      { id: WORKSPACE_MEMBER_ID, userId: USER_ID },
+    ]);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -69,6 +82,10 @@ describe('InboxQueueService', () => {
           provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: userWorkspaceRepository,
         },
+        {
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
+        },
       ],
     }).compile();
 
@@ -81,7 +98,7 @@ describe('InboxQueueService', () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
         name: 'Customer Support',
-        memberUserWorkspaceIds: [],
+        memberWorkspaceMemberIds: [],
       });
 
       // Assert
@@ -103,7 +120,7 @@ describe('InboxQueueService', () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
         name: 'Support',
-        memberUserWorkspaceIds: [],
+        memberWorkspaceMemberIds: [],
       });
 
       // Assert
@@ -118,7 +135,7 @@ describe('InboxQueueService', () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
         name: '🚀',
-        memberUserWorkspaceIds: [],
+        memberWorkspaceMemberIds: [],
       });
 
       // Assert
@@ -130,16 +147,21 @@ describe('InboxQueueService', () => {
   });
 
   describe('setMembers', () => {
-    // Membership is read access, so this is an authorization boundary
-    it('should drop ids that belong to another workspace', async () => {
+    // Membership is read access, so the translation doubles as the check
+    it('should keep only ids that resolve to a member of this workspace', async () => {
       // Prepare
-      userWorkspaceRepository.find.mockResolvedValue([{ id: MEMBER_ID }]);
+      workspaceMemberRepository.find.mockResolvedValue([
+        { id: WORKSPACE_MEMBER_ID, userId: USER_ID },
+      ]);
 
       // Act
       await service.setMembers({
         workspaceId: WORKSPACE_ID,
         queueId: QUEUE_ID,
-        memberUserWorkspaceIds: [MEMBER_ID, 'someone-elses-user-workspace-id'],
+        memberWorkspaceMemberIds: [
+          WORKSPACE_MEMBER_ID,
+          'someone-elses-workspace-member-id',
+        ],
       });
 
       // Assert
@@ -151,13 +173,13 @@ describe('InboxQueueService', () => {
 
     it('should write nobody when none of the ids are members', async () => {
       // Prepare
-      userWorkspaceRepository.find.mockResolvedValue([]);
+      workspaceMemberRepository.find.mockResolvedValue([]);
 
       // Act
       await service.setMembers({
         workspaceId: WORKSPACE_ID,
         queueId: QUEUE_ID,
-        memberUserWorkspaceIds: ['someone-elses-user-workspace-id'],
+        memberWorkspaceMemberIds: ['someone-elses-workspace-member-id'],
       });
 
       // Assert

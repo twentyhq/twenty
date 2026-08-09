@@ -1,6 +1,6 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
-import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
+import { SettingsWorkspaceMemberPickerDropdown } from '@/settings/components/SettingsWorkspaceMemberPickerDropdown';
 import { t } from '@lingui/core/macro';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
@@ -24,7 +24,7 @@ export const ROLE_TARGET_CONFIG = {
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToUsers,
     buttonTitle: () => t`Assign to member`,
-    dropdownComponent: SettingsRoleAssignmentWorkspaceMemberPickerDropdown,
+    dropdownComponent: SettingsWorkspaceMemberPickerDropdown,
     // Tooltip configuration for member type
     tooltip: {
       anchorId: 'assign-member',

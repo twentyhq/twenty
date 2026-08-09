@@ -66,7 +66,7 @@ export const SettingsInboxQueuesTable = ({
                 <StyledAddress>/inbox/q/{inboxQueue.slug}</StyledAddress>
               </TableCell>
               <TableCell align="right">
-                {inboxQueue.memberUserWorkspaceIds.length}
+                {inboxQueue.memberWorkspaceMemberIds.length}
               </TableCell>
             </StyledRow>
           );

@@ -236,12 +236,6 @@ const SettingsCustomDomainPage = lazy(() =>
   ),
 );
 
-const SettingsInbox = lazy(() =>
-  import('~/pages/settings/inbox/SettingsInbox').then((module) => ({
-    default: module.SettingsInbox,
-  })),
-);
-
 const SettingsInboxQueueNew = lazy(() =>
   import('~/pages/settings/inbox/SettingsInboxQueueNew').then((module) => ({
     default: module.SettingsInboxQueueNew,
@@ -896,7 +890,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Inbox} element={<SettingsInbox />} />
         <Route
           path={SettingsPath.InboxQueueNew}
           element={<SettingsInboxQueueNew />}

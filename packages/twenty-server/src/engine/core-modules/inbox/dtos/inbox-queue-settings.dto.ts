@@ -25,7 +25,7 @@ export class InboxQueueSettingsDTO {
   isDefault: boolean;
 
   @Field(() => [UUIDScalarType])
-  memberUserWorkspaceIds: string[];
+  memberWorkspaceMemberIds: string[];
 }
 
 // A kind of work, and where it goes when no producer named a recipient. This is

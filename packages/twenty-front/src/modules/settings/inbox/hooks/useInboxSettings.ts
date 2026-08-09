@@ -64,7 +64,7 @@ export const useInboxSettings = () => {
     async (input: {
       name: string;
       icon?: string;
-      memberUserWorkspaceIds: string[];
+      memberWorkspaceMemberIds: string[];
     }) => {
       await createInboxQueueMutation({ variables: { input } });
     },
@@ -79,7 +79,7 @@ export const useInboxSettings = () => {
   );
 
   const setInboxQueueMembers = useCallback(
-    async (input: { queueId: string; memberUserWorkspaceIds: string[] }) => {
+    async (input: { queueId: string; memberWorkspaceMemberIds: string[] }) => {
       await setInboxQueueMembersMutation({ variables: { input } });
     },
     [setInboxQueueMembersMutation],

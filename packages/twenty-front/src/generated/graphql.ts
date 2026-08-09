@@ -285,7 +285,7 @@ export type InboxQueueSettings = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isDefault: Scalars['Boolean']['output'];
-  memberUserWorkspaceIds: Array<Scalars['UUID']['output']>;
+  memberWorkspaceMemberIds: Array<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   slug: Scalars['String']['output'];
 };
@@ -311,7 +311,7 @@ export enum MessageChannelVisibility {
 
 export type CreateInboxQueueInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
-  memberUserWorkspaceIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+  memberWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   name: Scalars['String']['input'];
 };
 
@@ -321,7 +321,7 @@ export type SetInboxItemTypeDefaultQueueInput = {
 };
 
 export type SetInboxQueueMembersInput = {
-  memberUserWorkspaceIds: Array<Scalars['UUID']['input']>;
+  memberWorkspaceMemberIds: Array<Scalars['UUID']['input']>;
   queueId: Scalars['UUID']['input'];
 };
 
