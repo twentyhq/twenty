@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -43,24 +43,19 @@ export const SettingsInboxQueueEdit = () => {
   } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // The draft only exists once the queue has loaded, so it is seeded here
-  // rather than held as derived state that could disagree with the server. It
-  // carries the queue it was seeded from, because navigating between two shared
-  // inboxes reuses this component and would otherwise save one into the other.
-  useEffect(() => {
-    if (isDefined(inboxQueue) && editedQueue?.queueId !== inboxQueue.id) {
-      setEditedQueue({
-        queueId: inboxQueue.id,
-        draft: {
+  // Derived rather than synced: the draft is whatever has been edited for this
+  // queue, falling back to what the server says. Edits carry the queue they
+  // were made against, so navigating between two shared inboxes cannot save one
+  // into the other and there is no window where the two disagree.
+  const draft = !isDefined(inboxQueue)
+    ? null
+    : isDefined(editedQueue) && editedQueue.queueId === inboxQueue.id
+      ? editedQueue.draft
+      : {
           name: inboxQueue.name,
           icon: inboxQueue.icon ?? 'IconInbox',
           memberWorkspaceMemberIds: inboxQueue.memberWorkspaceMemberIds,
-        },
-      });
-    }
-  }, [inboxQueue, editedQueue]);
-
-  const draft = editedQueue?.draft ?? null;
+        };
 
   const goBack = () => navigateSettings(SettingsPath.WorkspaceCommunications);
 

@@ -6,6 +6,7 @@ import { INBOX_ITEMS_PAGE_SIZE } from '@/inbox/constants/InboxItemsPageSize';
 import { INBOX_ITEMS_POLL_INTERVAL } from '@/inbox/constants/InboxItemsPollInterval';
 import { GET_MY_INBOX_ITEMS } from '@/inbox/graphql/queries/getMyInboxItems';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
+import { shouldSkipInboxPoll } from '@/inbox/utils/shouldSkipInboxPoll';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
   type InboxItem,
@@ -37,6 +38,7 @@ export const useInboxItems = (
     client: apolloCoreClient,
     variables: { scope, queueSlug, assignment, limit: limit + 1 },
     pollInterval: INBOX_ITEMS_POLL_INTERVAL,
+    skipPollAttempt: shouldSkipInboxPoll,
     skip: !isInboxEnabled,
   });
 
