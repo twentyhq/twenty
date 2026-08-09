@@ -5,40 +5,32 @@
 # repository variables rather than being written here, because this repository is
 # public.
 #
-# Both target branches deploy automatically, so the cloud boxes track whatever the
-# Mac is running during the parallel-run period. That is the point: every push
-# rehearses the deploy and the schema upgrade before anyone depends on it.
+# This is the only thing that deploys a cloud box. deploy-staging.yml and
+# deploy-production.yml decide what may go out and then wait on a run of this.
 #
-# Promotion is already gated upstream: deploy-production.yml requires a reviewer
-# and only then moves the production-target pointer, which is what triggers this.
-# Gating again here would mean approving every deploy twice, and would in fact
-# fail: the production environment restricts deployments to protected branches,
-# and production-target is not one. So the environment is declared only for manual
-# dispatch, where no upstream approval has happened.
+# It used to also trigger on pushes to the staging-target and production-target
+# branches, which is how the Mac's pollers were fed during the parallel run. That
+# trigger never once fired: those refs are moved with GITHUB_TOKEN, and GitHub
+# suppresses push events from that token. Now that the Mac is retired the refs are
+# only a record of what each environment runs, so the trigger is gone rather than
+# left looking load-bearing.
 #
-# Parallel-run safety rests on two flags set on the cloud production box:
-# CLOUD_DISABLE_CRON_JOBS=true and CLOUD_EMAIL_DRIVER=logger. Deploying code to
-# both boxes is harmless while those hold, because the cloud box cannot sync
-# mailboxes or send mail. When they flip at cutover, the Mac must already be
-# quiesced.
+# Promotion is gated upstream: deploy-production.yml requires a reviewer before it
+# dispatches. Gating again here would mean approving every deploy twice, so the
+# environment is declared only for manual dispatch, where no upstream approval has
+# happened.
 name: cd-deploy-cloud
 
 # The correlation id is how the workflow that dispatched this one finds it again,
 # since the dispatch API returns nothing to identify the run it created. It is
-# empty for the other two triggers, which nobody is waiting on.
+# empty for a manual dispatch, which nobody is waiting on.
 run-name: >-
   cd-deploy-cloud
-  ${{ github.event.inputs.environment || github.event.client_payload.environment || github.ref_name }}
+  ${{ github.event.inputs.environment || github.event.client_payload.environment }}
   ${{ github.event.client_payload.correlation_id }}
 
 on:
-  # Kept for a pointer moved by hand. It does not fire for the deploy workflows:
-  # they move the pointers with GITHUB_TOKEN, and GitHub suppresses push events
-  # from that token, which is why the cloud boxes never once deployed from a
-  # promotion and every run in this workflow's history is a manual dispatch.
-  push:
-    branches: [staging-target, production-target]
-  # What deploy-staging.yml and deploy-production.yml send after moving a pointer.
+  # What deploy-staging.yml and deploy-production.yml send, then wait for.
   # repository_dispatch is one of the two events GitHub always delivers even from
   # GITHUB_TOKEN. It also leaves `environment` empty below, so production keeps
   # the single approval it already took upstream rather than asking twice.
@@ -63,7 +55,7 @@ permissions:
 
 concurrency:
   # Never let two deploys race on the same box.
-  group: cd-deploy-cloud-${{ github.event.inputs.environment || github.event.client_payload.environment || (github.ref_name == 'production-target' && 'production' || 'staging') }}
+  group: cd-deploy-cloud-${{ github.event.inputs.environment || github.event.client_payload.environment }}
   cancel-in-progress: false
 
 jobs:
@@ -79,7 +71,7 @@ jobs:
         id: target
         run: |
           set -euo pipefail
-          ENV_NAME="${{ github.event.inputs.environment || github.event.client_payload.environment || (github.ref_name == 'production-target' && 'production' || 'staging') }}"
+          ENV_NAME="${{ github.event.inputs.environment || github.event.client_payload.environment }}"
           SHA="${{ github.event.inputs.sha || github.event.client_payload.sha || github.sha }}"
           # A repository_dispatch runs from the default branch, so github.sha is
           # main rather than what is being deployed. Refuse rather than silently
@@ -87,6 +79,10 @@ jobs:
           if [ "${{ github.event_name }}" = "repository_dispatch" ] && [ -z "${{ github.event.client_payload.sha }}" ]; then
             echo "repository_dispatch arrived without client_payload.sha"; exit 1
           fi
+          case "$ENV_NAME" in
+            staging | production) ;;
+            *) echo "not a known environment: '$ENV_NAME'"; exit 1 ;;
+          esac
           [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "not a 40-char sha: $SHA"; exit 1; }
           if [ "$ENV_NAME" = "production" ]; then
             echo "vm=${{ vars.GCP_PRODUCTION_VM }}" >> "$GITHUB_OUTPUT"

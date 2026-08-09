@@ -68,7 +68,20 @@ jobs:
           fi
           echo "Found ${image}"
 
-      - name: Move the staging-target ref
+      - name: Deploy the cloud box
+        uses: ./.github/actions/deploy-cloud-box
+        with:
+          environment: staging
+          sha: ${{ steps.resolve.outputs.sha }}
+          token: ${{ github.token }}
+
+      # Nothing deploys from this ref any more; the Mac that polled it is retired.
+      # It stays because deploy-production.yml reads it to refuse promoting code
+      # staging never ran. That makes it a claim about what staging has actually
+      # had on it, so it is only safe to move once the deploy above succeeded --
+      # moving it first would let a failed staging deploy clear the way to
+      # production.
+      - name: Record what staging now runs
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -82,18 +95,6 @@ jobs:
               -f ref=refs/heads/staging-target -f sha="$SHA" >/dev/null
           fi
           echo "staging-target now points at ${SHA}"
-
-      # The Mac converges by polling the ref above. The cloud box does not poll,
-      # and the push event that would have told it never fires from GITHUB_TOKEN,
-      # so it is asked directly and waited on. Both hosts stay in step for as
-      # long as the parallel run lasts; when the Mac retires, the ref move goes
-      # and this stays.
-      - name: Deploy the cloud box
-        uses: ./.github/actions/deploy-cloud-box
-        with:
-          environment: staging
-          sha: ${{ steps.resolve.outputs.sha }}
-          token: ${{ github.token }}
 
       - name: Record the deployment
         env:
