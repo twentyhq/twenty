@@ -23,6 +23,19 @@ const GC_KIND_BY_CONSTANT = new Map<number, string>([
   [constants.NODE_PERFORMANCE_GC_WEAKCB, 'weakcb'],
 ]);
 
+const gcKindOf = (detail: unknown): string => {
+  if (
+    typeof detail !== 'object' ||
+    detail === null ||
+    !('kind' in detail) ||
+    typeof detail.kind !== 'number'
+  ) {
+    return 'unknown';
+  }
+
+  return GC_KIND_BY_CONSTANT.get(detail.kind) ?? 'unknown';
+};
+
 // Attributes event loop stalls to garbage collection: a `major` pause is stop-the-world, so its
 // duration lands directly on request latency. Paired with the heap gauges, this is what tells us
 // whether a cache-size reduction actually bought p99.
@@ -46,13 +59,8 @@ export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
   onModuleInit(): void {
     this.observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        const kind =
-          GC_KIND_BY_CONSTANT.get(
-            (entry.detail as { kind?: number } | undefined)?.kind ?? -1,
-          ) ?? 'unknown';
-
         this.pauseHistogram.record(entry.duration / MILLISECONDS_PER_SECOND, {
-          kind,
+          kind: gcKindOf(entry.detail),
         });
       }
     });
