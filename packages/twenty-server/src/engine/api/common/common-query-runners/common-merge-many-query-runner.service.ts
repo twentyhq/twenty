@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import {
   MUTATION_MAX_MERGE_RECORDS,
+  QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
@@ -645,14 +646,41 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         context.authContext,
       );
 
+      // The update builder refuses to touch more than QUERY_MAX_RECORDS rows at
+      // once, and a person auto-created by email sync can carry thousands of
+      // participants and timeline activities. Repoint in batches: each pass
+      // takes rows still pointing at an absorbed record, so the updates
+      // themselves advance the loop.
+      //
       // repository.update() runs outside the transaction; build from the transaction-scoped repository so the migration rolls back with the merge.
-      await repository
-        .createQueryBuilder(relationField.objectMetadata.nameSingular)
-        .update()
-        .set({ [relationField.joinColumnName]: toId })
-        .where({ [relationField.joinColumnName]: In(fromIds) })
-        .returning('*')
-        .execute();
+      // oxlint-disable-next-line no-constant-condition
+      while (true) {
+        // withDeleted keeps the old single-statement semantics: trashed rows
+        // still pointing at an absorbed record move too, so restoring one
+        // later does not resurrect a reference to a merged-away person.
+        const batch = await repository.find({
+          where: { [relationField.joinColumnName]: In(fromIds) },
+          select: { id: true },
+          take: QUERY_MAX_RECORDS,
+          withDeleted: true,
+        });
+
+        if (batch.length === 0) {
+          break;
+        }
+
+        await repository
+          .createQueryBuilder(relationField.objectMetadata.nameSingular)
+          .update()
+          .set({ [relationField.joinColumnName]: toId })
+          .whereInIds(batch.map(({ id }) => id))
+          .returning('*')
+          .execute();
+
+        if (batch.length < QUERY_MAX_RECORDS) {
+          break;
+        }
+      }
     }
   }
 
