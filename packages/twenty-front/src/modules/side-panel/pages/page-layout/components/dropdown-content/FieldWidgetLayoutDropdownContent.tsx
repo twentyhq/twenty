@@ -1,6 +1,7 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
+import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
@@ -69,7 +70,9 @@ export const FieldWidgetLayoutDropdownContent = () => {
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
   const currentNestedRelationFieldMetadataId =
     fieldConfiguration?.nestedRelationFieldMetadataId;
-  const currentViewId = fieldConfiguration?.viewId ?? null;
+  const currentViewId = isDefined(fieldConfiguration)
+    ? getWidgetConfigurationViewId(fieldConfiguration)
+    : null;
 
   const { fieldMetadataItem } = useFieldMetadataItemById(
     currentFieldMetadataId ?? '',

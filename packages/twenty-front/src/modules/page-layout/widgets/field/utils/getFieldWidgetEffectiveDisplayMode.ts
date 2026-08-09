@@ -1,5 +1,6 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { isNonEmptyString } from '@sniptt/guards';
+import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 // The table display mode renders an embedded view, so it only means anything
@@ -7,9 +8,9 @@ import { FieldDisplayMode } from '~/generated-metadata/graphql';
 // view deleted, or a layout picked before one could be created — renders its
 // inline relation instead of an empty card.
 export const getFieldWidgetEffectiveDisplayMode = (
-  configuration: Pick<FieldConfiguration, 'fieldDisplayMode' | 'viewId'>,
+  configuration: FieldConfiguration,
 ): FieldDisplayMode =>
   configuration.fieldDisplayMode === FieldDisplayMode.TABLE &&
-  !isNonEmptyString(configuration.viewId)
+  !isDefined(getWidgetConfigurationViewId(configuration))
     ? FieldDisplayMode.FIELD
     : configuration.fieldDisplayMode;
