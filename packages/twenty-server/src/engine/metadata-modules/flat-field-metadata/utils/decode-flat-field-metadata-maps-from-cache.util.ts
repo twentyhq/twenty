@@ -1,23 +1,27 @@
 import {
   FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS,
-  FLAT_FIELD_METADATA_KEY_BY_SHORT_CODE,
+  FLAT_FIELD_METADATA_KEY_LOOKUP,
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-cache-codec.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type EncodedFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+import {
+  type EncodedFlatFieldMetadata,
+  type EncodedFlatFieldMetadataMaps,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const decodeFlatFieldMetadata = (
-  encoded: Record<string, unknown>,
+  encoded: EncodedFlatFieldMetadata,
 ): FlatFieldMetadata => {
-  const decoded: Record<string, unknown> = {};
+  const decoded: Partial<
+    Record<string, FlatFieldMetadata[keyof FlatFieldMetadata]>
+  > = {};
 
   for (const key of FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS) {
     decoded[key] = [];
   }
 
   for (const [shortCode, value] of Object.entries(encoded)) {
-    decoded[FLAT_FIELD_METADATA_KEY_BY_SHORT_CODE.get(shortCode) ?? shortCode] =
-      value;
+    decoded[FLAT_FIELD_METADATA_KEY_LOOKUP.get(shortCode) ?? shortCode] = value;
   }
 
   return decoded as FlatFieldMetadata;

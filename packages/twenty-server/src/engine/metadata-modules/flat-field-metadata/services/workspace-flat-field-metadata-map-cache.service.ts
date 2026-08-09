@@ -33,7 +33,8 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMaps')
 export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
-  FlatEntityMaps<FlatFieldMetadata>
+  FlatEntityMaps<FlatFieldMetadata>,
+  EncodedFlatFieldMetadataMaps
 > {
   constructor(
     @InjectRepository(FieldMetadataEntity)
@@ -67,11 +68,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   }
 
   override decodeFromCacheStorage(
-    rawData: unknown,
+    rawData: EncodedFlatFieldMetadataMaps,
   ): FlatEntityMaps<FlatFieldMetadata> {
-    return decodeFlatFieldMetadataMapsFromCache(
-      rawData as EncodedFlatFieldMetadataMaps,
-    );
+    return decodeFlatFieldMetadataMapsFromCache(rawData);
   }
 
   async computeForCache(

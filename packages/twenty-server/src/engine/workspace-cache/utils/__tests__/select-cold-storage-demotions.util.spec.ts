@@ -1,16 +1,23 @@
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { selectColdStorageDemotions } from 'src/engine/workspace-cache/utils/select-cold-storage-demotions.util';
+
+type CacheData = WorkspaceCacheDataMap['featureFlagsMap'];
 
 const FIELD_METADATA = 'flat-maps:field-metadata';
 const ORM = 'orm:entity-metadatas';
 
-const hotEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<unknown> => ({
-  versions: new Map([['hash-1', { state: 'hot', data: {}, lastReadAt }]]),
+const hotEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<CacheData> => ({
+  versions: new Map([
+    ['hash-1', { state: 'hot', data: {} as CacheData, lastReadAt }],
+  ]),
   latestHash: 'hash-1',
   lastHashCheckedAt: lastReadAt,
 });
 
-const coldEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<unknown> => ({
+const coldEntry = (
+  lastReadAt: number,
+): WorkspaceLocalCacheEntry<CacheData> => ({
   versions: new Map([
     ['hash-1', { state: 'cold', blob: Buffer.from('{}'), lastReadAt }],
   ]),

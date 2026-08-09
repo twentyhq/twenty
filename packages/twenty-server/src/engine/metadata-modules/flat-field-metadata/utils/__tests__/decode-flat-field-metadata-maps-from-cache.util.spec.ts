@@ -1,19 +1,25 @@
-import { type EncodedFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+import {
+  type EncodedFlatFieldMetadata,
+  type EncodedFlatFieldMetadataMaps,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
 import { decodeFlatFieldMetadataMapsFromCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/decode-flat-field-metadata-maps-from-cache.util';
 import { encodeFlatFieldMetadataMapsForCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/encode-flat-field-metadata-maps-for-cache.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const decodeOne = (
-  encodedFlatFieldMetadata: Record<string, unknown>,
-): Record<string, unknown> =>
-  decodeFlatFieldMetadataMapsFromCache({
+  encodedFlatFieldMetadata: EncodedFlatFieldMetadata,
+): FlatFieldMetadata => {
+  const maps: EncodedFlatFieldMetadataMaps = {
     byUniversalIdentifier: { 'field-uid': encodedFlatFieldMetadata },
     universalIdentifierById: {},
     universalIdentifiersByApplicationId: {},
-  } as EncodedFlatFieldMetadataMaps).byUniversalIdentifier[
+  };
+
+  return decodeFlatFieldMetadataMapsFromCache(maps).byUniversalIdentifier[
     'field-uid'
-  ] as unknown as Record<string, unknown>;
+  ] as FlatFieldMetadata;
+};
 
 describe('decodeFlatFieldMetadataMapsFromCache', () => {
   it('should restore a short code to its full key', () => {
@@ -33,17 +39,21 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
   });
 
   it('should pass an unmapped key through unchanged', () => {
-    expect(decodeOne({ someKeyAddedLater: 'value' })).toMatchObject({
+    expect(
+      decodeOne({ someKeyAddedLater: 'value' } as EncodedFlatFieldMetadata),
+    ).toMatchObject({
       someKeyAddedLater: 'value',
     });
   });
 
   it('should keep a null relation array as null instead of restoring the empty default', () => {
     const encoded = encodeFlatFieldMetadataMapsForCache({
-      byUniversalIdentifier: { 'field-uid': { viewFieldIds: null } },
+      byUniversalIdentifier: {
+        'field-uid': { viewFieldIds: null } as unknown as FlatFieldMetadata,
+      },
       universalIdentifierById: {},
       universalIdentifiersByApplicationId: {},
-    } as unknown as FlatEntityMaps<FlatFieldMetadata>);
+    });
 
     expect(
       decodeFlatFieldMetadataMapsFromCache(encoded).byUniversalIdentifier[
@@ -53,18 +63,18 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
   });
 
   it('should round trip a field through JSON, as the cache storage layer does', () => {
-    const maps = {
+    const maps: FlatEntityMaps<FlatFieldMetadata> = {
       byUniversalIdentifier: {
         'field-uid': {
           name: 'firstName',
           settings: { displayAsRelativeDate: true },
           viewFieldIds: ['view-field-1'],
           viewFilterIds: [],
-        },
+        } as unknown as FlatFieldMetadata,
       },
       universalIdentifierById: { 'field-id': 'field-uid' },
       universalIdentifiersByApplicationId: { 'app-id': ['field-uid'] },
-    } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+    };
 
     const encoded = JSON.parse(
       JSON.stringify(encodeFlatFieldMetadataMapsForCache(maps)),

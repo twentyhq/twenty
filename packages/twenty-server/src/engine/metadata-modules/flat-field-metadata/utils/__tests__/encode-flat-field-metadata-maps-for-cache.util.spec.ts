@@ -1,19 +1,21 @@
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type EncodedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { encodeFlatFieldMetadataMapsForCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/encode-flat-field-metadata-maps-for-cache.util';
 
 const buildMaps = (
-  flatFieldMetadata: Record<string, unknown>,
-): FlatEntityMaps<FlatFieldMetadata> =>
-  ({
-    byUniversalIdentifier: { 'field-uid': flatFieldMetadata },
-    universalIdentifierById: {},
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadata: Partial<FlatFieldMetadata>,
+): FlatEntityMaps<FlatFieldMetadata> => ({
+  byUniversalIdentifier: {
+    'field-uid': flatFieldMetadata as FlatFieldMetadata,
+  },
+  universalIdentifierById: {},
+  universalIdentifiersByApplicationId: {},
+});
 
 const encodeOne = (
-  flatFieldMetadata: Record<string, unknown>,
-): Record<string, unknown> =>
+  flatFieldMetadata: Partial<FlatFieldMetadata>,
+): EncodedFlatFieldMetadata =>
   encodeFlatFieldMetadataMapsForCache(buildMaps(flatFieldMetadata))
     .byUniversalIdentifier['field-uid'];
 
@@ -33,13 +35,17 @@ describe('encodeFlatFieldMetadataMapsForCache', () => {
   });
 
   it('should pass an unmapped key through unchanged', () => {
-    expect(encodeOne({ someKeyAddedLater: 'value' })).toEqual({
+    expect(
+      encodeOne({ someKeyAddedLater: 'value' } as Partial<FlatFieldMetadata>),
+    ).toEqual({
       someKeyAddedLater: 'value',
     });
   });
 
   it('should pass a key inherited from Object.prototype through unchanged', () => {
-    expect(encodeOne({ constructor: 'value' })).toEqual({
+    expect(
+      encodeOne({ constructor: 'value' } as Partial<FlatFieldMetadata>),
+    ).toEqual({
       constructor: 'value',
     });
   });

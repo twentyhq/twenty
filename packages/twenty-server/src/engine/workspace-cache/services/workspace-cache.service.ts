@@ -59,6 +59,9 @@ const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
   [WORKSPACE_CACHE_KEYS_V2.ORMEntityMetadatas, 128],
 ]);
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
+type StoredCacheDataType = ReturnType<
+  WorkspaceCacheProvider<CacheDataType>['encodeForCacheStorage']
+>;
 
 type CacheEntriesResult = {
   data: Partial<WorkspaceCacheDataMap>;
@@ -440,12 +443,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return [this.buildDataKey(workspaceId, baseKey), `${baseKey}:hash`];
     });
 
-    const allValues = await this.cacheStorage.mget<CacheDataType | string>(
-      allKeys,
-    );
+    const allValues = await this.cacheStorage.mget<
+      StoredCacheDataType | string
+    >(allKeys);
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
-      const rawData = allValues[index * 2];
+      const rawData = allValues[index * 2] as StoredCacheDataType | undefined;
       const hash = allValues[index * 2 + 1] as string | undefined;
 
       if (isDefined(rawData) && isDefined(hash)) {
@@ -526,7 +529,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const computed = await Promise.all(computePromises);
 
-    const redisEntries: Array<{ key: string; value: unknown }> = [];
+    const redisEntries: Array<{ key: string; value: StoredCacheDataType }> = [];
     const staleEncodingKeys: string[] = [];
     const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
 
@@ -755,7 +758,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     keyName: WorkspaceCacheKeyName,
     data: CacheDataType,
-  ): unknown {
+  ): StoredCacheDataType {
     if (!this.isCompactStorageEnabled(workspaceId)) {
       return data;
     }
@@ -766,10 +769,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private decodeFromStorage(
     workspaceId: string,
     keyName: WorkspaceCacheKeyName,
-    rawData: unknown,
+    rawData: StoredCacheDataType,
   ): CacheDataType {
     if (!this.isCompactStorageEnabled(workspaceId)) {
-      return rawData as CacheDataType;
+      return rawData;
     }
 
     return this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
