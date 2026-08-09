@@ -109,6 +109,10 @@ export const FieldWidgetInlineCell = ({
     closeInlineCell();
   };
 
+  const handlePersist: FieldInputEvent = ({ newValue }) => {
+    persistFieldFromFieldInputContext(newValue);
+  };
+
   const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
@@ -192,6 +196,7 @@ export const FieldWidgetInlineCell = ({
         onCancel: handleCancel,
         onEnter: handleEnter,
         onEscape: handleEscape,
+        onPersist: handlePersist,
         onClickOutside: handleClickOutside,
         onShiftTab: handleShiftTab,
         onSubmit: handleSubmit,

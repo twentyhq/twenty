@@ -33,7 +33,7 @@ export const FilesFieldInput = () => {
     isAttachmentPreviewEnabledState,
   );
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onPersist } = useContext(
     FieldInputEventContext,
   );
 
@@ -148,6 +148,10 @@ export const FilesFieldInput = () => {
     onEnter?.({ newValue: parseFilesArrayToFilesValue(updatedFiles) });
   };
 
+  const handlePersist = (updatedFiles: FieldFilesValue[]) => {
+    onPersist?.({ newValue: parseFilesArrayToFilesValue(updatedFiles) });
+  };
+
   const handlePreview = (file: FieldFilesValue) => {
     if (!isAttachmentPreviewEnabled) return;
     setFilePreview(file);
@@ -189,6 +193,7 @@ export const FilesFieldInput = () => {
       items={files}
       onChange={handleChange}
       onEnter={handleEnter}
+      onPersist={handlePersist}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder={t`File label`}

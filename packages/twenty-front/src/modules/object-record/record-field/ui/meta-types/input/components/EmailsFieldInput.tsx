@@ -19,7 +19,7 @@ export const EmailsFieldInput = () => {
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onPersist } = useContext(
     FieldInputEventContext,
   );
 
@@ -97,6 +97,10 @@ export const EmailsFieldInput = () => {
     onEnter?.({ newValue: parseStringArrayToEmailsValue(updatedEmails) });
   };
 
+  const handlePersist = (updatedEmails: string[]) => {
+    onPersist?.({ newValue: parseStringArrayToEmailsValue(updatedEmails) });
+  };
+
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
@@ -106,6 +110,7 @@ export const EmailsFieldInput = () => {
       items={emails}
       onChange={handleChange}
       onEnter={handleEnter}
+      onPersist={handlePersist}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder={t`Email`}

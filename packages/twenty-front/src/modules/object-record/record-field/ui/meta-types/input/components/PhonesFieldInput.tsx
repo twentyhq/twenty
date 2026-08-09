@@ -80,7 +80,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
 export const PhonesFieldInput = () => {
   const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onPersist } = useContext(
     FieldInputEventContext,
   );
 
@@ -152,6 +152,10 @@ export const PhonesFieldInput = () => {
     onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
   };
 
+  const handlePersist = (updatedPhones: PhoneRecord[]) => {
+    onPersist?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+  };
+
   return (
     <MultiItemFieldInput
       items={phones}
@@ -159,6 +163,7 @@ export const PhonesFieldInput = () => {
       onClickOutside={handleClickOutside}
       onEscape={handleEscape}
       onEnter={handleEnter}
+      onPersist={handlePersist}
       placeholder={t`Phone`}
       fieldMetadataType={FieldMetadataType.PHONES}
       validateInput={validateInput}

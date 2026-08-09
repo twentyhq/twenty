@@ -17,6 +17,9 @@ export type FieldInputEventContextType = {
   onEnter?: FieldInputEvent;
   onCancel?: () => void;
   onEscape?: FieldInputEvent;
+  // Persists the value while the input stays open, for inputs where a change
+  // can be committed without leaving edit mode
+  onPersist?: FieldInputEvent;
   onSubmit?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;

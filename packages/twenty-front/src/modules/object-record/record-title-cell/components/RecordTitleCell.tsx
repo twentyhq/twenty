@@ -82,6 +82,10 @@ export const RecordTitleCell = ({
     closeCell();
   };
 
+  const handlePersist: FieldInputEvent = ({ newValue }) => {
+    persistFieldFromFieldInputContext(newValue);
+  };
+
   const handleTab: FieldInputEvent = ({ newValue, skipPersist }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
@@ -105,6 +109,7 @@ export const RecordTitleCell = ({
           onClickOutside: handleClickOutside,
           onEnter: handleEnter,
           onEscape: handleEscape,
+          onPersist: handlePersist,
           onShiftTab: handleShiftTab,
           onTab: handleTab,
         }}

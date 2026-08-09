@@ -110,6 +110,10 @@ export const RecordInlineCell = ({
     closeInlineCell();
   };
 
+  const handlePersist: FieldInputEvent = ({ newValue }) => {
+    persistFieldFromFieldInputContext(newValue);
+  };
+
   const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
@@ -199,6 +203,7 @@ export const RecordInlineCell = ({
         onCancel: handleCancel,
         onEnter: handleEnter,
         onEscape: handleEscape,
+        onPersist: handlePersist,
         onClickOutside: handleClickOutside,
         onShiftTab: handleShiftTab,
         onSubmit: handleSubmit,

@@ -87,6 +87,10 @@ export const RecordFieldListInputContextProvider = ({
     closeInlineCellAndResetEditModePosition();
   };
 
+  const handlePersist: FieldInputEvent = ({ newValue }) => {
+    persistFieldFromFieldInputContext(newValue);
+  };
+
   const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
     ({ newValue, event, skipPersist }) => {
       const currentFocusId = store.get(currentFocusIdSelector.atom);
@@ -141,6 +145,7 @@ export const RecordFieldListInputContextProvider = ({
         onCancel: handleCancel,
         onEnter: handleEnter,
         onEscape: handleEscape,
+        onPersist: handlePersist,
         onClickOutside: handleClickOutside,
         onShiftTab: handleShiftTab,
         onSubmit: handleSubmit,

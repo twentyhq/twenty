@@ -28,6 +28,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -36,6 +37,7 @@ type MultiItemFieldInputProps<T> = {
   onChange: (newItemsValue: T[]) => void;
   onEscape: (newItemsValue: T[]) => void;
   onEnter: (newItemsValue: T[]) => void;
+  onPersist: (newItemsValue: T[]) => void;
   onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
@@ -62,6 +64,7 @@ export const MultiItemFieldInput = <T,>({
   onChange,
   onEscape,
   onEnter,
+  onPersist,
   onError,
   placeholder,
   validateInput,
@@ -226,13 +229,10 @@ export const MultiItemFieldInput = <T,>({
 
     onChange(updatedItems);
 
-    // An emptied field has no item left to edit in the dropdown, so it has to be
-    // persisted right away instead of waiting for a click outside
-    const shouldPersistValue =
-      shouldAutoEnterBecauseOnlyOneItemIsAllowed || updatedItems.length === 0;
-
-    if (shouldPersistValue) {
+    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
       onEnter(updatedItems);
+    } else if (!isDeeplyEqual(items, updatedItems)) {
+      onPersist(updatedItems);
     }
 
     setIsInputDisplayed(false);
@@ -290,11 +290,13 @@ export const MultiItemFieldInput = <T,>({
   const handleSetPrimaryItem = (index: number) => {
     const updatedItems = moveArrayItem(items, { fromIndex: index, toIndex: 0 });
     onChange(updatedItems);
+    onPersist(updatedItems);
   };
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
+    onPersist(updatedItems);
     showInputIfNoItemsRemain(updatedItems);
   };
 
