@@ -6,7 +6,7 @@ import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 
 type SlackAssistantContext = {
-  conversationMessages: SlackAssistantAgentMessage[] | undefined;
+  conversationMessages: SlackAssistantAgentMessage[];
   requesterName: string | undefined;
 };
 
@@ -26,7 +26,7 @@ export const fetchSlackAssistantContext = async ({
   const slackClientResult = await getSlackClient();
 
   if (!slackClientResult.success) {
-    return { conversationMessages: undefined, requesterName: undefined };
+    return { conversationMessages: [], requesterName: undefined };
   }
 
   const { client } = slackClientResult;

@@ -27,7 +27,7 @@ export const buildSlackAssistantMessages = ({
 }: {
   requestText: string;
   requesterName: string | undefined;
-  conversationMessages: SlackAssistantAgentMessage[] | undefined;
+  conversationMessages: SlackAssistantAgentMessage[];
   timeoutSeconds: number;
   workspaceBaseUrl: string | undefined;
 }): SlackAssistantAgentMessage[] => {
@@ -49,7 +49,7 @@ export const buildSlackAssistantMessages = ({
   requestSections.push(`${requester} asks from Slack:\n${requestText}`);
 
   return [
-    ...(conversationMessages ?? []),
+    ...conversationMessages,
     { role: 'user', content: requestSections.join('\n\n') },
   ];
 };

@@ -147,4 +147,74 @@ describe('fetchSlackConversationMessages', () => {
       { role: 'assistant', content: 'Earlier answer' },
     ]);
   });
+
+  it('should drop leading assistant turns so the history opens on a user turn', async () => {
+    const client = buildClient({
+      replies: [
+        {
+          ts: '1',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Answer to a trimmed question',
+        },
+        { ts: '2', user: 'U123', text: 'Follow-up question' },
+        {
+          ts: '3',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Follow-up answer',
+        },
+      ],
+    });
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: '1',
+      isDirectMessage: false,
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U123>: Follow-up question' },
+      { role: 'assistant', content: 'Follow-up answer' },
+    ]);
+  });
+
+  it('should return no history when every remaining turn is an assistant turn', async () => {
+    const client = buildClient({
+      replies: [
+        {
+          ts: '1',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Only answer',
+        },
+      ],
+    });
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: '1',
+      isDirectMessage: false,
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([]);
+  });
+
+  it('should return no history for a channel mention outside a thread', async () => {
+    const client = buildClient({});
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: undefined,
+      isDirectMessage: false,
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([]);
+  });
 });

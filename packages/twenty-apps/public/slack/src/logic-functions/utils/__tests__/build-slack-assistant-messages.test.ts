@@ -7,7 +7,7 @@ describe('buildSlackAssistantMessages', () => {
     const messages = buildSlackAssistantMessages({
       requestText: 'How many open opportunities does ACME have?',
       requesterName: 'Jane',
-      conversationMessages: undefined,
+      conversationMessages: [],
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
     });

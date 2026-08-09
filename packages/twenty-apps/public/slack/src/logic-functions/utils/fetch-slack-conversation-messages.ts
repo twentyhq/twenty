@@ -15,6 +15,8 @@ type SlackContextMessage = {
   text?: string;
 };
 
+type SlackContextMessageWithText = SlackContextMessage & { text: string };
+
 const mapSlackMessagesToAgentMessages = ({
   messages,
   assistantBotUserId,
@@ -25,9 +27,13 @@ const mapSlackMessagesToAgentMessages = ({
   assistantBotUserId: string | undefined;
   excludeMessageTimestamps: Set<string>;
   excludeMessageTexts: Set<string>;
-}): SlackAssistantAgentMessage[] =>
-  messages
-    .filter((message) => {
+}): SlackAssistantAgentMessage[] => {
+  const agentMessages = messages
+    .filter((message): message is SlackContextMessageWithText => {
+      if (!isNonEmptyString(message.text)) {
+        return false;
+      }
+
       if (
         isNonEmptyString(message.ts) &&
         excludeMessageTimestamps.has(message.ts)
@@ -35,14 +41,7 @@ const mapSlackMessagesToAgentMessages = ({
         return false;
       }
 
-      if (
-        isNonEmptyString(message.text) &&
-        excludeMessageTexts.has(message.text)
-      ) {
-        return false;
-      }
-
-      return isNonEmptyString(message.text);
+      return !excludeMessageTexts.has(message.text);
     })
     .slice(-CONTEXT_MESSAGE_LIMIT)
     .map((message): SlackAssistantAgentMessage => {
@@ -50,7 +49,7 @@ const mapSlackMessagesToAgentMessages = ({
         isNonEmptyString(message.user) &&
         message.user === assistantBotUserId
       ) {
-        return { role: 'assistant', content: message.text ?? '' };
+        return { role: 'assistant', content: message.text };
       }
 
       const author = isNonEmptyString(message.bot_id)
@@ -59,6 +58,17 @@ const mapSlackMessagesToAgentMessages = ({
 
       return { role: 'user', content: `${author}: ${message.text}` };
     });
+
+  // trimming the window can leave an assistant turn first, which providers
+  // reject: a conversation has to open on a user turn
+  const firstUserTurnIndex = agentMessages.findIndex(
+    (message) => message.role === 'user',
+  );
+
+  return firstUserTurnIndex === -1
+    ? []
+    : agentMessages.slice(firstUserTurnIndex);
+};
 
 export const fetchSlackConversationMessages = async ({
   client,
@@ -76,7 +86,7 @@ export const fetchSlackConversationMessages = async ({
   assistantBotUserId: string | undefined;
   excludeMessageTimestamps?: string[];
   excludeMessageTexts?: string[];
-}): Promise<SlackAssistantAgentMessage[] | undefined> => {
+}): Promise<SlackAssistantAgentMessage[]> => {
   const excludedTimestamps = new Set(
     excludeMessageTimestamps.filter(isNonEmptyString),
   );
@@ -112,8 +122,8 @@ export const fetchSlackConversationMessages = async ({
       });
     }
 
-    return undefined;
+    return [];
   } catch {
-    return undefined;
+    return [];
   }
 };
