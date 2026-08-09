@@ -5,10 +5,14 @@ name: Build and push custom image
 # Builds run on GitHub's runners, avoiding the ~8GB frontend build OOM you'd
 # hit on a small VM.
 #
-# Both linux/amd64 and linux/arm64 are published. amd64 is what a cloud VM
-# runs; arm64 is what the Apple Silicon staging host runs. Each platform builds
-# natively on its own runner and the two are merged into one manifest list, so
-# neither pays for QEMU emulation. arm64 runners are free for public repos.
+# linux/amd64 only. Both cloud boxes are e2-standard-2, which is x86, and that
+# is not incidental: on GCP the x86 E2 family costs roughly half what the ARM
+# C4A family does for the same 2 vCPU / 8 GB. arm64 was here for the Apple
+# Silicon staging Mac, which was retired on 2026-08-09; nothing pulls it now.
+# The build still runs natively rather than under QEMU.
+#
+# If an arm64 host ever comes back, restore the matrix entry AND the platform
+# list in the merge job's verify step, which asserts exactly what is published.
 #
 # Pull requests build only when they carry the `needs-staging` label, so
 # opening a PR costs nothing until someone actually wants it on staging.
@@ -69,20 +73,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Both architectures. amd64 was dropped when the only consumer was
-        # staging on the Apple Silicon Mac; it is back because the cloud boxes
-        # run these images on x86. That is not incidental: on GCP the x86 E2
-        # family costs roughly half what the ARM C4A family does for the same
-        # 2 vCPU / 8 GB, so an amd64 image is what makes the cheaper machine
-        # type available at all.
-        #
-        # arm64 stays until local staging on the Mac is retired.
+        # One entry, but still a matrix: the merge job below builds a manifest
+        # list from whatever this produces, so adding a platform back is an
+        # entry here rather than a restructure.
         #
         # Adding or removing a platform means changing this list AND the verify
         # step in the merge job, which checks exactly this list.
         include:
-          - platform: linux/arm64
-            runner: ubuntu-24.04-arm
           - platform: linux/amd64
             runner: ubuntu-latest
     runs-on: ${{ matrix.runner }}
@@ -197,9 +194,9 @@ jobs:
 
           docker buildx imagetools create "${tag_args[@]}" "${source_args[@]}"
 
-      # A tag that does not resolve on the architecture the staging host runs
-      # is the failure this job structure exists to prevent, so it is checked
-      # rather than assumed. Keep this list in step with the build matrix.
+      # A tag that does not resolve on the architecture the boxes run is the
+      # failure this job structure exists to prevent, so it is checked rather
+      # than assumed. Keep this list in step with the build matrix.
       - name: Verify the expected platforms are published
         env:
           IMAGE: ${{ needs.prepare.outputs.image }}
@@ -211,7 +208,7 @@ jobs:
               grep -v unknown | sort -u
           )"
           echo "$platforms"
-          for required in linux/arm64 linux/amd64; do
+          for required in linux/amd64; do
             printf '%s\n' "$platforms" | grep -qx "$required" ||
               { echo "::error::${IMAGE}:${SHA} is missing $required"; exit 1; }
           done
