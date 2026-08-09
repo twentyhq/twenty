@@ -83,7 +83,20 @@ jobs:
           fi
           echo "Staging ran ${staged}, contained in ${SHA}"
 
-      - name: Move the production-target ref
+      # Already past the environment gate above, so the single approval that
+      # guards promotion also guards this. cd-deploy-cloud deliberately declares
+      # no environment for a repository_dispatch, or it would ask for a second.
+      - name: Deploy the cloud box
+        uses: ./.github/actions/deploy-cloud-box
+        with:
+          environment: production
+          sha: ${{ steps.resolve.outputs.sha }}
+          token: ${{ github.token }}
+
+      # As with staging-target: a record of what production runs, not the thing
+      # that puts it there, and written only once the deploy above succeeded so a
+      # rolled-back deploy does not leave the ref claiming otherwise.
+      - name: Record what production now runs
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -97,16 +110,6 @@ jobs:
               -f ref=refs/heads/production-target -f sha="$SHA" >/dev/null
           fi
           echo "production-target now points at ${SHA}"
-
-      # Already past the environment gate above, so the single approval that
-      # guards promotion also guards this. cd-deploy-cloud deliberately declares
-      # no environment for a repository_dispatch, or it would ask for a second.
-      - name: Deploy the cloud box
-        uses: ./.github/actions/deploy-cloud-box
-        with:
-          environment: production
-          sha: ${{ steps.resolve.outputs.sha }}
-          token: ${{ github.token }}
 
       - name: Record the deployment
         env:
