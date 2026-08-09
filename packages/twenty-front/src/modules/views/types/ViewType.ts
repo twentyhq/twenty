@@ -21,6 +21,7 @@ export const VIEW_TYPE_LABELS = {
   [ViewType.FIELDS_WIDGET]: msg`Fields widget`,
   [ViewType.TABLE_WIDGET]: msg`Table widget`,
   [ViewType.KANBAN_WIDGET]: msg`Kanban widget`,
+  [ViewType.LIST_WIDGET]: msg`List widget`,
   [ViewType.CALENDAR_WIDGET]: msg`Calendar widget`,
 } satisfies Record<ViewTypeLabelKey, MessageDescriptor>;
 
