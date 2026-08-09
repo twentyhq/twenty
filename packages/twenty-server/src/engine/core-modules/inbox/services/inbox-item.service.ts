@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In } from 'typeorm';
+import { type FindOptionsWhere, In, IsNull, Not } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
+import { InboxQueueAssignment } from 'src/engine/core-modules/inbox/enums/inbox-queue-assignment.enum';
 import {
   InboxException,
   InboxExceptionCode,
@@ -21,9 +22,16 @@ export const DEFAULT_INBOX_PAGE_SIZE = 50;
 export const MAX_INBOX_PAGE_SIZE = 500;
 
 // Which inbox is being read: someone's own, or one shared queue they watch.
+// A queue is read through an assignment filter, because "everything addressed
+// here" and "what nobody has picked up" are different questions and only the
+// second is the one a shared inbox exists to answer.
 export type InboxReadScope =
   | { kind: 'personal' }
-  | { kind: 'queue'; queueId: string };
+  | {
+      kind: 'queue';
+      queueId: string;
+      assignment: InboxQueueAssignment;
+    };
 
 // Reads and the one mutation that is not a transition. Everything that changes
 // where an item sits lives in InboxTransitionService.
@@ -204,12 +212,31 @@ export class InboxItemService {
     actorUserWorkspaceId: string;
   }): FindOptionsWhere<InboxItemEntity> {
     // A personal inbox shows what is yours, including work you took out of a
-    // queue. A queue shows everything addressed to it, taken or not.
-    return readScope.kind === 'personal'
-      ? { assigneeUserWorkspaceId: actorUserWorkspaceId }
-      : { queueId: readScope.queueId };
+    // queue: taking something does not remove it from the queue it came from,
+    // so the team keeps seeing it and you get it in your own list.
+    if (readScope.kind === 'personal') {
+      return { assigneeUserWorkspaceId: actorUserWorkspaceId };
+    }
+
+    return {
+      queueId: readScope.queueId,
+      ...buildAssignmentCriteria(readScope.assignment),
+    };
   }
 }
+
+const buildAssignmentCriteria = (
+  assignment: InboxQueueAssignment,
+): FindOptionsWhere<InboxItemEntity> => {
+  switch (assignment) {
+    case InboxQueueAssignment.UNASSIGNED:
+      return { assigneeUserWorkspaceId: IsNull() };
+    case InboxQueueAssignment.ASSIGNED:
+      return { assigneeUserWorkspaceId: Not(IsNull()) };
+    case InboxQueueAssignment.ALL:
+      return {};
+  }
+};
 
 type VisibleItemArgs = {
   inboxItemId: string;

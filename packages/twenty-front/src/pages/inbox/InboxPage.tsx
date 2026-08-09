@@ -1,10 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
+import { SegmentedControl } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxList } from '@/inbox/components/InboxList';
@@ -18,7 +19,7 @@ import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrd
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { InboxItemScope } from '~/generated/graphql';
+import { InboxItemScope, InboxQueueAssignment } from '~/generated/graphql';
 
 const StyledListPane = styled.div`
   display: flex;
@@ -41,6 +42,12 @@ const StyledErrorState = styled.div`
 
 export const InboxPage = () => {
   const { t } = useLingui();
+  // A shared inbox opens on what nobody has picked up, because that is the
+  // question it exists to answer. The other two keep the team's whole picture
+  // reachable without making it the landing page.
+  const [queueAssignment, setQueueAssignment] = useState<InboxQueueAssignment>(
+    InboxQueueAssignment.UNASSIGNED,
+  );
   const { theme } = useContext(ThemeContext);
   const { inboxSectionSlug, inboxQueueSlug } = useParams<{
     inboxSectionSlug?: string;
@@ -66,6 +73,7 @@ export const InboxPage = () => {
   } = useInboxItems(
     isDefined(inboxQueueSlug) ? InboxItemScope.INBOX : inboxSection.scope,
     inboxQueueSlug,
+    isDefined(inboxQueueSlug) ? queueAssignment : undefined,
   );
   const { openInboxItemFullPage } = useOpenInboxItemFullPage(inboxSection);
   const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
@@ -86,6 +94,27 @@ export const InboxPage = () => {
         <PageCardHeader
           icon={<SectionIcon size={theme.icon.size.md} />}
           title={inboxQueue?.name ?? t(inboxSection.label)}
+          actionButton={
+            isDefined(inboxQueueSlug) && (
+              <SegmentedControl
+                ariaLabel={t`Filter this shared inbox`}
+                itemWidth="content"
+                value={queueAssignment}
+                onChange={setQueueAssignment}
+                options={[
+                  {
+                    value: InboxQueueAssignment.UNASSIGNED,
+                    label: t`Unassigned`,
+                  },
+                  {
+                    value: InboxQueueAssignment.ASSIGNED,
+                    label: t`Assigned`,
+                  },
+                  { value: InboxQueueAssignment.ALL, label: t`All` },
+                ]}
+              />
+            )
+          }
         />
       }
     >

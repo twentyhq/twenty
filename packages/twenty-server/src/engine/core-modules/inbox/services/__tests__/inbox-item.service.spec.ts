@@ -1,10 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { In } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
+import { InboxQueueAssignment } from 'src/engine/core-modules/inbox/enums/inbox-queue-assignment.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import {
@@ -226,12 +227,67 @@ describe('InboxItemService', () => {
       expect(findOptions.where).toHaveLength(1);
     });
 
-    it('should read a shared inbox by the queue rather than by who holds each item', async () => {
+    // What a shared inbox is opened to answer: what has nobody picked up
+    it('should read only what nobody has taken when the queue is read unassigned', async () => {
       // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        readScope: { kind: 'queue', queueId: 'support-queue-id' },
+        readScope: {
+          kind: 'queue',
+          queueId: 'support-queue-id',
+          assignment: InboxQueueAssignment.UNASSIGNED,
+        },
+        scope: InboxItemScope.INBOX,
+        now: NOW,
+      });
+
+      // Assert
+      const [, findOptions] = inboxItemRepository.find.mock.calls[0];
+
+      expect(findOptions.where).toEqual({
+        queueId: 'support-queue-id',
+        assigneeUserWorkspaceId: IsNull(),
+        ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, NOW),
+      });
+    });
+
+    // Taking something does not remove it from the queue, so the team can still
+    // see who holds what
+    it('should read only what someone holds when the queue is read assigned', async () => {
+      // Act
+      await service.findMany({
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: {
+          kind: 'queue',
+          queueId: 'support-queue-id',
+          assignment: InboxQueueAssignment.ASSIGNED,
+        },
+        scope: InboxItemScope.INBOX,
+        now: NOW,
+      });
+
+      // Assert
+      const [, findOptions] = inboxItemRepository.find.mock.calls[0];
+
+      expect(findOptions.where).toEqual({
+        queueId: 'support-queue-id',
+        assigneeUserWorkspaceId: Not(IsNull()),
+        ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, NOW),
+      });
+    });
+
+    it('should read the whole shared inbox by the queue alone when asked for all', async () => {
+      // Act
+      await service.findMany({
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
+        readScope: {
+          kind: 'queue',
+          queueId: 'support-queue-id',
+          assignment: InboxQueueAssignment.ALL,
+        },
         scope: InboxItemScope.INBOX,
         now: NOW,
       });

@@ -7,22 +7,35 @@ import { INBOX_ITEMS_POLL_INTERVAL } from '@/inbox/constants/InboxItemsPollInter
 import { GET_MY_INBOX_ITEMS } from '@/inbox/graphql/queries/getMyInboxItems';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type InboxItem, type InboxItemScope } from '~/generated/graphql';
+import {
+  type InboxItem,
+  type InboxItemScope,
+  type InboxQueueAssignment,
+} from '~/generated/graphql';
 
 // Older items are reached by growing the page rather than by an offset cursor,
 // so the polling that keeps this list live cannot fight the pagination. One
 // extra item is requested to tell "exactly a full page" from "there is more".
-export const useInboxItems = (scope?: InboxItemScope, queueSlug?: string) => {
+export const useInboxItems = (
+  scope?: InboxItemScope,
+  queueSlug?: string,
+  assignment?: InboxQueueAssignment,
+) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
   const [limit, setLimit] = useState(INBOX_ITEMS_PAGE_SIZE);
 
   const { data, loading, error, refetch } = useQuery<
     { myInboxItems: InboxItem[] },
-    { scope?: InboxItemScope; queueSlug?: string; limit: number }
+    {
+      scope?: InboxItemScope;
+      queueSlug?: string;
+      assignment?: InboxQueueAssignment;
+      limit: number;
+    }
   >(GET_MY_INBOX_ITEMS, {
     client: apolloCoreClient,
-    variables: { scope, queueSlug, limit: limit + 1 },
+    variables: { scope, queueSlug, assignment, limit: limit + 1 },
     pollInterval: INBOX_ITEMS_POLL_INTERVAL,
     skip: !isInboxEnabled,
   });

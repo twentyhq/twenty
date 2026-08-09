@@ -286,6 +286,12 @@ export type InboxQueue = {
   unread: Scalars['Int']['output'];
 };
 
+export enum InboxQueueAssignment {
+  ALL = 'ALL',
+  ASSIGNED = 'ASSIGNED',
+  UNASSIGNED = 'UNASSIGNED'
+}
+
 export type InboxQueueSettings = {
   __typename?: 'InboxQueueSettings';
   icon?: Maybe<Scalars['String']['output']>;
@@ -599,6 +605,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 
 export type QueryMyInboxCountsArgs = {
+  assignment?: InputMaybe<InboxQueueAssignment>;
   queueSlug?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -609,6 +616,7 @@ export type QueryMyInboxItemArgs = {
 
 
 export type QueryMyInboxItemsArgs = {
+  assignment?: InputMaybe<InboxQueueAssignment>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   queueSlug?: InputMaybe<Scalars['String']['input']>;
   scope?: InputMaybe<InboxItemScope>;

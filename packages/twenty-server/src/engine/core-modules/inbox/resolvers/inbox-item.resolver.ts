@@ -14,6 +14,7 @@ import {
   InboxQueueDTO,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item.dto';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
+import { InboxQueueAssignment } from 'src/engine/core-modules/inbox/enums/inbox-queue-assignment.enum';
 import { InboxGraphqlApiExceptionFilter } from 'src/engine/core-modules/inbox/filters/inbox-graphql-api-exception.filter';
 import {
   InboxException,
@@ -63,6 +64,10 @@ export class InboxItemResolver {
     // Naming a queue reads that shared inbox instead of the caller's own
     @Args('queueSlug', { type: () => String, nullable: true })
     queueSlug?: string,
+    // Only read for a queue. Defaults to what nobody has taken, which is the
+    // question a shared inbox is opened to answer.
+    @Args('assignment', { type: () => InboxQueueAssignment, nullable: true })
+    assignment?: InboxQueueAssignment,
     // The client grows this to reach older items, so nothing falls off the
     // end of the list without a way back to it.
     @Args('limit', { type: () => Int, nullable: true })
@@ -76,6 +81,7 @@ export class InboxItemResolver {
         workspaceId,
         userWorkspaceId,
         queueSlug,
+        assignment,
       }),
       scope: scope ?? InboxItemScope.INBOX,
       now,
@@ -116,6 +122,8 @@ export class InboxItemResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('queueSlug', { type: () => String, nullable: true })
     queueSlug?: string,
+    @Args('assignment', { type: () => InboxQueueAssignment, nullable: true })
+    assignment?: InboxQueueAssignment,
   ): Promise<InboxCountsDTO> {
     return this.inboxItemService.countByScope({
       workspaceId,
@@ -124,6 +132,7 @@ export class InboxItemResolver {
         workspaceId,
         userWorkspaceId,
         queueSlug,
+        assignment,
       }),
       now: new Date(),
     });
@@ -146,7 +155,13 @@ export class InboxItemResolver {
         const counts = await this.inboxItemService.countByScope({
           workspaceId,
           actorUserWorkspaceId: userWorkspaceId,
-          readScope: { kind: 'queue', queueId: queue.id },
+          // The badge is what the team still has to pick up. Counting items a
+          // teammate already took would make it grow as work gets claimed.
+          readScope: {
+            kind: 'queue',
+            queueId: queue.id,
+            assignment: InboxQueueAssignment.UNASSIGNED,
+          },
           now,
           shouldCountSnoozed: false,
         });
@@ -244,10 +259,12 @@ export class InboxItemResolver {
     workspaceId,
     userWorkspaceId,
     queueSlug,
+    assignment,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     queueSlug?: string;
+    assignment?: InboxQueueAssignment;
   }): Promise<InboxReadScope> {
     if (!isDefined(queueSlug)) {
       return { kind: 'personal' };
@@ -266,6 +283,10 @@ export class InboxItemResolver {
       );
     }
 
-    return { kind: 'queue', queueId: queue.id };
+    return {
+      kind: 'queue',
+      queueId: queue.id,
+      assignment: assignment ?? InboxQueueAssignment.UNASSIGNED,
+    };
   }
 }
