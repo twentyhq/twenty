@@ -7,7 +7,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { ErrorLink } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
-import { from, switchMap, throwError } from 'rxjs';
+import { from, switchMap, tap, throwError } from 'rxjs';
 import { RestLink } from 'apollo-link-rest';
 import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
 
@@ -21,7 +21,9 @@ import { retryWithBackoff } from '~/utils/retryWithBackoff';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isAuthProxyRedirect } from '@/apollo/utils/isAuthProxyRedirect';
 import { loggerLink } from '@/apollo/utils/loggerLink';
+import { clearAuthProxyReloadGuard } from '@/apollo/utils/reloadOnceForAuthProxyRedirect';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
@@ -42,6 +44,9 @@ const logger = loggerLink(() => 'Twenty');
 // UNAUTHENTICATED errors from /graphql and /metadata clients
 // deduplicate into a single renewal request.
 let renewalPromise: Promise<boolean> | null = null;
+
+// Shared so a burst of concurrent failures costs a single probe.
+let authProxyProbePromise: Promise<boolean> | null = null;
 
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
@@ -74,6 +79,7 @@ export interface Options {
   onUnauthenticatedError?: () => void;
   onAppVersionMismatch?: (message: string) => void;
   onPayloadTooLarge?: (message: string) => void;
+  onAuthProxyRedirect?: () => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
@@ -100,6 +106,7 @@ export class ApolloFactory implements ApolloManager {
       onUnauthenticatedError,
       onAppVersionMismatch,
       onPayloadTooLarge,
+      onAuthProxyRedirect,
       currentWorkspaceMember,
       currentWorkspace,
       extraLinks,
@@ -292,6 +299,38 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
+      const handleOpaqueNetworkError = (error: Error) => {
+        if (isDebugMode === true) {
+          logDebug(`[Network error]: ${error}`);
+        }
+
+        onNetworkError?.(error);
+
+        if (!isDefined(onAuthProxyRedirect)) {
+          return;
+        }
+
+        // oxlint-disable-next-line no-console
+        console.log(
+          `Opaque network error on ${uri}, probing for an auth proxy redirect`,
+          error,
+        );
+
+        if (!authProxyProbePromise) {
+          authProxyProbePromise = isAuthProxyRedirect(uri).finally(() => {
+            authProxyProbePromise = null;
+          });
+        }
+
+        authProxyProbePromise
+          .then((redirectedToAuthProxy) => {
+            if (redirectedToAuthProxy) {
+              onAuthProxyRedirect();
+            }
+          })
+          .catch(() => {});
+      };
+
       const errorLink = new ErrorLink(({ error, operation, forward }) => {
         if (CombinedGraphQLErrors.is(error)) {
           onErrorCb?.(error.errors);
@@ -358,17 +397,21 @@ export class ApolloFactory implements ApolloManager {
           }
           onNetworkError?.(error);
         } else if (isDefined(error)) {
-          if (isDebugMode === true) {
-            logDebug(`[Network error]: ${error}`);
-          }
-          onNetworkError?.(error as Error);
+          handleOpaqueNetworkError(error as Error);
         }
       });
+
+      // Any response at all means the proxy let this request through, so a later
+      // expiry in the same tab is free to reload again.
+      const authProxyRecoveryLink = new ApolloLink((operation, forward) =>
+        forward(operation).pipe(tap(() => clearAuthProxyReloadGuard())),
+      );
 
       // Type assertion needed because third-party link packages (apollo-link-rest,
       // apollo-upload-client) reference their own @apollo/client ApolloLink type
       const links = [
         errorLink,
+        authProxyRecoveryLink,
         authLink,
         ...(extraLinks || []),
         ...(isDebugMode ? [logger] : []),

@@ -4,6 +4,7 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isAuthProxyRedirect } from '@/apollo/utils/isAuthProxyRedirect';
 import { renewToken } from '@/auth/services/AuthService';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
@@ -30,6 +31,10 @@ jest.mock('@/apollo/utils/getTokenPair', () => ({
   getTokenPair: jest.fn(),
 }));
 
+jest.mock('@/apollo/utils/isAuthProxyRedirect', () => ({
+  isAuthProxyRedirect: jest.fn(),
+}));
+
 jest.mock('~/utils/sleep', () => ({
   sleep: jest.fn().mockResolvedValue(undefined),
 }));
@@ -50,6 +55,7 @@ const UNAUTHENTICATED_RESPONSE = JSON.stringify({
 });
 
 const mockOnError = jest.fn();
+const mockOnAuthProxyRedirect = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
 const mockOnTokenPairChange = jest.fn();
@@ -114,6 +120,7 @@ const createMockOptions = (): Options => ({
   cache: new InMemoryCache(),
   isDebugMode: true,
   onError: mockOnError,
+  onAuthProxyRedirect: mockOnAuthProxyRedirect,
   onNetworkError: mockOnNetworkError,
   onPayloadTooLarge: mockOnPayloadTooLarge,
   onTokenPairChange: mockOnTokenPairChange,
@@ -154,7 +161,11 @@ describe('ApolloFactory', () => {
     fetchMock.resetMocks();
     jest.mocked(renewToken).mockReset().mockResolvedValue(RENEWED_TOKEN_PAIR);
     jest.mocked(getTokenPair).mockReset().mockReturnValue(CURRENT_TOKEN_PAIR);
+    jest.mocked(isAuthProxyRedirect).mockReset().mockResolvedValue(false);
   });
+
+  const flushPendingProbe = () =>
+    new Promise((resolve) => setTimeout(resolve, 0));
 
   it('should create an instance of ApolloFactory', () => {
     const options = createMockOptions();
@@ -250,6 +261,39 @@ describe('ApolloFactory', () => {
       expect(error).toBeDefined();
       expect(mockOnNetworkError).toHaveBeenCalled();
     }
+  }, 10000);
+
+  it('should call onAuthProxyRedirect when an opaque network failure is an expired auth proxy session', async () => {
+    jest.mocked(isAuthProxyRedirect).mockResolvedValue(true);
+    fetchMock.mockReject(() =>
+      Promise.reject(new TypeError('Failed to fetch')),
+    );
+
+    try {
+      await makeRequest();
+    } catch {
+      // the operation is expected to fail, the redirect handling is what matters
+    }
+    await flushPendingProbe();
+
+    expect(mockOnAuthProxyRedirect).toHaveBeenCalled();
+  }, 10000);
+
+  it('should not call onAuthProxyRedirect when the network is genuinely down', async () => {
+    jest.mocked(isAuthProxyRedirect).mockResolvedValue(false);
+    fetchMock.mockReject(() =>
+      Promise.reject(new TypeError('Failed to fetch')),
+    );
+
+    try {
+      await makeRequest();
+    } catch {
+      // the operation is expected to fail, the redirect handling is what matters
+    }
+    await flushPendingProbe();
+
+    expect(mockOnNetworkError).toHaveBeenCalled();
+    expect(mockOnAuthProxyRedirect).not.toHaveBeenCalled();
   }, 10000);
 
   it('should update workspace member when calling updateWorkspaceMember', () => {
