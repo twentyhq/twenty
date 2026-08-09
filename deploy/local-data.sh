@@ -20,8 +20,6 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_FILE="$REPO_ROOT/packages/twenty-docker/docker-compose.dev.yml"
 SEED_WORKSPACE_ID="20202020-1c25-4d02-bf25-6aeccf7ea419"
 VERIFY_SQL="$REPO_ROOT/deploy/devdata-verify.sql"
-MIRROR_HOST="${TWENTY_DEVDATA_HOST:-spectech-llm}"
-MIRROR_REMOTE_REPO="${TWENTY_DEVDATA_REMOTE_REPO:-~/Projects/twenty}"
 MIRROR_PASSWORD="devmirror"
 MIRROR_TEMP_DIR=""
 
@@ -161,16 +159,13 @@ fetch_mirror() {
     info "using the mirror dump at $source_file"
     cp "$source_file" "$destination"
   else
-    command -v ssh >/dev/null 2>&1 ||
-      fail "ssh is required to pull a mirror. Use mirror --from-file instead."
-    info "building a fresh mirror on $MIRROR_HOST; this takes a few minutes"
-    # A non-interactive ssh shell gets a minimal PATH that misses Homebrew, so
-    # docker is invisible on the remote. Prepend it rather than using a login
-    # shell, whose profile output would corrupt the dump streaming on stdout.
-    ssh "$MIRROR_HOST" \
-      "PATH=/opt/homebrew/bin:/usr/local/bin:\$PATH \
-       bash $MIRROR_REMOTE_REPO/deploy/devdata-publish.sh --stdout" \
-      >"$destination"
+    # The mirror is built locally from the nightly production dump in R2
+    # (devdata-publish.sh). The old ssh path to the Mac's staging host died with
+    # that staging at the 2026-08 cloud cutover. Building requires R2 read
+    # credentials; developers without them consume a dump someone else built,
+    # via --from-file.
+    info "building a fresh mirror from the latest production backup"
+    bash "$REPO_ROOT/deploy/devdata-publish.sh" --stdout >"$destination"
   fi
 
   [ -s "$destination" ] || fail "The mirror dump is empty."
