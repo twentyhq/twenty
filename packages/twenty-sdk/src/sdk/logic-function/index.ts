@@ -56,12 +56,7 @@ export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/e
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
-export type {
-  RunAgentInput,
-  RunAgentMessage,
-  RunAgentMessageRole,
-  RunAgentResult,
-} from 'twenty-shared/application';
+export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export type {

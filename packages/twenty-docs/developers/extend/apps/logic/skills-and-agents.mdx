@@ -130,9 +130,6 @@ const { result, error, success } = await runAgent({
 });
 ```
 
-You can import `RunAgentMessage` from `twenty-sdk/logic-function` to type your
-messages array in TypeScript.
-
 Key points:
 - Provide **exactly one** of `prompt` (string) or `messages` (1 to 100 entries
   of `{ role: 'user' | 'assistant', content: string }`).
