@@ -236,6 +236,24 @@ const SettingsCustomDomainPage = lazy(() =>
   ),
 );
 
+const SettingsInbox = lazy(() =>
+  import('~/pages/settings/inbox/SettingsInbox').then((module) => ({
+    default: module.SettingsInbox,
+  })),
+);
+
+const SettingsInboxQueueNew = lazy(() =>
+  import('~/pages/settings/inbox/SettingsInboxQueueNew').then((module) => ({
+    default: module.SettingsInboxQueueNew,
+  })),
+);
+
+const SettingsInboxQueueEdit = lazy(() =>
+  import('~/pages/settings/inbox/SettingsInboxQueueEdit').then((module) => ({
+    default: module.SettingsInboxQueueEdit,
+  })),
+);
+
 const SettingsApiWebhooks = lazy(() =>
   import('~/pages/settings/api-webhooks/SettingsApiWebhooks').then(
     (module) => ({
@@ -869,6 +887,23 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ObjectFieldEdit}
           element={<SettingsObjectFieldEdit />}
+        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.WORKSPACE}
+          />
+        }
+      >
+        <Route path={SettingsPath.Inbox} element={<SettingsInbox />} />
+        <Route
+          path={SettingsPath.InboxQueueNew}
+          element={<SettingsInboxQueueNew />}
+        />
+        <Route
+          path={SettingsPath.InboxQueueDetail}
+          element={<SettingsInboxQueueEdit />}
         />
       </Route>
       <Route

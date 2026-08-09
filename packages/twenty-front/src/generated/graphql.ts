@@ -261,6 +261,15 @@ export type InboxItemType = {
   outcomes: Array<InboxItemOutcome>;
 };
 
+export type InboxItemTypeSettings = {
+  __typename?: 'InboxItemTypeSettings';
+  defaultQueueId?: Maybe<Scalars['UUID']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+};
+
 export type InboxQueue = {
   __typename?: 'InboxQueue';
   icon?: Maybe<Scalars['String']['output']>;
@@ -269,6 +278,16 @@ export type InboxQueue = {
   needsAction: Scalars['Int']['output'];
   slug: Scalars['String']['output'];
   unread: Scalars['Int']['output'];
+};
+
+export type InboxQueueSettings = {
+  __typename?: 'InboxQueueSettings';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  memberUserWorkspaceIds: Array<Scalars['UUID']['output']>;
+  name: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
 };
 
 export type LinkMetadata = {
@@ -290,14 +309,38 @@ export enum MessageChannelVisibility {
   SUBJECT = 'SUBJECT'
 }
 
+export type CreateInboxQueueInput = {
+  icon?: InputMaybe<Scalars['String']['input']>;
+  memberUserWorkspaceIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+  name: Scalars['String']['input'];
+};
+
+export type SetInboxItemTypeDefaultQueueInput = {
+  defaultQueueId?: InputMaybe<Scalars['UUID']['input']>;
+  inboxItemTypeId: Scalars['UUID']['input'];
+};
+
+export type SetInboxQueueMembersInput = {
+  memberUserWorkspaceIds: Array<Scalars['UUID']['input']>;
+  queueId: Scalars['UUID']['input'];
+};
+
+export type UpdateInboxQueueInput = {
+  icon?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  queueId: Scalars['UUID']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
   computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersionDto;
+  createInboxQueue: InboxQueueSettings;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
+  deleteInboxQueue: Scalars['Boolean']['output'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
@@ -309,10 +352,13 @@ export type Mutation = {
   markInboxItemRead: InboxItem;
   retryWorkflowRun: WorkflowRun;
   runWorkflowVersion: RunWorkflowVersion;
+  setInboxItemTypeDefaultQueue: InboxItemTypeSettings;
+  setInboxQueueMembers: InboxQueueSettings;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
   transitionInboxItem: InboxItem;
+  updateInboxQueue: InboxQueueSettings;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -375,6 +421,16 @@ export type MutationDuplicateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationCreateInboxQueueArgs = {
+  input: CreateInboxQueueInput;
+};
+
+
+export type MutationDeleteInboxQueueArgs = {
+  queueId: Scalars['UUID']['input'];
+};
+
+
 export type MutationExecuteInboxItemActionArgs = {
   actionKey: Scalars['String']['input'];
   expectedVersion?: InputMaybe<Scalars['Int']['input']>;
@@ -418,10 +474,25 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationSetInboxItemTypeDefaultQueueArgs = {
+  input: SetInboxItemTypeDefaultQueueInput;
+};
+
+
+export type MutationSetInboxQueueMembersArgs = {
+  input: SetInboxQueueMembersInput;
+};
+
+
 export type MutationTransitionInboxItemArgs = {
   expectedVersion?: InputMaybe<Scalars['Int']['input']>;
   inboxItemId: Scalars['UUID']['input'];
   transition: TransitionInboxItemInput;
+};
+
+
+export type MutationUpdateInboxQueueArgs = {
+  input: UpdateInboxQueueInput;
 };
 
 
@@ -472,6 +543,8 @@ export type Query = {
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  inboxItemTypeSettings: Array<InboxItemTypeSettings>;
+  inboxQueueSettings: Array<InboxQueueSettings>;
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   myInboxCounts: InboxCounts;
   myInboxItem?: Maybe<InboxItem>;

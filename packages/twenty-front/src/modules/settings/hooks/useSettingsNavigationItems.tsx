@@ -28,6 +28,7 @@ import {
   IconLayout,
   IconMail,
   IconMessage,
+  IconInbox,
   IconMessageCircle,
   IconPlug,
   IconServer,
@@ -75,6 +76,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const permissionMap = usePermissionFlagMap();
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  );
+  const isInboxFeatureEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INBOX_ENABLED,
   );
   return [
     {
@@ -172,6 +176,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.AI,
           Icon: IconSparkles,
           isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
+        },
+        {
+          label: t`Inbox`,
+          path: SettingsPath.Inbox,
+          Icon: IconInbox,
+          isHidden:
+            !isInboxFeatureEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Communication`,
