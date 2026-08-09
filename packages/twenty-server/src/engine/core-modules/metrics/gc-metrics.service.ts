@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 const MILLISECONDS_PER_SECOND = 1_000;
-// Scavenges land under a millisecond; mark-compact over a multi-GB heap runs into seconds.
 const GC_DURATION_BUCKETS_SECONDS = [
   0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5,
 ];
@@ -36,9 +35,6 @@ const gcKindOf = (detail: unknown): string => {
   return GC_KIND_BY_CONSTANT.get(detail.kind) ?? 'unknown';
 };
 
-// Attributes event loop stalls to garbage collection: a `major` pause is stop-the-world, so its
-// duration lands directly on request latency. Paired with the heap gauges, this is what tells us
-// whether a cache-size reduction actually bought p99.
 @Injectable()
 export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
   private readonly pauseHistogram: Histogram;
@@ -110,7 +106,6 @@ export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // The four gauges share one snapshot per scrape instead of each calling into V8.
   private getHeapStatisticsSnapshot(): ReturnType<typeof getHeapStatistics> {
     const now = Date.now();
 
