@@ -225,9 +225,16 @@ export const MultiItemFieldInput = <T,>({
     }
 
     onChange(updatedItems);
-    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+
+    // An emptied field has no item left to edit in the dropdown, so it has to be
+    // persisted right away instead of waiting for a click outside
+    const shouldPersistValue =
+      shouldAutoEnterBecauseOnlyOneItemIsAllowed || updatedItems.length === 0;
+
+    if (shouldPersistValue) {
       onEnter(updatedItems);
     }
+
     setIsInputDisplayed(false);
     setIsAddingNewItem(false);
     setInputValue('');
@@ -292,7 +299,14 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleEscape = () => {
-    onEscape(items);
+    if (!isInputDisplayed) {
+      onEscape(items);
+      return;
+    }
+
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+
+    onEscape(isValid ? updatedItems : items);
   };
 
   useHotkeysOnFocusedElement({
