@@ -4,10 +4,14 @@ import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox
 // What the work is about. `ownerUserWorkspaceId` is the subject saying who it
 // belongs to, which is a property of the subject rather than of its kind: a
 // thread knows its owner, a record may or may not.
-export type InboxSubject = { ownerUserWorkspaceId?: string } & (
-  | { kind: 'thread'; threadId: string }
-  | { kind: 'record'; objectMetadataId: string; recordId: string }
-);
+export type InboxSubject =
+  | { kind: 'thread'; threadId: string; ownerUserWorkspaceId: string }
+  | {
+      kind: 'record';
+      objectMetadataId: string;
+      recordId: string;
+      ownerUserWorkspaceId?: string;
+    };
 
 // Who the work is for. A person, or a shared queue that several people watch.
 // A producer names one of these; it never resolves the recipient itself.

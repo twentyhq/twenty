@@ -71,7 +71,9 @@ export class InboxQueueService {
     const membership = await this.inboxQueueMemberRepository.findOne(
       workspaceId,
       {
-        where: { userWorkspaceId, queue: { slug } },
+        // The join is part of an authorization gate, so the queue carries the
+        // tenant predicate rather than inheriting it from the membership row
+        where: { userWorkspaceId, queue: { slug, workspaceId } },
         relations: { queue: true },
       },
     );

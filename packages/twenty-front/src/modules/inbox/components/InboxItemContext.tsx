@@ -22,18 +22,19 @@ const StyledHeader = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTitle = styled.div`
+// The focused page's title is the page's heading; the side panel's rides above
+// whatever the panel is showing, so it is not one.
+const StyledPageTitle = styled.h1`
   color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin: 0;
+`;
+
+const StyledBarTitle = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-
-  &[data-size='page'] {
-    font-size: ${themeCssVariables.font.size.xl};
-    font-weight: ${themeCssVariables.font.weight.semiBold};
-  }
-
-  &[data-size='bar'] {
-    font-size: ${themeCssVariables.font.size.sm};
-  }
 `;
 
 const StyledPreview = styled.div`
@@ -85,7 +86,11 @@ export const InboxItemContext = ({
         <InboxItemIcon size={theme.icon.size.sm} color="currentColor" />
         {inboxItem.inboxItemType.label}
       </StyledHeader>
-      <StyledTitle data-size={size}>{inboxItem.title}</StyledTitle>
+      {size === 'page' ? (
+        <StyledPageTitle>{inboxItem.title}</StyledPageTitle>
+      ) : (
+        <StyledBarTitle>{inboxItem.title}</StyledBarTitle>
+      )}
       {isNonEmptyString(inboxItem.preview) && (
         <StyledPreview data-size={size}>{inboxItem.preview}</StyledPreview>
       )}

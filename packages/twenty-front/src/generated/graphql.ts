@@ -223,7 +223,6 @@ export type InboxItemAction = {
   isPrimary: Scalars['Boolean']['output'];
   key: Scalars['String']['output'];
   label: Scalars['String']['output'];
-  navigationKind?: Maybe<Scalars['String']['output']>;
   transitionKind?: Maybe<Scalars['String']['output']>;
 };
 
