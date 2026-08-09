@@ -27,6 +27,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
         "defaultPriority" "core"."inboxItemType_defaultpriority_enum" NOT NULL DEFAULT 'UPDATE',
         "actions" jsonb NOT NULL DEFAULT '[]',
         "resolution" jsonb,
+        "defaultQueueId" uuid,
         "deletedAt" TIMESTAMP WITH TIME ZONE,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -175,6 +176,14 @@ export class CreateInboxCoreTablesFastInstanceCommand
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_THREAD_ID"
         ON "core"."inboxItem" ("threadId")`,
+    );
+
+    // Added once both tables exist, since the type table is created first
+    await queryRunner.query(
+      `ALTER TABLE "core"."inboxItemType"
+        ADD CONSTRAINT "FK_INBOX_ITEM_TYPE_DEFAULT_QUEUE_ID"
+        FOREIGN KEY ("defaultQueueId")
+        REFERENCES "core"."inboxQueue"("id") ON DELETE SET NULL`,
     );
   }
 

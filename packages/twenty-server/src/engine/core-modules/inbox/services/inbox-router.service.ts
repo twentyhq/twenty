@@ -77,7 +77,7 @@ export class InboxRouterService {
     return this.upsertItem({
       args,
       inboxItemType,
-      address: await this.resolveAddress(args),
+      address: await this.resolveAddress(args, inboxItemType),
       // One item per subject for the subject's whole life, unless the producer
       // knows better and names its own slot. A producer whose events are each
       // separate work names no slot and gets an item per call.
@@ -92,6 +92,7 @@ export class InboxRouterService {
   // producer that reports work is entitled to assume the work landed.
   private async resolveAddress(
     args: RouteInboxItemArgs,
+    inboxItemType: InboxItemTypeEntity,
   ): Promise<InboxItemAddress> {
     if (isDefined(args.subject?.ownerUserWorkspaceId)) {
       return {
@@ -109,6 +110,12 @@ export class InboxRouterService {
 
     if (args.target?.kind === 'queue') {
       return { kind: 'queue', queueId: args.target.queueId };
+    }
+
+    // What the workspace configured for this kind of work, before falling back
+    // to the queue that catches everything nothing else claimed.
+    if (isDefined(inboxItemType.defaultQueueId)) {
+      return { kind: 'queue', queueId: inboxItemType.defaultQueueId };
     }
 
     const defaultQueue = await this.inboxQueueService.findOrCreateDefaultQueue({

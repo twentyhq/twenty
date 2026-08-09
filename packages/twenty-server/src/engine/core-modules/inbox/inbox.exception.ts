@@ -14,6 +14,7 @@ export const InboxExceptionCode = appendCommonExceptionCode({
   INBOX_ITEM_NOT_FOUND: 'INBOX_ITEM_NOT_FOUND',
   INBOX_ITEM_CHANGED: 'INBOX_ITEM_CHANGED',
   INVALID_INBOX_ACTION: 'INVALID_INBOX_ACTION',
+  INVALID_INBOX_QUEUE_CHANGE: 'INVALID_INBOX_QUEUE_CHANGE',
 } as const);
 
 const getInboxExceptionUserFriendlyMessage = (
@@ -30,6 +31,8 @@ const getInboxExceptionUserFriendlyMessage = (
       return msg`Someone else worked on this item. Reload and try again.`;
     case InboxExceptionCode.INVALID_INBOX_ACTION:
       return msg`This action cannot be run on this item.`;
+    case InboxExceptionCode.INVALID_INBOX_QUEUE_CHANGE:
+      return msg`This shared inbox cannot be changed that way.`;
     case InboxExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

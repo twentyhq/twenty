@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-30/create-inbox-core-tables-upgrade-command-name.constant';
+import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
@@ -89,6 +90,18 @@ export class InboxItemTypeEntity {
   // stores the outcome key and its result without knowing either word.
   @Column({ nullable: true, type: 'jsonb' })
   resolution: JsonbProperty<InboxItemResolution> | null;
+
+  // Where work of this kind goes when the producer named nobody. Configured
+  // rather than coded, so sending failed runs to an Ops inbox is a setting.
+  @Column({ nullable: true, type: 'uuid' })
+  defaultQueueId: string | null;
+
+  @ManyToOne(() => InboxQueueEntity, { onDelete: 'SET NULL' })
+  @JoinColumn({
+    name: 'defaultQueueId',
+    foreignKeyConstraintName: 'FK_INBOX_ITEM_TYPE_DEFAULT_QUEUE_ID',
+  })
+  defaultQueue: EntityRelation<InboxQueueEntity> | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   deletedAt: Date | null;

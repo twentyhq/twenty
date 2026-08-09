@@ -550,6 +550,52 @@ describe('InboxRouterService', () => {
       );
     });
 
+    // The workspace decides where a kind of work goes; the producer only says
+    // what happened. This is the seam that makes routing configurable.
+    it('should send work to the queue the type is configured with before triage', async () => {
+      // Prepare
+      inboxItemTypeService.findByKey.mockResolvedValue({
+        ...CONVERSATION_TYPE,
+        defaultQueueId: SUPPORT_QUEUE_ID,
+      });
+
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A message nobody owns',
+      });
+
+      // Assert
+      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
+      );
+      expect(inboxQueueService.findOrCreateDefaultQueue).not.toHaveBeenCalled();
+    });
+
+    it('should let a producer that named a queue outrank the type default', async () => {
+      // Prepare
+      inboxItemTypeService.findByKey.mockResolvedValue({
+        ...CONVERSATION_TYPE,
+        defaultQueueId: TRIAGE_QUEUE_ID,
+      });
+
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A support request',
+        target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
+      });
+
+      // Assert
+      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
+      );
+    });
+
     it('should address work to the queue a producer named, with nobody holding it', async () => {
       // Act
       await service.routeItem({

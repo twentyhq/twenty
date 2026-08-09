@@ -8,6 +8,10 @@ import { IsNull, Repository } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { STANDARD_INBOX_ITEM_TYPES } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -43,6 +47,51 @@ export class InboxItemTypeService {
     return this.inboxItemTypeRepository.findOne(workspaceId, {
       where: { key, deletedAt: IsNull() },
     });
+  }
+
+  // The kinds of work this workspace knows about. Seeded first, so a workspace
+  // that has never routed anything still has something to configure.
+  async findAllForSettings({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<InboxItemTypeEntity[]> {
+    await this.seedStandardTypes({ workspaceId });
+
+    return this.inboxItemTypeRepository.find(workspaceId, {
+      where: { deletedAt: IsNull() },
+      order: { label: 'ASC' },
+    });
+  }
+
+  async setDefaultQueue({
+    workspaceId,
+    inboxItemTypeId,
+    defaultQueueId,
+  }: {
+    workspaceId: string;
+    inboxItemTypeId: string;
+    defaultQueueId: string | null;
+  }): Promise<InboxItemTypeEntity> {
+    await this.inboxItemTypeRepository.update(
+      workspaceId,
+      { id: inboxItemTypeId },
+      { defaultQueueId },
+    );
+
+    const inboxItemType = await this.inboxItemTypeRepository.findOne(
+      workspaceId,
+      { where: { id: inboxItemTypeId, deletedAt: IsNull() } },
+    );
+
+    if (!isDefined(inboxItemType)) {
+      throw new InboxException(
+        `Inbox item type ${inboxItemTypeId} not found`,
+        InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE,
+      );
+    }
+
+    return inboxItemType;
   }
 
   // Idempotent: identity is (workspaceId, universalIdentifier), so re-running

@@ -23,6 +23,7 @@ export class InboxGraphqlApiExceptionFilter implements ExceptionFilter {
       case InboxExceptionCode.INBOX_ITEM_CHANGED:
         throw new ConflictError(exception);
       case InboxExceptionCode.INVALID_INBOX_ACTION:
+      case InboxExceptionCode.INVALID_INBOX_QUEUE_CHANGE:
       case InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE:
         throw new UserInputError(exception);
       case InboxExceptionCode.INTERNAL_SERVER_ERROR:
