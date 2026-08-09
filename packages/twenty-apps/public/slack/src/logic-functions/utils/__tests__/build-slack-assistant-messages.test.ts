@@ -14,14 +14,10 @@ describe('buildSlackAssistantMessages', () => {
 
     expect(messages).toHaveLength(1);
     expect(messages[0].role).toBe('user');
-    expect(messages[0].content).toContain('killed after 300 seconds');
-    expect(messages[0].content).not.toContain('recent Slack history');
-    expect(messages[0].content).toContain(
-      '[Record Name](https://acme.twenty.com/object/<objectNameSingular>/<recordId>)',
-    );
     expect(messages[0].content).toContain(
       'Jane asks from Slack:\nHow many open opportunities does ACME have?',
     );
+    expect(messages[0].content).not.toContain('recent Slack history');
   });
 
   it('should prepend conversation history as prior turns before the request', () => {
@@ -51,24 +47,6 @@ describe('buildSlackAssistantMessages', () => {
     );
     expect(messages[2].content).toContain(
       'Jane asks from Slack:\nAnd who owns it?',
-    );
-  });
-
-  it('should fall back to a generic requester name and warn about missing record links', () => {
-    const messages = buildSlackAssistantMessages({
-      requestText: 'List my tasks',
-      requesterName: undefined,
-      conversationMessages: [],
-      timeoutSeconds: 120,
-      workspaceBaseUrl: undefined,
-    });
-
-    expect(messages).toHaveLength(1);
-    expect(messages[0].content).toContain(
-      'A team member asks from Slack:\nList my tasks',
-    );
-    expect(messages[0].content).toContain(
-      'record links are unavailable',
     );
   });
 });

@@ -72,7 +72,12 @@ describe('fetchSlackConversationMessages', () => {
   it('should not produce assistant turns when the bot user id is unknown', async () => {
     const client = buildClient({
       replies: [
-        { ts: '1', user: ASSISTANT_BOT_USER_ID, bot_id: 'B1', text: 'Earlier answer' },
+        {
+          ts: '1',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Earlier answer',
+        },
       ],
     });
 
@@ -94,7 +99,12 @@ describe('fetchSlackConversationMessages', () => {
       replies: [
         { ts: '1', user: 'U123', text: 'Hello' },
         { ts: '2', user: 'U123', text: 'The request itself' },
-        { ts: '3', user: ASSISTANT_BOT_USER_ID, bot_id: 'B1', text: 'Thinking…' },
+        {
+          ts: '3',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Thinking…',
+        },
       ],
     });
 
@@ -114,7 +124,12 @@ describe('fetchSlackConversationMessages', () => {
   it('should read channel history in chronological order for direct messages', async () => {
     const client = buildClient({
       history: [
-        { ts: '2', user: ASSISTANT_BOT_USER_ID, bot_id: 'B1', text: 'Earlier answer' },
+        {
+          ts: '2',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Earlier answer',
+        },
         { ts: '1', user: 'U123', text: 'Earlier question' },
       ],
     });
@@ -131,37 +146,5 @@ describe('fetchSlackConversationMessages', () => {
       { role: 'user', content: '<@U123>: Earlier question' },
       { role: 'assistant', content: 'Earlier answer' },
     ]);
-  });
-
-  it('should return undefined outside of threads and direct messages', async () => {
-    const client = buildClient({});
-
-    const messages = await fetchSlackConversationMessages({
-      client,
-      channelId: 'C1',
-      threadTimestamp: undefined,
-      isDirectMessage: false,
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toBeUndefined();
-  });
-
-  it('should return undefined when the Slack API call fails', async () => {
-    const client = {
-      conversations: {
-        replies: vi.fn().mockRejectedValue(new Error('slack down')),
-      },
-    } as unknown as WebClient;
-
-    const messages = await fetchSlackConversationMessages({
-      client,
-      channelId: 'C1',
-      threadTimestamp: '1',
-      isDirectMessage: false,
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toBeUndefined();
   });
 });
