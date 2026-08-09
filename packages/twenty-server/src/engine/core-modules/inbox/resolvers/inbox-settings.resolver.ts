@@ -134,12 +134,12 @@ export class InboxSettingsResolver {
       memberWorkspaceMemberIds: input.memberWorkspaceMemberIds,
     });
 
-    const queues = await this.inboxQueueService.findAllQueues({
+    const queue = await this.inboxQueueService.findQueueOrThrow({
       workspaceId: workspace.id,
+      queueId: input.queueId,
     });
-    const queue = queues.find(({ id }) => id === input.queueId);
 
-    return this.readQueueSettings(workspace.id, queue ?? queues[0]);
+    return this.readQueueSettings(workspace.id, queue);
   }
 
   @Mutation(() => Boolean)

@@ -12,6 +12,7 @@ import {
   InboxException,
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
+import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -22,6 +23,7 @@ export class InboxItemTypeService {
     private readonly inboxItemTypeRepository: WorkspaceScopedRepository<InboxItemTypeEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly inboxQueueService: InboxQueueService,
   ) {}
 
   async findByKey({
@@ -73,12 +75,6 @@ export class InboxItemTypeService {
     inboxItemTypeId: string;
     defaultQueueId: string | null;
   }): Promise<InboxItemTypeEntity> {
-    await this.inboxItemTypeRepository.update(
-      workspaceId,
-      { id: inboxItemTypeId },
-      { defaultQueueId },
-    );
-
     const inboxItemType = await this.inboxItemTypeRepository.findOne(
       workspaceId,
       { where: { id: inboxItemTypeId, deletedAt: IsNull() } },
@@ -91,7 +87,23 @@ export class InboxItemTypeService {
       );
     }
 
-    return inboxItemType;
+    // The queue is looked up through the workspace-scoped repository, so a
+    // queue id belonging to another workspace is rejected rather than becoming
+    // an address this workspace can no longer see into.
+    if (isDefined(defaultQueueId)) {
+      await this.inboxQueueService.findQueueOrThrow({
+        workspaceId,
+        queueId: defaultQueueId,
+      });
+    }
+
+    await this.inboxItemTypeRepository.update(
+      workspaceId,
+      { id: inboxItemType.id },
+      { defaultQueueId },
+    );
+
+    return { ...inboxItemType, defaultQueueId };
   }
 
   // Idempotent: identity is (workspaceId, universalIdentifier), so re-running

@@ -37,20 +37,30 @@ export const SettingsInboxQueueEdit = () => {
 
   const inboxQueue = inboxQueues.find(({ id }) => id === queueId);
 
-  const [draft, setDraft] = useState<InboxQueueDraft | null>(null);
+  const [editedQueue, setEditedQueue] = useState<{
+    queueId: string;
+    draft: InboxQueueDraft;
+  } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   // The draft only exists once the queue has loaded, so it is seeded here
-  // rather than held as derived state that could disagree with the server
+  // rather than held as derived state that could disagree with the server. It
+  // carries the queue it was seeded from, because navigating between two shared
+  // inboxes reuses this component and would otherwise save one into the other.
   useEffect(() => {
-    if (isDefined(inboxQueue) && !isDefined(draft)) {
-      setDraft({
-        name: inboxQueue.name,
-        icon: inboxQueue.icon ?? 'IconInbox',
-        memberWorkspaceMemberIds: inboxQueue.memberWorkspaceMemberIds,
+    if (isDefined(inboxQueue) && editedQueue?.queueId !== inboxQueue.id) {
+      setEditedQueue({
+        queueId: inboxQueue.id,
+        draft: {
+          name: inboxQueue.name,
+          icon: inboxQueue.icon ?? 'IconInbox',
+          memberWorkspaceMemberIds: inboxQueue.memberWorkspaceMemberIds,
+        },
       });
     }
-  }, [inboxQueue, draft]);
+  }, [inboxQueue, editedQueue]);
+
+  const draft = editedQueue?.draft ?? null;
 
   const goBack = () => navigateSettings(SettingsPath.WorkspaceCommunications);
 
@@ -123,7 +133,12 @@ export const SettingsInboxQueueEdit = () => {
       }
     >
       <SettingsPageContainer>
-        <SettingsInboxQueueForm draft={draft} onChange={setDraft} />
+        <SettingsInboxQueueForm
+          draft={draft}
+          onChange={(nextDraft) =>
+            setEditedQueue({ queueId: inboxQueue.id, draft: nextDraft })
+          }
+        />
         {!inboxQueue.isDefault && (
           <Section>
             <H2Title

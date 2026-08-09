@@ -7,6 +7,7 @@ import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrTh
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
 import { WorkflowActionCode } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionCode';
 import { WorkflowEditActionCreateCalendarEvent } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent';
+import { WorkflowEditActionCreateInboxItem } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateInboxItem';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
@@ -144,6 +145,17 @@ export const WorkflowRunStepNodeDetail = ({
         case 'CREATE_CALENDAR_EVENT': {
           return (
             <WorkflowEditActionCreateCalendarEvent
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'CREATE_INBOX_ITEM': {
+          return (
+            <WorkflowEditActionCreateInboxItem
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

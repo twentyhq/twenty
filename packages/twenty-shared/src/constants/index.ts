@@ -44,6 +44,7 @@ export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';
 export { IANA_TIME_ZONES } from './IanaTimeZones';
 export { IMAGE_IDENTIFIER_FIELD_METADATA_TYPES } from './ImageIdentifierFieldMetadataTypes';
+export { INBOX_QUEUE_NAME_MAX_LENGTH } from './InboxQueueNameMaxLength';
 export { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from './LabelIdentifierFieldMetadataTypes';
 export { MAX_CUSTOM_INDEXES_PER_OBJECT } from './MaxCustomIndexesPerObject';
 export { MAX_EMAIL_RECIPIENTS } from './MaxEmailRecipients';

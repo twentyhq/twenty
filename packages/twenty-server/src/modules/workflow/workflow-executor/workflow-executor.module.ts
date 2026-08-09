@@ -9,6 +9,7 @@ import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/fa
 import { AiAgentActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent-action.module';
 import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
 import { CreateCalendarEventActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/create-calendar-event-action.module';
+import { CreateInboxItemActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/create-inbox-item/create-inbox-item-action.module';
 import { DelayActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/delay-action.module';
 import { EmptyActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/empty-action.module';
 import { FilterActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter-action.module';
@@ -42,6 +43,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     HttpRequestActionModule,
     MailSenderActionModule,
     CreateCalendarEventActionModule,
+    CreateInboxItemActionModule,
     MetricsModule,
   ],
   providers: [WorkflowExecutorWorkspaceService, WorkflowActionFactory],

@@ -3,6 +3,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
 import { type WorkflowCreateCalendarEventActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/types/workflow-create-calendar-event-action-settings.type';
+import { type WorkflowCreateInboxItemActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/create-inbox-item/types/workflow-create-inbox-item-action-settings.type';
 import { type WorkflowDelayActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-settings.type';
 import { type WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
 import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
@@ -57,6 +58,11 @@ export type WorkflowDraftEmailAction = BaseWorkflowAction & {
 export type WorkflowCreateCalendarEventAction = BaseWorkflowAction & {
   type: WorkflowActionType.CREATE_CALENDAR_EVENT;
   settings: WorkflowCreateCalendarEventActionSettings;
+};
+
+export type WorkflowCreateInboxItemAction = BaseWorkflowAction & {
+  type: WorkflowActionType.CREATE_INBOX_ITEM;
+  settings: WorkflowCreateInboxItemActionSettings;
 };
 
 export type WorkflowCreateRecordAction = BaseWorkflowAction & {
@@ -134,6 +140,7 @@ export type WorkflowAction =
   | WorkflowSendEmailAction
   | WorkflowDraftEmailAction
   | WorkflowCreateCalendarEventAction
+  | WorkflowCreateInboxItemAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction

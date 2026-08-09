@@ -26,6 +26,7 @@ import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-int
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { CreateInboxItemTool } from 'src/engine/core-modules/tool/tools/inbox-tool/create-inbox-item-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
@@ -46,6 +47,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly sendEmailTool: SendEmailTool,
     private readonly draftEmailTool: DraftEmailTool,
     private readonly createCalendarEventTool: CreateCalendarEventTool,
+    private readonly createInboxItemTool: CreateInboxItemTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
@@ -61,6 +63,7 @@ export class ActionToolProvider implements ToolProvider {
       ['send_email', this.sendEmailTool],
       ['draft_email', this.draftEmailTool],
       ['create_calendar_event', this.createCalendarEventTool],
+      ['create_inbox_item', this.createInboxItemTool],
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],

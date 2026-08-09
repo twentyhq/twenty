@@ -61,6 +61,28 @@ export class InboxRouterService {
     );
   }
 
+  // For callers whose whole purpose was the item: a workflow step that creates
+  // one has nothing else to complete, so it wants the failure, not a quiet null.
+  async routeOrThrow(args: RouteInboxItemArgs): Promise<InboxItemEntity> {
+    if (!(await this.isInboxEnabled(args.workspaceId))) {
+      throw new InboxException(
+        'The inbox is not enabled for this workspace',
+        InboxExceptionCode.INBOX_DISABLED,
+      );
+    }
+
+    const item = await this.routeItem(args);
+
+    if (!isDefined(item)) {
+      throw new InboxException(
+        `Failed to route inbox item of type ${args.typeKey}`,
+        InboxExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return item;
+  }
+
   async routeItem(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
     const inboxItemType = await this.inboxItemTypeService.findByKey({
       workspaceId: args.workspaceId,

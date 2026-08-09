@@ -1,6 +1,4 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
-import { SettingsWorkspaceMemberPickerDropdown } from '@/settings/components/SettingsWorkspaceMemberPickerDropdown';
 import { t } from '@lingui/core/macro';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
@@ -24,7 +22,6 @@ export const ROLE_TARGET_CONFIG = {
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToUsers,
     buttonTitle: () => t`Assign to member`,
-    dropdownComponent: SettingsWorkspaceMemberPickerDropdown,
     // Tooltip configuration for member type
     tooltip: {
       anchorId: 'assign-member',
@@ -43,7 +40,6 @@ export const ROLE_TARGET_CONFIG = {
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToAgents,
     buttonTitle: () => t`Assign to agent`,
-    dropdownComponent: SettingsRoleAssignmentEntityPickerDropdown,
     // No tooltip for agent type
     tooltip: null,
   },
@@ -59,7 +55,6 @@ export const ROLE_TARGET_CONFIG = {
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToApiKeys,
     buttonTitle: () => t`Assign to API key`,
-    dropdownComponent: SettingsRoleAssignmentEntityPickerDropdown,
     // No tooltip for apiKey type
     tooltip: null,
   },

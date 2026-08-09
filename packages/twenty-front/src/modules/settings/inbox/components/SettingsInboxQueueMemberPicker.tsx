@@ -104,6 +104,7 @@ export const SettingsInboxQueueMemberPicker = ({
                 <LightIconButton
                   Icon={IconX}
                   accent="tertiary"
+                  aria-label={t`Remove ${fullName}`}
                   onClick={() =>
                     onChange(
                       selectedWorkspaceMemberIds.filter(

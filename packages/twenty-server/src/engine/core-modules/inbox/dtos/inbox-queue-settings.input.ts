@@ -7,17 +7,16 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { INBOX_QUEUE_NAME_MAX_LENGTH } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-
-const QUEUE_NAME_MAX_LENGTH = 100;
 
 @InputType()
 export class CreateInboxQueueInput {
   @Field(() => String)
   @IsString()
   @MinLength(1)
-  @MaxLength(QUEUE_NAME_MAX_LENGTH)
+  @MaxLength(INBOX_QUEUE_NAME_MAX_LENGTH)
   name: string;
 
   @Field(() => String, { nullable: true })
@@ -40,7 +39,7 @@ export class UpdateInboxQueueInput {
   @IsOptional()
   @IsString()
   @MinLength(1)
-  @MaxLength(QUEUE_NAME_MAX_LENGTH)
+  @MaxLength(INBOX_QUEUE_NAME_MAX_LENGTH)
   name?: string;
 
   @Field(() => String, { nullable: true })

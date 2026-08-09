@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import {
   getSubdomainSlugFromDisplayName,
   isDefined,
 } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In, Repository } from 'typeorm';
+import {
+  type DataSource,
+  type FindOptionsWhere,
+  In,
+  Repository,
+} from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxQueueMemberEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-member.entity';
@@ -37,6 +42,8 @@ export class InboxQueueService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   // The queues a person watches. This is also the set of queues whose items
@@ -268,6 +275,8 @@ export class InboxQueueService {
     queueId: string;
     memberWorkspaceMemberIds: string[];
   }): Promise<void> {
+    const queue = await this.findQueueOrThrow({ workspaceId, queueId });
+
     // Membership is read access, so the translation doubles as the check: an id
     // that is not a member of this workspace resolves to nothing.
     const userWorkspaceIds = await this.toUserWorkspaceIds({
@@ -275,19 +284,35 @@ export class InboxQueueService {
       workspaceMemberIds: memberWorkspaceMemberIds,
     });
 
-    await this.inboxQueueMemberRepository.delete(workspaceId, { queueId });
+    // Replacing the list is a delete plus an insert, which two admins saving at
+    // once would interleave into the union of both lists. The queue row is
+    // locked first so the second save waits and genuinely replaces the first.
+    await this.coreDataSource.transaction(async (manager) => {
+      await manager
+        .createQueryBuilder()
+        .select('queue.id')
+        .from(InboxQueueEntity, 'queue')
+        .where('queue.id = :queueId', { queueId: queue.id })
+        .setLock('pessimistic_write')
+        .getOne();
 
-    if (userWorkspaceIds.length === 0) {
-      return;
-    }
+      const queueMemberRepository =
+        this.inboxQueueMemberRepository.withManager(manager);
 
-    await this.inboxQueueMemberRepository.saveMany(
-      workspaceId,
-      userWorkspaceIds.map((userWorkspaceId) => ({
-        queueId,
-        userWorkspaceId,
-      })),
-    );
+      await queueMemberRepository.delete(workspaceId, { queueId: queue.id });
+
+      if (userWorkspaceIds.length === 0) {
+        return;
+      }
+
+      await queueMemberRepository.saveMany(
+        workspaceId,
+        userWorkspaceIds.map((userWorkspaceId) => ({
+          queueId: queue.id,
+          userWorkspaceId,
+        })),
+      );
+    });
   }
 
   // The inbox stores membership against the core identity, but everything that
@@ -397,7 +422,7 @@ export class InboxQueueService {
     );
   }
 
-  private async findQueueOrThrow({
+  async findQueueOrThrow({
     workspaceId,
     queueId,
   }: {

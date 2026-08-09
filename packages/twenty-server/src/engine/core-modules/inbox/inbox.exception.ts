@@ -11,10 +11,12 @@ import {
 export const InboxExceptionCode = appendCommonExceptionCode({
   UNKNOWN_INBOX_ITEM_TYPE: 'UNKNOWN_INBOX_ITEM_TYPE',
   UNKNOWN_INBOX_QUEUE: 'UNKNOWN_INBOX_QUEUE',
+  UNKNOWN_INBOX_RECIPIENT: 'UNKNOWN_INBOX_RECIPIENT',
   INBOX_ITEM_NOT_FOUND: 'INBOX_ITEM_NOT_FOUND',
   INBOX_ITEM_CHANGED: 'INBOX_ITEM_CHANGED',
   INVALID_INBOX_ACTION: 'INVALID_INBOX_ACTION',
   INVALID_INBOX_QUEUE_CHANGE: 'INVALID_INBOX_QUEUE_CHANGE',
+  INBOX_DISABLED: 'INBOX_DISABLED',
 } as const);
 
 const getInboxExceptionUserFriendlyMessage = (
@@ -25,6 +27,8 @@ const getInboxExceptionUserFriendlyMessage = (
       return msg`This kind of inbox item is not declared.`;
     case InboxExceptionCode.UNKNOWN_INBOX_QUEUE:
       return msg`This shared inbox does not exist, or you are not a member.`;
+    case InboxExceptionCode.UNKNOWN_INBOX_RECIPIENT:
+      return msg`This person is not a member of this workspace.`;
     case InboxExceptionCode.INBOX_ITEM_NOT_FOUND:
       return msg`This inbox item no longer exists.`;
     case InboxExceptionCode.INBOX_ITEM_CHANGED:
@@ -33,6 +37,8 @@ const getInboxExceptionUserFriendlyMessage = (
       return msg`This action cannot be run on this item.`;
     case InboxExceptionCode.INVALID_INBOX_QUEUE_CHANGE:
       return msg`This shared inbox cannot be changed that way.`;
+    case InboxExceptionCode.INBOX_DISABLED:
+      return msg`The inbox is not enabled for this workspace.`;
     case InboxExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxQueueMemberEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-member.entity';
@@ -27,11 +27,20 @@ describe('InboxQueueService', () => {
     update: jest.fn(),
     delete: jest.fn(),
   };
-  const inboxQueueMemberRepository = {
+  const inboxQueueMemberRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+    saveMany: jest.Mock;
+    delete: jest.Mock;
+    withManager: jest.Mock;
+  } = {
     find: jest.fn(),
     findOne: jest.fn(),
     saveMany: jest.fn(),
     delete: jest.fn(),
+    // Membership replacement runs in a transaction, which rebinds the
+    // repository to that transaction's manager
+    withManager: jest.fn(() => inboxQueueMemberRepository),
   };
   const inboxItemRepository = { update: jest.fn() };
   const userWorkspaceRepository = { find: jest.fn() };
@@ -39,6 +48,18 @@ describe('InboxQueueService', () => {
   const globalWorkspaceOrmManager = {
     getRepository: jest.fn().mockResolvedValue(workspaceMemberRepository),
     executeInWorkspaceContext: jest.fn((run: () => unknown) => run()),
+  };
+  const queueLockQueryBuilder = {
+    select: jest.fn().mockReturnThis(),
+    from: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    setLock: jest.fn().mockReturnThis(),
+    getOne: jest.fn().mockResolvedValue(null),
+  };
+  const coreDataSource = {
+    transaction: jest.fn((run: (manager: unknown) => unknown) =>
+      run({ createQueryBuilder: () => queueLockQueryBuilder }),
+    ),
   };
 
   beforeEach(async () => {
@@ -85,6 +106,10 @@ describe('InboxQueueService', () => {
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: globalWorkspaceOrmManager,
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: coreDataSource,
         },
       ],
     }).compile();

@@ -105,9 +105,11 @@ export const SettingsWorkspaceCommunications = () => {
     },
   ];
 
+  // Only tabs that have content can be active, or a link to #whatsapp lands on
+  // an empty page instead of falling back to the first real tab.
   const activeTabId = useSettingsActiveTabId(
     COMMUNICATIONS_TABS_INSTANCE_ID,
-    tabs.map(({ id }) => id),
+    tabs.filter(({ disabled }) => disabled !== true).map(({ id }) => id),
   );
 
   if (!isEmailGroupFeatureEnabled && !isInboxFeatureEnabled) {

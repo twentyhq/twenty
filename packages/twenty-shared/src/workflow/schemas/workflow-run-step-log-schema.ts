@@ -108,12 +108,24 @@ const createCalendarEventStepLogDetailsSchema = z.object({
   durationMs: z.number(),
 });
 
+const createInboxItemStepLogDetailsSchema = z.object({
+  type: z.literal('CREATE_INBOX_ITEM'),
+  status: z.enum(['SUCCESS', 'ERROR']),
+  title: z.string().optional(),
+  inboxItemId: z.string().optional(),
+  queueId: z.string().optional(),
+  assigneeUserWorkspaceId: z.string().optional(),
+  error: z.string().optional(),
+  durationMs: z.number(),
+});
+
 const stepLogDetailsSchema = z.discriminatedUnion('type', [
   aiAgentStepLogDetailsSchema,
   codeStepLogDetailsSchema,
   httpRequestStepLogDetailsSchema,
   emailStepLogDetailsSchema,
   createCalendarEventStepLogDetailsSchema,
+  createInboxItemStepLogDetailsSchema,
 ]);
 
 export const workflowRunStepLogSchema = z.object({

@@ -26,6 +26,7 @@ import {
 } from 'twenty-shared/workflow';
 
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
 import {
@@ -200,10 +201,15 @@ export class WorkflowValidationWorkspaceService {
         return step;
       }
 
+      // Only the output schema changes. The copy goes through `object` because
+      // spreading the union directly multiplies every trigger and action
+      // variant by every settings variant, which the compiler cannot represent.
+      const { settings } = step as { settings: BaseWorkflowActionSettings };
+
       return {
-        ...step,
-        settings: { ...step.settings, outputSchema: computedSchema },
-      };
+        ...(step as object),
+        settings: { ...settings, outputSchema: computedSchema },
+      } as TStep;
     } catch {
       // Output schema enrichment is best-effort: if it cannot be computed,
       // validation still runs against the step's existing settings rather

@@ -10,11 +10,13 @@ import {
   STANDARD_INBOX_ITEM_TYPES,
 } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
+import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
 const APPLICATION_ID = 'twenty-standard-application-id';
+const QUEUE_ID = 'inbox-queue-id';
 
 const existingType = {
   id: 'inbox-item-type-id',
@@ -28,10 +30,15 @@ describe('InboxItemTypeService', () => {
   const inboxItemTypeRepository = {
     findOne: jest.fn(),
     upsert: jest.fn(),
+    update: jest.fn(),
   };
 
   const applicationRepository = {
     findOne: jest.fn(),
+  };
+
+  const inboxQueueService = {
+    findQueueOrThrow: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -39,6 +46,7 @@ describe('InboxItemTypeService', () => {
 
     inboxItemTypeRepository.findOne.mockResolvedValue(existingType);
     inboxItemTypeRepository.upsert.mockResolvedValue({ identifiers: [] });
+    inboxQueueService.findQueueOrThrow.mockResolvedValue({ id: QUEUE_ID });
     applicationRepository.findOne.mockResolvedValue({ id: APPLICATION_ID });
 
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +61,10 @@ describe('InboxItemTypeService', () => {
           // stays on the raw repository
           provide: getRepositoryToken(ApplicationEntity),
           useValue: applicationRepository,
+        },
+        {
+          provide: InboxQueueService,
+          useValue: inboxQueueService,
         },
       ],
     }).compile();
@@ -168,6 +180,60 @@ describe('InboxItemTypeService', () => {
 
       // Assert
       expect(inboxItemTypeRepository.upsert).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('setDefaultQueue', () => {
+    // The queue lookup is workspace-scoped, so a queue from another workspace
+    // cannot become an address this workspace can no longer see into
+    it('should reject a queue that does not belong to this workspace', async () => {
+      // Prepare
+      inboxQueueService.findQueueOrThrow.mockRejectedValue(
+        new Error('Inbox queue not found'),
+      );
+
+      // Act
+      const setDefaultQueue = service.setDefaultQueue({
+        workspaceId: WORKSPACE_ID,
+        inboxItemTypeId: existingType.id,
+        defaultQueueId: QUEUE_ID,
+      });
+
+      // Assert
+      await expect(setDefaultQueue).rejects.toThrow();
+      expect(inboxItemTypeRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should leave a type that no longer exists untouched', async () => {
+      // Prepare
+      inboxItemTypeRepository.findOne.mockResolvedValue(null);
+
+      // Act
+      const setDefaultQueue = service.setDefaultQueue({
+        workspaceId: WORKSPACE_ID,
+        inboxItemTypeId: existingType.id,
+        defaultQueueId: null,
+      });
+
+      // Assert
+      await expect(setDefaultQueue).rejects.toThrow();
+      expect(inboxItemTypeRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should write the queue once both are verified', async () => {
+      // Act
+      await service.setDefaultQueue({
+        workspaceId: WORKSPACE_ID,
+        inboxItemTypeId: existingType.id,
+        defaultQueueId: QUEUE_ID,
+      });
+
+      // Assert
+      expect(inboxItemTypeRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: existingType.id },
+        { defaultQueueId: QUEUE_ID },
+      );
     });
   });
 });

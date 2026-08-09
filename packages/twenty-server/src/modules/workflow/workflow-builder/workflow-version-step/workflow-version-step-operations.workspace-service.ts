@@ -362,6 +362,23 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.CREATE_INBOX_ITEM: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Create Inbox Item',
+            type: WorkflowActionType.CREATE_INBOX_ITEM,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                title: '',
+                preview: '',
+                typeKey: 'approval',
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.DRAFT_EMAIL: {
         return {
           builtStep: {

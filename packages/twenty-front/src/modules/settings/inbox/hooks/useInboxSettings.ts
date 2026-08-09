@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   CREATE_INBOX_QUEUE,
   DELETE_INBOX_QUEUE,
@@ -15,6 +16,7 @@ import {
   type InboxItemTypeSettings,
   type InboxQueueSettings,
 } from '~/generated/graphql';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 const INBOX_SETTINGS_REFETCH_QUERIES = [
   'GetInboxQueueSettings',
@@ -26,6 +28,12 @@ const INBOX_SETTINGS_REFETCH_QUERIES = [
 export const useInboxSettings = () => {
   const apolloCoreClient = useApolloCoreClient();
 
+  // The queries are flag-guarded server-side, so asking with the flag off is a
+  // GraphQL error rather than an empty list.
+  const isInboxFeatureEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INBOX_ENABLED,
+  );
+
   const mutationOptions = {
     client: apolloCoreClient,
     refetchQueries: INBOX_SETTINGS_REFETCH_QUERIES,
@@ -33,11 +41,17 @@ export const useInboxSettings = () => {
 
   const { data: queuesData, loading: queuesLoading } = useQuery<{
     inboxQueueSettings: InboxQueueSettings[];
-  }>(GET_INBOX_QUEUE_SETTINGS, { client: apolloCoreClient });
+  }>(GET_INBOX_QUEUE_SETTINGS, {
+    client: apolloCoreClient,
+    skip: !isInboxFeatureEnabled,
+  });
 
   const { data: typesData, loading: typesLoading } = useQuery<{
     inboxItemTypeSettings: InboxItemTypeSettings[];
-  }>(GET_INBOX_ITEM_TYPE_SETTINGS, { client: apolloCoreClient });
+  }>(GET_INBOX_ITEM_TYPE_SETTINGS, {
+    client: apolloCoreClient,
+    skip: !isInboxFeatureEnabled,
+  });
 
   const [createInboxQueueMutation] = useMutation(
     CREATE_INBOX_QUEUE,
