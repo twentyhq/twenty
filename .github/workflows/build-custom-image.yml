@@ -129,8 +129,15 @@ jobs:
           target: twenty
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=${{ needs.prepare.outputs.image }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha,scope=${{ steps.platform.outputs.pair }}
-          cache-to: type=gha,mode=max,scope=${{ steps.platform.outputs.pair }}
+          # Layer cache lives in GHCR, not GitHub's Actions cache. The Actions
+          # cache has a hard 10 GB per-repo limit shared with every other
+          # workflow; two platforms of mode=max buildkit blobs kept it pinned at
+          # ~9.8 GB, so layers were constantly evicted and "cached" builds were
+          # cold more often than not (15 min instead of ~1). A registry cache
+          # has no such limit and persists between runs. image-manifest is
+          # required for GHCR to accept the cache artifact.
+          cache-from: type=registry,ref=${{ needs.prepare.outputs.image }}:buildcache-${{ steps.platform.outputs.pair }}
+          cache-to: type=registry,ref=${{ needs.prepare.outputs.image }}:buildcache-${{ steps.platform.outputs.pair }},mode=max,image-manifest=true,oci-mediatypes=true
 
       - name: Export digest
         env:
