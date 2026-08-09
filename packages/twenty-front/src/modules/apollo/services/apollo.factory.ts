@@ -21,6 +21,7 @@ import { retryWithBackoff } from '~/utils/retryWithBackoff';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isAuthProxyRedirect } from '@/apollo/utils/isAuthProxyRedirect';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 import { i18n } from '@lingui/core';
@@ -42,6 +43,9 @@ const logger = loggerLink(() => 'Twenty');
 // UNAUTHENTICATED errors from /graphql and /metadata clients
 // deduplicate into a single renewal request.
 let renewalPromise: Promise<boolean> | null = null;
+
+// Shared so a burst of concurrent failures costs a single probe.
+let authProxyProbePromise: Promise<boolean> | null = null;
 
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
@@ -74,6 +78,7 @@ export interface Options {
   onUnauthenticatedError?: () => void;
   onAppVersionMismatch?: (message: string) => void;
   onPayloadTooLarge?: (message: string) => void;
+  onAuthProxyRedirect?: () => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
@@ -100,6 +105,7 @@ export class ApolloFactory implements ApolloManager {
       onUnauthenticatedError,
       onAppVersionMismatch,
       onPayloadTooLarge,
+      onAuthProxyRedirect,
       currentWorkspaceMember,
       currentWorkspace,
       extraLinks,
@@ -292,6 +298,32 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
+      const handleOpaqueNetworkError = (error: Error) => {
+        if (isDebugMode === true) {
+          logDebug(`[Network error]: ${error}`);
+        }
+
+        onNetworkError?.(error);
+
+        if (!isDefined(onAuthProxyRedirect)) {
+          return;
+        }
+
+        if (!authProxyProbePromise) {
+          authProxyProbePromise = isAuthProxyRedirect(uri).finally(() => {
+            authProxyProbePromise = null;
+          });
+        }
+
+        authProxyProbePromise
+          .then((redirectedToAuthProxy) => {
+            if (redirectedToAuthProxy) {
+              onAuthProxyRedirect();
+            }
+          })
+          .catch(() => {});
+      };
+
       const errorLink = new ErrorLink(({ error, operation, forward }) => {
         if (CombinedGraphQLErrors.is(error)) {
           onErrorCb?.(error.errors);
@@ -358,10 +390,7 @@ export class ApolloFactory implements ApolloManager {
           }
           onNetworkError?.(error);
         } else if (isDefined(error)) {
-          if (isDebugMode === true) {
-            logDebug(`[Network error]: ${error}`);
-          }
-          onNetworkError?.(error as Error);
+          handleOpaqueNetworkError(error as Error);
         }
       });
 

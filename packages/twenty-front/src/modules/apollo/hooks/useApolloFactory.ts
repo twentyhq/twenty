@@ -104,6 +104,11 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
           },
         });
       },
+      onAuthProxyRedirect: () => {
+        // A reload is a document navigation, so it follows the proxy redirect the
+        // way fetch() cannot and lands the user on the identity provider.
+        window.location.reload();
+      },
       extraLinks: [],
       isDebugMode: process.env.IS_DEBUG_MODE === 'true',
       // Override options
