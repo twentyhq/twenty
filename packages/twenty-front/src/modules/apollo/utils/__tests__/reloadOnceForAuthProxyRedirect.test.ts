@@ -1,4 +1,7 @@
-import { reloadOnceForAuthProxyRedirect } from '@/apollo/utils/reloadOnceForAuthProxyRedirect';
+import {
+  clearAuthProxyReloadGuard,
+  reloadOnceForAuthProxyRedirect,
+} from '@/apollo/utils/reloadOnceForAuthProxyRedirect';
 import { reloadWindow } from '~/utils/reloadWindow';
 
 jest.mock('~/utils/reloadWindow', () => ({
@@ -27,6 +30,14 @@ describe('reloadOnceForAuthProxyRedirect', () => {
     reloadOnceForAuthProxyRedirect();
 
     expect(reloadWindow).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reload again after a request succeeds and lifts the guard', () => {
+    reloadOnceForAuthProxyRedirect();
+    clearAuthProxyReloadGuard();
+    reloadOnceForAuthProxyRedirect();
+
+    expect(reloadWindow).toHaveBeenCalledTimes(2);
   });
 
   it('should not reload when session storage is unavailable and the guard cannot be recorded', () => {

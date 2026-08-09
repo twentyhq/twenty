@@ -7,7 +7,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { ErrorLink } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
-import { from, switchMap, throwError } from 'rxjs';
+import { from, switchMap, tap, throwError } from 'rxjs';
 import { RestLink } from 'apollo-link-rest';
 import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
 
@@ -23,6 +23,7 @@ import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { isAuthProxyRedirect } from '@/apollo/utils/isAuthProxyRedirect';
 import { loggerLink } from '@/apollo/utils/loggerLink';
+import { clearAuthProxyReloadGuard } from '@/apollo/utils/reloadOnceForAuthProxyRedirect';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
@@ -394,10 +395,17 @@ export class ApolloFactory implements ApolloManager {
         }
       });
 
+      // Any response at all means the proxy let this request through, so a later
+      // expiry in the same tab is free to reload again.
+      const authProxyRecoveryLink = new ApolloLink((operation, forward) =>
+        forward(operation).pipe(tap(() => clearAuthProxyReloadGuard())),
+      );
+
       // Type assertion needed because third-party link packages (apollo-link-rest,
       // apollo-upload-client) reference their own @apollo/client ApolloLink type
       const links = [
         errorLink,
+        authProxyRecoveryLink,
         authLink,
         ...(extraLinks || []),
         ...(isDebugMode ? [logger] : []),
