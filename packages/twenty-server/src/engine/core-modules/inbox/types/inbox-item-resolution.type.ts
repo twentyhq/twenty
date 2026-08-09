@@ -10,8 +10,6 @@ export type InboxItemFieldSchema = {
 export type InboxItemOutcome = {
   key: string;
   label: string;
-  // What the resolver has to supply alongside the outcome
-  resultSchema?: InboxItemFieldSchema[];
 };
 
 // The set of ways an item of this type can end. An approval declares

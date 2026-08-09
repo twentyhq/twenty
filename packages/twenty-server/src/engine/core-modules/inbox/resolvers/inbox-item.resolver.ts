@@ -148,6 +148,7 @@ export class InboxItemResolver {
           actorUserWorkspaceId: userWorkspaceId,
           readScope: { kind: 'queue', queueId: queue.id },
           now,
+          shouldCountSnoozed: false,
         });
 
         return {

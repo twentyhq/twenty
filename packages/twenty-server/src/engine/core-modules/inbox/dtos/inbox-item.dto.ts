@@ -35,11 +35,6 @@ export class InboxItemActionDTO {
   @Field(() => Boolean)
   isPrimary: boolean;
 
-  // Set when the client resolves the action itself rather than transitioning
-  // the item: OPEN_THREAD or OPEN_SUBJECT_RECORD.
-  @Field(() => String, { nullable: true })
-  navigationKind: string | null;
-
   // Set when the action transitions the item. The client never interprets it;
   // it sends the action key back and the server applies the transition.
   @Field(() => String, { nullable: true })

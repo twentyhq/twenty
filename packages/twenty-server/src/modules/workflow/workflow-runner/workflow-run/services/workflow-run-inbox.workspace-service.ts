@@ -1,44 +1,59 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
-import { reportToInbox } from 'src/engine/core-modules/inbox/utils/report-to-inbox.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // The inbox addresses people by their core identity, while workflow runs record
 // the workspace member who started them, so this producer translates between
 // the two before routing.
 @Injectable()
-export class WorkflowRunInboxService {
-  private readonly logger = new Logger(WorkflowRunInboxService.name);
+export class WorkflowRunInboxWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunInboxWorkspaceService.name);
 
   constructor(
     private readonly inboxRouterService: InboxRouterService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
+  // The lookups below run before the router does, so the flag is checked here
+  // too rather than letting a disabled workspace pay for them on every failure.
   async onWorkflowRunFailed(args: {
     workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id' | 'name' | 'createdBy'>;
     workspaceId: string;
     error?: string;
   }): Promise<void> {
-    await reportToInbox(
-      this.logger,
-      `failed workflow run ${args.workflowRun.id} in workspace ${args.workspaceId}`,
-      () => this.routeFailedRun(args),
-    );
+    try {
+      const isInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_INBOX_ENABLED,
+        args.workspaceId,
+      );
+
+      if (!isInboxEnabled) {
+        return;
+      }
+
+      await this.routeFailedRun(args);
+    } catch (error) {
+      this.logger.warn(
+        `Could not update the inbox for failed workflow run ${
+          args.workflowRun.id
+        } in workspace ${args.workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   private async routeFailedRun({
@@ -56,10 +71,10 @@ export class WorkflowRunInboxService {
       return;
     }
 
-    const userWorkspaceId = await this.resolveUserWorkspaceId({
-      workspaceId,
-      workspaceMemberId,
-    });
+    const [userWorkspaceId, workflowRunObjectMetadataId] = await Promise.all([
+      this.resolveUserWorkspaceId({ workspaceId, workspaceMemberId }),
+      this.resolveWorkflowRunObjectMetadataId(workspaceId),
+    ]);
 
     if (!isDefined(userWorkspaceId)) {
       return;
@@ -67,9 +82,6 @@ export class WorkflowRunInboxService {
 
     // Run names follow the "#<count> - <workflow name>" convention
     const workflowName = workflowRun.name?.match(/^#\d+ - (.+)$/)?.[1];
-
-    const workflowRunObjectMetadataId =
-      await this.resolveWorkflowRunObjectMetadataId(workspaceId);
 
     await this.inboxRouterService.route({
       workspaceId,
@@ -108,24 +120,20 @@ export class WorkflowRunInboxService {
     workspaceId: string;
     workspaceMemberId: string;
   }): Promise<string | null> {
-    const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: { id: workspaceMemberId },
+    const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
+      workspaceMemberId,
+      workspaceId,
     });
 
     if (!isDefined(workspaceMember?.userId)) {
       return null;
     }
 
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId: workspaceMember.userId, workspaceId },
-    });
+    const userWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUser({
+        userId: workspaceMember.userId,
+        workspaceId,
+      });
 
     return userWorkspace?.id ?? null;
   }

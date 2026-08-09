@@ -35,7 +35,6 @@ const toActionDto = (action: InboxItemAction): InboxItemActionDTO => ({
   label: action.label,
   icon: action.icon ?? null,
   isPrimary: action.isPrimary ?? false,
-  navigationKind: action.navigation?.kind ?? null,
   transitionKind: action.transition?.kind ?? null,
   inputSchema: (action.inputSchema ?? []).map(toFieldDto),
 });

@@ -1,2 +1,4 @@
+import { AppPath } from 'twenty-shared/types';
+
 export const getInboxQueuePath = (inboxQueueSlug: string): string =>
-  `/inbox/q/${inboxQueueSlug}`;
+  `${AppPath.InboxPage}/q/${inboxQueueSlug}`;

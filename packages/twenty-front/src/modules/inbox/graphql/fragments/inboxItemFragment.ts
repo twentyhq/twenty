@@ -9,14 +9,10 @@ export const INBOX_ITEM_FRAGMENT = gql`
     version
     title
     preview
-    payload
     outcome
-    result
     lastEventAt
     queueId
-    assigneeUserWorkspaceId
     isAssignedToMe
-    assigneeUserId
     threadId
     subjectObjectMetadataId
     subjectRecordId
@@ -30,7 +26,6 @@ export const INBOX_ITEM_FRAGMENT = gql`
         label
         icon
         isPrimary
-        navigationKind
         transitionKind
         inputSchema {
           key

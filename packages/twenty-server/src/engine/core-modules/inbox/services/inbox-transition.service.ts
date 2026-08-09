@@ -28,6 +28,9 @@ export type TransitionInboxItemArgs = {
   // Optimistic concurrency. Omitted means "apply regardless", which is what a
   // producer wants; a UI that read the item should always pass what it read.
   expectedVersion?: number;
+  // Passed by a caller that already loaded and authorised the item, so the
+  // same row is not read twice for one mutation.
+  loadedInboxItem?: InboxItemEntity;
 };
 
 // The assignee's side of the item. Producers write through the router; nothing
@@ -47,6 +50,7 @@ export class InboxTransitionService {
     memberQueueIds,
     transition,
     expectedVersion,
+    loadedInboxItem,
   }: TransitionInboxItemArgs): Promise<InboxItemEntity> {
     const visibleItemArgs = {
       inboxItemId,
@@ -55,7 +59,8 @@ export class InboxTransitionService {
       memberQueueIds,
     };
     const inboxItem =
-      await this.inboxItemService.findVisibleItemOrThrow(visibleItemArgs);
+      loadedInboxItem ??
+      (await this.inboxItemService.findVisibleItemOrThrow(visibleItemArgs));
 
     // The version guard lives in the WHERE clause, so losing the race means
     // updating nothing rather than overwriting the winner

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowRunInboxService } from 'src/modules/workflow/workflow-runner/workflow-run/services/workflow-run-inbox.service';
+import { WorkflowRunInboxWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/services/workflow-run-inbox.workspace-service';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
@@ -33,7 +33,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
-    private readonly workflowRunInboxService: WorkflowRunInboxService,
+    private readonly workflowRunInboxWorkspaceService: WorkflowRunInboxWorkspaceService,
   ) {}
 
   async createWorkflowRun({
@@ -241,7 +241,7 @@ export class WorkflowRunWorkspaceService {
     }
 
     if (status === WorkflowRunStatus.FAILED) {
-      await this.workflowRunInboxService.onWorkflowRunFailed({
+      await this.workflowRunInboxWorkspaceService.onWorkflowRunFailed({
         workflowRun: workflowRunToUpdate,
         workspaceId,
         error,

@@ -1,4 +1,6 @@
+import { AppPath } from 'twenty-shared/types';
+
 import { type InboxSection } from '@/inbox/constants/InboxSections';
 
 export const getInboxSectionPath = (inboxSection: InboxSection): string =>
-  `/inbox/${inboxSection.slug}`;
+  `${AppPath.InboxPage}/${inboxSection.slug}`;

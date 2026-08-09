@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -9,12 +8,11 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconLayoutSidebarRightExpand,
-  useIcons,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { InboxItemActions } from '@/inbox/components/InboxItemActions';
+import { InboxItemContext } from '@/inbox/components/InboxItemContext';
 import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEffect';
 import { InboxItemSubject } from '@/inbox/components/InboxItemSubject';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
@@ -39,35 +37,6 @@ const StyledContext = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
-`;
-
-const StyledTypeLabel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledTitle = styled.h1`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0;
-`;
-
-const StyledPreview = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-`;
-
-const StyledOutcome = styled.div`
-  align-self: flex-start;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.xs};
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPagination = styled.div`
@@ -100,7 +69,6 @@ export const InboxItemPage = () => {
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
   const { inboxItem, loading, error } = useInboxItem(inboxItemId);
   const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
-  const { getIcon } = useIcons();
 
   const { hasPrevious, hasNext, position, total, goToPrevious, goToNext } =
     useInboxItemPagination({ inboxSection, inboxItemId });
@@ -131,11 +99,6 @@ export const InboxItemPage = () => {
       </PageCardLayout>
     );
   }
-
-  const InboxItemIcon = getIcon(inboxItem.inboxItemType.icon);
-  const outcomeLabel = inboxItem.inboxItemType.outcomes.find(
-    (outcome) => outcome.key === inboxItem.outcome,
-  )?.label;
 
   return (
     <PageCardLayout
@@ -187,18 +150,7 @@ export const InboxItemPage = () => {
           isUnread={isUnread}
         />
         <StyledContext>
-          <StyledTypeLabel>
-            <InboxItemIcon size={theme.icon.size.sm} color="currentColor" />
-            {inboxItem.inboxItemType.label}
-          </StyledTypeLabel>
-          <StyledTitle>{inboxItem.title}</StyledTitle>
-          {isNonEmptyString(inboxItem.preview) && (
-            <StyledPreview>{inboxItem.preview}</StyledPreview>
-          )}
-          {isDefined(inboxItem.outcome) && (
-            <StyledOutcome>{outcomeLabel ?? inboxItem.outcome}</StyledOutcome>
-          )}
-          <InboxItemActions inboxItem={inboxItem} />
+          <InboxItemContext inboxItem={inboxItem} size="page" />
         </StyledContext>
         <InboxItemSubject inboxItem={inboxItem} />
       </StyledBody>

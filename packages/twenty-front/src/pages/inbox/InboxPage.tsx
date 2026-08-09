@@ -59,8 +59,6 @@ export const InboxPage = () => {
   const {
     isInboxEnabled,
     inboxItems,
-    needsActionItems,
-    otherItems,
     isInitialLoading,
     error,
     hasMoreItems,
@@ -98,8 +96,6 @@ export const InboxPage = () => {
           <InboxList
             loading={isInitialLoading}
             inboxItems={inboxItems}
-            needsActionItems={needsActionItems}
-            otherItems={otherItems}
             selectedInboxItemId={selectedInboxItemId}
             hasMoreItems={hasMoreItems}
             shouldSplitByPriority={shouldSplitByPriority}
@@ -108,8 +104,6 @@ export const InboxPage = () => {
                 inboxItem,
                 getRenderedInboxItemOrder({
                   inboxItems,
-                  needsActionItems,
-                  otherItems,
                   shouldSplitByPriority,
                 }),
               )

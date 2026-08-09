@@ -1,11 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxListRow } from '@/inbox/components/InboxListRow';
 import { InboxListSection } from '@/inbox/components/InboxListSection';
 import { InboxListSkeletonLoader } from '@/inbox/components/InboxListSkeletonLoader';
+import { partitionInboxItemsByPriority } from '@/inbox/utils/partitionInboxItemsByPriority';
 import { type InboxItem } from '~/generated/graphql';
+
+const StyledLoadMore = styled.div`
+  align-self: flex-start;
+  padding: ${themeCssVariables.spacing[2]};
+`;
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -15,21 +22,6 @@ const StyledContainer = styled.div`
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[2]};
   padding-left: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledLoadMoreButton = styled.button`
-  align-self: flex-start;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]};
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledEmptyState = styled.div`
@@ -45,8 +37,6 @@ const StyledEmptyState = styled.div`
 type InboxListProps = {
   loading: boolean;
   inboxItems: InboxItem[];
-  needsActionItems: InboxItem[];
-  otherItems: InboxItem[];
   selectedInboxItemId: string | null;
   hasMoreItems: boolean;
   // Splitting by priority only earns its keep where work is still pending
@@ -59,8 +49,6 @@ type InboxListProps = {
 export const InboxList = ({
   loading,
   inboxItems,
-  needsActionItems,
-  otherItems,
   selectedInboxItemId,
   hasMoreItems,
   shouldSplitByPriority,
@@ -70,6 +58,8 @@ export const InboxList = ({
 }: InboxListProps) => {
   const { t } = useLingui();
 
+  const { needsActionItems, otherItems } =
+    partitionInboxItemsByPriority(inboxItems);
   const hasNeedsActionSection =
     shouldSplitByPriority && needsActionItems.length > 0;
   // Concatenating the priority buckets would bury a recent low priority item
@@ -118,9 +108,13 @@ export const InboxList = ({
         renderRows(flatItems)
       )}
       {hasMoreItems && (
-        <StyledLoadMoreButton type="button" onClick={onLoadMoreItems}>
-          {t`Load older`}
-        </StyledLoadMoreButton>
+        <StyledLoadMore>
+          <LightButton
+            accent="tertiary"
+            title={t`Load older`}
+            onClick={onLoadMoreItems}
+          />
+        </StyledLoadMore>
       )}
     </StyledContainer>
   );

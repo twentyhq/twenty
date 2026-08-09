@@ -4,8 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkflowRunInboxService } from 'src/modules/workflow/workflow-runner/workflow-run/services/workflow-run-inbox.service';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { WorkflowRunInboxWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/services/workflow-run-inbox.workspace-service';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -24,12 +24,13 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     WorkspaceIteratorModule,
     FeatureFlagModule,
     InboxModule,
-    TypeOrmModule.forFeature([UserWorkspaceEntity, ObjectMetadataEntity]),
+    UserWorkspaceModule,
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
   ],
   providers: [
     WorkflowRunWorkspaceService,
     WorkflowRunStepLogWorkspaceService,
-    WorkflowRunInboxService,
+    WorkflowRunInboxWorkspaceService,
     DeleteWorkflowRunsCommand,
   ],
   exports: [

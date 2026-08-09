@@ -27,7 +27,6 @@ export class CreateInboxCoreTablesFastInstanceCommand
         "defaultPriority" "core"."inboxItemType_defaultpriority_enum" NOT NULL DEFAULT 'UPDATE',
         "actions" jsonb NOT NULL DEFAULT '[]',
         "resolution" jsonb,
-        "detailFrontComponentId" uuid,
         "deletedAt" TIMESTAMP WITH TIME ZONE,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

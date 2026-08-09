@@ -6,13 +6,8 @@ import { INBOX_ITEMS_PAGE_SIZE } from '@/inbox/constants/InboxItemsPageSize';
 import { INBOX_ITEMS_POLL_INTERVAL } from '@/inbox/constants/InboxItemsPollInterval';
 import { GET_MY_INBOX_ITEMS } from '@/inbox/graphql/queries/getMyInboxItems';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
-import { sortInboxItemsByLastEventAtDesc } from '@/inbox/utils/sortInboxItemsByLastEventAtDesc';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import {
-  type InboxItem,
-  InboxItemPriority,
-  type InboxItemScope,
-} from '~/generated/graphql';
+import { type InboxItem, type InboxItemScope } from '~/generated/graphql';
 
 // Older items are reached by growing the page rather than by an offset cursor,
 // so the polling that keeps this list live cannot fight the pagination. One
@@ -32,9 +27,9 @@ export const useInboxItems = (scope?: InboxItemScope, queueSlug?: string) => {
     skip: !isInboxEnabled,
   });
 
-  const fetchedItems = sortInboxItemsByLastEventAtDesc(
-    data?.myInboxItems ?? [],
-  );
+  // Already ordered by lastEventAt desc by the server, which is also the order
+  // the extra-item check assumes
+  const fetchedItems = data?.myInboxItems ?? [];
   const hasMoreItems = fetchedItems.length > limit;
   const inboxItems = fetchedItems.slice(0, limit);
 
@@ -44,12 +39,6 @@ export const useInboxItems = (scope?: InboxItemScope, queueSlug?: string) => {
 
   return {
     inboxItems,
-    needsActionItems: inboxItems.filter(
-      (inboxItem) => inboxItem.priority === InboxItemPriority.NEEDS_ACTION,
-    ),
-    otherItems: inboxItems.filter(
-      (inboxItem) => inboxItem.priority !== InboxItemPriority.NEEDS_ACTION,
-    ),
     isInboxEnabled,
     hasMoreItems,
     loadMoreItems,

@@ -90,10 +90,6 @@ export class InboxItemTypeEntity {
   @Column({ nullable: true, type: 'jsonb' })
   resolution: JsonbProperty<InboxItemResolution> | null;
 
-  // Optional app front component rendered in place of the generic detail card
-  @Column({ nullable: true, type: 'uuid' })
-  detailFrontComponentId: string | null;
-
   @Column({ type: 'timestamptz', nullable: true })
   deletedAt: Date | null;
 

@@ -72,11 +72,15 @@ export class InboxItemService {
     actorUserWorkspaceId,
     readScope,
     now,
+    shouldCountSnoozed = true,
   }: {
     workspaceId: string;
     actorUserWorkspaceId: string;
     readScope: InboxReadScope;
     now: Date;
+    // A queue badge shows unread and needsAction only, and the snoozed count is
+    // the most expensive of the three, so it is not computed unless asked for.
+    shouldCountSnoozed?: boolean;
   }): Promise<{ unread: number; needsAction: number; snoozed: number }> {
     const readScopeCriteria = this.buildReadScopeCriteria({
       readScope,
@@ -87,19 +91,23 @@ export class InboxItemService {
       ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, now),
     };
 
-    const [unread, needsAction, snoozed] = await Promise.all([
+    const [unread, needsAction, snoozed = 0] = await Promise.all([
       this.inboxItemRepository.count(workspaceId, {
         where: { ...visibleCriteria, ...buildInboxItemUnreadCriteria() },
       }),
       this.inboxItemRepository.count(workspaceId, {
         where: { ...visibleCriteria, priority: InboxItemPriority.NEEDS_ACTION },
       }),
-      this.inboxItemRepository.count(workspaceId, {
-        where: {
-          ...readScopeCriteria,
-          ...buildInboxItemScopeCriteria(InboxItemScope.SNOOZED, now),
-        },
-      }),
+      ...(shouldCountSnoozed
+        ? [
+            this.inboxItemRepository.count(workspaceId, {
+              where: {
+                ...readScopeCriteria,
+                ...buildInboxItemScopeCriteria(InboxItemScope.SNOOZED, now),
+              },
+            }),
+          ]
+        : []),
     ]);
 
     return { unread, needsAction, snoozed };

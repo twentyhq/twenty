@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { AppPath } from 'twenty-shared/types';
 import { useLocation } from 'react-router-dom';
 import { useIcons } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -9,7 +10,6 @@ import { INBOX_SUB_SECTIONS } from '@/inbox/constants/InboxSubSections';
 import { useInboxCounts } from '@/inbox/hooks/useInboxCounts';
 import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
-import { INBOX_ROOT_PATH } from '@/inbox/constants/InboxRootPath';
 import { getInboxQueuePath } from '@/inbox/utils/getInboxQueuePath';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { isInboxSectionActive } from '@/inbox/utils/isInboxSectionActive';
@@ -47,7 +47,7 @@ export const NavigationDrawerInboxSection = () => {
   // stay out of the way until you are
   const isInboxSurfaceActive = isInboxSectionActive({
     pathname: location.pathname,
-    inboxSectionPath: INBOX_ROOT_PATH,
+    inboxSectionPath: AppPath.InboxPage,
   });
   const selectedSubSectionIndex = INBOX_SUB_SECTIONS.findIndex(
     (inboxSubSection) =>

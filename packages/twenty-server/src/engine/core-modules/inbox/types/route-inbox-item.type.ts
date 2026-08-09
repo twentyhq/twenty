@@ -1,9 +1,13 @@
 import { type InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
 
-export type InboxSubject =
-  | { kind: 'thread'; threadId: string; ownerUserWorkspaceId: string }
-  | { kind: 'record'; objectMetadataId: string; recordId: string };
+// What the work is about. `ownerUserWorkspaceId` is the subject saying who it
+// belongs to, which is a property of the subject rather than of its kind: a
+// thread knows its owner, a record may or may not.
+export type InboxSubject = { ownerUserWorkspaceId?: string } & (
+  | { kind: 'thread'; threadId: string }
+  | { kind: 'record'; objectMetadataId: string; recordId: string }
+);
 
 // Who the work is for. A person, or a shared queue that several people watch.
 // A producer names one of these; it never resolves the recipient itself.
@@ -11,7 +15,7 @@ export type InboxPrincipalRef =
   | { kind: 'userWorkspace'; userWorkspaceId: string }
   | { kind: 'queue'; queueId: string };
 
-export type UpsertInboxItemArgs = {
+export type RouteInboxItemArgs = {
   workspaceId: string;
   typeKey: string;
   // Omitted on a fold means "keep what the item already says", so a turn that
@@ -31,7 +35,3 @@ export type UpsertInboxItemArgs = {
   target?: InboxPrincipalRef;
   priority?: InboxItemPriority;
 };
-
-// Kept as the name producers call, since routing is what the service does with
-// these arguments even though the write itself is an upsert.
-export type RouteInboxItemArgs = UpsertInboxItemArgs;

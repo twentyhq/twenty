@@ -17,7 +17,7 @@ import {
   type InboxSubject,
   type RouteInboxItemArgs,
 } from 'src/engine/core-modules/inbox/types/route-inbox-item.type';
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -48,21 +48,17 @@ export class InboxRouterService {
   // Routing never breaks the caller: a producer that cannot notify should still
   // complete its own work.
   async route(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
-    try {
-      if (!(await this.isInboxEnabled(args.workspaceId))) {
-        return null;
-      }
+    return this.bestEffort(
+      `route inbox item of type ${args.typeKey}`,
+      args.workspaceId,
+      async () => {
+        if (!(await this.isInboxEnabled(args.workspaceId))) {
+          return null;
+        }
 
-      return await this.routeItem(args);
-    } catch (error) {
-      this.logger.warn(
-        `Failed to route inbox item of type ${args.typeKey} in workspace ${
-          args.workspaceId
-        }: ${error instanceof Error ? error.message : String(error)}`,
-      );
-
-      return null;
-    }
+        return this.routeItem(args);
+      },
+    );
   }
 
   async routeItem(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
@@ -97,7 +93,7 @@ export class InboxRouterService {
   private async resolveAddress(
     args: RouteInboxItemArgs,
   ): Promise<InboxItemAddress> {
-    if (args.subject?.kind === 'thread') {
+    if (isDefined(args.subject?.ownerUserWorkspaceId)) {
       return {
         kind: 'person',
         assigneeUserWorkspaceId: args.subject.ownerUserWorkspaceId,
@@ -157,13 +153,7 @@ export class InboxRouterService {
         slotKey,
       });
     } catch (error) {
-      const isConcurrentInsert =
-        typeof error === 'object' &&
-        isDefined(error) &&
-        (error as { code?: string }).code ===
-          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
-
-      if (!isConcurrentInsert || !isDefined(slotKey)) {
+      if (!isUniqueViolation(error) || !isDefined(slotKey)) {
         throw error;
       }
 
@@ -287,7 +277,7 @@ export class InboxRouterService {
     threadId: string;
     title: string;
   }): Promise<void> {
-    await this.runBestEffort('renameThreadItem', workspaceId, async () => {
+    await this.bestEffort('rename the thread item', workspaceId, async () => {
       await this.inboxItemRepository.update(
         workspaceId,
         { threadId },
@@ -305,7 +295,7 @@ export class InboxRouterService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    await this.runBestEffort('clearByThreadId', workspaceId, async () => {
+    await this.bestEffort('clear the thread items', workspaceId, async () => {
       await this.inboxItemRepository.update(
         workspaceId,
         { threadId },
@@ -321,20 +311,23 @@ export class InboxRouterService {
   }
 
   // The inbox is never allowed to fail the subsystem that feeds it: a chat or
-  // workflow operation must complete even when its inbox item cannot.
-  private async runBestEffort(
+  // workflow operation must complete even when its inbox item cannot. This is
+  // the one place that decides so, so every producer reads the same way.
+  private async bestEffort<TResult>(
     operation: string,
     workspaceId: string,
-    run: () => Promise<unknown>,
-  ): Promise<void> {
+    run: () => Promise<TResult | null>,
+  ): Promise<TResult | null> {
     try {
-      await run();
+      return await run();
     } catch (error) {
       this.logger.warn(
         `Failed to ${operation} in workspace ${workspaceId}: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
+
+      return null;
     }
   }
 }

@@ -8,6 +8,9 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type InboxItem } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
+// A transition can move an item between scopes, so the list has to be re-read.
+// Marking read cannot: it only flips isUnread on a row the cache already holds,
+// which the mutation's own payload updates.
 const INBOX_REFETCH_QUERIES = ['GetMyInboxItems', 'GetMyInboxCounts'];
 
 type InboxItemTransitionInput = {
@@ -29,7 +32,10 @@ export const useInboxItemActions = () => {
   const [markInboxItemReadMutation] = useMutation<
     { markInboxItemRead: InboxItem },
     { inboxItemId: string }
-  >(MARK_INBOX_ITEM_READ, mutationOptions);
+  >(MARK_INBOX_ITEM_READ, {
+    client: apolloCoreClient,
+    refetchQueries: ['GetMyInboxCounts'],
+  });
 
   const [transitionInboxItemMutation] = useMutation<
     { transitionInboxItem: InboxItem },

@@ -5,17 +5,11 @@ import { In } from 'typeorm';
 
 import { InboxQueueMemberEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-member.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export const DEFAULT_INBOX_QUEUE_SLUG = 'triage';
-
-const toSlug = (name: string): string =>
-  name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
 
 @Injectable()
 export class InboxQueueService {
@@ -74,12 +68,15 @@ export class InboxQueueService {
     userWorkspaceId: string;
     slug: string;
   }): Promise<InboxQueueEntity | null> {
-    const queues = await this.findMemberQueues({
+    const membership = await this.inboxQueueMemberRepository.findOne(
       workspaceId,
-      userWorkspaceId,
-    });
+      {
+        where: { userWorkspaceId, queue: { slug } },
+        relations: { queue: true },
+      },
+    );
 
-    return queues.find((queue) => queue.slug === slug) ?? null;
+    return membership?.queue ?? null;
   }
 
   // Where work goes when no rule could address it. Created on demand rather
@@ -105,13 +102,7 @@ export class InboxQueueService {
         isDefault: true,
       });
     } catch (error) {
-      const isConcurrentInsert =
-        typeof error === 'object' &&
-        isDefined(error) &&
-        (error as { code?: string }).code ===
-          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
-
-      const concurrentQueue = isConcurrentInsert
+      const concurrentQueue = isUniqueViolation(error)
         ? await this.inboxQueueRepository.findOne(workspaceId, {
             where: { isDefault: true },
           })
@@ -123,57 +114,5 @@ export class InboxQueueService {
 
       return concurrentQueue;
     }
-  }
-
-  async createQueue({
-    workspaceId,
-    name,
-    icon,
-    memberUserWorkspaceIds,
-  }: {
-    workspaceId: string;
-    name: string;
-    icon?: string;
-    memberUserWorkspaceIds: string[];
-  }): Promise<InboxQueueEntity> {
-    const queue = await this.inboxQueueRepository.save(workspaceId, {
-      name,
-      slug: toSlug(name),
-      icon: icon ?? null,
-      isDefault: false,
-    });
-
-    await this.setMembers({
-      workspaceId,
-      queueId: queue.id,
-      memberUserWorkspaceIds,
-    });
-
-    return queue;
-  }
-
-  async setMembers({
-    workspaceId,
-    queueId,
-    memberUserWorkspaceIds,
-  }: {
-    workspaceId: string;
-    queueId: string;
-    memberUserWorkspaceIds: string[];
-  }): Promise<void> {
-    await this.inboxQueueMemberRepository.delete(workspaceId, { queueId });
-
-    if (memberUserWorkspaceIds.length === 0) {
-      return;
-    }
-
-    await Promise.all(
-      memberUserWorkspaceIds.map((userWorkspaceId) =>
-        this.inboxQueueMemberRepository.save(workspaceId, {
-          queueId,
-          userWorkspaceId,
-        }),
-      ),
-    );
   }
 }

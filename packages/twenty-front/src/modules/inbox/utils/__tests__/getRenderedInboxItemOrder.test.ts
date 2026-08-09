@@ -1,20 +1,22 @@
 import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrder';
-import { type InboxItem } from '~/generated/graphql';
+import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
 
-const buildInboxItem = (id: string) => ({ id }) as InboxItem;
+const buildInboxItem = (id: string, priority: InboxItemPriority) =>
+  ({ id, priority }) as InboxItem;
 
-const needsActionItems = [buildInboxItem('needs-action')];
-const otherItems = [buildInboxItem('newer-but-quiet')];
+const needsActionItem = buildInboxItem(
+  'needs-action',
+  InboxItemPriority.NEEDS_ACTION,
+);
+const quietItem = buildInboxItem('newer-but-quiet', InboxItemPriority.UPDATE);
 // The list is sorted by lastEventAt, so a quiet item can sort above a loud one
-const inboxItems = [...otherItems, ...needsActionItems];
+const inboxItems = [quietItem, needsActionItem];
 
 describe('getRenderedInboxItemOrder', () => {
   it('should put needs-action items first when the list splits by priority', () => {
     // Act
     const order = getRenderedInboxItemOrder({
       inboxItems,
-      needsActionItems,
-      otherItems,
       shouldSplitByPriority: true,
     });
 
@@ -29,8 +31,6 @@ describe('getRenderedInboxItemOrder', () => {
     // Act
     const order = getRenderedInboxItemOrder({
       inboxItems,
-      needsActionItems,
-      otherItems,
       shouldSplitByPriority: false,
     });
 
@@ -44,13 +44,11 @@ describe('getRenderedInboxItemOrder', () => {
   it('should cover every rendered item when splitting with nothing urgent', () => {
     // Act
     const order = getRenderedInboxItemOrder({
-      inboxItems: otherItems,
-      needsActionItems: [],
-      otherItems,
+      inboxItems: [quietItem],
       shouldSplitByPriority: true,
     });
 
     // Assert
-    expect(order).toHaveLength(otherItems.length);
+    expect(order).toHaveLength(1);
   });
 });

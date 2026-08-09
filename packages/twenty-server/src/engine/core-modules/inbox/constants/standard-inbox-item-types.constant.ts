@@ -61,14 +61,6 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
         {
           key: 'ANSWERED',
           label: 'Answered',
-          resultSchema: [
-            {
-              key: 'answer',
-              label: 'Answer',
-              type: 'LONG_TEXT',
-              isRequired: true,
-            },
-          ],
         },
       ],
     },
@@ -121,19 +113,10 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
         {
           key: 'CHANGES_REQUESTED',
           label: 'Changes requested',
-          resultSchema: [
-            {
-              key: 'feedback',
-              label: 'Feedback',
-              type: 'LONG_TEXT',
-              isRequired: true,
-            },
-          ],
         },
         {
           key: 'REJECTED',
           label: 'Rejected',
-          resultSchema: [{ key: 'reason', label: 'Reason', type: 'TEXT' }],
         },
       ],
     },

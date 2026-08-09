@@ -114,6 +114,7 @@ export class InboxItemActionService {
       actorUserWorkspaceId,
       memberQueueIds,
       expectedVersion,
+      loadedInboxItem: inboxItem,
       transition: this.applyInput({
         transition: action.transition,
         action,

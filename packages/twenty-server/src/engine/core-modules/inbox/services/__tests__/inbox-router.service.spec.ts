@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { IsNull } from 'typeorm';
+import { IsNull, QueryFailedError } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
@@ -11,6 +11,16 @@ import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inb
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+
+// What Postgres actually raises through TypeORM when a partial unique index
+// rejects a concurrent insert
+const buildUniqueViolation = () =>
+  Object.assign(
+    new QueryFailedError('insert', [], new Error('duplicate key')),
+    {
+      code: '23505',
+    },
+  );
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
@@ -446,7 +456,7 @@ describe('InboxRouterService', () => {
         // The other producer's row lands between our lookup and our insert
         inboxItemRepository.findOne.mockResolvedValue(concurrentItem);
 
-        return Promise.reject({ code: '23505' });
+        return Promise.reject(buildUniqueViolation());
       });
       inboxItemRepository.findOneBy.mockResolvedValue(concurrentItem);
 
@@ -488,7 +498,7 @@ describe('InboxRouterService', () => {
 
     it('should rethrow when the unique violation leaves no row behind', async () => {
       // Prepare
-      inboxItemRepository.save.mockRejectedValueOnce({ code: '23505' });
+      inboxItemRepository.save.mockRejectedValueOnce(buildUniqueViolation());
 
       // Act & Assert
       await expect(
@@ -498,7 +508,7 @@ describe('InboxRouterService', () => {
           title: 'A message from Alice',
           subject: threadSubject,
         }),
-      ).rejects.toEqual({ code: '23505' });
+      ).rejects.toThrow('duplicate key');
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
   });
