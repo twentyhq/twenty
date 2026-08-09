@@ -24,8 +24,18 @@
 name: cd-deploy-cloud
 
 on:
+  # Kept for a pointer moved by hand. It does not fire for the deploy workflows:
+  # they move the pointers with GITHUB_TOKEN, and GitHub suppresses push events
+  # from that token, which is why the cloud boxes never once deployed from a
+  # promotion and every run in this workflow's history is a manual dispatch.
   push:
     branches: [staging-target, production-target]
+  # What deploy-staging.yml and deploy-production.yml send after moving a pointer.
+  # repository_dispatch is one of the two events GitHub always delivers even from
+  # GITHUB_TOKEN. It also leaves `environment` empty below, so production keeps
+  # the single approval it already took upstream rather than asking twice.
+  repository_dispatch:
+    types: [deploy-cloud]
   workflow_dispatch:
     inputs:
       environment:
@@ -45,7 +55,7 @@ permissions:
 
 concurrency:
   # Never let two deploys race on the same box.
-  group: cd-deploy-cloud-${{ github.event.inputs.environment || (github.ref_name == 'production-target' && 'production' || 'staging') }}
+  group: cd-deploy-cloud-${{ github.event.inputs.environment || github.event.client_payload.environment || (github.ref_name == 'production-target' && 'production' || 'staging') }}
   cancel-in-progress: false
 
 jobs:
@@ -61,8 +71,14 @@ jobs:
         id: target
         run: |
           set -euo pipefail
-          ENV_NAME="${{ github.event.inputs.environment || (github.ref_name == 'production-target' && 'production' || 'staging') }}"
-          SHA="${{ github.event.inputs.sha || github.sha }}"
+          ENV_NAME="${{ github.event.inputs.environment || github.event.client_payload.environment || (github.ref_name == 'production-target' && 'production' || 'staging') }}"
+          SHA="${{ github.event.inputs.sha || github.event.client_payload.sha || github.sha }}"
+          # A repository_dispatch runs from the default branch, so github.sha is
+          # main rather than what is being deployed. Refuse rather than silently
+          # deploying main if the payload arrives without a sha.
+          if [ "${{ github.event_name }}" = "repository_dispatch" ] && [ -z "${{ github.event.client_payload.sha }}" ]; then
+            echo "repository_dispatch arrived without client_payload.sha"; exit 1
+          fi
           [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "not a 40-char sha: $SHA"; exit 1; }
           if [ "$ENV_NAME" = "production" ]; then
             echo "vm=${{ vars.GCP_PRODUCTION_VM }}" >> "$GITHUB_OUTPUT"

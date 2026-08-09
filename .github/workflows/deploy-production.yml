@@ -97,6 +97,22 @@ jobs:
           fi
           echo "production-target now points at ${SHA}"
 
+      - name: Tell the cloud box to deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+        run: |
+          # This step is already past the environment gate above, so the single
+          # approval that guards promotion also guards this. cd-deploy-cloud
+          # deliberately declares no environment for a repository_dispatch, or
+          # it would ask for a second one.
+          gh api --method POST "repos/${REPO}/dispatches" \
+            -f event_type=deploy-cloud \
+            -F "client_payload[environment]=production" \
+            -F "client_payload[sha]=$SHA" >/dev/null
+          echo "asked cd-deploy-cloud to put ${SHA} on production"
+
       - name: Record the deployment
         env:
           GH_TOKEN: ${{ github.token }}

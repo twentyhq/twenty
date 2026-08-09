@@ -78,6 +78,23 @@ jobs:
           fi
           echo "staging-target now points at ${SHA}"
 
+      - name: Tell the cloud box to deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+        run: |
+          # The Mac converges by polling the ref above. The cloud box does not
+          # poll, and the push event that would have told it never fires from
+          # GITHUB_TOKEN, so it is asked directly. Both hosts stay in step for
+          # as long as the parallel run lasts; when the Mac retires, the ref
+          # move goes and this stays.
+          gh api --method POST "repos/${REPO}/dispatches" \
+            -f event_type=deploy-cloud \
+            -F "client_payload[environment]=staging" \
+            -F "client_payload[sha]=$SHA" >/dev/null
+          echo "asked cd-deploy-cloud to put ${SHA} on staging"
+
       - name: Record the deployment
         env:
           GH_TOKEN: ${{ github.token }}
