@@ -59,8 +59,6 @@ const mapSlackMessagesToAgentMessages = ({
       return { role: 'user', content: `${author}: ${message.text}` };
     });
 
-  // trimming the window can leave an assistant turn first, which providers
-  // reject: a conversation has to open on a user turn
   const firstUserTurnIndex = agentMessages.findIndex(
     (message) => message.role === 'user',
   );
