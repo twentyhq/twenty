@@ -171,6 +171,10 @@ Per motivi di sicurezza, le intestazioni di risposta sono limitate a un elenco c
 Il codice di stato deve essere un codice di stato HTTP valido (compreso tra 100 e 599). I nomi delle intestazioni di risposta vengono confrontati senza distinzione tra maiuscole e minuscole.
 </Note>
 
+#### Risposte di errore della piattaforma
+
+Oltre alle risposte specifiche del tuo handler, la piattaforma risponde direttamente alle chiamate di route in alcune situazioni: `404` quando la route o la funzione non esiste, `403` quando l'applicazione è arrestata, `429` quando viene raggiunto il rate limit di esecuzione e `422` quando le `dependencies` dell'applicazione in produzione sono troppo grandi per essere installate — vedi [limiti di dimensione delle dipendenze](/l/it/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Trigger route del server
 
 `httpRouteTriggerSettings` espone una funzione sotto `/s/` e risolve lo spazio di lavoro dall'host della richiesta — il che funziona quando ogni spazio di lavoro ha il proprio dominio. I provider di terze parti, tuttavia, inviano gli eventi di ogni tenant a **un** URL. Per questo caso, usa `serverRouteTriggerSettings`.

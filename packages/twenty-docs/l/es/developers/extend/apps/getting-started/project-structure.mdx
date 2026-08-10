@@ -76,4 +76,4 @@ El generador fija `twenty-sdk` y `twenty-client-sdk` a su propia versión; mant�
 
 Mantener cualquiera de los paquetes bajo `dependencies` lo introduce en el bundle de runtime de la app instalada, donde es peso muerto. `twenty dev:build` emite una advertencia cuando cualquiera de ellos sigue listado bajo `dependencies`.
 
-Añade las dependencias de runtime propias de tu app (las bibliotecas que tus funciones lógicas realmente importan en tiempo de ejecución) bajo `dependencies` como de costumbre.
+Añade las dependencias de runtime propias de tu app (las bibliotecas que tus funciones lógicas realmente importan en tiempo de ejecución) bajo `dependencies` como de costumbre. Mantén el árbol ligero: las `dependencies` se instalan en una capa de tiempo de ejecución con un límite de 250 MB sin comprimir, y una sincronización o instalación falla con un error de tamaño de dependencias si se supera ese límite — las bibliotecas de UI y las herramientas de desarrollo pertenecen a `devDependencies`.

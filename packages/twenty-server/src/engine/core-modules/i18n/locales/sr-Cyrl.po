@@ -42,6 +42,31 @@ msgstr "„{0}” није важеће подпоље поља „{1}”."
 msgid "\"{payloadKey}\" is not a valid workspace member field."
 msgstr "\"{payloadKey}\" није важеће поље члана радног простора."
 
+#. js-lingui-id: ddGPbK
+#. placeholder {0}: nestedField.label
+#. placeholder {1}: sourceField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} does not belong to the object {1} points to."
+msgstr ""
+
+#. js-lingui-id: bSLhyc
+#. placeholder {0}: sourceField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} does not belong to this widget's object."
+msgstr ""
+
+#. js-lingui-id: MTdK9i
+#. placeholder {0}: sourceField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} must be a one-to-many or many-to-one relation field."
+msgstr ""
+
+#. js-lingui-id: EIb+ss
+#. placeholder {0}: nestedField.label
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "{0} must be a one-to-many relation field."
+msgstr ""
+
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -162,6 +187,11 @@ msgstr "Дошло је до сукоба имена."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for FOLDER type"
+msgstr ""
+
+#. js-lingui-id: 9er1TA
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "A nested relation widget must use the table layout."
 msgstr ""
 
 #. js-lingui-id: ChJFls
@@ -6872,6 +6902,11 @@ msgstr "Покретања"
 msgid "Saturday"
 msgstr "Субота"
 
+#. js-lingui-id: H2SymB
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Save Campaign"
+msgstr ""
+
 #. js-lingui-id: 4ba0NE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7106,6 +7141,11 @@ msgstr "Неке од одабраних дозвола нису валидне.
 #. js-lingui-id: aPJopM
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
+#. js-lingui-id: RjTo7h
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while starting the app installation. Please try again."
 msgstr ""
 
 #. js-lingui-id: fWsBTs
@@ -7551,6 +7591,11 @@ msgstr "Апликација нема додељену важећу улогу. 
 msgid "The application key-value entry could not be saved. Please try again."
 msgstr ""
 
+#. js-lingui-id: WPAHpm
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
+msgstr ""
+
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -7667,6 +7712,11 @@ msgstr "Извршилац радног тока"
 msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
 msgstr "Поље \"{field}\" не може се ажурирати. Молимо контактирајте администратора ваше радне површине."
 
+#. js-lingui-id: xM30Ha
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "The field configured for this widget could not be found."
+msgstr ""
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -7727,6 +7777,11 @@ msgstr ""
 msgid "The logic function to run on disconnect was not found."
 msgstr ""
 
+#. js-lingui-id: fIq00W
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
+msgid "The nested relation field configured for this widget could not be found."
+msgstr ""
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -7783,6 +7838,16 @@ msgstr "У наведеној адреси е-поште недостаје до
 msgid "The provided email address is not valid. Please use a standard email format (e.g., user@example.com)."
 msgstr "Наведена адреса е-поште није важећа. Користите стандардни формат адресе е-поште (нпр. user@example.com)."
 
+#. js-lingui-id: cjqhZq
+#: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
+msgid "The provider denied access to this account. Please reconnect it."
+msgstr ""
+
+#. js-lingui-id: XX3Gdh
+#: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
+msgid "The provider is temporarily unavailable. Please try again later."
+msgstr ""
+
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."
@@ -7830,6 +7895,11 @@ msgstr "APP_VERSION на серверу није важећа semver верзи�
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Једнина и множинска имена не могу бити иста за објекат"
+
+#. js-lingui-id: Dvwk3g
+#: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
+msgid "The subscription is no longer available on the provider."
+msgstr ""
 
 #. js-lingui-id: RCS0+I
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7942,6 +8012,11 @@ msgstr "Дошло је до проблема са вашим токеном. М
 msgid "There is no failed message to retry."
 msgstr "Нема неуспеле поруке за поновни покушај."
 
+#. js-lingui-id: Yi0Q/T
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
+msgstr ""
+
 #. js-lingui-id: Iy9pZw
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
@@ -7950,6 +8025,12 @@ msgstr "Вредност поља {fieldLabel} се већ користи. Мо�
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
+msgstr ""
+
+#. js-lingui-id: jrTmnG
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This action is not available for your request."
 msgstr ""
 
 #. js-lingui-id: 4CW4iW
@@ -8006,6 +8087,11 @@ msgstr ""
 #. js-lingui-id: ZyEq3L
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign no longer exists."
+msgstr ""
+
+#. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-email-content.util.ts
+msgid "This campaign's email content is invalid."
 msgstr ""
 
 #. js-lingui-id: 99gsJ/
@@ -8104,6 +8190,11 @@ msgstr "Ова дозвола поља је већ додељена улози"
 #: src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util.ts
 msgid "This field references an object that could not be found"
 msgstr "Ово поље референцира објекат који није пронађен"
+
+#. js-lingui-id: 5F02zD
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "This file format is not supported."
+msgstr ""
 
 #. js-lingui-id: HUJCXI
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -8691,6 +8782,7 @@ msgstr "Кориснику је већ додељена улога."
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 msgid "User does not have access to this workspace"
 msgstr "Корисник нема приступ овом радном простору"
 
@@ -8723,6 +8815,7 @@ msgstr "ID корисника је обавезан."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
 msgid "User is not a member of the workspace."
@@ -9600,6 +9693,7 @@ msgid "Workspace member name"
 msgstr "Име члана простора за рад"
 
 #. js-lingui-id: rnnLQA
+#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Члан радног простора није пронађен."
@@ -9937,6 +10031,11 @@ msgstr "Морате бити аутентификовани да бисте и�
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your app version is out of date. Please refresh the page to continue."
 msgstr "Ваша верзија апликације је застарела. Освежите страницу да наставите."
+
+#. js-lingui-id: Lmx0IG
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Your application's production dependencies are too large to install. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of \"dependencies\"."
+msgstr ""
 
 #. js-lingui-id: J5Vm4Q
 #: src/engine/core-modules/billing/billing.validate.ts

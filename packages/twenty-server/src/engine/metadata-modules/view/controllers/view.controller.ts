@@ -7,14 +7,18 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -45,7 +49,7 @@ import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-module
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
-@Controller('rest/metadata/views')
+@Controller(`${ApiPath.Rest}/metadata/views`)
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
@@ -63,24 +67,29 @@ export class ViewController {
   @Get()
   @UseGuards(CustomPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
-  ): Promise<ViewDTO[]> {
-    const views = objectMetadataId
-      ? await this.viewService.findByObjectMetadataIdWithRelations(
-          workspace.id,
-          objectMetadataId,
-          userWorkspaceId,
-        )
-      : await this.viewService.findByWorkspaceIdWithRelations(
-          workspace.id,
-          userWorkspaceId,
-        );
+  ) {
+    const page = await this.viewService.findManyWithRelationsPaginated({
+      workspaceId: workspace.id,
+      objectMetadataId,
+      userWorkspaceId,
+      pagination: parseMetadataRestPagination(request),
+    });
 
-    return this.processViewsWithTemplates(views, workspace.id, locale);
+    return {
+      pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
+      data: await this.processViewsWithTemplates(
+        page.items,
+        workspace.id,
+        locale,
+      ),
+    };
   }
 
   @Get(':id')

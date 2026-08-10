@@ -60,8 +60,6 @@ const httpRequestStepLogDetailsSchema = z.object({
     bodyBytes: z.number().optional(),
     bodyTruncated: z.boolean().optional(),
   }),
-  // `response` is absent for transport-level failures (DNS, timeout, TLS,
-  // etc.) — only `error` is set in that case.
   response: z
     .object({
       status: z.number(),
@@ -130,11 +128,4 @@ export const workflowRunStepLogSchema = z.object({
   sizeBytes: z.number(),
 });
 
-// We intentionally keep the runtime schema permissive: the column is a
-// JSONB blob written by the server and the consumers don't validate
-// individual `details` shapes. The strict per-step type (with the
-// discriminated `details` union) lives in `WorkflowRunStepLog` and is
-// applied at the boundaries that *produce* logs (server-side writers).
-// Tighter zod parsing here would collapse the discriminated union to `{}`
-// when inferred through `z.record`, breaking front-end indexing.
 export const workflowRunStepLogsSchema = z.record(z.string(), z.unknown());

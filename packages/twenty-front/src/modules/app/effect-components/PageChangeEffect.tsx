@@ -39,6 +39,7 @@ import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
@@ -162,7 +163,7 @@ export const PageChangeEffect = () => {
 
       if (
         store.get(shouldOpenAiChatAfterOnboardingState.atom) &&
-        pageChangeEffectNavigateLocation !== AppPath.WorkspaceSetup
+        !isAiChatPath(pageChangeEffectNavigateLocation)
       ) {
         store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       }

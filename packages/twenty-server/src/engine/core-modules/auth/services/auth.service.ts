@@ -807,7 +807,10 @@ export class AuthService {
       .andWhere('"appToken".type IN (:...types)', {
         types: INVITATION_APP_TOKEN_TYPES,
       })
-      .andWhere('"appToken"."deletedAt" IS NULL');
+      .andWhere('"appToken"."deletedAt" IS NULL')
+      .andWhere('"appToken"."expiresAt" > :now', {
+        now: new Date(),
+      });
 
     if ('workspacePersonalInviteToken' in params) {
       qr.andWhere('"appToken".value = :personalInviteToken', {

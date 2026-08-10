@@ -100,7 +100,8 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="تشغيل وكيل من دالة منطقية">
 
-تتيح `runAgent()` لدالة منطقية تشغيل أحد وكلاء تطبيقك (مع مهاراته وأدواته). عرِّف الوكيل عن طريق `universalIdentifier` الذي مررته إلى `defineAgent()`:
+تتيح `runAgent()` لدالة منطقية تشغيل أحد وكلاء تطبيقك (مع مهاراته وأدواته). حدِّد الوكيل بواسطة `universalIdentifier` الذي مررته إلى `defineAgent()`. مرر إما سلسلة `prompt` أو سجل المحادثة `messages`
+— وليس كليهما معًا:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +112,24 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+لبوتات المحادثة متعددة الجولات (Slack, Discord, Teams, …)، مرر سجل سلسلة المحادثة كـ
+`messages` بدلًا من استخدام `prompt` واحد فقط:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 النقاط الرئيسية:
+* قدِّم **واحدًا فقط** من `prompt` (سلسلة نصية) أو `messages` (من 1 إلى 100 عنصر من `{ role: 'user' | 'assistant', content: string }`).
 * يعمل الوكيل **بشكل متزامن** ويمكنه قراءة/تحديث السجلات بنفسه عبر أدواته الخاصة — يتم حل `runAgent()` بمجرد اكتمال التشغيل.
 * لا يمكن للتطبيق تشغيل سوى وكلائه الخاصين.
 * يجب أن يمنح [الدور الافتراضي](/l/ar/developers/extend/apps/config/roles) للتطبيق علامة الإذن `AI` — أضِف `SystemPermissionFlag.AI` إلى `permissionFlagUniversalIdentifiers` الخاصة به (أو عيِّن `canAccessAllTools: true`).
@@ -132,6 +150,31 @@ export default defineApplicationRole({
 
 <Warning>
   **تجنب الحلقات:** إذا استدعيت `runAgent()` من مشغل حدث قاعدة بيانات من نوع `*.updated` وقام الوكيل بتحديث نفس السجل، فحدد نطاق المشغل باستخدام `updatedFields` إلى حقل لا يكتبه الوكيل أبدًا (مثل عنوان URL المصدر)، أو تحقَّق مما إذا كان أي حقل مستهدف لا يزال فارغًا قبل استدعاء `runAgent()`.
+</Warning>
+
+### التشغيل نيابةً عن أحد أعضاء مساحة العمل
+
+مرر `runAsWorkspaceMemberId` عندما يتم تشغيل التنفيذ بواسطة شخص — مثل روبوت دردشة يجيب على رسالة، مثلاً — لكي يتصرف الوكيل بصفة ذلك العضو بدلًا من التطبيق:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+يُقيَّد التنفيذ عندئذٍ بما تسمح به كلٌّ من دور الوكيل ودور العضو، وتُنسب السجلات التي ينشئها إلى ذلك العضو، وتُطبَّق أذونات العضو على مستوى الصف. احذف الحقل في عمليات التنفيذ الذاتية (المهام المجدولة، مشغلات أحداث قاعدة البيانات): في هذه الحالة يحتفظ الوكيل بدوره الخاص.
+
+تطبيقك مسؤول عن تعيين الشخص الذي شغّل التنفيذ إلى عضو في مساحة العمل. يتطلب تسمية عضو ما رمز وصول للتطبيق، وما يمكن للرمز تسميته يعتمد على ما إذا كان يتضمن مستخدمًا أم لا:
+
+* يمكن لرمز **بدون مستخدم مرفق** أن يسمّي أي عضو. تعمل الدالة المنطقية بدون مستخدم، وكذلك الرموز المُنشأة عبر `client_credentials` أو من مفتاح API.
+* لا يمكن لرمز مُصدَر **نيابةً عن مستخدم**، كما يستقبله مكوّن الواجهة الأمامية، أن يسمّي إلا العضو الخاص بذلك المستخدم فقط.
+
+لا يمكن لأي شيء آخر — جلسة مستخدم عادية، أو مفتاح API بدون رمز تطبيق — أن يسمّي عضوًا على الإطلاق.
+
+<Warning>
+  يقوم `runAgent()` بإطلاق استثناء عندما يتعذّر حل عضو مساحة العمل — مثل عضو غير معروف أو تمت إزالته، أو ليس لديه أي دور. لا يعود إطلاقًا إلى دور الوكيل نفسه، لأن ذلك سيمنح صلاحيات وصول أكثر مما طلبه المستدعي.
 </Warning>
 
 </Accordion>

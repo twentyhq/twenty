@@ -1,32 +1,29 @@
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
-import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
+import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
-import { findById, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const fieldMetadataItemByIdSelector = createAtomFamilySelector({
   key: 'fieldMetadataItemByIdSelector',
   get:
     ({ fieldMetadataItemId }: { fieldMetadataItemId: string }) =>
     ({ get }) => {
-      const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
-      const flattenedFieldMetadataItems = get(
-        flattenedFieldMetadataItemsSelector,
+      const foundFieldMetadataItem = get(fieldMetadataItemByIdMapSelector).get(
+        fieldMetadataItemId,
       );
 
-      const foundObjectMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.fields.some(findById(fieldMetadataItemId)),
-      );
-
-      if (!isDefined(foundObjectMetadataItem)) {
+      if (
+        !isDefined(foundFieldMetadataItem) ||
+        !isDefined(foundFieldMetadataItem.objectMetadataId)
+      ) {
         return {};
       }
 
-      const foundFieldMetadataItem = flattenedFieldMetadataItems.find(
-        findById(fieldMetadataItemId),
-      );
+      const foundObjectMetadataItem = get(
+        objectMetadataItemsByIdMapSelector,
+      ).get(foundFieldMetadataItem.objectMetadataId);
 
-      if (!isDefined(foundFieldMetadataItem)) {
+      if (!isDefined(foundObjectMetadataItem)) {
         return {};
       }
 
@@ -35,4 +32,7 @@ export const fieldMetadataItemByIdSelector = createAtomFamilySelector({
         foundObjectMetadataItem,
       };
     },
+  areEqual: (previous, next) =>
+    previous.foundFieldMetadataItem === next.foundFieldMetadataItem &&
+    previous.foundObjectMetadataItem === next.foundObjectMetadataItem,
 });

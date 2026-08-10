@@ -9,4 +9,5 @@ export const WIDGET_TYPES_REQUIRING_RELATION_FIELD: WidgetType[] = [
   WidgetType.NOTES,
   WidgetType.FILES,
   WidgetType.TIMELINE,
+  WidgetType.CALL_RECORDING_TRANSCRIPT,
 ];

@@ -188,6 +188,7 @@ enum EngineComponentKey {
   COMPOSE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN_TEST
+  EMAIL_BLOCK_SETTINGS
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -250,81 +251,6 @@ enum LogicFunctionExecutionMode {
   PREBUILT
 }
 
-type Field {
-  id: UUID!
-  universalIdentifier: String!
-  type: FieldMetadataType!
-  name: String!
-  label: String!
-  description: String
-  icon: String
-  isActive: Boolean
-  isSystem: Boolean
-  isUIEditable: Boolean
-  isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
-  isNullable: Boolean
-  isUnique: Boolean
-  defaultValue: JSON
-  options: JSON
-  settings: JSON
-  objectMetadataId: UUID!
-  isLabelSyncedWithName: Boolean
-  morphId: UUID
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  applicationId: UUID!
-  relation: Relation
-  morphRelations: [Relation!]
-  object: Object
-}
-
-"""Type of the field"""
-enum FieldMetadataType {
-  ACTOR
-  ADDRESS
-  ARRAY
-  BOOLEAN
-  CURRENCY
-  DATE
-  DATE_TIME
-  EMAILS
-  FILES
-  FULL_NAME
-  LINKS
-  MORPH_RELATION
-  MULTI_SELECT
-  NUMBER
-  NUMERIC
-  PHONES
-  POSITION
-  RATING
-  RAW_JSON
-  RELATION
-  RICH_TEXT
-  SELECT
-  TEXT
-  TS_VECTOR
-  UUID
-}
-
-type Index {
-  id: UUID!
-  name: String!
-  isCustom: Boolean
-  isUnique: Boolean!
-  indexWhereClause: String
-  indexType: IndexType!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  indexFieldMetadataList: [IndexField!]!
-}
-
-"""Type of the index"""
-enum IndexType {
-  BTREE
-  GIN
-}
-
 type Object {
   id: UUID!
   universalIdentifier: String!
@@ -351,9 +277,6 @@ type Object {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean!
   duplicateCriteria: [[String!]!]
-  fieldsList: [Field!]!
-  indexMetadataList: [Index!]!
-  searchFieldMetadataList: [SearchField!]!
   fields(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -368,6 +291,9 @@ type Object {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): ObjectIndexMetadatasConnection!
+  fieldsList: [Field!]!
+  indexMetadataList: [Index!]!
+  searchFieldMetadataList: [SearchField!]!
 }
 
 enum ObjectOpenRecordIn {
@@ -836,9 +762,11 @@ enum ViewType {
   TABLE
   KANBAN
   CALENDAR
+  LIST
   FIELDS_WIDGET
   TABLE_WIDGET
   KANBAN_WIDGET
+  LIST_WIDGET
   CALENDAR_WIDGET
 }
 
@@ -956,6 +884,7 @@ type User {
   deletedWorkspaceMembers: [DeletedWorkspaceMember!]
   hasPassword: Boolean!
   supportUserHash: String
+  isWorkspaceCreator: Boolean
   workspaces: [UserWorkspace!]!
   availableWorkspaces: AvailableWorkspaces!
 }
@@ -968,6 +897,7 @@ enum OnboardingStatus {
   SYNC_EMAIL
   APPS_INSTALLATION
   INVITE_TEAM
+  BOOK_CALL
   COMPLETED
 }
 
@@ -1058,6 +988,8 @@ enum WidgetType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  CALL_RECORDING_SUMMARY
+  CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
 }
@@ -1087,7 +1019,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1128,6 +1060,8 @@ enum WidgetConfigurationType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  CALL_RECORDING_SUMMARY
+  CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
 }
@@ -1296,6 +1230,14 @@ type EmailThreadConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+type CallRecordingSummaryConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type CallRecordingTranscriptConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
 type MessageCampaignBodyConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -1309,6 +1251,7 @@ type FieldConfiguration {
   fieldMetadataId: String!
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
+  nestedRelationFieldMetadataId: String
 }
 
 """Display mode for field configuration widgets"""
@@ -1783,16 +1726,21 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_AI_CHAT_PAGE_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_CALENDAR_WEEK_VIEW_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
+  IS_LIST_VIEW_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
+  IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
+  IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
+  IS_NATIVE_CALL_RECORDING_TABS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -1949,6 +1897,7 @@ type ApiConfig {
 type PublicFeatureFlagMetadata {
   label: String!
   description: String!
+  icon: String!
   imagePath: String
 }
 
@@ -1992,6 +1941,8 @@ type ClientConfig {
   isEmailingDomainInDemoMode: Boolean!
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
+  isBookCallOnboardingStepEnabled: Boolean!
+  isCompanyEnrichmentEnabled: Boolean!
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
@@ -2188,12 +2139,100 @@ type MarketplaceAppDetail {
 type WorkspaceCompanyEnrichmentResult {
   outcome: WorkspaceCompanyEnrichmentOutcome!
   enrichment: JSON
+  isBookCallOnboardingStepPending: Boolean!
 }
 
 enum WorkspaceCompanyEnrichmentOutcome {
   matched
   unavailable
   transientError
+}
+
+type Field {
+  id: UUID!
+  universalIdentifier: String!
+  type: FieldMetadataType!
+  name: String!
+  label: String!
+  description: String
+  icon: String
+  isActive: Boolean
+  isSystem: Boolean
+  isUIEditable: Boolean
+  isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
+  isNullable: Boolean
+  isUnique: Boolean
+  defaultValue: JSON
+  options: JSON
+  settings: JSON
+  objectMetadataId: UUID!
+  isLabelSyncedWithName: Boolean
+  morphId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  applicationId: UUID!
+  object: Object
+  relation: Relation
+  morphRelations: [Relation!]
+}
+
+"""Type of the field"""
+enum FieldMetadataType {
+  ACTOR
+  ADDRESS
+  ARRAY
+  BOOLEAN
+  CURRENCY
+  DATE
+  DATE_TIME
+  EMAILS
+  FILES
+  FULL_NAME
+  LINKS
+  MORPH_RELATION
+  MULTI_SELECT
+  NUMBER
+  NUMERIC
+  PHONES
+  POSITION
+  RATING
+  RAW_JSON
+  RELATION
+  RICH_TEXT
+  SELECT
+  TEXT
+  TS_VECTOR
+  UUID
+}
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type FieldEdge {
+  """The node containing the Field"""
+  node: Field!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type FieldConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [FieldEdge!]!
 }
 
 type Relation {
@@ -2219,6 +2258,64 @@ type IndexField {
   updatedAt: DateTime!
 }
 
+type Index {
+  id: UUID!
+  name: String!
+  isCustom: Boolean
+  isUnique: Boolean!
+  indexWhereClause: String
+  indexType: IndexType!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  indexFieldMetadataList: [IndexField!]!
+}
+
+"""Type of the index"""
+enum IndexType {
+  BTREE
+  GIN
+}
+
+type IndexEdge {
+  """The node containing the Index"""
+  node: Index!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type ObjectEdge {
+  """The node containing the Object"""
+  node: Object!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type ObjectConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [ObjectEdge!]!
+}
+
+type ObjectFieldsConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [FieldEdge!]!
+}
+
+type ObjectIndexMetadatasConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [IndexEdge!]!
+}
+
 type ObjectRecordCount {
   objectNamePlural: String!
   totalCount: Int!
@@ -2231,76 +2328,6 @@ type SearchField {
   position: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type ObjectEdge {
-  """The node containing the Object"""
-  node: Object!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type PageInfo {
-  """true if paging forward and there are more records."""
-  hasNextPage: Boolean
-
-  """true if paging backwards and there are more records."""
-  hasPreviousPage: Boolean
-
-  """The cursor of the first returned record."""
-  startCursor: ConnectionCursor
-
-  """The cursor of the last returned record."""
-  endCursor: ConnectionCursor
-}
-
-type ObjectConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [ObjectEdge!]!
-}
-
-type IndexEdge {
-  """The node containing the Index"""
-  node: Index!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type ObjectIndexMetadatasConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [IndexEdge!]!
-}
-
-type FieldEdge {
-  """The node containing the Field"""
-  node: Field!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type ObjectFieldsConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [FieldEdge!]!
-}
-
-type FieldConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [FieldEdge!]!
 }
 
 type BillingEntitlement {
@@ -3223,12 +3250,6 @@ type Query {
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
-  objectRecordCounts: [ObjectRecordCount!]!
-  mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
-  object(
-    """The id of the record to find."""
-    id: UUID!
-  ): Object!
   objects(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -3236,6 +3257,12 @@ type Query {
     """Specify to filter the records returned."""
     filter: ObjectFilter! = {}
   ): ObjectConnection!
+  object(
+    """The id of the record to find."""
+    id: UUID!
+  ): Object!
+  objectRecordCounts: [ObjectRecordCount!]!
+  mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
@@ -3262,10 +3289,6 @@ type Query {
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  field(
-    """The id of the record to find."""
-    id: UUID!
-  ): Field!
   fields(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -3273,6 +3296,10 @@ type Query {
     """Specify to filter the records returned."""
     filter: FieldFilter! = {}
   ): FieldConnection!
+  field(
+    """The id of the record to find."""
+    id: UUID!
+  ): Field!
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
   getRoles: [Role!]!
@@ -3334,13 +3361,13 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
-  isRemote: BooleanFieldComparison
   isActive: BooleanFieldComparison
-  isSystem: BooleanFieldComparison
-  isUIEditable: BooleanFieldComparison
-  isUICreatable: BooleanFieldComparison
-  isUIReadOnly: BooleanFieldComparison
+  isRemote: BooleanFieldComparison
   isSearchable: BooleanFieldComparison
+  isSystem: BooleanFieldComparison
+  isUICreatable: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
+  isUIReadOnly: BooleanFieldComparison
 }
 
 input LogicFunctionIdInput {
@@ -3483,6 +3510,7 @@ type Mutation {
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
+  completeBookCallOnboardingStep: OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
@@ -3725,6 +3753,7 @@ enum FileFolder {
   Dependencies
   Workflow
   EmailAttachment
+  EmailImage
   AppTarball
   GeneratedSdkClient
   Dpa
@@ -3863,7 +3892,7 @@ input UpsertViewWidgetInput {
 
 input UpsertViewWidgetViewSettingsInput {
   """
-  The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed.
+  The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed.
   """
   type: ViewType
   mainGroupByFieldMetadataId: UUID
@@ -4703,7 +4732,19 @@ input CreateEmailingDomainInput {
 
 input RunAgentInput {
   agentUniversalIdentifier: String!
-  prompt: String!
+  prompt: String
+  runAsWorkspaceMemberId: UUID
+  messages: [RunAgentMessageInput!]
+}
+
+input RunAgentMessageInput {
+  role: RunAgentMessageRole!
+  content: String!
+}
+
+enum RunAgentMessageRole {
+  user
+  assistant
 }
 
 input CreateWebhookInput {
