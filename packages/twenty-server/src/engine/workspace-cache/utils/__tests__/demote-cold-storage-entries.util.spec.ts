@@ -4,18 +4,13 @@ import { demoteColdStorageEntries } from 'src/engine/workspace-cache/utils/demot
 const FIELD_METADATA = 'flat-maps:field-metadata';
 const ORM = 'orm:entity-metadatas';
 
-const hotEntry = (
-  lastReadAt: number,
-  keyName = 'flatFieldMetadataMaps',
-): WorkspaceLocalCacheEntry<string> => ({
-  keyName,
+const hotEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
   versions: new Map([['hash-1', { state: 'hot', data: 'data', lastReadAt }]]),
   latestHash: 'hash-1',
   lastHashCheckedAt: lastReadAt,
 });
 
 const coldEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
-  keyName: 'flatFieldMetadataMaps',
   versions: new Map([
     ['hash-1', { state: 'cold', blob: Buffer.from('{}'), lastReadAt }],
   ]),
@@ -27,12 +22,12 @@ const serialize = () => Buffer.from('serialized');
 
 const demote = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
-  hotEntriesPerKeyName: number,
+  hotEntriesPerProvider: number,
   overrides?: { serialize?: () => Buffer | undefined },
 ) =>
   demoteColdStorageEntries({
     localCache,
-    hotEntriesPerKeyName,
+    hotEntriesPerProvider,
     serialize: overrides?.serialize ?? serialize,
   });
 
@@ -90,11 +85,11 @@ describe('demoteColdStorageEntries', () => {
     ).toMatchObject({ state: 'hot' });
   });
 
-  it('should budget each key name independently', () => {
+  it('should budget each provider independently', () => {
     const localCache = new Map([
       [`${FIELD_METADATA}:ws-a`, hotEntry(1)],
       [`${FIELD_METADATA}:ws-b`, hotEntry(2)],
-      [`${ORM}:ws-a`, hotEntry(3, 'ORMEntityMetadatas')],
+      [`${ORM}:ws-a`, hotEntry(3)],
     ]);
 
     expect(demote(localCache, 1)).toBe(1);

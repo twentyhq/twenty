@@ -1,20 +1,17 @@
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
+import { getProviderFromCacheKey } from 'src/engine/workspace-cache/utils/get-provider-from-cache-key.util';
 
-export const demoteColdStorageEntries = <T, TKeyName>({
+export const demoteColdStorageEntries = <T>({
   localCache,
-  hotEntriesPerKeyName,
+  hotEntriesPerProvider,
   serialize,
 }: {
-  localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T, TKeyName>>;
-  hotEntriesPerKeyName: number;
-  serialize: (params: {
-    localKey: string;
-    keyName: TKeyName;
-    data: T;
-  }) => Buffer | undefined;
+  localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T>>;
+  hotEntriesPerProvider: number;
+  serialize: (params: { localKey: string; data: T }) => Buffer | undefined;
 }): number => {
-  const hotByKeyName = new Map<
-    TKeyName,
+  const hotByProvider = new Map<
+    string,
     { localKey: string; hash: string; lastReadAt: number }[]
   >();
 
@@ -24,17 +21,18 @@ export const demoteColdStorageEntries = <T, TKeyName>({
         continue;
       }
 
-      const hot = hotByKeyName.get(entry.keyName) ?? [];
+      const provider = getProviderFromCacheKey(localKey);
+      const hot = hotByProvider.get(provider) ?? [];
 
       hot.push({ localKey, hash, lastReadAt: version.lastReadAt });
-      hotByKeyName.set(entry.keyName, hot);
+      hotByProvider.set(provider, hot);
     }
   }
 
   let demoted = 0;
 
-  for (const hot of hotByKeyName.values()) {
-    if (hot.length <= hotEntriesPerKeyName) {
+  for (const hot of hotByProvider.values()) {
+    if (hot.length <= hotEntriesPerProvider) {
       continue;
     }
 
@@ -42,7 +40,7 @@ export const demoteColdStorageEntries = <T, TKeyName>({
 
     for (const { localKey, hash } of hot.slice(
       0,
-      hot.length - hotEntriesPerKeyName,
+      hot.length - hotEntriesPerProvider,
     )) {
       const entry = localCache.get(localKey);
       const version = entry?.versions.get(hash);
@@ -51,11 +49,7 @@ export const demoteColdStorageEntries = <T, TKeyName>({
         continue;
       }
 
-      const blob = serialize({
-        localKey,
-        keyName: entry.keyName,
-        data: version.data,
-      });
+      const blob = serialize({ localKey, data: version.data });
 
       if (blob === undefined) {
         continue;

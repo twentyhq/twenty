@@ -59,6 +59,13 @@ const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
   [WORKSPACE_CACHE_KEYS_V2.ORMEntityMetadatas, 128],
   [WORKSPACE_CACHE_KEYS_V2.flatFieldMetadataMaps, 256],
 ]);
+const KEY_NAME_BY_PREFIX = new Map(
+  Object.entries(WORKSPACE_CACHE_KEYS_V2).map(([keyName, prefix]) => [
+    prefix,
+    keyName as WorkspaceCacheKeyName,
+  ]),
+);
+
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 
@@ -639,12 +646,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     let entry = this.localCache.get(localKey);
 
     if (!isDefined(entry)) {
-      entry = {
-        keyName,
-        versions: new Map(),
-        latestHash: '',
-        lastHashCheckedAt: 0,
-      };
+      entry = { versions: new Map(), latestHash: '', lastHashCheckedAt: 0 };
       this.localCache.set(localKey, entry);
     }
 
@@ -683,11 +685,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private demoteColdEntries(): void {
     demoteColdStorageEntries({
       localCache: this.localCache,
-      hotEntriesPerKeyName: HOT_ENTRIES_PER_PROVIDER,
-      serialize: ({ localKey, keyName, data }) => {
-        const workspaceId = localKey.slice(localKey.lastIndexOf(':') + 1);
+      hotEntriesPerProvider: HOT_ENTRIES_PER_PROVIDER,
+      serialize: ({ localKey, data }) => {
+        const separatorIndex = localKey.lastIndexOf(':');
+        const workspaceId = localKey.slice(separatorIndex + 1);
+        const keyName = KEY_NAME_BY_PREFIX.get(
+          localKey.slice(0, separatorIndex),
+        );
 
         if (
+          !isDefined(keyName) ||
           this.localDataOnlyKeys.has(keyName) ||
           keyName === 'featureFlagsMap' ||
           !this.isCompactStorageEnabled(workspaceId)
