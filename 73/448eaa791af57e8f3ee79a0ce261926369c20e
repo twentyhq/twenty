@@ -1,0 +1,98 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job.ts
+  s_7c7a6c72e0c33c::t_24553d9737f2ab 24
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_7c7a6c72e0c33c::t_ae71c01e966280 323-331
+  s_7c7a6c72e0c33c::t_ab51568c9b0561 322
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-messages-import.service.ts
+  s_7c7a6c72e0c33c::t_0f8ca46c4e1145 335-336
+  s_7c7a6c72e0c33c::t_0dbc9837312c8e 37-40
+  s_7c7a6c72e0c33c::t_9e669d3da95734 126-138
+  s_7c7a6c72e0c33c::t_7766fc761d8e8c 66-77,79-122,124
+  s_7c7a6c72e0c33c::t_abcb7e10eb6ba6 289-290
+  s_7c7a6c72e0c33c::t_778267a49c470a 125
+packages/twenty-server/src/modules/connected-account/imap-api/imap-apis.module.ts
+  s_7c7a6c72e0c33c::t_969643484b9708 21
+  s_7c7a6c72e0c33c::t_b46072c996c4aa 43
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job.ts
+  s_7c7a6c72e0c33c::t_e59dce51d33687 18
+  s_7c7a6c72e0c33c::t_ca6c608760181d 32
+  s_7c7a6c72e0c33c::t_288a48420f2524 105,109-117
+packages/twenty-server/src/engine/core-modules/auth/services/microsoft-apis.service.ts
+  s_7c7a6c72e0c33c::t_5d81a4bb65f97b 44
+  s_7c7a6c72e0c33c::t_98166cf9583e30 51
+  s_7c7a6c72e0c33c::t_a4dad23f5183eb 299-303
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-onboarding-message-list-fetch.job.ts
+  s_7c7a6c72e0c33c::t_fffcb2970e288c 1-22
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue.constants.ts
+  s_7c7a6c72e0c33c::t_9ebd9371ba8d3b 8
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service.ts
+  s_7c7a6c72e0c33c::t_223a54dbd6f913 17-20
+  s_7c7a6c72e0c33c::t_6545894e9acf91 64-67,70-140
+  s_7c7a6c72e0c33c::t_baa77764a579dd 393-412
+  s_7c7a6c72e0c33c::t_e6a1365639af17 354-356,370,372-378
+  s_7c7a6c72e0c33c::t_5c05e93ff260ad 27-28
+  s_7c7a6c72e0c33c::t_fab9482c868393 357-369,371
+  s_7c7a6c72e0c33c::t_c83568ba51d9bd 41
+  s_7c7a6c72e0c33c::t_23fb5fa6f1d82a 141
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job.ts
+  s_7c7a6c72e0c33c::t_04ebc068a42fed 18
+  s_7c7a6c72e0c33c::t_8d186aeea46389 111,115-123
+  s_7c7a6c72e0c33c::t_60f2e63790d02f 33
+packages/twenty-server/src/modules/messaging/common/services/message-channel-sync-status.service.ts
+  s_7c7a6c72e0c33c::t_6526d1386b106f 278-314
+packages/twenty-server/src/modules/connected-account/channel-sync/channel-sync.module.ts
+  s_7c7a6c72e0c33c::t_ce08cbfbbaa652 12,21
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_7c7a6c72e0c33c::t_350275e1e29dc7 43
+  s_7c7a6c72e0c33c::t_30b2fae35a0a66 30
+  s_7c7a6c72e0c33c::t_385957e9786ee6 85-86,89-92
+  s_7c7a6c72e0c33c::t_62c33dfe7467f5 93
+packages/twenty-server/src/modules/messaging/message-import-manager/services/__tests__/messaging-messages-import.service.spec.ts
+  s_7c7a6c72e0c33c::t_aa80c435664154 238-240,242-243
+  s_7c7a6c72e0c33c::t_0535c662530183 306-308,310-311
+  s_7c7a6c72e0c33c::t_69568eb04365b9 228-230,232-234
+packages/twenty-server/src/modules/messaging/message-import-manager/messaging-import-manager.module.ts
+  s_7c7a6c72e0c33c::t_99697dd40887a0 56-57
+  s_7c7a6c72e0c33c::t_32ff41632baa7c 102-104
+  s_7c7a6c72e0c33c::t_de089a21f0707c 127-128
+  s_7c7a6c72e0c33c::t_c27b3a1a09a8a7 139
+  s_7c7a6c72e0c33c::t_e3ef10a31b345b 40-42
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-onboarding-messages-import.job.ts
+  s_7c7a6c72e0c33c::t_5cd3b8ec060eb9 1-52
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job.ts
+  s_7c7a6c72e0c33c::t_1769ad39ee3e53 24
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service.ts
+  s_7c7a6c72e0c33c::t_fab9482c868393 111-113
+  s_7c7a6c72e0c33c::t_7dc7633a110a20 65-83
+  s_7c7a6c72e0c33c::t_816c8698730843 1-16,21-64,84-110,114-116
+  s_7c7a6c72e0c33c::t_634f330e0878ea 17-20
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue-worker-config.constant.ts
+  s_7c7a6c72e0c33c::t_700590b71cbf85 43-53
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.ts
+  s_7c7a6c72e0c33c::t_83adf19ca34f39 33
+  s_7c7a6c72e0c33c::t_88a8b8cc7d1fdb 225-226,228-231
+  s_7c7a6c72e0c33c::t_82f88aa0dba648 48
+packages/twenty-server/src/engine/core-modules/auth/auth.module.ts
+  s_7c7a6c72e0c33c::t_ec582febed92f6 77
+  s_7c7a6c72e0c33c::t_577303abd53ac9 112
+packages/twenty-server/src/engine/core-modules/auth/services/google-apis.service.ts
+  s_7c7a6c72e0c33c::t_76e7d993d6529a 53
+  s_7c7a6c72e0c33c::t_67f9b20675a341 46
+  s_7c7a6c72e0c33c::t_237eff19e57a4b 339-343
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "73448eaa791af57e8f3ee79a0ce261926369c20e",
+  "prompts": {},
+  "sessions": {
+    "s_7c7a6c72e0c33c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c20e5ec-cd9d-423a-8ce0-ce10eb826c66",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
