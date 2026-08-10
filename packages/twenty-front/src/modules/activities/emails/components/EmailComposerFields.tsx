@@ -1,11 +1,12 @@
 import { useQuery } from '@apollo/client/react';
+import { useContext } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
 import { EmailComposerFieldRow } from '@/activities/emails/components/EmailComposerFieldRow';
@@ -121,6 +122,7 @@ export const EmailComposerFields = ({
   contextRecord,
   onAttachFiles,
 }: EmailComposerFieldsProps) => {
+  const { theme } = useContext(ThemeContext);
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: { id: string; handle: string }[];
@@ -280,7 +282,7 @@ export const EmailComposerFields = ({
         <StyledAttachments>
           {isDefined(onAttachFiles) && (
             <StyledAttachAction type="button" onClick={onAttachFiles}>
-              <IconPaperclip size={14} />
+              <IconPaperclip size={theme.icon.size.sm} />
               {t`Attach files`}
             </StyledAttachAction>
           )}
