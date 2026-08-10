@@ -62,6 +62,17 @@ export const Default: Story = {
   },
 };
 
+export const LongConfirmButtonLabel: Story = {
+  args: {
+    modalInstanceId: 'confirmation-modal',
+    title: 'Pariatur labore.',
+    subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
+    confirmButtonText:
+      'Permanently Destroy this unbelievably long custom object name',
+    onConfirmClick: fn(),
+  },
+};
+
 export const InputConfirmation: Story = {
   args: {
     confirmationValue: 'email@test.dev',
