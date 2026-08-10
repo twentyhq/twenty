@@ -29,6 +29,7 @@ import {
   FindManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -178,20 +179,24 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       columnsToSelect,
     );
 
-    const objectRecords = (await queryBuilder.getMany()) as ObjectRecord[];
-
-    const pageInfo = getPageInfo(
-      objectRecords,
-      orderByWithIdCondition,
+    const fetchedObjectRecords =
+      (await queryBuilder.getMany()) as ObjectRecord[];
+    const { items: objectRecords, pageInfo: cursorPageInfo } = buildCursorPage({
+      fetchedItems: fetchedObjectRecords,
       limit,
-      isForwardPagination,
+      direction: isForwardPagination ? 'forward' : 'backward',
+      // getCursor applies cursors on truthiness, so an empty-string cursor
+      // must not advertise navigation from a cursor.
+      hasAfterCursor: Boolean(args.after),
+      hasBeforeCursor: Boolean(args.before),
+    });
+    const pageInfo = getPageInfo({
+      records: objectRecords,
+      orderBy: orderByWithIdCondition,
+      pageInfo: cursorPageInfo,
       flatObjectMetadata,
       flatFieldMetadataMaps,
-    );
-
-    if (!isForwardPagination) {
-      objectRecords.reverse();
-    }
+    });
 
     const hasAggregatedFields =
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;

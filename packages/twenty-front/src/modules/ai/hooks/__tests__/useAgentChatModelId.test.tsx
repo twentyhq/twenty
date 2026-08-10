@@ -2,11 +2,13 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   jotaiStore,
@@ -62,15 +64,26 @@ const renderHooks = ({
   return result;
 };
 
+const onboardingChatPath = getAppPath(AppPath.AiChat, { threadId: null });
+
 describe('useAgentChatModelId', () => {
   beforeEach(() => {
+    sessionStorage.clear();
     resetJotaiStore();
   });
 
-  it('should request the workspace fast model on the workspace setup page', () => {
-    const result = renderHooks({ pathname: AppPath.WorkspaceSetup });
+  it('should request the workspace fast model during the onboarding chat', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+    const result = renderHooks({ pathname: onboardingChatPath });
 
     expect(result.current.modelIdForRequest).toBe('openai/gpt-5-mini');
+  });
+
+  it('should request no model on a plain chat page', () => {
+    const result = renderHooks({ pathname: onboardingChatPath });
+
+    expect(result.current.modelIdForRequest).toBeUndefined();
   });
 
   it('should request no model elsewhere so the server falls back to the smart model', () => {
@@ -79,9 +92,11 @@ describe('useAgentChatModelId', () => {
     expect(result.current.modelIdForRequest).toBeUndefined();
   });
 
-  it('should let a user selected model win on the workspace setup page', () => {
+  it('should let a user selected model win during the onboarding chat', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
     const result = renderHooks({
-      pathname: AppPath.WorkspaceSetup,
+      pathname: onboardingChatPath,
       userSelectedModel: 'openai/gpt-4.1',
     });
 

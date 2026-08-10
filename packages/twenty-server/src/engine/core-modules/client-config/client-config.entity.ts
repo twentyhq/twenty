@@ -226,6 +226,9 @@ export class PublicFeatureFlagMetadata {
   @Field(() => String)
   description: string;
 
+  @Field(() => String)
+  icon: string;
+
   @Field(() => String, { nullable: true })
   imagePath?: string;
 }
@@ -277,7 +280,10 @@ export class ClientConfig {
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 
-  @Field(() => Number)
+  @Field(() => Number, {
+    deprecationReason:
+      'Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend.',
+  })
   subdomainMinLength: number;
 
   @Field(() => String)

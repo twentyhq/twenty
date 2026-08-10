@@ -65,12 +65,15 @@ export class ApiKeyService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
-    return this.apiKeyRepository.find(workspaceId);
+    return this.apiKeyRepository.find(workspaceId, {
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
   }
 
   async findActiveByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
     return this.apiKeyRepository.find(workspaceId, {
       where: { revokedAt: IsNull() },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
   }
 

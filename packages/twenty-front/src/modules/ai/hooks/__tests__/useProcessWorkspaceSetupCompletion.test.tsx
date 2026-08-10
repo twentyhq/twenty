@@ -6,6 +6,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -16,20 +17,17 @@ const navigateMock = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => navigateMock,
+  useLocation: () => ({ state: null }),
 }));
 
 jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
   useDefaultHomePagePath: () => ({ defaultHomePagePath: '/objects/people' }),
 }));
 
-const openAskAiPageMock = jest.fn();
-
-jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
-  useOpenAskAiPageInSidePanel: () => ({ openAskAiPage: openAskAiPageMock }),
-}));
+const closeSidePanelMenuMock = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
-  useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
+  useSidePanelMenu: () => ({ closeSidePanelMenu: closeSidePanelMenuMock }),
 }));
 
 let isWorkspaceSetupChat = true;
@@ -82,6 +80,8 @@ describe('useProcessWorkspaceSetupCompletion', () => {
   });
 
   it('should redirect to the companies view and move the chat to the side panel', () => {
+    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
+
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
     });
@@ -93,9 +93,8 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     });
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/companies');
-    expect(openAskAiPageMock).toHaveBeenCalledWith({
-      resetNavigationStack: true,
-    });
+    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(true);
     expect(getProcessedToolCallIds()).toEqual(['call-1']);
   });
 
@@ -128,7 +127,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     });
 
     expect(navigateMock).not.toHaveBeenCalled();
-    expect(openAskAiPageMock).not.toHaveBeenCalled();
+    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
     expect(getProcessedToolCallIds()).toEqual(['call-1']);
   });
 

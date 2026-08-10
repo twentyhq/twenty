@@ -3,7 +3,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
-import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
@@ -13,20 +12,17 @@ import {
 
 const navigateMock = jest.fn();
 
+let locationState: unknown = null;
+
 jest.mock('react-router-dom', () => ({
   useNavigate: () => navigateMock,
+  useLocation: () => ({ state: locationState }),
 }));
 
 const defaultHomePagePath = '/objects/companies';
 
 jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
   useDefaultHomePagePath: () => ({ defaultHomePagePath }),
-}));
-
-const openAskAiPageMock = jest.fn();
-
-jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
-  useOpenAskAiPageInSidePanel: () => ({ openAskAiPage: openAskAiPageMock }),
 }));
 
 const closeSidePanelMenuMock = jest.fn();
@@ -44,11 +40,12 @@ describe('useReturnFromExpandedAiChat', () => {
     jest.clearAllMocks();
     sessionStorage.clear();
     resetJotaiStore();
+    locationState = null;
   });
 
-  it('should reopen the side panel and keep the side panel continuation when collapsing', () => {
+  it('should navigate to the return location carried by the history entry when collapsing', () => {
     jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
-    jotaiStore.set(aiChatExpandedReturnLocationState.atom, '/objects/people');
+    locationState = { returnLocation: '/objects/people' };
 
     const { result } = renderHook(
       () => useReturnFromExpandedAiChat({ reopenSidePanel: true }),
@@ -59,22 +56,28 @@ describe('useReturnFromExpandedAiChat', () => {
       result.current();
     });
 
-    expect(openAskAiPageMock).toHaveBeenCalledWith({
-      resetNavigationStack: true,
-    });
-    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');
+    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       true,
     );
-    expect(jotaiStore.get(aiChatExpandedReturnLocationState.atom)).toBeNull();
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
   });
 
-  it('should prefer the destination path over the stored return location', () => {
-    jotaiStore.set(aiChatExpandedReturnLocationState.atom, '/objects/people');
+  it('should navigate home when the history entry has no return location', () => {
+    const { result } = renderHook(
+      () => useReturnFromExpandedAiChat({ reopenSidePanel: true }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current();
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith(defaultHomePagePath);
+  });
+
+  it('should prefer the destination path over the return location carried by the history entry', () => {
+    locationState = { returnLocation: '/objects/people' };
 
     const { result } = renderHook(
       () =>
@@ -94,6 +97,7 @@ describe('useReturnFromExpandedAiChat', () => {
 
   it('should cancel the side panel continuation when closing', () => {
     jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
     const { result } = renderHook(
       () => useReturnFromExpandedAiChat({ reopenSidePanel: false }),
@@ -104,11 +108,13 @@ describe('useReturnFromExpandedAiChat', () => {
       result.current();
     });
 
-    expect(openAskAiPageMock).not.toHaveBeenCalled();
-    expect(closeSidePanelMenuMock).toHaveBeenCalled();
-    expect(navigateMock).toHaveBeenCalledWith(defaultHomePagePath);
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       false,
     );
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      false,
+    );
+    expect(closeSidePanelMenuMock).toHaveBeenCalled();
+    expect(navigateMock).toHaveBeenCalledWith(defaultHomePagePath);
   });
 });
