@@ -25,6 +25,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
+import { OnboardingEmailDigestModule } from 'src/modules/onboarding-email-digest/onboarding-email-digest.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -67,6 +68,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     MetricsModule,
     ToolProviderModule,
     DashboardToolsModule,
+    OnboardingEmailDigestModule,
     WorkflowToolsModule,
   ],
   providers: [

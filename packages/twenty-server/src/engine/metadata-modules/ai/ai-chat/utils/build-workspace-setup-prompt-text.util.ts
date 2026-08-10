@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type WorkspaceCompanyEnrichment,
   type WorkspacePersonEnrichment,
@@ -6,15 +6,20 @@ import {
 
 import { type WorkspaceSetupWorkspaceContext } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-workspace-context.type';
 import { buildCompanyContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-company-context-message-text.util';
+import { buildOnboardingEmailDigestMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-onboarding-email-digest-message-text.util';
 import { buildPersonContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-person-context-message-text.util';
 import { buildWorkspaceContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-context-message-text.util';
 import { getEnglishLanguageNameFromLocale } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-english-language-name-from-locale.util';
+import { type OnboardingEmailDigest } from 'src/modules/onboarding-email-digest/types/onboarding-email-digest.type';
 
 const NO_COMPANY_CONTEXT_LINE =
   'No information about the company that owns this workspace is available.';
 
 const NO_PERSON_CONTEXT_LINE =
   'No third-party information about the person setting up this workspace is available.';
+
+const NO_EMAIL_DIGEST_LINE =
+  'No information about imported emails is available.';
 
 const FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT =
   'Do not greet them again, the page above already welcomed them by name. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then a couple of lines on what you already know about their company, tailored to their business and specific enough to show you did your homework rather than reciting data points, written the way a colleague would rather than a form. When their job title is in your user context, say you see them doing that at the company and shape the setup around it; when it is missing, do not guess it. Invite them to correct anything, and present the data model proposal described below once they answer. Close this reply with an ask_questions call offering to propose a data model from what you know, or to hear first what they want to use Twenty for and anything else worth knowing.';
@@ -25,15 +30,26 @@ const FIRST_REPLY_INSTRUCTION_WITHOUT_COMPANY_CONTEXT =
 const FIRST_REPLY_PERSON_CONTEXT_ADDENDUM =
   'The person context above tells you who they are professionally: fold at most one specific detail from it into how you frame the setup, and never recite their profile back at them.';
 
+const FIRST_REPLY_EMAIL_DIGEST_ADDENDUM =
+  'Their mailbox is already connected and its first emails are imported: mention naturally, in one clause, that you can already see who they email most and will use that to seed the workspace, without listing contacts or subjects back at them.';
+
+const FIRST_REPLY_EMAIL_IMPORT_PENDING_ADDENDUM =
+  'Their mailbox is connected and its emails are still importing: you may note that their contacts are on their way into the workspace, and nothing more.';
+
+const DATA_MODEL_PROPOSAL_EMAIL_DIGEST_LINE =
+  'Records for the people and companies in their imported emails already exist in this workspace: shape the proposal so those records slot straight in, and you may name one or two of their real contacts or companies as examples.';
+
 export const buildWorkspaceSetupPromptText = ({
   companyEnrichment,
   personEnrichment,
   workspaceContext,
+  emailDigest,
   locale,
 }: {
   companyEnrichment: WorkspaceCompanyEnrichment | null;
   personEnrichment: WorkspacePersonEnrichment | null;
   workspaceContext: WorkspaceSetupWorkspaceContext;
+  emailDigest: OnboardingEmailDigest | null;
   locale: string;
 }): string => {
   const companyContextSection = isDefined(companyEnrichment)
@@ -47,6 +63,23 @@ export const buildWorkspaceSetupPromptText = ({
   const workspaceContextSection =
     buildWorkspaceContextMessageText(workspaceContext);
 
+  const emailDigestSection = isDefined(emailDigest)
+    ? buildOnboardingEmailDigestMessageText(emailDigest)
+    : NO_EMAIL_DIGEST_LINE;
+
+  const isMailboxConnected =
+    isDefined(emailDigest) &&
+    emailDigest.syncState !== 'NOT_CONNECTED' &&
+    emailDigest.syncState !== 'FAILED';
+
+  const hasImportedEmailData =
+    isMailboxConnected && emailDigest.importedMessageCount > 0;
+
+  const hasImportedContactsOrCompanies =
+    hasImportedEmailData &&
+    (isNonEmptyArray(emailDigest.topContacts) ||
+      isNonEmptyArray(emailDigest.topCompanyDomains));
+
   const firstReplyInstruction = isDefined(companyEnrichment)
     ? FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT
     : FIRST_REPLY_INSTRUCTION_WITHOUT_COMPANY_CONTEXT;
@@ -57,9 +90,19 @@ export const buildWorkspaceSetupPromptText = ({
     firstReplyAddenda.push(FIRST_REPLY_PERSON_CONTEXT_ADDENDUM);
   }
 
+  if (hasImportedEmailData) {
+    firstReplyAddenda.push(FIRST_REPLY_EMAIL_DIGEST_ADDENDUM);
+  } else if (isMailboxConnected) {
+    firstReplyAddenda.push(FIRST_REPLY_EMAIL_IMPORT_PENDING_ADDENDUM);
+  }
+
   const firstReplySection = [firstReplyInstruction, ...firstReplyAddenda].join(
     ' ',
   );
+
+  const dataModelProposalEmailDigestSegment = hasImportedContactsOrCompanies
+    ? `${DATA_MODEL_PROPOSAL_EMAIL_DIGEST_LINE}\n\n`
+    : '';
 
   const userLanguageName = getEnglishLanguageNameFromLocale(locale);
 
@@ -69,7 +112,9 @@ ${personContextSection}
 
 ${workspaceContextSection}
 
-You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference or quote it, present what you know about them and their company as your own knowledge rather than as data you were handed, and follow these rules silently instead of narrating your own method back to them.
+${emailDigestSection}
+
+You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference or quote it, present what you know about them, their company, and their inbox as your own knowledge rather than as data you were handed, and follow these rules silently instead of narrating your own method back to them.
 
 ## Goal
 
@@ -89,7 +134,7 @@ Introduce the data model in one line, including that it stays fully customizable
 - One line per standard object (People, Companies, Opportunities) mapping it onto their domain, with the custom fields to add. A field earns its place only if the team would filter, sort, or report on it.
 - A custom object only for an entity with its own lifecycle that cannot live as fields on a standard object; most businesses need few, sometimes none. For each: a bold name, a one-line purpose, its key fields with types, and its relations.
 
-Never stop after presenting the proposal. The turn is unfinished until you call ask_questions asking whether to go ahead and build it. Ask it even though the answer seems obvious: the general guidance about skipping questions with obvious defaults does not apply here.
+${dataModelProposalEmailDigestSegment}Never stop after presenting the proposal. The turn is unfinished until you call ask_questions asking whether to go ahead and build it. Ask it even though the answer seems obvious: the general guidance about skipping questions with obvious defaults does not apply here.
 
 ## After approval
 

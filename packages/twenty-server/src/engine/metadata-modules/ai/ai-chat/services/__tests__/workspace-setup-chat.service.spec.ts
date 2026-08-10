@@ -118,6 +118,10 @@ describe('WorkspaceSetupChatService', () => {
       }),
     };
 
+    const onboardingEmailDigestService = {
+      buildDigestForUser: jest.fn().mockResolvedValue(null),
+    };
+
     const service = new WorkspaceSetupChatService(
       twentyConfigService as never,
       billingUsageService as never,
@@ -127,6 +131,7 @@ describe('WorkspaceSetupChatService', () => {
       agentChatService as never,
       agentChatStreamingService as never,
       globalWorkspaceOrmManager as never,
+      onboardingEmailDigestService as never,
     );
 
     return {
@@ -141,11 +146,17 @@ describe('WorkspaceSetupChatService', () => {
       agentChatService,
       agentChatStreamingService,
       globalWorkspaceOrmManager,
+      onboardingEmailDigestService,
     };
   };
 
   it('should return unavailable without any thread interaction when the onboarding ai chat is disabled', async () => {
-    const { service, twentyConfigService, agentChatService } = buildService();
+    const {
+      service,
+      twentyConfigService,
+      agentChatService,
+      onboardingEmailDigestService,
+    } = buildService();
 
     twentyConfigService.get.mockReturnValue(false);
 
@@ -160,6 +171,9 @@ describe('WorkspaceSetupChatService', () => {
     );
     expect(agentChatService.findThreadById).not.toHaveBeenCalled();
     expect(agentChatService.createThread).not.toHaveBeenCalled();
+    expect(
+      onboardingEmailDigestService.buildDigestForUser,
+    ).not.toHaveBeenCalled();
   });
 
   it('should return unavailable when the caller is not the workspace creator', async () => {
@@ -386,8 +400,20 @@ describe('WorkspaceSetupChatService', () => {
     expect(kickoffText).not.toContain('No information about the company');
   });
 
-  it('should embed the workspace context and the person context in the hidden prompt', async () => {
-    const { service, agentChatStreamingService } = buildService();
+  it('should embed the workspace context, the person context, and the email digest in the hidden prompt', async () => {
+    const { service, agentChatStreamingService, onboardingEmailDigestService } =
+      buildService();
+
+    onboardingEmailDigestService.buildDigestForUser.mockResolvedValue({
+      syncState: 'IMPORTING',
+      connectedAccountHandle: 'creator@acme.com',
+      importedMessageCount: 42,
+      topContacts: [
+        { handle: 'jane@corp.com', displayName: 'Jane Doe', messageCount: 12 },
+      ],
+      topCompanyDomains: [{ domain: 'corp.com', messageCount: 15 }],
+      recentSubjects: [{ subject: 'Q3 renewal', receivedAt: '2026-08-05' }],
+    });
 
     const personContext = {
       email: 'creator@acme.com',
@@ -410,6 +436,13 @@ describe('WorkspaceSetupChatService', () => {
       personContext,
     });
 
+    expect(
+      onboardingEmailDigestService.buildDigestForUser,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      userWorkspaceId: 'user-workspace-id',
+    });
+
     const kickoffText =
       agentChatStreamingService.startHiddenKickoffStream.mock.calls[0][0].text;
 
@@ -418,9 +451,46 @@ describe('WorkspaceSetupChatService', () => {
     );
     expect(kickoffText).toContain('Job title: Head of Sales');
     expect(kickoffText).toContain('Seniority: director');
+    expect(kickoffText).toContain('Jane Doe <jane@corp.com> (12)');
+    expect(kickoffText).toContain('corp.com (15)');
+    expect(kickoffText).toContain('"Q3 renewal" (2026-08-05)');
     expect(kickoffText).not.toContain(
       'No third-party information about the person',
     );
+    expect(kickoffText).not.toContain(
+      'No information about imported emails is available.',
+    );
+  });
+
+  it('should fall back to the no-digest line when the digest computation exceeds its time budget', async () => {
+    jest.useFakeTimers();
+
+    try {
+      const {
+        service,
+        agentChatStreamingService,
+        onboardingEmailDigestService,
+      } = buildService();
+
+      onboardingEmailDigestService.buildDigestForUser.mockReturnValue(
+        new Promise(() => {}),
+      );
+
+      const resultPromise = service.startWorkspaceSetupChat(startArguments);
+
+      await jest.advanceTimersByTimeAsync(1500);
+      await resultPromise;
+
+      const kickoffText =
+        agentChatStreamingService.startHiddenKickoffStream.mock.calls[0][0]
+          .text;
+
+      expect(kickoffText).toContain(
+        'No information about imported emails is available.',
+      );
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('should return alreadyStarted without a credit check when the thread already has conversation messages', async () => {
@@ -429,6 +499,7 @@ describe('WorkspaceSetupChatService', () => {
       billingUsageService,
       agentChatService,
       agentChatStreamingService,
+      onboardingEmailDigestService,
     } = buildService();
 
     const existingThread = {
@@ -450,6 +521,9 @@ describe('WorkspaceSetupChatService', () => {
     expect(billingUsageService.hasAvailableCredits).not.toHaveBeenCalled();
     expect(
       agentChatStreamingService.startHiddenKickoffStream,
+    ).not.toHaveBeenCalled();
+    expect(
+      onboardingEmailDigestService.buildDigestForUser,
     ).not.toHaveBeenCalled();
   });
 

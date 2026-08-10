@@ -26,6 +26,9 @@ import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { ONBOARDING_EMAIL_DIGEST_TIME_BUDGET_MS } from 'src/modules/onboarding-email-digest/constants/onboarding-email-digest-time-budget-ms.constant';
+import { OnboardingEmailDigestService } from 'src/modules/onboarding-email-digest/services/onboarding-email-digest.service';
+import { type OnboardingEmailDigest } from 'src/modules/onboarding-email-digest/types/onboarding-email-digest.type';
 
 const WORKSPACE_SETUP_CHAT_THREAD_TITLE = msg`Workspace setup`;
 
@@ -55,6 +58,7 @@ export class WorkspaceSetupChatService {
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly onboardingEmailDigestService: OnboardingEmailDigestService,
   ) {}
 
   async startWorkspaceSetupChat({
@@ -151,6 +155,11 @@ export class WorkspaceSetupChatService {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
+    const emailDigestPromise = this.resolveEmailDigestWithinTimeBudget({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
+
     const locale = await localePromise;
 
     thread ??= await this.createThreadWithDeterministicId({
@@ -159,6 +168,8 @@ export class WorkspaceSetupChatService {
       workspaceId: workspace.id,
       locale,
     });
+
+    const emailDigest = await emailDigestPromise;
 
     const kickoffResult =
       await this.agentChatStreamingService.startHiddenKickoffStream({
@@ -173,6 +184,7 @@ export class WorkspaceSetupChatService {
             workspaceSubdomain: workspace.subdomain,
             userEmail,
           },
+          emailDigest,
           locale,
         }),
         modelId: workspace.fastModel,
@@ -190,6 +202,35 @@ export class WorkspaceSetupChatService {
     });
 
     return { outcome: WorkspaceSetupChatOutcome.STARTED, thread };
+  }
+
+  private async resolveEmailDigestWithinTimeBudget({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<OnboardingEmailDigest | null> {
+    let timeoutId: NodeJS.Timeout | undefined;
+
+    const timeBudgetPromise = new Promise<null>((resolve) => {
+      timeoutId = setTimeout(
+        () => resolve(null),
+        ONBOARDING_EMAIL_DIGEST_TIME_BUDGET_MS,
+      );
+    });
+
+    try {
+      return await Promise.race([
+        this.onboardingEmailDigestService.buildDigestForUser({
+          workspaceId,
+          userWorkspaceId,
+        }),
+        timeBudgetPromise,
+      ]);
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   private async createThreadWithDeterministicId({
