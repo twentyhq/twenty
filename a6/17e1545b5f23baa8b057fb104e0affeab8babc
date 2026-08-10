@@ -1,0 +1,97 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-clean-cache.ts
+  s_7c7a6c72e0c33c::t_ea4633ab4ff211 7
+  s_7c7a6c72e0c33c::t_2482f7889a661d 23
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-messages-import.service.ts
+  s_7c7a6c72e0c33c::t_5941a28185c66e 174-177,319-322
+  s_7c7a6c72e0c33c::t_c4df13db730955 22
+packages/twenty-server/src/engine/core-modules/auth/services/microsoft-apis.service.ts
+  s_7c7a6c72e0c33c::t_ab02370460de2c 299-301
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job.ts
+  s_7c7a6c72e0c33c::t_652d875f94f032 7
+  s_7c7a6c72e0c33c::t_004264e1f93240 29
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service.ts
+  s_7c7a6c72e0c33c::t_3a39c83d954cf9 282
+  s_7c7a6c72e0c33c::t_47e22e67b3213f 207-210,277
+  s_7c7a6c72e0c33c::t_34d367a8c22e8f 23
+  s_7c7a6c72e0c33c::t_c43ee026bfff67 25
+  s_7c7a6c72e0c33c::t_dad7129f8feb0f 278-280
+packages/twenty-server/src/modules/onboarding-first-messages/services/onboarding-first-messages.service.ts
+  s_7c7a6c72e0c33c::t_aa517a9b19ea81 7-43
+  s_7c7a6c72e0c33c::t_0be4bb152dc10b 4-6
+  s_7c7a6c72e0c33c::t_212dbeba4b4574 44-46
+  s_7c7a6c72e0c33c::t_8b2973b92d73e5 1-3,47-52
+packages/twenty-server/src/modules/onboarding-first-messages/constants/onboarding-first-messages-search-scopes.constant.ts
+  s_7c7a6c72e0c33c::t_a2812ab431ad43 3-6
+  s_7c7a6c72e0c33c::t_88c0464b77f906 1-2
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_7c7a6c72e0c33c::t_da00d9635159ac 330
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-onboarding-first-batch-import.job.ts
+  s_7c7a6c72e0c33c::t_3143e3003ba11a 1-25,29-30
+  s_7c7a6c72e0c33c::t_dad7129f8feb0f 26-28
+packages/twenty-server/src/modules/onboarding-first-messages/constants/onboarding-first-messages-max-per-scope.constant.ts
+  s_7c7a6c72e0c33c::t_05d17092f2b7ff 1
+packages/twenty-server/src/modules/messaging/common/services/message-channel-sync-status.service.ts
+  s_7c7a6c72e0c33c::t_34af3b91e031cf 24
+  s_7c7a6c72e0c33c::t_6bd006613b91e6 112
+packages/twenty-server/src/engine/core-modules/auth/services/google-apis.service.ts
+  s_7c7a6c72e0c33c::t_b810923507e769 339-341
+packages/twenty-server/src/modules/onboarding-first-messages/services/imap-first-messages.service.ts
+  s_7c7a6c72e0c33c::t_d39bac9f2690bf 11-54
+  s_7c7a6c72e0c33c::t_70a5a91e5e5c7e 8-10
+  s_7c7a6c72e0c33c::t_dddef7bd20f29e 55-57
+  s_7c7a6c72e0c33c::t_48c86a13bc55b5 1-7,58-92
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service.ts
+  s_7c7a6c72e0c33c::t_82e92f4ac62944 49-50,52-53
+  s_7c7a6c72e0c33c::t_700c4de2b69e3a 18-20
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.ts
+  s_7c7a6c72e0c33c::t_a28304243dbcbc 225-227
+packages/twenty-server/src/modules/onboarding-first-messages/services/gmail-first-messages.service.ts
+  s_7c7a6c72e0c33c::t_83fe46a4a001a0 7-28
+  s_7c7a6c72e0c33c::t_cf6010c5056e58 4-6
+  s_7c7a6c72e0c33c::t_018f5a9679af07 29-31
+  s_7c7a6c72e0c33c::t_b7187d0b1162d4 1-3,32-43
+packages/twenty-server/src/modules/onboarding-first-messages/onboarding-first-messages.module.ts
+  s_7c7a6c72e0c33c::t_a56cb2243cfc3c 5-20
+  s_7c7a6c72e0c33c::t_b046b068ed6da0 2-4
+  s_7c7a6c72e0c33c::t_2bfad9a62f8d35 1
+packages/twenty-server/src/modules/messaging/common/utils/get-messages-to-import-cache-key.util.ts
+  s_7c7a6c72e0c33c::t_b9f6137ceea01a 1-7
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-onboarding-first-batch-import.service.ts
+  s_7c7a6c72e0c33c::t_cec7754499c859 18,20
+  s_7c7a6c72e0c33c::t_b73259f1ed1d25 82-84
+  s_7c7a6c72e0c33c::t_78cd5b293af477 128-142
+  s_7c7a6c72e0c33c::t_e80e0dde6de139 81
+  s_7c7a6c72e0c33c::t_0f68ff5543e048 21-22
+  s_7c7a6c72e0c33c::t_55af9edcbac302 121-122
+  s_7c7a6c72e0c33c::t_a11ac1ab2e70f7 24
+  s_7c7a6c72e0c33c::t_09574eba61375f 1-10,14-17,19,23,25-44,46-48,51-80,85-120,123-127,143
+  s_7c7a6c72e0c33c::t_8531fd6360cfb6 49-50
+  s_7c7a6c72e0c33c::t_f49b83029fbd8a 45
+  s_7c7a6c72e0c33c::t_42ff51579cd40a 11-13
+packages/twenty-server/src/modules/messaging/message-import-manager/messaging-import-manager.module.ts
+  s_7c7a6c72e0c33c::t_eadc4bfbccfa96 41,57,106,129
+  s_7c7a6c72e0c33c::t_6f0fec2e5b0b99 20,93
+packages/twenty-server/src/modules/onboarding-first-messages/services/microsoft-first-messages.service.ts
+  s_7c7a6c72e0c33c::t_644b29042b3d59 6-30
+  s_7c7a6c72e0c33c::t_92393064bd6b05 3-5
+  s_7c7a6c72e0c33c::t_e2cc10c4e05df7 31-33
+  s_7c7a6c72e0c33c::t_f1bc86acc25bbf 1-2,34-48
+packages/twenty-server/src/modules/messaging/common/constants/messages-to-import-cache-ttl-ms.constant.ts
+  s_7c7a6c72e0c33c::t_d17a47c7725b68 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "a617e1545b5f23baa8b057fb104e0affeab8babc",
+  "prompts": {},
+  "sessions": {
+    "s_7c7a6c72e0c33c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c20e5ec-cd9d-423a-8ce0-ce10eb826c66",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}
