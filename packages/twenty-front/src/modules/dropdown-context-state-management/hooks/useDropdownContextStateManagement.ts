@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectOptionsDropdownContextValue } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { type RecordBoardColumnHeaderAggregateDropdownContextValue } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
+import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
 import { type RecordTableColumnAggregateFooterDropdownContextValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type Context, useCallback, useContext } from 'react';
@@ -13,7 +13,7 @@ import { type Context, useCallback, useContext } from 'react';
  */
 export const useDropdownContextStateManagement = <
   T extends
-    | RecordBoardColumnHeaderAggregateDropdownContextValue
+    | RecordGroupAggregateDropdownContextValue
     | RecordTableColumnAggregateFooterDropdownContextValue
     | ObjectOptionsDropdownContextValue,
 >({

@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
-import { SettingsPath } from 'twenty-shared/types';
+import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -31,7 +31,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/google-apis')
+@Controller(`${ApiPath.Auth}/google-apis`)
 @UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAPIsAuthController {
   constructor(

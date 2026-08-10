@@ -190,29 +190,30 @@ describe('FileUploadService', () => {
       expect(result.contentType).toBe('application/octet-stream');
     });
 
-    it.each([FileFolder.EmailAttachment, FileFolder.AgentChat])(
-      'should support direct upload for the %s folder',
-      async (fileFolder) => {
-        fileStorageService.getPresignedUploadUrl.mockResolvedValueOnce(
-          'https://bucket/presigned-put',
-        );
+    it.each([
+      FileFolder.EmailAttachment,
+      FileFolder.EmailImage,
+      FileFolder.AgentChat,
+    ])('should support direct upload for the %s folder', async (fileFolder) => {
+      fileStorageService.getPresignedUploadUrl.mockResolvedValueOnce(
+        'https://bucket/presigned-put',
+      );
 
-        const result = await service.createFileUpload({
-          workspaceId: 'workspace-id',
-          filename: 'document.pdf',
-          size: 1024,
+      const result = await service.createFileUpload({
+        workspaceId: 'workspace-id',
+        filename: 'document.pdf',
+        size: 1024,
+        fileFolder,
+      });
+
+      expect(fileStorageService.createPendingFile).toHaveBeenCalledWith(
+        expect.objectContaining({
           fileFolder,
-        });
-
-        expect(fileStorageService.createPendingFile).toHaveBeenCalledWith(
-          expect.objectContaining({
-            fileFolder,
-            resourcePath: 'mocked-file-id.pdf',
-          }),
-        );
-        expect(result.uploadUrl).toBe('https://bucket/presigned-put');
-      },
-    );
+          resourcePath: 'mocked-file-id.pdf',
+        }),
+      );
+      expect(result.uploadUrl).toBe('https://bucket/presigned-put');
+    });
   });
 
   describe('completeFileUpload', () => {
@@ -340,6 +341,49 @@ describe('FileUploadService', () => {
         }),
       ).rejects.toThrow();
       expect(fileRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should reject non-image content from the email image folder', async () => {
+      fileRepository.findOne.mockResolvedValueOnce({
+        ...pendingFile,
+        path: `${FileFolder.EmailImage}/file-id.pdf`,
+      });
+      fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 1024 });
+      fileStorageService.readFile.mockResolvedValueOnce(
+        Readable.from(PDF_BYTES),
+      );
+
+      await expect(
+        service.completeFileUpload({
+          workspaceId: 'workspace-id',
+          fileId: 'file-id',
+        }),
+      ).rejects.toMatchObject({
+        code: FileUploadExceptionCode.BAD_REQUEST,
+      });
+      expect(fileRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should accept image content in the email image folder', async () => {
+      fileRepository.findOne.mockResolvedValueOnce({
+        ...pendingFile,
+        path: `${FileFolder.EmailImage}/file-id.png`,
+      });
+      fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 1024 });
+      fileStorageService.readFile.mockResolvedValueOnce(
+        Readable.from(PNG_BYTES),
+      );
+
+      await service.completeFileUpload({
+        workspaceId: 'workspace-id',
+        fileId: 'file-id',
+      });
+
+      expect(fileRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        { id: 'file-id' },
+        { status: FILE_STATUS.UPLOADED, mimeType: 'image/png' },
+      );
     });
 
     it('should be idempotent when the file is already UPLOADED', async () => {

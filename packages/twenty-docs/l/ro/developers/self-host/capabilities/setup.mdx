@@ -386,3 +386,24 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 Când utilizați `LOGIC_FUNCTION_TYPE=DISABLED` sau `CODE_INTERPRETER_TYPE=DISABLED`, orice încercare de execuție va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără aceste capabilități.
 </Note>
+
+## API și interfața front-end pe gazde separate
+
+Este relevant doar dacă nu lași back-end-ul să servească front-end-ul. Implementările cu aceeași origine
+nu au nevoie de nimic aici.
+
+Declară fiecare origine de browser care comunică cu API-ul, separate prin virgulă. `SERVER_URL`
+și `FRONTEND_URL` sunt deja de încredere.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Actualizarea la o versiune cu sesiuni bazate pe cookie face ca acest lucru să fie obligatoriu. Partea de front-end
+acum trimite datele de autentificare la fiecare cerere, iar browserele resping un răspuns cu date de autentificare
+provenit de la o origine nedeclarată, astfel încât aplicația nu se încarcă până când nu configurați această opțiune.
+</Warning>
+
+Dacă cele două gazde se află pe domenii înregistrabile diferite (nu doar pe
+subdomenii diferite), setați, de asemenea, `AUTH_COOKIE_SAME_SITE=none`, ceea ce necesită HTTPS.

@@ -2,7 +2,7 @@ import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
-import { SettingsPath } from 'twenty-shared/types';
+import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -23,7 +23,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/apps')
+@Controller(`${ApiPath.Auth}/apps`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class ConnectionProviderOAuthController {
   private readonly logger = new Logger(ConnectionProviderOAuthController.name);

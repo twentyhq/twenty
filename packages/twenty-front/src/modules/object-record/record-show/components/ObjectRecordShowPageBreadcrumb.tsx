@@ -11,6 +11,7 @@ import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/u
 import { getRecordShowPageBreadcrumbPaginationLabel } from '@/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -61,6 +62,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  const isMobile = useIsMobile();
 
   const { loading } = useFindOneRecord({
     objectNameSingular,
@@ -114,17 +117,19 @@ export const ObjectRecordShowPageBreadcrumb = ({
 
   return (
     <StyledEditableTitleContainer data-testid="top-bar-title">
-      <StyledEditableTitlePrefix
-        onClick={() => {
-          navigateToIndexView();
-        }}
-      >
-        <StyledBreadcrumbPrefixObjectIcon>
-          <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-        </StyledBreadcrumbPrefixObjectIcon>
-        {objectLabel}
-        <span>{' / '}</span>
-      </StyledEditableTitlePrefix>
+      {!isMobile && (
+        <StyledEditableTitlePrefix
+          onClick={() => {
+            navigateToIndexView();
+          }}
+        >
+          <StyledBreadcrumbPrefixObjectIcon>
+            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+          </StyledBreadcrumbPrefixObjectIcon>
+          {objectLabel}
+          <span>{' / '}</span>
+        </StyledEditableTitlePrefix>
+      )}
       <StyledTitle>
         <FieldContext.Provider
           value={{
@@ -155,9 +160,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
           />
         </FieldContext.Provider>
       </StyledTitle>
-      <StyledPaginationInformation>
-        {paginationInformation}
-      </StyledPaginationInformation>
+      {!isMobile && (
+        <StyledPaginationInformation>
+          {paginationInformation}
+        </StyledPaginationInformation>
+      )}
     </StyledEditableTitleContainer>
   );
 };

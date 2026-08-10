@@ -1,10 +1,11 @@
 import { styled } from '@linaria/react';
 
+import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
@@ -143,7 +144,7 @@ export const CampaignComposerFields = ({
         defaultValue={campaignState.body}
         onChange={campaignState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
-        preset="inlineEmailBody"
+        profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
       />
     </StyledFieldsContainer>
   );

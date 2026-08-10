@@ -1,8 +1,10 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -11,22 +13,40 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+const STORY_RICH_TEXT_PROFILE = {
+  chrome: 'document',
+  minHeight: 200,
+  enableFullScreen: false,
+  buildExtensions: buildFullRichTextWithVariableTagExtensions,
+} satisfies AdvancedTextEditorProfile;
+
+const STORY_MINIMAL_PROFILE = {
+  chrome: 'document',
+  minHeight: 200,
+  enableFullScreen: false,
+  buildExtensions: () => [],
+} satisfies AdvancedTextEditorProfile;
+
 const EditorWrapper = ({
   readonly = false,
   placeholder = 'Enter text content...',
   defaultValue = null,
   onUpdate = fn(),
   minHeight = 200,
-  enableSlashCommand = true,
+  extensionSet = 'richText',
 }: {
   readonly?: boolean;
   placeholder?: string;
   defaultValue?: string | null;
   onUpdate?: (content: string) => void;
   minHeight?: number;
-  enableSlashCommand?: boolean;
+  extensionSet?: 'richText' | 'minimal';
 }) => {
   const editor = useAdvancedTextEditor({
+    profile:
+      extensionSet === 'richText'
+        ? STORY_RICH_TEXT_PROFILE
+        : STORY_MINIMAL_PROFILE,
     placeholder,
     readonly,
     defaultValue,
@@ -36,12 +56,13 @@ const EditorWrapper = ({
     },
     onImageUpload: async (file: File) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`;
+      return {
+        url: `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`,
+      };
     },
     onImageUploadError: (_error: Error, _file: File) => {
       // Handle image upload error
     },
-    enableSlashCommand,
   });
 
   if (!editor) {
@@ -86,6 +107,7 @@ export const WithContent: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -141,6 +163,7 @@ export const WithHeadings: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'heading',
@@ -179,6 +202,7 @@ export const WithLinks: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -214,6 +238,7 @@ export const WithVariableTags: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -247,6 +272,7 @@ export const ReadOnly: Story = {
     readonly: true,
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -278,6 +304,13 @@ export const Empty: Story = {
   },
 };
 
+export const MinimalDocument: Story = {
+  args: {
+    extensionSet: 'minimal',
+    placeholder: 'Ask, search or make anything...',
+  },
+};
+
 export const Interactive: Story = {
   args: {
     onUpdate: fn(),
@@ -296,6 +329,7 @@ export const WithLists: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'heading',

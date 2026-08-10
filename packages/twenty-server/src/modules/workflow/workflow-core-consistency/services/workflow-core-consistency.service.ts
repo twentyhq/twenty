@@ -32,16 +32,16 @@ export class WorkflowCoreConsistencyService {
   ) {}
 
   async runConsistencyCheck(): Promise<void> {
-    // Only workspaces that actually use workflows; the soft-ref makes this a
-    // cheap central lookup that skips the vast majority of workspaces.
-    const workspaces: Array<{ workspaceId: string }> =
+    const workspaces: Array<{ workspaceId: string; databaseSchema: string }> =
       await this.coreDataSource.query(
-        `SELECT DISTINCT "workspaceId" FROM core."workflow"`,
+        `SELECT id AS "workspaceId", "databaseSchema"
+         FROM core."workspace"
+         WHERE "activationStatus" IN ('ACTIVE', 'SUSPENDED') AND "databaseSchema" IS NOT NULL`,
       );
 
-    for (const { workspaceId } of workspaces) {
+    for (const { workspaceId, databaseSchema } of workspaces) {
       try {
-        await this.checkWorkspace(workspaceId);
+        await this.checkWorkspace(workspaceId, databaseSchema);
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
@@ -50,17 +50,21 @@ export class WorkflowCoreConsistencyService {
     }
   }
 
-  private async checkWorkspace(workspaceId: string): Promise<void> {
-    const [workspace] = await this.coreDataSource.query(
-      `SELECT "databaseSchema" FROM core."workspace" WHERE id = $1`,
+  private async checkWorkspace(
+    workspaceId: string,
+    schema: string,
+  ): Promise<void> {
+    const [{ shouldCheck }] = await this.coreDataSource.query(
+      `SELECT (
+         EXISTS (SELECT 1 FROM "${schema}"."workflow" WHERE "deletedAt" IS NULL)
+         OR EXISTS (SELECT 1 FROM core."workflow" WHERE "workspaceId" = $1)
+       ) AS "shouldCheck"`,
       [workspaceId],
     );
 
-    if (!isDefined(workspace?.databaseSchema)) {
+    if (!shouldCheck) {
       return;
     }
-
-    const schema: string = workspace.databaseSchema;
 
     await this.checkWorkflowSync(workspaceId, schema);
     await this.checkWorkflowVersionSync(workspaceId, schema);
@@ -170,7 +174,7 @@ export class WorkflowCoreConsistencyService {
       type: AutomatedTriggerType;
       settings: BaseDatabaseEventTriggerSettings | CronTriggerSettings | null;
     }> = await this.coreDataSource.query(
-      `SELECT "workflowId", type, settings FROM "${schema}"."workflowAutomatedTrigger"`,
+      `SELECT "workflowId", type, settings FROM "${schema}"."workflowAutomatedTrigger" WHERE "deletedAt" IS NULL`,
     );
 
     const tableByWorkflowId = new Map(

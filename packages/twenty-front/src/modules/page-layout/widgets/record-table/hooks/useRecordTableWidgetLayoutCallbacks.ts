@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -12,11 +13,6 @@ import {
   type ViewCalendarLayout,
   ViewType,
 } from '~/generated-metadata/graphql';
-
-export type RecordTableWidgetLayoutViewType =
-  | ViewType.TABLE_WIDGET
-  | ViewType.KANBAN_WIDGET
-  | ViewType.CALENDAR_WIDGET;
 
 type UseRecordTableWidgetLayoutCallbacksParams = {
   pageLayoutId: string;

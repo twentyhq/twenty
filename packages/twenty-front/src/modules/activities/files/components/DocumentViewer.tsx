@@ -44,7 +44,10 @@ const StyledDocumentViewerContainer = styled.div`
 
   #react-doc-viewer,
   #proxy-renderer,
-  #msdoc-renderer {
+  #msdoc-renderer,
+  #html-renderer,
+  #html-renderer iframe,
+  iframe {
     background: none;
     display: flex;
     flex-direction: column;

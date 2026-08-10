@@ -106,6 +106,7 @@ describe('ClientConfigService', () => {
             IS_CONFIG_VARIABLES_IN_DB_ENABLED: false,
             IS_IMAP_SMTP_CALDAV_ENABLED: false,
             CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
+            ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 50,
             CLOUDFLARE_API_KEY: undefined,
             CLOUDFLARE_ZONE_ID: undefined,
             ALLOW_REQUESTS_TO_TWENTY_ICONS: false,
@@ -190,11 +191,49 @@ describe('ClientConfigService', () => {
         isEmailingDomainInDemoMode: false,
         allowRequestsToTwentyIcons: false,
         calendarBookingPageId: 'team/twenty/talk-to-us',
+        isBookCallOnboardingStepEnabled: true,
+        isCompanyEnrichmentEnabled: false,
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
         isOnboardingAiChatEnabled: false,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
       });
+    });
+
+    it('should not return onboarding credits rewards when billing is disabled', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'IS_BILLING_ENABLED' ? false : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.onboarding).toBeNull();
+    });
+
+    it('should advertise cookie sessions when the flag is on', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'AUTH_COOKIE_SESSIONS_ENABLED' ? true : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.isCookieSessionEnabled).toBe(true);
+    });
+
+    it('should not advertise cookie sessions when the flag is off', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'AUTH_COOKIE_SESSIONS_ENABLED' ? false : undefined,
+        );
+
+      const result = await service.getClientConfig();
+
+      expect(result.isCookieSessionEnabled).toBe(false);
     });
 
     it('should handle production environment correctly', async () => {
@@ -203,6 +242,7 @@ describe('ClientConfigService', () => {
         .mockImplementation((key: string) => {
           if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'IS_FEATURE_FLAG_MANAGEMENT_ENABLED') return false;
 
           return undefined;
         });
@@ -251,6 +291,22 @@ describe('ClientConfigService', () => {
         .mockImplementation((key: string) => {
           if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return true;
+
+          return undefined;
+        });
+
+      const result = await service.getClientConfig();
+
+      expect(result.canManageFeatureFlags).toBe(true);
+    });
+
+    it('should allow managing feature flags when IS_FEATURE_FLAG_MANAGEMENT_ENABLED is on', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
+          if (key === 'IS_BILLING_ENABLED') return false;
+          if (key === 'IS_FEATURE_FLAG_MANAGEMENT_ENABLED') return true;
 
           return undefined;
         });

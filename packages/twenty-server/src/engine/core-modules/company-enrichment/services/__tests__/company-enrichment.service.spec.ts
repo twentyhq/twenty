@@ -22,7 +22,7 @@ describe('CompanyEnrichmentService', () => {
   };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
-  let twentyConfigService: { get: jest.Mock };
+  let configValues: Record<string, unknown>;
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
@@ -41,8 +41,9 @@ describe('CompanyEnrichmentService', () => {
     };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
     keyValuePairService = { set: jest.fn() };
-    twentyConfigService = {
-      get: jest.fn().mockReturnValue(true),
+    configValues = {
+      IS_ONBOARDING_AI_CHAT_ENABLED: true,
+      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -62,7 +63,7 @@ describe('CompanyEnrichmentService', () => {
         },
         {
           provide: TwentyConfigService,
-          useValue: twentyConfigService,
+          useValue: { get: (key: string) => configValues[key] },
         },
         {
           provide: KeyValuePairService,
@@ -204,27 +205,6 @@ describe('CompanyEnrichmentService', () => {
     );
   });
 
-  it('should return unavailable without any lookup when onboarding AI chat is off', async () => {
-    twentyConfigService.get.mockReturnValue(false);
-
-    const result = await service.enrichCompanyForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'foo@acme.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(twentyConfigService.get).toHaveBeenCalledWith(
-      'IS_ONBOARDING_AI_CHAT_ENABLED',
-    );
-    expect(userWorkspaceService.isWorkspaceCreator).not.toHaveBeenCalled();
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
-    expect(
-      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
-    ).not.toHaveBeenCalled();
-    expect(keyValuePairService.set).not.toHaveBeenCalled();
-  });
-
   it('should not consume throttle tokens when the feature is disabled', async () => {
     peopleDataLabsCompanyClientService.isEnabled.mockReturnValue(false);
 
@@ -334,6 +314,90 @@ describe('CompanyEnrichmentService', () => {
       domain: 'acme.com',
       name: 'Acme Inc',
     });
+  });
+
+  it('should not call the client when no api key is configured', async () => {
+    configValues = { IS_ONBOARDING_AI_CHAT_ENABLED: true };
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result.outcome).toBe('unavailable');
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should not call the client when no consumer of the enrichment is configured', async () => {
+    configValues = {
+      IS_ONBOARDING_AI_CHAT_ENABLED: false,
+      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+    };
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us' },
+    { ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 50 },
+    {
+      CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
+      ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 0,
+    },
+  ])(
+    'should not call the client for a half-configured book-call step (%j)',
+    async (bookCallConfig) => {
+      configValues = {
+        IS_ONBOARDING_AI_CHAT_ENABLED: false,
+        PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+        ...bookCallConfig,
+      };
+
+      await service.enrichCompanyForWorkspaceCreator({
+        userId: creatorUserId,
+        email: 'foo@acme.com',
+        workspaceId,
+      });
+
+      expect(
+        peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+      ).not.toHaveBeenCalled();
+    },
+  );
+
+  it('should enrich for the book-call step alone when the ai chat is disabled', async () => {
+    configValues = {
+      IS_ONBOARDING_AI_CHAT_ENABLED: false,
+      CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
+      ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: 50,
+      PEOPLE_DATA_LABS_API_KEY: 'pdl-key',
+    };
+    peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
+      outcome: 'matched',
+      data: { name: 'Acme Inc', employee_count: 320 },
+    });
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result.outcome).toBe('matched');
+    expect(result.enrichment).toMatchObject({ employeeCount: 320 });
   });
 
   it('should rethrow non throttler errors from the throttler', async () => {
