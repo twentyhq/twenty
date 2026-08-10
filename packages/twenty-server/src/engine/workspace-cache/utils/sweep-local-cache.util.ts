@@ -2,7 +2,7 @@ import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/
 
 export type LocalCacheSweepConfig = {
   ttlMs: number;
-  maxEntriesByPrefix: ReadonlyMap<string, number>;
+  maxEntriesByKeyName: ReadonlyMap<string, number>;
   globalMaxEntries: number;
   minEvict: number;
 };
@@ -70,10 +70,10 @@ export const sweepLocalCache = <T>(
     }
   }
 
-  for (const [prefix, maxEntries] of config.maxEntriesByPrefix) {
+  for (const [keyName, maxEntries] of config.maxEntriesByKeyName) {
     evicted += evictLeastRecentlyRead({
       localCache,
-      matches: (key) => key.startsWith(`${prefix}:`),
+      matches: (key) => key.startsWith(`${keyName}:`),
       maxEntries,
       minEvict: 0,
     });

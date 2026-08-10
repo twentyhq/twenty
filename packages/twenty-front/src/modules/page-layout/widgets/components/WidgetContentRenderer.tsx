@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
+import { CallRecordingTranscriptWidget } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptWidget';
 import { EmailThreadWidget } from '@/page-layout/widgets/email-thread/components/EmailThreadWidget';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
@@ -84,6 +85,9 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.MESSAGE_CAMPAIGN_BODY:
       return <MessageCampaignBodyWidget />;
+
+    case WidgetType.CALL_RECORDING_TRANSCRIPT:
+      return <CallRecordingTranscriptWidget />;
 
     // MESSAGE_CAMPAIGN_DETAILS renders nothing on purpose: the envelope fields
     // moved into the composer body widget. Workspaces still carrying the widget

@@ -7,15 +7,17 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -44,21 +46,23 @@ export class PageLayoutController {
   @Get()
   @UseGuards(NoPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('objectMetadataId') objectMetadataId?: string,
     @Query('pageLayoutType') pageLayoutType?: PageLayoutType,
-  ): Promise<PageLayoutDTO[]> {
-    if (isDefined(objectMetadataId)) {
-      return this.pageLayoutService.findBy({
-        workspaceId: workspace.id,
-        filter: {
-          objectMetadataId,
-          pageLayoutType,
-        },
-      });
-    }
+  ) {
+    const page = await this.pageLayoutService.findManyPaginated({
+      workspaceId: workspace.id,
+      objectMetadataId,
+      pageLayoutType,
+      pagination: parseMetadataRestPagination(request),
+    });
 
-    return this.pageLayoutService.findByWorkspaceId(workspace.id);
+    return {
+      data: page.items,
+      pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
+    };
   }
 
   @Get(':id')
