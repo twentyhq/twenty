@@ -4,6 +4,7 @@
   "description": "Slack assistant and workflow steps for Twenty",
   "license": "MIT",
   "engines": {
+    "twenty": ">=2.30.0",
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
