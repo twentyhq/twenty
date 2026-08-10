@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.30.0', 1786122069394)
+@RegisteredInstanceCommand('2.30.0', 1786360664857)
 export class CreateInboxCoreTablesFastInstanceCommand
   implements FastInstanceCommand
 {
@@ -178,7 +178,13 @@ export class CreateInboxCoreTablesFastInstanceCommand
         ON "core"."inboxItem" ("threadId")`,
     );
 
-    // Added once both tables exist, since the type table is created first
+    // Added once both tables exist, since the type table is created first.
+    // Dropped first because Postgres has no ADD CONSTRAINT IF NOT EXISTS, and
+    // this command has to survive being re-run.
+    await queryRunner.query(
+      `ALTER TABLE "core"."inboxItemType"
+        DROP CONSTRAINT IF EXISTS "FK_INBOX_ITEM_TYPE_DEFAULT_QUEUE_ID"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."inboxItemType"
         ADD CONSTRAINT "FK_INBOX_ITEM_TYPE_DEFAULT_QUEUE_ID"
