@@ -3,6 +3,8 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
 // Every unit test in this module mocks the repository, which means none of them
 // can catch a missing workspace predicate or a missing membership check: the
 // mock answers whatever it is asked. These go through the real resolvers so the
@@ -229,8 +231,15 @@ describe('inbox queue administration', () => {
   });
 
   it('should refuse to delete the triage inbox', async () => {
-    // Prepare: reading the settings seeds triage if it does not exist yet
-    await makeGraphqlAPIRequest({ query: GET_INBOX_QUEUE_SETTINGS });
+    // Prepare: triage is created on demand, and deleting a queue is one of the
+    // things that needs somewhere to move the work to
+    const { queue } = await createQueue('Integration Triage Trigger');
+
+    await makeGraphqlAPIRequest({
+      query: DELETE_INBOX_QUEUE,
+      variables: { queueId: queue.id },
+    });
+
     const settings = await makeGraphqlAPIRequest({
       query: GET_INBOX_QUEUE_SETTINGS,
     });
@@ -238,9 +247,7 @@ describe('inbox queue administration', () => {
       ({ isDefault }: { isDefault: boolean }) => isDefault,
     );
 
-    if (!triage) {
-      return;
-    }
+    expect(triage).toBeDefined();
 
     // Act
     const response = await makeGraphqlAPIRequest({
@@ -270,22 +277,43 @@ describe('inbox queue administration', () => {
       expect(memberResponse.body.data?.myInboxItems).toBeFalsy();
     });
 
-    it('should keep a shared inbox out of the drawer of someone who does not watch it', async () => {
+    // The same person, before and after being added: membership is the only
+    // thing that changes the answer
+    it('should put a shared inbox in the drawer only once someone watches it', async () => {
       // Prepare
-      const { queue } = await createQueue('Integration Unwatched');
+      const { queue } = await createQueue('Integration Watched');
+
+      const jonyQueueIds = async () =>
+        (
+          await makeGraphqlAPIRequest(
+            { query: GET_MY_INBOX_QUEUES },
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          )
+        ).body.data.myInboxQueues.map(({ id }: { id: string }) => id);
+
+      expect(await jonyQueueIds()).not.toContain(queue.id);
 
       // Act
-      const memberQueues = await makeGraphqlAPIRequest(
-        { query: GET_MY_INBOX_QUEUES },
+      await makeGraphqlAPIRequest({
+        query: SET_INBOX_QUEUE_MEMBERS,
+        variables: {
+          input: {
+            queueId: queue.id,
+            memberWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+          },
+        },
+      });
+
+      // Assert
+      expect(await jonyQueueIds()).toContain(queue.id);
+
+      const readable = await makeGraphqlAPIRequest(
+        { query: GET_MY_INBOX_ITEMS, variables: { queueSlug: queue.slug } },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
-      // Assert
-      expect(
-        memberQueues.body.data.myInboxQueues.map(
-          ({ id }: { id: string }) => id,
-        ),
-      ).not.toContain(queue.id);
+      expect(readable.body.errors).toBeUndefined();
+      expect(readable.body.data.myInboxItems).toEqual([]);
     });
 
     // Administration is settings-gated: it decides who can reach which shared
