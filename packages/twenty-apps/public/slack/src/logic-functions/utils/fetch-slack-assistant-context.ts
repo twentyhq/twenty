@@ -32,7 +32,13 @@ export const fetchSlackAssistantContext = async ({
   const { client } = slackClientResult;
 
   const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
-    () => undefined,
+    (error) => {
+      console.warn(
+        `[slack] failed to resolve the bot user id, past assistant replies are replayed as user turns: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return undefined;
+    },
   );
 
   const [conversationMessages, requesterName] = await Promise.all([

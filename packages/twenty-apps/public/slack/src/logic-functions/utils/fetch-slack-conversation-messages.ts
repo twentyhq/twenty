@@ -2,11 +2,14 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
+import { stripSlackAssistantAnswerFooter } from 'src/logic-functions/utils/strip-slack-assistant-answer-footer';
 
 const CONTEXT_MESSAGE_LIMIT = 15;
-// conversations.replies pages from the start of the thread, so fetch a wider
-// window and keep the tail to stay on the most recent turns
-const THREAD_REPLIES_FETCH_LIMIT = 100;
+// conversations.replies only pages forward from the start of the thread, so
+// walk to the last page and keep a wide tail to stay on the most recent turns
+const THREAD_REPLIES_PAGE_SIZE = 200;
+const THREAD_REPLIES_MAX_PAGES = 10;
+const THREAD_REPLIES_TAIL_SIZE = 100;
 
 type SlackContextMessage = {
   ts?: string;
@@ -16,6 +19,40 @@ type SlackContextMessage = {
 };
 
 type SlackContextMessageWithText = SlackContextMessage & { text: string };
+
+const fetchThreadTailMessages = async ({
+  client,
+  channelId,
+  threadTimestamp,
+}: {
+  client: WebClient;
+  channelId: string;
+  threadTimestamp: string;
+}): Promise<SlackContextMessage[]> => {
+  let tailMessages: SlackContextMessage[] = [];
+  let cursor: string | undefined = undefined;
+
+  for (let page = 0; page < THREAD_REPLIES_MAX_PAGES; page++) {
+    const replies = await client.conversations.replies({
+      channel: channelId,
+      ts: threadTimestamp,
+      limit: THREAD_REPLIES_PAGE_SIZE,
+      cursor,
+    });
+
+    tailMessages = [...tailMessages, ...(replies.messages ?? [])].slice(
+      -THREAD_REPLIES_TAIL_SIZE,
+    );
+
+    cursor = replies.response_metadata?.next_cursor;
+
+    if (!isNonEmptyString(cursor)) {
+      break;
+    }
+  }
+
+  return tailMessages;
+};
 
 const mapSlackMessagesToAgentMessages = ({
   messages,
@@ -49,7 +86,10 @@ const mapSlackMessagesToAgentMessages = ({
         isNonEmptyString(message.user) &&
         message.user === assistantBotUserId
       ) {
-        return { role: 'assistant', content: message.text };
+        return {
+          role: 'assistant',
+          content: stripSlackAssistantAnswerFooter(message.text),
+        };
       }
 
       const author = isNonEmptyString(message.bot_id)
@@ -59,6 +99,8 @@ const mapSlackMessagesToAgentMessages = ({
       return { role: 'user', content: `${author}: ${message.text}` };
     });
 
+  // trimming the window can leave an assistant turn first, which providers
+  // reject: a conversation has to open on a user turn
   const firstUserTurnIndex = agentMessages.findIndex(
     (message) => message.role === 'user',
   );
@@ -92,14 +134,12 @@ export const fetchSlackConversationMessages = async ({
 
   try {
     if (isNonEmptyString(threadTimestamp)) {
-      const replies = await client.conversations.replies({
-        channel: channelId,
-        ts: threadTimestamp,
-        limit: THREAD_REPLIES_FETCH_LIMIT,
-      });
-
       return mapSlackMessagesToAgentMessages({
-        messages: replies.messages ?? [],
+        messages: await fetchThreadTailMessages({
+          client,
+          channelId,
+          threadTimestamp,
+        }),
         assistantBotUserId,
         excludeMessageTimestamps: excludedTimestamps,
         excludeMessageTexts: excludedTexts,

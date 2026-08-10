@@ -204,6 +204,65 @@ describe('fetchSlackConversationMessages', () => {
     expect(messages).toEqual([]);
   });
 
+  it('should strip the answered-in footer from replayed assistant turns', async () => {
+    const client = buildClient({
+      replies: [
+        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
+        {
+          ts: '2',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Sarah owns it.\n\n_Answered in 4s_',
+        },
+      ],
+    });
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: '1',
+      isDirectMessage: false,
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages[1]).toEqual({
+      role: 'assistant',
+      content: 'Sarah owns it.',
+    });
+  });
+
+  it('should page to the thread tail so long threads keep their most recent turns', async () => {
+    const repliesMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        messages: [{ ts: '1', user: 'U123', text: 'Oldest turn' }],
+        response_metadata: { next_cursor: 'page2' },
+      })
+      .mockResolvedValueOnce({
+        messages: [{ ts: '2', user: 'U123', text: 'Newest turn' }],
+        response_metadata: { next_cursor: '' },
+      });
+
+    const client = {
+      conversations: { replies: repliesMock },
+    } as unknown as WebClient;
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: '1',
+      isDirectMessage: false,
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(repliesMock).toHaveBeenCalledTimes(2);
+    expect(repliesMock.mock.calls[1][0]).toMatchObject({ cursor: 'page2' });
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U123>: Oldest turn' },
+      { role: 'user', content: '<@U123>: Newest turn' },
+    ]);
+  });
+
   it('should return no history for a channel mention outside a thread', async () => {
     const client = buildClient({});
 
