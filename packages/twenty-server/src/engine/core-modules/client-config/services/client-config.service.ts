@@ -27,10 +27,6 @@ import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/co
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
-// Served only so front bundles cached from the previous release keep booting; the
-// subdomain minimum is now fixed at 1 and nothing reads this value anymore.
-const DEPRECATED_SUBDOMAIN_MIN_LENGTH = 1;
-
 @Injectable()
 export class ClientConfigService {
   constructor(
@@ -210,7 +206,6 @@ export class ClientConfigService {
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-      subdomainMinLength: DEPRECATED_SUBDOMAIN_MIN_LENGTH,
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
