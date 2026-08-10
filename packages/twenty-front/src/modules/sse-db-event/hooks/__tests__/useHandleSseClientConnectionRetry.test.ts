@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { type Client } from 'graphql-sse';
 import { createStore, Provider } from 'jotai';
 import { createElement, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -66,7 +67,7 @@ const setupStore = ({
 
 const wasStreamDestroyed = (store: ReturnType<typeof createStore>) =>
   store.get(shouldDestroyEventStreamState.atom) &&
-  store.get(sseClientState.atom) === null;
+  !isDefined(store.get(sseClientState.atom));
 
 describe('useHandleSseClientConnectionRetry', () => {
   beforeEach(() => {
@@ -96,7 +97,6 @@ describe('useHandleSseClientConnectionRetry', () => {
 
     expect(dispose).not.toHaveBeenCalled();
     expect(wasStreamDestroyed(store)).toBe(false);
-    // Nothing to renew when the cookie is the credential.
     expect(ensureTokenRenewedMock).not.toHaveBeenCalled();
   });
 
