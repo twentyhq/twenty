@@ -157,22 +157,22 @@ export class CalDavFetchEventsService {
       );
     }
 
-    const removedHrefs = unreadableResponses.filter(
+    const removedResponses = unreadableResponses.filter(
       (response) => response.status === 404 || response.status === 410,
     );
-    const unexpectedHrefs = unreadableResponses.filter(
+    const unexpectedResponses = unreadableResponses.filter(
       (response) => response.status !== 404 && response.status !== 410,
     );
 
-    if (removedHrefs.length > 0) {
+    if (removedResponses.length > 0) {
       this.logger.debug(
-        `Skipping ${removedHrefs.length} calendar events removed from ${collectionUrl} since the last list fetch`,
+        `Skipping ${removedResponses.length} calendar events removed from ${collectionUrl} since the last list fetch`,
       );
     }
 
-    if (unexpectedHrefs.length > 0) {
+    if (unexpectedResponses.length > 0) {
       this.logger.warn(
-        `Skipping ${unexpectedHrefs.length} unreadable calendar events in ${collectionUrl}: ${unexpectedHrefs
+        `Skipping ${unexpectedResponses.length} unreadable calendar events in ${collectionUrl}: ${unexpectedResponses
           .map((response) => `${response.href} ${response.status}`)
           .join(', ')}`,
       );
@@ -187,7 +187,9 @@ export class CalDavFetchEventsService {
     response: DAVResponse,
     collectionUrl: string,
   ): boolean {
-    if (!isNonEmptyString(response.href)) return true;
+    if (!isNonEmptyString(response.href)) {
+      return true;
+    }
 
     return (
       new URL(response.href, collectionUrl).href === new URL(collectionUrl).href
