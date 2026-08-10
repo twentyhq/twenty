@@ -956,22 +956,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slack/types@npm:^2.20.1":
-  version: 2.20.1
-  resolution: "@slack/types@npm:2.20.1"
-  checksum: 10c0/62f1ff4d387cf511316f45c18ce9beaa1d0989a063ede5b40458fa776d460417f49faafb6cf7312fe2a9a5c8dfeb5c39ab685b911332f117a8222708da6468d7
+"@slack/types@npm:^2.21.0":
+  version: 2.22.0
+  resolution: "@slack/types@npm:2.22.0"
+  checksum: 10c0/0630feebb790957b227821ce4c474c174d9a4473481b9f04bfa589b2dc4f52a615b9f80664222c8a44090590fd1e1aaf5427986eb2c3a98dc75a5fabce3e2d53
   languageName: node
   linkType: hard
 
-"@slack/web-api@npm:^7.8.0":
-  version: 7.15.1
-  resolution: "@slack/web-api@npm:7.15.1"
+"@slack/web-api@npm:^7.18.0":
+  version: 7.19.0
+  resolution: "@slack/web-api@npm:7.19.0"
   dependencies:
     "@slack/logger": "npm:^4.0.1"
-    "@slack/types": "npm:^2.20.1"
+    "@slack/types": "npm:^2.21.0"
     "@types/node": "npm:>=18"
     "@types/retry": "npm:0.12.0"
-    axios: "npm:^1.15.0"
+    axios: "npm:^1.16.0"
     eventemitter3: "npm:^5.0.1"
     form-data: "npm:^4.0.4"
     is-electron: "npm:2.2.2"
@@ -979,7 +979,7 @@ __metadata:
     p-queue: "npm:^6"
     p-retry: "npm:^4"
     retry: "npm:^0.13.1"
-  checksum: 10c0/69abd28f60805a90fa57851b20f856a4f2bc929b2863f1e434d9cec8a844a4dc0574720c8d5543aa860cd627013d5ccac969391580dbc4f05c95a21d77c2116f
+  checksum: 10c0/78d52590feede0e5b55bfb3effa2723e090f3b684878f069d830fee2bad712abc285f4abdd1c0a7d308e19378c330aa86e9795667a229c888ca1862d39dd40d8
   languageName: node
   linkType: hard
 
@@ -1001,7 +1001,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@twentyhq/slack@workspace:."
   dependencies:
-    "@slack/web-api": "npm:^7.8.0"
+    "@slack/web-api": "npm:^7.18.0"
     "@types/node": "npm:^24.7.2"
     "@types/react": "npm:^18.2.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
@@ -1351,7 +1351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.15.0, axios@npm:^1.16.0":
+"axios@npm:^1.16.0":
   version: 1.18.1
   resolution: "axios@npm:1.18.1"
   dependencies:

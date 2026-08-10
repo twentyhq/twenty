@@ -64,12 +64,10 @@ const mapSlackMessagesToAgentMessages = ({
   messages,
   assistantBotUserId,
   excludeMessageTimestamps,
-  excludeMessageTexts,
 }: {
   messages: ReadonlyArray<SlackContextMessage>;
   assistantBotUserId: string | undefined;
   excludeMessageTimestamps: Set<string>;
-  excludeMessageTexts: Set<string>;
 }): SlackAssistantAgentMessage[] => {
   const agentMessages = messages
     .filter((message): message is SlackContextMessageWithText => {
@@ -77,14 +75,9 @@ const mapSlackMessagesToAgentMessages = ({
         return false;
       }
 
-      if (
-        isNonEmptyString(message.ts) &&
-        excludeMessageTimestamps.has(message.ts)
-      ) {
-        return false;
-      }
-
-      return !excludeMessageTexts.has(message.text);
+      return !(
+        isNonEmptyString(message.ts) && excludeMessageTimestamps.has(message.ts)
+      );
     })
     .slice(-CONTEXT_MESSAGE_LIMIT)
     .map((message): SlackAssistantAgentMessage => {
@@ -120,53 +113,29 @@ export const fetchSlackConversationMessages = async ({
   client,
   channelId,
   threadTimestamp,
-  isDirectMessage,
   assistantBotUserId,
   excludeMessageTimestamps = [],
-  excludeMessageTexts = [],
 }: {
   client: WebClient;
   channelId: string;
-  threadTimestamp: string | undefined;
-  isDirectMessage: boolean;
+  threadTimestamp: string;
   assistantBotUserId: string | undefined;
   excludeMessageTimestamps?: string[];
-  excludeMessageTexts?: string[];
 }): Promise<SlackAssistantAgentMessage[]> => {
   const excludedTimestamps = new Set(
     excludeMessageTimestamps.filter(isNonEmptyString),
   );
-  const excludedTexts = new Set(excludeMessageTexts.filter(isNonEmptyString));
 
   try {
-    if (isNonEmptyString(threadTimestamp)) {
-      return mapSlackMessagesToAgentMessages({
-        messages: await fetchThreadTailMessages({
-          client,
-          channelId,
-          threadTimestamp,
-        }),
-        assistantBotUserId,
-        excludeMessageTimestamps: excludedTimestamps,
-        excludeMessageTexts: excludedTexts,
-      });
-    }
-
-    if (isDirectMessage) {
-      const history = await client.conversations.history({
-        channel: channelId,
-        limit: CONTEXT_MESSAGE_LIMIT,
-      });
-
-      return mapSlackMessagesToAgentMessages({
-        messages: [...(history.messages ?? [])].reverse(),
-        assistantBotUserId,
-        excludeMessageTimestamps: excludedTimestamps,
-        excludeMessageTexts: excludedTexts,
-      });
-    }
-
-    return [];
+    return mapSlackMessagesToAgentMessages({
+      messages: await fetchThreadTailMessages({
+        client,
+        channelId,
+        threadTimestamp,
+      }),
+      assistantBotUserId,
+      excludeMessageTimestamps: excludedTimestamps,
+    });
   } catch {
     return [];
   }

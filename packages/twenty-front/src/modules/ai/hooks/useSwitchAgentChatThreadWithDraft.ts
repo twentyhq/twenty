@@ -4,6 +4,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 export const useSwitchAgentChatThreadWithDraft = () => {
@@ -13,17 +14,20 @@ export const useSwitchAgentChatThreadWithDraft = () => {
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const store = useStore();
 
-  const switchThreadWithDraft = (toThreadId: string) => {
-    const isSameThread = toThreadId === currentAiChatThread;
+  const switchThreadWithDraft = useCallback(
+    (toThreadId: string) => {
+      const isSameThread = toThreadId === currentAiChatThread;
 
-    setCurrentAiChatThread(toThreadId);
+      setCurrentAiChatThread(toThreadId);
 
-    if (!isSameThread) {
-      const destinationDraft =
-        store.get(agentChatDraftsByThreadIdState.atom)[toThreadId] ?? '';
-      setAgentChatInput(tipTapDocumentToMarkdown(destinationDraft));
-    }
-  };
+      if (!isSameThread) {
+        const destinationDraft =
+          store.get(agentChatDraftsByThreadIdState.atom)[toThreadId] ?? '';
+        setAgentChatInput(tipTapDocumentToMarkdown(destinationDraft));
+      }
+    },
+    [currentAiChatThread, setCurrentAiChatThread, setAgentChatInput, store],
+  );
 
   return { switchThreadWithDraft };
 };

@@ -7143,6 +7143,11 @@ msgstr "您選擇的一些權限無效。請使用有效的權限設置重試。
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "找不到某些工作區成員資格。他們可能不再有權訪問此工作區。"
 
+#. js-lingui-id: RjTo7h
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while starting the app installation. Please try again."
+msgstr ""
+
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "Something went wrong. Please try again."

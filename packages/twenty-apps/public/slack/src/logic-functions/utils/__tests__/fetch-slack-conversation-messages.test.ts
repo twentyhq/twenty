@@ -5,17 +5,10 @@ import { fetchSlackConversationMessages } from 'src/logic-functions/utils/fetch-
 
 const ASSISTANT_BOT_USER_ID = 'U_ASSISTANT';
 
-const buildClient = ({
-  replies,
-  history,
-}: {
-  replies?: object[];
-  history?: object[];
-}): WebClient =>
+const buildClient = ({ replies }: { replies?: object[] }): WebClient =>
   ({
     conversations: {
       replies: vi.fn().mockResolvedValue({ messages: replies ?? [] }),
-      history: vi.fn().mockResolvedValue({ messages: history ?? [] }),
     },
   }) as unknown as WebClient;
 
@@ -37,7 +30,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
@@ -59,7 +51,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
@@ -85,7 +76,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: undefined,
     });
 
@@ -94,17 +84,11 @@ describe('fetchSlackConversationMessages', () => {
     ]);
   });
 
-  it('should exclude filtered timestamps and transient texts', async () => {
+  it('should exclude the triggering message by timestamp', async () => {
     const client = buildClient({
       replies: [
         { ts: '1', user: 'U123', text: 'Hello' },
         { ts: '2', user: 'U123', text: 'The request itself' },
-        {
-          ts: '3',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: 'Thinking…',
-        },
       ],
     });
 
@@ -112,40 +96,11 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
       excludeMessageTimestamps: ['2'],
-      excludeMessageTexts: ['Thinking…'],
     });
 
     expect(messages).toEqual([{ role: 'user', content: '<@U123>: Hello' }]);
-  });
-
-  it('should read channel history in chronological order for direct messages', async () => {
-    const client = buildClient({
-      history: [
-        {
-          ts: '2',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: 'Earlier answer',
-        },
-        { ts: '1', user: 'U123', text: 'Earlier question' },
-      ],
-    });
-
-    const messages = await fetchSlackConversationMessages({
-      client,
-      channelId: 'D1',
-      threadTimestamp: undefined,
-      isDirectMessage: true,
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toEqual([
-      { role: 'user', content: '<@U123>: Earlier question' },
-      { role: 'assistant', content: 'Earlier answer' },
-    ]);
   });
 
   it('should drop leading assistant turns so the history opens on a user turn', async () => {
@@ -171,7 +126,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
@@ -197,7 +151,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
@@ -221,7 +174,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
@@ -251,7 +203,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
@@ -279,7 +230,6 @@ describe('fetchSlackConversationMessages', () => {
       client,
       channelId: 'C1',
       threadTimestamp: '1',
-      isDirectMessage: false,
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
@@ -291,14 +241,17 @@ describe('fetchSlackConversationMessages', () => {
     warnSpy.mockRestore();
   });
 
-  it('should return no history for a channel mention outside a thread', async () => {
-    const client = buildClient({});
+  it('should return no history when the Slack API throws', async () => {
+    const client = {
+      conversations: {
+        replies: vi.fn().mockRejectedValue(new Error('slack down')),
+      },
+    } as unknown as WebClient;
 
     const messages = await fetchSlackConversationMessages({
       client,
       channelId: 'C1',
-      threadTimestamp: undefined,
-      isDirectMessage: false,
+      threadTimestamp: '1',
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 

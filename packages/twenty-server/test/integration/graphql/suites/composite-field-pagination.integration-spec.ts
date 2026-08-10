@@ -85,6 +85,9 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
 
     expect(firstPagePeople).toHaveLength(2);
     expect(firstPageResponse.body.data.people.pageInfo.hasNextPage).toBe(true);
+    expect(firstPageResponse.body.data.people.pageInfo.hasPreviousPage).toBe(
+      false,
+    );
 
     expect(firstPagePeople[0].name.firstName).toBe('Alice');
     expect(firstPagePeople[0].name.lastName).toBe('Brown');
@@ -113,6 +116,9 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
     );
 
     expect(secondPagePeople).toHaveLength(2);
+    expect(secondPageResponse.body.data.people.pageInfo.hasPreviousPage).toBe(
+      true,
+    );
 
     expect(secondPagePeople[0].name.firstName).toBe('Bob');
     expect(secondPagePeople[0].name.lastName).toBe('Johnson');

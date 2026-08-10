@@ -280,12 +280,6 @@ export class ClientConfig {
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 
-  @Field(() => Number, {
-    deprecationReason:
-      'Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend.',
-  })
-  subdomainMinLength: number;
-
   @Field(() => String)
   frontDomain: string;
 
