@@ -94,7 +94,9 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/companies');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(true);
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+      true,
+    );
     expect(getProcessedToolCallIds()).toEqual(['call-1']);
   });
 
