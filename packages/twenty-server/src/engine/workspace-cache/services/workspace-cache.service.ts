@@ -42,7 +42,7 @@ import {
   type WorkspaceLocalCacheEntry,
 } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
-import { selectColdStorageDemotions } from 'src/engine/workspace-cache/utils/select-cold-storage-demotions.util';
+import { demoteColdStorageEntries } from 'src/engine/workspace-cache/utils/demote-cold-storage-entries.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
@@ -55,17 +55,10 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const HOT_ENTRIES_PER_PROVIDER = 64;
-const DATA_KEY_SUFFIX = 'data';
-const COMPACT_DATA_KEY_SUFFIX = 'data:compact-v1';
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
   [WORKSPACE_CACHE_KEYS_V2.ORMEntityMetadatas, 128],
 ]);
-const buildAllDataKeys = (baseKey: string): string[] => [
-  `${baseKey}:${DATA_KEY_SUFFIX}`,
-  `${baseKey}:${COMPACT_DATA_KEY_SUFFIX}`,
-];
-
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 
@@ -93,8 +86,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
-  private readonly keyNameByPrefix = new Map<string, WorkspaceCacheKeyName>();
-  private readonly coldStorageEligiblePrefixes = new Set<string>();
+  private readonly coldStorageKeyNameByPrefix = new Map<
+    string,
+    WorkspaceCacheKeyName
+  >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -137,14 +132,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             instance.constructor,
           );
 
-        const prefix = WORKSPACE_CACHE_KEYS_V2[workspaceCacheKeyName];
-
-        this.keyNameByPrefix.set(prefix, workspaceCacheKeyName);
-
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
         } else if (workspaceCacheKeyName !== 'featureFlagsMap') {
-          this.coldStorageEligiblePrefixes.add(prefix);
+          this.coldStorageKeyNameByPrefix.set(
+            WORKSPACE_CACHE_KEYS_V2[workspaceCacheKeyName],
+            workspaceCacheKeyName,
+          );
         }
       }
     }
@@ -446,7 +440,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const allKeys = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [this.buildDataKey({ workspaceId, baseKey }), `${baseKey}:hash`];
+      return [`${baseKey}:data`, `${baseKey}:hash`];
     });
 
     const allValues = await this.cacheStorage.mget<
@@ -461,7 +455,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data = this.decodeFromStorage({ keyName, rawData });
+          data =
+            this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
         } catch (error) {
           this.logger.warn(
             `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
@@ -539,7 +534,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       key: string;
       value: StoredCacheDataType | string;
     }> = [];
-    const staleEncodingKeys: string[] = [];
     const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
 
     for (const { keyName, data, hash, isAdopted } of computed) {
@@ -558,15 +552,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (!isLocalDataOnly) {
-        const dataKey = this.buildDataKey({ workspaceId, baseKey });
-
         redisEntries.push({
-          key: dataKey,
+          key: `${baseKey}:data`,
           value: this.encodeForStorage({ workspaceId, keyName, data }),
         });
-        staleEncodingKeys.push(
-          ...buildAllDataKeys(baseKey).filter((key) => key !== dataKey),
-        );
       }
 
       this.setInLocalCache(workspaceId, keyName, data, hash);
@@ -577,10 +566,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
       try {
         await this.cacheStorage.mset(redisEntries);
-
-        if (staleEncodingKeys.length > 0) {
-          await this.cacheStorage.mdel(staleEncodingKeys);
-        }
       } finally {
         this.cacheMetricsService.recordRedisWrite(
           (performance.now() - redisWriteStartedAt) / 1000,
@@ -646,7 +631,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const keysToDelete = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [...buildAllDataKeys(baseKey), `${baseKey}:hash`];
+      return [`${baseKey}:data`, `${baseKey}:hash`];
     });
 
     await this.cacheStorage.mdel(keysToDelete);
@@ -699,40 +684,25 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private demoteColdEntries(): void {
-    const demotions = selectColdStorageDemotions({
+    demoteColdStorageEntries({
       localCache: this.localCache,
-      eligiblePrefixes: this.coldStorageEligiblePrefixes,
+      keyNameByEligiblePrefix: this.coldStorageKeyNameByPrefix,
       hotEntriesPerPrefix: HOT_ENTRIES_PER_PROVIDER,
-    });
+      serialize: ({ localKey, keyName, data }) => {
+        const workspaceId = localKey.slice(localKey.lastIndexOf(':') + 1);
 
-    for (const { localKey, hash } of demotions) {
-      const entry = this.localCache.get(localKey);
-      const version = entry?.versions.get(hash);
+        if (!this.isCompactStorageEnabled(workspaceId)) {
+          return undefined;
+        }
 
-      if (!isDefined(entry) || version?.state !== 'hot') {
-        continue;
-      }
-
-      const keyName = this.keyNameFromLocalKey(localKey);
-      const workspaceId = localKey.slice(localKey.lastIndexOf(':') + 1);
-
-      if (!isDefined(keyName) || !this.isCompactStorageEnabled(workspaceId)) {
-        continue;
-      }
-
-      entry.versions.set(hash, {
-        state: 'cold',
-        blob: Buffer.from(
+        return Buffer.from(
           JSON.stringify(
-            this.getProviderOrThrow(keyName).encodeForCacheStorage(
-              version.data,
-            ),
+            this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
           ),
           'utf8',
-        ),
-        lastReadAt: version.lastReadAt,
-      });
-    }
+        );
+      },
+    });
   }
 
   private isCompactStorageEnabled(workspaceId: string): boolean {
@@ -750,18 +720,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     ];
   }
 
-  private buildDataKey({
-    workspaceId,
-    baseKey,
-  }: {
-    workspaceId: string;
-    baseKey: string;
-  }): string {
-    return this.isCompactStorageEnabled(workspaceId)
-      ? `${baseKey}:${COMPACT_DATA_KEY_SUFFIX}`
-      : `${baseKey}:${DATA_KEY_SUFFIX}`;
-  }
-
   private encodeForStorage({
     workspaceId,
     keyName,
@@ -776,16 +734,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     return this.getProviderOrThrow(keyName).encodeForCacheStorage(data);
-  }
-
-  private decodeFromStorage({
-    keyName,
-    rawData,
-  }: {
-    keyName: WorkspaceCacheKeyName;
-    rawData: StoredCacheDataType;
-  }): CacheDataType {
-    return this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
   }
 
   private readVersion({
@@ -814,14 +762,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     });
 
     return data;
-  }
-
-  private keyNameFromLocalKey(
-    localKey: string,
-  ): WorkspaceCacheKeyName | undefined {
-    const prefix = localKey.slice(0, localKey.lastIndexOf(':'));
-
-    return this.keyNameByPrefix.get(prefix);
   }
 
   private cleanupStaleVersions(
