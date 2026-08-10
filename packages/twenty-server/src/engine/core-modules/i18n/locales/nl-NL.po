@@ -7143,6 +7143,11 @@ msgstr "Sommige van de door u geselecteerde rechten zijn niet geldig. Probeer he
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Sommige lidmaatschappen van deze werkruimte konden niet worden gevonden. Mogelijk hebben de betreffende gebruikers geen toegang meer tot deze werkruimte."
 
+#. js-lingui-id: RjTo7h
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while starting the app installation. Please try again."
+msgstr ""
+
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "Something went wrong. Please try again."

@@ -7143,6 +7143,11 @@ msgstr "بعض الأذونات التي اخترتها غير صالحة. ير�
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "تعذر العثور على بعض عضويات مساحة العمل. قد لا يملكون حق الوصول إلى مساحة العمل هذه بعد الآن."
 
+#. js-lingui-id: RjTo7h
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while starting the app installation. Please try again."
+msgstr ""
+
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "Something went wrong. Please try again."
