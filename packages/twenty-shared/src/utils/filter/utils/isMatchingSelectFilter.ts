@@ -1,4 +1,5 @@
 import { type SelectFilter } from '@/types';
+import { isDefined } from '@/utils';
 
 export const isMatchingSelectFilter = ({
   selectFilter,
@@ -24,23 +25,32 @@ export const isMatchingSelectFilter = ({
     case selectFilter.neq !== undefined: {
       return value !== selectFilter.neq;
     }
-    // Cursor-based pagination builds gt/lt conditions from the view's sort,
-    // so a view sorted by a Select field produces them on this filter.
-    // Compared lexicographically, like isMatchingUUIDFilter and
-    // isMatchingStringFilter — the server orders by option position, so an
-    // optimistic result can be misplaced until the next fetch corrects it.
-    // Throwing here instead would abort the mutation and lose the write.
+    // Cursor-based pagination builds gt/lt conditions from the view's sort, so
+    // a view sorted by a Select field produces them on this filter. The server
+    // orders Select as LOWER(value::text), so compare case-insensitively to
+    // keep the optimistic cache consistent with its ordering. A null value
+    // satisfies no comparison, matching NULL semantics in Postgres.
     case selectFilter.gt !== undefined: {
-      return value > selectFilter.gt;
+      return (
+        isDefined(value) && value.toLowerCase() > selectFilter.gt.toLowerCase()
+      );
     }
     case selectFilter.gte !== undefined: {
-      return value >= selectFilter.gte;
+      return (
+        isDefined(value) &&
+        value.toLowerCase() >= selectFilter.gte.toLowerCase()
+      );
     }
     case selectFilter.lt !== undefined: {
-      return value < selectFilter.lt;
+      return (
+        isDefined(value) && value.toLowerCase() < selectFilter.lt.toLowerCase()
+      );
     }
     case selectFilter.lte !== undefined: {
-      return value <= selectFilter.lte;
+      return (
+        isDefined(value) &&
+        value.toLowerCase() <= selectFilter.lte.toLowerCase()
+      );
     }
     default: {
       throw new Error(

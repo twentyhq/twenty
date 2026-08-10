@@ -134,6 +134,40 @@ describe('isMatchingSelectFilter', () => {
     });
   });
 
+  describe('case insensitivity', () => {
+    it('should compare case-insensitively, matching the server ordering', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'ACTIVE' },
+          value: 'closed',
+        }),
+      ).toBe(true);
+    });
+
+    it('should not order lowercase values after uppercase ones', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'closed' },
+          value: 'ACTIVE',
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('null values', () => {
+    it.each(['gt', 'gte', 'lt', 'lte'] as const)(
+      'should not match %s when value is null',
+      (operand) => {
+        expect(
+          isMatchingSelectFilter({
+            selectFilter: { [operand]: 'ACTIVE' },
+            value: null as any,
+          }),
+        ).toBe(false);
+      },
+    );
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
