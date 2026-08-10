@@ -2,9 +2,14 @@ import { useCalendarEventCallRecording } from '@/page-layout/widgets/calendar-ev
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 
 export const CallRecordingTranscriptWidgetContent = () => {
-  const { callRecordingState } = useCalendarEventCallRecording();
+  const { callRecordingSelection, loading, error } =
+    useCalendarEventCallRecording();
 
   return (
-    <CallRecordingTranscriptBody callRecordingState={callRecordingState} />
+    <CallRecordingTranscriptBody
+      callRecordingSelection={callRecordingSelection}
+      loading={loading}
+      error={error}
+    />
   );
 };

@@ -1,84 +1,121 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { type CalendarEventCallRecordingSummaryWidgetState } from '@/page-layout/widgets/call-recording-summary/types/CalendarEventCallRecordingSummaryWidgetState';
-import { getCallRecordingSummaryStateMessage } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryStateMessage';
+import { type CalendarEventCallRecordingSelection } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingSelection';
+import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
+import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
-import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
-import { PageLayoutWidgetMessageDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetMessageDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { IconFileText } from 'twenty-ui/icon';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+} from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledForbiddenContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
 
 const StyledSummaryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCopyButtonRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
 type CallRecordingSummaryBodyProps = {
-  callRecordingSummaryState: CalendarEventCallRecordingSummaryWidgetState;
+  callRecordingSelection: CalendarEventCallRecordingSelection | undefined;
+  loading: boolean;
+  error: Error | undefined;
 };
 
 export const CallRecordingSummaryBody = ({
-  callRecordingSummaryState,
+  callRecordingSelection,
+  loading,
+  error,
 }: CallRecordingSummaryBodyProps) => {
   const widget = useCurrentWidget();
 
-  if (callRecordingSummaryState.state === 'LOADING') {
+  if (loading) {
     return <WidgetSkeletonLoader />;
   }
 
-  if (callRecordingSummaryState.state === 'READY') {
+  if (isDefined(error)) {
+    return <PageLayoutWidgetErrorDisplay widgetId={widget.id} error={error} />;
+  }
+
+  if (!isDefined(callRecordingSelection)) {
+    return (
+      // TODO: might need a dedicated call recording animated placeholder
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="noMatchRecord" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            {t`No Call Recording`}
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            {t`No call recording exists for this calendar event yet.`}
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+  }
+
+  const summaryMarkdown =
+    callRecordingSelection.callRecording.summary?.markdown;
+
+  if (isNonEmptyString(summaryMarkdown?.trim())) {
     return (
       <StyledSummaryContainer>
-        <StyledCopyButtonRow>
-          <LightCopyIconButton copyText={callRecordingSummaryState.markdown} />
-        </StyledCopyButtonRow>
-        <LazyMarkdownRenderer text={callRecordingSummaryState.markdown} />
+        <LazyMarkdownRenderer text={summaryMarkdown} />
       </StyledSummaryContainer>
     );
   }
 
-  if (callRecordingSummaryState.state === 'QUERY_ERROR') {
+  if (isCallRecordingTranscriptPending(callRecordingSelection.callRecording)) {
     return (
-      <PageLayoutWidgetErrorDisplay
-        widgetId={widget.id}
-        error={callRecordingSummaryState.error}
-      />
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="loadingMessages" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            {t`Processing Recording`}
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            {t`The call recording is still being processed…`}
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 
-  if (callRecordingSummaryState.state === 'FORBIDDEN') {
+  if (isCallRecordingTranscriptFailed(callRecordingSelection.callRecording)) {
     return (
-      <StyledForbiddenContainer>
-        <PageLayoutWidgetForbiddenDisplay
-          widgetId={widget.id}
-          restriction={callRecordingSummaryState.restriction}
-        />
-      </StyledForbiddenContainer>
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="errorIndex" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            {t`Processing Failed`}
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            {t`The call recording could not be processed.`}
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 
   return (
-    <PageLayoutWidgetMessageDisplay
-      Icon={IconFileText}
-      message={getCallRecordingSummaryStateMessage(
-        callRecordingSummaryState.state,
-      )}
-    />
+    <AnimatedPlaceholderEmptyContainer>
+      <AnimatedPlaceholder type="noMatchRecord" />
+      <AnimatedPlaceholderEmptyTextContainer>
+        <AnimatedPlaceholderEmptyTitle>
+          {t`No Summary`}
+        </AnimatedPlaceholderEmptyTitle>
+        <AnimatedPlaceholderEmptySubTitle>
+          {t`No summary has been generated for this call recording yet.`}
+        </AnimatedPlaceholderEmptySubTitle>
+      </AnimatedPlaceholderEmptyTextContainer>
+    </AnimatedPlaceholderEmptyContainer>
   );
 };

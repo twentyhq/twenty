@@ -17,23 +17,6 @@ const mockLayoutRenderingContext: {
   },
 };
 
-const requiredFields = ['status', 'transcript', 'createdAt'].map((name) => ({
-  id: `${name}-field-id`,
-  name,
-}));
-
-const summaryField = { id: 'summary-field-id', name: 'summary' };
-
-let mockCallRecordingObjectFields: { id: string; name: string }[];
-
-const mockCallRecordingPermissions: {
-  canReadObjectRecords: boolean;
-  restrictedFields: Record<string, { canRead: boolean }>;
-} = {
-  canReadObjectRecords: true,
-  restrictedFields: {},
-};
-
 let findManyRecordsResult: {
   records: Record<string, unknown>[];
   loading: boolean;
@@ -45,14 +28,8 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
     objectMetadataItem: {
       id: 'call-recording-object-id',
-      labelSingular: 'Call Recording',
-      fields: mockCallRecordingObjectFields,
     },
   }),
-}));
-
-jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
-  useObjectPermissionsForObject: () => mockCallRecordingPermissions,
 }));
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
@@ -90,6 +67,7 @@ const readyCallRecording = {
       words: [{ text: 'Hello', start_timestamp: { relative: 0 } }],
     },
   ],
+  summary: null,
   createdAt: '2026-08-07T09:55:00.000Z',
 };
 
@@ -101,9 +79,6 @@ describe('useCalendarEventCallRecording', () => {
       id: 'calendar-event-id',
       targetObjectNameSingular: 'calendarEvent',
     };
-    mockCallRecordingPermissions.canReadObjectRecords = true;
-    mockCallRecordingPermissions.restrictedFields = {};
-    mockCallRecordingObjectFields = requiredFields;
     findManyRecordsResult = {
       records: [],
       loading: false,
@@ -112,7 +87,7 @@ describe('useCalendarEventCallRecording', () => {
     };
   });
 
-  it('queries every transcript field for the current calendar event in arrival order', () => {
+  it('queries every call recording field for the current calendar event in arrival order', () => {
     renderHook(() => useCalendarEventCallRecording());
 
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
@@ -124,53 +99,12 @@ describe('useCalendarEventCallRecording', () => {
           id: true,
           status: true,
           transcript: true,
-          createdAt: true,
-        },
-        skip: false,
-      }),
-    );
-  });
-
-  it('queries the summary field when its metadata is readable', () => {
-    mockCallRecordingObjectFields = [...requiredFields, summaryField];
-
-    renderHook(() => useCalendarEventCallRecording());
-
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({
-        recordGqlFields: {
-          id: true,
-          status: true,
-          transcript: true,
-          createdAt: true,
           summary: true,
-        },
-      }),
-    );
-  });
-
-  it('keeps the transcript query working when only the summary field is restricted', () => {
-    mockCallRecordingObjectFields = [...requiredFields, summaryField];
-    mockCallRecordingPermissions.restrictedFields = {
-      'summary-field-id': { canRead: false },
-    };
-
-    const { result } = renderHook(() => useCalendarEventCallRecording());
-
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({
-        recordGqlFields: {
-          id: true,
-          status: true,
-          transcript: true,
           createdAt: true,
         },
         skip: false,
       }),
     );
-    expect(result.current.callRecordingState).toEqual({
-      state: 'NO_RECORDING',
-    });
   });
 
   it('refetches after the SSE client reconnects', async () => {
@@ -188,49 +122,7 @@ describe('useCalendarEventCallRecording', () => {
     expect(findManyRecordsResult.refetch).toHaveBeenCalledTimes(1);
   });
 
-  it('returns permission denied when the object cannot be read', () => {
-    mockCallRecordingPermissions.canReadObjectRecords = false;
-
-    const { result } = renderHook(() => useCalendarEventCallRecording());
-
-    expect(result.current.callRecordingState).toEqual({
-      state: 'FORBIDDEN',
-      restriction: { type: 'object', objectName: 'Call Recording' },
-    });
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({ skip: true }),
-    );
-  });
-
-  it('returns permission denied with the field name when a required field cannot be read', () => {
-    mockCallRecordingPermissions.restrictedFields = {
-      'transcript-field-id': { canRead: false },
-    };
-
-    const { result } = renderHook(() => useCalendarEventCallRecording());
-
-    expect(result.current.callRecordingState).toEqual({
-      state: 'FORBIDDEN',
-      restriction: { type: 'field', fieldNames: ['transcript'] },
-    });
-  });
-
-  it('reports unavailable instead of forbidden when a required field has no metadata', () => {
-    mockCallRecordingObjectFields = requiredFields.filter(
-      (field) => field.name !== 'transcript',
-    );
-
-    const { result } = renderHook(() => useCalendarEventCallRecording());
-
-    expect(result.current.callRecordingState).toEqual({
-      state: 'UNAVAILABLE',
-    });
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({ skip: true }),
-    );
-  });
-
-  it('fails safely outside a calendar event record page', () => {
+  it('skips the query outside a calendar event record page', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'person-id',
       targetObjectNameSingular: 'person',
@@ -238,52 +130,48 @@ describe('useCalendarEventCallRecording', () => {
 
     const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingState).toEqual({
-      state: 'UNSUPPORTED',
-    });
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: true }),
+    );
+    expect(result.current.callRecordingSelection).toBeUndefined();
   });
 
-  it('fails safely when there is no target record', () => {
+  it('skips the query when there is no target record', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = undefined;
 
     const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingState).toEqual({
-      state: 'UNSUPPORTED',
-    });
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: true }),
+    );
+    expect(result.current.callRecordingSelection).toBeUndefined();
   });
 
-  it('distinguishes loading from no related recordings', () => {
+  it('passes loading through and resolves to no selection without recordings', () => {
     findManyRecordsResult.loading = true;
 
     const { result, rerender } = renderHook(() =>
       useCalendarEventCallRecording(),
     );
 
-    expect(result.current.callRecordingState).toEqual({
-      state: 'LOADING',
-    });
+    expect(result.current.loading).toBe(true);
 
     act(() => {
       findManyRecordsResult.loading = false;
       rerender();
     });
 
-    expect(result.current.callRecordingState).toEqual({
-      state: 'NO_RECORDING',
-    });
+    expect(result.current.loading).toBe(false);
+    expect(result.current.callRecordingSelection).toBeUndefined();
   });
 
-  it('maps query failures without showing a no-recording state', () => {
+  it('passes query errors through', () => {
     const queryError = new Error('Query failed');
     findManyRecordsResult.error = queryError;
 
     const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingState).toEqual({
-      state: 'QUERY_ERROR',
-      error: queryError,
-    });
+    expect(result.current.error).toBe(queryError);
   });
 
   it('reacts when a cached pending recording receives a transcript', () => {
@@ -299,13 +187,17 @@ describe('useCalendarEventCallRecording', () => {
       useCalendarEventCallRecording(),
     );
 
-    expect(result.current.callRecordingState.state).toBe('PENDING');
+    expect(
+      result.current.callRecordingSelection?.transcriptEntries,
+    ).toBeUndefined();
 
     act(() => {
       findManyRecordsResult.records = [readyCallRecording];
       rerender();
     });
 
-    expect(result.current.callRecordingState.state).toBe('READY');
+    expect(result.current.callRecordingSelection?.transcriptEntries).toEqual([
+      expect.objectContaining({ speakerName: 'Ada', text: 'Hello' }),
+    ]);
   });
 });

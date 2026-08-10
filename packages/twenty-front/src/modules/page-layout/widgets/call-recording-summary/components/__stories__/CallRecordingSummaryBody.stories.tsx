@@ -8,6 +8,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { CallRecordingSummaryBody } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -20,6 +21,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { CallRecordingStatus } from '~/generated/graphql';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
@@ -97,6 +99,32 @@ const summaryMarkdown = [
   '2. Schedule a follow-up with the procurement contact.',
 ].join('\n');
 
+const summarizedCallRecording: CalendarEventCallRecordingCandidate = {
+  __typename: 'CallRecording',
+  id: 'call-recording-id',
+  status: CallRecordingStatus.COMPLETED,
+  transcript: [],
+  summary: { markdown: summaryMarkdown },
+  createdAt: '2026-01-01T00:00:00Z',
+};
+
+const unsummarizedCallRecording: CalendarEventCallRecordingCandidate = {
+  ...summarizedCallRecording,
+  summary: null,
+};
+
+const pendingCallRecording: CalendarEventCallRecordingCandidate = {
+  ...unsummarizedCallRecording,
+  status: CallRecordingStatus.PROCESSING,
+  transcript: { status: 'PENDING' },
+};
+
+const failedCallRecording: CalendarEventCallRecordingCandidate = {
+  ...unsummarizedCallRecording,
+  status: CallRecordingStatus.FAILED,
+  transcript: null,
+};
+
 const meta: Meta<typeof CallRecordingSummaryBody> = {
   title: 'Modules/PageLayout/Widgets/CallRecordingSummaryBody',
   component: CallRecordingSummaryBody,
@@ -160,60 +188,82 @@ type Story = StoryObj<typeof CallRecordingSummaryBody>;
 
 export const Ready: Story = {
   args: {
-    callRecordingSummaryState: { state: 'READY', markdown: summaryMarkdown },
+    callRecordingSelection: {
+      callRecording: summarizedCallRecording,
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
+  },
+};
+
+export const ReadyWhileRecordingIsPending: Story = {
+  args: {
+    callRecordingSelection: {
+      callRecording: {
+        ...pendingCallRecording,
+        summary: { markdown: summaryMarkdown },
+      },
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
   },
 };
 
 export const Loading: Story = {
   args: {
-    callRecordingSummaryState: { state: 'LOADING' },
+    callRecordingSelection: undefined,
+    loading: true,
+    error: undefined,
   },
 };
 
 export const NoSummary: Story = {
   args: {
-    callRecordingSummaryState: { state: 'NO_SUMMARY' },
+    callRecordingSelection: {
+      callRecording: unsummarizedCallRecording,
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
   },
 };
 
 export const Pending: Story = {
   args: {
-    callRecordingSummaryState: { state: 'PENDING' },
+    callRecordingSelection: {
+      callRecording: pendingCallRecording,
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
   },
 };
 
 export const Failed: Story = {
   args: {
-    callRecordingSummaryState: { state: 'FAILED' },
+    callRecordingSelection: {
+      callRecording: failedCallRecording,
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
   },
 };
 
 export const NoRecording: Story = {
   args: {
-    callRecordingSummaryState: { state: 'NO_RECORDING' },
-  },
-};
-
-export const Unavailable: Story = {
-  args: {
-    callRecordingSummaryState: { state: 'UNAVAILABLE' },
-  },
-};
-
-export const ForbiddenField: Story = {
-  args: {
-    callRecordingSummaryState: {
-      state: 'FORBIDDEN',
-      restriction: { type: 'field', fieldNames: ['Summary'] },
-    },
+    callRecordingSelection: undefined,
+    loading: false,
+    error: undefined,
   },
 };
 
 export const QueryError: Story = {
   args: {
-    callRecordingSummaryState: {
-      state: 'QUERY_ERROR',
-      error: new Error('Failed to load call recordings'),
-    },
+    callRecordingSelection: undefined,
+    loading: false,
+    error: new Error('Failed to load call recordings'),
   },
 };

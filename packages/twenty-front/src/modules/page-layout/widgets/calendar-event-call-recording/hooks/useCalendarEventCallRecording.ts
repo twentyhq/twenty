@@ -1,14 +1,11 @@
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
-import { useCallRecordingSummaryFieldAccess } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCallRecordingSummaryFieldAccess';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { type CalendarEventCallRecordingWidgetState } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingWidgetState';
+import { type CalendarEventCallRecordingSelection } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingSelection';
 import { selectCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/utils/selectCalendarEventCallRecording';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
@@ -19,10 +16,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 const CALL_RECORDING_QUERY_LIMIT = 50;
 
+// mapObjectMetadataToGraphQLQuery drops unreadable and absent fields from the query
 const CALL_RECORDING_RECORD_FIELDS = {
   id: true,
   status: true,
   transcript: true,
+  summary: true,
   createdAt: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 
@@ -31,14 +30,10 @@ const CALL_RECORDING_ORDER_BY: RecordGqlOperationOrderBy = [
   { id: 'AscNullsFirst' },
 ];
 
-const REQUIRED_CALL_RECORDING_FIELD_NAMES = [
-  'status',
-  'transcript',
-  'createdAt',
-];
-
 export const useCalendarEventCallRecording = (): {
-  callRecordingState: CalendarEventCallRecordingWidgetState;
+  callRecordingSelection: CalendarEventCallRecordingSelection | undefined;
+  loading: boolean;
+  error: Error | undefined;
 } => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
@@ -47,61 +42,13 @@ export const useCalendarEventCallRecording = (): {
       objectNameSingular: CoreObjectNameSingular.CallRecording,
     });
 
-  const callRecordingObjectPermissions = useObjectPermissionsForObject(
-    callRecordingObjectMetadataItem.id,
-  );
-
-  const { isSummaryFieldMetadataMissing, restrictedSummaryFieldLabel } =
-    useCallRecordingSummaryFieldAccess();
-
   const calendarEventId =
     targetRecordIdentifier?.targetObjectNameSingular ===
     CoreObjectNameSingular.CalendarEvent
       ? targetRecordIdentifier.id
       : undefined;
 
-  const requiredFieldMetadataItems = REQUIRED_CALL_RECORDING_FIELD_NAMES.map(
-    (requiredFieldName) =>
-      callRecordingObjectMetadataItem.fields.find(
-        (field) => field.name === requiredFieldName,
-      ),
-  ).filter(isDefined);
-
-  const hasRequiredFieldMetadata =
-    requiredFieldMetadataItems.length ===
-    REQUIRED_CALL_RECORDING_FIELD_NAMES.length;
-
-  const restrictedFieldNames = requiredFieldMetadataItems
-    .filter(
-      (fieldMetadataItem) =>
-        callRecordingObjectPermissions.restrictedFields[fieldMetadataItem.id]
-          ?.canRead === false,
-    )
-    .map((fieldMetadataItem) =>
-      isNonEmptyString(fieldMetadataItem.label)
-        ? fieldMetadataItem.label
-        : fieldMetadataItem.name,
-    );
-
-  const canReadCallRecordingObjectRecords =
-    callRecordingObjectPermissions.canReadObjectRecords;
-
-  const shouldSkipQuery =
-    !isDefined(calendarEventId) ||
-    !hasRequiredFieldMetadata ||
-    !canReadCallRecordingObjectRecords ||
-    restrictedFieldNames.length > 0;
-
-  const shouldQuerySummaryField =
-    !isSummaryFieldMetadataMissing && !isDefined(restrictedSummaryFieldLabel);
-
-  const recordGqlFields = useMemo(
-    () =>
-      shouldQuerySummaryField
-        ? { ...CALL_RECORDING_RECORD_FIELDS, summary: true }
-        : CALL_RECORDING_RECORD_FIELDS,
-    [shouldQuerySummaryField],
-  );
+  const shouldSkipQuery = !isDefined(calendarEventId);
 
   const callRecordingFilter = useMemo(
     () =>
@@ -120,7 +67,7 @@ export const useCalendarEventCallRecording = (): {
     objectNameSingular: CoreObjectNameSingular.CallRecording,
     filter: callRecordingFilter,
     orderBy: CALL_RECORDING_ORDER_BY,
-    recordGqlFields,
+    recordGqlFields: CALL_RECORDING_RECORD_FIELDS,
     limit: CALL_RECORDING_QUERY_LIMIT,
     skip: shouldSkipQuery,
   });
@@ -164,42 +111,5 @@ export const useCalendarEventCallRecording = (): {
     [callRecordings],
   );
 
-  if (!isDefined(calendarEventId)) {
-    return { callRecordingState: { state: 'UNSUPPORTED' } };
-  }
-
-  if (!hasRequiredFieldMetadata) {
-    return { callRecordingState: { state: 'UNAVAILABLE' } };
-  }
-
-  if (!canReadCallRecordingObjectRecords) {
-    return {
-      callRecordingState: {
-        state: 'FORBIDDEN',
-        restriction: {
-          type: 'object',
-          objectName: callRecordingObjectMetadataItem.labelSingular,
-        },
-      },
-    };
-  }
-
-  if (restrictedFieldNames.length > 0) {
-    return {
-      callRecordingState: {
-        state: 'FORBIDDEN',
-        restriction: { type: 'field', fieldNames: restrictedFieldNames },
-      },
-    };
-  }
-
-  if (isDefined(error)) {
-    return { callRecordingState: { state: 'QUERY_ERROR', error } };
-  }
-
-  if (loading) {
-    return { callRecordingState: { state: 'LOADING' } };
-  }
-
-  return { callRecordingState: callRecordingSelection };
+  return { callRecordingSelection, loading, error };
 };

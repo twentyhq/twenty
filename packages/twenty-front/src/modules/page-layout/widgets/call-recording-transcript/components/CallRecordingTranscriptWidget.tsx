@@ -1,6 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { CallRecordingTranscriptWidgetContent } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptWidgetContent';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
@@ -15,21 +15,24 @@ const StyledWidgetContainer = styled.div`
 
 export const CallRecordingTranscriptWidget = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
 
   const hasCallRecordingObjectMetadata = objectMetadataItems.some(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === CoreObjectNameSingular.CallRecording,
   );
 
+  const isCalendarEventTarget =
+    targetRecordIdentifier?.targetObjectNameSingular ===
+    CoreObjectNameSingular.CalendarEvent;
+
+  if (!hasCallRecordingObjectMetadata || !isCalendarEventTarget) {
+    return null;
+  }
+
   return (
     <StyledWidgetContainer>
-      {hasCallRecordingObjectMetadata ? (
-        <CallRecordingTranscriptWidgetContent />
-      ) : (
-        <CallRecordingTranscriptBody
-          callRecordingState={{ state: 'UNAVAILABLE' }}
-        />
-      )}
+      <CallRecordingTranscriptWidgetContent />
     </StyledWidgetContainer>
   );
 };

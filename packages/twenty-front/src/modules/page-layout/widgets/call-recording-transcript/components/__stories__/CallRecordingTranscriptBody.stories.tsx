@@ -85,13 +85,25 @@ const pageLayoutWithTranscriptWidget: PageLayout = {
   deletedAt: null,
 };
 
-const callRecording: CalendarEventCallRecordingCandidate = {
+const completedCallRecording: CalendarEventCallRecordingCandidate = {
   __typename: 'CallRecording',
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,
   transcript: [],
   summary: null,
   createdAt: '2026-01-01T00:00:00Z',
+};
+
+const pendingCallRecording: CalendarEventCallRecordingCandidate = {
+  ...completedCallRecording,
+  status: CallRecordingStatus.PROCESSING,
+  transcript: { status: 'PENDING' },
+};
+
+const failedCallRecording: CalendarEventCallRecordingCandidate = {
+  ...completedCallRecording,
+  status: CallRecordingStatus.FAILED,
+  transcript: null,
 };
 
 const transcriptEntries = [
@@ -181,67 +193,68 @@ type Story = StoryObj<typeof CallRecordingTranscriptBody>;
 
 export const Ready: Story = {
   args: {
-    callRecordingState: {
-      state: 'READY',
-      entries: transcriptEntries,
-      callRecording,
+    callRecordingSelection: {
+      callRecording: completedCallRecording,
+      transcriptEntries,
     },
+    loading: false,
+    error: undefined,
   },
 };
 
 export const Loading: Story = {
   args: {
-    callRecordingState: { state: 'LOADING' },
+    callRecordingSelection: undefined,
+    loading: true,
+    error: undefined,
   },
 };
 
 export const Pending: Story = {
   args: {
-    callRecordingState: { state: 'PENDING', callRecording },
+    callRecordingSelection: {
+      callRecording: pendingCallRecording,
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
   },
 };
 
 export const Failed: Story = {
   args: {
-    callRecordingState: { state: 'FAILED', callRecording },
+    callRecordingSelection: {
+      callRecording: failedCallRecording,
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
+  },
+};
+
+export const NoTranscript: Story = {
+  args: {
+    callRecordingSelection: {
+      callRecording: completedCallRecording,
+      transcriptEntries: undefined,
+    },
+    loading: false,
+    error: undefined,
   },
 };
 
 export const NoRecording: Story = {
   args: {
-    callRecordingState: { state: 'NO_RECORDING' },
-  },
-};
-
-export const Unavailable: Story = {
-  args: {
-    callRecordingState: { state: 'UNAVAILABLE' },
-  },
-};
-
-export const ForbiddenObject: Story = {
-  args: {
-    callRecordingState: {
-      state: 'FORBIDDEN',
-      restriction: { type: 'object', objectName: 'Call Recording' },
-    },
-  },
-};
-
-export const ForbiddenFields: Story = {
-  args: {
-    callRecordingState: {
-      state: 'FORBIDDEN',
-      restriction: { type: 'field', fieldNames: ['Transcript'] },
-    },
+    callRecordingSelection: undefined,
+    loading: false,
+    error: undefined,
   },
 };
 
 export const QueryError: Story = {
   args: {
-    callRecordingState: {
-      state: 'QUERY_ERROR',
-      error: new Error('Failed to load call recordings'),
-    },
+    callRecordingSelection: undefined,
+    loading: false,
+    error: new Error('Failed to load call recordings'),
   },
 };
