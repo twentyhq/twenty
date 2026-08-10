@@ -7,6 +7,7 @@ import { getLabelledPinnedCommandMenuItemId } from '@/command-menu-item/display/
 import { getPinnedCommandMenuItemsDisplayConfig } from '@/command-menu-item/display/utils/getPinnedCommandMenuItemsDisplayConfig';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -31,9 +32,10 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledItemsContainer = styled.div`
+const StyledItemsContainer = styled.div<{ shouldReverse: boolean }>`
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: ${({ shouldReverse }) =>
+    shouldReverse ? 'row-reverse' : 'row'};
   gap: ${PINNED_COMMAND_MENU_ITEMS_GAP}px;
   max-width: 100%;
   overflow: hidden;
@@ -43,7 +45,11 @@ export const PinnedCommandMenuItemButtons = () => {
   const { theme } = useContext(ThemeContext);
   const { commandMenuItems, containerType } = useContext(CommandMenuContext);
 
-  const { layoutKey, shouldLabelSingleCommandMenuItem } = useMemo(
+  const {
+    layoutKey,
+    shouldLabelSingleCommandMenuItem,
+    shouldReverseCommandMenuItems,
+  } = useMemo(
     () => getPinnedCommandMenuItemsDisplayConfig(containerType),
     [containerType],
   );
@@ -75,6 +81,21 @@ export const PinnedCommandMenuItemButtons = () => {
     layoutKey,
   });
 
+  const isCommandMenuItemLabelled = (
+    commandMenuItem: (typeof pinnedInlineCommandMenuItems)[number],
+  ) =>
+    isDefined(commandMenuItem.shortLabel) &&
+    !shouldHideCommandMenuItemLabel(commandMenuItem.id);
+
+  // Labels last so they land rightmost in the footer, and leftmost in the
+  // header once the row is reversed.
+  const displayedInlineCommandMenuItems = [
+    ...pinnedInlineCommandMenuItems.filter(
+      (item) => !isCommandMenuItemLabelled(item),
+    ),
+    ...pinnedInlineCommandMenuItems.filter(isCommandMenuItemLabelled),
+  ];
+
   return (
     <>
       <PinnedCommandMenuItemsInlineMeasurements
@@ -90,8 +111,8 @@ export const PinnedCommandMenuItemButtons = () => {
       <StyledWrapper>
         <NodeDimension onDimensionChange={onContainerDimensionChange}>
           <StyledContainer>
-            <StyledItemsContainer>
-              {pinnedInlineCommandMenuItems.map((item) => (
+            <StyledItemsContainer shouldReverse={shouldReverseCommandMenuItems}>
+              {displayedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer
                   key={item.id}
                   initial={{ width: 0, opacity: 0 }}

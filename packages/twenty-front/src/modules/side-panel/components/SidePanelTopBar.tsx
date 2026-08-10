@@ -217,7 +217,7 @@ export const SidePanelTopBar = () => {
           <IconButton
             Icon={IconX}
             size="small"
-            variant="secondary"
+            variant="tertiary"
             onClick={closeSidePanelMenu}
             ariaLabel={t`Close side panel`}
           />
