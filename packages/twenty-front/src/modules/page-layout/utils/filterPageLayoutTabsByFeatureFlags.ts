@@ -2,7 +2,6 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const NATIVE_CALL_RECORDING_WIDGET_TYPES = new Set<WidgetType>([
-  WidgetType.CALL_RECORDING_SUMMARY,
   WidgetType.CALL_RECORDING_TRANSCRIPT,
 ]);
 

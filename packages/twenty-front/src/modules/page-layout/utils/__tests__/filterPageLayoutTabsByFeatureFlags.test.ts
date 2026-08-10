@@ -71,27 +71,6 @@ describe('filterPageLayoutTabsByFeatureFlags', () => {
     ).toEqual([]);
   });
 
-  it('gates summary and transcript with the same feature', () => {
-    const tabs = [
-      createMockTab('summary-tab', [
-        createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),
-      ]),
-      createMockTab('transcript-tab', [
-        createMockWidget(
-          'transcript-widget',
-          WidgetType.CALL_RECORDING_TRANSCRIPT,
-        ),
-      ]),
-    ];
-
-    expect(
-      filterPageLayoutTabsByFeatureFlags({
-        tabs,
-        isNativeCallRecordingTabsEnabled: false,
-      }),
-    ).toEqual([]);
-  });
-
   it('preserves unrelated widgets in a mixed tab', () => {
     const tabs = [
       createMockTab('mixed-tab', [
@@ -127,9 +106,6 @@ describe('filterPageLayoutTabsByFeatureFlags', () => {
 
   it('returns all tabs unchanged when the feature is enabled', () => {
     const tabs = [
-      createMockTab('summary-tab', [
-        createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),
-      ]),
       createMockTab('transcript-tab', [
         createMockWidget(
           'transcript-widget',
