@@ -192,7 +192,8 @@ export class CalDavFetchEventsService {
     }
 
     return (
-      new URL(response.href, collectionUrl).href === new URL(collectionUrl).href
+      new URL(response.href, collectionUrl).href.replace(/\/$/, '') ===
+      new URL(collectionUrl).href.replace(/\/$/, '')
     );
   }
 
