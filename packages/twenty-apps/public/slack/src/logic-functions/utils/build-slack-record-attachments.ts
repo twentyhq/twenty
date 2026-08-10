@@ -1,6 +1,7 @@
 import { type MessageAttachment, type SectionBlock } from '@slack/web-api';
 import { isNonEmptyArray } from '@sniptt/guards';
 
+import { SLACK_RECORD_SUMMARY_MAX_COUNT } from 'src/constants/slack-record-summary-max-count';
 import {
   type SlackRecordDetails,
   type SlackRecordField,
@@ -10,7 +11,6 @@ import { type SlackRecordReference } from 'src/logic-functions/types/slack-recor
 // Twenty's accent (Radix indigo9), rendered as the attachment's left bar
 const RECORD_ACCENT_COLOR = '#3E63DD';
 
-const RECORD_ATTACHMENT_MAX_COUNT = 5;
 const RECORD_NAME_MAX_LENGTH = 150;
 
 const ELLIPSIS = '…';
@@ -90,7 +90,7 @@ export const buildSlackRecordAttachments = ({
   // subject; a truncated sample would only add noise
   if (
     !isNonEmptyArray(references) ||
-    references.length > RECORD_ATTACHMENT_MAX_COUNT
+    references.length > SLACK_RECORD_SUMMARY_MAX_COUNT
   ) {
     return [];
   }
