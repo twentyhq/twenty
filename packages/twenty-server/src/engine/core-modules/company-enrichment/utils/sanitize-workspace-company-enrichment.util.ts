@@ -1,5 +1,5 @@
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-field-max-length.constant';
@@ -44,7 +44,7 @@ export const sanitizeWorkspaceCompanyEnrichment = (
   const domain = sanitizeSingleLineText(value.domain);
   const enrichedAt = sanitizeSingleLineText(value.enrichedAt);
 
-  if (domain === null || enrichedAt === null) {
+  if (!isDefined(domain) || !isDefined(enrichedAt)) {
     return null;
   }
 
