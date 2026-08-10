@@ -554,6 +554,17 @@ export const MakeSecondaryLinkPrimary: Story = {
       canvasElement.ownerDocument.body,
     ).findByText('Set as Primary');
     await userEvent.click(setPrimaryOption);
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: {
+        primaryLinkUrl: 'https://docs.twenty.com',
+        primaryLinkLabel: 'Documentation',
+        secondaryLinks: [
+          { url: 'https://www.twenty.com', label: 'Twenty Website' },
+        ],
+      },
+      skipClose: true,
+    });
   },
 };
 
