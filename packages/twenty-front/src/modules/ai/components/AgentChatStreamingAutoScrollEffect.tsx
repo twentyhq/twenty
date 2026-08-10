@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +26,7 @@ export const AgentChatStreamingAutoScrollEffect = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
-    if (agentChatMessages.length === 0) {
+    if (!isNonEmptyArray(agentChatMessages)) {
       return;
     }
 

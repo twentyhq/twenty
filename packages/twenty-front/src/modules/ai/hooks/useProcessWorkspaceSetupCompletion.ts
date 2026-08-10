@@ -4,6 +4,7 @@ import { processedToolExecutionPartIdsComponentState } from '@/ai/states/process
 import { extractCompletedWorkspaceSetupToolParts } from '@/ai/utils/extractCompletedWorkspaceSetupToolParts';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { AppPath } from 'twenty-shared/types';
@@ -41,7 +42,7 @@ export const useProcessWorkspaceSetupCompletion = () => {
       (part) => !alreadyProcessedToolExecutionPartIds.includes(part.toolCallId),
     );
 
-    if (partsToProcess.length === 0) {
+    if (!isNonEmptyArray(partsToProcess)) {
       return;
     }
 
