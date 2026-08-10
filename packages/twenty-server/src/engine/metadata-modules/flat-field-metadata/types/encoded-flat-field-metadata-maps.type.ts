@@ -15,3 +15,9 @@ export type EncodedFlatFieldMetadataMaps = {
   universalIdentifierById: FlatEntityMaps<FlatFieldMetadata>['universalIdentifierById'];
   universalIdentifiersByApplicationId: FlatEntityMaps<FlatFieldMetadata>['universalIdentifiersByApplicationId'];
 };
+
+export type EncodableFlatFieldMetadataMaps = {
+  byUniversalIdentifier: Partial<Record<string, Partial<FlatFieldMetadata>>>;
+  universalIdentifierById: FlatEntityMaps<FlatFieldMetadata>['universalIdentifierById'];
+  universalIdentifiersByApplicationId: FlatEntityMaps<FlatFieldMetadata>['universalIdentifiersByApplicationId'];
+};

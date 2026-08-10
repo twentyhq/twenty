@@ -10,7 +10,7 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const decodeFlatFieldMetadata = (
-  encoded: EncodedFlatFieldMetadata,
+  encoded: EncodedFlatFieldMetadata | Partial<FlatFieldMetadata>,
 ): FlatFieldMetadata => {
   const decoded: Partial<
     Record<string, FlatFieldMetadata[keyof FlatFieldMetadata]>
@@ -30,7 +30,7 @@ const decodeFlatFieldMetadata = (
 };
 
 export const decodeFlatFieldMetadataMapsFromCache = (
-  encoded: EncodedFlatFieldMetadataMaps,
+  encoded: EncodedFlatFieldMetadataMaps | FlatEntityMaps<FlatFieldMetadata>,
 ): FlatEntityMaps<FlatFieldMetadata> => {
   const byUniversalIdentifier: FlatEntityMaps<FlatFieldMetadata>['byUniversalIdentifier'] =
     {};

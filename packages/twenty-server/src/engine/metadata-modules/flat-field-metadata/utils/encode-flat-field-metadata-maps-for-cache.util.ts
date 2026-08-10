@@ -4,15 +4,15 @@ import {
   FLAT_FIELD_METADATA_EMPTY_ARRAY_KEY_SET,
   FLAT_FIELD_METADATA_SHORT_CODE_LOOKUP,
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-cache-codec.constant';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
+  type EncodableFlatFieldMetadataMaps,
   type EncodedFlatFieldMetadata,
   type EncodedFlatFieldMetadataMaps,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const encodeFlatFieldMetadata = (
-  flatFieldMetadata: FlatFieldMetadata,
+  flatFieldMetadata: Partial<FlatFieldMetadata>,
 ): EncodedFlatFieldMetadata => {
   const encoded: Partial<
     Record<string, FlatFieldMetadata[keyof FlatFieldMetadata]>
@@ -34,7 +34,7 @@ const encodeFlatFieldMetadata = (
 };
 
 export const encodeFlatFieldMetadataMapsForCache = (
-  flatEntityMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatEntityMaps: EncodableFlatFieldMetadataMaps,
 ): EncodedFlatFieldMetadataMaps => {
   const byUniversalIdentifier: Record<string, EncodedFlatFieldMetadata> = {};
 
