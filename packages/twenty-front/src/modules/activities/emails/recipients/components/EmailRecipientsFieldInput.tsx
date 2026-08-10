@@ -39,7 +39,6 @@ import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/uti
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -57,31 +56,31 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 const SUGGESTIONS_SEARCH_DEBOUNCE_MS = 300;
 
+// The field sits inside a bordered composer row, so it carries no chrome of its
+// own; the drop-target tint is the only surface it paints.
 const StyledRowContainer = styled.div<{ $isDropTarget: boolean }>`
   align-content: flex-start;
   align-items: center;
   background-color: ${({ $isDropTarget }) =>
     $isDropTarget
       ? themeCssVariables.background.transparent.blue
-      : themeCssVariables.background.transparent.lighter};
-  border: 1px solid
-    ${({ $isDropTarget }) =>
-      $isDropTarget
-        ? themeCssVariables.color.blue
-        : themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+      : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   cursor: text;
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
   max-height: 96px;
-  min-height: 32px;
+  min-height: 24px;
+  outline: ${({ $isDropTarget }) =>
+    $isDropTarget ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
+  outline-offset: -1px;
   overflow-y: auto;
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]} 0;
   transition:
     background-color 120ms ease-out,
-    border-color 120ms ease-out;
+    outline-color 120ms ease-out;
   width: 100%;
 `;
 
@@ -109,7 +108,6 @@ type EmailRecipientsFieldInputProps = {
   // elsewhere.
   draggedSourceIndices: number[] | null;
   label: string;
-  placeholder: string;
   recipients: EmailRecipient[];
   onChange: (recipients: EmailRecipient[]) => void;
   onSubmit?: () => void;
@@ -121,7 +119,6 @@ export const EmailRecipientsFieldInput = ({
   fieldId,
   draggedSourceIndices,
   label,
-  placeholder,
   recipients,
   onChange,
   onSubmit,
@@ -581,9 +578,6 @@ export const EmailRecipientsFieldInput = ({
       role="combobox"
       aria-expanded={isDropdownOpen}
       aria-label={label}
-      placeholder={
-        recipients.length === 0 && !isEditing ? placeholder : undefined
-      }
       value={inputValue}
       onChange={(event) => handleInputChange(event.target.value)}
       onKeyDown={handleInputKeyDown}
@@ -634,7 +628,6 @@ export const EmailRecipientsFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      <InputLabel>{label}</InputLabel>
       <Dropdown
         dropdownId={suggestionsDropdownId}
         dropdownPlacement="bottom-start"
