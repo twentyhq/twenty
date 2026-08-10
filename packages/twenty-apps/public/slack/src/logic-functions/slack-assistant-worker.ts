@@ -25,7 +25,7 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
-import { runSlackAssistantAgentWithProgress } from 'src/logic-functions/utils/run-slack-assistant-agent-with-progress';
+import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
@@ -64,6 +64,8 @@ export const slackAssistantWorkerHandler = async (
 
   const isDirectMessage = record.slackChannelType === 'im';
 
+  const isThreadStartingMessage = !isNonEmptyString(record.slackThreadTimestamp);
+
   const parentMessageTimestamp = getSlackAssistantParentMessageTimestamp({
     slackThreadTimestamp: record.slackThreadTimestamp,
     slackMessageTimestamp,
@@ -88,7 +90,7 @@ export const slackAssistantWorkerHandler = async (
         fetchWorkspaceBaseUrl(),
       ]);
 
-    const agentResult = await runSlackAssistantAgentWithProgress({
+    const agentResult = await runSlackAssistantAgentWithStatus({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       prompt: buildSlackAssistantPrompt({
         requestText,
@@ -150,11 +152,13 @@ export const slackAssistantWorkerHandler = async (
     });
 
     if (isDirectMessage) {
-      await setSlackAssistantThreadTitle({
-        slackChannelId,
-        threadTimestamp: parentMessageTimestamp,
-        title: buildSlackAssistantRequestName(requestText),
-      });
+      if (isThreadStartingMessage) {
+        await setSlackAssistantThreadTitle({
+          slackChannelId,
+          threadTimestamp: parentMessageTimestamp,
+          title: buildSlackAssistantRequestName(requestText),
+        });
+      }
     } else {
       await subscribeSlackThread({
         channelId: slackChannelId,

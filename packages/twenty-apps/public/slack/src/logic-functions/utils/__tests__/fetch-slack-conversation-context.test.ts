@@ -64,8 +64,12 @@ describe('fetchSlackConversationContext', () => {
     expect(repliesMock).toHaveBeenLastCalledWith(
       expect.objectContaining({ cursor: 'cursor-page-2' }),
     );
-    expect(context).toContain('message 119');
-    expect(context).not.toContain('message 99\n');
+    expect(context).toBe(
+      Array.from(
+        { length: 15 },
+        (_, index) => `<@U123>: message ${105 + index}`,
+      ).join('\n'),
+    );
   });
 
   it('should exclude the triggering message by timestamp', async () => {

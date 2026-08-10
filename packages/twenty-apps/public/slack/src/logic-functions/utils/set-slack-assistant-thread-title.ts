@@ -9,7 +9,7 @@ export const setSlackAssistantThreadTitle = async ({
   threadTimestamp: string;
   title: string;
 }): Promise<void> =>
-  runBestEffortSlackCall((client) =>
+  runBestEffortSlackCall('assistant.threads.setTitle', (client) =>
     client.assistant.threads.setTitle({
       channel_id: slackChannelId,
       thread_ts: threadTimestamp,

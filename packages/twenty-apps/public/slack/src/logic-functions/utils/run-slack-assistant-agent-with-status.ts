@@ -6,7 +6,7 @@ import {
 
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 
-export const runSlackAssistantAgentWithProgress = async ({
+export const runSlackAssistantAgentWithStatus = async ({
   agentUniversalIdentifier,
   prompt,
   slackChannelId,

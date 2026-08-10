@@ -9,7 +9,7 @@ export const setSlackAssistantStatus = async ({
   threadTimestamp: string;
   status: string;
 }): Promise<void> =>
-  runBestEffortSlackCall((client) =>
+  runBestEffortSlackCall('assistant.threads.setStatus', (client) =>
     client.assistant.threads.setStatus({
       channel_id: slackChannelId,
       thread_ts: threadTimestamp,

@@ -4,6 +4,8 @@ import {
 } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { setSlackAssistantStatus } from 'src/logic-functions/utils/set-slack-assistant-status';
 
+const STATUS_SHUTDOWN_TIMEOUT_MS = 5000;
+
 export const startSlackAssistantStatusUpdates = ({
   slackChannelId,
   threadTimestamp,
@@ -38,6 +40,17 @@ export const startSlackAssistantStatusUpdates = ({
     isStopped = true;
     timers.forEach(clearTimeout);
 
-    await pendingUpdate;
+    // A stalled setStatus would otherwise hold the answer back for the whole
+    // WebClient retry window, which outlasts the worker's budget
+    let shutdownTimer: ReturnType<typeof setTimeout> | undefined;
+
+    await Promise.race([
+      pendingUpdate,
+      new Promise<void>((resolve) => {
+        shutdownTimer = setTimeout(resolve, STATUS_SHUTDOWN_TIMEOUT_MS);
+      }),
+    ]);
+
+    clearTimeout(shutdownTimer);
   };
 };
