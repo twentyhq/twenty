@@ -1818,11 +1818,15 @@ export interface MarketplaceAppDetail {
 export interface WorkspaceCompanyEnrichmentResult {
     outcome: WorkspaceCompanyEnrichmentOutcome
     enrichment?: Scalars['JSON']
+    personOutcome: WorkspacePersonEnrichmentOutcome
+    personEnrichment?: Scalars['JSON']
     isBookCallOnboardingStepPending: Scalars['Boolean']
     __typename: 'WorkspaceCompanyEnrichmentResult'
 }
 
 export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
+
+export type WorkspacePersonEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
 
 export interface Field {
     id: Scalars['UUID']
@@ -5115,6 +5119,8 @@ export interface MarketplaceAppDetailGenqlSelection{
 export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
     outcome?: boolean | number
     enrichment?: boolean | number
+    personOutcome?: boolean | number
+    personEnrichment?: boolean | number
     isBookCallOnboardingStepPending?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6533,7 +6539,7 @@ export interface MutationGenqlSelection{
     unarchiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteChatThread?: { __args: {id: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
-    startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null)} })
+    startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -9687,6 +9693,12 @@ export const enumCaptchaDriverType = {
 }
 
 export const enumWorkspaceCompanyEnrichmentOutcome = {
+   matched: 'matched' as const,
+   unavailable: 'unavailable' as const,
+   transientError: 'transientError' as const
+}
+
+export const enumWorkspacePersonEnrichmentOutcome = {
    matched: 'matched' as const,
    unavailable: 'unavailable' as const,
    transientError: 'transientError' as const
