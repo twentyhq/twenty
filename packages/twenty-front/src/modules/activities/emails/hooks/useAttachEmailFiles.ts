@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import { type EmailAttachment } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,8 +14,19 @@ export const useAttachEmailFiles = ({
 }: UseAttachEmailFilesArgs) => {
   const { uploadEmailAttachment } = useUploadEmailAttachment();
   const { openFileUpload } = useFileUpload();
+  const [pendingUploadCount, setPendingUploadCount] = useState(0);
 
   const handleUploadFiles = async (filesToUpload: File[]) => {
+    setPendingUploadCount((count) => count + 1);
+
+    try {
+      await appendUploadedFiles(filesToUpload);
+    } finally {
+      setPendingUploadCount((count) => count - 1);
+    }
+  };
+
+  const appendUploadedFiles = async (filesToUpload: File[]) => {
     const uploadedFiles = await Promise.all(
       filesToUpload.map((file) => uploadEmailAttachment(file)),
     );
@@ -39,5 +50,10 @@ export const useAttachEmailFiles = ({
     openFileUpload({ multiple: true, onUpload: handleUploadFiles });
   };
 
-  return { openAttachmentPicker };
+  // Attachments only join the draft once their upload resolves, so sending has
+  // to wait or the mail goes out without the file the user just picked.
+  return {
+    openAttachmentPicker,
+    isUploadingAttachments: pendingUploadCount > 0,
+  };
 };

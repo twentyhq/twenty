@@ -37,6 +37,7 @@ import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/type
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -99,12 +100,6 @@ const StyledInput = styled.input`
   &::placeholder {
     ${FORM_FIELD_PLACEHOLDER_STYLES}
   }
-`;
-
-const StyledFieldContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 `;
 
 type EmailRecipientsFieldInputProps = {
@@ -632,7 +627,7 @@ export const EmailRecipientsFieldInput = ({
   }
 
   return (
-    <StyledFieldContainer>
+    <FormFieldInputContainer>
       <Dropdown
         dropdownId={suggestionsDropdownId}
         dropdownPlacement="bottom-start"
@@ -659,6 +654,6 @@ export const EmailRecipientsFieldInput = ({
           />
         }
       />
-    </StyledFieldContainer>
+    </FormFieldInputContainer>
   );
 };

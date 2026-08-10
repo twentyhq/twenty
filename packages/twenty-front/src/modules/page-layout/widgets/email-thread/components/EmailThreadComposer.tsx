@@ -81,9 +81,11 @@ export const EmailThreadComposer = ({
 
   const { handleSend, canSend } = composerState;
 
-  const { openAttachmentPicker } = useAttachEmailFiles({
+  const { openAttachmentPicker, isUploadingAttachments } = useAttachEmailFiles({
     onFilesAttached: composerState.setFiles,
   });
+
+  const canSendReply = canSend && !isUploadingAttachments;
 
   const footerCommandMenuItems =
     useMemo((): SidePanelFooterCommandMenuItem[] => {
@@ -121,22 +123,22 @@ export const EmailThreadComposer = ({
           isPrimaryCTA: true,
           hotkeys: [getOsControlSymbol(), '⏎'],
           onClick: handleSend,
-          disabled: !canSend,
+          disabled: !canSendReply,
         },
       ];
     }, [
       isComposerOpen,
       handleSend,
-      canSend,
+      canSendReply,
       setIsComposerOpen,
       openAttachmentPicker,
     ]);
 
   const handleSendHotkey = useCallback(() => {
-    if (isComposerOpen && canSend) {
+    if (isComposerOpen && canSendReply) {
       handleSend();
     }
-  }, [isComposerOpen, canSend, handleSend]);
+  }, [isComposerOpen, canSendReply, handleSend]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
@@ -153,7 +155,10 @@ export const EmailThreadComposer = ({
         />
       )}
       {isComposerOpen ? (
-        <EmailComposerFields composerState={composerState} />
+        <EmailComposerFields
+          composerState={composerState}
+          onAttachFiles={isInSidePanel ? undefined : openAttachmentPicker}
+        />
       ) : (
         !isInSidePanel && (
           <StyledReplyBar onClick={() => setIsComposerOpen(true)}>

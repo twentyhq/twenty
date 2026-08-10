@@ -60,15 +60,17 @@ export const SidePanelComposeEmailPage = () => {
     onSent: goBackFromSidePanel,
   });
 
-  const { openAttachmentPicker } = useAttachEmailFiles({
+  const { openAttachmentPicker, isUploadingAttachments } = useAttachEmailFiles({
     onFilesAttached: composerState.setFiles,
   });
 
+  const canSend = composerState.canSend && !isUploadingAttachments;
+
   const handleSendHotkey = useCallback(() => {
-    if (composerState.canSend) {
+    if (canSend) {
       composerState.handleSend();
     }
-  }, [composerState]);
+  }, [canSend, composerState]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
@@ -116,7 +118,7 @@ export const SidePanelComposeEmailPage = () => {
             Icon={IconSend}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleSend}
-            disabled={!composerState.canSend}
+            disabled={!canSend}
           />,
         ]}
       />

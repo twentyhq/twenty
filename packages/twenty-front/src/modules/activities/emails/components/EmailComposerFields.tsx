@@ -3,6 +3,7 @@ import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPaperclip } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -80,7 +81,25 @@ const StyledBody = styled.div`
 `;
 
 const StyledAttachments = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
+`;
+
+const StyledAttachAction = styled.button`
+  align-items: center;
+  align-self: flex-start;
+  all: unset;
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[1]};
+
+  &:hover {
+    color: ${themeCssVariables.font.color.secondary};
+  }
 `;
 
 const StyledRecipientLimitWarning = styled.div`
@@ -92,11 +111,15 @@ const StyledRecipientLimitWarning = styled.div`
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
   contextRecord?: EmailComposerContextRecord | null;
+  // Surfaces without a composer footer of their own pass this so attaching
+  // stays reachable from inside the form.
+  onAttachFiles?: () => void;
 };
 
 export const EmailComposerFields = ({
   composerState,
   contextRecord,
+  onAttachFiles,
 }: EmailComposerFieldsProps) => {
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
@@ -253,12 +276,20 @@ export const EmailComposerFields = ({
           onImageUpload={uploadEmailImage}
         />
       </StyledBody>
-      {composerState.files.length > 0 && (
+      {(composerState.files.length > 0 || isDefined(onAttachFiles)) && (
         <StyledAttachments>
-          <EmailAttachmentsField
-            files={composerState.files}
-            onChange={composerState.setFiles}
-          />
+          {isDefined(onAttachFiles) && (
+            <StyledAttachAction type="button" onClick={onAttachFiles}>
+              <IconPaperclip size={14} />
+              {t`Attach files`}
+            </StyledAttachAction>
+          )}
+          {composerState.files.length > 0 && (
+            <EmailAttachmentsField
+              files={composerState.files}
+              onChange={composerState.setFiles}
+            />
+          )}
         </StyledAttachments>
       )}
     </StyledFieldsContainer>
