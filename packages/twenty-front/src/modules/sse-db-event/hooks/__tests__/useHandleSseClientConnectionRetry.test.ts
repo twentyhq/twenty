@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
-import { type ReactNode } from 'react';
-import { createElement } from 'react';
+import { createElement, type ReactNode } from 'react';
 
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -70,7 +69,7 @@ describe('useHandleSseClientConnectionRetry', () => {
 
     await act(() => result.current.handleSseClientConnectionRetry(0));
 
-    expect(dispose).toHaveBeenCalled();
+    expect(dispose).toHaveBeenCalledTimes(1);
     expect(wasStreamDestroyed(store)).toBe(true);
   });
 
@@ -96,7 +95,7 @@ describe('useHandleSseClientConnectionRetry', () => {
 
     await act(() => result.current.handleSseClientConnectionRetry(11));
 
-    expect(dispose).toHaveBeenCalled();
+    expect(dispose).toHaveBeenCalledTimes(1);
     expect(wasStreamDestroyed(store)).toBe(true);
   });
 
@@ -110,8 +109,9 @@ describe('useHandleSseClientConnectionRetry', () => {
 
     await act(() => result.current.handleSseClientConnectionRetry(0));
 
-    expect(ensureTokenRenewedMock).toHaveBeenCalled();
-    expect(dispose).toHaveBeenCalled();
+    expect(ensureTokenRenewedMock).toHaveBeenCalledTimes(1);
+    expect(ensureTokenRenewedMock).toHaveBeenCalledWith(store);
+    expect(dispose).toHaveBeenCalledTimes(1);
     expect(wasStreamDestroyed(store)).toBe(true);
   });
 

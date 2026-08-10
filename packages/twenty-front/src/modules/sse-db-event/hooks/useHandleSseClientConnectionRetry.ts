@@ -57,8 +57,6 @@ export const useHandleSseClientConnectionRetry = () => {
         return;
       }
 
-      // Token mode only: in cookie mode there is no token pair to renew, and an
-      // absent one must not be read as a lost credential.
       if (!store.get(isCookieAuthActiveState.atom)) {
         const accessToken = store.get(
           tokenPairState.atom,
