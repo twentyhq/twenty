@@ -20,8 +20,11 @@ import { retryWithBackoff } from '~/utils/retryWithBackoff';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import { getIsCookieAuthActive } from '@/apollo/utils/getIsCookieAuthActive';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { isAuthProxyRedirect } from '@/apollo/utils/isAuthProxyRedirect';
+import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
+import { setIsCookieAuthActive } from '@/apollo/utils/setIsCookieAuthActive';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { clearAuthProxyReloadGuard } from '@/apollo/utils/reloadOnceForAuthProxyRedirect';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
@@ -121,14 +124,17 @@ export class ApolloFactory implements ApolloManager {
     const buildApolloLink = (): ApolloLink => {
       const uploadLink = new UploadHttpLink({
         uri,
+        credentials: 'include',
       });
 
       const streamingRestLink = new StreamingRestLink({
         uri: REST_API_BASE_URL,
+        credentials: 'include',
       });
 
       const restLink = new RestLink({
         uri: REST_API_BASE_URL,
+        credentials: 'include',
       });
 
       const authLink = setContext(async (_, { headers, skipAuthToken }) => {
@@ -136,12 +142,23 @@ export class ApolloFactory implements ApolloManager {
 
         const locale = this.currentWorkspaceMember?.locale ?? i18n.locale;
 
-        if (isUndefinedOrNull(tokenPair) || skipAuthToken === true) {
+        // The token pair is kept as a dormant fallback once cookie auth is
+        // active, but must not be sent: Bearer takes precedence over the
+        // session cookie server-side, so attaching it would keep the cookie
+        // unused and bypass the CSRF origin check.
+        if (
+          isUndefinedOrNull(tokenPair) ||
+          skipAuthToken === true ||
+          getIsCookieAuthActive()
+        ) {
           return {
             headers: {
               ...headers,
               ...optionHeaders,
               'x-locale': locale,
+              ...(isDefined(this.appVersion) && {
+                'X-App-Version': this.appVersion,
+              }),
             },
           };
         }
@@ -154,7 +171,9 @@ export class ApolloFactory implements ApolloManager {
             ...optionHeaders,
             authorization: token ? `Bearer ${token}` : '',
             'x-locale': locale,
-            ...(this.appVersion && { 'X-App-Version': this.appVersion }),
+            ...(isDefined(this.appVersion) && {
+              'X-App-Version': this.appVersion,
+            }),
           },
         };
       });
@@ -202,6 +221,37 @@ export class ApolloFactory implements ApolloManager {
         forward: ApolloLink.ForwardFunction,
         error: ErrorLike,
       ) => {
+        // Renewing and replaying a deliberately headerless operation (the cookie
+        // session probe) could loop, so it must fail as-is.
+        if (operation.getContext().skipAuthToken === true) {
+          return throwError(() => error);
+        }
+
+        // A server that still has cookie sessions disabled ignores the session
+        // cookie, so a cookie-only client reads as unauthenticated there. That
+        // happens on every request routed to a not-yet-rolled pod, and after a
+        // rollback. Fall back to the retained token pair instead of signing the
+        // user out. Attempted once per operation so a genuinely expired token
+        // still reaches the renewal path below.
+        if (
+          getIsCookieAuthActive() &&
+          operation.getContext().hasAttemptedCookieAuthFallback !== true &&
+          isDefined(getTokenPair()?.refreshToken?.token)
+        ) {
+          setIsCookieAuthActive(false);
+          operation.setContext({ hasAttemptedCookieAuthFallback: true });
+          // Deactivation is sticky for the rest of the mount by design. Both
+          // credentials stay valid, so re-probing after every fallback would
+          // thrash between them for the whole rollout: the probe succeeds on a
+          // rolled pod, the next request lands on an old one and falls back
+          // again. CookieSessionBootEffect re-probes on the next mount, which
+          // restores cookie auth once the fleet is uniform.
+          // Deliberately falls through to the renewal below rather than
+          // replaying immediately: the retained access token is likely to have
+          // expired while the client was authenticating by cookie, so the
+          // replay needs a fresh one to succeed on the first try.
+        }
+
         if (!getTokenPair()?.refreshToken?.token) {
           onUnauthenticatedError?.();
 
@@ -335,9 +385,9 @@ export class ApolloFactory implements ApolloManager {
         if (CombinedGraphQLErrors.is(error)) {
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
-            if (graphQLError.message === 'Unauthorized') {
+            if (isUnauthenticatedGraphQLError(graphQLError)) {
               // oxlint-disable-next-line no-console
-              console.log('Unauthorized, triggering token renewal');
+              console.log('Unauthenticated, triggering token renewal');
               return handleTokenRenewal(operation, forward, error);
             }
 
@@ -348,11 +398,6 @@ export class ApolloFactory implements ApolloManager {
                     t`Your app version is out of date. Please refresh the page.`,
                 );
                 return;
-              }
-              case 'UNAUTHENTICATED': {
-                // oxlint-disable-next-line no-console
-                console.log('UNAUTHENTICATED, triggering token renewal');
-                return handleTokenRenewal(operation, forward, error);
               }
               case 'NOT_FOUND':
               case 'BAD_USER_INPUT':

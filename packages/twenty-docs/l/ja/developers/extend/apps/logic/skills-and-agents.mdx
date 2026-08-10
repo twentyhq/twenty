@@ -100,7 +100,7 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="ロジック関数からエージェントを実行する">
 
-`runAgent()` を使用すると、ロジック関数からアプリのエージェント（そのスキルやツールを含む）を実行できます。 `defineAgent()` に渡した `universalIdentifier` でエージェントを識別します:
+`runAgent()` を使用すると、ロジック関数からアプリのエージェント（そのスキルやツールを含む）を実行できます。 `defineAgent()` に渡した `universalIdentifier` でエージェントを識別します。 `prompt` 文字列または会話履歴である `messages` のいずれか一方のみを渡してください。両方は渡さないでください。
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,23 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+マルチターンのボット (Slack、Discord、Teams など) の場合は、単一の `prompt` ではなく、スレッド履歴を `messages` として渡してください。
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 主なポイント：
+* `prompt` (string) または `messages`（1～100 個の `{ role: 'user' | 'assistant', content: string }` エントリ）のうち、**ちょうど一つだけ**を指定してください。
 * エージェントは**同期的に**実行され、自身のツールを通じてレコードの読み取り/更新ができます。`runAgent()` は、実行が完了すると解決されます。
 * アプリは自分自身のエージェントのみを実行できます。
 * アプリの[デフォルトロール](/l/ja/developers/extend/apps/config/roles)には `AI` パーミッションフラグが付与されている必要があります — その `permissionFlagUniversalIdentifiers` に `SystemPermissionFlag.AI` を追加するか（または `canAccessAllTools: true` を設定します）。
@@ -132,6 +148,33 @@ export default defineApplicationRole({
 
 <Warning>
   **ループを避けてください:** `*.updated` データベースイベントトリガーから `runAgent()` を呼び出し、そのエージェントが同じレコードを更新する場合、`updatedFields` を使ってエージェントが決して書き込まないフィールド（例: ソース URL）にスコープするか、`runAgent()` を呼び出す前に、対象フィールドのいずれかがまだ空であるかどうかを判定してガードしてください。
+</Warning>
+
+### ワークスペースメンバーを代理して実行する場合
+
+実行が人によってトリガーされた場合 — たとえばメッセージに返信するチャットボットなど — には、`runAsWorkspaceMemberId` を渡して、そのエージェントがアプリとしてではなく、そのメンバーとして動作するようにします。
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+その場合、実行はエージェントのロールとメンバーのロールの**両方**で許可されている範囲に制限され、作成されたレコードはそのメンバーに帰属し、メンバーの行レベル権限が適用されます。 自律的な実行（スケジュールされたジョブ、データベースイベントトリガー）の場合は、そのフィールドを省略します。この場合、エージェント自身のロールが維持されます。
+
+実行をトリガーした人物を、どのワークスペースメンバーに対応付けるかは、あなたのアプリ側の責任です。 メンバーを指定するにはアプリアクセストークンが必要であり、トークンで指定できるメンバーは、そのトークンにユーザーが紐づいているかどうかに依存します。
+
+* ユーザーが紐づいていないトークンは、任意のメンバーを指定できます。 ロジック関数はそのようなトークンで実行され、`client_credentials` を通じて、または API
+  キーから発行されたトークンも同様です。
+* フロントコンポーネントが受け取るような、ユーザーを代表して発行されたトークンは、そのユーザー自身のメンバーのみを指定できます。
+
+それ以外、つまり通常のユーザーセッションやアプリアクセストークンを伴わない API キーは、メンバーをまったく指定できません。
+
+<Warning>
+  `runAgent()` は、ワークスペースメンバーを解決できない場合（不明または削除されたメンバー、あるいはロールを持たないメンバー）に例外をスローします。 呼び出し元が要求した以上のアクセス権を与えてしまうことになるため、
+  エージェント自身のロールにフォールバックすることは決してありません。
 </Warning>
 
 </Accordion>

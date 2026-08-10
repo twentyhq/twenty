@@ -108,6 +108,13 @@ export const CampaignDetailsFields = ({
 
   return (
     <StyledFieldsContainer onBlur={() => detailsState.flush()}>
+      <FormTextFieldInput
+        key={`subject-${detailsState.draftResyncKey}`}
+        label={t`Subject`}
+        defaultValue={detailsState.subject}
+        onChange={detailsState.setSubject}
+        placeholder={t`Subject`}
+      />
       <Select
         dropdownId="campaign-composer-from-account"
         label={t`From`}
@@ -118,6 +125,7 @@ export const CampaignDetailsFields = ({
         onChange={detailsState.setFromAddress}
       />
       <FormSingleRecordPicker
+        key={`list-${detailsState.draftResyncKey}`}
         label={t`To`}
         objectNameSingulars={[CoreObjectNameSingular.MessageList]}
         defaultValue={detailsState.listId}
@@ -145,12 +153,6 @@ export const CampaignDetailsFields = ({
           </StyledHint>
         </>
       )}
-      <FormTextFieldInput
-        label={t`Subject`}
-        defaultValue={detailsState.subject}
-        onChange={detailsState.setSubject}
-        placeholder={t`Subject`}
-      />
     </StyledFieldsContainer>
   );
 };

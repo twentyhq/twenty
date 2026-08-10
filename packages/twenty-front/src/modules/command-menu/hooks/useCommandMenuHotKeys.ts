@@ -1,4 +1,3 @@
-import { AI_CHAT_THREADS_LIST_FOCUS_ID } from '@/ai/constants/AiChatThreadsListFocusId';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
@@ -65,18 +64,6 @@ export const useCommandMenuHotKeys = () => {
       // Allow Escape while the search input is focused so it closes the
       // command menu / search instead of being swallowed by the form tag.
       enableOnFormTags: true,
-    },
-  });
-
-  useHotkeysOnFocusedElement({
-    keys: [Key.Escape],
-    callback: () => {
-      handleSidePanelEscape();
-    },
-    focusId: AI_CHAT_THREADS_LIST_FOCUS_ID,
-    dependencies: [handleSidePanelEscape],
-    options: {
-      enableOnFormTags: false,
     },
   });
 };

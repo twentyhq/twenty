@@ -21,7 +21,7 @@ type LinkRecord = {
 export const LinksFieldInput = () => {
   const { draftValue, fieldDefinition, setDraftValue } = useLinksField();
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -80,6 +80,13 @@ export const LinksFieldInput = () => {
     onEnter?.({ newValue: parseArrayToLinksValue(updatedLinks) });
   };
 
+  const handleSubmit = (updatedLinks: LinkRecord[]) => {
+    onSubmit?.({
+      newValue: parseArrayToLinksValue(updatedLinks),
+      skipClose: true,
+    });
+  };
+
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
@@ -90,6 +97,7 @@ export const LinksFieldInput = () => {
       onChange={handleChange}
       onEscape={handleEscape}
       onEnter={handleEnter}
+      onSubmit={handleSubmit}
       onClickOutside={handleClickOutside}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}

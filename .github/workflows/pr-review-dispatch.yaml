@@ -3,13 +3,13 @@ run-name: "PR Review Dispatch #${{ github.event.pull_request.number }}"
 
 on:
   pull_request_target:
-    types: [ready_for_review, synchronize, labeled]
+    types: [opened, ready_for_review, synchronize, labeled]
 
 permissions: {}
 
 concurrency:
-  group: pr-review-dispatch-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: pr-review-dispatch-${{ github.event.pull_request.number }}-${{ github.event.action }}
+  cancel-in-progress: ${{ github.event.action == 'synchronize' }}
 
 jobs:
   dispatch:
@@ -39,6 +39,8 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT: ${{ github.event.action }}
         run: |
           gh workflow run pr-review.yaml --repo twentyhq/ci-privileged --ref main \
-            -f pr_number="$PR_NUMBER"
+            -f pr_number="$PR_NUMBER" \
+            -f event="$EVENT"

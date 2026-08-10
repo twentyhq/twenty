@@ -11,7 +11,7 @@ export const getFirefliesApiKey = ():
     return {
       success: false,
       error:
-        'Fireflies is not configured. Open the Twenty Fireflies app settings and set the FIREFLIES_API_KEY application variable (Fireflies → Integrations → Fireflies API → Generate API key).',
+        'Fireflies is not configured. Open the Fireflies app settings and set the FIREFLIES_API_KEY application variable (Fireflies → Integrations → Fireflies API → Generate API key).',
     };
   }
 

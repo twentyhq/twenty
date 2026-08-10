@@ -13,6 +13,8 @@ import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.aut
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -29,6 +31,7 @@ describe('AccessTokenService', () => {
   let workspaceRepository: Repository<WorkspaceEntity>;
   let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
+  let userSessionService: UserSessionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -77,6 +80,13 @@ describe('AccessTokenService', () => {
           useValue: {},
         },
         {
+          provide: UserSessionService,
+          useValue: {
+            resolveSession: jest.fn(),
+          },
+        },
+        UserSessionCookieService,
+        {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
             getRepository: jest.fn(),
@@ -103,6 +113,7 @@ describe('AccessTokenService', () => {
     userWorkspaceRepository = module.get<Repository<UserWorkspaceEntity>>(
       getRepositoryToken(UserWorkspaceEntity),
     );
+    userSessionService = module.get<UserSessionService>(UserSessionService);
   });
 
   it('should be defined', () => {
@@ -288,10 +299,92 @@ describe('AccessTokenService', () => {
       jest
         .spyOn(jwtWrapperService, 'extractJwtFromRequest')
         .mockReturnValue(() => null);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
 
       await expect(service.validateTokenByRequest(mockRequest)).rejects.toThrow(
         AuthException,
       );
+    });
+
+    it('should reject session tokens presented as bearer tokens', async () => {
+      const mockSessionToken = 'sess_opaque-session-token';
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${mockSessionToken}`,
+        },
+      } as Request;
+
+      jest
+        .spyOn(jwtWrapperService, 'extractJwtFromRequest')
+        .mockReturnValue(() => mockSessionToken);
+
+      await expect(service.validateTokenByRequest(mockRequest)).rejects.toThrow(
+        'Session tokens are only accepted from the session cookie',
+      );
+    });
+
+    it('should resolve the session cookie when cookie sessions are enabled', async () => {
+      const mockSessionToken = 'sess_opaque-session-token';
+      const mockRequest = {
+        headers: {
+          cookie: `twenty-session=${mockSessionToken}`,
+        },
+      } as Request;
+      const mockPayload = {
+        sub: 'user-id',
+        userId: 'user-id',
+        workspaceId: 'workspace-id',
+        userWorkspaceId: 'user-workspace-id',
+      };
+      const mockAuthContext = {
+        user: { id: 'user-id' },
+        workspace: { id: 'workspace-id' },
+        workspaceMember: { id: 'workspace-member-id' },
+      };
+
+      jest
+        .spyOn(jwtWrapperService, 'extractJwtFromRequest')
+        .mockReturnValue(() => null);
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'SERVER_URL' ? 'http://localhost:3000' : true,
+        );
+      jest.spyOn(userSessionService, 'resolveSession').mockResolvedValue({
+        payload: mockPayload as any,
+        authenticatedAt: new Date(),
+        expiresAt: new Date(),
+      });
+      jest
+        .spyOn(service['jwtStrategy'], 'validate')
+        .mockResolvedValue(mockAuthContext as any);
+
+      const result = await service.validateTokenByRequest(mockRequest);
+
+      expect(userSessionService.resolveSession).toHaveBeenCalledWith(
+        mockSessionToken,
+      );
+      expect(service['jwtStrategy'].validate).toHaveBeenCalledWith(mockPayload);
+      expect(result.workspaceMemberId).toEqual('workspace-member-id');
+    });
+
+    it('should ignore the session cookie when cookie sessions are disabled', async () => {
+      const mockRequest = {
+        headers: {
+          cookie: 'twenty-session=sess_opaque-session-token',
+        },
+      } as Request;
+
+      jest
+        .spyOn(jwtWrapperService, 'extractJwtFromRequest')
+        .mockReturnValue(() => null);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
+      jest.spyOn(userSessionService, 'resolveSession');
+
+      await expect(service.validateTokenByRequest(mockRequest)).rejects.toThrow(
+        'Missing authentication token',
+      );
+      expect(userSessionService.resolveSession).not.toHaveBeenCalled();
     });
   });
 });

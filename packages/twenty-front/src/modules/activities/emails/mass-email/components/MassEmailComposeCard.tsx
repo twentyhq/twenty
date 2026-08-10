@@ -2,9 +2,10 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
+import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { type MassEmailComposerState } from '@/activities/emails/mass-email/hooks/useMassEmailComposerState';
 import { EMAIL_PLACEHOLDER_KEYS } from '@/activities/emails/mass-email/utils/emailPlaceholders';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
@@ -257,7 +258,7 @@ export const MassEmailComposeCard = ({
               }
             }}
             placeholder={t`Write your email…`}
-            preset="inlineEmailBody"
+            profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
             minHeight={260}
           />
         </StyledBodyContainer>

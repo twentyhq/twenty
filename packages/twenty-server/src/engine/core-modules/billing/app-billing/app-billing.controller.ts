@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 
 import { Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppBillingService } from 'src/engine/core-modules/billing/app-billing/app-billing.service';
@@ -30,7 +31,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 const APP_BILLING_CHARGE_THROTTLE_LIMIT = 1000;
 const APP_BILLING_CHARGE_THROTTLE_TTL_MS = 60_000;
 
-@Controller('app/billing')
+@Controller(`${ApiPath.App}/billing`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 export class AppBillingController {
   constructor(

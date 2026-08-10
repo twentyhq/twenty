@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource, type Repository } from 'typeorm';
 
+import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -780,6 +781,158 @@ describe('UserWorkspaceService', () => {
       expect(result).toEqual({
         availableWorkspacesForSignIn: [],
         availableWorkspacesForSignUp: [{ workspace: workspace1 }],
+      });
+    });
+
+    describe('workspaceDiscoverability', () => {
+      const email = 'test@example.com';
+
+      const buildWorkspace = (
+        id: string,
+        workspaceDiscoverability: WorkspaceDiscoverability,
+      ) =>
+        ({
+          id,
+          displayName: id,
+          workspaceSSOIdentityProviders: [],
+          workspaceDiscoverability,
+        }) as unknown as WorkspaceEntity;
+
+      const mockSources = ({
+        memberships = [],
+        approvedAccessDomains = [],
+        invitations = [],
+      }: {
+        memberships?: WorkspaceEntity[];
+        approvedAccessDomains?: WorkspaceEntity[];
+        invitations?: WorkspaceEntity[];
+      }) => {
+        jest.spyOn(userRepository, 'findOne').mockResolvedValue({
+          email,
+          userWorkspaces: memberships.map((workspace) => ({
+            workspaceId: workspace.id,
+            workspace,
+          })),
+        } as UserEntity);
+
+        jest
+          .spyOn(
+            approvedAccessDomainService,
+            'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+          )
+          .mockResolvedValue(
+            approvedAccessDomains.map(
+              (workspace) =>
+                ({
+                  id: `domain-${workspace.id}`,
+                  workspaceId: workspace.id,
+                  workspace,
+                  isValidated: true,
+                }) as unknown as ApprovedAccessDomainEntity,
+            ),
+          );
+
+        jest
+          .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+          .mockResolvedValue(
+            invitations.map(
+              (workspace) =>
+                ({
+                  workspaceId: workspace.id,
+                  workspace,
+                }) as unknown as AppTokenEntity,
+            ),
+          );
+      };
+
+      it('should list a membership unless the workspace is hidden', async () => {
+        const publicWorkspace = buildWorkspace(
+          'public',
+          WorkspaceDiscoverability.PUBLIC,
+        );
+        const membersAndInviteesWorkspace = buildWorkspace(
+          'members-and-invitees',
+          WorkspaceDiscoverability.MEMBERS_AND_INVITEES,
+        );
+
+        mockSources({
+          memberships: [
+            publicWorkspace,
+            membersAndInviteesWorkspace,
+            buildWorkspace('hidden', WorkspaceDiscoverability.HIDDEN),
+          ],
+        });
+
+        const result = await service.findAvailableWorkspacesByEmail(email);
+
+        expect(result.availableWorkspacesForSignIn).toEqual([
+          { workspace: publicWorkspace },
+          { workspace: membersAndInviteesWorkspace },
+        ]);
+      });
+
+      it('should surface a workspace by email domain only when it is public', async () => {
+        const publicWorkspace = buildWorkspace(
+          'public',
+          WorkspaceDiscoverability.PUBLIC,
+        );
+
+        mockSources({
+          approvedAccessDomains: [
+            publicWorkspace,
+            buildWorkspace(
+              'members-and-invitees',
+              WorkspaceDiscoverability.MEMBERS_AND_INVITEES,
+            ),
+            buildWorkspace('hidden', WorkspaceDiscoverability.HIDDEN),
+          ],
+        });
+
+        const result = await service.findAvailableWorkspacesByEmail(email);
+
+        expect(result.availableWorkspacesForSignUp).toEqual([
+          { workspace: publicWorkspace },
+        ]);
+      });
+
+      it('should list an invitation unless the workspace is hidden', async () => {
+        const membersAndInviteesWorkspace = buildWorkspace(
+          'members-and-invitees',
+          WorkspaceDiscoverability.MEMBERS_AND_INVITEES,
+        );
+
+        mockSources({
+          invitations: [
+            membersAndInviteesWorkspace,
+            buildWorkspace('hidden', WorkspaceDiscoverability.HIDDEN),
+          ],
+        });
+
+        const result = await service.findAvailableWorkspacesByEmail(email);
+
+        expect(result.availableWorkspacesForSignUp).toEqual([
+          expect.objectContaining({ workspace: membersAndInviteesWorkspace }),
+        ]);
+      });
+
+      it('should keep a hidden workspace out of every source at once', async () => {
+        const hiddenWorkspace = buildWorkspace(
+          'hidden',
+          WorkspaceDiscoverability.HIDDEN,
+        );
+
+        mockSources({
+          memberships: [hiddenWorkspace],
+          approvedAccessDomains: [hiddenWorkspace],
+          invitations: [hiddenWorkspace],
+        });
+
+        const result = await service.findAvailableWorkspacesByEmail(email);
+
+        expect(result).toEqual({
+          availableWorkspacesForSignIn: [],
+          availableWorkspacesForSignUp: [],
+        });
       });
     });
   });

@@ -15,6 +15,13 @@ import svgr from 'vite-plugin-svgr';
 
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
 
+import { ApiPath } from 'twenty-shared/types';
+
+import {
+  API_PROXY_PATHS,
+  buildApiProxyMatcher,
+} from './src/config/apiProxyPrefixes';
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
@@ -26,6 +33,7 @@ export default defineConfig(({ mode }) => {
     SSL_CERT_PATH,
     SSL_KEY_PATH,
     REACT_APP_PORT,
+    REACT_APP_SERVER_BASE_URL,
     IS_DEBUG_MODE,
     REACT_APP_ENVIRONMENT_LABEL,
   } = env;
@@ -34,43 +42,26 @@ export default defineConfig(({ mode }) => {
     ? parseInt(REACT_APP_PORT)
     : 3001;
 
-  // When VITE_PROXY_API_TO is set, the dev server forwards backend routes to it
-  // so the frontend and API share a single origin (needed to expose dev through
-  // one tunnel, and for clean OAuth callbacks). Prefixes are the backend's
-  // controller/GraphQL routes; everything else falls through to Vite (the SPA).
-  // Regex keys avoid collisions with frontend routes that share a prefix:
-  // `^/auth(/|$)` excludes the SPA's `/authorize`, and `^/s/` excludes `/sync`
-  // and `/settings`.
-  const buildApiProxy = (target: string) => {
-    const prefixes = [
-      '/metadata',
-      '/admin-panel',
-      '/client-config',
-      '/rest',
-      '/oauth',
-      '/apps',
-      '/app/billing',
-      '/webhooks',
-      '/healthz',
-      '/mcp',
-      '/files',
-      '/file',
-      '/public-assets',
-      '/.well-known',
-    ];
-    const proxy: Record<
-      string,
-      { target: string; changeOrigin: boolean; ws?: boolean }
-    > = {
-      '/graphql': { target, changeOrigin: true, ws: true },
-      '^/auth(/|$)': { target, changeOrigin: true },
-      '^/s/': { target, changeOrigin: true },
-    };
-    for (const prefix of prefixes) {
-      proxy[prefix] = { target, changeOrigin: true };
-    }
-    return proxy;
-  };
+  // VITE_PROXY_API_TO points the dev proxy somewhere other than the local
+  // backend, so the frontend and API share a single origin when dev is exposed
+  // through one tunnel (see deploy/start-ngrok.sh). changeOrigin rewrites the
+  // Host header, which that tunnelled backend needs.
+  const apiProxyTarget = isNonEmptyString(VITE_PROXY_API_TO)
+    ? VITE_PROXY_API_TO
+    : isNonEmptyString(REACT_APP_SERVER_BASE_URL)
+      ? REACT_APP_SERVER_BASE_URL
+      : 'http://localhost:3000';
+
+  const apiProxy = Object.fromEntries(
+    API_PROXY_PATHS.map((apiPath) => [
+      buildApiProxyMatcher(apiPath),
+      {
+        target: apiProxyTarget,
+        changeOrigin: true,
+        ...(apiPath === ApiPath.GraphQL ? { ws: true } : {}),
+      },
+    ]),
+  );
 
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
@@ -90,6 +81,7 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: port,
+      proxy: apiProxy,
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
       // Comma-separated hostnames allowed to reach the dev server (e.g. when
       // proxied through a tunnel/reverse proxy). Use "true" to allow any host.
@@ -100,9 +92,6 @@ export default defineConfig(({ mode }) => {
                 ? true
                 : VITE_ALLOWED_HOSTS.split(',').map((host) => host.trim()),
           }
-        : {}),
-      ...(isNonEmptyString(VITE_PROXY_API_TO)
-        ? { proxy: buildApiProxy(VITE_PROXY_API_TO) }
         : {}),
       ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
@@ -140,17 +129,14 @@ export default defineConfig(({ mode }) => {
                 : VITE_ALLOWED_HOSTS.split(',').map((host) => host.trim()),
           }
         : {}),
-      ...(isNonEmptyString(VITE_PROXY_API_TO)
-        ? { proxy: buildApiProxy(VITE_PROXY_API_TO) }
-        : {}),
+      proxy: apiProxy,
     },
 
     plugins: [
       // In dev, Vite serves index.html with an empty window._env_ placeholder
-      // (it is only populated by the server/inject script in prod). When the
-      // app is reached via a non-localhost host (e.g. a tunnel), getDefaultUrl()
-      // would resolve the API to the same origin and 404. Inject the configured
-      // server base URL so the frontend hits the right backend.
+      // (it is only populated by the server/inject script in prod), so the
+      // frontend would fall back to its own origin. Inject the configured
+      // server base URL and environment label so dev matches prod.
       {
         name: 'inject-runtime-env-dev',
         transformIndexHtml(html: string) {

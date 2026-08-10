@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationAuthorizationModule } from 'src/engine/core-modules/application/application-authorization/application-authorization.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -30,6 +31,7 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
       UserWorkspaceEntity,
     ]),
     ApplicationRegistrationModule,
+    ApplicationAuthorizationModule,
     ApplicationCoreModule,
     ApplicationInstallModule,
     TokenModule,

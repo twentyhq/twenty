@@ -121,5 +121,6 @@ Quando qualcosa va storto, il diff dei metadati e gli errori nominali ti permett
 
 * **Errore di build del manifest** — la CLI fallisce prima della sincronizzazione (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); correggi il sorgente della tua app.
 * **Errore di sincronizzazione / migrazione** — la build riesce ma l'applicazione del diff fallisce, indicando l'entità e lo `universalIdentifier`; correggi i metadati in conflitto.
+* **Errore dimensione delle dipendenze** — la sincronizzazione o l'installazione non riesce perché le `dependencies` di produzione dell'app sono troppo grandi per essere installate come layer di runtime (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); sposta nei `devDependencies` i pacchetti che le tue funzioni logiche non importano a runtime (librerie UI, strumenti di sviluppo).
 * **Errore di runtime del codice dell'app** — la sincronizzazione va a buon fine ma le tue funzioni di logica o i componenti si comportano in modo anomalo in fase di esecuzione; controlla i [log delle funzioni](/l/it/developers/extend/apps/operations/cli).
 * **Stato locale dell'istanza** — nessuno dei casi precedenti e lo spazio di lavoro continua a sembrare errato; procedi lungo la scala di ripristino.

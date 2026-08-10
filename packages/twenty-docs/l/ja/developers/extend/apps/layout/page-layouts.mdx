@@ -58,6 +58,28 @@ export default definePageLayout({
 * タブ内の各 `widget` は、[front component](/l/ja/developers/extend/apps/layout/front-components)、リレーションリスト、その他のビルトインウィジェットタイプをレンダリングできます。
 * タブの `position` は表示順を制御します。 組み込みタブの後にカスタムタブを配置するには、より大きな値（例：50）を使用します。
 
+### フィールド ウィジェット
+
+`FIELD` ウィジェットは、レコードの 1 つのフィールドをレンダリングします。 リレーションフィールドの場合、関連レコードの一覧を埋め込むこともできます。
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` は、レイアウトのオブジェクト上のフィールドのユニバーサル識別子を受け取ります。
+* `fieldDisplayMode` は `'FIELD'`、`'CARD'`、`'EDITOR'`、`'VIEW'`、`'TABLE'` のいずれかです。 `TABLE` は、1 対多のリレーションフィールドのレコードを一覧表示するビューを埋め込みます。
+* `nestedRelationFieldMetadataId` は任意で、リレーション先オブジェクト上の 1 対多リレーションフィールドのユニバーサル識別子を受け取り、2 ホップ先のリレーションにあるレコードを一覧表示するために使用されます（例: 会社ページでその会社の担当者が持つ商談を一覧表示する、または人物ページでその人物の所属する会社の商談を一覧表示する、など）。 最初のホップは 1 対多または多対 1 のリレーションフィールドのどちらでもかまいませんが、2 つ目は必ず 1 対多でなければなりません（ジャンクションリレーションはサポートされません）。また、`fieldDisplayMode: 'TABLE'` が必須であり、ネストされたウィジェットは常に埋め込みビューとしてレンダリングされるため、これを他の表示モードと組み合わせると検証エラーになります。
+
 ## definePageLayoutTab
 
 既存のレイアウトにタブを**追加**したい場合にのみ使用します。たとえば、標準の Company ページにアナリティクスタブを追加する場合や、自分のオブジェクトのレイアウトに AI サマリータブを追加する場合などです。

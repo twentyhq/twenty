@@ -25,7 +25,7 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-import { RecordTableRowMultiDragCounterChip } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragCounterChip';
+import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
@@ -177,7 +177,7 @@ export const RecordTableRowDragOverlayContent = ({
           recordId={recordId}
           focusIndex={sourceData.focusIndex}
           style={{
-            background: themeCssVariables.background.transparent.light,
+            background: themeCssVariables.background.secondary,
             borderColor: themeCssVariables.border.color.medium,
           }}
           isDragging
@@ -194,7 +194,7 @@ export const RecordTableRowDragOverlayContent = ({
           </RecordTableRowDraggableContextProvider>
         </RecordTableTr>
       </StyledRowClipContainer>
-      <RecordTableRowMultiDragCounterChip />
+      <RecordTableRowMultiDragPreview recordId={recordId} />
     </StyledRowDragOverlayCSSBridge>
   );
 };
