@@ -320,4 +320,66 @@ describe('getTabsWithVisibleWidgets', () => {
       expect(result[1].widgets).toHaveLength(2);
     });
   });
+
+  describe('with record-gated widgets', () => {
+    const createRecordGatedWidget = (
+      id: string,
+      conditionalAvailabilityExpression: string,
+    ): PageLayoutTab['widgets'][0] => ({
+      ...createMockWidget(id),
+      conditionalAvailabilityExpression,
+    });
+
+    const sentOnlyTab = () =>
+      createMockTab('sent-only', [
+        createRecordGatedWidget(
+          'widget-1',
+          'not everyEquals(selectedRecords, "status", "DRAFT")',
+        ),
+      ]);
+
+    it('should drop a tab whose widgets are all gated out by the selected record', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+        selectedRecords: [{ id: 'record-1', status: 'DRAFT' }],
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('always');
+    });
+
+    it('should keep a tab whose widgets the selected record allows', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+        selectedRecords: [{ id: 'record-1', status: 'SENT' }],
+      });
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('sent-only');
+    });
+
+    it('should treat record predicates as vacuously true when no record is given', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [
+          createMockTab('draft-only', [
+            createRecordGatedWidget(
+              'widget-1',
+              'everyEquals(selectedRecords, "status", "DRAFT")',
+            ),
+          ]),
+        ],
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+      });
+
+      expect(result).toHaveLength(1);
+    });
+  });
 });

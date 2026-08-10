@@ -1,10 +1,12 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -17,6 +19,11 @@ export const usePageLayoutRenderableTabs = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const targetRecordStatus = useAtomFamilySelectorValue(
+    recordStoreFamilySelector,
+    { recordId: targetRecordIdentifier?.id ?? '', fieldName: 'status' },
+  );
+
   const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
     ? objectMetadataItems.find(
         (item) =>
@@ -24,11 +31,26 @@ export const usePageLayoutRenderableTabs = () => {
       )
     : undefined;
 
+  // A tab whose every widget is gated on the record — a campaign's sent-only
+  // widgets, say — is only empty once the record is taken into account. Without
+  // it the tab survives on widgets that will never render, and a tab that
+  // should disappear keeps its slot in the tab list and the pinned column.
+  //
+  // An unloaded record contributes nothing rather than a record with blank
+  // fields: guessing before the store answers makes the pinned column appear
+  // for a frame and then collapse. Objects with no status field never reach
+  // this branch, so their tabs filter exactly as they did before.
+  const selectedRecords =
+    isDefined(targetRecordIdentifier) && isDefined(targetRecordStatus)
+      ? [{ id: targetRecordIdentifier.id, status: targetRecordStatus }]
+      : [];
+
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
     isInSidePanel,
     isEditMode: isPageLayoutInEditMode,
+    selectedRecords,
   });
 
   // Edit mode keeps every tab visible (like getTabsWithVisibleWidgets) so a

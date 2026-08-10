@@ -57,10 +57,6 @@ const HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
     .widgets.fields.universalIdentifier;
 
-const HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
-    .widgets.details.universalIdentifier;
-
 const HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
     .widgets.list.universalIdentifier;
@@ -146,13 +142,16 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         ],
       });
 
+    // The details widget this used to create is gone from the standard layout
+    // (2.30 moved its fields above the composer body and deletes the widget), so
+    // it is no longer in the standard flat maps this looks up — asking for it
+    // here would throw on any workspace still upgrading through 2.25.
     const pageLayoutWidgetsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutWidget>({
         standardFlatEntityMaps:
           standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
         universalIdentifiers: [
-          HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER,
           COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER,
           HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
           HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
@@ -208,7 +207,6 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         : [];
 
     const pageLayoutWidgetsToUpdate = [
-      HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER,
       HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
       HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
       HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,

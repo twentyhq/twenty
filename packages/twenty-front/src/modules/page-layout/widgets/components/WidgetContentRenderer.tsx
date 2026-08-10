@@ -10,7 +10,6 @@ import { FrontComponentWidgetRenderer } from '@/page-layout/widgets/front-compon
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { MessageCampaignBodyWidget } from '@/page-layout/widgets/message-campaign/components/MessageCampaignBodyWidget';
-import { MessageCampaignDetailsWidget } from '@/page-layout/widgets/message-campaign/components/MessageCampaignDetailsWidget';
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
 import { StandaloneRichTextWidgetRenderer } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidgetRenderer';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
@@ -86,9 +85,9 @@ export const WidgetContentRenderer = ({
     case WidgetType.MESSAGE_CAMPAIGN_BODY:
       return <MessageCampaignBodyWidget />;
 
-    case WidgetType.MESSAGE_CAMPAIGN_DETAILS:
-      return <MessageCampaignDetailsWidget />;
-
+    // MESSAGE_CAMPAIGN_DETAILS renders nothing on purpose: the envelope fields
+    // moved into the composer body widget. Workspaces still carrying the widget
+    // must not show a second copy of the fields before the upgrade drops it.
     default:
       return null;
   }

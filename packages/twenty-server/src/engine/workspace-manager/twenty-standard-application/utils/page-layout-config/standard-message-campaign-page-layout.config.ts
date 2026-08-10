@@ -23,14 +23,6 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
         .home.universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
-      details: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
-            .tabs.home.widgets.details.universalIdentifier,
-        ...WIDGET_PROPS.messageCampaignDetails,
-        conditionalAvailabilityExpression:
-          'everyEquals(selectedRecords, "status", "DRAFT")',
-      },
       list: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage

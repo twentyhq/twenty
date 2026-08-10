@@ -20,11 +20,12 @@ const StyledRow = styled.div`
   }
 `;
 
-const StyledLabel = styled.span`
+const StyledLabel = styled.span<{ $minWidth: string | undefined }>`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
+  min-width: ${({ $minWidth }) => $minWidth ?? 'auto'};
 `;
 
 const StyledContent = styled.div`
@@ -38,6 +39,12 @@ type EmailComposerFieldRowProps = {
   label: string;
   children: ReactNode;
   trailing?: ReactNode;
+  // Labels size to their text by default, which is fine for To/Cc/Bcc/Subject.
+  // A block mixing short and long labels passes a width so the controls line up
+  // in a single column instead of stepping in and out. It is a floor rather than
+  // a fixed width: a translation longer than the column widens its own row
+  // instead of running underneath the control.
+  labelMinWidth?: string;
 };
 
 // The visible label is a plain span, so it cannot be associated with whatever
@@ -47,9 +54,12 @@ export const EmailComposerFieldRow = ({
   label,
   children,
   trailing,
+  labelMinWidth,
 }: EmailComposerFieldRowProps) => (
   <StyledRow role="group" aria-label={label}>
-    <StyledLabel aria-hidden="true">{label}</StyledLabel>
+    <StyledLabel aria-hidden="true" $minWidth={labelMinWidth}>
+      {label}
+    </StyledLabel>
     <StyledContent>{children}</StyledContent>
     {trailing}
   </StyledRow>
