@@ -1,66 +1,68 @@
-# CRM environments and deployment
+# CRM development and promotion
 
-This directory defines the operating model for the
-`SpeculativeTechnologies/CRM` fork.
+This directory contains the public repository's local-development tooling,
+promotion guidance, and some retired deployment assets. The live cloud runtime
+is deliberately documented elsewhere.
 
 ## Start here
 
-- [SHIPPING.md](SHIPPING.md) — **new here? read this one.** How a change gets
-  from your laptop to the live CRM, in plain language
-- [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md) — branching, review, and promotion rules
-- [DEVELOPMENT.md](DEVELOPMENT.md) — isolated development on another machine
-- [LLM-LOCAL-DEV.md](LLM-LOCAL-DEV.md) — the same pipeline, written for coding
-  agents working on a developer machine
-- [LLM-FOLK-SYNC.md](LLM-FOLK-SYNC.md) — what the Folk sync must preserve when
-  writing connections, which are now stored in both directions
-- [STAGING.md](STAGING.md) — isolated staging on the production Mac
-- [PRODUCTION.md](PRODUCTION.md) — current live-instance operations
+- [SHIPPING.md](SHIPPING.md) — the human walkthrough from branch to production
+- [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md) — authoritative branching, review, and
+  promotion rules
+- [DEVELOPMENT.md](DEVELOPMENT.md) — isolated local development
+- [LLM-LOCAL-DEV.md](LLM-LOCAL-DEV.md) — the same pipeline for coding agents
+- [STAGING.md](STAGING.md) and [PRODUCTION.md](PRODUCTION.md) — public workflow
+  boundaries and links to the private cloud runbook
+- [LLM-FOLK-SYNC.md](LLM-FOLK-SYNC.md) — invariants for writing bidirectional
+  Folk connections
 
-Developer schema and data:
+## Repository boundary
+
+Use this public `SpeculativeTechnologies/CRM` repository for application code,
+schema changes, migrations, tests, CI, image builds, and the GitHub workflows
+that promote a commit.
+
+Use the private
+[`SpeculativeTechnologies/crm-ops`](https://github.com/SpeculativeTechnologies/crm-ops)
+repository for the cloud Compose stack, host deployment and backup scripts,
+Cloudflare tunnel configuration, systemd units, access, restores, and incident
+response. Its `deploy/CLOUD-OPS.md` is authoritative for the deployed CRM.
+
+## Local data and schema
 
 ```bash
 bash deploy/local-schema.sh check
 bash deploy/local-schema.sh sync
 bash deploy/local-data.sh seed     # small synthetic fixture
-bash deploy/local-data.sh mirror   # scrubbed copy of the real CRM
+bash deploy/local-data.sh mirror   # scrubbed copy built from a nightly backup
 bash deploy/local-data.sh verify
 ```
 
-Use the fixture for UI work and CI, and the mirror for anything that changes
-the schema. Only the mirror contains the fork's custom objects and fields.
+Use the fixture for UI work and CI. Use the mirror for entities, migrations,
+workspace upgrades, views, search, and permissions. The mirror is confidential
+even after credentials and mailbox content have been removed.
 
-## Environment summary
+## Environments
 
 ```text
-developer machine                 production Mac
------------------                 --------------------------------------
-source processes                  staging Docker project
-twenty-dev Postgres/Redis           web <explicit bind address>:3020
-feature-branch data                 private DB/Redis + named volumes
-
-                                  native production services
-                                    backend :3000
-                                    frontend :3010
-                                    Postgres :5432
-                                    Redis :6379
+developer machine          GitHub Actions          Google Cloud
+-----------------          --------------          --------------------------
+feature branch       --->  build pinned image ---> isolated staging VM
+twenty-dev services        promotion gates    ---> production VM after approval
+developer-owned data       deployment result       cloud-owned data and storage
 ```
 
-Staging and production must never share a database, Redis, storage, environment
-file, or mutable source checkout.
+Development must never use cloud Postgres, Redis, storage, secrets, or
+environment files.
 
-## Files
+## Retired assets
 
-- `compose.staging.yml`, `.env.staging.example`, and `staging.sh` operate local
-  staging.
-- `test-environment-isolation.sh` checks staging's static isolation properties.
-- `devdata-publish.sh`, `devdata-scrub.sql`, and `devdata-verify.sql` build the
-  scrubbed development mirror from staging. They run on the staging host;
-  developers reach them through `local-data.sh mirror`.
-- `serve-public.sh`, `serve-frontend.mjs`, and `publish-frontend.sh` operate the
-  current native production instance.
-- `update-after-merge.sh` synchronizes dependencies, instance migrations,
-  workspace upgrades, and metadata cache after eligible merges.
-- `backup-db.sh` creates and verifies a production database dump.
-- `docker-compose.yml`, `.env.example`, and `Caddyfile` are the older
-  single-VM/container deployment template. They are not the active production
-  configuration on this Mac and must not be confused with staging.
+Files such as `compose.staging.yml`, `staging.sh`, `production-converge.sh`,
+`serve-public.sh`, and the launchd definitions describe the former Mac-hosted
+deployment. They do not operate the current cloud environments. Do not use them
+for staging or production; current equivalents and procedures live in
+`crm-ops`.
+
+The mirror tools remain active: `devdata-publish.sh` restores the latest nightly
+production backup into a temporary local database, scrubs and verifies it, and
+`local-data.sh mirror` installs the resulting dump into `twenty-dev`.

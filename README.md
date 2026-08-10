@@ -11,23 +11,36 @@ the instance holding real fellow, mentor, and candidate records.
 
 | Path | What it is |
 |---|---|
-| `deploy/` | Everything specific to running our instance: environment docs, deploy scripts, staging, backups, local data tooling |
+| `deploy/` | Local-development tooling, public workflow docs, and retired deployment assets kept for reference |
 | `packages/` | Upstream's monorepo (front, server, ui, shared, emails, website, ...) plus our changes inside it |
 | `CLAUDE.md` | Commands and code conventions, for humans and coding agents |
 | `TODO.md` | Current work queue for this fork |
+
+## Which repository to use
+
+Application development stays in this repository. Frontend, backend, schema,
+migrations, integrations, CI, image builds, and the GitHub promotion workflows
+all belong in `SpeculativeTechnologies/CRM`.
+
+The private
+[`SpeculativeTechnologies/crm-ops`](https://github.com/SpeculativeTechnologies/crm-ops)
+repository is the source of truth for running the cloud installation: Docker
+Compose, host deployment and backup scripts, Cloudflare tunnel configuration,
+systemd units, access, restores, and incident response. Changes that span the
+application and its runtime should use coordinated PRs in both repositories
+rather than copying private operational detail into this public fork.
 
 ## Environments
 
 | Environment | Where | Data | Purpose |
 |---|---|---|---|
 | Development | Each developer's own machine | Developer-owned Postgres, Redis, storage | Build and test feature branches |
-| Staging | Ben's Mac, Docker project `twenty-staging` | Staging-only volumes, refreshed nightly from production | Validate a candidate commit |
-| Production | Ben's Mac, `/Users/ben/Deploy/twenty` | Live CRM data | The instance the team uses |
+| Staging | Google Cloud, [crm-staging.spec.tech](https://crm-staging.spec.tech) | Isolated copy of production data | Validate a candidate commit |
+| Production | Google Cloud, [crm.spec.tech](https://crm.spec.tech) | Live CRM data | The instance the team uses |
 
-The boundaries are mandatory. Never develop in the production checkout, never
-point development or staging at production's Postgres, Redis, or `.env` files,
-and never run `setup-dev-env.sh` on the production Mac (its default ports are
-production's ports). Full rules in
+The boundaries are mandatory. Develop only on a developer-owned machine with
+developer-owned Postgres, Redis, and storage. Never point development at cloud
+services or copy cloud secrets into a local environment. Full rules are in
 [deploy/TEAM-WORKFLOW.md](deploy/TEAM-WORKFLOW.md).
 
 ## Getting started
@@ -80,12 +93,15 @@ Branch from `origin/main`, push, open a PR against
 then merge on GitHub. Never push directly to `main`. Schema changes travel with
 the code that needs them, as committed instance commands: never repair drift with
 manual production SQL, and never copy a schema between environments. Data may be
-copied downward (staging to a developer machine); schema may not.
+copied downward only through the verified scrubbed-mirror workflow; schema may
+not.
 
-Deploys go through the **Deploy to production** GitHub workflow, which promotes
-one merged SHA behind an approval gate; a converger on the production Mac polls
-for it and fast-forwards. Details, backups, and the rollback story are in
-[deploy/PRODUCTION.md](deploy/PRODUCTION.md).
+Deploys go through the **Deploy to staging** and **Deploy to production** GitHub
+workflows. Those workflows deploy a pinned image directly to the appropriate
+cloud VM and wait for the result; production accepts only code merged to `main`
+that staging has already run, behind an approval gate. Operational details,
+backups, and rollback live in the private
+[`crm-ops` cloud runbook](https://github.com/SpeculativeTechnologies/crm-ops/blob/main/deploy/CLOUD-OPS.md).
 
 ## Where to read next
 
@@ -93,8 +109,10 @@ for it and fast-forwards. Details, backups, and the rollback story are in
   procedure: environment boundaries, branching, review, promotion
 - [deploy/DEVELOPMENT.md](deploy/DEVELOPMENT.md) — developer machine setup and
   daily workflow
-- [deploy/STAGING.md](deploy/STAGING.md) — isolated staging on the production Mac
-- [deploy/PRODUCTION.md](deploy/PRODUCTION.md) — live-instance operations
+- [deploy/STAGING.md](deploy/STAGING.md) — public staging workflow and link to
+  the private cloud runbook
+- [deploy/PRODUCTION.md](deploy/PRODUCTION.md) — public production workflow and
+  link to the private cloud runbook
 - [deploy/README.md](deploy/README.md) — index of the deploy directory
 - [CLAUDE.md](CLAUDE.md) — commands, architecture, code conventions
 - [deploy/LLM-LOCAL-DEV.md](deploy/LLM-LOCAL-DEV.md) and

@@ -1,15 +1,16 @@
 # Environment guide
 
-The old workflow in this file mixed local development with the live backend.
-That workflow is retired because both processes could use the production
-Postgres and Redis services.
+The old workflow in this file mixed local development with a live backend. It
+is retired.
 
-Use the environment-specific guides:
+Use the current guides:
 
-- [DEVELOPMENT.md](DEVELOPMENT.md): development on another machine
-- [STAGING.md](STAGING.md): isolated staging on this production Mac
-- [PRODUCTION.md](PRODUCTION.md): operation of the live instance
+- [DEVELOPMENT.md](DEVELOPMENT.md): isolated development in the public CRM repo
+- [STAGING.md](STAGING.md): staging promotion boundary
+- [PRODUCTION.md](PRODUCTION.md): production promotion boundary
 - [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md): branching, review, and promotion protocol
+- [`crm-ops/deploy/CLOUD-OPS.md`](https://github.com/SpeculativeTechnologies/crm-ops/blob/main/deploy/CLOUD-OPS.md):
+  private cloud operations and incident response
 
-Do not run development setup, source backend processes, tests, or reset commands
-on the production Mac.
+Do not run development setup, source processes, tests, or reset commands on a
+staging or production cloud VM.

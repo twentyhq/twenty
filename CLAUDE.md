@@ -245,7 +245,7 @@ private because it describes a live system; this repository is public.
 ### Hard safety rules
 
 - Work only in a developer checkout with developer-owned Postgres, Redis, and
-  storage. Never develop in `/Users/ben/Deploy/twenty`.
+  storage. Never develop on a staging or production cloud VM.
 - Never point development or staging code at production services, secrets, or
   environment files.
 - If an environment guard refuses a command, stop and report the refusal. Do not

@@ -1,6 +1,7 @@
 name: Deploy to production
 
-# Promotes a commit to production without anyone needing SSH to the host.
+# Promotes a commit to cloud production without anyone needing an interactive
+# shell on the host.
 #
 # Unlike staging, this is deliberately not frictionless. It declares the
 # `production` environment, so if that environment has required reviewers
@@ -10,11 +11,11 @@ name: Deploy to production
 # file. Without required reviewers configured on the `production` environment,
 # this workflow will deploy with no approval step at all. See PRODUCTION.md.
 #
-# Three checks below encode rules that were previously only written down:
+# The workflow encodes the promotion rules that were previously only written
+# down:
 #   - the commit must already be merged into main
 #   - staging must have run something this commit contains
-#   - an image is not required, because production runs from a git checkout
-#     rather than a container
+#   - cd-deploy-cloud verifies the pinned image before touching the VM
 
 on:
   workflow_dispatch:
@@ -143,5 +144,5 @@ jobs:
           id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<<"$body")"
           gh api --method POST "repos/${REPO}/deployments/${id}/statuses" \
             -f state=success \
-            -f description="on the production box; the Mac converges separately" >/dev/null
+            -f description="deployed and verified on cloud production" >/dev/null
           echo "Deployment ${id} recorded for ${SHA}"

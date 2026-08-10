@@ -1,8 +1,11 @@
 # Development on another machine
 
-Development belongs on a developer-owned computer, never on the production Mac.
-Each developer gets an independent clone, Postgres database, Redis instance,
-and local file storage.
+Development belongs in the public `SpeculativeTechnologies/CRM` repository on a
+developer-owned computer, never on a staging or production cloud VM. Each
+developer gets an independent clone, Postgres database, Redis instance, and
+local file storage. Cloud infrastructure and operational runbooks live in the
+private `SpeculativeTechnologies/crm-ops` repository; feature development does
+not move there.
 
 ## Prerequisites
 
@@ -66,7 +69,7 @@ bash deploy/local-schema.sh sync
 This applies shared instance migrations, upgrades every local workspace, clears
 stale metadata caches, and displays the resulting upgrade status. It refuses to
 run unless the server environment points at the standard localhost development
-Postgres and Redis URLs, and it refuses the production checkout explicitly.
+Postgres and Redis URLs.
 
 The installed post-merge hook normally runs it automatically when a merge
 changes entities, instance migrations, or workspace upgrade commands. Run a
@@ -177,8 +180,10 @@ publisher keeps only the three newest.
 
 ### Refreshing and troubleshooting
 
-Each `mirror` run builds a fresh copy from staging, and staging refreshes from
-production nightly at 4:15 AM, so a mirror is at most a day behind.
+Each `mirror` run builds a fresh scrubbed copy locally from the latest available
+nightly production backup in R2. The raw backup is restored only into a
+temporary local database, scrubbed, verified, and removed before the mirror is
+installed into `twenty-dev`.
 
 Check what you currently have:
 
@@ -189,11 +194,11 @@ bash deploy/local-data.sh verify
 This reports the fixture's record counts, or the mirror's build time and source
 commit, depending on which dataset is installed.
 
-If the machine cannot reach the staging host, have someone publish a dump and
-hand it over out of band:
+If the developer does not have the approved read-only R2 configuration, have an
+authorized teammate build a verified mirror and hand it over out of band:
 
 ```bash
-bash deploy/devdata-publish.sh              # on the staging host
+bash deploy/devdata-publish.sh              # on an authorized developer machine
 bash deploy/local-data.sh mirror --from-file ~/Downloads/twenty-devdata.dump
 ```
 
@@ -208,4 +213,4 @@ This deletes only that developer machine's `twenty-dev` Docker volumes:
 bash packages/twenty-utils/setup-dev-env.sh --docker --reset
 ```
 
-Never run setup or reset commands on Ben's production Mac.
+Never run setup or reset commands on a staging or production cloud VM.
