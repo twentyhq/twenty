@@ -11,11 +11,13 @@ export const OBJECT_FILTER_DROPDOWN_ID = 'side-panel-object-filter-dropdown';
 type SidePanelObjectFilterDropdownProps = {
   selectedObjectNameSingular: string | null;
   onSelectObject: (objectNameSingular: string | null) => void;
+  withHiddenObjectsToggle?: boolean;
 };
 
 export const SidePanelObjectFilterDropdown = ({
   selectedObjectNameSingular,
   onSelectObject,
+  withHiddenObjectsToggle = true,
 }: SidePanelObjectFilterDropdownProps) => {
   const { t } = useLingui();
   const isFilterActive = isDefined(selectedObjectNameSingular);
@@ -37,6 +39,7 @@ export const SidePanelObjectFilterDropdown = ({
         <SidePanelObjectFilterDropdownContent
           selectedObjectNameSingular={selectedObjectNameSingular}
           onSelectObject={onSelectObject}
+          withHiddenObjectsToggle={withHiddenObjectsToggle}
         />
       }
     />

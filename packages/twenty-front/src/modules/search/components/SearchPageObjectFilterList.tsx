@@ -12,6 +12,7 @@ import { SEARCH_PAGE_OBJECT_FILTER_FOCUS_ID } from '@/search/constants/SearchPag
 import { SEARCH_PAGE_OBJECT_FILTER_SELECTABLE_LIST_ID } from '@/search/constants/SearchPageObjectFilterSelectableListId';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -71,7 +72,20 @@ export const SearchPageObjectFilterList = ({
     ...objectMetadataItems.map((objectMetadataItem) => objectMetadataItem.id),
   ];
 
+  const { setSelectedItemId } = useSelectableList(
+    SEARCH_PAGE_OBJECT_FILTER_SELECTABLE_LIST_ID,
+  );
+
   const handleFocus = () => {
+    // Start the keyboard cursor on the filter that is actually applied, so the
+    // first arrow key moves away from it rather than back to the top.
+    setSelectedItemId(
+      objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === selectedObjectNameSingular,
+      )?.id ?? ALL_OBJECTS_ITEM_ID,
+    );
+
     pushFocusItemToFocusStack({
       focusId: SEARCH_PAGE_OBJECT_FILTER_FOCUS_ID,
       component: {

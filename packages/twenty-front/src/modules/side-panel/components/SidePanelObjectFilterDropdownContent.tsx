@@ -25,11 +25,15 @@ const ALL_OBJECTS_ITEM_ID = 'all-objects';
 type SidePanelObjectFilterDropdownContentProps = {
   selectedObjectNameSingular: string | null;
   onSelectObject: (objectNameSingular: string | null) => void;
+  // Surfaces that only search a fixed set of objects opt out, so the dropdown
+  // can never offer an object the caller would then reject.
+  withHiddenObjectsToggle?: boolean;
 };
 
 export const SidePanelObjectFilterDropdownContent = ({
   selectedObjectNameSingular,
   onSelectObject,
+  withHiddenObjectsToggle = true,
 }: SidePanelObjectFilterDropdownContentProps) => {
   const { t } = useLingui();
   const [filterSearch, setFilterSearch] = useState('');
@@ -39,7 +43,7 @@ export const SidePanelObjectFilterDropdownContent = ({
 
   const displayedObjects = useSearchFilterableObjectMetadataItems({
     searchFilter: filterSearch,
-    includeHiddenObjects: sidePanelShowHiddenObjects,
+    includeHiddenObjects: withHiddenObjectsToggle && sidePanelShowHiddenObjects,
   });
 
   const handleSelect = (objectNameSingular: string | null) => {
@@ -110,18 +114,22 @@ export const SidePanelObjectFilterDropdownContent = ({
           })}
         </DropdownMenuItemsContainer>
       </SelectableList>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <MenuItemToggle
-          LeftIcon={IconCube}
-          onToggleChange={() =>
-            setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
-          }
-          toggled={sidePanelShowHiddenObjects}
-          text={t`Show hidden objects`}
-          toggleSize="small"
-        />
-      </DropdownMenuItemsContainer>
+      {withHiddenObjectsToggle && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            <MenuItemToggle
+              LeftIcon={IconCube}
+              onToggleChange={() =>
+                setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
+              }
+              toggled={sidePanelShowHiddenObjects}
+              text={t`Show hidden objects`}
+              toggleSize="small"
+            />
+          </DropdownMenuItemsContainer>
+        </>
+      )}
     </DropdownContent>
   );
 };

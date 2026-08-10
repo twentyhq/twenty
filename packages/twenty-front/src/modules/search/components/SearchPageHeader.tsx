@@ -115,6 +115,7 @@ export const SearchPageHeader = ({
         <SidePanelObjectFilterDropdown
           selectedObjectNameSingular={selectedObjectNameSingular}
           onSelectObject={onSelectObject}
+          withHiddenObjectsToggle={false}
         />
       ) : (
         <SearchPageCollapseButton />
