@@ -47,6 +47,7 @@ import {
   toLegacyFieldMetadataCreateResponse,
   toLegacyFieldMetadataDeleteResponse,
   toLegacyFieldMetadataFindOneResponse,
+  toLegacyFieldMetadataListResponse,
   toLegacyFieldMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
@@ -102,7 +103,9 @@ export class FieldMetadataController {
       totalCount,
     };
 
-    return result;
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyFieldMetadataListResponse(result);
   }
 
   @Get(':id')

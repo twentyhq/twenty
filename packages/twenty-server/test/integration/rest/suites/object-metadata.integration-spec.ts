@@ -65,8 +65,14 @@ describe.each([
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body).not.toHaveProperty('data.objects');
-      expect(Array.isArray(response.body.data)).toBe(true);
+
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.objects');
+        expect(Array.isArray(response.body.data)).toBe(true);
+      } else {
+        expect(Array.isArray(response.body.data.objects)).toBe(true);
+      }
+
       expect(response.body).toHaveProperty('pageInfo.hasNextPage');
       expect(response.body).toHaveProperty('pageInfo.hasPreviousPage');
       expect(response.body).toHaveProperty('pageInfo.startCursor');

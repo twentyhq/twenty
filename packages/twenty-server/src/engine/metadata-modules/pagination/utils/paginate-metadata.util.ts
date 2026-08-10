@@ -1,10 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral, type SelectQueryBuilder } from 'typeorm';
 
-import {
-  buildCursorPage,
-  type CursorPaginationDirection,
-} from 'src/engine/api/utils/build-cursor-page.util';
+import { type CursorPaginationDirection } from 'src/engine/api/types/cursor-pagination-direction.type';
+import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
 
 export type MetadataCursorPagination = {
   limit: number;

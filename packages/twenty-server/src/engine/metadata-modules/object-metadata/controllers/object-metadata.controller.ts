@@ -52,6 +52,7 @@ import {
   toLegacyObjectMetadataCreateResponse,
   toLegacyObjectMetadataDeleteResponse,
   toLegacyObjectMetadataFindOneResponse,
+  toLegacyObjectMetadataListResponse,
   toLegacyObjectMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
@@ -113,7 +114,9 @@ export class ObjectMetadataController {
       totalCount: number;
     } = { data, pageInfo, totalCount };
 
-    return result;
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyObjectMetadataListResponse(result);
   }
 
   @Get(':id')

@@ -1,14 +1,5 @@
-export type CursorPaginationDirection = 'forward' | 'backward';
-
-export type CursorPageFlags = {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-};
-
-export type CursorPage<TItem> = {
-  items: TItem[];
-  pageInfo: CursorPageFlags;
-};
+import { type CursorPage } from 'src/engine/api/types/cursor-page.type';
+import { type CursorPaginationDirection } from 'src/engine/api/types/cursor-pagination-direction.type';
 
 // Query adapters fetch limit + 1 items in pagination order. This function owns
 // the transport-neutral page window: trimming the sentinel item, restoring
