@@ -10,6 +10,7 @@ import {
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { matchWorkspacePersonEnrichmentToUserEmail } from 'src/engine/core-modules/company-enrichment/utils/match-workspace-person-enrichment-to-user-email.util';
 import { sanitizeWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-company-enrichment.util';
 import { sanitizeWorkspacePersonEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-person-enrichment.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -52,7 +53,10 @@ export class WorkspaceSetupChatResolver {
       userWorkspaceId,
       workspace,
       companyContext: sanitizeWorkspaceCompanyEnrichment(companyContext),
-      personContext: sanitizeWorkspacePersonEnrichment(personContext),
+      personContext: matchWorkspacePersonEnrichmentToUserEmail({
+        personEnrichment: sanitizeWorkspacePersonEnrichment(personContext),
+        userEmail: user.email,
+      }),
     });
   }
 }
