@@ -55,6 +55,11 @@ const StyledCcBccToggle = styled.button`
   &:hover {
     color: ${themeCssVariables.font.color.secondary};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 2px;
+  }
 `;
 
 const StyledSubjectInput = styled.input`
@@ -100,6 +105,11 @@ const StyledAttachAction = styled.button`
 
   &:hover {
     color: ${themeCssVariables.font.color.secondary};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 2px;
   }
 `;
 
