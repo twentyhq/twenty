@@ -75,9 +75,6 @@ describe('useHandleSseClientConnectionRetry', () => {
   });
 
   it('should stop retrying when a cookie-mode client has been signed out', async () => {
-    // The regression this guards: clearSession drops both credentials, and
-    // without a check the loop retried forever because graphql-sse resets its
-    // retry count on every result.
     const { store, dispose, result } = setupStore({
       isCookieAuthActive: false,
       tokenPair: null,
