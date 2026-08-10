@@ -9,10 +9,7 @@ import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-sla
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type StaleSlackAssistantRequest } from 'src/logic-functions/types/stale-slack-assistant-request.type';
 
-// A run killed at the worker timeout never writes its own terminal status, so
-// anything still PROCESSING past that mark plus a grace period is abandoned
 const STALE_REQUEST_GRACE_SECONDS = 60;
-// Bounds how many notices a single sweep can post if something fails in bulk
 const STALE_REQUEST_SWEEP_BATCH_SIZE = 50;
 
 const notifySlackAssistantTimeout = async (
