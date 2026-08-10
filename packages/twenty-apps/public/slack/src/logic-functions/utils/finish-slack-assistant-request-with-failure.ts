@@ -27,6 +27,13 @@ export const finishSlackAssistantRequestWithFailure = async ({
     slackChannelId,
     messageText: SLACK_ASSISTANT_FAILURE_TEXT,
     parentMessageTimestamp,
+    messageBlocks: [
+      {
+        type: 'alert',
+        level: 'warning',
+        text: { type: 'plain_text', text: SLACK_ASSISTANT_FAILURE_TEXT },
+      },
+    ],
   });
 
   await updateSlackAssistantRequest(client, {
