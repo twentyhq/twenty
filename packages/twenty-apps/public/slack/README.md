@@ -13,11 +13,15 @@
 
 Mention the bot in a channel or DM it. It replies in the thread with your CRM data, using the recent conversation as context.
 
-Anyone who can message the bot acts with the **Slack Assistant** role, which by default can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Workspace members stay read-only and hard delete is off. Tighten the role in **Settings → Roles** if you want a narrower bot.
+The bot runs with the **Slack Assistant** role, which by default can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Workspace members stay read-only and hard delete is off. Tighten the role in **Settings → Roles** if you want a narrower bot.
+
+**It acts as whoever tagged it.** The first time someone mentions the bot, their Slack profile email is matched against workspace members and the pair is stored as a **Slack User Mapping** record. From then on the bot runs with that member's permissions *and* the Slack Assistant role: it can never do more than the person asking, and never more than the role allows. Someone with no mapping gets the Slack Assistant role on its own, exactly as before.
+
+Only members of the Slack workspace that installed the app are matched automatically. Guests and Slack Connect users from another Slack workspace are not, because their email is vouched for by someone other than your admin. Map those by hand from **Slack User Mappings**, where you can also correct or remove any mapping.
 
 One Slack workspace answers into one Twenty workspace.
 
-When the bot is added to a channel it introduces itself once, with a short message in the channel and the details (what to ask it, what it reads, and the shared-role caveat above) in a thread reply. It needs the `member_joined_channel` subscription, so leave that one off if you want the bot to arrive quietly.
+When the bot is added to a channel it introduces itself once, with a short message in the channel and the details (what to ask it, what it reads, and how permissions work) in a thread reply. It needs the `member_joined_channel` subscription, so leave that one off if you want the bot to arrive quietly.
 
 ## 🧰 The workflow steps
 

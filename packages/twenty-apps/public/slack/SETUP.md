@@ -21,6 +21,8 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `channels:history` | assistant: thread follow-ups in public channels |
    | `groups:history` | assistant: thread follow-ups in private channels |
    | `im:history` | assistant: direct messages |
+   | `users:read` | assistant: name the person who tagged the bot |
+   | `users:read.email` | assistant: match a Slack account to a workspace member |
 
    Adding or removing scopes later means existing installs must re-authorize: disconnect and **Add connection** again.
 
