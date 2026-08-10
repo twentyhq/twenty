@@ -8,9 +8,11 @@ import { SearchPagePreview } from '@/search/components/SearchPagePreview';
 import { SearchPageResults } from '@/search/components/SearchPageResults';
 import { SEARCH_PAGE_SELECTABLE_LIST_ID } from '@/search/constants/SearchPageSelectableListId';
 import { useOpenSearchResultItem } from '@/search/hooks/useOpenSearchResultItem';
+import { useSearchFilterableObjectMetadataItems } from '@/search/hooks/useSearchFilterableObjectMetadataItems';
 import { useSearchPageQueryParams } from '@/search/hooks/useSearchPageQueryParams';
 import { useSearchRecordPreviewItem } from '@/search/hooks/useSearchRecordPreviewItem';
 import { useSearchRecords } from '@/search/hooks/useSearchRecords';
+import { getValidSearchObjectNameSingular } from '@/search/utils/getValidSearchObjectNameSingular';
 
 const StyledBody = styled.div`
   display: flex;
@@ -29,9 +31,17 @@ export const SearchPageContent = () => {
     setObjectNameSingular,
   } = useSearchPageQueryParams();
 
+  const filterableObjectMetadataItems =
+    useSearchFilterableObjectMetadataItems();
+
+  const selectedObjectNameSingular = getValidSearchObjectNameSingular({
+    objectNameSingular,
+    filterableObjectMetadataItems,
+  });
+
   const { searchResultItems, loading, noResults } = useSearchRecords({
     searchInput,
-    objectNameSingular,
+    objectNameSingular: selectedObjectNameSingular,
   });
 
   const selectableItemIds = useMemo(
@@ -39,10 +49,10 @@ export const SearchPageContent = () => {
     [searchResultItems],
   );
 
-  const previewedItem = useSearchRecordPreviewItem(
+  const previewedItem = useSearchRecordPreviewItem({
     searchResultItems,
-    SEARCH_PAGE_SELECTABLE_LIST_ID,
-  );
+    selectableListInstanceId: SEARCH_PAGE_SELECTABLE_LIST_ID,
+  });
 
   const { openSearchResultItem } = useOpenSearchResultItem();
 
@@ -51,11 +61,14 @@ export const SearchPageContent = () => {
       <SearchPageHeader
         searchInput={searchInput}
         onSearchInputChange={setSearchInput}
+        selectedObjectNameSingular={selectedObjectNameSingular}
+        onSelectObject={setObjectNameSingular}
       />
       <StyledBody>
         {!isMobile && (
           <SearchPageObjectFilterList
-            selectedObjectNameSingular={objectNameSingular}
+            objectMetadataItems={filterableObjectMetadataItems}
+            selectedObjectNameSingular={selectedObjectNameSingular}
             onSelectObject={setObjectNameSingular}
           />
         )}

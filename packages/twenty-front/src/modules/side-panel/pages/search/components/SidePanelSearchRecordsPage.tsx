@@ -55,10 +55,10 @@ export const SidePanelSearchRecordsPage = () => {
     [searchResultItems],
   );
 
-  const previewedItem = useSearchRecordPreviewItem(
+  const previewedItem = useSearchRecordPreviewItem({
     searchResultItems,
-    SIDE_PANEL_SELECTABLE_LIST_ID,
-  );
+    selectableListInstanceId: SIDE_PANEL_SELECTABLE_LIST_ID,
+  });
 
   const shouldDisplayPreview = !isMobile && isDefined(previewedItem);
 

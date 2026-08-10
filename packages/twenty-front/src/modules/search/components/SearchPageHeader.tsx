@@ -8,6 +8,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { SearchPageCollapseButton } from '@/search/components/SearchPageCollapseButton';
 import { SEARCH_PAGE_FOCUS_ID } from '@/search/constants/SearchPageFocusId';
+import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -55,11 +56,15 @@ const StyledInput = styled.input`
 type SearchPageHeaderProps = {
   searchInput: string;
   onSearchInputChange: (searchInput: string) => void;
+  selectedObjectNameSingular: string | null;
+  onSelectObject: (objectNameSingular: string | null) => void;
 };
 
 export const SearchPageHeader = ({
   searchInput,
   onSearchInputChange,
+  selectedObjectNameSingular,
+  onSelectObject,
 }: SearchPageHeaderProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -98,13 +103,22 @@ export const SearchPageHeader = ({
       <StyledInput
         autoFocus
         data-testid={SEARCH_PAGE_FOCUS_ID}
+        aria-label={t`Search`}
         value={searchInput}
         placeholder={t`Type anything...`}
         onChange={(event) => onSearchInputChange(event.target.value)}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
       />
-      <SearchPageCollapseButton />
+      {/* The filter list is a desktop column, so mobile keeps the dropdown */}
+      {isMobile ? (
+        <SidePanelObjectFilterDropdown
+          selectedObjectNameSingular={selectedObjectNameSingular}
+          onSelectObject={onSelectObject}
+        />
+      ) : (
+        <SearchPageCollapseButton />
+      )}
     </StyledHeader>
   );
 };

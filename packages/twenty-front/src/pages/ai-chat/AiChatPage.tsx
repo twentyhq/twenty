@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { Navigate } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
 import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
@@ -12,23 +11,10 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { ExpandedPagePanel } from '@/ui/layout/page/components/ExpandedPagePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
-const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
-
-const StyledPanel = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border-left: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE} 0 0
-    ${PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE};
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-`;
 
 const StyledCenteredChatContainer = styled.div`
   display: flex;
@@ -54,7 +40,7 @@ export const AiChatPage = () => {
   }
 
   return (
-    <StyledPanel>
+    <ExpandedPagePanel>
       <AiChatPageThreadUrlSyncEffect />
       <AiChatPageCloseAskAiPanelEffect />
       <AiChatPageContinueInSidePanelEffect />
@@ -71,6 +57,6 @@ export const AiChatPage = () => {
           <AiChatTab />
         </AiChatMessageListPreambleContext.Provider>
       </StyledCenteredChatContainer>
-    </StyledPanel>
+    </ExpandedPagePanel>
   );
 };

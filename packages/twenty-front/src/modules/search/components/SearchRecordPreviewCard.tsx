@@ -52,6 +52,7 @@ const StyledHeader = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   height: 40px;
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
@@ -64,6 +65,7 @@ const StyledTitleText = styled.div`
 
 const StyledFieldList = styled.div<{ layout: SearchRecordPreviewCardLayout }>`
   display: flex;
+  flex: ${({ layout }) => (layout === 'floating' ? '0 1 auto' : '1 1 auto')};
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   max-height: ${({ layout }) => (layout === 'floating' ? '50dvh' : 'none')};
