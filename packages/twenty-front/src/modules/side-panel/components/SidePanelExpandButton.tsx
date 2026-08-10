@@ -13,7 +13,7 @@ const SidePanelExpandButtonContent = () => {
   const expandTarget = useSidePanelExpandTarget();
 
   const expandWithShortcut = useCallback(() => {
-    if (expandTarget?.hasExpandShortcut === true) {
+    if (expandTarget?.hasExpandShortcut) {
       expandTarget.expand();
     }
   }, [expandTarget]);

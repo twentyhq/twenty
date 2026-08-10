@@ -9641,6 +9641,7 @@ export const enumDatabaseEventAction = {
 }
 
 export const enumFeatureFlagKey = {
+   IS_AI_CHAT_PAGE_ENABLED: 'IS_AI_CHAT_PAGE_ENABLED' as const,
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,

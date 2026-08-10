@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -8,7 +10,7 @@ export const RecordPageSidePanelPinnedCommandMenuItems = () => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  if (!contextStoreCurrentObjectMetadataItemId) {
+  if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
     return null;
   }
 
