@@ -1,4 +1,12 @@
-# Environment work handoff
+# Archived: former Mac-hosted environment handoff
+
+> **Historical only. Do not execute this runbook.** Staging and production moved
+> to Google Cloud in August 2026, and the Mac-hosted convergers, Tailscale
+> endpoints, and production checkout described below are retired. Current cloud
+> operations live in the private
+> [`SpeculativeTechnologies/crm-ops`](https://github.com/SpeculativeTechnologies/crm-ops)
+> repository; start with `deploy/CLOUD-OPS.md`. Current local development and
+> promotion rules are in [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md).
 
 Updated 2026-07-25 in `/Users/ben/Projects/twenty`.
 

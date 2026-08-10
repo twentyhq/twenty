@@ -9,16 +9,16 @@ Human context is in [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md) and
 
 ## Hard rules
 
-1. Never run anything in `/Users/ben/Deploy/twenty`. That is the live CRM.
-2. Never run `setup-dev-env.sh`, `local-schema.sh`, or `local-data.sh` on the
-   machine that hosts production. Its datastore ports are production's ports.
-   The scripts refuse, but do not rely on that.
+1. Work only in a developer checkout with developer-owned Postgres, Redis, and
+   storage. Never use a cloud VM as a development environment.
+2. Never point local development at cloud services, secrets, or environment
+   files.
 3. Never push to `main`, and never deploy. Promotion is the production owner's
    action.
 4. Never repair schema drift with manual SQL. Schema changes travel as
    committed instance commands and workspace upgrades.
-5. Never copy a mirror dump, or rows from one, anywhere outside the local
-   machine. See "Handling mirror data" below.
+5. Never upload a mirror dump, or rows from one, to a commit, pull request,
+   issue, log, or hosted artifact. See "Handling mirror data" below.
 6. If a command refuses to run because of an environment guard, stop and report
    it. Do not work around the guard.
 
@@ -30,8 +30,8 @@ git status --short --branch
 docker compose -f packages/twenty-docker/docker-compose.dev.yml ps
 ```
 
-You are on a developer machine if the checkout is not
-`/Users/ben/Deploy/twenty` and the `twenty-dev` Docker services are running. If
+You are in the standard developer environment when the checkout is on a
+developer-owned machine and the `twenty-dev` Docker services are running. If
 they are not running:
 
 ```bash
@@ -61,10 +61,11 @@ When in doubt, use the mirror.
 bash deploy/local-data.sh mirror
 ```
 
-Takes a few minutes. It replaces the local database, verifies that the dump was
-scrubbed, wipes the database if it was not, and runs `local-schema.sh sync`.
-Sign in at `http://localhost:3001` with any account it prints, password
-`devmirror`.
+Takes a few minutes. It builds a scrubbed mirror locally from the latest
+available nightly production backup, replaces the local database, verifies the
+scrub, and runs `local-schema.sh sync`. Access to the backup is read-only and
+comes from the developer's ignored local configuration. Sign in at
+`http://localhost:3001` with any account it prints, password `devmirror`.
 
 Check what is installed at any time with `bash deploy/local-data.sh verify`.
 
@@ -142,19 +143,23 @@ owner's review.
 
 ## Step 5 and 6: staging and production
 
-These run on the production Mac and are the production owner's actions. Do not
-perform them from a developer machine, and do not perform them on your own
-initiative even if you are on that Mac.
+Promotion runs through GitHub Actions against the cloud environments and is the
+production owner's action. Do not initiate staging or production deployment on
+your own initiative, and do not operate the cloud VMs directly.
 
 The sequence, for reference when reporting readiness:
 
-1. Identify the exact commit SHA to promote.
-2. `bash deploy/refresh-staging-from-production.sh --yes`
-3. Stage the image tagged with that full SHA and run
-   `bash deploy/staging.sh test`.
-4. Back up the production database for schema-changing releases.
-5. Deploy the same SHA to production.
-6. Record the SHA, operator, time, migration result, and smoke-test result.
+1. Ensure CI has published an image tagged with the exact commit SHA. An
+   unmerged PR needs the `needs-staging` label to build one.
+2. Run **Deploy to staging** for that branch, tag, or SHA and wait for the cloud
+   deployment result.
+3. Exercise the change at `https://crm-staging.spec.tech`.
+4. Merge the reviewed PR to `main`.
+5. Run **Deploy to production** for the merged SHA and obtain the production
+   approval.
+6. Follow the private
+   [`crm-ops` cloud runbook](https://github.com/SpeculativeTechnologies/crm-ops/blob/main/deploy/CLOUD-OPS.md)
+   for operational checks, backup requirements, and rollback.
 
 Your job ends at a reviewed, merged PR plus a clear statement of what needs
 verifying on staging.
@@ -187,7 +192,7 @@ and the counts, not the rows.
 | Blank screen, "Cannot return null for non-nullable field" | schema behind the checkout | `bash deploy/local-schema.sh sync` |
 | `local-schema.sh` refuses to run | not the guarded `twenty-dev` target | stop, report; do not bypass |
 | `mirror` reports "not a verified mirror" | the dump was not produced by `devdata-publish.sh` | stop and report; the local database was already wiped |
-| `mirror` cannot reach the staging host | no tailnet or SSH access | ask for a dump and use `mirror --from-file` |
+| `mirror` cannot read the nightly backup | missing or expired local R2 read credentials | obtain the approved read-only configuration, or ask for a verified mirror dump and use `mirror --from-file` |
 | Custom object page is blank | the object has no view rows | create a view for it, then `npx nx run twenty-server:command -- cache:flat-cache-invalidate --metadataName view` |
 | Upgrade status reports "behind" or "failed" | a workspace upgrade did not apply | report the exact output; do not patch the database by hand |
 

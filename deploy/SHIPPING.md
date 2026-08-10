@@ -13,16 +13,18 @@ There are three places code can be running:
 | Place | What it is |
 |---|---|
 | **Your machine** | Where you build the change |
-| **Staging** | A copy of the real CRM, refreshed from production every morning. Safe to break. |
+| **Staging** | An isolated copy of the real CRM used to validate a candidate commit. Safe to break. |
 | **Production** | The live CRM everyone uses |
 
-Staging and production both live on one Mac in the office. That Mac never
-accepts incoming connections — it checks GitHub every minute or two and pulls
-down whatever it's been told to run. That's why you don't need server access,
-and it's why a deploy takes a minute to show up rather than being instant.
+Staging and production run on separate Google Cloud VMs. GitHub Actions reaches
+them through identity federation and IAP, deploys an image pinned to the exact
+commit SHA, and waits until the deployment succeeds or rolls back. That is why
+you do not need server access.
 
-Two invisible bookmarks control it: one says what staging should run, the other
-says what production should run. Deploying is just moving a bookmark.
+The application and its promotion workflows live in the public
+`SpeculativeTechnologies/CRM` repository. The private
+`SpeculativeTechnologies/crm-ops` repository contains the cloud runtime and
+operational runbooks; normal feature work does not move there.
 
 ## The normal path
 
@@ -35,15 +37,17 @@ Get a review.
 an image — takes 20–40 minutes, so add the label early. Then go to
 **Actions → Deploy to staging → Run workflow** and enter your branch name.
 
-**4. Actually try it.** Open staging and use the thing you changed. Click around
-the normal stuff too — people, companies, search. Staging has real data in it,
-so it should feel like the real CRM.
+**4. Actually try it.** Open `https://crm-staging.spec.tech` and use the thing
+you changed. Click around the normal stuff too — people, companies, search.
+Staging has a copy of real data, so it should feel like the real CRM.
 
 **5. Merge your PR.**
 
 **6. Put it on production.** Go to **Actions → Deploy to production → Run
-workflow** and type `main`. The run then pauses and waits for Ben to approve it.
-Once approved, the Mac picks it up within a minute.
+workflow** and enter the merged commit or `main`. The run verifies that the
+commit is on `main` and includes what staging ran, then pauses for Ben's
+approval. Once approved, it deploys the cloud production VM and waits for the
+result.
 
 That's it. Steps 3 and 4 are the ones people skip and shouldn't.
 
@@ -61,35 +65,30 @@ will refuse.
 
 ## How to tell it worked
 
-For production, watch for the deploy to report success in the Actions run, or
-ask someone with server access to check the log. The line you want ends with
-`production is now running <commit> and healthy`.
+For production, watch the Actions run. A green run means the cloud VM is serving
+that commit; the promotion workflow no longer reports success before the target
+environment has finished deploying.
 
-A deploy that changes the database takes a backup first and runs migrations, so
-it can take several minutes. A deploy that only touches a few files takes
-seconds.
+A deploy runs instance commands and workspace upgrades before switching the
+application. Database changes can therefore take several minutes.
 
 ## If something looks wrong
 
-**Don't re-run the deploy to try again.** Once the Mac has moved to the new
-code, running it again does nothing — it thinks it's already done. Re-running
-never fixes a half-finished deploy.
-
-Instead:
-
-- If the site is up but looks stale or broken after a big update, the frontend
-  may need rebuilding — see [PRODUCTION.md](PRODUCTION.md).
-- If a database migration failed, **stop and get Ben.** Rolling back the code
-  does not undo a database change, and guessing here can lose data.
-- Backups run nightly, plus one before every database-changing deploy.
+The cloud deployment script rolls the application back automatically when a
+migration or health check fails. Do not improvise a database repair or operate
+the VM directly. Stop, preserve the failed workflow output, and follow the
+private `crm-ops/deploy/CLOUD-OPS.md` incident and rollback guidance with Ben.
 
 ## Where the detail lives
 
 - [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md) — the rules, review requirements, and
   what counts as an emergency change
 - [DEVELOPMENT.md](DEVELOPMENT.md) — setting up your own machine
-- [STAGING.md](STAGING.md) — staging internals, refreshing its data
-- [PRODUCTION.md](PRODUCTION.md) — live operations, recovery, rollback
+- [STAGING.md](STAGING.md) — public staging workflow and private-runbook pointer
+- [PRODUCTION.md](PRODUCTION.md) — public production workflow and
+  private-runbook pointer
+- [`crm-ops/deploy/CLOUD-OPS.md`](https://github.com/SpeculativeTechnologies/crm-ops/blob/main/deploy/CLOUD-OPS.md)
+  — authoritative cloud operations, recovery, and rollback
 
 ## Once a week, automatically
 

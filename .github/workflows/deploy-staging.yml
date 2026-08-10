@@ -1,11 +1,10 @@
 name: Deploy to staging
 
-# Points staging at a commit without anyone needing SSH to the staging host.
+# Deploys a commit to cloud staging without anyone needing an interactive shell.
 #
-# This workflow never connects to that machine. It validates the target and
-# moves the `staging-target` ref; a converger on the host polls that ref and
-# pulls the matching image. The host only ever makes outbound calls, so there
-# is no inbound access to the Mac that also runs production.
+# This workflow validates the target and image, dispatches cd-deploy-cloud,
+# waits for the cloud deployment result, and only then moves `staging-target` as
+# a record of what the environment successfully ran.
 #
 # Two checks below are load-bearing. The commit must exist in this repository
 # and an image must already be published for it. Together they mean staging
@@ -134,5 +133,5 @@ jobs:
           id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<<"$body")"
           gh api --method POST "repos/${REPO}/deployments/${id}/statuses" \
             -f state=success \
-            -f description="on the staging box; the Mac converges separately" >/dev/null
+            -f description="deployed and verified on cloud staging" >/dev/null
           echo "Deployment ${id} recorded for ${SHA}"
