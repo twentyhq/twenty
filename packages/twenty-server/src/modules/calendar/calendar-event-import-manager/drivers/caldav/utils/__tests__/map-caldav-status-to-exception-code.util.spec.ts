@@ -2,22 +2,60 @@ import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-ev
 import { CalendarEventImportDriverExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
 describe('mapCalDavStatusToExceptionCode', () => {
-  it.each([
-    [401, CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS],
-    [403, CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS],
-    [404, CalendarEventImportDriverExceptionCode.NOT_FOUND],
-    [410, CalendarEventImportDriverExceptionCode.NOT_FOUND],
-    [408, CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR],
-    [429, CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR],
-    [500, CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR],
-    [502, CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR],
-    [503, CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR],
-    [504, CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR],
-    [507, CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR],
-    [400, CalendarEventImportDriverExceptionCode.UNKNOWN],
-    [418, CalendarEventImportDriverExceptionCode.UNKNOWN],
-    [undefined, CalendarEventImportDriverExceptionCode.UNKNOWN],
-  ])('maps %s to %s', (status, expectedCode) => {
-    expect(mapCalDavStatusToExceptionCode(status)).toBe(expectedCode);
+  it('maps auth failures to INSUFFICIENT_PERMISSIONS', () => {
+    expect(mapCalDavStatusToExceptionCode(401)).toBe(
+      CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+    );
+    expect(mapCalDavStatusToExceptionCode(403)).toBe(
+      CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+    );
+  });
+
+  it('maps missing collections to NOT_FOUND', () => {
+    expect(mapCalDavStatusToExceptionCode(404)).toBe(
+      CalendarEventImportDriverExceptionCode.NOT_FOUND,
+    );
+    expect(mapCalDavStatusToExceptionCode(410)).toBe(
+      CalendarEventImportDriverExceptionCode.NOT_FOUND,
+    );
+  });
+
+  it('maps throttling and server failures to TEMPORARY_ERROR', () => {
+    expect(mapCalDavStatusToExceptionCode(408)).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(mapCalDavStatusToExceptionCode(429)).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(mapCalDavStatusToExceptionCode(500)).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(mapCalDavStatusToExceptionCode(502)).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(mapCalDavStatusToExceptionCode(503)).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(mapCalDavStatusToExceptionCode(504)).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(mapCalDavStatusToExceptionCode(507)).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
+  it('falls back to UNKNOWN for unrecognised statuses', () => {
+    expect(mapCalDavStatusToExceptionCode(400)).toBe(
+      CalendarEventImportDriverExceptionCode.UNKNOWN,
+    );
+    expect(mapCalDavStatusToExceptionCode(418)).toBe(
+      CalendarEventImportDriverExceptionCode.UNKNOWN,
+    );
+  });
+
+  it('falls back to UNKNOWN when the server sent no status', () => {
+    expect(mapCalDavStatusToExceptionCode(undefined)).toBe(
+      CalendarEventImportDriverExceptionCode.UNKNOWN,
+    );
   });
 });
