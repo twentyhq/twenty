@@ -2,9 +2,6 @@ import { type WebClient } from '@slack/web-api';
 
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 
-// Cosmetic calls must fail fast: the WebClient default retries for ~30 minutes,
-// far past the worker budget, and a late reply re-shows a status the answer
-// already cleared
 const BEST_EFFORT_TIMEOUT_MS = 5000;
 
 export const runBestEffortSlackCall = async (

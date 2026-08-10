@@ -40,8 +40,6 @@ export const startSlackAssistantStatusUpdates = ({
     isStopped = true;
     timers.forEach(clearTimeout);
 
-    // A stalled setStatus would otherwise hold the answer back for the whole
-    // WebClient retry window, which outlasts the worker's budget
     let shutdownTimer: ReturnType<typeof setTimeout> | undefined;
 
     await Promise.race([
