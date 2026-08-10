@@ -5,6 +5,7 @@ import { StopPropagationContainer } from '@/object-record/record-board/record-bo
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
+import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import {
@@ -22,15 +23,19 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
+  calendarDay: string;
   isRecordReadOnly: boolean;
 };
 
 export const RecordCalendarCardBody = ({
   recordId,
+  calendarDay,
   isRecordReadOnly,
 }: RecordCalendarCardBodyProps) => {
   const { objectPermissions, objectMetadataItem } =
     useRecordCalendarContextOrThrow();
+
+  const cardInstanceIdPrefix = getRecordCalendarCardInstanceIdPrefix(calendarDay);
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -108,7 +113,7 @@ export const RecordCalendarCardBody = ({
                 useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,
                 triggerEvent: 'CLICK',
-                anchorId: `${RECORD_CALENDAR_CARD_INPUT_ID_PREFIX}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
+                anchorId: `${cardInstanceIdPrefix}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
                 onMouseEnter: () => handleMouseEnter(index),
               }}
             >
@@ -117,13 +122,11 @@ export const RecordCalendarCardBody = ({
                   instanceId: getRecordFieldInputInstanceId({
                     recordId,
                     fieldName: correspondingFieldDefinition.metadata.fieldName,
-                    prefix: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX,
+                    prefix: cardInstanceIdPrefix,
                   }),
                 }}
               >
-                <RecordInlineCell
-                  instanceIdPrefix={RECORD_CALENDAR_CARD_INPUT_ID_PREFIX}
-                />
+                <RecordInlineCell instanceIdPrefix={cardInstanceIdPrefix} />
               </RecordFieldComponentInstanceContext.Provider>
             </FieldContext.Provider>
           </StopPropagationContainer>
