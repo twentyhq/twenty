@@ -263,6 +263,27 @@ describe('fetchSlackConversationMessages', () => {
     ]);
   });
 
+  it('should return no history when the thread tail is out of pagination reach', async () => {
+    const repliesMock = vi.fn().mockResolvedValue({
+      messages: [{ ts: '1', user: 'U123', text: 'A turn from the thread head' }],
+      response_metadata: { next_cursor: 'always-more' },
+    });
+
+    const client = {
+      conversations: { replies: repliesMock },
+    } as unknown as WebClient;
+
+    const messages = await fetchSlackConversationMessages({
+      client,
+      channelId: 'C1',
+      threadTimestamp: '1',
+      isDirectMessage: false,
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([]);
+  });
+
   it('should return no history for a channel mention outside a thread', async () => {
     const client = buildClient({});
 

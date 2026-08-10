@@ -7,7 +7,7 @@ import { stripSlackAssistantAnswerFooter } from 'src/logic-functions/utils/strip
 const CONTEXT_MESSAGE_LIMIT = 15;
 // conversations.replies only pages forward from the start of the thread, so
 // walk to the last page and keep a wide tail to stay on the most recent turns
-const THREAD_REPLIES_PAGE_SIZE = 200;
+const THREAD_REPLIES_PAGE_SIZE = 1000;
 const THREAD_REPLIES_MAX_PAGES = 10;
 const THREAD_REPLIES_TAIL_SIZE = 100;
 
@@ -47,11 +47,17 @@ const fetchThreadTailMessages = async ({
     cursor = replies.response_metadata?.next_cursor;
 
     if (!isNonEmptyString(cursor)) {
-      break;
+      return tailMessages;
     }
   }
 
-  return tailMessages;
+  // the tail is out of reach, and replaying the head of the thread as if it
+  // were recent would mislead the agent more than having no history at all
+  console.warn(
+    `[slack] thread ${threadTimestamp} is longer than ${THREAD_REPLIES_MAX_PAGES * THREAD_REPLIES_PAGE_SIZE} replies, skipping history`,
+  );
+
+  return [];
 };
 
 const mapSlackMessagesToAgentMessages = ({
