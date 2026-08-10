@@ -62,7 +62,7 @@ export class ApplicationVendorService {
       ),
     });
 
-    if (presignedUrl) {
+    if (isDefined(presignedUrl)) {
       return {
         fileResponse: { type: 'redirect', presignedUrl },
         vendorChecksum: application.vendorChecksum,
