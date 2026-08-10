@@ -263,7 +263,9 @@ describe('fetchSlackConversationMessages', () => {
     ]);
   });
 
-  it('should return no history when the thread tail is out of pagination reach', async () => {
+  it('should warn and return no history when the thread tail is out of pagination reach', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
     const repliesMock = vi.fn().mockResolvedValue({
       messages: [{ ts: '1', user: 'U123', text: 'A turn from the thread head' }],
       response_metadata: { next_cursor: 'always-more' },
@@ -282,6 +284,11 @@ describe('fetchSlackConversationMessages', () => {
     });
 
     expect(messages).toEqual([]);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('skipping history'),
+    );
+
+    warnSpy.mockRestore();
   });
 
   it('should return no history for a channel mention outside a thread', async () => {
