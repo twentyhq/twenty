@@ -16,8 +16,6 @@ const StyledWidgetContainer = styled.div`
 export const CallRecordingTranscriptWidget = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Guard component: useCalendarEventCallRecordingTranscript queries callRecording
-  // and would throw in a workspace where the object does not exist
   const hasCallRecordingObjectMetadata = objectMetadataItems.some(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === CoreObjectNameSingular.CallRecording,

@@ -64,14 +64,13 @@ const classifyCallRecordingTranscript = (
   return { state: 'MISSING' };
 };
 
-// callRecordings are expected in arrival order (createdAt ascending)
 export const selectCalendarEventCallRecordingTranscript = (
-  callRecordings: CalendarEventCallRecordingTranscriptCandidate[],
+  callRecordingsInArrivalOrder: CalendarEventCallRecordingTranscriptCandidate[],
 ): CalendarEventCallRecordingTranscriptSelection => {
   let firstPendingSelection: ClassifiedCallRecordingTranscript | undefined;
   let firstSelection: ClassifiedCallRecordingTranscript | undefined;
 
-  for (const callRecording of callRecordings) {
+  for (const callRecording of callRecordingsInArrivalOrder) {
     const selection = classifyCallRecordingTranscript(callRecording);
 
     if (selection.state === 'READY') {

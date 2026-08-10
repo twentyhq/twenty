@@ -7,6 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { computeCallRecordingTabPosition } from 'src/database/commands/upgrade-version-command/2-30/utils/compute-call-recording-tab-position.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -86,7 +87,19 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatPageLayoutTabMaps,
         existingFlatEntityMaps: flatPageLayoutTabMaps,
         universalIdentifiers: [CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER],
-      });
+      }).map((pageLayoutTab) => ({
+        ...pageLayoutTab,
+        position: computeCallRecordingTabPosition({
+          existingPageLayoutTabs: Object.values(
+            flatPageLayoutTabMaps.byUniversalIdentifier,
+          )
+            .filter(isDefined)
+            .filter(
+              (existingPageLayoutTab) =>
+                existingPageLayoutTab.pageLayoutId === existingPageLayout.id,
+            ),
+        }),
+      }));
 
     const pageLayoutWidgetsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutWidget>({

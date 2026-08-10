@@ -70,7 +70,7 @@ const CALENDAR_EVENT_PAGE_TABS = {
       },
     },
   },
-  // position 30 is reserved for the upcoming Summary tab
+  // Reserve position 30 for the upcoming Summary tab.
   callRecording: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
