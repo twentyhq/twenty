@@ -43,7 +43,8 @@ export const CommandMenuButton = ({
       ? getCommandMenuItemLabel(command.shortLabel)
       : undefined;
 
-  const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
+  const buttonAccent =
+    isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
 
   return (
     <>
@@ -51,8 +52,8 @@ export const CommandMenuButton = ({
         <Button
           Icon={command.Icon}
           size="small"
-          variant={isPrimaryAction ? 'primary' : 'secondary'}
-          accent={isPrimaryAction ? 'blue' : buttonAccent}
+          variant="primary"
+          accent={buttonAccent}
           to={to}
           onClick={onClick}
           disabled={disabled}
@@ -64,8 +65,8 @@ export const CommandMenuButton = ({
           <IconButton
             Icon={command.Icon}
             size="small"
-            variant={isPrimaryAction ? 'primary' : 'secondary'}
-            accent={isPrimaryAction ? 'blue' : buttonAccent}
+            variant="primary"
+            accent={buttonAccent}
             to={to}
             onClick={onClick}
             disabled={disabled}
