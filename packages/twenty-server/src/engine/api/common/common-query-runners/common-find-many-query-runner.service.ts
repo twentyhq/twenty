@@ -185,8 +185,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       fetchedItems: fetchedObjectRecords,
       limit,
       direction: isForwardPagination ? 'forward' : 'backward',
-      hasAfterCursor: isDefined(args.after),
-      hasBeforeCursor: isDefined(args.before),
+      // getCursor applies cursors on truthiness, so an empty-string cursor
+      // must not advertise navigation from a cursor.
+      hasAfterCursor: Boolean(args.after),
+      hasBeforeCursor: Boolean(args.before),
     });
     const pageInfo = getPageInfo({
       records: objectRecords,

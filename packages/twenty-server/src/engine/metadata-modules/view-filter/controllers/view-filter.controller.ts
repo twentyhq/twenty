@@ -60,7 +60,9 @@ export class ViewFilterController {
   ) {
     const page = await this.viewFilterService.findManyPaginated({
       workspaceId: workspace.id,
-      viewId,
+      // An empty viewId means "no filter", matching the sibling view
+      // controllers, rather than filtering on the empty string.
+      viewId: viewId === '' ? undefined : viewId,
       pagination: parseMetadataRestPagination(request),
     });
 

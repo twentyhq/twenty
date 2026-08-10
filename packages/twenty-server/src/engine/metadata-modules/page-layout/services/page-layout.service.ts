@@ -10,6 +10,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
+import { compareFlatPageLayoutsByCreation } from 'src/engine/metadata-modules/page-layout/utils/compare-flat-page-layouts-by-creation.util';
 import { fromCreatePageLayoutInputToFlatPageLayoutToCreate } from 'src/engine/metadata-modules/flat-page-layout/utils/from-create-page-layout-input-to-flat-page-layout-to-create.util';
 import { fromDestroyPageLayoutInputToFlatPageLayoutOrThrow } from 'src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util';
 import {
@@ -60,10 +61,7 @@ export class PageLayoutService {
     )
       .filter(isDefined)
       .filter((layout) => !isDefined(layout.deletedAt))
-      .sort(
-        (a, b) =>
-          a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
-      );
+      .sort(compareFlatPageLayoutsByCreation);
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
@@ -107,10 +105,7 @@ export class PageLayoutService {
 
         return isNotDeleted && matchesObjectMetadataId && matchesPageLayoutType;
       })
-      .sort(
-        (a, b) =>
-          a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
-      );
+      .sort(compareFlatPageLayoutsByCreation);
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
@@ -150,11 +145,7 @@ export class PageLayoutService {
             layout.objectMetadataId === objectMetadataId) &&
           (!isDefined(pageLayoutType) || layout.type === pageLayoutType),
       )
-      .sort(
-        (first, second) =>
-          first.createdAt.localeCompare(second.createdAt) ||
-          first.id.localeCompare(second.id),
-      );
+      .sort(compareFlatPageLayoutsByCreation);
     const page = paginateMetadataOrderedItems({
       items: activeLayouts,
       pagination,

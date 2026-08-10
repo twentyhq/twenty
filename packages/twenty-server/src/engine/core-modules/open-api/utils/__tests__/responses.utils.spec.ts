@@ -2,18 +2,33 @@ import { getFindManyResponse200 } from 'src/engine/core-modules/open-api/utils/r
 
 describe('getFindManyResponse200', () => {
   it('documents the direct metadata list envelope and complete page info', () => {
-    const response = getFindManyResponse200(
-      { nameSingular: 'view', namePlural: 'views' },
-      true,
-    );
+    const response = getFindManyResponse200({
+      item: { nameSingular: 'view', namePlural: 'views' },
+      isDirectDataFeatureFlagged: true,
+    });
     expect(response).toMatchObject({
       content: {
         'application/json': {
           schema: {
             properties: {
               data: {
-                type: 'array',
-                items: { $ref: '#/components/schemas/ViewForResponse' },
+                oneOf: [
+                  {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/ViewForResponse' },
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      views: {
+                        type: 'array',
+                        items: {
+                          $ref: '#/components/schemas/ViewForResponse',
+                        },
+                      },
+                    },
+                  },
+                ],
               },
               pageInfo: {
                 properties: {
@@ -32,8 +47,7 @@ describe('getFindManyResponse200', () => {
 
   it('keeps the workspace record REST envelope nested', () => {
     const response = getFindManyResponse200({
-      nameSingular: 'company',
-      namePlural: 'companies',
+      item: { nameSingular: 'company', namePlural: 'companies' },
     });
 
     expect(response).toMatchObject({

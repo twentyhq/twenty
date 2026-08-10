@@ -15,8 +15,11 @@ export const paginateMetadataOrderedItems = <TEntity extends { id: string }>({
   pagination: MetadataCursorPagination;
 }): MetadataCursorPage<TEntity> => {
   const cursorId = pagination.afterId ?? pagination.beforeId;
-  const cursorIndex = isDefined(cursorId)
-    ? items.findIndex(({ id }) => id === cursorId)
+  // Cursors are accepted in any UUID casing, so identity is matched
+  // case-insensitively against the canonical lowercase ids.
+  const normalizedCursorId = cursorId?.toLowerCase();
+  const cursorIndex = isDefined(normalizedCursorId)
+    ? items.findIndex(({ id }) => id.toLowerCase() === normalizedCursorId)
     : undefined;
 
   if (cursorIndex === -1) {

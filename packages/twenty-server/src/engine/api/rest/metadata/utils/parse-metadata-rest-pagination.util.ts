@@ -31,12 +31,20 @@ export const parseMetadataRestPagination = (
     throw new BadRequestException(`Invalid cursor: ${invalidCursor}`);
   }
 
+  const limit = parseLimitRestRequest(
+    request,
+    DEFAULT_METADATA_REST_PAGE_SIZE,
+    MAX_METADATA_REST_PAGE_SIZE,
+  );
+
+  if (!Number.isInteger(limit)) {
+    throw new BadRequestException(
+      `limit '${request.query?.limit}' is invalid. Should be an integer`,
+    );
+  }
+
   return {
-    limit: parseLimitRestRequest(
-      request,
-      DEFAULT_METADATA_REST_PAGE_SIZE,
-      MAX_METADATA_REST_PAGE_SIZE,
-    ),
+    limit,
     direction: isDefined(endingBefore) ? 'backward' : 'forward',
     afterId: startingAfter,
     beforeId: endingBefore,
