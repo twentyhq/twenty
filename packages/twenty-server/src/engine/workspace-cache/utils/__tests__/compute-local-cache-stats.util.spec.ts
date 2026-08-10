@@ -18,9 +18,9 @@ describe('computeLocalCacheStats', () => {
   it('counts entries, distinct workspaces, and total versions', () => {
     const stats = computeLocalCacheStats(
       new Map([
-        ['orm:entity-metadatas:ws-a', entry(1)],
-        ['flat-maps:field-metadata:ws-a', entry(2)],
-        ['orm:entity-metadatas:ws-b', entry(1)],
+        ['ORMEntityMetadatas:ws-a', entry(1)],
+        ['flatFieldMetadataMaps:ws-a', entry(2)],
+        ['ORMEntityMetadatas:ws-b', entry(1)],
       ]),
     );
 
@@ -29,8 +29,8 @@ describe('computeLocalCacheStats', () => {
     expect(stats.workspaces).toBe(2);
     expect(stats.versionsTotal).toBe(4);
     expect(stats.entriesByProvider).toEqual({
-      'orm:entity-metadatas': 2,
-      'flat-maps:field-metadata': 1,
+      ORMEntityMetadatas: 2,
+      flatFieldMetadataMaps: 1,
     });
   });
 

@@ -1,5 +1,5 @@
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
-import { getProviderFromCacheKey } from 'src/engine/workspace-cache/utils/get-provider-from-cache-key.util';
+import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 
 export const demoteColdStorageEntries = <T>({
   localCache,
@@ -21,7 +21,7 @@ export const demoteColdStorageEntries = <T>({
         continue;
       }
 
-      const provider = getProviderFromCacheKey(localKey);
+      const provider = getKeyNameFromLocalCacheKey(localKey);
       const hot = hotByProvider.get(provider) ?? [];
 
       hot.push({ localKey, hash, lastReadAt: version.lastReadAt });

@@ -1,8 +1,8 @@
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { demoteColdStorageEntries } from 'src/engine/workspace-cache/utils/demote-cold-storage-entries.util';
 
-const FIELD_METADATA = 'flat-maps:field-metadata';
-const ORM = 'orm:entity-metadatas';
+const FIELD_METADATA = 'flatFieldMetadataMaps';
+const ORM = 'ORMEntityMetadatas';
 
 const hotEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
   versions: new Map([['hash-1', { state: 'hot', data: 'data', lastReadAt }]]),

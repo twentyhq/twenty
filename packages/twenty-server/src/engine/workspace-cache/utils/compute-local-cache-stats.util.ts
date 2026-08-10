@@ -1,4 +1,4 @@
-import { getProviderFromCacheKey } from 'src/engine/workspace-cache/utils/get-provider-from-cache-key.util';
+import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 
 export type LocalCacheStats = {
   entries: number;
@@ -24,7 +24,7 @@ export const computeLocalCacheStats = (
 
   for (const [key, entry] of localCache) {
     workspaceIds.add(key.slice(key.lastIndexOf(':') + 1));
-    const provider = getProviderFromCacheKey(key);
+    const provider = getKeyNameFromLocalCacheKey(key);
 
     entriesByProvider[provider] = (entriesByProvider[provider] ?? 0) + 1;
     const versionCount = entry.versions.size;

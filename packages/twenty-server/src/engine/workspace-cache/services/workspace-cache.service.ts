@@ -56,16 +56,10 @@ const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const HOT_ENTRIES_PER_PROVIDER = 64;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
-const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
-  [WORKSPACE_CACHE_KEYS_V2.ORMEntityMetadatas, 128],
+const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
+  ['ORMEntityMetadatas', 128],
+  ['flatFieldMetadataMaps', 256],
 ]);
-const KEY_NAME_BY_PREFIX = new Map(
-  Object.entries(WORKSPACE_CACHE_KEYS_V2).map(([keyName, prefix]) => [
-    prefix,
-    keyName as WorkspaceCacheKeyName,
-  ]),
-);
-
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 
@@ -297,7 +291,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     const hashKeys = cacheKeyNames.map(
-      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:hash`,
+      (keyName) => `${this.buildRedisKey(workspaceId, keyName)}:hash`,
     );
 
     const hashes = await this.cacheStorage.mget<string>(hashKeys);
@@ -347,7 +341,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const now = Date.now();
 
     for (const keyName of cacheKeyNames) {
-      const localKey = this.buildCacheKey(workspaceId, keyName);
+      const localKey = this.buildLocalKey(workspaceId, keyName);
       const cached = this.localCache.get(localKey);
 
       if (isDefined(cached) && now - cached.lastHashCheckedAt < LOCAL_TTL_MS) {
@@ -384,14 +378,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     const hashKeys = cacheKeyNames.map(
-      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:hash`,
+      (keyName) => `${this.buildRedisKey(workspaceId, keyName)}:hash`,
     );
 
     const redisHashes = await this.cacheStorage.mget<string>(hashKeys);
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
       const redisHash = redisHashes[index];
-      const localKey = this.buildCacheKey(workspaceId, keyName);
+      const localKey = this.buildLocalKey(workspaceId, keyName);
       const localEntry = this.localCache.get(localKey);
 
       if (
@@ -436,7 +430,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     // Interleave data and hash keys for atomic fetch: [data1, hash1, data2, hash2, ...]
     const allKeys = cacheKeyNames.flatMap((keyName) => {
-      const baseKey = this.buildCacheKey(workspaceId, keyName);
+      const baseKey = this.buildRedisKey(workspaceId, keyName);
 
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
@@ -539,7 +533,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       Object.assign(result.data, { [keyName]: data });
       result.hashes[keyName] = hash;
 
-      const baseKey = this.buildCacheKey(workspaceId, keyName);
+      const baseKey = this.buildRedisKey(workspaceId, keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
       const isRecoveryBootstrap =
         hashResolution.strategy === 'recover' && !isAdopted && isLocalDataOnly;
@@ -593,7 +587,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const result: CacheEntriesResult = { data: {}, hashes: {} };
 
     for (const keyName of workspaceCacheKeyNames) {
-      const localKey = this.buildCacheKey(workspaceId, keyName);
+      const localKey = this.buildLocalKey(workspaceId, keyName);
       const entry = this.localCache.get(localKey);
       const version = entry?.versions.get(entry.latestHash);
 
@@ -614,7 +608,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): void {
     for (const keyName of cacheKeyNames) {
-      const localKey = this.buildCacheKey(workspaceId, keyName);
+      const localKey = this.buildLocalKey(workspaceId, keyName);
       const entry = this.localCache.get(localKey);
 
       if (isDefined(entry)) {
@@ -628,7 +622,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
     const keysToDelete = cacheKeyNames.flatMap((keyName) => {
-      const baseKey = this.buildCacheKey(workspaceId, keyName);
+      const baseKey = this.buildRedisKey(workspaceId, keyName);
 
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
@@ -642,7 +636,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     data: CacheDataType,
     hash: string,
   ): void {
-    const localKey = this.buildCacheKey(workspaceId, keyName);
+    const localKey = this.buildLocalKey(workspaceId, keyName);
     let entry = this.localCache.get(localKey);
 
     if (!isDefined(entry)) {
@@ -670,7 +664,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const evicted = sweepLocalCache(this.localCache, now, {
       ttlMs: LOCAL_ENTRY_TTL_MS,
-      maxEntriesByPrefix: MAX_LOCAL_ENTRIES_BY_PREFIX,
+      maxEntriesByKeyName: MAX_LOCAL_ENTRIES_BY_KEY_NAME,
       globalMaxEntries: MAX_LOCAL_CACHE_ENTRIES,
       minEvict: MIN_EVICT_KEYS,
     });
@@ -689,9 +683,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       serialize: ({ localKey, data }) => {
         const separatorIndex = localKey.lastIndexOf(':');
         const workspaceId = localKey.slice(separatorIndex + 1);
-        const keyName = KEY_NAME_BY_PREFIX.get(
-          localKey.slice(0, separatorIndex),
-        );
+        const keyName = localKey.slice(
+          0,
+          separatorIndex,
+        ) as WorkspaceCacheKeyName;
 
         if (
           !isDefined(keyName) ||
@@ -714,7 +709,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private isCompactStorageEnabled(workspaceId: string): boolean {
     const entry = this.localCache.get(
-      this.buildCacheKey(workspaceId, 'featureFlagsMap'),
+      this.buildLocalKey(workspaceId, 'featureFlagsMap'),
     );
     const version = entry?.versions.get(entry.latestHash);
 
@@ -815,10 +810,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     return provider;
   }
 
-  private buildCacheKey(
+  private buildRedisKey(
     workspaceId: string,
     keyName: WorkspaceCacheKeyName,
   ): string {
     return `${WORKSPACE_CACHE_KEYS_V2[keyName]}:${workspaceId}`;
+  }
+
+  private buildLocalKey(
+    workspaceId: string,
+    keyName: WorkspaceCacheKeyName,
+  ): string {
+    return `${keyName}:${workspaceId}`;
   }
 }
