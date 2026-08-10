@@ -33,7 +33,8 @@ describe('selectColdStorageDemotions', () => {
     ]);
 
     expect(
-      selectColdStorageDemotions(cache, {
+      selectColdStorageDemotions({
+        localCache: cache,
         eligiblePrefixes: new Set([FIELD_METADATA]),
         hotEntriesPerPrefix: 2,
       }),
@@ -48,7 +49,8 @@ describe('selectColdStorageDemotions', () => {
     ]);
 
     expect(
-      selectColdStorageDemotions(cache, {
+      selectColdStorageDemotions({
+        localCache: cache,
         eligiblePrefixes: new Set([FIELD_METADATA]),
         hotEntriesPerPrefix: 1,
       }),
@@ -65,7 +67,8 @@ describe('selectColdStorageDemotions', () => {
     ]);
 
     expect(
-      selectColdStorageDemotions(cache, {
+      selectColdStorageDemotions({
+        localCache: cache,
         eligiblePrefixes: new Set([FIELD_METADATA]),
         hotEntriesPerPrefix: 1,
       }),
@@ -80,7 +83,8 @@ describe('selectColdStorageDemotions', () => {
     ]);
 
     expect(
-      selectColdStorageDemotions(cache, {
+      selectColdStorageDemotions({
+        localCache: cache,
         eligiblePrefixes: new Set([FIELD_METADATA, 'flat-maps:view-field']),
         hotEntriesPerPrefix: 1,
       }),
@@ -94,7 +98,8 @@ describe('selectColdStorageDemotions', () => {
     ]);
 
     expect(
-      selectColdStorageDemotions(cache, {
+      selectColdStorageDemotions({
+        localCache: cache,
         eligiblePrefixes: new Set([FIELD_METADATA]),
         hotEntriesPerPrefix: 1,
       }),

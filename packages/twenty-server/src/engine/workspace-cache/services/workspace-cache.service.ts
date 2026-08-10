@@ -440,7 +440,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const allKeys = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [this.buildDataKey(workspaceId, baseKey), `${baseKey}:hash`];
+      return [this.buildDataKey({ workspaceId, baseKey }), `${baseKey}:hash`];
     });
 
     const allValues = await this.cacheStorage.mget<
@@ -455,7 +455,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data = this.decodeFromStorage(workspaceId, keyName, rawData);
+          data = this.decodeFromStorage({ workspaceId, keyName, rawData });
         } catch (error) {
           this.logger.warn(
             `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
@@ -549,11 +549,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (!isLocalDataOnly) {
-        const dataKey = this.buildDataKey(workspaceId, baseKey);
+        const dataKey = this.buildDataKey({ workspaceId, baseKey });
 
         redisEntries.push({
           key: dataKey,
-          value: this.encodeForStorage(workspaceId, keyName, data),
+          value: this.encodeForStorage({ workspaceId, keyName, data }),
         });
         staleEncodingKeys.push(
           ...[`${baseKey}:data`, `${baseKey}:data:compact-v1`].filter(
@@ -607,7 +607,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const version = entry?.versions.get(entry.latestHash);
 
       if (isDefined(entry) && isDefined(version)) {
-        const data = this.readVersion(keyName, entry, version);
+        const data = this.readVersion({ keyName, entry, version });
 
         Object.assign(result.data, { [keyName]: data });
         result.hashes[keyName] = entry.latestHash;
@@ -696,7 +696,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private demoteColdEntries(): void {
-    const demotions = selectColdStorageDemotions(this.localCache, {
+    const demotions = selectColdStorageDemotions({
+      localCache: this.localCache,
       eligiblePrefixes: this.coldStorageEligiblePrefixes,
       hotEntriesPerPrefix: HOT_ENTRIES_PER_PROVIDER,
     });
@@ -748,17 +749,27 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
-  private buildDataKey(workspaceId: string, baseKey: string): string {
+  private buildDataKey({
+    workspaceId,
+    baseKey,
+  }: {
+    workspaceId: string;
+    baseKey: string;
+  }): string {
     return this.isCompactStorageEnabled(workspaceId)
       ? `${baseKey}:data:compact-v1`
       : `${baseKey}:data`;
   }
 
-  private encodeForStorage(
-    workspaceId: string,
-    keyName: WorkspaceCacheKeyName,
-    data: CacheDataType,
-  ): StoredCacheDataType {
+  private encodeForStorage({
+    workspaceId,
+    keyName,
+    data,
+  }: {
+    workspaceId: string;
+    keyName: WorkspaceCacheKeyName;
+    data: CacheDataType;
+  }): StoredCacheDataType {
     if (!this.isCompactStorageEnabled(workspaceId)) {
       return data;
     }
@@ -766,11 +777,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     return this.getProviderOrThrow(keyName).encodeForCacheStorage(data);
   }
 
-  private decodeFromStorage(
-    workspaceId: string,
-    keyName: WorkspaceCacheKeyName,
-    rawData: StoredCacheDataType,
-  ): CacheDataType {
+  private decodeFromStorage({
+    workspaceId,
+    keyName,
+    rawData,
+  }: {
+    workspaceId: string;
+    keyName: WorkspaceCacheKeyName;
+    rawData: StoredCacheDataType;
+  }): CacheDataType {
     if (!this.isCompactStorageEnabled(workspaceId)) {
       return rawData;
     }
@@ -778,11 +793,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     return this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
   }
 
-  private readVersion(
-    keyName: WorkspaceCacheKeyName,
-    entry: WorkspaceLocalCacheEntry<CacheDataType>,
-    version: VersionEntry<CacheDataType>,
-  ): CacheDataType {
+  private readVersion({
+    keyName,
+    entry,
+    version,
+  }: {
+    keyName: WorkspaceCacheKeyName;
+    entry: WorkspaceLocalCacheEntry<CacheDataType>;
+    version: VersionEntry<CacheDataType>;
+  }): CacheDataType {
     if (version.state === 'hot') {
       version.lastReadAt = Date.now();
 

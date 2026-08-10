@@ -12,10 +12,13 @@ export type ColdStorageConfig = {
 
 const prefixOf = (localKey: string): string =>
   localKey.slice(0, localKey.lastIndexOf(':'));
-export const selectColdStorageDemotions = <T>(
-  localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T>>,
-  config: ColdStorageConfig,
-): ColdStorageDemotion[] => {
+export const selectColdStorageDemotions = <T>({
+  localCache,
+  eligiblePrefixes,
+  hotEntriesPerPrefix,
+}: {
+  localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T>>;
+} & ColdStorageConfig): ColdStorageDemotion[] => {
   const hotByPrefix = new Map<
     string,
     { localKey: string; hash: string; lastReadAt: number }[]
@@ -24,7 +27,7 @@ export const selectColdStorageDemotions = <T>(
   for (const [localKey, entry] of localCache) {
     const prefix = prefixOf(localKey);
 
-    if (!config.eligiblePrefixes.has(prefix)) {
+    if (!eligiblePrefixes.has(prefix)) {
       continue;
     }
 
@@ -43,16 +46,13 @@ export const selectColdStorageDemotions = <T>(
   const demotions: ColdStorageDemotion[] = [];
 
   for (const hot of hotByPrefix.values()) {
-    if (hot.length <= config.hotEntriesPerPrefix) {
+    if (hot.length <= hotEntriesPerPrefix) {
       continue;
     }
 
     hot.sort((a, b) => a.lastReadAt - b.lastReadAt);
 
-    for (const candidate of hot.slice(
-      0,
-      hot.length - config.hotEntriesPerPrefix,
-    )) {
+    for (const candidate of hot.slice(0, hot.length - hotEntriesPerPrefix)) {
       demotions.push({ localKey: candidate.localKey, hash: candidate.hash });
     }
   }
