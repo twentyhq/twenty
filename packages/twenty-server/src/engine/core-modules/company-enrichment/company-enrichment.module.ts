@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { CompanyEnrichmentResolver } from 'src/engine/core-modules/company-enrichment/resolvers/company-enrichment.resolver';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import { PeopleDataLabsPersonClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-person-client.service';
+import { PersonEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/person-enrichment.service';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
@@ -21,7 +23,9 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
     CompanyEnrichmentResolver,
     CompanyEnrichmentService,
     PeopleDataLabsCompanyClientService,
+    PeopleDataLabsPersonClientService,
+    PersonEnrichmentService,
   ],
-  exports: [CompanyEnrichmentService],
+  exports: [CompanyEnrichmentService, PersonEnrichmentService],
 })
 export class CompanyEnrichmentModule {}

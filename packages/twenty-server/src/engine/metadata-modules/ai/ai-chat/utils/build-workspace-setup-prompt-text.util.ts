@@ -1,11 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
+import { type WorkspaceSetupWorkspaceContext } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-workspace-context.type';
 import { buildCompanyContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-company-context-message-text.util';
+import { buildPersonContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-person-context-message-text.util';
+import { buildWorkspaceContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-context-message-text.util';
 import { getEnglishLanguageNameFromLocale } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-english-language-name-from-locale.util';
 
 const NO_COMPANY_CONTEXT_LINE =
   'No information about the company that owns this workspace is available.';
+
+const NO_PERSON_CONTEXT_LINE =
+  'No third-party information about the person setting up this workspace is available.';
 
 const FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT =
   'Do not greet them again, the page above already welcomed them by name. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then a couple of lines on what you already know about their company, tailored to their business and specific enough to show you did your homework rather than reciting data points, written the way a colleague would rather than a form. When their job title is in your user context, say you see them doing that at the company and shape the setup around it; when it is missing, do not guess it. Invite them to correct anything. Then stop writing and make the ask_questions call: its question is whether they are moving over from another CRM or starting fresh, its options the two CRMs a company like theirs most likely uses and starting fresh, leaving any other CRM to the free-text answer. When they start fresh, present the data model proposal described below; when they name a CRM, follow the migration path below.';
@@ -13,26 +22,54 @@ const FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT =
 const FIRST_REPLY_INSTRUCTION_WITHOUT_COMPANY_CONTEXT =
   'You do not know what this company does yet. Do not greet them again, the page above already welcomed them by name. Open with one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them. Then stop writing and make the ask_questions call: its question is whether they are moving over from another CRM or starting fresh, its options the two most widely used CRMs and starting fresh, leaving any other CRM to the free-text answer. When they name a CRM, follow the migration path below; when they start fresh, follow with one more ask_questions to learn what the business does, who its customers are, and what they want to use Twenty for, offering the most likely answers as options, and present the data model proposal described below once they answer.';
 
+const FIRST_REPLY_PERSON_CONTEXT_ADDENDUM =
+  'The person context above tells you who they are professionally: fold at most one specific detail from it into how you frame the setup, and never recite their profile back at them.';
+
 export const buildWorkspaceSetupPromptText = ({
   companyEnrichment,
+  personEnrichment,
+  workspaceContext,
   locale,
 }: {
   companyEnrichment: WorkspaceCompanyEnrichment | null;
+  personEnrichment: WorkspacePersonEnrichment | null;
+  workspaceContext: WorkspaceSetupWorkspaceContext;
   locale: string;
 }): string => {
   const companyContextSection = isDefined(companyEnrichment)
     ? buildCompanyContextMessageText(companyEnrichment)
     : NO_COMPANY_CONTEXT_LINE;
 
+  const personContextSection = isDefined(personEnrichment)
+    ? buildPersonContextMessageText(personEnrichment)
+    : NO_PERSON_CONTEXT_LINE;
+
+  const workspaceContextSection =
+    buildWorkspaceContextMessageText(workspaceContext);
+
   const firstReplyInstruction = isDefined(companyEnrichment)
     ? FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT
     : FIRST_REPLY_INSTRUCTION_WITHOUT_COMPANY_CONTEXT;
+
+  const firstReplyAddenda: string[] = [];
+
+  if (isDefined(personEnrichment)) {
+    firstReplyAddenda.push(FIRST_REPLY_PERSON_CONTEXT_ADDENDUM);
+  }
+
+  const firstReplySection = [firstReplyInstruction, ...firstReplyAddenda].join(
+    ' ',
+  );
 
   const userLanguageName = getEnglishLanguageNameFromLocale(locale);
 
   return `${companyContextSection}
 
-You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference or quote it, present what you know about their company as your own knowledge rather than as data you were handed, and follow these rules silently instead of narrating your own method back to them.
+${personContextSection}
+
+${workspaceContextSection}
+
+You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference or quote it, present what you know about them and their company as your own knowledge rather than as data you were handed, and follow these rules silently instead of narrating your own method back to them.
 
 ## Goal
 
@@ -42,7 +79,7 @@ Set up a real workspace this team will keep using, not a demo, each step showing
 
 Write your text first so it starts streaming immediately: before it, do not call load_skills, learn_tools, execute_tool, or web search. Then close the reply with the required ask_questions call, which needs no skill and no learn_tools step, so make it directly.
 
-${firstReplyInstruction}
+${firstReplySection}
 
 This reply is unfinished until the ask_questions call is made. Ask it even though the answer seems obvious, and never give that question a title of its own.
 

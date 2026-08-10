@@ -5,7 +5,9 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceCompanyEnrichmentResultDTO } from 'src/engine/core-modules/company-enrichment/dtos/workspace-company-enrichment-result.dto';
 import { WorkspaceCompanyEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-company-enrichment-outcome.enum';
+import { WorkspacePersonEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-person-enrichment-outcome.enum';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
+import { PersonEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/person-enrichment.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -23,6 +25,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class CompanyEnrichmentResolver {
   constructor(
     private readonly companyEnrichmentService: CompanyEnrichmentService,
+    private readonly personEnrichmentService: PersonEnrichmentService,
     private readonly onboardingService: OnboardingService,
   ) {}
 
@@ -32,12 +35,18 @@ export class CompanyEnrichmentResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WorkspaceCompanyEnrichmentResultDTO> {
-    const enrichmentResult =
-      await this.companyEnrichmentService.enrichCompanyForWorkspaceCreator({
+    const [enrichmentResult, personEnrichmentResult] = await Promise.all([
+      this.companyEnrichmentService.enrichCompanyForWorkspaceCreator({
         userId: user.id,
         email: user.email,
         workspaceId: workspace.id,
-      });
+      }),
+      this.personEnrichmentService.enrichPersonForWorkspaceCreator({
+        userId: user.id,
+        email: user.email,
+        workspaceId: workspace.id,
+      }),
+    ]);
 
     if (enrichmentResult.outcome === 'matched') {
       await this.onboardingService.setOnboardingBookCallPendingIfQualified({
@@ -56,6 +65,9 @@ export class CompanyEnrichmentResolver {
     return {
       ...enrichmentResult,
       outcome: WorkspaceCompanyEnrichmentOutcome[enrichmentResult.outcome],
+      personOutcome:
+        WorkspacePersonEnrichmentOutcome[personEnrichmentResult.outcome],
+      personEnrichment: personEnrichmentResult.enrichment,
       isBookCallOnboardingStepPending,
     };
   }
