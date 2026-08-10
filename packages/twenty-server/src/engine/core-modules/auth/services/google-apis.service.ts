@@ -47,6 +47,7 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { OnboardingRecentMessagesImportService } from 'src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
@@ -67,6 +68,7 @@ export class GoogleAPIsService {
     private readonly updateConnectedAccountOnReconnectService: UpdateConnectedAccountOnReconnectService,
     private readonly googleAPIScopesService: GoogleAPIScopesService,
     private readonly googleApisServiceAvailabilityService: GoogleApisServiceAvailabilityService,
+    private readonly onboardingRecentMessagesImportService: OnboardingRecentMessagesImportService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(ConnectedAccountEntity)
@@ -344,6 +346,12 @@ export class GoogleAPIsService {
                   MessagingMessageListFetchJob.name,
                   { workspaceId, messageChannelId: messageChannel.id },
                 );
+                this.onboardingRecentMessagesImportService
+                  .importRecentMessages({
+                    messageChannelId: messageChannel.id,
+                    workspaceId,
+                  })
+                  .catch(() => undefined);
               }
             }
           }

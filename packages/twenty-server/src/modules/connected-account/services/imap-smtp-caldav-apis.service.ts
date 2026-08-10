@@ -34,6 +34,7 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { OnboardingRecentMessagesImportService } from 'src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
@@ -59,6 +60,7 @@ export class ImapSmtpCalDavAPIService {
     private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+    private readonly onboardingRecentMessagesImportService: OnboardingRecentMessagesImportService,
   ) {}
 
   async upsertConnectedAccount(input: {
@@ -230,6 +232,12 @@ export class ImapSmtpCalDavAPIService {
         MessagingMessageListFetchJob.name,
         { workspaceId, messageChannelId: existingMessageChannel.id },
       );
+      this.onboardingRecentMessagesImportService
+        .importRecentMessages({
+          messageChannelId: existingMessageChannel.id,
+          workspaceId,
+        })
+        .catch(() => undefined);
     }
 
     if (

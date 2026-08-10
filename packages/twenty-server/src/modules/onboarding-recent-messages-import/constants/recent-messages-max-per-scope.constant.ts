@@ -1,0 +1,1 @@
+export const RECENT_MESSAGES_MAX_PER_SCOPE = 50;
