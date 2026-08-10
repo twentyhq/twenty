@@ -1,102 +1,63 @@
+import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { type VendorExportNames } from '@/cli/utilities/build/common/vendor-build/types/vendor-export-names.type';
-import { isNonEmptyArray } from '@sniptt/guards';
 import * as esbuild from 'esbuild';
-import { createRequire } from 'node:module';
-import { pathToFileURL } from 'node:url';
-import { join } from 'path';
 import { isDefined } from 'twenty-shared/utils';
-
-const NODE_CJS_INTEROP_SYNTHETIC_EXPORT_NAMES = ['module.exports'];
 
 const DEFAULT_EXPORT_NAME = 'default';
 
-const buildNamedExportsProbeSource = (specifier: string): string =>
-  `export * from ${JSON.stringify(specifier)};`;
+const PROBE_NAMESPACE_IDENTIFIER = 'vendorNamespace';
 
-const buildDefaultExportProbeSource = (specifier: string): string =>
-  `export { default } from ${JSON.stringify(specifier)};`;
+const buildNamespaceProbeSource = (specifier: string): string =>
+  `import * as ${PROBE_NAMESPACE_IDENTIFIER} from ${JSON.stringify(specifier)};\nexport { ${PROBE_NAMESPACE_IDENTIFIER} };`;
 
-const resolveProbeWithEsbuild = async ({
+const buildProbeBundle = async ({
   appPath,
-  probeSource,
+  specifier,
 }: {
   appPath: string;
-  probeSource: string;
-}): Promise<esbuild.BuildResult | null> => {
+  specifier: string;
+}): Promise<string | null> => {
   try {
-    return await esbuild.build({
+    const probeResult = await esbuild.build({
+      ...getBaseFrontComponentBuildOptions(),
       stdin: {
-        contents: probeSource,
+        contents: buildNamespaceProbeSource(specifier),
         resolveDir: appPath,
         sourcefile: 'vendor-export-probe.js',
         loader: 'js',
       },
-      bundle: true,
       write: false,
-      metafile: true,
-      format: 'esm',
-      platform: 'browser',
-      logLevel: 'silent',
-      loader: { '.css': 'empty' },
-      define: { 'process.env.NODE_ENV': '"production"' },
       outfile: 'vendor-export-probe-out.js',
+      outExtension: undefined,
+      external: [],
+      sourcemap: false,
     });
+
+    return (
+      probeResult.outputFiles?.find((outputFile) =>
+        outputFile.path.endsWith('.js'),
+      )?.text ?? null
+    );
   } catch {
     return null;
   }
 };
 
-const enumerateNamedExportsWithEsbuild = async ({
-  appPath,
-  specifier,
-}: {
-  appPath: string;
-  specifier: string;
-}): Promise<string[]> => {
-  const probeResult = await resolveProbeWithEsbuild({
-    appPath,
-    probeSource: buildNamedExportsProbeSource(specifier),
-  });
-
-  if (!isDefined(probeResult)) {
-    return [];
-  }
-
-  return Object.values(probeResult.metafile?.outputs ?? {})[0]?.exports ?? [];
-};
-
-const hasDefaultExportResolvableByEsbuild = async ({
-  appPath,
-  specifier,
-}: {
-  appPath: string;
-  specifier: string;
-}): Promise<boolean> =>
-  isDefined(
-    await resolveProbeWithEsbuild({
-      appPath,
-      probeSource: buildDefaultExportProbeSource(specifier),
-    }),
-  );
-
-const enumerateExportsByImportingInNode = async ({
-  appPath,
-  specifier,
-}: {
-  appPath: string;
-  specifier: string;
-}): Promise<string[]> => {
+const importProbeNamespace = async (
+  probeBundleSource: string,
+): Promise<Record<string, unknown> | null> => {
   try {
-    const appRequire = createRequire(join(appPath, 'package.json'));
-    const resolvedPath = appRequire.resolve(specifier);
-    const resolvedModule = await import(pathToFileURL(resolvedPath).href);
+    const probeModuleUrl = `data:text/javascript;base64,${Buffer.from(
+      probeBundleSource,
+    ).toString('base64')}`;
+    const probeModule = (await import(probeModuleUrl)) as Record<
+      string,
+      Record<string, unknown> | undefined
+    >;
 
-    return Object.keys(resolvedModule).filter(
-      (exportName) =>
-        !NODE_CJS_INTEROP_SYNTHETIC_EXPORT_NAMES.includes(exportName),
-    );
+    return probeModule[PROBE_NAMESPACE_IDENTIFIER] ?? null;
   } catch {
-    return [];
+    return null;
   }
 };
 
@@ -107,29 +68,24 @@ export const enumerateVendorExportNames = async ({
   appPath: string;
   specifier: string;
 }): Promise<VendorExportNames> => {
-  const esbuildNamedExports = await enumerateNamedExportsWithEsbuild({
-    appPath,
-    specifier,
-  });
-  const nodeExports = await enumerateExportsByImportingInNode({
-    appPath,
-    specifier,
-  });
+  const probeBundleSource = await buildProbeBundle({ appPath, specifier });
 
-  if (!isNonEmptyArray(esbuildNamedExports) && !isNonEmptyArray(nodeExports)) {
+  const vendorNamespace = isDefined(probeBundleSource)
+    ? await importProbeNamespace(probeBundleSource)
+    : null;
+
+  if (!isDefined(vendorNamespace)) {
     throw new Error(
       `Unable to determine the exports of vendor dependency "${specifier}". Check that it is installed and importable from the application.`,
     );
   }
 
-  const hasDefaultExport = await hasDefaultExportResolvableByEsbuild({
-    appPath,
-    specifier,
-  });
-
-  const namedExports = [...new Set([...esbuildNamedExports, ...nodeExports])]
+  const namedExports = Object.keys(vendorNamespace)
     .filter((exportName) => exportName !== DEFAULT_EXPORT_NAME)
     .sort();
 
-  return { namedExports, hasDefaultExport };
+  return {
+    namedExports,
+    hasDefaultExport: DEFAULT_EXPORT_NAME in vendorNamespace,
+  };
 };
