@@ -18,6 +18,7 @@ export enum AppPath {
 
   // Onboarded
   AiChat = '/chat/:threadId?',
+  Search = '/search',
   Index = '/',
   TasksPage = '/objects/tasks',
   OpportunitiesPage = '/objects/opportunities',

@@ -50,6 +50,15 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
+    key: FeatureFlagKey.IS_SEARCH_PAGE_ENABLED,
+    metadata: {
+      label: 'Full-Page Search',
+      description:
+        'Open search as a full page you can link to, with an object filter on the left and a record preview on the right',
+      icon: 'IconSearch',
+    },
+  },
+  {
     key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
     metadata: {
       label: 'Settings Discovery Hero',

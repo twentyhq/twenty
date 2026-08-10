@@ -1,6 +1,7 @@
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
+import { SidePanelSearchHandoffEffect } from '@/side-panel/components/SidePanelSearchHandoffEffect';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
 import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
@@ -162,6 +163,7 @@ export const SidePanelForDesktop = () => {
       <SidePanelAskAiHandoffEffect
         onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
       />
+      <SidePanelSearchHandoffEffect />
       <ResizablePanelGap
         side="left"
         constraints={SIDE_PANEL_CONSTRAINTS}

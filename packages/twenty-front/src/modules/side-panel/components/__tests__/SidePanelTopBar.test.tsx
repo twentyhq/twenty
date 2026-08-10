@@ -32,6 +32,10 @@ jest.mock('@/side-panel/components/SidePanelExpandAiChatButton', () => ({
   SidePanelExpandAiChatButton: () => null,
 }));
 
+jest.mock('@/side-panel/components/SidePanelExpandSearchButton', () => ({
+  SidePanelExpandSearchButton: () => null,
+}));
+
 const mockCloseSidePanelMenu = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelContextChips', () => ({

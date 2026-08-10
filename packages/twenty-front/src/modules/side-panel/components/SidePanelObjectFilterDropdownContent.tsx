@@ -1,12 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { TintedIconTile } from 'twenty-ui/data-display';
 import { IconCube } from 'twenty-ui/icon';
 import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { useSearchFilterableObjectMetadataItems } from '@/search/hooks/useSearchFilterableObjectMetadataItems';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -36,25 +35,11 @@ export const SidePanelObjectFilterDropdownContent = ({
   const [filterSearch, setFilterSearch] = useState('');
   const [sidePanelShowHiddenObjects, setSidePanelShowHiddenObjects] =
     useAtomState(sidePanelShowHiddenObjectsState);
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const { closeDropdown } = useCloseDropdown();
 
-  const searchFilter = filterSearch.toLowerCase();
-
-  const displayedObjects = readableObjectMetadataItems.filter((item) => {
-    if (
-      OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
-        item.nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
-      )
-    ) {
-      return false;
-    }
-
-    if (!sidePanelShowHiddenObjects && !item.isSearchable) {
-      return false;
-    }
-
-    return item.labelPlural.toLowerCase().includes(searchFilter);
+  const displayedObjects = useSearchFilterableObjectMetadataItems({
+    searchFilter: filterSearch,
+    includeHiddenObjects: sidePanelShowHiddenObjects,
   });
 
   const handleSelect = (objectNameSingular: string | null) => {

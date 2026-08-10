@@ -117,6 +117,12 @@ const AiChatPage = lazy(() =>
   })),
 );
 
+const SearchPage = lazy(() =>
+  import('~/pages/search/SearchPage').then((module) => ({
+    default: module.SearchPage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -181,6 +187,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <AiChatPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.Search}
+                element={
+                  <LazyRoute>
+                    <SearchPage />
                   </LazyRoute>
                 }
               />

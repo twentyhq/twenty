@@ -25,6 +25,10 @@ jest.mock('@/side-panel/components/SidePanelAskAiHandoffEffect', () => ({
   },
 }));
 
+jest.mock('@/side-panel/components/SidePanelSearchHandoffEffect', () => ({
+  SidePanelSearchHandoffEffect: () => null,
+}));
+
 jest.mock('framer-motion', () => ({
   useReducedMotion: () => false,
 }));

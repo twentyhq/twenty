@@ -10,10 +10,11 @@ import { recordStoreIdentifierFamilySelector } from '@/object-record/record-stor
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
-import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewMaxCollapsedFields';
-import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
-import { useSidePanelSearchRecordPreviewFields } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewFields';
-import { useSidePanelSearchRecordPreviewRecord } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewRecord';
+import { SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS } from '@/search/constants/SearchRecordPreviewMaxCollapsedFields';
+import { SEARCH_RECORD_PREVIEW_WIDTH } from '@/search/constants/SearchRecordPreviewWidth';
+import { useSearchRecordPreviewFields } from '@/search/hooks/useSearchRecordPreviewFields';
+import { useSearchRecordPreviewRecord } from '@/search/hooks/useSearchRecordPreviewRecord';
+import { type SearchRecordPreviewCardLayout } from '@/search/types/SearchRecordPreviewCardLayout';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
@@ -31,15 +32,19 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-// Pinned width so the card keeps its shape across records of different objects
-const StyledCard = styled.div`
+// Floating pins the width so the card keeps its shape across records of
+// different objects; filled lets the surrounding column decide.
+const StyledCard = styled.div<{ layout: SearchRecordPreviewCardLayout }>`
   background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${({ layout }) =>
+    layout === 'floating' ? themeCssVariables.border.radius.md : '0'};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: ${({ layout }) => (layout === 'floating' ? 'auto' : '100%')};
   overflow: hidden;
-  width: ${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px;
+  width: ${({ layout }) =>
+    layout === 'floating' ? `${SEARCH_RECORD_PREVIEW_WIDTH}px` : '100%'};
 `;
 
 const StyledHeader = styled.div`
@@ -57,11 +62,12 @@ const StyledTitleText = styled.div`
   white-space: nowrap;
 `;
 
-const StyledFieldList = styled.div`
+const StyledFieldList = styled.div<{ layout: SearchRecordPreviewCardLayout }>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  max-height: 50dvh;
+  max-height: ${({ layout }) => (layout === 'floating' ? '50dvh' : 'none')};
+  min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
 `;
@@ -110,17 +116,19 @@ const StyledFieldValue = styled.div`
   overflow: hidden;
 `;
 
-type SidePanelSearchRecordPreviewCardProps = {
+type SearchRecordPreviewCardProps = {
   objectNameSingular: string;
   recordId: string;
   label: string;
+  layout?: SearchRecordPreviewCardLayout;
 };
 
-export const SidePanelSearchRecordPreviewCard = ({
+export const SearchRecordPreviewCard = ({
   objectNameSingular,
   recordId,
   label,
-}: SidePanelSearchRecordPreviewCardProps) => {
+  layout = 'floating',
+}: SearchRecordPreviewCardProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { getIcon } = useIcons();
   const { theme } = useContext(ThemeContext);
@@ -128,9 +136,9 @@ export const SidePanelSearchRecordPreviewCard = ({
   const [areAllFieldsVisible, setAreAllFieldsVisible] = useState(false);
 
   const { visibleFields, hiddenFields } =
-    useSidePanelSearchRecordPreviewFields(objectMetadataItem);
+    useSearchRecordPreviewFields(objectMetadataItem);
 
-  const { isRecordLoaded } = useSidePanelSearchRecordPreviewRecord({
+  const { isRecordLoaded } = useSearchRecordPreviewRecord({
     objectNameSingular,
     recordId,
   });
@@ -159,7 +167,7 @@ export const SidePanelSearchRecordPreviewCard = ({
   // past that, plus the view's hidden columns, sits behind the expander
   const collapsedFields = visibleFields.slice(
     0,
-    SIDE_PANEL_SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS,
+    SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS,
   );
 
   const displayedFields = areAllFieldsVisible
@@ -186,7 +194,7 @@ export const SidePanelSearchRecordPreviewCard = ({
     const instanceId = getRecordFieldInputInstanceId({
       recordId,
       fieldName: fieldMetadataItem.name,
-      prefix: 'side-panel-search-record-preview',
+      prefix: 'search-record-preview',
     });
 
     return (
@@ -229,7 +237,7 @@ export const SidePanelSearchRecordPreviewCard = ({
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <StyledCard>
+      <StyledCard layout={layout}>
         <StyledHeader>
           <SidePanelPageInfoLayout
             icon={
@@ -258,7 +266,7 @@ export const SidePanelSearchRecordPreviewCard = ({
           />
         </StyledHeader>
 
-        <StyledFieldList>
+        <StyledFieldList layout={layout}>
           {displayedFields.map(renderFieldRow)}
           {!areAllFieldsVisible &&
             remainingFieldCount > 0 && (

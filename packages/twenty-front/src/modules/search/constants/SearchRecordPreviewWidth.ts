@@ -1,0 +1,1 @@
+export const SEARCH_RECORD_PREVIEW_WIDTH = 360;

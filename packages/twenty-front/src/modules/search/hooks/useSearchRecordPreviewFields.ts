@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 // The preview mirrors the columns of the object's index view, so what you see
 // while searching matches the list view you came from. Columns hidden in that
 // view stay available behind the "More" expander.
-export const useSidePanelSearchRecordPreviewFields = (
+export const useSearchRecordPreviewFields = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ): {
   visibleFields: FieldMetadataItem[];

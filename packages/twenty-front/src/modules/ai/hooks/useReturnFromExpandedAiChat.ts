@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
+import { getExpandedPageReturnLocation } from '~/utils/getExpandedPageReturnLocation';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -21,7 +21,7 @@ export const useReturnFromExpandedAiChat = ({
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const returnLocation = getExpandedAiChatReturnLocation(location.state);
+  const returnLocation = getExpandedPageReturnLocation(location.state);
 
   return useCallback(() => {
     if (!reopenSidePanel) {

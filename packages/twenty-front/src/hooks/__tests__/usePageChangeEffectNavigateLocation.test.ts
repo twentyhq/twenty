@@ -298,6 +298,17 @@ const testCases: {
   { loc: AppPath.AiChat, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
   { loc: AppPath.AiChat, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
 
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.Search, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.APPS_INSTALLATION, res: AppPath.InstallApps },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
+  { loc: AppPath.Search, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+
   { loc: AppPath.OpportunitiesPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.OpportunitiesPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
   { loc: AppPath.OpportunitiesPage, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },

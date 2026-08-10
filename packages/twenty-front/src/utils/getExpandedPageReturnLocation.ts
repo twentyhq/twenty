@@ -1,6 +1,6 @@
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 
-export const getExpandedAiChatReturnLocation = (historyState: unknown) => {
+export const getExpandedPageReturnLocation = (historyState: unknown) => {
   if (
     typeof historyState !== 'object' ||
     historyState === null ||

@@ -1,0 +1,1 @@
+export const SEARCH_RECORDS_DEBOUNCE_MS = 300;

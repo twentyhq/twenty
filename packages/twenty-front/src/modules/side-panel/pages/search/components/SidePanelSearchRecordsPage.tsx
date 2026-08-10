@@ -1,25 +1,25 @@
-import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
-import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
-import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
-import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
-import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+
+import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
+import { SearchRecordPreviewCard } from '@/search/components/SearchRecordPreviewCard';
+import { SearchResultListItem } from '@/search/components/SearchResultListItem';
+import { SEARCH_RECORD_PREVIEW_WIDTH } from '@/search/constants/SearchRecordPreviewWidth';
+import { useOpenSearchResultItem } from '@/search/hooks/useOpenSearchResultItem';
+import { useSearchRecordPreviewItem } from '@/search/hooks/useSearchRecordPreviewItem';
+import { useSearchRecords } from '@/search/hooks/useSearchRecords';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
+import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
+import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
 // Tooltips render at 0.9 opacity, which would make the card translucent.
@@ -33,18 +33,32 @@ const previewTooltipClass = css`
 
 export const SidePanelSearchRecordsPage = () => {
   const { t } = useLingui();
-  const { searchResultItems, loading, noResults } = useSidePanelSearchRecords();
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const { closeCommandMenu } = useCloseCommandMenu();
-  const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+  const sidePanelSearchObjectFilter = useAtomStateValue(
+    sidePanelSearchObjectFilterState,
+  );
+
+  const { searchResultItems, loading, noResults } = useSearchRecords({
+    searchInput: sidePanelSearch,
+    objectNameSingular: sidePanelSearchObjectFilter,
+  });
+
+  const { closeCommandMenu } = useCloseCommandMenu();
+  const { openSearchResultItem } = useOpenSearchResultItem({
+    onBeforeNavigateToRecordPage: closeCommandMenu,
+  });
 
   const selectableItemIds = useMemo(
     () => searchResultItems.map((item) => item.id),
     [searchResultItems],
   );
 
-  const previewedItem = useSidePanelSearchRecordPreviewItem(searchResultItems);
+  const previewedItem = useSearchRecordPreviewItem(
+    searchResultItems,
+    SIDE_PANEL_SELECTABLE_LIST_ID,
+  );
 
   const shouldDisplayPreview = !isMobile && isDefined(previewedItem);
 
@@ -57,55 +71,14 @@ export const SidePanelSearchRecordsPage = () => {
       >
         {searchResultItems.length > 0 && (
           <SidePanelGroup heading={t`Results`}>
-            {searchResultItems.map((item) => {
-              const isTaskOrNote = [
-                CoreObjectNameSingular.Task,
-                CoreObjectNameSingular.Note,
-              ].includes(item.objectNameSingular as CoreObjectNameSingular);
-
-              const handleClick = () => {
-                if (isTaskOrNote) {
-                  openRecordInSidePanel({
-                    recordId: item.recordId,
-                    objectNameSingular:
-                      item.objectNameSingular as CoreObjectNameSingular,
-                  });
-                } else {
-                  closeCommandMenu();
-                  navigate(
-                    getAppPath(AppPath.RecordShowPage, {
-                      objectNameSingular: item.objectNameSingular,
-                      objectRecordId: item.recordId,
-                    }),
-                  );
-                }
-              };
-
-              return (
-                <SelectableListItem
-                  key={item.id}
-                  itemId={item.id}
-                  onEnter={handleClick}
-                >
-                  <div id={getSidePanelSearchResultAnchorId(item.id)}>
-                    <CommandMenuItem
-                      id={item.id}
-                      label={item.label}
-                      description={item.objectLabel}
-                      onClick={handleClick}
-                      LeftComponent={
-                        <Avatar
-                          type={item.avatarType}
-                          avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
-                          placeholderColorSeed={item.recordId}
-                          placeholder={item.label}
-                        />
-                      }
-                    />
-                  </div>
-                </SelectableListItem>
-              );
-            })}
+            {searchResultItems.map((item) => (
+              <SearchResultListItem
+                key={item.id}
+                item={item}
+                anchorId={getSidePanelSearchResultAnchorId(item.id)}
+                onClick={() => openSearchResultItem(item)}
+              />
+            ))}
           </SidePanelGroup>
         )}
       </SidePanelList>
@@ -120,9 +93,9 @@ export const SidePanelSearchRecordsPage = () => {
           isOpen
           delay={TooltipDelay.noDelay}
           className={previewTooltipClass}
-          width={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
+          width={`${SEARCH_RECORD_PREVIEW_WIDTH}px`}
         >
-          <SidePanelSearchRecordPreviewCard
+          <SearchRecordPreviewCard
             key={previewedItem.recordId}
             objectNameSingular={previewedItem.objectNameSingular}
             recordId={previewedItem.recordId}

@@ -2,6 +2,7 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
+import { searchSidePanelHandoffPathnameState } from '@/search/states/searchSidePanelHandoffPathnameState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
@@ -98,21 +99,39 @@ export const PageChangeEffect = () => {
 
   const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();
 
-  const closeSidePanelUnlessNotRelevant = useCallback(() => {
-    const currentPage = store.get(sidePanelPageState.atom);
+  const closeSidePanelUnlessNotRelevant = useCallback(
+    (pathname: string) => {
+      // Collapsing the search page reopens search in the panel of the route it
+      // lands on, from a layout effect that runs before this one. That panel
+      // belongs to the destination, so closing it here would undo the handoff.
+      const searchHandoffPathname = store.get(
+        searchSidePanelHandoffPathnameState.atom,
+      );
 
-    if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
-      return;
-    }
+      if (isDefined(searchHandoffPathname)) {
+        if (searchHandoffPathname === pathname) {
+          return;
+        }
 
-    const sidePanelIsAiChat = currentPage === SidePanelPages.AskAI;
+        store.set(searchSidePanelHandoffPathnameState.atom, null);
+      }
 
-    if (sidePanelIsAiChat) {
-      return;
-    }
+      const currentPage = store.get(sidePanelPageState.atom);
 
-    closeSidePanelMenu();
-  }, [closeSidePanelMenu, store]);
+      if (currentPage === SidePanelPages.NavigationMenuItemEdit) {
+        return;
+      }
+
+      const sidePanelIsAiChat = currentPage === SidePanelPages.AskAI;
+
+      if (sidePanelIsAiChat) {
+        return;
+      }
+
+      closeSidePanelMenu();
+    },
+    [closeSidePanelMenu, store],
+  );
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
@@ -121,7 +140,7 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeSidePanelUnlessNotRelevant();
+    closeSidePanelUnlessNotRelevant(location.pathname);
   }, [location.pathname, closeSidePanelUnlessNotRelevant]);
 
   useEffect(() => {
