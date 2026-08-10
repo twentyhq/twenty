@@ -234,14 +234,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               expectedOutputSchema: {},
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionInput: isDefined(
+                logicFunctionInput: defaultSettings?.input?.logicFunctionInput ?? (isDefined(
                   newLogicFunction.workflowActionTriggerSettings?.inputSchema,
                 )
                   ? (getFunctionInputFromInputSchema(
                       newLogicFunction.workflowActionTriggerSettings
                         .inputSchema,
                     )[0] ?? {})
-                  : {},
+                  : {})
               },
             },
           },
@@ -302,14 +302,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               expectedOutputSchema: {},
               input: {
                 logicFunctionId,
-                logicFunctionInput: isDefined(
+                logicFunctionInput: defaultSettings?.input?.logicFunctionInput ?? (isDefined(
                   flatLogicFunction.workflowActionTriggerSettings?.inputSchema,
                 )
                   ? (getFunctionInputFromInputSchema(
                       flatLogicFunction.workflowActionTriggerSettings
                         .inputSchema,
                     )[0] ?? {})
-                  : {},
+                  : {})
               },
             },
           },
