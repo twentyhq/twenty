@@ -148,7 +148,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
     });
   };
 
-  it('passes the position before the hidden legacy Timeline tab to the migration', async () => {
+  it('passes the computed tab position to the migration', async () => {
     mockWorkspaceCache({
       tabs: [
         buildPageLayoutTab({

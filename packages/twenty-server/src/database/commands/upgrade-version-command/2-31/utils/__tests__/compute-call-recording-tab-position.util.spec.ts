@@ -52,7 +52,7 @@ describe('computeCallRecordingTabPosition', () => {
     ).toBe(15);
   });
 
-  it('uses a fractional position before the hidden legacy Timeline tab', () => {
+  it('uses a fractional position before the legacy Timeline tab', () => {
     expect(
       computeCallRecordingTabPosition({
         existingPageLayoutTabs: [
