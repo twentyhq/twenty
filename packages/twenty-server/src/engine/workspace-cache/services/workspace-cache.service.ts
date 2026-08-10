@@ -35,6 +35,7 @@ import {
   type WorkspaceCacheDataMap,
   type WorkspaceCacheResult,
   type WorkspaceCacheResultWithHashes,
+  type WorkspaceCacheStoredDataMap,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import {
   type VersionEntry,
@@ -54,14 +55,19 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const HOT_ENTRIES_PER_PROVIDER = 64;
+const DATA_KEY_SUFFIX = 'data';
+const COMPACT_DATA_KEY_SUFFIX = 'data:compact-v1';
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
   [WORKSPACE_CACHE_KEYS_V2.ORMEntityMetadatas, 128],
 ]);
+const buildAllDataKeys = (baseKey: string): string[] => [
+  `${baseKey}:${DATA_KEY_SUFFIX}`,
+  `${baseKey}:${COMPACT_DATA_KEY_SUFFIX}`,
+];
+
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
-type StoredCacheDataType = ReturnType<
-  WorkspaceCacheProvider<CacheDataType>['encodeForCacheStorage']
->;
+type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 
 type CacheEntriesResult = {
   data: Partial<WorkspaceCacheDataMap>;
@@ -556,9 +562,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           value: this.encodeForStorage({ workspaceId, keyName, data }),
         });
         staleEncodingKeys.push(
-          ...[`${baseKey}:data`, `${baseKey}:data:compact-v1`].filter(
-            (key) => key !== dataKey,
-          ),
+          ...buildAllDataKeys(baseKey).filter((key) => key !== dataKey),
         );
       }
 
@@ -639,11 +643,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const keysToDelete = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [
-        `${baseKey}:data`,
-        `${baseKey}:data:compact-v1`,
-        `${baseKey}:hash`,
-      ];
+      return [...buildAllDataKeys(baseKey), `${baseKey}:hash`];
     });
 
     await this.cacheStorage.mdel(keysToDelete);
@@ -742,11 +742,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return false;
     }
 
-    return (
-      (version.data as WorkspaceCacheDataMap['featureFlagsMap'])[
-        FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
-      ] === true
-    );
+    return (version.data as WorkspaceCacheDataMap['featureFlagsMap'])[
+      FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
+    ];
   }
 
   private buildDataKey({
@@ -757,8 +755,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     baseKey: string;
   }): string {
     return this.isCompactStorageEnabled(workspaceId)
-      ? `${baseKey}:data:compact-v1`
-      : `${baseKey}:data`;
+      ? `${baseKey}:${COMPACT_DATA_KEY_SUFFIX}`
+      : `${baseKey}:${DATA_KEY_SUFFIX}`;
   }
 
   private encodeForStorage({
