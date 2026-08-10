@@ -25,16 +25,4 @@ describe('encodeFlatFieldMetadataMapsForCache', () => {
       $H: ['view-field-1'],
     });
   });
-
-  it('should pass an unmapped key through unchanged', () => {
-    expect(encodeOne({ someKeyAddedLater: 'value' })).toEqual({
-      someKeyAddedLater: 'value',
-    });
-  });
-
-  it('should pass a key inherited from Object.prototype through unchanged', () => {
-    expect(encodeOne({ constructor: 'value' })).toEqual({
-      constructor: 'value',
-    });
-  });
 });

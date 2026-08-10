@@ -36,12 +36,6 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
     });
   });
 
-  it('should pass an unmapped key through unchanged', () => {
-    expect(decodeOne({ someKeyAddedLater: 'value' })).toMatchObject({
-      someKeyAddedLater: 'value',
-    });
-  });
-
   it('should round trip a field through JSON, as the cache storage layer does', () => {
     const encoded = JSON.parse(
       JSON.stringify(

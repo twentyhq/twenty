@@ -434,9 +434,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
 
-    const allValues = await this.cacheStorage.mget<CacheDataType | string>(
-      allKeys,
-    );
+    const [allValues, isCompactStorageEnabled] = await Promise.all([
+      this.cacheStorage.mget<CacheDataType | string>(allKeys),
+      this.resolveCompactStorageEnabled(workspaceId),
+    ]);
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
       const rawData = allValues[index * 2] as CacheDataType | undefined;
@@ -446,7 +447,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data = this.isCompactStorageEnabled(workspaceId)
+          data = isCompactStorageEnabled
             ? this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData)
             : rawData;
         } catch (error) {
@@ -522,6 +523,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const computed = await Promise.all(computePromises);
 
+    const recomputedFeatureFlagsMap = computed.find(
+      ({ keyName }) => keyName === 'featureFlagsMap',
+    )?.data as WorkspaceCacheDataMap['featureFlagsMap'] | undefined;
+
+    const isCompactStorageEnabled = isDefined(recomputedFeatureFlagsMap)
+      ? recomputedFeatureFlagsMap[
+          FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
+        ]
+      : await this.resolveCompactStorageEnabled(workspaceId);
+
     const redisEntries: Array<{
       key: string;
       value: StoredCacheDataType | string;
@@ -546,7 +557,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       if (!isLocalDataOnly) {
         redisEntries.push({
           key: `${baseKey}:data`,
-          value: this.encodeForStorage({ workspaceId, keyName, data }),
+          value: isCompactStorageEnabled
+            ? this.getProviderOrThrow(keyName).encodeForCacheStorage(data)
+            : data,
         });
       }
 
@@ -688,10 +701,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         ) as WorkspaceCacheKeyName;
 
         if (
-          !isDefined(keyName) ||
           this.localDataOnlyKeys.has(keyName) ||
           keyName === 'featureFlagsMap' ||
-          !this.isCompactStorageEnabled(workspaceId)
+          !this.isCompactStorageEnabledInLocalCache(workspaceId)
         ) {
           return undefined;
         }
@@ -706,14 +718,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  private isCompactStorageEnabled(workspaceId: string): boolean {
+  private isCompactStorageEnabledInLocalCache(
+    workspaceId: string,
+  ): boolean | undefined {
     const entry = this.localCache.get(
       this.buildCacheKey(workspaceId, 'featureFlagsMap'),
     );
     const version = entry?.versions.get(entry.latestHash);
 
     if (version?.state !== 'hot') {
-      return false;
+      return undefined;
     }
 
     return (version.data as WorkspaceCacheDataMap['featureFlagsMap'])[
@@ -721,20 +735,26 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     ];
   }
 
-  private encodeForStorage({
-    workspaceId,
-    keyName,
-    data,
-  }: {
-    workspaceId: string;
-    keyName: WorkspaceCacheKeyName;
-    data: CacheDataType;
-  }): StoredCacheDataType {
-    if (!this.isCompactStorageEnabled(workspaceId)) {
-      return data;
+  // A restarted pod reads an already-encoded Redis payload with an empty local
+  // cache, so the flag has to resolve from Redis before any decode happens.
+  private async resolveCompactStorageEnabled(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const localValue = this.isCompactStorageEnabledInLocalCache(workspaceId);
+
+    if (isDefined(localValue)) {
+      return localValue;
     }
 
-    return this.getProviderOrThrow(keyName).encodeForCacheStorage(data);
+    const featureFlagsMap = await this.cacheStorage.get<
+      WorkspaceCacheDataMap['featureFlagsMap']
+    >(`${this.buildCacheKey(workspaceId, 'featureFlagsMap')}:data`);
+
+    return (
+      featureFlagsMap?.[
+        FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
+      ] ?? false
+    );
   }
 
   private readVersion({
