@@ -129,6 +129,10 @@ export type SelectFilter = {
   is?: IsFilter;
   in?: string[];
   eq?: string;
+  gt?: string;
+  gte?: string;
+  lt?: string;
+  lte?: string;
   neq?: string;
 };
 

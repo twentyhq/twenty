@@ -72,6 +72,68 @@ describe('isMatchingSelectFilter', () => {
     });
   });
 
+  describe('gt', () => {
+    it('should return true when value is greater', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'ACTIVE' },
+          value: 'CLOSED',
+        }),
+      ).toBe(true);
+    });
+
+    it('should return false when value is not greater', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'CLOSED' },
+          value: 'ACTIVE',
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('gte', () => {
+    it('should return true when value is equal', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gte: 'ACTIVE' },
+          value: 'ACTIVE',
+        }),
+      ).toBe(true);
+    });
+  });
+
+  describe('lt', () => {
+    it('should return true when value is lower', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { lt: 'CLOSED' },
+          value: 'ACTIVE',
+        }),
+      ).toBe(true);
+    });
+
+    it('should return false when value is not lower', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { lt: 'ACTIVE' },
+          value: 'CLOSED',
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('lte', () => {
+    it('should return true when value is equal', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { lte: 'ACTIVE' },
+          value: 'ACTIVE',
+        }),
+      ).toBe(true);
+    });
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
