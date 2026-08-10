@@ -108,6 +108,31 @@ describe('getTabsRenderableForTargetObject', () => {
     expect(result.map((tab) => tab.id)).toEqual(['tab-4']);
   });
 
+  it('requires call recordings for the native transcript widget', () => {
+    const tabs = [
+      createMockTab('transcript-tab', [
+        createMockWidget(
+          'transcript-widget',
+          WidgetType.CALL_RECORDING_TRANSCRIPT,
+        ),
+      ]),
+    ];
+
+    expect(
+      getTabsRenderableForTargetObject({
+        tabs,
+        targetObjectFields: [],
+      }),
+    ).toEqual([]);
+
+    expect(
+      getTabsRenderableForTargetObject({
+        tabs,
+        targetObjectFields: [createRelationField('callRecordings')],
+      }).map((tab) => tab.id),
+    ).toEqual(['transcript-tab']);
+  });
+
   it('should drop tabs whose relation field exists but is deactivated', () => {
     const tabs = [
       createMockTab('tab-1', [createMockWidget('widget-1', WidgetType.TASKS)]),

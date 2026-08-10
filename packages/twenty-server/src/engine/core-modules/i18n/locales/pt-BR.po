@@ -7143,6 +7143,11 @@ msgstr "Algumas das permissões que você selecionou não são válidas. Por fav
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Algumas associações ao espaço de trabalho não puderam ser encontradas. Essas associações talvez não tenham mais acesso a este espaço de trabalho."
 
+#. js-lingui-id: RjTo7h
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while starting the app installation. Please try again."
+msgstr ""
+
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "Something went wrong. Please try again."
