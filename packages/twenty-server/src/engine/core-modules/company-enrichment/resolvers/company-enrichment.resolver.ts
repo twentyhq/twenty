@@ -1,5 +1,7 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Mutation } from '@nestjs/graphql';
+
+import { type WorkspacePersonEnrichmentResult } from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -23,6 +25,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @MetadataResolver()
 export class CompanyEnrichmentResolver {
+  private readonly logger = new Logger(CompanyEnrichmentResolver.name);
+
   constructor(
     private readonly companyEnrichmentService: CompanyEnrichmentService,
     private readonly personEnrichmentService: PersonEnrichmentService,
@@ -41,7 +45,7 @@ export class CompanyEnrichmentResolver {
         email: user.email,
         workspaceId: workspace.id,
       }),
-      this.personEnrichmentService.enrichPersonForWorkspaceCreator({
+      this.enrichPersonForWorkspaceCreatorBestEffort({
         userId: user.id,
         email: user.email,
         workspaceId: workspace.id,
@@ -70,5 +74,31 @@ export class CompanyEnrichmentResolver {
       personEnrichment: personEnrichmentResult.enrichment,
       isBookCallOnboardingStepPending,
     };
+  }
+
+  // Person enrichment is best-effort garnish on this mutation: an unexpected
+  // failure must not take down the company enrichment resolved alongside it.
+  private async enrichPersonForWorkspaceCreatorBestEffort({
+    userId,
+    email,
+    workspaceId,
+  }: {
+    userId: string;
+    email: string;
+    workspaceId: string;
+  }): Promise<WorkspacePersonEnrichmentResult> {
+    try {
+      return await this.personEnrichmentService.enrichPersonForWorkspaceCreator(
+        { userId, email, workspaceId },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Person enrichment unexpectedly failed for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return { outcome: 'transientError', enrichment: null };
+    }
   }
 }
