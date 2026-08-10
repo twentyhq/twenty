@@ -21,6 +21,7 @@ import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { getMessagesToImportCacheKey } from 'src/modules/messaging/common/utils/get-messages-to-import-cache-key.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -108,7 +109,7 @@ export class MessageChannelSyncStatusService {
 
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:${messageChannelId}`,
+        getMessagesToImportCacheKey({ workspaceId, messageChannelId }),
       );
     }
 

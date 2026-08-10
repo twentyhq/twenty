@@ -327,7 +327,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  MESSAGING_ONBOARDING_FIRST_MESSAGES_GET_BATCH_SIZE = 50;
+  MESSAGING_ONBOARDING_FIRST_MESSAGES_GET_BATCH_SIZE = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,

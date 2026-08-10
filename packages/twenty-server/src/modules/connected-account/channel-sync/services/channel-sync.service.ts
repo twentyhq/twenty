@@ -82,10 +82,6 @@ export class ChannelSyncService {
           workspaceId,
         );
 
-        await this.messagingSyncJobDispatcherService.enqueueOnboardingContactsBootstrap(
-          { messageChannel, workspaceId },
-        );
-
         await this.messagingSyncJobDispatcherService.enqueueMessageListFetch({
           messageChannel,
           workspaceId,

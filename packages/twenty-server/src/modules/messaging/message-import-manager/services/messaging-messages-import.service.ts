@@ -19,6 +19,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { getMessagesToImportCacheKey } from 'src/modules/messaging/common/utils/get-messages-to-import-cache-key.util';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -170,7 +171,10 @@ export class MessagingMessagesImportService {
           }
 
           messageIdsToFetch = await this.cacheStorage.setPop(
-            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            getMessagesToImportCacheKey({
+              workspaceId,
+              messageChannelId: messageChannel.id,
+            }),
             messagesGetBatchSize,
           );
 
@@ -312,7 +316,10 @@ export class MessagingMessagesImportService {
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error (${error.code}) importing messages: ${error.message}`,
           );
           await this.cacheStorage.setAdd(
-            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            getMessagesToImportCacheKey({
+              workspaceId,
+              messageChannelId: messageChannel.id,
+            }),
             messageIdsToFetch,
           );
 

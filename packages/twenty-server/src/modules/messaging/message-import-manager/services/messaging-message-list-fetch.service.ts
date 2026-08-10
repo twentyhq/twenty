@@ -20,7 +20,9 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { MESSAGES_TO_IMPORT_CACHE_TTL_MS } from 'src/modules/messaging/common/constants/messages-to-import-cache-ttl-ms.constant';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { getMessagesToImportCacheKey } from 'src/modules/messaging/common/utils/get-messages-to-import-cache-key.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
@@ -40,8 +42,6 @@ import {
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-
-const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class MessagingMessageListFetchService {
@@ -204,7 +204,10 @@ export class MessagingMessageListFetchService {
             );
 
           await this.cacheStorage.del(
-            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+            getMessagesToImportCacheKey({
+              workspaceId,
+              messageChannelId: freshMessageChannel.id,
+            }),
           );
 
           const messageExternalIds = [
@@ -271,9 +274,12 @@ export class MessagingMessageListFetchService {
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
               await this.cacheStorage.setAdd(
-                `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+                getMessagesToImportCacheKey({
+                  workspaceId,
+                  messageChannelId: freshMessageChannel.id,
+                }),
                 messageExternalIdsToImport,
-                ONE_WEEK_IN_MILLISECONDS,
+                MESSAGES_TO_IMPORT_CACHE_TTL_MS,
               );
             }
           }

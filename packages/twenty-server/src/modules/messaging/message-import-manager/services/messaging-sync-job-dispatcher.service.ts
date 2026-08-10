@@ -15,10 +15,9 @@ import {
   type MessagingMessagesImportJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import {
-  MessagingOnboardingContactsBootstrapJob,
-  type MessagingOnboardingContactsBootstrapJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-contacts-bootstrap.job';
-import { MessagingOnboardingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-message-list-fetch.job';
+  MessagingOnboardingFirstBatchImportJob,
+  type MessagingOnboardingFirstBatchImportJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-first-batch-import.job';
 import { MessagingOnboardingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-messages-import.job';
 
 type DispatchableMessageChannel = Pick<MessageChannelEntity, 'id' | 'syncedAt'>;
@@ -47,9 +46,11 @@ export class MessagingSyncJobDispatcherService {
       workspaceId,
     };
 
+    // A first sync imports its newest messages before listing the whole mailbox,
+    // and that job starts the full list fetch once it is done
     if (this.isOnboardingSync(messageChannel)) {
-      await this.onboardingQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingOnboardingMessageListFetchJob.name,
+      await this.onboardingQueueService.add<MessagingOnboardingFirstBatchImportJobData>(
+        MessagingOnboardingFirstBatchImportJob.name,
         data,
       );
 
@@ -59,25 +60,6 @@ export class MessagingSyncJobDispatcherService {
     await this.messagingQueueService.add<MessagingMessageListFetchJobData>(
       MessagingMessageListFetchJob.name,
       data,
-    );
-  }
-
-  // Kicks off the lightweight contact bootstrap in parallel with the regular
-  // sync, and is a no-op for a channel that already completed one
-  async enqueueOnboardingContactsBootstrap({
-    messageChannel,
-    workspaceId,
-  }: {
-    messageChannel: DispatchableMessageChannel;
-    workspaceId: string;
-  }): Promise<void> {
-    if (!this.isOnboardingSync(messageChannel)) {
-      return;
-    }
-
-    await this.onboardingQueueService.add<MessagingOnboardingContactsBootstrapJobData>(
-      MessagingOnboardingContactsBootstrapJob.name,
-      { messageChannelId: messageChannel.id, workspaceId },
     );
   }
 

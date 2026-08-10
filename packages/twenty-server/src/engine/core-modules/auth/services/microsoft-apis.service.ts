@@ -296,8 +296,9 @@ export class MicrosoftAPIsService {
               messageChannel.syncStage !==
               MessageChannelSyncStage.PENDING_CONFIGURATION
             ) {
-              await this.messagingSyncJobDispatcherService.enqueueOnboardingContactsBootstrap(
-                { messageChannel, workspaceId },
+              await this.messagingChannelSyncStatusService.markAsMessagesListFetchScheduled(
+                [messageChannel.id],
+                workspaceId,
               );
               await this.messagingSyncJobDispatcherService.enqueueMessageListFetch(
                 { messageChannel, workspaceId },

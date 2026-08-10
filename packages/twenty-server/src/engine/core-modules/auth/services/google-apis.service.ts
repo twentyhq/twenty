@@ -336,8 +336,9 @@ export class GoogleAPIsService {
                   [messageChannel.id],
                   workspaceId,
                 );
-                await this.messagingSyncJobDispatcherService.enqueueOnboardingContactsBootstrap(
-                  { messageChannel, workspaceId },
+                await this.messagingChannelSyncStatusService.markAsMessagesListFetchScheduled(
+                  [messageChannel.id],
+                  workspaceId,
                 );
                 await this.messagingSyncJobDispatcherService.enqueueMessageListFetch(
                   { messageChannel, workspaceId },

@@ -222,8 +222,9 @@ export class ImapSmtpCalDavAPIService {
         workspaceId,
       );
 
-      await this.messagingSyncJobDispatcherService.enqueueOnboardingContactsBootstrap(
-        { messageChannel: existingMessageChannel, workspaceId },
+      await this.messagingChannelSyncStatusService.markAsMessagesListFetchScheduled(
+        [existingMessageChannel.id],
+        workspaceId,
       );
       await this.messagingSyncJobDispatcherService.enqueueMessageListFetch({
         messageChannel: existingMessageChannel,

@@ -4,6 +4,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getMessagesToImportCacheKey } from 'src/modules/messaging/common/utils/get-messages-to-import-cache-key.util';
 
 export type MessagingAddSingleMessageToCacheForImportJobData = {
   messageExternalId: string;
@@ -25,7 +26,7 @@ export class MessagingAddSingleMessageToCacheForImportJob {
     const { messageExternalId, messageChannelId, workspaceId } = data;
 
     await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:${messageChannelId}`,
+      getMessagesToImportCacheKey({ workspaceId, messageChannelId }),
       [messageExternalId],
     );
   }

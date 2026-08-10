@@ -17,6 +17,7 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
+import { OnboardingFirstMessagesModule } from 'src/modules/onboarding-first-messages/onboarding-first-messages.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 import { MessagingTriggerMessageListFetchCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-trigger-message-list-fetch.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
@@ -37,7 +38,7 @@ import { MessagingCleanCacheJob } from 'src/modules/messaging/message-import-man
 import { MessagingInboundEmailImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-inbound-email-import.job';
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
-import { MessagingOnboardingContactsBootstrapJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-contacts-bootstrap.job';
+import { MessagingOnboardingFirstBatchImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-first-batch-import.job';
 import { MessagingOnboardingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-message-list-fetch.job';
 import { MessagingOnboardingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
@@ -53,7 +54,7 @@ import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
-import { MessagingOnboardingContactsBootstrapService } from 'src/modules/messaging/message-import-manager/services/messaging-onboarding-contacts-bootstrap.service';
+import { MessagingOnboardingFirstBatchImportService } from 'src/modules/messaging/message-import-manager/services/messaging-onboarding-first-batch-import.service';
 import { MessagingSyncJobDispatcherService } from 'src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
@@ -89,6 +90,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageCleanerModule,
     WorkspaceEventEmitterModule,
     ConnectedAccountModule,
+    OnboardingFirstMessagesModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(MessageChannelEntity),
@@ -101,7 +103,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessagesImportJob,
     MessagingOnboardingMessageListFetchJob,
     MessagingOnboardingMessagesImportJob,
-    MessagingOnboardingContactsBootstrapJob,
+    MessagingOnboardingFirstBatchImportJob,
     MessagingOngoingStaleJob,
     MessagingRelaunchFailedMessageChannelJob,
     MessagingMessageListFetchCronJob,
@@ -124,7 +126,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingDeleteFolderMessagesService,
     MessagingImportFolderMessagesService,
     MessagingDeleteGroupEmailMessagesService,
-    MessagingOnboardingContactsBootstrapService,
+    MessagingOnboardingFirstBatchImportService,
     MessagingSyncJobDispatcherService,
     InboundEmailImportService,
   ],
