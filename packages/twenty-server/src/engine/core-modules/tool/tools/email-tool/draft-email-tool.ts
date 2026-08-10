@@ -17,7 +17,7 @@ export class DraftEmailTool implements Tool {
   private readonly logger = new Logger(DraftEmailTool.name);
 
   description =
-    'Create a draft email using a connected account. The email will be saved as a draft, not sent.';
+    'Create a draft email using a connected account. The email will be saved as a draft, not sent. To choose the sender, pass fromHandle with the email address to draft from (or connectedAccountId if you already have its UUID); otherwise the default connected account is used.';
   inputSchema = EmailToolInputZodSchema;
 
   constructor(

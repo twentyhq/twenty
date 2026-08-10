@@ -22,7 +22,9 @@ import {
 } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
+import { getUsableConnectedAccountHandles } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-usable-connected-account-handles.util';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
+import { selectConnectedAccountIdByHandle } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-by-handle.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -128,6 +130,57 @@ export class EmailComposerService {
         if (!isDefined(connectedAccountId)) {
           throw new EmailToolException(
             `No connected account available for user workspace '${userWorkspaceId}'`,
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          );
+        }
+
+        return connectedAccountId;
+      },
+      authContext,
+    );
+  }
+
+  private async getConnectedAccountIdByHandleOrThrow({
+    fromHandle,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    fromHandle: string;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<string> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const allAccounts = await this.connectedAccountRepository.find({
+          where: { workspaceId, archivedAt: IsNull() },
+          order: { createdAt: 'ASC', id: 'ASC' },
+        });
+
+        if (!isNonEmptyArray(allAccounts)) {
+          throw new EmailToolException(
+            'No connected accounts found for this workspace',
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          );
+        }
+
+        const connectedAccountId = selectConnectedAccountIdByHandle({
+          connectedAccounts: allAccounts,
+          handle: fromHandle,
+          userWorkspaceId,
+        });
+
+        if (!isDefined(connectedAccountId)) {
+          const usableHandles = getUsableConnectedAccountHandles({
+            connectedAccounts: allAccounts,
+            userWorkspaceId,
+          });
+
+          throw new EmailToolException(
+            isNonEmptyArray(usableHandles)
+              ? `No connected account found for handle '${fromHandle}'. Available handles: ${usableHandles.join(', ')}`
+              : `No connected account found for handle '${fromHandle}', and no connected account is available to you in this workspace`,
             EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
           );
         }
@@ -338,7 +391,7 @@ export class EmailComposerService {
     context: ToolExecutionContext,
   ): Promise<EmailComposerResult> {
     const { workspaceId, userWorkspaceId } = context;
-    const { subject, body, files, inReplyTo } = parameters;
+    const { subject, body, files, inReplyTo, fromHandle } = parameters;
     let { connectedAccountId } = parameters;
 
     let recipients: { to: string[]; cc: string[]; bcc: string[] };
@@ -374,6 +427,14 @@ export class EmailComposerService {
     }
 
     const toRecipientsDisplay = recipients.to.join(', ');
+
+    if (!connectedAccountId && isNonEmptyString(fromHandle)) {
+      connectedAccountId = await this.getConnectedAccountIdByHandleOrThrow({
+        fromHandle,
+        workspaceId,
+        userWorkspaceId,
+      });
+    }
 
     if (!connectedAccountId) {
       connectedAccountId = await this.getDefaultConnectedAccountIdOrThrow({

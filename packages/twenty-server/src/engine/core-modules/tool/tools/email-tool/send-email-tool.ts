@@ -15,7 +15,7 @@ export class SendEmailTool implements Tool {
   private readonly logger = new Logger(SendEmailTool.name);
 
   description =
-    'Send an email using a connected account. Requires SEND_EMAIL_TOOL permission.';
+    'Send an email using a connected account. To choose the sender, pass fromHandle with the email address to send from (or connectedAccountId if you already have its UUID); otherwise the default connected account is used. Requires SEND_EMAIL_TOOL permission.';
   inputSchema = EmailToolInputZodSchema;
 
   constructor(
