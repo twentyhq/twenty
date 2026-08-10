@@ -7,8 +7,6 @@ import { viewableRichTextComponentState } from '@/side-panel/pages/rich-text-pag
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const RICH_TEXT_TAB_ID = 'richText';
-
 export const useExpandRichTextSidePanelPage =
   (): SidePanelExpandTarget | null => {
     const { t } = useLingui();
@@ -31,11 +29,6 @@ export const useExpandRichTextSidePanelPage =
     return {
       label: t`Expand record`,
       hasExpandShortcut: true,
-      expand: () =>
-        navigateToRecordPage({
-          objectNameSingular,
-          recordId,
-          targetTabId: RICH_TEXT_TAB_ID,
-        }),
+      expand: () => navigateToRecordPage({ objectNameSingular, recordId }),
     };
   };

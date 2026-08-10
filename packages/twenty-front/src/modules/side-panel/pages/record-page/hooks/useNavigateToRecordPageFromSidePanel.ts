@@ -19,8 +19,6 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 type NavigateToRecordPageParams = {
   objectNameSingular: string;
   recordId: string;
-  // Pages that carry no tab list of their own name the tab to land on.
-  targetTabId?: string;
 };
 
 export const useNavigateToRecordPageFromSidePanel = () => {
@@ -39,11 +37,7 @@ export const useNavigateToRecordPageFromSidePanel = () => {
   );
 
   const navigateToRecordPage = useCallback(
-    ({
-      objectNameSingular,
-      recordId,
-      targetTabId,
-    }: NavigateToRecordPageParams) => {
+    ({ objectNameSingular, recordId }: NavigateToRecordPageParams) => {
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: getShowPageTabListComponentId({
@@ -54,13 +48,12 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       );
 
       const tabIdToOpen =
-        targetTabId ??
-        (activeTabId === 'home'
+        activeTabId === 'home'
           ? objectNameSingular === CoreObjectNameSingular.Note ||
             objectNameSingular === CoreObjectNameSingular.Task
             ? 'richText'
             : 'timeline'
-          : activeTabId);
+          : activeTabId;
 
       store.set(
         activeTabIdComponentState.atomFamily({
