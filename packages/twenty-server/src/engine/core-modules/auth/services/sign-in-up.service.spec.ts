@@ -118,7 +118,7 @@ const createSignInUpServiceForTests = () => {
       }),
     } as any,
     {
-      creditWorkspaceBalance: jest.fn(),
+      grantCredits: jest.fn(),
     } as any,
     {
       isBillingEnabled: jest.fn(),

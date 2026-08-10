@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
+import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -262,11 +263,14 @@ export class OnboardingService {
         return;
       }
 
-      await this.billingCreditService.creditWorkspaceBalance({
+      await this.billingCreditService.grantCredits({
         workspaceId,
         amountMicro: this.twentyConfigService.get(
           'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
         ),
+        type: BillingCreditGrantType.ONBOARDING_REWARD,
+        reason: 'Onboarding reward: import contacts',
+        idempotencyKey: `onboarding-import-contacts:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(
@@ -405,12 +409,15 @@ export class OnboardingService {
     rewardAppsCount: number;
   }) {
     try {
-      await this.billingCreditService.creditWorkspaceBalance({
+      await this.billingCreditService.grantCredits({
         workspaceId,
         amountMicro:
           this.twentyConfigService.get(
             'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
           ) * rewardAppsCount,
+        type: BillingCreditGrantType.ONBOARDING_REWARD,
+        reason: `Onboarding reward: install ${rewardAppsCount} app(s)`,
+        idempotencyKey: `onboarding-install-apps:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(

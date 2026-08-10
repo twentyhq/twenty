@@ -59,10 +59,7 @@ export class ResourceCreditService {
   async getResourceCreditRolloverParameters(
     workspaceId: string,
     subscriptionId: string,
-  ): Promise<{
-    tierQuantity: number;
-    unitPriceCents: number;
-  } | null> {
+  ): Promise<{ tierQuantity: number } | null> {
     const subscription = await this.billingSubscriptionRepository.findOne(
       workspaceId,
       {
@@ -85,9 +82,6 @@ export class ResourceCreditService {
       return null;
     }
 
-    return {
-      tierQuantity: pricingInfo.tierCap,
-      unitPriceCents: pricingInfo.unitPriceCents,
-    };
+    return { tierQuantity: pricingInfo.tierCap };
   }
 }

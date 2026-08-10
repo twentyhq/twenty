@@ -13,16 +13,21 @@ import {
   IconCreditCard,
   IconExternalLink,
   IconId,
+  IconPlus,
   IconStatusChange,
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
+import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
@@ -40,6 +45,7 @@ const STRIPE_DASHBOARD_BASE_URL = 'https://dashboard.stripe.com';
 const BASE_PRODUCT_KEY = 'BASE_PRODUCT';
 const RESOURCE_CREDIT_KEY = 'RESOURCE_CREDIT';
 const EM_DASH = '\u2014';
+const GRANT_CREDITS_MODAL_ID = 'settings-admin-grant-workspace-credits';
 
 type SettingsAdminWorkspaceBillingContentProps = {
   workspaceId: string;
@@ -66,6 +72,13 @@ const StyledExternalLink = styled.a`
 
 const StyledMono = styled.span`
   font-family: ${themeCssVariables.code.font.family};
+`;
+
+const StyledSectionHeader = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
 `;
 
 const StyledItemValue = styled.div`
@@ -138,6 +151,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
 }: SettingsAdminWorkspaceBillingContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
+  const { openModal } = useModal();
   const apolloAdminClient = useApolloAdminClient();
 
   const { data, loading } = useQuery<WorkspaceBillingAdminPanelQuery>(
@@ -172,7 +186,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
     );
   }
 
-  const { stripeCustomerId, creditBalance, subscription, usage } = billing;
+  const { stripeCustomerId, creditBalance, creditGrants, subscription, usage } =
+    billing;
 
   const formatCredits = (credits: number): string =>
     formatNumber(credits, { abbreviate: true, decimals: 2 });
@@ -421,6 +436,31 @@ export const SettingsAdminWorkspaceBillingContent = ({
           />
         )}
       </Section>
+
+      <Section>
+        <StyledSectionHeader>
+          <H2Title
+            title={t`Granted credits`}
+            description={t`Credits handed out on top of the plan allowance`}
+          />
+          <Button
+            Icon={IconPlus}
+            title={t`Grant credits`}
+            variant="secondary"
+            size="small"
+            onClick={() => openModal(GRANT_CREDITS_MODAL_ID)}
+          />
+        </StyledSectionHeader>
+        <SettingsAdminWorkspaceCreditGrantsTable
+          workspaceId={workspaceId}
+          creditGrants={creditGrants}
+        />
+      </Section>
+
+      <SettingsAdminWorkspaceCreditGrantModal
+        modalInstanceId={GRANT_CREDITS_MODAL_ID}
+        workspaceId={workspaceId}
+      />
     </StyledContainer>
   );
 };

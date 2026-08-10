@@ -1453,6 +1453,11 @@ type BillingSubscriptionItem {
   billingProduct: BillingProductDTO!
 }
 
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
 type BillingSubscription {
   id: UUID!
   status: SubscriptionStatus!
@@ -1473,11 +1478,6 @@ enum SubscriptionStatus {
   Paused
   Trialing
   Unpaid
-}
-
-type BillingCustomer {
-  id: UUID!
-  hasPaymentMethod: Boolean
 }
 
 type LogicFunctionExecutionResult {

@@ -39,14 +39,15 @@ export class BillingUsageCacheService {
     );
   }
 
-  async decrementAvailableCredits(
+  // Signed: usage moves it down, a grant moves it up.
+  async adjustAvailableCredits(
     workspaceId: string,
     periodStart: Date | string,
-    usedCredits: number,
+    deltaCredits: number,
   ): Promise<number> {
     return this.billingUsageCacheStorage.incrBy(
       buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
-      -usedCredits,
+      deltaCredits,
     );
   }
 

@@ -1,22 +1,33 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
+import { type AdminPanelWorkspaceCreditGrantDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-credit-grant.dto';
 import { type AdminPanelWorkspaceUsageDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage.dto';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import {
+  INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+  toDisplayCredits,
+} from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-const CREDIT_BALANCE_MICRO_UNIT = 1_000_000;
-
 const KNOWN_PLAN_KEYS: ReadonlySet<string> = new Set(
   Object.values(BillingPlanKey),
 );
@@ -34,8 +45,105 @@ export class AdminPanelBillingService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingCreditService: BillingCreditService,
+    private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  async grantWorkspaceCredits({
+    workspaceId,
+    amount,
+    type,
+    reason,
+    grantedByUserId,
+  }: {
+    workspaceId: string;
+    amount: number;
+    type: BillingCreditGrantType;
+    reason?: string;
+    grantedByUserId: string;
+  }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
+    const amountMicro = Math.round(
+      amount * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+    );
+
+    const maxAmountMicro = this.twentyConfigService.get(
+      'BILLING_MAX_ADMIN_CREDIT_GRANT_MICRO',
+    );
+
+    // The field is micro-denominated, so a slipped decimal is four orders of
+    // magnitude. Bound what a single grant can hand out.
+    if (amountMicro > maxAmountMicro) {
+      throw new BillingException(
+        `Cannot grant ${toDisplayCredits(amountMicro)} credits at once, the maximum is ${toDisplayCredits(maxAmountMicro)}`,
+        BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID,
+      );
+    }
+
+    const grant = await this.billingCreditService.grantCredits({
+      workspaceId,
+      amountMicro,
+      type,
+      reason,
+      grantedByUserId,
+    });
+
+    if (!isDefined(grant)) {
+      throw new BillingException(
+        `Could not grant credits to workspace ${workspaceId}, billing is disabled on this instance`,
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      );
+    }
+
+    return this.toCreditGrantDTO(grant);
+  }
+
+  async revokeWorkspaceCreditGrant({
+    workspaceId,
+    creditGrantId,
+    revokedByUserId,
+  }: {
+    workspaceId: string;
+    creditGrantId: string;
+    revokedByUserId: string;
+  }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
+    const grant = await this.billingCreditService.revokeGrant({
+      workspaceId,
+      grantId: creditGrantId,
+      revokedByUserId,
+    });
+
+    return this.toCreditGrantDTO(grant);
+  }
+
+  private async getWorkspaceCreditGrants(
+    workspaceId: string,
+  ): Promise<AdminPanelWorkspaceCreditGrantDTO[]> {
+    const grants = await this.billingCreditGrantService.listGrants(workspaceId);
+
+    return grants.map((grant) => this.toCreditGrantDTO(grant));
+  }
+
+  private toCreditGrantDTO(
+    grant: BillingCreditGrantEntity,
+  ): AdminPanelWorkspaceCreditGrantDTO {
+    const now = Date.now();
+
+    return {
+      id: grant.id,
+      amount: toDisplayCredits(grant.amountMicro),
+      type: grant.type,
+      effectiveAt: grant.effectiveAt,
+      expiresAt: grant.expiresAt,
+      revokedAt: grant.revokedAt,
+      reason: grant.reason,
+      isActive:
+        !isDefined(grant.revokedAt) &&
+        grant.effectiveAt.getTime() <= now &&
+        grant.expiresAt.getTime() > now,
+      createdAt: grant.createdAt,
+    };
+  }
 
   async getWorkspaceBilling(
     workspaceId: string,
@@ -44,27 +152,33 @@ export class AdminPanelBillingService {
       return null;
     }
 
-    const [customer, subscription] = await Promise.all([
+    const [customer, subscription, creditGrants] = await Promise.all([
       this.billingCustomerRepository.findOne(workspaceId, { where: {} }),
       this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
       }),
+      this.getWorkspaceCreditGrants(workspaceId),
     ]);
 
-    if (!customer && !subscription) {
+    // A workspace can hold granted credits before it has a customer or a
+    // subscription, and the admin panel still has to show and manage them.
+    if (!customer && !subscription && creditGrants.length === 0) {
       return null;
     }
 
     const stripeCustomerId =
       customer?.stripeCustomerId ?? subscription?.stripeCustomerId ?? null;
-    const creditBalance = customer
-      ? customer.creditBalanceMicro / CREDIT_BALANCE_MICRO_UNIT
-      : null;
+    const creditBalance = toDisplayCredits(
+      await this.billingCreditGrantService.getSpendableCreditsMicro(
+        workspaceId,
+      ),
+    );
 
     if (!subscription) {
       return {
         stripeCustomerId,
         creditBalance,
+        creditGrants,
         subscription: null,
         usage: null,
       };
@@ -92,6 +206,7 @@ export class AdminPanelBillingService {
     return {
       stripeCustomerId,
       creditBalance,
+      creditGrants,
       usage,
       subscription: {
         stripeSubscriptionId: subscription.stripeSubscriptionId,

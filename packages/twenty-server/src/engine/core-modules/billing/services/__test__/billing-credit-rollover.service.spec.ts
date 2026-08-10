@@ -2,16 +2,43 @@
 
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const workspaceId = 'ws_123';
+const CLOSING_PERIOD_START = new Date('2026-01-01T00:00:00.000Z');
+const CLOSING_PERIOD_END = new Date('2026-02-01T00:00:00.000Z');
+const NEXT_PERIOD_END = new Date('2026-03-01T00:00:00.000Z');
+const ALLOWANCE = 1_000_000;
+
+const baseParams = {
+  workspaceId,
+  closingPeriodStart: CLOSING_PERIOD_START,
+  closingPeriodEnd: CLOSING_PERIOD_END,
+  closingAllowanceMicro: ALLOWANCE,
+  nextPeriodStart: CLOSING_PERIOD_END,
+  nextPeriodEnd: NEXT_PERIOD_END,
+  nextAllowanceMicro: ALLOWANCE,
+};
+
 describe('BillingCreditRolloverService', () => {
   let service: BillingCreditRolloverService;
-  let billingUsageService: jest.Mocked<
-    Pick<BillingUsageService, 'getCurrentPeriodCreditsUsed'>
-  >;
-  let billingCustomerRepository: jest.Mocked<{ update: jest.Mock }>;
+  let billingUsageService: jest.Mocked<{
+    getCreditsUsedBetweenOrNull: jest.Mock;
+  }>;
+  let billingCreditGrantService: jest.Mocked<{
+    findGrantsLiveDuringPeriod: jest.Mock;
+    closeGrantsAtPeriodEnd: jest.Mock;
+    createGrant: jest.Mock;
+    materializeLegacyBalance: jest.Mock;
+  }>;
+  let billingCreditService: jest.Mocked<{
+    refreshWorkspaceCreditState: jest.Mock;
+  }>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,14 +47,31 @@ describe('BillingCreditRolloverService', () => {
         {
           provide: BillingUsageService,
           useValue: {
-            getCurrentPeriodCreditsUsed: jest.fn().mockResolvedValue(0),
+            getCreditsUsedBetweenOrNull: jest.fn().mockResolvedValue(0),
           },
         },
         {
-          provide: getWorkspaceScopedRepositoryToken(BillingCustomerEntity),
+          provide: BillingCreditGrantService,
           useValue: {
-            update: jest.fn(),
+            findGrantsLiveDuringPeriod: jest.fn().mockResolvedValue([]),
+            closeGrantsAtPeriodEnd: jest.fn().mockResolvedValue(undefined),
+            createGrant: jest
+              .fn()
+              .mockImplementation((params) =>
+                Promise.resolve({ id: 'grant_new', ...params }),
+              ),
+            materializeLegacyBalance: jest.fn().mockResolvedValue(undefined),
           },
+        },
+        {
+          provide: BillingCreditService,
+          useValue: {
+            refreshWorkspaceCreditState: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: { get: jest.fn().mockReturnValue(2) },
         },
       ],
     }).compile();
@@ -36,9 +80,8 @@ describe('BillingCreditRolloverService', () => {
       BillingCreditRolloverService,
     );
     billingUsageService = module.get(BillingUsageService);
-    billingCustomerRepository = module.get(
-      getWorkspaceScopedRepositoryToken(BillingCustomerEntity),
-    );
+    billingCreditGrantService = module.get(BillingCreditGrantService);
+    billingCreditService = module.get(BillingCreditService);
   });
 
   afterEach(() => {
@@ -46,81 +89,194 @@ describe('BillingCreditRolloverService', () => {
   });
 
   describe('processRolloverOnPeriodTransition', () => {
-    const baseParams = {
-      workspaceId: 'ws_123',
-      stripeCustomerId: 'cus_123',
-      tierQuantity: 1000,
-      previousPeriodStart: new Date('2024-01-01'),
-    };
-
-    it('writes rollover amount to creditBalanceMicro when credits unused', async () => {
-      (
-        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
-      ).mockResolvedValue(300);
+    it('grants the unspent allowance for the new period', async () => {
+      billingUsageService.getCreditsUsedBetweenOrNull.mockResolvedValue(
+        300_000,
+      );
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
-      expect(billingCustomerRepository.update).toHaveBeenCalledWith(
-        'ws_123',
-        { stripeCustomerId: 'cus_123' },
-        { creditBalanceMicro: 700 },
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId,
+          amountMicro: 700_000,
+          type: BillingCreditGrantType.ROLLOVER,
+          effectiveAt: CLOSING_PERIOD_END,
+          expiresAt: NEXT_PERIOD_END,
+        }),
       );
     });
 
-    it('sets creditBalanceMicro to tierQuantity when no credits used', async () => {
-      (
-        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
-      ).mockResolvedValue(0);
+    it('reads usage over the closing period, not the one that just started', async () => {
+      await service.processRolloverOnPeriodTransition(baseParams);
+
+      expect(
+        billingUsageService.getCreditsUsedBetweenOrNull,
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        from: CLOSING_PERIOD_START,
+        to: CLOSING_PERIOD_END,
+      });
+    });
+
+    it('grants nothing when the whole allowance was spent', async () => {
+      billingUsageService.getCreditsUsedBetweenOrNull.mockResolvedValue(
+        ALLOWANCE,
+      );
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
-      expect(billingCustomerRepository.update).toHaveBeenCalledWith(
-        'ws_123',
-        { stripeCustomerId: 'cus_123' },
-        { creditBalanceMicro: 1000 },
-      );
+      expect(billingCreditGrantService.createGrant).not.toHaveBeenCalled();
     });
 
-    it('sets creditBalanceMicro to 0 when all credits used', async () => {
-      (
-        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
-      ).mockResolvedValue(1000);
+    it('refreshes the credit state once even when nothing carried forward', async () => {
+      billingUsageService.getCreditsUsedBetweenOrNull.mockResolvedValue(
+        ALLOWANCE,
+      );
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
-      expect(billingCustomerRepository.update).toHaveBeenCalledWith(
-        'ws_123',
-        { stripeCustomerId: 'cus_123' },
-        { creditBalanceMicro: 0 },
-      );
+      expect(
+        billingCreditService.refreshWorkspaceCreditState,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        billingCreditService.refreshWorkspaceCreditState,
+      ).toHaveBeenCalledWith({ workspaceId, availableDeltaMicro: 0 });
     });
 
-    it('sets creditBalanceMicro to 0 when usage exceeds tier', async () => {
-      (
-        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
-      ).mockResolvedValue(1500);
+    it('refreshes the credit state once for the whole transition', async () => {
+      billingCreditGrantService.findGrantsLiveDuringPeriod.mockResolvedValue([
+        {
+          id: 'compensation_1',
+          type: BillingCreditGrantType.COMPENSATION,
+          amountMicro: 500_000,
+          createdAt: CLOSING_PERIOD_START,
+        },
+      ]);
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
-      expect(billingCustomerRepository.update).toHaveBeenCalledWith(
-        'ws_123',
-        { stripeCustomerId: 'cus_123' },
-        { creditBalanceMicro: 0 },
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledTimes(2);
+      expect(
+        billingCreditService.refreshWorkspaceCreditState,
+      ).toHaveBeenCalledTimes(1);
+    });
+
+    it('caps the rollover so the new period totals at most twice the allowance', async () => {
+      billingCreditGrantService.findGrantsLiveDuringPeriod.mockResolvedValue([
+        {
+          id: 'previous_rollover',
+          type: BillingCreditGrantType.ROLLOVER,
+          amountMicro: ALLOWANCE,
+          createdAt: CLOSING_PERIOD_START,
+        },
+      ]);
+
+      await service.processRolloverOnPeriodTransition(baseParams);
+
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledTimes(1);
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledWith(
+        expect.objectContaining({ amountMicro: ALLOWANCE }),
       );
     });
 
-    it('caps rollover at tierQuantity', async () => {
-      (
-        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
-      ).mockResolvedValue(0);
-      const params = { ...baseParams, tierQuantity: 500 };
+    it('carries a compensation grant over untouched by the cap', async () => {
+      billingCreditGrantService.findGrantsLiveDuringPeriod.mockResolvedValue([
+        {
+          id: 'compensation_1',
+          type: BillingCreditGrantType.COMPENSATION,
+          amountMicro: 200_000_000,
+          createdAt: CLOSING_PERIOD_START,
+        },
+      ]);
 
-      await service.processRolloverOnPeriodTransition(params);
+      await service.processRolloverOnPeriodTransition(baseParams);
 
-      expect(billingCustomerRepository.update).toHaveBeenCalledWith(
-        'ws_123',
-        { stripeCustomerId: 'cus_123' },
-        { creditBalanceMicro: 500 },
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amountMicro: 200_000_000,
+          type: BillingCreditGrantType.COMPENSATION,
+          sourceGrantId: 'compensation_1',
+        }),
+      );
+    });
+
+    it('closes the grants it carried forward so they cannot be counted twice', async () => {
+      billingCreditGrantService.findGrantsLiveDuringPeriod.mockResolvedValue([
+        {
+          id: 'compensation_1',
+          type: BillingCreditGrantType.COMPENSATION,
+          amountMicro: 500_000,
+          createdAt: CLOSING_PERIOD_START,
+        },
+      ]);
+
+      await service.processRolloverOnPeriodTransition(baseParams);
+
+      expect(
+        billingCreditGrantService.closeGrantsAtPeriodEnd,
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        periodEnd: CLOSING_PERIOD_END,
+      });
+    });
+
+    it('gives every carried grant a replay-safe idempotency key', async () => {
+      await service.processRolloverOnPeriodTransition(baseParams);
+
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledWith(
+        expect.objectContaining({
+          idempotencyKey: `carry-forward:${workspaceId}:${CLOSING_PERIOD_END.toISOString()}:ROLLOVER:allowance`,
+        }),
+      );
+    });
+
+    it('skips the whole transition when usage could not be read', async () => {
+      billingUsageService.getCreditsUsedBetweenOrNull.mockResolvedValue(null);
+
+      await service.processRolloverOnPeriodTransition(baseParams);
+
+      expect(billingCreditGrantService.createGrant).not.toHaveBeenCalled();
+      expect(
+        billingCreditGrantService.closeGrantsAtPeriodEnd,
+      ).not.toHaveBeenCalled();
+      expect(
+        billingCreditService.refreshWorkspaceCreditState,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('carries trial credits into the first paid period', async () => {
+      const trialAllowance = 500_000;
+
+      billingCreditGrantService.findGrantsLiveDuringPeriod.mockResolvedValue([
+        {
+          id: 'reward_1',
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          amountMicro: 1_000_000,
+          createdAt: CLOSING_PERIOD_START,
+        },
+      ]);
+      billingUsageService.getCreditsUsedBetweenOrNull.mockResolvedValue(
+        200_000,
+      );
+
+      await service.processRolloverOnPeriodTransition({
+        ...baseParams,
+        closingAllowanceMicro: trialAllowance,
+      });
+
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amountMicro: 300_000,
+          type: BillingCreditGrantType.ROLLOVER,
+        }),
+      );
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amountMicro: 1_000_000,
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          sourceGrantId: 'reward_1',
+        }),
       );
     });
   });

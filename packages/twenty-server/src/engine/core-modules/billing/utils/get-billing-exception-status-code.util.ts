@@ -18,6 +18,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_METER_NOT_FOUND:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND:
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_NOT_FOUND:
       return 404;
     case BillingExceptionCode.BILLING_METER_EVENT_FAILED:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD:
@@ -25,6 +26,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE:
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
     case BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID:
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID:
       return 400;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
       return 402;

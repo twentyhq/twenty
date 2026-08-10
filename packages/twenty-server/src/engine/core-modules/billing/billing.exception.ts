@@ -35,6 +35,8 @@ export enum BillingExceptionCode {
   BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
   BILLING_SUBSCRIPTION_NOT_CANCELED = 'BILLING_SUBSCRIPTION_NOT_CANCELED',
   BILLING_CREDIT_AMOUNT_INVALID = 'BILLING_CREDIT_AMOUNT_INVALID',
+  BILLING_CREDIT_GRANT_NOT_FOUND = 'BILLING_CREDIT_GRANT_NOT_FOUND',
+  BILLING_CREDIT_GRANT_VALIDITY_INVALID = 'BILLING_CREDIT_GRANT_VALIDITY_INVALID',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -93,6 +95,10 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Workspace cannot be deleted: subscription is not yet canceled.`;
     case BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID:
       return msg`Invalid credit amount.`;
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_NOT_FOUND:
+      return msg`Credit grant not found.`;
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID:
+      return msg`Credit grant must expire after it becomes effective.`;
     default:
       assertUnreachable(code);
   }

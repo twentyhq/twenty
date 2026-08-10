@@ -20,8 +20,10 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
+import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
@@ -41,6 +43,7 @@ export class BillingWebhookInvoiceService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -87,7 +90,7 @@ export class BillingWebhookInvoiceService {
       { hasReachedCurrentPeriodCap: false },
     );
 
-    if (!isDefined(stripeCustomerId) || !periodEnd) {
+    if (!isDefined(stripeCustomerId) || !periodEnd || !periodStart) {
       return;
     }
 
@@ -108,18 +111,27 @@ export class BillingWebhookInvoiceService {
 
     const isFirstPeriodAfterTrial =
       isDefined(trialEnd) &&
-      isDefined(periodStart) &&
       Math.abs(periodStart - trialEnd) <= TRIAL_END_TOLERANCE_SECONDS;
 
-    if (periodStart && !isFirstPeriodAfterTrial) {
-      await this.processRollover(subscription, new Date(periodStart * 1000));
-    }
+    await this.processRollover({
+      subscription,
+      invoicePeriodStart: new Date(periodStart * 1000),
+      invoicePeriodEnd: new Date(periodEnd * 1000),
+      isFirstPeriodAfterTrial,
+    });
   }
 
-  private async processRollover(
-    subscription: BillingSubscriptionEntity,
-    invoicedPeriodStart: Date,
-  ): Promise<void> {
+  private async processRollover({
+    subscription,
+    invoicePeriodStart,
+    invoicePeriodEnd,
+    isFirstPeriodAfterTrial,
+  }: {
+    subscription: BillingSubscriptionEntity;
+    invoicePeriodStart: Date;
+    invoicePeriodEnd: Date;
+    isFirstPeriodAfterTrial: boolean;
+  }): Promise<void> {
     const params =
       await this.resourceCreditService.getResourceCreditRolloverParameters(
         subscription.workspaceId,
@@ -130,11 +142,35 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
+    const {
+      closingPeriodStart,
+      closingPeriodEnd,
+      nextPeriodStart,
+      nextPeriodEnd,
+    } = deriveBillingPeriodTransition({
+      invoicePeriodStart,
+      invoicePeriodEnd,
+      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+      subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
+      trialStart: subscription.trialStart,
+      isFirstPeriodAfterTrial,
+    });
+
+    // Credits earned during the trial follow the workspace into its first paid
+    // period, so the trial closes like any other period. Its allowance comes
+    // from config rather than the price, which only applies once paid.
+    const closingAllowanceMicro = isFirstPeriodAfterTrial
+      ? this.billingUsageService.getTrialResourceUsageCap(subscription)
+      : params.tierQuantity;
+
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
       workspaceId: subscription.workspaceId,
-      stripeCustomerId: subscription.stripeCustomerId,
-      tierQuantity: params.tierQuantity,
-      previousPeriodStart: invoicedPeriodStart,
+      closingPeriodStart,
+      closingPeriodEnd,
+      closingAllowanceMicro,
+      nextPeriodStart,
+      nextPeriodEnd,
+      nextAllowanceMicro: params.tierQuantity,
     });
   }
 
