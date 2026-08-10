@@ -49,7 +49,7 @@ export class WorkflowTriggerJob {
       });
 
       if (!workflow) {
-        this.logger.error(
+        this.logger.warn(
           `Workflow ${data.workflowId} not found in workspace ${data.workspaceId}`,
           WorkflowTriggerExceptionCode.NOT_FOUND,
         );
@@ -58,7 +58,7 @@ export class WorkflowTriggerJob {
       }
 
       if (!workflow.lastPublishedVersionId) {
-        this.logger.error(
+        this.logger.warn(
           `Workflow ${data.workflowId} has no published version in workspace ${data.workspaceId}`,
           WorkflowTriggerExceptionCode.INTERNAL_ERROR,
         );
@@ -73,7 +73,7 @@ export class WorkflowTriggerJob {
         });
 
       if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
-        this.logger.error(
+        this.logger.warn(
           `Workflow version ${workflowVersion?.id} is not active in workspace ${data.workspaceId}`,
           WorkflowTriggerExceptionCode.INTERNAL_ERROR,
         );

@@ -2,6 +2,7 @@ import { HttpException } from '@nestjs/common';
 
 import { GraphQLError } from 'graphql';
 
+import { CacheLockAcquisitionError } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -62,6 +63,10 @@ export const shouldCaptureException = (
   exception: Error,
   statusCode?: number,
 ): boolean => {
+  if (exception instanceof CacheLockAcquisitionError) {
+    return false;
+  }
+
   if (
     exception instanceof GraphQLError &&
     (exception?.extensions?.http?.status ?? 500) < 500

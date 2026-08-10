@@ -7,6 +7,8 @@ import {
 
 import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
+import { CacheLockAcquisitionError } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { POSTGRESQL_ERROR_CODES from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
@@ -48,6 +50,19 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (exception instanceof CacheLockAcquisitionError) {
+          scope.addBreadcrumb({
+            category: 'sentry.filter',
+            level: 'warning',
+            message: 'Filtered transient cache lock acquisition failure',
+            data: {
+              key: exception.key,
+            },
+          });
+
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
@@ -85,6 +100,22 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
 
         if (exception instanceof PostgresException) {
           scope.setTag('postgresSqlErrorCode', exception.code);
+
+          if (
+            exception.code === POSTGRESQL_ERROR_CODES.READ_ONLY_SQL_TRANSACTION
+          ) {
+            scope.setTag('postgresTransactionMode', 'read-only');
+            scope.addBreadcrumb({
+              category: 'database.transaction',
+              level: 'error',
+              message: 'PostgreSQL rejected operation in read-only transaction',
+              data: {
+                postgresSqlErrorCode: exception.code,
+                operationName: options?.operation?.name,
+              },
+            });
+          }
+
           const fingerPrint = [exception.code];
           const genericOperationName = getGenericOperationName(
             options?.operation?.name,
