@@ -993,8 +993,6 @@ export type ClientConfig = {
   publicFunctionDomain?: Maybe<Scalars['String']['output']>;
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
-  /** @deprecated Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend. */
-  subdomainMinLength: Scalars['Float']['output'];
   support: Support;
 };
 
@@ -6151,7 +6149,7 @@ export type UpsertViewWidgetViewSettingsInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
-  /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed. */
+  /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed. */
   type?: InputMaybe<ViewType>;
 };
 
@@ -6491,6 +6489,7 @@ export enum ViewType {
   KANBAN = 'KANBAN',
   KANBAN_WIDGET = 'KANBAN_WIDGET',
   LIST = 'LIST',
+  LIST_WIDGET = 'LIST_WIDGET',
   TABLE = 'TABLE',
   TABLE_WIDGET = 'TABLE_WIDGET'
 }

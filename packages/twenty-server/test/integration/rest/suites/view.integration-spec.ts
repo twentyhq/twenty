@@ -5,6 +5,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
+  assertMetadataRestListResponse,
   assertRestApiErrorNotFoundResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
@@ -12,6 +13,8 @@ import { createTestViewWithRestApi } from 'test/integration/rest/utils/view-rest
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
 import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
+
+import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 
 describe('View REST API', () => {
   let testObjectMetadataId: string;
@@ -78,8 +81,7 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(Array.isArray(response.body)).toBe(true);
+      assertMetadataRestListResponse<ViewDTO>(response);
     });
 
     it('should return views filtered by objectMetadataId', async () => {
@@ -89,11 +91,10 @@ describe('View REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(Array.isArray(response.body)).toBe(true);
+      const views = assertMetadataRestListResponse<ViewDTO>(response);
 
-      if (response.body.length > 0) {
-        assertViewStructure(response.body[0]);
+      if (views.length > 0) {
+        assertViewStructure(views[0]);
       }
     });
   });

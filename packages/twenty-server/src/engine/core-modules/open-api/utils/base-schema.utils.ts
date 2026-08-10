@@ -69,10 +69,10 @@ Notes: Strings and dates are quoted; numbers are not.
 
 All list endpoints use cursor-based pagination.
 
-- Use **limit** to cap page size (default: 60, max: 60).
+- Use **limit** to cap page size (default: 60, max: 200).
 - Use **starting_after** to fetch the next page (forward).
 - Use **ending_before** to fetch the previous page (backward).
-- Responses include **pageInfo** with \`hasNextPage\`, \`startCursor\`, and \`endCursor\`.
+- Responses include **pageInfo** with \`hasNextPage\`, \`hasPreviousPage\`, \`startCursor\`, and \`endCursor\`.
 
 Examples:
 

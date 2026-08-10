@@ -6,12 +6,6 @@ import {
 } from '@nestjs/graphql';
 
 import {
-  Authorize,
-  FilterableField,
-  IDField,
-  QueryOptions,
-} from '@ptc-org/nestjs-query-graphql';
-import {
   IsBoolean,
   IsDate,
   IsEnum,
@@ -30,24 +24,11 @@ registerEnumType(IndexType, {
   description: 'Type of the index',
 });
 
-// TODO: drop these nestjs-query decorators once ObjectMetadataDTO's
-// @CursorConnection('indexMetadatas') relation is migrated off nestjs-query.
 @ObjectType('Index')
-@Authorize({
-  // oxlint-disable-next-line typescript/no-explicit-any
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  disableSort: true,
-  maxResultsSize: 1000,
-})
 export class IndexMetadataDTO {
   @IsUUID()
   @IsNotEmpty()
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @IsString()
@@ -58,7 +39,7 @@ export class IndexMetadataDTO {
 
   @IsBoolean()
   @IsOptional()
-  @FilterableField({ nullable: true })
+  @Field({ nullable: true })
   isCustom?: boolean;
 
   @IsBoolean()

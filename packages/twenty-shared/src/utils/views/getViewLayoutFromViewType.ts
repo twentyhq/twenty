@@ -10,6 +10,7 @@ const VIEW_TYPE_TO_LAYOUT_MAPPING: Record<ViewTypeValue, ViewTypeValue> = {
   [ViewType.FIELDS_WIDGET]: ViewType.FIELDS_WIDGET,
   [ViewType.TABLE_WIDGET]: ViewType.TABLE,
   [ViewType.KANBAN_WIDGET]: ViewType.KANBAN,
+  [ViewType.LIST_WIDGET]: ViewType.LIST,
   [ViewType.CALENDAR_WIDGET]: ViewType.CALENDAR,
 };
 
