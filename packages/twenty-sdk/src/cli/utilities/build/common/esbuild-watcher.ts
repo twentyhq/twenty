@@ -1,9 +1,6 @@
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
-import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
-import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -207,11 +204,6 @@ export type EsbuildWatcherFactoryOptions = RestartableWatcherOptions & {
   shouldSkipTypecheck: () => boolean;
 };
 
-export type FrontComponentsWatcherFactoryOptions =
-  EsbuildWatcherFactoryOptions & {
-    getVendorBuildContext?: () => VendorBuildContext | null;
-  };
-
 export const createLogicFunctionsWatcher = (
   options: EsbuildWatcherFactoryOptions,
 ): EsbuildWatcher =>
@@ -226,24 +218,5 @@ export const createLogicFunctionsWatcher = (
         createStubTwentySdkDefinePlugin(),
       ],
       banner: NODE_ESM_CJS_BANNER,
-    },
-  });
-
-export const createFrontComponentsWatcher = (
-  options: FrontComponentsWatcherFactoryOptions,
-): EsbuildWatcher =>
-  new EsbuildWatcher({
-    ...options,
-    config: {
-      externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
-      fileFolder: FileFolder.BuiltFrontComponent,
-      jsx: 'automatic',
-      extraPlugins: [
-        createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
-        ...getFrontComponentBuildPlugins({
-          getVendorBuildContext: options.getVendorBuildContext,
-        }),
-        createStubTwentySdkDefinePlugin(),
-      ],
     },
   });
