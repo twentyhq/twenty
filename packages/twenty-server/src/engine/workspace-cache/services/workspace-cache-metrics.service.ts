@@ -40,7 +40,7 @@ export class WorkspaceCacheMetricsService {
   private readonly redisWriteDurationHistogram: Histogram;
 
   private localCache?: LocalCache;
-  private cacheSizeByProvider: Record<string, number> = {};
+  private cacheSizeByKeyName: Record<string, number> = {};
   private cacheSizeTotalBytes = 0;
   private sizeSampler?: ReturnType<typeof setInterval>;
   private sizeStartupTimer?: ReturnType<typeof setTimeout>;
@@ -148,14 +148,14 @@ export class WorkspaceCacheMetricsService {
       return;
     }
 
-    const perProvider: Record<
+    const perKeyName: Record<
       string,
       { count: number; sampledBytes: number; sampled: number }
     > = {};
 
     for (const [key, entry] of localCache) {
-      const provider = getKeyNameFromLocalCacheKey(key);
-      const stats = (perProvider[provider] ??= {
+      const keyName = getKeyNameFromLocalCacheKey(key);
+      const stats = (perKeyName[keyName] ??= {
         count: 0,
         sampledBytes: 0,
         sampled: 0,
@@ -180,20 +180,20 @@ export class WorkspaceCacheMetricsService {
       }
     }
 
-    const byProvider: Record<string, number> = {};
+    const byKeyName: Record<string, number> = {};
     let total = 0;
 
-    for (const [provider, stats] of Object.entries(perProvider)) {
+    for (const [keyName, stats] of Object.entries(perKeyName)) {
       const estimate =
         stats.sampled === 0
           ? 0
           : Math.round((stats.sampledBytes / stats.sampled) * stats.count);
 
-      byProvider[provider] = estimate;
+      byKeyName[keyName] = estimate;
       total += estimate;
     }
 
-    this.cacheSizeByProvider = byProvider;
+    this.cacheSizeByKeyName = byKeyName;
     this.cacheSizeTotalBytes = total;
   }
 
@@ -249,9 +249,9 @@ export class WorkspaceCacheMetricsService {
         unit: 'By',
       },
       callback: async () =>
-        Object.entries(this.cacheSizeByProvider).map(([provider, value]) => ({
+        Object.entries(this.cacheSizeByKeyName).map(([keyName, value]) => ({
           value,
-          attributes: { provider },
+          attributes: { provider: keyName },
         })),
     });
     this.metricsService.createMultiObservableGauge({
@@ -261,10 +261,10 @@ export class WorkspaceCacheMetricsService {
           'Entries in the local workspace metadata cache per provider',
       },
       callback: async () =>
-        Object.entries(this.getStats().entriesByProvider).map(
-          ([provider, value]) => ({
+        Object.entries(this.getStats().entriesByKeyName).map(
+          ([keyName, value]) => ({
             value,
-            attributes: { provider },
+            attributes: { provider: keyName },
           }),
         ),
     });

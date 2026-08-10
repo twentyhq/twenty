@@ -11,7 +11,7 @@ describe('computeLocalCacheStats', () => {
       workspaces: 0,
       versionsTotal: 0,
       versionsByCount: { '1': 0, '2': 0, '3': 0, '4': 0, '5+': 0 },
-      entriesByProvider: {},
+      entriesByKeyName: {},
     });
   });
 
@@ -28,7 +28,7 @@ describe('computeLocalCacheStats', () => {
     // ws-a and ws-b — the same workspace under two providers counts once.
     expect(stats.workspaces).toBe(2);
     expect(stats.versionsTotal).toBe(4);
-    expect(stats.entriesByProvider).toEqual({
+    expect(stats.entriesByKeyName).toEqual({
       ORMEntityMetadatas: 2,
       flatFieldMetadataMaps: 1,
     });
