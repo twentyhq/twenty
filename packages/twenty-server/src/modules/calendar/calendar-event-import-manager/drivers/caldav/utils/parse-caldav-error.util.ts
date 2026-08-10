@@ -1,12 +1,30 @@
+import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
+// tsdav's collectionQuery rejects with this message and stringifies the parsed body into
+// an unusable "[object Object]", so the status is recovered from the message itself.
+const TSDAV_COLLECTION_QUERY_ERROR_REGEX =
+  /^Collection query failed: (\d{3})\b/;
+
 export const parseCalDAVError = (
   error: Error,
 ): CalendarEventImportDriverException => {
   const { message } = error;
+
+  const collectionQueryStatus =
+    TSDAV_COLLECTION_QUERY_ERROR_REGEX.exec(message)?.[1];
+
+  if (collectionQueryStatus !== undefined) {
+    return new CalendarEventImportDriverException(
+      message,
+      mapCalDavStatusToExceptionCode(
+        Number.parseInt(collectionQueryStatus, 10),
+      ),
+    );
+  }
 
   switch (message) {
     case 'Collection does not exist on server':

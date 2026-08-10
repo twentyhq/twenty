@@ -14,7 +14,9 @@ import { extractICalData } from 'src/modules/calendar/calendar-event-import-mana
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
+import { normalizeSyncToken } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/normalize-sync-token.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
+import { runCalendarMultiGet } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/run-calendar-multi-get.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 type CalendarSyncResult = {
@@ -85,24 +87,29 @@ export class CalDavFetchEventsService {
       ),
     ];
 
-    const calendarObjects = (
-      await Promise.all(
-        collectionUrls.map((collectionUrl) =>
-          client.calendarMultiGet({
-            url: collectionUrl,
-            props: {
-              [`${DAVNamespaceShort.DAV}:getetag`]: {},
-              [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
-            },
-            objectUrls: eventHrefs.filter(
-              (href) =>
-                this.resolveCollectionUrl(client, href) === collectionUrl,
-            ),
-            depth: '1',
-          }),
-        ),
-      )
-    ).flat();
+    const multiGetResults = await Promise.all(
+      collectionUrls.map((collectionUrl) =>
+        runCalendarMultiGet({
+          client,
+          collectionUrl,
+          objectUrls: eventHrefs.filter(
+            (href) => this.resolveCollectionUrl(client, href) === collectionUrl,
+          ),
+        }),
+      ),
+    );
+
+    const missingHrefs = multiGetResults.flatMap(
+      (result) => result.missingHrefs,
+    );
+
+    if (missingHrefs.length > 0) {
+      this.logger.debug(
+        `Skipping ${missingHrefs.length} calendar events removed from the server since the last list fetch`,
+      );
+    }
+
+    const calendarObjects = multiGetResults.flatMap((result) => result.objects);
 
     return calendarObjects.flatMap((calendarObject) => {
       const iCalData = extractICalData(calendarObject.props?.calendarData);
@@ -172,10 +179,9 @@ export class CalDavFetchEventsService {
       .filter((entry) => entry.status === 404)
       .map((entry) => entry.href);
 
-    const rawSyncToken = syncResult[0]?.raw?.multistatus?.syncToken;
-    const newSyncToken = isNonEmptyString(rawSyncToken)
-      ? rawSyncToken
-      : previousSyncToken;
+    const newSyncToken =
+      normalizeSyncToken(syncResult[0]?.raw?.multistatus?.syncToken) ??
+      previousSyncToken;
 
     return {
       calendarUrl: calendar.url,
