@@ -2,20 +2,19 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseSearchableObjectNameSingularsParams = {
   selectedObjectNameSingular?: string | null;
+  // Passed in rather than read from the side panel state, so a surface that
+  // only ever searches searchable objects cannot inherit another one's scope.
+  includeHiddenObjects?: boolean;
 };
 
 export const useSearchableObjectNameSingulars = ({
   selectedObjectNameSingular = null,
+  includeHiddenObjects = false,
 }: UseSearchableObjectNameSingularsParams = {}) => {
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
-  const sidePanelShowHiddenObjects = useAtomStateValue(
-    sidePanelShowHiddenObjectsState,
-  );
 
   return useMemo(() => {
     if (isDefined(selectedObjectNameSingular)) {
@@ -23,11 +22,11 @@ export const useSearchableObjectNameSingulars = ({
     }
 
     return readableObjectMetadataItems
-      .filter((item) => sidePanelShowHiddenObjects || item.isSearchable)
+      .filter((item) => includeHiddenObjects || item.isSearchable)
       .map((item) => item.nameSingular);
   }, [
     readableObjectMetadataItems,
     selectedObjectNameSingular,
-    sidePanelShowHiddenObjects,
+    includeHiddenObjects,
   ]);
 };

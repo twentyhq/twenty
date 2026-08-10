@@ -18,6 +18,7 @@ import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelS
 import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -40,9 +41,14 @@ export const SidePanelSearchRecordsPage = () => {
     sidePanelSearchObjectFilterState,
   );
 
+  const sidePanelShowHiddenObjects = useAtomStateValue(
+    sidePanelShowHiddenObjectsState,
+  );
+
   const { searchResultItems, loading, noResults } = useSearchRecords({
     searchInput: sidePanelSearch,
     objectNameSingular: sidePanelSearchObjectFilter,
+    includeHiddenObjects: sidePanelShowHiddenObjects,
   });
 
   const { closeCommandMenu } = useCloseCommandMenu();

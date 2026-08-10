@@ -5,6 +5,8 @@ import { useDebounce } from 'use-debounce';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export type NavigationMenuItemSearchRecord = {
@@ -30,8 +32,13 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
 
   const [deferredSearchInput] = useDebounce(trimmedSearchInput, 300);
 
+  const sidePanelShowHiddenObjects = useAtomStateValue(
+    sidePanelShowHiddenObjectsState,
+  );
+
   const includedObjectNameSingulars = useSearchableObjectNameSingulars({
     selectedObjectNameSingular,
+    includeHiddenObjects: sidePanelShowHiddenObjects,
   });
 
   const { loading: recordSearchLoading, searchRecords } =

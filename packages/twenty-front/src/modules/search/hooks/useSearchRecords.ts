@@ -11,11 +11,13 @@ import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchab
 type UseSearchRecordsParams = {
   searchInput: string;
   objectNameSingular: string | null;
+  includeHiddenObjects?: boolean;
 };
 
 export const useSearchRecords = ({
   searchInput,
   objectNameSingular,
+  includeHiddenObjects = false,
 }: UseSearchRecordsParams) => {
   const [debouncedSearchInput] = useDebounce(
     searchInput.trim(),
@@ -25,6 +27,7 @@ export const useSearchRecords = ({
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const includedObjectNameSingulars = useSearchableObjectNameSingulars({
     selectedObjectNameSingular: objectNameSingular,
+    includeHiddenObjects,
   });
 
   const { loading, searchRecords } = useObjectRecordSearchRecords({
