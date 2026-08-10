@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 import { RECENT_MESSAGES_MAX_PER_SCOPE } from 'src/modules/onboarding-recent-messages-import/constants/recent-messages-max-per-scope.constant';
 import { GmailRecentMessagesService } from 'src/modules/onboarding-recent-messages-import/services/gmail-recent-messages.service';
@@ -18,6 +22,21 @@ export class RecentMessagesService {
   ) {}
 
   async getExternalIds({
+    connectedAccount,
+    messageFolders,
+  }: {
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>;
+    messageFolders: MessageFolder[];
+  }): Promise<string[]> {
+    const externalIds = await this.getExternalIdsByProvider({
+      connectedAccount,
+      messageFolders,
+    });
+
+    return [...new Set(externalIds)];
+  }
+
+  private async getExternalIdsByProvider({
     connectedAccount,
     messageFolders,
   }: {
@@ -44,7 +63,10 @@ export class RecentMessagesService {
           maxCountPerScope,
         });
       default:
-        return [];
+        throw new MessageImportDriverException(
+          `Provider ${connectedAccount.provider} is not supported`,
+          MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
+        );
     }
   }
 }

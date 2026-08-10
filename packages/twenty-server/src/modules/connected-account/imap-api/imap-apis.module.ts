@@ -17,7 +17,6 @@ import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-commo
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
-import { OnboardingRecentMessagesImportModule } from 'src/modules/onboarding-recent-messages-import/onboarding-recent-messages-import.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 
 @Module({
@@ -39,7 +38,6 @@ import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-
     ConnectedAccountModule,
     ConnectedAccountTokenEncryptionModule,
     MessagingCommonModule,
-    OnboardingRecentMessagesImportModule,
     MessagingFolderSyncManagerModule,
   ],
   providers: [ImapSmtpCalDavAPIService],
