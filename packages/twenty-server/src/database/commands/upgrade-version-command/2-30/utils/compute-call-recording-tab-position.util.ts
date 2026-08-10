@@ -18,7 +18,7 @@ export const computeCallRecordingTabPosition = ({
   >[];
 }): number => {
   const existingNonDeletedPageLayoutTabs = existingPageLayoutTabs.filter(
-    (pageLayoutTab) => pageLayoutTab.deletedAt === null,
+    (pageLayoutTab) => !isDefined(pageLayoutTab.deletedAt),
   );
   const homeTab = existingNonDeletedPageLayoutTabs.find(
     (pageLayoutTab) =>
