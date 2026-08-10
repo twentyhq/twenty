@@ -1,7 +1,7 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddCalendarEventCallRecordingTabCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437483000-add-calendar-event-call-recording-tab.command';
+import { AddCalendarEventSummaryTabCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786459678000-add-calendar-event-summary-tab.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -27,15 +27,15 @@ const CALENDAR_EVENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
 const HOME_TAB_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
     .universalIdentifier;
-const TIMELINE_TAB_UNIVERSAL_IDENTIFIER =
+const SUMMARY_TAB_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .timeline.universalIdentifier;
+    .summary.universalIdentifier;
+const SUMMARY_WIDGET_UNIVERSAL_IDENTIFIER =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+    .summary.widgets.summary.universalIdentifier;
 const CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
     .callRecording.universalIdentifier;
-const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .callRecording.widgets.transcript.universalIdentifier;
 
 const buildByUniversalIdentifierMap = <
   TFlatEntity extends { universalIdentifier: string },
@@ -66,8 +66,8 @@ const buildPageLayoutTab = ({
   deletedAt,
 });
 
-describe('AddCalendarEventCallRecordingTabCommand', () => {
-  let command: AddCalendarEventCallRecordingTabCommand;
+describe('AddCalendarEventSummaryTabCommand', () => {
+  let command: AddCalendarEventSummaryTabCommand;
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
 
@@ -83,19 +83,19 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
       allFlatEntityMaps: {
         flatPageLayoutTabMaps: buildByUniversalIdentifierMap([
           {
-            universalIdentifier: CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER,
+            universalIdentifier: SUMMARY_TAB_UNIVERSAL_IDENTIFIER,
             position: 30,
           },
         ]),
         flatPageLayoutWidgetMaps: buildByUniversalIdentifierMap([
           {
-            universalIdentifier: TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER,
+            universalIdentifier: SUMMARY_WIDGET_UNIVERSAL_IDENTIFIER,
           },
         ]),
       },
     });
 
-    command = new AddCalendarEventCallRecordingTabCommand(
+    command = new AddCalendarEventSummaryTabCommand(
       {} as WorkspaceIteratorService,
       {
         findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
@@ -148,7 +148,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
     });
   };
 
-  it('passes the computed tab position to the migration', async () => {
+  it('passes the position before the Call Recording tab to the migration', async () => {
     mockWorkspaceCache({
       tabs: [
         buildPageLayoutTab({
@@ -156,7 +156,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
           position: 10,
         }),
         buildPageLayoutTab({
-          universalIdentifier: TIMELINE_TAB_UNIVERSAL_IDENTIFIER,
+          universalIdentifier: CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER,
           position: 20,
         }),
       ],
@@ -171,7 +171,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
         .flatEntityToCreate,
     ).toEqual([
       expect.objectContaining({
-        universalIdentifier: CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: SUMMARY_TAB_UNIVERSAL_IDENTIFIER,
         position: 15,
       }),
     ]);
@@ -180,12 +180,37 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
         .flatEntityToCreate,
     ).toEqual([
       expect.objectContaining({
-        universalIdentifier: TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: SUMMARY_WIDGET_UNIVERSAL_IDENTIFIER,
       }),
     ]);
   });
 
-  it('is idempotent when the tab and transcript already exist', async () => {
+  it('falls back to inserting after Home when the Call Recording tab is missing', async () => {
+    mockWorkspaceCache({
+      tabs: [
+        buildPageLayoutTab({
+          universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER,
+          position: 10,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    const [payload] = validateBuildAndRunWorkspaceMigrationMock.mock.calls[0];
+
+    expect(
+      payload.allFlatEntityOperationByMetadataName.pageLayoutTab
+        .flatEntityToCreate,
+    ).toEqual([
+      expect.objectContaining({
+        universalIdentifier: SUMMARY_TAB_UNIVERSAL_IDENTIFIER,
+        position: 20,
+      }),
+    ]);
+  });
+
+  it('is idempotent when the tab and summary widget already exist', async () => {
     mockWorkspaceCache({
       tabs: [
         buildPageLayoutTab({
@@ -193,13 +218,11 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
           position: 10,
         }),
         buildPageLayoutTab({
-          universalIdentifier: CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER,
+          universalIdentifier: SUMMARY_TAB_UNIVERSAL_IDENTIFIER,
           position: 30,
         }),
       ],
-      widgets: [
-        { universalIdentifier: TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER },
-      ],
+      widgets: [{ universalIdentifier: SUMMARY_WIDGET_UNIVERSAL_IDENTIFIER }],
     });
 
     await runOnWorkspace();
@@ -207,7 +230,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
   });
 
-  it('creates only the missing transcript widget without moving an existing tab', async () => {
+  it('creates only the missing summary widget without moving an existing tab', async () => {
     mockWorkspaceCache({
       tabs: [
         buildPageLayoutTab({
@@ -215,7 +238,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
           position: 10,
         }),
         buildPageLayoutTab({
-          universalIdentifier: CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER,
+          universalIdentifier: SUMMARY_TAB_UNIVERSAL_IDENTIFIER,
           position: 73,
         }),
       ],
@@ -234,7 +257,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
         .flatEntityToCreate,
     ).toEqual([
       expect.objectContaining({
-        universalIdentifier: TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: SUMMARY_WIDGET_UNIVERSAL_IDENTIFIER,
       }),
     ]);
   });

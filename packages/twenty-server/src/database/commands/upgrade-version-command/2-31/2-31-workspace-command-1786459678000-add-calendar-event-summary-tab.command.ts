@@ -7,7 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
-import { computeCallRecordingTabPosition } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-call-recording-tab-position.util';
+import { computeSummaryTabPosition } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-summary-tab-position.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -20,21 +20,21 @@ const CALENDAR_EVENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
     .universalIdentifier;
 
-const CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER =
+const SUMMARY_TAB_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .callRecording.universalIdentifier;
+    .summary.universalIdentifier;
 
-const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
+const SUMMARY_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .callRecording.widgets.transcript.universalIdentifier;
+    .summary.widgets.summary.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.31.0', 1786437483000)
+@RegisteredWorkspaceCommand('2.31.0', 1786459678000)
 @Command({
-  name: 'upgrade:2-31:add-calendar-event-call-recording-tab',
+  name: 'upgrade:2-31:add-calendar-event-summary-tab',
   description:
-    'Add the Call Recording tab and transcript widget to the CalendarEvent record page in existing workspaces',
+    'Add the Summary tab and call recording summary widget to the CalendarEvent record page in existing workspaces',
 })
-export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddCalendarEventSummaryTabCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -55,15 +55,12 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
         { workspaceId },
       );
 
-    const {
-      flatPageLayoutMaps,
-      flatPageLayoutTabMaps,
-      flatPageLayoutWidgetMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatPageLayoutMaps',
-      'flatPageLayoutTabMaps',
-      'flatPageLayoutWidgetMaps',
-    ]);
+    const { flatPageLayoutMaps, flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatPageLayoutMaps',
+        'flatPageLayoutTabMaps',
+        'flatPageLayoutWidgetMaps',
+      ]);
 
     const existingPageLayout =
       flatPageLayoutMaps.byUniversalIdentifier[
@@ -89,10 +86,10 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
       getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutTab>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatPageLayoutTabMaps,
         existingFlatEntityMaps: flatPageLayoutTabMaps,
-        universalIdentifiers: [CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER],
+        universalIdentifiers: [SUMMARY_TAB_UNIVERSAL_IDENTIFIER],
       }).map((pageLayoutTab) => ({
         ...pageLayoutTab,
-        position: computeCallRecordingTabPosition({
+        position: computeSummaryTabPosition({
           existingPageLayoutTabs: Object.values(
             flatPageLayoutTabMaps.byUniversalIdentifier,
           )
@@ -109,7 +106,7 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
         standardFlatEntityMaps:
           standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
-        universalIdentifiers: [TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER],
+        universalIdentifiers: [SUMMARY_WIDGET_UNIVERSAL_IDENTIFIER],
       });
 
     const totalOperationCount =
@@ -117,14 +114,14 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
 
     if (totalOperationCount === 0) {
       this.logger.log(
-        `CalendarEvent record page already has the Call Recording tab for workspace ${workspaceId}, skipping`,
+        `CalendarEvent record page already has the Summary tab for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Applying ${totalOperationCount} CalendarEvent Call Recording tab operation(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Applying ${totalOperationCount} CalendarEvent Summary tab operation(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -155,7 +152,7 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to add the CalendarEvent Call Recording tab for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to add the CalendarEvent Summary tab for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -164,7 +161,7 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
     }
 
     this.logger.log(
-      `Added the CalendarEvent Call Recording tab for workspace ${workspaceId}`,
+      `Added the CalendarEvent Summary tab for workspace ${workspaceId}`,
     );
   }
 }
