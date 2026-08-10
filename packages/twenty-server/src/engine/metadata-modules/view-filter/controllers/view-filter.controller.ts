@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +16,8 @@ import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -51,14 +54,23 @@ export class ViewFilterController {
   @Get()
   @UseGuards(NoPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
-  ): Promise<ViewFilterDTO[]> {
-    if (viewId) {
-      return this.viewFilterService.findByViewId(workspace.id, viewId);
-    }
+  ) {
+    const page = await this.viewFilterService.findManyPaginated({
+      workspaceId: workspace.id,
+      // An empty viewId means "no filter", matching the sibling view
+      // controllers, rather than filtering on the empty string.
+      viewId: viewId === '' ? undefined : viewId,
+      pagination: parseMetadataRestPagination(request),
+    });
 
-    return this.viewFilterService.findByWorkspaceId(workspace.id);
+    return {
+      data: page.items,
+      pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
+    };
   }
 
   @Get(':id')

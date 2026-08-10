@@ -1,5 +1,6 @@
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
+import { HeadlessOpenAiChatHistoryTabEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenAiChatHistoryTabEngineCommand';
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
@@ -51,7 +52,7 @@ import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-co
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
-import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/icon';
+import { IconSearch, IconSparkles } from 'twenty-ui/icon';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
@@ -215,11 +216,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     />
   ),
   [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: (
-    <HeadlessOpenSidePanelPageEngineCommand
-      page={SidePanelPages.ViewPreviousAiChats}
-      pageTitle={msg`View Previous AI Chats`}
-      pageIcon={IconHistory}
-    />
+    <HeadlessOpenAiChatHistoryTabEngineCommand />
   ),
   [EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW]: (
     <SeeActiveVersionWorkflowSingleRecordCommand />

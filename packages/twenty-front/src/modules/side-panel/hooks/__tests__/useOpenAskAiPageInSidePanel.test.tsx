@@ -27,6 +27,7 @@ describe('useOpenAskAiPageInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jotaiStore.set(isSidePanelOpenedState.atom, false);
+    window.history.pushState({}, '', '/objects/companies');
   });
 
   it('should navigate to AskAI page with correct defaults', () => {
@@ -81,5 +82,19 @@ describe('useOpenAskAiPageInSidePanel', () => {
         resetNavigationStack: true,
       }),
     );
+  });
+
+  it('should not open the panel AskAI page while on the AI chat page', () => {
+    window.history.pushState({}, '', '/chat');
+
+    const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.openAskAiPage();
+    });
+
+    expect(navigateSidePanelMenuMock).not.toHaveBeenCalled();
   });
 });

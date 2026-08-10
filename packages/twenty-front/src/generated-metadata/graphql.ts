@@ -1817,11 +1817,13 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_AI_CHAT_PAGE_ENABLED = 'IS_AI_CHAT_PAGE_ENABLED',
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
   IS_CALENDAR_WEEK_VIEW_ENABLED = 'IS_CALENDAR_WEEK_VIEW_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
+  IS_LIST_VIEW_ENABLED = 'IS_LIST_VIEW_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_SETTINGS_DISCOVERY_HERO_ENABLED = 'IS_SETTINGS_DISCOVERY_HERO_ENABLED',
@@ -4504,6 +4506,7 @@ export type PublicFeatureFlag = {
 export type PublicFeatureFlagMetadata = {
   __typename?: 'PublicFeatureFlagMetadata';
   description: Scalars['String']['output'];
+  icon: Scalars['String']['output'];
   imagePath?: Maybe<Scalars['String']['output']>;
   label: Scalars['String']['output'];
 };
@@ -6150,7 +6153,7 @@ export type UpsertViewWidgetViewSettingsInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
-  /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed. */
+  /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed. */
   type?: InputMaybe<ViewType>;
 };
 
@@ -6489,6 +6492,8 @@ export enum ViewType {
   FIELDS_WIDGET = 'FIELDS_WIDGET',
   KANBAN = 'KANBAN',
   KANBAN_WIDGET = 'KANBAN_WIDGET',
+  LIST = 'LIST',
+  LIST_WIDGET = 'LIST_WIDGET',
   TABLE = 'TABLE',
   TABLE_WIDGET = 'TABLE_WIDGET'
 }

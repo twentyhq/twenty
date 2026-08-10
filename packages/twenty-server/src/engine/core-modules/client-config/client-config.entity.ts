@@ -226,6 +226,9 @@ export class PublicFeatureFlagMetadata {
   @Field(() => String)
   description: string;
 
+  @Field(() => String)
+  icon: string;
+
   @Field(() => String, { nullable: true })
   imagePath?: string;
 }

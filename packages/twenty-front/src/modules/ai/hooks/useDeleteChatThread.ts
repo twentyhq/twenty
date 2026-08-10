@@ -6,6 +6,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -21,6 +22,7 @@ export const useDeleteChatThread = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
 
   const [deleteMutation] = useMutation(DeleteChatThreadDocument);
@@ -49,11 +51,13 @@ export const useDeleteChatThread = () => {
         const nextThreadId = remaining[0].id;
 
         setCurrentAiChatThread(nextThreadId);
+        projectAiChatThreadToUrl(nextThreadId);
         setAgentChatInput(
           tipTapDocumentToMarkdown(draftsByThreadId[nextThreadId] ?? ''),
         );
       } else {
         setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+        projectAiChatThreadToUrl(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
         setAgentChatInput(
           tipTapDocumentToMarkdown(
             draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '',

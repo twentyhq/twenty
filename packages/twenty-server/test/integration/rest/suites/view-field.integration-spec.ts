@@ -4,6 +4,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
+  assertMetadataRestListResponse,
   assertRestApiErrorNotFoundResponse,
   assertRestApiErrorResponse,
   assertRestApiSuccessfulResponse,
@@ -116,8 +117,10 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual([]);
+      expect(assertMetadataRestListResponse<ViewFieldDTO>(response)).toEqual(
+        [],
+      );
+      expect(response.body.totalCount).toBe(0);
     });
 
     it('should return all view fields for workspace when no viewId provided', async () => {
@@ -127,8 +130,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(Array.isArray(response.body)).toBe(true);
+      assertMetadataRestListResponse<ViewFieldDTO>(response);
     });
 
     it('should return view fields for a specific view after creating one', async () => {
@@ -148,10 +150,8 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(Array.isArray(response.body)).toBe(true);
-
-      const returnedViewField = response.body.find(
+      const viewFields = assertMetadataRestListResponse<ViewFieldDTO>(response);
+      const returnedViewField = viewFields.find(
         (el: ViewFieldDTO) => el.id === viewField.id,
       );
 
