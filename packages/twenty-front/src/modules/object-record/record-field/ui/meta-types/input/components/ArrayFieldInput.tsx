@@ -13,7 +13,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const ArrayFieldInput = () => {
   const { setDraftValue, draftValue, fieldDefinition } = useArrayField();
 
-  const { onEscape, onClickOutside, onEnter, onPersist } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -57,8 +57,11 @@ export const ArrayFieldInput = () => {
     onEnter?.({ newValue: parseStringArrayToArrayValue(newValue) });
   };
 
-  const handlePersist = (newValue: string[]) => {
-    onPersist?.({ newValue: parseStringArrayToArrayValue(newValue) });
+  const handleSubmit = (newValue: string[]) => {
+    onSubmit?.({
+      newValue: parseStringArrayToArrayValue(newValue),
+      skipClose: true,
+    });
   };
 
   const maxNumberOfValues =
@@ -71,7 +74,7 @@ export const ArrayFieldInput = () => {
       items={arrayItems}
       onChange={handleChange}
       onEnter={handleEnter}
-      onPersist={handlePersist}
+      onSubmit={handleSubmit}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder={t`Enter value`}

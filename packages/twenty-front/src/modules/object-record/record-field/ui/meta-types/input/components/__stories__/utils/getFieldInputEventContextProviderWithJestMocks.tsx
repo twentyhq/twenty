@@ -10,7 +10,6 @@ export const getFieldInputEventContextProviderWithJestMocks = () => {
   const handleClickoutsideMocked = fn();
   const handleEnterMocked = fn();
   const handleEscapeMocked = fn();
-  const handlePersistMocked = fn();
   const handleShiftTabMocked = fn();
   const handleTabMocked = fn();
 
@@ -25,7 +24,6 @@ export const getFieldInputEventContextProviderWithJestMocks = () => {
           onSubmit: handleSubmitMocked,
           onEnter: handleEnterMocked,
           onEscape: handleEscapeMocked,
-          onPersist: handlePersistMocked,
           onShiftTab: handleShiftTabMocked,
           onTab: handleTabMocked,
         }}
@@ -42,7 +40,6 @@ export const getFieldInputEventContextProviderWithJestMocks = () => {
     handleClickoutsideMocked,
     handleEnterMocked,
     handleEscapeMocked,
-    handlePersistMocked,
     handleShiftTabMocked,
     handleTabMocked,
   };

@@ -36,20 +36,22 @@ export const FieldWidgetInputContextProvider = ({
     closeInlineCell();
   };
 
-  const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
+  const handleSubmit: FieldInputEvent = ({
+    newValue,
+    skipPersist,
+    skipClose,
+  }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCell();
+    if (skipClose !== true) {
+      closeInlineCell();
+    }
   };
 
   const handleCancel = () => {
     closeInlineCell();
-  };
-
-  const handlePersist: FieldInputEvent = ({ newValue }) => {
-    persistFieldFromFieldInputContext(newValue);
   };
 
   const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
@@ -101,7 +103,6 @@ export const FieldWidgetInputContextProvider = ({
         onCancel: handleCancel,
         onEnter: handleEnter,
         onEscape: handleEscape,
-        onPersist: handlePersist,
         onClickOutside: handleClickOutside,
         onShiftTab: handleShiftTab,
         onSubmit: handleSubmit,

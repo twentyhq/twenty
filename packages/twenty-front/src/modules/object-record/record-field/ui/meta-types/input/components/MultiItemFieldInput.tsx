@@ -37,7 +37,7 @@ type MultiItemFieldInputProps<T> = {
   onChange: (newItemsValue: T[]) => void;
   onEscape: (newItemsValue: T[]) => void;
   onEnter: (newItemsValue: T[]) => void;
-  onPersist: (newItemsValue: T[]) => void;
+  onSubmit: (newItemsValue: T[]) => void;
   onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
@@ -64,7 +64,7 @@ export const MultiItemFieldInput = <T,>({
   onChange,
   onEscape,
   onEnter,
-  onPersist,
+  onSubmit,
   onError,
   placeholder,
   validateInput,
@@ -232,7 +232,7 @@ export const MultiItemFieldInput = <T,>({
     if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
       onEnter(updatedItems);
     } else if (!isDeeplyEqual(items, updatedItems)) {
-      onPersist(updatedItems);
+      onSubmit(updatedItems);
     }
 
     setIsInputDisplayed(false);
@@ -290,25 +290,18 @@ export const MultiItemFieldInput = <T,>({
   const handleSetPrimaryItem = (index: number) => {
     const updatedItems = moveArrayItem(items, { fromIndex: index, toIndex: 0 });
     onChange(updatedItems);
-    onPersist(updatedItems);
+    onSubmit(updatedItems);
   };
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
-    onPersist(updatedItems);
+    onSubmit(updatedItems);
     showInputIfNoItemsRemain(updatedItems);
   };
 
   const handleEscape = () => {
-    if (!isInputDisplayed) {
-      onEscape(items);
-      return;
-    }
-
-    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
-
-    onEscape(isValid ? updatedItems : items);
+    onEscape(items);
   };
 
   useHotkeysOnFocusedElement({

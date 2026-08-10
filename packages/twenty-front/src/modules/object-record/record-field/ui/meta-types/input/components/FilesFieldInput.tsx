@@ -33,7 +33,7 @@ export const FilesFieldInput = () => {
     isAttachmentPreviewEnabledState,
   );
 
-  const { onEscape, onClickOutside, onEnter, onPersist } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -64,7 +64,7 @@ export const FilesFieldInput = () => {
         setDraftValue(nextValue);
 
         // This input renders nothing without files, so it has to be closed once
-        // the last one is gone, the value itself being persisted by onPersist
+        // the last one is gone, the value itself being persisted by onSubmit
         if (nextValue.length === 0) {
           onEnter?.({ newValue: nextValue, skipPersist: true });
         }
@@ -150,8 +150,11 @@ export const FilesFieldInput = () => {
     onEnter?.({ newValue: parseFilesArrayToFilesValue(updatedFiles) });
   };
 
-  const handlePersist = (updatedFiles: FieldFilesValue[]) => {
-    onPersist?.({ newValue: parseFilesArrayToFilesValue(updatedFiles) });
+  const handleSubmit = (updatedFiles: FieldFilesValue[]) => {
+    onSubmit?.({
+      newValue: parseFilesArrayToFilesValue(updatedFiles),
+      skipClose: true,
+    });
   };
 
   const handlePreview = (file: FieldFilesValue) => {
@@ -195,7 +198,7 @@ export const FilesFieldInput = () => {
       items={files}
       onChange={handleChange}
       onEnter={handleEnter}
-      onPersist={handlePersist}
+      onSubmit={handleSubmit}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder={t`File label`}

@@ -18,7 +18,7 @@ const updateRecord = fn();
 const {
   FieldInputEventContextProviderWithJestMocks,
   handleEscapeMocked,
-  handlePersistMocked,
+  handleSubmitMocked,
   handleClickoutsideMocked,
 } = getFieldInputEventContextProviderWithJestMocks();
 
@@ -333,8 +333,9 @@ export const DeletePrimaryLinkPersistsEmptyValue: Story = {
     ).findByText('Delete');
     await userEvent.click(deleteOption);
 
-    expect(handlePersistMocked).toHaveBeenCalledWith({
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
       newValue: EMPTY_LINKS_VALUE,
+      skipClose: true,
     });
   },
 };
@@ -364,41 +365,9 @@ export const ClearPrimaryLinkAndPressEnter: Story = {
     await userEvent.clear(input);
     await userEvent.type(input, '{enter}');
 
-    expect(handlePersistMocked).toHaveBeenCalledWith({
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
       newValue: EMPTY_LINKS_VALUE,
-    });
-  },
-};
-
-export const ClearPrimaryLinkAndPressEscape: Story = {
-  args: {
-    value: {
-      primaryLinkUrl: 'https://www.twenty.com',
-      primaryLinkLabel: 'Twenty Website',
-      secondaryLinks: [],
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const openDropdownButton = await canvas.findByRole('button', {
-      expanded: false,
-    });
-    await userEvent.click(openDropdownButton);
-
-    const editOption = await within(
-      canvasElement.ownerDocument.body,
-    ).findByText('Edit');
-    await userEvent.click(editOption);
-
-    const input = await canvas.findByPlaceholderText('URL');
-    expect(input).toHaveValue('https://www.twenty.com');
-
-    await userEvent.clear(input);
-    await userEvent.keyboard('{escape}');
-
-    expect(handleEscapeMocked).toHaveBeenCalledWith({
-      newValue: EMPTY_LINKS_VALUE,
+      skipClose: true,
     });
   },
 };

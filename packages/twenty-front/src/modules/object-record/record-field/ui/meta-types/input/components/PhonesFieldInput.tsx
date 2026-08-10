@@ -80,7 +80,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
 export const PhonesFieldInput = () => {
   const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
 
-  const { onEscape, onClickOutside, onEnter, onPersist } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -152,8 +152,11 @@ export const PhonesFieldInput = () => {
     onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
   };
 
-  const handlePersist = (updatedPhones: PhoneRecord[]) => {
-    onPersist?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+  const handleSubmit = (updatedPhones: PhoneRecord[]) => {
+    onSubmit?.({
+      newValue: parseArrayToPhonesValue(updatedPhones),
+      skipClose: true,
+    });
   };
 
   return (
@@ -163,7 +166,7 @@ export const PhonesFieldInput = () => {
       onClickOutside={handleClickOutside}
       onEscape={handleEscape}
       onEnter={handleEnter}
-      onPersist={handlePersist}
+      onSubmit={handleSubmit}
       placeholder={t`Phone`}
       fieldMetadataType={FieldMetadataType.PHONES}
       validateInput={validateInput}

@@ -3,6 +3,7 @@ import { createContext } from 'react';
 export type FieldInputEventArgs = {
   newValue?: unknown;
   skipPersist?: boolean;
+  skipClose?: boolean;
 };
 
 export type FieldInputEvent = (args: FieldInputEventArgs) => void;
@@ -17,7 +18,6 @@ export type FieldInputEventContextType = {
   onEnter?: FieldInputEvent;
   onCancel?: () => void;
   onEscape?: FieldInputEvent;
-  onPersist?: FieldInputEvent;
   onSubmit?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;

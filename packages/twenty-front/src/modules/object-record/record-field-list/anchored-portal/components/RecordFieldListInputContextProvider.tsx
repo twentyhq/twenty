@@ -75,20 +75,22 @@ export const RecordFieldListInputContextProvider = ({
     closeInlineCellAndResetEditModePosition();
   };
 
-  const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
+  const handleSubmit: FieldInputEvent = ({
+    newValue,
+    skipPersist,
+    skipClose,
+  }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCellAndResetEditModePosition();
+    if (skipClose !== true) {
+      closeInlineCellAndResetEditModePosition();
+    }
   };
 
   const handleCancel = () => {
     closeInlineCellAndResetEditModePosition();
-  };
-
-  const handlePersist: FieldInputEvent = ({ newValue }) => {
-    persistFieldFromFieldInputContext(newValue);
   };
 
   const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
@@ -145,7 +147,6 @@ export const RecordFieldListInputContextProvider = ({
         onCancel: handleCancel,
         onEnter: handleEnter,
         onEscape: handleEscape,
-        onPersist: handlePersist,
         onClickOutside: handleClickOutside,
         onShiftTab: handleShiftTab,
         onSubmit: handleSubmit,
