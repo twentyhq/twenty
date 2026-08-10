@@ -127,18 +127,22 @@ export class InboxItemService {
     inboxItemId,
     workspaceId,
     actorUserWorkspaceId,
-    memberQueueIds,
+    accessibleQueueIds,
   }: VisibleItemArgs): Promise<InboxItemEntity> {
     const inboxItem = await this.findVisibleItemOrThrow({
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
-      memberQueueIds,
+      accessibleQueueIds,
     });
 
     await this.inboxItemRepository.update(
       workspaceId,
-      this.buildWriteScope({ inboxItem, actorUserWorkspaceId, memberQueueIds }),
+      this.buildWriteScope({
+        inboxItem,
+        actorUserWorkspaceId,
+        accessibleQueueIds,
+      }),
       // Database clock, since unread is this against lastEventAt
       { readAt: () => 'clock_timestamp()' },
     );
@@ -147,17 +151,17 @@ export class InboxItemService {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
-      memberQueueIds,
+      accessibleQueueIds,
     });
   }
 
   // Visible means addressed to you, or sitting in a queue you watch. Queue
-  // membership is the only thing keeping one team out of another's inbox.
+  // the reachable set is the only thing keeping one team out of another's inbox.
   async findVisibleItem({
     inboxItemId,
     workspaceId,
     actorUserWorkspaceId,
-    memberQueueIds,
+    accessibleQueueIds,
   }: VisibleItemArgs): Promise<InboxItemEntity | null> {
     return this.inboxItemRepository.findOne(workspaceId, {
       where: [
@@ -165,8 +169,8 @@ export class InboxItemService {
           id: inboxItemId,
           assigneeUserWorkspaceId: actorUserWorkspaceId,
         },
-        ...(memberQueueIds.length > 0
-          ? [{ id: inboxItemId, queueId: In(memberQueueIds) }]
+        ...(accessibleQueueIds.length > 0
+          ? [{ id: inboxItemId, queueId: In(accessibleQueueIds) }]
           : []),
       ],
       relations: { inboxItemType: true, assigneeUserWorkspace: true },
@@ -193,14 +197,14 @@ export class InboxItemService {
   buildWriteScope({
     inboxItem,
     actorUserWorkspaceId,
-    memberQueueIds,
+    accessibleQueueIds,
   }: {
     inboxItem: InboxItemEntity;
     actorUserWorkspaceId: string;
-    memberQueueIds: string[];
+    accessibleQueueIds: string[];
   }): FindOptionsWhere<InboxItemEntity> {
     return isDefined(inboxItem.queueId)
-      ? { id: inboxItem.id, queueId: In(memberQueueIds) }
+      ? { id: inboxItem.id, queueId: In(accessibleQueueIds) }
       : { id: inboxItem.id, assigneeUserWorkspaceId: actorUserWorkspaceId };
   }
 
@@ -242,5 +246,5 @@ type VisibleItemArgs = {
   inboxItemId: string;
   workspaceId: string;
   actorUserWorkspaceId: string;
-  memberQueueIds: string[];
+  accessibleQueueIds: string[];
 };

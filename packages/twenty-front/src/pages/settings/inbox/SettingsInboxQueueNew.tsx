@@ -11,6 +11,7 @@ import {
   SettingsInboxQueueForm,
 } from '@/settings/inbox/components/SettingsInboxQueueForm';
 import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsInboxQueueNew = () => {
@@ -21,7 +22,7 @@ export const SettingsInboxQueueNew = () => {
   const [draft, setDraft] = useState<InboxQueueDraft>({
     name: '',
     icon: 'IconInbox',
-    memberWorkspaceMemberIds: [],
+    roleIds: [],
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -34,7 +35,7 @@ export const SettingsInboxQueueNew = () => {
       await createInboxQueue({
         name: draft.name.trim(),
         icon: draft.icon,
-        memberWorkspaceMemberIds: draft.memberWorkspaceMemberIds,
+        roleIds: draft.roleIds,
       });
       goBack();
     } finally {
@@ -62,6 +63,7 @@ export const SettingsInboxQueueNew = () => {
         />
       }
     >
+      <SettingsRolesQueryEffect />
       <SettingsPageContainer>
         <SettingsInboxQueueForm draft={draft} onChange={setDraft} />
       </SettingsPageContainer>

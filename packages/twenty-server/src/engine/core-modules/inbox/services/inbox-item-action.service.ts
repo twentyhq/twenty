@@ -72,7 +72,7 @@ export class InboxItemActionService {
     inboxItemId,
     workspaceId,
     actorUserWorkspaceId,
-    memberQueueIds,
+    accessibleQueueIds,
     actionKey,
     input,
     expectedVersion,
@@ -80,7 +80,7 @@ export class InboxItemActionService {
     inboxItemId: string;
     workspaceId: string;
     actorUserWorkspaceId: string;
-    memberQueueIds: string[];
+    accessibleQueueIds: string[];
     actionKey: string;
     input?: InboxItemPayload;
     expectedVersion?: number;
@@ -89,7 +89,7 @@ export class InboxItemActionService {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
-      memberQueueIds,
+      accessibleQueueIds,
     });
 
     const action = this.findActionOrThrow({ inboxItem, actionKey });
@@ -112,7 +112,7 @@ export class InboxItemActionService {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
-      memberQueueIds,
+      accessibleQueueIds,
       expectedVersion,
       loadedInboxItem: inboxItem,
       transition: this.applyInput({

@@ -79,12 +79,10 @@ export class CreateInboxItemTool implements Tool {
     workspaceId: string,
   ): Promise<InboxPrincipalRef | undefined> {
     if (isDefined(parameters.assigneeWorkspaceMemberId)) {
-      const [userWorkspaceId] = await this.inboxQueueService.toUserWorkspaceIds(
-        {
-          workspaceId,
-          workspaceMemberIds: [parameters.assigneeWorkspaceMemberId],
-        },
-      );
+      const userWorkspaceId = await this.inboxRouterService.toUserWorkspaceId({
+        workspaceId,
+        workspaceMemberId: parameters.assigneeWorkspaceMemberId,
+      });
 
       if (!isDefined(userWorkspaceId)) {
         throw new InboxException(

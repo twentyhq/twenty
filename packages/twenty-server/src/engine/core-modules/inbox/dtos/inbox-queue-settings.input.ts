@@ -27,7 +27,7 @@ export class CreateInboxQueueInput {
   @Field(() => [UUIDScalarType], { nullable: true })
   @IsOptional()
   @IsArray()
-  memberWorkspaceMemberIds?: string[];
+  roleIds?: string[];
 }
 
 @InputType()
@@ -49,13 +49,13 @@ export class UpdateInboxQueueInput {
 }
 
 @InputType()
-export class SetInboxQueueMembersInput {
+export class SetInboxQueueRolesInput {
   @Field(() => UUIDScalarType)
   queueId: string;
 
   @Field(() => [UUIDScalarType])
   @IsArray()
-  memberWorkspaceMemberIds: string[];
+  roleIds: string[];
 }
 
 @InputType()

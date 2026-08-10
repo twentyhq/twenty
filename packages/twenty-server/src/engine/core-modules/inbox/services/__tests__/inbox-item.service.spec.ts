@@ -40,7 +40,7 @@ const ownedItemArgs = {
   inboxItemId: INBOX_ITEM_ID,
   workspaceId: WORKSPACE_ID,
   actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-  memberQueueIds: [],
+  accessibleQueueIds: [],
 };
 
 describe('InboxItemService', () => {
@@ -197,12 +197,12 @@ describe('InboxItemService', () => {
   });
 
   describe('queue visibility', () => {
-    // Membership is the only thing keeping one team out of another's inbox
+    // The reachable set is the only thing keeping one team out of another's inbox
     it('should reach an item through a queue the caller belongs to', async () => {
       // Act
       await service.findVisibleItem({
         ...ownedItemArgs,
-        memberQueueIds: ['support-queue-id'],
+        accessibleQueueIds: ['support-queue-id'],
       });
 
       // Assert
@@ -308,7 +308,7 @@ describe('InboxItemService', () => {
       const writeScope = service.buildWriteScope({
         inboxItem: { id: INBOX_ITEM_ID, queueId: 'support-queue-id' } as never,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
-        memberQueueIds: ['support-queue-id'],
+        accessibleQueueIds: ['support-queue-id'],
       });
 
       // Assert

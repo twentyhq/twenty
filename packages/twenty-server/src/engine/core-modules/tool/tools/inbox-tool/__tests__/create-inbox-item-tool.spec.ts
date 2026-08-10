@@ -16,11 +16,11 @@ const USER_WORKSPACE_ID = 'user-workspace-id';
 describe('CreateInboxItemTool', () => {
   let tool: CreateInboxItemTool;
 
-  const inboxRouterService = { routeOrThrow: jest.fn() };
-  const inboxQueueService = {
-    toUserWorkspaceIds: jest.fn(),
-    findQueueOrThrow: jest.fn(),
+  const inboxRouterService = {
+    routeOrThrow: jest.fn(),
+    toUserWorkspaceId: jest.fn(),
   };
+  const inboxQueueService = { findQueueOrThrow: jest.fn() };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -31,7 +31,7 @@ describe('CreateInboxItemTool', () => {
       queueId: QUEUE_ID,
       assigneeUserWorkspaceId: null,
     });
-    inboxQueueService.toUserWorkspaceIds.mockResolvedValue([USER_WORKSPACE_ID]);
+    inboxRouterService.toUserWorkspaceId.mockResolvedValue(USER_WORKSPACE_ID);
     inboxQueueService.findQueueOrThrow.mockResolvedValue({ id: QUEUE_ID });
 
     const module: TestingModule = await Test.createTestingModule({
@@ -86,7 +86,7 @@ describe('CreateInboxItemTool', () => {
   // Work addressed to one person landing in a shared inbox is worse than failing
   it('should fail rather than fall back when the named person is not a member', async () => {
     // Prepare
-    inboxQueueService.toUserWorkspaceIds.mockResolvedValue([]);
+    inboxRouterService.toUserWorkspaceId.mockResolvedValue(null);
 
     // Act
     const output = await tool.execute(

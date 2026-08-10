@@ -7,7 +7,7 @@ const INBOX_QUEUE_SETTINGS_FRAGMENT = gql`
     slug
     icon
     isDefault
-    memberWorkspaceMemberIds
+    roleIds
   }
 `;
 
@@ -57,10 +57,10 @@ export const UPDATE_INBOX_QUEUE = gql`
   }
 `;
 
-export const SET_INBOX_QUEUE_MEMBERS = gql`
+export const SET_INBOX_QUEUE_ROLES = gql`
   ${INBOX_QUEUE_SETTINGS_FRAGMENT}
-  mutation SetInboxQueueMembers($input: SetInboxQueueMembersInput!) {
-    setInboxQueueMembers(input: $input) {
+  mutation SetInboxQueueRoles($input: SetInboxQueueRolesInput!) {
+    setInboxQueueRoles(input: $input) {
       ...InboxQueueSettingsFields
     }
   }

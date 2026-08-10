@@ -1,21 +1,21 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
-import { InboxQueueMemberEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-member.entity';
+import { InboxQueueRoleEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-role.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
 const QUEUE_ID = 'queue-id';
 const TRIAGE_QUEUE_ID = 'triage-queue-id';
-const MEMBER_ID = 'user-workspace-id';
-const USER_ID = 'user-id';
-const WORKSPACE_MEMBER_ID = 'workspace-member-id';
+const ROLE_ID = 'role-id';
+const OTHER_ROLE_ID = 'other-role-id';
+const USER_WORKSPACE_ID = 'user-workspace-id';
 
 describe('InboxQueueService', () => {
   let service: InboxQueueService;
@@ -27,7 +27,7 @@ describe('InboxQueueService', () => {
     update: jest.fn(),
     delete: jest.fn(),
   };
-  const inboxQueueMemberRepository: {
+  const inboxQueueRoleRepository: {
     find: jest.Mock;
     findOne: jest.Mock;
     saveMany: jest.Mock;
@@ -38,17 +38,13 @@ describe('InboxQueueService', () => {
     findOne: jest.fn(),
     saveMany: jest.fn(),
     delete: jest.fn(),
-    // Membership replacement runs in a transaction, which rebinds the
-    // repository to that transaction's manager
-    withManager: jest.fn(() => inboxQueueMemberRepository),
+    // Grant replacement runs in a transaction, which rebinds the repository to
+    // that transaction's manager
+    withManager: jest.fn(() => inboxQueueRoleRepository),
   };
   const inboxItemRepository = { update: jest.fn() };
-  const userWorkspaceRepository = { find: jest.fn() };
-  const workspaceMemberRepository = { find: jest.fn() };
-  const globalWorkspaceOrmManager = {
-    getRepository: jest.fn().mockResolvedValue(workspaceMemberRepository),
-    executeInWorkspaceContext: jest.fn((run: () => unknown) => run()),
-  };
+  const roleRepository = { find: jest.fn() };
+  const userRoleService = { getRoleIdForUserWorkspace: jest.fn() };
   const queueLockQueryBuilder = {
     select: jest.fn().mockReturnThis(),
     from: jest.fn().mockReturnThis(),
@@ -76,12 +72,12 @@ describe('InboxQueueService', () => {
       id: QUEUE_ID,
       ...queue,
     }));
-    inboxQueueMemberRepository.find.mockResolvedValue([]);
-    userWorkspaceRepository.find.mockResolvedValue([
-      { id: MEMBER_ID, userId: USER_ID },
-    ]);
-    workspaceMemberRepository.find.mockResolvedValue([
-      { id: WORKSPACE_MEMBER_ID, userId: USER_ID },
+    inboxQueueRoleRepository.find.mockResolvedValue([]);
+    inboxQueueRoleRepository.findOne.mockResolvedValue(null);
+    userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(ROLE_ID);
+    roleRepository.find.mockResolvedValue([
+      { id: ROLE_ID },
+      { id: OTHER_ROLE_ID },
     ]);
 
     const module: TestingModule = await Test.createTestingModule({
@@ -92,20 +88,20 @@ describe('InboxQueueService', () => {
           useValue: inboxQueueRepository,
         },
         {
-          provide: getWorkspaceScopedRepositoryToken(InboxQueueMemberEntity),
-          useValue: inboxQueueMemberRepository,
+          provide: getWorkspaceScopedRepositoryToken(InboxQueueRoleEntity),
+          useValue: inboxQueueRoleRepository,
         },
         {
           provide: getWorkspaceScopedRepositoryToken(InboxItemEntity),
           useValue: inboxItemRepository,
         },
         {
-          provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: userWorkspaceRepository,
+          provide: getWorkspaceScopedRepositoryToken(RoleEntity),
+          useValue: roleRepository,
         },
         {
-          provide: GlobalWorkspaceOrmManager,
-          useValue: globalWorkspaceOrmManager,
+          provide: UserRoleService,
+          useValue: userRoleService,
         },
         {
           provide: getDataSourceToken(),
@@ -123,7 +119,7 @@ describe('InboxQueueService', () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
         name: 'Customer Support',
-        memberWorkspaceMemberIds: [],
+        roleIds: [],
       });
 
       // Assert
@@ -145,7 +141,7 @@ describe('InboxQueueService', () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
         name: 'Support',
-        memberWorkspaceMemberIds: [],
+        roleIds: [],
       });
 
       // Assert
@@ -160,7 +156,7 @@ describe('InboxQueueService', () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
         name: '🚀',
-        memberWorkspaceMemberIds: [],
+        roleIds: [],
       });
 
       // Assert
@@ -171,45 +167,94 @@ describe('InboxQueueService', () => {
     });
   });
 
-  describe('setMembers', () => {
-    // Membership is read access, so the translation doubles as the check
-    it('should keep only ids that resolve to a member of this workspace', async () => {
-      // Prepare
-      workspaceMemberRepository.find.mockResolvedValue([
-        { id: WORKSPACE_MEMBER_ID, userId: USER_ID },
-      ]);
-
+  describe('setQueueRoles', () => {
+    // Saving the list replaces it, so the roles dropped from it lose access
+    it('should replace the grants rather than add to them', async () => {
       // Act
-      await service.setMembers({
+      await service.setQueueRoles({
         workspaceId: WORKSPACE_ID,
         queueId: QUEUE_ID,
-        memberWorkspaceMemberIds: [
-          WORKSPACE_MEMBER_ID,
-          'someone-elses-workspace-member-id',
-        ],
+        roleIds: [ROLE_ID, OTHER_ROLE_ID],
       });
 
       // Assert
-      expect(inboxQueueMemberRepository.saveMany).toHaveBeenCalledWith(
+      expect(inboxQueueRoleRepository.delete).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        [{ queueId: QUEUE_ID, userWorkspaceId: MEMBER_ID }],
+        { queueId: QUEUE_ID },
+      );
+      expect(inboxQueueRoleRepository.saveMany).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        [
+          { queueId: QUEUE_ID, roleId: ROLE_ID },
+          { queueId: QUEUE_ID, roleId: OTHER_ROLE_ID },
+        ],
       );
     });
 
-    it('should write nobody when none of the ids are members', async () => {
+    // A role from another workspace satisfies the foreign key, so the workspace
+    // predicate is the only thing keeping the grant out
+    it('should refuse a role that does not belong to this workspace', async () => {
       // Prepare
-      workspaceMemberRepository.find.mockResolvedValue([]);
+      roleRepository.find.mockResolvedValue([]);
 
+      // Act & Assert
+      await expect(
+        service.setQueueRoles({
+          workspaceId: WORKSPACE_ID,
+          queueId: QUEUE_ID,
+          roleIds: ['someone-elses-role-id'],
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.UNKNOWN_INBOX_ROLE,
+      });
+      expect(inboxQueueRoleRepository.saveMany).not.toHaveBeenCalled();
+    });
+
+    it('should leave nobody with access when the list is emptied', async () => {
       // Act
-      await service.setMembers({
+      await service.setQueueRoles({
         workspaceId: WORKSPACE_ID,
         queueId: QUEUE_ID,
-        memberWorkspaceMemberIds: ['someone-elses-workspace-member-id'],
+        roleIds: [],
       });
 
       // Assert
-      expect(inboxQueueMemberRepository.delete).toHaveBeenCalled();
-      expect(inboxQueueMemberRepository.saveMany).not.toHaveBeenCalled();
+      expect(inboxQueueRoleRepository.delete).toHaveBeenCalled();
+      expect(inboxQueueRoleRepository.saveMany).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('findAccessibleQueueIds', () => {
+    // Access is a permission, so it is read off the role rather than a list
+    it('should return the queues granted to the role of the person asking', async () => {
+      // Prepare
+      inboxQueueRoleRepository.find.mockResolvedValue([
+        { queueId: QUEUE_ID, roleId: ROLE_ID },
+        { queueId: TRIAGE_QUEUE_ID, roleId: ROLE_ID },
+      ]);
+
+      // Act
+      const queueIds = await service.findAccessibleQueueIds({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+      });
+
+      // Assert
+      expect(inboxQueueRoleRepository.find).toHaveBeenCalledWith(WORKSPACE_ID, {
+        where: { roleId: ROLE_ID },
+      });
+      expect(queueIds).toEqual([QUEUE_ID, TRIAGE_QUEUE_ID]);
+    });
+
+    it('should return nothing when the role has no shared inbox', async () => {
+      // Act
+      const queueIds = await service.findAccessibleQueueIds({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+      });
+
+      // Assert
+      expect(queueIds).toEqual([]);
     });
   });
 

@@ -16,6 +16,7 @@ import {
   SettingsInboxQueueForm,
 } from '@/settings/inbox/components/SettingsInboxQueueForm';
 import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -31,7 +32,7 @@ export const SettingsInboxQueueEdit = () => {
     inboxQueues,
     loading,
     updateInboxQueue,
-    setInboxQueueMembers,
+    setInboxQueueRoles,
     deleteInboxQueue,
   } = useInboxSettings();
 
@@ -54,7 +55,7 @@ export const SettingsInboxQueueEdit = () => {
       : {
           name: inboxQueue.name,
           icon: inboxQueue.icon ?? 'IconInbox',
-          memberWorkspaceMemberIds: inboxQueue.memberWorkspaceMemberIds,
+          roleIds: inboxQueue.roleIds,
         };
 
   const goBack = () => navigateSettings(SettingsPath.WorkspaceCommunications);
@@ -92,9 +93,9 @@ export const SettingsInboxQueueEdit = () => {
         name: draft.name.trim(),
         icon: draft.icon,
       });
-      await setInboxQueueMembers({
+      await setInboxQueueRoles({
         queueId: inboxQueue.id,
-        memberWorkspaceMemberIds: draft.memberWorkspaceMemberIds,
+        roleIds: draft.roleIds,
       });
       goBack();
     } finally {
@@ -127,6 +128,7 @@ export const SettingsInboxQueueEdit = () => {
         />
       }
     >
+      <SettingsRolesQueryEffect />
       <SettingsPageContainer>
         <SettingsInboxQueueForm
           draft={draft}

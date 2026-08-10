@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 
-import { SettingsInboxQueueMemberPicker } from '@/settings/inbox/components/SettingsInboxQueueMemberPicker';
+import { SettingsInboxQueueRolePicker } from '@/settings/inbox/components/SettingsInboxQueueRolePicker';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -22,7 +22,7 @@ const StyledNameInput = styled.div`
 export type InboxQueueDraft = {
   name: string;
   icon: string;
-  memberWorkspaceMemberIds: string[];
+  roleIds: string[];
 };
 
 // One form for creating and editing, because both collect the same three
@@ -62,14 +62,12 @@ export const SettingsInboxQueueForm = ({
       </Section>
       <Section>
         <H2Title
-          title={t`Members`}
-          description={t`Work sent here belongs to everyone who watches it until someone takes it`}
+          title={t`Access`}
+          description={t`Roles that can open this inbox. Work sent here belongs to all of them until someone takes it`}
         />
-        <SettingsInboxQueueMemberPicker
-          selectedWorkspaceMemberIds={draft.memberWorkspaceMemberIds}
-          onChange={(memberWorkspaceMemberIds) =>
-            onChange({ ...draft, memberWorkspaceMemberIds })
-          }
+        <SettingsInboxQueueRolePicker
+          selectedRoleIds={draft.roleIds}
+          onChange={(roleIds) => onChange({ ...draft, roleIds })}
         />
       </Section>
     </>

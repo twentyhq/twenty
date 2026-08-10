@@ -11,6 +11,7 @@ import {
 export const InboxExceptionCode = appendCommonExceptionCode({
   UNKNOWN_INBOX_ITEM_TYPE: 'UNKNOWN_INBOX_ITEM_TYPE',
   UNKNOWN_INBOX_QUEUE: 'UNKNOWN_INBOX_QUEUE',
+  UNKNOWN_INBOX_ROLE: 'UNKNOWN_INBOX_ROLE',
   UNKNOWN_INBOX_RECIPIENT: 'UNKNOWN_INBOX_RECIPIENT',
   INBOX_ITEM_NOT_FOUND: 'INBOX_ITEM_NOT_FOUND',
   INBOX_ITEM_CHANGED: 'INBOX_ITEM_CHANGED',
@@ -27,6 +28,8 @@ const getInboxExceptionUserFriendlyMessage = (
       return msg`This kind of inbox item is not declared.`;
     case InboxExceptionCode.UNKNOWN_INBOX_QUEUE:
       return msg`This shared inbox does not exist, or you are not a member.`;
+    case InboxExceptionCode.UNKNOWN_INBOX_ROLE:
+      return msg`This role does not exist in this workspace.`;
     case InboxExceptionCode.UNKNOWN_INBOX_RECIPIENT:
       return msg`This person is not a member of this workspace.`;
     case InboxExceptionCode.INBOX_ITEM_NOT_FOUND:

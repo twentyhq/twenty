@@ -5,6 +5,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -30,6 +31,12 @@ const StyledAddress = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
+const StyledRoles = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export const SettingsInboxQueuesTable = ({
   inboxQueues,
 }: {
@@ -37,16 +44,21 @@ export const SettingsInboxQueuesTable = ({
 }) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const roles = useSettingsAllRoles();
+
   return (
     <Table>
       <TableRow gridTemplateColumns={INBOX_QUEUE_TABLE_GRID}>
         <TableHeader>{t`Name`}</TableHeader>
         <TableHeader>{t`Address`}</TableHeader>
-        <TableHeader align="right">{t`Members`}</TableHeader>
+        <TableHeader>{t`Access`}</TableHeader>
       </TableRow>
       <TableBody>
         {inboxQueues.map((inboxQueue) => {
           const QueueIcon = getIcon(inboxQueue.icon);
+          const roleLabels = inboxQueue.roleIds
+            .map((roleId) => roles.find(({ id }) => id === roleId)?.label)
+            .filter((label) => label !== undefined);
 
           return (
             <StyledRow
@@ -65,8 +77,10 @@ export const SettingsInboxQueuesTable = ({
               <TableCell>
                 <StyledAddress>/inbox/q/{inboxQueue.slug}</StyledAddress>
               </TableCell>
-              <TableCell align="right">
-                {inboxQueue.memberWorkspaceMemberIds.length}
+              <TableCell>
+                <StyledRoles>
+                  {roleLabels.length === 0 ? t`Nobody` : roleLabels.join(', ')}
+                </StyledRoles>
               </TableCell>
             </StyledRow>
           );

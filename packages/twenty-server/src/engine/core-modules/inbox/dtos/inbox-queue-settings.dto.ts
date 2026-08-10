@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 // The administrator's view of a shared inbox. The reader's view is InboxQueueDTO,
-// which carries counts instead of membership: what you can see and who can see
+// which carries counts instead of grants: what you can see and who can see
 // it are different questions.
 @ObjectType('InboxQueueSettings')
 export class InboxQueueSettingsDTO {
@@ -25,7 +25,7 @@ export class InboxQueueSettingsDTO {
   isDefault: boolean;
 
   @Field(() => [UUIDScalarType])
-  memberWorkspaceMemberIds: string[];
+  roleIds: string[];
 }
 
 // A kind of work, and where it goes when no producer named a recipient. This is

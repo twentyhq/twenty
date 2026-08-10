@@ -79,28 +79,28 @@ export class CreateInboxCoreTablesFastInstanceCommand
     );
 
     await queryRunner.query(
-      `CREATE TABLE IF NOT EXISTS "core"."inboxQueueMember" (
+      `CREATE TABLE IF NOT EXISTS "core"."inboxQueueRole" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "workspaceId" uuid NOT NULL,
         "queueId" uuid NOT NULL,
-        "userWorkspaceId" uuid NOT NULL,
+        "roleId" uuid NOT NULL,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_inboxQueueMember_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_INBOX_QUEUE_MEMBER_WORKSPACE_ID" FOREIGN KEY ("workspaceId")
+        CONSTRAINT "PK_inboxQueueRole_id" PRIMARY KEY ("id"),
+        CONSTRAINT "FK_INBOX_QUEUE_ROLE_WORKSPACE_ID" FOREIGN KEY ("workspaceId")
           REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_INBOX_QUEUE_MEMBER_QUEUE_ID" FOREIGN KEY ("queueId")
+        CONSTRAINT "FK_INBOX_QUEUE_ROLE_QUEUE_ID" FOREIGN KEY ("queueId")
           REFERENCES "core"."inboxQueue"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_INBOX_QUEUE_MEMBER_USER_WORKSPACE_ID" FOREIGN KEY ("userWorkspaceId")
-          REFERENCES "core"."userWorkspace"("id") ON DELETE CASCADE
+        CONSTRAINT "FK_INBOX_QUEUE_ROLE_ROLE_ID" FOREIGN KEY ("roleId")
+          REFERENCES "core"."role"("id") ON DELETE CASCADE
       )`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_QUEUE_MEMBER_QUEUE_ID_USER_WORKSPACE_ID_UNIQUE"
-        ON "core"."inboxQueueMember" ("queueId", "userWorkspaceId")`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_QUEUE_ROLE_QUEUE_ID_ROLE_ID_UNIQUE"
+        ON "core"."inboxQueueRole" ("queueId", "roleId")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_INBOX_QUEUE_MEMBER_USER_WORKSPACE_ID"
-        ON "core"."inboxQueueMember" ("userWorkspaceId")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_INBOX_QUEUE_ROLE_ROLE_ID"
+        ON "core"."inboxQueueRole" ("roleId")`,
     );
 
     // No status column: lastEventAt is written by producers, clearedAt by the
@@ -195,7 +195,7 @@ export class CreateInboxCoreTablesFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItem"`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueueMember"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueueRole"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueue"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItemType"`);
     await queryRunner.query(

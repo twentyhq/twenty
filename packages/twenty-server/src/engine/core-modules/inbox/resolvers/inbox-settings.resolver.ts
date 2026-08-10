@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
@@ -16,7 +15,7 @@ import {
 import {
   CreateInboxQueueInput,
   SetInboxItemTypeDefaultQueueInput,
-  SetInboxQueueMembersInput,
+  SetInboxQueueRolesInput,
   UpdateInboxQueueInput,
 } from 'src/engine/core-modules/inbox/dtos/inbox-queue-settings.input';
 import { InboxGraphqlApiExceptionFilter } from 'src/engine/core-modules/inbox/filters/inbox-graphql-api-exception.filter';
@@ -45,8 +44,8 @@ const toInboxItemTypeSettingsDto = (
 });
 
 // Administering shared inboxes decides who can read whose work, so it sits
-// behind the workspace settings permission rather than behind membership the
-// way reading an item does.
+// behind the workspace settings permission rather than behind the access it
+// grants, the way reading an item does.
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
@@ -67,26 +66,15 @@ export class InboxSettingsResolver {
   async inboxQueueSettings(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InboxQueueSettingsDTO[]> {
-    const [queues, memberIdsByQueue, workspaceMemberIdByUserWorkspaceId] =
-      await Promise.all([
-        this.inboxQueueService.findAllQueues({ workspaceId: workspace.id }),
-        this.inboxQueueService.findQueueMemberIdsByQueue({
-          workspaceId: workspace.id,
-        }),
-        this.inboxQueueService.toWorkspaceMemberIdsByUserWorkspaceId({
-          workspaceId: workspace.id,
-        }),
-      ]);
+    const [queues, roleIdsByQueue] = await Promise.all([
+      this.inboxQueueService.findAllQueues({ workspaceId: workspace.id }),
+      this.inboxQueueService.findQueueRoleIdsByQueue({
+        workspaceId: workspace.id,
+      }),
+    ]);
 
     return queues.map((queue) =>
-      this.toDto(
-        queue,
-        (memberIdsByQueue.get(queue.id) ?? [])
-          .map((userWorkspaceId) =>
-            workspaceMemberIdByUserWorkspaceId.get(userWorkspaceId),
-          )
-          .filter(isDefined),
-      ),
+      this.toDto(queue, roleIdsByQueue.get(queue.id) ?? []),
     );
   }
 
@@ -100,7 +88,7 @@ export class InboxSettingsResolver {
       workspaceId: workspace.id,
       name: input.name,
       icon: input.icon,
-      memberWorkspaceMemberIds: input.memberWorkspaceMemberIds ?? [],
+      roleIds: input.roleIds ?? [],
     });
 
     return this.readQueueSettings(workspace.id, queue);
@@ -124,14 +112,14 @@ export class InboxSettingsResolver {
 
   @Mutation(() => InboxQueueSettingsDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
-  async setInboxQueueMembers(
-    @Args('input') input: SetInboxQueueMembersInput,
+  async setInboxQueueRoles(
+    @Args('input') input: SetInboxQueueRolesInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InboxQueueSettingsDTO> {
-    await this.inboxQueueService.setMembers({
+    await this.inboxQueueService.setQueueRoles({
       workspaceId: workspace.id,
       queueId: input.queueId,
-      memberWorkspaceMemberIds: input.memberWorkspaceMemberIds,
+      roleIds: input.roleIds,
     });
 
     const queue = await this.inboxQueueService.findQueueOrThrow({
@@ -187,27 +175,16 @@ export class InboxSettingsResolver {
     workspaceId: string,
     queue: InboxQueueEntity,
   ): Promise<InboxQueueSettingsDTO> {
-    const [memberIdsByQueue, workspaceMemberIdByUserWorkspaceId] =
-      await Promise.all([
-        this.inboxQueueService.findQueueMemberIdsByQueue({ workspaceId }),
-        this.inboxQueueService.toWorkspaceMemberIdsByUserWorkspaceId({
-          workspaceId,
-        }),
-      ]);
-
-    return this.toDto(
-      queue,
-      (memberIdsByQueue.get(queue.id) ?? [])
-        .map((userWorkspaceId) =>
-          workspaceMemberIdByUserWorkspaceId.get(userWorkspaceId),
-        )
-        .filter(isDefined),
+    const roleIdsByQueue = await this.inboxQueueService.findQueueRoleIdsByQueue(
+      { workspaceId },
     );
+
+    return this.toDto(queue, roleIdsByQueue.get(queue.id) ?? []);
   }
 
   private toDto(
     queue: InboxQueueEntity,
-    memberWorkspaceMemberIds: string[],
+    roleIds: string[],
   ): InboxQueueSettingsDTO {
     return {
       id: queue.id,
@@ -215,7 +192,7 @@ export class InboxSettingsResolver {
       slug: queue.slug,
       icon: queue.icon,
       isDefault: queue.isDefault,
-      memberWorkspaceMemberIds,
+      roleIds,
     };
   }
 }

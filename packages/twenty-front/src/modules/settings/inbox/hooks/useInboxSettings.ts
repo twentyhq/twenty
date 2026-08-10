@@ -9,7 +9,7 @@ import {
   GET_INBOX_ITEM_TYPE_SETTINGS,
   GET_INBOX_QUEUE_SETTINGS,
   SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE,
-  SET_INBOX_QUEUE_MEMBERS,
+  SET_INBOX_QUEUE_ROLES,
   UPDATE_INBOX_QUEUE,
 } from '@/settings/inbox/graphql/inboxSettingsOperations';
 import {
@@ -20,7 +20,7 @@ import {
 const INBOX_SETTINGS_REFETCH_QUERIES = [
   'GetInboxQueueSettings',
   'GetInboxItemTypeSettings',
-  // The drawer's shared section is membership-driven, so it changes too
+  // The drawer's shared section follows these grants, so it changes too
   'GetMyInboxQueues',
 ];
 
@@ -58,8 +58,8 @@ export const useInboxSettings = () => {
     UPDATE_INBOX_QUEUE,
     mutationOptions,
   );
-  const [setInboxQueueMembersMutation] = useMutation(
-    SET_INBOX_QUEUE_MEMBERS,
+  const [setInboxQueueRolesMutation] = useMutation(
+    SET_INBOX_QUEUE_ROLES,
     mutationOptions,
   );
   const [deleteInboxQueueMutation] = useMutation(
@@ -72,11 +72,7 @@ export const useInboxSettings = () => {
   );
 
   const createInboxQueue = useCallback(
-    async (input: {
-      name: string;
-      icon?: string;
-      memberWorkspaceMemberIds: string[];
-    }) => {
+    async (input: { name: string; icon?: string; roleIds: string[] }) => {
       await createInboxQueueMutation({ variables: { input } });
     },
     [createInboxQueueMutation],
@@ -89,11 +85,11 @@ export const useInboxSettings = () => {
     [updateInboxQueueMutation],
   );
 
-  const setInboxQueueMembers = useCallback(
-    async (input: { queueId: string; memberWorkspaceMemberIds: string[] }) => {
-      await setInboxQueueMembersMutation({ variables: { input } });
+  const setInboxQueueRoles = useCallback(
+    async (input: { queueId: string; roleIds: string[] }) => {
+      await setInboxQueueRolesMutation({ variables: { input } });
     },
-    [setInboxQueueMembersMutation],
+    [setInboxQueueRolesMutation],
   );
 
   const deleteInboxQueue = useCallback(
@@ -119,7 +115,7 @@ export const useInboxSettings = () => {
     loading: queuesLoading || typesLoading,
     createInboxQueue,
     updateInboxQueue,
-    setInboxQueueMembers,
+    setInboxQueueRoles,
     deleteInboxQueue,
     setInboxItemTypeDefaultQueue,
   };

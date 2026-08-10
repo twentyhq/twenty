@@ -11,23 +11,23 @@ import {
 import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-30/create-inbox-core-tables-upgrade-command-name.constant';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
-// Who watches a queue. This is also who may read its items, so it is the only
-// thing standing between sales and the support mailbox.
-@Entity({ name: 'inboxQueueMember', schema: 'core' })
+// Which roles can reach a shared inbox. Access is a permission, so it is
+// granted the way every other permission is, rather than by a second list of
+// people kept in step by hand. Who ends up doing a given piece of work is a
+// separate question, answered by the item's assignee.
+@Entity({ name: 'inboxQueueRole', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
 })
-@Index(
-  'IDX_INBOX_QUEUE_MEMBER_QUEUE_ID_USER_WORKSPACE_ID_UNIQUE',
-  ['queueId', 'userWorkspaceId'],
-  { unique: true },
-)
-@Index('IDX_INBOX_QUEUE_MEMBER_USER_WORKSPACE_ID', ['userWorkspaceId'])
-export class InboxQueueMemberEntity {
+@Index('IDX_INBOX_QUEUE_ROLE_QUEUE_ID_ROLE_ID_UNIQUE', ['queueId', 'roleId'], {
+  unique: true,
+})
+@Index('IDX_INBOX_QUEUE_ROLE_ROLE_ID', ['roleId'])
+export class InboxQueueRoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -37,31 +37,31 @@ export class InboxQueueMemberEntity {
   @ManyToOne('WorkspaceEntity', { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'workspaceId',
-    foreignKeyConstraintName: 'FK_INBOX_QUEUE_MEMBER_WORKSPACE_ID',
+    foreignKeyConstraintName: 'FK_INBOX_QUEUE_ROLE_WORKSPACE_ID',
   })
   workspace: EntityRelation<WorkspaceEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
   queueId: string;
 
-  @ManyToOne(() => InboxQueueEntity, (queue) => queue.members, {
+  @ManyToOne(() => InboxQueueEntity, (queue) => queue.roles, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({
     name: 'queueId',
-    foreignKeyConstraintName: 'FK_INBOX_QUEUE_MEMBER_QUEUE_ID',
+    foreignKeyConstraintName: 'FK_INBOX_QUEUE_ROLE_QUEUE_ID',
   })
   queue: EntityRelation<InboxQueueEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
-  userWorkspaceId: string;
+  roleId: string;
 
-  @ManyToOne(() => UserWorkspaceEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => RoleEntity, { onDelete: 'CASCADE' })
   @JoinColumn({
-    name: 'userWorkspaceId',
-    foreignKeyConstraintName: 'FK_INBOX_QUEUE_MEMBER_USER_WORKSPACE_ID',
+    name: 'roleId',
+    foreignKeyConstraintName: 'FK_INBOX_QUEUE_ROLE_ROLE_ID',
   })
-  userWorkspace: EntityRelation<UserWorkspaceEntity>;
+  role: EntityRelation<RoleEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

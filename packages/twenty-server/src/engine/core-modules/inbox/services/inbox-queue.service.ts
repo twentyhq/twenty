@@ -1,30 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import {
   getSubdomainSlugFromDisplayName,
   isDefined,
 } from 'twenty-shared/utils';
-import {
-  type DataSource,
-  type FindOptionsWhere,
-  In,
-  Repository,
-} from 'typeorm';
+import { type DataSource, In } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
-import { InboxQueueMemberEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-member.entity';
+import { InboxQueueRoleEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-role.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import {
   InboxException,
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -35,42 +28,48 @@ export class InboxQueueService {
   constructor(
     @InjectWorkspaceScopedRepository(InboxQueueEntity)
     private readonly inboxQueueRepository: WorkspaceScopedRepository<InboxQueueEntity>,
-    @InjectWorkspaceScopedRepository(InboxQueueMemberEntity)
-    private readonly inboxQueueMemberRepository: WorkspaceScopedRepository<InboxQueueMemberEntity>,
+    @InjectWorkspaceScopedRepository(InboxQueueRoleEntity)
+    private readonly inboxQueueRoleRepository: WorkspaceScopedRepository<InboxQueueRoleEntity>,
     @InjectWorkspaceScopedRepository(InboxItemEntity)
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
+    private readonly userRoleService: UserRoleService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
 
-  // The queues a person watches. This is also the set of queues whose items
-  // they may read, so every read scope is built from it.
-  async findMemberQueueIds({
+  // The shared inboxes a person can reach, which is also the set whose items
+  // they may read, so every read scope is built from it. Access follows their
+  // role: it is a permission, granted where the workspace's other permissions
+  // are, rather than a second list of people to keep in step by hand.
+  async findAccessibleQueueIds({
     workspaceId,
     userWorkspaceId,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<string[]> {
-    const memberships = await this.inboxQueueMemberRepository.find(
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
-      { where: { userWorkspaceId } },
-    );
+      userWorkspaceId,
+    });
 
-    return memberships.map((membership) => membership.queueId);
+    const grants = await this.inboxQueueRoleRepository.find(workspaceId, {
+      where: { roleId },
+    });
+
+    return grants.map((grant) => grant.queueId);
   }
 
-  async findMemberQueues({
+  async findAccessibleQueues({
     workspaceId,
     userWorkspaceId,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<InboxQueueEntity[]> {
-    const queueIds = await this.findMemberQueueIds({
+    const queueIds = await this.findAccessibleQueueIds({
       workspaceId,
       userWorkspaceId,
     });
@@ -85,7 +84,7 @@ export class InboxQueueService {
     });
   }
 
-  async findMemberQueueBySlug({
+  async findAccessibleQueueBySlug({
     workspaceId,
     userWorkspaceId,
     slug,
@@ -94,17 +93,19 @@ export class InboxQueueService {
     userWorkspaceId: string;
     slug: string;
   }): Promise<InboxQueueEntity | null> {
-    const membership = await this.inboxQueueMemberRepository.findOne(
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
-      {
-        // The join is part of an authorization gate, so the queue carries the
-        // tenant predicate rather than inheriting it from the membership row
-        where: { userWorkspaceId, queue: { slug, workspaceId } },
-        relations: { queue: true },
-      },
-    );
+      userWorkspaceId,
+    });
 
-    return membership?.queue ?? null;
+    const grant = await this.inboxQueueRoleRepository.findOne(workspaceId, {
+      // The join is part of an authorization gate, so the queue carries the
+      // tenant predicate rather than inheriting it from the grant row
+      where: { roleId, queue: { slug, workspaceId } },
+      relations: { queue: true },
+    });
+
+    return grant?.queue ?? null;
   }
 
   // Where work goes when no rule could address it. Created on demand rather
@@ -158,22 +159,19 @@ export class InboxQueueService {
     });
   }
 
-  async findQueueMemberIdsByQueue({
+  async findQueueRoleIdsByQueue({
     workspaceId,
   }: {
     workspaceId: string;
   }): Promise<Map<string, string[]>> {
-    const memberships = await this.inboxQueueMemberRepository.find(workspaceId);
+    const grants = await this.inboxQueueRoleRepository.find(workspaceId);
 
-    return memberships.reduce((memberIdsByQueue, membership) => {
-      const memberIds = memberIdsByQueue.get(membership.queueId) ?? [];
+    return grants.reduce((roleIdsByQueue, grant) => {
+      const roleIds = roleIdsByQueue.get(grant.queueId) ?? [];
 
-      memberIdsByQueue.set(membership.queueId, [
-        ...memberIds,
-        membership.userWorkspaceId,
-      ]);
+      roleIdsByQueue.set(grant.queueId, [...roleIds, grant.roleId]);
 
-      return memberIdsByQueue;
+      return roleIdsByQueue;
     }, new Map<string, string[]>());
   }
 
@@ -181,12 +179,12 @@ export class InboxQueueService {
     workspaceId,
     name,
     icon,
-    memberWorkspaceMemberIds,
+    roleIds,
   }: {
     workspaceId: string;
     name: string;
     icon?: string | null;
-    memberWorkspaceMemberIds: string[];
+    roleIds: string[];
   }): Promise<InboxQueueEntity> {
     const queue = await this.inboxQueueRepository.save(workspaceId, {
       name,
@@ -195,10 +193,10 @@ export class InboxQueueService {
       isDefault: false,
     });
 
-    await this.setMembers({
+    await this.setQueueRoles({
       workspaceId,
       queueId: queue.id,
-      memberWorkspaceMemberIds,
+      roleIds,
     });
 
     return queue;
@@ -266,23 +264,20 @@ export class InboxQueueService {
     await this.inboxQueueRepository.delete(workspaceId, { id: queue.id });
   }
 
-  async setMembers({
+  // Which roles can reach this shared inbox. Granting access is a permission
+  // change, so it names roles rather than people.
+  async setQueueRoles({
     workspaceId,
     queueId,
-    memberWorkspaceMemberIds,
+    roleIds,
   }: {
     workspaceId: string;
     queueId: string;
-    memberWorkspaceMemberIds: string[];
+    roleIds: string[];
   }): Promise<void> {
     const queue = await this.findQueueOrThrow({ workspaceId, queueId });
 
-    // Membership is read access, so the translation doubles as the check: an id
-    // that is not a member of this workspace resolves to nothing.
-    const userWorkspaceIds = await this.toUserWorkspaceIds({
-      workspaceId,
-      workspaceMemberIds: memberWorkspaceMemberIds,
-    });
+    await this.assertRolesBelongToWorkspace({ workspaceId, roleIds });
 
     // Replacing the list is a delete plus an insert, which two admins saving at
     // once would interleave into the union of both lists. The queue row is
@@ -296,130 +291,20 @@ export class InboxQueueService {
         .setLock('pessimistic_write')
         .getOne();
 
-      const queueMemberRepository =
-        this.inboxQueueMemberRepository.withManager(manager);
+      const queueRoleRepository =
+        this.inboxQueueRoleRepository.withManager(manager);
 
-      await queueMemberRepository.delete(workspaceId, { queueId: queue.id });
+      await queueRoleRepository.delete(workspaceId, { queueId: queue.id });
 
-      if (userWorkspaceIds.length === 0) {
+      if (roleIds.length === 0) {
         return;
       }
 
-      await queueMemberRepository.saveMany(
+      await queueRoleRepository.saveMany(
         workspaceId,
-        userWorkspaceIds.map((userWorkspaceId) => ({
-          queueId: queue.id,
-          userWorkspaceId,
-        })),
+        roleIds.map((roleId) => ({ queueId: queue.id, roleId })),
       );
     });
-  }
-
-  // The inbox stores membership against the core identity, but everything that
-  // administers it speaks workspace members, so the two are translated here
-  // rather than leaking userWorkspaceId into the client.
-  async toUserWorkspaceIds({
-    workspaceId,
-    workspaceMemberIds,
-  }: {
-    workspaceId: string;
-    workspaceMemberIds: string[];
-  }): Promise<string[]> {
-    const userIds = await this.findUserIdsOfWorkspaceMembers({
-      workspaceId,
-      workspaceMemberIds,
-    });
-
-    if (userIds.length === 0) {
-      return [];
-    }
-
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: { userId: In(userIds), workspaceId },
-      select: { id: true },
-    });
-
-    return userWorkspaces.map((userWorkspace) => userWorkspace.id);
-  }
-
-  async toWorkspaceMemberIdsByUserWorkspaceId({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<Map<string, string>> {
-    const [userWorkspaces, workspaceMembers] = await Promise.all([
-      this.userWorkspaceRepository.find({
-        where: { workspaceId },
-        select: { id: true, userId: true },
-      }),
-      this.findWorkspaceMembers({ workspaceId }),
-    ]);
-
-    const workspaceMemberIdByUserId = new Map(
-      workspaceMembers.map((workspaceMember) => [
-        workspaceMember.userId,
-        workspaceMember.id,
-      ]),
-    );
-
-    return userWorkspaces.reduce((workspaceMemberIdByUserWorkspaceId, uw) => {
-      const workspaceMemberId = workspaceMemberIdByUserId.get(uw.userId);
-
-      if (isDefined(workspaceMemberId)) {
-        workspaceMemberIdByUserWorkspaceId.set(uw.id, workspaceMemberId);
-      }
-
-      return workspaceMemberIdByUserWorkspaceId;
-    }, new Map<string, string>());
-  }
-
-  private async findUserIdsOfWorkspaceMembers({
-    workspaceId,
-    workspaceMemberIds,
-  }: {
-    workspaceId: string;
-    workspaceMemberIds: string[];
-  }): Promise<string[]> {
-    const uniqueIds = [...new Set(workspaceMemberIds)];
-
-    if (uniqueIds.length === 0) {
-      return [];
-    }
-
-    const workspaceMembers = await this.findWorkspaceMembers({
-      workspaceId,
-      where: { id: In(uniqueIds) },
-    });
-
-    return workspaceMembers
-      .map((workspaceMember) => workspaceMember.userId)
-      .filter(isDefined);
-  }
-
-  // Workspace members live in the workspace schema, so reading them needs a
-  // workspace context the settings request does not carry on its own.
-  private async findWorkspaceMembers({
-    workspaceId,
-    where,
-  }: {
-    workspaceId: string;
-    where?: FindOptionsWhere<WorkspaceMemberWorkspaceEntity>;
-  }): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workspaceMemberRepository.find(
-          isDefined(where) ? { where } : {},
-        );
-      },
-      buildSystemAuthContext(workspaceId),
-    );
   }
 
   async findQueueOrThrow({
@@ -441,6 +326,35 @@ export class InboxQueueService {
     }
 
     return queue;
+  }
+
+  // A role from another workspace would satisfy the foreign key and land as a
+  // grant nobody here can see, so it is rejected before it is written.
+  private async assertRolesBelongToWorkspace({
+    workspaceId,
+    roleIds,
+  }: {
+    workspaceId: string;
+    roleIds: string[];
+  }): Promise<void> {
+    if (roleIds.length === 0) {
+      return;
+    }
+
+    const roles = await this.roleRepository.find(workspaceId, {
+      where: { id: In(roleIds) },
+      select: { id: true },
+    });
+
+    const knownRoleIds = new Set(roles.map((role) => role.id));
+    const unknownRoleId = roleIds.find((roleId) => !knownRoleIds.has(roleId));
+
+    if (isDefined(unknownRoleId)) {
+      throw new InboxException(
+        `Role ${unknownRoleId} not found`,
+        InboxExceptionCode.UNKNOWN_INBOX_ROLE,
+      );
+    }
   }
 
   // Two queues can share a display name, but not an address. A name that

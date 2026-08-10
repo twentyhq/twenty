@@ -63,7 +63,7 @@ const executeArgs = {
   inboxItemId: INBOX_ITEM_ID,
   workspaceId: WORKSPACE_ID,
   actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
-  memberQueueIds: [],
+  accessibleQueueIds: [],
 };
 
 describe('InboxItemActionService', () => {

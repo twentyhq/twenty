@@ -23,7 +23,7 @@ export type TransitionInboxItemArgs = {
   inboxItemId: string;
   workspaceId: string;
   actorUserWorkspaceId: string;
-  memberQueueIds: string[];
+  accessibleQueueIds: string[];
   transition: InboxItemTransition;
   // Optimistic concurrency. Omitted means "apply regardless", which is what a
   // producer wants; a UI that read the item should always pass what it read.
@@ -47,7 +47,7 @@ export class InboxTransitionService {
     inboxItemId,
     workspaceId,
     actorUserWorkspaceId,
-    memberQueueIds,
+    accessibleQueueIds,
     transition,
     expectedVersion,
     loadedInboxItem,
@@ -56,7 +56,7 @@ export class InboxTransitionService {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
-      memberQueueIds,
+      accessibleQueueIds,
     };
     const inboxItem =
       loadedInboxItem ??
@@ -70,7 +70,7 @@ export class InboxTransitionService {
         ...this.inboxItemService.buildWriteScope({
           inboxItem,
           actorUserWorkspaceId,
-          memberQueueIds,
+          accessibleQueueIds,
         }),
         ...(isDefined(expectedVersion) ? { version: expectedVersion } : {}),
       },

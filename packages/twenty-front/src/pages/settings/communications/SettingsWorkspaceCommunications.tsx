@@ -10,6 +10,7 @@ import { useSettingsActiveTabId } from '@/settings/components/layout/useSettings
 import { SettingsInboxQueuesTable } from '@/settings/inbox/components/SettingsInboxQueuesTable';
 import { SettingsInboxRoutingTable } from '@/settings/inbox/components/SettingsInboxRoutingTable';
 import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -167,6 +168,7 @@ export const SettingsWorkspaceCommunications = () => {
         )}
         {activeTabId === COMMUNICATIONS_TAB_ID.sharedInboxes && (
           <Section>
+            <SettingsRolesQueryEffect />
             <H2Title
               title={t`Shared inboxes`}
               description={t`An inbox a team watches together. Work sent here is nobody's until someone takes it.`}

@@ -7,7 +7,7 @@ import { shouldSkipInboxPoll } from '@/inbox/utils/shouldSkipInboxPoll';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type InboxQueue } from '~/generated/graphql';
 
-// The shared inboxes this person is a member of. Membership is resolved server
+// The shared inboxes this person can reach. Access is resolved server
 // side, so the navigation simply renders what comes back.
 export const useInboxQueues = () => {
   const apolloCoreClient = useApolloCoreClient();

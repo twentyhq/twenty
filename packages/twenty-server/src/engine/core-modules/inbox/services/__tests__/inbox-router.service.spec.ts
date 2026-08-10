@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull, QueryFailedError } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
@@ -11,6 +12,8 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 // What Postgres actually raises through TypeORM when a partial unique index
@@ -96,6 +99,19 @@ describe('InboxRouterService', () => {
     findOrCreateDefaultQueue: jest.fn(),
   };
 
+  const userWorkspaceRepository = {
+    find: jest.fn(),
+  };
+
+  const workspaceMemberRepository = {
+    find: jest.fn(),
+  };
+
+  const globalWorkspaceOrmManager = {
+    getRepository: jest.fn().mockResolvedValue(workspaceMemberRepository),
+    executeInWorkspaceContext: jest.fn((run: () => unknown) => run()),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -108,6 +124,8 @@ describe('InboxRouterService', () => {
     inboxQueueService.findOrCreateDefaultQueue.mockResolvedValue({
       id: TRIAGE_QUEUE_ID,
     });
+    userWorkspaceRepository.find.mockResolvedValue([]);
+    workspaceMemberRepository.find.mockResolvedValue([]);
     inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
@@ -133,6 +151,14 @@ describe('InboxRouterService', () => {
         {
           provide: FeatureFlagService,
           useValue: featureFlagService,
+        },
+        {
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: userWorkspaceRepository,
+        },
+        {
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
         },
       ],
     }).compile();

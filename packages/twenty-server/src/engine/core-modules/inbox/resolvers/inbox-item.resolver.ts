@@ -42,7 +42,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 // own items, plus the queues they belong to. Both come from the auth context,
 // never from the request.
 // NoPermissionGuard: the inbox needs no permission flag because reachability is
-// decided by assignment and queue membership rather than by object permissions.
+// decided by assignment and queue access rather than by object permissions.
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
@@ -105,7 +105,7 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
         workspaceId,
         userWorkspaceId,
       }),
@@ -138,14 +138,14 @@ export class InboxItemResolver {
     });
   }
 
-  // The shared inboxes this person watches, badged the same way their own is
+  // The shared inboxes this person can reach, badged the same way their own is
   @Query(() => [InboxQueueDTO])
   async myInboxQueues(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<InboxQueueDTO[]> {
     const now = new Date();
-    const queues = await this.inboxQueueService.findMemberQueues({
+    const queues = await this.inboxQueueService.findAccessibleQueues({
       workspaceId,
       userWorkspaceId,
     });
@@ -188,7 +188,7 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
         workspaceId,
         userWorkspaceId,
       }),
@@ -213,7 +213,7 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
         workspaceId,
         userWorkspaceId,
       }),
@@ -241,7 +241,7 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      memberQueueIds: await this.inboxQueueService.findMemberQueueIds({
+      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
         workspaceId,
         userWorkspaceId,
       }),
@@ -254,7 +254,7 @@ export class InboxItemResolver {
   }
 
   // Reading a queue you do not belong to is indistinguishable from reading one
-  // that does not exist, so membership is resolved before the scope is built.
+  // that does not exist, so access is resolved before the scope is built.
   private async resolveReadScope({
     workspaceId,
     userWorkspaceId,
@@ -270,7 +270,7 @@ export class InboxItemResolver {
       return { kind: 'personal' };
     }
 
-    const queue = await this.inboxQueueService.findMemberQueueBySlug({
+    const queue = await this.inboxQueueService.findAccessibleQueueBySlug({
       workspaceId,
       userWorkspaceId,
       slug: queueSlug,
