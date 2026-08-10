@@ -24,6 +24,7 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget | null => {
 
   return {
     label: t`Expand chat`,
+    hasExpandShortcut: false,
     expand: () => {
       void closeSidePanelMenu();
 

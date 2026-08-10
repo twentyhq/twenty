@@ -8082,6 +8082,7 @@ msgstr ""
 
 #. js-lingui-id: CM8OoE
 #: src/modules/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage.ts
+#: src/modules/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage.ts
 msgid "Expand record"
 msgstr ""
 
@@ -13914,7 +13915,6 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Vous seul pourrez voir vos e-mails et événements"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx

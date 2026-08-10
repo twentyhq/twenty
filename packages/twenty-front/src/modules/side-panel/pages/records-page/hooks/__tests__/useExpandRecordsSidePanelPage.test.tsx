@@ -118,6 +118,15 @@ describe('useExpandRecordsSidePanelPage', () => {
     expect(result.current).toBeNull();
   });
 
+  it('should not expand when the view id is empty', () => {
+    const { result } = renderExpandRecordsSidePanelPage({
+      objectMetadataId: companyObjectMetadataItem.id,
+      viewId: '',
+    });
+
+    expect(result.current).toBeNull();
+  });
+
   it('should not expand on mobile where the panel already fills the viewport', () => {
     mockIsMobile = true;
 

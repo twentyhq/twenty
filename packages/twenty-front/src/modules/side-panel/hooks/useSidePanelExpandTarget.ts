@@ -4,11 +4,11 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
 import { useExpandRecordSidePanelPage } from '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage';
 import { useExpandRecordsSidePanelPage } from '@/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage';
+import { useExpandRichTextSidePanelPage } from '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// Pages that have no full page equivalent return null and get no expand button.
 export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { hasSidePanelSubPages } = useSidePanelSubPageHistory();
@@ -16,6 +16,7 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   const askAiExpandTarget = useExpandAskAiSidePanelPage();
   const recordExpandTarget = useExpandRecordSidePanelPage();
   const recordsExpandTarget = useExpandRecordsSidePanelPage();
+  const richTextExpandTarget = useExpandRichTextSidePanelPage();
 
   // A sub page has taken over the panel content, so expanding the page
   // underneath it would discard what the user is currently doing.
@@ -30,6 +31,8 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
       return recordExpandTarget;
     case SidePanelPages.ViewRecords:
       return recordsExpandTarget;
+    case SidePanelPages.EditRichText:
+      return richTextExpandTarget;
     default:
       return null;
   }

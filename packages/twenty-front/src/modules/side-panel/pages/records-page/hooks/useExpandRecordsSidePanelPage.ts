@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -38,13 +39,14 @@ export const useExpandRecordsSidePanelPage =
     if (
       isMobile ||
       !isDefined(objectMetadataItem) ||
-      !isDefined(viewableRecordsViewId)
+      !isNonEmptyString(viewableRecordsViewId)
     ) {
       return null;
     }
 
     return {
       label: t`Expand view`,
+      hasExpandShortcut: true,
       expand: () => {
         navigate(
           AppPath.RecordIndexPage,

@@ -239,6 +239,7 @@ describe('WorkspaceEntityManager', () => {
         'test-entity': 'test-entity-id',
       },
       featureFlagsMap: {
+        IS_AI_CHAT_PAGE_ENABLED: false,
         IS_APP_CLAIMING_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,

@@ -4,4 +4,6 @@
 export type SidePanelExpandTarget = {
   label: string;
   expand: () => void;
+  // Pages whose content owns cmd+enter, such as a composer, decline it.
+  hasExpandShortcut: boolean;
 };

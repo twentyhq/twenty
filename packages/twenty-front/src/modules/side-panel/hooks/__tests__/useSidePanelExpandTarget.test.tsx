@@ -8,18 +8,27 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const askAiExpandTarget: SidePanelExpandTarget = {
+const mockAskAiExpandTarget: SidePanelExpandTarget = {
   label: 'Expand chat',
+  hasExpandShortcut: true,
   expand: jest.fn(),
 };
 
-const recordExpandTarget: SidePanelExpandTarget = {
+const mockRecordExpandTarget: SidePanelExpandTarget = {
   label: 'Expand record',
+  hasExpandShortcut: true,
   expand: jest.fn(),
 };
 
-const recordsExpandTarget: SidePanelExpandTarget = {
+const mockRecordsExpandTarget: SidePanelExpandTarget = {
   label: 'Expand view',
+  hasExpandShortcut: true,
+  expand: jest.fn(),
+};
+
+const mockRichTextExpandTarget: SidePanelExpandTarget = {
+  label: 'Expand record',
+  hasExpandShortcut: true,
   expand: jest.fn(),
 };
 
@@ -28,21 +37,28 @@ let mockHasSidePanelSubPages = false;
 jest.mock(
   '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage',
   () => ({
-    useExpandAskAiSidePanelPage: () => askAiExpandTarget,
+    useExpandAskAiSidePanelPage: () => mockAskAiExpandTarget,
   }),
 );
 
 jest.mock(
   '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage',
   () => ({
-    useExpandRecordSidePanelPage: () => recordExpandTarget,
+    useExpandRecordSidePanelPage: () => mockRecordExpandTarget,
   }),
 );
 
 jest.mock(
   '@/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage',
   () => ({
-    useExpandRecordsSidePanelPage: () => recordsExpandTarget,
+    useExpandRecordsSidePanelPage: () => mockRecordsExpandTarget,
+  }),
+);
+
+jest.mock(
+  '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage',
+  () => ({
+    useExpandRichTextSidePanelPage: () => mockRichTextExpandTarget,
   }),
 );
 
@@ -71,19 +87,25 @@ describe('useSidePanelExpandTarget', () => {
   it('should return the ask ai target when the ask ai page is open', () => {
     const { result } = renderExpandTarget(SidePanelPages.AskAI);
 
-    expect(result.current).toBe(askAiExpandTarget);
+    expect(result.current).toBe(mockAskAiExpandTarget);
   });
 
   it('should return the record target when a record page is open', () => {
     const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
 
-    expect(result.current).toBe(recordExpandTarget);
+    expect(result.current).toBe(mockRecordExpandTarget);
   });
 
   it('should return the records target when a records page is open', () => {
     const { result } = renderExpandTarget(SidePanelPages.ViewRecords);
 
-    expect(result.current).toBe(recordsExpandTarget);
+    expect(result.current).toBe(mockRecordsExpandTarget);
+  });
+
+  it('should return the rich text target when a rich text page is open', () => {
+    const { result } = renderExpandTarget(SidePanelPages.EditRichText);
+
+    expect(result.current).toBe(mockRichTextExpandTarget);
   });
 
   it('should return null when the page has no full page equivalent', () => {

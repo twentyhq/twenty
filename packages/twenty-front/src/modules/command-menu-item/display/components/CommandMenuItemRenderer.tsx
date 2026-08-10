@@ -32,6 +32,7 @@ const StyledPreviewWrapper = styled.div`
 type CommandMenuItemRendererProps = {
   item: CommandMenuItemFieldsFragment;
   isPrimaryAction?: boolean;
+  shouldHideLabel?: boolean;
 };
 
 type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
@@ -39,6 +40,7 @@ type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
 const CommandMenuItemButtonRenderer = ({
   item,
   isPrimaryAction = false,
+  shouldHideLabel = false,
 }: CommandMenuItemButtonRendererProps) => {
   const { commandMenuContextApi, isInPreviewMode } =
     useContext(CommandMenuContext);
@@ -65,6 +67,7 @@ const CommandMenuItemButtonRenderer = ({
         <CommandMenuButton
           command={command}
           isPrimaryAction={isPrimaryAction}
+          shouldHideLabel={shouldHideLabel}
         />
       </StyledPreviewWrapper>
     );
@@ -76,6 +79,7 @@ const CommandMenuItemButtonRenderer = ({
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
       isPrimaryAction={isPrimaryAction}
+      shouldHideLabel={shouldHideLabel}
     />
   );
 };

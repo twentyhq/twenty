@@ -3,6 +3,8 @@ import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuCont
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
+import { getLabelledPinnedCommandMenuItemId } from '@/command-menu-item/display/utils/getLabelledPinnedCommandMenuItemId';
+import { getPinnedCommandMenuItemsDisplayConfig } from '@/command-menu-item/display/utils/getPinnedCommandMenuItemsDisplayConfig';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
@@ -39,12 +41,29 @@ const StyledItemsContainer = styled.div`
 
 export const PinnedCommandMenuItemButtons = () => {
   const { theme } = useContext(ThemeContext);
-  const { commandMenuItems } = useContext(CommandMenuContext);
+  const { commandMenuItems, containerType } = useContext(CommandMenuContext);
+
+  const { layoutKey, shouldLabelSingleCommandMenuItem } = useMemo(
+    () => getPinnedCommandMenuItemsDisplayConfig(containerType),
+    [containerType],
+  );
 
   const pinnedCommandMenuItems = useMemo(
     () => commandMenuItems.filter((item) => item.isPinned === true),
     [commandMenuItems],
   );
+
+  const labelledCommandMenuItemId = useMemo(
+    () =>
+      shouldLabelSingleCommandMenuItem
+        ? getLabelledPinnedCommandMenuItemId(pinnedCommandMenuItems)
+        : null,
+    [pinnedCommandMenuItems, shouldLabelSingleCommandMenuItem],
+  );
+
+  const shouldHideCommandMenuItemLabel = (commandMenuItemId: string) =>
+    shouldLabelSingleCommandMenuItem &&
+    commandMenuItemId !== labelledCommandMenuItemId;
 
   const {
     pinnedInlineCommandMenuItems,
@@ -53,6 +72,7 @@ export const PinnedCommandMenuItemButtons = () => {
     onCommandMenuItemDimensionChange,
   } = usePinnedCommandMenuItemsInlineLayout({
     pinnedCommandMenuItems,
+    layoutKey,
   });
 
   return (
@@ -62,6 +82,7 @@ export const PinnedCommandMenuItemButtons = () => {
           ...pinnedInlineCommandMenuItems,
           ...pinnedOverflowCommandMenuItems,
         ]}
+        shouldHideCommandMenuItemLabel={shouldHideCommandMenuItemLabel}
         onPinnedCommandMenuItemDimensionChange={
           onCommandMenuItemDimensionChange
         }
@@ -83,6 +104,7 @@ export const PinnedCommandMenuItemButtons = () => {
                 >
                   <CommandMenuItemRenderer
                     item={item}
+                    shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
                     isPrimaryAction={
                       item.engineComponentKey ===
                         EngineComponentKey.CREATE_NEW_RECORD ||

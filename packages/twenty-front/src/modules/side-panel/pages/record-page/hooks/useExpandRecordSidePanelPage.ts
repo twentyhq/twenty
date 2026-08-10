@@ -33,6 +33,7 @@ export const useExpandRecordSidePanelPage =
 
     return {
       label: t`Expand record`,
+      hasExpandShortcut: true,
       expand: () =>
         navigateToRecordPage({
           objectNameSingular: viewableRecordNameSingular,

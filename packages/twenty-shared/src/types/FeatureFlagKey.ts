@@ -1,4 +1,7 @@
 export enum FeatureFlagKey {
+  // Graduated to GA and read by nothing. Kept so the public FeatureFlagKey enum
+  // stays backward compatible; drop it in a breaking release.
+  IS_AI_CHAT_PAGE_ENABLED = 'IS_AI_CHAT_PAGE_ENABLED',
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',

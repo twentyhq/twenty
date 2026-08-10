@@ -25,6 +25,7 @@ export type CommandMenuButtonProps = {
   to?: string;
   disabled?: boolean;
   isPrimaryAction?: boolean;
+  shouldHideLabel?: boolean;
 };
 
 export const CommandMenuButton = ({
@@ -33,12 +34,14 @@ export const CommandMenuButton = ({
   to,
   disabled = false,
   isPrimaryAction = false,
+  shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuItemLabel(command.label);
 
-  const resolvedShortLabel = isDefined(command.shortLabel)
-    ? getCommandMenuItemLabel(command.shortLabel)
-    : undefined;
+  const resolvedShortLabel =
+    isDefined(command.shortLabel) && !shouldHideLabel
+      ? getCommandMenuItemLabel(command.shortLabel)
+      : undefined;
 
   const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
 

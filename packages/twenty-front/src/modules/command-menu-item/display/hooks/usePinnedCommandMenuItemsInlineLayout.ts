@@ -1,7 +1,8 @@
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
-import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
+import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
+import { type PinnedCommandMenuItemsLayoutKey } from '@/command-menu-item/display/types/PinnedCommandMenuItemsLayoutKey';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { isNumber } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
@@ -13,13 +14,15 @@ type ElementDimensions = {
 
 type UsePinnedCommandMenuItemsInlineLayoutParams = {
   pinnedCommandMenuItems: CommandMenuItemFieldsFragment[];
+  layoutKey: PinnedCommandMenuItemsLayoutKey;
 };
 
 export const usePinnedCommandMenuItemsInlineLayout = ({
   pinnedCommandMenuItems,
+  layoutKey,
 }: UsePinnedCommandMenuItemsInlineLayoutParams) => {
   const [commandMenuPinnedInlineLayout, setCommandMenuPinnedInlineLayout] =
-    useAtomState(commandMenuPinnedInlineLayoutState);
+    useAtomFamilyState(commandMenuPinnedInlineLayoutFamilyState, layoutKey);
 
   const pinnedCommandMenuItemKeysInDisplayOrder = useMemo(
     () => pinnedCommandMenuItems.map((item) => item.id),
