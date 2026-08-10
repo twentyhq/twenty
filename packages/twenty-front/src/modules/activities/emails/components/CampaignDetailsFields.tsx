@@ -8,6 +8,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import {
+  CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
+  CampaignEnvelopeBox,
+} from '@/activities/emails/components/CampaignEnvelopeBox';
 import { EmailComposerFieldRow } from '@/activities/emails/components/EmailComposerFieldRow';
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
@@ -17,40 +21,6 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
-
-// Widest label in the block ("Unsubscribe topic"), so every control starts on
-// the same column.
-const LABEL_MIN_WIDTH = '116px';
-
-const StyledFieldsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]} 0;
-  width: 100%;
-`;
-
-// Tracks the body page below rather than the window, so the two read as one
-// centred column. The body backdrop supplies the gap between them.
-const StyledColumn = styled.div<{ $width: string }>`
-  display: flex;
-  flex-direction: column;
-  max-width: ${({ $width }) => $width};
-  min-width: 0;
-  width: 100%;
-`;
-
-const StyledHeaderRows = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  /* Keeps the row hairlines from crossing the rounded corners. */
-  overflow: hidden;
-  width: 100%;
-`;
 
 const StyledSubjectInput = styled.input`
   background: transparent;
@@ -156,64 +126,11 @@ export const CampaignDetailsFields = ({
   const hasTopicOptions = topicOptions.length > 0;
 
   return (
-    <StyledFieldsContainer onBlur={() => detailsState.flush()}>
-      <StyledColumn $width={width}>
-        <StyledHeaderRows>
-          <EmailComposerFieldRow
-            label={t`From`}
-            labelMinWidth={LABEL_MIN_WIDTH}
-          >
-            <Select
-              dropdownId="campaign-composer-from-account"
-              fullWidth
-              value={detailsState.fromAddress}
-              options={senderOptions}
-              emptyOption={{ label: t`Select a sender`, value: '' }}
-              onChange={detailsState.setFromAddress}
-            />
-          </EmailComposerFieldRow>
-          <EmailComposerFieldRow label={t`To`} labelMinWidth={LABEL_MIN_WIDTH}>
-            <FormSingleRecordPicker
-              key={`list-${detailsState.draftResyncKey}`}
-              objectNameSingulars={[CoreObjectNameSingular.MessageList]}
-              defaultValue={detailsState.listId}
-              onChange={detailsState.setListId}
-              onCreate={handleCreateList}
-            />
-          </EmailComposerFieldRow>
-          {hasTopicOptions && (
-            <EmailComposerFieldRow
-              label={t`Unsubscribe topic`}
-              labelMinWidth={LABEL_MIN_WIDTH}
-            >
-              <Select
-                dropdownId="campaign-composer-unsubscribe-topic"
-                fullWidth
-                value={detailsState.unsubscribeTopicId ?? ''}
-                options={topicOptions}
-                emptyOption={{ label: t`No topic`, value: '' }}
-                onChange={(value) =>
-                  detailsState.setUnsubscribeTopicId(
-                    value === '' ? null : value,
-                  )
-                }
-              />
-            </EmailComposerFieldRow>
-          )}
-          <EmailComposerFieldRow
-            label={t`Subject`}
-            labelMinWidth={LABEL_MIN_WIDTH}
-          >
-            <StyledSubjectInput
-              key={`subject-${detailsState.draftResyncKey}`}
-              type="text"
-              aria-label={t`Subject`}
-              defaultValue={detailsState.subject}
-              onChange={(event) => detailsState.setSubject(event.target.value)}
-            />
-          </EmailComposerFieldRow>
-        </StyledHeaderRows>
-        {(isDefined(audiencePreview) || hasTopicOptions) && (
+    <CampaignEnvelopeBox
+      width={width}
+      onBlur={() => detailsState.flush()}
+      below={
+        (isDefined(audiencePreview) || hasTopicOptions) && (
           <StyledHints>
             {isDefined(audiencePreview) && (
               <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
@@ -224,8 +141,63 @@ export const CampaignDetailsFields = ({
               </StyledHint>
             )}
           </StyledHints>
-        )}
-      </StyledColumn>
-    </StyledFieldsContainer>
+        )
+      }
+    >
+      <EmailComposerFieldRow
+        label={t`From`}
+        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+      >
+        <Select
+          dropdownId="campaign-composer-from-account"
+          fullWidth
+          value={detailsState.fromAddress}
+          options={senderOptions}
+          emptyOption={{ label: t`Select a sender`, value: '' }}
+          onChange={detailsState.setFromAddress}
+        />
+      </EmailComposerFieldRow>
+      <EmailComposerFieldRow
+        label={t`To`}
+        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+      >
+        <FormSingleRecordPicker
+          key={`list-${detailsState.draftResyncKey}`}
+          objectNameSingulars={[CoreObjectNameSingular.MessageList]}
+          defaultValue={detailsState.listId}
+          onChange={detailsState.setListId}
+          onCreate={handleCreateList}
+        />
+      </EmailComposerFieldRow>
+      {hasTopicOptions && (
+        <EmailComposerFieldRow
+          label={t`Unsubscribe topic`}
+          labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+        >
+          <Select
+            dropdownId="campaign-composer-unsubscribe-topic"
+            fullWidth
+            value={detailsState.unsubscribeTopicId ?? ''}
+            options={topicOptions}
+            emptyOption={{ label: t`No topic`, value: '' }}
+            onChange={(value) =>
+              detailsState.setUnsubscribeTopicId(value === '' ? null : value)
+            }
+          />
+        </EmailComposerFieldRow>
+      )}
+      <EmailComposerFieldRow
+        label={t`Subject`}
+        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+      >
+        <StyledSubjectInput
+          key={`subject-${detailsState.draftResyncKey}`}
+          type="text"
+          aria-label={t`Subject`}
+          defaultValue={detailsState.subject}
+          onChange={(event) => detailsState.setSubject(event.target.value)}
+        />
+      </EmailComposerFieldRow>
+    </CampaignEnvelopeBox>
   );
 };
