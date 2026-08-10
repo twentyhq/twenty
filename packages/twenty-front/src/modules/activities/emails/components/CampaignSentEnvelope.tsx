@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -55,7 +56,7 @@ export const CampaignSentEnvelope = ({
         label={t`From`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
       >
-        {isDefined(fromAddress) && fromAddress.length > 0 ? (
+        {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No sender`}</StyledEmptyValue>
@@ -86,7 +87,7 @@ export const CampaignSentEnvelope = ({
         label={t`Subject`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
       >
-        {isDefined(subject) && subject.length > 0 ? (
+        {isNonEmptyString(subject) ? (
           <StyledValue>{subject}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
