@@ -13,7 +13,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
-import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 
 type RecordCalendarCardCellHoveredPortalContentProps = {
   calendarDay: string;
@@ -34,7 +33,7 @@ export const RecordCalendarCardCellHoveredPortalContent = ({
     getRecordFieldInputInstanceId({
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
-      prefix: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX,
+      prefix: cardInstanceIdPrefix,
     }),
   );
 
