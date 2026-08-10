@@ -1,0 +1,69 @@
+packages/twenty-server/src/modules/connected-account/imap-api/imap-apis.module.ts
+  s_7c7a6c72e0c33c::t_b60d748a1d123e 20,42
+packages/twenty-server/src/engine/core-modules/auth/services/microsoft-apis.service.ts
+  s_7c7a6c72e0c33c::t_b60d748a1d123e 48,69,312-313
+  s_7c7a6c72e0c33c::t_8e654afd0aeb90 314-317
+packages/twenty-server/src/modules/onboarding-recent-messages-import/services/imap-recent-message-external-ids.service.ts
+  s_7c7a6c72e0c33c::t_222c481027baab 10-76,93
+  s_7c7a6c72e0c33c::t_e8d2d4111fe0c0 85-87
+  s_7c7a6c72e0c33c::t_2dbd3dcb9d5f48 1-9,77-84,88-92,94-96
+packages/twenty-server/src/modules/messaging/message-import-manager/messaging-import-manager.module.ts
+  s_7c7a6c72e0c33c::t_8a696b34e54b3b 129
+packages/twenty-server/src/modules/onboarding-recent-messages-import/constants/onboarding-recent-messages-import-cache-ttl-ms.constant.ts
+  s_7c7a6c72e0c33c::t_9bea3bee448aea 1-2
+packages/twenty-server/src/modules/onboarding-recent-messages-import/services/gmail-recent-message-external-ids.service.ts
+  s_7c7a6c72e0c33c::t_bc6c7240a11fd6 7-32
+  s_7c7a6c72e0c33c::t_99fc2acd3ed66f 4-6
+  s_7c7a6c72e0c33c::t_88661676279dd9 33-35
+  s_7c7a6c72e0c33c::t_0676883a801bc0 1-3,36-43
+packages/twenty-server/src/engine/core-modules/auth/services/google-apis.service.ts
+  s_7c7a6c72e0c33c::t_8768dd77f2486b 351-354
+  s_7c7a6c72e0c33c::t_b60d748a1d123e 50,71,349-350
+packages/twenty-server/src/modules/onboarding-recent-messages-import/constants/recent-message-external-ids-max-per-scope.constant.ts
+  s_7c7a6c72e0c33c::t_2c90dcdc4a5f3e 1
+packages/twenty-server/src/modules/onboarding-recent-messages-import/services/microsoft-recent-message-external-ids.service.ts
+  s_7c7a6c72e0c33c::t_80d04f5a6b04b0 6-36
+  s_7c7a6c72e0c33c::t_953544b28ba209 3-5
+  s_7c7a6c72e0c33c::t_7fdf34b4ed075c 37-39
+  s_7c7a6c72e0c33c::t_112ec94bb46971 1-2,40-49
+packages/twenty-server/src/engine/core-modules/auth/auth.module.ts
+  s_7c7a6c72e0c33c::t_b60d748a1d123e 77,111
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.ts
+  s_7c7a6c72e0c33c::t_b60d748a1d123e 37,63,235-236
+  s_7c7a6c72e0c33c::t_9d9b55294eeeaa 237-240
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-messages-import.service.ts
+  s_7c7a6c72e0c33c::t_dc6fd66ec8925c 66,70-72
+packages/twenty-server/src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service.ts
+  s_7c7a6c72e0c33c::t_ae3b2ab9668eee 16-108
+  s_7c7a6c72e0c33c::t_fd43c73c08b4cd 13-15
+  s_7c7a6c72e0c33c::t_0aef6b9fb2ac14 109-111
+  s_7c7a6c72e0c33c::t_422d1560c4ecd7 1-12,112
+packages/twenty-server/src/modules/onboarding-recent-messages-import/onboarding-recent-messages-import.module.ts
+  s_7c7a6c72e0c33c::t_187a1eb8446039 9-32
+  s_7c7a6c72e0c33c::t_0a48927fbdcf79 6-8
+  s_7c7a6c72e0c33c::t_7f65832d261e99 1-5
+packages/twenty-server/src/modules/onboarding-recent-messages-import/services/recent-message-external-ids.service.ts
+  s_7c7a6c72e0c33c::t_5a0751dbe38110 7-45
+  s_7c7a6c72e0c33c::t_4ae68ba37b1e89 4-6
+  s_7c7a6c72e0c33c::t_51f770b44cf985 46-48
+  s_7c7a6c72e0c33c::t_48a3021233b800 1-3,49-50
+packages/twenty-server/src/modules/onboarding-recent-messages-import/constants/recent-message-external-ids-search-scopes.constant.ts
+  s_7c7a6c72e0c33c::t_a0085a362b73d7 1
+  s_7c7a6c72e0c33c::t_38f0db90c0dc8c 2-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "952b1e95cf188be0a44fccca4ca79e71308a81d3",
+  "prompts": {},
+  "sessions": {
+    "s_7c7a6c72e0c33c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c20e5ec-cd9d-423a-8ce0-ce10eb826c66",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}
