@@ -1,30 +1,12 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
-const TSDAV_COLLECTION_QUERY_ERROR_REGEX =
-  /^Collection query failed: (\d{3})\b/;
-
 export const parseCalDAVError = (
   error: Error,
 ): CalendarEventImportDriverException => {
   const { message } = error;
-
-  const collectionQueryStatus =
-    TSDAV_COLLECTION_QUERY_ERROR_REGEX.exec(message)?.[1];
-
-  if (isDefined(collectionQueryStatus)) {
-    return new CalendarEventImportDriverException(
-      message,
-      mapCalDavStatusToExceptionCode(
-        Number.parseInt(collectionQueryStatus, 10),
-      ),
-    );
-  }
 
   switch (message) {
     case 'Collection does not exist on server':
