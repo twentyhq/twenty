@@ -4,6 +4,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-cache-codec.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
+  type EncodableFlatFieldMetadataMaps,
   type EncodedFlatFieldMetadata,
   type EncodedFlatFieldMetadataMaps,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
@@ -29,8 +30,10 @@ const decodeFlatFieldMetadata = (
   return decoded as FlatFieldMetadata;
 };
 
+// Entries written before the codec shipped are still stored plain, so decoding
+// has to leave an already-plain payload untouched.
 export const decodeFlatFieldMetadataMapsFromCache = (
-  encoded: EncodedFlatFieldMetadataMaps | FlatEntityMaps<FlatFieldMetadata>,
+  encoded: EncodedFlatFieldMetadataMaps | EncodableFlatFieldMetadataMaps,
 ): FlatEntityMaps<FlatFieldMetadata> => {
   const byUniversalIdentifier: FlatEntityMaps<FlatFieldMetadata>['byUniversalIdentifier'] =
     {};

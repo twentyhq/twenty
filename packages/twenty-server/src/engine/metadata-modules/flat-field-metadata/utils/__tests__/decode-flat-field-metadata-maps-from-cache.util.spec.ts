@@ -36,6 +36,22 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
     });
   });
 
+  it('should leave an already-plain field untouched, as stored before the codec shipped', () => {
+    const plain = {
+      name: 'firstName',
+      viewFieldIds: ['view-field-1'],
+      viewFilterIds: [],
+    };
+
+    expect(
+      decodeFlatFieldMetadataMapsFromCache({
+        byUniversalIdentifier: { 'field-uid': plain },
+        universalIdentifierById: {},
+        universalIdentifiersByApplicationId: {},
+      }).byUniversalIdentifier['field-uid'],
+    ).toMatchObject(plain);
+  });
+
   it('should round trip a field through JSON, as the cache storage layer does', () => {
     const encoded = JSON.parse(
       JSON.stringify(

@@ -252,7 +252,6 @@ describe('WorkspaceEntityManager', () => {
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_WORKFLOW_VERSION_IN_CORE_ENABLED: false,
         IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: false,
-        IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED: false,
         IS_NATIVE_CALL_RECORDING_TABS_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
