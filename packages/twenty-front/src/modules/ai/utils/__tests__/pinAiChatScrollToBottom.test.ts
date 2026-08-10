@@ -104,18 +104,29 @@ describe('pinAiChatScrollToBottom', () => {
     expect(scrollWrapperElement.scrollTop).toBe(9000);
   });
 
-  it('should keep re-pinning while only the width changes', () => {
+  it('should keep re-pinning past the minimum duration while only the width changes', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
     pinAiChatScrollToBottom({ scrollWrapperElement, onPinningStopped });
 
-    for (let frameIndex = 0; frameIndex < 15; frameIndex++) {
-      scrollWrapperElement.clientWidth -= 10;
+    for (
+      let frameIndex = 0;
+      frameIndex < framesToCover(AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS);
+      frameIndex++
+    ) {
+      scrollWrapperElement.clientWidth -= 1;
       advanceOneFrame();
     }
 
+    expect(currentTimeInMs).toBeGreaterThan(
+      AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS,
+    );
     expect(onPinningStopped).not.toHaveBeenCalled();
+
+    advanceFrames(framesToCover(AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS));
+
+    expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
 
   it('should not stop before the minimum duration even when nothing changes', () => {
@@ -151,24 +162,36 @@ describe('pinAiChatScrollToBottom', () => {
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
 
-  it('should extend the window when the content grows late', () => {
+  it('should extend the window when the content grows after the minimum duration', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
     pinAiChatScrollToBottom({ scrollWrapperElement, onPinningStopped });
 
-    advanceFrames(5);
-    scrollWrapperElement.scrollHeight = 4000;
-    advanceOneFrame();
-
-    advanceFrames(
-      Math.floor(
-        AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS / FRAME_DURATION_IN_MS,
-      ) - 2,
+    const quietFrameCount = Math.floor(
+      AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS / FRAME_DURATION_IN_MS,
     );
 
+    while (
+      currentTimeInMs <
+      AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS + FRAME_DURATION_IN_MS
+    ) {
+      scrollWrapperElement.scrollHeight += 100;
+      advanceOneFrame();
+    }
+
     expect(onPinningStopped).not.toHaveBeenCalled();
-    expect(scrollWrapperElement.scrollTop).toBe(4000);
+
+    scrollWrapperElement.scrollHeight = 8000;
+    advanceOneFrame();
+    advanceFrames(quietFrameCount - 2);
+
+    expect(onPinningStopped).not.toHaveBeenCalled();
+    expect(scrollWrapperElement.scrollTop).toBe(8000);
+
+    advanceFrames(4);
+
+    expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
 
   it('should stop immediately when the user scrolls', () => {

@@ -1,6 +1,8 @@
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
 import { pinAiChatScrollToBottom } from '@/ai/utils/pinAiChatScrollToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -12,13 +14,15 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 
 export const AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect =
   () => {
-    const agentChatIsInitialScrollPendingOnThreadChange = useAtomStateValue(
-      agentChatIsInitialScrollPendingOnThreadChangeState,
+    const agentChatDisplayedThread = useAtomStateValue(
+      agentChatDisplayedThreadState,
     );
 
     const setAgentChatIsInitialScrollPendingOnThreadChange = useSetAtomState(
       agentChatIsInitialScrollPendingOnThreadChangeState,
     );
+
+    const store = useStore();
 
     const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
@@ -27,7 +31,7 @@ export const AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect =
     );
 
     useEffect(() => {
-      if (!agentChatIsInitialScrollPendingOnThreadChange) {
+      if (!store.get(agentChatIsInitialScrollPendingOnThreadChangeState.atom)) {
         return;
       }
 
@@ -48,7 +52,8 @@ export const AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect =
           ),
       });
     }, [
-      agentChatIsInitialScrollPendingOnThreadChange,
+      agentChatDisplayedThread,
+      store,
       setAgentChatIsInitialScrollPendingOnThreadChange,
       getScrollWrapperElement,
       setScrollWrapperScrollBottom,

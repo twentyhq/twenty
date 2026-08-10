@@ -48,21 +48,20 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 
-const buildCompletionMessage = (toolCallId: string): ExtendedUIMessage =>
-  ({
-    id: 'message-1',
-    role: 'assistant',
-    parts: [
-      { type: 'text', text: 'Here is what we built together.' },
-      {
-        type: 'tool-complete_workspace_setup',
-        toolCallId,
-        input: {},
-        output: { success: true, message: 'Setup marked as finished.' },
-        state: 'output-available',
-      },
-    ],
-  }) as unknown as ExtendedUIMessage;
+const buildMessageParts = (parts: unknown[]) =>
+  ({ parts }) as Pick<ExtendedUIMessage, 'parts'>;
+
+const buildCompletionMessage = (toolCallId: string) =>
+  buildMessageParts([
+    { type: 'text', text: 'Here is what we built together.' },
+    {
+      type: 'tool-complete_workspace_setup',
+      toolCallId,
+      input: {},
+      output: { success: true, message: 'Setup marked as finished.' },
+      state: 'output-available',
+    },
+  ]);
 
 const getProcessedToolCallIds = () =>
   jotaiStore.get(
@@ -139,18 +138,16 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     });
 
     act(() => {
-      result.current.processWorkspaceSetupCompletion({
-        id: 'message-1',
-        role: 'assistant',
-        parts: [
+      result.current.processWorkspaceSetupCompletion(
+        buildMessageParts([
           {
             type: 'tool-complete_workspace_setup',
             toolCallId: 'call-1',
             input: {},
             state: 'input-streaming',
           },
-        ],
-      } as unknown as ExtendedUIMessage);
+        ]),
+      );
     });
 
     expect(navigateMock).not.toHaveBeenCalled();
@@ -163,10 +160,8 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     });
 
     act(() => {
-      result.current.processWorkspaceSetupCompletion({
-        id: 'message-1',
-        role: 'assistant',
-        parts: [
+      result.current.processWorkspaceSetupCompletion(
+        buildMessageParts([
           {
             type: 'tool-complete_workspace_setup',
             toolCallId: 'call-1',
@@ -174,8 +169,8 @@ describe('useProcessWorkspaceSetupCompletion', () => {
             state: 'output-available',
             output: { success: false, message: 'Something went wrong.' },
           },
-        ],
-      } as unknown as ExtendedUIMessage);
+        ]),
+      );
     });
 
     expect(navigateMock).not.toHaveBeenCalled();

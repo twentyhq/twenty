@@ -26,7 +26,9 @@ export const useProcessWorkspaceSetupCompletion = () => {
 
   const store = useStore();
 
-  const processWorkspaceSetupCompletion = (message: ExtendedUIMessage) => {
+  const processWorkspaceSetupCompletion = (
+    message: Pick<ExtendedUIMessage, 'parts'>,
+  ) => {
     const completedParts = extractCompletedWorkspaceSetupToolParts(
       message.parts,
     );
