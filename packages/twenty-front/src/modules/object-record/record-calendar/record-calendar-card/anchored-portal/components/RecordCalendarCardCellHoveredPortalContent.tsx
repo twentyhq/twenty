@@ -27,7 +27,8 @@ export const RecordCalendarCardCellHoveredPortalContent = ({
   const { isRecordFieldReadOnly, recordId, fieldDefinition } =
     useContext(FieldContext);
 
-  const cardInstanceIdPrefix = getRecordCalendarCardInstanceIdPrefix(calendarDay);
+  const cardInstanceIdPrefix =
+    getRecordCalendarCardInstanceIdPrefix(calendarDay);
 
   const { openInlineCell } = useInlineCell(
     getRecordFieldInputInstanceId({

@@ -3,7 +3,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
-import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
@@ -35,7 +34,8 @@ export const RecordCalendarCardBody = ({
   const { objectPermissions, objectMetadataItem } =
     useRecordCalendarContextOrThrow();
 
-  const cardInstanceIdPrefix = getRecordCalendarCardInstanceIdPrefix(calendarDay);
+  const cardInstanceIdPrefix =
+    getRecordCalendarCardInstanceIdPrefix(calendarDay);
 
   const { updateOneRecord } = useUpdateOneRecord();
 
