@@ -12,11 +12,13 @@ export const updateSlackAssistantRequest = async (
     status,
     responseText,
     errorMessage,
+    workspaceMemberId,
   }: {
     id: string;
-    status: SlackAssistantRequestStatus;
+    status?: SlackAssistantRequestStatus;
     responseText?: string;
     errorMessage?: string;
+    workspaceMemberId?: string;
   },
 ): Promise<void> => {
   await client.mutation({
@@ -24,9 +26,10 @@ export const updateSlackAssistantRequest = async (
       __args: {
         id,
         data: {
-          status,
+          ...(status !== undefined ? { status } : {}),
           ...(responseText !== undefined ? { responseText } : {}),
           ...(errorMessage !== undefined ? { errorMessage } : {}),
+          ...(workspaceMemberId !== undefined ? { workspaceMemberId } : {}),
         },
       },
       id: true,

@@ -32,6 +32,10 @@ export default defineConnectionProvider({
       'channels:history',
       'groups:history',
       'im:history',
+      // Identity scopes, used to name the requester and to match their Slack
+      // account to a workspace member
+      'users:read',
+      'users:read.email',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',

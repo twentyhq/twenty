@@ -28,6 +28,7 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 import { runSlackAssistantAgentWithProgress } from 'src/logic-functions/utils/run-slack-assistant-agent-with-progress';
 import { runSlackReaction } from 'src/logic-functions/utils/run-slack-reaction';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
@@ -114,23 +115,36 @@ export const slackAssistantWorkerHandler = async (
   };
 
   try {
-    const [{ conversationContext, requesterName }, workspaceBaseUrl] =
-      await Promise.all([
-        fetchSlackAssistantContext({
-          slackChannelId,
-          parentMessageTimestamp,
-          isDirectMessage,
-          slackUserId: record.slackUserId,
-          excludeMessageTimestamps: [
-            slackMessageTimestamp,
-            placeholderTimestamp,
-          ],
-        }),
-        fetchWorkspaceBaseUrl(),
-      ]);
+    const [
+      { conversationContext, requesterName, requesterIdentity },
+      workspaceBaseUrl,
+    ] = await Promise.all([
+      fetchSlackAssistantContext({
+        slackChannelId,
+        parentMessageTimestamp,
+        isDirectMessage,
+        slackUserId: record.slackUserId,
+        excludeMessageTimestamps: [slackMessageTimestamp, placeholderTimestamp],
+      }),
+      fetchWorkspaceBaseUrl(),
+    ]);
+
+    const runAsWorkspaceMemberId = await resolveSlackRunAsWorkspaceMemberId({
+      client,
+      identity: requesterIdentity,
+    });
+
+    if (isNonEmptyString(runAsWorkspaceMemberId)) {
+      // Audit only, so a failure here must not cost the requester their answer.
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        workspaceMemberId: runAsWorkspaceMemberId,
+      }).catch(() => undefined);
+    }
 
     const agentResult = await runSlackAssistantAgentWithProgress({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+      runAsWorkspaceMemberId,
       prompt: buildSlackAssistantPrompt({
         requestText,
         requesterName,
