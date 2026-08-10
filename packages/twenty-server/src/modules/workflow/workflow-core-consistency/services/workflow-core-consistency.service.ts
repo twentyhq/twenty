@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryFailedError } from 'typeorm';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -15,6 +15,15 @@ import {
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 
 type DriftCounts = Record<string, number>;
+
+const POSTGRES_UNDEFINED_TABLE = '42P01';
+const POSTGRES_UNDEFINED_COLUMN = '42703';
+
+const isSchemaNotMigratedError = (error: unknown): boolean =>
+  error instanceof QueryFailedError &&
+  [POSTGRES_UNDEFINED_TABLE, POSTGRES_UNDEFINED_COLUMN].includes(
+    (error.driverError as { code?: string } | undefined)?.code ?? '',
+  );
 
 // Detect drift between the workspace source-of-truth records and their core
 // mirror. The dual-write is best-effort (async, not transactional), so core can
@@ -43,6 +52,13 @@ export class WorkflowCoreConsistencyService {
       try {
         await this.checkWorkspace(workspaceId, databaseSchema);
       } catch (error) {
+        if (isSchemaNotMigratedError(error)) {
+          this.logger.warn(
+            `Workflow core consistency: skipping workspace ${workspaceId} - schema not migrated (${(error as Error).message})`,
+          );
+          continue;
+        }
+
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
         });

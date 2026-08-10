@@ -1,4 +1,4 @@
-import { type DataSource } from 'typeorm';
+import { type DataSource, QueryFailedError } from 'typeorm';
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -244,6 +244,28 @@ describe('WorkflowCoreConsistencyService', () => {
         `"workflowAutomatedTrigger" WHERE "deletedAt" IS NULL`,
       ),
     );
+  });
+
+  it('skips a workspace whose schema is not migrated without reporting to Sentry', async () => {
+    const undefinedColumnError = new QueryFailedError(
+      'SELECT',
+      [],
+      Object.assign(new Error('column wf.coreWorkflowId does not exist'), {
+        code: '42703',
+      }),
+    );
+
+    coreDataSource.query.mockImplementation((sql: string) => {
+      if (sql.includes('FROM core."workspace"')) {
+        return Promise.resolve([{ workspaceId, databaseSchema: schema }]);
+      }
+
+      return Promise.reject(undefinedColumnError);
+    });
+
+    await expect(service.runConsistencyCheck()).resolves.toBeUndefined();
+
+    expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
   });
 
   it('isolates a per-workspace failure and reports it to Sentry', async () => {
