@@ -164,4 +164,25 @@ describe('createMutationObserverRegistry', () => {
 
     expect(records).toHaveLength(0);
   });
+
+  it('reports whether any observation is registered', () => {
+    const registry = createMutationObserverRegistry();
+    const { sink } = createFakeSink();
+
+    const target = createFakeNode();
+
+    expect(registry.hasObservations()).toBe(false);
+
+    registry.registerObservation({
+      target,
+      sink,
+      options: { childList: true },
+    });
+
+    expect(registry.hasObservations()).toBe(true);
+
+    registry.unregisterObservations({ targets: [target], sink });
+
+    expect(registry.hasObservations()).toBe(false);
+  });
 });

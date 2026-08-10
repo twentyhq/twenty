@@ -437,6 +437,25 @@ describe('installMutationObserver', () => {
     expect(record.oldValue).toBe('first');
   });
 
+  it('reports the old value of character data mutated before any observer existed', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const text = document.createTextNode('first');
+    text.data = 'second';
+
+    new MutationObserver(collect).observe(text, {
+      characterData: true,
+      characterDataOldValue: true,
+    });
+
+    text.data = 'third';
+
+    await flushMicrotasks();
+
+    expect(deliveries[0][0].oldValue).toBe('second');
+  });
+
   it('batches every mutation of a microtask into a single callback', async () => {
     const { document, MutationObserver } = createSandbox();
     const { collect, deliveries } = createRecordCollector();

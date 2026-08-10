@@ -17,8 +17,11 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
   >();
   const transientTargetsBySink = new Map<MutationRecordSink, Set<Node>>();
   const oldValueRequestedBySink = new Map<MutationRecordSink, boolean>();
+  const activeSinks = new Set<MutationRecordSink>();
 
   return {
+    hasObservations: () => activeSinks.size > 0,
+
     registerObservation: ({ target, sink, options }) => {
       const registrations =
         registrationsByTarget.get(target) ?? NO_REGISTRATIONS;
@@ -27,9 +30,13 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
         ...registrations.filter((registration) => registration.sink !== sink),
         { sink, options, isTransient: false },
       ]);
+
+      activeSinks.add(sink);
     },
 
     unregisterObservations: ({ targets, sink }) => {
+      activeSinks.delete(sink);
+
       for (const target of targets) {
         const registrations = registrationsByTarget.get(target);
 

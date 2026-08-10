@@ -50,6 +50,10 @@ export const installMutationRecordHooks = ({
       value,
     );
 
+    if (!registry.hasObservations()) {
+      return;
+    }
+
     registry.broadcastMutationRecord({
       record: createMutationRecord({
         type: 'attributes',
@@ -96,6 +100,10 @@ export const installMutationRecordHooks = ({
     const oldValue = dataByCharacterDataNode.get(text) ?? '';
     dataByCharacterDataNode.set(text, text.data);
 
+    if (!registry.hasObservations()) {
+      return;
+    }
+
     registry.broadcastMutationRecord({
       record: createMutationRecord({ type: 'characterData', target: text }),
       oldValue,
@@ -115,6 +123,10 @@ export const installMutationRecordHooks = ({
   hooks.insertChild = (parent, node, index) => {
     insertChildHook?.(parent, node, index);
 
+    if (!registry.hasObservations()) {
+      return;
+    }
+
     registry.broadcastMutationRecord({
       record: createMutationRecord({
         type: 'childList',
@@ -129,6 +141,10 @@ export const installMutationRecordHooks = ({
 
   hooks.removeChild = (parent, node, index) => {
     removeChildHook?.(parent, node, index);
+
+    if (!registry.hasObservations()) {
+      return;
+    }
 
     registry.registerTransientObservations({
       detachedNode: node,

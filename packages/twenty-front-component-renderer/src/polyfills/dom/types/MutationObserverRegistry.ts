@@ -2,6 +2,7 @@ import { type MutationRecordSink } from '@/polyfills/dom/types/MutationRecordSin
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
 
 export type MutationObserverRegistry = {
+  hasObservations: () => boolean;
   registerObservation: (input: {
     target: Node;
     sink: MutationRecordSink;
