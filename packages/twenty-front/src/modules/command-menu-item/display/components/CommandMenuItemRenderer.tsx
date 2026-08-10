@@ -179,6 +179,7 @@ const CommandMenuItemSelectableRenderer = ({
 export const CommandMenuItemRenderer = ({
   item,
   isPrimaryAction,
+  shouldHideLabel,
 }: CommandMenuItemRendererProps) => {
   const { displayType } = useContext(CommandMenuContext);
 
@@ -187,6 +188,7 @@ export const CommandMenuItemRenderer = ({
       <CommandMenuItemButtonRenderer
         item={item}
         isPrimaryAction={isPrimaryAction}
+        shouldHideLabel={shouldHideLabel}
       />
     );
   }

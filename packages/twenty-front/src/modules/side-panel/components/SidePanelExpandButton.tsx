@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
@@ -10,34 +9,39 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 
-const SidePanelExpandButtonContent = () => {
-  const expandTarget = useSidePanelExpandTarget();
-
-  const expandWithShortcut = useCallback(() => {
-    if (expandTarget?.hasExpandShortcut) {
-      expandTarget.expand();
-    }
-  }, [expandTarget]);
-
+// Registered only for targets that claim the shortcut, so pages whose content
+// owns cmd+enter keep it to themselves.
+const SidePanelExpandShortcutEffect = ({ expand }: { expand: () => void }) => {
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
-    callback: expandWithShortcut,
+    callback: expand,
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [expandWithShortcut],
+    dependencies: [expand],
   });
+
+  return null;
+};
+
+const SidePanelExpandButtonContent = () => {
+  const expandTarget = useSidePanelExpandTarget();
 
   if (!isDefined(expandTarget)) {
     return null;
   }
 
   return (
-    <IconButton
-      Icon={IconLayoutSidebarRightExpand}
-      size="small"
-      variant="tertiary"
-      onClick={expandTarget.expand}
-      ariaLabel={expandTarget.label}
-    />
+    <>
+      {expandTarget.hasExpandShortcut && (
+        <SidePanelExpandShortcutEffect expand={expandTarget.expand} />
+      )}
+      <IconButton
+        Icon={IconLayoutSidebarRightExpand}
+        size="small"
+        variant="tertiary"
+        onClick={expandTarget.expand}
+        ariaLabel={expandTarget.label}
+      />
+    </>
   );
 };
 

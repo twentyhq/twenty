@@ -57,13 +57,22 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
       layoutKey: 'side-panel-footer',
     });
 
+  // A widget owning the footer suppresses those buttons entirely, and leaves
+  // the footer measurements stale, so every pinned item belongs here instead.
+  const hasPinnedWidgetCommandMenuItems =
+    sidePanelWidgetFooterCommandMenuItems.some(
+      (commandMenuItem) => commandMenuItem.isPinned !== false,
+    );
+
   const pinnedOverflowCommandMenuItemIds = new Set(
     pinnedOverflowCommandMenuItems.map((item) => item.id),
   );
 
   const listedCommandMenuItems = recordSelectionCommandMenuItems.filter(
     (item) =>
-      item.isPinned !== true || pinnedOverflowCommandMenuItemIds.has(item.id),
+      item.isPinned !== true ||
+      hasPinnedWidgetCommandMenuItems ||
+      pinnedOverflowCommandMenuItemIds.has(item.id),
   );
 
   const selectableItemIdArray = [
