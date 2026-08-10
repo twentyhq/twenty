@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { validate as uuidValidate } from 'uuid';
 
@@ -31,20 +32,22 @@ export const parseMetadataRestPagination = (
     throw new BadRequestException(`Invalid cursor: ${invalidCursor}`);
   }
 
-  const limit = parseLimitRestRequest(
-    request,
-    DEFAULT_METADATA_REST_PAGE_SIZE,
-    MAX_METADATA_REST_PAGE_SIZE,
-  );
+  // The raw value is checked before parsing because parseLimitRestRequest
+  // clamps to the maximum first, which would turn 1000.5 into a valid 1000.
+  const requestedLimit = request.query?.limit;
 
-  if (!Number.isInteger(limit)) {
+  if (isNonEmptyString(requestedLimit) && !Number.isInteger(+requestedLimit)) {
     throw new BadRequestException(
-      `limit '${request.query?.limit}' is invalid. Should be an integer`,
+      `limit '${requestedLimit}' is invalid. Should be an integer`,
     );
   }
 
   return {
-    limit,
+    limit: parseLimitRestRequest(
+      request,
+      DEFAULT_METADATA_REST_PAGE_SIZE,
+      MAX_METADATA_REST_PAGE_SIZE,
+    ),
     direction: isDefined(endingBefore) ? 'backward' : 'forward',
     afterId: startingAfter,
     beforeId: endingBefore,
