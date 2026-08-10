@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import {
   CalendarEventImportDriverException,
@@ -15,7 +17,7 @@ export const parseCalDAVError = (
   const collectionQueryStatus =
     TSDAV_COLLECTION_QUERY_ERROR_REGEX.exec(message)?.[1];
 
-  if (collectionQueryStatus !== undefined) {
+  if (isDefined(collectionQueryStatus)) {
     return new CalendarEventImportDriverException(
       message,
       mapCalDavStatusToExceptionCode(

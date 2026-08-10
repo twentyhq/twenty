@@ -143,7 +143,7 @@ export class CalDavFetchEventsService {
     });
 
     const unreadableResponses = responses.filter(
-      (response) => (response.status ?? 0) >= 400,
+      (response) => isDefined(response.status) && response.status >= 400,
     );
 
     const failedRequest = unreadableResponses.find(
@@ -163,7 +163,9 @@ export class CalDavFetchEventsService {
       );
     }
 
-    return responses.filter((response) => (response.status ?? 0) < 400);
+    return responses.filter(
+      (response) => !isDefined(response.status) || response.status < 400,
+    );
   }
 
   private resolveCollectionUrl(client: DAVClient, href: string): string {
