@@ -38,12 +38,17 @@ export const installMutationRecordHooks = ({
     return previousValue;
   };
 
-  const broadcastAttributeMutation = (
-    element: Element,
-    name: string,
-    namespace: string | null | undefined,
-    value: string | null,
-  ) => {
+  const broadcastAttributeMutation = ({
+    element,
+    name,
+    namespace,
+    value,
+  }: {
+    element: Element;
+    name: string;
+    namespace: string | null | undefined;
+    value: string | null;
+  }) => {
     const oldValue = swapCachedAttributeValue(
       element,
       buildAttributeCacheKey({ name, namespace }),
@@ -112,12 +117,12 @@ export const installMutationRecordHooks = ({
 
   hooks.setAttribute = (element, name, value, namespace) => {
     setAttributeHook?.(element, name, value, namespace);
-    broadcastAttributeMutation(element, name, namespace, value);
+    broadcastAttributeMutation({ element, name, namespace, value });
   };
 
   hooks.removeAttribute = (element, name, namespace) => {
     removeAttributeHook?.(element, name, namespace);
-    broadcastAttributeMutation(element, name, namespace, null);
+    broadcastAttributeMutation({ element, name, namespace, value: null });
   };
 
   hooks.insertChild = (parent, node, index) => {
