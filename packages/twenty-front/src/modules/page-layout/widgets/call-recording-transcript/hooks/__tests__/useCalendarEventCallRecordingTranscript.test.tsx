@@ -3,6 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const mockUseFindManyRecords = jest.fn();
+const mockUseListenToEventsForQuery = jest.fn();
 
 const mockLayoutRenderingContext: {
   targetRecordIdentifier?: {
@@ -65,7 +66,9 @@ jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
 }));
 
 jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
-  useListenToEventsForQuery: jest.fn(),
+  useListenToEventsForQuery: (parameters: unknown) => {
+    mockUseListenToEventsForQuery(parameters);
+  },
 }));
 
 jest.mock(
@@ -91,6 +94,7 @@ const readyCallRecording = {
 describe('useCalendarEventCallRecordingTranscript', () => {
   beforeEach(() => {
     mockUseFindManyRecords.mockClear();
+    mockUseListenToEventsForQuery.mockClear();
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'calendar-event-id',
       targetObjectNameSingular: 'calendarEvent',
@@ -123,6 +127,21 @@ describe('useCalendarEventCallRecordingTranscript', () => {
         skip: false,
       }),
     );
+  });
+
+  it('refetches after the SSE client reconnects', async () => {
+    renderHook(() => useCalendarEventCallRecordingTranscript());
+
+    const { onSseReconnected } = mockUseListenToEventsForQuery.mock
+      .calls[0][0] as {
+      onSseReconnected: () => Promise<void>;
+    };
+
+    await act(async () => {
+      await onSseReconnected();
+    });
+
+    expect(findManyRecordsResult.refetch).toHaveBeenCalledTimes(1);
   });
 
   it('returns permission denied when the object cannot be read', () => {

@@ -7,6 +7,7 @@ import { selectCalendarEventCallRecordingTranscript } from '@/page-layout/widget
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
@@ -72,8 +73,10 @@ export const useCalendarEventCallRecordingTranscript = (): {
         callRecordingObjectPermissions.restrictedFields[fieldMetadataItem.id]
           ?.canRead === false,
     )
-    .map(
-      (fieldMetadataItem) => fieldMetadataItem.label || fieldMetadataItem.name,
+    .map((fieldMetadataItem) =>
+      isNonEmptyString(fieldMetadataItem.label)
+        ? fieldMetadataItem.label
+        : fieldMetadataItem.name,
     );
 
   const canReadCallRecordingObjectRecords =
@@ -117,10 +120,16 @@ export const useCalendarEventCallRecordingTranscript = (): {
     [callRecordingFilter],
   );
 
+  const refetchCallRecordingTranscriptOnSseReconnected =
+    useCallback(async () => {
+      await refetch();
+    }, [refetch]);
+
   useListenToEventsForQuery({
     queryId: `call-recording-transcript-${calendarEventId}`,
     operationSignature,
     skip: shouldSkipQuery,
+    onSseReconnected: refetchCallRecordingTranscriptOnSseReconnected,
   });
 
   const handleCallRecordingOperation = useCallback(() => {
