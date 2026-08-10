@@ -1,6 +1,6 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
-import { computeCallRecordingTabPosition } from 'src/database/commands/upgrade-version-command/2-30/utils/compute-call-recording-tab-position.util';
+import { computeCallRecordingTabPosition } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-call-recording-tab-position.util';
 
 const HOME_TAB_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home

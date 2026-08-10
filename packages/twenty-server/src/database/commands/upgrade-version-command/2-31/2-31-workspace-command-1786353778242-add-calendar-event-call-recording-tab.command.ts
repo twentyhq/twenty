@@ -7,7 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
-import { computeCallRecordingTabPosition } from 'src/database/commands/upgrade-version-command/2-30/utils/compute-call-recording-tab-position.util';
+import { computeCallRecordingTabPosition } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-call-recording-tab-position.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -28,9 +28,9 @@ const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
     .callRecording.widgets.transcript.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.30.0', 1786353778242)
+@RegisteredWorkspaceCommand('2.31.0', 1786353778242)
 @Command({
-  name: 'upgrade:2-30:add-calendar-event-call-recording-tab',
+  name: 'upgrade:2-31:add-calendar-event-call-recording-tab',
   description:
     'Add the Call Recording tab and transcript widget to the CalendarEvent record page in existing workspaces',
 })
