@@ -39,12 +39,18 @@ export const CampaignSentEnvelope = ({
   campaign,
   width,
 }: CampaignSentEnvelopeProps) => {
-  const { unsubscribeTopics } = useUnsubscribeTopics();
+  const { unsubscribeTopics, loading: areTopicsLoading } =
+    useUnsubscribeTopics();
 
   const fromAddress = campaign.fromAddress?.primaryEmail;
   const subject = campaign.subject;
 
-  const unsubscribeTopic = isDefined(campaign.unsubscribeTopicId)
+  // The row follows the id the campaign was sent with, not whether the topic
+  // still exists: a topic deleted afterwards must not erase the fact that this
+  // send was scoped to one.
+  const hasUnsubscribeTopic = isDefined(campaign.unsubscribeTopicId);
+
+  const unsubscribeTopic = hasUnsubscribeTopic
     ? unsubscribeTopics.find(
         (topic) => topic.id === campaign.unsubscribeTopicId,
       )
@@ -73,14 +79,22 @@ export const CampaignSentEnvelope = ({
           onChange={() => {}}
         />
       </EmailComposerFieldRow>
-      {isDefined(unsubscribeTopic) && (
+      {hasUnsubscribeTopic && (
         <EmailComposerFieldRow
           label={t`Unsubscribe topic`}
           labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
         >
-          <StyledValue>
-            {unsubscribeTopic.name ?? t`Untitled topic`}
-          </StyledValue>
+          {isDefined(unsubscribeTopic) ? (
+            <StyledValue>
+              {unsubscribeTopic.name ?? t`Untitled topic`}
+            </StyledValue>
+          ) : (
+            // Blank rather than "deleted" until the topics land, so a slow
+            // query never accuses an existing topic of being gone.
+            !areTopicsLoading && (
+              <StyledEmptyValue>{t`Deleted topic`}</StyledEmptyValue>
+            )
+          )}
         </EmailComposerFieldRow>
       )}
       <EmailComposerFieldRow
