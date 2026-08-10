@@ -1,10 +1,12 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
+import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useTheme } from 'twenty-ui/theme-constants';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';
 
@@ -18,6 +20,7 @@ export const ObjectMetadataLink = ({
   displayName,
 }: ObjectMetadataLinkProps) => {
   const theme = useTheme();
+  const { openViewTarget } = useChatTargetNavigation();
 
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -26,6 +29,14 @@ export const ObjectMetadataLink = ({
       objectNameType: 'singular',
     },
   );
+
+  const handleOpenViewTarget = isDefined(objectMetadataItem)
+    ? () => {
+        openViewTarget({
+          objectNameSingular: objectMetadataItem.nameSingular,
+        });
+      }
+    : undefined;
 
   return (
     <ChatReferenceChipDisplay
@@ -37,6 +48,7 @@ export const ObjectMetadataLink = ({
             })
           : undefined
       }
+      onClick={isCurrentPathAiChatPage() ? handleOpenViewTarget : undefined}
       leftComponent={
         <ObjectMetadataIcon
           objectMetadataItem={

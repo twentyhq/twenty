@@ -14,7 +14,11 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -43,6 +47,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
+import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -140,11 +145,13 @@ export class AgentAsyncExecutorService {
   private async buildPreloadedRegistryTools({
     agent,
     agentRoleId,
+    runAsRoleId,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
+    runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -153,7 +160,10 @@ export class AgentAsyncExecutorService {
     const toolProviderContext: ToolProviderContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
-      rolePermissionConfig: { intersectionOf: [agentRoleId] },
+      rolePermissionConfig: buildAgentRolePermissionConfig({
+        agentRoleId,
+        runAsRoleId,
+      }),
       requireExplicitObjectGrants: true,
       authContext,
       actorContext,
@@ -175,19 +185,26 @@ export class AgentAsyncExecutorService {
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
+    runAsRoleId,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
+    runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
+    const rolePermissionConfig = isDefined(runAsRoleId)
+      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
+      : undefined;
+
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
+      rolePermissionConfig,
       authContext,
       actorContext,
       userId,
@@ -197,7 +214,7 @@ export class AgentAsyncExecutorService {
     const fullCatalog = await this.toolRegistry.buildToolIndex(
       agent.workspaceId,
       agentRoleId,
-      { userId, userWorkspaceId },
+      { userId, userWorkspaceId, rolePermissionConfig },
     );
 
     const allowedCategories = new Set(WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES);
@@ -240,6 +257,7 @@ export class AgentAsyncExecutorService {
     authContext,
     workspaceId,
     userWorkspaceId,
+    runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
   }: {
@@ -250,6 +268,7 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
+    runAsRoleId?: string;
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -313,6 +332,7 @@ export class AgentAsyncExecutorService {
             const lazyToolset = await this.buildLazyRegistryTools({
               agent,
               agentRoleId,
+              runAsRoleId,
               authContext,
               actorContext,
             });
@@ -323,6 +343,7 @@ export class AgentAsyncExecutorService {
             registryTools = await this.buildPreloadedRegistryTools({
               agent,
               agentRoleId,
+              runAsRoleId,
               authContext,
               actorContext,
             });
@@ -354,7 +375,7 @@ export class AgentAsyncExecutorService {
       let hasNoMoreAvailableCredits = false;
 
       const textResponse = await generateText({
-        system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}${toolCatalogSection}`,
+        system: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
         messages: messages.map(

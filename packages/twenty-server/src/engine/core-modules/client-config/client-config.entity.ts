@@ -226,6 +226,9 @@ export class PublicFeatureFlagMetadata {
   @Field(() => String)
   description: string;
 
+  @Field(() => String)
+  icon: string;
+
   @Field(() => String, { nullable: true })
   imagePath?: string;
 }
@@ -338,6 +341,12 @@ export class ClientConfig {
 
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;
+
+  @Field(() => Boolean)
+  isBookCallOnboardingStepEnabled: boolean;
+
+  @Field(() => Boolean)
+  isCompanyEnrichmentEnabled: boolean;
 
   @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;

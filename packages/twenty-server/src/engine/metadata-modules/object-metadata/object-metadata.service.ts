@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4, v5 } from 'uuid';
@@ -48,7 +47,7 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 @Injectable()
-export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
+export class ObjectMetadataService {
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -56,9 +55,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
-  ) {
-    super(objectMetadataRepository);
-  }
+  ) {}
 
   async updateOneObject({
     updateObjectInput,

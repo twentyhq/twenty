@@ -1,5 +1,5 @@
-import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
-import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
+import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
+import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/WorkflowVariableTag';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -48,7 +48,7 @@ export const useTextVariableEditor = ({
       Placeholder.configure({
         placeholder,
       }),
-      VariableTag,
+      WorkflowVariableTag,
       ...(multiline
         ? [
             HardBreak.configure({

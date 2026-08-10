@@ -13,7 +13,7 @@ export const useCampaignDetailsState = ({
 }: {
   campaign: MessageCampaign;
 }) => {
-  const { draft, updateDraft, flush } =
+  const { draft, updateDraft, flush, draftResyncKey } =
     usePersistedCampaignDraft<CampaignDetailsDraft>({
       campaignId: campaign.id,
       initialDraft: () => ({
@@ -36,6 +36,7 @@ export const useCampaignDetailsState = ({
   return {
     ...draft,
     flush,
+    draftResyncKey,
     setListId: (listId: string | null) => updateDraft({ listId }),
     setUnsubscribeTopicId: (unsubscribeTopicId: string | null) =>
       updateDraft({ unsubscribeTopicId }),

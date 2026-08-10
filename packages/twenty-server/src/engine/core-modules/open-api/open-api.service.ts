@@ -332,7 +332,10 @@ export class OpenApiService {
             { $ref: '#/components/parameters/endingBefore' },
           ],
           responses: {
-            '200': getFindManyResponse200(item),
+            '200': getFindManyResponse200({
+              item,
+              isDirectDataFeatureFlagged: true,
+            }),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -391,7 +394,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeMetadataSchemaComponents(metadata),
-      parameters: computeParameterComponents(true),
+      parameters: computeParameterComponents(),
       responses: {
         '400': get400ErrorResponses(),
         '401': get401ErrorResponses(),

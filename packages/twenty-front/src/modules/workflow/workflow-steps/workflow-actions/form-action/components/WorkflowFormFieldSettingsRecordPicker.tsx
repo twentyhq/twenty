@@ -1,6 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
