@@ -30,6 +30,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
+import { canBoundScanWithDirectLimit } from 'src/engine/api/common/utils/can-bound-scan-with-direct-limit.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -163,12 +164,20 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
     });
 
-    if (isDefined(args.offset)) {
-      queryBuilder.skip(args.offset);
-    }
-
     queryBuilder.setFindOptions({ select: columnsToSelect });
-    queryBuilder.take(limit + 1);
+
+    // Joins are all applied by this point, so the scan shape is known.
+    if (canBoundScanWithDirectLimit(queryBuilder)) {
+      if (isDefined(args.offset)) {
+        queryBuilder.offset(args.offset);
+      }
+      queryBuilder.limit(limit + 1);
+    } else {
+      if (isDefined(args.offset)) {
+        queryBuilder.skip(args.offset);
+      }
+      queryBuilder.take(limit + 1);
+    }
 
     // Add order columns AFTER setFindOptions (setFindOptions clears addSelect)
     // Pass columnsToSelect so we only add columns that aren't already selected

@@ -20,7 +20,9 @@ type StatsInput = ReadonlyMap<
   { versions: ReadonlyMap<string, VersionEntry<unknown>> }
 >;
 
-export const computeLocalCacheStats = (localCache: StatsInput): LocalCacheStats => {
+export const computeLocalCacheStats = (
+  localCache: StatsInput,
+): LocalCacheStats => {
   const workspaceIds = new Set<string>();
   const versionsByCount: Record<string, number> = {
     '1': 0,
