@@ -115,9 +115,6 @@ export class CalDavFetchEventsService {
     });
   }
 
-  // tsdav's calendarMultiGet throws as soon as any member of the 207 Multi-Status carries a
-  // >=400 status, but RFC 4791 section 7.9 has servers report objects deleted since the last
-  // list fetch as a per-href 404, so the REPORT is sent through davRequest to keep the batch
   private async fetchCalendarObjects(
     client: DAVClient,
     collectionUrl: string,
@@ -149,8 +146,6 @@ export class CalDavFetchEventsService {
       (response) => (response.status ?? 0) >= 400,
     );
 
-    // tsdav only fills props for entries parsed out of a multistatus body, so an entry without
-    // them is the REPORT itself having failed rather than a single object being unreachable
     const failedRequest = unreadableResponses.find(
       (response) => !isDefined(response.props),
     );
@@ -228,7 +223,6 @@ export class CalDavFetchEventsService {
       .filter((entry) => entry.status === 404)
       .map((entry) => entry.href);
 
-    // SOGo returns a bare integer sync-token, which tsdav parses as a number
     const rawSyncToken = syncResult[0]?.raw?.multistatus?.syncToken;
     const newSyncToken = isDefined(rawSyncToken)
       ? String(rawSyncToken)
