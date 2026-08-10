@@ -31,6 +31,7 @@ import { EmailAliasManagerService } from 'src/modules/connected-account/email-al
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
+import { OnboardingRecentMessagesImportService } from 'src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service';
 
 jest.mock('uuid', () => ({
   ...jest.requireActual('uuid'),
@@ -207,6 +208,12 @@ describe('GoogleAPIsService', () => {
           provide: EmailAliasManagerService,
           useValue: {
             refreshHandleAliases: jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
+          provide: OnboardingRecentMessagesImportService,
+          useValue: {
+            importRecentMessages: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
