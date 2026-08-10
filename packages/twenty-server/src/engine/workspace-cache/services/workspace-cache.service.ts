@@ -94,6 +94,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
+  private readonly coldStorableKeys = new Set<WorkspaceCacheKeyName>();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -139,6 +140,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
         }
+
+        if (options?.coldStorable ?? !options?.localDataOnly) {
+          this.coldStorableKeys.add(workspaceCacheKeyName);
+        }
       }
     }
 
@@ -159,14 +164,23 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   // Maintenance used to run inline on the first request after each interval, so
   // whichever request happened to trigger it was charged the whole cost.
   private startMaintenanceTimers(): void {
+    // A throw inside a timer callback has no caller to catch it.
+    const guard = (name: string, run: () => void) => () => {
+      try {
+        run();
+      } catch (error) {
+        this.logger.error(`Workspace cache ${name} failed`, error);
+      }
+    };
+
     this.sweepTimer = setInterval(
-      () => this.sweepLocalCache(),
+      guard('sweep', () => this.sweepLocalCache()),
       LOCAL_CACHE_SWEEP_INTERVAL_MS,
     );
     this.sweepTimer.unref();
 
     this.demotionTimer = setInterval(
-      () => this.demoteColdEntries(),
+      guard('demotion', () => this.demoteColdEntries()),
       DEMOTION_INTERVAL_MS,
     );
     this.demotionTimer.unref();
@@ -704,16 +718,26 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           separatorIndex,
         ) as WorkspaceCacheKeyName;
 
-        if (this.localDataOnlyKeys.has(keyName)) {
+        if (!this.coldStorableKeys.has(keyName)) {
           return undefined;
         }
 
-        return Buffer.from(
-          JSON.stringify(
-            this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
-          ),
-          'utf8',
-        );
+        try {
+          return Buffer.from(
+            JSON.stringify(
+              this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
+            ),
+            'utf8',
+          );
+        } catch (error) {
+          // Leaving the entry hot is always safe; losing the sweep is not.
+          this.logger.warn(
+            `Failed to encode ${keyName} for cold storage, leaving it hot`,
+            error,
+          );
+
+          return undefined;
+        }
       },
     });
 
