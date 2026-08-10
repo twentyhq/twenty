@@ -4,9 +4,14 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import {
+  getRecordTableWidgetLayoutViewType,
+  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
@@ -28,12 +33,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconCalendar,
-  IconLayoutKanban,
   IconLayoutSidebarRight,
   IconList,
   IconListDetails,
-  IconTable,
 } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,
@@ -72,7 +74,9 @@ export const SidePanelRecordPageFieldSettings = () => {
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
   const currentNestedRelationFieldMetadataId =
     fieldConfiguration?.nestedRelationFieldMetadataId;
-  const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
+  const currentDisplayMode = isDefined(fieldConfiguration)
+    ? getFieldWidgetEffectiveDisplayMode(fieldConfiguration)
+    : undefined;
   const currentViewId = isDefined(widgetInEditMode)
     ? getWidgetConfigurationViewId(widgetInEditMode.configuration)
     : null;
@@ -127,10 +131,11 @@ export const SidePanelRecordPageFieldSettings = () => {
     isDefined(targetObjectMetadataId) &&
     isDefined(currentViewId);
 
-  const isEmbeddedViewKanbanLayout =
-    embeddedWidgetView?.type === ViewType.KANBAN_WIDGET;
+  const embeddedViewLayoutViewType = getRecordTableWidgetLayoutViewType(
+    embeddedWidgetView?.type,
+  );
   const isEmbeddedViewCalendarLayout =
-    embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET;
+    embeddedViewLayoutViewType === ViewType.CALENDAR_WIDGET;
   const embeddedViewHasGroupBy = isDefined(
     embeddedWidgetView?.mainGroupByFieldMetadataId,
   );
@@ -157,22 +162,17 @@ export const SidePanelRecordPageFieldSettings = () => {
     [FieldDisplayMode.TABLE]: t`Table`,
   };
 
+  const embeddedViewLayoutOption =
+    RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[embeddedViewLayoutViewType];
+
   const layoutLabel = isTableDisplayMode
-    ? isEmbeddedViewKanbanLayout
-      ? t`Kanban`
-      : isEmbeddedViewCalendarLayout
-        ? t`Calendar`
-        : t`Table`
+    ? t(embeddedViewLayoutOption.label)
     : isDefined(currentDisplayMode)
       ? (displayModeLabels[currentDisplayMode] ?? '')
       : '';
 
   const layoutRowIcon = isTableDisplayMode
-    ? isEmbeddedViewKanbanLayout
-      ? IconLayoutKanban
-      : isEmbeddedViewCalendarLayout
-        ? IconCalendar
-        : IconTable
+    ? embeddedViewLayoutOption.Icon
     : IconLayoutSidebarRight;
 
   const selectableItemIds = [

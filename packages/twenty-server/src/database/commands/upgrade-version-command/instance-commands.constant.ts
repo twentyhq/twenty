@@ -136,6 +136,7 @@ import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database
 import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785518325511-create-user-session-core-table';
 import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
 import { AddListViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1785929606728-add-list-view-type';
+import { AddListWidgetViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786227282471-add-list-widget-view-type';
 import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
 
 export const INSTANCE_COMMANDS = [
@@ -276,4 +277,5 @@ export const INSTANCE_COMMANDS = [
   CreateApplicationAuthorizationCoreTableFastInstanceCommand,
   AddListViewTypeFastInstanceCommand,
   AddCallRecordingWidgetTypesFastInstanceCommand,
+  AddListWidgetViewTypeFastInstanceCommand,
 ];

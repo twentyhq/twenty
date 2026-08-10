@@ -31,6 +31,7 @@ const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const INDEX_VIEW_ID = '11111111-1111-4111-8111-111111111111';
 const KANBAN_VIEW_ID = '22222222-2222-4222-8222-222222222222';
 const WIDGET_VIEW_ID = '33333333-3333-4333-8333-333333333333';
+const LIST_VIEW_ID = '44444444-4444-4444-8444-444444444444';
 
 const buildCompanyView = (view: Partial<ViewWithRelations>) =>
   ({
@@ -58,12 +59,22 @@ const kanbanView = buildCompanyView({
   position: 2,
 });
 
-const widgetView = buildCompanyView({
-  id: WIDGET_VIEW_ID,
-  name: 'Dashboard widget view',
-  type: ViewType.KANBAN_WIDGET,
-  position: 0,
+const listView = buildCompanyView({
+  id: LIST_VIEW_ID,
+  name: 'Companies list',
+  type: ViewType.LIST,
+  position: 3,
 });
+
+const buildWidgetView = (type: ViewType) =>
+  buildCompanyView({
+    id: WIDGET_VIEW_ID,
+    name: 'Dashboard widget view',
+    type,
+    position: 0,
+  });
+
+const widgetView = buildWidgetView(ViewType.KANBAN_WIDGET);
 
 const renderOpenRecordsInSidePanel = (views: ViewWithRelations[]) => {
   let store: ReturnType<typeof createStore> | undefined;
@@ -188,16 +199,41 @@ describe('useOpenRecordsInSidePanel', () => {
     ).toBe(INDEX_VIEW_ID);
   });
 
-  it('should fall back to the index view when the view id points at a widget-backing view', () => {
+  it.each([ViewType.KANBAN_WIDGET, ViewType.LIST_WIDGET])(
+    'should fall back to the index view when the view id points at a %s view',
+    (widgetViewType) => {
+      const { result, store } = renderOpenRecordsInSidePanel([
+        buildWidgetView(widgetViewType),
+        indexView,
+      ]);
+
+      act(() => {
+        result.current.openRecordsInSidePanel({
+          objectNameSingular: companyObjectMetadataItem.nameSingular,
+          viewId: WIDGET_VIEW_ID,
+        });
+      });
+
+      expect(
+        store.get(
+          viewableRecordsViewIdComponentState.atomFamily({
+            instanceId: getNavigatedPageId(),
+          }),
+        ),
+      ).toBe(INDEX_VIEW_ID);
+    },
+  );
+
+  it('should open a list view without falling back to the index view', () => {
     const { result, store } = renderOpenRecordsInSidePanel([
-      widgetView,
+      listView,
       indexView,
     ]);
 
     act(() => {
       result.current.openRecordsInSidePanel({
         objectNameSingular: companyObjectMetadataItem.nameSingular,
-        viewId: WIDGET_VIEW_ID,
+        viewId: LIST_VIEW_ID,
       });
     });
 
@@ -207,7 +243,7 @@ describe('useOpenRecordsInSidePanel', () => {
           instanceId: getNavigatedPageId(),
         }),
       ),
-    ).toBe(INDEX_VIEW_ID);
+    ).toBe(LIST_VIEW_ID);
   });
 
   it('should throw when the object has no user-facing view', () => {
