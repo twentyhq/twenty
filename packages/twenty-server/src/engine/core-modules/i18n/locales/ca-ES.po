@@ -7143,6 +7143,11 @@ msgstr "Alguns dels permisos que has seleccionat no són vàlids. Si us plau, to
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "No s'han pogut trobar algunes membresies de l'espai de treball. És possible que ja no tinguin accés a aquest espai de treball."
 
+#. js-lingui-id: RjTo7h
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while starting the app installation. Please try again."
+msgstr ""
+
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "Something went wrong. Please try again."
