@@ -668,12 +668,6 @@ export default {
             ]
         },
         "UUIDFilterComparison": {
-            "is": [
-                3
-            ],
-            "isNot": [
-                3
-            ],
             "eq": [
                 4
             ],

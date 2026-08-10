@@ -5558,8 +5558,6 @@ export type UuidFilterComparison = {
   gte?: InputMaybe<Scalars['UUID']['input']>;
   iLike?: InputMaybe<Scalars['UUID']['input']>;
   in?: InputMaybe<Array<Scalars['UUID']['input']>>;
-  is?: InputMaybe<Scalars['Boolean']['input']>;
-  isNot?: InputMaybe<Scalars['Boolean']['input']>;
   like?: InputMaybe<Scalars['UUID']['input']>;
   lt?: InputMaybe<Scalars['UUID']['input']>;
   lte?: InputMaybe<Scalars['UUID']['input']>;

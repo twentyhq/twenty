@@ -331,8 +331,6 @@ input FieldFilter {
 }
 
 input UUIDFilterComparison {
-  is: Boolean
-  isNot: Boolean
   eq: UUID
   neq: UUID
   gt: UUID
