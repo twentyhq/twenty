@@ -3,7 +3,6 @@ import { FrontComponentLoadErrorSnackBarEffect } from '@/front-components/compon
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
-import { useOnApplicationVendorChecksumUpdated } from '@/front-components/hooks/useOnApplicationVendorChecksumUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { getApplicationVendorUrl } from '@/front-components/utils/getApplicationVendorUrl';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
@@ -21,7 +20,6 @@ import {
   FindOneFrontComponentDocument,
   type FindOneFrontComponentQuery,
   GetApplicationSdkClientChecksumsDocument,
-  GetApplicationVendorChecksumDocument,
 } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
@@ -88,7 +86,7 @@ const FrontComponentRendererContent = ({
     id: frontComponentId,
     applicationId,
     usesSdkClient,
-    usesVendor,
+    vendorChecksum,
   } = frontComponent;
 
   const { executionContext, frontComponentHostCommunicationApi } =
@@ -133,25 +131,10 @@ const FrontComponentRendererContent = ({
     [applicationId, sdkClientChecksums],
   );
 
-  const { data: vendorChecksumData, loading: vendorChecksumLoading } = useQuery(
-    GetApplicationVendorChecksumDocument,
-    {
-      variables: { applicationId },
-      skip: !usesVendor,
-    },
-  );
-
-  useOnApplicationVendorChecksumUpdated({
+  const vendorUrl = getApplicationVendorUrl({
     applicationId,
-    skip: !usesVendor,
+    checksum: vendorChecksum ?? undefined,
   });
-
-  const vendorUrl = usesVendor
-    ? getApplicationVendorUrl({
-        applicationId,
-        checksum: vendorChecksumData?.applicationVendorChecksum ?? undefined,
-      })
-    : undefined;
 
   const componentUrl = getFrontComponentUrl({
     frontComponentId,
@@ -161,9 +144,7 @@ const FrontComponentRendererContent = ({
   const applicationVariables = frontComponent.applicationVariables ?? undefined;
 
   const isSdkClientReady = !usesSdkClient || !sdkClientChecksumsLoading;
-  const isVendorReady = !usesVendor || !vendorChecksumLoading;
-  const isReadyToRender =
-    isDefined(applicationTokenPair) && isSdkClientReady && isVendorReady;
+  const isReadyToRender = isDefined(applicationTokenPair) && isSdkClientReady;
 
   return (
     <>

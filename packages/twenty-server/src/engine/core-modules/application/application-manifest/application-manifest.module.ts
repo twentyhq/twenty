@@ -15,13 +15,17 @@ import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-sto
 import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
+    TypeOrmModule.forFeature([
+      ApplicationRegistrationEntity,
+      FrontComponentEntity,
+    ]),
     ApplicationModule,
     ApplicationRegistrationModule,
     ApplicationTranslationModule,

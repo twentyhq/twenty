@@ -53,10 +53,6 @@ describe('buildApplication with a vendor bundle', () => {
     );
   });
 
-  it('flags the component that imports a vendored dependency', () => {
-    expect(builtManifest.frontComponents[0].usesVendor).toBe(true);
-  });
-
   it('writes a vendor bundle the components import instead of bundling react', async () => {
     const vendorBundle = await readFile(
       join(VENDOR_APP_PATH, OUTPUT_DIR, 'src', 'vendor.mjs'),

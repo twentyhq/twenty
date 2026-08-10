@@ -17,7 +17,6 @@ type SettingsApplicationFrontComponentSettingsTabProps = {
   builtComponentChecksum: string;
   isHeadless: boolean;
   usesSdkClient: boolean;
-  usesVendor: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -55,7 +54,6 @@ export const SettingsApplicationFrontComponentSettingsTab = ({
   builtComponentChecksum,
   isHeadless,
   usesSdkClient,
-  usesVendor,
   createdAt,
   updatedAt,
 }: SettingsApplicationFrontComponentSettingsTabProps) => {
@@ -83,11 +81,6 @@ export const SettingsApplicationFrontComponentSettingsTab = ({
       key: 'usesSdkClient',
       label: t`Uses SDK client`,
       value: usesSdkClient ? t`Yes` : t`No`,
-    },
-    {
-      key: 'usesVendor',
-      label: t`Uses vendor bundle`,
-      value: usesVendor ? t`Yes` : t`No`,
     },
     {
       key: 'builtComponentChecksum',

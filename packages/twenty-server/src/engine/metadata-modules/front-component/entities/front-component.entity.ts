@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('frontComponent')
@@ -40,13 +39,6 @@ export class FrontComponentEntity
 
   @Column({ default: false })
   usesSdkClient: boolean;
-
-  @Column({ default: false })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.31.0_AddUsesVendorToFrontComponentFastInstanceCommand_1786000200000',
-  })
-  usesVendor: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

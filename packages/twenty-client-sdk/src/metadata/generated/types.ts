@@ -338,8 +338,8 @@ export default {
             "usesSdkClient": [
                 3
             ],
-            "usesVendor": [
-                3
+            "vendorChecksum": [
+                1
             ],
             "applicationTokenPair": [
                 13
@@ -6348,15 +6348,6 @@ export default {
             ],
             "applicationSdkClientChecksums": [
                 75,
-                {
-                    "applicationId": [
-                        4,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "applicationVendorChecksum": [
-                1,
                 {
                     "applicationId": [
                         4,

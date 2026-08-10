@@ -247,7 +247,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000001',
       isHeadless: false,
       usesSdkClient: false,
-      usesVendor: false,
     },
     {
       builtComponentPath: 'src/components/card.front-component.mjs',
@@ -259,7 +258,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
       isHeadless: false,
       usesSdkClient: false,
-      usesVendor: false,
     },
     {
       builtComponentPath: 'src/components/greeting.front-component.mjs',
@@ -271,7 +269,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: '370ae182-743f-4ecb-b625-7ac48e21f0e5',
       isHeadless: false,
       usesSdkClient: false,
-      usesVendor: false,
     },
     {
       builtComponentPath: 'src/components/test.front-component.mjs',
@@ -283,7 +280,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'f1234567-abcd-4000-8000-000000000001',
       isHeadless: false,
       usesSdkClient: false,
-      usesVendor: false,
     },
   ],
 

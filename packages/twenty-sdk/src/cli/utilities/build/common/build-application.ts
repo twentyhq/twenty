@@ -43,7 +43,6 @@ export type BuiltFileInfo = {
   sourcePath: string;
   fileFolder: FileFolder;
   usesSdkClient?: boolean;
-  usesVendor?: boolean;
 };
 
 export type AppBuildResult = {
@@ -67,7 +66,6 @@ export const buildApplication = async (
       sourcePath: event.sourcePath,
       fileFolder: event.fileFolder,
       usesSdkClient: event.usesSdkClient,
-      usesVendor: event.usesVendor,
     });
   };
 

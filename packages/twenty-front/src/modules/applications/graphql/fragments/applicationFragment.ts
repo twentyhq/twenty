@@ -48,7 +48,7 @@ export const APPLICATION_FRAGMENT = gql`
       universalIdentifier
       isHeadless
       usesSdkClient
-      usesVendor
+      vendorChecksum
       createdAt
       updatedAt
     }

@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
 import { readFile } from 'node:fs/promises';
 import path from 'path';
-import { VENDOR_BUNDLE_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 const SDK_CLIENT_IMPORT_PREFIX = 'twenty-client-sdk';
@@ -58,12 +57,6 @@ export const processEsbuildResult = async ({
           imp.external === true &&
           imp.path.startsWith(SDK_CLIENT_IMPORT_PREFIX),
       ) ?? false;
-    const usesVendor =
-      outputMeta?.imports?.some(
-        (imp) =>
-          imp.external === true && imp.path === VENDOR_BUNDLE_IMPORT_SPECIFIER,
-      ) ?? false;
-
     if (onFileBuilt) {
       await onFileBuilt({
         fileFolder,
@@ -71,7 +64,6 @@ export const processEsbuildResult = async ({
         sourcePath: relativeSourcePath,
         checksum,
         usesSdkClient,
-        usesVendor,
       });
     }
   }

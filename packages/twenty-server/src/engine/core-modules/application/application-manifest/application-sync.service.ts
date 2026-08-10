@@ -29,6 +29,7 @@ import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-f
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -52,6 +53,8 @@ export class ApplicationSyncService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
@@ -275,7 +278,7 @@ export class ApplicationSyncService {
     );
 
     if (application.vendorChecksum !== vendorChecksum) {
-      await this.broadcastVendorChecksumUpdate({
+      await this.broadcastFrontComponentVendorChecksumUpdates({
         workspaceId,
         applicationId: application.id,
         vendorChecksum,
@@ -285,7 +288,7 @@ export class ApplicationSyncService {
     return updatedApplication;
   }
 
-  private async broadcastVendorChecksumUpdate({
+  private async broadcastFrontComponentVendorChecksumUpdates({
     workspaceId,
     applicationId,
     vendorChecksum,
@@ -295,22 +298,25 @@ export class ApplicationSyncService {
     vendorChecksum: string | null;
   }): Promise<void> {
     try {
+      const frontComponents = await this.frontComponentRepository.find({
+        select: ['id'],
+        where: { applicationId, workspaceId },
+      });
+
       await this.workspaceEventBroadcaster.broadcast({
         workspaceId,
-        events: [
-          {
-            type: 'updated',
-            entityName: 'application',
-            recordId: applicationId,
-            properties: {
-              updatedFields: ['vendorChecksum'],
-              after: {
-                id: applicationId,
-                vendorChecksum,
-              },
+        events: frontComponents.map((frontComponent) => ({
+          type: 'updated',
+          entityName: 'frontComponent',
+          recordId: frontComponent.id,
+          properties: {
+            updatedFields: ['vendorChecksum'],
+            after: {
+              id: frontComponent.id,
+              vendorChecksum,
             },
           },
-        ],
+        })),
       });
     } catch (error) {
       this.logger.warn(

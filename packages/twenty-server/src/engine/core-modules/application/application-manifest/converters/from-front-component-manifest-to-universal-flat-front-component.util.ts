@@ -27,7 +27,6 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
       ? false
       : (frontComponentManifest.isHeadless ?? false),
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
-    usesVendor: frontComponentManifest.usesVendor ?? false,
     createdAt: now,
     updatedAt: now,
   };

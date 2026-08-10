@@ -73,10 +73,6 @@ export class FrontComponentDTO {
   @Field()
   usesSdkClient: boolean;
 
-  @IsBoolean()
-  @Field()
-  usesVendor: boolean;
-
   @Field(() => ApplicationTokenPairDTO, { nullable: true })
   applicationTokenPair?: ApplicationTokenPairDTO;
 

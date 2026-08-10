@@ -20,7 +20,6 @@ export type UpdateManifestChecksumParams = {
       builtPath: string;
       fileFolder: FileFolder;
       usesSdkClient?: boolean;
-      usesVendor?: boolean;
     }
   >;
 };
@@ -98,7 +97,6 @@ export const manifestUpdateChecksums = ({
                 ...component,
                 builtComponentChecksum: checksum,
                 usesSdkClient: builtFileInfo?.usesSdkClient ?? false,
-                usesVendor: builtFileInfo?.usesVendor ?? false,
               }
             : component,
         ),

@@ -22,7 +22,6 @@ export type FileBuiltEvent = {
   sourcePath: string;
   checksum: string;
   usesSdkClient?: boolean;
-  usesVendor?: boolean;
 };
 
 export type StartWatchersOrchestratorStepOutput = {
@@ -165,7 +164,6 @@ export class StartWatchersOrchestratorStep {
       sourcePath: event.sourcePath,
       fileFolder: event.fileFolder,
       usesSdkClient: event.usesSdkClient,
-      usesVendor: event.usesVendor,
     });
 
     this.onFileBuilt(event);

@@ -107,7 +107,7 @@ type FrontComponent {
   updatedAt: DateTime!
   isHeadless: Boolean!
   usesSdkClient: Boolean!
-  usesVendor: Boolean!
+  vendorChecksum: String
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
 }
@@ -3215,7 +3215,6 @@ type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
-  applicationVendorChecksum(applicationId: UUID!): String
   isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
