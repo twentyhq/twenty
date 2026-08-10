@@ -1,4 +1,4 @@
-export type SlackAssistantProgressStep = {
+export type SlackAssistantStatusStep = {
   afterSeconds: number;
   text: string;
 };
