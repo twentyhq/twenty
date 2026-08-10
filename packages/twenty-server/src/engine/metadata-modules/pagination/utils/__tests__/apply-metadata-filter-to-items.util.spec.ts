@@ -57,10 +57,16 @@ describe('applyMetadataFilterToItems', () => {
   });
 
   it('inverts aliased boolean columns', () => {
+    type ReadOnlyFilter = {
+      and?: ReadOnlyFilter[];
+      or?: ReadOnlyFilter[];
+      isUIReadOnly?: { is?: boolean };
+    };
+
     const items = [{ id: 'a', isUIEditable: false }];
 
     expect(
-      applyMetadataFilterToItems({
+      applyMetadataFilterToItems<(typeof items)[number], ReadOnlyFilter>({
         items,
         filter: { isUIReadOnly: { is: true } },
         columnByFilterField: {
@@ -75,8 +81,14 @@ describe('applyMetadataFilterToItems', () => {
   });
 
   it('rejects unknown filter fields', () => {
+    type UnknownFieldFilter = {
+      and?: UnknownFieldFilter[];
+      or?: UnknownFieldFilter[];
+      unknownField?: { eq?: string };
+    };
+
     expect(() =>
-      applyMetadataFilterToItems({
+      applyMetadataFilterToItems<{ id: string }, UnknownFieldFilter>({
         items: [{ id: 'a' }],
         filter: { unknownField: { eq: 'a' } },
         columnByFilterField: {},
