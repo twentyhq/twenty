@@ -5,7 +5,9 @@ import {
   type DAVCalendar,
   type DAVClient,
   type DAVResponse,
+  DAVNamespace,
   DAVNamespaceShort,
+  getDAVAttribute,
 } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,9 +16,9 @@ import { extractICalData } from 'src/modules/calendar/calendar-event-import-mana
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
-import { normalizeSyncToken } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/normalize-sync-token.util';
+import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
-import { runCalendarMultiGet } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/run-calendar-multi-get.util';
+import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 type CalendarSyncResult = {
@@ -87,29 +89,20 @@ export class CalDavFetchEventsService {
       ),
     ];
 
-    const multiGetResults = await Promise.all(
-      collectionUrls.map((collectionUrl) =>
-        runCalendarMultiGet({
-          client,
-          collectionUrl,
-          objectUrls: eventHrefs.filter(
-            (href) => this.resolveCollectionUrl(client, href) === collectionUrl,
+    const calendarObjects = (
+      await Promise.all(
+        collectionUrls.map((collectionUrl) =>
+          this.fetchCalendarObjects(
+            client,
+            collectionUrl,
+            eventHrefs.filter(
+              (href) =>
+                this.resolveCollectionUrl(client, href) === collectionUrl,
+            ),
           ),
-        }),
-      ),
-    );
-
-    const missingHrefs = multiGetResults.flatMap(
-      (result) => result.missingHrefs,
-    );
-
-    if (missingHrefs.length > 0) {
-      this.logger.debug(
-        `Skipping ${missingHrefs.length} calendar events removed from the server since the last list fetch`,
-      );
-    }
-
-    const calendarObjects = multiGetResults.flatMap((result) => result.objects);
+        ),
+      )
+    ).flat();
 
     return calendarObjects.flatMap((calendarObject) => {
       const iCalData = extractICalData(calendarObject.props?.calendarData);
@@ -120,6 +113,62 @@ export class CalDavFetchEventsService {
         isEventInTimeRange(event, startDate, endDate),
       );
     });
+  }
+
+  // tsdav's calendarMultiGet throws as soon as any member of the 207 Multi-Status carries a
+  // >=400 status, but RFC 4791 section 7.9 has servers report objects deleted since the last
+  // list fetch as a per-href 404, so the REPORT is sent through davRequest to keep the batch
+  private async fetchCalendarObjects(
+    client: DAVClient,
+    collectionUrl: string,
+    objectUrls: string[],
+  ): Promise<DAVResponse[]> {
+    const responses = await client.davRequest({
+      url: collectionUrl,
+      init: {
+        method: 'REPORT',
+        namespace: DAVNamespaceShort.CALDAV,
+        headers: { depth: '1' },
+        body: {
+          'calendar-multiget': {
+            _attributes: getDAVAttribute([
+              DAVNamespace.DAV,
+              DAVNamespace.CALDAV,
+            ]),
+            [`${DAVNamespaceShort.DAV}:prop`]: {
+              [`${DAVNamespaceShort.DAV}:getetag`]: {},
+              [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
+            },
+            [`${DAVNamespaceShort.DAV}:href`]: objectUrls,
+          },
+        },
+      },
+    });
+
+    const unreadableResponses = responses.filter(
+      (response) => (response.status ?? 0) >= 400,
+    );
+
+    // tsdav only fills props for entries parsed out of a multistatus body, so an entry without
+    // them is the REPORT itself having failed rather than a single object being unreachable
+    const failedRequest = unreadableResponses.find(
+      (response) => !isDefined(response.props),
+    );
+
+    if (isDefined(failedRequest)) {
+      throw new CalendarEventImportDriverException(
+        `calendar-multiget on ${collectionUrl} failed: ${failedRequest.status} ${failedRequest.statusText}`,
+        mapCalDavStatusToExceptionCode(failedRequest.status),
+      );
+    }
+
+    if (unreadableResponses.length > 0) {
+      this.logger.debug(
+        `Skipping ${unreadableResponses.length} calendar events removed from ${collectionUrl} since the last list fetch`,
+      );
+    }
+
+    return responses.filter((response) => (response.status ?? 0) < 400);
   }
 
   private resolveCollectionUrl(client: DAVClient, href: string): string {
@@ -179,9 +228,11 @@ export class CalDavFetchEventsService {
       .filter((entry) => entry.status === 404)
       .map((entry) => entry.href);
 
-    const newSyncToken =
-      normalizeSyncToken(syncResult[0]?.raw?.multistatus?.syncToken) ??
-      previousSyncToken;
+    // SOGo returns a bare integer sync-token, which tsdav parses as a number
+    const rawSyncToken = syncResult[0]?.raw?.multistatus?.syncToken;
+    const newSyncToken = isDefined(rawSyncToken)
+      ? String(rawSyncToken)
+      : previousSyncToken;
 
     return {
       calendarUrl: calendar.url,

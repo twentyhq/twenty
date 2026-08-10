@@ -3,17 +3,25 @@ import { CalendarEventImportDriverExceptionCode } from 'src/modules/calendar/cal
 export const mapCalDavStatusToExceptionCode = (
   status: number | undefined,
 ): CalendarEventImportDriverExceptionCode => {
-  if (status === 401 || status === 403) {
-    return CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS;
-  }
+  switch (status) {
+    case 401:
+    case 403:
+      return CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS;
 
-  if (status === 404 || status === 410) {
-    return CalendarEventImportDriverExceptionCode.NOT_FOUND;
-  }
+    case 404:
+    case 410:
+      return CalendarEventImportDriverExceptionCode.NOT_FOUND;
 
-  if (status === 408 || status === 429 || (status ?? 0) >= 500) {
-    return CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR;
-  }
+    case 408:
+    case 429:
+    case 500:
+    case 502:
+    case 503:
+    case 504:
+    case 507:
+      return CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR;
 
-  return CalendarEventImportDriverExceptionCode.UNKNOWN;
+    default:
+      return CalendarEventImportDriverExceptionCode.UNKNOWN;
+  }
 };

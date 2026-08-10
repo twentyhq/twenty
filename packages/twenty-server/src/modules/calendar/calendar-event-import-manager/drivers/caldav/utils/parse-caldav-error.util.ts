@@ -4,8 +4,8 @@ import {
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
-// tsdav's collectionQuery rejects with this message and stringifies the parsed body into
-// an unusable "[object Object]", so the status is recovered from the message itself.
+// tsdav stringifies the parsed body into an unusable "[object Object]", so the
+// status has to be recovered from the message itself
 const TSDAV_COLLECTION_QUERY_ERROR_REGEX =
   /^Collection query failed: (\d{3})\b/;
 
