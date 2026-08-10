@@ -15,14 +15,14 @@
   },
   "dependencies": {
     "twenty-sdk": "latest",
-    "twenty-client-sdk": "latest",
-    "twenty-ui": "latest"
+    "twenty-client-sdk": "latest"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.2",
-    "react": "^19.0.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "oxlint": "^0.16.0"
   }
 }

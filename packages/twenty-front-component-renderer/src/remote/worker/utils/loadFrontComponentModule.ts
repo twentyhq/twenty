@@ -1,12 +1,12 @@
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
+import { buildBlobUrlBySpecifier } from '@/remote/worker/utils/buildBlobUrlBySpecifier';
 import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
 import { createSdkClientModuleBlobUrls } from '@/remote/worker/utils/createSdkClientModuleBlobUrls';
 import { revokeSdkClientModuleBlobUrls } from '@/remote/worker/utils/revokeSdkClientModuleBlobUrls';
 import { rewriteModuleImportsToBlobUrls } from '@/remote/worker/utils/rewriteModuleImportsToBlobUrls';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { containsVendorImportSpecifier } from '@/utils/containsVendorImportSpecifier';
-import { VENDOR_BUNDLE_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 type LoadFrontComponentModuleInput = {
   componentSource: string;
@@ -43,17 +43,7 @@ export const loadFrontComponentModule = async ({
 
   const componentModuleSource = rewriteModuleImportsToBlobUrls(
     componentSource,
-    {
-      ...(isDefined(sdkModuleBlobUrls)
-        ? {
-            'twenty-client-sdk/core': sdkModuleBlobUrls.core,
-            'twenty-client-sdk/metadata': sdkModuleBlobUrls.metadata,
-          }
-        : {}),
-      ...(isDefined(vendorModuleBlobUrl)
-        ? { [VENDOR_BUNDLE_IMPORT_SPECIFIER]: vendorModuleBlobUrl }
-        : {}),
-    },
+    buildBlobUrlBySpecifier({ sdkModuleBlobUrls, vendorModuleBlobUrl }),
   );
 
   const componentModuleBlobUrl = createJavaScriptModuleBlobUrl(
