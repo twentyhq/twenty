@@ -8,8 +8,6 @@ import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-
 import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
 import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { DEFAULT_METADATA_REST_PAGE_SIZE } from 'src/engine/metadata-modules/pagination/constants/default-metadata-rest-page-size.constant';
-import { MAX_METADATA_REST_PAGE_SIZE } from 'src/engine/metadata-modules/pagination/constants/max-metadata-rest-page-size.constant';
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
 
 export const parseMetadataRestPagination = (
@@ -33,7 +31,8 @@ export const parseMetadataRestPagination = (
   }
 
   // The raw value is checked before parsing because parseLimitRestRequest
-  // clamps to the maximum first, which would turn 1000.5 into a valid 1000.
+  // clamps to the maximum first, which would turn a fractional value above
+  // the cap into a valid integer limit.
   const requestedLimit = request.query?.limit;
 
   if (isNonEmptyString(requestedLimit) && !Number.isInteger(+requestedLimit)) {
@@ -43,11 +42,7 @@ export const parseMetadataRestPagination = (
   }
 
   return {
-    limit: parseLimitRestRequest(
-      request,
-      DEFAULT_METADATA_REST_PAGE_SIZE,
-      MAX_METADATA_REST_PAGE_SIZE,
-    ),
+    limit: parseLimitRestRequest(request),
     direction: isDefined(endingBefore) ? 'backward' : 'forward',
     afterId: startingAfter,
     beforeId: endingBefore,

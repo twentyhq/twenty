@@ -394,7 +394,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeMetadataSchemaComponents(metadata),
-      parameters: computeParameterComponents(true),
+      parameters: computeParameterComponents(),
       responses: {
         '400': get400ErrorResponses(),
         '401': get401ErrorResponses(),

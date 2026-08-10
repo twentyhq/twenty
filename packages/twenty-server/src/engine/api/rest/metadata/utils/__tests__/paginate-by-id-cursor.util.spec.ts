@@ -1,5 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 
+import {
+  QUERY_DEFAULT_LIMIT_RECORDS,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
+
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { isMetadataRestRequest } from 'src/engine/api/rest/metadata/utils/is-metadata-rest-request.util';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
@@ -14,11 +19,15 @@ const requestWithQuery = (
 ): AuthenticatedRequest => ({ query }) as unknown as AuthenticatedRequest;
 
 describe('paginateMetadataRestItems', () => {
-  it('uses the documented metadata default and maximum page size', () => {
-    expect(parseMetadataRestPagination(requestWithQuery({})).limit).toBe(1000);
+  it('uses the shared REST default and maximum page size', () => {
+    expect(parseMetadataRestPagination(requestWithQuery({})).limit).toBe(
+      QUERY_DEFAULT_LIMIT_RECORDS,
+    );
     expect(
-      parseMetadataRestPagination(requestWithQuery({ limit: '1001' })).limit,
-    ).toBe(1000);
+      parseMetadataRestPagination(
+        requestWithQuery({ limit: `${QUERY_MAX_RECORDS + 1}` }),
+      ).limit,
+    ).toBe(QUERY_MAX_RECORDS);
   });
 
   it('parses REST arguments and returns the unified direct envelope', () => {
