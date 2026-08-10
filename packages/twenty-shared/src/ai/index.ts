@@ -56,4 +56,5 @@ export { formatRecordReference } from './utils/format-record-reference.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';

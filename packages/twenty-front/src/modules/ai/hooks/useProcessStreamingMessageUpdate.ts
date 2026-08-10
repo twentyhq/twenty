@@ -1,12 +1,14 @@
 import { useProcessUIToolCallMessage } from '@/ai/hooks/useProcessUIToolCallMessage';
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import { isSucceededCompleteWorkspaceSetupToolPart } from '@/ai/utils/isSucceededCompleteWorkspaceSetupToolPart';
 import { isUIToolCallMessage } from '@/ai/utils/isUIToolCallMessage';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessage,
+  isSucceededCompleteWorkspaceSetupToolPart,
+} from 'twenty-shared/ai';
 
 export const useProcessStreamingMessageUpdate = () => {
   const agentChatUISessionStartTime = useAtomStateValue(

@@ -1,5 +1,7 @@
-import { isSucceededCompleteWorkspaceSetupToolPart } from '@/ai/utils/isSucceededCompleteWorkspaceSetupToolPart';
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessagePart,
+  isSucceededCompleteWorkspaceSetupToolPart,
+} from 'twenty-shared/ai';
 
 export const extractCompletedWorkspaceSetupToolParts = (
   messageParts: ExtendedUIMessagePart[],

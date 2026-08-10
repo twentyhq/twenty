@@ -10,12 +10,12 @@ import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompleteWorkspaceSetupToolPart';
-import { isSucceededCompleteWorkspaceSetupToolPart } from '@/ai/utils/isSucceededCompleteWorkspaceSetupToolPart';
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
+  isSucceededCompleteWorkspaceSetupToolPart,
 } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
