@@ -512,6 +512,43 @@ describe('installMutationObserver', () => {
     expect(deliveries).toHaveLength(0);
   });
 
+  it('delivers records again when a target is re-observed after disconnect', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const observer = new MutationObserver(collect);
+    observer.observe(container, { childList: true });
+    observer.disconnect();
+    observer.observe(container, { childList: true });
+
+    container.appendChild(document.createElement('span'));
+
+    await flushMicrotasks();
+
+    expect(deliveries).toHaveLength(1);
+  });
+
+  it('stops delivering after a disconnect that followed a re-observe of the same target', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const observer = new MutationObserver(collect);
+    observer.observe(container, { childList: true });
+    observer.disconnect();
+    observer.observe(container, { childList: true });
+    observer.disconnect();
+
+    new MutationObserver(() => {}).observe(container, { childList: true });
+
+    container.appendChild(document.createElement('span'));
+
+    await flushMicrotasks();
+
+    expect(deliveries).toHaveLength(0);
+  });
+
   it('stops delivering to an observer disconnected from another callback', async () => {
     const { document, MutationObserver } = createSandbox();
     const { collect, deliveries } = createRecordCollector();

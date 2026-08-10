@@ -1,4 +1,5 @@
 import { isFunction } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MutationObserverRegistry } from '@/polyfills/dom/types/MutationObserverRegistry';
 import { type MutationRecordSink } from '@/polyfills/dom/types/MutationRecordSink';
@@ -44,7 +45,8 @@ export const createMutationObserverClass = ({
   return class MutationObserverImplementation implements WorkerMutationObserver {
     #callback: WorkerMutationObserverCallback;
     #records: WorkerMutationRecord[] = [];
-    #targets = new Set<Node>();
+    #targetRefs = new Set<WeakRef<Node>>();
+    #targetRefByTarget = new WeakMap<Node, WeakRef<Node>>();
 
     #deliverRecords = () => {
       registry.clearTransientObservations({ sink: this.#sink });
@@ -85,7 +87,17 @@ export const createMutationObserverClass = ({
     observe(target: Node, options: MutationObserverInit = {}): void {
       const normalizedOptions = normalizeMutationObserverInit(options);
 
-      this.#targets.add(target);
+      const existingTargetRef = this.#targetRefByTarget.get(target);
+
+      if (
+        !isDefined(existingTargetRef) ||
+        !this.#targetRefs.has(existingTargetRef)
+      ) {
+        const targetRef = new WeakRef(target);
+
+        this.#targetRefByTarget.set(target, targetRef);
+        this.#targetRefs.add(targetRef);
+      }
 
       registry.registerObservation({
         target,
@@ -95,13 +107,17 @@ export const createMutationObserverClass = ({
     }
 
     disconnect(): void {
+      const liveTargets = [...this.#targetRefs]
+        .map((targetRef) => targetRef.deref())
+        .filter(isDefined);
+
       registry.unregisterObservations({
-        targets: this.#targets,
+        targets: liveTargets,
         sink: this.#sink,
       });
       registry.clearTransientObservations({ sink: this.#sink });
 
-      this.#targets.clear();
+      this.#targetRefs.clear();
       this.#records = [];
       pendingDeliveries.delete(this.#deliverRecords);
     }
