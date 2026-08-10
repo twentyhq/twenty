@@ -6,6 +6,7 @@ import {
   SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
   SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
   SLACK_EVENTS_ROUTE_UNIVERSAL_IDENTIFIER,
+  SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackWebhookSecret } from 'src/logic-functions/utils/get-slack-webhook-secret';
@@ -59,18 +60,29 @@ export const slackEventsResolverHandler = async (
   return {
     workspaceId: await resolveTargetWorkspaceId(body),
     targetLogicFunctionUniversalIdentifier:
-      body.event?.type === 'member_joined_channel'
-        ? SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER
-        : SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+      resolveTargetLogicFunctionUniversalIdentifier(body),
     payload: body,
   };
+};
+
+const resolveTargetLogicFunctionUniversalIdentifier = (
+  body: SlackEventsRequestBody,
+): string => {
+  switch (body.event?.type) {
+    case 'member_joined_channel':
+      return SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER;
+    case 'app_home_opened':
+      return SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER;
+    default:
+      return SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER;
+  }
 };
 
 export default defineLogicFunction({
   universalIdentifier: SLACK_EVENTS_ROUTE_UNIVERSAL_IDENTIFIER,
   name: 'slack-events-resolver',
   description:
-    'Receives Slack Events API callbacks, verifies the request signature in the owner workspace, answers the url_verification handshake, and resolves the target workspace plus the function that handles the event (assistant enqueue, or the channel welcome on member_joined_channel).',
+    'Receives Slack Events API callbacks, verifies the request signature in the owner workspace, answers the url_verification handshake, and resolves the target workspace plus the function that handles the event (assistant enqueue, the channel welcome on member_joined_channel, or the suggested prompts on app_home_opened).',
   timeoutSeconds: 15,
   handler: slackEventsResolverHandler,
   serverRouteTriggerSettings: {
