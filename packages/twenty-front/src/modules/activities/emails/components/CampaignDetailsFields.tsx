@@ -23,27 +23,32 @@ import { Select } from '@/ui/input/components/Select';
 const LABEL_MIN_WIDTH = '116px';
 
 const StyledFieldsContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]} 0;
+  width: 100%;
+`;
+
+// Tracks the body page below rather than the window, so the two read as one
+// centred column. The body backdrop supplies the gap between them.
+const StyledColumn = styled.div<{ $width: string }>`
+  display: flex;
+  flex-direction: column;
+  max-width: ${({ $width }) => $width};
+  min-width: 0;
   width: 100%;
 `;
 
 const StyledHeaderRows = styled.div`
   background-color: ${themeCssVariables.background.secondary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  width: 100%;
-`;
-
-// The side-panel composer can let a control fill its row; this page is as wide
-// as the window, where a sender dropdown spanning it reads as a banner rather
-// than a field.
-const StyledControl = styled.div`
-  display: flex;
-  max-width: 400px;
-  min-width: 0;
+  /* Keeps the row hairlines from crossing the rounded corners. */
+  overflow: hidden;
   width: 100%;
 `;
 
@@ -104,10 +109,12 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
 
 type CampaignDetailsFieldsProps = {
   campaign: MessageCampaign;
+  width: string;
 };
 
 export const CampaignDetailsFields = ({
   campaign,
+  width,
 }: CampaignDetailsFieldsProps) => {
   const detailsState = useCampaignDetailsState({ campaign });
 
@@ -150,9 +157,12 @@ export const CampaignDetailsFields = ({
 
   return (
     <StyledFieldsContainer onBlur={() => detailsState.flush()}>
-      <StyledHeaderRows>
-        <EmailComposerFieldRow label={t`From`} labelMinWidth={LABEL_MIN_WIDTH}>
-          <StyledControl>
+      <StyledColumn $width={width}>
+        <StyledHeaderRows>
+          <EmailComposerFieldRow
+            label={t`From`}
+            labelMinWidth={LABEL_MIN_WIDTH}
+          >
             <Select
               dropdownId="campaign-composer-from-account"
               fullWidth
@@ -161,10 +171,8 @@ export const CampaignDetailsFields = ({
               emptyOption={{ label: t`Select a sender`, value: '' }}
               onChange={detailsState.setFromAddress}
             />
-          </StyledControl>
-        </EmailComposerFieldRow>
-        <EmailComposerFieldRow label={t`To`} labelMinWidth={LABEL_MIN_WIDTH}>
-          <StyledControl>
+          </EmailComposerFieldRow>
+          <EmailComposerFieldRow label={t`To`} labelMinWidth={LABEL_MIN_WIDTH}>
             <FormSingleRecordPicker
               key={`list-${detailsState.draftResyncKey}`}
               objectNameSingulars={[CoreObjectNameSingular.MessageList]}
@@ -172,14 +180,12 @@ export const CampaignDetailsFields = ({
               onChange={detailsState.setListId}
               onCreate={handleCreateList}
             />
-          </StyledControl>
-        </EmailComposerFieldRow>
-        {hasTopicOptions && (
-          <EmailComposerFieldRow
-            label={t`Unsubscribe topic`}
-            labelMinWidth={LABEL_MIN_WIDTH}
-          >
-            <StyledControl>
+          </EmailComposerFieldRow>
+          {hasTopicOptions && (
+            <EmailComposerFieldRow
+              label={t`Unsubscribe topic`}
+              labelMinWidth={LABEL_MIN_WIDTH}
+            >
               <Select
                 dropdownId="campaign-composer-unsubscribe-topic"
                 fullWidth
@@ -192,34 +198,34 @@ export const CampaignDetailsFields = ({
                   )
                 }
               />
-            </StyledControl>
+            </EmailComposerFieldRow>
+          )}
+          <EmailComposerFieldRow
+            label={t`Subject`}
+            labelMinWidth={LABEL_MIN_WIDTH}
+          >
+            <StyledSubjectInput
+              key={`subject-${detailsState.draftResyncKey}`}
+              type="text"
+              aria-label={t`Subject`}
+              defaultValue={detailsState.subject}
+              onChange={(event) => detailsState.setSubject(event.target.value)}
+            />
           </EmailComposerFieldRow>
+        </StyledHeaderRows>
+        {(isDefined(audiencePreview) || hasTopicOptions) && (
+          <StyledHints>
+            {isDefined(audiencePreview) && (
+              <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
+            )}
+            {hasTopicOptions && (
+              <StyledHint>
+                {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
+              </StyledHint>
+            )}
+          </StyledHints>
         )}
-        <EmailComposerFieldRow
-          label={t`Subject`}
-          labelMinWidth={LABEL_MIN_WIDTH}
-        >
-          <StyledSubjectInput
-            key={`subject-${detailsState.draftResyncKey}`}
-            type="text"
-            aria-label={t`Subject`}
-            defaultValue={detailsState.subject}
-            onChange={(event) => detailsState.setSubject(event.target.value)}
-          />
-        </EmailComposerFieldRow>
-      </StyledHeaderRows>
-      {(isDefined(audiencePreview) || hasTopicOptions) && (
-        <StyledHints>
-          {isDefined(audiencePreview) && (
-            <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
-          )}
-          {hasTopicOptions && (
-            <StyledHint>
-              {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-            </StyledHint>
-          )}
-        </StyledHints>
-      )}
+      </StyledColumn>
     </StyledFieldsContainer>
   );
 };
