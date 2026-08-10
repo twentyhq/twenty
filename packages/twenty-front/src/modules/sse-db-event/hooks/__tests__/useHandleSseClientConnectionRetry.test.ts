@@ -1,9 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
+import { type Client } from 'graphql-sse';
 import { createStore, Provider } from 'jotai';
 import { createElement, type ReactNode } from 'react';
 
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { type AuthTokenPair } from '~/generated-metadata/graphql';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
@@ -18,9 +20,23 @@ jest.mock('@/auth/utils/ensureTokenRenewed', () => ({
   ensureTokenRenewed: (...args: unknown[]) => ensureTokenRenewedMock(...args),
 }));
 
-const buildTokenPair = (expiresAt: Date) => ({
-  accessOrWorkspaceAgnosticToken: { token: 'access-token', expiresAt },
-  refreshToken: { token: 'refresh-token', expiresAt },
+const buildTokenPair = (expiresAt: Date): AuthTokenPair => ({
+  accessOrWorkspaceAgnosticToken: {
+    token: 'access-token',
+    expiresAt: expiresAt.toISOString(),
+  },
+  refreshToken: {
+    token: 'refresh-token',
+    expiresAt: expiresAt.toISOString(),
+  },
+});
+
+// The hook only ever calls dispose, but the atom holds a full Client, so the
+// unused members are stubbed rather than cast away.
+const buildSseClient = (dispose: () => void): Client => ({
+  subscribe: () => () => {},
+  iterate: async function* () {},
+  dispose,
 });
 
 const setupStore = ({
@@ -28,15 +44,15 @@ const setupStore = ({
   tokenPair,
 }: {
   isCookieAuthActive: boolean;
-  tokenPair: ReturnType<typeof buildTokenPair> | null;
+  tokenPair: AuthTokenPair | null;
 }) => {
   const store = createStore();
   const dispose = jest.fn();
 
-  store.set(sseClientState.atom, { dispose } as never);
+  store.set(sseClientState.atom, buildSseClient(dispose));
   store.set(shouldDestroyEventStreamState.atom, false);
   store.set(isCookieAuthActiveState.atom, isCookieAuthActive);
-  store.set(tokenPairState.atom, tokenPair as never);
+  store.set(tokenPairState.atom, tokenPair);
 
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(Provider, { store }, children);
@@ -49,7 +65,7 @@ const setupStore = ({
 };
 
 const wasStreamDestroyed = (store: ReturnType<typeof createStore>) =>
-  store.get(shouldDestroyEventStreamState.atom) === true &&
+  store.get(shouldDestroyEventStreamState.atom) &&
   store.get(sseClientState.atom) === null;
 
 describe('useHandleSseClientConnectionRetry', () => {
