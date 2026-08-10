@@ -179,6 +179,17 @@ export class OnboardingEmailDigestService {
           order: { receivedAt: 'DESC' },
         });
 
+        const nonDraftMessageIds = messages.map((message) => message.id);
+
+        if (nonDraftMessageIds.length === 0) {
+          return {
+            importedMessageCount: 0,
+            topContacts: [],
+            topCompanyDomains: [],
+            recentSubjects: [],
+          };
+        }
+
         const messageParticipantRepository =
           await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
@@ -191,7 +202,9 @@ export class OnboardingEmailDigestService {
           .select('LOWER(participant.handle)', 'handle')
           .addSelect('MAX(participant.displayName)', 'displayName')
           .addSelect('COUNT(*)', 'messageCount')
-          .where('participant.messageId IN (:...messageIds)', { messageIds })
+          .where('participant.messageId IN (:...messageIds)', {
+            messageIds: nonDraftMessageIds,
+          })
           .andWhere('participant.workspaceMemberId IS NULL')
           .andWhere('participant.handle IS NOT NULL')
           .groupBy('LOWER(participant.handle)')
@@ -201,14 +214,14 @@ export class OnboardingEmailDigestService {
 
         return {
           importedMessageCount: messages.length,
-          topContacts: buildOnboardingEmailDigestTopContacts(
+          topContacts: buildOnboardingEmailDigestTopContacts({
             participantGroupRows,
             ownHandles,
-          ),
-          topCompanyDomains: buildOnboardingEmailDigestTopCompanyDomains(
+          }),
+          topCompanyDomains: buildOnboardingEmailDigestTopCompanyDomains({
             participantGroupRows,
             ownHandles,
-          ),
+          }),
           recentSubjects: buildOnboardingEmailDigestRecentSubjects(messages),
         };
       },

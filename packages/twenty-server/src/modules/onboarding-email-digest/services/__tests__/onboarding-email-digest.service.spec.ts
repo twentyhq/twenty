@@ -153,12 +153,13 @@ describe('OnboardingEmailDigestService', () => {
     });
   });
 
-  it('should build the full digest and drop own, alias, and group handles', async () => {
-    const { service } = buildService({
+  it('should build the full digest from non-draft messages and drop own, alias, and group handles', async () => {
+    const built = buildService({
       associations: [
         { messageId: 'message-1' },
         { messageId: 'message-2' },
         { messageId: 'message-2' },
+        { messageId: 'draft-message' },
       ],
       messages: [
         {
@@ -185,10 +186,17 @@ describe('OnboardingEmailDigestService', () => {
       ],
     });
 
+    const { service, participantQueryBuilder } = built;
+
     const result = await service.buildDigestForUser({
       workspaceId,
       userWorkspaceId,
     });
+
+    expect(participantQueryBuilder.where).toHaveBeenCalledWith(
+      'participant.messageId IN (:...messageIds)',
+      { messageIds: ['message-1', 'message-2'] },
+    );
 
     expect(result).toEqual({
       syncState: 'IMPORTING',
@@ -201,6 +209,28 @@ describe('OnboardingEmailDigestService', () => {
       topCompanyDomains: [{ domain: 'corp.com', messageCount: 12 }],
       recentSubjects: [{ subject: 'Q3 renewal', receivedAt: '2026-08-05' }],
     });
+  });
+
+  it('should report an empty digest without querying participants when every imported message is a draft', async () => {
+    const { service, participantQueryBuilder } = buildService({
+      associations: [{ messageId: 'draft-message' }],
+      messages: [],
+    });
+
+    const result = await service.buildDigestForUser({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    expect(result).toEqual({
+      syncState: 'IMPORTING',
+      connectedAccountHandle: 'Admin@acme.com',
+      importedMessageCount: 0,
+      topContacts: [],
+      topCompanyDomains: [],
+      recentSubjects: [],
+    });
+    expect(participantQueryBuilder.getRawMany).not.toHaveBeenCalled();
   });
 
   it('should return null instead of throwing when a query fails', async () => {

@@ -8,10 +8,13 @@ import { type OnboardingEmailDigestTopContact } from 'src/modules/onboarding-ema
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { sanitizePromptContextLine } from 'src/utils/sanitize-prompt-context-line.util';
 
-export const buildOnboardingEmailDigestTopContacts = (
-  participantGroupRows: OnboardingEmailDigestParticipantGroupRow[],
-  ownHandles: Set<string>,
-): OnboardingEmailDigestTopContact[] => {
+export const buildOnboardingEmailDigestTopContacts = ({
+  participantGroupRows,
+  ownHandles,
+}: {
+  participantGroupRows: OnboardingEmailDigestParticipantGroupRow[];
+  ownHandles: Set<string>;
+}): OnboardingEmailDigestTopContact[] => {
   const topContacts: OnboardingEmailDigestTopContact[] = [];
 
   for (const row of participantGroupRows) {

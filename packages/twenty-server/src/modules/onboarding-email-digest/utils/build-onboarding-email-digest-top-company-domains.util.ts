@@ -7,10 +7,13 @@ import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/ut
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
-export const buildOnboardingEmailDigestTopCompanyDomains = (
-  participantGroupRows: OnboardingEmailDigestParticipantGroupRow[],
-  ownHandles: Set<string>,
-): OnboardingEmailDigestTopCompanyDomain[] => {
+export const buildOnboardingEmailDigestTopCompanyDomains = ({
+  participantGroupRows,
+  ownHandles,
+}: {
+  participantGroupRows: OnboardingEmailDigestParticipantGroupRow[];
+  ownHandles: Set<string>;
+}): OnboardingEmailDigestTopCompanyDomain[] => {
   const ownDomains = new Set(
     [...ownHandles].map(getDomainNameFromHandle).filter(isNonEmptyString),
   );
@@ -18,7 +21,7 @@ export const buildOnboardingEmailDigestTopCompanyDomains = (
   const messageCountByDomain = new Map<string, number>();
 
   for (const row of participantGroupRows) {
-    const handle = row.handle?.toLowerCase();
+    const handle = row.handle.toLowerCase();
 
     if (
       !isNonEmptyString(handle) ||
