@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type WorkspacePersonEnrichment } from 'twenty-shared/workspace';
 
 import { WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-person-enrichment-field-max-length.constant';
@@ -34,7 +34,7 @@ export const sanitizeWorkspacePersonEnrichment = (
   const email = sanitizeSingleLineText(value.email);
   const enrichedAt = sanitizeSingleLineText(value.enrichedAt);
 
-  if (email === null || enrichedAt === null) {
+  if (!isDefined(email) || !isDefined(enrichedAt)) {
     return null;
   }
 
