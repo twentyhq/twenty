@@ -27,14 +27,18 @@ export const buildOnboardingEmailDigestRecentSubjects = (
   const recentSubjects: OnboardingEmailDigestRecentSubject[] = [];
 
   for (const message of messages) {
-    const subject = sanitizePromptContextLine(
+    const sanitizedSubject = sanitizePromptContextLine(
       message.subject,
       ONBOARDING_EMAIL_DIGEST_SUBJECT_MAX_LENGTH,
     );
 
-    if (!isNonEmptyString(subject)) {
+    if (!isNonEmptyString(sanitizedSubject)) {
       continue;
     }
+
+    // The digest message wraps subjects in double quotes, so a quote inside
+    // one would visually break out of its delimiters.
+    const subject = sanitizedSubject.replace(/"/g, "'");
 
     const subjectKey = normalizeSubjectDeduplicationKey(subject);
 

@@ -46,6 +46,19 @@ describe('buildOnboardingEmailDigestMessageText', () => {
     expect(result).not.toContain('Top contacts');
   });
 
+  it('should describe a synced empty mailbox without promising an import', () => {
+    const result = buildOnboardingEmailDigestMessageText({
+      ...digestWithData,
+      syncState: 'SYNCED',
+      importedMessageCount: 0,
+    });
+
+    expect(result).toContain(
+      'connected and fully synced, but no emails were imported',
+    );
+    expect(result).not.toContain('The email import just started');
+  });
+
   it('should render the digest lines with the injection guardrail when data exists', () => {
     const result = buildOnboardingEmailDigestMessageText(digestWithData);
 

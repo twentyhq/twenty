@@ -72,13 +72,13 @@ export const buildWorkspaceSetupPromptText = ({
     emailDigest.syncState !== 'NOT_CONNECTED' &&
     emailDigest.syncState !== 'FAILED';
 
-  const hasImportedEmailData =
-    isMailboxConnected && emailDigest.importedMessageCount > 0;
-
   const hasImportedContactsOrCompanies =
-    hasImportedEmailData &&
+    isMailboxConnected &&
     (isNonEmptyArray(emailDigest.topContacts) ||
       isNonEmptyArray(emailDigest.topCompanyDomains));
+
+  const isEmailImportStillRunning =
+    isMailboxConnected && emailDigest.syncState === 'IMPORTING';
 
   const firstReplyInstruction = isDefined(companyEnrichment)
     ? FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT
@@ -90,9 +90,9 @@ export const buildWorkspaceSetupPromptText = ({
     firstReplyAddenda.push(FIRST_REPLY_PERSON_CONTEXT_ADDENDUM);
   }
 
-  if (hasImportedEmailData) {
+  if (hasImportedContactsOrCompanies) {
     firstReplyAddenda.push(FIRST_REPLY_EMAIL_DIGEST_ADDENDUM);
-  } else if (isMailboxConnected) {
+  } else if (isEmailImportStillRunning) {
     firstReplyAddenda.push(FIRST_REPLY_EMAIL_IMPORT_PENDING_ADDENDUM);
   }
 

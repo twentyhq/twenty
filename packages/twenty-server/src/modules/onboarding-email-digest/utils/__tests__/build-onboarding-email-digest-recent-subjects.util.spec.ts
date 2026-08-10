@@ -35,6 +35,17 @@ describe('buildOnboardingEmailDigestRecentSubjects', () => {
     expect(result[0].subject).toBe('Subject 0');
   });
 
+  it('should replace double quotes so subjects cannot break out of their quoting', () => {
+    const result = buildOnboardingEmailDigestRecentSubjects([
+      {
+        subject: 'He said "hello" twice',
+        receivedAt: new Date('2026-08-05'),
+      },
+    ]);
+
+    expect(result[0].subject).toBe("He said 'hello' twice");
+  });
+
   it('should sanitize line breaks and cap the subject length', () => {
     const result = buildOnboardingEmailDigestRecentSubjects([
       {

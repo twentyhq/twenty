@@ -30,7 +30,11 @@ export const buildOnboardingEmailDigestMessageText = (
   }
 
   if (emailDigest.importedMessageCount === 0) {
-    return `The user connected their mailbox ${emailDigest.connectedAccountHandle}. The email import just started: imported emails, and the people and companies found in them, will become queryable in this workspace shortly.`;
+    if (emailDigest.syncState === 'IMPORTING') {
+      return `The user connected their mailbox ${emailDigest.connectedAccountHandle}. The email import just started: imported emails, and the people and companies found in them, will become queryable in this workspace shortly.`;
+    }
+
+    return `The user's mailbox ${emailDigest.connectedAccountHandle} is connected and fully synced, but no emails were imported, so do not reference imported data.`;
   }
 
   const importedMessageCountText =

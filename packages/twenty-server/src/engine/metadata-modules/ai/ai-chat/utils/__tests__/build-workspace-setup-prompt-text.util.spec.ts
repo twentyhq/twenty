@@ -379,6 +379,25 @@ describe('buildWorkspaceSetupPromptText', () => {
     );
   });
 
+  it('should add no email addenda for a synced mailbox without external contacts', () => {
+    const result = buildPrompt({
+      emailDigest: {
+        syncState: 'SYNCED',
+        connectedAccountHandle: 'admin@acme.com',
+        importedMessageCount: 42,
+        topContacts: [],
+        topCompanyDomains: [],
+        recentSubjects: [],
+      },
+    });
+
+    expect(result).not.toContain('you can already see who they email most');
+    expect(result).not.toContain('their contacts are on their way');
+    expect(result).not.toContain(
+      'Records for the people and companies in their imported emails already exist',
+    );
+  });
+
   it('should add no email addenda when no mailbox is connected', () => {
     const result = buildPrompt({ emailDigest: { syncState: 'NOT_CONNECTED' } });
 
