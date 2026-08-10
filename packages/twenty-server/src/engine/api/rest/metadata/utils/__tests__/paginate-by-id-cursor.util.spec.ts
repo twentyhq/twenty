@@ -1,10 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import {
-  isMetadataRestRequest,
-  paginateMetadataRestItems,
-} from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { isMetadataRestRequest } from 'src/engine/api/rest/metadata/utils/is-metadata-rest-request.util';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 
 const UUID_A = '00000000-0000-4000-8000-00000000000a';
 const UUID_B = '00000000-0000-4000-8000-00000000000b';
@@ -15,6 +14,13 @@ const requestWithQuery = (
 ): AuthenticatedRequest => ({ query }) as unknown as AuthenticatedRequest;
 
 describe('paginateMetadataRestItems', () => {
+  it('uses the documented metadata default and maximum page size', () => {
+    expect(parseMetadataRestPagination(requestWithQuery({})).limit).toBe(1000);
+    expect(
+      parseMetadataRestPagination(requestWithQuery({ limit: '1001' })).limit,
+    ).toBe(1000);
+  });
+
   it('parses REST arguments and returns the unified direct envelope', () => {
     const page = paginateMetadataRestItems({
       items: [{ id: UUID_A }, { id: UUID_B }, { id: UUID_C }],

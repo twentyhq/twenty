@@ -16,7 +16,7 @@ import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -58,11 +58,17 @@ export class ViewFilterController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
   ) {
-    const items = viewId
-      ? await this.viewFilterService.findByViewId(workspace.id, viewId)
-      : await this.viewFilterService.findByWorkspaceId(workspace.id);
+    const page = await this.viewFilterService.findManyPaginated({
+      workspaceId: workspace.id,
+      viewId,
+      pagination: parseMetadataRestPagination(request),
+    });
 
-    return paginateMetadataRestItems({ items, request });
+    return {
+      data: page.items,
+      pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
+    };
   }
 
   @Get(':id')

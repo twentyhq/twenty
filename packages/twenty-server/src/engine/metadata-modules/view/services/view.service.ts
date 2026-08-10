@@ -24,6 +24,9 @@ import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
 import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
+import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
+import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
+import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { DeleteViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/delete-view.input';
 import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/destroy-view.input';
@@ -607,6 +610,34 @@ export class ViewService {
     });
 
     return this.findManyWithRelationsFromCache(flatViews, workspaceId);
+  }
+
+  async findManyWithRelationsPaginated({
+    workspaceId,
+    objectMetadataId,
+    userWorkspaceId,
+    pagination,
+  }: {
+    workspaceId: string;
+    objectMetadataId?: string;
+    userWorkspaceId?: string;
+    pagination: MetadataCursorPagination;
+  }): Promise<MetadataCursorPage<ViewDTO> & { totalCount: number }> {
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      objectMetadataId,
+      userWorkspaceId,
+    });
+    const page = paginateMetadataOrderedItems({
+      items: flatViews,
+      pagination,
+    });
+
+    return {
+      ...page,
+      items: await this.findManyWithRelationsFromCache(page.items, workspaceId),
+      totalCount: flatViews.length,
+    };
   }
 
   async findByObjectMetadataIdWithRelations(

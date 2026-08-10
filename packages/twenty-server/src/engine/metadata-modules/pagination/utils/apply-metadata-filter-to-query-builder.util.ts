@@ -502,7 +502,7 @@ export const applyMetadataFilterToItems = <
         throw new UserInputError(`Unknown filter field: ${filterField}`);
       }
 
-      const value = (item as unknown as Record<string, unknown>)[column.column];
+      const value: unknown = Reflect.get(item, column.column);
 
       if (
         !matchesMetadataComparison({

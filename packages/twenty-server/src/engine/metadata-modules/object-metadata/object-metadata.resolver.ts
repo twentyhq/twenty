@@ -27,16 +27,10 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import {
-  FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
-  FieldFilterInput,
-} from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
+import { FieldFilterInput } from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import {
-  INDEX_FILTER_COLUMN_BY_FILTER_FIELD,
-  IndexFilterInput,
-} from 'src/engine/metadata-modules/index-metadata/dtos/index-filter.input';
+import { IndexFilterInput } from 'src/engine/metadata-modules/index-metadata/dtos/index-filter.input';
 import { CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -54,14 +48,8 @@ import { ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadat
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
-import {
-  applyMetadataFilterToItems,
-  applyMetadataFilterToQueryBuilder,
-} from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
-import {
-  findManyItemsWithCursorPagination,
-  findManyWithCursorPagination,
-} from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
+import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
+import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
 import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -164,19 +152,11 @@ export class ObjectMetadataResolver {
     })
     filter: FieldFilterInput,
   ): Promise<CursorConnection<FieldMetadataDTO>> {
-    const fieldMetadatas = await context.loaders.fieldMetadataLoader.load({
+    return context.loaders.fieldMetadataConnectionLoader.load({
       objectMetadata,
       workspaceId: workspace.id,
       locale: context.req.locale,
-    });
-    const filteredFieldMetadatas = applyMetadataFilterToItems({
-      items: fieldMetadatas,
       filter,
-      columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
-    });
-
-    return findManyItemsWithCursorPagination({
-      items: filteredFieldMetadatas,
       paging,
     });
   }
@@ -199,18 +179,10 @@ export class ObjectMetadataResolver {
     })
     filter: IndexFilterInput,
   ): Promise<CursorConnection<IndexMetadataDTO>> {
-    const indexMetadatas = await context.loaders.indexMetadataLoader.load({
+    return context.loaders.indexMetadataConnectionLoader.load({
       objectMetadata,
       workspaceId: workspace.id,
-    });
-    const filteredIndexMetadatas = applyMetadataFilterToItems({
-      items: indexMetadatas,
       filter,
-      columnByFilterField: INDEX_FILTER_COLUMN_BY_FILTER_FIELD,
-    });
-
-    return findManyItemsWithCursorPagination({
-      items: filteredIndexMetadatas,
       paging,
     });
   }

@@ -29,6 +29,9 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-to-page-layout-dto.util';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
+import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
+import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
+import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -118,6 +121,58 @@ export class PageLayoutService {
         }),
       ),
     );
+  }
+
+  async findManyPaginated({
+    workspaceId,
+    objectMetadataId,
+    pageLayoutType,
+    pagination,
+  }: {
+    workspaceId: string;
+    objectMetadataId?: string;
+    pageLayoutType?: PageLayoutType;
+    pagination: MetadataCursorPagination;
+  }): Promise<MetadataCursorPage<PageLayoutDTO> & { totalCount: number }> {
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+    } = await this.getPageLayoutFlatEntityMaps(workspaceId);
+    const activeLayouts = Object.values(
+      flatPageLayoutMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (layout) =>
+          !isDefined(layout.deletedAt) &&
+          (!isNonEmptyString(objectMetadataId) ||
+            layout.objectMetadataId === objectMetadataId) &&
+          (!isDefined(pageLayoutType) || layout.type === pageLayoutType),
+      )
+      .sort(
+        (first, second) =>
+          first.createdAt.localeCompare(second.createdAt) ||
+          first.id.localeCompare(second.id),
+      );
+    const page = paginateMetadataOrderedItems({
+      items: activeLayouts,
+      pagination,
+    });
+
+    return {
+      ...page,
+      items: page.items.map((layout) =>
+        fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
+          reconstructFlatPageLayoutWithTabsAndWidgets({
+            layout,
+            flatPageLayoutTabMaps,
+            flatPageLayoutWidgetMaps,
+          }),
+        ),
+      ),
+      totalCount: activeLayouts.length,
+    };
   }
 
   async findByIdOrThrow({

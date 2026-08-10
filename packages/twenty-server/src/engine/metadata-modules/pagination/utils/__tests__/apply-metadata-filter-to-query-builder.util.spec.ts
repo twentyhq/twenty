@@ -174,6 +174,37 @@ describe('applyMetadataFilterToQueryBuilder', () => {
     expect(() => applyFilter({ id: { is: true } })).toThrow(UserInputError);
   });
 
+  it('normalizes UUID operands for database and in-memory filters', () => {
+    type UuidFilter = {
+      and?: UuidFilter[];
+      or?: UuidFilter[];
+      id?: { eq?: string; in?: string[] };
+    };
+
+    const lowerCaseUuid = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    const upperCaseUuid = lowerCaseUuid.toUpperCase();
+    const filter: UuidFilter = {
+      id: { eq: upperCaseUuid, in: [upperCaseUuid] },
+    };
+    const whereBuilder = applyFilter({
+      id: { eq: upperCaseUuid, in: [upperCaseUuid] },
+    });
+
+    expect(whereBuilder.parameters).toEqual({
+      metadataFilterParameter0: lowerCaseUuid,
+      metadataFilterParameter1: [lowerCaseUuid],
+    });
+    expect(
+      applyMetadataFilterToItems({
+        items: [{ id: lowerCaseUuid }],
+        filter,
+        columnByFilterField: {
+          id: { column: 'id', type: 'uuid' },
+        },
+      }),
+    ).toEqual([{ id: lowerCaseUuid }]);
+  });
+
   it('applies the same filter semantics to batched in-memory relations', () => {
     type TestFilter = {
       and?: TestFilter[];

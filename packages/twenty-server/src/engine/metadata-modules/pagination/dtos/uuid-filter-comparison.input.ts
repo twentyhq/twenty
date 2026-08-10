@@ -4,6 +4,12 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @InputType('UUIDFilterComparison')
 export class UUIDFilterComparisonInput {
+  @Field(() => Boolean, { nullable: true })
+  is?: boolean | null;
+
+  @Field(() => Boolean, { nullable: true })
+  isNot?: boolean | null;
+
   @Field(() => UUIDScalarType, { nullable: true })
   eq?: string;
 

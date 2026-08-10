@@ -1,5 +1,8 @@
 import gql from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 type ObjectPage = {
   data: {
@@ -17,6 +20,9 @@ type ObjectPage = {
               hasNextPage: boolean;
               hasPreviousPage: boolean;
             };
+          };
+          indexMetadatas: {
+            edges: { node: { id: string } }[];
           };
         };
       }[];
@@ -50,6 +56,13 @@ const OBJECTS_WITH_FIELDS_QUERY = gql`
             pageInfo {
               hasNextPage
               hasPreviousPage
+            }
+          }
+          indexMetadatas(paging: { first: 1 }) {
+            edges {
+              node {
+                id
+              }
             }
           }
         }
@@ -113,19 +126,41 @@ describe('metadata list pagination', () => {
     expect(backPage.data?.objects.pageInfo.hasNextPage).toBe(true);
   });
 
-  it('paginates nested fields independently for every parent', async () => {
-    const page = await queryObjects({ first: 2 });
-
-    expect(page.errors).toBeUndefined();
-    expect(page.data?.objects.edges).toHaveLength(2);
-
-    for (const { node: objectMetadata } of page.data?.objects.edges ?? []) {
-      expect(objectMetadata.fields.edges).toHaveLength(1);
-      expect(objectMetadata.fields.edges[0].node.objectMetadataId).toBe(
-        objectMetadata.id,
+  it('batches bounded nested pagination independently for every parent', async () => {
+    const cacheService =
+      getAppProviderByClassName<WorkspaceManyOrAllFlatEntityMapsCacheService>(
+        'WorkspaceManyOrAllFlatEntityMapsCacheService',
       );
-      expect(objectMetadata.fields.edges[0].cursor).toBeTruthy();
-      expect(objectMetadata.fields.pageInfo.hasPreviousPage).toBe(false);
+    const cacheSpy = jest.spyOn(
+      cacheService,
+      'getOrRecomputeManyOrAllFlatEntityMaps',
+    );
+    try {
+      const page = await queryObjects({ first: 2 });
+
+      expect(page.errors).toBeUndefined();
+      expect(page.data?.objects.edges).toHaveLength(2);
+
+      for (const { node: objectMetadata } of page.data?.objects.edges ?? []) {
+        expect(objectMetadata.fields.edges).toHaveLength(1);
+        expect(objectMetadata.fields.edges[0].node.objectMetadataId).toBe(
+          objectMetadata.id,
+        );
+        expect(objectMetadata.fields.edges[0].cursor).toBeTruthy();
+        expect(objectMetadata.fields.pageInfo.hasPreviousPage).toBe(false);
+      }
+
+      const fieldBatchCalls = cacheSpy.mock.calls.filter(([parameters]) =>
+        parameters.flatMapsKeys?.includes('flatFieldMetadataMaps'),
+      );
+      const indexBatchCalls = cacheSpy.mock.calls.filter(([parameters]) =>
+        parameters.flatMapsKeys?.includes('flatIndexMaps'),
+      );
+
+      expect(fieldBatchCalls).toHaveLength(1);
+      expect(indexBatchCalls).toHaveLength(1);
+    } finally {
+      cacheSpy.mockRestore();
     }
   });
 
@@ -233,9 +268,9 @@ describe('metadata list pagination', () => {
       `,
     });
 
-    expect(invalidFilterResponse.body.data).toBeUndefined();
+    expect(invalidFilterResponse.body.data).toBeNull();
     expect(invalidFilterResponse.body.errors[0].message).toContain(
-      'Field "is" is not defined by type "UUIDFilterComparison"',
+      'UUID is/isNot comparisons only support null values',
     );
   });
 });

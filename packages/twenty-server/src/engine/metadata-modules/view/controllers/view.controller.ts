@@ -17,7 +17,7 @@ import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -74,23 +74,18 @@ export class ViewController {
     userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
   ) {
-    const views = objectMetadataId
-      ? await this.viewService.findByObjectMetadataIdWithRelations(
-          workspace.id,
-          objectMetadataId,
-          userWorkspaceId,
-        )
-      : await this.viewService.findByWorkspaceIdWithRelations(
-          workspace.id,
-          userWorkspaceId,
-        );
-
-    const page = paginateMetadataRestItems({ items: views, request });
+    const page = await this.viewService.findManyWithRelationsPaginated({
+      workspaceId: workspace.id,
+      objectMetadataId,
+      userWorkspaceId,
+      pagination: parseMetadataRestPagination(request),
+    });
 
     return {
-      ...page,
+      pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
       data: await this.processViewsWithTemplates(
-        page.data,
+        page.items,
         workspace.id,
         locale,
       ),

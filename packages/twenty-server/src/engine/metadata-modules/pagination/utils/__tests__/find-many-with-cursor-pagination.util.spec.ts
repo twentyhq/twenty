@@ -2,10 +2,8 @@ import { type SelectQueryBuilder } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import {
-  findManyItemsWithCursorPagination,
-  findManyWithCursorPagination,
-} from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
+import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
+import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 
 type FakeEntity = { id: string };
 
@@ -181,6 +179,16 @@ describe('findManyWithCursorPagination', () => {
       hasNextPage: false,
       hasPreviousPage: true,
     });
+
+    const fullDatasetConnection = findManyItemsWithCursorPagination({
+      items: [{ id: UUID_D }, { id: UUID_C }, { id: UUID_B }, { id: UUID_A }],
+      paging: { last: 2 },
+    });
+
+    expect(fullDatasetConnection.edges.map(({ node }) => node.id)).toEqual([
+      UUID_B,
+      UUID_A,
+    ]);
   });
 
   it('uses the default result size when paging is omitted', async () => {

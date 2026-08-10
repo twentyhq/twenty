@@ -1,87 +1,9 @@
-import { BadRequestException } from '@nestjs/common';
-
-import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, type Repository } from 'typeorm';
-import { validate as uuidValidate } from 'uuid';
 
-import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
-import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
-import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
+import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { DEFAULT_METADATA_REST_PAGE_SIZE } from 'src/engine/metadata-modules/pagination/constants/default-metadata-rest-page-size.constant';
-import { MAX_METADATA_REST_PAGE_SIZE } from 'src/engine/metadata-modules/pagination/constants/max-metadata-rest-page-size.constant';
-import {
-  type MetadataCursorPagination,
-  paginateMetadataOrderedItems,
-  paginateMetadataQueryBuilder,
-} from 'src/engine/metadata-modules/pagination/utils/paginate-metadata.util';
-
-export type RestCursorPageInfo = {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor: string | null;
-  endCursor: string | null;
-};
-
-export type MetadataRestListResponse<T> = {
-  data: T[];
-  pageInfo: RestCursorPageInfo;
-  totalCount: number;
-};
-
-const parseMetadataRestPagination = (
-  request: AuthenticatedRequest,
-): MetadataCursorPagination => {
-  const startingAfter = parseStartingAfterRestRequest(request);
-  const endingBefore = parseEndingBeforeRestRequest(request);
-
-  if (isDefined(startingAfter) && isDefined(endingBefore)) {
-    throw new BadRequestException(
-      `'starting_after' and 'ending_before' cannot be used together.`,
-    );
-  }
-
-  const invalidCursor = [startingAfter, endingBefore].find(
-    (cursor) => isDefined(cursor) && !uuidValidate(cursor),
-  );
-
-  if (isDefined(invalidCursor)) {
-    throw new BadRequestException(`Invalid cursor: ${invalidCursor}`);
-  }
-
-  return {
-    limit: parseLimitRestRequest(
-      request,
-      DEFAULT_METADATA_REST_PAGE_SIZE,
-      MAX_METADATA_REST_PAGE_SIZE,
-    ),
-    direction: isDefined(endingBefore) ? 'backward' : 'forward',
-    afterId: startingAfter,
-    beforeId: endingBefore,
-  };
-};
-
-export const paginateMetadataRestItems = <T extends { id: string }>({
-  items,
-  request,
-}: {
-  items: T[];
-  request: AuthenticatedRequest;
-}): MetadataRestListResponse<T> => {
-  const page = paginateMetadataOrderedItems({
-    items,
-    pagination: parseMetadataRestPagination(request),
-  });
-
-  return {
-    data: page.items,
-    pageInfo: page.pageInfo,
-    totalCount: items.length,
-  };
-};
-
-export const isMetadataRestRequest = (request: AuthenticatedRequest): boolean =>
-  request.originalUrl.startsWith('/rest/metadata/');
+import { paginateMetadataQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-query-builder.util';
 
 export const paginateByIdCursor = async <
   T extends { id: string; workspaceId: string },

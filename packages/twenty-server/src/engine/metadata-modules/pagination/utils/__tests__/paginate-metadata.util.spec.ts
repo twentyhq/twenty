@@ -1,4 +1,4 @@
-import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata.util';
+import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
 
 const items = ['first', 'second', 'third', 'fourth'].map((id) => ({ id }));
 

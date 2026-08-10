@@ -14,10 +14,9 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -52,17 +51,18 @@ export class PageLayoutController {
     @Query('objectMetadataId') objectMetadataId?: string,
     @Query('pageLayoutType') pageLayoutType?: PageLayoutType,
   ) {
-    const items = isDefined(objectMetadataId)
-      ? await this.pageLayoutService.findBy({
-          workspaceId: workspace.id,
-          filter: {
-            objectMetadataId,
-            pageLayoutType,
-          },
-        })
-      : await this.pageLayoutService.findByWorkspaceId(workspace.id);
+    const page = await this.pageLayoutService.findManyPaginated({
+      workspaceId: workspace.id,
+      objectMetadataId,
+      pageLayoutType,
+      pagination: parseMetadataRestPagination(request),
+    });
 
-    return paginateMetadataRestItems({ items, request });
+    return {
+      data: page.items,
+      pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
+    };
   }
 
   @Get(':id')
