@@ -1,6 +1,20 @@
 import { computeLocalCacheStats } from 'src/engine/workspace-cache/utils/compute-local-cache-stats.util';
 
-const entry = (versionCount: number) => ({ versions: { size: versionCount } });
+// Version state matters now, so fixtures build real version maps.
+const entry = (versionCount: number, state: 'hot' | 'cold' = 'hot') => ({
+  versions: new Map(
+    Array.from({ length: versionCount }, (_, index) => [
+      `hash-${index}`,
+      state === 'hot'
+        ? { state: 'hot' as const, data: 'data', lastReadAt: index }
+        : {
+            state: 'cold' as const,
+            blob: Buffer.alloc(100),
+            lastReadAt: index,
+          },
+    ]),
+  ),
+});
 
 describe('computeLocalCacheStats', () => {
   it('returns zeros for an empty cache', () => {
@@ -12,6 +26,12 @@ describe('computeLocalCacheStats', () => {
       versionsTotal: 0,
       versionsByCount: { '1': 0, '2': 0, '3': 0, '4': 0, '5+': 0 },
       entriesByKeyName: {},
+      hotVersionsByKeyName: {},
+      coldVersionsByKeyName: {},
+      coldBytesByKeyName: {},
+      hotVersionsTotal: 0,
+      coldVersionsTotal: 0,
+      coldBytesTotal: 0,
     });
   });
 
@@ -51,6 +71,28 @@ describe('computeLocalCacheStats', () => {
       '3': 0,
       '4': 1,
       '5+': 2,
+    });
+  });
+
+  it('splits versions by storage state and sums exact cold bytes', () => {
+    const stats = computeLocalCacheStats(
+      new Map([
+        ['flatFieldMetadataMaps:ws-a', entry(2, 'cold')],
+        ['flatFieldMetadataMaps:ws-b', entry(1, 'hot')],
+        ['ORMEntityMetadatas:ws-a', entry(1, 'hot')],
+      ]),
+    );
+
+    expect(stats.hotVersionsTotal).toBe(2);
+    expect(stats.coldVersionsTotal).toBe(2);
+    expect(stats.coldBytesTotal).toBe(200);
+    expect(stats.coldVersionsByKeyName).toEqual({
+      flatFieldMetadataMaps: 2,
+      ORMEntityMetadatas: 0,
+    });
+    expect(stats.hotVersionsByKeyName).toEqual({
+      flatFieldMetadataMaps: 1,
+      ORMEntityMetadatas: 1,
     });
   });
 });

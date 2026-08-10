@@ -53,6 +53,14 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const HOT_ENTRIES_PER_PROVIDER = 64;
+// Demotion is sliced rather than done in one pass: encoding a single field
+// metadata entry costs ~17ms in prod, so draining the backlog at once blocked
+// the loop for ~2.8s and timed out the 3s liveness probe. The budget cannot go
+// below one entry's cost, so the floor for a slice is roughly that; 10ms every
+// 250ms drains faster than entries go hot again and a no-op tick on a full pod
+// costs 0.14ms.
+const DEMOTION_INTERVAL_MS = 250;
+const DEMOTION_BUDGET_MS = 10;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
@@ -79,7 +87,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     string,
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
-  private lastLocalCacheSweepAt: number | undefined;
+  private sweepTimer?: ReturnType<typeof setInterval>;
+  private demotionTimer?: ReturnType<typeof setInterval>;
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
@@ -134,10 +143,33 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     this.cacheMetricsService.start(this.localCache);
+    this.startMaintenanceTimers();
   }
 
   onModuleDestroy(): void {
+    if (isDefined(this.sweepTimer)) {
+      clearInterval(this.sweepTimer);
+    }
+    if (isDefined(this.demotionTimer)) {
+      clearInterval(this.demotionTimer);
+    }
     this.cacheMetricsService.stop();
+  }
+
+  // Maintenance used to run inline on the first request after each interval, so
+  // whichever request happened to trigger it was charged the whole cost.
+  private startMaintenanceTimers(): void {
+    this.sweepTimer = setInterval(
+      () => this.sweepLocalCache(),
+      LOCAL_CACHE_SWEEP_INTERVAL_MS,
+    );
+    this.sweepTimer.unref();
+
+    this.demotionTimer = setInterval(
+      () => this.demoteColdEntries(),
+      DEMOTION_INTERVAL_MS,
+    );
+    this.demotionTimer.unref();
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
@@ -158,7 +190,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
-    this.sweepLocalCacheIfDue();
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const memoKey =
@@ -268,10 +299,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
           strategy: 'mint',
         });
-
-        // Invalidation writes entries too, so run the sweep here as well — otherwise an
-        // invalidate-only workload never enforces the per-provider caps.
-        this.sweepLocalCacheIfDue();
 
         // Clear memoizer again after recomputation to evict any stale entries
         // cached by concurrent getOrRecompute calls during the flush window.
@@ -433,8 +460,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
 
-    const allValues =
-      await this.cacheStorage.mget<CacheDataType | string>(allKeys);
+    const allValues = await this.cacheStorage.mget<CacheDataType | string>(
+      allKeys,
+    );
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
       const rawData = allValues[index * 2] as CacheDataType | undefined;
@@ -444,9 +472,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
-            rawData,
-          );
+          data =
+            this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
         } catch (error) {
           this.logger.warn(
             `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
@@ -648,16 +675,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.cleanupStaleVersions(entry);
   }
 
-  private sweepLocalCacheIfDue(): void {
+  private sweepLocalCache(): void {
     const now = Date.now();
-
-    if (
-      isDefined(this.lastLocalCacheSweepAt) &&
-      now - this.lastLocalCacheSweepAt < LOCAL_CACHE_SWEEP_INTERVAL_MS
-    ) {
-      return;
-    }
-    this.lastLocalCacheSweepAt = now;
 
     const evicted = sweepLocalCache(this.localCache, now, {
       ttlMs: LOCAL_ENTRY_TTL_MS,
@@ -669,14 +688,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     if (evicted > 0) {
       this.cacheMetricsService.recordEviction(evicted);
     }
-
-    this.demoteColdEntries();
   }
 
   private demoteColdEntries(): void {
-    demoteColdStorageEntries({
+    const startedAt = performance.now();
+
+    const { demoted, remaining } = demoteColdStorageEntries({
       localCache: this.localCache,
       hotEntriesPerProvider: HOT_ENTRIES_PER_PROVIDER,
+      budgetMs: DEMOTION_BUDGET_MS,
       serialize: ({ localKey, data }) => {
         const separatorIndex = localKey.lastIndexOf(':');
         const keyName = localKey.slice(
@@ -696,6 +716,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
       },
     });
+
+    this.cacheMetricsService.recordDemotionSlice({
+      durationSeconds: (performance.now() - startedAt) / 1000,
+      demoted,
+      remaining,
+    });
   }
 
   private readVersion({
@@ -713,6 +739,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return version.data;
     }
 
+    const hydrateStartedAt = performance.now();
     const data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
       JSON.parse(version.blob.toString('utf8')),
     );
@@ -722,6 +749,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       data,
       lastReadAt: Date.now(),
     });
+
+    this.cacheMetricsService.recordHydration(
+      (performance.now() - hydrateStartedAt) / 1000,
+      keyName,
+    );
 
     return data;
   }
