@@ -133,6 +133,21 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
     expect(personContext).not.toHaveProperty('injectedField');
   });
 
+  it('should drop a person context whose email does not match the authenticated user', async () => {
+    const { resolver, workspaceSetupChatService } = buildResolver();
+
+    await start(resolver, null, {
+      email: 'someone-else@evil.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      jobTitle: 'CEO',
+    } as unknown as WorkspacePersonEnrichment);
+
+    const { personContext } =
+      workspaceSetupChatService.startWorkspaceSetupChat.mock.calls[0][0];
+
+    expect(personContext).toBeNull();
+  });
+
   it('should return the service result untouched', async () => {
     const { resolver } = buildResolver();
 
