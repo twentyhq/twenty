@@ -82,8 +82,7 @@ export const EmailThreadComposer = ({
   const { handleSend, canSend } = composerState;
 
   const { openAttachmentPicker } = useAttachEmailFiles({
-    files: composerState.files,
-    onChange: composerState.setFiles,
+    onFilesAttached: composerState.setFiles,
   });
 
   const footerCommandMenuItems =

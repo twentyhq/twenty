@@ -61,8 +61,7 @@ export const SidePanelComposeEmailPage = () => {
   });
 
   const { openAttachmentPicker } = useAttachEmailFiles({
-    files: composerState.files,
-    onChange: composerState.setFiles,
+    onFilesAttached: composerState.setFiles,
   });
 
   const handleSendHotkey = useCallback(() => {

@@ -40,13 +40,16 @@ type EmailComposerFieldRowProps = {
   trailing?: ReactNode;
 };
 
+// The visible label is a plain span, so it cannot be associated with whatever
+// control the row wraps. Naming the row as a group gives assistive technology
+// the field name even for controls that take no label of their own.
 export const EmailComposerFieldRow = ({
   label,
   children,
   trailing,
 }: EmailComposerFieldRowProps) => (
-  <StyledRow>
-    <StyledLabel>{label}</StyledLabel>
+  <StyledRow role="group" aria-label={label}>
+    <StyledLabel aria-hidden="true">{label}</StyledLabel>
     <StyledContent>{children}</StyledContent>
     {trailing}
   </StyledRow>
