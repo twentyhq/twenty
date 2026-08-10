@@ -84,10 +84,9 @@ const renderNavigateToRecordPage = ({
     </BaseWrapper>
   );
 
-  const { result } = renderHook(
-    () => useNavigateToRecordPageFromSidePanel(),
-    { wrapper },
-  );
+  const { result } = renderHook(() => useNavigateToRecordPageFromSidePanel(), {
+    wrapper,
+  });
 
   return { result, getStore: () => store };
 };
@@ -172,7 +171,9 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
   it('should clear the parent view when it belongs to another object', () => {
     const { result, getStore } = renderNavigateToRecordPage({
       activeTabIdInSidePanel: 'home',
-      parentView: { parentViewObjectNameSingular: CoreObjectNameSingular.Person },
+      parentView: {
+        parentViewObjectNameSingular: CoreObjectNameSingular.Person,
+      },
     });
 
     act(() => {

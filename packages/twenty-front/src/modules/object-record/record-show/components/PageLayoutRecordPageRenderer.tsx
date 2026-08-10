@@ -67,6 +67,11 @@ export const PageLayoutRecordPageRenderer = ({
       (commandMenuItem) => commandMenuItem.isPinned !== false,
     );
 
+  // A widget that contributes footer actions, such as the email composer,
+  // supersedes the record's own actions rather than doubling up with them.
+  const hasPinnedWidgetCommandMenuItems =
+    pinnedWidgetCommandMenuItems.length > 0;
+
   return (
     <>
       <RecordShowEffect
@@ -114,7 +119,9 @@ export const PageLayoutRecordPageRenderer = ({
           <SidePanelFooter
             actions={[
               <RecordPageSidePanelCommandMenu key="options" />,
-              <RecordPageSidePanelPinnedCommandMenuItems key="pinned" />,
+              ...(hasPinnedWidgetCommandMenuItems
+                ? []
+                : [<RecordPageSidePanelPinnedCommandMenuItems key="pinned" />]),
               ...pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
                 <Button
                   key={commandMenuItem.id}
