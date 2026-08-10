@@ -1,9 +1,9 @@
-import { type CalendarEventCallRecordingTranscriptWidgetState } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptWidgetState';
+import { type CalendarEventCallRecordingWidgetState } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingWidgetState';
 import { t } from '@lingui/core/macro';
 
 export const getCallRecordingTranscriptStateMessage = (
   state: Exclude<
-    CalendarEventCallRecordingTranscriptWidgetState['state'],
+    CalendarEventCallRecordingWidgetState['state'],
     'LOADING' | 'READY' | 'QUERY_ERROR' | 'FORBIDDEN'
   >,
 ): string => {

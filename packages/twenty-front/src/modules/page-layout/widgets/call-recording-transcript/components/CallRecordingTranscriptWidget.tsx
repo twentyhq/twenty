@@ -27,7 +27,7 @@ export const CallRecordingTranscriptWidget = () => {
         <CallRecordingTranscriptWidgetContent />
       ) : (
         <CallRecordingTranscriptBody
-          callRecordingTranscriptState={{ state: 'UNAVAILABLE' }}
+          callRecordingState={{ state: 'UNAVAILABLE' }}
         />
       )}
     </StyledWidgetContainer>

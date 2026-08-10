@@ -1,19 +1,22 @@
-import { selectCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/utils/selectCalendarEventCallRecordingTranscript';
+import { selectCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/utils/selectCalendarEventCallRecording';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const createCallRecording = ({
   id,
   transcript,
   status = CallRecordingStatus.COMPLETED,
+  summary = null,
 }: {
   id: string;
   transcript: unknown;
   status?: CallRecordingStatus;
+  summary?: { markdown: string | null } | null;
 }) => ({
   __typename: 'CallRecording' as const,
   id,
   status,
   transcript,
+  summary,
   createdAt: '2026-08-01T00:00:00.000Z',
 });
 
@@ -24,9 +27,9 @@ const VALID_TRANSCRIPT = [
   },
 ];
 
-describe('selectCalendarEventCallRecordingTranscript', () => {
+describe('selectCalendarEventCallRecording', () => {
   it('shows the first readable transcript even when a later attempt failed', () => {
-    const selection = selectCalendarEventCallRecordingTranscript([
+    const selection = selectCalendarEventCallRecording([
       createCallRecording({
         id: 'first-readable',
         transcript: VALID_TRANSCRIPT,
@@ -41,11 +44,12 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
     expect(selection).toMatchObject({
       state: 'READY',
       entries: [{ speakerName: 'Ada', text: 'Readable transcript' }],
+      callRecording: { id: 'first-readable' },
     });
   });
 
   it('shows the first readable transcript when several are readable', () => {
-    const selection = selectCalendarEventCallRecordingTranscript([
+    const selection = selectCalendarEventCallRecording([
       createCallRecording({
         id: 'later-failed',
         transcript: null,
@@ -73,7 +77,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
   });
 
   it('prefers a pending candidate over earlier terminal candidates', () => {
-    const selection = selectCalendarEventCallRecordingTranscript([
+    const selection = selectCalendarEventCallRecording([
       createCallRecording({
         id: 'first-failed',
         transcript: { status: 'FAILED' },
@@ -86,11 +90,14 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
       }),
     ]);
 
-    expect(selection).toMatchObject({ state: 'PENDING' });
+    expect(selection).toMatchObject({
+      state: 'PENDING',
+      callRecording: { id: 'retry-pending' },
+    });
   });
 
   it('falls back to the first recording when nothing is readable or pending', () => {
-    const selection = selectCalendarEventCallRecordingTranscript([
+    const selection = selectCalendarEventCallRecording([
       createCallRecording({
         id: 'first-failed',
         transcript: { status: 'FAILED' },
@@ -102,7 +109,10 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
       }),
     ]);
 
-    expect(selection).toMatchObject({ state: 'FAILED' });
+    expect(selection).toMatchObject({
+      state: 'FAILED',
+      callRecording: { id: 'first-failed' },
+    });
   });
 
   it.each([
@@ -140,7 +150,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
     'returns $expectedState for its corresponding terminal payload',
     ({ expectedState, transcript, status }) => {
       expect(
-        selectCalendarEventCallRecordingTranscript([
+        selectCalendarEventCallRecording([
           createCallRecording({
             id: 'recording',
             transcript,
@@ -186,7 +196,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
     'uses lifecycle and explicit failure precedence for $status with $transcript',
     ({ expectedState, transcript, status }) => {
       expect(
-        selectCalendarEventCallRecordingTranscript([
+        selectCalendarEventCallRecording([
           createCallRecording({
             id: 'recording',
             transcript,
@@ -199,7 +209,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
 
   it('lets a readable transcript override a failed lifecycle status', () => {
     expect(
-      selectCalendarEventCallRecordingTranscript([
+      selectCalendarEventCallRecording([
         createCallRecording({
           id: 'recording',
           transcript: VALID_TRANSCRIPT,
@@ -210,7 +220,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
   });
 
   it('returns no recording for an empty candidate list', () => {
-    expect(selectCalendarEventCallRecordingTranscript([])).toEqual({
+    expect(selectCalendarEventCallRecording([])).toEqual({
       state: 'NO_RECORDING',
     });
   });

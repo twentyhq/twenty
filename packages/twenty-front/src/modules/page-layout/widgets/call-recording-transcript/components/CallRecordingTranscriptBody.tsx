@@ -1,5 +1,5 @@
+import { type CalendarEventCallRecordingWidgetState } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingWidgetState';
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
-import { type CalendarEventCallRecordingTranscriptWidgetState } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptWidgetState';
 import { getCallRecordingTranscriptStateMessage } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
@@ -16,41 +16,39 @@ const StyledForbiddenContainer = styled.div`
 `;
 
 type CallRecordingTranscriptBodyProps = {
-  callRecordingTranscriptState: CalendarEventCallRecordingTranscriptWidgetState;
+  callRecordingState: CalendarEventCallRecordingWidgetState;
 };
 
 export const CallRecordingTranscriptBody = ({
-  callRecordingTranscriptState,
+  callRecordingState,
 }: CallRecordingTranscriptBodyProps) => {
   const widget = useCurrentWidget();
 
-  if (callRecordingTranscriptState.state === 'LOADING') {
+  if (callRecordingState.state === 'LOADING') {
     return <WidgetSkeletonLoader />;
   }
 
-  if (callRecordingTranscriptState.state === 'READY') {
+  if (callRecordingState.state === 'READY') {
     return (
-      <CallRecordingTranscriptEntryList
-        entries={callRecordingTranscriptState.entries}
-      />
+      <CallRecordingTranscriptEntryList entries={callRecordingState.entries} />
     );
   }
 
-  if (callRecordingTranscriptState.state === 'QUERY_ERROR') {
+  if (callRecordingState.state === 'QUERY_ERROR') {
     return (
       <PageLayoutWidgetErrorDisplay
         widgetId={widget.id}
-        error={callRecordingTranscriptState.error}
+        error={callRecordingState.error}
       />
     );
   }
 
-  if (callRecordingTranscriptState.state === 'FORBIDDEN') {
+  if (callRecordingState.state === 'FORBIDDEN') {
     return (
       <StyledForbiddenContainer>
         <PageLayoutWidgetForbiddenDisplay
           widgetId={widget.id}
-          restriction={callRecordingTranscriptState.restriction}
+          restriction={callRecordingState.restriction}
         />
       </StyledForbiddenContainer>
     );
@@ -59,9 +57,7 @@ export const CallRecordingTranscriptBody = ({
   return (
     <PageLayoutWidgetMessageDisplay
       Icon={IconFileText}
-      message={getCallRecordingTranscriptStateMessage(
-        callRecordingTranscriptState.state,
-      )}
+      message={getCallRecordingTranscriptStateMessage(callRecordingState.state)}
     />
   );
 };

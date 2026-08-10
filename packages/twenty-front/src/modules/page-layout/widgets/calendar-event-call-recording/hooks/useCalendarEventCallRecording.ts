@@ -1,10 +1,11 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { type CalendarEventCallRecordingTranscriptCandidate } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptCandidate';
-import { type CalendarEventCallRecordingTranscriptWidgetState } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptWidgetState';
-import { selectCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/utils/selectCalendarEventCallRecordingTranscript';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useCallRecordingSummaryFieldAccess } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCallRecordingSummaryFieldAccess';
+import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { type CalendarEventCallRecordingWidgetState } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingWidgetState';
+import { selectCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/utils/selectCalendarEventCallRecording';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -16,16 +17,16 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-const CALL_RECORDING_TRANSCRIPT_QUERY_LIMIT = 50;
+const CALL_RECORDING_QUERY_LIMIT = 50;
 
-const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS = {
+const CALL_RECORDING_RECORD_FIELDS = {
   id: true,
   status: true,
   transcript: true,
   createdAt: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 
-const CALL_RECORDING_TRANSCRIPT_ORDER_BY: RecordGqlOperationOrderBy = [
+const CALL_RECORDING_ORDER_BY: RecordGqlOperationOrderBy = [
   { createdAt: 'AscNullsLast' },
   { id: 'AscNullsFirst' },
 ];
@@ -36,8 +37,8 @@ const REQUIRED_CALL_RECORDING_FIELD_NAMES = [
   'createdAt',
 ];
 
-export const useCalendarEventCallRecordingTranscript = (): {
-  callRecordingTranscriptState: CalendarEventCallRecordingTranscriptWidgetState;
+export const useCalendarEventCallRecording = (): {
+  callRecordingState: CalendarEventCallRecordingWidgetState;
 } => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
@@ -49,6 +50,9 @@ export const useCalendarEventCallRecordingTranscript = (): {
   const callRecordingObjectPermissions = useObjectPermissionsForObject(
     callRecordingObjectMetadataItem.id,
   );
+
+  const { isSummaryFieldMetadataMissing, restrictedSummaryFieldLabel } =
+    useCallRecordingSummaryFieldAccess();
 
   const calendarEventId =
     targetRecordIdentifier?.targetObjectNameSingular ===
@@ -88,6 +92,17 @@ export const useCalendarEventCallRecordingTranscript = (): {
     !canReadCallRecordingObjectRecords ||
     restrictedFieldNames.length > 0;
 
+  const shouldQuerySummaryField =
+    !isSummaryFieldMetadataMissing && !isDefined(restrictedSummaryFieldLabel);
+
+  const recordGqlFields = useMemo(
+    () =>
+      shouldQuerySummaryField
+        ? { ...CALL_RECORDING_RECORD_FIELDS, summary: true }
+        : CALL_RECORDING_RECORD_FIELDS,
+    [shouldQuerySummaryField],
+  );
+
   const callRecordingFilter = useMemo(
     () =>
       isDefined(calendarEventId)
@@ -101,12 +116,12 @@ export const useCalendarEventCallRecordingTranscript = (): {
     loading,
     error,
     refetch,
-  } = useFindManyRecords<CalendarEventCallRecordingTranscriptCandidate>({
+  } = useFindManyRecords<CalendarEventCallRecordingCandidate>({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
     filter: callRecordingFilter,
-    orderBy: CALL_RECORDING_TRANSCRIPT_ORDER_BY,
-    recordGqlFields: CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS,
-    limit: CALL_RECORDING_TRANSCRIPT_QUERY_LIMIT,
+    orderBy: CALL_RECORDING_ORDER_BY,
+    recordGqlFields,
+    limit: CALL_RECORDING_QUERY_LIMIT,
     skip: shouldSkipQuery,
   });
 
@@ -120,16 +135,15 @@ export const useCalendarEventCallRecordingTranscript = (): {
     [callRecordingFilter],
   );
 
-  const refetchCallRecordingTranscriptOnSseReconnected =
-    useCallback(async () => {
-      await refetch();
-    }, [refetch]);
+  const refetchCallRecordingOnSseReconnected = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
 
   useListenToEventsForQuery({
-    queryId: `call-recording-transcript-${calendarEventId}`,
+    queryId: `calendar-event-call-recording-${calendarEventId}`,
     operationSignature,
     skip: shouldSkipQuery,
-    onSseReconnected: refetchCallRecordingTranscriptOnSseReconnected,
+    onSseReconnected: refetchCallRecordingOnSseReconnected,
   });
 
   const handleCallRecordingOperation = useCallback(() => {
@@ -145,22 +159,22 @@ export const useCalendarEventCallRecordingTranscript = (): {
     objectMetadataItemId: callRecordingObjectMetadataItem.id,
   });
 
-  const callRecordingTranscriptSelection = useMemo(
-    () => selectCalendarEventCallRecordingTranscript(callRecordings),
+  const callRecordingSelection = useMemo(
+    () => selectCalendarEventCallRecording(callRecordings),
     [callRecordings],
   );
 
   if (!isDefined(calendarEventId)) {
-    return { callRecordingTranscriptState: { state: 'UNSUPPORTED' } };
+    return { callRecordingState: { state: 'UNSUPPORTED' } };
   }
 
   if (!hasRequiredFieldMetadata) {
-    return { callRecordingTranscriptState: { state: 'UNAVAILABLE' } };
+    return { callRecordingState: { state: 'UNAVAILABLE' } };
   }
 
   if (!canReadCallRecordingObjectRecords) {
     return {
-      callRecordingTranscriptState: {
+      callRecordingState: {
         state: 'FORBIDDEN',
         restriction: {
           type: 'object',
@@ -172,7 +186,7 @@ export const useCalendarEventCallRecordingTranscript = (): {
 
   if (restrictedFieldNames.length > 0) {
     return {
-      callRecordingTranscriptState: {
+      callRecordingState: {
         state: 'FORBIDDEN',
         restriction: { type: 'field', fieldNames: restrictedFieldNames },
       },
@@ -180,12 +194,12 @@ export const useCalendarEventCallRecordingTranscript = (): {
   }
 
   if (isDefined(error)) {
-    return { callRecordingTranscriptState: { state: 'QUERY_ERROR', error } };
+    return { callRecordingState: { state: 'QUERY_ERROR', error } };
   }
 
   if (loading) {
-    return { callRecordingTranscriptState: { state: 'LOADING' } };
+    return { callRecordingState: { state: 'LOADING' } };
   }
 
-  return { callRecordingTranscriptState: callRecordingTranscriptSelection };
+  return { callRecordingState: callRecordingSelection };
 };

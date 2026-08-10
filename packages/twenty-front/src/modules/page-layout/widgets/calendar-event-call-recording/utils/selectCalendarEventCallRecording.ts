@@ -1,5 +1,5 @@
-import { type CalendarEventCallRecordingTranscriptCandidate } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptCandidate';
-import { type CalendarEventCallRecordingTranscriptSelection } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptSelection';
+import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { type CalendarEventCallRecordingSelection } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingSelection';
 import { isArray } from '@sniptt/guards';
 import {
   isCallRecordingTranscriptStatusMarker,
@@ -20,58 +20,58 @@ const UNAVAILABLE_CALL_RECORDING_STATUSES = new Set<CallRecordingStatus>([
   CallRecordingStatus.NOT_RECORDED,
 ]);
 
-type ClassifiedCallRecordingTranscript = Exclude<
-  CalendarEventCallRecordingTranscriptSelection,
+type ClassifiedCallRecording = Exclude<
+  CalendarEventCallRecordingSelection,
   { state: 'NO_RECORDING' }
 >;
 
-const classifyCallRecordingTranscript = (
-  callRecording: CalendarEventCallRecordingTranscriptCandidate,
-): ClassifiedCallRecordingTranscript => {
+const classifyCallRecording = (
+  callRecording: CalendarEventCallRecordingCandidate,
+): ClassifiedCallRecording => {
   const entries = parseCallRecordingTranscriptEntries(callRecording.transcript);
 
   if (isDefined(entries) && entries.length > 0) {
-    return { state: 'READY', entries };
+    return { state: 'READY', entries, callRecording };
   }
 
   if (UNAVAILABLE_CALL_RECORDING_STATUSES.has(callRecording.status)) {
-    return { state: 'FAILED' };
+    return { state: 'FAILED', callRecording };
   }
 
   if (
     isCallRecordingTranscriptStatusMarker(callRecording.transcript) &&
     callRecording.transcript.status === 'FAILED'
   ) {
-    return { state: 'FAILED' };
+    return { state: 'FAILED', callRecording };
   }
 
   if (IN_PROGRESS_CALL_RECORDING_STATUSES.has(callRecording.status)) {
-    return { state: 'PENDING' };
+    return { state: 'PENDING', callRecording };
   }
 
   if (isCallRecordingTranscriptStatusMarker(callRecording.transcript)) {
-    return { state: 'PENDING' };
+    return { state: 'PENDING', callRecording };
   }
 
   if (isArray(callRecording.transcript)) {
-    return { state: 'EMPTY' };
+    return { state: 'EMPTY', callRecording };
   }
 
   if (isDefined(callRecording.transcript)) {
-    return { state: 'UNRECOGNIZED' };
+    return { state: 'UNRECOGNIZED', callRecording };
   }
 
-  return { state: 'MISSING' };
+  return { state: 'MISSING', callRecording };
 };
 
-export const selectCalendarEventCallRecordingTranscript = (
-  callRecordingsInArrivalOrder: CalendarEventCallRecordingTranscriptCandidate[],
-): CalendarEventCallRecordingTranscriptSelection => {
-  let firstPendingSelection: ClassifiedCallRecordingTranscript | undefined;
-  let firstSelection: ClassifiedCallRecordingTranscript | undefined;
+export const selectCalendarEventCallRecording = (
+  callRecordingsInArrivalOrder: CalendarEventCallRecordingCandidate[],
+): CalendarEventCallRecordingSelection => {
+  let firstPendingSelection: ClassifiedCallRecording | undefined;
+  let firstSelection: ClassifiedCallRecording | undefined;
 
   for (const callRecording of callRecordingsInArrivalOrder) {
-    const selection = classifyCallRecordingTranscript(callRecording);
+    const selection = classifyCallRecording(callRecording);
 
     if (selection.state === 'READY') {
       return selection;

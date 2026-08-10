@@ -1,4 +1,4 @@
-import { useCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/hooks/useCalendarEventCallRecordingTranscript';
+import { useCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventCallRecording';
 import { act, renderHook } from '@testing-library/react';
 import { CallRecordingStatus } from '~/generated/graphql';
 
@@ -21,6 +21,8 @@ const requiredFields = ['status', 'transcript', 'createdAt'].map((name) => ({
   id: `${name}-field-id`,
   name,
 }));
+
+const summaryField = { id: 'summary-field-id', name: 'summary' };
 
 let mockCallRecordingObjectFields: { id: string; name: string }[];
 
@@ -91,7 +93,7 @@ const readyCallRecording = {
   createdAt: '2026-08-07T09:55:00.000Z',
 };
 
-describe('useCalendarEventCallRecordingTranscript', () => {
+describe('useCalendarEventCallRecording', () => {
   beforeEach(() => {
     mockUseFindManyRecords.mockClear();
     mockUseListenToEventsForQuery.mockClear();
@@ -111,7 +113,7 @@ describe('useCalendarEventCallRecordingTranscript', () => {
   });
 
   it('queries every transcript field for the current calendar event in arrival order', () => {
-    renderHook(() => useCalendarEventCallRecordingTranscript());
+    renderHook(() => useCalendarEventCallRecording());
 
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -129,8 +131,50 @@ describe('useCalendarEventCallRecordingTranscript', () => {
     );
   });
 
+  it('queries the summary field when its metadata is readable', () => {
+    mockCallRecordingObjectFields = [...requiredFields, summaryField];
+
+    renderHook(() => useCalendarEventCallRecording());
+
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recordGqlFields: {
+          id: true,
+          status: true,
+          transcript: true,
+          createdAt: true,
+          summary: true,
+        },
+      }),
+    );
+  });
+
+  it('keeps the transcript query working when only the summary field is restricted', () => {
+    mockCallRecordingObjectFields = [...requiredFields, summaryField];
+    mockCallRecordingPermissions.restrictedFields = {
+      'summary-field-id': { canRead: false },
+    };
+
+    const { result } = renderHook(() => useCalendarEventCallRecording());
+
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recordGqlFields: {
+          id: true,
+          status: true,
+          transcript: true,
+          createdAt: true,
+        },
+        skip: false,
+      }),
+    );
+    expect(result.current.callRecordingState).toEqual({
+      state: 'NO_RECORDING',
+    });
+  });
+
   it('refetches after the SSE client reconnects', async () => {
-    renderHook(() => useCalendarEventCallRecordingTranscript());
+    renderHook(() => useCalendarEventCallRecording());
 
     const { onSseReconnected } = mockUseListenToEventsForQuery.mock
       .calls[0][0] as {
@@ -147,11 +191,9 @@ describe('useCalendarEventCallRecordingTranscript', () => {
   it('returns permission denied when the object cannot be read', () => {
     mockCallRecordingPermissions.canReadObjectRecords = false;
 
-    const { result } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
+    const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'FORBIDDEN',
       restriction: { type: 'object', objectName: 'Call Recording' },
     });
@@ -165,11 +207,9 @@ describe('useCalendarEventCallRecordingTranscript', () => {
       'transcript-field-id': { canRead: false },
     };
 
-    const { result } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
+    const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'FORBIDDEN',
       restriction: { type: 'field', fieldNames: ['transcript'] },
     });
@@ -180,11 +220,9 @@ describe('useCalendarEventCallRecordingTranscript', () => {
       (field) => field.name !== 'transcript',
     );
 
-    const { result } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
+    const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'UNAVAILABLE',
     });
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
@@ -198,11 +236,9 @@ describe('useCalendarEventCallRecordingTranscript', () => {
       targetObjectNameSingular: 'person',
     };
 
-    const { result } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
+    const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'UNSUPPORTED',
     });
   });
@@ -210,11 +246,9 @@ describe('useCalendarEventCallRecordingTranscript', () => {
   it('fails safely when there is no target record', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = undefined;
 
-    const { result } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
+    const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'UNSUPPORTED',
     });
   });
@@ -223,10 +257,10 @@ describe('useCalendarEventCallRecordingTranscript', () => {
     findManyRecordsResult.loading = true;
 
     const { result, rerender } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
+      useCalendarEventCallRecording(),
     );
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'LOADING',
     });
 
@@ -235,7 +269,7 @@ describe('useCalendarEventCallRecordingTranscript', () => {
       rerender();
     });
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'NO_RECORDING',
     });
   });
@@ -244,11 +278,9 @@ describe('useCalendarEventCallRecordingTranscript', () => {
     const queryError = new Error('Query failed');
     findManyRecordsResult.error = queryError;
 
-    const { result } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
-    );
+    const { result } = renderHook(() => useCalendarEventCallRecording());
 
-    expect(result.current.callRecordingTranscriptState).toEqual({
+    expect(result.current.callRecordingState).toEqual({
       state: 'QUERY_ERROR',
       error: queryError,
     });
@@ -264,16 +296,16 @@ describe('useCalendarEventCallRecordingTranscript', () => {
     ];
 
     const { result, rerender } = renderHook(() =>
-      useCalendarEventCallRecordingTranscript(),
+      useCalendarEventCallRecording(),
     );
 
-    expect(result.current.callRecordingTranscriptState.state).toBe('PENDING');
+    expect(result.current.callRecordingState.state).toBe('PENDING');
 
     act(() => {
       findManyRecordsResult.records = [readyCallRecording];
       rerender();
     });
 
-    expect(result.current.callRecordingTranscriptState.state).toBe('READY');
+    expect(result.current.callRecordingState.state).toBe('READY');
   });
 });
