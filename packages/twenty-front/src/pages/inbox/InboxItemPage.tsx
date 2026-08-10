@@ -68,7 +68,8 @@ export const InboxItemPage = () => {
   const isInboxEnabled = useIsInboxEnabled();
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
   const { inboxItem, loading, error } = useInboxItem(inboxItemId);
-  const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
+  // Already the focused page, so an item with no subject has nowhere to go
+  const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel(() => {});
 
   const { hasPrevious, hasNext, position, total, goToPrevious, goToNext } =
     useInboxItemPagination({ inboxSection, inboxItemId });
@@ -150,7 +151,7 @@ export const InboxItemPage = () => {
           isUnread={isUnread}
         />
         <StyledContext>
-          <InboxItemContext inboxItem={inboxItem} size="page" />
+          <InboxItemContext inboxItem={inboxItem} />
         </StyledContext>
         <InboxItemSubject inboxItem={inboxItem} />
       </StyledBody>

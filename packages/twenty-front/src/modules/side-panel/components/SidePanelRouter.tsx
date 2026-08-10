@@ -1,5 +1,4 @@
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
-import { InboxItemContextBar } from '@/inbox/components/InboxItemContextBar';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -79,7 +78,6 @@ export const SidePanelRouter = () => {
         >
           <SidePanelTopBar />
         </motion.div>
-        <InboxItemContextBar />
         <StyledSidePanelContent>
           <CommandMenuContextProvider
             isInSidePanel={true}

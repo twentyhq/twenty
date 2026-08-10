@@ -19,7 +19,11 @@ import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrd
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { InboxItemScope, InboxQueueAssignment } from '~/generated/graphql';
+import {
+  type InboxItem,
+  InboxItemScope,
+  InboxQueueAssignment,
+} from '~/generated/graphql';
 
 const StyledListPane = styled.div`
   display: flex;
@@ -76,11 +80,20 @@ export const InboxPage = () => {
     isDefined(inboxQueueSlug) ? queueAssignment : undefined,
   );
   const { openInboxItemFullPage } = useOpenInboxItemFullPage(inboxSection);
-  const { openInboxItemInSidePanel } = useOpenInboxItemInSidePanel();
   const selectedInboxItemId = useAtomStateValue(selectedInboxItemIdState);
-
   const shouldSplitByPriority =
     isDefined(inboxQueueSlug) || inboxSection.scope === InboxItemScope.INBOX;
+
+  const openFullPage = (inboxItem: InboxItem) =>
+    openInboxItemFullPage(
+      inboxItem,
+      getRenderedInboxItemOrder({ inboxItems, shouldSplitByPriority }),
+    );
+
+  // An item with no subject has nothing to show in the panel, so it opens
+  // where its own context and actions live
+  const { openInboxItemInSidePanel } =
+    useOpenInboxItemInSidePanel(openFullPage);
 
   // With the flag off the inbox is not a surface, so a direct visit lands on
   // the app index rather than on an empty shell
@@ -128,15 +141,7 @@ export const InboxPage = () => {
             selectedInboxItemId={selectedInboxItemId}
             hasMoreItems={hasMoreItems}
             shouldSplitByPriority={shouldSplitByPriority}
-            onInboxItemClick={(inboxItem) =>
-              openInboxItemFullPage(
-                inboxItem,
-                getRenderedInboxItemOrder({
-                  inboxItems,
-                  shouldSplitByPriority,
-                }),
-              )
-            }
+            onInboxItemClick={openFullPage}
             onInboxItemOpenInSidePanel={openInboxItemInSidePanel}
             onLoadMoreItems={loadMoreItems}
           />

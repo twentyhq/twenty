@@ -31,26 +31,9 @@ const StyledPageTitle = styled.h1`
   margin: 0;
 `;
 
-const StyledBarTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
 const StyledPreview = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-
-  &[data-size='page'] {
-    color: ${themeCssVariables.font.color.secondary};
-    font-size: ${themeCssVariables.font.size.md};
-  }
-
-  &[data-size='bar'] {
-    font-size: ${themeCssVariables.font.size.sm};
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 const StyledOutcome = styled.div`
@@ -62,16 +45,10 @@ const StyledOutcome = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
-// What the item is, above whatever it is about. The focused page and the side
-// panel show the same thing at different sizes, so they render this rather than
-// each keeping their own copy.
-export const InboxItemContext = ({
-  inboxItem,
-  size,
-}: {
-  inboxItem: InboxItem;
-  size: 'bar' | 'page';
-}) => {
+// What the item is, above whatever it is about. Only the focused page shows
+// this: the side panel shows the subject alone, because an inbox item's context
+// riding above an unrelated record is worse than no context at all.
+export const InboxItemContext = ({ inboxItem }: { inboxItem: InboxItem }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
@@ -86,13 +63,9 @@ export const InboxItemContext = ({
         <InboxItemIcon size={theme.icon.size.sm} color="currentColor" />
         {inboxItem.inboxItemType.label}
       </StyledHeader>
-      {size === 'page' ? (
-        <StyledPageTitle>{inboxItem.title}</StyledPageTitle>
-      ) : (
-        <StyledBarTitle>{inboxItem.title}</StyledBarTitle>
-      )}
+      <StyledPageTitle>{inboxItem.title}</StyledPageTitle>
       {isNonEmptyString(inboxItem.preview) && (
-        <StyledPreview data-size={size}>{inboxItem.preview}</StyledPreview>
+        <StyledPreview>{inboxItem.preview}</StyledPreview>
       )}
       {isDefined(inboxItem.outcome) && (
         <StyledOutcome>{outcomeLabel ?? inboxItem.outcome}</StyledOutcome>
