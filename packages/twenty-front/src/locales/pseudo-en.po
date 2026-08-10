@@ -2787,12 +2787,14 @@ msgid "at the top of the hour"
 msgstr ""
 
 #. js-lingui-id: N7m8E+
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai/components/internal/AgentChatFileUploadButton.tsx
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
 msgstr ""
 
 #. js-lingui-id: w/Sphq
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Attachments"
@@ -3494,7 +3496,6 @@ msgstr ""
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
-#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6517,6 +6518,11 @@ msgstr ""
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "Disabled"
+msgstr ""
+
+#. js-lingui-id: bzSI52
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+msgid "Discard"
 msgstr ""
 
 #. js-lingui-id: +K0AvT
@@ -15150,7 +15156,6 @@ msgid "recipient@example.com"
 msgstr ""
 
 #. js-lingui-id: yPrbsy
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr ""
@@ -18940,6 +18945,7 @@ msgstr ""
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "To"
@@ -19970,7 +19976,6 @@ msgid "Upload .xlsx, .xls or .csv file"
 msgstr ""
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/activities/emails/components/EmailAttachmentsField.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowSendEmailAttachments.tsx
