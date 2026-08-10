@@ -31,15 +31,8 @@ export const usePageLayoutRenderableTabs = () => {
       )
     : undefined;
 
-  // A tab whose every widget is gated on the record — a campaign's sent-only
-  // widgets, say — is only empty once the record is taken into account. Without
-  // it the tab survives on widgets that will never render, and a tab that
-  // should disappear keeps its slot in the tab list and the pinned column.
-  //
-  // An unloaded record contributes nothing rather than a record with blank
-  // fields: guessing before the store answers makes the pinned column appear
-  // for a frame and then collapse. Objects with no status field never reach
-  // this branch, so their tabs filter exactly as they did before.
+  // Left empty until the status loads, so record predicates stay false rather
+  // than flashing the pinned column in for a frame.
   const selectedRecords =
     isDefined(targetRecordIdentifier) && isDefined(targetRecordStatus)
       ? [{ id: targetRecordIdentifier.id, status: targetRecordStatus }]

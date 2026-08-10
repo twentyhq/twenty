@@ -34,7 +34,7 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.messageCampaign.fields.list.universalIdentifier,
         conditionalAvailabilityExpression:
-          'not everyEquals(selectedRecords, "status", "DRAFT")',
+          'noneEquals(selectedRecords, "status", "DRAFT")',
       },
       recipients: {
         universalIdentifier:
@@ -48,7 +48,7 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
           STANDARD_OBJECTS.messageCampaign.fields.recipients
             .universalIdentifier,
         conditionalAvailabilityExpression:
-          'not everyEquals(selectedRecords, "status", "DRAFT")',
+          'noneEquals(selectedRecords, "status", "DRAFT")',
       },
       fields: {
         universalIdentifier:
@@ -57,7 +57,7 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
         ...WIDGET_PROPS.fields,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
         conditionalAvailabilityExpression:
-          'not everyEquals(selectedRecords, "status", "DRAFT")',
+          'noneEquals(selectedRecords, "status", "DRAFT")',
       },
     },
   },

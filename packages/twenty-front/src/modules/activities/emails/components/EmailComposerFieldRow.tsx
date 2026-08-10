@@ -39,11 +39,8 @@ type EmailComposerFieldRowProps = {
   label: string;
   children: ReactNode;
   trailing?: ReactNode;
-  // Labels size to their text by default, which is fine for To/Cc/Bcc/Subject.
-  // A block mixing short and long labels passes a width so the controls line up
-  // in a single column instead of stepping in and out. It is a floor rather than
-  // a fixed width: a translation longer than the column widens its own row
-  // instead of running underneath the control.
+  // A floor, not a fixed width: mixed-length labels line up without a long
+  // translation running underneath its control.
   labelMinWidth?: string;
 };
 

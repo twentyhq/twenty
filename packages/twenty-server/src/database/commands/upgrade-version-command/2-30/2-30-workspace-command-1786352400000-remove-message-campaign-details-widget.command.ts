@@ -8,22 +8,36 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
     .universalIdentifier;
 
-const HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER =
+const HOME_WIDGETS =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
-    .widgets.details.universalIdentifier;
+    .widgets;
+
+const DETAILS_WIDGET_UNIVERSAL_IDENTIFIER =
+  HOME_WIDGETS.details.universalIdentifier;
+
+// The sent-only widgets move from "not everyEquals" to "noneEquals". The two
+// agree on a loaded record, but an empty selection makes the first true and the
+// second false, and the selection is empty until the record loads.
+const SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS = [
+  HOME_WIDGETS.fields.universalIdentifier,
+  HOME_WIDGETS.list.universalIdentifier,
+  HOME_WIDGETS.recipients.universalIdentifier,
+];
 
 @RegisteredWorkspaceCommand('2.30.0', 1786352400000)
 @Command({
   name: 'upgrade:2-30:remove-message-campaign-details-widget',
   description:
-    'Removes the message campaign details widget, whose fields now sit above the body in the composer',
+    'Removes the message campaign details widget, whose fields now sit above the body in the composer, and makes the sent-only widgets fail closed while the record loads',
 })
 export class RemoveMessageCampaignDetailsWidgetCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -65,21 +79,60 @@ export class RemoveMessageCampaignDetailsWidgetCommand extends ProvisionedWorksp
       return;
     }
 
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        now: new Date().toISOString(),
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      });
+
     const detailsWidget =
       flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER
+        DETAILS_WIDGET_UNIVERSAL_IDENTIFIER
       ];
 
-    if (!isDefined(detailsWidget)) {
+    const pageLayoutWidgetsToDelete = isDefined(detailsWidget)
+      ? [detailsWidget]
+      : [];
+
+    const pageLayoutWidgetsToUpdate = SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) => {
+        const existingWidget =
+          flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier];
+        const standardWidget =
+          standardAllFlatEntityMaps.flatPageLayoutWidgetMaps
+            .byUniversalIdentifier[universalIdentifier];
+
+        if (
+          !isDefined(existingWidget) ||
+          !isDefined(standardWidget) ||
+          existingWidget.conditionalAvailabilityExpression ===
+            standardWidget.conditionalAvailabilityExpression
+        ) {
+          return null;
+        }
+
+        return {
+          ...existingWidget,
+          conditionalAvailabilityExpression:
+            standardWidget.conditionalAvailabilityExpression,
+        };
+      },
+    ).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
+
+    const totalOperationCount =
+      pageLayoutWidgetsToDelete.length + pageLayoutWidgetsToUpdate.length;
+
+    if (totalOperationCount === 0) {
       this.logger.log(
-        `Message campaign details widget already removed for workspace ${workspaceId}, skipping`,
+        `Message campaign record page already up to date for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Removing the message campaign details widget for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Applying ${totalOperationCount} message campaign record page operation(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -96,8 +149,8 @@ export class RemoveMessageCampaignDetailsWidgetCommand extends ProvisionedWorksp
           allFlatEntityOperationByMetadataName: {
             pageLayoutWidget: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [detailsWidget],
-              flatEntityToUpdate: [],
+              flatEntityToDelete: pageLayoutWidgetsToDelete,
+              flatEntityToUpdate: pageLayoutWidgetsToUpdate,
             },
           },
         },
@@ -105,7 +158,7 @@ export class RemoveMessageCampaignDetailsWidgetCommand extends ProvisionedWorksp
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to remove the message campaign details widget for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to update the message campaign record page for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -114,7 +167,7 @@ export class RemoveMessageCampaignDetailsWidgetCommand extends ProvisionedWorksp
     }
 
     this.logger.log(
-      `Removed the message campaign details widget for workspace ${workspaceId}`,
+      `Updated the message campaign record page for workspace ${workspaceId}`,
     );
   }
 }
