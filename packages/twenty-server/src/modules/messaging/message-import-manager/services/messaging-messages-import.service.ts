@@ -34,6 +34,10 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { MessageChannelSyncStage } from 'twenty-shared/types';
 
+export type MessageBatchImportResult = {
+  hasMoreMessagesToImport: boolean;
+};
+
 @Injectable()
 export class MessagingMessagesImportService {
   private readonly logger = new Logger(MessagingMessagesImportService.name);
@@ -59,16 +63,79 @@ export class MessagingMessagesImportService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async processMessageBatchImport(
-    messageChannel: MessageChannelEntity,
-    connectedAccount: ConnectedAccountEntity,
-    workspaceId: string,
-  ) {
-    let messageIdsToFetch: string[] = [];
+  async runForMessageChannel({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<MessageBatchImportResult> {
+    await this.messagingMonitoringService.track({
+      eventName: 'messages_import.triggered',
+      workspaceId,
+      messageChannelId,
+    });
 
-    const messagesGetBatchSize = this.twentyConfigService.get(
-      'MESSAGING_MESSAGES_GET_BATCH_SIZE',
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageChannel = await this.messageChannelRepository.findOne({
+          where: {
+            id: messageChannelId,
+            workspaceId,
+          },
+          relations: { connectedAccount: true, messageFolders: true },
+        });
+
+        if (!isDefined(messageChannel)) {
+          await this.messagingMonitoringService.track({
+            eventName: 'messages_import.error.message_channel_not_found',
+            messageChannelId,
+            workspaceId,
+          });
+
+          return { hasMoreMessagesToImport: false };
+        }
+
+        if (!messageChannel.isSyncEnabled) {
+          return { hasMoreMessagesToImport: false };
+        }
+
+        if (
+          messageChannel.syncStage !==
+          MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
+        ) {
+          return { hasMoreMessagesToImport: false };
+        }
+
+        return this.processMessageBatchImport({
+          messageChannel,
+          connectedAccount: messageChannel.connectedAccount,
+          workspaceId,
+          messagesGetBatchSize: this.twentyConfigService.get(
+            'MESSAGING_MESSAGES_GET_BATCH_SIZE',
+          ),
+        });
+      },
+      authContext,
+      { lite: true },
     );
+  }
+
+  async processMessageBatchImport({
+    messageChannel,
+    connectedAccount,
+    workspaceId,
+    messagesGetBatchSize,
+  }: {
+    messageChannel: MessageChannelEntity;
+    connectedAccount: ConnectedAccountEntity;
+    workspaceId: string;
+    messagesGetBatchSize: number;
+  }): Promise<MessageBatchImportResult> {
+    let messageIdsToFetch: string[] = [];
+    let hasMoreMessagesToImport = false;
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -219,6 +286,8 @@ export class MessagingMessagesImportService {
               workspaceId,
             );
           } else {
+            hasMoreMessagesToImport = true;
+
             await this.messageChannelSyncStatusService.markAsMessagesImportPending(
               [messageChannel.id],
               workspaceId,
@@ -263,6 +332,8 @@ export class MessagingMessagesImportService {
       authContext,
       { lite: true },
     );
+
+    return { hasMoreMessagesToImport };
   }
 
   private async trackMessageImportCompleted(

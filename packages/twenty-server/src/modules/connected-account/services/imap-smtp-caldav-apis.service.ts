@@ -30,10 +30,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
-import {
-  MessagingMessageListFetchJob,
-  type MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { MessagingSyncJobDispatcherService } from 'src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
@@ -48,8 +45,7 @@ export class ImapSmtpCalDavAPIService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly messagingSyncJobDispatcherService: MessagingSyncJobDispatcherService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly createMessageChannelService: CreateMessageChannelService,
@@ -226,10 +222,13 @@ export class ImapSmtpCalDavAPIService {
         workspaceId,
       );
 
-      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        { workspaceId, messageChannelId: existingMessageChannel.id },
+      await this.messagingSyncJobDispatcherService.enqueueOnboardingContactsBootstrap(
+        { messageChannel: existingMessageChannel, workspaceId },
       );
+      await this.messagingSyncJobDispatcherService.enqueueMessageListFetch({
+        messageChannel: existingMessageChannel,
+        workspaceId,
+      });
     }
 
     if (

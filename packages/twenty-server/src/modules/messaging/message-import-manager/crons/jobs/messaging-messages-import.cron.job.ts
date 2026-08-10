@@ -11,16 +11,11 @@ import {
 } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  MessagingMessagesImportJob,
-  type MessagingMessagesImportJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
+import { MessagingSyncJobDispatcherService } from 'src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
@@ -34,8 +29,7 @@ export class MessagingMessagesImportCronJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly messagingSyncJobDispatcherService: MessagingSyncJobDispatcherService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -108,18 +102,19 @@ export class MessagingMessagesImportCronJob {
           .returning('id')
           .execute();
 
-        const updatedIds = updateResult.raw.map(
+        const updatedIds: string[] = updateResult.raw.map(
           (row: { id: string }) => row.id,
         );
 
-        for (const messageChannelId of updatedIds) {
-          await this.messageQueueService.add<MessagingMessagesImportJobData>(
-            MessagingMessagesImportJob.name,
-            {
-              workspaceId: activeWorkspace.id,
-              messageChannelId,
-            },
-          );
+        const scheduledMessageChannels = messageChannelsToSchedule.filter(
+          (messageChannel) => updatedIds.includes(messageChannel.id),
+        );
+
+        for (const messageChannel of scheduledMessageChannels) {
+          await this.messagingSyncJobDispatcherService.enqueueMessagesImport({
+            messageChannel,
+            workspaceId: activeWorkspace.id,
+          });
         }
       } catch (error) {
         if (

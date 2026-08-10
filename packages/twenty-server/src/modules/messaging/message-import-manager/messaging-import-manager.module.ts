@@ -37,6 +37,9 @@ import { MessagingCleanCacheJob } from 'src/modules/messaging/message-import-man
 import { MessagingInboundEmailImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-inbound-email-import.job';
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
+import { MessagingOnboardingContactsBootstrapJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-contacts-bootstrap.job';
+import { MessagingOnboardingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-message-list-fetch.job';
+import { MessagingOnboardingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingRelaunchFailedMessageChannelJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-relaunch-failed-message-channel.job';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
@@ -50,6 +53,8 @@ import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingOnboardingContactsBootstrapService } from 'src/modules/messaging/message-import-manager/services/messaging-onboarding-contacts-bootstrap.service';
+import { MessagingSyncJobDispatcherService } from 'src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
@@ -94,6 +99,9 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingTriggerMessageListFetchCommand,
     MessagingMessageListFetchJob,
     MessagingMessagesImportJob,
+    MessagingOnboardingMessageListFetchJob,
+    MessagingOnboardingMessagesImportJob,
+    MessagingOnboardingContactsBootstrapJob,
     MessagingOngoingStaleJob,
     MessagingRelaunchFailedMessageChannelJob,
     MessagingMessageListFetchCronJob,
@@ -116,6 +124,8 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingDeleteFolderMessagesService,
     MessagingImportFolderMessagesService,
     MessagingDeleteGroupEmailMessagesService,
+    MessagingOnboardingContactsBootstrapService,
+    MessagingSyncJobDispatcherService,
     InboundEmailImportService,
   ],
   exports: [
@@ -126,6 +136,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingProcessGroupEmailActionsService,
     InboundEmailImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
+    MessagingSyncJobDispatcherService,
   ],
 })
 export class MessagingImportManagerModule {}

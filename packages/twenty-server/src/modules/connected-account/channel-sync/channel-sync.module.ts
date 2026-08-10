@@ -9,6 +9,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { ChannelSyncResolver } from 'src/modules/connected-account/channel-sync/channel-sync.resolver';
 import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/services/channel-sync.service';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     PermissionsModule,
     WorkspaceDataSourceModule,
     MessagingCommonModule,
+    MessagingImportManagerModule,
   ],
   providers: [ChannelSyncResolver, ChannelSyncService],
   exports: [ChannelSyncService],

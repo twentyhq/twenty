@@ -320,6 +320,16 @@ export class ConfigVariables {
   MESSAGING_MESSAGES_GET_BATCH_SIZE = 400;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Number of messages fetched in the very first batch of a newly connected account, kept small so contacts appear quickly during onboarding',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  MESSAGING_ONBOARDING_FIRST_MESSAGES_GET_BATCH_SIZE = 50;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable the Microsoft Calendar integration',
     type: ConfigVariableType.BOOLEAN,

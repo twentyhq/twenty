@@ -18,6 +18,7 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-
     ConnectedAccountTokenEncryptionModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
+    MessagingImportManagerModule,
   ],
   providers: [ImapSmtpCalDavAPIService],
   exports: [ImapSmtpCalDavAPIService],

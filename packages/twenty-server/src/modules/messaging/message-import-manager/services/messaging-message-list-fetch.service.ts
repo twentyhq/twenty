@@ -14,12 +14,18 @@ import {
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
+import { type MessagingMessagesImportJobData } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
+import { MessagingOnboardingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-onboarding-messages-import.job';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
@@ -32,6 +38,7 @@ import {
   type ProcessFolderActionsResult,
 } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -54,7 +61,83 @@ export class MessagingMessageListFetchService {
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
     private readonly messagingProcessFolderActionsService: MessagingProcessFolderActionsService,
+    private readonly messagingMonitoringService: MessagingMonitoringService,
+    private readonly twentyConfigService: TwentyConfigService,
+    @InjectMessageQueue(MessageQueue.messagingOnboardingQueue)
+    private readonly onboardingQueueService: MessageQueueService,
   ) {}
+
+  public async runForMessageChannel({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messagingMonitoringService.track({
+      eventName: 'message_list_fetch_job.triggered',
+      messageChannelId,
+      workspaceId,
+    });
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageChannel = await this.messageChannelRepository.findOne({
+          where: {
+            id: messageChannelId,
+            workspaceId,
+          },
+          relations: { connectedAccount: true, messageFolders: true },
+        });
+
+        if (!isDefined(messageChannel)) {
+          await this.messagingMonitoringService.track({
+            eventName: 'message_list_fetch_job.error.message_channel_not_found',
+            messageChannelId,
+            workspaceId,
+          });
+
+          return;
+        }
+
+        if (
+          messageChannel.syncStage !==
+          MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED
+        ) {
+          return;
+        }
+
+        try {
+          await this.messagingMonitoringService.track({
+            eventName: 'message_list_fetch.started',
+            workspaceId,
+            connectedAccountId: messageChannel.connectedAccount.id,
+            messageChannelId: messageChannel.id,
+          });
+
+          await this.processMessageListFetch(messageChannel, workspaceId);
+
+          await this.messagingMonitoringService.track({
+            eventName: 'message_list_fetch.completed',
+            workspaceId,
+            connectedAccountId: messageChannel.connectedAccount.id,
+            messageChannelId: messageChannel.id,
+          });
+        } catch (error) {
+          await this.messageImportErrorHandlerService.handleDriverException(
+            error,
+            MessageImportSyncStep.MESSAGE_LIST_FETCH,
+            messageChannel,
+            workspaceId,
+          );
+        }
+      },
+      authContext,
+      { lite: true },
+    );
+  }
 
   public async processMessageListFetch(
     messageChannel: MessageChannelEntity,
@@ -268,14 +351,31 @@ export class MessagingMessageListFetchService {
             workspaceId,
           );
 
-          await this.messagingMessagesImportService.processMessageBatchImport(
-            {
-              ...freshMessageChannel,
-              syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-            },
-            freshMessageChannel.connectedAccount,
-            workspaceId,
-          );
+          const isOnboardingSync = !isDefined(freshMessageChannel.syncedAt);
+
+          const { hasMoreMessagesToImport } =
+            await this.messagingMessagesImportService.processMessageBatchImport(
+              {
+                messageChannel: {
+                  ...freshMessageChannel,
+                  syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+                },
+                connectedAccount: freshMessageChannel.connectedAccount,
+                workspaceId,
+                messagesGetBatchSize: this.twentyConfigService.get(
+                  isOnboardingSync
+                    ? 'MESSAGING_ONBOARDING_FIRST_MESSAGES_GET_BATCH_SIZE'
+                    : 'MESSAGING_MESSAGES_GET_BATCH_SIZE',
+                ),
+              },
+            );
+
+          if (isOnboardingSync && hasMoreMessagesToImport) {
+            await this.chainOnboardingMessagesImport(
+              freshMessageChannel.id,
+              workspaceId,
+            );
+          }
         } catch (error) {
           await this.messageImportErrorHandlerService.handleDriverException(
             error,
@@ -287,6 +387,26 @@ export class MessagingMessageListFetchService {
       },
       authContext,
       { lite: true },
+    );
+  }
+
+  private async chainOnboardingMessagesImport(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    const claimedMessageChannelIds =
+      await this.messageChannelSyncStatusService.claimPendingMessagesImport(
+        [messageChannelId],
+        workspaceId,
+      );
+
+    if (claimedMessageChannelIds.length === 0) {
+      return;
+    }
+
+    await this.onboardingQueueService.add<MessagingMessagesImportJobData>(
+      MessagingOnboardingMessagesImportJob.name,
+      { workspaceId, messageChannelId },
     );
   }
 

@@ -27,10 +27,7 @@ import {
   type CreateWebhookSubscriptionJobData,
 } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import {
-  MessagingMessageListFetchJob,
-  type MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { MessagingSyncJobDispatcherService } from 'src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service';
 
 export type StartChannelSyncInput = {
   connectedAccountId: string;
@@ -43,8 +40,7 @@ export class ChannelSyncService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly messagingSyncJobDispatcherService: MessagingSyncJobDispatcherService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.webhookQueue)
@@ -86,13 +82,14 @@ export class ChannelSyncService {
           workspaceId,
         );
 
-        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-          MessagingMessageListFetchJob.name,
-          {
-            workspaceId,
-            messageChannelId: messageChannel.id,
-          },
+        await this.messagingSyncJobDispatcherService.enqueueOnboardingContactsBootstrap(
+          { messageChannel, workspaceId },
         );
+
+        await this.messagingSyncJobDispatcherService.enqueueMessageListFetch({
+          messageChannel,
+          workspaceId,
+        });
 
         if (
           !this.twentyConfigService.get(

@@ -225,20 +225,22 @@ describe('MessagingMessagesImportService', () => {
       MessageChannelSyncStage.MESSAGES_IMPORT_PENDING;
 
     await expect(
-      service.processMessageBatchImport(
-        mockMessageChannel as MessageChannelEntity,
-        mockConnectedAccount,
+      service.processMessageBatchImport({
+        messageChannel: mockMessageChannel as MessageChannelEntity,
+        connectedAccount: mockConnectedAccount,
         workspaceId,
-      ),
-    ).resolves.toBeFalsy();
+        messagesGetBatchSize: 400,
+      }),
+    ).resolves.toEqual({ hasMoreMessagesToImport: false });
   });
 
   it('should process message batch import successfully', async () => {
-    await service.processMessageBatchImport(
-      mockMessageChannel as MessageChannelEntity,
-      mockConnectedAccount,
+    await service.processMessageBatchImport({
+      messageChannel: mockMessageChannel as MessageChannelEntity,
+      connectedAccount: mockConnectedAccount,
       workspaceId,
-    );
+      messagesGetBatchSize: 400,
+    });
     expect(
       messageChannelSyncStatusService.markAsMessagesImportOngoing,
     ).toHaveBeenCalledWith([mockMessageChannel.id], workspaceId);
@@ -301,11 +303,12 @@ describe('MessagingMessagesImportService', () => {
         MessagingSaveMessagesAndEnqueueContactCreationService,
       );
 
-    await service.processMessageBatchImport(
-      mockMessageChannel as MessageChannelEntity,
-      mockConnectedAccount,
+    await service.processMessageBatchImport({
+      messageChannel: mockMessageChannel as MessageChannelEntity,
+      connectedAccount: mockConnectedAccount,
       workspaceId,
-    );
+      messagesGetBatchSize: 400,
+    });
 
     expect(
       messageChannelSyncStatusService.markAsMessagesImportPending,

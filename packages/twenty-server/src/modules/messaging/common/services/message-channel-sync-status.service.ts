@@ -275,6 +275,43 @@ export class MessageChannelSyncStatusService {
     );
   }
 
+  // Claims channels that are still pending, so a caller chaining the next batch
+  // and the import cron cannot both schedule the same channel
+  public async claimPendingMessagesImport(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ): Promise<string[]> {
+    if (!messageChannelIds.length) {
+      return [];
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const updateResult = await this.messageChannelRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+            syncStageStartedAt: new Date(),
+          })
+          .where({
+            id: In(messageChannelIds),
+            workspaceId,
+            isSyncEnabled: true,
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          })
+          .returning('id')
+          .execute();
+
+        return updateResult.raw.map((row: { id: string }) => row.id);
+      },
+      authContext,
+      { lite: true },
+    );
+  }
+
   public async markAsMessagesImportOngoing(
     messageChannelIds: string[],
     workspaceId: string,

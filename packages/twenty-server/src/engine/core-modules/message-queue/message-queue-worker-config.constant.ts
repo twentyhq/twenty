@@ -40,6 +40,17 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  // Dedicated lane for the very first sync of a freshly connected account, so
+  // time-to-first-contact never queues behind the ongoing-sync backlog
+  [MessageQueue.messagingOnboardingQueue]: {
+    priority: 1,
+    workerOptions: {
+      concurrency: 5,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.webhookQueue]: {
     priority: 2,
     workerOptions: {

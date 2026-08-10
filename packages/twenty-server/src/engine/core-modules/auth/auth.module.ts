@@ -74,6 +74,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 
 import { AuthResolver } from './auth.resolver';
@@ -108,6 +109,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
+    MessagingImportManagerModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,

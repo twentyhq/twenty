@@ -5,6 +5,7 @@ export const QUEUE_DRIVER = Symbol('message-queue:queue_driver');
 export enum MessageQueue {
   taskAssignedQueue = 'task-assigned-queue',
   messagingQueue = 'messaging-queue',
+  messagingOnboardingQueue = 'messaging-onboarding-queue',
   webhookQueue = 'webhook-queue',
   cronQueue = 'cron-queue',
   emailQueue = 'email-queue',

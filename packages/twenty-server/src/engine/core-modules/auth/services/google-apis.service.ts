@@ -43,18 +43,14 @@ import { EmailAliasManagerService } from 'src/modules/connected-account/email-al
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import {
-  MessagingMessageListFetchJob,
-  type MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { MessagingSyncJobDispatcherService } from 'src/modules/messaging/message-import-manager/services/messaging-sync-job-dispatcher.service';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class GoogleAPIsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly messagingSyncJobDispatcherService: MessagingSyncJobDispatcherService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -340,9 +336,11 @@ export class GoogleAPIsService {
                   [messageChannel.id],
                   workspaceId,
                 );
-                await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-                  MessagingMessageListFetchJob.name,
-                  { workspaceId, messageChannelId: messageChannel.id },
+                await this.messagingSyncJobDispatcherService.enqueueOnboardingContactsBootstrap(
+                  { messageChannel, workspaceId },
+                );
+                await this.messagingSyncJobDispatcherService.enqueueMessageListFetch(
+                  { messageChannel, workspaceId },
                 );
               }
             }
