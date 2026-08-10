@@ -4,8 +4,10 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { type CalendarEventCallRecordingTranscriptCandidate } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptCandidate';
 import { type CalendarEventCallRecordingTranscriptWidgetState } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptWidgetState';
 import { selectCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/utils/selectCalendarEventCallRecordingTranscript';
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationGqlRecordFields,
@@ -83,19 +85,55 @@ export const useCalendarEventCallRecordingTranscript = (): {
     !canReadCallRecordingObjectRecords ||
     restrictedFieldNames.length > 0;
 
+  const callRecordingFilter = useMemo(
+    () =>
+      isDefined(calendarEventId)
+        ? { calendarEventId: { eq: calendarEventId } }
+        : undefined,
+    [calendarEventId],
+  );
+
   const {
     records: callRecordings,
     loading,
     error,
+    refetch,
   } = useFindManyRecords<CalendarEventCallRecordingTranscriptCandidate>({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
-    filter: isDefined(calendarEventId)
-      ? { calendarEventId: { eq: calendarEventId } }
-      : undefined,
+    filter: callRecordingFilter,
     orderBy: CALL_RECORDING_TRANSCRIPT_ORDER_BY,
     recordGqlFields: CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS,
     limit: CALL_RECORDING_TRANSCRIPT_QUERY_LIMIT,
     skip: shouldSkipQuery,
+  });
+
+  const operationSignature = useMemo(
+    () => ({
+      objectNameSingular: CoreObjectNameSingular.CallRecording,
+      variables: {
+        filter: callRecordingFilter,
+      },
+    }),
+    [callRecordingFilter],
+  );
+
+  useListenToEventsForQuery({
+    queryId: `call-recording-transcript-${calendarEventId}`,
+    operationSignature,
+    skip: shouldSkipQuery,
+  });
+
+  const handleCallRecordingOperation = useCallback(() => {
+    if (shouldSkipQuery) {
+      return;
+    }
+
+    refetch();
+  }, [shouldSkipQuery, refetch]);
+
+  useListenToObjectRecordOperationBrowserEvent({
+    onObjectRecordOperationBrowserEvent: handleCallRecordingOperation,
+    objectMetadataItemId: callRecordingObjectMetadataItem.id,
   });
 
   const callRecordingTranscriptSelection = useMemo(

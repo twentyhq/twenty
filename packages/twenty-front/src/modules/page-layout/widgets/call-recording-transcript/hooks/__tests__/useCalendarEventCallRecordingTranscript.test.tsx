@@ -35,6 +35,7 @@ let findManyRecordsResult: {
   records: Record<string, unknown>[];
   loading: boolean;
   error: Error | undefined;
+  refetch: jest.Mock;
 };
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
@@ -63,6 +64,17 @@ jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => mockLayoutRenderingContext,
 }));
 
+jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
+  useListenToEventsForQuery: jest.fn(),
+}));
+
+jest.mock(
+  '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent',
+  () => ({
+    useListenToObjectRecordOperationBrowserEvent: jest.fn(),
+  }),
+);
+
 const readyCallRecording = {
   __typename: 'CallRecording',
   id: 'ready-call-recording-id',
@@ -90,6 +102,7 @@ describe('useCalendarEventCallRecordingTranscript', () => {
       records: [],
       loading: false,
       error: undefined,
+      refetch: jest.fn(),
     };
   });
 
