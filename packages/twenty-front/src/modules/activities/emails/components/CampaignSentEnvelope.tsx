@@ -39,8 +39,11 @@ export const CampaignSentEnvelope = ({
   campaign,
   width,
 }: CampaignSentEnvelopeProps) => {
-  const { unsubscribeTopics, loading: areTopicsLoading } =
-    useUnsubscribeTopics();
+  const {
+    unsubscribeTopics,
+    loading: areTopicsLoading,
+    error: topicsError,
+  } = useUnsubscribeTopics();
 
   const fromAddress = campaign.fromAddress?.primaryEmail;
   const subject = campaign.subject;
@@ -55,6 +58,12 @@ export const CampaignSentEnvelope = ({
         (topic) => topic.id === campaign.unsubscribeTopicId,
       )
     : undefined;
+
+  const isTopicKnownDeleted =
+    hasUnsubscribeTopic &&
+    !isDefined(unsubscribeTopic) &&
+    !areTopicsLoading &&
+    !isDefined(topicsError);
 
   return (
     <CampaignEnvelopeBox width={width}>
@@ -89,9 +98,11 @@ export const CampaignSentEnvelope = ({
               {unsubscribeTopic.name ?? t`Untitled topic`}
             </StyledValue>
           ) : (
-            // Blank rather than "deleted" until the topics land, so a slow
-            // query never accuses an existing topic of being gone.
-            !areTopicsLoading && (
+            // "Deleted" is a claim about the record, so it is only made once
+            // the topics actually came back: neither a slow query nor a failed
+            // one — a network error, or a role that cannot read topics — gets
+            // to report a live topic as gone.
+            isTopicKnownDeleted && (
               <StyledEmptyValue>{t`Deleted topic`}</StyledEmptyValue>
             )
           )}
