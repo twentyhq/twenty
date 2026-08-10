@@ -27,6 +27,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
+import { getInvalidatedMetadataNamesFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-invalidated-metadata-names-from-actions.util';
 import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
@@ -294,6 +295,17 @@ export class WorkspaceMigrationRunnerService {
       getMetadataFlatEntityMapsKey,
     );
 
+    // The wide set above is required to read every related map for validation,
+    // but post-commit invalidation only needs the maps a mutation can actually
+    // change. Recomputing validation-only maps (e.g. object/field metadata for a
+    // viewField position update) is the dominant cost on metadata-heavy workspaces.
+    const invalidatedFlatEntityMapsKeys = [
+      ...new Set([
+        ...getInvalidatedMetadataNamesFromActions(actions),
+        ...searchVectorRebuildMetadataNames,
+      ]),
+    ].map(getMetadataFlatEntityMapsKey);
+
     let allFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
         typeof allFlatEntityMapsKeys
@@ -515,7 +527,7 @@ export class WorkspaceMigrationRunnerService {
 
     try {
       await this.invalidateCache({
-        allFlatEntityMapsKeys,
+        allFlatEntityMapsKeys: invalidatedFlatEntityMapsKeys,
         workspaceId,
       });
 
@@ -541,7 +553,7 @@ export class WorkspaceMigrationRunnerService {
       performance.now() - postCommitInvalidateStart;
 
     this.logger.perf(
-      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${invalidatedFlatEntityMapsKeys.length} flat-maps keys`,
       'Runner',
     );
 
