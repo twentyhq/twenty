@@ -27,7 +27,7 @@ const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
     .callRecording.widgets.transcript.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.30.0', 1786098569000)
+@RegisteredWorkspaceCommand('2.30.0', 1786353778242)
 @Command({
   name: 'upgrade:2-30:add-calendar-event-call-recording-tab',
   description:
