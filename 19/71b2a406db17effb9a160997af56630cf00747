@@ -1,0 +1,51 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service.ts
+  s_7c7a6c72e0c33c::t_6c30b0e4f69a22 91-93
+  s_7c7a6c72e0c33c::t_fab9482c868393 150-152
+  s_7c7a6c72e0c33c::t_0542cf2cfdfaf8 79-90,94-149,153-160
+  s_7c7a6c72e0c33c::t_3e5e4e525253f9 7
+  s_7c7a6c72e0c33c::t_081ca5c572991c 161
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-onboarding-contacts-bootstrap.service.ts
+  s_7c7a6c72e0c33c::t_ad252e1e377f52 1-89,98-115,118,126-128,130-163
+  s_7c7a6c72e0c33c::t_fab9482c868393 90-97
+  s_7c7a6c72e0c33c::t_f5169aa3ec67d5 116-117,119-125,129
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.ts
+  s_7c7a6c72e0c33c::t_f52a227ab4be39 28
+  s_7c7a6c72e0c33c::t_43ebc8ff89d6ec 54-57
+  s_7c7a6c72e0c33c::t_81d8108292d70d 3
+  s_7c7a6c72e0c33c::t_c0cf1edb72815a 87-96
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/should-create-contact-from-participant.util.ts
+  s_7c7a6c72e0c33c::t_c0a78d27420c9b 31
+  s_7c7a6c72e0c33c::t_a1779a86490de6 57-64
+  s_7c7a6c72e0c33c::t_3b26aa0d699307 1,8-11,21
+  s_7c7a6c72e0c33c::t_8e2fd77d879b63 2-7,12-20,22-30,32-56,65-71
+packages/twenty-server/src/modules/messaging/message-import-manager/jobs/messaging-onboarding-contacts-bootstrap.job.ts
+  s_7c7a6c72e0c33c::t_9ca1db9a0bcaf3 1-30
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-get-message-list.service.ts
+  s_7c7a6c72e0c33c::t_01c92e738e9983 56-91
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service.ts
+  s_7c7a6c72e0c33c::t_c93b7479fc0cbf 5
+  s_7c7a6c72e0c33c::t_0f337212935354 143-198
+  s_7c7a6c72e0c33c::t_8140285b2f7452 199
+packages/twenty-server/src/modules/messaging/message-import-manager/constants/messaging-onboarding-contacts-bootstrap-max-messages-per-folder.constant.ts
+  s_7c7a6c72e0c33c::t_72c2cd11e2497a 1
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-message-list.service.ts
+  s_7c7a6c72e0c33c::t_92955f93dc1bfe 45-89
+  s_7c7a6c72e0c33c::t_5e7da0086d0b0d 14
+  s_7c7a6c72e0c33c::t_b603ab101dccd8 90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "1971b2a406db17effb9a160997af56630cf00747",
+  "prompts": {},
+  "sessions": {
+    "s_7c7a6c72e0c33c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c20e5ec-cd9d-423a-8ce0-ce10eb826c66",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
