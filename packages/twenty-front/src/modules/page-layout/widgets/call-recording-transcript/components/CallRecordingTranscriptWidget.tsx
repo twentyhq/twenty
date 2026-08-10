@@ -16,7 +16,7 @@ export const CallRecordingTranscriptWidget = () => {
     useCalendarEventCallRecordingTranscript();
 
   return (
-    <StyledWidgetContainer data-testid="call-recording-transcript-widget">
+    <StyledWidgetContainer>
       <CallRecordingTranscriptBody
         callRecordingTranscriptState={callRecordingTranscriptState}
       />

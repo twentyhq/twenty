@@ -26,9 +26,11 @@ const CALL_RECORDING_TRANSCRIPT_ORDER_BY: RecordGqlOperationOrderBy = [
   { id: 'AscNullsFirst' },
 ];
 
-const REQUIRED_CALL_RECORDING_FIELD_NAMES = Object.keys(
-  CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS,
-).filter((fieldName) => fieldName !== 'id');
+const REQUIRED_CALL_RECORDING_FIELD_NAMES = [
+  'status',
+  'transcript',
+  'createdAt',
+];
 
 export const useCalendarEventCallRecordingTranscript = (): {
   callRecordingTranscriptState: CalendarEventCallRecordingTranscriptWidgetState;

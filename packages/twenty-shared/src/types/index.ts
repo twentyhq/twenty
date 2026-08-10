@@ -22,10 +22,7 @@ export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
 export { CalendarChannelVisibility } from './CalendarChannelVisibility';
 export type {
-  CallRecordingTranscriptWord,
-  CallRecordingTranscriptEntry,
   CallRecordingTranscriptStatusMarker,
-  CallRecordingTranscript,
   CallRecordingParsedTranscriptWord,
   CallRecordingParsedTranscriptEntry,
 } from './CallRecordingTranscript';

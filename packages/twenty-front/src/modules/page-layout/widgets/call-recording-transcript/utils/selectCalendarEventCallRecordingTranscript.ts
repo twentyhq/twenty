@@ -31,37 +31,37 @@ const classifyCallRecordingTranscript = (
   const entries = parseCallRecordingTranscriptEntries(callRecording.transcript);
 
   if (isDefined(entries) && entries.length > 0) {
-    return { state: 'READY', callRecording, entries };
+    return { state: 'READY', entries };
   }
 
   if (UNAVAILABLE_CALL_RECORDING_STATUSES.has(callRecording.status)) {
-    return { state: 'FAILED', callRecording };
+    return { state: 'FAILED' };
   }
 
   if (
     isCallRecordingTranscriptStatusMarker(callRecording.transcript) &&
     callRecording.transcript.status === 'FAILED'
   ) {
-    return { state: 'FAILED', callRecording };
+    return { state: 'FAILED' };
   }
 
   if (IN_PROGRESS_CALL_RECORDING_STATUSES.has(callRecording.status)) {
-    return { state: 'PENDING', callRecording };
+    return { state: 'PENDING' };
   }
 
   if (isCallRecordingTranscriptStatusMarker(callRecording.transcript)) {
-    return { state: 'PENDING', callRecording };
+    return { state: 'PENDING' };
   }
 
   if (isArray(callRecording.transcript)) {
-    return { state: 'EMPTY', callRecording };
+    return { state: 'EMPTY' };
   }
 
   if (isDefined(callRecording.transcript)) {
-    return { state: 'UNRECOGNIZED', callRecording };
+    return { state: 'UNRECOGNIZED' };
   }
 
-  return { state: 'MISSING', callRecording };
+  return { state: 'MISSING' };
 };
 
 // callRecordings are expected in arrival order (createdAt ascending)

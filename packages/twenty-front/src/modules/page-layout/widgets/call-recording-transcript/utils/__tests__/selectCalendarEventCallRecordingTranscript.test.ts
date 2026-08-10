@@ -10,7 +10,7 @@ const createCallRecording = ({
   transcript: unknown;
   status?: CallRecordingStatus;
 }) => ({
-  __typename: 'CallRecording',
+  __typename: 'CallRecording' as const,
   id,
   status,
   transcript,
@@ -40,7 +40,6 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
 
     expect(selection).toMatchObject({
       state: 'READY',
-      callRecording: { id: 'first-readable' },
       entries: [{ speakerName: 'Ada', text: 'Readable transcript' }],
     });
   });
@@ -69,7 +68,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
 
     expect(selection).toMatchObject({
       state: 'READY',
-      callRecording: { id: 'first-readable' },
+      entries: [{ text: 'Readable transcript' }],
     });
   });
 
@@ -87,10 +86,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
       }),
     ]);
 
-    expect(selection).toMatchObject({
-      state: 'PENDING',
-      callRecording: { id: 'retry-pending' },
-    });
+    expect(selection).toMatchObject({ state: 'PENDING' });
   });
 
   it('falls back to the first recording when nothing is readable or pending', () => {
@@ -106,10 +102,7 @@ describe('selectCalendarEventCallRecordingTranscript', () => {
       }),
     ]);
 
-    expect(selection).toMatchObject({
-      state: 'FAILED',
-      callRecording: { id: 'first-failed' },
-    });
+    expect(selection).toMatchObject({ state: 'FAILED' });
   });
 
   it.each([
