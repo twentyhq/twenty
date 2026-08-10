@@ -16,7 +16,6 @@ updates:
     ignore:
       - dependency-name: "@graphql-yoga/nestjs"
       - dependency-name: "@nestjs/graphql"
-      - dependency-name: "@ptc-org/nestjs-query-graphql"
       - dependency-name: "typeorm"
       # chokidar is pinned to v3 via a resolution: v4+ dropped native macOS
       # FSEvents and hits EMFILE on a repo this size (see #20316)
