@@ -14,9 +14,11 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSend } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
+import { Button, IconButton } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
+
+import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -58,6 +60,11 @@ export const SidePanelComposeEmailPage = () => {
     onSent: goBackFromSidePanel,
   });
 
+  const { openAttachmentPicker } = useAttachEmailFiles({
+    files: composerState.files,
+    onChange: composerState.setFiles,
+  });
+
   const handleSendHotkey = useCallback(() => {
     if (composerState.canSend) {
       composerState.handleSend();
@@ -85,12 +92,21 @@ export const SidePanelComposeEmailPage = () => {
       </StyledContent>
       <SidePanelFooter
         actions={[
-          <Button
-            key="cancel"
+          <IconButton
+            key="discard"
             size="small"
             variant="secondary"
-            title={t`Cancel`}
+            Icon={IconTrash}
+            ariaLabel={t`Discard`}
             onClick={goBackFromSidePanel}
+          />,
+          <IconButton
+            key="attach"
+            size="small"
+            variant="secondary"
+            Icon={IconPaperclip}
+            ariaLabel={t`Attach files`}
+            onClick={openAttachmentPicker}
           />,
           <Button
             key="send"

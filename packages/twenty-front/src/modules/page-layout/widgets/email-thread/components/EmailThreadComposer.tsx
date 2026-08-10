@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
+import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { EmailThreadComposerFooterEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect';
@@ -13,7 +14,12 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowBackUp, IconSend, IconX } from 'twenty-ui/icon';
+import {
+  IconArrowBackUp,
+  IconPaperclip,
+  IconSend,
+  IconX,
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
@@ -75,6 +81,11 @@ export const EmailThreadComposer = ({
 
   const { handleSend, canSend } = composerState;
 
+  const { openAttachmentPicker } = useAttachEmailFiles({
+    files: composerState.files,
+    onChange: composerState.setFiles,
+  });
+
   const footerCommandMenuItems =
     useMemo((): SidePanelFooterCommandMenuItem[] => {
       if (!isComposerOpen) {
@@ -98,6 +109,13 @@ export const EmailThreadComposer = ({
           onClick: () => setIsComposerOpen(false),
         },
         {
+          id: 'attach-files',
+          label: t`Attach files`,
+          Icon: IconPaperclip,
+          isPinned: false,
+          onClick: openAttachmentPicker,
+        },
+        {
           id: 'send',
           label: t`Send`,
           Icon: IconSend,
@@ -107,7 +125,13 @@ export const EmailThreadComposer = ({
           disabled: !canSend,
         },
       ];
-    }, [isComposerOpen, handleSend, canSend, setIsComposerOpen]);
+    }, [
+      isComposerOpen,
+      handleSend,
+      canSend,
+      setIsComposerOpen,
+      openAttachmentPicker,
+    ]);
 
   const handleSendHotkey = useCallback(() => {
     if (isComposerOpen && canSend) {
