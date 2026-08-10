@@ -202,6 +202,32 @@ describe('applyMetadataFilterToQueryBuilder', () => {
     ).toEqual([]);
   });
 
+  it('matches uuid filters regardless of operand casing', () => {
+    type UuidFilter = {
+      and?: UuidFilter[];
+      or?: UuidFilter[];
+      id?: { eq?: string; neq?: string; in?: string[]; notIn?: string[] };
+    };
+
+    const items = [{ id: '00000000-0000-4000-8000-00000000000a' }];
+    const columnByFilterField = {
+      id: { column: 'id', type: 'uuid' },
+    } as const;
+    const upperCasedId = items[0].id.toUpperCase();
+
+    const matching = (filter: UuidFilter) =>
+      applyMetadataFilterToItems<(typeof items)[number], UuidFilter>({
+        items,
+        filter,
+        columnByFilterField,
+      });
+
+    expect(matching({ id: { eq: upperCasedId } })).toEqual(items);
+    expect(matching({ id: { in: [upperCasedId] } })).toEqual(items);
+    expect(matching({ id: { neq: upperCasedId } })).toEqual([]);
+    expect(matching({ id: { notIn: [upperCasedId] } })).toEqual([]);
+  });
+
   it('ignores undefined filter values', () => {
     const whereBuilder = applyFilter({ id: undefined });
 

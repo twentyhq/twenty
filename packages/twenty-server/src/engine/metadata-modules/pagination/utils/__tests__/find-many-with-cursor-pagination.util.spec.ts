@@ -20,6 +20,7 @@ const createFakeQueryBuilder = (rows: FakeEntity[]) => {
     andWhere: [] as [string, Record<string, unknown> | undefined][],
     take: [] as number[],
   };
+  let takenAmount: number | undefined;
 
   const queryBuilder = {
     orderBy(column: string, direction: string) {
@@ -34,10 +35,13 @@ const createFakeQueryBuilder = (rows: FakeEntity[]) => {
     },
     take(amount: number) {
       calls.take.push(amount);
+      takenAmount = amount;
 
       return queryBuilder;
     },
-    getMany: async () => [...rows],
+    // Rows are supplied in the order the query would return them, so honouring
+    // take keeps the fake faithful to a real keyset window.
+    getMany: async () => rows.slice(0, takenAmount ?? rows.length),
   };
 
   return {
@@ -155,11 +159,20 @@ describe('findManyWithCursorPagination', () => {
   });
 
   it('supports fetching the last page without a before cursor', async () => {
-    const rows = [{ id: UUID_A }, { id: UUID_B }, { id: UUID_C }];
+    // Presentation order is id DESC, so the last page holds the smallest ids.
+    // Rows are listed ASC because that is the order the backward query walks,
+    // and the dataset is larger than the page so the window is not trivial.
+    const rows = [
+      { id: UUID_A },
+      { id: UUID_B },
+      { id: UUID_C },
+      { id: UUID_D },
+    ];
     const { result, calls } = paginate(rows, { last: 2 });
     const connection = await result;
 
     expect(calls.orderBy).toEqual([['"entity"."id"', 'ASC']]);
+    expect(calls.andWhere).toEqual([]);
     expect(connection.edges.map(({ node }) => node.id)).toEqual([
       UUID_B,
       UUID_A,

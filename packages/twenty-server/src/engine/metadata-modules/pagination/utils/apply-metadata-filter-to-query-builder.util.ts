@@ -70,19 +70,63 @@ const normalizeMetadataComparison = ({
     normalizedComparison.isNot = invertBooleanComparisonValue(comparison.isNot);
   }
 
-  if (
-    column.type === 'uuid' &&
-    ((normalizedComparison.is !== undefined &&
-      normalizedComparison.is !== null) ||
+  if (column.type === 'uuid') {
+    if (
+      (normalizedComparison.is !== undefined &&
+        normalizedComparison.is !== null) ||
       (normalizedComparison.isNot !== undefined &&
-        normalizedComparison.isNot !== null))
-  ) {
-    throw new UserInputError(
-      'UUID is/isNot comparisons only support null values',
-    );
+        normalizedComparison.isNot !== null)
+    ) {
+      throw new UserInputError(
+        'UUID is/isNot comparisons only support null values',
+      );
+    }
+
+    // Postgres compares uuid columns canonically, but the in-memory matcher
+    // compares raw strings, so operands are lowercased to keep both paths
+    // agreeing on differently-cased but equal ids.
+    return lowercaseComparisonOperands(normalizedComparison);
   }
 
   return normalizedComparison;
+};
+
+const lowercaseValue = (value: unknown): unknown =>
+  typeof value === 'string' ? value.toLowerCase() : value;
+
+const lowercaseComparisonOperands = (
+  comparison: MetadataFilterComparison,
+): MetadataFilterComparison => {
+  const lowercasedComparison: MetadataFilterComparison = { ...comparison };
+
+  for (const operand of [
+    'eq',
+    'neq',
+    'gt',
+    'gte',
+    'lt',
+    'lte',
+    'like',
+    'notLike',
+    'iLike',
+    'notILike',
+  ] as const) {
+    if (isDefined(lowercasedComparison[operand])) {
+      lowercasedComparison[operand] = lowercaseValue(
+        lowercasedComparison[operand],
+      );
+    }
+  }
+
+  for (const operand of ['in', 'notIn'] as const) {
+    const values = lowercasedComparison[operand];
+
+    if (isDefined(values)) {
+      lowercasedComparison[operand] = values.map(lowercaseValue);
+    }
+  }
+
+  return lowercasedComparison;
 };
 
 const applyComparisonToQueryBuilder = ({
@@ -283,14 +327,17 @@ const matchesMetadataComparison = ({
     comparison,
     column,
   });
+  const normalizedValue =
+    column.type === 'uuid' ? lowercaseValue(value) : value;
 
-  const stringValue = typeof value === 'string' ? value : undefined;
+  const stringValue =
+    typeof normalizedValue === 'string' ? normalizedValue : undefined;
   const simpleComparisons: [
     keyof MetadataFilterComparison,
     (comparisonValue: unknown) => boolean,
   ][] = [
-    ['eq', (comparisonValue) => value === comparisonValue],
-    ['neq', (comparisonValue) => value !== comparisonValue],
+    ['eq', (comparisonValue) => normalizedValue === comparisonValue],
+    ['neq', (comparisonValue) => normalizedValue !== comparisonValue],
     [
       'gt',
       (comparisonValue) =>
@@ -361,14 +408,14 @@ const matchesMetadataComparison = ({
 
   if (
     isDefined(normalizedComparison.in) &&
-    !normalizedComparison.in.includes(value)
+    !normalizedComparison.in.includes(normalizedValue)
   ) {
     return false;
   }
 
   if (
     isDefined(normalizedComparison.notIn) &&
-    normalizedComparison.notIn.includes(value)
+    normalizedComparison.notIn.includes(normalizedValue)
   ) {
     return false;
   }
@@ -376,8 +423,8 @@ const matchesMetadataComparison = ({
   if (
     normalizedComparison.is !== undefined &&
     (normalizedComparison.is === null
-      ? value !== null && value !== undefined
-      : value !== normalizedComparison.is)
+      ? normalizedValue !== null && normalizedValue !== undefined
+      : normalizedValue !== normalizedComparison.is)
   ) {
     return false;
   }
@@ -385,8 +432,8 @@ const matchesMetadataComparison = ({
   if (
     normalizedComparison.isNot !== undefined &&
     (normalizedComparison.isNot === null
-      ? value === null || value === undefined
-      : value === normalizedComparison.isNot)
+      ? normalizedValue === null || normalizedValue === undefined
+      : normalizedValue === normalizedComparison.isNot)
   ) {
     return false;
   }

@@ -8,6 +8,8 @@ import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-
 import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
 import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { DEFAULT_METADATA_REST_PAGE_SIZE } from 'src/engine/metadata-modules/pagination/constants/default-metadata-rest-page-size.constant';
+import { MAX_METADATA_REST_PAGE_SIZE } from 'src/engine/metadata-modules/pagination/constants/max-metadata-rest-page-size.constant';
 import {
   type MetadataCursorPagination,
   paginateMetadataOrderedItems,
@@ -48,7 +50,11 @@ const parseMetadataRestPagination = (
   }
 
   return {
-    limit: parseLimitRestRequest(request),
+    limit: parseLimitRestRequest(
+      request,
+      DEFAULT_METADATA_REST_PAGE_SIZE,
+      MAX_METADATA_REST_PAGE_SIZE,
+    ),
     direction: isDefined(endingBefore) ? 'backward' : 'forward',
     afterId: startingAfter,
     beforeId: endingBefore,

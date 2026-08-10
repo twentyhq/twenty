@@ -1,0 +1,1 @@
+export const MAX_METADATA_REST_PAGE_SIZE = 1000;
