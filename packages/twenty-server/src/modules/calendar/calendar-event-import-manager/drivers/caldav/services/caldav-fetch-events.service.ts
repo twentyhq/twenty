@@ -146,8 +146,8 @@ export class CalDavFetchEventsService {
       (response) => isDefined(response.status) && response.status >= 400,
     );
 
-    const failedRequest = unreadableResponses.find(
-      (response) => !isDefined(response.props),
+    const failedRequest = unreadableResponses.find((response) =>
+      this.isCollectionResponse(response, collectionUrl),
     );
 
     if (isDefined(failedRequest)) {
@@ -157,14 +157,40 @@ export class CalDavFetchEventsService {
       );
     }
 
-    if (unreadableResponses.length > 0) {
+    const removedHrefs = unreadableResponses.filter(
+      (response) => response.status === 404 || response.status === 410,
+    );
+    const unexpectedHrefs = unreadableResponses.filter(
+      (response) => response.status !== 404 && response.status !== 410,
+    );
+
+    if (removedHrefs.length > 0) {
       this.logger.debug(
-        `Skipping ${unreadableResponses.length} calendar events removed from ${collectionUrl} since the last list fetch`,
+        `Skipping ${removedHrefs.length} calendar events removed from ${collectionUrl} since the last list fetch`,
+      );
+    }
+
+    if (unexpectedHrefs.length > 0) {
+      this.logger.warn(
+        `Skipping ${unexpectedHrefs.length} unreadable calendar events in ${collectionUrl}: ${unexpectedHrefs
+          .map((response) => `${response.href} ${response.status}`)
+          .join(', ')}`,
       );
     }
 
     return responses.filter(
       (response) => !isDefined(response.status) || response.status < 400,
+    );
+  }
+
+  private isCollectionResponse(
+    response: DAVResponse,
+    collectionUrl: string,
+  ): boolean {
+    if (!isNonEmptyString(response.href)) return true;
+
+    return (
+      new URL(response.href, collectionUrl).href === new URL(collectionUrl).href
     );
   }
 
