@@ -5,6 +5,7 @@ import { type CalendarEventCallRecordingTranscriptCandidate } from '@/page-layou
 import { type CalendarEventCallRecordingTranscriptWidgetState } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptWidgetState';
 import { selectCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/utils/selectCalendarEventCallRecordingTranscript';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useMemo } from 'react';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationGqlRecordFields,
@@ -90,6 +91,11 @@ export const useCalendarEventCallRecordingTranscript = (): {
     skip: shouldSkipQuery,
   });
 
+  const callRecordingTranscriptSelection = useMemo(
+    () => selectCalendarEventCallRecordingTranscript(callRecordings),
+    [callRecordings],
+  );
+
   if (!isDefined(calendarEventId)) {
     return { callRecordingTranscriptState: { state: 'UNSUPPORTED' } };
   }
@@ -106,8 +112,5 @@ export const useCalendarEventCallRecordingTranscript = (): {
     return { callRecordingTranscriptState: { state: 'LOADING' } };
   }
 
-  return {
-    callRecordingTranscriptState:
-      selectCalendarEventCallRecordingTranscript(callRecordings),
-  };
+  return { callRecordingTranscriptState: callRecordingTranscriptSelection };
 };

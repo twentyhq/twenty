@@ -68,11 +68,22 @@ const classifyCallRecordingTranscript = (
 export const selectCalendarEventCallRecordingTranscript = (
   callRecordings: CalendarEventCallRecordingTranscriptCandidate[],
 ): CalendarEventCallRecordingTranscriptSelection => {
-  const selections = callRecordings.map(classifyCallRecordingTranscript);
+  let firstPendingSelection: ClassifiedCallRecordingTranscript | undefined;
+  let firstSelection: ClassifiedCallRecordingTranscript | undefined;
 
-  return (
-    selections.find((selection) => selection.state === 'READY') ??
-    selections.find((selection) => selection.state === 'PENDING') ??
-    selections[0] ?? { state: 'NO_RECORDING' }
-  );
+  for (const callRecording of callRecordings) {
+    const selection = classifyCallRecordingTranscript(callRecording);
+
+    if (selection.state === 'READY') {
+      return selection;
+    }
+
+    if (!isDefined(firstPendingSelection) && selection.state === 'PENDING') {
+      firstPendingSelection = selection;
+    }
+
+    firstSelection ??= selection;
+  }
+
+  return firstPendingSelection ?? firstSelection ?? { state: 'NO_RECORDING' };
 };
