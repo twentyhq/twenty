@@ -9,7 +9,6 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -434,10 +433,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
 
-    const [allValues, isCompactStorageEnabled] = await Promise.all([
-      this.cacheStorage.mget<CacheDataType | string>(allKeys),
-      this.resolveCompactStorageEnabled(workspaceId),
-    ]);
+    const allValues =
+      await this.cacheStorage.mget<CacheDataType | string>(allKeys);
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
       const rawData = allValues[index * 2] as CacheDataType | undefined;
@@ -447,9 +444,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data = isCompactStorageEnabled
-            ? this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData)
-            : rawData;
+          data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
+            rawData,
+          );
         } catch (error) {
           this.logger.warn(
             `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
@@ -523,16 +520,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const computed = await Promise.all(computePromises);
 
-    const recomputedFeatureFlagsMap = computed.find(
-      ({ keyName }) => keyName === 'featureFlagsMap',
-    )?.data as WorkspaceCacheDataMap['featureFlagsMap'] | undefined;
-
-    const isCompactStorageEnabled = isDefined(recomputedFeatureFlagsMap)
-      ? recomputedFeatureFlagsMap[
-          FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
-        ]
-      : await this.resolveCompactStorageEnabled(workspaceId);
-
     const redisEntries: Array<{
       key: string;
       value: StoredCacheDataType | string;
@@ -557,9 +544,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       if (!isLocalDataOnly) {
         redisEntries.push({
           key: `${baseKey}:data`,
-          value: isCompactStorageEnabled
-            ? this.getProviderOrThrow(keyName).encodeForCacheStorage(data)
-            : data,
+          value: this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
         });
       }
 
@@ -694,17 +679,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       hotEntriesPerProvider: HOT_ENTRIES_PER_PROVIDER,
       serialize: ({ localKey, data }) => {
         const separatorIndex = localKey.lastIndexOf(':');
-        const workspaceId = localKey.slice(separatorIndex + 1);
         const keyName = localKey.slice(
           0,
           separatorIndex,
         ) as WorkspaceCacheKeyName;
 
-        if (
-          this.localDataOnlyKeys.has(keyName) ||
-          keyName === 'featureFlagsMap' ||
-          !this.isCompactStorageEnabledInLocalCache(workspaceId)
-        ) {
+        if (this.localDataOnlyKeys.has(keyName)) {
           return undefined;
         }
 
@@ -716,45 +696,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
       },
     });
-  }
-
-  private isCompactStorageEnabledInLocalCache(
-    workspaceId: string,
-  ): boolean | undefined {
-    const entry = this.localCache.get(
-      this.buildCacheKey(workspaceId, 'featureFlagsMap'),
-    );
-    const version = entry?.versions.get(entry.latestHash);
-
-    if (version?.state !== 'hot') {
-      return undefined;
-    }
-
-    return (version.data as WorkspaceCacheDataMap['featureFlagsMap'])[
-      FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
-    ];
-  }
-
-  // A restarted pod reads an already-encoded Redis payload with an empty local
-  // cache, so the flag has to resolve from Redis before any decode happens.
-  private async resolveCompactStorageEnabled(
-    workspaceId: string,
-  ): Promise<boolean> {
-    const localValue = this.isCompactStorageEnabledInLocalCache(workspaceId);
-
-    if (isDefined(localValue)) {
-      return localValue;
-    }
-
-    const featureFlagsMap = await this.cacheStorage.get<
-      WorkspaceCacheDataMap['featureFlagsMap']
-    >(`${this.buildCacheKey(workspaceId, 'featureFlagsMap')}:data`);
-
-    return (
-      featureFlagsMap?.[
-        FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
-      ] ?? false
-    );
   }
 
   private readVersion({
