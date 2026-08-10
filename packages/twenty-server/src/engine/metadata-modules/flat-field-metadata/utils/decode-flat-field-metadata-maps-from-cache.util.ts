@@ -16,12 +16,14 @@ const decodeFlatFieldMetadata = (
     Record<string, FlatFieldMetadata[keyof FlatFieldMetadata]>
   > = {};
 
-  for (const key of FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS) {
-    decoded[key] = [];
-  }
-
   for (const [shortCode, value] of Object.entries(encoded)) {
     decoded[FLAT_FIELD_METADATA_KEY_LOOKUP.get(shortCode) ?? shortCode] = value;
+  }
+
+  for (const key of FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS) {
+    if (!(key in decoded)) {
+      decoded[key] = [];
+    }
   }
 
   return decoded as FlatFieldMetadata;

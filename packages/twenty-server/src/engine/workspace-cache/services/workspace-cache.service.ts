@@ -90,7 +90,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private lastLocalCacheSweepAt: number | undefined;
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
-    WorkspaceCacheProvider<CacheDataType>
+    WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
   private readonly keyNameByPrefix = new Map<string, WorkspaceCacheKeyName>();
@@ -461,7 +461,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data = this.decodeFromStorage({ workspaceId, keyName, rawData });
+          data = this.decodeFromStorage({ keyName, rawData });
         } catch (error) {
           this.logger.warn(
             `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
@@ -535,7 +535,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const computed = await Promise.all(computePromises);
 
-    const redisEntries: Array<{ key: string; value: StoredCacheDataType }> = [];
+    const redisEntries: Array<{
+      key: string;
+      value: StoredCacheDataType | string;
+    }> = [];
     const staleEncodingKeys: string[] = [];
     const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
 
@@ -776,18 +779,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private decodeFromStorage({
-    workspaceId,
     keyName,
     rawData,
   }: {
-    workspaceId: string;
     keyName: WorkspaceCacheKeyName;
     rawData: StoredCacheDataType;
   }): CacheDataType {
-    if (!this.isCompactStorageEnabled(workspaceId)) {
-      return rawData;
-    }
-
     return this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
   }
 
@@ -861,7 +858,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private getProviderOrThrow(
     keyName: WorkspaceCacheKeyName,
-  ): WorkspaceCacheProvider<CacheDataType> {
+  ): WorkspaceCacheProvider<CacheDataType, StoredCacheDataType> {
     const provider = this.workspaceCacheProviders.get(keyName);
 
     if (!isDefined(provider)) {

@@ -62,6 +62,27 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
     ).toMatchObject({ viewFieldIds: null });
   });
 
+  it('should be idempotent, so decoding a payload that was never encoded is safe', () => {
+    const encoded = encodeFlatFieldMetadataMapsForCache({
+      byUniversalIdentifier: {
+        'field-uid': {
+          name: 'firstName',
+          viewFieldIds: ['view-field-1'],
+          viewFilterIds: [],
+        } as unknown as FlatFieldMetadata,
+      },
+      universalIdentifierById: {},
+      universalIdentifiersByApplicationId: {},
+    });
+
+    const decodedOnce = decodeFlatFieldMetadataMapsFromCache(encoded);
+    const decodedTwice = decodeFlatFieldMetadataMapsFromCache(
+      decodedOnce as unknown as EncodedFlatFieldMetadataMaps,
+    );
+
+    expect(decodedTwice).toEqual(decodedOnce);
+  });
+
   it('should round trip a field through JSON, as the cache storage layer does', () => {
     const maps: FlatEntityMaps<FlatFieldMetadata> = {
       byUniversalIdentifier: {
