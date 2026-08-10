@@ -435,6 +435,24 @@ export class UserWorkspaceService {
     };
   }
 
+  async getUserWorkspaceForUser({
+    userId,
+    workspaceId,
+    relations = ['twoFactorAuthenticationMethods'],
+  }: {
+    userId: string;
+    workspaceId: string;
+    relations?: string[];
+  }): Promise<UserWorkspaceEntity | null> {
+    return this.userWorkspaceRepository.findOne({
+      where: {
+        userId,
+        workspaceId,
+      },
+      relations,
+    });
+  }
+
   async getUserWorkspaceForUserOrThrow({
     userId,
     workspaceId,
@@ -444,11 +462,9 @@ export class UserWorkspaceService {
     workspaceId: string;
     relations?: string[];
   }): Promise<UserWorkspaceEntity> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: {
-        userId,
-        workspaceId,
-      },
+    const userWorkspace = await this.getUserWorkspaceForUser({
+      userId,
+      workspaceId,
       relations,
     });
 
@@ -459,13 +475,13 @@ export class UserWorkspaceService {
     return userWorkspace;
   }
 
-  async getWorkspaceMemberOrThrow({
+  async getWorkspaceMember({
     workspaceMemberId,
     workspaceId,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
-  }): Promise<WorkspaceMemberWorkspaceEntity> {
+  }): Promise<WorkspaceMemberWorkspaceEntity | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -477,20 +493,33 @@ export class UserWorkspaceService {
             { shouldBypassPermissionChecks: true },
           );
 
-        const workspaceMember = await workspaceMemberRepository.findOne({
+        return workspaceMemberRepository.findOne({
           where: {
             id: workspaceMemberId,
           },
         });
-
-        if (!isDefined(workspaceMember)) {
-          throw new Error('Workspace member not found');
-        }
-
-        return workspaceMember;
       },
       authContext,
     );
+  }
+
+  async getWorkspaceMemberOrThrow({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<WorkspaceMemberWorkspaceEntity> {
+    const workspaceMember = await this.getWorkspaceMember({
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    if (!isDefined(workspaceMember)) {
+      throw new Error('Workspace member not found');
+    }
+
+    return workspaceMember;
   }
 
   private async computeDefaultAvatarUrl(

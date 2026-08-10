@@ -18,8 +18,15 @@ const updateRecord = fn();
 const {
   FieldInputEventContextProviderWithJestMocks,
   handleEscapeMocked,
+  handleSubmitMocked,
   handleClickoutsideMocked,
 } = getFieldInputEventContextProviderWithJestMocks();
+
+const EMPTY_LINKS_VALUE = {
+  primaryLinkUrl: null,
+  primaryLinkLabel: null,
+  secondaryLinks: [],
+};
 
 const LinksValueSetterEffect = ({
   value,
@@ -305,6 +312,66 @@ export const DeletePrimaryLink: Story = {
   },
 };
 
+export const DeletePrimaryLinkPersistsEmptyValue: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const openDropdownButton = await canvas.findByRole('button', {
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButton);
+
+    const deleteOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Delete');
+    await userEvent.click(deleteOption);
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: EMPTY_LINKS_VALUE,
+      skipClose: true,
+    });
+  },
+};
+
+export const ClearPrimaryLinkAndPressEnter: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const openDropdownButton = await canvas.findByRole('button', {
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButton);
+
+    const editOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Edit');
+    await userEvent.click(editOption);
+
+    const input = await canvas.findByPlaceholderText('URL');
+    await userEvent.clear(input);
+    await userEvent.type(input, '{enter}');
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: EMPTY_LINKS_VALUE,
+      skipClose: true,
+    });
+  },
+};
+
 export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
   args: {
     value: {
@@ -487,6 +554,17 @@ export const MakeSecondaryLinkPrimary: Story = {
       canvasElement.ownerDocument.body,
     ).findByText('Set as Primary');
     await userEvent.click(setPrimaryOption);
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: {
+        primaryLinkUrl: 'https://docs.twenty.com',
+        primaryLinkLabel: 'Documentation',
+        secondaryLinks: [
+          { url: 'https://www.twenty.com', label: 'Twenty Website' },
+        ],
+      },
+      skipClose: true,
+    });
   },
 };
 
