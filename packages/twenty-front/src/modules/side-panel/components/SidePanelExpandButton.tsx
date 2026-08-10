@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
@@ -41,13 +42,14 @@ const SidePanelExpandButtonContent = () => {
 };
 
 export const SidePanelExpandButton = () => {
-  const sidePanelPageInstance = useComponentInstanceStateContext(
+  const sidePanelPageInstanceId = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
-  );
+  )?.instanceId;
 
-  // Expand targets read state scoped to the side panel page, so there is
-  // nothing to expand outside of one.
-  if (!isDefined(sidePanelPageInstance)) {
+  // Expand targets read state scoped to the side panel page. The context
+  // defaults to a blank instance id, which those reads reject, so match the
+  // condition they enforce rather than merely checking the context exists.
+  if (!isNonEmptyString(sidePanelPageInstanceId)) {
     return null;
   }
 
