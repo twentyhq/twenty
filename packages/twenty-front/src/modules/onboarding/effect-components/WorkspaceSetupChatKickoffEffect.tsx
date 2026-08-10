@@ -15,6 +15,7 @@ import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/consta
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
+import { personEnrichmentState } from '@/onboarding/states/personEnrichmentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   StartWorkspaceSetupChatDocument,
@@ -60,6 +61,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
         const { data } = await startWorkspaceSetupChatMutation({
           variables: {
             companyContext: store.get(companyEnrichmentState.atom) ?? undefined,
+            personContext: store.get(personEnrichmentState.atom) ?? undefined,
           },
         });
 

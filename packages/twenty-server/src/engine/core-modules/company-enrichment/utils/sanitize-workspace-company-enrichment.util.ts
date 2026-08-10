@@ -5,31 +5,16 @@ import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-field-max-length.constant';
 import { WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-max-tags.constant';
 import { WORKSPACE_COMPANY_ENRICHMENT_SUMMARY_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-summary-max-length.constant';
+import { sanitizePromptContextLine } from 'src/utils/sanitize-prompt-context-line.util';
 
-// NUL bytes break Postgres text inserts, and line breaks in single-line fields could forge
-// extra lines inside the model-facing context message built from these values.
-const CONTROL_CHARACTERS_AND_LINE_BREAKS_PATTERN =
-  /[\u0000-\u001f\u007f\u0080-\u009f]+/g;
 const CONTROL_CHARACTERS_EXCEPT_LINE_BREAKS_PATTERN =
   /[\u0000-\u0009\u000b-\u001f\u007f\u0080-\u009f]+/g;
 
-const sanitizeSingleLineText = (
-  value: unknown,
-  maxLength = WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
-): string | null => {
-  if (!isNonEmptyString(value)) {
-    return null;
-  }
-
-  const cleanedValue = value
-    .replace(CONTROL_CHARACTERS_AND_LINE_BREAKS_PATTERN, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  return isNonEmptyString(cleanedValue)
-    ? cleanedValue.slice(0, maxLength)
-    : null;
-};
+const sanitizeSingleLineText = (value: unknown): string | null =>
+  sanitizePromptContextLine(
+    value,
+    WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
+  );
 
 const sanitizeSummaryText = (value: unknown): string | null => {
   if (!isNonEmptyString(value)) {

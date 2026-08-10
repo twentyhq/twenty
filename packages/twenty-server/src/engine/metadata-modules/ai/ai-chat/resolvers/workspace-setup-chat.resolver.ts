@@ -3,11 +3,15 @@ import { Args, Mutation } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { sanitizeWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-company-enrichment.util';
+import { sanitizeWorkspacePersonEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-person-enrichment.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -35,16 +39,20 @@ export class WorkspaceSetupChatResolver {
   async startWorkspaceSetupChat(
     @Args('companyContext', { type: () => GraphQLJSON, nullable: true })
     companyContext: WorkspaceCompanyEnrichment | null,
+    @Args('personContext', { type: () => GraphQLJSON, nullable: true })
+    personContext: WorkspacePersonEnrichment | null,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.workspaceSetupChatService.startWorkspaceSetupChat({
       userId: user.id,
+      userEmail: user.email,
       userLocale: user.locale,
       userWorkspaceId,
       workspace,
       companyContext: sanitizeWorkspaceCompanyEnrichment(companyContext),
+      personContext: sanitizeWorkspacePersonEnrichment(personContext),
     });
   }
 }

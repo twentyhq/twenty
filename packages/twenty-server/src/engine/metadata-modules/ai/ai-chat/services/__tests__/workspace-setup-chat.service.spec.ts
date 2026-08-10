@@ -1,5 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 import { QueryFailedError } from 'typeorm';
 import { v5 } from 'uuid';
 
@@ -28,16 +31,20 @@ const EXPECTED_THREAD_ID = v5(
 describe('WorkspaceSetupChatService', () => {
   const workspace = {
     id: 'workspace-id',
+    displayName: 'Acme',
+    subdomain: 'acme',
     fastModel: 'fast-model-id',
     smartModel: 'smart-model-id',
   } as WorkspaceEntity;
 
   const startArguments = {
     userId: 'creator-user-id',
+    userEmail: 'creator@acme.com',
     userLocale: 'en',
     userWorkspaceId: 'user-workspace-id',
     workspace,
     companyContext: null,
+    personContext: null,
   };
 
   beforeEach(() => {
@@ -377,6 +384,43 @@ describe('WorkspaceSetupChatService', () => {
       'The user locale is French, please continue the discussion in that language.',
     );
     expect(kickoffText).not.toContain('No information about the company');
+  });
+
+  it('should embed the workspace context and the person context in the hidden prompt', async () => {
+    const { service, agentChatStreamingService } = buildService();
+
+    const personContext = {
+      email: 'creator@acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      fullName: 'Ada Lovelace',
+      jobTitle: 'Head of Sales',
+      jobTitleLevels: ['director'],
+      jobCompanyName: 'Acme Inc',
+      industry: 'computer software',
+      headline: 'Selling anvils at scale',
+      linkedinUrl: 'linkedin.com/in/ada',
+      skills: ['sales', 'negotiation'],
+      locality: 'Paris',
+      region: 'Ile-de-France',
+      country: 'France',
+    } satisfies WorkspacePersonEnrichment;
+
+    await service.startWorkspaceSetupChat({
+      ...startArguments,
+      personContext,
+    });
+
+    const kickoffText =
+      agentChatStreamingService.startHiddenKickoffStream.mock.calls[0][0].text;
+
+    expect(kickoffText).toContain(
+      'This workspace is named "Acme" (subdomain: acme). The admin setting it up signed up with creator@acme.com.',
+    );
+    expect(kickoffText).toContain('Job title: Head of Sales');
+    expect(kickoffText).toContain('Seniority: director');
+    expect(kickoffText).not.toContain(
+      'No third-party information about the person',
+    );
   });
 
   it('should return alreadyStarted without a credit check when the thread already has conversation messages', async () => {

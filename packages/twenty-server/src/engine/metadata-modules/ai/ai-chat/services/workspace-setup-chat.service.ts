@@ -3,7 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 import { QueryFailedError } from 'typeorm';
 import { v5 } from 'uuid';
 
@@ -56,16 +59,20 @@ export class WorkspaceSetupChatService {
 
   async startWorkspaceSetupChat({
     userId,
+    userEmail,
     userLocale,
     userWorkspaceId,
     workspace,
     companyContext,
+    personContext,
   }: {
     userId: string;
+    userEmail: string;
     userLocale: string | null;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
+    personContext: WorkspacePersonEnrichment | null;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
@@ -160,6 +167,12 @@ export class WorkspaceSetupChatService {
         workspace,
         text: buildWorkspaceSetupPromptText({
           companyEnrichment: companyContext,
+          personEnrichment: personContext,
+          workspaceContext: {
+            workspaceDisplayName: workspace.displayName ?? null,
+            workspaceSubdomain: workspace.subdomain,
+            userEmail,
+          },
           locale,
         }),
         modelId: workspace.fastModel,

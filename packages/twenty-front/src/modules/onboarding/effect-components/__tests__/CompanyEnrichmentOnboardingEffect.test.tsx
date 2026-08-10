@@ -2,13 +2,17 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
 import { Provider as JotaiProvider } from 'jotai';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
+import { personEnrichmentState } from '@/onboarding/states/personEnrichmentState';
 import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import {
@@ -44,16 +48,36 @@ const enrichment: WorkspaceCompanyEnrichment = {
   country: null,
 };
 
+const personEnrichment: WorkspacePersonEnrichment = {
+  email: 'ada@acme.com',
+  enrichedAt: '2026-07-21T10:00:00.000Z',
+  fullName: 'Ada Lovelace',
+  jobTitle: 'Head of Sales',
+  jobTitleLevels: [],
+  jobCompanyName: null,
+  industry: null,
+  headline: null,
+  linkedinUrl: null,
+  skills: [],
+  locality: null,
+  region: null,
+  country: null,
+};
+
 const buildEnrichMock = ({
   outcome,
   enrichmentPayload,
   countCall,
   isBookCallOnboardingStepPending = false,
+  personOutcome = 'unavailable',
+  personEnrichmentPayload = null,
 }: {
   outcome: string;
   enrichmentPayload: WorkspaceCompanyEnrichment | null;
   countCall: () => void;
   isBookCallOnboardingStepPending?: boolean;
+  personOutcome?: string;
+  personEnrichmentPayload?: WorkspacePersonEnrichment | null;
 }) => ({
   request: { query: EnrichWorkspaceCompanyDocument },
   result: () => {
@@ -65,6 +89,8 @@ const buildEnrichMock = ({
           __typename: 'WorkspaceCompanyEnrichmentResult',
           outcome,
           enrichment: enrichmentPayload,
+          personOutcome,
+          personEnrichment: personEnrichmentPayload,
           isBookCallOnboardingStepPending,
         },
       },
@@ -368,6 +394,47 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
       domain: 'acme.com',
     });
   });
+
+  it('stores a matched person enrichment alongside the company one', async () => {
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'unavailable',
+        enrichmentPayload: null,
+        countCall: () => {},
+        personOutcome: 'matched',
+        personEnrichmentPayload: personEnrichment,
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(jotaiStore.get(personEnrichmentState.atom)).toMatchObject({
+      email: 'ada@acme.com',
+      jobTitle: 'Head of Sales',
+    });
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
+  });
+
+  it.each(['transientError', 'unavailable'])(
+    'stores no person enrichment on a %s person outcome',
+    async (personOutcome) => {
+      renderEffect([
+        buildEnrichMock({
+          outcome: 'matched',
+          enrichmentPayload: enrichment,
+          countCall: () => {},
+          personOutcome,
+        }),
+      ]);
+
+      await flushMutation();
+
+      expect(jotaiStore.get(personEnrichmentState.atom)).toBeNull();
+      expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
+        domain: 'acme.com',
+      });
+    },
+  );
 
   it('stores nothing when the mutation fails', async () => {
     renderEffect([
