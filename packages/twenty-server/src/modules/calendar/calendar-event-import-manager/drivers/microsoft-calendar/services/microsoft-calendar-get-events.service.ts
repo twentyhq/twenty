@@ -21,9 +21,11 @@ export class MicrosoftCalendarGetEventsService {
     connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
+    const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
+
     try {
-      const microsoftClient =
-        await this.microsoftOAuth2ClientProvider.getClient(connectedAccount.id);
       const eventIds: string[] = [];
       const eventIdsToDelete: string[] = [];
 

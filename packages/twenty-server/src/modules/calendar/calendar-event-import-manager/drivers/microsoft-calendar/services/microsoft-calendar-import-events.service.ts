@@ -18,10 +18,11 @@ export class MicrosoftCalendarImportEventsService {
     connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
     eventExternalIds: string[],
   ): Promise<FetchedCalendarEvent[]> {
-    try {
-      const microsoftClient =
-        await this.microsoftOAuth2ClientProvider.getClient(connectedAccount.id);
+    const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
+    try {
       const events: Event[] = [];
 
       for (const eventExternalId of eventExternalIds) {
