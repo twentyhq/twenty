@@ -84,8 +84,18 @@ export const createMutationObserverClass = ({
       this.#callback = callback;
     }
 
+    #pruneCollectedTargetRefs = () => {
+      for (const targetRef of this.#targetRefs) {
+        if (!isDefined(targetRef.deref())) {
+          this.#targetRefs.delete(targetRef);
+        }
+      }
+    };
+
     observe(target: Node, options: MutationObserverInit = {}): void {
       const normalizedOptions = normalizeMutationObserverInit(options);
+
+      this.#pruneCollectedTargetRefs();
 
       const existingTargetRef = this.#targetRefByTarget.get(target);
 
