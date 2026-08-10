@@ -8,11 +8,13 @@ import {
   Post,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
+import { LegacyMetadataRouteDeprecationInterceptor } from 'src/engine/api/rest/metadata/interceptors/legacy-metadata-route-deprecation.interceptor';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -27,6 +29,10 @@ import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhoo
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
+/**
+ * rest/webhooks is deprecated, use rest/metadata/webhooks instead
+ * rest/webhooks will be removed in the future
+ */
 @Controller([`${ApiPath.Rest}/webhooks`, `${ApiPath.Rest}/metadata/webhooks`])
 @UseGuards(
   JwtAuthGuard,
@@ -39,6 +45,7 @@ import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/works
   FlatEntityMapsRestApiExceptionFilter,
   WorkspaceMigrationRunnerRestApiExceptionFilter,
 )
+@UseInterceptors(LegacyMetadataRouteDeprecationInterceptor)
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 

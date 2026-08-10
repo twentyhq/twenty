@@ -8,12 +8,14 @@ import {
   Post,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
+import { LegacyMetadataRouteDeprecationInterceptor } from 'src/engine/api/rest/metadata/interceptors/legacy-metadata-route-deprecation.interceptor';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
@@ -38,6 +40,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
 @UseFilters(PermissionsRestApiExceptionFilter, RestApiExceptionFilter)
+@UseInterceptors(LegacyMetadataRouteDeprecationInterceptor)
 export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
