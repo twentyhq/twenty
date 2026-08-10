@@ -37,6 +37,16 @@ const StyledHeaderRows = styled.div`
   width: 100%;
 `;
 
+// The side-panel composer can let a control fill its row; this page is as wide
+// as the window, where a sender dropdown spanning it reads as a banner rather
+// than a field.
+const StyledControl = styled.div`
+  display: flex;
+  max-width: 400px;
+  min-width: 0;
+  width: 100%;
+`;
+
 const StyledSubjectInput = styled.input`
   background: transparent;
   border: none;
@@ -142,39 +152,47 @@ export const CampaignDetailsFields = ({
     <StyledFieldsContainer onBlur={() => detailsState.flush()}>
       <StyledHeaderRows>
         <EmailComposerFieldRow label={t`From`} labelMinWidth={LABEL_MIN_WIDTH}>
-          <Select
-            dropdownId="campaign-composer-from-account"
-            fullWidth
-            value={detailsState.fromAddress}
-            options={senderOptions}
-            emptyOption={{ label: t`Select a sender`, value: '' }}
-            onChange={detailsState.setFromAddress}
-          />
+          <StyledControl>
+            <Select
+              dropdownId="campaign-composer-from-account"
+              fullWidth
+              value={detailsState.fromAddress}
+              options={senderOptions}
+              emptyOption={{ label: t`Select a sender`, value: '' }}
+              onChange={detailsState.setFromAddress}
+            />
+          </StyledControl>
         </EmailComposerFieldRow>
         <EmailComposerFieldRow label={t`To`} labelMinWidth={LABEL_MIN_WIDTH}>
-          <FormSingleRecordPicker
-            key={`list-${detailsState.draftResyncKey}`}
-            objectNameSingulars={[CoreObjectNameSingular.MessageList]}
-            defaultValue={detailsState.listId}
-            onChange={detailsState.setListId}
-            onCreate={handleCreateList}
-          />
+          <StyledControl>
+            <FormSingleRecordPicker
+              key={`list-${detailsState.draftResyncKey}`}
+              objectNameSingulars={[CoreObjectNameSingular.MessageList]}
+              defaultValue={detailsState.listId}
+              onChange={detailsState.setListId}
+              onCreate={handleCreateList}
+            />
+          </StyledControl>
         </EmailComposerFieldRow>
         {hasTopicOptions && (
           <EmailComposerFieldRow
             label={t`Unsubscribe topic`}
             labelMinWidth={LABEL_MIN_WIDTH}
           >
-            <Select
-              dropdownId="campaign-composer-unsubscribe-topic"
-              fullWidth
-              value={detailsState.unsubscribeTopicId ?? ''}
-              options={topicOptions}
-              emptyOption={{ label: t`No topic`, value: '' }}
-              onChange={(value) =>
-                detailsState.setUnsubscribeTopicId(value === '' ? null : value)
-              }
-            />
+            <StyledControl>
+              <Select
+                dropdownId="campaign-composer-unsubscribe-topic"
+                fullWidth
+                value={detailsState.unsubscribeTopicId ?? ''}
+                options={topicOptions}
+                emptyOption={{ label: t`No topic`, value: '' }}
+                onChange={(value) =>
+                  detailsState.setUnsubscribeTopicId(
+                    value === '' ? null : value,
+                  )
+                }
+              />
+            </StyledControl>
           </EmailComposerFieldRow>
         )}
         <EmailComposerFieldRow
