@@ -585,7 +585,7 @@ export interface View {
     __typename: 'View'
 }
 
-export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'LIST' | 'FIELDS_WIDGET' | 'TABLE_WIDGET' | 'KANBAN_WIDGET' | 'CALENDAR_WIDGET'
+export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'LIST' | 'FIELDS_WIDGET' | 'TABLE_WIDGET' | 'KANBAN_WIDGET' | 'LIST_WIDGET' | 'CALENDAR_WIDGET'
 
 export type ViewKey = 'INDEX'
 
@@ -6660,7 +6660,7 @@ viewFilterGroups?: (UpsertViewWidgetViewFilterGroupInput[] | null),
 viewSorts?: (UpsertViewWidgetViewSortInput[] | null)}
 
 export interface UpsertViewWidgetViewSettingsInput {
-/** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed. */
+/** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed. */
 type?: (ViewType | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null)}
@@ -9446,6 +9446,7 @@ export const enumViewType = {
    FIELDS_WIDGET: 'FIELDS_WIDGET' as const,
    TABLE_WIDGET: 'TABLE_WIDGET' as const,
    KANBAN_WIDGET: 'KANBAN_WIDGET' as const,
+   LIST_WIDGET: 'LIST_WIDGET' as const,
    CALENDAR_WIDGET: 'CALENDAR_WIDGET' as const
 }
 

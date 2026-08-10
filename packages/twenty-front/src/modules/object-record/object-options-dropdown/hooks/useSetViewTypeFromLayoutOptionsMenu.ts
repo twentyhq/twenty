@@ -117,6 +117,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }
         case ViewType.TABLE_WIDGET:
         case ViewType.KANBAN_WIDGET:
+        case ViewType.LIST_WIDGET:
         case ViewType.CALENDAR_WIDGET:
         case ViewType.FIELDS_WIDGET: {
           return;
