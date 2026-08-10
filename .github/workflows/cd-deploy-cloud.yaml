@@ -84,11 +84,22 @@ jobs:
             *) echo "not a known environment: '$ENV_NAME'"; exit 1 ;;
           esac
           [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "not a 40-char sha: $SHA"; exit 1; }
+          # Each box carries its own zone. They have always been co-located, but a
+          # zone that runs out of capacity for a machine family is a real event, and
+          # recovering from it can mean rebuilding one box somewhere else. A single
+          # shared zone would then break deploys to the box that did not move.
+          # GCP_ZONE stays the fallback so neither environment needs its own
+          # variable set until it actually diverges.
           if [ "$ENV_NAME" = "production" ]; then
             echo "vm=${{ vars.GCP_PRODUCTION_VM }}" >> "$GITHUB_OUTPUT"
+            ZONE="${{ vars.GCP_PRODUCTION_ZONE || vars.GCP_ZONE }}"
           else
             echo "vm=${{ vars.GCP_STAGING_VM }}" >> "$GITHUB_OUTPUT"
+            ZONE="${{ vars.GCP_STAGING_ZONE || vars.GCP_ZONE }}"
           fi
+          [ -n "$ZONE" ] || { echo "no zone configured for $ENV_NAME"; exit 1; }
+          echo "zone=$ZONE"
+          echo "zone=$ZONE" >> "$GITHUB_OUTPUT"
           echo "env_name=$ENV_NAME" >> "$GITHUB_OUTPUT"
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
 
@@ -119,7 +130,7 @@ jobs:
         run: |
           set -euo pipefail
           VM="${{ steps.target.outputs.vm }}"
-          ZONE="${{ vars.GCP_ZONE }}"
+          ZONE="${{ steps.target.outputs.zone }}"
           # GCP refuses `instances start` while a box is still STOPPING, and a
           # deploy fired moments after someone stopped staging lands exactly
           # there. Wait for a settled state before deciding what to do.
@@ -148,7 +159,7 @@ jobs:
         run: |
           set -euo pipefail
           gcloud compute ssh "${{ steps.target.outputs.vm }}" \
-            --zone "${{ vars.GCP_ZONE }}" --tunnel-through-iap --quiet \
+            --zone "${{ steps.target.outputs.zone }}" --tunnel-through-iap --quiet \
             --command "sudo /opt/twenty/cloud-deploy.sh ${{ steps.target.outputs.sha }}"
 
       - name: Verify from outside
@@ -162,9 +173,11 @@ jobs:
           [ "$CODE" = "403" ] || { echo "expected 403 from Access"; exit 1; }
 
       - name: Stop staging again when idle
-        # Production stays up. Staging costs ~$65/month running and ~$9 stopped,
-        # so a deploy that wakes it should put it back.
+        # Production stays up. Staging costs far more running than stopped, so a
+        # deploy that wakes it should put it back. Left off by default while a
+        # us-central1 capacity shortage makes any start a gamble: a box that is
+        # already up is worth more than the saving.
         if: steps.target.outputs.env_name == 'staging' && vars.STAGING_STOP_AFTER_DEPLOY == 'true'
         run: |
           gcloud compute instances stop "${{ steps.target.outputs.vm }}" \
-            --zone "${{ vars.GCP_ZONE }}" --async
+            --zone "${{ steps.target.outputs.zone }}" --async
