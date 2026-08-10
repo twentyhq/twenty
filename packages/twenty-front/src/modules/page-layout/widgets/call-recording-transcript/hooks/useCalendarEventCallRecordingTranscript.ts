@@ -53,28 +53,35 @@ export const useCalendarEventCallRecordingTranscript = (): {
       ? targetRecordIdentifier.id
       : undefined;
 
-  const hasRequiredFieldReadPermission =
-    REQUIRED_CALL_RECORDING_FIELD_NAMES.every((fieldName) => {
-      const fieldMetadataItem = callRecordingObjectMetadataItem.fields.find(
-        (field) => field.name === fieldName,
-      );
+  const requiredFieldMetadataItems = REQUIRED_CALL_RECORDING_FIELD_NAMES.map(
+    (requiredFieldName) =>
+      callRecordingObjectMetadataItem.fields.find(
+        (field) => field.name === requiredFieldName,
+      ),
+  ).filter(isDefined);
 
-      if (!isDefined(fieldMetadataItem)) {
-        return false;
-      }
+  const hasRequiredFieldMetadata =
+    requiredFieldMetadataItems.length ===
+    REQUIRED_CALL_RECORDING_FIELD_NAMES.length;
 
-      return (
+  const restrictedFieldNames = requiredFieldMetadataItems
+    .filter(
+      (fieldMetadataItem) =>
         callRecordingObjectPermissions.restrictedFields[fieldMetadataItem.id]
-          ?.canRead !== false
-      );
-    });
+          ?.canRead === false,
+    )
+    .map(
+      (fieldMetadataItem) => fieldMetadataItem.label || fieldMetadataItem.name,
+    );
 
-  const hasCallRecordingTranscriptReadPermission =
-    callRecordingObjectPermissions.canReadObjectRecords &&
-    hasRequiredFieldReadPermission;
+  const canReadCallRecordingObjectRecords =
+    callRecordingObjectPermissions.canReadObjectRecords;
 
   const shouldSkipQuery =
-    !isDefined(calendarEventId) || !hasCallRecordingTranscriptReadPermission;
+    !isDefined(calendarEventId) ||
+    !hasRequiredFieldMetadata ||
+    !canReadCallRecordingObjectRecords ||
+    restrictedFieldNames.length > 0;
 
   const {
     records: callRecordings,
@@ -100,12 +107,33 @@ export const useCalendarEventCallRecordingTranscript = (): {
     return { callRecordingTranscriptState: { state: 'UNSUPPORTED' } };
   }
 
-  if (!hasCallRecordingTranscriptReadPermission) {
-    return { callRecordingTranscriptState: { state: 'FORBIDDEN' } };
+  if (!hasRequiredFieldMetadata) {
+    return { callRecordingTranscriptState: { state: 'UNAVAILABLE' } };
+  }
+
+  if (!canReadCallRecordingObjectRecords) {
+    return {
+      callRecordingTranscriptState: {
+        state: 'FORBIDDEN',
+        restriction: {
+          type: 'object',
+          objectName: callRecordingObjectMetadataItem.labelSingular,
+        },
+      },
+    };
+  }
+
+  if (restrictedFieldNames.length > 0) {
+    return {
+      callRecordingTranscriptState: {
+        state: 'FORBIDDEN',
+        restriction: { type: 'field', fieldNames: restrictedFieldNames },
+      },
+    };
   }
 
   if (isDefined(error)) {
-    return { callRecordingTranscriptState: { state: 'QUERY_ERROR' } };
+    return { callRecordingTranscriptState: { state: 'QUERY_ERROR', error } };
   }
 
   if (loading) {

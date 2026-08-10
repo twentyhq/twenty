@@ -21,6 +21,8 @@ const requiredFields = ['status', 'transcript', 'createdAt'].map((name) => ({
   name,
 }));
 
+let mockCallRecordingObjectFields: { id: string; name: string }[];
+
 const mockCallRecordingPermissions: {
   canReadObjectRecords: boolean;
   restrictedFields: Record<string, { canRead: boolean }>;
@@ -39,7 +41,8 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
     objectMetadataItem: {
       id: 'call-recording-object-id',
-      fields: requiredFields,
+      labelSingular: 'Call Recording',
+      fields: mockCallRecordingObjectFields,
     },
   }),
 }));
@@ -82,6 +85,7 @@ describe('useCalendarEventCallRecordingTranscript', () => {
     };
     mockCallRecordingPermissions.canReadObjectRecords = true;
     mockCallRecordingPermissions.restrictedFields = {};
+    mockCallRecordingObjectFields = requiredFields;
     findManyRecordsResult = {
       records: [],
       loading: false,
@@ -117,13 +121,14 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'FORBIDDEN',
+      restriction: { type: 'object', objectName: 'Call Recording' },
     });
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({ skip: true }),
     );
   });
 
-  it('returns permission denied when a required field cannot be read', () => {
+  it('returns permission denied with the field name when a required field cannot be read', () => {
     mockCallRecordingPermissions.restrictedFields = {
       'transcript-field-id': { canRead: false },
     };
@@ -134,7 +139,25 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'FORBIDDEN',
+      restriction: { type: 'field', fieldNames: ['transcript'] },
     });
+  });
+
+  it('reports unavailable instead of forbidden when a required field has no metadata', () => {
+    mockCallRecordingObjectFields = requiredFields.filter(
+      (field) => field.name !== 'transcript',
+    );
+
+    const { result } = renderHook(() =>
+      useCalendarEventCallRecordingTranscript(),
+    );
+
+    expect(result.current.callRecordingTranscriptState).toEqual({
+      state: 'UNAVAILABLE',
+    });
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: true }),
+    );
   });
 
   it('fails safely outside a calendar event record page', () => {
@@ -186,7 +209,8 @@ describe('useCalendarEventCallRecordingTranscript', () => {
   });
 
   it('maps query failures without showing a no-recording state', () => {
-    findManyRecordsResult.error = new Error('Query failed');
+    const queryError = new Error('Query failed');
+    findManyRecordsResult.error = queryError;
 
     const { result } = renderHook(() =>
       useCalendarEventCallRecordingTranscript(),
@@ -194,6 +218,7 @@ describe('useCalendarEventCallRecordingTranscript', () => {
 
     expect(result.current.callRecordingTranscriptState).toEqual({
       state: 'QUERY_ERROR',
+      error: queryError,
     });
   });
 
