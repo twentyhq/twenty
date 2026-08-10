@@ -1,7 +1,6 @@
-import { cssInjectionPlugin } from '@/cli/utilities/build/common/front-component-build/css-injection-plugin';
-import { createJsxRuntimeRemoteWrapperPlugin } from '@/cli/utilities/build/common/front-component-build/jsx-runtime-remote-wrapper-plugin';
-import { stripCommentsPlugin } from '@/cli/utilities/build/common/front-component-build/strip-comments-plugin';
+import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { REACT_VENDOR_SPECIFIERS } from '@/cli/utilities/build/common/vendor-build/constants/react-vendor-specifiers.constant';
 import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
 import { enumerateVendorExportNames } from '@/cli/utilities/build/common/vendor-build/utils/enumerate-vendor-export-names';
 import { getVendorEntrySource } from '@/cli/utilities/build/common/vendor-build/utils/get-vendor-entry-source';
@@ -42,28 +41,16 @@ export const buildVendorBundle = async ({
   await ensureDir(dirname(absoluteBuiltPath));
 
   const buildResult = await esbuild.build({
+    ...getBaseFrontComponentBuildOptions(),
     stdin: {
       contents: getVendorEntrySource(vendor.dependencies),
       resolveDir: appPath,
       sourcefile: 'twenty-vendor-entry.js',
       loader: 'js',
     },
-    bundle: true,
-    splitting: false,
-    format: 'esm',
-    platform: 'browser',
     outfile: absoluteBuiltPath,
+    outExtension: undefined,
     external: [],
-    minify: true,
-    sourcemap: true,
-    metafile: true,
-    logLevel: 'silent',
-    define: { 'process.env.NODE_ENV': '"production"' },
-    plugins: [
-      createJsxRuntimeRemoteWrapperPlugin(),
-      cssInjectionPlugin,
-      stripCommentsPlugin,
-    ],
   });
 
   const undeclaredBundledReactPackages = isDefined(buildResult.metafile)
@@ -77,7 +64,9 @@ export const buildVendorBundle = async ({
     throw new Error(
       `Vendor dependencies pull in ${undeclaredBundledReactPackages.join(' and ')} without declaring ${undeclaredBundledReactPackages.length > 1 ? 'them' : 'it'}. Add ${undeclaredBundledReactPackages
         .map((packageName) =>
-          packageName === 'react-dom' ? '"react-dom/client"' : '"react"',
+          packageName === REACT_VENDOR_SPECIFIERS.reactDom
+            ? `"${REACT_VENDOR_SPECIFIERS.reactDomClient}"`
+            : `"${REACT_VENDOR_SPECIFIERS.react}"`,
         )
         .join(' and ')} to defineVendor dependencies so components and vendored libraries share one instance.`,
     );

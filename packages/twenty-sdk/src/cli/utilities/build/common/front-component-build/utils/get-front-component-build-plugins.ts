@@ -16,21 +16,15 @@ type GetFrontComponentBuildPluginsOptions = {
 
 export const getFrontComponentBuildPlugins = (
   options?: GetFrontComponentBuildPluginsOptions,
-): esbuild.Plugin[] => {
-  const pluginsResolvingVendoredSpecifiersBeforeTheJsxWrapper = isDefined(
-    options?.getVendorBuildContext,
-  )
+): esbuild.Plugin[] => [
+  ...(isDefined(options?.getVendorBuildContext)
     ? [createVendorShimPlugin(options.getVendorBuildContext)]
-    : [];
-
-  return [
-    ...pluginsResolvingVendoredSpecifiersBeforeTheJsxWrapper,
-    createJsxRuntimeRemoteWrapperPlugin(
-      options?.usePreact ? { usePreact: true } : undefined,
-    ),
-    ...(options?.usePreact ? [createPreactAliasPlugin()] : []),
-    jsxTransformToRemoteDomWorkerFormatPlugin,
-    cssInjectionPlugin,
-    stripCommentsPlugin,
-  ];
-};
+    : []),
+  createJsxRuntimeRemoteWrapperPlugin(
+    options?.usePreact ? { usePreact: true } : undefined,
+  ),
+  ...(options?.usePreact ? [createPreactAliasPlugin()] : []),
+  jsxTransformToRemoteDomWorkerFormatPlugin,
+  cssInjectionPlugin,
+  stripCommentsPlugin,
+];

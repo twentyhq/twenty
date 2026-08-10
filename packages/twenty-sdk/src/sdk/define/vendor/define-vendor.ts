@@ -4,7 +4,7 @@ import { type VendorConfig } from '@/sdk/define/vendor/vendor-config';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { VENDOR_BUNDLE_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
-const RESERVED_DEPENDENCY_PREFIXES = ['twenty-client-sdk'];
+const RESERVED_DEPENDENCY_PREFIXES = ['twenty-client-sdk', 'twenty-sdk'];
 
 export const defineVendor: DefineEntity<VendorConfig> = (config) => {
   const errors = [];

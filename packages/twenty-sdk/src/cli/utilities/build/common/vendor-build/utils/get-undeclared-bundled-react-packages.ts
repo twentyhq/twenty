@@ -1,6 +1,11 @@
 import type * as esbuild from 'esbuild';
 
-const REACT_PACKAGE_NAMES = ['react', 'react-dom'];
+import { REACT_VENDOR_SPECIFIERS } from '@/cli/utilities/build/common/vendor-build/constants/react-vendor-specifiers.constant';
+
+const REACT_PACKAGE_NAMES = [
+  REACT_VENDOR_SPECIFIERS.react,
+  REACT_VENDOR_SPECIFIERS.reactDom,
+];
 
 const buildPackageInputPattern = (packageName: string): RegExp =>
   new RegExp(`(^|/)node_modules/${packageName}/`);
