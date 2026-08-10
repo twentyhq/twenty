@@ -2,12 +2,8 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
 
-const buildMessage = (parts: unknown[]): ExtendedUIMessage =>
-  ({
-    id: 'message-1',
-    role: 'assistant',
-    parts,
-  }) as ExtendedUIMessage;
+const buildMessage = (parts: unknown[]): Pick<ExtendedUIMessage, 'parts'> =>
+  ({ parts }) as Pick<ExtendedUIMessage, 'parts'>;
 
 describe('hasSucceededWorkspaceSetupCompletion', () => {
   it('should detect a succeeded completion in an earlier message', () => {
