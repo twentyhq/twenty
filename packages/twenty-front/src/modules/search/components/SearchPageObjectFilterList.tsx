@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { TintedIconTile } from 'twenty-ui/data-display';
 import { IconCube } from 'twenty-ui/icon';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -76,10 +77,15 @@ export const SearchPageObjectFilterList = ({
     SEARCH_PAGE_OBJECT_FILTER_SELECTABLE_LIST_ID,
   );
 
-  const selectableItemIds = [
-    ALL_OBJECTS_ITEM_ID,
-    ...objectMetadataItems.map((objectMetadataItem) => objectMetadataItem.id),
-  ];
+  // A fresh array each render would make the selectable list rewrite its ids
+  // on every render, which is how these lists tip into an update loop.
+  const selectableItemIds = useMemo(
+    () => [
+      ALL_OBJECTS_ITEM_ID,
+      ...objectMetadataItems.map((objectMetadataItem) => objectMetadataItem.id),
+    ],
+    [objectMetadataItems],
+  );
 
   const { setSelectedItemId } = useSelectableList(
     SEARCH_PAGE_OBJECT_FILTER_SELECTABLE_LIST_ID,
