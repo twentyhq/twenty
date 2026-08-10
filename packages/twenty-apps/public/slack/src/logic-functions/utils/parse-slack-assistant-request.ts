@@ -124,7 +124,6 @@ export const parseSlackAssistantRequest = (
         parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
           slackThreadTimestamp: event.thread_ts,
           slackMessageTimestamp: event.ts,
-          isDirectMessage: kind === 'directMessage',
         }),
         isInExistingThread: isNonEmptyString(event.thread_ts),
       },
