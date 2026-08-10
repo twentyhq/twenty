@@ -45,6 +45,15 @@ const StyledHeading = styled.div`
   user-select: none;
 `;
 
+// Selectable list items are full height by default, which spreads them over
+// the rail once it has one. Keeping them in an auto-height list leaves each row
+// at its own height.
+const StyledList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[0.5]};
+`;
+
 type SearchPageObjectFilterListProps = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
   selectedObjectNameSingular: string | null;
@@ -120,37 +129,39 @@ export const SearchPageObjectFilterList = ({
         focusId={SEARCH_PAGE_OBJECT_FILTER_FOCUS_ID}
         selectableItemIdArray={selectableItemIds}
       >
-        <SelectableListItem
-          itemId={ALL_OBJECTS_ITEM_ID}
-          onEnter={() => onSelectObject(null)}
-        >
-          <MenuItemSelectAvatar
-            avatar={<TintedIconTile Icon={IconCube} />}
-            text={t`All objects`}
-            selected={selectedObjectNameSingular === null}
-            focused={selectedItemId === ALL_OBJECTS_ITEM_ID}
-            onClick={() => onSelectObject(null)}
-          />
-        </SelectableListItem>
-        {objectMetadataItems.map((objectMetadataItem) => (
+        <StyledList>
           <SelectableListItem
-            key={objectMetadataItem.id}
-            itemId={objectMetadataItem.id}
-            onEnter={() => onSelectObject(objectMetadataItem.nameSingular)}
+            itemId={ALL_OBJECTS_ITEM_ID}
+            onEnter={() => onSelectObject(null)}
           >
             <MenuItemSelectAvatar
-              avatar={
-                <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-              }
-              text={objectMetadataItem.labelPlural}
-              selected={
-                selectedObjectNameSingular === objectMetadataItem.nameSingular
-              }
-              focused={selectedItemId === objectMetadataItem.id}
-              onClick={() => onSelectObject(objectMetadataItem.nameSingular)}
+              avatar={<TintedIconTile Icon={IconCube} />}
+              text={t`All objects`}
+              selected={selectedObjectNameSingular === null}
+              focused={selectedItemId === ALL_OBJECTS_ITEM_ID}
+              onClick={() => onSelectObject(null)}
             />
           </SelectableListItem>
-        ))}
+          {objectMetadataItems.map((objectMetadataItem) => (
+            <SelectableListItem
+              key={objectMetadataItem.id}
+              itemId={objectMetadataItem.id}
+              onEnter={() => onSelectObject(objectMetadataItem.nameSingular)}
+            >
+              <MenuItemSelectAvatar
+                avatar={
+                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+                }
+                text={objectMetadataItem.labelPlural}
+                selected={
+                  selectedObjectNameSingular === objectMetadataItem.nameSingular
+                }
+                focused={selectedItemId === objectMetadataItem.id}
+                onClick={() => onSelectObject(objectMetadataItem.nameSingular)}
+              />
+            </SelectableListItem>
+          ))}
+        </StyledList>
       </SelectableList>
     </StyledContainer>
   );
