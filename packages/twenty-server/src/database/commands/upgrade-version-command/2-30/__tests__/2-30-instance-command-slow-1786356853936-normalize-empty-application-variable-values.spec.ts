@@ -1,6 +1,6 @@
 import { type DataSource } from 'typeorm';
 
-import { NormalizeEmptyApplicationVariableValuesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-slow-1786029294001-normalize-empty-application-variable-values';
+import { NormalizeEmptyApplicationVariableValuesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-slow-1786356853936-normalize-empty-application-variable-values';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
