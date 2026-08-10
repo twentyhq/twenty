@@ -1,49 +1,40 @@
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
-import { getProviderFromCacheKey } from 'src/engine/workspace-cache/utils/get-provider-from-cache-key.util';
 
 export const demoteColdStorageEntries = <T, TKeyName>({
   localCache,
-  keyNameByEligiblePrefix,
-  hotEntriesPerPrefix,
+  hotEntriesPerKeyName,
   serialize,
 }: {
-  localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T>>;
-  keyNameByEligiblePrefix: ReadonlyMap<string, TKeyName>;
-  hotEntriesPerPrefix: number;
+  localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T, TKeyName>>;
+  hotEntriesPerKeyName: number;
   serialize: (params: {
     localKey: string;
     keyName: TKeyName;
     data: T;
   }) => Buffer | undefined;
 }): number => {
-  const hotByPrefix = new Map<
-    string,
+  const hotByKeyName = new Map<
+    TKeyName,
     { localKey: string; hash: string; lastReadAt: number }[]
   >();
 
   for (const [localKey, entry] of localCache) {
-    const prefix = getProviderFromCacheKey(localKey);
-
-    if (!keyNameByEligiblePrefix.has(prefix)) {
-      continue;
-    }
-
     for (const [hash, version] of entry.versions) {
       if (version.state !== 'hot') {
         continue;
       }
 
-      const hot = hotByPrefix.get(prefix) ?? [];
+      const hot = hotByKeyName.get(entry.keyName) ?? [];
 
       hot.push({ localKey, hash, lastReadAt: version.lastReadAt });
-      hotByPrefix.set(prefix, hot);
+      hotByKeyName.set(entry.keyName, hot);
     }
   }
 
   let demoted = 0;
 
-  for (const [prefix, hot] of hotByPrefix) {
-    if (hot.length <= hotEntriesPerPrefix) {
+  for (const hot of hotByKeyName.values()) {
+    if (hot.length <= hotEntriesPerKeyName) {
       continue;
     }
 
@@ -51,27 +42,26 @@ export const demoteColdStorageEntries = <T, TKeyName>({
 
     for (const { localKey, hash } of hot.slice(
       0,
-      hot.length - hotEntriesPerPrefix,
+      hot.length - hotEntriesPerKeyName,
     )) {
-      const version = localCache.get(localKey)?.versions.get(hash);
+      const entry = localCache.get(localKey);
+      const version = entry?.versions.get(hash);
 
-      if (version?.state !== 'hot') {
+      if (!entry || version?.state !== 'hot') {
         continue;
       }
 
-      const keyName = keyNameByEligiblePrefix.get(prefix);
-
-      if (keyName === undefined) {
-        continue;
-      }
-
-      const blob = serialize({ localKey, keyName, data: version.data });
+      const blob = serialize({
+        localKey,
+        keyName: entry.keyName,
+        data: version.data,
+      });
 
       if (blob === undefined) {
         continue;
       }
 
-      localCache.get(localKey)?.versions.set(hash, {
+      entry.versions.set(hash, {
         state: 'cold',
         blob,
         lastReadAt: version.lastReadAt,

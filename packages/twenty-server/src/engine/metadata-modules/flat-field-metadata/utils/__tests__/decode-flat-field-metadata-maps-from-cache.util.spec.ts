@@ -42,20 +42,6 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
     });
   });
 
-  it('should be idempotent, so decoding a payload that was never encoded is safe', () => {
-    const decodedOnce = decodeFlatFieldMetadataMapsFromCache(
-      encodeOne({
-        name: 'firstName',
-        viewFieldIds: ['view-field-1'],
-        viewFilterIds: [],
-      }),
-    );
-
-    expect(decodeFlatFieldMetadataMapsFromCache(decodedOnce)).toEqual(
-      decodedOnce,
-    );
-  });
-
   it('should round trip a field through JSON, as the cache storage layer does', () => {
     const encoded = JSON.parse(
       JSON.stringify(

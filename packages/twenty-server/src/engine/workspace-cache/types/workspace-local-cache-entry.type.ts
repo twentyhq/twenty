@@ -12,7 +12,8 @@ export type ColdVersionEntry = {
 
 export type VersionEntry<T> = HotVersionEntry<T> | ColdVersionEntry;
 
-export type WorkspaceLocalCacheEntry<T> = {
+export type WorkspaceLocalCacheEntry<T, TKeyName = string> = {
+  keyName: TKeyName;
   versions: Map<string, VersionEntry<T>>;
   latestHash: string;
   lastHashCheckedAt: number;

@@ -4,13 +4,18 @@ import { demoteColdStorageEntries } from 'src/engine/workspace-cache/utils/demot
 const FIELD_METADATA = 'flat-maps:field-metadata';
 const ORM = 'orm:entity-metadatas';
 
-const hotEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
+const hotEntry = (
+  lastReadAt: number,
+  keyName = 'flatFieldMetadataMaps',
+): WorkspaceLocalCacheEntry<string> => ({
+  keyName,
   versions: new Map([['hash-1', { state: 'hot', data: 'data', lastReadAt }]]),
   latestHash: 'hash-1',
   lastHashCheckedAt: lastReadAt,
 });
 
 const coldEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
+  keyName: 'flatFieldMetadataMaps',
   versions: new Map([
     ['hash-1', { state: 'cold', blob: Buffer.from('{}'), lastReadAt }],
   ]),
@@ -22,15 +27,12 @@ const serialize = () => Buffer.from('serialized');
 
 const demote = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
-  hotEntriesPerPrefix: number,
+  hotEntriesPerKeyName: number,
   overrides?: { serialize?: () => Buffer | undefined },
 ) =>
   demoteColdStorageEntries({
     localCache,
-    keyNameByEligiblePrefix: new Map([
-      [FIELD_METADATA, 'flatFieldMetadataMaps'],
-    ]),
-    hotEntriesPerPrefix,
+    hotEntriesPerKeyName,
     serialize: overrides?.serialize ?? serialize,
   });
 
@@ -88,13 +90,19 @@ describe('demoteColdStorageEntries', () => {
     ).toMatchObject({ state: 'hot' });
   });
 
-  it('should never demote a provider that is not eligible', () => {
+  it('should budget each key name independently', () => {
     const localCache = new Map([
-      [`${ORM}:ws-a`, hotEntry(1)],
-      [`${ORM}:ws-b`, hotEntry(2)],
+      [`${FIELD_METADATA}:ws-a`, hotEntry(1)],
+      [`${FIELD_METADATA}:ws-b`, hotEntry(2)],
+      [`${ORM}:ws-a`, hotEntry(3, 'ORMEntityMetadatas')],
     ]);
 
-    expect(demote(localCache, 1)).toBe(0);
+    expect(demote(localCache, 1)).toBe(1);
+    expect(localCache.get(`${ORM}:ws-a`)?.versions.get('hash-1')).toMatchObject(
+      {
+        state: 'hot',
+      },
+    );
   });
 
   it('should not count an already cold entry against the hot budget', () => {

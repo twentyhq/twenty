@@ -86,10 +86,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
-  private readonly coldStorageKeyNameByPrefix = new Map<
-    string,
-    WorkspaceCacheKeyName
-  >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -134,11 +130,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
-        } else if (workspaceCacheKeyName !== 'featureFlagsMap') {
-          this.coldStorageKeyNameByPrefix.set(
-            WORKSPACE_CACHE_KEYS_V2[workspaceCacheKeyName],
-            workspaceCacheKeyName,
-          );
         }
       }
     }
@@ -443,20 +434,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
 
-    const allValues = await this.cacheStorage.mget<
-      StoredCacheDataType | string
-    >(allKeys);
+    const allValues = await this.cacheStorage.mget<CacheDataType | string>(
+      allKeys,
+    );
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
-      const rawData = allValues[index * 2] as StoredCacheDataType | undefined;
+      const rawData = allValues[index * 2] as CacheDataType | undefined;
       const hash = allValues[index * 2 + 1] as string | undefined;
 
       if (isDefined(rawData) && isDefined(hash)) {
         let data: CacheDataType;
 
         try {
-          data =
-            this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
+          data = this.isCompactStorageEnabled(workspaceId)
+            ? this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData)
+            : rawData;
         } catch (error) {
           this.logger.warn(
             `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
@@ -647,7 +639,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     let entry = this.localCache.get(localKey);
 
     if (!isDefined(entry)) {
-      entry = { versions: new Map(), latestHash: '', lastHashCheckedAt: 0 };
+      entry = {
+        keyName,
+        versions: new Map(),
+        latestHash: '',
+        lastHashCheckedAt: 0,
+      };
       this.localCache.set(localKey, entry);
     }
 
@@ -686,12 +683,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private demoteColdEntries(): void {
     demoteColdStorageEntries({
       localCache: this.localCache,
-      keyNameByEligiblePrefix: this.coldStorageKeyNameByPrefix,
-      hotEntriesPerPrefix: HOT_ENTRIES_PER_PROVIDER,
+      hotEntriesPerKeyName: HOT_ENTRIES_PER_PROVIDER,
       serialize: ({ localKey, keyName, data }) => {
         const workspaceId = localKey.slice(localKey.lastIndexOf(':') + 1);
 
-        if (!this.isCompactStorageEnabled(workspaceId)) {
+        if (
+          this.localDataOnlyKeys.has(keyName) ||
+          keyName === 'featureFlagsMap' ||
+          !this.isCompactStorageEnabled(workspaceId)
+        ) {
           return undefined;
         }
 
