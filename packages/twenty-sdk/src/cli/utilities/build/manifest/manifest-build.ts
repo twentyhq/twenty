@@ -9,8 +9,6 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
-import { getVendorDependenciesErrors } from '@/cli/utilities/build/manifest/utils/get-vendor-dependencies-errors';
-import { getVendorDependenciesWarnings } from '@/cli/utilities/build/manifest/utils/get-vendor-dependencies-warnings';
 import { normalizeVendorDependencies } from '@/cli/utilities/build/manifest/utils/normalize-vendor-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
@@ -511,9 +509,6 @@ export const buildManifest = async (
         const dependencies = normalizeVendorDependencies(
           extract.config.dependencies ?? [],
         );
-
-        errors.push(...getVendorDependenciesErrors(dependencies));
-        warnings.push(...getVendorDependenciesWarnings(dependencies));
 
         vendorManifests.push({
           dependencies,

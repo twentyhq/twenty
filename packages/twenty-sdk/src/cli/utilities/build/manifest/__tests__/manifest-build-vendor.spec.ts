@@ -5,8 +5,6 @@ import {
   VENDOR_APP_PATH,
 } from '@/cli/__tests__/apps/fixture-paths';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
-import { getVendorDependenciesErrors } from '@/cli/utilities/build/manifest/utils/get-vendor-dependencies-errors';
-import { getVendorDependenciesWarnings } from '@/cli/utilities/build/manifest/utils/get-vendor-dependencies-warnings';
 import { normalizeVendorDependencies } from '@/cli/utilities/build/manifest/utils/normalize-vendor-dependencies';
 
 describe('buildManifest vendor', () => {
@@ -46,35 +44,5 @@ describe('normalizeVendorDependencies', () => {
     expect(normalizeVendorDependencies(['lodash', 'date-fns', 'lodash'])).toEqual(
       ['date-fns', 'lodash'],
     );
-  });
-});
-
-describe('getVendorDependenciesErrors', () => {
-  it('rejects react-dom without react', () => {
-    expect(getVendorDependenciesErrors(['react-dom/client'])).toHaveLength(1);
-  });
-
-  it('accepts react-dom alongside react', () => {
-    expect(
-      getVendorDependenciesErrors(['react', 'react-dom/client']),
-    ).toEqual([]);
-  });
-
-  it('accepts dependencies unrelated to react', () => {
-    expect(getVendorDependenciesErrors(['date-fns'])).toEqual([]);
-  });
-});
-
-describe('getVendorDependenciesWarnings', () => {
-  it('warns when react is vendored without react-dom', () => {
-    expect(
-      getVendorDependenciesWarnings(['react', 'react/jsx-runtime']),
-    ).toHaveLength(1);
-  });
-
-  it('stays silent when both are vendored', () => {
-    expect(
-      getVendorDependenciesWarnings(['react', 'react-dom/client']),
-    ).toEqual([]);
   });
 });
