@@ -13,12 +13,6 @@ describe('buildWorkspaceSetupChatThreadId', () => {
     ).toBe(THREAD_ID_ALREADY_STORED_FOR_THIS_PAIR);
   });
 
-  it('should be stable across calls', () => {
-    expect(
-      buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId }),
-    ).toBe(buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId }));
-  });
-
   it('should give each workspace and user workspace pair its own thread id', () => {
     const otherWorkspaceId = '20202020-3d15-4f4d-a9b6-1fd1d0a8b5c0';
     const otherUserWorkspaceId = '20202020-7a6f-4b2e-9c33-2f1e6b7c8d90';
