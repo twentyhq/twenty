@@ -576,7 +576,7 @@ export class AgentChatStreamingService {
         workspace.id,
       );
 
-      if (fileParts.length > 0) {
+      if (isNonEmptyArray(fileParts)) {
         const attachmentMessage = await this.agentChatService.addMessage({
           threadId,
           uiMessage: {
