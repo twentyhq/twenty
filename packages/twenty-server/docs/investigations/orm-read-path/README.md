@@ -53,7 +53,7 @@ whole of it.
 | 7 | pagination | `common-find-many-query-runner.service.ts:171` | `take(n)` → two-phase `distinctAlias` query keyed on the primary column |
 | 8 | permission check | `workspace-select-query-builder.ts:375-385` → `permissions.utils.ts:270` | reads `expressionMap.aliases[0].metadata.name`, `expressionMap.selects`, `expressionMap.joinAttributes`, `expressionMap.orderBys`, and **regex-parses `"alias"."column"` back out of the select strings** (`permissions.utils.ts:385`, `:436`) |
 | 9 | row-level permission predicates | `apply-row-level-permission-predicates.util.ts:24` | `Brackets` + `.andWhere`. Predicates come from `FlatObjectMetadata` + `flatFieldMetadataMaps` through the *same* filter parser as user filters. No `EntityMetadata` |
-| 10 | soft delete | `applyDeletedAtToBuilder` / `withDeleted()` | the implicit `deletedAt IS NULL` comes from the `deleteDate: true` column flag |
+| 10 | soft delete | `applyDeletedAtToBuilder` / `withDeleted()` | the implicit `deletedAt IS NULL` comes from the `deleteDate: true` column flag. **Not uniform — see below** |
 | 11 | execute + hydrate | `workspace-select-query-builder.ts:138-166` | `super.getMany()` — pg rows → entity instances with **flat** properties |
 | 12 | flat → nested | `format-result.util.ts:51` | nothing. Rebuilds composites from `flatFieldMetadataMaps` |
 | 13 | relations | `process-nested-relations-v2.helper.ts:63` | **separate queries, never joins.** One query per relation field, `IN (:...ids)`, plus a `CROSS JOIN LATERAL (VALUES ...)` for the per-parent limit built as a raw string (`:504-537`) |
@@ -62,6 +62,16 @@ whole of it.
 
 Steps 12, 14 and 15 are three full walks of every record after the driver has already
 built one object per row.
+
+**Soft delete is not one rule.** Step 10's implicit `deletedAt IS NULL` does not apply
+uniformly, and a reimplementation that assumes it does will diverge. To-one relation
+loading deliberately opts out: `process-nested-relations-v2.helper.ts:213-217` forces
+`deletedAt` into the select and calls `withDeleted()` for `MANY_TO_ONE`, then
+`assignRelationResults` (`:573-575`) sets both the relation **and** its foreign key to
+`null` when the target turns out to be soft-deleted, and strips `deletedAt` back out of
+the payload unless the caller selected it (`:577-583`). So a soft-deleted parent is
+fetched and then nulled in JS, rather than filtered in SQL. Any generated query must
+reproduce that, including the FK nulling, which is observable in the GraphQL response.
 
 ## 3. The six questions
 
@@ -95,7 +105,8 @@ Almost nothing, and this is the load-bearing finding.
 - **Computed / derived fields**: none on the entity. `searchVector` is a real generated
   column, handled in DDL.
 - The genuine semantics TypeORM contributes on reads are three flags: `deleteDate` (implicit
-  soft-delete filter), `primary` (the `distinctAlias` key), and relation metadata for the
+  soft-delete filter, plus the `withDeleted()` opt-out that to-one relation loading relies
+  on), `primary` (the `distinctAlias` key), and relation metadata for the
   order-by join in step 5. Two are one-liners; the third is discussed in 3.4.
 
 ### 3.3 How are row-level permission predicates applied?
@@ -193,17 +204,23 @@ Synthetic workspaces shaped like the measured one, built through the same
 `EntitySchemaTransformer` + `EntityMetadataBuilder` pair as
 `workspace-orm-entity-metadatas-cache.service.ts:81`.
 
-| shape | columns | relations | build (median) | traced objects |
+Relations are declared on **both** sides, as production does: each RELATION field is its own
+`fieldMetadata` row, and `determineSchemaRelationDetails:79` sets `inverseSide` to the real
+target field name. Declaring only the owning side builds a smaller, differently shaped graph
+and understates the cost.
+
+| shape | columns | relations | build (median of 3 runs) | traced objects |
 |---|---|---|---|---|
-| 33 objects, no relations | 726 | 0 | 3.3 ms | 2,948 |
-| 33 objects, 4 relations each | 726 | 132 | 12.7 ms | 4,015 |
-| 100 objects, 4 relations each | 2,200 | 400 | 24.5 ms | 12,122 |
+| 33 objects, no relations | 726 | 0 | 3.2 ms | 2,948 |
+| 33 objects, 4 relations each | 726 | 264 | 12.6 ms | 4,800 |
+| 100 objects, 4 relations each | 2,200 | 800 | 25.5 ms | 14,515 |
 
 Two things to take from this, and one not to.
 
-- Build time is 3-4ms for a dev-sized workspace, matching what the
-  `charles/orm-metadata-serializable` branch found, and it is dominated by relations:
-  adding 132 relations to the same 726 columns costs 4x the build time and 36% more objects.
+- Build time is ~3ms for a dev-sized workspace with no relations, in the same range as what
+  the `charles/orm-metadata-serializable` branch found, and it is dominated by relations:
+  adding 264 relation entries to the same 726 columns costs 4x the build time and 63% more
+  objects.
 - Cost is linear in columns, so it scales with custom fields, not with traffic.
 - **Do not compare the object counts to the 40,726 from the heap snapshot.** This traversal
   dedupes strings globally and does not count property backing stores, so it is a lower

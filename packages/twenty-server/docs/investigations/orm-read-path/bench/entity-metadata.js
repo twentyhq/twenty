@@ -3,51 +3,70 @@ const { DataSource, EntitySchema } = require('typeorm');
 const { EntitySchemaTransformer } = require('typeorm/entity-schema/EntitySchemaTransformer');
 const { EntityMetadataBuilder } = require('typeorm/metadata-builder/EntityMetadataBuilder');
 
-// Mirrors EntitySchemaFactory: one EntitySchema per object metadata row,
-// flat columns (composites already expanded), relations for RELATION fields.
+// Mirrors EntitySchemaFactory: one EntitySchema per object metadata row, flat columns
+// (composites already expanded), and a relation entry for every RELATION field.
+//
+// Both sides are declared, as production does: a RELATION field exists as its own
+// fieldMetadata row on each object, and determineSchemaRelationDetails sets inverseSide to
+// the real target field name. Declaring only the owning side builds a smaller and
+// structurally different graph than the one the cache actually holds.
 const buildSchemas = ({ objectCount, columnsPerObject, relationsPerObject }) => {
   const names = Array.from({ length: objectCount }, (_, i) => `object${i}`);
+  const columnsByObject = new Map(
+    names.map((name, index) => {
+      const columns = {
+        id: { name: 'id', type: 'uuid', primary: true, nullable: false },
+        createdAt: { name: 'createdAt', type: 'timestamptz', precision: 3, createDate: true, nullable: false },
+        updatedAt: { name: 'updatedAt', type: 'timestamptz', precision: 3, updateDate: true, nullable: false },
+        deletedAt: { name: 'deletedAt', type: 'timestamptz', precision: 3, deleteDate: true, nullable: true },
+      };
 
-  return names.map((name, index) => {
-    const columns = {
-      id: { name: 'id', type: 'uuid', primary: true, nullable: false },
-      createdAt: { name: 'createdAt', type: 'timestamptz', precision: 3, createDate: true, nullable: false },
-      updatedAt: { name: 'updatedAt', type: 'timestamptz', precision: 3, updateDate: true, nullable: false },
-      deletedAt: { name: 'deletedAt', type: 'timestamptz', precision: 3, deleteDate: true, nullable: true },
-    };
+      for (let c = 0; c < columnsPerObject; c++) {
+        columns[`object${index}Field${c}`] = { name: `object${index}Field${c}`, type: 'text', nullable: true };
+      }
 
-    for (let c = 0; c < columnsPerObject; c++) {
-      columns[`object${index}Field${c}`] = { name: `object${index}Field${c}`, type: 'text', nullable: true };
-    }
+      return [name, columns];
+    }),
+  );
+  const relationsByObject = new Map(names.map((name) => [name, {}]));
 
-    const relations = {};
-
+  names.forEach((name, index) => {
     for (let r = 0; r < relationsPerObject; r++) {
       const targetName = names[(index + r + 1) % objectCount];
-      const relationName = `relation${r}`;
+      const owningField = `object${index}Relation${r}`;
+      const inverseField = `object${index}Inverse${r}`;
 
-      columns[`${relationName}Id`] = { name: `${relationName}Id`, type: 'uuid', nullable: true };
-      relations[relationName] = {
+      columnsByObject.get(name)[`${owningField}Id`] = {
+        name: `${owningField}Id`,
+        type: 'uuid',
+        nullable: true,
+      };
+
+      relationsByObject.get(name)[owningField] = {
         type: 'many-to-one',
         target: targetName,
-        inverseSide: `inverseOf${name}${r}`,
-        joinColumn: { name: `${relationName}Id` },
+        inverseSide: inverseField,
+        joinColumn: { name: `${owningField}Id` },
       };
-      relations[`inverseOf${targetName}${r}`] = undefined;
-    }
 
-    for (const key of Object.keys(relations)) {
-      if (relations[key] === undefined) delete relations[key];
+      relationsByObject.get(targetName)[inverseField] = {
+        type: 'one-to-many',
+        target: name,
+        inverseSide: owningField,
+      };
     }
-
-    return new EntitySchema({
-      name,
-      tableName: `_${name}`,
-      schema: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
-      columns,
-      relations,
-    });
   });
+
+  return names.map(
+    (name) =>
+      new EntitySchema({
+        name,
+        tableName: `_${name}`,
+        schema: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        columns: columnsByObject.get(name),
+        relations: relationsByObject.get(name),
+      }),
+  );
 };
 
 const countObjects = (roots, skipKeys) => {
