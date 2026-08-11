@@ -5,6 +5,7 @@ import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-field-max-length.constant';
 import { WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-max-tags.constant';
 import { WORKSPACE_COMPANY_ENRICHMENT_SUMMARY_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-summary-max-length.constant';
+import { sanitizePromptContextLineArray } from 'src/utils/sanitize-prompt-context-line-array.util';
 import { sanitizePromptContextLine } from 'src/utils/sanitize-prompt-context-line.util';
 
 const CONTROL_CHARACTERS_EXCEPT_LINE_BREAKS_PATTERN =
@@ -59,12 +60,11 @@ export const sanitizeWorkspaceCompanyEnrichment = (
     founded: sanitizeFiniteNumber(value.founded),
     headline: sanitizeSingleLineText(value.headline),
     summary: sanitizeSummaryText(value.summary),
-    tags: Array.isArray(value.tags)
-      ? value.tags
-          .map((tag) => sanitizeSingleLineText(tag))
-          .filter(isNonEmptyString)
-          .slice(0, WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS)
-      : [],
+    tags: sanitizePromptContextLineArray({
+      value: value.tags,
+      maxLength: WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
+      maxItems: WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS,
+    }),
     locality: sanitizeSingleLineText(value.locality),
     region: sanitizeSingleLineText(value.region),
     country: sanitizeSingleLineText(value.country),
