@@ -53,7 +53,7 @@ export class FrontComponentResolver {
 
     return (
       flatApplicationMaps.byId[frontComponent.applicationId]
-        ?.sharedDependenciesChecksum ?? null
+        ?.frontComponentSharedDependenciesChecksum ?? null
     );
   }
 

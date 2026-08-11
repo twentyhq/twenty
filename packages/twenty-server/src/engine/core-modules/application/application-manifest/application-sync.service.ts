@@ -285,7 +285,7 @@ export class ApplicationSyncService {
       await this.broadcastFrontComponentSharedDependenciesChecksumUpdates({
         workspaceId,
         applicationId: application.id,
-        frontComponentSharedDependenciesChecksum: sharedDependenciesChecksum,
+        sharedDependenciesChecksum,
       });
     }
 

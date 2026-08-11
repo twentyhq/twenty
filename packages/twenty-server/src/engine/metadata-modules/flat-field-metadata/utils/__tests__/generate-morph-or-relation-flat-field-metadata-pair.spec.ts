@@ -44,8 +44,8 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   deletedAt: null,
   isSdkLayerStale: true,
   sdkClientCoreChecksum: null,
-  vendorChecksum: null,
-  vendorBuiltPath: null,
+  frontComponentSharedDependenciesChecksum: null,
+  frontComponentSharedDependenciesBuiltPath: null,
 };
 
 type GenerateMorphOrRelationFlatFieldMetadataPairTestInput = Parameters<
