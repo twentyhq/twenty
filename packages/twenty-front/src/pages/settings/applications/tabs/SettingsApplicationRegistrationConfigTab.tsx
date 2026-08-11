@@ -9,18 +9,15 @@ import {
   UpdateAdminApplicationRegistrationVariableDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
-import { Pill } from 'twenty-ui/data-display';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
-import { IconInfoCircle } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
+import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
 import { shouldDisplayVariable } from '~/pages/settings/applications/utils/shouldDisplayVariable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
@@ -74,19 +71,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledLabelRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledLabel = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: 11px;
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
 export const SettingsApplicationRegistrationConfigTab = ({
   registration,
   fromAdmin,
@@ -95,7 +79,6 @@ export const SettingsApplicationRegistrationConfigTab = ({
   fromAdmin?: boolean;
 }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const apolloAdminClient = useApolloAdminClient();
 
   const applicationRegistrationId = registration.id;
@@ -164,32 +147,14 @@ export const SettingsApplicationRegistrationConfigTab = ({
         />
         <StyledContainer>
           {variables.map((variable) => {
-            const tooltipId = `config-var-desc-${variable.key}`;
             return (
               <div key={variable.key}>
-                <StyledLabelRow>
-                  <StyledLabel>{variable.key}</StyledLabel>
-                  {variable.isDeprecated && <Pill label={t`Deprecated`} />}
-                  {isNonEmptyString(variable.description) && (
-                    <>
-                      <IconInfoCircle
-                        id={tooltipId}
-                        size={theme.icon.size.sm}
-                        color={theme.font.color.tertiary}
-                        style={{ outline: 'none', cursor: 'pointer' }}
-                      />
-                      <AppTooltip
-                        anchorSelect={`#${tooltipId}`}
-                        content={variable.description}
-                        offset={5}
-                        noArrow
-                        place="bottom"
-                        positionStrategy="fixed"
-                        delay={TooltipDelay.shortDelay}
-                      />
-                    </>
-                  )}
-                </StyledLabelRow>
+                <SettingsApplicationVariableLabelRow
+                  variableKey={variable.key}
+                  isDeprecated={variable.isDeprecated}
+                  description={variable.description}
+                  tooltipId={`config-var-desc-${variable.key}`}
+                />
                 <ConfigVariableInput
                   variable={variable as ConfigVariable}
                   onUpdate={handleUpdate}
