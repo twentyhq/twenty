@@ -107,13 +107,16 @@ export class BillingCreditService {
         `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey}), repairing derived state`,
       );
 
+      // Rebuilding from the ledger can overstate the balance by whatever
+      // usage ClickHouse has not ingested yet, and that value then stands for
+      // the period. Accepted here because the alternative is a grant that
+      // stays invisible for the whole period, and erring high is the direction
+      // the grant intended. The cap is left to be derived from the rebuilt
+      // balance, since the replayed grant may since have been revoked.
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
         rebuildCounter: true,
-        // The replayed grant is live, so whatever the failed first attempt
-        // left behind, the workspace has credits and must not stay capped.
-        shouldClearCap: true,
       });
 
       return null;
@@ -145,14 +148,19 @@ export class BillingCreditService {
 
     // A retried revocation must not take the same credits off the usage
     // counter twice, which would block a workspace that still has credits. It
-    // still has to repair, since the attempt that did revoke can have failed
-    // before refreshing, leaving revoked credits spendable until the period
-    // ends.
+    // still repairs the mirror, the cap flag and the cached subscription,
+    // since the attempt that did revoke can have failed before refreshing.
+    //
+    // The counter is deliberately left alone rather than rebuilt: a rebuild
+    // reads usage from ClickHouse, and any usage still in flight there would
+    // be frozen into the counter as extra credit for the rest of the period.
+    // That fires on every retry, including a double-clicked revoke, while the
+    // stale counter it would repair only happens when an attempt failed
+    // midway. Erring high is also the wrong direction for a revocation.
     if (!wasRevokedNow) {
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
-        rebuildCounter: true,
       });
 
       return grant;
@@ -176,7 +184,9 @@ export class BillingCreditService {
     return grant;
   }
 
-  private async syncMirrorBalance(workspaceId: string): Promise<void> {
+  // Returns what the ledger says is spendable, so callers rebuilding derived
+  // state can decide from the balance rather than assuming one.
+  private async syncMirrorBalance(workspaceId: string): Promise<number> {
     const activeCreditsMicro =
       await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
 
@@ -185,6 +195,8 @@ export class BillingCreditService {
       {},
       { creditBalanceMicro: activeCreditsMicro },
     );
+
+    return activeCreditsMicro;
   }
 
   // Keeps everything that reads a credit balance consistent with the ledger:
@@ -204,7 +216,7 @@ export class BillingCreditService {
     rebuildCounter?: boolean;
     shouldClearCap?: boolean;
   }): Promise<void> {
-    await this.syncMirrorBalance(workspaceId);
+    const activeCreditsMicro = await this.syncMirrorBalance(workspaceId);
 
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
@@ -227,36 +239,41 @@ export class BillingCreditService {
         periodStart,
       );
 
+      // A replayed grant may since have been revoked or expired, so the cap
+      // follows what the ledger actually holds rather than the caller's
+      // assumption.
       return this.clearCapAndSubscriptionCache(workspaceId, {
-        shouldClearCap,
+        shouldClearCap: activeCreditsMicro > 0,
       });
     }
 
     // Adjusting the warm counter instead of flushing it avoids recomputing
     // from ClickHouse while its async inserts for recent usage are still
     // landing, which would credit the workspace for usage it already spent.
-    const cachedAvailableCredits =
-      await this.billingUsageCacheService.getAvailableCredits(
-        workspaceId,
-        periodStart,
-      );
+    if (availableDeltaMicro !== 0) {
+      const cachedAvailableCredits =
+        await this.billingUsageCacheService.getAvailableCredits(
+          workspaceId,
+          periodStart,
+        );
 
-    if (isDefined(cachedAvailableCredits)) {
-      await this.billingUsageCacheService.adjustAvailableCredits(
-        workspaceId,
-        periodStart,
-        availableDeltaMicro,
-      );
-    } else if (availableDeltaMicro !== 0) {
-      // Nothing to adjust, and a reader that missed the counter before this
-      // write landed is still free to warm it from a balance that predates
-      // the grant. That value would then stand until the period ends, so mark
-      // the counter unwarmable for a short while and let readers compute
-      // straight from the ledger until the marker lapses.
-      await this.billingUsageCacheService.markAvailableCreditsStale(
-        workspaceId,
-        periodStart,
-      );
+      if (isDefined(cachedAvailableCredits)) {
+        await this.billingUsageCacheService.adjustAvailableCredits(
+          workspaceId,
+          periodStart,
+          availableDeltaMicro,
+        );
+      } else {
+        // Nothing to adjust, and a reader that missed the counter before this
+        // write landed is still free to warm it from a balance that predates
+        // the grant. That value would then stand until the period ends, so
+        // mark the counter unwarmable for a short while and let readers
+        // compute straight from the ledger until the marker lapses.
+        await this.billingUsageCacheService.markAvailableCreditsStale(
+          workspaceId,
+          periodStart,
+        );
+      }
     }
 
     return this.clearCapAndSubscriptionCache(workspaceId, { shouldClearCap });

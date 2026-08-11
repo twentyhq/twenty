@@ -347,14 +347,15 @@ describe('BillingCreditService', () => {
 
         expect(
           billingUsageCacheService.adjustAvailableCredits,
-        ).toHaveBeenCalledWith(workspaceId, PERIOD_START, 0);
+        ).not.toHaveBeenCalled();
       },
     );
 
-    // The attempt that did revoke can have failed before refreshing, leaving
-    // revoked credits spendable, so a retry has to repair without decrementing
-    // a second time.
-    it('repairs without a second decrement when the grant was already revoked', async () => {
+    // The attempt that did revoke can have failed before refreshing, so a retry
+    // repairs the mirror without decrementing twice. The counter is left alone
+    // on purpose: rebuilding it reads ClickHouse, and usage still in flight
+    // there would be frozen in as extra credit for the rest of the period.
+    it('repairs the mirror without touching the counter when already revoked', async () => {
       billingUsageCacheService.getAvailableCredits.mockResolvedValue(3_000_000);
       billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(0);
       billingCreditGrantService.revokeGrant.mockResolvedValue({
@@ -369,7 +370,7 @@ describe('BillingCreditService', () => {
       ).not.toHaveBeenCalled();
       expect(
         billingUsageCacheService.invalidateAvailableCredits,
-      ).toHaveBeenCalledWith(workspaceId, PERIOD_START);
+      ).not.toHaveBeenCalled();
       expect(billingCustomerRepository.update).toHaveBeenCalledWith(
         workspaceId,
         {},

@@ -137,7 +137,6 @@ export class BillingCreditRolloverService {
       workspaceId,
       availableDeltaMicro: carriedForwardMicro,
       rebuildCounter: hasReplayedGrant,
-      shouldClearCap: hasReplayedGrant || carriedForwardMicro > 0,
     });
   }
 }

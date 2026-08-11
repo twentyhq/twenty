@@ -146,7 +146,6 @@ describe('BillingCreditRolloverService', () => {
         workspaceId,
         availableDeltaMicro: 0,
         rebuildCounter: false,
-        shouldClearCap: false,
       });
     });
 
@@ -164,7 +163,6 @@ describe('BillingCreditRolloverService', () => {
         workspaceId,
         availableDeltaMicro: 0,
         rebuildCounter: true,
-        shouldClearCap: true,
       });
     });
 
