@@ -15,3 +15,9 @@ export const buildBillingUsageCounterAdjustmentKey = (
 ): string => {
   return `available-credits-adjusted:${workspaceId}:${adjustmentKey}`;
 };
+
+export const buildBillingUsageAvailableCreditsStaleMarkerPattern = (
+  workspaceId: string,
+): string => {
+  return `available-credits-stale:${workspaceId}:*`;
+};

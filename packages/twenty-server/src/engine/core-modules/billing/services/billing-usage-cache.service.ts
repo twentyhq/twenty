@@ -6,6 +6,7 @@ import { buildBillingUsageAvailableCreditsCacheKey } from 'src/engine/core-modul
 import { buildBillingUsageAvailableCreditsCachePattern } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-cache-pattern.util';
 import {
   buildBillingUsageAvailableCreditsStaleMarkerKey,
+  buildBillingUsageAvailableCreditsStaleMarkerPattern,
   buildBillingUsageCounterAdjustmentKey,
 } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-stale-marker-key.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -127,6 +128,15 @@ export class BillingUsageCacheService {
   async flushAvailableCredits(workspaceId: string): Promise<void> {
     await this.billingUsageCacheStorage.flushByPattern(
       buildBillingUsageAvailableCreditsCachePattern(workspaceId),
+    );
+  }
+
+  // Separate from flushAvailableCredits on purpose: flushing the counters must
+  // not drop the markers, or a reader mid-computation could warm a pre-grant
+  // balance straight back in. Clearing them is for resetting state wholesale.
+  async flushAvailableCreditsStaleMarkers(workspaceId: string): Promise<void> {
+    await this.billingUsageCacheStorage.flushByPattern(
+      buildBillingUsageAvailableCreditsStaleMarkerPattern(workspaceId),
     );
   }
 }
