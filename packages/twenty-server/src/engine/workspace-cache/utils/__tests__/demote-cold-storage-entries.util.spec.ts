@@ -20,16 +20,24 @@ const coldEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
 
 const serialize = () => Buffer.from('serialized');
 
+const NO_BUDGET_LIMIT = Number.POSITIVE_INFINITY;
+
 const demote = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
   hotEntriesPerProvider: number,
-  overrides?: { serialize?: () => Buffer | undefined },
+  overrides?: {
+    serialize?: () => Buffer | undefined;
+    budgetMs?: number;
+    now?: () => number;
+  },
 ) =>
   demoteColdStorageEntries({
     localCache,
     hotEntriesPerProvider,
+    budgetMs: overrides?.budgetMs ?? NO_BUDGET_LIMIT,
     serialize: overrides?.serialize ?? serialize,
-  });
+    now: overrides?.now,
+  }).demoted;
 
 describe('demoteColdStorageEntries', () => {
   it('should demote nothing when the provider is within its hot budget', () => {
@@ -107,5 +115,86 @@ describe('demoteColdStorageEntries', () => {
     ]);
 
     expect(demote(localCache, 1)).toBe(0);
+  });
+
+  describe('time budget', () => {
+    const clockAdvancingPerEntry = () => {
+      let elapsed = 0;
+
+      return () => {
+        const current = elapsed;
+
+        elapsed += 10;
+
+        return current;
+      };
+    };
+
+    const buildCache = (count: number) =>
+      new Map(
+        Array.from({ length: count }, (_, index) => [
+          `${FIELD_METADATA}:ws-${index}`,
+          hotEntry(index),
+        ]),
+      );
+
+    it('should stop once the budget is spent instead of draining the backlog', () => {
+      const localCache = buildCache(10);
+
+      const result = demoteColdStorageEntries({
+        localCache,
+        hotEntriesPerProvider: 0,
+        budgetMs: 25,
+        serialize,
+        now: clockAdvancingPerEntry(),
+      });
+
+      expect(result.demoted).toBe(2);
+      expect(result.remaining).toBe(8);
+    });
+
+    it('should demote coldest first so an interrupted slice leaves the hottest behind', () => {
+      const localCache = buildCache(10);
+
+      demoteColdStorageEntries({
+        localCache,
+        hotEntriesPerProvider: 0,
+        budgetMs: 25,
+        serialize,
+        now: clockAdvancingPerEntry(),
+      });
+
+      expect(
+        localCache.get(`${FIELD_METADATA}:ws-0`)?.versions.get('hash-1'),
+      ).toMatchObject({ state: 'cold' });
+      expect(
+        localCache.get(`${FIELD_METADATA}:ws-9`)?.versions.get('hash-1'),
+      ).toMatchObject({ state: 'hot' });
+    });
+
+    it('should converge across successive slices without a cursor', () => {
+      const localCache = buildCache(10);
+      let slices = 0;
+      let remaining = Number.POSITIVE_INFINITY;
+
+      while (remaining > 0 && slices < 10) {
+        remaining = demoteColdStorageEntries({
+          localCache,
+          hotEntriesPerProvider: 0,
+          budgetMs: 25,
+          serialize,
+          now: clockAdvancingPerEntry(),
+        }).remaining;
+        slices += 1;
+      }
+
+      expect(remaining).toBe(0);
+      expect(slices).toBe(5);
+      expect(
+        [...localCache.values()].every(
+          (entry) => entry.versions.get('hash-1')?.state === 'cold',
+        ),
+      ).toBe(true);
+    });
   });
 });

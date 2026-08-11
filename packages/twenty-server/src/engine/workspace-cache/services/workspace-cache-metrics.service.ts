@@ -38,6 +38,8 @@ export class WorkspaceCacheMetricsService {
   private readonly logger = new Logger(WorkspaceCacheMetricsService.name);
   private readonly recomputeDurationHistogram: Histogram;
   private readonly redisWriteDurationHistogram: Histogram;
+  private readonly demotionDurationHistogram: Histogram;
+  private readonly hydrationDurationHistogram: Histogram;
 
   private localCache?: LocalCache;
   private cacheSizeByKeyName: Record<string, number> = {};
@@ -46,6 +48,7 @@ export class WorkspaceCacheMetricsService {
   private sizeStartupTimer?: ReturnType<typeof setTimeout>;
   private statsCache?: { computedAt: number } & LocalCacheStats;
   private sizeSampleInFlight = false;
+  private demotionBacklog = 0;
 
   constructor(private readonly metricsService: MetricsService) {
     const meter = this.metricsService.getMeter();
@@ -64,6 +67,24 @@ export class WorkspaceCacheMetricsService {
       {
         description:
           'Wall-clock time to serialize and write recomputed cache entries to Redis',
+        unit: 's',
+        advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
+      },
+    );
+    this.demotionDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_demotion_slice_duration_seconds',
+      {
+        description:
+          'Event loop time consumed by one cold-storage demotion slice',
+        unit: 's',
+        advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
+      },
+    );
+    this.hydrationDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_hydration_duration_seconds',
+      {
+        description:
+          'Wall-clock time to hydrate one cold cache entry back into objects on read',
         unit: 's',
         advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
       },
@@ -91,6 +112,32 @@ export class WorkspaceCacheMetricsService {
 
   recordRedisWrite(seconds: number): void {
     this.redisWriteDurationHistogram.record(seconds);
+  }
+
+  recordDemotionSlice({
+    durationSeconds,
+    demoted,
+    remaining,
+  }: {
+    durationSeconds: number;
+    demoted: number;
+    remaining: number;
+  }): void {
+    this.demotionBacklog = remaining;
+
+    if (demoted === 0) {
+      return;
+    }
+
+    this.demotionDurationHistogram.record(durationSeconds);
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.WorkspaceMetadataCacheDemoted,
+      amount: demoted,
+    });
+  }
+
+  recordHydration(seconds: number, cacheKey: WorkspaceCacheKeyName): void {
+    this.hydrationDurationHistogram.record(seconds, { cache_key: cacheKey });
   }
 
   recordEviction(amount: number): void {
@@ -267,6 +314,64 @@ export class WorkspaceCacheMetricsService {
             attributes: { provider: keyName },
           }),
         ),
+    });
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_workspace_cache_local_versions_by_state',
+      options: {
+        description:
+          'Local workspace metadata cache versions by storage state and provider',
+      },
+      callback: async () => {
+        const stats = this.getStats();
+
+        return [
+          ...Object.entries(stats.hotVersionsByKeyName).map(
+            ([keyName, value]) => ({
+              value,
+              attributes: { provider: keyName, state: 'hot' },
+            }),
+          ),
+          ...Object.entries(stats.coldVersionsByKeyName).map(
+            ([keyName, value]) => ({
+              value,
+              attributes: { provider: keyName, state: 'cold' },
+            }),
+          ),
+        ];
+      },
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_hot_versions',
+      options: {
+        description:
+          'Total hot (live object) versions in the local workspace metadata cache',
+      },
+      callback: async () => this.getStats().hotVersionsTotal,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_cold_versions',
+      options: {
+        description:
+          'Total cold (serialized buffer) versions in the local workspace metadata cache',
+      },
+      callback: async () => this.getStats().coldVersionsTotal,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_cold_bytes',
+      options: {
+        description:
+          'Exact retained bytes held as cold buffers in the local workspace metadata cache',
+        unit: 'By',
+      },
+      callback: async () => this.getStats().coldBytesTotal,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_demotion_backlog',
+      options: {
+        description:
+          'Entries still awaiting demotion when the last demotion slice ran out of budget',
+      },
+      callback: async () => this.demotionBacklog,
     });
   }
 }
