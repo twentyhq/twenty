@@ -53,6 +53,7 @@ describe('BillingCreditService', () => {
   let billingUsageCapService: jest.Mocked<{
     clearHasReachedCapForWorkspace: jest.Mock;
   }>;
+  let cacheLockService: jest.Mocked<{ withLock: jest.Mock }>;
   let workspaceCacheService: jest.Mocked<{ invalidateAndRecompute: jest.Mock }>;
   let billingCustomerRepository: jest.Mocked<{ update: jest.Mock }>;
 
@@ -136,6 +137,7 @@ describe('BillingCreditService', () => {
     billingSubscriptionService = module.get(BillingSubscriptionService);
     billingUsageCacheService = module.get(BillingUsageCacheService);
     billingUsageCapService = module.get(BillingUsageCapService);
+    cacheLockService = module.get(CacheLockService);
     workspaceCacheService = module.get(WorkspaceCacheService);
     billingCustomerRepository = module.get(
       getWorkspaceScopedRepositoryToken(BillingCustomerEntity),
@@ -163,6 +165,43 @@ describe('BillingCreditService', () => {
           type: BillingCreditGrantType.COMPENSATION,
           expiresAt: PERIOD_END,
         }),
+      );
+    });
+
+    it('writes the ledger row and the counter under the workspace credit state lock', async () => {
+      await service.grantCredits(params);
+
+      expect(cacheLockService.withLock).toHaveBeenCalledWith(
+        expect.any(Function),
+        `billing-credit-state:${workspaceId}`,
+      );
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalled();
+    });
+
+    // Reading the period before waiting for the lock would date the grant to
+    // the period the wait started in, so it would land already expired while
+    // its amount still went onto the counter for the period now running.
+    it('takes its validity window from the period that is current once the lock is held', async () => {
+      const NEXT_PERIOD_END = new Date(PERIOD_END.getTime() + 30 * DAY_IN_MS);
+
+      cacheLockService.withLock.mockImplementation(
+        async (fn: () => Promise<unknown>) => {
+          billingSubscriptionService.getCurrentBillingSubscription.mockResolvedValue(
+            {
+              ...subscription,
+              currentPeriodStart: PERIOD_END,
+              currentPeriodEnd: NEXT_PERIOD_END,
+            },
+          );
+
+          return fn();
+        },
+      );
+
+      await service.grantCredits(params);
+
+      expect(billingCreditGrantService.createGrant).toHaveBeenCalledWith(
+        expect.objectContaining({ expiresAt: NEXT_PERIOD_END }),
       );
     });
 
@@ -304,6 +343,16 @@ describe('BillingCreditService', () => {
   });
 
   describe('revokeGrant', () => {
+    it('marks the grant revoked and moves the counter under the workspace credit state lock', async () => {
+      await service.revokeGrant({ workspaceId, grantId: 'grant_1' });
+
+      expect(cacheLockService.withLock).toHaveBeenCalledWith(
+        expect.any(Function),
+        `billing-credit-state:${workspaceId}`,
+      );
+      expect(billingCreditGrantService.revokeGrant).toHaveBeenCalled();
+    });
+
     it('takes the revoked amount back off the warm usage counter', async () => {
       billingUsageCacheService.getAvailableCredits.mockResolvedValue(3_000_000);
       billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(0);

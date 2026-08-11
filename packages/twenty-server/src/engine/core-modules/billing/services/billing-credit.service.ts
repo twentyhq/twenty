@@ -62,15 +62,35 @@ export class BillingCreditService {
 
     const { workspaceId } = params;
 
+    // Writing the row and moving the counter are two steps, and a reader that
+    // computes availability between them counts the grant from the ledger and
+    // then has it added a second time. Locking keeps the pair indivisible for
+    // anything else touching this workspace's credit state.
+    return this.cacheLockService.withLock(
+      () => this.writeGrantAndRefreshState(params),
+      buildBillingCreditStateLockKey(workspaceId),
+    );
+  }
+
+  // Inside the lock, not before it: a grant that waited behind a period
+  // transition would otherwise carry the period the wait started in, so it
+  // would land already expired while its amount still went onto the counter
+  // for the period that had meanwhile opened.
+  private async resolveGrantValidity(
+    params: GrantCreditsParams,
+  ): Promise<{ effectiveAt: Date; expiresAt: Date }> {
+    const effectiveAt = params.effectiveAt ?? new Date();
+
+    if (isDefined(params.expiresAt)) {
+      return { effectiveAt, expiresAt: params.expiresAt };
+    }
+
     // Only needed to default the validity window; callers that supply their own
     // (the period transition) would otherwise pay for a three-table join.
-    const subscription = isDefined(params.expiresAt)
-      ? undefined
-      : await this.billingSubscriptionService.getCurrentBillingSubscription({
-          workspaceId,
-        });
-
-    const effectiveAt = params.effectiveAt ?? new Date();
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId: params.workspaceId,
+      });
 
     // A lapsed subscription still carries the period that just ended, and
     // that is exactly the workspace someone is most likely to be granting
@@ -82,32 +102,19 @@ export class BillingCreditService {
       isDefined(currentPeriodEnd) &&
       currentPeriodEnd.getTime() > effectiveAt.getTime();
 
-    const expiresAt =
-      params.expiresAt ??
-      (hasUsablePeriodEnd
+    return {
+      effectiveAt,
+      expiresAt: hasUsablePeriodEnd
         ? currentPeriodEnd
-        : addDays(effectiveAt, PROVISIONAL_GRANT_VALIDITY_IN_DAYS));
-
-    // Writing the row and moving the counter are two steps, and a reader that
-    // computes availability between them counts the grant from the ledger and
-    // then has it added a second time. Locking keeps the pair indivisible for
-    // anything else touching this workspace's credit state.
-    return this.cacheLockService.withLock(
-      () => this.writeGrantAndRefreshState({ params, effectiveAt, expiresAt }),
-      buildBillingCreditStateLockKey(workspaceId),
-    );
+        : addDays(effectiveAt, PROVISIONAL_GRANT_VALIDITY_IN_DAYS),
+    };
   }
 
-  private async writeGrantAndRefreshState({
-    params,
-    effectiveAt,
-    expiresAt,
-  }: {
-    params: GrantCreditsParams;
-    effectiveAt: Date;
-    expiresAt: Date;
-  }): Promise<BillingCreditGrantEntity | null> {
+  private async writeGrantAndRefreshState(
+    params: GrantCreditsParams,
+  ): Promise<BillingCreditGrantEntity | null> {
     const { workspaceId, amountMicro } = params;
+    const { effectiveAt, expiresAt } = await this.resolveGrantValidity(params);
 
     await this.billingCreditGrantService.materializeLegacyBalance({
       workspaceId,
