@@ -30,7 +30,7 @@ const decodeFlatFieldMetadata = (
 };
 
 export const decodeFlatFieldMetadataMapsFromCache = (
-  encoded: EncodedFlatFieldMetadataMaps | FlatEntityMaps<FlatFieldMetadata>,
+  encoded: EncodedFlatFieldMetadataMaps,
 ): FlatEntityMaps<FlatFieldMetadata> => {
   const byUniversalIdentifier: FlatEntityMaps<FlatFieldMetadata>['byUniversalIdentifier'] =
     {};
