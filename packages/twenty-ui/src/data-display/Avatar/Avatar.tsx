@@ -1,8 +1,9 @@
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
+import { useState } from 'react';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
-import { useImageLoadErrorProbe } from '@ui/data-display/Avatar/hooks/useImageLoadErrorProbe';
+import { AvatarImageLoadErrorEffect } from '@ui/data-display/Avatar/components/AvatarImageLoadErrorEffect';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
@@ -45,9 +46,15 @@ export const Avatar = ({
 }: AvatarProps) => {
   const theme = useTheme();
 
+  const [erroredAvatarImageURI, setErroredAvatarImageURI] = useState<
+    string | null
+  >(null);
+
   const avatarImageURI = isNonEmptyString(avatarUrl) ? avatarUrl : null;
 
-  const avatarImageFailedToLoad = useImageLoadErrorProbe(avatarImageURI);
+  const avatarImageFailedToLoad =
+    isNonEmptyString(avatarImageURI) &&
+    erroredAvatarImageURI === avatarImageURI;
 
   const placeholderFirstChar = placeholder?.trim()?.charAt(0);
   const isPlaceholderFirstCharEmpty =
@@ -126,6 +133,12 @@ export const Avatar = ({
       onKeyDown={handleClickableElementKeyDown}
       style={avatarStyle}
     >
+      {isNonEmptyString(avatarImageURI) && (
+        <AvatarImageLoadErrorEffect
+          avatarImageURI={avatarImageURI}
+          onImageLoadError={setErroredAvatarImageURI}
+        />
+      )}
       {Icon ? (
         <Icon
           color={iconColor ? iconColor : 'currentColor'}
