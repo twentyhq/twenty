@@ -95,7 +95,7 @@ export const extractFrontComponentSharedDependencies = async (
     return { errors: [] };
   }
 
-  const errors = getSharedDependenciesErrors(declaredDependencies as string[]);
+  const errors = getSharedDependenciesErrors(declaredDependencies);
 
   if (isNonEmptyArray(errors)) {
     return { errors };
@@ -103,9 +103,7 @@ export const extractFrontComponentSharedDependencies = async (
 
   return {
     sharedDependencies: {
-      dependencies: normalizeSharedDependencies(
-        declaredDependencies as string[],
-      ),
+      dependencies: normalizeSharedDependencies(declaredDependencies),
       builtPath: FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
       builtChecksum: null,
     },
