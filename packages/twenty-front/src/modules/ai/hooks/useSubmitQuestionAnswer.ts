@@ -12,6 +12,7 @@ import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -50,11 +51,18 @@ export const useSubmitQuestionAnswer = () => {
         });
       const previousMessages = store.get(messagesAtom);
 
+      const uploadedFiles = store.get(agentChatUploadedFilesState.atom);
+      const fileAttachments = uploadedFiles.map((file) => ({
+        id: file.fileId,
+        filename: file.filename,
+      }));
+
       store.set(
         messagesAtom,
         markQuestionAnswered(previousMessages, messageId, toolCallId, answers),
       );
       store.set(isAwaitingFirstChunkAtom, true);
+      store.set(agentChatUploadedFilesState.atom, []);
 
       try {
         await apolloClient.mutate({
@@ -64,6 +72,8 @@ export const useSubmitQuestionAnswer = () => {
             messageId,
             answers,
             modelId: modelIdForRequest,
+            fileAttachments:
+              fileAttachments.length > 0 ? fileAttachments : undefined,
           },
         });
 
@@ -76,6 +86,7 @@ export const useSubmitQuestionAnswer = () => {
           messagesAtom,
           markQuestionPending(currentMessages, messageId, toolCallId),
         );
+        store.set(agentChatUploadedFilesState.atom, uploadedFiles);
 
         enqueueErrorSnackBar({
           apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,

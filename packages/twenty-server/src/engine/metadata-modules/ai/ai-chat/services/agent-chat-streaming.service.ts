@@ -536,6 +536,7 @@ export class AgentChatStreamingService {
     userWorkspaceId,
     workspace,
     modelId,
+    fileAttachments,
   }: {
     threadId: string;
     messageId: string;
@@ -543,6 +544,7 @@ export class AgentChatStreamingService {
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     modelId?: string;
+    fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
     const streamId = generateId();
 
@@ -567,6 +569,23 @@ export class AgentChatStreamingService {
     }
 
     try {
+      const fileParts = await this.buildFilePartsFromAttachments(
+        fileAttachments,
+        workspace.id,
+      );
+
+      if (fileParts.length > 0) {
+        await this.agentChatService.addMessage({
+          threadId,
+          uiMessage: {
+            role: AgentMessageRole.USER,
+            parts: fileParts,
+          },
+          turnId: resolved.turnId ?? undefined,
+          workspaceId: workspace.id,
+        });
+      }
+
       await this.enqueueResumeStream({
         threadId,
         userWorkspaceId,
