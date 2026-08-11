@@ -1,4 +1,7 @@
-import { type EncodedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+import {
+  type EncodedFlatFieldMetadata,
+  type EncodedFlatFieldMetadataMaps,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
 import { decodeFlatFieldMetadataMapsFromCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/decode-flat-field-metadata-maps-from-cache.util';
 import { encodeFlatFieldMetadataMapsForCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/encode-flat-field-metadata-maps-for-cache.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -48,7 +51,9 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
         byUniversalIdentifier: { 'field-uid': plain },
         universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
-      }).byUniversalIdentifier['field-uid'],
+      } as unknown as EncodedFlatFieldMetadataMaps).byUniversalIdentifier[
+        'field-uid'
+      ],
     ).toMatchObject(plain);
   });
 

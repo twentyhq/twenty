@@ -4,7 +4,6 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-cache-codec.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
-  type EncodableFlatFieldMetadataMaps,
   type EncodedFlatFieldMetadata,
   type EncodedFlatFieldMetadataMaps,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
@@ -31,7 +30,7 @@ const decodeFlatFieldMetadata = (
 };
 
 export const decodeFlatFieldMetadataMapsFromCache = (
-  encoded: EncodedFlatFieldMetadataMaps | EncodableFlatFieldMetadataMaps,
+  encoded: EncodedFlatFieldMetadataMaps,
 ): FlatEntityMaps<FlatFieldMetadata> => {
   const byUniversalIdentifier: FlatEntityMaps<FlatFieldMetadata>['byUniversalIdentifier'] =
     {};
