@@ -69,27 +69,5 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
         }),
       ).toThrow(FlatEntityMapsException);
     });
-
-    it.each([[VIEW_UNIVERSAL_IDENTIFIER], [''], [null]])(
-      'should reject the removed viewId key holding %p instead of storing an unbound widget',
-      (legacyViewId) => {
-        expect(() =>
-          convertUniversalConfiguration({
-            configurationType,
-            viewId: legacyViewId,
-          }),
-        ).toThrow(/rename it to "viewUniversalIdentifier"/);
-      },
-    );
-
-    it('should reject the removed viewId key even when viewUniversalIdentifier is set', () => {
-      expect(() =>
-        convertUniversalConfiguration({
-          configurationType,
-          viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
-          viewId: VIEW_UNIVERSAL_IDENTIFIER,
-        }),
-      ).toThrow(/rename it to "viewUniversalIdentifier"/);
-    });
   });
 });

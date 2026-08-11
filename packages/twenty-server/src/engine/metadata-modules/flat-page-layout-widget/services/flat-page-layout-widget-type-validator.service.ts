@@ -9,6 +9,7 @@ import {
 } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-type-validator.type';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { rejectWidgetType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/reject-widget-type.util';
+import { validateRenamedWidgetConfigurationKeys } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-renamed-widget-configuration-keys.util';
 import { validateFieldsFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util';
 import { validateFrontComponentFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util';
 import { validateFrontComponentFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-update.util';
@@ -194,7 +195,10 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ];
     }
 
-    return pageLayoutWidgetTypeValidator(args);
+    return [
+      ...validateRenamedWidgetConfigurationKeys(flatEntityToValidate),
+      ...pageLayoutWidgetTypeValidator(args),
+    ];
   }
 
   public validateFlatPageLayoutWidgetTypeSpecificitiesForUpdate(
@@ -216,6 +220,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ];
     }
 
-    return pageLayoutWidgetTypeValidator(args);
+    return [
+      ...validateRenamedWidgetConfigurationKeys(flatEntityToValidate),
+      ...pageLayoutWidgetTypeValidator(args),
+    ];
   }
 }

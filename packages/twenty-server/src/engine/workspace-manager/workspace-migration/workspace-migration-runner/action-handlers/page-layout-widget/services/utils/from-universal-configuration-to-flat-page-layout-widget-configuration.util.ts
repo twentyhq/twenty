@@ -42,22 +42,6 @@ const resolveFieldMetadataIdOrThrow = ({
   return flatFieldMetadata.id;
 };
 
-// Manifests built before the key was renamed carry the view universal
-// identifier under viewId; resolving it silently would let a stale manifest
-// install a widget bound to nothing
-const assertViewIsNotReferencedByLegacyKey = (
-  universalConfiguration: FlatPageLayoutWidget['universalConfiguration'],
-): void => {
-  if (!('viewId' in universalConfiguration)) {
-    return;
-  }
-
-  throw new FlatEntityMapsException(
-    `Page layout widget configuration references a view through the removed "viewId" key, rename it to "viewUniversalIdentifier"`,
-    FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
-  );
-};
-
 const resolveViewIdOrThrow = ({
   viewUniversalIdentifier,
   flatViewMaps,
@@ -277,8 +261,6 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELDS: {
-      assertViewIsNotReferencedByLegacyKey(universalConfiguration);
-
       const { viewUniversalIdentifier, newFieldDefaultVisibility, ...rest } =
         universalConfiguration;
 
@@ -291,8 +273,6 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.RECORD_TABLE: {
-      assertViewIsNotReferencedByLegacyKey(universalConfiguration);
-
       const { viewUniversalIdentifier, ...rest } = universalConfiguration;
 
       const viewId = resolveViewIdOrThrow({
