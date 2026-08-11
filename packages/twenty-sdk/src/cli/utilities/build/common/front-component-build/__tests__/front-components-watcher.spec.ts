@@ -174,6 +174,57 @@ describe('FrontComponentsWatcher', () => {
     expect(componentsWatcherInstance.restart).not.toHaveBeenCalled();
   });
 
+  it('ignores a vendor build that was in flight when the manifest changed', async () => {
+    const handleFileBuilt = vi.fn();
+    const watcher = new FrontComponentsWatcher({
+      appPath: '/app',
+      sourcePaths: SOURCE_PATHS,
+      vendor: VENDOR_MANIFEST,
+      shouldSkipTypecheck: () => true,
+      handleFileBuilt,
+      handleBuildError: vi.fn(),
+    });
+
+    await watcher.start();
+
+    let resolveInFlightBuild: (() => void) | undefined;
+
+    buildVendorBundleMock.mockImplementationOnce(async ({ onFileBuilt }) => {
+      await new Promise<void>((resolve) => {
+        resolveInFlightBuild = resolve;
+      });
+
+      await onFileBuilt?.({
+        fileFolder: FileFolder.BuiltFrontComponent,
+        builtPath: 'src/vendor.mjs',
+        sourcePath: 'src/vendor.ts',
+        checksum: 'stale-checksum',
+      });
+
+      return { exportNamesBySpecifier: new Map() };
+    });
+
+    const inFlightBuild = triggerVendorBuild(watcher);
+
+    mockVendorBuildWithChecksum('checksum-2');
+
+    const restartPromise = watcher.restart(SOURCE_PATHS, {
+      ...VENDOR_MANIFEST,
+      dependencies: ['react', 'react-dom/client'],
+    });
+
+    resolveInFlightBuild?.();
+
+    await Promise.all([inFlightBuild, restartPromise]);
+
+    expect(handleFileBuilt).not.toHaveBeenCalledWith(
+      expect.objectContaining({ checksum: 'stale-checksum' }),
+    );
+    expect(handleFileBuilt).toHaveBeenCalledWith(
+      expect.objectContaining({ checksum: 'checksum-2' }),
+    );
+  });
+
   it('reports a restart is needed only when the paths or the vendor manifest change', () => {
     const watcher = createWatcher(VENDOR_MANIFEST);
 

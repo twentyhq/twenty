@@ -43,6 +43,7 @@ export class FrontComponentsWatcher {
   private vendorDependencyWatcher: FSWatcher | null = null;
   private isClosed = false;
   private isApplyingRestart = false;
+  private vendorBuildGeneration = 0;
   private inFlightVendorBuildPromise: Promise<void> | null = null;
   private hasVendorBuildRequestedDuringInFlightBuild = false;
 
@@ -111,6 +112,9 @@ export class FrontComponentsWatcher {
       this.sourcePaths = sourcePaths;
 
       if (hasVendorManifestChanged) {
+        this.vendorBuildGeneration += 1;
+        this.hasVendorBuildRequestedDuringInFlightBuild = false;
+        await this.inFlightVendorBuildPromise;
         await this.vendorDependencyWatcher?.close();
         this.vendorDependencyWatcher = null;
         this.vendor = vendor;
@@ -174,21 +178,25 @@ export class FrontComponentsWatcher {
 
   private async runVendorBuild(): Promise<void> {
     const vendor = this.vendor;
+    const generation = this.vendorBuildGeneration;
 
     if (!isDefined(vendor)) {
       return;
     }
 
+    const isObsolete = () =>
+      this.isClosed || generation !== this.vendorBuildGeneration;
+
     try {
       let builtChecksum: string | null = null;
 
-      this.vendorBuildContext = await buildVendorBundle({
+      const vendorBuildContext = await buildVendorBundle({
         appPath: this.appPath,
         vendor,
         onFileBuilt: async (event) => {
           builtChecksum = event.checksum;
 
-          if (this.isClosed || event.checksum === this.lastVendorChecksum) {
+          if (isObsolete() || event.checksum === this.lastVendorChecksum) {
             return;
           }
 
@@ -196,9 +204,11 @@ export class FrontComponentsWatcher {
         },
       });
 
-      if (this.isClosed) {
+      if (isObsolete()) {
         return;
       }
+
+      this.vendorBuildContext = vendorBuildContext;
 
       if (builtChecksum !== this.lastVendorChecksum) {
         this.lastVendorChecksum = builtChecksum;
@@ -208,7 +218,7 @@ export class FrontComponentsWatcher {
         }
       }
     } catch (error) {
-      if (this.isClosed) {
+      if (isObsolete()) {
         return;
       }
 
