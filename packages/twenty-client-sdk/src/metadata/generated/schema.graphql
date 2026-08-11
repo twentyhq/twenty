@@ -107,9 +107,9 @@ type FrontComponent {
   updatedAt: DateTime!
   isHeadless: Boolean!
   usesSdkClient: Boolean!
-  sharedDependenciesChecksum: String
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
+  sharedDependenciesChecksum: String
 }
 
 type CommandMenuItem {

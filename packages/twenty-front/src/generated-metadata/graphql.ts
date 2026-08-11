@@ -2046,11 +2046,11 @@ export type FrontComponent = {
   id: Scalars['UUID']['output'];
   isHeadless: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
+  sharedDependenciesChecksum?: Maybe<Scalars['String']['output']>;
   sourceComponentPath: Scalars['String']['output'];
   universalIdentifier?: Maybe<Scalars['UUID']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   usesSdkClient: Scalars['Boolean']['output'];
-  sharedDependenciesChecksum?: Maybe<Scalars['String']['output']>;
 };
 
 export type FrontComponentConfiguration = {

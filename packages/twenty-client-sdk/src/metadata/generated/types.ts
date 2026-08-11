@@ -338,14 +338,14 @@ export default {
             "usesSdkClient": [
                 3
             ],
-            "sharedDependenciesChecksum": [
-                1
-            ],
             "applicationTokenPair": [
                 13
             ],
             "applicationVariables": [
                 5
+            ],
+            "sharedDependenciesChecksum": [
+                1
             ],
             "__typename": [
                 1
