@@ -1,30 +1,18 @@
-import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
-import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
-import {
-  PAGE_LAYOUT_TEST_INSTANCE_ID,
-  PageLayoutTestWrapper,
-} from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/calendar-event-call-recording/testing/getCallRecordingWidgetStoryDecorator';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
-import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
-  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { CallRecordingStatus } from '~/generated/graphql';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
-import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const TRANSCRIPT_WIDGET_ID = 'transcript-widget';
 const CALL_RECORDING_TAB_ID = 'call-recording-tab';
@@ -143,53 +131,11 @@ const meta: Meta<typeof CallRecordingTranscriptBody> = {
   title: 'Modules/PageLayout/Widgets/CallRecordingTranscriptBody',
   component: CallRecordingTranscriptBody,
   decorators: [
-    (Story) => {
-      setTestObjectMetadataItemsInMetadataStore(
-        jotaiStore,
-        getTestEnrichedObjectMetadataItemsMock(),
-      );
-      jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-      jotaiStore.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutWithTranscriptWidget,
-      );
-      jotaiStore.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutWithTranscriptWidget,
-      );
-
-      return (
-        <div style={{ width: '500px', height: '360px', display: 'flex' }}>
-          <PageLayoutTestWrapper store={jotaiStore}>
-            <LayoutRenderingProvider
-              value={{
-                isInSidePanel: false,
-                layoutType: PageLayoutType.RECORD_PAGE,
-                targetRecordIdentifier: undefined,
-              }}
-            >
-              <PageLayoutContentProvider
-                value={{
-                  tabId: CALL_RECORDING_TAB_ID,
-                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-                  presentation: 'stack',
-                }}
-              >
-                <WidgetComponentInstanceContext.Provider
-                  value={{ instanceId: TRANSCRIPT_WIDGET_ID }}
-                >
-                  <Story />
-                </WidgetComponentInstanceContext.Provider>
-              </PageLayoutContentProvider>
-            </LayoutRenderingProvider>
-          </PageLayoutTestWrapper>
-        </div>
-      );
-    },
+    getCallRecordingWidgetStoryDecorator({
+      pageLayout: pageLayoutWithTranscriptWidget,
+      tabId: CALL_RECORDING_TAB_ID,
+      widgetId: TRANSCRIPT_WIDGET_ID,
+    }),
     ComponentDecorator,
   ],
   parameters: {
@@ -205,6 +151,7 @@ export const Ready: Story = {
     callRecording: readableCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -222,6 +169,7 @@ export const Loading: Story = {
     callRecording: undefined,
     loading: true,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     await waitFor(() => {
@@ -237,6 +185,7 @@ export const Pending: Story = {
     callRecording: pendingCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -250,6 +199,7 @@ export const Failed: Story = {
     callRecording: failedCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -263,6 +213,7 @@ export const NoTranscript: Story = {
     callRecording: completedCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -276,6 +227,7 @@ export const NoRecording: Story = {
     callRecording: undefined,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -284,11 +236,26 @@ export const NoRecording: Story = {
   },
 };
 
+export const Forbidden: Story = {
+  args: {
+    callRecording: undefined,
+    loading: false,
+    error: undefined,
+    restriction: { type: 'field', fieldNames: ['Transcript'] },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Not shared');
+  },
+};
+
 export const QueryError: Story = {
   args: {
     callRecording: undefined,
     loading: false,
     error: new Error('Failed to load call recordings'),
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

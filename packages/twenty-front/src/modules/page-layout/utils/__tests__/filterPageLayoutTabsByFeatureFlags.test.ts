@@ -57,25 +57,7 @@ const createMockTab = (
 });
 
 describe('filterPageLayoutTabsByFeatureFlags', () => {
-  it('removes a native call recording tab when the feature is disabled', () => {
-    const tabs = [
-      createMockTab('transcript-tab', [
-        createMockWidget(
-          'transcript-widget',
-          WidgetType.CALL_RECORDING_TRANSCRIPT,
-        ),
-      ]),
-    ];
-
-    expect(
-      filterPageLayoutTabsByFeatureFlags({
-        tabs,
-        isNativeCallRecordingTabsEnabled: false,
-      }),
-    ).toEqual([]);
-  });
-
-  it('gates summary and transcript with the same feature', () => {
+  it('removes native call recording tabs when the feature is disabled', () => {
     const tabs = [
       createMockTab('summary-tab', [
         createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),

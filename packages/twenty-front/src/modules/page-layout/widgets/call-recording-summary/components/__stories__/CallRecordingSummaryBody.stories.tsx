@@ -1,30 +1,18 @@
-import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
-import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
-import {
-  PAGE_LAYOUT_TEST_INSTANCE_ID,
-  PageLayoutTestWrapper,
-} from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/calendar-event-call-recording/testing/getCallRecordingWidgetStoryDecorator';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { CallRecordingSummaryBody } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody';
-import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
-  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { CallRecordingStatus } from '~/generated/graphql';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
-import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const SUMMARY_WIDGET_ID = 'summary-widget';
 const SUMMARY_TAB_ID = 'summary-tab';
@@ -130,53 +118,11 @@ const meta: Meta<typeof CallRecordingSummaryBody> = {
   title: 'Modules/PageLayout/Widgets/CallRecordingSummaryBody',
   component: CallRecordingSummaryBody,
   decorators: [
-    (Story) => {
-      setTestObjectMetadataItemsInMetadataStore(
-        jotaiStore,
-        getTestEnrichedObjectMetadataItemsMock(),
-      );
-      jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-      jotaiStore.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutWithSummaryWidget,
-      );
-      jotaiStore.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutWithSummaryWidget,
-      );
-
-      return (
-        <div style={{ width: '500px', height: '360px', display: 'flex' }}>
-          <PageLayoutTestWrapper store={jotaiStore}>
-            <LayoutRenderingProvider
-              value={{
-                isInSidePanel: false,
-                layoutType: PageLayoutType.RECORD_PAGE,
-                targetRecordIdentifier: undefined,
-              }}
-            >
-              <PageLayoutContentProvider
-                value={{
-                  tabId: SUMMARY_TAB_ID,
-                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-                  presentation: 'stack',
-                }}
-              >
-                <WidgetComponentInstanceContext.Provider
-                  value={{ instanceId: SUMMARY_WIDGET_ID }}
-                >
-                  <Story />
-                </WidgetComponentInstanceContext.Provider>
-              </PageLayoutContentProvider>
-            </LayoutRenderingProvider>
-          </PageLayoutTestWrapper>
-        </div>
-      );
-    },
+    getCallRecordingWidgetStoryDecorator({
+      pageLayout: pageLayoutWithSummaryWidget,
+      tabId: SUMMARY_TAB_ID,
+      widgetId: SUMMARY_WIDGET_ID,
+    }),
     ComponentDecorator,
   ],
   parameters: {
@@ -192,6 +138,7 @@ export const Ready: Story = {
     callRecording: summarizedCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -210,6 +157,7 @@ export const ReadyWhileRecordingIsPending: Story = {
     },
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -225,6 +173,7 @@ export const Loading: Story = {
     callRecording: undefined,
     loading: true,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     await waitFor(() => {
@@ -240,6 +189,7 @@ export const NoSummary: Story = {
     callRecording: unsummarizedCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -253,6 +203,7 @@ export const Pending: Story = {
     callRecording: pendingCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -266,6 +217,7 @@ export const Failed: Story = {
     callRecording: failedCallRecording,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -279,6 +231,7 @@ export const NoRecording: Story = {
     callRecording: undefined,
     loading: false,
     error: undefined,
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -287,11 +240,26 @@ export const NoRecording: Story = {
   },
 };
 
+export const Forbidden: Story = {
+  args: {
+    callRecording: undefined,
+    loading: false,
+    error: undefined,
+    restriction: { type: 'field', fieldNames: ['Summary'] },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Not shared');
+  },
+};
+
 export const QueryError: Story = {
   args: {
     callRecording: undefined,
     loading: false,
     error: new Error('Failed to load call recordings'),
+    restriction: undefined,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
