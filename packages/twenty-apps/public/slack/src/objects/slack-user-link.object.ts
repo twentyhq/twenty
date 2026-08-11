@@ -38,8 +38,7 @@ export default defineObject({
       name: 'name',
     },
     {
-      universalIdentifier:
-        SLACK_USER_LINK_TEAM_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: SLACK_USER_LINK_TEAM_ID_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Slack team ID',
       description: 'Slack workspace the account belongs to',
@@ -47,8 +46,7 @@ export default defineObject({
       name: 'slackTeamId',
     },
     {
-      universalIdentifier:
-        SLACK_USER_LINK_USER_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: SLACK_USER_LINK_USER_ID_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Slack user ID',
       description: 'Slack account that the assistant acts for',

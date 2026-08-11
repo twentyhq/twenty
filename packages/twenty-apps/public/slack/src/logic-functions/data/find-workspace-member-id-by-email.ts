@@ -5,12 +5,10 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 const CANDIDATES_PER_PAGE = 100;
 const MAX_PAGES = 10;
 
-// `ilike` treats `%` and `_` as wildcards and an email may legitimately contain
-// them, so the query only narrows the candidates and the match is decided by an
-// exact case-insensitive comparison. Every page has to be read before deciding:
-// stopping early could miss a second holder of the same address and bind a
-// Slack account to the wrong member. An ambiguous or unbounded result binds
-// nobody.
+// `ilike` treats `%` and `_` as wildcards and an email may contain them, so the
+// query only narrows the candidates and an exact case-insensitive comparison
+// decides. Every page is read: an ambiguous or unbounded result binds nobody
+// rather than risk binding the wrong member.
 export const findWorkspaceMemberIdByEmail = async (
   client: CoreApiClient,
   email: string,

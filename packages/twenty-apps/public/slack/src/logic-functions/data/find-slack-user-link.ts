@@ -2,10 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 export const findSlackUserLinkWorkspaceMemberId = async (
   client: CoreApiClient,
-  {
-    slackTeamId,
-    slackUserId,
-  }: { slackTeamId: string; slackUserId: string },
+  { slackTeamId, slackUserId }: { slackTeamId: string; slackUserId: string },
 ): Promise<string | undefined> => {
   const queryResult = await client.query({
     slackUserLinks: {

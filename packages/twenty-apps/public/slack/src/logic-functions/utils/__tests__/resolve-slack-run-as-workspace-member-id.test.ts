@@ -16,8 +16,7 @@ const {
 }));
 
 vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
-  findSlackUserLinkWorkspaceMemberId:
-    findSlackUserLinkWorkspaceMemberIdMock,
+  findSlackUserLinkWorkspaceMemberId: findSlackUserLinkWorkspaceMemberIdMock,
 }));
 
 vi.mock('src/logic-functions/data/find-workspace-member-id-by-email', () => ({
@@ -65,7 +64,11 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     findSlackUserLinkWorkspaceMemberIdMock.mockResolvedValue('member-1');
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
     ).toBe('member-1');
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
@@ -86,7 +89,11 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
     ).toBe('member-1');
     expect(createSlackUserLinkMock).toHaveBeenCalledWith(client, {
       slackTeamId: 'T0INSTALLED',
@@ -98,7 +105,11 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
 
   it('should not store a link when no member owns the email', async () => {
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
     ).toBeUndefined();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
@@ -111,7 +122,11 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
       .mockResolvedValueOnce('member-2');
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
     ).toBe('member-2');
   });
 

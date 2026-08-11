@@ -8,12 +8,9 @@ import { findSlackUserLinkWorkspaceMemberId } from 'src/logic-functions/data/fin
 import { findWorkspaceMemberIdByEmail } from 'src/logic-functions/data/find-workspace-member-id-by-email';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 
-// Auto-linking trusts an email, and an email is only as good as whoever vouched
-// for it. Within the Slack workspace that installed the app that is this
-// workspace's own admin; for a Slack Connect user it is a different
-// organisation's. The installing team is read from the live connection rather
-// than cached, so a reconnected or replaced connection cannot leave a stale team
-// standing in as the authority.
+// An email is only as good as whoever vouched for it, and for a Slack Connect
+// user that is another organisation's admin, so only the installing team is
+// auto-linked. The team comes from the live connection, never a cached one.
 const resolveLinkableEmail = async ({
   slackClient,
   identity,
@@ -39,7 +36,7 @@ const resolveLinkableEmail = async ({
 };
 
 // Resolving to nothing is not a failure: the assistant then runs with its own
-// role, which is what every install did before links existed.
+// role, as every install did before links existed.
 export const resolveSlackRunAsWorkspaceMemberId = async ({
   client,
   slackClient,

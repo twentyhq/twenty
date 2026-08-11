@@ -6,9 +6,8 @@ import {
 
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 
-// `prompt` is declared here rather than picked, because `RunAgentInput` is a XOR
-// between `prompt` and `messages` and picking through it widens the field to
-// `string | undefined`. The assistant only ever sends a prompt.
+// `prompt` is declared rather than picked: `RunAgentInput` is a XOR between
+// `prompt` and `messages`, so picking it through widens it to optional.
 type RunSlackAssistantAgentInput = Pick<
   RunAgentInput,
   'agentUniversalIdentifier' | 'runAsWorkspaceMemberId'
