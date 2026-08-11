@@ -30,6 +30,7 @@ const run = (
     pack?: () => Buffer | undefined;
     budgetMs?: number;
     minIdleMs?: number;
+    packCostEstimateMs?: number;
     now?: () => number;
   },
 ) =>
@@ -38,6 +39,7 @@ const run = (
     liveVersionsPerProvider,
     minIdleMs: overrides?.minIdleMs ?? 0,
     budgetMs: overrides?.budgetMs ?? NO_BUDGET_LIMIT,
+    packCostEstimateMs: overrides?.packCostEstimateMs ?? 0,
     pack: overrides?.pack ?? pack,
     now: overrides?.now,
     nowEpochMs: () => NOW_EPOCH_MS,
@@ -67,6 +69,19 @@ describe('packIdleVersions', () => {
     expect(
       localCache.get(`${FIELD_METADATA}:ws-newest`)?.versions.get('hash-1'),
     ).toMatchObject({ state: 'live' });
+  });
+
+  it('should count versions read inside the idle window against the provider budget without packing them', () => {
+    const localCache = new Map([
+      [`${FIELD_METADATA}:ws-recent-a`, liveEntry(NOW_EPOCH_MS - 1_000)],
+      [`${FIELD_METADATA}:ws-recent-b`, liveEntry(NOW_EPOCH_MS - 2_000)],
+      [`${FIELD_METADATA}:ws-idle`, liveEntry(NOW_EPOCH_MS - 90_000)],
+    ]);
+
+    expect(run(localCache, 2, { minIdleMs: 60_000 }).packed).toBe(1);
+    expect(
+      localCache.get(`${FIELD_METADATA}:ws-idle`)?.versions.get('hash-1'),
+    ).toMatchObject({ state: 'packed' });
   });
 
   it('should leave versions read inside the idle window alone, whatever the budget', () => {
@@ -151,6 +166,26 @@ describe('packIdleVersions', () => {
           liveEntry(index),
         ]),
       );
+
+    it('should bound the first pack of a slice with the estimate carried from the last one', () => {
+      const result = run(buildCache(10), 0, {
+        budgetMs: 25,
+        packCostEstimateMs: 40,
+        now: clockAdvancingPerCall(),
+      });
+
+      expect(result.packed).toBe(0);
+      expect(result.remaining).toBe(10);
+    });
+
+    it('should report the costliest pack so the next slice can budget for it', () => {
+      const result = run(buildCache(10), 0, {
+        budgetMs: 25,
+        now: clockAdvancingPerCall(),
+      });
+
+      expect(result.packCostEstimateMs).toBe(10);
+    });
 
     it('should stop before a pack the budget cannot absorb rather than overrunning it', () => {
       const result = run(buildCache(10), 0, {

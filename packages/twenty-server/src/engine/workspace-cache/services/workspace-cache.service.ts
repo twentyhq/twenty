@@ -85,7 +85,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
   private sweepTimer?: ReturnType<typeof setInterval>;
-  private demotionTimer?: ReturnType<typeof setInterval>;
+  private packingTimer?: ReturnType<typeof setInterval>;
+  private packCostEstimateMs = 0;
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
@@ -147,8 +148,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     if (isDefined(this.sweepTimer)) {
       clearInterval(this.sweepTimer);
     }
-    if (isDefined(this.demotionTimer)) {
-      clearInterval(this.demotionTimer);
+    if (isDefined(this.packingTimer)) {
+      clearInterval(this.packingTimer);
     }
     this.cacheMetricsService.stop();
   }
@@ -160,11 +161,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
     this.sweepTimer.unref();
 
-    this.demotionTimer = setInterval(
+    this.packingTimer = setInterval(
       () => this.packIdleVersionsSlice(),
       PACKING_INTERVAL_MS,
     );
-    this.demotionTimer.unref();
+    this.packingTimer.unref();
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
@@ -693,8 +694,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private packIdleVersionsSlice(): void {
     const startedAt = performance.now();
 
-    const { packed, remaining } = packIdleVersions({
+    const { packed, remaining, packCostEstimateMs } = packIdleVersions({
       localCache: this.localCache,
+      packCostEstimateMs: this.packCostEstimateMs,
       liveVersionsPerProvider: LIVE_VERSIONS_PER_PROVIDER,
       minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
       budgetMs: PACKING_BUDGET_MS,
@@ -717,6 +719,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
       },
     });
+
+    this.packCostEstimateMs = packCostEstimateMs;
 
     this.cacheMetricsService.recordPackingSlice({
       durationSeconds: (performance.now() - startedAt) / 1000,

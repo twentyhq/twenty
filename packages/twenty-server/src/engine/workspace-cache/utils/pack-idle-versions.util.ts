@@ -6,13 +6,17 @@ import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/ge
 export type PackIdleVersionsResult = {
   packed: number;
   remaining: number;
+  packCostEstimateMs: number;
 };
+
+type LiveVersion = { localKey: string; hash: string; lastReadAt: number };
 
 export const packIdleVersions = <T>({
   localCache,
   liveVersionsPerProvider,
   minIdleMs,
   budgetMs,
+  packCostEstimateMs = 0,
   pack,
   now = () => performance.now(),
   nowEpochMs = () => Date.now(),
@@ -21,22 +25,18 @@ export const packIdleVersions = <T>({
   liveVersionsPerProvider: number;
   minIdleMs: number;
   budgetMs: number;
+  packCostEstimateMs?: number;
   pack: (params: { localKey: string; data: T }) => Buffer | undefined;
   now?: () => number;
   nowEpochMs?: () => number;
 }): PackIdleVersionsResult => {
   const startedAt = now();
   const idleSince = nowEpochMs() - minIdleMs;
-  const liveByProvider = new Map<
-    string,
-    { localKey: string; hash: string; lastReadAt: number }[]
-  >();
+  const liveByProvider = new Map<string, LiveVersion[]>();
 
   for (const [localKey, entry] of localCache) {
     for (const [hash, version] of entry.versions) {
-      // A version read since idleSince is in the working set: packing it now only
-      // buys an unpack on the next read, which is the churn this threshold prevents.
-      if (version.state !== 'live' || version.lastReadAt > idleSince) {
+      if (version.state !== 'live') {
         continue;
       }
 
@@ -48,8 +48,7 @@ export const packIdleVersions = <T>({
     }
   }
 
-  const candidates: { localKey: string; hash: string; lastReadAt: number }[] =
-    [];
+  const candidates: LiveVersion[] = [];
 
   for (const live of liveByProvider.values()) {
     if (live.length <= liveVersionsPerProvider) {
@@ -57,19 +56,27 @@ export const packIdleVersions = <T>({
     }
 
     live.sort((a, b) => a.lastReadAt - b.lastReadAt);
-    candidates.push(...live.slice(0, live.length - liveVersionsPerProvider));
+
+    // Versions read since idleSince still count against the provider's budget —
+    // they are just never the ones packed, since packing the working set only
+    // buys an unpack on the next read.
+    candidates.push(
+      ...live
+        .slice(0, live.length - liveVersionsPerProvider)
+        .filter((version) => version.lastReadAt <= idleSince),
+    );
   }
 
   candidates.sort((a, b) => a.lastReadAt - b.lastReadAt);
 
   let packed = 0;
   let index = 0;
-  let costliestPackMs = 0;
+  let costliestPackMs = packCostEstimateMs;
 
   for (const { localKey, hash } of candidates) {
-    // Stop before starting a version that the budget cannot absorb, rather than
-    // after overrunning it. Without this the slice always overruns by one entry,
-    // and one entry costs more than the whole budget.
+    // Stop before starting a version the budget cannot absorb, rather than after
+    // overrunning it. The estimate carries across slices, so the first version of
+    // a slice is bounded by what packing cost last time.
     if (now() - startedAt + costliestPackMs >= budgetMs) {
       break;
     }
@@ -99,5 +106,9 @@ export const packIdleVersions = <T>({
     packed += 1;
   }
 
-  return { packed, remaining: candidates.length - index };
+  return {
+    packed,
+    remaining: candidates.length - index,
+    packCostEstimateMs: costliestPackMs,
+  };
 };

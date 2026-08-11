@@ -75,7 +75,7 @@ export class WorkspaceCacheMetricsService {
       'twenty_workspace_cache_packing_slice_duration_seconds',
       {
         description:
-          'Event loop time consumed by one cold-storage demotion slice',
+          'Event loop time consumed by one packing slice',
         unit: 's',
         advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
       },
@@ -84,7 +84,7 @@ export class WorkspaceCacheMetricsService {
       'twenty_workspace_cache_unpacking_duration_seconds',
       {
         description:
-          'Wall-clock time to hydrate one cold cache entry back into objects on read',
+          'Wall-clock time to unpack one packed cache version back into objects on read',
         unit: 's',
         advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
       },
@@ -319,7 +319,7 @@ export class WorkspaceCacheMetricsService {
       metricName: 'twenty_workspace_cache_local_versions_by_state',
       options: {
         description:
-          'Local workspace metadata cache versions by storage state and provider',
+          'Local workspace metadata cache versions by tier (live or packed) and provider',
       },
       callback: async () => {
         const stats = this.getStats();
@@ -344,7 +344,7 @@ export class WorkspaceCacheMetricsService {
       metricName: 'twenty_workspace_cache_local_live_versions',
       options: {
         description:
-          'Total hot (live object) versions in the local workspace metadata cache',
+          'Total live (object graph) versions in the local workspace metadata cache',
       },
       callback: async () => this.getStats().liveVersionsTotal,
     });
@@ -352,7 +352,7 @@ export class WorkspaceCacheMetricsService {
       metricName: 'twenty_workspace_cache_local_packed_versions',
       options: {
         description:
-          'Total cold (serialized buffer) versions in the local workspace metadata cache',
+          'Total packed (serialized buffer) versions in the local workspace metadata cache',
       },
       callback: async () => this.getStats().packedVersionsTotal,
     });
@@ -360,7 +360,7 @@ export class WorkspaceCacheMetricsService {
       metricName: 'twenty_workspace_cache_local_packed_bytes',
       options: {
         description:
-          'Exact retained bytes held as cold buffers in the local workspace metadata cache',
+          'Exact retained bytes held as packed buffers in the local workspace metadata cache',
         unit: 'By',
       },
       callback: async () => this.getStats().packedBytesTotal,
@@ -369,7 +369,7 @@ export class WorkspaceCacheMetricsService {
       metricName: 'twenty_workspace_cache_packing_backlog',
       options: {
         description:
-          'Entries still awaiting demotion when the last demotion slice ran out of budget',
+          'Versions still awaiting packing when the last packing slice ran out of budget',
       },
       callback: async () => this.packingBacklog,
     });
