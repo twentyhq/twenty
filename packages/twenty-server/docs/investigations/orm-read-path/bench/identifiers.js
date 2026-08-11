@@ -113,7 +113,11 @@ const probePostgresJs = () => {
     'utf8',
   );
 
-  if (!source.includes(POSTGRES_JS_ESCAPE_SOURCE)) {
+  const shippedBody = source
+    .match(/export const escapeIdentifier = function escape\(str\) \{([\s\S]*?)\n\}/)?.[1]
+    ?.trim();
+
+  if (shippedBody !== POSTGRES_JS_ESCAPE_SOURCE) {
     report('postgres.js', 'transcription', 'STALE — escapeIdentifier changed upstream');
 
     return;

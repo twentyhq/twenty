@@ -209,7 +209,7 @@ Relations are declared on **both** sides, as production does: each RELATION fiel
 target field name. Declaring only the owning side builds a smaller, differently shaped graph
 and understates the cost.
 
-| shape | columns | relations | build (median of 3 runs) | traced objects |
+| shape | columns | relations | build (median of 7 builds) | traced objects |
 |---|---|---|---|---|
 | 33 objects, no relations | 726 | 0 | 3.2 ms | 2,948 |
 | 33 objects, 4 relations each | 726 | 264 | 12.6 ms | 4,800 |
