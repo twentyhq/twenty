@@ -3,8 +3,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  type FieldMetadataType,
+  type ViewFilterOperand,
+} from 'twenty-shared/types';
+import { getFilterValueValidationIssue, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
@@ -64,6 +69,19 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else {
+      const invalidValueError = this.getInvalidValueError({
+        fieldType: fieldMetadata.type,
+        operand: flatPredicateToValidate.operand,
+        subFieldName: flatPredicateToValidate.subFieldName,
+        value: flatPredicateToValidate.value,
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(invalidValueError)) {
+        validationResult.errors.push(invalidValueError);
+      }
     }
 
     const objectMetadata = flatObjectMetadataMaps
@@ -240,6 +258,25 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else if (
+      'value' in flatEntityUpdate ||
+      'operand' in flatEntityUpdate ||
+      'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
+      'subFieldName' in flatEntityUpdate ||
+      'workspaceMemberFieldMetadataUniversalIdentifier' in flatEntityUpdate
+    ) {
+      const invalidValueError = this.getInvalidValueError({
+        fieldType: fieldMetadata.type,
+        operand: updatedPredicate.operand,
+        subFieldName: updatedPredicate.subFieldName,
+        value: updatedPredicate.value,
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(invalidValueError)) {
+        validationResult.errors.push(invalidValueError);
+      }
     }
 
     const objectMetadata = flatObjectMetadataMaps
@@ -295,5 +332,46 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     }
 
     return validationResult;
+  }
+
+  private getInvalidValueError({
+    fieldType,
+    operand,
+    subFieldName,
+    value,
+    workspaceMemberFieldMetadataUniversalIdentifier,
+  }: {
+    fieldType: FieldMetadataType;
+    operand: string;
+    subFieldName: string | null | undefined;
+    value: unknown;
+    workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
+  }) {
+    if (isDefined(workspaceMemberFieldMetadataUniversalIdentifier)) {
+      return undefined;
+    }
+
+    const recordFilterOperand = operand as ViewFilterOperand;
+
+    const issue = getFilterValueValidationIssue({
+      fieldType,
+      operand: recordFilterOperand,
+      subFieldName,
+      value,
+    });
+
+    if (!isDefined(issue)) {
+      return undefined;
+    }
+
+    const { stringifiedValue, filterType, hint } = issue;
+
+    return {
+      code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+      message: isNonEmptyString(hint)
+        ? t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${hint}`
+        : t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}".`,
+      userFriendlyMessage: msg`Predicate value is not valid for this operand`,
+    };
   }
 }
