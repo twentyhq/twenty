@@ -142,24 +142,6 @@ describe('CompanyEnrichmentResolver', () => {
     });
   });
 
-  it('should still return the company result when person enrichment rejects', async () => {
-    companyEnrichmentService.enrichCompanyForWorkspaceCreator.mockResolvedValue(
-      {
-        outcome: 'matched',
-        enrichment: { domain: 'acme.com', employeeCount: 320 },
-      },
-    );
-    personEnrichmentService.enrichPersonForWorkspaceCreator.mockRejectedValue(
-      new Error('redis down'),
-    );
-
-    const result = await resolver.enrichWorkspaceCompany(user, workspace);
-
-    expect(result.outcome).toBe('matched');
-    expect(result.personOutcome).toBe('transientError');
-    expect(result.personEnrichment).toBeNull();
-  });
-
   it('should never qualify the book-call step from the person outcome', async () => {
     companyEnrichmentService.enrichCompanyForWorkspaceCreator.mockResolvedValue(
       { outcome: 'unavailable', enrichment: null },

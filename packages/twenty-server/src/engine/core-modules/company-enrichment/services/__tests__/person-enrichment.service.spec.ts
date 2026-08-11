@@ -152,6 +152,20 @@ describe('PersonEnrichmentService', () => {
     );
   });
 
+  it('should return transientError instead of rejecting when a dependency unexpectedly throws', async () => {
+    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
+      new Error('redis down'),
+    );
+
+    const result = await service.enrichPersonForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'ada@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'transientError', enrichment: null });
+  });
+
   it('should return transientError without calling the client when throttled', async () => {
     throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
       new ThrottlerException(
