@@ -42,6 +42,42 @@ const resolveFieldMetadataIdOrThrow = ({
   return flatFieldMetadata.id;
 };
 
+// Manifests built before the key was renamed to viewUniversalIdentifier
+// reference the view universal identifier under the viewId key
+const getLegacyViewUniversalIdentifier = (
+  universalConfiguration: FlatPageLayoutWidget['universalConfiguration'],
+): string | null => {
+  const { viewId } = universalConfiguration as { viewId?: string | null };
+
+  return viewId ?? null;
+};
+
+const resolveViewIdOrThrow = ({
+  viewUniversalIdentifier,
+  flatViewMaps,
+}: {
+  viewUniversalIdentifier: string | null | undefined;
+  flatViewMaps: MetadataFlatEntityMaps<'view'>;
+}): string | null => {
+  if (!isDefined(viewUniversalIdentifier)) {
+    return null;
+  }
+
+  const flatView = findFlatEntityByUniversalIdentifier({
+    flatEntityMaps: flatViewMaps,
+    universalIdentifier: viewUniversalIdentifier,
+  });
+
+  if (!isDefined(flatView)) {
+    throw new FlatEntityMapsException(
+      `View not found for universal identifier: ${viewUniversalIdentifier}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
+  return flatView.id;
+};
+
 const convertUniversalFilterToChartFilter = ({
   filter,
   flatFieldMetadataMaps,
@@ -238,23 +274,12 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       const { viewUniversalIdentifier, newFieldDefaultVisibility, ...rest } =
         universalConfiguration;
 
-      let viewId: string | null = null;
-
-      if (isDefined(viewUniversalIdentifier)) {
-        const flatView = findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatViewMaps,
-          universalIdentifier: viewUniversalIdentifier,
-        });
-
-        if (!isDefined(flatView)) {
-          throw new FlatEntityMapsException(
-            `View not found for universal identifier: ${viewUniversalIdentifier}`,
-            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-          );
-        }
-
-        viewId = flatView.id;
-      }
+      const viewId = resolveViewIdOrThrow({
+        viewUniversalIdentifier:
+          viewUniversalIdentifier ??
+          getLegacyViewUniversalIdentifier(universalConfiguration),
+        flatViewMaps,
+      });
 
       return { ...rest, viewId, newFieldDefaultVisibility };
     }
@@ -262,23 +287,12 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.RECORD_TABLE: {
       const { viewUniversalIdentifier, ...rest } = universalConfiguration;
 
-      let viewId: string | null = null;
-
-      if (isDefined(viewUniversalIdentifier)) {
-        const flatView = findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatViewMaps,
-          universalIdentifier: viewUniversalIdentifier,
-        });
-
-        if (!isDefined(flatView)) {
-          throw new FlatEntityMapsException(
-            `View not found for universal identifier: ${viewUniversalIdentifier}`,
-            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-          );
-        }
-
-        viewId = flatView.id;
-      }
+      const viewId = resolveViewIdOrThrow({
+        viewUniversalIdentifier:
+          viewUniversalIdentifier ??
+          getLegacyViewUniversalIdentifier(universalConfiguration),
+        flatViewMaps,
+      });
 
       return { ...rest, viewId };
     }
