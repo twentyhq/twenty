@@ -96,7 +96,7 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('You do not know what this company does yet');
     expect(result).toContain('ask_questions to learn what the business does');
-    expect(result).toContain('When they choose to start fresh');
+    expect(result).toContain('when they start fresh');
     expect(result).not.toContain('tailored to their business');
   });
 
