@@ -330,8 +330,6 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     queryBuilder.where('"person"."id" = :a', { a: 1 });
     queryBuilder.orWhere('"person"."id" = :b', { b: 2 });
 
-    // Without the wrapping parens, AND would bind tighter than OR and rows matching the
-    // first branch would come back unfiltered.
     expect(queryBuilder.getQuery()).toContain(
       'WHERE (("person"."id" = :a) OR ("person"."id" = :b)) AND "person"."deletedAt" IS NULL',
     );
@@ -395,8 +393,6 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
 
     const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
 
-    // "name" exists on company, not on person: checking it against person would fail the
-    // field-permission lookup with an internal error.
     expect(columnNamesByAlias['person']).toEqual(['id']);
     expect(columnNamesByAlias['company']).toEqual(['name']);
   });
@@ -409,7 +405,6 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     queryBuilder.markRowLevelPermissionApplied('company');
     queryBuilder.where('"person"."id" = :id', { id: 1 });
 
-    // The main predicate went with the WHERE, the joined one is in ON and stays.
     expect(queryBuilder.markRowLevelPermissionApplied('person')).toBe(true);
     expect(queryBuilder.markRowLevelPermissionApplied('company')).toBe(false);
   });

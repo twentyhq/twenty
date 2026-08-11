@@ -13,9 +13,6 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED]: false,
 };
 
-// Lets a CI job run the whole suite against a flagged code path, e.g.
-// TEST_FORCED_FEATURE_FLAGS=IS_ORM_V2_READ_PATH_ENABLED. An unknown name throws rather
-// than being skipped: a typo would otherwise leave the run green without testing anything.
 const getForcedFeatureFlags = (): FeatureFlagKey[] => {
   const forcedFeatureFlags = process.env.TEST_FORCED_FEATURE_FLAGS;
 

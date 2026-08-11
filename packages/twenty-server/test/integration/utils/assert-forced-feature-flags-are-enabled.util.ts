@@ -1,8 +1,5 @@
 import { type DataSource } from 'typeorm';
 
-// The seeding command logs and swallows its errors, so a typo in
-// TEST_FORCED_FEATURE_FLAGS would otherwise leave the flagged CI pass green
-// while running the unflagged code path.
 export const assertForcedFeatureFlagsAreEnabled = async (
   dataSource: DataSource,
 ): Promise<void> => {

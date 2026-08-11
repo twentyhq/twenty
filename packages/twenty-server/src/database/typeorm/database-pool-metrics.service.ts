@@ -96,8 +96,6 @@ export class DatabasePoolMetricsService {
     }
   }
 
-  // ORM v2 owns raw pg pools rather than a TypeORM driver, so it reports the same
-  // gauges and acquisition timings by wrapping connect() instead of the driver.
   registerPool({
     poolName,
     pool,
@@ -111,7 +109,6 @@ export class DatabasePoolMetricsService {
       return;
     }
 
-    // bind() collapses the overloads, so they are restated to keep both forms typed.
     const connect = pool.connect.bind(pool) as {
       (): Promise<PoolClient>;
       (callback: PoolConnectCallback): void;
@@ -128,9 +125,6 @@ export class DatabasePoolMetricsService {
       );
     };
 
-    // pool.query() acquires its client through the callback form of connect(), so both
-    // overloads have to survive instrumentation: dropping the callback would leave every
-    // pooled query waiting on a callback that never fires.
     pool.connect = ((callback?: PoolConnectCallback) => {
       const startedAt = performance.now();
 
@@ -158,7 +152,6 @@ export class DatabasePoolMetricsService {
     this.instrumentedPools.add(pool);
   }
 
-  // Gauges read the pool on every scrape, so a pool that has been ended must go.
   unregisterPool(poolName: DatabasePoolName): void {
     this.pools.delete(poolName);
   }

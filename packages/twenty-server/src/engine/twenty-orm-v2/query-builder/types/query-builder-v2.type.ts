@@ -24,7 +24,6 @@ export const isWhereFactoryLike = (
   condition !== null &&
   typeof (condition as WhereFactoryLike).whereFactory === 'function';
 
-// NotBrackets extends Brackets, so only this tag separates them without importing typeorm.
 const NOT_BRACKETS_INSTANCE_SYMBOL = Symbol.for('NotBrackets');
 
 export const isNegatedWhereFactoryLike = (condition: unknown): boolean =>

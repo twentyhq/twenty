@@ -55,7 +55,6 @@ export const resolveObjectRecordsPermissions = ({
     (roleId) => objectPermissionsByRoleId[roleId],
   );
 
-  // A bound that cannot be resolved denies rather than letting the rest decide alone.
   return {
     objectRecordsPermissions: allRolePermissions.every(isDefined)
       ? computePermissionIntersection(allRolePermissions)

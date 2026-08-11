@@ -49,7 +49,6 @@ export const compileNamedParameters = (
       continue;
     }
 
-    // "::text" is a cast, not a parameter
     if (character === ':' && sql[index + 1] === ':') {
       text += '::';
       index += 2;
@@ -98,7 +97,6 @@ export const compileNamedParameters = (
         );
       }
 
-      // Empty is legal for containsAny; NULL matches nothing in both IN and ARRAY.
       if (parameterValue.length === 0) {
         text += 'NULL';
       } else {

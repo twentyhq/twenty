@@ -4,9 +4,6 @@ import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-bu
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
-// Values must never reach the SQL text and identifiers must never break out of their
-// quotes. Asserting on the emitted statement rather than on the escaping helper is what
-// makes this a regression net: a future code path that interpolates a value fails here.
 const HOSTILE_VALUES = [
   "'; DROP TABLE company; --",
   "1' OR '1'='1",
@@ -125,9 +122,6 @@ describe('ORM v2 SQL injection invariants', () => {
 
         expect(sql).toContain(`"${hostileIdentifier.replace(/"/g, '""')}"`);
 
-        // The payload may appear inside a quoted identifier, where it is just a
-        // column name. What matters is that none of it survives outside one, so
-        // strip every quoted identifier and assert the skeleton stays clean.
         const sqlOutsideIdentifiers = sql.replace(/"(?:[^"]|"")*"/g, '""');
 
         expect(sqlOutsideIdentifiers).not.toMatch(

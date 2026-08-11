@@ -18,7 +18,6 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/t
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/utils/build-workspace-table-shape.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm-v2/utils/resolve-object-records-permissions.util';
 
-// Keyed on the flat maps identity, so a metadata version change drops the entry with them.
 const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
   object,
   Map<string, WorkspaceTableShape>

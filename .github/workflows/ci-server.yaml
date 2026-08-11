@@ -271,8 +271,6 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
         orm-v2: [false]
         include:
-          # findMany is the only runner on ORM v2 today, so the flagged pass covers
-          # that surface rather than the whole suite.
           - shard: 1
             orm-v2: true
     services:
@@ -313,10 +311,6 @@ jobs:
       SHARD_COUNTER: 16
       AUTH_COOKIE_SESSIONS_ENABLED: ${{ contains(github.event.pull_request.labels.*.name, 'ci:auth-cookie-sessions') }}
       TEST_FORCED_FEATURE_FLAGS: ${{ matrix.orm-v2 && 'IS_ORM_V2_READ_PATH_ENABLED' || '' }}
-      # The findMany surface: record reads plus the paths where ORM v2 composes SQL
-      # differently from TypeORM (relation ordering and filtering, the per-parent
-      # limit, row-level predicates on joins, soft-deleted relations, composites).
-      # Widen this as more runners move over.
       ORM_V2_TEST_PATH_PATTERN: '(find-many|composite-field-pagination|filter-by-relation-field|order-by-relation-field|nested-relation|soft-deleted-relation|relation-join-rls)'
     steps:
       - name: Fetch custom Github Actions and base branch history

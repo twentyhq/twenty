@@ -5,7 +5,6 @@ import { type Pool, type PoolClient } from 'pg';
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
 
-// A connection retains every named statement for its lifetime, so the set must be bounded.
 const MAX_PREPARED_STATEMENT_SHAPES = 1000;
 
 const statementNameByText = new Map<string, string>();

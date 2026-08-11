@@ -74,8 +74,6 @@ describe('compileNamedParameters', () => {
   });
 
   it('should expand an empty spread to NULL so it matches nothing', () => {
-    // containsAny is not in ARRAY_OPERATORS, so the shared validation lets an empty list
-    // through; NULL is valid in both "IN (NULL)" and "ARRAY[NULL]".
     const compiled = compileNamedParameters('"id" IN (:...ids)', { ids: [] });
 
     expect(compiled.text).toBe('"id" IN (NULL)');

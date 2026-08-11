@@ -17,7 +17,6 @@ const buildFlatFieldMetadata = (
   },
 ): FlatFieldMetadata => flatFieldMetadata as unknown as FlatFieldMetadata;
 
-// Flat maps resolve id -> universalIdentifier -> entity, so a fixture needs both indexes.
 const buildFlatFieldMetadataMaps = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): FlatEntityMaps<FlatFieldMetadata> =>

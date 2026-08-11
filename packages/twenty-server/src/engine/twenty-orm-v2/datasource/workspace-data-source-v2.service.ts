@@ -139,7 +139,6 @@ export class WorkspaceDataSourceV2Service
         : undefined,
     });
 
-    // An unhandled pool 'error' event would take the process down.
     pool.on('error', (error) => {
       this.logger.error(`Idle client error: ${error.message}`, error.stack);
     });

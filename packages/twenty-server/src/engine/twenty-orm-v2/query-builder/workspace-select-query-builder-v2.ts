@@ -78,9 +78,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       queryType: 'select',
       joinAttributes: this.joinClauses.map((joinClause) => ({
         alias: { name: joinClause.alias },
-        // Callers reject joins that can duplicate root rows, and read that from the
-        // relation rather than from the join itself. Workspace relations are only
-        // ever to-one or one-to-many, so many-to-many cannot arise here.
         relation: {
           isOneToMany: joinClause.relationType === RelationType.ONE_TO_MANY,
           isManyToMany: false,
@@ -124,7 +121,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     condition: string | WhereFactoryLike,
     parameters?: Record<string, unknown>,
   ): this {
-    // Joined predicates live in ON and survive this, so only the main marker is cleared.
     this.whereClauses.length = 0;
     this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
@@ -445,7 +441,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
       condition.whereFactory(nestedBuilder);
 
-      // A nested group is a fragment of this WHERE, so it carries no soft-delete copy.
       const nestedSql = nestedBuilder.buildWhereExpression({
         includeSoftDeletePredicate: false,
       });

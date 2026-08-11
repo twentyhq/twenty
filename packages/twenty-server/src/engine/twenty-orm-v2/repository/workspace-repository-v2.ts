@@ -177,7 +177,6 @@ export class WorkspaceRepositoryV2 {
       return;
     }
 
-    // In WHERE this would turn the LEFT JOIN into an inner join.
     queryBuilder.addJoinCondition(alias, renderedCondition.sql);
     queryBuilder.setParameters(renderedCondition.parameters);
   }

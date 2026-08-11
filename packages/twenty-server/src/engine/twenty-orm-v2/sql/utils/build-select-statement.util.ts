@@ -136,7 +136,6 @@ export const buildWhereExpression = (
     return softDeletePredicate;
   }
 
-  // AND binds tighter than OR, so the clauses must be wrapped before the predicate.
   return `(${userExpression}) AND ${softDeletePredicate}`;
 };
 

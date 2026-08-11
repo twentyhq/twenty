@@ -125,7 +125,6 @@ describe('seedFeatureFlags', () => {
     ).toHaveLength(2);
   });
 
-  // A silently ignored typo would leave CI green while testing nothing.
   it('should throw on an unknown flag name', async () => {
     process.env.TEST_FORCED_FEATURE_FLAGS = 'IS_ORM_V2_READ_PATH_ENABLE';
 

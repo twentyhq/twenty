@@ -272,8 +272,6 @@ describe('DatabasePoolMetricsService', () => {
     expect(histogramRecord).toHaveBeenCalledTimes(1);
   });
 
-  // pool.query() acquires its client through the callback form, so instrumentation that
-  // only handles the promise form leaves every pooled query hanging.
   it('keeps the callback form of connect working', () => {
     const { pool } = createRawPool();
 

@@ -6,9 +6,6 @@ import {
 
 const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
 
-// The permission layer needs the columns a query reads, grouped by the alias they belong
-// to: a joined alias is a different object with its own field permissions, and ordering
-// by one of its columns reads it just as selecting it does.
 export const collectReferencedColumnNames = ({
   mainAlias,
   mainAliasColumnNames,
@@ -40,7 +37,6 @@ export const collectReferencedColumnNames = ({
       ...expression.matchAll(QUALIFIED_COLUMN_REFERENCE),
     ];
 
-    // Attributing a qualified column to the main alias would check the wrong object.
     if (qualifiedReferences.length > 0) {
       for (const [, alias, columnName] of qualifiedReferences) {
         addColumnName(alias, columnName);
