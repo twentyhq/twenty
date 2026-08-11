@@ -7,6 +7,8 @@ let mockIsMobile = false;
 let mockIsInSidePanel = false;
 
 const featureFilteredHomeTab: PageLayoutTab = {
+  isSystemSideEffect: false,
+  universalIdentifier: 'universal-identifier-mock',
   id: 'home-tab-id',
   applicationId: 'application-id',
   isActive: true,
