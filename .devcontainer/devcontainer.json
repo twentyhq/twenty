@@ -1,0 +1,5 @@
+{
+  "name": "twentymg",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code"
+}
