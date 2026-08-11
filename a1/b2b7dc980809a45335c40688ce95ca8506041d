@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service.ts
+  s_7c7a6c72e0c33c::t_6cf1616d6c8ecb 97-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "a1b2b7dc980809a45335c40688ce95ca8506041d",
+  "prompts": {},
+  "sessions": {
+    "s_7c7a6c72e0c33c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c20e5ec-cd9d-423a-8ce0-ce10eb826c66",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
