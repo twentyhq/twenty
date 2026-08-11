@@ -135,13 +135,17 @@ const createPageLayoutWithWidget = (
   widget: PageLayoutWidget,
   pageLayoutType: PageLayoutType = PageLayoutType.DASHBOARD,
 ): PageLayout => ({
+  applicationId: 'application-id-mock',
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Mock Page Layout',
   type: pageLayoutType,
+  isSystemSideEffect: false,
   objectMetadataId: companyObjectMetadataItem.id,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
     {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutTab',
       isActive: true,
       applicationId: '',
@@ -252,6 +256,8 @@ type Story = StoryObj<typeof WidgetRenderer>;
 export const WithNumberChart: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -341,6 +347,8 @@ export const WithNumberChart: Story = {
 export const WithBarChart: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -441,6 +449,8 @@ export const SmallWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -537,6 +547,8 @@ export const MediumWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -637,6 +649,8 @@ export const LargeWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -737,6 +751,8 @@ export const WideWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -833,6 +849,8 @@ export const TallWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -934,6 +952,8 @@ export const WithManyToOneRelationFieldWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1055,6 +1075,8 @@ export const WithOneToManyRelationFieldWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1168,6 +1190,8 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1307,6 +1331,8 @@ export const OnMobile: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1407,6 +1433,8 @@ export const InSidePanel: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1569,6 +1597,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
     const presentation = variant === 'solo' ? 'solo' : 'stack';
 
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1670,14 +1700,18 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
 
     const pageLayoutData: PageLayout = {
       id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      applicationId: 'application-id-mock',
       name: 'Mock Page Layout',
       type: pageLayoutType,
+      isSystemSideEffect: false,
       objectMetadataId: companyObjectMetadataItem.id,
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs:
         variant === 'side-column'
           ? [
               {
+                isSystemSideEffect: false,
+                universalIdentifier: 'universal-identifier-mock',
                 __typename: 'PageLayoutTab',
                 isActive: true,
                 applicationId: '',
@@ -1694,6 +1728,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 __typename: 'PageLayoutTab',
                 isActive: true,
                 applicationId: '',
+                universalIdentifier: 'universal-identifier-mock',
+                isSystemSideEffect: false,
                 id: 'other-tab',
                 title: 'Other Tab',
                 position: 1,
@@ -1709,6 +1745,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 __typename: 'PageLayoutTab',
                 isActive: true,
                 applicationId: '',
+                universalIdentifier: 'universal-identifier-mock',
+                isSystemSideEffect: false,
                 id: TAB_ID_OVERVIEW,
                 title: 'Overview',
                 position: 0,

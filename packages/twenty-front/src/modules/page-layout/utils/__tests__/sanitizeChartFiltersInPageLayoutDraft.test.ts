@@ -43,6 +43,8 @@ const buildChartFilters = (recordFilters: RecordFilter[]): ChartFilters => ({
 
 const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
   const tab: PageLayoutTab = {
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutTab',
     id: 'tab-1',
     applicationId: 'test-application-id',

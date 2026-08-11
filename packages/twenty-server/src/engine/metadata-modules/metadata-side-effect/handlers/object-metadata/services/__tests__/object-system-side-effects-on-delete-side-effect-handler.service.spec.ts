@@ -37,6 +37,7 @@ type ViewFixture = {
   universalIdentifier: string;
   isSystemSideEffect: boolean;
   viewFieldUniversalIdentifiers?: string[];
+  viewFieldGroupUniversalIdentifiers?: string[];
 };
 
 const buildFieldMetadataMaps = (fields: FieldFixture[]) => ({
@@ -82,6 +83,10 @@ const buildArgs = ({
       flatSearchFieldMetadataMaps: { byUniversalIdentifier: {} },
       flatViewMaps: { byUniversalIdentifier: {} },
       flatViewFieldMaps: { byUniversalIdentifier: {} },
+      flatViewFieldGroupMaps: { byUniversalIdentifier: {} },
+      flatPageLayoutMaps: { byUniversalIdentifier: {} },
+      flatPageLayoutTabMaps: { byUniversalIdentifier: {} },
+      flatPageLayoutWidgetMaps: { byUniversalIdentifier: {} },
       ...relatedFlatEntityMaps,
     },
     context: {},
@@ -272,7 +277,10 @@ describe('ObjectSystemSideEffectsOnDeleteSideEffectHandlerService', () => {
                     ],
                   },
                 ] satisfies ViewFixture[]
-              ).map((view) => [view.universalIdentifier, view]),
+              ).map((view) => [
+                view.universalIdentifier,
+                { viewFieldGroupUniversalIdentifiers: [], ...view },
+              ]),
             ),
           },
           flatViewFieldMaps: {

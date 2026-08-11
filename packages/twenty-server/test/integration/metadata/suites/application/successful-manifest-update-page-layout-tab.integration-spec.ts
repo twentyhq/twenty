@@ -4,6 +4,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout-tab/utils/find-page-layout-tabs.util';
 import { type Manifest } from 'twenty-shared/application';
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,7 +13,8 @@ const TEST_ROLE_ID = uuidv4();
 const TEST_TAB_ID = uuidv4();
 
 const STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID =
-  '20202020-a102-4002-8002-ae0a1ea11002';
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage
+    .universalIdentifier;
 
 const PAGE_LAYOUT_TAB_GQL_FIELDS = `
   id
