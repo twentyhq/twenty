@@ -116,7 +116,7 @@ export const MultiSelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
       focusId={focusId}
-      shouldSelectFirstItemOnListChange={isNonEmptyString(searchFilter)}
+      shouldPreselectFirstItem={isNonEmptyString(searchFilter)}
     >
       <DropdownContent
         ref={containerRef}

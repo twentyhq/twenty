@@ -18,7 +18,7 @@ type SelectableListProps = {
   onSelect?: (selected: string) => void;
   selectableListInstanceId: string;
   focusId: string;
-  shouldSelectFirstItemOnListChange?: boolean;
+  shouldPreselectFirstItem?: boolean;
 };
 
 export const SelectableList = ({
@@ -28,7 +28,7 @@ export const SelectableList = ({
   selectableListInstanceId,
   onSelect,
   focusId,
-  shouldSelectFirstItemOnListChange,
+  shouldPreselectFirstItem,
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
 
@@ -58,7 +58,7 @@ export const SelectableList = ({
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
     }
 
-    if (shouldSelectFirstItemOnListChange !== true) {
+    if (shouldPreselectFirstItem !== true) {
       return;
     }
 
@@ -84,7 +84,7 @@ export const SelectableList = ({
     selectableItemIdMatrix,
     selectableListInstanceId,
     setSelectableItemIds,
-    shouldSelectFirstItemOnListChange,
+    shouldPreselectFirstItem,
     resetSelectedItem,
     setSelectedItemId,
     store,
