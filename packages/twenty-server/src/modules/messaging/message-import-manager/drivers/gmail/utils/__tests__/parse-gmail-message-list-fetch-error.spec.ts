@@ -271,4 +271,20 @@ describe('parseGmailApiError', () => {
       -3,
     );
   });
+
+  it('should leave retryAfter undefined on non-rate-limit errors even when the message contains a retry-after timestamp', () => {
+    const fifteenMinutesFromNow = new Date(Date.now() + 15 * 60 * 1000);
+    const error = getGmailApiError({
+      code: 500,
+      reason: 'backendError',
+      message: `Backend Error.  Retry after ${fifteenMinutesFromNow.toISOString()}`,
+    });
+
+    const exception = parseGmailApiError(error);
+
+    expect(exception.code).toBe(
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(exception.throttleRetryAfter).toBeUndefined();
+  });
 });

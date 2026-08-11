@@ -54,11 +54,18 @@ export const parseGmailApiError = (
     );
   }
 
+  if (gmailApiError.code === 429 || gmailApiError.code === 403) {
+    return new MessageImportDriverException(
+      gmailApiError.message,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      {
+        throttleRetryAfter: parseGmailErrorRetryAfter(gmailApiError.message),
+      },
+    );
+  }
+
   return new MessageImportDriverException(
     gmailApiError.message,
     MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-    {
-      throttleRetryAfter: parseGmailErrorRetryAfter(gmailApiError.message),
-    },
   );
 };
