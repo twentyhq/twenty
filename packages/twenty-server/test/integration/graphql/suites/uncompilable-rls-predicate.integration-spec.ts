@@ -93,20 +93,22 @@ describe('row-level permission predicates that compile to nothing', () => {
     expect(await findCompanyIdsAsRestrictedRole()).toEqual([OWNED_COMPANY_ID]);
   });
 
-  // An empty selection compiles to no filter at all, and a role whose only
-  // predicate compiles to nothing ends up with no WHERE clause, so the
-  // restriction disappears instead of matching no record.
-  it('does not expose every record when a predicate selects no record', async () => {
+  it('rejects a predicate selecting no record', async () => {
     await upsertAccountOwnerRlsPredicate({
       setup: rlsRole,
       predicateId: PREDICATE_ID,
       value: { selectedRecordIds: [] },
       expectToFail: true,
     });
+  });
 
-    expect(await findCompanyIdsAsRestrictedRole()).not.toContain(
-      FOREIGN_COMPANY_ID,
-    );
+  it('rejects a predicate resolving only through the current record', async () => {
+    await upsertAccountOwnerRlsPredicate({
+      setup: rlsRole,
+      predicateId: PREDICATE_ID,
+      value: { selectedRecordIds: [], isCurrentRecordSelected: true },
+      expectToFail: true,
+    });
   });
 
   it('accepts a selection resolving to the current workspace member', async () => {

@@ -12,10 +12,12 @@ import {
 } from 'twenty-shared/types';
 import {
   convertViewFilterValueToString,
+  getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
+  jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -341,6 +343,43 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     return validationResult;
   }
 
+  // A row level permission predicate compiles without a current record, so a
+  // relation value resolving only through isCurrentRecordSelected yields no
+  // record id and removes the restriction instead of matching nothing. View
+  // filters do resolve it, so this cannot live in the shared schema.
+  private getUnresolvableRelationError({
+    fieldType,
+    operand,
+    value,
+  }: {
+    fieldType: FieldMetadataType;
+    operand: RowLevelPermissionPredicateOperand;
+    value: unknown;
+  }) {
+    if (getFilterTypeFromFieldType(fieldType) !== 'RELATION') {
+      return undefined;
+    }
+
+    const stringifiedValue = convertViewFilterValueToString(value);
+
+    const relationValue =
+      jsonRelationFilterValueSchema.safeParse(stringifiedValue);
+
+    if (
+      !relationValue.success ||
+      relationValue.data.selectedRecordIds.length > 0 ||
+      relationValue.data.isCurrentWorkspaceMemberSelected === true
+    ) {
+      return undefined;
+    }
+
+    return {
+      code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+      message: t`Value "${stringifiedValue}" resolves to no record for operand "${operand}", the current record is not available to a row level permission predicate`,
+      userFriendlyMessage: msg`Predicate value is not valid for this operand`,
+    };
+  }
+
   private getInvalidValueError({
     fieldType,
     operand,
@@ -372,6 +411,16 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Operand "${operand}" requires a value, an empty predicate would remove the row restriction entirely`,
         userFriendlyMessage: msg`Predicate is missing a value`,
       };
+    }
+
+    const unresolvableRelationError = this.getUnresolvableRelationError({
+      fieldType,
+      operand,
+      value,
+    });
+
+    if (isDefined(unresolvableRelationError)) {
+      return unresolvableRelationError;
     }
 
     const issue = getFilterValueValidationIssue({
