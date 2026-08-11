@@ -12,6 +12,7 @@ import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
@@ -37,6 +38,14 @@ export const useSubmitQuestionAnswer = () => {
       const threadId = store.get(agentChatDisplayedThreadState.atom);
 
       if (!isDefined(threadId)) {
+        return;
+      }
+
+      const agentChatSelectedFiles = store.get(
+        agentChatSelectedFilesState.atom,
+      );
+
+      if (isNonEmptyArray(agentChatSelectedFiles)) {
         return;
       }
 
