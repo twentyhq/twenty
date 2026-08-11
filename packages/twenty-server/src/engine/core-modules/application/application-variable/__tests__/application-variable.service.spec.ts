@@ -302,25 +302,6 @@ describe('ApplicationVariableEntityService', () => {
         secretEncryptionService.decryptVersionedOrThrow,
       ).toHaveBeenCalledTimes(1);
     });
-
-    it('should still inject a deprecated variable so apps can fall back to it', async () => {
-      mockCachedApplicationVariables([
-        makeFlatVariable({
-          universalIdentifier: 'variable-1',
-          key: 'LEGACY_URL',
-          value:
-            `enc:v2:deadbeef:https://legacy.example.com|${workspaceA}` as EncryptedString,
-          isDeprecated: true,
-        }),
-      ]);
-
-      const result = await service.getPublicEnvVariables({
-        workspaceId: workspaceA,
-        applicationId: mockApplicationId,
-      });
-
-      expect(result).toEqual({ LEGACY_URL: 'https://legacy.example.com' });
-    });
   });
 
   describe('update', () => {

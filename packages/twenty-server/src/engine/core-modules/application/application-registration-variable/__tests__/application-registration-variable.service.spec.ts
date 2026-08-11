@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { In, Not, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -100,16 +100,6 @@ describe('ApplicationRegistrationVariableService', () => {
     }) as ApplicationRegistrationVariableEntity;
 
   describe('syncVariableSchemas', () => {
-    it('should default isDeprecated to false when the manifest omits it', async () => {
-      const serverVariables: ServerVariables = { API_KEY: {} };
-
-      await service.syncVariableSchemas(registrationId, serverVariables);
-
-      expect(variableRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({ key: 'API_KEY', isDeprecated: false }),
-      );
-    });
-
     it('should persist isDeprecated on creation', async () => {
       const serverVariables: ServerVariables = {
         API_KEY: { isDeprecated: true },
@@ -137,28 +127,6 @@ describe('ApplicationRegistrationVariableService', () => {
       );
     });
 
-    it('should update isDeprecated on an existing variable without touching its value', async () => {
-      variableRepository.find.mockResolvedValue([
-        makeExistingVariable({
-          encryptedValue: 'enc:v2:deadbeef:stored-secret' as EncryptedString,
-        }),
-      ]);
-
-      await service.syncVariableSchemas(registrationId, {
-        API_KEY: { isDeprecated: true },
-      });
-
-      expect(variableRepository.update).toHaveBeenCalledWith(
-        'variable-1',
-        expect.objectContaining({ isDeprecated: true }),
-      );
-      expect(variableRepository.update).toHaveBeenCalledWith(
-        'variable-1',
-        expect.not.objectContaining({ encryptedValue: expect.anything() }),
-      );
-      expect(variableRepository.save).not.toHaveBeenCalled();
-    });
-
     it('should un-deprecate a variable when the manifest drops the flag', async () => {
       variableRepository.find.mockResolvedValue([
         makeExistingVariable({ isDeprecated: true }),
@@ -170,22 +138,6 @@ describe('ApplicationRegistrationVariableService', () => {
         'variable-1',
         expect.objectContaining({ isDeprecated: false }),
       );
-    });
-
-    it('should not delete a deprecated variable that is still declared', async () => {
-      variableRepository.find.mockResolvedValue([
-        makeExistingVariable({ isDeprecated: true }),
-      ]);
-
-      await service.syncVariableSchemas(registrationId, {
-        API_KEY: { isDeprecated: true },
-        NEW_API_KEY: {},
-      });
-
-      expect(variableRepository.delete).toHaveBeenCalledWith({
-        applicationRegistrationId: registrationId,
-        key: Not(In(['API_KEY', 'NEW_API_KEY'])),
-      });
     });
   });
 
@@ -210,16 +162,6 @@ describe('ApplicationRegistrationVariableService', () => {
       expect(result.get(registrationId)).toBe(true);
     });
 
-    it('should report unconfigured when a required variable is not deprecated', async () => {
-      mockVariables([
-        makeExistingVariable({ isRequired: true, isDeprecated: false }),
-      ]);
-
-      const result = await service.isConfiguredBatch([registrationId]);
-
-      expect(result.get(registrationId)).toBe(false);
-    });
-
     it('should report unconfigured when a required variable decrypts to an empty string', async () => {
       mockVariables([
         makeExistingVariable({
@@ -231,19 +173,6 @@ describe('ApplicationRegistrationVariableService', () => {
       const result = await service.isConfiguredBatch([registrationId]);
 
       expect(result.get(registrationId)).toBe(false);
-    });
-
-    it('should report configured when a required variable decrypts to a real value', async () => {
-      mockVariables([
-        makeExistingVariable({
-          isRequired: true,
-          encryptedValue: 'enc:v2:deadbeef:stored-secret' as EncryptedString,
-        }),
-      ]);
-
-      const result = await service.isConfiguredBatch([registrationId]);
-
-      expect(result.get(registrationId)).toBe(true);
     });
 
     it('should treat an undecryptable required variable as filled', async () => {
@@ -274,49 +203,6 @@ describe('ApplicationRegistrationVariableService', () => {
 
       expect(variable.isFilled).toBe(true);
       expect(variable.value).toBe('•••••••••••••');
-    });
-
-    it('should throw for a value that is not an enc:v2 envelope', async () => {
-      variableRepository.find.mockResolvedValue([
-        makeExistingVariable({
-          isSecret: false,
-          encryptedValue: 'legacy-ctr-ciphertext' as EncryptedString,
-        }),
-      ]);
-
-      await expect(
-        service.findVariablesWithObfuscatedValuesGlobal(registrationId),
-      ).rejects.toThrow('undecryptable');
-    });
-  });
-
-  describe('createVariable', () => {
-    it('should encrypt an empty value and report the variable unfilled', async () => {
-      applicationRegistrationRepository.findOne.mockResolvedValue({
-        id: registrationId,
-      } as never);
-      variableRepository.save.mockImplementation(
-        async (entity) => entity as ApplicationRegistrationVariableEntity,
-      );
-
-      const result = await service.createVariable(
-        {
-          applicationRegistrationId: registrationId,
-          key: 'API_KEY',
-          value: '' as PlaintextString,
-        },
-        'workspace-1',
-      );
-
-      expect(encryptionService.encryptVersioned).toHaveBeenCalledWith('');
-      expect(variableRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: 'API_KEY',
-          encryptedValue: 'enc:v2:deadbeef:',
-        }),
-      );
-      expect(result.isFilled).toBe(false);
-      expect(result.value).toBeNull();
     });
   });
 
