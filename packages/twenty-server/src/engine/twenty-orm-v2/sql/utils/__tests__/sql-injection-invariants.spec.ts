@@ -96,14 +96,12 @@ describe('ORM v2 SQL injection invariants', () => {
     it('should never emit a quote character that came from a value', () => {
       const compiled = compileNamedParameters(
         '"person"."name" = :name AND "person"."id" = :id',
-        { name: "o'brien\"; --", id: "'; DROP TABLE person; --" },
+        { name: 'o\'brien"; --', id: "'; DROP TABLE person; --" },
       );
 
-      expect(compiled.text).toBe(
-        '"person"."name" = $1 AND "person"."id" = $2',
-      );
+      expect(compiled.text).toBe('"person"."name" = $1 AND "person"."id" = $2');
       expect(compiled.values).toEqual([
-        "o'brien\"; --",
+        'o\'brien"; --',
         "'; DROP TABLE person; --",
       ]);
     });
