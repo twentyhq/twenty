@@ -35,13 +35,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 401 Invalid Credentials', () => {
+  it('should handle 401 Invalid Credentials as temporary so the next attempt can refresh the token', () => {
     const error = getGmailApiError({ code: 401 });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -75,13 +75,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 403 Domain Policy Error', () => {
+  it('should handle 403 Domain Policy Error as temporary', () => {
     const error = getGmailApiError({ code: 403, reason: 'domainPolicy' });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -95,12 +95,14 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 410 Gone', () => {
+  it('should handle 410 Gone as temporary', () => {
     const error = getGmailApiError({ code: 410 });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
-    expect(exception.code).toBe(MessageImportDriverExceptionCode.UNKNOWN);
+    expect(exception.code).toBe(
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
   });
 
   it('should handle 429 Too Many Requests', () => {
@@ -166,13 +168,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 401 Invalid Credentials with errorCodeAsString', () => {
+  it('should handle 401 Invalid Credentials with errorCodeAsString as temporary', () => {
     const error = getGmailApiError({ code: 401 });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -206,13 +208,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 403 Domain Policy Error with errorCodeAsString', () => {
+  it('should handle 403 Domain Policy Error with errorCodeAsString as temporary', () => {
     const error = getGmailApiError({ code: 403, reason: 'domainPolicy' });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
