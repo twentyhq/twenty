@@ -12,8 +12,10 @@ import {
 import { EmailComposerFieldRow } from '@/activities/emails/components/EmailComposerFieldRow';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -63,8 +65,24 @@ export const CampaignSentEnvelope = ({
     skip: !hasList,
   });
 
+  // useFindOneRecord skips the query outright when the role cannot read the
+  // object, which looks exactly like a lookup that came back empty: not
+  // loading, no error, no record. Without this the row would tell a reader who
+  // simply lacks access that the list was deleted.
+  const { objectMetadataItem: messageListObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.MessageList,
+    });
+
+  const { canReadObjectRecords: canReadMessageLists } =
+    useObjectPermissionsForObject(messageListObjectMetadataItem.id);
+
   const isListKnownDeleted =
-    hasList && !isDefined(list) && !isListLoading && !isDefined(listError);
+    hasList &&
+    canReadMessageLists &&
+    !isDefined(list) &&
+    !isListLoading &&
+    !isDefined(listError);
 
   const fromAddress = campaign.fromAddress?.primaryEmail;
   const subject = campaign.subject;
