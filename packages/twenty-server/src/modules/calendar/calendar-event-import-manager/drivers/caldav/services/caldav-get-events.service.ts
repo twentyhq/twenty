@@ -21,10 +21,10 @@ export class CalDavGetEventsService {
   ): Promise<GetCalendarEventsResponse> {
     this.logger.debug(`Getting calendar events for ${connectedAccountId}`);
 
-    try {
-      const client =
-        await this.calDavClientProvider.getClient(connectedAccountId);
+    const client =
+      await this.calDavClientProvider.getClient(connectedAccountId);
 
+    try {
       const result = await this.fetchEventsService.fetchChangedEventHrefs(
         client,
         syncCursor ? (JSON.parse(syncCursor) as CalDavSyncCursor) : undefined,
@@ -45,7 +45,7 @@ export class CalDavGetEventsService {
         error,
       );
 
-      throw parseCalDAVError(error as Error);
+      throw parseCalDAVError(error);
     }
   }
 }
