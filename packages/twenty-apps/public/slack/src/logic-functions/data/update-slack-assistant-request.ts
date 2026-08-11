@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 
@@ -26,10 +27,10 @@ export const updateSlackAssistantRequest = async (
       __args: {
         id,
         data: {
-          ...(status !== undefined ? { status } : {}),
-          ...(responseText !== undefined ? { responseText } : {}),
-          ...(errorMessage !== undefined ? { errorMessage } : {}),
-          ...(workspaceMemberId !== undefined ? { workspaceMemberId } : {}),
+          ...(isDefined(status) ? { status } : {}),
+          ...(isDefined(responseText) ? { responseText } : {}),
+          ...(isDefined(errorMessage) ? { errorMessage } : {}),
+          ...(isDefined(workspaceMemberId) ? { workspaceMemberId } : {}),
         },
       },
       id: true,
