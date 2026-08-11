@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -43,7 +44,7 @@ export const MultiSelectInput = ({
   dropdownWidth,
   onAddSelectOption,
 }: MultiSelectInputProps) => {
-  const { resetSelectedItem } = useSelectableList(
+  const { resetSelectedItem, setSelectedItemId } = useSelectableList(
     selectableListComponentInstanceId,
   );
 
@@ -59,12 +60,33 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filteredOptionsInDropDown = useMemo(() => {
-    const searchTerm = normalizeSearchText(searchFilter);
-    return options.filter((option) => {
-      return normalizeSearchText(option.label).includes(searchTerm);
-    });
-  }, [options, searchFilter]);
+  const filterOptions = useCallback(
+    (searchText: string) => {
+      const searchTerm = normalizeSearchText(searchText);
+      return options.filter((option) => {
+        return normalizeSearchText(option.label).includes(searchTerm);
+      });
+    },
+    [options],
+  );
+
+  const filteredOptionsInDropDown = useMemo(
+    () => filterOptions(searchFilter),
+    [filterOptions, searchFilter],
+  );
+
+  const handleSearchFilterChange = (searchText: string) => {
+    const newSearchFilter = turnIntoEmptyStringIfWhitespacesOnly(searchText);
+    setSearchFilter(newSearchFilter);
+
+    const firstMatchingOption = filterOptions(newSearchFilter)[0];
+
+    if (isNonEmptyString(newSearchFilter) && isDefined(firstMatchingOption)) {
+      setSelectedItemId(firstMatchingOption.value);
+    } else {
+      resetSelectedItem();
+    }
+  };
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
@@ -122,9 +144,7 @@ export const MultiSelectInput = ({
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={(event) =>
-            setSearchFilter(
-              turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
-            )
+            handleSearchFilterChange(event.currentTarget.value)
           }
           autoFocus
         />

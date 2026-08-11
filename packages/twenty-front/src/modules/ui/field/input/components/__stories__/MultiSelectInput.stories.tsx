@@ -314,6 +314,32 @@ export const NoResultsFound: Story = {
   },
 };
 
+export const SearchThenEnterSelectsFirstMatch: Story = {
+  args: {
+    values: [],
+    options: sampleOptions,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const searchInput = await canvas.findByRole('textbox');
+
+    await userEvent.click(searchInput);
+
+    await userEvent.type(searchInput, 'viral');
+
+    await waitFor(() => {
+      expect(canvas.getByText('Viral Marketing')).toBeVisible();
+    });
+
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(args.onOptionSelected).toHaveBeenCalledWith(['viral']);
+    });
+  },
+};
+
 export const KeyboardNavigation: Story = {
   args: {
     values: [],
