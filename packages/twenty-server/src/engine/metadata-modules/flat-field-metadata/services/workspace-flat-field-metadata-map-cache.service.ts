@@ -205,6 +205,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         flatEntity: {
           ...flatFieldMetadata,
           isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),
+          isSearchable:
+            (searchFieldMetadatasByFieldId.get(fieldMetadataEntity.id) ?? [])
+              .length > 0,
         },
         flatEntityMapsToMutate: flatFieldMetadataMaps,
       });

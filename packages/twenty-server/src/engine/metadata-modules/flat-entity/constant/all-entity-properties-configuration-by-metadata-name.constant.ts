@@ -90,6 +90,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    // isSearchable is derived from SearchFieldMetadata at cache build time
+    // and is not a column on the fieldMetadata table. Same contract as
+    // isUnique above: it stays in propertiesToCompare so validators see the
+    // proposed change, but the field-metadata runner drops it before issuing
+    // the SQL UPDATE — the actual state change rides on the side-effect
+    // searchFieldMetadata create/delete.
+    isSearchable: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     label: {
       toCompare: true,
       toStringify: false,

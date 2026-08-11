@@ -170,6 +170,14 @@ export class FieldMetadataEntity<
   // dropped by 1798300000000-drop-field-metadata-is-unique-column.ts.
   isUnique: boolean | null;
 
+  // Derived at flat-entity cache build time from the existence of a
+  // SearchFieldMetadata row targeting this field — never persisted on this
+  // entity, for the same reason as isUnique above: searchFieldMetadata is the
+  // source of truth and carries position/isSystemSideEffect that a boolean
+  // cannot express. The state change rides on a side-effect
+  // searchFieldMetadata create/delete.
+  isSearchable: boolean | null;
+
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 

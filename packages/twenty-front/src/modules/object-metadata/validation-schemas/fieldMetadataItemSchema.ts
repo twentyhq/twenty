@@ -48,6 +48,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     isActive: z.boolean(),
     isNullable: z.boolean(),
     isUnique: z.boolean(),
+    isSearchable: z.boolean(),
     isSystem: z.boolean(),
     isUIEditable: z.boolean(),
     label: metadataLabelSchema(existingLabels),

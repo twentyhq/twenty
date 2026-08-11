@@ -22,6 +22,7 @@ type BaseRegularFieldManifest<
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isUIEditable?: boolean;
   isUnique?: boolean;
+  isSearchable?: boolean;
   objectUniversalIdentifier: string;
 };
 

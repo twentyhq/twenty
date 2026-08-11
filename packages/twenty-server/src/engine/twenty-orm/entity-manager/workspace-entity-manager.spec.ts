@@ -163,6 +163,7 @@ describe('WorkspaceEntityManager', () => {
       isSystem: false,
       isUIEditable: true,
       isUnique: false,
+      isSearchable: false,
       options: null,
       settings: null,
       overrides: null,
@@ -241,6 +242,7 @@ describe('WorkspaceEntityManager', () => {
       featureFlagsMap: {
         IS_APP_CLAIMING_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
+        IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_CALENDAR_WEEK_VIEW_ENABLED: false,
         IS_EMAIL_GROUP_ENABLED: false,
@@ -269,6 +271,7 @@ describe('WorkspaceEntityManager', () => {
     mockDataSource = {
       featureFlagMap: {
         IS_UNIQUE_INDEXES_ENABLED: false,
+        IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
       },
       permissionsPerRoleId: {},

@@ -21,6 +21,7 @@ type Assertions = [
       | 'options'
       | 'settings'
       | 'isUnique'
+      | 'isSearchable'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
       | 'isNullable'

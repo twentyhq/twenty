@@ -151,12 +151,17 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const { entityId, update } = flatAction;
 
-    // isUnique is derived from IndexMetadata at cache build time and has
-    // no underlying column on fieldMetadata. It travels in the update
-    // payload only so per-type validators (e.g. FILES rejection) can run
-    // — the actual state change is handled by the metadata side-effect
-    // engine, which owns the backing unique index lifecycle.
-    const { isUnique: _droppedIsUnique, ...persistedUpdate } = update;
+    // isUnique and isSearchable are derived at flat-entity cache build time
+    // (from IndexMetadata and SearchFieldMetadata respectively) and have no
+    // underlying column on fieldMetadata. They travel in the update payload
+    // only so validators can run — the actual state changes are handled by
+    // the metadata side-effect engine, which owns the backing unique index
+    // and searchFieldMetadata lifecycles.
+    const {
+      isUnique: _droppedIsUnique,
+      isSearchable: _droppedIsSearchable,
+      ...persistedUpdate
+    } = update;
 
     if (Object.keys(persistedUpdate).length === 0) {
       return;

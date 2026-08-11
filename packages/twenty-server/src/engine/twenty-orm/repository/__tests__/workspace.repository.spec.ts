@@ -73,6 +73,7 @@ describe('WorkspaceRepository', () => {
       isSystemSideEffect: false,
       isNullable: false,
       isUnique: true,
+      isSearchable: false,
       isSystem: true,
       isUIEditable: true,
       isLabelSyncedWithName: false,
@@ -198,6 +199,7 @@ describe('WorkspaceRepository', () => {
             type: 'string',
             isNullable: false,
             isUnique: true,
+            isSearchable: false,
           },
         },
       });
