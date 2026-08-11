@@ -4,7 +4,10 @@ import { Injectable } from '@nestjs/common';
 
 import { buildBillingUsageAvailableCreditsCacheKey } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-cache-key.util';
 import { buildBillingUsageAvailableCreditsCachePattern } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-cache-pattern.util';
-import { buildBillingUsageAvailableCreditsStaleMarkerKey } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-stale-marker-key.util';
+import {
+  buildBillingUsageAvailableCreditsStaleMarkerKey,
+  buildBillingUsageCounterAdjustmentKey,
+} from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-stale-marker-key.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -51,6 +54,31 @@ export class BillingUsageCacheService {
     );
 
     return true;
+  }
+
+  async hasCounterAdjustmentBeenApplied(
+    workspaceId: string,
+    adjustmentKey: string,
+  ): Promise<boolean> {
+    const marker = await this.billingUsageCacheStorage.get<boolean>(
+      buildBillingUsageCounterAdjustmentKey(workspaceId, adjustmentKey),
+    );
+
+    return marker === true;
+  }
+
+  async markCounterAdjustmentApplied(
+    workspaceId: string,
+    adjustmentKey: string,
+    periodEnd: Date | string,
+  ): Promise<void> {
+    const ttlMs = Math.max(new Date(periodEnd).getTime() - Date.now(), 0);
+
+    await this.billingUsageCacheStorage.set(
+      buildBillingUsageCounterAdjustmentKey(workspaceId, adjustmentKey),
+      true,
+      ttlMs,
+    );
   }
 
   async markAvailableCreditsStale(

@@ -46,6 +46,8 @@ describe('BillingCreditService', () => {
     adjustAvailableCredits: jest.Mock;
     invalidateAvailableCredits: jest.Mock;
     markAvailableCreditsStale: jest.Mock;
+    hasCounterAdjustmentBeenApplied: jest.Mock;
+    markCounterAdjustmentApplied: jest.Mock;
   }>;
   let billingUsageCapService: jest.Mocked<{
     clearHasReachedCapForWorkspace: jest.Mock;
@@ -96,6 +98,10 @@ describe('BillingCreditService', () => {
             adjustAvailableCredits: jest.fn().mockResolvedValue(0),
             invalidateAvailableCredits: jest.fn().mockResolvedValue(undefined),
             markAvailableCreditsStale: jest.fn().mockResolvedValue(undefined),
+            hasCounterAdjustmentBeenApplied: jest.fn().mockResolvedValue(false),
+            markCounterAdjustmentApplied: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
         {
@@ -351,11 +357,43 @@ describe('BillingCreditService', () => {
       },
     );
 
-    // The attempt that did revoke can have failed before refreshing, so a retry
-    // repairs the mirror without decrementing twice. The counter is left alone
-    // on purpose: rebuilding it reads ClickHouse, and usage still in flight
-    // there would be frozen in as extra credit for the rest of the period.
-    it('repairs the mirror without touching the counter when already revoked', async () => {
+    // The attempt that did revoke failed before reaching the counter, so the
+    // revoked credits are still spendable and only a rebuild from the ledger
+    // can repair that without decrementing a second time.
+    it('rebuilds the counter when the first revoke never reached it', async () => {
+      billingUsageCacheService.hasCounterAdjustmentBeenApplied.mockResolvedValue(
+        false,
+      );
+      billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(0);
+      billingCreditGrantService.revokeGrant.mockResolvedValue({
+        grant: { id: 'grant_1', amountMicro: 2_000_000 },
+        wasRevokedNow: false,
+      });
+
+      await service.revokeGrant({ workspaceId, grantId: 'grant_1' });
+
+      expect(
+        billingUsageCacheService.invalidateAvailableCredits,
+      ).toHaveBeenCalledWith(workspaceId, PERIOD_START);
+      expect(
+        billingUsageCacheService.adjustAvailableCredits,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('records that a revocation moved the counter so a retry can tell', async () => {
+      await service.revokeGrant({ workspaceId, grantId: 'grant_1' });
+
+      expect(
+        billingUsageCacheService.markCounterAdjustmentApplied,
+      ).toHaveBeenCalledWith(workspaceId, 'revoke:grant_1', PERIOD_END);
+    });
+
+    // The first attempt recorded that it moved the counter, so the retry must
+    // not move it again and must not rebuild either.
+    it('leaves the counter alone when the first revoke already adjusted it', async () => {
+      billingUsageCacheService.hasCounterAdjustmentBeenApplied.mockResolvedValue(
+        true,
+      );
       billingUsageCacheService.getAvailableCredits.mockResolvedValue(3_000_000);
       billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(0);
       billingCreditGrantService.revokeGrant.mockResolvedValue({

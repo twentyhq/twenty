@@ -147,20 +147,25 @@ export class BillingCreditService {
       });
 
     // A retried revocation must not take the same credits off the usage
-    // counter twice, which would block a workspace that still has credits. It
-    // still repairs the mirror, the cap flag and the cached subscription,
-    // since the attempt that did revoke can have failed before refreshing.
-    //
-    // The counter is deliberately left alone rather than rebuilt: a rebuild
-    // reads usage from ClickHouse, and any usage still in flight there would
-    // be frozen into the counter as extra credit for the rest of the period.
-    // That fires on every retry, including a double-clicked revoke, while the
-    // stale counter it would repair only happens when an attempt failed
-    // midway. Erring high is also the wrong direction for a revocation.
+    // counter twice, which would block a workspace that still has credits.
+    // Whether the attempt that did revoke got as far as the counter is
+    // recorded, so a retry can tell the two apart: already applied means
+    // repair the rest and leave the counter alone, never applied means rebuild
+    // from the ledger. Guessing either way is wrong, since always rebuilding
+    // freezes ClickHouse lag in as extra credit on every double click and
+    // never rebuilding leaves revoked credits spendable until the period ends.
     if (!wasRevokedNow) {
+      const wasCounterAdjusted =
+        await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
+          workspaceId,
+          buildRevocationAdjustmentKey(grantId),
+        );
+
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
+        rebuildCounter: !wasCounterAdjusted,
+        adjustmentKey: buildRevocationAdjustmentKey(grantId),
       });
 
       return grant;
@@ -179,6 +184,7 @@ export class BillingCreditService {
     await this.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: wasActiveWhenRevoked ? -grant.amountMicro : 0,
+      adjustmentKey: buildRevocationAdjustmentKey(grantId),
     });
 
     return grant;
@@ -208,6 +214,7 @@ export class BillingCreditService {
     availableDeltaMicro,
     rebuildCounter = false,
     shouldClearCap = availableDeltaMicro > 0,
+    adjustmentKey,
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
@@ -215,6 +222,8 @@ export class BillingCreditService {
     // for repairs where how far the original attempt got is unknowable.
     rebuildCounter?: boolean;
     shouldClearCap?: boolean;
+    // Names a one-off adjustment so a retry can see it already landed.
+    adjustmentKey?: string;
   }): Promise<void> {
     const activeCreditsMicro = await this.syncMirrorBalance(workspaceId);
 
@@ -238,6 +247,14 @@ export class BillingCreditService {
         workspaceId,
         periodStart,
       );
+
+      if (isDefined(adjustmentKey)) {
+        await this.billingUsageCacheService.markCounterAdjustmentApplied(
+          workspaceId,
+          adjustmentKey,
+          subscription.currentPeriodEnd,
+        );
+      }
 
       // A replayed grant may since have been revoked or expired, so the cap
       // follows what the ledger actually holds rather than the caller's
@@ -276,6 +293,14 @@ export class BillingCreditService {
       }
     }
 
+    if (isDefined(adjustmentKey)) {
+      await this.billingUsageCacheService.markCounterAdjustmentApplied(
+        workspaceId,
+        adjustmentKey,
+        subscription.currentPeriodEnd,
+      );
+    }
+
     return this.clearCapAndSubscriptionCache(workspaceId, { shouldClearCap });
   }
 
@@ -294,3 +319,8 @@ export class BillingCreditService {
     ]);
   }
 }
+
+// Scopes the completion marker to one revocation, so retrying it is the only
+// thing that can see it.
+const buildRevocationAdjustmentKey = (grantId: string): string =>
+  `revoke:${grantId}`;
