@@ -4,6 +4,7 @@ export const AI_SDK_PACKAGE_LABELS: Record<AiSdkPackage, string> = {
   '@ai-sdk/openai': 'OpenAI',
   '@ai-sdk/anthropic': 'Anthropic',
   '@ai-sdk/google': 'Google',
+  '@ai-sdk/google-vertex': 'Google Vertex AI',
   '@ai-sdk/mistral': 'Mistral',
   '@ai-sdk/xai': 'xAI',
   '@ai-sdk/amazon-bedrock': 'AWS Bedrock',

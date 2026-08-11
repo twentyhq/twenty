@@ -7,6 +7,7 @@ export const AI_SDK_PACKAGES = [
   '@ai-sdk/amazon-bedrock',
   '@ai-sdk/openai-compatible',
   '@ai-sdk/azure',
+  '@ai-sdk/google-vertex',
 ] as const;
 
 export type AiSdkPackage = (typeof AI_SDK_PACKAGES)[number];

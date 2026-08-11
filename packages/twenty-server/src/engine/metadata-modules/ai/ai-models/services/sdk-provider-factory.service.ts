@@ -4,6 +4,7 @@ import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
 import { createAzure } from '@ai-sdk/azure';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createVertex } from '@ai-sdk/google-vertex';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
@@ -21,6 +22,7 @@ import {
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
+  AI_SDK_GOOGLE_VERTEX,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
@@ -106,6 +108,8 @@ export class SdkProviderFactoryService {
         return this.buildXaiProvider(config);
       case AI_SDK_BEDROCK:
         return this.buildBedrockProvider(config);
+      case AI_SDK_GOOGLE_VERTEX:
+        return this.buildVertexProvider(config);
       case AI_SDK_OPENAI_COMPATIBLE:
         return this.buildOpenAiCompatibleProvider(config);
       case AI_SDK_AZURE:
@@ -186,6 +190,33 @@ export class SdkProviderFactoryService {
       createModel: (modelId: string) => provider(modelId),
       rawProvider: provider,
       sdkPackage: AI_SDK_BEDROCK,
+    };
+  }
+
+  private buildVertexProvider(config: AiProviderConfig): AiSdkProviderInstance {
+    if (!config.project) {
+      throw new Error('project is required for Google Vertex providers');
+    }
+
+    // Vertex authenticates through Application Default Credentials (the runtime
+    // service account, or GOOGLE_APPLICATION_CREDENTIALS locally), so no key is
+    // read from config here.
+    const provider = createVertex({
+      project: config.project,
+      location: config.region ?? 'us-central1',
+      ...(config.baseUrl && { baseURL: config.baseUrl }),
+    });
+
+    return {
+      // Vertex serves the same Gemini models as the Generative AI API, so it
+      // needs the same tool-result sanitisation.
+      createModel: (modelId: string) =>
+        wrapLanguageModel({
+          model: provider(modelId),
+          middleware: sanitizeGeminiToolResultRefsMiddleware,
+        }),
+      rawProvider: provider,
+      sdkPackage: AI_SDK_GOOGLE_VERTEX,
     };
   }
 

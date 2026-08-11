@@ -13,6 +13,7 @@ export const aiProviderConfigSchema = z.object({
   apiKey: z.string().optional(),
   baseUrl: z.string().optional(),
   region: z.string().optional(),
+  project: z.string().optional(),
   dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
   accessKeyId: z.string().optional(),
   secretAccessKey: z.string().optional(),
