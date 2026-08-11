@@ -15,6 +15,7 @@ import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modu
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
+import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util';
 import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -138,6 +139,16 @@ export class FlatFieldMetadataValidatorService {
         message: 'Label identifier field metadata cannot be deactivated',
         userFriendlyMessage: msg`Label identifier field cannot be deactivated`,
       });
+    }
+
+    if (isDefined(flatEntityUpdate.isSearchable)) {
+      validationResult.errors.push(
+        ...validateSearchableFlatFieldMetadata({
+          flatFieldMetadataToValidate,
+          flatObjectMetadata,
+          flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+        }),
+      );
     }
 
     // Should be moved in relation field validator

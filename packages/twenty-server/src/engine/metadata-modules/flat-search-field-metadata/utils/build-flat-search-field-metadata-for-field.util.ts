@@ -8,6 +8,7 @@ export const buildFlatSearchFieldMetadataForField = ({
   flatFieldMetadata,
   tsVectorFlatFieldMetadata,
   position,
+  isSystemSideEffect = true,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
@@ -16,6 +17,7 @@ export const buildFlatSearchFieldMetadataForField = ({
   flatFieldMetadata: { universalIdentifier: string };
   tsVectorFlatFieldMetadata: { universalIdentifier: string };
   position: number;
+  isSystemSideEffect?: boolean;
 }): UniversalFlatSearchFieldMetadata => {
   const createdAt = new Date().toISOString();
 
@@ -28,7 +30,7 @@ export const buildFlatSearchFieldMetadataForField = ({
     createdAt,
     updatedAt: createdAt,
     position,
-    isSystemSideEffect: true,
+    isSystemSideEffect,
     applicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,

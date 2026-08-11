@@ -152,6 +152,12 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
         flatEntity: {
           ...flatFieldMetadata,
           isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),
+          isSearchable:
+            (
+              searchFieldMetadatas.byFieldMetadataId.get(
+                fieldMetadataEntity.id,
+              ) ?? []
+            ).length > 0,
         },
         flatEntityMapsToMutate: flatFieldMetadataMaps,
       });
