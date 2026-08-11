@@ -39,6 +39,7 @@ import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
 import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
@@ -84,9 +85,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
           .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig)
       : repository;
 
-    const queryBuilder = readRepository.createQueryBuilder(
-      flatObjectMetadata.nameSingular,
-    ) as unknown as ReturnType<typeof repository.createQueryBuilder>;
+    const queryBuilder: ReadRecordQueryBuilder =
+      readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
@@ -233,8 +233,9 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
-      ? await aggregateQueryBuilder.getRawOne()
-      : undefined;
+      ? ((await aggregateQueryBuilder.getRawOne<Record<string, number>>()) ??
+        {})
+      : {};
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -259,7 +260,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     return {
       records: objectRecords,
       aggregatedValues: parentObjectRecordsAggregatedValues,
-      totalCount: parentObjectRecordsAggregatedValues?.totalCount,
+      totalCount: parentObjectRecordsAggregatedValues.totalCount ?? 0,
       pageInfo,
       selectedFieldsResult: args.selectedFieldsResult,
     };

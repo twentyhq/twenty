@@ -1,9 +1,7 @@
-import { type ObjectLiteral } from 'typeorm';
-
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 
 type AddRelationJoinAliasToQueryBuilderArgs = {
-  queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+  queryBuilder: RecordQueryBuilder;
   parentAlias: string;
   relationName: string;
 };
