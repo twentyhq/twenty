@@ -10,6 +10,7 @@ import { type UniversalFlatViewField } from 'src/engine/workspace-manager/worksp
 export const computeRecordPageViewFieldForExistingObject = ({
   sourceFlatFieldMetadata,
   recordPageViewUniversalIdentifier,
+  batchAppendOffset,
   flatViewMaps,
   flatViewFieldMaps,
   flatViewFieldGroupMaps,
@@ -17,6 +18,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
 }: {
   sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
   recordPageViewUniversalIdentifier: string;
+  batchAppendOffset: number;
 } & Pick<
   AllFlatEntityMaps,
   | 'flatViewMaps'
@@ -100,12 +102,16 @@ export const computeRecordPageViewFieldForExistingObject = ({
       )
       .map((flatViewField) => flatViewField.position);
 
-  const position =
+  // All fields of a batch read the same pre-batch maps, so the append base is
+  // identical for each of them: the caller-order offset keeps positions distinct.
+  const appendBasePosition =
     existingActivePositions.reduce(
       (maxPosition, existingPosition) =>
         Math.max(maxPosition, existingPosition),
       -1,
     ) + 1;
+
+  const position = appendBasePosition + batchAppendOffset;
 
   const createdAt = new Date().toISOString();
   const { applicationUniversalIdentifier } = sourceFlatFieldMetadata;

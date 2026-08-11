@@ -3,6 +3,7 @@ import { ViewType } from 'twenty-shared/types';
 import { FieldRecordPageViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-page-view-field-on-create-side-effect-handler.service';
 import {
   buildArgs,
+  buildPendingFieldMetadata,
   computeViewFieldUniversalIdentifier,
   DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
   filterByView,
@@ -252,6 +253,70 @@ describe('FieldRecordPageViewFieldOnCreateSideEffectHandlerService', () => {
         viewFieldGroupUniversalIdentifier: 'group-uid-2',
         position: 8,
       });
+    });
+
+    it('should offset the append position by the field rank among the batch emitting caller fields', () => {
+      const speciesField = buildPendingFieldMetadata('species');
+      const traitsField = buildPendingFieldMetadata('traits');
+
+      const buildArgsForTrigger = (
+        triggerFieldMetadata: typeof PRIORITY_FIELD,
+      ) =>
+        buildArgs({
+          triggerFieldMetadata,
+          // name is the label identifier and species is already synced:
+          // neither takes an append slot.
+          pendingFieldMetadatas: [
+            NAME_FIELD,
+            speciesField,
+            PRIORITY_FIELD,
+            traitsField,
+          ],
+          objectMetadataInWorkspace: true,
+          viewsInWorkspace: [SYNCED_INDEX_VIEW, SYNCED_RECORD_PAGE_VIEW],
+          viewFieldsInWorkspace: [
+            {
+              universalIdentifier: 'existing-record-page-vf',
+              viewId: SYNCED_RECORD_PAGE_VIEW.id,
+              position: 3,
+              isActive: true,
+            },
+            {
+              universalIdentifier: 'species-synced-vf',
+              viewId: SYNCED_RECORD_PAGE_VIEW.id,
+              fieldMetadataUniversalIdentifier:
+                speciesField.universalIdentifier,
+              position: 0,
+              isActive: true,
+            },
+          ],
+          fieldsWidgetsInWorkspace: [SYNCED_FIELDS_WIDGET],
+        });
+
+      const positions = [PRIORITY_FIELD, traitsField].map(
+        (triggerFieldMetadata) => {
+          const result = handler.buildSideEffects(
+            buildArgsForTrigger(triggerFieldMetadata),
+          );
+
+          expect(result.status).toBe('success');
+
+          if (result.status !== 'success') {
+            throw new Error('expected success');
+          }
+
+          const [recordPageViewField] = filterByView(
+            Object.values(
+              result.operations.viewField?.flatEntityToCreate ?? {},
+            ),
+            DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
+          );
+
+          return recordPageViewField.position;
+        },
+      );
+
+      expect(positions).toEqual([4, 5]);
     });
 
     it('should not emit when no active FIELDS widget references the engine record-page view', () => {

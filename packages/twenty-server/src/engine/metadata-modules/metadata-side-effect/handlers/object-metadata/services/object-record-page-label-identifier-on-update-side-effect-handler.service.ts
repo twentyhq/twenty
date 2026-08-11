@@ -203,6 +203,8 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
     return computeRecordPageViewFieldForExistingObject({
       sourceFlatFieldMetadata: previousLabelIdentifierFlatFieldMetadata,
       recordPageViewUniversalIdentifier,
+      // Relabel restores a single field: no batch to offset within.
+      batchAppendOffset: 0,
       flatViewMaps: relatedFlatEntityMaps.flatViewMaps,
       flatViewFieldMaps: relatedFlatEntityMaps.flatViewFieldMaps,
       flatViewFieldGroupMaps: relatedFlatEntityMaps.flatViewFieldGroupMaps,
