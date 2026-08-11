@@ -79,12 +79,20 @@ export const MultiSelectInput = ({
     const newSearchFilter = turnIntoEmptyStringIfWhitespacesOnly(searchText);
     setSearchFilter(newSearchFilter);
 
-    const firstMatchingOption = filterOptions(newSearchFilter)[0];
+    const matchingOptions = filterOptions(newSearchFilter);
+    const firstMatchingOption = matchingOptions[0];
 
-    if (isNonEmptyString(newSearchFilter) && isDefined(firstMatchingOption)) {
-      setSelectedItemId(firstMatchingOption.value);
-    } else {
+    if (!isNonEmptyString(newSearchFilter) || !isDefined(firstMatchingOption)) {
       resetSelectedItem();
+      return;
+    }
+
+    const isSelectedItemStillMatching = matchingOptions.some(
+      (option) => option.value === selectedItemId,
+    );
+
+    if (!isSelectedItemStillMatching) {
+      setSelectedItemId(firstMatchingOption.value);
     }
   };
 
