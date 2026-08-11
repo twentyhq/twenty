@@ -394,7 +394,7 @@ describe('ApplicationVariableEntityService', () => {
       );
     });
 
-    it('should store the unset sentinel instead of encrypting an empty value', async () => {
+    it('should encrypt an empty value like any other value', async () => {
       const existingVariable = {
         id: '1',
         key: 'API_KEY',
@@ -413,10 +413,13 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(secretEncryptionService.encryptVersioned).not.toHaveBeenCalled();
+      expect(secretEncryptionService.encryptVersioned).toHaveBeenCalledWith(
+        '',
+        { workspaceId: mockWorkspaceId },
+      );
       expect(repository.update).toHaveBeenCalledWith(
         { key: 'API_KEY', applicationId: mockApplicationId },
-        { value: '' },
+        { value: `enc:v2:deadbeef:|${mockWorkspaceId}` },
       );
     });
 
@@ -483,6 +486,24 @@ describe('ApplicationVariableEntityService', () => {
         mask: SECRET_APPLICATION_VARIABLE_MASK,
         workspaceId: mockWorkspaceId,
       });
+    });
+
+    it('should return an empty string when a secret variable decrypts to an empty string', () => {
+      const variable = {
+        id: '1',
+        key: 'SECRET_KEY',
+        value: `enc:v2:deadbeef:|${mockWorkspaceId}`,
+        isSecret: true,
+        applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
+      } as ApplicationVariableEntity;
+
+      const result = service.getDisplayValue(variable);
+
+      expect(result).toBe('');
+      expect(
+        secretEncryptionService.decryptAndMaskVersioned,
+      ).not.toHaveBeenCalled();
     });
   });
 });

@@ -400,7 +400,6 @@ export type ApplicationRegistrationVariable = {
   description: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isDeprecated: Scalars['Boolean']['output'];
-  isFilled: Scalars['Boolean']['output'];
   isRequired: Scalars['Boolean']['output'];
   isSecret: Scalars['Boolean']['output'];
   key: Scalars['String']['output'];
@@ -2634,7 +2633,7 @@ export type Mutation = {
   completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
   createApplicationRegistration: CreateApplicationRegistration;
-  createApplicationRegistrationVariable: ApplicationRegistrationVariable;
+  createApplicationRegistrationVariable: ApplicationRegistrationVariableDto;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent;
   createCalendarEvent: CreateCalendarEventOutput;
@@ -2797,7 +2796,7 @@ export type Mutation = {
   updateApiKey?: Maybe<ApiKey>;
   updateApplication: Application;
   updateApplicationRegistration: ApplicationRegistration;
-  updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
+  updateApplicationRegistrationVariable: ApplicationRegistrationVariableDto;
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
@@ -8289,7 +8288,7 @@ export type UpdateApplicationRegistrationVariableMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariable', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
+export type UpdateApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariableDTO', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
 
 export type ApplicationRegistrationTarballUrlQueryVariables = Exact<{
   id: Scalars['String']['input'];

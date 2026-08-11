@@ -92,9 +92,6 @@ describe('ApplicationRegistrationVariableService', () => {
       type: FieldMetadataType.TEXT,
       options: null,
       applicationRegistrationId: registrationId,
-      get isFilled() {
-        return this.encryptedValue !== '';
-      },
       ...overrides,
     }) as ApplicationRegistrationVariableEntity;
 
@@ -203,15 +200,44 @@ describe('ApplicationRegistrationVariableService', () => {
 
       expect(result.get(registrationId)).toBe(false);
     });
+
+    it('should report unconfigured when a required variable decrypts to an empty string', async () => {
+      mockVariables([
+        makeExistingVariable({
+          isRequired: true,
+          encryptedValue: 'enc:v2:deadbeef:' as EncryptedString,
+        }),
+      ]);
+
+      const result = await service.isConfiguredBatch([registrationId]);
+
+      expect(result.get(registrationId)).toBe(false);
+    });
+
+    it('should report configured when a required variable decrypts to a real value', async () => {
+      mockVariables([
+        makeExistingVariable({
+          isRequired: true,
+          encryptedValue: 'enc:v2:deadbeef:stored-secret' as EncryptedString,
+        }),
+      ]);
+
+      const result = await service.isConfiguredBatch([registrationId]);
+
+      expect(result.get(registrationId)).toBe(true);
+    });
   });
 
   describe('createVariable', () => {
-    it('should store the unset sentinel instead of encrypting an empty value', async () => {
+    it('should encrypt an empty value and report the variable unfilled', async () => {
       applicationRegistrationRepository.findOne.mockResolvedValue({
         id: registrationId,
       } as never);
+      variableRepository.save.mockImplementation(
+        async (entity) => entity as ApplicationRegistrationVariableEntity,
+      );
 
-      await service.createVariable(
+      const result = await service.createVariable(
         {
           applicationRegistrationId: registrationId,
           key: 'API_KEY',
@@ -220,33 +246,42 @@ describe('ApplicationRegistrationVariableService', () => {
         'workspace-1',
       );
 
-      expect(encryptionService.encryptVersioned).not.toHaveBeenCalled();
+      expect(encryptionService.encryptVersioned).toHaveBeenCalledWith('');
       expect(variableRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({ key: 'API_KEY', encryptedValue: '' }),
+        expect.objectContaining({
+          key: 'API_KEY',
+          encryptedValue: 'enc:v2:deadbeef:',
+        }),
       );
+      expect(result.isFilled).toBe(false);
+      expect(result.value).toBeNull();
     });
   });
 
   describe('updateVariableGlobal', () => {
-    it('should store the unset sentinel instead of encrypting an empty value', async () => {
+    it('should encrypt an empty value and report the variable unfilled', async () => {
       const variable = makeExistingVariable({
         encryptedValue: 'enc:v2:deadbeef:stored-secret' as EncryptedString,
       });
 
       variableRepository.findOne.mockResolvedValue(variable);
       variableRepository.findOneOrFail.mockResolvedValue(
-        makeExistingVariable({}),
+        makeExistingVariable({
+          encryptedValue: 'enc:v2:deadbeef:' as EncryptedString,
+        }),
       );
 
-      await service.updateVariableGlobal({
+      const result = await service.updateVariableGlobal({
         id: 'variable-1',
         update: { value: '' as PlaintextString },
       });
 
-      expect(encryptionService.encryptVersioned).not.toHaveBeenCalled();
+      expect(encryptionService.encryptVersioned).toHaveBeenCalledWith('');
       expect(variableRepository.update).toHaveBeenCalledWith('variable-1', {
-        encryptedValue: '',
+        encryptedValue: 'enc:v2:deadbeef:',
       });
+      expect(result.isFilled).toBe(false);
+      expect(result.value).toBeNull();
     });
   });
 });

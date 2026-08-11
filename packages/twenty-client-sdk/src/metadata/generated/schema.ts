@@ -24,7 +24,6 @@ export interface ApplicationRegistrationVariable {
     isDeprecated: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
-    isFilled: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ApplicationRegistrationVariable'
@@ -3081,8 +3080,8 @@ export interface Mutation {
     updateApplicationRegistration: ApplicationRegistration
     deleteApplicationRegistration: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
-    createApplicationRegistrationVariable: ApplicationRegistrationVariable
-    updateApplicationRegistrationVariable: ApplicationRegistrationVariable
+    createApplicationRegistrationVariable: ApplicationRegistrationVariableDTO
+    updateApplicationRegistrationVariable: ApplicationRegistrationVariableDTO
     deleteApplicationRegistrationVariable: Scalars['Boolean']
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
@@ -3243,7 +3242,6 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     isDeprecated?: boolean | number
     type?: boolean | number
     options?: boolean | number
-    isFilled?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
@@ -6478,8 +6476,8 @@ export interface MutationGenqlSelection{
     updateApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {input: UpdateApplicationRegistrationInput} })
     deleteApplicationRegistration?: { __args: {id: Scalars['String']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
-    createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
-    updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
+    createApplicationRegistrationVariable?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
+    updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })

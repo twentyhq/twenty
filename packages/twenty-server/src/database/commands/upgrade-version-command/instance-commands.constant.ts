@@ -139,7 +139,6 @@ import { AddListViewTypeFastInstanceCommand } from 'src/database/commands/upgrad
 import { AddListWidgetViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786227282471-add-list-widget-view-type';
 import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
 import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786356853935-add-is-deprecated-to-application-variables';
-import { NormalizeEmptyApplicationVariableValuesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-slow-1786356853936-normalize-empty-application-variable-values';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -281,5 +280,4 @@ export const INSTANCE_COMMANDS = [
   AddCallRecordingWidgetTypesFastInstanceCommand,
   AddListWidgetViewTypeFastInstanceCommand,
   AddIsDeprecatedToApplicationVariablesFastInstanceCommand,
-  NormalizeEmptyApplicationVariableValuesSlowInstanceCommand,
 ];

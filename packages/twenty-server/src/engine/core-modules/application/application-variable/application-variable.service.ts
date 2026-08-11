@@ -11,7 +11,6 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
-import { isUnsetApplicationVariableValue } from 'src/engine/core-modules/application/utils/is-unset-application-variable-value.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
@@ -37,6 +36,15 @@ export class ApplicationVariableEntityService {
       return '';
     }
 
+    const plaintextValue = this.secretEncryptionService.decryptVersionedOrThrow(
+      applicationVariable.value,
+      { workspaceId: applicationVariable.workspaceId },
+    );
+
+    if (plaintextValue === '') {
+      return '';
+    }
+
     if (applicationVariable.isSecret) {
       return this.secretEncryptionService.decryptAndMaskVersioned({
         value: applicationVariable.value,
@@ -45,10 +53,7 @@ export class ApplicationVariableEntityService {
       });
     }
 
-    return this.secretEncryptionService.decryptVersionedOrThrow(
-      applicationVariable.value,
-      { workspaceId: applicationVariable.workspaceId },
-    );
+    return plaintextValue;
   }
 
   async getServerEnvVariables(
@@ -149,11 +154,9 @@ export class ApplicationVariableEntityService {
     await this.applicationVariableRepository.update(
       { key, applicationId },
       {
-        value: isUnsetApplicationVariableValue(plainTextValue)
-          ? ''
-          : this.secretEncryptionService.encryptVersioned(plainTextValue, {
-              workspaceId,
-            }),
+        value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
+          workspaceId,
+        }),
       },
     );
 
