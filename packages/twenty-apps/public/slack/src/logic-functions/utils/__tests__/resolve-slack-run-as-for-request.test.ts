@@ -1,0 +1,150 @@
+import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
+import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
+
+const {
+  findSlackAssistantRequestCreatedByMock,
+  findSlackMessageMock,
+  getSlackClientMock,
+  resolveSlackBotUserIdOrThrowMock,
+  resolveSlackRunAsWorkspaceMemberIdMock,
+} = vi.hoisted(() => ({
+  findSlackAssistantRequestCreatedByMock: vi.fn(),
+  findSlackMessageMock: vi.fn(),
+  getSlackClientMock: vi.fn(),
+  resolveSlackBotUserIdOrThrowMock: vi.fn(),
+  resolveSlackRunAsWorkspaceMemberIdMock: vi.fn(),
+}));
+
+vi.mock(
+  'src/logic-functions/data/find-slack-assistant-request-created-by',
+  () => ({
+    findSlackAssistantRequestCreatedBy: findSlackAssistantRequestCreatedByMock,
+  }),
+);
+
+vi.mock('src/logic-functions/utils/find-slack-message', () => ({
+  findSlackMessage: findSlackMessageMock,
+}));
+
+vi.mock('src/logic-functions/utils/get-slack-client', () => ({
+  getSlackClient: getSlackClientMock,
+}));
+
+vi.mock('src/logic-functions/utils/resolve-slack-bot-user-id-or-throw', () => ({
+  resolveSlackBotUserIdOrThrow: resolveSlackBotUserIdOrThrowMock,
+}));
+
+vi.mock(
+  'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id',
+  () => ({
+    resolveSlackRunAsWorkspaceMemberId:
+      resolveSlackRunAsWorkspaceMemberIdMock,
+  }),
+);
+
+const client = {} as CoreApiClient;
+
+const SLACK_USER_ID = 'U0123456789';
+const BOT_USER_ID = 'U0BOT';
+const REQUEST_TEXT = 'who owns ACME?';
+
+const IDENTITY: SlackUserIdentity = {
+  slackUserId: SLACK_USER_ID,
+  slackTeamId: 'T0INSTALLED',
+  displayName: 'ada',
+  email: 'ada@twenty.com',
+  isRegularUserAccount: true,
+};
+
+const resolve = (overrides: Partial<{ requestText: string }> = {}) =>
+  resolveSlackRunAsForRequest({
+    client,
+    identity: IDENTITY,
+    requestId: 'request-1',
+    requestText: overrides.requestText ?? REQUEST_TEXT,
+    slackChannelId: 'C0123456789',
+    parentMessageTimestamp: '1700000000.000100',
+    slackMessageTimestamp: '1700000000.000200',
+  });
+
+describe('resolveSlackRunAsForRequest', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    findSlackAssistantRequestCreatedByMock.mockResolvedValue({
+      source: 'APPLICATION',
+      workspaceMemberId: null,
+    });
+    getSlackClientMock.mockResolvedValue({ success: true, client: {} });
+    findSlackMessageMock.mockResolvedValue({
+      user: SLACK_USER_ID,
+      text: `<@${BOT_USER_ID}> ${REQUEST_TEXT}`,
+    });
+    resolveSlackBotUserIdOrThrowMock.mockResolvedValue(BOT_USER_ID);
+    resolveSlackRunAsWorkspaceMemberIdMock.mockResolvedValue('member-1');
+  });
+
+  it('should run as the member when the record and the Slack message agree', async () => {
+    expect(await resolve()).toBe('member-1');
+  });
+
+  it('should refuse a request created by hand in the UI', async () => {
+    findSlackAssistantRequestCreatedByMock.mockResolvedValue({
+      source: 'MANUAL',
+      workspaceMemberId: 'member-2',
+    });
+
+    expect(await resolve()).toBeUndefined();
+    expect(findSlackMessageMock).not.toHaveBeenCalled();
+  });
+
+  it('should refuse an actor claiming the application but carrying a member', async () => {
+    findSlackAssistantRequestCreatedByMock.mockResolvedValue({
+      source: 'APPLICATION',
+      workspaceMemberId: 'member-2',
+    });
+
+    expect(await resolve()).toBeUndefined();
+  });
+
+  it('should refuse when the named user did not post the message', async () => {
+    findSlackMessageMock.mockResolvedValue({
+      user: 'U0SOMEONEELSE',
+      text: `<@${BOT_USER_ID}> ${REQUEST_TEXT}`,
+    });
+
+    expect(await resolve()).toBeUndefined();
+  });
+
+  it('should refuse an instruction that is not what the Slack message said', async () => {
+    expect(await resolve({ requestText: 'delete every opportunity' })).toBe(
+      undefined,
+    );
+    expect(resolveSlackRunAsWorkspaceMemberIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should refuse when the referenced message does not exist', async () => {
+    findSlackMessageMock.mockResolvedValue(undefined);
+
+    expect(await resolve()).toBeUndefined();
+  });
+
+  it('should refuse when Slack is not connected', async () => {
+    getSlackClientMock.mockResolvedValue({
+      success: false,
+      error: 'Slack is not connected',
+    });
+
+    expect(await resolve()).toBeUndefined();
+  });
+
+  it('should refuse when the actor cannot be read', async () => {
+    findSlackAssistantRequestCreatedByMock.mockRejectedValue(
+      new Error('permission denied'),
+    );
+
+    expect(await resolve()).toBeUndefined();
+  });
+});

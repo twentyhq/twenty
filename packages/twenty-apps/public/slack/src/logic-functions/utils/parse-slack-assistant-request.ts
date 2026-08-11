@@ -5,7 +5,7 @@ import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { getSlackBotUserIdFromEventBody } from 'src/logic-functions/utils/get-slack-bot-user-id-from-event-body';
-import { stripSlackBotMention } from 'src/logic-functions/utils/strip-slack-bot-mention';
+import { normalizeSlackRequestText } from 'src/logic-functions/utils/normalize-slack-request-text';
 
 const LEADING_MENTION_PATTERN = /^<@([A-Z0-9]+)(\|[^>]*)?>/;
 
@@ -52,7 +52,7 @@ const classifySlackAssistantEvent = (
 const getBotUserIdFromLeadingMention = (text: string): string | undefined =>
   text.trimStart().match(LEADING_MENTION_PATTERN)?.[1];
 
-const normalizeSlackRequestText = ({
+const resolveRequestBotUserId = ({
   text,
   kind,
   botUserId,
@@ -60,17 +60,9 @@ const normalizeSlackRequestText = ({
   text: string;
   kind: SlackAssistantEventKind;
   botUserId: string | undefined;
-}): string => {
-  const resolvedBotUserId =
-    botUserId ??
-    (kind === 'mention' ? getBotUserIdFromLeadingMention(text) : undefined);
-
-  const strippedText = isNonEmptyString(resolvedBotUserId)
-    ? stripSlackBotMention({ text, botUserId: resolvedBotUserId })
-    : text;
-
-  return strippedText.replace(/\s+/g, ' ').trim();
-};
+}): string | undefined =>
+  botUserId ??
+  (kind === 'mention' ? getBotUserIdFromLeadingMention(text) : undefined);
 
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
@@ -106,8 +98,11 @@ export const parseSlackAssistantRequest = (
 
   const requestText = normalizeSlackRequestText({
     text: event.text ?? '',
-    kind,
-    botUserId: getSlackBotUserIdFromEventBody(body),
+    botUserId: resolveRequestBotUserId({
+      text: event.text ?? '',
+      kind,
+      botUserId: getSlackBotUserIdFromEventBody(body),
+    }),
   });
 
   if (!isNonEmptyString(requestText)) {

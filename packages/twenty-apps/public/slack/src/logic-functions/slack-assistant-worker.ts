@@ -96,6 +96,8 @@ export const slackAssistantWorkerHandler = async (
     const runAsWorkspaceMemberId = await resolveSlackRunAsForRequest({
       client,
       identity: requesterIdentity,
+      requestId: record.id,
+      requestText,
       slackChannelId,
       parentMessageTimestamp,
       slackMessageTimestamp,

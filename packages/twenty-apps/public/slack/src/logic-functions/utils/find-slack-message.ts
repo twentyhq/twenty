@@ -5,27 +5,25 @@ import { isDefined } from 'twenty-sdk/utils';
 const THREAD_REPLIES_FETCH_LIMIT = 100;
 const THREAD_REPLIES_MAX_PAGES = 10;
 
-// Actor metadata is caller-controllable, so it cannot prove a request really
-// came from the person it names. Slack can: only Slack decides who posted a
-// message at a given timestamp. Asking it is the one check a hand-written
-// slackAssistantRequest cannot forge, and run-as depends on it.
-//
+export type SlackMessage = {
+  user: string | undefined;
+  text: string | undefined;
+};
+
 // `conversations.replies` on the parent timestamp covers every shape the
 // assistant sees: a top-level message is its own parent and comes back as the
 // only entry, a threaded mention comes back among the replies.
-export const isSlackMessageAuthoredBy = async ({
+export const findSlackMessage = async ({
   client,
   slackChannelId,
   parentMessageTimestamp,
   messageTimestamp,
-  slackUserId,
 }: {
   client: WebClient;
   slackChannelId: string;
   parentMessageTimestamp: string;
   messageTimestamp: string;
-  slackUserId: string;
-}): Promise<boolean> => {
+}): Promise<SlackMessage | undefined> => {
   try {
     let cursor: string | undefined;
 
@@ -42,20 +40,20 @@ export const isSlackMessageAuthoredBy = async ({
       );
 
       if (isDefined(message)) {
-        return message.user === slackUserId;
+        return { user: message.user, text: message.text };
       }
 
       const nextCursor = replies.response_metadata?.next_cursor;
 
       if (!isNonEmptyString(nextCursor)) {
-        return false;
+        return undefined;
       }
 
       cursor = nextCursor;
     }
 
-    return false;
+    return undefined;
   } catch {
-    return false;
+    return undefined;
   }
 };

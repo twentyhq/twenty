@@ -55,7 +55,7 @@ describe('fetchSlackUserIdentity', () => {
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'ada',
       email: 'ada@twenty.com',
-      isRegularMemberOfOwnTeam: true,
+      isRegularUserAccount: true,
     });
   });
 
@@ -89,7 +89,7 @@ describe('fetchSlackUserIdentity', () => {
       slackUserId: SLACK_USER_ID,
     });
 
-    expect(identity?.isRegularMemberOfOwnTeam).toBe(false);
+    expect(identity?.isRegularUserAccount).toBe(false);
   });
 
   it('should report a missing email rather than judging eligibility on it', async () => {
@@ -116,6 +116,6 @@ describe('fetchSlackUserIdentity', () => {
     });
 
     expect(identity?.slackTeamId).toBe('T0EXTERNAL');
-    expect(identity?.isRegularMemberOfOwnTeam).toBe(true);
+    expect(identity?.isRegularUserAccount).toBe(true);
   });
 });

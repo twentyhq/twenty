@@ -38,7 +38,7 @@ const IDENTITY: SlackUserIdentity = {
   slackTeamId: 'T0INSTALLED',
   displayName: 'ada',
   email: 'ada@twenty.com',
-  isRegularMemberOfOwnTeam: true,
+  isRegularUserAccount: true,
 };
 
 describe('resolveSlackRunAsWorkspaceMemberId', () => {
@@ -76,7 +76,7 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
       await resolveSlackRunAsWorkspaceMemberId({
         client,
         slackClient,
-        identity: { ...IDENTITY, isRegularMemberOfOwnTeam: false },
+        identity: { ...IDENTITY, isRegularUserAccount: false },
       }),
     ).toBeUndefined();
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
@@ -124,7 +124,7 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
       await resolveSlackRunAsWorkspaceMemberId({
         client,
         slackClient,
-        identity: { ...IDENTITY, isRegularMemberOfOwnTeam: false },
+        identity: { ...IDENTITY, isRegularUserAccount: false },
       }),
     ).toBeUndefined();
   });

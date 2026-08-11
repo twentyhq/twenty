@@ -21,7 +21,7 @@ const resolveLinkableEmail = async ({
   slackClient: WebClient;
   identity: SlackUserIdentity;
 }): Promise<string | undefined> => {
-  if (!identity.isRegularMemberOfOwnTeam || !isNonEmptyString(identity.email)) {
+  if (!identity.isRegularUserAccount || !isNonEmptyString(identity.email)) {
     return undefined;
   }
 
