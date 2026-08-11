@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/is-unsubscribe-email.util.ts
+  s_71b01cad791275::t_9eb185a119439c 3
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/is-unsubscribe-email.util.spec.ts
+  s_71b01cad791275::t_34ab7b7df313c3 18-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "82ea47f5655c63fce3239932ad4a98df0eaba8e5",
+  "prompts": {},
+  "sessions": {
+    "s_71b01cad791275": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f29edea1-2061-4138-83c3-374f844b00fe",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
