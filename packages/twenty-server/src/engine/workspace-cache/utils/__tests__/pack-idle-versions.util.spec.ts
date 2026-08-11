@@ -132,9 +132,11 @@ describe('packIdleVersions', () => {
     ]);
 
     expect(run(localCache, 1).packed).toBe(1);
-    expect(localCache.get(`${ORM}:ws-a`)?.versions.get('hash-1')).toMatchObject({
-      state: 'live',
-    });
+    expect(localCache.get(`${ORM}:ws-a`)?.versions.get('hash-1')).toMatchObject(
+      {
+        state: 'live',
+      },
+    );
   });
 
   it('should not count an already packed version against the live budget', () => {

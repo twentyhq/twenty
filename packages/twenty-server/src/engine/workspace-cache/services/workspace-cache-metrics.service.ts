@@ -74,8 +74,7 @@ export class WorkspaceCacheMetricsService {
     this.packingDurationHistogram = meter.createHistogram(
       'twenty_workspace_cache_packing_slice_duration_seconds',
       {
-        description:
-          'Event loop time consumed by one packing slice',
+        description: 'Event loop time consumed by one packing slice',
         unit: 's',
         advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
       },
