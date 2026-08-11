@@ -89,9 +89,6 @@ export const WidgetContentRenderer = ({
     case WidgetType.CALL_RECORDING_TRANSCRIPT:
       return <CallRecordingTranscriptWidget />;
 
-    // MESSAGE_CAMPAIGN_DETAILS renders nothing on purpose: the envelope fields
-    // moved into the composer body widget. Workspaces still carrying the widget
-    // must not show a second copy of the fields before the upgrade drops it.
     default:
       return null;
   }
