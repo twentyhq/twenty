@@ -11,7 +11,9 @@ import {
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { computeCarryForwardGrants } from 'src/engine/core-modules/billing/utils/compute-carry-forward-grants.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type ProcessRolloverParams = {
@@ -24,24 +26,28 @@ export type ProcessRolloverParams = {
   nextAllowanceMicro: number;
 };
 
+// The transition writes more rows than a single grant does, so it is given more
+// room than the lock's default before it gives up.
+const ROLLOVER_LOCK_OPTIONS = { ms: 200, maxRetries: 50, ttl: 30_000 };
+
 @Injectable()
 export class BillingCreditRolloverService {
   constructor(
     private readonly billingUsageService: BillingUsageService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingCreditService: BillingCreditService,
+    private readonly cacheLockService: CacheLockService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async processRolloverOnPeriodTransition({
-    workspaceId,
-    closingPeriodStart,
-    closingPeriodEnd,
-    closingAllowanceMicro,
-    nextPeriodStart,
-    nextPeriodEnd,
-    nextAllowanceMicro,
-  }: ProcessRolloverParams): Promise<void> {
+  async processRolloverOnPeriodTransition(
+    params: ProcessRolloverParams,
+  ): Promise<void> {
+    const { workspaceId, closingPeriodStart, closingPeriodEnd } = params;
+
+    // Read outside the lock: usage comes from ClickHouse and no credit write
+    // can change it, so paying that latency while holding the lock would only
+    // stall concurrent grants.
     const usageMicro =
       await this.billingUsageService.getCreditsUsedBetweenOrNull({
         workspaceId,
@@ -62,6 +68,26 @@ export class BillingCreditRolloverService {
       );
     }
 
+    // Everything from here reads the ledger, decides from that snapshot, then
+    // writes it back. A grant landing in between would either be carried twice
+    // or dropped, so the whole read-decide-write runs alone.
+    await this.cacheLockService.withLock(
+      () => this.carryGrantsForward({ ...params, usageMicro }),
+      buildBillingCreditStateLockKey(workspaceId),
+      ROLLOVER_LOCK_OPTIONS,
+    );
+  }
+
+  private async carryGrantsForward({
+    workspaceId,
+    closingPeriodStart,
+    closingPeriodEnd,
+    closingAllowanceMicro,
+    nextPeriodStart,
+    nextPeriodEnd,
+    nextAllowanceMicro,
+    usageMicro,
+  }: ProcessRolloverParams & { usageMicro: number }): Promise<void> {
     await this.billingCreditGrantService.materializeLegacyBalance({
       workspaceId,
       effectiveAt: closingPeriodStart,
@@ -126,20 +152,35 @@ export class BillingCreditRolloverService {
       }
     }
 
+    // A replay only tells us the rows already exist, not whether the delivery
+    // that wrote them got as far as the counter. Stripe also redelivers events
+    // it already handled successfully, and rebuilding then would throw away a
+    // correct warm counter and recompute it from ClickHouse, crediting back
+    // whatever usage has not been ingested yet. So the transition records that
+    // it moved the counter, and a replay rebuilds only when that is absent.
+    const adjustmentKey = buildRolloverAdjustmentKey(nextPeriodStart);
+    const hasAdjustedCounter = hasReplayedGrant
+      ? await this.billingCreditService.hasCounterAdjustmentBeenApplied({
+          workspaceId,
+          adjustmentKey,
+        })
+      : false;
+
     // Runs unconditionally: closing the old grants moves the balance on its
     // own, so a period where everything was spent still needs the refresh.
-    //
-    // A replayed grant means a previous delivery inserted the rows and then
-    // failed, so this delivery adds nothing to carriedForwardMicro and a delta
-    // of zero would leave the carried credits out of the counter for the whole
-    // period. Rebuild from the ledger instead.
     await this.billingCreditService.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: carriedForwardMicro,
-      rebuildCounter: hasReplayedGrant,
+      rebuildCounter: hasReplayedGrant && !hasAdjustedCounter,
+      adjustmentKey,
     });
   }
 }
+
+// Scopes the completion marker to one period transition, so only a redelivery
+// of that transition can see it.
+const buildRolloverAdjustmentKey = (nextPeriodStart: Date): string =>
+  `rollover:${nextPeriodStart.toISOString()}`;
 
 // Stripe redelivers webhooks, so the whole transition has to be replayable.
 const buildCarryForwardIdempotencyKey = ({

@@ -8,6 +8,7 @@ import {
   buildBillingUsageAvailableCreditsStaleMarkerKey,
   buildBillingUsageAvailableCreditsStaleMarkerPattern,
   buildBillingUsageCounterAdjustmentKey,
+  buildBillingUsageCounterAdjustmentPattern,
 } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-stale-marker-key.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -137,6 +138,12 @@ export class BillingUsageCacheService {
   async flushAvailableCreditsStaleMarkers(workspaceId: string): Promise<void> {
     await this.billingUsageCacheStorage.flushByPattern(
       buildBillingUsageAvailableCreditsStaleMarkerPattern(workspaceId),
+    );
+  }
+
+  async flushCounterAdjustmentMarkers(workspaceId: string): Promise<void> {
+    await this.billingUsageCacheStorage.flushByPattern(
+      buildBillingUsageCounterAdjustmentPattern(workspaceId),
     );
   }
 }

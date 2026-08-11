@@ -64,8 +64,12 @@ export class CreateBillingCreditGrantTableFastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."billingCreditGrant"`);
+
+    // After the table, which depends on it. Leaving it behind would make a
+    // later re-run reuse the old value set rather than create the current one.
     await queryRunner.query(
-      `DROP TABLE IF EXISTS "core"."billingCreditGrant"`,
+      `DROP TYPE IF EXISTS "core"."billingCreditGrant_type_enum"`,
     );
   }
 }

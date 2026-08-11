@@ -77,6 +77,17 @@ export class BackfillCreditBalanceIntoGrantsSlowInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    // An instance without billing never grew the table, so deleting from it
+    // unconditionally would fail the rollback on exactly the instances that
+    // had nothing to roll back.
+    const isLedgerPresent = await queryRunner.query(
+      `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCreditGrant'`,
+    );
+
+    if (isLedgerPresent.length === 0) {
+      return;
+    }
+
     await queryRunner.query(
       `DELETE FROM "core"."billingCreditGrant" WHERE "idempotencyKey" LIKE $1`,
       [`${BACKFILL_IDEMPOTENCY_KEY_PREFIX}%`],

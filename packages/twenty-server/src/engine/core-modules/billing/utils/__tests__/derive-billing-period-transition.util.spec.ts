@@ -112,6 +112,75 @@ describe('deriveBillingPeriodTransition', () => {
     expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 
+  // A subscription anchored on the 31st runs January 31 to February 28, and
+  // subMonths clamps February 28 back to January 28. Three days of the previous
+  // period would count as usage here, and grants that expired on January 31
+  // would read as live and be carried forward a second time.
+  it('prefers the period start the ledger recorded over clamped calendar arithmetic', () => {
+    const monthEndBoundary = new Date('2026-02-28T00:00:00.000Z');
+    const ledgerPeriodStart = new Date('2026-01-31T00:00:00.000Z');
+
+    const result = deriveBillingPeriodTransition({
+      invoicePeriodStart: monthEndBoundary,
+      invoicePeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
+      subscriptionCurrentPeriodStart: monthEndBoundary,
+      subscriptionCurrentPeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
+      subscriptionInterval: SubscriptionInterval.Month,
+      trialStart: null,
+      isFirstPeriodAfterTrial: false,
+      ledgerPeriodStart,
+    });
+
+    expect(result.closingPeriodStart).toEqual(ledgerPeriodStart);
+  });
+
+  it('ignores a ledger period start that is not before the boundary', () => {
+    const result = deriveBillingPeriodTransition({
+      invoicePeriodStart: FEBRUARY,
+      invoicePeriodEnd: MARCH,
+      subscriptionCurrentPeriodStart: FEBRUARY,
+      subscriptionCurrentPeriodEnd: MARCH,
+      subscriptionInterval: SubscriptionInterval.Month,
+      trialStart: null,
+      isFirstPeriodAfterTrial: false,
+      ledgerPeriodStart: MARCH,
+    });
+
+    expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
+
+  it('falls back to calendar arithmetic when the ledger has nothing to say', () => {
+    const result = deriveBillingPeriodTransition({
+      invoicePeriodStart: FEBRUARY,
+      invoicePeriodEnd: MARCH,
+      subscriptionCurrentPeriodStart: FEBRUARY,
+      subscriptionCurrentPeriodEnd: MARCH,
+      subscriptionInterval: SubscriptionInterval.Month,
+      trialStart: null,
+      isFirstPeriodAfterTrial: false,
+      ledgerPeriodStart: null,
+    });
+
+    expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
+
+  // The subscription still carries the closing period, so it is authoritative
+  // and the ledger must not override it.
+  it('keeps the subscription period start when it precedes the boundary', () => {
+    const result = deriveBillingPeriodTransition({
+      invoicePeriodStart: FEBRUARY,
+      invoicePeriodEnd: MARCH,
+      subscriptionCurrentPeriodStart: JANUARY,
+      subscriptionCurrentPeriodEnd: FEBRUARY,
+      subscriptionInterval: SubscriptionInterval.Month,
+      trialStart: null,
+      isFirstPeriodAfterTrial: false,
+      ledgerPeriodStart: new Date('2026-01-15T00:00:00.000Z'),
+    });
+
+    expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
+
   it('uses the subscription period end when the invoice carries no forward period', () => {
     const result = deriveBillingPeriodTransition({
       invoicePeriodStart: FEBRUARY,

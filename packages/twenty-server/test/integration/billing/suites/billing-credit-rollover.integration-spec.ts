@@ -28,7 +28,10 @@ const NEXT_PERIOD_END = addMonths(PERIOD_BOUNDARY, 1);
 
 const ALLOWANCE_MICRO = 1_000_000;
 
-const postInvoiceFinalized = (invoiceId = 'in_test_default') =>
+const postInvoiceFinalized = (
+  invoiceId = 'in_test_default',
+  { periodStart = CLOSING_PERIOD_END, periodEnd = NEXT_PERIOD_END } = {},
+) =>
   client
     .post('/webhooks/stripe')
     .set('stripe-signature', 'correct-signature')
@@ -37,8 +40,8 @@ const postInvoiceFinalized = (invoiceId = 'in_test_default') =>
       JSON.stringify({
         type: 'invoice.finalized',
         data: createMockStripeInvoiceFinalizedData({
-          periodStart: CLOSING_PERIOD_END,
-          periodEnd: NEXT_PERIOD_END,
+          periodStart,
+          periodEnd,
           stripeCustomerId: TEST_STRIPE_CUSTOMER_ID,
           invoiceId,
         }),
@@ -226,6 +229,74 @@ describe('Billing credit rollover (integration)', () => {
     expect(
       await cache.getAvailableCredits(workspaceId, CLOSING_PERIOD_START),
     ).toBe(120_000 + 700_000);
+  });
+
+  // Stripe redelivers events it already handled. Rebuilding on that redelivery
+  // would drop a counter that is already correct and recompute it from
+  // ClickHouse, handing back every credit whose usage has not been ingested yet.
+  it('leaves a warm counter alone when a successful delivery is repeated', async () => {
+    usageSpy.mockResolvedValue(300_000);
+    const cache = getBillingUsageCacheService();
+
+    await cache.warmAvailableCredits(
+      workspaceId,
+      CLOSING_PERIOD_START,
+      NEXT_PERIOD_END,
+      120_000,
+    );
+
+    await postInvoiceFinalized().expect(200);
+    const afterFirst = await cache.getAvailableCredits(
+      workspaceId,
+      CLOSING_PERIOD_START,
+    );
+
+    await postInvoiceFinalized().expect(200);
+
+    expect(afterFirst).toBe(120_000 + 700_000);
+    expect(
+      await cache.getAvailableCredits(workspaceId, CLOSING_PERIOD_START),
+    ).toBe(afterFirst);
+  });
+
+  // A subscription anchored on the 31st runs January 31 to February 28. Once
+  // the subscription.updated webhook has moved the subscription on, calendar
+  // arithmetic clamps February 28 back to January 28 and the closing period
+  // swallows three days of the period before it.
+  describe('a month-end anchor whose subscription already advanced', () => {
+    const MONTH_END_BOUNDARY = new Date('2026-02-28T00:00:00.000Z');
+    const TRUE_CLOSING_PERIOD_START = new Date('2026-01-31T00:00:00.000Z');
+    const MONTH_END_NEXT_PERIOD_END = new Date('2026-03-31T00:00:00.000Z');
+
+    it('reads the closing period start off the ledger rather than the calendar', async () => {
+      usageSpy.mockResolvedValue(0);
+      await setupResourceCreditSubscription({
+        workspaceId,
+        periodStart: MONTH_END_BOUNDARY,
+        periodEnd: MONTH_END_NEXT_PERIOD_END,
+        creditAmountMicro: ALLOWANCE_MICRO,
+      });
+      // What the previous transition left behind: a grant closed at the instant
+      // the period it belonged to ended.
+      await insertCreditGrant({
+        workspaceId,
+        amountMicro: 100_000,
+        type: BillingCreditGrantType.ROLLOVER,
+        effectiveAt: new Date('2025-12-31T00:00:00.000Z'),
+        expiresAt: TRUE_CLOSING_PERIOD_START,
+      });
+
+      await postInvoiceFinalized('in_test_month_end', {
+        periodStart: MONTH_END_BOUNDARY,
+        periodEnd: MONTH_END_NEXT_PERIOD_END,
+      }).expect(200);
+
+      expect(usageSpy).toHaveBeenCalledWith({
+        workspaceId,
+        from: TRUE_CLOSING_PERIOD_START,
+        to: MONTH_END_BOUNDARY,
+      });
+    });
   });
 
   describe('closing a trial', () => {

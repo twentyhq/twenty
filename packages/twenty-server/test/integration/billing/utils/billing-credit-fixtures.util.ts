@@ -191,8 +191,10 @@ export const resetBillingCreditState = async (
 
   await cache.flushAvailableCredits(workspaceId);
   // Markers survive a counter flush by design, so a grant in one test would
-  // otherwise stop the next one warming its counter.
+  // otherwise stop the next one warming its counter, and a transition in one
+  // test would make the next one read its own first delivery as a replay.
   await cache.flushAvailableCreditsStaleMarkers(workspaceId);
+  await cache.flushCounterAdjustmentMarkers(workspaceId);
 };
 
 export const getBillingUsageCacheService = (): BillingUsageCacheService =>

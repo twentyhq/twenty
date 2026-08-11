@@ -22,7 +22,10 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
+import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { CacheLockException } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -31,6 +34,15 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 type UsageSumRow = {
   total: string | number | null;
+};
+
+// This gate runs before every credit-consuming execution, so it waits far less
+// than a writer does and falls back to computing unlocked rather than failing
+// the execution outright.
+const AVAILABLE_CREDITS_WARM_UP_LOCK_OPTIONS = {
+  ms: 50,
+  maxRetries: 20,
+  ttl: 10_000,
 };
 
 @Injectable()
@@ -47,6 +59,7 @@ export class BillingUsageService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
     private readonly billingUsageCapService: BillingUsageCapService,
+    private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
@@ -227,7 +240,7 @@ export class BillingUsageService {
     const { currentPeriodStart, currentPeriodEnd } = currentBillingSubscription;
 
     const { availableCredits, isCounterWarm } =
-      await this.resolveAvailableCreditsForDecrement({
+      await this.resolveAvailableCredits({
         workspaceId,
         currentPeriodStart,
         currentPeriodEnd,
@@ -258,7 +271,13 @@ export class BillingUsageService {
     return decrementedAvailableCredits;
   }
 
-  private async resolveAvailableCreditsForDecrement({
+  // Warming is a read of the ledger followed by a write of what it implies, so
+  // a grant landing in between would be counted from the ledger here and then
+  // added to the counter again by the grant itself. Taking the writers' lock on
+  // the cold path closes that; a hit returns before the lock, keeping the warm
+  // path, which is the overwhelming majority of calls, free of Redis round
+  // trips.
+  private async resolveAvailableCredits({
     workspaceId,
     currentPeriodStart,
     currentPeriodEnd,
@@ -277,6 +296,62 @@ export class BillingUsageService {
       return { availableCredits: cachedAvailableCredits, isCounterWarm: true };
     }
 
+    try {
+      return await this.cacheLockService.withLock(
+        async () => {
+          // Whoever held the lock may have been another reader that already
+          // warmed the counter, so this pays for ClickHouse only once.
+          const warmedAvailableCredits =
+            await this.billingUsageCacheService.getAvailableCredits(
+              workspaceId,
+              currentPeriodStart,
+            );
+
+          if (isDefined(warmedAvailableCredits)) {
+            return {
+              availableCredits: warmedAvailableCredits,
+              isCounterWarm: true,
+            };
+          }
+
+          return this.computeAndWarmAvailableCredits({
+            workspaceId,
+            currentPeriodStart,
+            currentPeriodEnd,
+          });
+        },
+        buildBillingCreditStateLockKey(workspaceId),
+        AVAILABLE_CREDITS_WARM_UP_LOCK_OPTIONS,
+      );
+    } catch (error) {
+      if (!(error instanceof CacheLockException)) {
+        throw error;
+      }
+
+      // Blocking an execution because a grant is being written would be worse
+      // than the double count the lock exists to prevent, and the stale marker
+      // still stops a pre-grant balance being installed for the whole period.
+      this.logger.warn(
+        `Computing available credits for workspace ${workspaceId} without the credit state lock: ${error.message}`,
+      );
+
+      return this.computeAndWarmAvailableCredits({
+        workspaceId,
+        currentPeriodStart,
+        currentPeriodEnd,
+      });
+    }
+  }
+
+  private async computeAndWarmAvailableCredits({
+    workspaceId,
+    currentPeriodStart,
+    currentPeriodEnd,
+  }: {
+    workspaceId: string;
+    currentPeriodStart: Date;
+    currentPeriodEnd: Date;
+  }): Promise<{ availableCredits: number; isCounterWarm: boolean }> {
     const availableCredits = await this.getAvailableCreditsFromClickHouse({
       workspaceId,
       currentPeriodStart,
@@ -321,26 +396,11 @@ export class BillingUsageService {
 
     const subscription = currentBillingSubscription;
 
-    const cached = await this.billingUsageCacheService.getAvailableCredits(
-      subscription.workspaceId,
-      subscription.currentPeriodStart,
-    );
-
-    if (isDefined(cached)) {
-      return cached > 0;
-    }
-
-    const availableCredits = await this.getAvailableCreditsFromClickHouse({
+    const { availableCredits } = await this.resolveAvailableCredits({
       workspaceId: subscription.workspaceId,
       currentPeriodStart: subscription.currentPeriodStart,
+      currentPeriodEnd: subscription.currentPeriodEnd,
     });
-
-    await this.billingUsageCacheService.warmAvailableCredits(
-      subscription.workspaceId,
-      subscription.currentPeriodStart,
-      subscription.currentPeriodEnd,
-      availableCredits,
-    );
 
     return availableCredits > 0;
   }

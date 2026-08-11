@@ -21,3 +21,9 @@ export const buildBillingUsageAvailableCreditsStaleMarkerPattern = (
 ): string => {
   return `available-credits-stale:${workspaceId}:*`;
 };
+
+export const buildBillingUsageCounterAdjustmentPattern = (
+  workspaceId: string,
+): string => {
+  return `available-credits-adjusted:${workspaceId}:*`;
+};

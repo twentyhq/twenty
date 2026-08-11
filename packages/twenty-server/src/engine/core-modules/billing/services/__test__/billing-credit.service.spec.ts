@@ -11,6 +11,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -111,6 +112,10 @@ describe('BillingCreditService', () => {
               .fn()
               .mockResolvedValue(undefined),
           },
+        },
+        {
+          provide: CacheLockService,
+          useValue: { withLock: jest.fn((fn: () => unknown) => fn()) },
         },
         {
           provide: WorkspaceCacheService,

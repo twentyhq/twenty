@@ -228,6 +228,27 @@ export class BillingCreditGrantService {
     });
   }
 
+  // The previous transition pulled every grant it closed back to the instant
+  // the period ended, so the ledger records where the closing period started.
+  // Calendar arithmetic cannot recover it once the subscription has moved on:
+  // a month-end anchor clamps, and subtracting a month from February 28 gives
+  // January 28 rather than the January 31 the period actually started on.
+  async findPeriodStartBefore({
+    workspaceId,
+    boundary,
+  }: {
+    workspaceId: string;
+    boundary: Date;
+  }): Promise<Date | null> {
+    const [row] = await this.billingCreditGrantRepository.find(workspaceId, {
+      where: { expiresAt: LessThan(boundary) },
+      order: { expiresAt: 'DESC' },
+      take: 1,
+    });
+
+    return row?.expiresAt ?? null;
+  }
+
   // Enforces the one-grant-per-period invariant at the point where periods
   // actually roll: whatever a writer guessed for expiresAt, a grant never
   // outlives the period it was carried forward from. Matched by predicate

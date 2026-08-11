@@ -24,6 +24,7 @@ export const deriveBillingPeriodTransition = ({
   subscriptionInterval,
   trialStart,
   isFirstPeriodAfterTrial,
+  ledgerPeriodStart,
 }: {
   invoicePeriodStart: Date;
   invoicePeriodEnd: Date;
@@ -32,6 +33,9 @@ export const deriveBillingPeriodTransition = ({
   subscriptionInterval: SubscriptionInterval;
   trialStart: Date | null | undefined;
   isFirstPeriodAfterTrial: boolean;
+  // Where the ledger says the closing period started, for the case where the
+  // subscription has already moved on and cannot say.
+  ledgerPeriodStart?: Date | null;
 }): BillingPeriodTransition => {
   const boundary = invoicePeriodStart;
 
@@ -47,6 +51,18 @@ export const deriveBillingPeriodTransition = ({
 
     if (subscriptionCurrentPeriodStart.getTime() < boundary.getTime()) {
       return subscriptionCurrentPeriodStart;
+    }
+
+    // The ledger holds the exact instant, and calendar arithmetic cannot
+    // reproduce it for month-end anchors: a period running January 31 to
+    // February 28 comes back as starting January 28, which widens the usage
+    // window into the period before and drags already expired grants back
+    // into the carry-forward.
+    if (
+      isDefined(ledgerPeriodStart) &&
+      ledgerPeriodStart.getTime() < boundary.getTime()
+    ) {
+      return ledgerPeriodStart;
     }
 
     // Calendar arithmetic, not the invoiced duration: consecutive periods

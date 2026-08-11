@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
 import { IconTrash } from 'twenty-ui/icon';
@@ -18,6 +19,8 @@ import { REVOKE_WORKSPACE_CREDIT_GRANT } from '@/settings/admin-panel/graphql/mu
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -36,6 +39,7 @@ type SettingsAdminWorkspaceCreditGrantsTableProps = {
 };
 
 const GRID_AUTO_COLUMNS = '1fr 1.4fr 1fr 1.6fr 2fr 32px';
+const REVOKE_CREDIT_GRANT_MODAL_ID = 'revoke-credit-grant-modal';
 
 const StyledEmptyState = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -68,6 +72,11 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
   const { formatNumber } = useNumberFormat();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const apolloAdminClient = useApolloAdminClient();
+  const { openModal } = useModal();
+
+  const [grantPendingRevocation, setGrantPendingRevocation] =
+    useState<CreditGrant | null>(null);
+  const [revokingGrantId, setRevokingGrantId] = useState<string | null>(null);
 
   const [revokeWorkspaceCreditGrant] = useMutation(
     REVOKE_WORKSPACE_CREDIT_GRANT,
@@ -77,7 +86,17 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
     },
   );
 
+  const handleRevokeClick = (creditGrant: CreditGrant) => {
+    setGrantPendingRevocation(creditGrant);
+    openModal(REVOKE_CREDIT_GRANT_MODAL_ID);
+  };
+
   const handleRevoke = async (creditGrantId: string) => {
+    // The refetch that clears the row lands well after the mutation resolves,
+    // so without this the button stays live and a second click revokes an
+    // already revoked grant.
+    setRevokingGrantId(creditGrantId);
+
     try {
       await revokeWorkspaceCreditGrant({
         variables: { workspaceId, creditGrantId },
@@ -91,6 +110,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
             ? error.message
             : t`Could not revoke this credit grant.`,
       });
+    } finally {
+      setRevokingGrantId(null);
+      setGrantPendingRevocation(null);
     }
   };
 
@@ -148,7 +170,8 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
                       Icon={IconTrash}
                       size="small"
                       accent="danger"
-                      onClick={() => handleRevoke(creditGrant.id)}
+                      disabled={isDefined(revokingGrantId)}
+                      onClick={() => handleRevokeClick(creditGrant)}
                     />
                   )}
                 </TableCell>
@@ -157,6 +180,26 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
           })}
         </TableBody>
       </Table>
+
+      <ConfirmationModal
+        modalInstanceId={REVOKE_CREDIT_GRANT_MODAL_ID}
+        title={t`Revoke credit grant`}
+        subtitle={
+          isDefined(grantPendingRevocation)
+            ? t`This takes ${formatNumber(grantPendingRevocation.amount, {
+                decimals: 2,
+              })} credits back off this workspace straight away. Revoking cannot be undone.`
+            : ''
+        }
+        confirmButtonText={t`Revoke`}
+        loading={isDefined(revokingGrantId)}
+        onConfirmClick={() => {
+          if (isDefined(grantPendingRevocation)) {
+            handleRevoke(grantPendingRevocation.id);
+          }
+        }}
+        onClose={() => setGrantPendingRevocation(null)}
+      />
     </Card>
   );
 };

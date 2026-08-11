@@ -8,6 +8,7 @@ import { BillingCreditGrantService } from 'src/engine/core-modules/billing/servi
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const workspaceId = 'ws_123';
@@ -15,6 +16,7 @@ const CLOSING_PERIOD_START = new Date('2026-01-01T00:00:00.000Z');
 const CLOSING_PERIOD_END = new Date('2026-02-01T00:00:00.000Z');
 const NEXT_PERIOD_END = new Date('2026-03-01T00:00:00.000Z');
 const ALLOWANCE = 1_000_000;
+const ROLLOVER_ADJUSTMENT_KEY = `rollover:${CLOSING_PERIOD_END.toISOString()}`;
 
 const baseParams = {
   workspaceId,
@@ -39,6 +41,7 @@ describe('BillingCreditRolloverService', () => {
   }>;
   let billingCreditService: jest.Mocked<{
     refreshWorkspaceCreditState: jest.Mock;
+    hasCounterAdjustmentBeenApplied: jest.Mock;
   }>;
 
   beforeEach(async () => {
@@ -68,7 +71,12 @@ describe('BillingCreditRolloverService', () => {
           provide: BillingCreditService,
           useValue: {
             refreshWorkspaceCreditState: jest.fn().mockResolvedValue(undefined),
+            hasCounterAdjustmentBeenApplied: jest.fn().mockResolvedValue(false),
           },
+        },
+        {
+          provide: CacheLockService,
+          useValue: { withLock: jest.fn((fn: () => unknown) => fn()) },
         },
         {
           provide: TwentyConfigService,
@@ -146,6 +154,7 @@ describe('BillingCreditRolloverService', () => {
         workspaceId,
         availableDeltaMicro: 0,
         rebuildCounter: false,
+        adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
       });
     });
 
@@ -163,6 +172,27 @@ describe('BillingCreditRolloverService', () => {
         workspaceId,
         availableDeltaMicro: 0,
         rebuildCounter: true,
+        adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
+      });
+    });
+
+    // Stripe redelivers events it already handled, and rebuilding then would
+    // recompute from ClickHouse and credit back usage it has not ingested yet.
+    it('leaves the counter alone when the replayed transition already moved it', async () => {
+      billingCreditGrantService.createGrant.mockResolvedValue(null);
+      billingCreditService.hasCounterAdjustmentBeenApplied.mockResolvedValue(
+        true,
+      );
+
+      await service.processRolloverOnPeriodTransition(baseParams);
+
+      expect(
+        billingCreditService.refreshWorkspaceCreditState,
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        availableDeltaMicro: 0,
+        rebuildCounter: false,
+        adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
       });
     });
 

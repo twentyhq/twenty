@@ -70,7 +70,12 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
   const parsedAmount = Number(amount);
   const isAmountValid = Number.isFinite(parsedAmount) && parsedAmount > 0;
 
+  // The modal is mounted for the whole page, so without this the next admin to
+  // open it starts from the last grant's amount and reason.
   const handleClose = () => {
+    setAmount('');
+    setType(BillingCreditGrantType.COMPENSATION);
+    setReason('');
     closeModal(modalInstanceId);
   };
 

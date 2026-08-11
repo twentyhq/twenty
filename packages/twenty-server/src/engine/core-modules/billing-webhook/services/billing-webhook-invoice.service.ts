@@ -18,6 +18,7 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -42,6 +43,7 @@ export class BillingWebhookInvoiceService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly billingUsageService: BillingUsageService,
     private readonly resourceCreditService: ResourceCreditService,
@@ -142,6 +144,14 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
+    // The subscription.updated webhook races this one, and once it lands the
+    // subscription no longer knows where the closing period started.
+    const ledgerPeriodStart =
+      await this.billingCreditGrantService.findPeriodStartBefore({
+        workspaceId: subscription.workspaceId,
+        boundary: invoicePeriodStart,
+      });
+
     const {
       closingPeriodStart,
       closingPeriodEnd,
@@ -155,6 +165,7 @@ export class BillingWebhookInvoiceService {
       subscriptionInterval: subscription.interval,
       trialStart: subscription.trialStart,
       isFirstPeriodAfterTrial,
+      ledgerPeriodStart,
     });
 
     // Credits earned during the trial follow the workspace into its first paid
