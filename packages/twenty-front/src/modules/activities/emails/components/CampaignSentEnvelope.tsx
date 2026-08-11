@@ -43,10 +43,8 @@ export const CampaignSentEnvelope = ({
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
 
-  // Nothing on this surface is editable, so the list resolves to a plain chip
-  // rather than a disabled picker: the picker draws a full-width input box,
-  // which reads as "you may type here" next to two rows of static text.
-  // withSoftDeleted keeps a list that was deleted after the send visible.
+  // withSoftDeleted so a list deleted after the send still names what the
+  // campaign went to.
   const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
 
   const { record: list, loading: isListLoading } = useFindOneRecord({

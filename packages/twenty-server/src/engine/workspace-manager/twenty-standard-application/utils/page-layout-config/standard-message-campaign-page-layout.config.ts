@@ -23,9 +23,6 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
         .home.universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
-      // No list widget: the envelope above the sent body already names the list
-      // it went to, and a column that repeats it reads as a second, different
-      // fact rather than the same one twice.
       recipients: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
