@@ -1,4 +1,5 @@
 import { SidePanelPages } from 'twenty-shared/types';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
@@ -12,15 +13,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { hasSidePanelSubPages } = useSidePanelSubPageHistory();
+  const isMobile = useIsMobile();
 
   const askAiExpandTarget = useExpandAskAiSidePanelPage();
   const recordExpandTarget = useExpandRecordSidePanelPage();
   const recordsExpandTarget = useExpandRecordsSidePanelPage();
   const richTextExpandTarget = useExpandRichTextSidePanelPage();
 
-  // A sub page has taken over the panel content, so expanding the page
-  // underneath it would discard what the user is currently doing.
-  if (hasSidePanelSubPages) {
+  // On mobile the panel already fills the viewport, so there is nothing to
+  // expand into. A sub page has taken over the panel content, so expanding the
+  // page underneath it would discard what the user is currently doing.
+  if (isMobile || hasSidePanelSubPages) {
     return null;
   }
 

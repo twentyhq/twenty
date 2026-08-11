@@ -14,8 +14,6 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 const navigateAppMock = jest.fn();
 const closeSidePanelMenuMock = jest.fn();
 
-let mockIsMobile = false;
-
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigateAppMock,
 }));
@@ -24,11 +22,6 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({
     closeSidePanelMenu: closeSidePanelMenuMock,
   }),
-}));
-
-jest.mock('twenty-ui/utilities', () => ({
-  ...jest.requireActual('twenty-ui/utilities'),
-  useIsMobile: () => mockIsMobile,
 }));
 
 const PAGE_INSTANCE_ID = 'side-panel-page-instance-id';
@@ -78,7 +71,6 @@ const renderExpandRecordsSidePanelPage = ({
 
 describe('useExpandRecordsSidePanelPage', () => {
   beforeEach(() => {
-    mockIsMobile = false;
     jest.clearAllMocks();
   });
 
@@ -122,17 +114,6 @@ describe('useExpandRecordsSidePanelPage', () => {
     const { result } = renderExpandRecordsSidePanelPage({
       objectMetadataId: companyObjectMetadataItem.id,
       viewId: '',
-    });
-
-    expect(result.current).toBeNull();
-  });
-
-  it('should not expand on mobile where the panel already fills the viewport', () => {
-    mockIsMobile = true;
-
-    const { result } = renderExpandRecordsSidePanelPage({
-      objectMetadataId: companyObjectMetadataItem.id,
-      viewId: VIEW_ID,
     });
 
     expect(result.current).toBeNull();

@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useNavigateToRecordPageFromSidePanel } from '@/side-panel/pages/record-page/hooks/useNavigateToRecordPageFromSidePanel';
 import { viewableRichTextComponentState } from '@/side-panel/pages/rich-text-page/states/viewableRichTextComponentState';
@@ -10,7 +9,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const useExpandRichTextSidePanelPage =
   (): SidePanelExpandTarget | null => {
     const { t } = useLingui();
-    const isMobile = useIsMobile();
 
     const { recordId, objectNameSingular } = useAtomStateValue(
       viewableRichTextComponentState,
@@ -18,11 +16,7 @@ export const useExpandRichTextSidePanelPage =
 
     const { navigateToRecordPage } = useNavigateToRecordPageFromSidePanel();
 
-    if (
-      isMobile ||
-      !isNonEmptyString(recordId) ||
-      !isNonEmptyString(objectNameSingular)
-    ) {
+    if (!isNonEmptyString(recordId) || !isNonEmptyString(objectNameSingular)) {
       return null;
     }
 

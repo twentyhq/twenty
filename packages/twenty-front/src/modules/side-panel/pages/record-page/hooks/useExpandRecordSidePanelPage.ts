@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useNavigateToRecordPageFromSidePanel } from '@/side-panel/pages/record-page/hooks/useNavigateToRecordPageFromSidePanel';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
@@ -11,7 +10,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 export const useExpandRecordSidePanelPage =
   (): SidePanelExpandTarget | null => {
     const { t } = useLingui();
-    const isMobile = useIsMobile();
 
     const viewableRecordId = useAtomComponentStateValue(
       viewableRecordIdComponentState,
@@ -24,7 +22,6 @@ export const useExpandRecordSidePanelPage =
     const { navigateToRecordPage } = useNavigateToRecordPageFromSidePanel();
 
     if (
-      isMobile ||
       !isDefined(viewableRecordId) ||
       !isDefined(viewableRecordNameSingular)
     ) {

@@ -33,6 +33,12 @@ const mockRichTextExpandTarget: SidePanelExpandTarget = {
 };
 
 let mockHasSidePanelSubPages = false;
+let mockIsMobile = false;
+
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: () => mockIsMobile,
+}));
 
 jest.mock(
   '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage',
@@ -81,6 +87,7 @@ const renderExpandTarget = (sidePanelPage: SidePanelPages) => {
 describe('useSidePanelExpandTarget', () => {
   beforeEach(() => {
     mockHasSidePanelSubPages = false;
+    mockIsMobile = false;
     jest.clearAllMocks();
   });
 
@@ -116,6 +123,14 @@ describe('useSidePanelExpandTarget', () => {
 
   it('should return null when a sub page has taken over the panel', () => {
     mockHasSidePanelSubPages = true;
+
+    const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
+
+    expect(result.current).toBeNull();
+  });
+
+  it('should return null on mobile where the panel already fills the viewport', () => {
+    mockIsMobile = true;
 
     const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
 

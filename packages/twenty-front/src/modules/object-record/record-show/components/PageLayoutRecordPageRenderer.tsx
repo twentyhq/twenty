@@ -120,23 +120,22 @@ export const PageLayoutRecordPageRenderer = ({
             actions={[
               <RecordPageSidePanelCommandMenu key="options" />,
               ...(hasPinnedWidgetCommandMenuItems
-                ? []
+                ? pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
+                    <Button
+                      key={commandMenuItem.id}
+                      size="small"
+                      variant={
+                        commandMenuItem.isPrimaryCTA ? 'primary' : 'secondary'
+                      }
+                      accent={commandMenuItem.isPrimaryCTA ? 'blue' : 'default'}
+                      title={commandMenuItem.label}
+                      Icon={commandMenuItem.Icon}
+                      hotkeys={commandMenuItem.hotkeys}
+                      onClick={commandMenuItem.onClick}
+                      disabled={commandMenuItem.disabled}
+                    />
+                  ))
                 : [<RecordPageSidePanelPinnedCommandMenuItems key="pinned" />]),
-              ...pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
-                <Button
-                  key={commandMenuItem.id}
-                  size="small"
-                  variant={
-                    commandMenuItem.isPrimaryCTA ? 'primary' : 'secondary'
-                  }
-                  accent={commandMenuItem.isPrimaryCTA ? 'blue' : 'default'}
-                  title={commandMenuItem.label}
-                  Icon={commandMenuItem.Icon}
-                  hotkeys={commandMenuItem.hotkeys}
-                  onClick={commandMenuItem.onClick}
-                  disabled={commandMenuItem.disabled}
-                />
-              )),
             ]}
           />
         )}

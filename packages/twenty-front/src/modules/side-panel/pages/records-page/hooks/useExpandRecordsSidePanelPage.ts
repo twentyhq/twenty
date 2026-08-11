@@ -2,7 +2,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -16,7 +15,6 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const useExpandRecordsSidePanelPage =
   (): SidePanelExpandTarget | null => {
     const { t } = useLingui();
-    const isMobile = useIsMobile();
     const navigate = useNavigateApp();
     const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -37,7 +35,6 @@ export const useExpandRecordsSidePanelPage =
       : undefined;
 
     if (
-      isMobile ||
       !isDefined(objectMetadataItem) ||
       !isNonEmptyString(viewableRecordsViewId)
     ) {

@@ -4,14 +4,16 @@ import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/di
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { getLabelledPinnedCommandMenuItemId } from '@/command-menu-item/display/utils/getLabelledPinnedCommandMenuItemId';
-import { getPinnedCommandMenuItemsDisplayConfig } from '@/command-menu-item/display/utils/getPinnedCommandMenuItemsDisplayConfig';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { EngineComponentKey } from '~/generated-metadata/graphql';
+import {
+  type CommandMenuItemFieldsFragment,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
 
 const StyledCommandMenuItemContainer = styled(motion.div)`
   align-items: center;
@@ -45,31 +47,22 @@ export const PinnedCommandMenuItemButtons = () => {
   const { theme } = useContext(ThemeContext);
   const { commandMenuItems, containerType } = useContext(CommandMenuContext);
 
-  const {
-    layoutKey,
-    shouldLabelSingleCommandMenuItem,
-    shouldReverseCommandMenuItems,
-  } = useMemo(
-    () => getPinnedCommandMenuItemsDisplayConfig(containerType),
-    [containerType],
-  );
+  // The footer is far narrower than a page header, so it labels a single action
+  // and keeps that label rightmost. Headers label every action and reverse the
+  // row so their labels sit left of the icons.
+  const isSidePanelFooter = containerType === 'side-panel-footer';
 
   const pinnedCommandMenuItems = useMemo(
     () => commandMenuItems.filter((item) => item.isPinned === true),
     [commandMenuItems],
   );
 
-  const labelledCommandMenuItemId = useMemo(
-    () =>
-      shouldLabelSingleCommandMenuItem
-        ? getLabelledPinnedCommandMenuItemId(pinnedCommandMenuItems)
-        : null,
-    [pinnedCommandMenuItems, shouldLabelSingleCommandMenuItem],
-  );
+  const labelledCommandMenuItemId = isSidePanelFooter
+    ? getLabelledPinnedCommandMenuItemId(pinnedCommandMenuItems)
+    : null;
 
   const shouldHideCommandMenuItemLabel = (commandMenuItemId: string) =>
-    shouldLabelSingleCommandMenuItem &&
-    commandMenuItemId !== labelledCommandMenuItemId;
+    isSidePanelFooter && commandMenuItemId !== labelledCommandMenuItemId;
 
   const {
     pinnedInlineCommandMenuItems,
@@ -78,11 +71,11 @@ export const PinnedCommandMenuItemButtons = () => {
     onCommandMenuItemDimensionChange,
   } = usePinnedCommandMenuItemsInlineLayout({
     pinnedCommandMenuItems,
-    layoutKey,
+    layoutKey: isSidePanelFooter ? 'side-panel-footer' : 'page-header',
   });
 
   const isCommandMenuItemLabelled = (
-    commandMenuItem: (typeof pinnedInlineCommandMenuItems)[number],
+    commandMenuItem: CommandMenuItemFieldsFragment,
   ) =>
     isDefined(commandMenuItem.shortLabel) &&
     !shouldHideCommandMenuItemLabel(commandMenuItem.id);
@@ -111,7 +104,7 @@ export const PinnedCommandMenuItemButtons = () => {
       <StyledWrapper>
         <NodeDimension onDimensionChange={onContainerDimensionChange}>
           <StyledContainer>
-            <StyledItemsContainer shouldReverse={shouldReverseCommandMenuItems}>
+            <StyledItemsContainer shouldReverse={!isSidePanelFooter}>
               {displayedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer
                   key={item.id}

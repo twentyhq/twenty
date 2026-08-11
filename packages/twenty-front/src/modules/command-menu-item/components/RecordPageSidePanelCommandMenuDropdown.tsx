@@ -68,12 +68,13 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
     pinnedOverflowCommandMenuItems.map((item) => item.id),
   );
 
-  const listedCommandMenuItems = recordSelectionCommandMenuItems.filter(
-    (item) =>
-      item.isPinned !== true ||
-      hasPinnedWidgetCommandMenuItems ||
-      pinnedOverflowCommandMenuItemIds.has(item.id),
-  );
+  const listedCommandMenuItems = hasPinnedWidgetCommandMenuItems
+    ? recordSelectionCommandMenuItems
+    : recordSelectionCommandMenuItems.filter(
+        (item) =>
+          item.isPinned !== true ||
+          pinnedOverflowCommandMenuItemIds.has(item.id),
+      );
 
   const selectableItemIdArray = [
     ...dropdownWidgetCommandMenuItems.map(
