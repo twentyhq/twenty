@@ -132,7 +132,7 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           applicationUniversalIdentifier:

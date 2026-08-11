@@ -108,7 +108,7 @@ describe('AddCalendarEventCallRecordingTabCommand', () => {
         getOrRecompute: getOrRecomputeMock,
       } as unknown as WorkspaceCacheService,
       {
-        validateBuildAndRunWorkspaceMigration:
+        validateBuildAndRunLegacyWorkspaceMigration:
           validateBuildAndRunWorkspaceMigrationMock,
       } as unknown as WorkspaceMigrationValidateBuildAndRunService,
     );
