@@ -79,21 +79,14 @@ describe('buildOnboardingEmailDigestMessageText', () => {
     expect(result).toContain('you can query them with your tools');
   });
 
-  it('should report a fully synced mailbox', () => {
+  it('should report the synced status and mark a capped message count', () => {
     const result = buildOnboardingEmailDigestMessageText({
       ...digestWithData,
       syncState: 'SYNCED',
-    });
-
-    expect(result).toContain('Import status: fully synced');
-  });
-
-  it('should report the message count as capped when the cap was hit', () => {
-    const result = buildOnboardingEmailDigestMessageText({
-      ...digestWithData,
       importedMessageCount: ONBOARDING_EMAIL_DIGEST_MAX_MESSAGES,
     });
 
+    expect(result).toContain('Import status: fully synced');
     expect(result).toContain(
       `Imported messages so far: ${ONBOARDING_EMAIL_DIGEST_MAX_MESSAGES}+`,
     );

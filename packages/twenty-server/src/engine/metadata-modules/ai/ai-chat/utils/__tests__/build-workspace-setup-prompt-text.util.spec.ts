@@ -398,18 +398,20 @@ describe('buildWorkspaceSetupPromptText', () => {
     );
   });
 
-  it('should add no email addenda when no mailbox is connected', () => {
-    const result = buildPrompt({ emailDigest: { syncState: 'NOT_CONNECTED' } });
+  it('should add no email addenda when no mailbox is connected or its sync failed', () => {
+    const notConnected = buildPrompt({
+      emailDigest: { syncState: 'NOT_CONNECTED' },
+    });
 
-    expect(result).toContain(
+    expect(notConnected).toContain(
       'No email account is connected to this workspace yet.',
     );
-    expect(result).not.toContain('their contacts are on their way');
-    expect(result).not.toContain('you can already see who they email most');
-  });
+    expect(notConnected).not.toContain('their contacts are on their way');
+    expect(notConnected).not.toContain(
+      'you can already see who they email most',
+    );
 
-  it('should add no email addenda when the mailbox sync failed', () => {
-    const result = buildPrompt({
+    const failed = buildPrompt({
       emailDigest: {
         syncState: 'FAILED',
         connectedAccountHandle: 'admin@acme.com',
@@ -420,8 +422,8 @@ describe('buildWorkspaceSetupPromptText', () => {
       },
     });
 
-    expect(result).toContain('do not promise anything about imported emails');
-    expect(result).not.toContain('their contacts are on their way');
-    expect(result).not.toContain('you can already see who they email most');
+    expect(failed).toContain('do not promise anything about imported emails');
+    expect(failed).not.toContain('their contacts are on their way');
+    expect(failed).not.toContain('you can already see who they email most');
   });
 });

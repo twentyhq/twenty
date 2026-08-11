@@ -98,51 +98,34 @@ describe('OnboardingEmailDigestService', () => {
     };
   };
 
-  it('should report not connected when the user has no connected account', async () => {
-    const { service, globalWorkspaceOrmManager } = buildService({
-      connectedAccounts: [],
-    });
+  it('should report not connected without an account or without a message channel', async () => {
+    const noAccount = buildService({ connectedAccounts: [] });
 
-    const result = await service.buildDigestForUser({
-      workspaceId,
-      userWorkspaceId,
-    });
-
-    expect(result).toEqual({ syncState: 'NOT_CONNECTED' });
+    await expect(
+      noAccount.service.buildDigestForUser({ workspaceId, userWorkspaceId }),
+    ).resolves.toEqual({ syncState: 'NOT_CONNECTED' });
     expect(
-      globalWorkspaceOrmManager.executeInWorkspaceContext,
+      noAccount.globalWorkspaceOrmManager.executeInWorkspaceContext,
     ).not.toHaveBeenCalled();
+
+    const noChannel = buildService({ messageChannels: [] });
+
+    await expect(
+      noChannel.service.buildDigestForUser({ workspaceId, userWorkspaceId }),
+    ).resolves.toEqual({ syncState: 'NOT_CONNECTED' });
   });
 
-  it('should report not connected when the account has no message channel', async () => {
-    const { service } = buildService({ messageChannels: [] });
-
-    const result = await service.buildDigestForUser({
-      workspaceId,
-      userWorkspaceId,
-    });
-
-    expect(result).toEqual({ syncState: 'NOT_CONNECTED' });
-  });
-
-  it('should only read accounts belonging to the requesting user', async () => {
+  it('should report an importing empty digest scoped to the requesting user before any message landed', async () => {
     const { service, connectedAccountRepository } = buildService();
 
-    await service.buildDigestForUser({ workspaceId, userWorkspaceId });
+    const result = await service.buildDigestForUser({
+      workspaceId,
+      userWorkspaceId,
+    });
 
     expect(connectedAccountRepository.find).toHaveBeenCalledWith({
       where: { workspaceId, userWorkspaceId },
     });
-  });
-
-  it('should report an importing empty digest before any message landed', async () => {
-    const { service } = buildService();
-
-    const result = await service.buildDigestForUser({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     expect(result).toEqual({
       syncState: 'IMPORTING',
       connectedAccountHandle: 'Admin@acme.com',
