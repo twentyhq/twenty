@@ -32,7 +32,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
-import { getFanOutJoinAliases } from 'src/engine/api/common/utils/get-fan-out-join-aliases.util';
+import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -168,16 +168,17 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 
-    // A fanning-out join makes a row-level LIMIT return fewer records than asked, so it is
-    // rejected rather than paginated with take/skip, which drops the LIMIT from the scan.
-    const fanOutJoinAliases = getFanOutJoinAliases(queryBuilder);
+    // A join that can duplicate root rows makes a row-level LIMIT return fewer records than
+    // asked, so it is rejected rather than paginated with take/skip, which drops the LIMIT
+    // from the scan.
+    const nonToOneJoinAliases = getNonToOneJoinAliases(queryBuilder);
 
-    if (fanOutJoinAliases.length > 0) {
+    if (nonToOneJoinAliases.length > 0) {
       throw new CommonQueryRunnerException(
-        `Cannot filter or order through the to-many relation ${fanOutJoinAliases.join(', ')}`,
+        `Cannot filter or order through ${nonToOneJoinAliases.join(', ')}: only to-one relations are supported`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
-          userFriendlyMessage: msg`Filtering or ordering through a to-many relation is not supported.`,
+          userFriendlyMessage: msg`Filtering or ordering through this relation is not supported.`,
         },
       );
     }

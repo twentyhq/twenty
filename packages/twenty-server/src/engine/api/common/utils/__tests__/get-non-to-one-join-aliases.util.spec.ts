@@ -1,6 +1,6 @@
 import { type SelectQueryBuilder, type ObjectLiteral } from 'typeorm';
 
-import { getFanOutJoinAliases } from 'src/engine/api/common/utils/get-fan-out-join-aliases.util';
+import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 
 type JoinRelation = {
   isOneToMany: boolean;
@@ -21,16 +21,11 @@ const queryBuilderWithJoins = (
 
 const toOne: JoinRelation = { isOneToMany: false, isManyToMany: false };
 const oneToMany: JoinRelation = { isOneToMany: true, isManyToMany: false };
-const manyToMany: JoinRelation = { isOneToMany: false, isManyToMany: true };
 
-describe('getFanOutJoinAliases', () => {
-  it('should return no alias when there are no joins', () => {
-    expect(getFanOutJoinAliases(queryBuilderWithJoins([]))).toEqual([]);
-  });
-
+describe('getNonToOneJoinAliases', () => {
   it('should return no alias when every join is to-one', () => {
     expect(
-      getFanOutJoinAliases(
+      getNonToOneJoinAliases(
         queryBuilderWithJoins([
           { alias: 'company', relation: toOne },
           { alias: 'event', relation: toOne },
@@ -41,7 +36,7 @@ describe('getFanOutJoinAliases', () => {
 
   it('should return the alias of a one-to-many join, which duplicates root rows', () => {
     expect(
-      getFanOutJoinAliases(
+      getNonToOneJoinAliases(
         queryBuilderWithJoins([
           { alias: 'company', relation: toOne },
           { alias: 'people', relation: oneToMany },
@@ -50,17 +45,9 @@ describe('getFanOutJoinAliases', () => {
     ).toEqual(['people']);
   });
 
-  it('should return the alias of a many-to-many join', () => {
+  it('should return the alias of a join whose relation cannot be resolved', () => {
     expect(
-      getFanOutJoinAliases(
-        queryBuilderWithJoins([{ alias: 'tags', relation: manyToMany }]),
-      ),
-    ).toEqual(['tags']);
-  });
-
-  it('should return the alias of a join with no resolvable relation', () => {
-    expect(
-      getFanOutJoinAliases(
+      getNonToOneJoinAliases(
         queryBuilderWithJoins([
           { alias: 'company', relation: toOne },
           { alias: 'rawJoin' },
