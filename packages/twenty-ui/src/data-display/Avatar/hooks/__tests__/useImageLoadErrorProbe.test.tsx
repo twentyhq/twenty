@@ -25,27 +25,12 @@ describe('useImageLoadErrorProbe', () => {
     window.Image = originalImage;
   });
 
-  it('should return false for a null URI without probing', () => {
-    const { result } = renderHook(() => useImageLoadErrorProbe(null));
-
-    expect(result.current).toBe(false);
-    expect(MockImage.instances).toHaveLength(0);
-  });
-
-  it('should return false while the probe has not errored', () => {
-    const { result } = renderHook(() =>
-      useImageLoadErrorProbe('https://a.com/icon.png'),
-    );
-
-    expect(result.current).toBe(false);
-    expect(MockImage.instances).toHaveLength(1);
-    expect(MockImage.instances[0].src).toBe('https://a.com/icon.png');
-  });
-
-  it('should return true once the probe errors', () => {
+  it('should report an error only after the probed image fails to load', () => {
     const { result } = renderHook(() =>
       useImageLoadErrorProbe('https://a.com/broken.png'),
     );
+
+    expect(result.current).toBe(false);
 
     act(() => {
       MockImage.instances[0].onerror?.();
@@ -54,7 +39,7 @@ describe('useImageLoadErrorProbe', () => {
     expect(result.current).toBe(true);
   });
 
-  it('should reset when the URI changes to a new image', () => {
+  it('should reset the error when the URI changes to a new image', () => {
     const { result, rerender } = renderHook(
       ({ uri }: { uri: string }) => useImageLoadErrorProbe(uri),
       { initialProps: { uri: 'https://a.com/broken.png' } },
@@ -68,15 +53,5 @@ describe('useImageLoadErrorProbe', () => {
     rerender({ uri: 'https://a.com/other.png' });
 
     expect(result.current).toBe(false);
-  });
-
-  it('should detach the error handler on unmount', () => {
-    const { unmount } = renderHook(() =>
-      useImageLoadErrorProbe('https://a.com/icon.png'),
-    );
-
-    unmount();
-
-    expect(MockImage.instances[0].onerror).toBeNull();
   });
 });

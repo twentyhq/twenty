@@ -4,7 +4,6 @@ import { clsx } from 'clsx';
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { useImageLoadErrorProbe } from '@ui/data-display/Avatar/hooks/useImageLoadErrorProbe';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
-import { escapeCssStringValue } from '@ui/data-display/Avatar/utils/escapeCssStringValue';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useTheme } from '@ui/theme-constants';
@@ -138,7 +137,7 @@ export const Avatar = ({
         <div
           className={styles.image}
           style={{
-            backgroundImage: `url("${escapeCssStringValue(avatarImageURI)}")`,
+            backgroundImage: `url("${CSS.escape(avatarImageURI)}")`,
           }}
         />
       )}
