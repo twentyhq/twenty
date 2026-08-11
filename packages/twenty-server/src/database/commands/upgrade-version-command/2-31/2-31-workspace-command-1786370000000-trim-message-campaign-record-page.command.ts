@@ -21,25 +21,28 @@ const HOME_WIDGETS =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
     .widgets;
 
-const DETAILS_WIDGET_UNIVERSAL_IDENTIFIER =
-  HOME_WIDGETS.details.universalIdentifier;
+// details: its fields now sit above the body in the composer.
+// list: the envelope above the sent body already names the list it went to.
+const REMOVED_WIDGET_UNIVERSAL_IDENTIFIERS = [
+  HOME_WIDGETS.details.universalIdentifier,
+  HOME_WIDGETS.list.universalIdentifier,
+];
 
-// The sent-only widgets move from "not everyEquals" to "noneEquals". The two
+// The widgets that stay move from "not everyEquals" to "noneEquals". The two
 // agree on a loaded record, but an empty selection makes the first true and the
 // second false, and the selection is empty until the record loads.
 const SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS = [
   HOME_WIDGETS.fields.universalIdentifier,
-  HOME_WIDGETS.list.universalIdentifier,
   HOME_WIDGETS.recipients.universalIdentifier,
 ];
 
 @RegisteredWorkspaceCommand('2.31.0', 1786370000000)
 @Command({
-  name: 'upgrade:2-31:remove-message-campaign-details-widget',
+  name: 'upgrade:2-31:trim-message-campaign-record-page',
   description:
-    'Removes the message campaign details widget, whose fields now sit above the body in the composer, and makes the sent-only widgets fail closed while the record loads',
+    'Removes the message campaign details and list widgets, both of which the envelope above the body now covers, and makes the widgets that stay fail closed while the record loads',
 })
-export class RemoveMessageCampaignDetailsWidgetCommand extends ProvisionedWorkspaceCommandRunner {
+export class TrimMessageCampaignRecordPageCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -86,14 +89,10 @@ export class RemoveMessageCampaignDetailsWidgetCommand extends ProvisionedWorksp
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const detailsWidget =
-      flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        DETAILS_WIDGET_UNIVERSAL_IDENTIFIER
-      ];
-
-    const pageLayoutWidgetsToDelete = isDefined(detailsWidget)
-      ? [detailsWidget]
-      : [];
+    const pageLayoutWidgetsToDelete = REMOVED_WIDGET_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) =>
+        flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier],
+    ).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
 
     const pageLayoutWidgetsToUpdate = SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS.map(
       (universalIdentifier) => {
