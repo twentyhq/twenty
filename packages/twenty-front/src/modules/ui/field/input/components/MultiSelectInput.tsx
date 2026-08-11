@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -60,20 +60,14 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filterOptions = useCallback(
-    (searchText: string) => {
-      const searchTerm = normalizeSearchText(searchText);
-      return options.filter((option) => {
-        return normalizeSearchText(option.label).includes(searchTerm);
-      });
-    },
-    [options],
-  );
+  const filterOptions = (searchText: string) => {
+    const searchTerm = normalizeSearchText(searchText);
+    return options.filter((option) => {
+      return normalizeSearchText(option.label).includes(searchTerm);
+    });
+  };
 
-  const filteredOptionsInDropDown = useMemo(
-    () => filterOptions(searchFilter),
-    [filterOptions, searchFilter],
-  );
+  const filteredOptionsInDropDown = filterOptions(searchFilter);
 
   const handleSearchFilterChange = (searchText: string) => {
     const newSearchFilter = turnIntoEmptyStringIfWhitespacesOnly(searchText);
