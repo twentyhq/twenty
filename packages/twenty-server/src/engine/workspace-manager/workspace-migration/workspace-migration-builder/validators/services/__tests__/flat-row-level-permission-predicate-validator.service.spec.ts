@@ -154,8 +154,24 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
       expect(result.errors).toEqual([]);
     });
 
-    it.each([[''], ['[]'], [[]], [null], [undefined]])(
+    it.each([[''], ['[]'], [[]]])(
       'should reject %p on an operand that expects a value',
+      (value) => {
+        const result = service.validateFlatRowLevelPermissionPredicateCreation(
+          buildCreationArgs({
+            fieldType: FieldMetadataType.RELATION,
+            operand: RowLevelPermissionPredicateOperand.IS,
+            value,
+          }),
+        );
+
+        expect(result.errors).toHaveLength(1);
+        expect(result.errors[0].message).toContain('requires a value');
+      },
+    );
+
+    it.each([[null], [undefined]])(
+      'should accept %p, a predicate whose value is not filled in yet',
       (value) => {
         const result = service.validateFlatRowLevelPermissionPredicateCreation(
           buildCreationArgs({
@@ -165,8 +181,7 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
           }),
         );
 
-        expect(result.errors).toHaveLength(1);
-        expect(result.errors[0].message).toContain('requires a value');
+        expect(result.errors).toEqual([]);
       },
     );
 
