@@ -24,11 +24,29 @@ const meterDrivers = parseArrayEnvVar(
   [],
 );
 
+const parseSampleRate = (value: string | undefined, fallback: number) => {
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1
+    ? parsed
+    : fallback;
+};
+
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
+  const tracesSampleRate = parseSampleRate(
+    process.env.SENTRY_TRACES_SAMPLE_RATE,
+    0.1,
+  );
+
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
     release: process.env.APP_VERSION,
     dsn: process.env.SENTRY_DSN,
+    // The Modules integration attaches the installed-module list to every event.
+    // Nothing reads it and it measured 4.6% of server CPU on prod-eu.
+    defaultIntegrations: Sentry.getDefaultIntegrations({
+      tracesSampleRate,
+    }).filter((integration) => integration.name !== 'Modules'),
     integrations: [
       Sentry.redisIntegration(),
       Sentry.httpIntegration(),
@@ -55,8 +73,12 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       }),
       nodeProfilingIntegration(),
     ],
-    tracesSampleRate: 0.1,
-    profilesSampleRate: 0.3,
+    tracesSampleRate,
+    // Continuous CPU profiling measured 10-12% of server CPU on prod-eu at 0.3.
+    profilesSampleRate: parseSampleRate(
+      process.env.SENTRY_PROFILES_SAMPLE_RATE,
+      0.01,
+    ),
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
