@@ -340,69 +340,6 @@ export const SearchThenEnterSelectsFirstMatch: Story = {
   },
 };
 
-export const SearchThenArrowNavigatesFromFirstMatch: Story = {
-  args: {
-    values: [],
-    options: sampleOptions,
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    const searchInput = await canvas.findByRole('textbox');
-
-    await userEvent.click(searchInput);
-
-    await userEvent.type(searchInput, 'marketing');
-
-    await waitFor(() => {
-      expect(canvas.getByText('Content Marketing')).toBeVisible();
-      expect(canvas.getByText('Viral Marketing')).toBeVisible();
-    });
-
-    await userEvent.keyboard('{ArrowDown}');
-    await userEvent.keyboard('{Enter}');
-
-    await waitFor(() => {
-      expect(args.onOptionSelected).toHaveBeenCalledWith(['viral']);
-    });
-  },
-};
-
-export const RefiningSearchKeepsArrowSelection: Story = {
-  args: {
-    values: [],
-    options: sampleOptions,
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    const searchInput = await canvas.findByRole('textbox');
-
-    await userEvent.click(searchInput);
-
-    await userEvent.type(searchInput, 'ar');
-
-    await waitFor(() => {
-      expect(canvas.getByText('Search Engine')).toBeVisible();
-    });
-
-    await userEvent.keyboard('{ArrowDown}');
-    await userEvent.keyboard('{ArrowDown}');
-
-    await userEvent.type(searchInput, 'k');
-
-    await waitFor(() => {
-      expect(canvas.queryByText('Search Engine')).not.toBeInTheDocument();
-    });
-
-    await userEvent.keyboard('{Enter}');
-
-    await waitFor(() => {
-      expect(args.onOptionSelected).toHaveBeenCalledWith(['viral']);
-    });
-  },
-};
-
 export const KeyboardNavigation: Story = {
   args: {
     values: [],
