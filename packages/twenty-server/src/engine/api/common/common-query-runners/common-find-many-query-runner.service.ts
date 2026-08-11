@@ -69,11 +69,17 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
       workspaceDataSource,
       commonQueryParser,
+      readRepositoryV2,
     } = queryRunnerContext;
 
-    const queryBuilder = repository.createQueryBuilder(
-      flatObjectMetadata.nameSingular,
-    );
+    // ORM v2 exposes the same builder surface as TypeORM's, but is not nominally the same
+    // class, so the shared parsers need one cast at the boundary. Replacing it with a
+    // structural SelectQueryBuilder interface on the parsers is the next step.
+    const queryBuilder = (readRepositoryV2 === undefined
+      ? repository.createQueryBuilder(flatObjectMetadata.nameSingular)
+      : readRepositoryV2.createQueryBuilder(
+          flatObjectMetadata.nameSingular,
+        )) as unknown as ReturnType<typeof repository.createQueryBuilder>;
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
