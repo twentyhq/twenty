@@ -1499,6 +1499,11 @@ msgstr "Add sort"
 msgid "Add SSO Identity Provider"
 msgstr "Add SSO Identity Provider"
 
+#. js-lingui-id: ZAh4zP
+#: src/modules/views/view-stack/components/ViewStackTabList.tsx
+msgid "Add stack"
+msgstr "Add stack"
+
 #. js-lingui-id: 6Tl23V
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
@@ -1563,6 +1568,11 @@ msgstr "Add URI"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "Add view"
+
+#. js-lingui-id: oU1lna
+#: src/modules/views/view-stack/components/ViewStackTabDropdownContent.tsx
+msgid "Add view to this stack"
+msgstr "Add view to this stack"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -13506,6 +13516,11 @@ msgstr "No Select field"
 msgid "No server administrators found."
 msgstr "No server administrators found."
 
+#. js-lingui-id: RWRH60
+#: src/modules/views/view-picker/components/ViewPickerStackSelect.tsx
+msgid "No stack"
+msgstr "No stack"
+
 #. js-lingui-id: RQ6tfU
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
@@ -17989,6 +18004,11 @@ msgstr "SSO (SAML / OIDC)"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "SSO Bypass"
 msgstr "SSO Bypass"
+
+#. js-lingui-id: P9fBwv
+#: src/modules/views/view-picker/components/ViewPickerStackSelect.tsx
+msgid "Stack"
+msgstr "Stack"
 
 #. js-lingui-id: uavm+q
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx

@@ -9,6 +9,7 @@ import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/consta
 import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
+import { viewPickerParentViewIdComponentState } from '@/views/view-picker/states/viewPickerParentViewIdComponentState';
 
 export const useCloseAndResetViewPicker = () => {
   const setViewPickerMode = useSetAtomComponentState(
@@ -19,17 +20,27 @@ export const useCloseAndResetViewPicker = () => {
     viewPickerIsPersistingComponentState,
   );
 
+  const setViewPickerParentViewId = useSetAtomComponentState(
+    viewPickerParentViewIdComponentState,
+  );
+
   const { closeDropdown } = useCloseDropdown();
 
   const closeAndResetViewPicker = useCallback(() => {
     setViewPickerIsPersisting(false);
     setViewPickerMode('list');
+    setViewPickerParentViewId('');
     closeDropdown(VIEW_PICKER_CALENDAR_END_FIELD_DROPDOWN_ID);
     closeDropdown(VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID);
     closeDropdown(VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID);
     closeDropdown(VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID);
     closeDropdown(VIEW_PICKER_DROPDOWN_ID);
-  }, [closeDropdown, setViewPickerIsPersisting, setViewPickerMode]);
+  }, [
+    closeDropdown,
+    setViewPickerIsPersisting,
+    setViewPickerMode,
+    setViewPickerParentViewId,
+  ]);
 
   return { closeAndResetViewPicker };
 };

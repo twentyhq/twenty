@@ -1499,6 +1499,11 @@ msgstr ""
 msgid "Add SSO Identity Provider"
 msgstr ""
 
+#. js-lingui-id: ZAh4zP
+#: src/modules/views/view-stack/components/ViewStackTabList.tsx
+msgid "Add stack"
+msgstr ""
+
 #. js-lingui-id: 6Tl23V
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
@@ -1562,6 +1567,11 @@ msgstr ""
 #. js-lingui-id: q9e2Bs
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
+msgstr ""
+
+#. js-lingui-id: oU1lna
+#: src/modules/views/view-stack/components/ViewStackTabDropdownContent.tsx
+msgid "Add view to this stack"
 msgstr ""
 
 #. js-lingui-id: 8sZiWP
@@ -13483,6 +13493,11 @@ msgstr ""
 msgid "No server administrators found."
 msgstr ""
 
+#. js-lingui-id: RWRH60
+#: src/modules/views/view-picker/components/ViewPickerStackSelect.tsx
+msgid "No stack"
+msgstr ""
+
 #. js-lingui-id: RQ6tfU
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
@@ -17965,6 +17980,11 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "SSO Bypass"
+msgstr ""
+
+#. js-lingui-id: P9fBwv
+#: src/modules/views/view-picker/components/ViewPickerStackSelect.tsx
+msgid "Stack"
 msgstr ""
 
 #. js-lingui-id: uavm+q

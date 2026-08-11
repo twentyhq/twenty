@@ -53,6 +53,9 @@ export class ViewDTO {
   @Field({ nullable: false, defaultValue: 0 })
   position: number;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  parentViewId?: string | null;
+
   @Field({ nullable: false, defaultValue: false })
   isCompact: boolean;
 

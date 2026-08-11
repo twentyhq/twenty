@@ -64,6 +64,7 @@ type Assertions = [
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
       | 'kanbanColumnWidth'
+      | 'parentViewId'
       | 'anyFieldFilterValue'
       | 'visibility'
       | 'createdByUserWorkspaceId'

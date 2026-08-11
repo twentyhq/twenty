@@ -14,6 +14,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { ViewPickerEditButton } from '@/views/view-picker/components/ViewPickerEditButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
+import { ViewPickerStackSelect } from '@/views/view-picker/components/ViewPickerStackSelect';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -93,6 +94,7 @@ export const ViewPickerContentEditMode = () => {
             autoFocus
           />
         </ViewPickerIconAndNameContainer>
+        <ViewPickerStackSelect isEditingExistingView />
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>

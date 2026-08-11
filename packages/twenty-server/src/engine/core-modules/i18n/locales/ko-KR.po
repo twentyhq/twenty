@@ -353,6 +353,21 @@ msgstr ""
 msgid "A valid viewUniversalIdentifier is required for VIEW type"
 msgstr ""
 
+#. js-lingui-id: LQD1eK
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "A view can only be added to a stack on the same object."
+msgstr ""
+
+#. js-lingui-id: V2Nu5k
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "A view cannot be its own parent"
+msgstr ""
+
+#. js-lingui-id: TloFnU
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "A view cannot be its own parent."
+msgstr ""
+
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "A view error occurred."
@@ -5997,6 +6012,11 @@ msgstr "상위 내비게이션 메뉴 항목을 찾을 수 없음"
 msgid "Parent row level permission predicate group not found"
 msgstr "상위 레코드 수준 권한 조건 그룹을 찾을 수 없음"
 
+#. js-lingui-id: iOZ/kO
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Parent view belongs to a different object"
+msgstr ""
+
 #. js-lingui-id: 6OzP7Y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
@@ -6004,6 +6024,16 @@ msgstr "상위 레코드 수준 권한 조건 그룹을 찾을 수 없음"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "상위 뷰 필터 그룹을 찾을 수 없음"
+
+#. js-lingui-id: b8/ezf
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Parent view is already inside a stack"
+msgstr ""
+
+#. js-lingui-id: qfJecq
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Parent view not found"
+msgstr ""
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -7215,6 +7245,11 @@ msgstr "SSO 구성 오류."
 msgid "SSO is disabled."
 msgstr "SSO가 비활성화되어 있습니다."
 
+#. js-lingui-id: T30Bn9
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Stacks cannot be nested inside other stacks."
+msgstr ""
+
 #. js-lingui-id: 3PRxO3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Stage"
@@ -7906,6 +7941,11 @@ msgstr "서버의 APP_VERSION이 유효한 semver 버전이 아닙니다. 자체
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "단수와 복수 이름은 객체에 대해 동일할 수 없습니다"
 
+#. js-lingui-id: kIEMl9
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "The stack this view points to no longer exists."
+msgstr ""
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -8420,6 +8460,11 @@ msgstr "이 버전은 현재 배포된 버전보다 높지 않습니다. 다시 
 msgid "This version of the application is already installed in this workspace."
 msgstr "이 애플리케이션의 해당 버전은 이 워크스페이스에 이미 설치되어 있습니다."
 
+#. js-lingui-id: uJZkYy
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "This view already holds a stack, so it cannot be moved into another one."
+msgstr ""
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."
@@ -8914,6 +8959,11 @@ msgstr "비디오 녹화"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "View already exists"
 msgstr "뷰가 이미 존재합니다"
+
+#. js-lingui-id: +GJhrv
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "View already holds a stack"
+msgstr ""
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts

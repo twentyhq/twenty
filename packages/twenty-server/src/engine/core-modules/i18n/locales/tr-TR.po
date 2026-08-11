@@ -353,6 +353,21 @@ msgstr ""
 msgid "A valid viewUniversalIdentifier is required for VIEW type"
 msgstr ""
 
+#. js-lingui-id: LQD1eK
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "A view can only be added to a stack on the same object."
+msgstr ""
+
+#. js-lingui-id: V2Nu5k
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "A view cannot be its own parent"
+msgstr ""
+
+#. js-lingui-id: TloFnU
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "A view cannot be its own parent."
+msgstr ""
+
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "A view error occurred."
@@ -5997,6 +6012,11 @@ msgstr "Üst gezinme menüsü öğesi bulunamadı"
 msgid "Parent row level permission predicate group not found"
 msgstr "Üst satır düzeyi izin koşulu grubu bulunamadı"
 
+#. js-lingui-id: iOZ/kO
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Parent view belongs to a different object"
+msgstr ""
+
 #. js-lingui-id: 6OzP7Y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
@@ -6004,6 +6024,16 @@ msgstr "Üst satır düzeyi izin koşulu grubu bulunamadı"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "Üst görünüm filtre grubu bulunamadı"
+
+#. js-lingui-id: b8/ezf
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Parent view is already inside a stack"
+msgstr ""
+
+#. js-lingui-id: qfJecq
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Parent view not found"
+msgstr ""
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -7215,6 +7245,11 @@ msgstr "SSO yapılandırma hatası."
 msgid "SSO is disabled."
 msgstr "SSO devre dışı."
 
+#. js-lingui-id: T30Bn9
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "Stacks cannot be nested inside other stacks."
+msgstr ""
+
 #. js-lingui-id: 3PRxO3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Stage"
@@ -7906,6 +7941,11 @@ msgstr "Sunucunun APP_VERSION değeri geçerli bir semver sürümü değil. Kend
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Bir nesne için tekil ve çoğul isimler aynı olamaz"
 
+#. js-lingui-id: kIEMl9
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "The stack this view points to no longer exists."
+msgstr ""
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -8420,6 +8460,11 @@ msgstr "Bu sürüm, halihazırda dağıtılmış sürümden daha yüksek değil.
 msgid "This version of the application is already installed in this workspace."
 msgstr "Uygulamanın bu sürümü bu çalışma alanında zaten yüklü."
 
+#. js-lingui-id: uJZkYy
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "This view already holds a stack, so it cannot be moved into another one."
+msgstr ""
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."
@@ -8914,6 +8959,11 @@ msgstr "Video kaydı"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "View already exists"
 msgstr "Görünüm zaten mevcut"
+
+#. js-lingui-id: +GJhrv
+#: src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util.ts
+msgid "View already holds a stack"
+msgstr ""
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts

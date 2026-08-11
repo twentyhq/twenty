@@ -20,6 +20,7 @@ import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPicke
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
+import { ViewPickerStackSelect } from '@/views/view-picker/components/ViewPickerStackSelect';
 import { VIEW_PICKER_CALENDAR_END_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerCalendarEndFieldDropdownId';
 import { VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerCalendarFieldDropdownId';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
@@ -212,6 +213,7 @@ export const ViewPickerContentCreateMode = () => {
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
           />
         </ViewPickerSelectContainer>
+        <ViewPickerStackSelect />
         {viewPickerType === ViewType.KANBAN && (
           <>
             <ViewPickerSelectContainer>

@@ -36,6 +36,7 @@ export const computeFlatRecordPageFieldsViewToCreate = ({
     isCompact: false,
     shouldHideEmptyGroups: false,
     kanbanColumnWidth: null,
+    parentViewId: null,
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
     mainGroupByFieldMetadataUniversalIdentifier: null,

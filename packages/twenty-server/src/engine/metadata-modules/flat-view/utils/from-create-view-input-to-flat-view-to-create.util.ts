@@ -84,6 +84,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     key: createViewInput.key ?? null,
+    parentViewId: createViewInput.parentViewId ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,

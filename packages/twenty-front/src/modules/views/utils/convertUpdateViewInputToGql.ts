@@ -45,5 +45,8 @@ export const convertUpdateViewInputToGql = (
     ...(view.mainGroupByFieldMetadataId !== undefined && {
       mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
     }),
+    ...(view.parentViewId !== undefined && {
+      parentViewId: view.parentViewId,
+    }),
   };
 };

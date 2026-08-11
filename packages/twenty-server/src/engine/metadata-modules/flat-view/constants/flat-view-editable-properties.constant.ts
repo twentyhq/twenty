@@ -17,4 +17,5 @@ export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'mainGroupByFieldMetadataId',
   'shouldHideEmptyGroups',
   'kanbanColumnWidth',
+  'parentViewId',
 ] as const satisfies MetadataEntityPropertyName<'view'>[];

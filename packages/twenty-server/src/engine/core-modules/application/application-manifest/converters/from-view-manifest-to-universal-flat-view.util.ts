@@ -42,6 +42,7 @@ export const fromViewManifestToUniversalFlatView = ({
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,
     kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
+    parentViewId: null,
     anyFieldFilterValue: viewManifest.anyFieldFilterValue ?? null,
     createdByUserWorkspaceId: null,
     isActive: true,
