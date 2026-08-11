@@ -31,6 +31,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
       restorePendingQuestion: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
       addMessage: jest.fn().mockResolvedValue({ id: 'file-message-id' }),
+      deleteMessage: jest.fn().mockResolvedValue(undefined),
     };
     const eventPublisherService = {
       publish: jest.fn().mockImplementation(({ event }) => {
@@ -204,6 +205,29 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
 
     expect(agentChatService.restorePendingQuestion).toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('deletes the persisted attachment message when enqueueing fails', async () => {
+    const { service, agentChatService, fileRepository, messageQueueService } =
+      buildService();
+
+    fileRepository.find.mockResolvedValue([
+      { id: 'file-id', mimeType: 'text/csv' },
+    ]);
+    messageQueueService.add.mockRejectedValue(new Error('redis down'));
+
+    await expect(
+      service.answerPendingQuestionAndResumeStream({
+        ...answerArguments,
+        fileAttachments: [{ id: 'file-id', filename: 'contacts.csv' }],
+      }),
+    ).rejects.toThrow('redis down');
+
+    expect(agentChatService.deleteMessage).toHaveBeenCalledWith({
+      messageId: 'file-message-id',
+      workspaceId: 'workspace-id',
+    });
+    expect(agentChatService.restorePendingQuestion).toHaveBeenCalled();
   });
 
   it('restores the question and clears the heartbeat when enqueueing fails', async () => {

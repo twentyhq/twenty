@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
@@ -72,8 +72,9 @@ export const useSubmitQuestionAnswer = () => {
             messageId,
             answers,
             modelId: modelIdForRequest,
-            fileAttachments:
-              fileAttachments.length > 0 ? fileAttachments : undefined,
+            fileAttachments: isNonEmptyArray(fileAttachments)
+              ? fileAttachments
+              : undefined,
           },
         });
 

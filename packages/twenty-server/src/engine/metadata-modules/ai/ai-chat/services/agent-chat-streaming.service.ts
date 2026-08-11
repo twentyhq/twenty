@@ -568,6 +568,8 @@ export class AgentChatStreamingService {
       throw error;
     }
 
+    let attachmentMessageId: string | null = null;
+
     try {
       const fileParts = await this.buildFilePartsFromAttachments(
         fileAttachments,
@@ -575,7 +577,7 @@ export class AgentChatStreamingService {
       );
 
       if (fileParts.length > 0) {
-        await this.agentChatService.addMessage({
+        const attachmentMessage = await this.agentChatService.addMessage({
           threadId,
           uiMessage: {
             role: AgentMessageRole.USER,
@@ -584,6 +586,8 @@ export class AgentChatStreamingService {
           turnId: resolved.turnId ?? undefined,
           workspaceId: workspace.id,
         });
+
+        attachmentMessageId = attachmentMessage.id;
       }
 
       await this.enqueueResumeStream({
@@ -595,6 +599,14 @@ export class AgentChatStreamingService {
         modelId,
       });
     } catch (error) {
+      if (isDefined(attachmentMessageId)) {
+        await this.agentChatService
+          .deleteMessage({
+            messageId: attachmentMessageId,
+            workspaceId: workspace.id,
+          })
+          .catch(() => {});
+      }
       await this.agentChatService.restorePendingQuestion({
         threadId,
         messageId,
