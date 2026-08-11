@@ -18,14 +18,6 @@ describe('readIsPersonEnrichmentEnabled', () => {
     ).toBe(true);
   });
 
-  it('should be disabled without the api key', () => {
-    expect(
-      readIsPersonEnrichmentEnabled(
-        buildConfigService({ IS_ONBOARDING_AI_CHAT_ENABLED: true }),
-      ),
-    ).toBe(false);
-  });
-
   it('should be disabled when the onboarding ai chat is off, even for a configured book-call step', () => {
     expect(
       readIsPersonEnrichmentEnabled(

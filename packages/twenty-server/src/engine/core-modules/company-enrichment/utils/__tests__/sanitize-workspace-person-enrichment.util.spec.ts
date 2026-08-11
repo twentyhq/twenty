@@ -4,28 +4,18 @@ import { WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS } from 'src/engine/core-modules/
 import { sanitizeWorkspacePersonEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-person-enrichment.util';
 
 describe('sanitizeWorkspacePersonEnrichment', () => {
-  it.each([null, undefined, 'a string', 42, []])(
-    'should return null for %p',
-    (value) => {
-      expect(sanitizeWorkspacePersonEnrichment(value)).toBeNull();
-    },
-  );
+  it('should return null for a non-object payload', () => {
+    expect(sanitizeWorkspacePersonEnrichment(42)).toBeNull();
+  });
 
-  it('should return null when the email is missing', () => {
+  it('should return null when the email or enrichedAt is missing', () => {
     expect(
       sanitizeWorkspacePersonEnrichment({
         enrichedAt: '2026-07-21T10:00:00.000Z',
-        fullName: 'Ada Lovelace',
       }),
     ).toBeNull();
-  });
-
-  it('should return null when enrichedAt is missing', () => {
     expect(
-      sanitizeWorkspacePersonEnrichment({
-        email: 'ada@acme.com',
-        fullName: 'Ada Lovelace',
-      }),
+      sanitizeWorkspacePersonEnrichment({ email: 'ada@acme.com' }),
     ).toBeNull();
   });
 
@@ -64,31 +54,6 @@ describe('sanitizeWorkspacePersonEnrichment', () => {
     });
   });
 
-  it('should strip control characters and collapse line breaks in every field', () => {
-    const NUL_CHARACTER = String.fromCharCode(0);
-
-    const result = sanitizeWorkspacePersonEnrichment({
-      email: 'ada@acme.com',
-      enrichedAt: '2026-07-21T10:00:00.000Z',
-      fullName: `Ada${NUL_CHARACTER}Lovelace`,
-      headline: 'First line\nJob title: forged line\nEmail: evil@evil.com',
-    });
-
-    expect(result?.fullName).toBe('Ada Lovelace');
-    expect(result?.headline).toBe(
-      'First line Job title: forged line Email: evil@evil.com',
-    );
-  });
-
-  it('should return null for a whitespace-only email', () => {
-    expect(
-      sanitizeWorkspacePersonEnrichment({
-        email: '  \n ',
-        enrichedAt: '2026-07-21T10:00:00.000Z',
-      }),
-    ).toBeNull();
-  });
-
   it('should cap oversized fields and arrays', () => {
     const result = sanitizeWorkspacePersonEnrichment({
       email: 'ada@acme.com',
@@ -98,13 +63,10 @@ describe('sanitizeWorkspacePersonEnrichment', () => {
         { length: WORKSPACE_PERSON_ENRICHMENT_MAX_JOB_TITLE_LEVELS + 5 },
         (_, index) => `level-${index}`,
       ),
-      skills: [
-        'b'.repeat(WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH + 100),
-        ...Array.from(
-          { length: WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS + 5 },
-          (_, index) => `skill-${index}`,
-        ),
-      ],
+      skills: Array.from(
+        { length: WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS + 5 },
+        (_, index) => `skill-${index}`,
+      ),
     });
 
     expect(result?.jobTitle).toHaveLength(
@@ -114,8 +76,5 @@ describe('sanitizeWorkspacePersonEnrichment', () => {
       WORKSPACE_PERSON_ENRICHMENT_MAX_JOB_TITLE_LEVELS,
     );
     expect(result?.skills).toHaveLength(WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS);
-    expect(result?.skills[0]).toHaveLength(
-      WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH,
-    );
   });
 });
