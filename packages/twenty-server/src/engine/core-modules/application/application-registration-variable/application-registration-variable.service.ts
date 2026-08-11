@@ -69,10 +69,12 @@ export class ApplicationRegistrationVariableService {
       workspaceId,
     );
 
+    const encryptedValue = this.encryptionService.encryptVersioned(input.value);
+
     const variable = this.variableRepository.create({
       applicationRegistrationId: input.applicationRegistrationId,
       key: input.key,
-      encryptedValue: this.encryptionService.encryptVersioned(input.value),
+      encryptedValue,
       description: input.description ?? '',
       isSecret: input.isSecret ?? true,
     });
