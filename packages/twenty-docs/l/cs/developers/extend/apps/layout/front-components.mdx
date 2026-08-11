@@ -6,17 +6,23 @@ icon: window-maximize
 
 Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód se spouští uvnitř sandboxovaného iframe s nejasným původem (opaque-origin), ale jeho UI se stále vykresluje nativně na stránce, místo aby bylo omezené na tento iframe.
 
+<Warning>
+Komponenty Front jsou stále aktivně vyvíjeny. Váš kód běží nad částečným DOMem, nikoli nad skutečnou stránkou prohlížeče, takže pokročilé způsoby použití mohou selhávat, často bez zjevných chyb. Viz [Aktuální omezení](#current-limitations).
+</Warning>
+
 ## Kde lze použít frontendové komponenty
 
-Frontendové komponenty se mohou vykreslovat na dvou místech v rámci Twenty:
+Frontendové komponenty se mohou vykreslovat na třech místech v rámci Twenty:
 
 * **Postranní panel** — Frontendové komponenty, které nejsou headless, se otevírají v pravém postranním panelu. Toto je výchozí chování, když je frontendová komponenta vyvolána z příkazového menu.
 * **Widgety (nástěnky a stránky záznamů)** — front komponenty lze vkládat jako widgety do [rozložení stránky](/l/cs/developers/extend/apps/layout/page-layouts). Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget frontendové komponenty.
+* **Nastavení aplikace** — Definovaná pomocí [`defineSettingsFrontComponent()`](#custom-settings-component), frontendová komponenta se vykreslí jako sekce na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
 
-Samotná frontendová komponenta není z uživatelského rozhraní dostupná — je potřeba ji zpřístupnit. Dva způsoby, jak to udělat, jsou:
+Samotná frontendová komponenta není z uživatelského rozhraní dostupná — je potřeba ji zpřístupnit. Tři způsoby, jak to udělat, jsou:
 
 * **Spárujte ji s [položkou příkazové nabídky](/l/cs/developers/extend/apps/layout/command-menu-items)** — zaregistruje ji v příkazové nabídce (Cmd+K) a volitelně také jako připnutou rychlou akci.
 * **Vložte ji jako widget do [rozložení stránky](/l/cs/developers/extend/apps/layout/page-layouts)** — umístí ji na detailní stránku záznamu nebo na nástěnku.
+* **Definujte ji pomocí [`defineSettingsFrontComponent()`](#custom-settings-component)** — vykreslí ji jako sekci na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
 
 ## Základní příklad
 
@@ -76,6 +82,34 @@ Kliknutím na něj vykreslíte komponentu přímo ve stránce.
 ## Umístění frontendové komponenty na stránku
 
 Mimo příkazy můžete frontendovou komponentu vložit přímo na stránku záznamu přidáním jako widget v **rozvržení stránky**. Podrobnosti viz [Rozložení stránek](/l/cs/developers/extend/apps/layout/page-layouts).
+
+## Vlastní komponenta nastavení
+
+Chcete-li nahradit automaticky generované uživatelské rozhraní pro konfiguraci proměnných na kartě **Settings** (Nastavení) vaší aplikace vlastní komponentou, definujte ji pomocí `defineSettingsFrontComponent` místo `defineFrontComponent`. Používá stejná [konfigurační pole](#configuration-fields) (kromě `isHeadless`, který není podporován, protože komponenta nastavení vždy vykresluje viditelné uživatelské rozhraní) a zároveň označuje komponentu jako uživatelské rozhraní nastavení aplikace.
+
+Komponenta se vykreslí jako sekce **uvnitř** karty Settings, nikoli jako náhrada celé karty. Systémem spravované sekce Twenty — automatická aktualizace, App URL a připojení — se vždy zobrazují nad ní a aplikace je nemůže přebít.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Na jednu aplikaci je povolena pouze jedna frontová komponenta nastavení; deklarace více než jedné způsobí selhání sestavení. Je-li přítomna, karta **Settings** aplikace vykreslí tuto komponentu místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
 
 ## Headless vs. ne-headless
 
@@ -666,3 +700,72 @@ const Card = () => {
 Protože `useTheme()` je hook, čtete tokeny uvnitř těla komponenty, takže hodnoty vždy odrážejí aktuální motiv. Stejná mapa tokenů je také exportována jako konstanta `themeCssVariables`, ale ve frontendových komponentách preferujte `useTheme()` — modulová konstanta, která dereferencuje `themeCssVariables`, může být během extrakce manifestu aplikace nedefinovaná.
 
 Chcete-li se explicitně větvit podle aktivního schématu, načtěte jej pomocí `useColorScheme()` z `twenty-sdk/front-component`, která vrací `'light'` nebo `'dark'`.
+
+## Aktuální omezení
+
+Komponenty Front jsou aktivně vyvíjeny. Renderování, stylování a obsluha událostí fungují dobře. Cokoli, co sahá *mimo* samotné renderování (měření prvku, volání metody DOM na refu, vytváření portálu mimo váš strom, práce s úložištěm prohlížeče), dnes chybí nebo je nekompletní a většinou to selhává tiše: bez výjimky a bez chyby TypeScriptu, protože kostra je typovaná proti plnému DOMu prohlížeče.
+
+Pokud vás něco z toho blokuje, [vytvořte issue](https://github.com/twentyhq/twenty/issues/new/choose), aby to bylo upřednostněno.
+
+### Rozvržení a měření
+
+Zatím se nic nemůže samo změřit.
+
+| API                                                           | Co se stane                                                                     |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | Vyvolá výjimku                                                                  |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Tiše `undefined`, takže `width ?? 0` vrátí `0` a `width > 600` je vždycky false |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (ochrany pomocí `typeof` fungují)                              |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Vyvolá výjimku                                                                  |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Tiše `undefined`                                                                |
+| `new MutationObserver(fn)`                                    | Zkonstruuje se, pak `.observe()` vyvolá výjimku                                 |
+
+Takže recharts `ResponsiveContainer`, Floating UI / Popper, virtualizace seznamů a táhnutí pro změnu velikosti zatím nefungují. Místo toho dělejte rozvržení v CSS: váš stylesheet se dostane ke skutečné stránce, takže flexbox, grid, `aspect-ratio`, `clamp()` i `@container` se chovají normálně.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` a `queueMicrotask` fungují bez prefixu `window.`. Pouze `window.requestAnimationFrame(...)` a podobné volání vyvolají výjimku.
+</Note>
+
+### Přístup k DOMu
+
+`ref` vám dává sandboxový prvek, ne `HTMLElement`.
+
+| Co napíšete                                                                                                 | Co se stane                                         | Co použít místo toho                                                                                    |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Vyvolá výjimku                                      | Řízené komponenty; čtěte hodnoty z `event.target`                                                       |
+| `element.classList.add(...)`                                                                                | Vyvolá výjimku (`classList` je `undefined`)         | Sestavte si řetězec `className` sami                                                                    |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Vyvolá výjimku                                      | `querySelector()` / `querySelectorAll()`, které fungují                                                 |
+| `document.activeElement`                                                                                    | Vždy `undefined`                                    | Sledujte fokus pomocí `onFocus` / `onBlur`                                                              |
+| `\<canvas>`                                                                                | Nerenderuje nic, žádná chyba                        | SVG, nebo kreslete offscreen a zobrazte `<img src={dataUrl}>`                                           |
+| `createPortal(node, document.body)`                                                                         | Nerenderuje nic, zatímco `isConnected` hlásí úspěch | Překryvné prvky inline pomocí `position: absolute`, nebo knihovně předávejte vlastní kontejnerový prvek |
+
+Kvůli této mezeře v portálu popovery Radix, Headless UI, MUI a react-select ve výchozím stavu nic nevyrenderují. Většina z nich přijímá prop pro kontejner; nasměrujte ho na prvek, který jste vyrenderovali.
+
+### Události
+
+Události myši, ukazatele, dotyku, tažení, klávesnice, fokusu, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` a `animationend`/`transitionend` přecházejí do hostitele, plus několik specifických pro prvek: `load`/`error` na `<img>`, schránka a kompozice na `<input>`/`\<textarea>`, média na `\<video>`/`\<audio>`, `toggle` na `\<details>`/`\<dialog>`. Cokoli dalšího (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, zachycení ukazatele (pointer capture), `onLoad` na `<img>`) je bez varování zahazováno.
+
+`document.addEventListener()` a `window.addEventListener()` se zaregistrují bez chyby, ale nikdy se nespustí, což je důvod, proč se přetažení zastaví, jakmile ukazatel opustí prvek, na kterém začalo. Ani `event.preventDefault()` se nepřenáší; odeslání formuláře, `dragover`/`drop` a kliknutí na odkazy jsou už za vás ošetřené.
+
+### Atributy a stylování
+
+Každý prvek předává své vlastní vlastnosti do hostitelského DOMu (`href` na `\<a>`, `src`/`alt` na `<img>`, `value`/`placeholder`/`disabled` na `<input>` atd.) plus společnou sadu na každém prvku: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` a jakýkoli atribut `aria-*` / `data-*` (s pomlčkou, takže `ariaLabel` je zahozena). Cokoli mimo tento rozsah je tiše zahazováno, takže vlastní stav vyjádřete jako `data-*`.
+
+Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `\<style>`, je do `\<head>` hostitelské stránky vkládáno **bez ohraničení (unscoped)**. Třídy se tak střetávají s vlastními třídami Twenty (přidávejte jim předpony a nikdy nepište holé `div { ... }` selektory) a `@media` se vztahuje k oknu prohlížeče, nikoli k vašemu widgetu (použijte `@container` s vlastním `container-type`). Inline propy `style` nejsou ovlivněny.
+
+### Úložiště a síť
+
+`localStorage`, `sessionStorage`, IndexedDB, cookies, Cache API a `BroadcastChannel` nejsou vůbec k dispozici, protože komponenta běží ve workeru na neprůhledném (opaque) původu. Pro uchování stavu zavolejte [logickou funkci](/l/cs/developers/extend/apps/logic/logic-functions) a použijte její [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
+
+`fetch` funguje, s výhradami:
+
+* Volání na Twenty API a trasy (routes) vaší aplikace jsou proxyována hostitelem, proto upřednostněte [`RestApiClient`](#calling-the-twenty-rest-api). U proxyovaných volání jsou `AbortSignal` a ostatní volby `RequestInit` zahazovány a jsou podporována pouze těla typu `string` a `URLSearchParams`.
+* Jiné původy opouštějí sandbox s `Origin: null`, takže API třetí strany odpoví jen tehdy, pokud posílá `Access-Control-Allow-Origin: *`. Místo toho jej volejte z logické funkce.
+* `fetch('/rest/people')` se nikdy nespáruje s Twenty API, protože sandbox nemá URL stránky, podle které by vyhodnotil relativní cestu.
+
+### Další omezení
+
+* **Obsah souborů.** `<input type="file">` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` a nahrávání zatím nejsou možná.
+* **Payloady drag-and-drop.** Události tažení se spouštějí, ale `event.dataTransfer` je `undefined`.
+* **Vestavěné moduly Node.** `fs`, `path` a `node:crypto` způsobí chybu při sestavení, takže tuto práci přesuňte do [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` a `URL` jsou k dispozici.
+* **`\<iframe>`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.

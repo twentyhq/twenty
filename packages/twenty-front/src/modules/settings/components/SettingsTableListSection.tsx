@@ -1,5 +1,7 @@
 import { type ComponentType, type ReactNode } from 'react';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { styled } from '@linaria/react';
 
 import { Table } from '@/ui/layout/table/components/Table';
@@ -50,13 +52,14 @@ type SettingsTableListSectionProps<Item extends { id: string }> = {
   title: string;
   description: string;
   headerAdornment?: ReactNode;
+  toolbar?: ReactNode;
   items: Item[];
   columns: SettingsTableListSectionColumn<Item>[];
   gridAutoColumns: string;
   showRowChevron?: boolean;
   onRowClick?: (item: Item) => void;
-  footerButtonLabel: string;
-  onFooterButtonClick: () => void;
+  footerButtonLabel?: string;
+  onFooterButtonClick?: () => void;
 };
 
 export const SettingsTableListSection = <
@@ -65,6 +68,7 @@ export const SettingsTableListSection = <
   title,
   description,
   headerAdornment,
+  toolbar,
   items,
   columns,
   gridAutoColumns,
@@ -84,6 +88,7 @@ export const SettingsTableListSection = <
         description={description}
         adornment={headerAdornment}
       />
+      {isDefined(toolbar) && toolbar}
       {items.length > 0 && (
         <Table>
           <TableRow gridAutoColumns={resolvedGridAutoColumns}>
@@ -124,15 +129,17 @@ export const SettingsTableListSection = <
           </StyledTableRows>
         </Table>
       )}
-      <StyledFooter>
-        <Button
-          Icon={IconPlus}
-          title={footerButtonLabel}
-          variant="secondary"
-          size="small"
-          onClick={onFooterButtonClick}
-        />
-      </StyledFooter>
+      {isDefined(footerButtonLabel) && isDefined(onFooterButtonClick) && (
+        <StyledFooter>
+          <Button
+            Icon={IconPlus}
+            title={footerButtonLabel}
+            variant="secondary"
+            size="small"
+            onClick={onFooterButtonClick}
+          />
+        </StyledFooter>
+      )}
     </Section>
   );
 };

@@ -23,6 +23,7 @@ export const USER_QUERY_FRAGMENT = gql`
     canImpersonate
     supportUserHash
     onboardingStatus
+    isWorkspaceCreator
     workspaceMember {
       ...WorkspaceMemberQueryFragment
     }
@@ -35,6 +36,7 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       id
       permissionFlags
+      isImpersonating
       objectsPermissions {
         ...ObjectPermissionFragment
       }
@@ -70,7 +72,6 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         name
         universalIdentifier
-        logo
         logoUrl
       }
       isCustomDomainEnabled

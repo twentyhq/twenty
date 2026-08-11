@@ -32,9 +32,9 @@ Puede importar datos de cualquier objeto mediante archivos CSV, XLSX o XLS. Cada
 6. Revise los errores (resaltados en amarillo) y corríjalos, editando directamente en la interfaz de usuario
 7. Confirme la importación
 
-### Importación de relaciones entre objetos
+### Importar relaciones entre objetos
 
-Puede importar relaciones entre objetos utilizando la función de importación CSV. Debe hacer referencia al objeto relacionado utilizando un campo único de ese objeto: el `id`, el `email` para Personas y Miembros del espacio de trabajo, el `domain` para empresas, cualquier otro campo establecido como único en el modelo de datos para cualquier otro objeto.
+Puedes importar relaciones entre objetos usando la función de importación CSV. Debe hacer referencia al objeto relacionado utilizando un campo único de ese objeto: el `id`, el `email` para Personas y Miembros del espacio de trabajo, el `domain` para empresas, cualquier otro campo establecido como único en el modelo de datos para cualquier otro objeto.
 
 <Note>**Los registros eliminados cuentan para la unicidad.** Los registros eliminados lógicamente (visibles en Menú de comandos → Ver registros eliminados) se incluyen en las comprobaciones de unicidad. Si importa un registro con el mismo valor único que un registro eliminado, el registro eliminado se restaurará.</Note>
 
@@ -43,8 +43,8 @@ Puede importar relaciones entre objetos utilizando la función de importación C
 
 Al importar objetos relacionados, cargue los archivos en este orden:
 1. **Empresas** primero (el lado "uno" de las relaciones)
-2. **Personas** segundo (vinculadas a empresas mediante companyId)
-3. **Oportunidades** tercero (vinculadas a empresas/personas)
+2. **Personas** en segundo lugar (vinculadas a Empresas mediante companyId)
+3. **Oportunidades** en tercer lugar (vinculadas a Empresas/Personas)
 4. **Objetos personalizados** con relaciones al final
 
 ¿Por qué? El lado "uno" de una relación de uno a muchos debe existir antes de que pueda hacer referencia a él. Por ejemplo, el registro de Empresa debe existir antes de importar una Persona con el ID de esa empresa.

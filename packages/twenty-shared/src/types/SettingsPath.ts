@@ -33,6 +33,7 @@ export enum SettingsPath {
   NewEmailGroupChannel = 'email/new-email-group',
   NewUnsubscribeTopic = 'email/new-unsubscribe-topic',
   UnsubscribeTopicDetail = 'email/unsubscribe-topic/:unsubscribeTopicId',
+  Unsubscribe = 'communications/unsubscribe',
   PublicDomain = 'applications/public-domain',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
   Community = 'community',
@@ -86,6 +87,7 @@ export enum SettingsPath {
   AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
   AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
   AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
+  AdminPanelChats = 'admin-panel/chats',
 
   Roles = 'members/roles',
   RoleCreate = 'members/roles/create',

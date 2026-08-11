@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.25.0",
+  "version": "2.31.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -64,7 +64,7 @@
       "require": "./dist/front-component-renderer/build.cjs"
     }
   },
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
     "axios": "^1.16.0",
@@ -81,7 +81,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "semver": "7.6.3",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.3",
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
     "typescript": "^5.9.3",

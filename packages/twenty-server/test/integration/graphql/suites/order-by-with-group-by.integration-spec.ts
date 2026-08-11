@@ -698,4 +698,195 @@ describe('group-by resolvers - order by', () => {
       );
     });
   });
+
+  describe('relation field ordering under target id group by', () => {
+    const aardvarkCompanyId = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    const mangoCompanyId = '99999999-9999-4999-8999-999999999999';
+    const zebraCompanyId = '00000000-0000-4000-8000-000000000001';
+    const alicePersonId = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+    const bobPersonId = '11111111-1111-4111-8111-111111111111';
+    const carolPersonId = '22222222-2222-4222-8222-222222222222';
+    const personWithoutCompanyId = '33333333-3333-4333-8333-333333333333';
+    const aliceOpportunityId = randomUUID();
+    const bobOpportunityId = randomUUID();
+
+    beforeAll(async () => {
+      const companies = [
+        { id: aardvarkCompanyId, name: 'Aardvark' },
+        { id: mangoCompanyId, name: 'Mango' },
+        { id: zebraCompanyId, name: 'Zebra' },
+      ];
+
+      for (const company of companies) {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: company,
+          }),
+        );
+      }
+
+      const people = [
+        {
+          id: alicePersonId,
+          name: { firstName: 'Alice', lastName: 'Brown' },
+          companyId: aardvarkCompanyId,
+        },
+        {
+          id: bobPersonId,
+          name: { firstName: 'Bob', lastName: 'Johnson' },
+          companyId: mangoCompanyId,
+        },
+        {
+          id: carolPersonId,
+          name: { firstName: 'Carol', lastName: 'Smith' },
+          companyId: zebraCompanyId,
+        },
+        {
+          id: personWithoutCompanyId,
+          name: { firstName: 'Dave', lastName: 'Miller' },
+        },
+      ];
+
+      for (const person of people) {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            data: person,
+          }),
+        );
+      }
+
+      const opportunities = [
+        { id: aliceOpportunityId, pointOfContactId: alicePersonId },
+        { id: bobOpportunityId, pointOfContactId: bobPersonId },
+      ];
+
+      for (const opportunity of opportunities) {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'opportunity',
+            gqlFields: 'id',
+            data: opportunity,
+          }),
+        );
+      }
+    });
+
+    afterAll(async () => {
+      for (const id of [aliceOpportunityId, bobOpportunityId]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'opportunity',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+
+      for (const id of [
+        alicePersonId,
+        bobPersonId,
+        carolPersonId,
+        personWithoutCompanyId,
+      ]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+
+      for (const id of [aardvarkCompanyId, mangoCompanyId, zebraCompanyId]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+    });
+
+    it('should order groups by the related record TEXT label, not its id', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ companyId: true }],
+          filter: {
+            id: {
+              in: [
+                alicePersonId,
+                bobPersonId,
+                carolPersonId,
+                personWithoutCompanyId,
+              ],
+            },
+          },
+          orderBy: [
+            { company: { name: 'AscNullsLast' } },
+            { company: { id: 'AscNullsLast' } },
+          ],
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const groups = response.body.data.peopleGroupBy;
+
+      expect(
+        groups.map((group: any) => group.groupByDimensionValues[0]),
+      ).toEqual([aardvarkCompanyId, mangoCompanyId, zebraCompanyId, null]);
+    });
+
+    it('should order groups by the related record FULL_NAME label subfields', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'opportunity',
+          objectMetadataPluralName: 'opportunities',
+          groupBy: [{ pointOfContactId: true }],
+          filter: {
+            id: {
+              in: [aliceOpportunityId, bobOpportunityId],
+            },
+          },
+          orderBy: [
+            { pointOfContact: { name: { firstName: 'AscNullsLast' } } },
+            { pointOfContact: { name: { lastName: 'AscNullsLast' } } },
+            { pointOfContact: { id: 'AscNullsLast' } },
+          ],
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const groups = response.body.data.opportunitiesGroupBy;
+
+      expect(
+        groups.map((group: any) => group.groupByDimensionValues[0]),
+      ).toEqual([alicePersonId, bobPersonId]);
+    });
+
+    it('should fail when ordering by a relation absent from groupBy', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ jobTitle: true }],
+          orderBy: [{ company: { name: 'AscNullsLast' } }],
+        }),
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors.length).toBe(1);
+      expect(response.body.errors[0].message).toBe(
+        'Cannot order by a relation field that is not in groupBy criteria: company.name',
+      );
+    });
+  });
 });

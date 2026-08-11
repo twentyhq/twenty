@@ -31,7 +31,7 @@ export default definePageLayout({
       title: 'Hello World',
       position: 50,
       icon: 'IconWorld',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
@@ -51,11 +51,34 @@ export default definePageLayout({
 
 ### النقاط الرئيسية
 
-* `type` يكون عادة `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
+* `type` هو واحد من `'RECORD_INDEX'` أو `'RECORD_PAGE'` أو `'DASHBOARD'` أو `'STANDALONE_PAGE'`. استخدم `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
 * `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا التخطيط.
-* يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode` (`CANVAS` لتخطيط حرّ).
+* يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode`: `VERTICAL_LIST` لصفحات السجلات والصفحات المستقلة، و`GRID` للوحات المعلومات. في علامة تبويب من نوع `VERTICAL_LIST`، يعرض عنصر واجهة واحد ممتدًا حتى الحواف ويملك علامة التبويب بالكامل؛ وعند وجود عدة عناصر واجهة، فإنها تتكدس كبطاقات. تعرض علامة تبويب من نوع `GRID` دائمًا عناصر الواجهة كبطاقات على شبكة من 12 عمودًا مهما كان عددها، لذا اختر `VERTICAL_LIST` عندما تريد لعنصر واجهة واحد أن يملأ الصفحة.
+* عيِّن `layoutMode` بشكل صريح. إغفاله يمنحك `VERTICAL_LIST` على `STANDALONE_PAGE` و`GRID` في كل مكان آخر، وهو أمر نادرًا ما تريده في صفحة سجل.
 * يمكن لكل `widget` داخل لسان أن يعرض [front component](/l/ar/developers/extend/apps/layout/front-components)، أو قائمة علاقات، أو أنواعًا أخرى من عناصر الواجهة (widgets) المدمجة.
 * `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
+
+### عناصر واجهة الحقول
+
+عنصر واجهة `FIELD` يعرض حقلاً واحداً من السجل. لحقول العلاقات يمكنه أيضاً تضمين قائمة من السجلات ذات الصلة:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` يأخذ المعرف العالمي لحقل على كائن المخطط.
+* `fieldDisplayMode` يكون واحداً من `'FIELD'`، `'CARD'`، `'EDITOR'`، `'VIEW'` أو `'TABLE'`. `TABLE` يضمّن عرضاً يسرد السجلات لحقل علاقة من نوع واحد إلى متعدد.
+* `nestedRelationFieldMetadataId` اختياري، ويأخذ المعرّف العالمي لحقل علاقة من نوع واحد‑إلى‑متعدد على الكائن الهدف للعلاقة، وذلك لسرد السجلات التي تبعد قفزتين في سلسلة العلاقات (مثل صفحة شركة تسرد الفرص الخاصة بأشخاص الشركة، أو صفحة شخص تسرد الفرص الخاصة بشركة الشخص). يمكن أن تكون القفزة الأولى حقل علاقة من نوع واحد‑إلى‑متعدد أو من نوع متعدد‑إلى‑واحد، بينما يجب أن تكون القفزة الثانية من نوع واحد‑إلى‑متعدد (علاقات الوصل غير مدعومة)، ويتطلب ذلك `fieldDisplayMode: 'TABLE'` — إذ يُعد الجمع بينه وبين أي نمط عرض آخر خطأ في التحقق من الصحة، نظرًا لأن الودجة المتداخلة يتم عرضها دائمًا كعرض مضمن.
 
 ## definePageLayoutTab
 
@@ -77,7 +100,7 @@ export default definePageLayoutTab({
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',

@@ -214,6 +214,14 @@ const SettingsWorkspaceUnsubscribeTopicDetail = lazy(() =>
   ),
 );
 
+const SettingsWorkspaceUnsubscribe = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceUnsubscribe').then(
+    (module) => ({
+      default: module.SettingsWorkspaceUnsubscribe,
+    }),
+  ),
+);
+
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
@@ -613,6 +621,12 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
   ),
 );
 
+const SettingsAdminChats = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminChats').then((module) => ({
+    default: module.SettingsAdminChats,
+  })),
+);
+
 const SettingsCommunity = lazy(() =>
   import('~/pages/settings/community/SettingsCommunity').then((module) => ({
     default: module.SettingsCommunity,
@@ -723,6 +737,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.UnsubscribeTopicDetail}
           element={<SettingsWorkspaceUnsubscribeTopicDetail />}
+        />
+        <Route
+          path={SettingsPath.Unsubscribe}
+          element={<SettingsWorkspaceUnsubscribe />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route
@@ -1081,6 +1099,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}
             element={<SettingsAdminWorkspaceChatThread />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelChats}
+            element={<SettingsAdminChats />}
           />
         </>
       )}

@@ -34,6 +34,7 @@ export class FindRecordsService {
       limit,
       offset = 0,
       authContext,
+      rolePermissionConfig,
       select,
       shouldBuildEffectiveSelectFields,
     } = params;
@@ -55,6 +56,7 @@ export class FindRecordsService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
+        rolePermissionConfig,
       });
 
       const { effectiveSelectedFields, warnings } =
@@ -77,7 +79,7 @@ export class FindRecordsService {
       ];
 
       const {
-        results: { records, totalCount },
+        results: { records, totalCount, pageInfo },
       } = await this.commonFindManyRunner.execute(
         {
           filter,
@@ -107,6 +109,7 @@ export class FindRecordsService {
         result: {
           records,
           count: totalCount,
+          hasNextPage: pageInfo.hasNextPage,
         },
         ...(isNonEmptyArray(warnings) ? { warnings: warnings } : {}),
         recordReferences,

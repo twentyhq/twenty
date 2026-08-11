@@ -1,6 +1,5 @@
-import { type DragDropProvider } from '@dnd-kit/react';
 import { useStore } from 'jotai';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,24 +11,15 @@ import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRe
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
-import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragStart']
-  >
->[0];
-type DragMovePayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragMove']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
+type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DragDropItemData>;
 
 export type RecordCalendarDndKitContextValues = {
   activeDropTargetIndex: number | null;
@@ -96,9 +86,10 @@ export const useRecordCalendarMonthDndKit = (): {
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
 
@@ -126,9 +117,10 @@ export const useRecordCalendarMonthDndKit = (): {
     const sourceDroppableId = (source.data as DragDropItemData).droppableId;
     const sourceIndex = (source.data as DragDropItemData).index;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
     if (!isDefined(resolvedDrop)) {

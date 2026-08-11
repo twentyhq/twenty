@@ -3,6 +3,8 @@ import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,
   type CalendarConfiguration,
+  type CallRecordingSummaryConfiguration,
+  type CallRecordingTranscriptConfiguration,
   type EmailThreadConfiguration,
   type EmailsConfiguration,
   type FieldRichTextConfiguration,
@@ -11,6 +13,8 @@ import {
   type FrontComponentConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
+  type MessageCampaignBodyConfiguration,
+  type MessageCampaignDetailsConfiguration,
   type NotesConfiguration,
   type PieChartConfiguration,
   type RecordTableConfiguration,
@@ -49,6 +53,30 @@ type WidgetConfigurationTypenameMap = {
     'configurationType'
   > & {
     configurationType: WidgetConfigurationType.EMAIL_THREAD;
+  };
+  CallRecordingSummaryConfiguration: Omit<
+    CallRecordingSummaryConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY;
+  };
+  CallRecordingTranscriptConfiguration: Omit<
+    CallRecordingTranscriptConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT;
+  };
+  MessageCampaignBodyConfiguration: Omit<
+    MessageCampaignBodyConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY;
+  };
+  MessageCampaignDetailsConfiguration: Omit<
+    MessageCampaignDetailsConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS;
   };
   EmailsConfiguration: Omit<EmailsConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.EMAILS;

@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-const mockApiService = {
+export const mockApiService = {
   validateAuth: vi.fn().mockResolvedValue({ authValid: true, serverUp: true }),
   getWorkspaceFrontendUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
   generateApplicationToken: vi.fn().mockResolvedValue({

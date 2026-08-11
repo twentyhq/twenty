@@ -1,11 +1,9 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { type TabPresentation } from '@/page-layout/types/TabPresentation';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type GetWidgetCardVariantParams = {
-  layoutMode: PageLayoutTabLayoutMode;
+  presentation: TabPresentation;
   isInPinnedTab: boolean;
   pageLayoutType: PageLayoutType | null;
   isMobile: boolean;
@@ -13,17 +11,21 @@ type GetWidgetCardVariantParams = {
 };
 
 export const getWidgetCardVariant = ({
-  layoutMode,
+  presentation,
   isInPinnedTab,
   pageLayoutType,
   isMobile,
   isInSidePanel,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
-  if (layoutMode === PageLayoutTabLayoutMode.CANVAS) {
-    return 'canvas';
+  const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
+
+  if (isSideColumnContext) {
+    return 'side-column';
   }
 
-  const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
+  if (presentation === 'solo') {
+    return 'solo';
+  }
 
   switch (pageLayoutType) {
     case PageLayoutType.DASHBOARD:
@@ -33,6 +35,6 @@ export const getWidgetCardVariant = ({
     case PageLayoutType.RECORD_PAGE:
     case PageLayoutType.RECORD_INDEX:
     case null:
-      return isSideColumnContext ? 'side-column' : 'record-page';
+      return 'record-page';
   }
 };

@@ -30,7 +30,7 @@ import {
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
-import { MESSAGE_QUEUE_PRIORITY } from 'src/engine/core-modules/message-queue/message-queue-priority.constant';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -337,7 +337,8 @@ export class BullMQDriver
     return {
       // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
       jobId: options?.id ? `${options.id}-${v4()}` : undefined,
-      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
+      priority:
+        options?.priority ?? MESSAGE_QUEUE_WORKER_CONFIG[queueName].priority,
       attempts: 1 + (options?.retryLimit || 0),
       removeOnComplete: {
         age: QUEUE_RETENTION.completedMaxAge,

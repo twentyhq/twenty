@@ -204,7 +204,13 @@ Microsoft Azure 콘솔에서 "권한"에서 다음 API를 활성화하세요:
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-참고: "Mail.ReadWrite"와 "Mail.Send"는 워크플로우 작업을 통해 이메일을 보내려면 필수입니다. 수신 이메일만 원하시면 "Mail.Read"를 사용하실 수 있습니다.
+<Note>
+"Mail.ReadWrite"와 "Mail.Send"는 워크플로우 작업을 통해 이메일을 보내려는 경우에만 필수입니다. 이메일 수신만 원하시면 대신 "Mail.Read"를 사용하세요.
+</Note>
+
+<Note>
+워크플로우 작업을 사용하여 캘린더 이벤트를 생성하려면 "Calendars.ReadWrite"가 필수입니다. 캘린더 이벤트만 동기화하려면 "Calendars.Read"를 사용하세요.
+</Note>
 
 ### 인가된 리디렉션 URI
 
@@ -271,9 +277,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. **이메일** 섹션을 찾으세요
 3. SMTP 설정을 구성하세요:
 
-<ArticleTabs label1="Gmail" label2="오피스365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   [App Password](https://support.google.com/accounts/answer/185833)를 프로비저닝해야 합니다.
   * EMAIL_DRIVER=smtp
@@ -282,9 +288,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=gmail_email_address
   * EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="오피스365">
 
   2단계 인증을 사용 중인 경우, [앱 비밀번호](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)를 발급받아야 합니다.
   * EMAIL_DRIVER=smtp
@@ -293,9 +299,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=office365_email_address
   * EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev**는 개발 및 테스트를 위한 가상의 SMTP 이메일 서버입니다.
   * smtp4dev 이미지를 실행하세요: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -305,9 +311,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
@@ -380,3 +386,22 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 `LOGIC_FUNCTION_TYPE=DISABLED` 또는 `CODE_INTERPRETER_TYPE=DISABLED`를 사용하는 경우, 모든 실행 시도는 오류를 반환합니다. 이러한 기능 없이 Twenty를 실행하려는 경우 유용합니다.
 </Note>
+
+## 별도 호스트에서 동작하는 API와 프런트엔드
+
+백엔드가 프런트엔드를 제공하지 않는 경우에만 해당됩니다. 동일 출처
+배포의 경우 여기에서 추가로 설정할 내용이 없습니다.
+
+API와 통신하는 모든 브라우저 오리진을 쉼표로 구분하여 선언하세요. `SERVER_URL`
+과 `FRONTEND_URL`은 이미 신뢰된 상태입니다.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+쿠키 세션을 사용하는 버전으로 업그레이드하면, 이 설정이 필수입니다. 프런트엔드는
+이제 모든 요청에 자격 증명을 함께 보내고, 브라우저는 선언되지 않은 오리진에서 오는 자격 증명 포함 응답을 거부하므로, 이 값을 설정하기 전까지 앱이 로드되지 않습니다.
+</Warning>
+
+두 호스트가 서로 다른 등록 가능한 도메인(단순히 서로 다른 서브도메인이 아닌 경우)에 있다면, `AUTH_COOKIE_SAME_SITE=none`도 설정해야 하며, 이때는 HTTPS가 필요합니다.

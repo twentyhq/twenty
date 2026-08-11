@@ -99,7 +99,7 @@ const PaymentSuccess = lazy(() =>
   })),
 );
 
-const BookCall = lazy(() =>
+const BookCall = lazyWithPreload(() =>
   import('~/pages/onboarding/BookCall').then((module) => ({
     default: module.BookCall,
   })),
@@ -111,9 +111,9 @@ const StandalonePageLayoutPage = lazy(() =>
   })),
 );
 
-const WorkspaceSetup = lazyWithPreload(() =>
-  import('~/pages/onboarding/WorkspaceSetup').then((module) => ({
-    default: module.WorkspaceSetup,
+const AiChatPage = lazy(() =>
+  import('~/pages/ai-chat/AiChatPage').then((module) => ({
+    default: module.AiChatPage,
   })),
 );
 
@@ -124,13 +124,13 @@ const NotFound = lazy(() =>
 );
 
 const preloadOnboardingPages = () => {
-  void WorkspaceActivation.preload();
-  void CreateProfile.preload();
-  void SyncEmails.preload();
-  void InstallApps.preload();
-  void InviteTeam.preload();
-  void ChooseYourPlan.preload();
-  void WorkspaceSetup.preload();
+  WorkspaceActivation.preload();
+  CreateProfile.preload();
+  SyncEmails.preload();
+  InstallApps.preload();
+  InviteTeam.preload();
+  BookCall.preload();
+  ChooseYourPlan.preload();
 
   return null;
 };
@@ -147,14 +147,6 @@ const createWorkspaceAppRouter = (
       >
         <Route element={<MinimalMetadataGate />}>
           <Route element={<DefaultLayout />}>
-            <Route
-              path={AppPath.WorkspaceSetup}
-              element={
-                <LazyRoute fallback={null}>
-                  <WorkspaceSetup />
-                </LazyRoute>
-              }
-            />
             <Route element={<MainAppLayoutWithSidePanel />}>
               <Route
                 path={indexAppPath.getIndexAppPath()}
@@ -181,6 +173,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <StandalonePageLayoutPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.AiChat}
+                element={
+                  <LazyRoute>
+                    <AiChatPage />
                   </LazyRoute>
                 }
               />
@@ -228,14 +228,6 @@ const createWorkspaceAppRouter = (
             element={
               <LazyRoute fallback={<OnboardingPageLoader />}>
                 <PaymentSuccess />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.BookCall}
-            element={
-              <LazyRoute fallback={<OnboardingPageLoader />}>
-                <BookCall />
               </LazyRoute>
             }
           />
@@ -309,6 +301,14 @@ const createWorkspaceAppRouter = (
               element={
                 <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <InviteTeam />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.BookCall}
+              element={
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                  <BookCall />
                 </LazyRoute>
               }
             />

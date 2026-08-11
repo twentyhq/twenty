@@ -1,17 +1,19 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
+import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
+import { isFieldWidgetEligibleNestedParentField } from '@/page-layout/widgets/field/utils/isFieldWidgetEligibleNestedParentField';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldDisplayMode,
   type FieldConfiguration,
-  RelationType,
 } from '~/generated-metadata/graphql';
 
 type ResolveFieldWidgetRelationTableViewIdChangeArgs = {
   selectedField: FieldMetadataItem | undefined;
-  currentDisplayMode: FieldDisplayMode | undefined;
-  isSelectingDifferentField: boolean;
+  selectedNestedField?: FieldMetadataItem;
+  nextDisplayMode: FieldDisplayMode | undefined;
+  isSelectingDifferentChain: boolean;
   widgetId: string | undefined;
   currentViewId: string | null | undefined;
 };
@@ -22,42 +24,59 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
   const { addDraftViewForFieldRelationTableWidget } =
     useAddDraftViewForFieldRelationTableWidget(pageLayoutId);
 
+  // The embedded view must always list the selected chain's terminal object.
+  // Whenever the selection results in a table widget, a fresh draft view is
+  // generated on a chain change or a missing view id; otherwise a view id
+  // belonging to the previous chain is cleared so the layout dropdown can
+  // lazily create the right one.
   const resolveFieldWidgetRelationTableViewIdChange = ({
     selectedField,
-    currentDisplayMode,
-    isSelectingDifferentField,
+    selectedNestedField,
+    nextDisplayMode,
+    isSelectingDifferentChain,
     widgetId,
     currentViewId,
   }: ResolveFieldWidgetRelationTableViewIdChangeArgs):
     | Pick<FieldConfiguration, 'viewId'>
     | undefined => {
-    const targetObjectMetadataId =
-      selectedField?.relation?.targetObjectMetadata.id;
-    const targetFieldMetadataId =
-      selectedField?.relation?.targetFieldMetadata.id;
+    const {
+      targetObjectMetadataId,
+      inverseFieldMetadataId,
+      relationTargetFieldMetadataId,
+    } = getFieldWidgetRelationTraversal({
+      sourceFieldMetadataItem: selectedField,
+      nestedRelationFieldMetadataItem: selectedNestedField,
+    });
+
+    const isValidRelationChain =
+      isDefined(selectedField) &&
+      (isDefined(selectedNestedField)
+        ? isFieldWidgetEligibleNestedParentField(selectedField) &&
+          isOneToManyRelationField(selectedNestedField)
+        : isOneToManyRelationField(selectedField));
 
     const shouldRegenerateRelationTableView =
-      currentDisplayMode === FieldDisplayMode.TABLE &&
-      isSelectingDifferentField &&
-      selectedField?.type === FieldMetadataType.RELATION &&
-      selectedField.relation?.type === RelationType.ONE_TO_MANY &&
+      nextDisplayMode === FieldDisplayMode.TABLE &&
+      (isSelectingDifferentChain || !isDefined(currentViewId)) &&
+      isValidRelationChain &&
       isDefined(widgetId) &&
       isDefined(targetObjectMetadataId) &&
-      isDefined(targetFieldMetadataId);
+      isDefined(inverseFieldMetadataId);
 
     const regeneratedRelationTableViewId = shouldRegenerateRelationTableView
-      ? addDraftViewForFieldRelationTableWidget(
+      ? addDraftViewForFieldRelationTableWidget({
           widgetId,
           targetObjectMetadataId,
-          targetFieldMetadataId,
-        )
+          inverseFieldMetadataId,
+          relationTargetFieldMetadataId,
+        })
       : undefined;
 
     if (isDefined(regeneratedRelationTableViewId)) {
       return { viewId: regeneratedRelationTableViewId };
     }
 
-    if (isSelectingDifferentField && isDefined(currentViewId)) {
+    if (isSelectingDifferentChain && isDefined(currentViewId)) {
       return { viewId: undefined };
     }
 

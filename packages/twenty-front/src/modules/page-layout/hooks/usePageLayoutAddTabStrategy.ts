@@ -1,6 +1,7 @@
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
@@ -22,6 +23,8 @@ export const usePageLayoutAddTabStrategy = ({
   tabListInstanceId: string;
 }): PageLayoutAddTabStrategy | undefined => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const { featureFilteredPageLayoutTabs } =
+    usePageLayoutTabsFilteredByFeatureFlags();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const { createPageLayoutTab } = useCreatePageLayoutTab({
@@ -67,7 +70,8 @@ export const usePageLayoutAddTabStrategy = ({
     return undefined;
   }
 
-  const hasInactiveTabs = currentPageLayout.tabs.some(isReactivatableTab);
+  const hasInactiveTabs =
+    featureFilteredPageLayoutTabs.some(isReactivatableTab);
 
   const mode =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE && hasInactiveTabs

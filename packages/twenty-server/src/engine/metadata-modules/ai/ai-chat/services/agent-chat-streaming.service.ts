@@ -8,7 +8,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -289,6 +289,110 @@ export class AgentChatStreamingService {
         amount: 1,
         attributes: {
           model: modelId ?? 'unknown',
+          failure_phase: 'enqueue',
+          error_code: streamError.code,
+        },
+      });
+      throw error;
+    }
+  }
+
+  async startHiddenKickoffStream({
+    thread,
+    userWorkspaceId,
+    workspace,
+    text,
+    modelId,
+  }: {
+    thread: AgentChatThreadEntity;
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+    text: string;
+    modelId: string;
+  }): Promise<{ streamId: string; messageId: string; turnId: string } | null> {
+    const threadId = thread.id;
+    const streamId = generateId();
+
+    const hasClaimedStreamForKickoff = await this.tryClaimStream({
+      threadId,
+      workspaceId: workspace.id,
+      streamId,
+      where: { pendingQuestionMessageId: IsNull() },
+    });
+
+    if (!hasClaimedStreamForKickoff) {
+      return null;
+    }
+
+    try {
+      const hasConversationMessages =
+        await this.agentChatService.hasConversationMessages({
+          threadId,
+          workspaceId: workspace.id,
+        });
+
+      if (hasConversationMessages) {
+        await this.releaseStreamClaim(threadId, workspace.id, streamId);
+        await this.flushNextQueuedMessage(
+          threadId,
+          userWorkspaceId,
+          workspace.id,
+          !!thread.title,
+        );
+
+        return null;
+      }
+
+      const { id: messageId, turnId } =
+        await this.agentChatService.ensureHiddenKickoffMessage({
+          threadId,
+          workspaceId: workspace.id,
+          text,
+        });
+
+      const messages = await this.loadMessagesFromDB(
+        threadId,
+        userWorkspaceId,
+        workspace.id,
+      );
+
+      const kickoffMessage = messages[messages.length - 1];
+
+      if (!kickoffMessage || kickoffMessage.id !== messageId) {
+        throw new AiException(
+          'Workspace setup kickoff message could not be loaded',
+          AiExceptionCode.MESSAGE_NOT_FOUND,
+        );
+      }
+
+      await this.messageQueueService.add<StreamAgentChatJobData>(
+        STREAM_AGENT_CHAT_JOB_NAME,
+        {
+          threadId,
+          streamId,
+          userWorkspaceId,
+          workspaceId: workspace.id,
+          messages,
+          browsingContext: null,
+          modelId,
+          lastUserMessageText: text,
+          lastUserMessageParts: [{ type: 'text' as const, text }],
+          hasTitle: !!thread.title,
+          conversationSizeTokens: thread.conversationSize,
+          existingTurnId: turnId,
+        },
+      );
+
+      return { streamId, messageId, turnId };
+    } catch (error) {
+      await this.releaseStreamClaim(threadId, workspace.id, streamId);
+      const streamError = mapErrorToStreamError(error);
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatTurnFailed,
+        amount: 1,
+        attributes: {
+          model: modelId,
           failure_phase: 'enqueue',
           error_code: streamError.code,
         },
@@ -706,10 +810,15 @@ export class AgentChatStreamingService {
       threadId,
       userWorkspaceId,
       workspaceId,
+      includeHidden: true,
     });
 
+    // A hidden row without parts is an interrupted seed attempt: it carries no context and
+    // would otherwise reach the model as an empty user message.
     const filteredMessages = allMessages.filter(
-      (message) => message.status !== AgentMessageStatus.QUEUED,
+      (message) =>
+        message.status !== AgentMessageStatus.QUEUED &&
+        (!message.isHidden || isNonEmptyArray(message.parts)),
     );
 
     return Promise.all(
@@ -734,7 +843,11 @@ export class AgentChatStreamingService {
             return part;
           }),
         ),
-        metadata: { createdAt: message.createdAt.toISOString() },
+        // The hidden context seed gets no createdAt so injectMessageTimestamps skips it: its
+        // insert time is meaningless and later than the first real message it sorts before.
+        ...(message.isHidden
+          ? {}
+          : { metadata: { createdAt: message.createdAt.toISOString() } }),
       })),
     );
   }

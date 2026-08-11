@@ -1,4 +1,5 @@
 import { type Request } from 'express';
+import { LOGIC_FUNCTION_HTTP_RESPONSE_MARKER } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -18,8 +19,9 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
-const RESOLVER_UID = 'resolver-uid';
-const TARGET_UID = 'target-uid';
+const RESOLVER_UID = 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10';
+const TARGET_UID = 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10';
+const TARGET_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const buildExecuteResult = (
   data: object | null,
@@ -116,7 +118,7 @@ describe('ServerRouteTriggerService', () => {
     logicFunctionExecutorService = {
       execute: jest.fn().mockResolvedValueOnce(
         buildExecuteResult({
-          workspaceId: 'target-ws',
+          workspaceId: TARGET_WORKSPACE_ID,
           targetLogicFunctionUniversalIdentifier: TARGET_UID,
           payload: { from: 'resolver' },
         }),
@@ -148,7 +150,7 @@ describe('ServerRouteTriggerService', () => {
       LogicFunctionTriggerJob.name,
       {
         logicFunctionId: 'target-id',
-        workspaceId: 'target-ws',
+        workspaceId: TARGET_WORKSPACE_ID,
         payload: { from: 'resolver' },
       },
       { retryLimit: 3 },
@@ -200,7 +202,7 @@ describe('ServerRouteTriggerService', () => {
       expect.objectContaining({
         where: expect.objectContaining({
           universalIdentifier: TARGET_UID,
-          workspaceId: 'target-ws',
+          workspaceId: TARGET_WORKSPACE_ID,
           application: { applicationRegistrationId: 'reg-1' },
         }),
       }),
@@ -229,6 +231,26 @@ describe('ServerRouteTriggerService', () => {
     expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
   });
 
+  it('answers the caller directly and enqueues nothing when the resolver returns an http response', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
+        status: 200,
+        body: { challenge: 'abc123' },
+      }),
+    );
+
+    const result = await handle();
+
+    expect(result).toEqual({
+      statusCode: 200,
+      headers: {},
+      body: { challenge: 'abc123' },
+    });
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
   it('throws RESOLVER_INVALID_RESULT when the resolver does not return a workspaceId', async () => {
     logicFunctionExecutorService.execute.mockReset();
     logicFunctionExecutorService.execute.mockResolvedValueOnce(
@@ -245,7 +267,7 @@ describe('ServerRouteTriggerService', () => {
   it('throws RESOLVER_INVALID_RESULT when the resolver does not return a targetLogicFunctionUniversalIdentifier', async () => {
     logicFunctionExecutorService.execute.mockReset();
     logicFunctionExecutorService.execute.mockResolvedValueOnce(
-      buildExecuteResult({ workspaceId: 'target-ws' }),
+      buildExecuteResult({ workspaceId: TARGET_WORKSPACE_ID }),
     );
 
     await expect(handle()).rejects.toMatchObject({

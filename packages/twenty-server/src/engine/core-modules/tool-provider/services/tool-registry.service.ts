@@ -159,11 +159,13 @@ export class ToolRegistryService {
       userId?: string;
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
+      rolePermissionConfig?: RolePermissionConfig;
     },
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
       roleId,
+      rolePermissionConfig: options?.rolePermissionConfig,
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
       locale: options?.locale,
@@ -336,6 +338,18 @@ export class ToolRegistryService {
     }
   }
 
+  async spillToolOutputIfTooLarge(
+    output: ToolOutput,
+    context: ToolContext,
+    toolName: string,
+  ): Promise<ToolOutput> {
+    return this.toolOutputSpillService.spillIfTooLarge(
+      output,
+      { workspaceId: context.workspaceId },
+      { toolName },
+    );
+  }
+
   // Eager loading tools by categories (MCP, workflow agent).
   // These paths need full schemas, so generate with includeSchemas: true.
   async getToolsByCategories(
@@ -395,9 +409,10 @@ export class ToolRegistryService {
   private buildContextFromToolContext(
     context: ToolContext,
   ): ToolProviderContext {
-    const rolePermissionConfig: RolePermissionConfig = {
-      unionOf: [context.roleId],
-    };
+    const rolePermissionConfig: RolePermissionConfig =
+      context.rolePermissionConfig ?? {
+        unionOf: [context.roleId],
+      };
 
     return {
       workspaceId: context.workspaceId,

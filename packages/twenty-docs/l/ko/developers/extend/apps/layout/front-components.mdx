@@ -6,17 +6,23 @@ icon: window-maximize
 
 프런트 컴포넌트는 Twenty의 UI 내부에서 직접 렌더링되는 React 컴포넌트입니다. 이들은 Remote DOM을 사용하는 **격리된 Web Worker**에서 실행됩니다 — 코드는 샌드박스 처리된 opaque-origin iframe 내부에서 실행되지만, UI는 해당 iframe 안에 갇히지 않고 페이지 내에서 네이티브로 렌더링됩니다.
 
+<Warning>
+Front 컴포넌트는 여전히 활발히 개발 중입니다. 실제 브라우저 페이지가 아닌 부분적인 DOM을 대상으로 코드를 실행하므로 고급 사용 시에는 종종 아무런 표시 없이 실패할 수 있습니다. [현재 제한 사항](#current-limitations)을 참고하세요.
+</Warning>
+
 ## 프런트 컴포넌트를 사용할 수 있는 위치
 
-프런트 컴포넌트는 Twenty 내에서 두 위치에 렌더링될 수 있습니다:
+프런트 컴포넌트는 Twenty 내에서 세 위치에 렌더링될 수 있습니다:
 
 * **사이드 패널** — 비헤드리스 프런트 컴포넌트는 오른쪽 사이드 패널에서 열립니다. 이는 명령 메뉴에서 프런트 컴포넌트를 트리거할 때의 기본 동작입니다.
 * **위젯(대시보드 및 레코드 페이지)** — 프런트 컴포넌트를 [페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts) 내 위젯으로 삽입할 수 있습니다. 대시보드 또는 레코드 페이지 레이아웃을 구성할 때 사용자는 프런트 컴포넌트 위젯을 추가할 수 있습니다.
+* **App settings** — [`defineSettingsFrontComponent()`](#custom-settings-component)으로 정의되며, 이 프런트 컴포넌트는 기본 변수 구성 UI 대신 앱의 **Settings** 탭 내부 섹션으로 렌더링됩니다.
 
-프런트 컴포넌트만으로는 UI에서 직접 접근할 수 없으므로 *표시*해야 합니다. 이를 수행하는 두 가지 방법은 다음과 같습니다.
+프런트 컴포넌트만으로는 UI에서 직접 접근할 수 없으므로 *표시*해야 합니다. 이를 수행하는 세 가지 방법은 다음과 같습니다.
 
 * **[명령 메뉴 항목](/l/ko/developers/extend/apps/layout/command-menu-items)과 연결** — 명령 메뉴(Cmd+K)에 등록하고, 선택적으로 고정된 빠른 작업으로 등록합니다.
 * **[페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)에 위젯으로 포함** — 레코드 상세 페이지 또는 대시보드에 배치합니다.
+* **[`defineSettingsFrontComponent()`](#custom-settings-component)로 정의** — 기본 변수 구성 UI 대신 앱의 **Settings** 탭 내부 섹션으로 렌더링합니다.
 
 ## 기본 예제
 
@@ -76,6 +82,34 @@ export default defineCommandMenuItem({
 ## 프런트 컴포넌트를 페이지에 배치하기
 
 명령 외에도, 페이지 레이아웃에 위젯으로 추가하여 레코드 페이지에 프런트 컴포넌트를 직접 임베드할 수 있습니다. 자세한 내용은 [페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)을 참조하세요.
+
+## 사용자 정의 설정 컴포넌트
+
+앱의 **Settings** 탭에서 자동 생성되는 변수 구성 UI를 사용자 정의 컴포넌트로 대체하려면, `defineFrontComponent` 대신 `defineSettingsFrontComponent`로 정의하세요. 이 설정 컴포넌트는 항상 눈에 보이는 UI를 렌더링하므로 허용되지 않는 `isHeadless`를 제외하고, 동일한 [구성 필드](#configuration-fields)를 사용하며, 추가로 이 컴포넌트를 앱의 설정 UI로 표시합니다.
+
+이 컴포넌트는 전체 탭을 대체하는 것이 아니라, Settings 탭 내부의 섹션으로 렌더링됩니다. Twenty의 시스템 관리 섹션(자동 업그레이드, App URL, 연결)은 항상 이 컴포넌트 위에 렌더링되며, 앱에서 이를 재정의할 수 없습니다.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+앱당 하나의 설정 프런트 컴포넌트만 허용되며, 둘 이상 선언하면 빌드가 실패합니다. 설정 프런트 컴포넌트가 존재하는 경우, 앱의 **Settings** 탭은 기본 변수 구성 UI 대신 이 컴포넌트를 렌더링합니다.
 
 ## 헤드리스 vs 비헤드리스
 
@@ -666,3 +700,72 @@ const Card = () => {
 `useTheme()` 는 훅이므로, 컴포넌트 본문 안에서 토큰을 읽게 되어 값이 항상 실제 활성 테마를 반영합니다. 동일한 토큰 맵은 `themeCssVariables` 상수로도 export 되지만, 프론트 컴포넌트에서는 `useTheme()` 를 우선적으로 사용하세요. `themeCssVariables` 를 역참조하는 모듈 레벨 상수는 앱 매니페스트가 추출되는 동안에는 정의되지 않았을 수 있습니다.
 
 활성 스킴에 따라 분기해야 할 경우, `twenty-sdk/front-component` 의 `useColorScheme()` 으로 값을 읽으세요. 이 훅은 `'light'` 또는 `'dark'` 를 반환합니다.
+
+## 현재 제한 사항
+
+Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및 이벤트 처리는 잘 동작합니다. 렌더링을 *넘어서는* 작업(요소 측정, ref에 DOM 메서드 호출, 트리 바깥으로 포털링, 브라우저 스토리지 접근 등)은 현재 누락되었거나 불완전하며, 대부분 조용히 실패합니다. 예외도 발생하지 않고, 스캐폴드가 전체 브라우저 DOM을 기준으로 타입이 지정되어 있기 때문에 TypeScript 오류도 발생하지 않습니다.
+
+이 중 하나가 개발을 가로막는다면, 우선순위를 높일 수 있도록 [issue를 열어](https://github.com/twentyhq/twenty/issues/new/choose) 주세요.
+
+### 레이아웃과 측정
+
+아직 어떤 요소도 스스로를 측정할 수 없습니다.
+
+| API                                                           | 무슨 일이 일어나는지                                                               |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | 예외 발생                                                                     |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 조용히 `undefined`가 되어, `width ?? 0`은 `0`을 반환하고, `width > 600`은 항상 false입니다. |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` 발생(단, `typeof` 가드는 동작함)                                  |
+| `window.matchMedia()`, `window.getComputedStyle()`            | 예외 발생                                                                     |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | 조용히 `undefined`가 됨                                                        |
+| `new MutationObserver(fn)`                                    | 생성은 되지만 이후 `.observe()`에서 예외가 발생합니다.                                      |
+
+따라서 recharts의 `ResponsiveContainer`, Floating UI / Popper, 리스트 가상화, 드래그로 크기 조절 등은 아직 동작하지 않습니다. 대신 CSS에서 레이아웃을 구현하세요. 스타일시트는 실제 페이지에 도달하므로 flexbox, grid, `aspect-ratio`, `clamp()` 및 `@container`는 모두 정상적으로 동작합니다.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` 및 `queueMicrotask`는 `window.` 접두사 없이 동작합니다. `window.requestAnimationFrame(...)` 등만 예외를 발생시킵니다.
+</Note>
+
+### DOM 액세스
+
+`ref`는 `HTMLElement`가 아니라 샌드박스 요소를 반환합니다.
+
+| 작성한 코드                                                                                                      | 무슨 일이 일어나는지                               | 대신 사용할 것                                                            |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 예외 발생                                     | 제어 컴포넌트를 사용하고 값을 `event.target`에서 읽습니다                              |
+| `element.classList.add(...)`                                                                                | 예외 발생(`classList`는 `undefined`임)          | `className` 문자열을 직접 구성하세요.                                          |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 예외 발생                                     | 정상 동작하는 `querySelector()` / `querySelectorAll()`을 사용                |
+| `document.activeElement`                                                                                    | 항상 `undefined`                            | `onFocus` / `onBlur`로 포커스를 추적하세요.                                   |
+| `\<canvas>`                                                                                | 아무것도 렌더링되지 않으며, 오류도 없습니다.                 | SVG를 사용하거나, 오프스크린에서 그린 뒤 `<img src={dataUrl}>`로 표시하세요.              |
+| `createPortal(node, document.body)`                                                                         | `isConnected`는 성공으로 보고하지만 아무것도 렌더링되지 않습니다 | `position: absolute`로 인라인 오버레이를 사용하거나 라이브러리에 직접 렌더링한 컨테이너 요소를 전달하세요 |
+
+이 포털 간극 때문에 Radix, Headless UI, MUI, react-select의 팝오버는 기본적으로 아무것도 렌더링하지 않습니다. 대부분 컨테이너 prop을 받으므로, 직접 렌더링한 요소를 가리키도록 설정하세요.
+
+### 이벤트
+
+마우스, 포인터, 터치, 드래그, 키보드, 포커스, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` 그리고 `animationend`/`transitionend` 이벤트는 호스트로 전달되며, 여기에 요소별로 몇 가지가 더해집니다: `<img>`의 `load`/`error`, `<input>`/`\<textarea>`의 클립보드 및 조합(composition), `\<video>`/`\<audio>`의 미디어, `\<details>`/`\<dialog>`의 `toggle` 등입니다. 그 밖의 것들(`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, 포인터 캡처, `<img>`의 `onLoad` 등)은 경고 없이 모두 무시됩니다.
+
+`document.addEventListener()`와 `window.addEventListener()`는 오류 없이 등록되지만 절대 실행되지 않으며, 이 때문에 드래그는 시작한 요소를 벗어나는 순간 중지됩니다. `event.preventDefault()` 역시 전달되지 않습니다. 폼 제출, `dragover`/`drop` 및 링크 클릭은 이미 보호되어 있습니다.
+
+### 속성과 스타일링
+
+각 요소는 자신의 속성을 호스트 DOM으로 전달합니다(`href`는 `\<a>`, `src`/`alt`는 `<img>`, `value`/`placeholder`/`disabled`는 `<input>` 등). 또한 모든 요소에 공통으로 `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable`, 그리고 하이픈이 포함된 모든 `aria-*` / `data-*` 속성(따라서 `ariaLabel`은 무시됨)을 전달합니다. 그 외의 속성은 조용히 폐기되므로, 사용자 정의 상태는 `data-*`로 표현하세요.
+
+컴포넌트 CSS는 `import './styles.css'`, CSS-in-JS 또는 `\<style>` 요소에서 오든, 호스트 페이지의 `\<head>`에 **범위 없이(unscoped)** 주입됩니다. 따라서 클래스 이름이 Twenty 자체 것과 충돌합니다(접두사를 붙이고, `div { ... }` 선택자를 직접 작성하지 마세요). 그리고 `@media`는 위젯이 아니라 브라우저 창을 기준으로 매칭됩니다(직접 지정한 `container-type`과 함께 `@container`를 사용하세요). 인라인 `style` prop은 영향을 받지 않습니다.
+
+### 스토리지와 네트워크
+
+`localStorage`, `sessionStorage`, IndexedDB, 쿠키, Cache API 및 `BroadcastChannel`은 모두 사용할 수 없습니다. 컴포넌트가 불투명한 origin의 워커에서 실행되기 때문입니다. 상태를 영속화하려면 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)을 호출하고, 해당 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
+
+`fetch`는 동작하지만, 몇 가지 주의사항이 있습니다:
+
+* Twenty API와 앱의 라우트로 가는 호출은 호스트에서 프록시되므로, [`RestApiClient`](#calling-the-twenty-rest-api)를 사용하는 것이 좋습니다. 프록시되는 호출에서는 `AbortSignal` 및 기타 `RequestInit` 옵션이 제거되며, `string`과 `URLSearchParams` 타입의 body만 지원됩니다.
+* 다른 오리진으로 나가는 요청은 `Origin: null`을 가진 채 샌드박스를 벗어나므로, 서드파티 API는 `Access-Control-Allow-Origin: *`를 보내는 경우에만 응답합니다. 대신 logic function에서 호출하세요.
+* 샌드박스에는 상대 경로를 해석할 페이지 URL이 없으므로, `fetch('/rest/people')`은 Twenty API와 절대 매칭되지 않습니다.
+
+### 기타 제약 사항
+
+* **파일 내용.** `<input type="file">`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로, 현재는 `FileReader` 사용과 업로드가 불가능합니다.
+* **드래그 앤 드롭 페이로드.** 드래그 이벤트는 발생하지만, `event.dataTransfer`는 `undefined`입니다.
+* **Node 내장 모듈.** `fs`, `path` 및 `node:crypto`는 빌드에 실패하므로, 해당 작업은 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)으로 옮기세요. Web Crypto, `fetch`, `TextEncoder` 및 `URL`은 사용할 수 있습니다.
+* \*\*`\<iframe>`\*\*은 항상 `allow-same-origin` 없이 다시 샌드박싱되므로, 자체 세션에 의존하는 임베드는 로그아웃된 상태로 렌더링됩니다. 또한 `onLoad`도 지원되지 않습니다.

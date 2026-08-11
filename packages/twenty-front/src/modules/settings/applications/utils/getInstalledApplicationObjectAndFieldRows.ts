@@ -44,7 +44,7 @@ export const getInstalledApplicationObjectAndFieldRows = ({
             }),
             application: {
               id: installedApplication.id,
-              logo: installedApplication.logo,
+              logoUrl: installedApplication.logoUrl,
               name: installedApplication.name,
               universalIdentifier: installedApplication.universalIdentifier,
             },

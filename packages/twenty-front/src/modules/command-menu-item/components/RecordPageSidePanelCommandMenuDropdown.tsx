@@ -1,5 +1,6 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
+import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
@@ -43,11 +44,43 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
     [commandMenuItems],
   );
 
+  const pinnedCommandMenuItems = useMemo(
+    () => commandMenuItems.filter((item) => item.isPinned === true),
+    [commandMenuItems],
+  );
+
+  // Pinned items are buttons in the footer, so the dropdown only repeats the
+  // ones the footer could not fit.
+  const { pinnedOverflowCommandMenuItems } =
+    usePinnedCommandMenuItemsInlineLayout({
+      pinnedCommandMenuItems,
+      layoutKey: 'side-panel-footer',
+    });
+
+  // A widget owning the footer suppresses those buttons entirely, and leaves
+  // the footer measurements stale, so every pinned item belongs here instead.
+  const hasPinnedWidgetCommandMenuItems =
+    sidePanelWidgetFooterCommandMenuItems.some(
+      (commandMenuItem) => commandMenuItem.isPinned !== false,
+    );
+
+  const pinnedOverflowCommandMenuItemIds = new Set(
+    pinnedOverflowCommandMenuItems.map((item) => item.id),
+  );
+
+  const listedCommandMenuItems = hasPinnedWidgetCommandMenuItems
+    ? recordSelectionCommandMenuItems
+    : recordSelectionCommandMenuItems.filter(
+        (item) =>
+          item.isPinned !== true ||
+          pinnedOverflowCommandMenuItemIds.has(item.id),
+      );
+
   const selectableItemIdArray = [
     ...dropdownWidgetCommandMenuItems.map(
       (commandMenuItem) => commandMenuItem.id,
     ),
-    ...recordSelectionCommandMenuItems.map((item) => item.id),
+    ...listedCommandMenuItems.map((item) => item.id),
   ];
 
   return (
@@ -68,10 +101,8 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
         />
       ))}
       {dropdownWidgetCommandMenuItems.length > 0 &&
-        recordSelectionCommandMenuItems.length > 0 && (
-          <HorizontalSeparator noMargin />
-        )}
-      {recordSelectionCommandMenuItems.map((item) => (
+        listedCommandMenuItems.length > 0 && <HorizontalSeparator noMargin />}
+      {listedCommandMenuItems.map((item) => (
         <CommandMenuItemRenderer item={item} key={item.id} />
       ))}
     </OptionsDropdownMenu>

@@ -15,6 +15,7 @@ import { WorkerHealthIndicator } from 'src/engine/core-modules/admin-panel/indic
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
 import { AdminPanelServerAdminService } from 'src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service';
 import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel/services/admin-panel-signing-key.service';
@@ -93,6 +94,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelStatisticsService,
     AdminPanelBillingService,
     AdminPanelChatService,
+    AdminPanelGlobalChatThreadsService,
     AdminPanelConfigService,
     AdminPanelSigningKeyService,
     AdminPanelVersionService,
@@ -112,6 +114,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelUserLookupService,
     AdminPanelStatisticsService,
     AdminPanelChatService,
+    AdminPanelGlobalChatThreadsService,
     AdminPanelConfigService,
     AdminPanelVersionService,
     MaintenanceModeService,

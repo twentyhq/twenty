@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
@@ -31,8 +27,10 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -72,18 +70,47 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions } =
+    const { rolesPermissions, flatObjectPermissionMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',
+        'flatObjectPermissionMaps',
       ]);
 
-    const objectPermissions = this.getObjectPermissions(
+    const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
-      context.rolePermissionConfig,
-    );
+      rolePermissionConfig: context.rolePermissionConfig,
+    });
 
-    if (!objectPermissions) {
+    if (Object.keys(objectPermissions).length === 0) {
       return descriptors;
+    }
+
+    const requireExplicitObjectGrants =
+      context.requireExplicitObjectGrants === true;
+
+    const roleId = getRoleIdsFromRolePermissionConfig(
+      context.rolePermissionConfig,
+    )[0];
+
+    const explicitPermissionByObjectId = new Map<
+      string,
+      FlatObjectPermission
+    >();
+
+    if (requireExplicitObjectGrants) {
+      for (const flatObjectPermission of Object.values(
+        flatObjectPermissionMaps.byUniversalIdentifier,
+      )) {
+        if (
+          isDefined(flatObjectPermission) &&
+          flatObjectPermission.roleId === roleId
+        ) {
+          explicitPermissionByObjectId.set(
+            flatObjectPermission.objectMetadataId,
+            flatObjectPermission,
+          );
+        }
+      }
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -100,10 +127,26 @@ export class DatabaseToolProvider implements ToolProvider {
 
     for (const flatObject of allFlatObjects) {
       const permission = objectPermissions[flatObject.id];
+      const explicitPermission = explicitPermissionByObjectId.get(
+        flatObject.id,
+      );
 
-      if (!permission) {
+      if (
+        !permission ||
+        (requireExplicitObjectGrants && !isDefined(explicitPermission))
+      ) {
         continue;
       }
+
+      const canReadRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canReadObjectRecords === true
+        : permission.canReadObjectRecords;
+      const canUpdateRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canUpdateObjectRecords === true
+        : permission.canUpdateObjectRecords;
+      const canSoftDeleteRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canSoftDeleteObjectRecords === true
+        : permission.canSoftDeleteObjectRecords;
 
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
@@ -129,7 +172,7 @@ export class DatabaseToolProvider implements ToolProvider {
       const shouldIncludeSchema = (name: string) =>
         includeSchemas && (!toolNames || toolNames.has(name));
 
-      if (permission.canReadObjectRecords) {
+      if (canReadRecords) {
         descriptors.push({
           name: `find_many_${snakePlural}`,
           ...getCrudToolLabels(
@@ -138,7 +181,7 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
+          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data, plus a "count" of total matches and a "hasNextPage" flag. When "hasNextPage" is true, more records match than were returned: continue with a higher offset (or increase the limit) before concluding a record is absent or answering count/enumeration questions.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
             inputSchema: toToolJsonSchema(
@@ -216,7 +259,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords && canBeManagedByAutomation) {
+      if (canUpdateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `create_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -352,7 +395,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (permission.canSoftDeleteObjectRecords) {
+      if (canSoftDeleteRecords) {
         descriptors.push({
           name: `delete_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -426,32 +469,5 @@ export class DatabaseToolProvider implements ToolProvider {
       toolNames.has(`delete_many_${snakePlural}`) ||
       toolNames.has(`upsert_many_${snakePlural}`)
     );
-  }
-
-  private getObjectPermissions(
-    rolesPermissions: ObjectsPermissionsByRoleId,
-    rolePermissionConfig: ToolProviderContext['rolePermissionConfig'],
-  ): ObjectsPermissions | null {
-    if ('intersectionOf' in rolePermissionConfig) {
-      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
-        (roleId: string) => rolesPermissions[roleId],
-      );
-
-      return allRolePermissions.length === 1
-        ? allRolePermissions[0]
-        : computePermissionIntersection(allRolePermissions);
-    }
-
-    if ('unionOf' in rolePermissionConfig) {
-      if (rolePermissionConfig.unionOf.length === 1) {
-        return rolesPermissions[rolePermissionConfig.unionOf[0]];
-      }
-
-      throw new Error(
-        'Union permission logic for multiple roles not yet implemented',
-      );
-    }
-
-    return null;
   }
 }

@@ -24,7 +24,6 @@ import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -332,7 +331,6 @@ export const useLoadRecordIndexStates = () => {
 
           if (!skipGlobalIndexStates) {
             batchSet(recordIndexViewTypeState.atom, view.type);
-            batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
           }
 
           const recordCalendarInstanceId =

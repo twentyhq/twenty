@@ -1,12 +1,12 @@
 ---
 title: 安装钩子
-description: 在安装之前或之后运行逻辑——预置数据、备份记录、验证升级。
+description: 在安装、升级或卸载生命周期中运行逻辑——预置数据、备份记录、验证升级、清理外部资源。
 icon: wrench
 ---
 
-安装钩子是在安装或升级生命周期期间运行的特殊逻辑函数。 它们与常规的[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)共享相同的处理程序运行时，并接收一个 `InstallPayload`（`{ previousVersion?: string; newVersion: string }`——在全新安装时 `previousVersion` 为 `undefined`），但它们使用自己的 define 函数声明，并且存在于普通触发模型（HTTP、cron、数据库事件）之外。
+安装钩子是在安装、升级或卸载生命周期期间运行的特殊逻辑函数。 它们与常规的[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)共享相同的处理程序运行时，但使用自己的定义函数声明，并且存在于普通触发模型（HTTP、cron、数据库事件）之外。 安装钩子接收一个 `InstallPayload`（`{ previousVersion?: string; newVersion: string }`——在全新安装时 `previousVersion` 为 `undefined`）；卸载钩子接收一个 `UninstallPayload`（`{ version?: string }`——要被移除的版本）。
 
-每个应用**最多只能定义一个安装前函数**和**最多一个安装后函数**。 如果检测到任一类型多于一个，清单构建将报错。
+每个应用每种钩子（预安装、后安装、卸载）最多只能定义一个。 如果检测到任一类型多于一个，清单构建将报错。
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## 卸载钩子
+
+`defineUninstallLogicFunction` 声明一个在用户卸载你的应用时运行的钩子。 它在应用的元数据、数据和代码被移除之前执行——一旦删除迁移运行完成，就不再有任何内容可供执行——因此你的处理程序仍然可以查询应用的对象和记录。 将其用于清理外部资源：取消预置 API 资源、删除剩余的机器人、撤销网络钩子。
+
+备注：
+
+* 该钩子是尽力执行：它同步运行，但失败会被记录，并且**绝不会阻止卸载**——清理操作绝不能导致应用无法被移除。
+* 它接收 `UninstallPayload`（`{ version?: string }`——要被移除的版本）。
+* 在回滚失败的全新安装时，它**不会**运行——该应用从未完成安装。
+* 钩子无法在应用被删除后运行，因此依赖应用数据的外部清理（例如存储在记录中的机器人 ID）应放在这里，而不是放在外部计划任务中。
+* 与安装钩子类似，它在开发模式下**不会执行**——请改为手动触发：
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

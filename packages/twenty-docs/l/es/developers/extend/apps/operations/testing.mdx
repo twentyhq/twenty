@@ -60,7 +60,7 @@ El paso de compilación usa esbuild para producir un solo archivo autónomo por 
 
 **Las funciones de lógica** se ejecutan en un entorno Node.js. Los módulos integrados de Node (`fs`, `path`, `crypto`, `http`, etc.) están disponibles y no necesitan instalarse.
 
-**Los componentes de frontend** se ejecutan en un Web Worker. Los módulos integrados de Node **no** están disponibles — solo las APIs del navegador y paquetes de npm que funcionen en un entorno de navegador.
+**Los componentes de frontend** se ejecutan en un Web Worker. Los módulos integrados de Node **no** están disponibles — solo paquetes de npm que funcionen en un entorno de navegador. Ten en cuenta que la sandbox implementa un DOM *parcial*, por lo que un paquete puede compilarse correctamente y aun así fallar en tiempo de ejecución; consulta [Limitaciones actuales](/l/es/developers/extend/apps/layout/front-components#current-limitations).
 
 Ambos entornos tienen `twenty-client-sdk/core` y `twenty-client-sdk/metadata` disponibles como módulos preproporcionados — estos no se incluyen en el bundle sino que se resuelven en tiempo de ejecución por el servidor.
 

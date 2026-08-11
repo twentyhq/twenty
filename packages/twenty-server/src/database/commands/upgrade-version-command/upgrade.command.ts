@@ -1,6 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
@@ -34,6 +35,7 @@ export class UpgradeCommand extends CommandRunner {
     protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
     protected readonly upgradeStatusService: UpgradeStatusService,
+    protected readonly commandShutdownService: CommandShutdownService,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -123,6 +125,8 @@ export class UpgradeCommand extends CommandRunner {
         'Cannot use --start-from-workspace-id together with -w/--workspace-id',
       );
     }
+
+    this.commandShutdownService.listenToShutdownSignals();
 
     try {
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();

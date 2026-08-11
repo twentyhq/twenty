@@ -10,17 +10,16 @@ description: Görünümler, kenar çubuğu gezinmesi, bir komut ve ön uç bile�
 
 Bir [görünüm](/l/tr/developers/extend/apps/layout/views), belirli bir nesnenin kaydedilmiş bir listesidir.
 Bir [gezinme menüsü öğesi](/l/tr/developers/extend/apps/layout/navigation-menu-items)
-bu görünümü kenar çubuğuna yerleştirir.
+bu görünümü kenar çubuğuna yerleştirir. Sunucu, her nesnenin varsayılan "Tümü ..." görünümünü zaten otomatik olarak sağladığından, bir uygulamanın tanımladığı görünümler ek, özenle seçilmiş görünümlerdir.
 
 ```ts filename="src/views/documents.view.ts"
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 
 export default defineView({
   universalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
   name: 'All documents',
   objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconFile',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     { universalIdentifier: DOCUMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
@@ -202,7 +201,8 @@ export default defineFrontComponent({
 ```
 
 Bunu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) ile bağlayın. Bir
-`RECORD_PAGE` düzeni, bir nesnenin kayıt görünümüne sekmeler ekler; `CANVAS` sekmesindeki bir `FRONT_COMPONENT` widget'ı bileşeni barındırır:
+`RECORD_PAGE` düzeni, bir nesnenin kayıt görünümüne sekmeler ekler; tek bir
+`FRONT_COMPONENT` widget'ına sahip bir sekme, bileşeni kenardan kenara barındırır:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -217,7 +217,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
@@ -265,6 +265,9 @@ Herhangi bir belgeyi açın — **Preview** sekmesi, belgeyi paylaşılabilir we
 ```
 
 Bir `RICH_TEXT` alanı, hem editörün blok JSON'unu hem de bir Markdown izdüşümünü saklar. Oluşturma hattı bu Markdown izdüşümünü okur, böylece yer tutucular, PDF ve paylaşılabilir web sayfası hiç değişmeden çalışmaya devam eder — tam [`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts) dosyasına bakın.
+`FIELD` bileşenleri, ayrıca iki adım uzaktaki iç içe geçmiş bir ilişkideki
+kayıtların listelenmesi de dahil olmak üzere, diğer görüntüleme modlarını ve seçenekleri de destekler — bkz.
+[alan bileşeni referansı](/l/tr/developers/extend/apps/layout/page-layouts#field-widgets).
 Artık editörler, şablonları düzgün bir zengin metin editöründe yazıyor:
 
 <Frame caption="Template sekmesi: Twenty'nin yerel zengin metin editörü, body alanına bağlı.">

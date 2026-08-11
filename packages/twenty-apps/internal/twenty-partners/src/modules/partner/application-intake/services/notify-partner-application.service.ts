@@ -1,6 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { postWebhook } from 'src/modules/partner/application-intake/connector/discord/discord.connector';
+import { postWebhook } from 'src/modules/shared/connector/discord/discord.connector';
 import { findPartnerForEmbed } from 'src/modules/partner/application-intake/graphql/queries/find-partner-for-embed';
 import {
   buildApplicationEmbed,
@@ -37,7 +37,11 @@ export async function notifyPartnerApplication(
     };
 
     const embed = buildApplicationEmbed(partnerForEmbed, frontendUrl);
-    const delivered = await postWebhook(webhookUrl, { embeds: [embed] });
+    const delivered = await postWebhook(
+      webhookUrl,
+      { embeds: [embed] },
+      'on-partner-application-created',
+    );
     return { notified: delivered };
   } catch {
     // Best-effort: a Discord failure must never fail the trigger.

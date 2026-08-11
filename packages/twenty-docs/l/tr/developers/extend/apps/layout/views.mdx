@@ -4,10 +4,12 @@ description: Uygulamanızdaki nesneler için önceden yapılandırılmış kayde
 icon: list
 ---
 
-Bir **görünüm**, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş bir yapılandırmadır: hangi alanların görüneceği, sıraları, görünür olup olmadıkları ve uygulanan tüm filtreler veya gruplar. Uygulamanızla birlikte önceden yapılandırılmış görünümler yayınlamak için `defineView()` kullanın — genellikle oluşturduğunuz her özel nesne için varsayılan bir indeks görünümü şeklinde olur.
+Bir **görünüm**, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş bir yapılandırmadır: hangi alanların görüneceği, sıraları, görünür olup olmadıkları ve uygulanan tüm filtreler veya gruplar. Uygulamanızla önceden yapılandırılmış görünümler sunmak için `defineView()` kullanın.
+
+Her nesne, sunucu tarafından otomatik olarak sağlanan kendi ana liste görünümünü (bir `OBJECT` gezinme öğesinin açtığı "All ..." tablosu) alır — buna, uygulamanızın oluşturduğu nesneler de dahildir; uygulamanızın bildirdiği her alan için bir sütunla birlikte. `defineView()` ile tanımladığınız görünümler, bu varsayılan görünümün üzerine eklenen her zaman **ek** görünümlerdir.
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,23 +34,23 @@ export default defineView({
 ## Önemli noktalar
 
 * `objectUniversalIdentifier`, bu görünümün hangi nesneye uygulanacağını belirtir. Bu, tanımladığınız özel bir nesne veya standart bir Twenty nesnesi olabilir.
-* `key: ViewKey.INDEX` görünümü nesnenin ana liste görünümü olarak işaretler (bir `OBJECT` gezinme öğesinin açtığı görünüm).
-* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir. Otomatik oluşturulan `createdAt` gibi bir sistem alanına başvurmak için, bkz. [Sistem Alanlarını Hedefleme](/l/tr/developers/extend/apps/data/system-fields).
+* Nesnenin ana liste görünümü sunucuya aittir: `key` kullanımdan kaldırılmıştır ve yok sayılır, bu nedenle bir manifest görünümü bunu asla talep edemez. Görünümünüzün kenar çubuğunda tek tık uzağınızda olmasını istiyorsanız bir `VIEW` gezinme öğesi ekleyin.
+* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir. Otomatik oluşturulan `createdAt` gibi bir sistem alanına başvurmak için bkz. [Sistem Metaverilerini Hedefleme](/l/tr/developers/extend/apps/data/system-fields).
 * Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `sorts`, `groups` ve `fieldGroups` da tanımlayabilirsiniz.
 * `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
 
 ## İsteğe bağlı özellikler
 
-| Özellik                                                                                                     | Değerler                                                                           | Açıklama                                                                                                                                                                                |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`                                                                                                      | `ViewType.TABLE` (varsayılan), `ViewType.KANBAN`, `ViewType.CALENDAR`              | Kayıtların nasıl düzenlendiği. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET` ve `CALENDAR_WIDGET` da mevcuttur ancak sayfa düzeni bileşenleri tarafından dahili olarak kullanılır.) |
-| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (varsayılan), `ViewVisibility.UNLISTED`                 | Görünümün tüm çalışma alanı için listelenip listelenmediği veya seçicilerden gizlenip gizlenmediği.                                                                                     |
-| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (varsayılan), `ViewOpenRecordIn.RECORD_PAGE`         | Bir kayda tıklandığında nerede açılacağı.                                                                                                                                               |
-| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Varsayılan sıralama düzeni.                                                                                                                                                             |
-| `isCompact`                                                                                                 | `boolean`                                                                          | Kompakt satır görünümü.                                                                                                                                                                 |
-| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Kayıtları bir alana göre gruplayın (ör. kanban sütunları).                                                                                                                              |
-| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Kanban sütunu toplamları ve boyutlandırması.                                                                                                                                            |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Takvim görünümleri: düzen, kayıtları konumlandıran tarih alanı ve isteğe bağlı bir bitiş tarihi alanı.                                                                                  |
+| Özellik                                                                                                     | Değerler                                                                               | Açıklama                                                                                                                                                                                                              |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (varsayılan), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | Kayıtların nasıl düzenlendiği. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET` ve `CALENDAR_WIDGET` da mevcuttur ancak sayfa düzeni bileşenleri tarafından dahili olarak kullanılır.)                |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (varsayılan), `ViewVisibility.UNLISTED`                     | Görünümün tüm çalışma alanı için listelenip listelenmediği veya seçicilerden gizlenip gizlenmediği.                                                                                                                   |
+| `openRecordIn`                                                                                              | kullanımdan kaldırıldı                                                                 | Artık okunmuyor: Kayıtların nerede açılacağı artık [object](/l/tr/developers/extend/apps/data/objects) (`defineObject()` içindeki `openRecordIn`) özelliğiyle belirlenir; ayar yoksa her üyenin kendi tercihi esas alınır. |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`     | Varsayılan sıralama düzeni.                                                                                                                                                                                           |
+| `isCompact`                                                                                                 | `boolean`                                                                              | Kompakt satır görünümü.                                                                                                                                                                                               |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                      | Kayıtları bir alana göre gruplayın (ör. kanban sütunları).                                                                                                                                                            |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                                | Kanban sütunu toplamları ve boyutlandırması.                                                                                                                                                                          |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                            | Takvim görünümleri: düzen, kayıtları konumlandıran tarih alanı ve isteğe bağlı bir bitiş tarihi alanı.                                                                                                                |
 
 Yukarıdaki tüm enum'lar `twenty-sdk/define` içinden dışa aktarılır.
 
@@ -109,4 +110,4 @@ filters: [
 
 ## Görünümlerin kullanıcı arayüzünde görüntülenme şekli
 
-Tek başına bir görünüm, kenar çubuğundan erişilebilir değildir. Orada görünmesini sağlamak için, türü `VIEW` olan ve görünümün `universalIdentifier` değerini işaret eden bir [navigasyon menüsü öğesi](/l/tr/developers/extend/apps/layout/navigation-menu-items) ile eşleştirin. Bu, standart örüntüdür: her özel nesne genellikle varsayılan bir görünüm ve bunu açan bir kenar çubuğu girdisiyle birlikte sunulur.
+Tek başına bir görünüm, kenar çubuğundan erişilebilir değildir. Orada görünmesini sağlamak için, türü `VIEW` olan ve görünümün `universalIdentifier` değerini işaret eden bir [navigasyon menüsü öğesi](/l/tr/developers/extend/apps/layout/navigation-menu-items) ile eşleştirin. Bu, kanonik desendir: Her özel nesne, oluşturma sırasında otomatik olarak oluşturulan varsayılan bir indeks görünümü alır; dolayısıyla yalnızca onu açan kenar çubuğu öğesini eklemeniz yeterlidir.

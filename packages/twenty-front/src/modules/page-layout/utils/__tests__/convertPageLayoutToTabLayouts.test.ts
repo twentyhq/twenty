@@ -212,4 +212,59 @@ describe('convertPageLayoutToTabLayouts', () => {
       minH: richTextMinSize.h,
     });
   });
+
+  it('should use the widget-type minimum size for iframe widgets', () => {
+    const pageLayout: PageLayout = {
+      id: 'page-layout-1',
+      name: 'Page Layout 1',
+      type: PageLayoutType.DASHBOARD,
+      objectMetadataId: null,
+      universalIdentifier: '20202020-0000-0000-0000-000000000001',
+      tabs: [
+        {
+          id: 'tab-1',
+          applicationId: '',
+          isActive: true,
+          title: 'Tab 1',
+          position: 0,
+          pageLayoutId: 'page-layout-1',
+          widgets: [
+            {
+              __typename: 'PageLayoutWidget',
+              id: 'iframe-widget',
+              applicationId: '',
+              isActive: true,
+              pageLayoutTabId: 'tab-1',
+              title: 'Iframe',
+              type: WidgetType.IFRAME,
+              configuration: {
+                configurationType: WidgetConfigurationType.IFRAME,
+                url: 'https://example.com',
+              },
+              gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 6 },
+              objectMetadataId: null,
+              createdAt: '2025-01-01T00:00:00.000Z',
+              updatedAt: '2025-01-01T00:00:00.000Z',
+              deletedAt: null,
+            },
+          ],
+          createdAt: '2025-01-01T00:00:00.000Z',
+          updatedAt: '2025-01-01T00:00:00.000Z',
+          deletedAt: null,
+        },
+      ],
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
+      deletedAt: null,
+    };
+
+    const result = convertPageLayoutToTabLayouts(pageLayout);
+    const iframeMinSize = WIDGET_SIZES[WidgetType.IFRAME]!.minimum;
+
+    expect(result['tab-1'].desktop[0]).toMatchObject({
+      i: 'iframe-widget',
+      minW: iframeMinSize.w,
+      minH: iframeMinSize.h,
+    });
+  });
 });

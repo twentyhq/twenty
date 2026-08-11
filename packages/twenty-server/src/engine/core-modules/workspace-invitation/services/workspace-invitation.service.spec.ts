@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type DeleteResult, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -26,9 +26,12 @@ import { WorkspaceInvitationService } from './workspace-invitation.service';
 // To fix a circular dependency issue
 jest.mock('src/engine/core-modules/workspace/services/workspace.service');
 
-// To avoid dynamic import issues in Jest
-jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockImplementation(async (template, options) => {
+// render() resolves through a streaming scheduler that never advances under the
+// globally enabled fake timers; the real render path is covered by
+// email-templates-rendering.spec.ts.
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
+  renderEmail: jest.fn().mockImplementation(async (_template, options) => {
     if (options?.plainText) {
       return 'Plain Text Email';
     }
@@ -152,11 +155,10 @@ describe('WorkspaceInvitationService', () => {
       const email = 'test@example.com';
       const workspace = { id: 'workspace-id' } as WorkspaceEntity;
 
-      jest.spyOn(appTokenRepository, 'createQueryBuilder').mockReturnValue({
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue(null),
-      } as any);
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(appTokenRepository, 'delete')
+        .mockResolvedValue({} as DeleteResult);
 
       jest.spyOn(userWorkspaceRepository, 'exists').mockResolvedValue(false);
       jest
@@ -172,11 +174,9 @@ describe('WorkspaceInvitationService', () => {
       const email = 'test@example.com';
       const workspace = { id: 'workspace-id' } as WorkspaceEntity;
 
-      jest.spyOn(appTokenRepository, 'createQueryBuilder').mockReturnValue({
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue({}),
-      } as any);
+      jest
+        .spyOn(appTokenRepository, 'findOne')
+        .mockResolvedValue({} as AppTokenEntity);
 
       await expect(
         service.createWorkspaceInvitation(email, workspace),
@@ -250,13 +250,12 @@ describe('WorkspaceInvitationService', () => {
       jest
         .spyOn(onboardingService, 'isOnboardingInviteTeamPending')
         .mockResolvedValue(true);
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: any) =>
-          key === 'ONBOARDING_INVITE_TEAM_MAX_INVITES'
-            ? 10
-            : 'http://localhost:3000',
-        );
+      jest.spyOn(twentyConfigService, 'get').mockImplementation((key: any) => {
+        if (key === 'IS_BILLING_ENABLED') return true;
+        if (key === 'ONBOARDING_INVITE_TEAM_MAX_INVITES') return 10;
+
+        return 'http://localhost:3000';
+      });
       jest.spyOn(appTokenRepository, 'count').mockResolvedValue(0);
       jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
 
@@ -298,7 +297,9 @@ describe('WorkspaceInvitationService', () => {
         .mockResolvedValue(false);
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue('http://localhost:3000');
+        .mockImplementation((key: any) =>
+          key === 'IS_BILLING_ENABLED' ? true : 'http://localhost:3000',
+        );
       jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
 
       await service.sendInvitations(
@@ -316,6 +317,52 @@ describe('WorkspaceInvitationService', () => {
       expect(
         onboardingService.isOnboardingInviteTeamPending,
       ).toHaveBeenCalledWith({ workspaceId: workspace.id });
+    });
+
+    it('should downgrade to a regular invitation when billing is disabled', async () => {
+      const workspace = {
+        id: 'workspace-id',
+        inviteHash: 'invite-hash',
+        displayName: 'Test Workspace',
+      } as WorkspaceEntity;
+      const sender = {
+        userEmail: 'sender@example.com',
+        name: { firstName: 'Sender' },
+        locale: 'en',
+      };
+
+      const createWorkspaceInvitationSpy = jest
+        .spyOn(service, 'createWorkspaceInvitation')
+        .mockResolvedValue({
+          context: { email: 'test1@example.com' },
+          value: 'token-value',
+          type: AppTokenType.InvitationToken,
+        } as AppTokenEntity);
+      jest
+        .spyOn(onboardingService, 'isOnboardingInviteTeamPending')
+        .mockResolvedValue(true);
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: any) =>
+          key === 'IS_BILLING_ENABLED' ? false : 'http://localhost:3000',
+        );
+      const countSpy = jest.spyOn(appTokenRepository, 'count');
+
+      jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
+
+      await service.sendInvitations(
+        ['test1@example.com'],
+        workspace,
+        sender as WorkspaceMemberWorkspaceEntity,
+      );
+
+      expect(createWorkspaceInvitationSpy).toHaveBeenCalledWith(
+        'test1@example.com',
+        workspace,
+        undefined,
+        false,
+      );
+      expect(countSpy).not.toHaveBeenCalled();
     });
   });
 

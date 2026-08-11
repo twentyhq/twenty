@@ -24,6 +24,11 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
        ┌──────────────────────────────────┐
        │ Post-install hook                │  after metadata migration
        └──────────────────────────────────┘
+                          │
+                          ▼  (at uninstall time)
+       ┌──────────────────────────────────┐
+       │ Uninstall hook                   │  before app removal
+       └──────────────────────────────────┘
 ```
 
 ## In this section
@@ -36,7 +41,7 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
     `defineRole` — declare what your app's logic functions can read and write.
   </Card>
   <Card title="Install Hooks" icon="wrench" href="/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back up data, seed defaults, validate upgrades.
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction` — back up data, seed defaults, validate upgrades, clean up on removal.
   </Card>
 </CardGroup>
 
@@ -44,7 +49,7 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
 
 - **Application** is the entry point. Every app has exactly one `defineApplication()` call, and it points at one **Role** as its default.
 - The **Role** controls what the app's logic functions and front components can read and write. Follow least-privilege: only grant the permissions your code actually needs.
-- **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema).
+- **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema). The uninstall hook runs right before the app is removed, so it can clean up external resources while the app's data is still readable.
 
 <Note>
 Install hooks share the [logic function](/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).

@@ -11,14 +11,21 @@ export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
 export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
+export { ApiPath } from './ApiPath';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
+export type { AssertUnreachable } from './AssertUnreachable.type';
 export { CalendarChannelContactAutoCreationPolicy } from './CalendarChannelContactAutoCreationPolicy';
 export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
 export { CalendarChannelVisibility } from './CalendarChannelVisibility';
+export type {
+  CallRecordingTranscriptStatusMarker,
+  CallRecordingParsedTranscriptWord,
+  CallRecordingParsedTranscriptEntry,
+} from './CallRecordingTranscript';
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
@@ -146,6 +153,7 @@ export {
   LOGIC_FUNCTION_HTTP_RESPONSE_MARKER,
   isLogicFunctionHttpResponse,
 } from './LogicFunctionResponse';
+export { MessageCampaignStatus } from './MessageCampaignStatus';
 export { MessageChannelContactAutoCreationPolicy } from './MessageChannelContactAutoCreationPolicy';
 export { MessageChannelPendingGroupEmailsAction } from './MessageChannelPendingGroupEmailsAction';
 export { MessageChannelSyncStage } from './MessageChannelSyncStage';
@@ -162,6 +170,7 @@ export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
+export { ObjectOpenRecordIn } from './ObjectOpenRecordIn';
 export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectRecord } from './ObjectRecord';
 export type {
@@ -176,6 +185,7 @@ export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
+export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {
   ChartRecordFilter,
@@ -205,6 +215,10 @@ export type {
   FilesConfiguration,
   EmailsConfiguration,
   EmailThreadConfiguration,
+  MessageCampaignBodyConfiguration,
+  MessageCampaignDetailsConfiguration,
+  CallRecordingSummaryConfiguration,
+  CallRecordingTranscriptConfiguration,
   CalendarConfiguration,
   WorkflowConfiguration,
   WorkflowVersionConfiguration,

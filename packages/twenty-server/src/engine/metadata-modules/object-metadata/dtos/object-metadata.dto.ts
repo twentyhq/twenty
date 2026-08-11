@@ -1,35 +1,21 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
-
 import {
-  Authorize,
-  CursorConnection,
-  FilterableField,
-  IDField,
-  QueryOptions,
-} from '@ptc-org/nestjs-query-graphql';
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
+
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 
+registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
+
 @ObjectType('Object')
-@Authorize({
-  // oxlint-disable-next-line typescript/no-explicit-any
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  disableSort: true,
-  maxResultsSize: 1000,
-})
-@CursorConnection('fields', () => FieldMetadataDTO)
-@CursorConnection('indexMetadatas', () => IndexMetadataDTO)
 export class ObjectMetadataDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field()
@@ -62,30 +48,33 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   color?: string;
 
-  @FilterableField()
+  @Field()
   isRemote: boolean;
 
-  @FilterableField()
+  @Field()
   isActive: boolean;
 
-  @FilterableField()
+  @Field()
   isSystem: boolean;
 
-  @FilterableField()
+  @Field()
   isUIEditable: boolean;
 
-  @FilterableField()
+  @Field()
   isUICreatable: boolean;
 
-  // Deprecated alias kept for one release: stays filterable so ObjectFilter
-  // keeps its isUIReadOnly member and external API consumers are not broken.
-  @FilterableField({
+  // Deprecated alias kept for one release: stays exposed (and filterable via
+  // ObjectFilter) so external API consumers are not broken.
+  @Field({
     deprecationReason: 'Use isUIEditable',
   })
   isUIReadOnly: boolean;
 
-  @FilterableField()
+  @Field()
   isSearchable: boolean;
+
+  @Field(() => ObjectOpenRecordIn)
+  openRecordIn: ObjectOpenRecordIn;
 
   @HideField()
   workspaceId: string;

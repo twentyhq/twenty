@@ -4,10 +4,12 @@ description: アプリのオブジェクト向けに、列の順序、フィル�
 icon: list
 ---
 
-**ビュー**とは、オブジェクトのレコードをどのように表示するかについての保存された設定です。どのフィールドを表示するか、その順序、表示・非表示、および適用されるフィルターやグループなどを含みます。 `defineView()` を使用して、アプリにあらかじめ設定されたビューを組み込みます。通常は、作成する各カスタムオブジェクトに対してデフォルトのインデックスビューを用意します。
+**ビュー**とは、オブジェクトのレコードをどのように表示するかについての保存された設定です。どのフィールドを表示するか、その順序、表示・非表示、および適用されるフィルターやグループなどを含みます。 `defineView()` を使用して、事前設定済みのビューをアプリに同梱します。
+
+すべてのオブジェクトには、サーバーによってプロビジョニングされるメインのリストビュー（`OBJECT` ナビゲーション項目で開かれる「All ...」テーブル）が自動的に用意されます。これには、アプリが作成するオブジェクトも含まれ、アプリが宣言する各フィールドごとに 1 列が用意されます。 `defineView()` で定義したビューは、そのデフォルトビューに加えて常に**追加の**ビューとして扱われます。
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,23 +34,23 @@ export default defineView({
 ## 主なポイント
 
 * `objectUniversalIdentifier` は、このビューを適用するオブジェクトを指定します。 定義したカスタムオブジェクトでも、Twenty の標準オブジェクトでも可能です。
-* `key: ViewKey.INDEX` は、そのビューがオブジェクトのメイン一覧ビュー（`OBJECT` ナビゲーション項目を開いたときに表示されるビュー）であることを示します。
+* オブジェクトのメインのリストビューはサーバー所有です。`key` は非推奨で無視されるため、マニフェストビューがそれを取得することはできません。 サイドバーから 1 クリックでビューにアクセスできるようにしたい場合は、`VIEW` ナビゲーション項目を追加してください。
 * `fields` は、どの列をどの順序で表示するかを制御します。 各フィールドは `fieldMetadataUniversalIdentifier` を参照します。 `createdAt` などの自動作成システムフィールドの参照方法については、[システムフィールドのターゲット指定](/l/ja/developers/extend/apps/data/system-fields)を参照してください。
 * さらに高度な構成のために、`filters`、`filterGroups`、`sorts`、`groups`、`fieldGroups` も定義できます。
 * 同じオブジェクトに複数のビューがある場合、`position` が表示順を制御します。
 
 ## オプションのプロパティ
 
-| プロパティ                                                                                                       | 値                                                                                  | 説明                                                                                                                     |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `type`                                                                                                      | `ViewType.TABLE` (デフォルト), `ViewType.KANBAN`, `ViewType.CALENDAR`                   | レコードのレイアウト方法。 （`FIELDS_WIDGET`、`TABLE_WIDGET`、`KANBAN_WIDGET`、`CALENDAR_WIDGET` も存在しますが、ページレイアウトウィジェットによって内部的に使用されます。） |
-| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (デフォルト), `ViewVisibility.UNLISTED`                      | ビューがワークスペース全体で一覧表示されるか、ピッカーから非表示にされるか。                                                                                 |
-| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (デフォルト), `ViewOpenRecordIn.RECORD_PAGE`              | レコードをクリックしたときに、どこで開くか。                                                                                                 |
-| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | デフォルトのソート順。                                                                                                            |
-| `isCompact`                                                                                                 | `boolean`                                                                          | 行のコンパクト表示。                                                                                                             |
-| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | レコードをフィールドでグループ化します（例: かんばんのカラム）。                                                                                      |
-| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | かんばんカラムの集計とサイズ設定。                                                                                                      |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | カレンダービュー: レイアウト、レコードの位置を決める日付フィールド、オプションの終了日フィールド。                                                                     |
+| プロパティ                                                                                                       | 値                                                                                  | 説明                                                                                                                                                      |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (デフォルト), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR`  | レコードのレイアウト方法。 （`FIELDS_WIDGET`、`TABLE_WIDGET`、`KANBAN_WIDGET`、`LIST_WIDGET`、`CALENDAR_WIDGET` も存在しますが、ページレイアウトウィジェットによって内部的に使用されます。）                    |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (デフォルト), `ViewVisibility.UNLISTED`                      | ビューがワークスペース全体で一覧表示されるか、ピッカーから非表示にされるか。                                                                                                                  |
+| `openRecordIn`                                                                                              | 非推奨                                                                                | 参照されなくなりました: レコードをどこで開くかは、現在では[object](/l/ja/developers/extend/apps/data/objects)のプロパティ（`defineObject()` の `openRecordIn`）となっており、設定されていない場合は各メンバーの設定が使用されます。 |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | デフォルトのソート順。                                                                                                                                             |
+| `isCompact`                                                                                                 | `boolean`                                                                          | 行のコンパクト表示。                                                                                                                                              |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | レコードをフィールドでグループ化します（例: かんばんのカラム）。                                                                                                                       |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | かんばんカラムの集計とサイズ設定。                                                                                                                                       |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | カレンダービュー: レイアウト、レコードの位置を決める日付フィールド、オプションの終了日フィールド。                                                                                                      |
 
 上記のすべての enum は `twenty-sdk/define` からエクスポートされています。
 
@@ -109,4 +110,4 @@ filters: [
 
 ## ビューが UI にどのように表示されるか
 
-ビュー単体では、サイドバーから直接アクセスすることはできません。 それをサイドバーに表示するには、ビューの `universalIdentifier` を指す、種類が `VIEW` の[ナビゲーションメニュー項目](/l/ja/developers/extend/apps/layout/navigation-menu-items)と組み合わせます。 これが標準的なパターンです。各カスタムオブジェクトは通常、デフォルトビューと、それを開くためのサイドバーエントリをセットで提供します。
+ビュー単体では、サイドバーから直接アクセスすることはできません。 それをサイドバーに表示するには、ビューの `universalIdentifier` を指す、種類が `VIEW` の[ナビゲーションメニュー項目](/l/ja/developers/extend/apps/layout/navigation-menu-items)と組み合わせます。 それが標準的なパターンです。各カスタムオブジェクトには、作成時にデフォルトのインデックスビューが自動生成されるため、それを開くサイドバーエントリだけを用意しておけば十分です。

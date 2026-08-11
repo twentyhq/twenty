@@ -12,6 +12,7 @@ import { aggregateCallRecorderPolicyResultsByMeeting } from 'src/logic-functions
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
+import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import {
   createCallRecording,
   type ScheduledCallRecordingFields,
@@ -473,7 +474,7 @@ const canResetCallRecordingStatusToScheduled = (
   status: string | undefined,
 ): boolean =>
   status === CallRecordingStatus.SCHEDULED ||
-  status === CallRecordingStatus.FAILED;
+  isUnavailableCallRecordingStatus(status);
 
 const buildRemovedCalendarEventIdsByMeetingKey = (
   removedOccurrences: RemovedCallRecorderOccurrence[],

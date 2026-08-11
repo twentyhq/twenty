@@ -90,6 +90,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(typeof totalCount).toBe('number');
     expect(totalCount).toEqual(testPersonIds.length);
     expect(response.body.pageInfo.hasNextPage).toBe(false);
+    expect(response.body.pageInfo.hasPreviousPage).toBe(false);
   });
 
   it('should limit results based on the limit parameter', async () => {
@@ -159,6 +160,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(nextPagePeople).toBeDefined();
     expect(nextPagePeople.length).toBe(1);
     expect(nextPagePeople[0].id).toBe(people[1].id);
+    expect(nextPageResponse.body.pageInfo.hasPreviousPage).toBe(true);
   });
 
   it('should support cursor-based pagination with ending_before', async () => {
@@ -185,6 +187,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(nextPagePeople.length).toBe(2);
     expect(nextPagePeople[0].id).toBe(people[1].id);
     expect(nextPagePeople[1].id).toBe(people[2].id);
+    expect(nextPageResponse.body.pageInfo.hasNextPage).toBe(true);
   });
 
   it('should support ordering Asc of results', async () => {

@@ -75,6 +75,7 @@ const EMPTY_SORT_OPS = {
 const ALLOWED_WIDGET_VIEW_TYPES: ViewType[] = [
   ViewType.TABLE_WIDGET,
   ViewType.KANBAN_WIDGET,
+  ViewType.LIST_WIDGET,
   ViewType.CALENDAR_WIDGET,
 ];
 
@@ -192,13 +193,6 @@ export class ViewWidgetUpsertService {
     };
 
     if (isDefined(input.view)) {
-      if (!isRecordTableWidget) {
-        throw new ViewException(
-          t`View settings can only be updated on record table widgets`,
-          ViewExceptionCode.INVALID_VIEW_DATA,
-        );
-      }
-
       if (
         isDefined(input.view.type) &&
         !ALLOWED_WIDGET_VIEW_TYPES.includes(input.view.type)

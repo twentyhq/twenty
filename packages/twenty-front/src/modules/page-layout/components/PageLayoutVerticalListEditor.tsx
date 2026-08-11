@@ -1,15 +1,17 @@
-import { pointerIntersection } from '@dnd-kit/collision';
-import { useDroppable } from '@dnd-kit/react';
-import { PageLayoutWidgetDropLine } from '@/page-layout/components/dnd/PageLayoutWidgetDropLine';
-import { PageLayoutWidgetSortableItem } from '@/page-layout/components/dnd/PageLayoutWidgetSortableItem';
 import { getPageLayoutVerticalListViewerVariant } from '@/page-layout/components/utils/getPageLayoutVerticalListViewerVariant';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { type PageLayoutVerticalListViewerVariant } from '@/page-layout/types/PageLayoutVerticalListViewerVariant';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetDndData';
+import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDragData';
+import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
+import { PAGE_LAYOUT_WIDGET_DND_TYPE } from '@/page-layout/constants/PageLayoutWidgetDndType';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
+import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { pointerIntersection } from '@dnd-kit/collision';
+import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -32,15 +34,18 @@ const StyledVerticalListContainer = styled.div<{
       : themeCssVariables.spacing[2]};
 `;
 
-// Catches drops below the last widget (append) and drops into an empty tab,
-// where there is no sortable item to target.
-const StyledEndDropZone = styled.div`
+const StyledDropTarget = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   min-height: ${themeCssVariables.spacing[6]};
   position: relative;
+`;
+
+const StyledWidgetSlot = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 type PageLayoutVerticalListEditorProps = {
@@ -67,10 +72,12 @@ export const PageLayoutVerticalListEditor = ({
   const endDropData: PageLayoutWidgetListDropData = {
     type: 'widget-list',
     tabId,
+    itemCount: widgets.length,
   };
 
-  const { ref: endDropRef, isDropTarget: isEndDropTarget } = useDroppable({
+  const { ref: endDropZoneRef } = useDroppable({
     id: `page-layout-widget-list-${tabId}`,
+    accept: PAGE_LAYOUT_WIDGET_DND_TYPE,
     collisionDetector: pointerIntersection,
     data: endDropData,
   });
@@ -80,20 +87,47 @@ export const PageLayoutVerticalListEditor = ({
       variant={variant}
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
-      {widgets.map((widget, index) => (
-        <PageLayoutWidgetSortableItem
-          key={widget.id}
-          widgetId={widget.id}
-          tabId={tabId}
-          index={index}
-        >
-          <WidgetRenderer widget={widget} />
-        </PageLayoutWidgetSortableItem>
-      ))}
-      <StyledEndDropZone ref={endDropRef}>
-        {isEndDropTarget && <PageLayoutWidgetDropLine />}
+      {widgets.map((widget, index) => {
+        const widgetDragData: PageLayoutWidgetDragData = {
+          type: 'widget',
+          widgetId: widget.id,
+          tabId,
+          index,
+        };
+
+        return (
+          <StyledWidgetSlot key={widget.id}>
+            <DragDropItemDropTarget
+              index={index}
+              droppableId={tabId}
+              orientation="horizontal"
+              compact
+            />
+            <DragDropItemSortableCell
+              id={widget.id}
+              index={index}
+              group={tabId}
+              data={widgetDragData}
+              type={PAGE_LAYOUT_WIDGET_DND_TYPE}
+              accept={PAGE_LAYOUT_WIDGET_DND_TYPE}
+              hasTransition={false}
+              highlightWhileDragging={true}
+              orientation="horizontal"
+            >
+              <WidgetRenderer widget={widget} />
+            </DragDropItemSortableCell>
+          </StyledWidgetSlot>
+        );
+      })}
+      <StyledDropTarget ref={endDropZoneRef}>
+        <DragDropItemDropTarget
+          index={widgets.length}
+          droppableId={tabId}
+          orientation="horizontal"
+          compact
+        />
         {trailingElement}
-      </StyledEndDropZone>
+      </StyledDropTarget>
     </StyledVerticalListContainer>
   );
 };

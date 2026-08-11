@@ -317,11 +317,13 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const context = getWorkspaceContext();
 
-    const rolePermissionConfig = resolveRolePermissionConfig({
-      authContext: context.authContext,
-      userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-      apiKeyRoleMap: context.apiKeyRoleMap,
-    });
+    const rolePermissionConfig =
+      queryRunnerContext.rolePermissionConfig ??
+      resolveRolePermissionConfig({
+        authContext: context.authContext,
+        userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+        apiKeyRoleMap: context.apiKeyRoleMap,
+      });
 
     if (!rolePermissionConfig) {
       throw new CommonQueryRunnerException(
@@ -371,6 +373,11 @@ export abstract class CommonBaseQueryRunnerService<
         await this.metricsService.incrementCounterForEvent({
           key: MetricsKeys.CommonApiApplicationQueryRateLimited,
           shouldStoreInCache: false,
+          attributes: {
+            universal_identifier: authContext.application.universalIdentifier,
+            app_name: authContext.application.name,
+            source_type: authContext.application.sourceType,
+          },
         });
       }
 

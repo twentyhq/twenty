@@ -1,16 +1,22 @@
 ---
-title: Sistem Alanlarını Hedefleme
-description: "`createdAt` veya `updatedAt` gibi otomatik oluşturulan sistem alanlarına görünümlerden ve diğer varlıklardan `getFieldUniversalIdentifier` ile referans verin."
+title: Sistem Meta Verilerini Hedefleme
+description: Twenty meta verilerinin deterministik evrensel tanımlayıcılarını her nesnede otomatik olarak çözümleyin; böylece uygulamanız bunlara, değerleri kodun içine gömmek zorunda kalmadan başvurabilir.
 icon: gears
 ---
 
-Twenty içindeki her nesne, kendiniz asla tanımlamadığınız bir dizi **sistem alanı** ile birlikte gelir. Bunlar, nesne sağlandığında sunucu tarafından otomatik olarak oluşturulur:
+Twenty içindeki her nesne, kendi başınıza asla bildirmediğiniz **sistem meta verileriyle** birlikte gelir; bir alan kümesi ve sütunlarıyla birlikte ana liste görünümü gibi. Sunucu, nesne sağlandığında bunların hepsini oluşturur ve Twenty büyüdükçe bu küme de büyür.
+
+Siz bunu bildirmediğiniz için, içe aktarabileceğiniz bir `universalIdentifier` sabiti yoktur. Bunun yerine, sunucu her tanımlayıcıyı deterministik olarak **türetir** ve `twenty-sdk`, bildirim dosyanızın sunucunun kullandığı kesin değeri çözümleyebilmesi için aynı türetmeyi dışa açar.
+
+## Sistem Alanları
+
+Her nesnede bulunan, hiçbirini [`defineField()`](/l/tr/developers/extend/apps/data/extending-objects) ile bildirmediğiniz skaler alanlar:
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-Bu alanları [`defineField()`](/l/tr/developers/extend/apps/data/extending-objects) ile tanımlamadığınız için, içe aktarabileceğiniz bir `universalIdentifier` sabiti yoktur. Peki bir [görünümde](/l/tr/developers/extend/apps/layout/views) `createdAt` alanına sütun olarak nasıl referans verirsiniz?
+Peki bir [görünümde](/l/tr/developers/extend/apps/layout/views) `createdAt` alanına sütun olarak nasıl referans verirsiniz?
 
-## Sorun
+### Sorun
 
 Twenty 2.19'dan beri, bir sistem alanının evrensel tanımlayıcısı, sunucu tarafından üç girdiden **deterministik olarak türetilir**: uygulama evrensel tanımlayıcısı, nesne evrensel tanımlayıcısı ve alan adı. Rastgele bir id uydurup onu hardcode etmek işe yaramaz: sunucudaki hiçbir şeyle eşleşmez ve senkronizasyon, askıda kalan referansı reddeder:
 
@@ -18,7 +24,7 @@ Twenty 2.19'dan beri, bir sistem alanının evrensel tanımlayıcısı, sunucu t
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## Çözüm
+### Çözüm
 
 <Note>
   `getFieldUniversalIdentifier`, `twenty-sdk` 2.21 sürümünden itibaren kullanılabilir.
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 * `objectUniversalIdentifier`, alanın ait olduğu nesnenin tanımlayıcısıdır.
 * `name`, sistem alan adıdır; yukarıda listelenen değerlerden biridir.
 
-## Örnek: bir görünümde createdAt sütunu
+### Örnek: bir görünümde createdAt sütunu
 
 Tipik durum, özel nesnelerinizden birinin görünümüne bir `createdAt` sütunu eklemektir. Alan id'sini çözümleyin ve ona, herhangi bir `fieldMetadataUniversalIdentifier` gibi referans verin:
 
@@ -84,7 +90,7 @@ Aynı çözümlenen id, bir `fieldMetadataUniversalIdentifier` beklendiği her y
   türettiği için, `getFieldUniversalIdentifier` çağrısı, bu girdiler değişse bile referansınızı doğru tutar ve türetme zaman içinde gelişirse sapmayı önler.
 </Note>
 
-## Sistem ilişki alanları
+### Sistem ilişki alanları
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` 2.23 sürümünden itibaren `twenty-sdk` içinde kullanılabilir ve Twenty sunucusunun 2.23 veya daha yeni bir sürümünü gerektirir.
@@ -129,18 +135,64 @@ const attachmentTargetRocketFieldId =
 
 Skaler sistem alanlarında olduğu gibi, çözümlenen kimlik, `fieldMetadataUniversalIdentifier` beklendiği her yerde çalışır.
 
+## Sistem görünümleri
+
+<Note>
+  `getSystemViewUniversalIdentifier` ve `getSystemViewFieldUniversalIdentifier`, `twenty-sdk` 2.26 sürümünden itibaren kullanılabilir ve Twenty sunucusunun 2.26 veya daha yeni bir sürümünü gerektirir.
+</Note>
+
+Sunucu ayrıca her nesnede bir **sistem görünümü** de sağlar: ana liste görünümü (`All {objectLabelPlural}`, `ViewKey.INDEX` anahtarıyla), gösterilebilir her alan için bir sütunla. Sistem ilişki alanlarında olduğu gibi, tanımlayıcıları **isimden bağımsız** olarak türetilir; bu nedenle bir nesnenin veya alanın adını değiştirmeniz onları asla değiştirmez.
+
+Görünümü çözümlemek için `getSystemViewUniversalIdentifier` kullanın:
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier`, görünümün ad alanını belirleyen, **nesneye** sahip olan uygulamadır.
+* `objectUniversalIdentifier`, görünümün listelediği nesnedir.
+* `viewKey`, bugün için `ViewKey.INDEX` olan sistem görünüm anahtarıdır.
+
+Çözümlenen kimlik, bir `viewUniversalIdentifier` beklendiği her yerde, örneğin bir [`NavigationMenuItemType.VIEW`](/l/tr/developers/extend/apps/layout/navigation-menu-items) kenar çubuğu girdisinde çalışır. Sadece bir nesnenin ana listesini açmak için, `targetObjectUniversalIdentifier` ile `NavigationMenuItemType.OBJECT` kullanmayı tercih edin: hiçbir türetmeye ihtiyaç duymaz.
+
+`getSystemViewFieldUniversalIdentifier`, bir sistem görünümündeki tek bir **sütunu**, görünümden ve görüntülediği alandan yola çıkarak çözümler:
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+İlk argümana dikkat edin: bir sütun, **görüntülediği alana** sahip olan uygulamanın ad alanındadır, görünüme sahip olanın değil. Uygulamanızın standart bir nesneye eklediği bir alan, Twenty'ye ait bir görünüm üzerinde, kendi uygulamanız altında türetilen bir sütun alır.
+
+<Warning>
+  Sistem görünümleri ve sütunları **sunucuya aittir**: bunları bildirmek için değil, yalnızca onlara başvurmak için tanımlayıcılarını çözümleyin. [`defineView()`](/l/tr/developers/extend/apps/layout/views) üzerindeki
+  `key` kullanımdan kaldırılmıştır ve yok sayılır; bu nedenle bir bildirim görünümü asla `INDEX` anahtarını talep edemez ve sunucu, eklediğiniz her alan için zaten bir sütun sağlar; bu yüzden bir sistem görünümünde aynı alan için kendi `defineViewField()` bildiriminizi yapmak bununla çelişir.
+</Warning>
+
 ## Standart Twenty nesneleri
 
-**Standart** bir Twenty nesnesi (Person, Company, Opportunity, …) için hiçbir şey türetmeniz gerekmez: sistem alanı tanımlayıcıları, doğrudan içe aktarabileceğiniz önceden hesaplanmış sabitlerdir.
+**Standart** bir Twenty nesnesi (Person, Company, Opportunity, …) için hiçbir şey türetmeniz gerekmez: hem alanlar hem de görünümler için, doğrudan içe aktarabileceğiniz önceden hesaplanmış sabit tanımlayıcılar vardır.
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-[`defineObject()`](/l/tr/developers/extend/apps/data/objects) ile **uygulamanızın** tanımladığı, böyle bir sabitin olmadığı nesnelerde `getFieldUniversalIdentifier` yöntemine başvurun.
+Yukarıdaki yardımcı işlevlere, [`defineObject()`](/l/tr/developers/extend/apps/data/objects) ile **uygulamanızın** tanımladığı ve böyle bir sabitin bulunmadığı nesneler için başvurun.
 
 <Note>
   `name`, bir sistem alanı değil, bir **varsayılan** alandır. Kendi hardcode edilmiş

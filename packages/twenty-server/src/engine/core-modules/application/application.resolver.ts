@@ -1,10 +1,12 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
 
+import { ApiPath } from 'twenty-shared/types';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
@@ -21,6 +23,7 @@ export class ApplicationResolver {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationStopService: ApplicationStopService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -46,6 +49,19 @@ export class ApplicationResolver {
     };
   }
 
+  // Surfaces the kill switch so clients can warn users that the app is
+  // temporarily stopped and behaving in a degraded way. Kept as a dedicated
+  // query so listing applications does not trigger one Redis read per app.
+  @Query(() => Boolean)
+  async isApplicationStopped(
+    @Args('applicationUniversalIdentifier')
+    applicationUniversalIdentifier: string,
+  ): Promise<boolean> {
+    return this.applicationStopService.isApplicationStopped(
+      applicationUniversalIdentifier,
+    );
+  }
+
   // Resolves the display url of the logo bundled in the installed
   // application's public assets, so clients never build file urls themselves.
   @ResolveField(() => String, { nullable: true })
@@ -65,6 +81,6 @@ export class ApplicationResolver {
 
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
-    return `${serverUrl}/public-assets/${workspace.id}/${application.id}/${logo}`;
+    return `${serverUrl}/${ApiPath.PublicAssets}/${workspace.id}/${application.id}/${logo}`;
   }
 }

@@ -17,16 +17,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 
-import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
-import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
-import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
-import {
-  paginateByIdCursor,
-  type RestCursorPageInfo,
-} from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
+import { paginateByIdCursor } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -37,9 +32,9 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
-import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
+import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -60,7 +55,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
-@Controller('rest/metadata/objects')
+@Controller(`${ApiPath.Rest}/metadata/objects`)
 @UseGuards(
   JwtAuthGuard,
   WorkspaceAuthGuard,
@@ -70,6 +65,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   PermissionsRestApiExceptionFilter,
   ObjectMetadataRestApiExceptionFilter,
   ApplicationRestApiExceptionFilter,
+  FlatEntityMapsRestApiExceptionFilter,
 )
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {
@@ -80,19 +76,8 @@ export class ObjectMetadataController {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
   ) {}
-
-  private async loadUniqueFieldMetadataIds(
-    workspaceId: string,
-  ): Promise<ReadonlySet<string>> {
-    const { flatIndexMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatIndexMaps'] },
-      );
-
-    return computeUniqueFieldMetadataIdsFromFlatIndexMaps(flatIndexMaps);
-  }
 
   @Get()
   async findMany(
@@ -102,9 +87,7 @@ export class ObjectMetadataController {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.objectMetadataRepository,
       workspaceId,
-      limit: parseLimitRestRequest(request),
-      startingAfter: parseStartingAfterRestRequest(request),
-      endingBefore: parseEndingBeforeRestRequest(request),
+      request,
     });
 
     const [fields, uniqueFieldMetadataIds] = await Promise.all([
@@ -112,7 +95,7 @@ export class ObjectMetadataController {
         workspaceId,
         items.map((object) => object.id),
       ),
-      this.loadUniqueFieldMetadataIds(workspaceId),
+      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const data = items.map((object) =>
@@ -154,7 +137,7 @@ export class ObjectMetadataController {
       this.fieldMetadataRepository.find({
         where: { objectMetadataId: object.id, workspaceId },
       }),
-      this.loadUniqueFieldMetadataIds(workspaceId),
+      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const result = this.toObjectWithFieldsDto(
@@ -182,7 +165,7 @@ export class ObjectMetadataController {
       this.fieldMetadataRepository.find({
         where: { objectMetadataId: flatObject.id, workspaceId },
       }),
-      this.loadUniqueFieldMetadataIds(workspaceId),
+      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
@@ -253,7 +236,7 @@ export class ObjectMetadataController {
       this.fieldMetadataRepository.find({
         where: { objectMetadataId: flatObject.id, workspaceId },
       }),
-      this.loadUniqueFieldMetadataIds(workspaceId),
+      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const result: ObjectMetadataWithFieldsDTO = {

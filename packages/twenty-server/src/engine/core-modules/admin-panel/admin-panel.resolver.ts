@@ -17,6 +17,7 @@ import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/adm
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
+import { PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
 import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
@@ -35,12 +36,16 @@ import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-p
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
+import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
+import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
 import { JobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
 import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel/services/admin-panel-signing-key.service';
 import { AdminPanelServerAdminService } from 'src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service';
@@ -59,14 +64,6 @@ import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/applica
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
 import { PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
-import {
-  BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
-  type BackfillApplicationInstallationJobData,
-} from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
-import {
-  UPGRADE_APPLICATIONS_JOB_NAME,
-  type UpgradeApplicationsJobData,
-} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -132,6 +129,7 @@ export class AdminPanelResolver {
     private readonly adminStatisticsService: AdminPanelStatisticsService,
     private readonly adminBillingService: AdminPanelBillingService,
     private readonly adminChatService: AdminPanelChatService,
+    private readonly adminGlobalChatThreadsService: AdminPanelGlobalChatThreadsService,
     private readonly adminConfigService: AdminPanelConfigService,
     private readonly adminVersionService: AdminPanelVersionService,
     private readonly adminPanelHealthService: AdminPanelHealthService,
@@ -153,8 +151,6 @@ export class AdminPanelResolver {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly cronQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
   @UseGuards(AdminPanelOrImpersonateGuard)
@@ -536,59 +532,6 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async backfillApplicationInstallation(
-    @Args('applicationRegistrationId') applicationRegistrationId: string,
-  ): Promise<boolean> {
-    const registration =
-      await this.applicationRegistrationService.findOneByIdGlobal(
-        applicationRegistrationId,
-      );
-
-    if (!registration.isPreInstalled) {
-      throw new UserInputError(
-        'Only pre-installed apps can be backfilled. Enable pre-install first.',
-      );
-    }
-
-    await this.workspaceQueueService.add<BackfillApplicationInstallationJobData>(
-      BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
-      { applicationRegistrationId },
-      {
-        id: `${BACKFILL_APPLICATION_INSTALLATION_JOB_NAME}-${applicationRegistrationId}`,
-      }, // Avoids triggering multiple pending jobs for the same app
-    );
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async upgradeRegistrationApplications(
-    @Args('applicationRegistrationId') applicationRegistrationId: string,
-    @Args('batchSize', { type: () => Int, nullable: true })
-    batchSize?: number,
-  ): Promise<boolean> {
-    await this.applicationRegistrationService.findOneByIdGlobal(
-      applicationRegistrationId,
-    );
-
-    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
-      UPGRADE_APPLICATIONS_JOB_NAME,
-      {
-        applicationRegistrationId,
-        onlyAutoUpgrade: false,
-        ...(isDefined(batchSize) ? { batchSize } : {}),
-      },
-      {
-        id: `${UPGRADE_APPLICATIONS_JOB_NAME}-${applicationRegistrationId}`,
-      }, // Avoids triggering multiple pending jobs for the same app
-    );
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
   @Query(() => GraphQLJSON)
   async getAiProviders(): Promise<Record<string, unknown>> {
     const providers =
@@ -858,6 +801,58 @@ export class AdminPanelResolver {
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
   ): Promise<AdminChatThreadMessagesDTO> {
     return this.adminChatService.getChatThreadMessages(threadId);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => PaginatedAdminChatThreadsDTO)
+  async getAdminChatThreads(
+    @Args('scope', {
+      type: () => AdminChatThreadScope,
+      nullable: true,
+      defaultValue: AdminChatThreadScope.ALL,
+    })
+    scope: AdminChatThreadScope | null,
+    @Args('hasErrorOnly', {
+      type: () => Boolean,
+      nullable: true,
+      defaultValue: false,
+    })
+    hasErrorOnly: boolean | null,
+    @Args('userNeverEngagedOnly', {
+      type: () => Boolean,
+      nullable: true,
+      defaultValue: false,
+    })
+    userNeverEngagedOnly: boolean | null,
+    @Args('sortBy', {
+      type: () => AdminChatThreadSortField,
+      nullable: true,
+      defaultValue: AdminChatThreadSortField.CREATED_AT,
+    })
+    sortBy: AdminChatThreadSortField | null,
+    @Args('sortDirection', {
+      type: () => AdminChatThreadSortDirection,
+      nullable: true,
+      defaultValue: AdminChatThreadSortDirection.DESC,
+    })
+    sortDirection: AdminChatThreadSortDirection | null,
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 25 })
+    limit: number | null,
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
+    offset: number | null,
+    @Args('searchTerm', { type: () => String, nullable: true })
+    searchTerm?: string | null,
+  ): Promise<PaginatedAdminChatThreadsDTO> {
+    return this.adminGlobalChatThreadsService.getGlobalChatThreads({
+      scope: scope ?? AdminChatThreadScope.ALL,
+      hasErrorOnly: hasErrorOnly ?? false,
+      userNeverEngagedOnly: userNeverEngagedOnly ?? false,
+      searchTerm: searchTerm ?? undefined,
+      sortBy: sortBy ?? AdminChatThreadSortField.CREATED_AT,
+      sortDirection: sortDirection ?? AdminChatThreadSortDirection.DESC,
+      limit: limit ?? 25,
+      offset: offset ?? 0,
+    });
   }
 
   @UseGuards(AdminPanelGuard)

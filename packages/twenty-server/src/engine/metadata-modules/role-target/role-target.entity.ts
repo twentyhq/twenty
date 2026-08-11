@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -49,6 +50,13 @@ export class RoleTargetEntity extends SyncableEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   agentId: string | null;
+
+  @ManyToOne(() => AgentEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'agentId' })
+  agent: Relation<AgentEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   apiKeyId: string | null;

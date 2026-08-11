@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
@@ -70,6 +70,22 @@ export class UserWorkspaceService {
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
     return this.userWorkspaceRepository.findOne({ where: { id } });
+  }
+
+  async isWorkspaceCreator({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId },
+      order: { createdAt: 'ASC' },
+      withDeleted: true,
+    });
+
+    return earliestUserWorkspace?.userId === userId;
   }
 
   async updateUserWorkspaceLocaleForUserWorkspace({
@@ -172,6 +188,7 @@ export class UserWorkspaceService {
           lastName: user.lastName,
         },
         colorScheme: 'System',
+        openRecordIn: OpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,
         avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
@@ -418,6 +435,24 @@ export class UserWorkspaceService {
     };
   }
 
+  async getUserWorkspaceForUser({
+    userId,
+    workspaceId,
+    relations = ['twoFactorAuthenticationMethods'],
+  }: {
+    userId: string;
+    workspaceId: string;
+    relations?: string[];
+  }): Promise<UserWorkspaceEntity | null> {
+    return this.userWorkspaceRepository.findOne({
+      where: {
+        userId,
+        workspaceId,
+      },
+      relations,
+    });
+  }
+
   async getUserWorkspaceForUserOrThrow({
     userId,
     workspaceId,
@@ -427,11 +462,9 @@ export class UserWorkspaceService {
     workspaceId: string;
     relations?: string[];
   }): Promise<UserWorkspaceEntity> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: {
-        userId,
-        workspaceId,
-      },
+    const userWorkspace = await this.getUserWorkspaceForUser({
+      userId,
+      workspaceId,
       relations,
     });
 
@@ -442,13 +475,13 @@ export class UserWorkspaceService {
     return userWorkspace;
   }
 
-  async getWorkspaceMemberOrThrow({
+  async getWorkspaceMember({
     workspaceMemberId,
     workspaceId,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
-  }): Promise<WorkspaceMemberWorkspaceEntity> {
+  }): Promise<WorkspaceMemberWorkspaceEntity | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -460,20 +493,33 @@ export class UserWorkspaceService {
             { shouldBypassPermissionChecks: true },
           );
 
-        const workspaceMember = await workspaceMemberRepository.findOne({
+        return workspaceMemberRepository.findOne({
           where: {
             id: workspaceMemberId,
           },
         });
-
-        if (!isDefined(workspaceMember)) {
-          throw new Error('Workspace member not found');
-        }
-
-        return workspaceMember;
       },
       authContext,
     );
+  }
+
+  async getWorkspaceMemberOrThrow({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<WorkspaceMemberWorkspaceEntity> {
+    const workspaceMember = await this.getWorkspaceMember({
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    if (!isDefined(workspaceMember)) {
+      throw new Error('Workspace member not found');
+    }
+
+    return workspaceMember;
   }
 
   private async computeDefaultAvatarUrl(
@@ -613,6 +659,7 @@ export class UserWorkspaceService {
     },
     user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
+    canAutoLoginIntoWorkspaces = true,
   ) {
     const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
       await Promise.all([
@@ -631,18 +678,17 @@ export class UserWorkspaceService {
             async ({ workspace }) => {
               return {
                 ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
-                loginToken: workspaceValidator.isAuthEnabled(
-                  authProvider,
-                  workspace,
-                )
-                  ? (
-                      await this.loginTokenService.generateLoginToken(
-                        user.email,
-                        workspace.id,
-                        AuthProviderEnum.Password,
-                      )
-                    ).token
-                  : undefined,
+                loginToken:
+                  canAutoLoginIntoWorkspaces &&
+                  workspaceValidator.isAuthEnabled(authProvider, workspace)
+                    ? (
+                        await this.loginTokenService.generateLoginToken(
+                          user.email,
+                          workspace.id,
+                          AuthProviderEnum.Password,
+                        )
+                      ).token
+                    : undefined,
               };
             },
           ),
