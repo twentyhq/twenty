@@ -2,8 +2,8 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { findSlackAssistantRequestCreatedBy } from 'src/logic-functions/data/find-slack-assistant-request-created-by';
+import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
-import { findSlackMessage } from 'src/logic-functions/utils/find-slack-message';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { normalizeSlackRequestText } from 'src/logic-functions/utils/normalize-slack-request-text';
 import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
@@ -11,40 +11,29 @@ import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/re
 
 const APPLICATION_ACTOR_SOURCE = 'APPLICATION';
 
-// Any created slackAssistantRequest wakes the worker, including one written by
-// hand, whose slackUserId and requestText are whatever the author typed. Acting
-// as the named member on the strength of the record alone would let anyone able
-// to create one borrow a colleague's identity, so the record has to survive
-// three checks before run-as applies, and a record that fails any of them still
-// gets an answer, just with the agent role.
-//
-// The actor stops the ordinary path: a record written through the UI carries the
-// author's own workspace member. It is not sufficient on its own, because a
-// caller who supplies `createdBy` wholesale can name the application.
-//
-// Slack settles the rest, and cannot be talked into lying: the referenced
-// message must exist, must have been posted by the named user, and must still
-// say what the request claims it said. Without the text check, someone could
-// pair a colleague's real message coordinates with an instruction of their own
-// and have the agent run it as that colleague.
+// Any created slackAssistantRequest wakes the worker, and a caller supplying
+// `createdBy` wholesale can name the application, so the record alone never
+// earns a run-as. Slack settles it: the referenced message must exist, be the
+// named user's, and still say what the request claims it said. A record failing
+// any of this still gets an answer, just with the agent role.
 export const resolveSlackRunAsForRequest = async ({
   client,
   identity,
   requestId,
   requestText,
-  slackChannelId,
-  parentMessageTimestamp,
-  slackMessageTimestamp,
+  requestMessage,
 }: {
   client: CoreApiClient;
   identity: SlackUserIdentity | undefined;
   requestId: string;
   requestText: string;
-  slackChannelId: string;
-  parentMessageTimestamp: string;
-  slackMessageTimestamp: string;
+  requestMessage: SlackThreadMessage | undefined;
 }): Promise<string | undefined> => {
-  if (!isDefined(identity)) {
+  if (
+    !isDefined(identity) ||
+    !isDefined(requestMessage) ||
+    requestMessage.user !== identity.slackUserId
+  ) {
     return undefined;
   }
 
@@ -61,44 +50,27 @@ export const resolveSlackRunAsForRequest = async ({
     return undefined;
   }
 
+  const botUserId = await resolveSlackBotUserIdOrThrow().catch(() => undefined);
+
+  // The enqueue path only strips the bot mention when the event named the bot,
+  // so a DM can keep it in the stored text. Stripping both sides makes the two
+  // readings compare equal without letting the text say anything new.
+  const normalize = (text: string) =>
+    normalizeSlackRequestText({ text, botUserId });
+
+  if (normalize(requestMessage.text ?? '') !== normalize(requestText)) {
+    return undefined;
+  }
+
   const slackClientResult = await getSlackClient();
 
   if (!slackClientResult.success) {
     return undefined;
   }
 
-  const { client: slackClient } = slackClientResult;
-
-  const message = await findSlackMessage({
-    client: slackClient,
-    slackChannelId,
-    parentMessageTimestamp,
-    messageTimestamp: slackMessageTimestamp,
-  });
-
-  if (!isDefined(message) || message.user !== identity.slackUserId) {
-    return undefined;
-  }
-
-  const botUserId = await resolveSlackBotUserIdOrThrow().catch(() => undefined);
-  const messageText = message.text ?? '';
-
-  // The enqueue path only strips the bot mention when the event told it who the
-  // bot is, so a DM or thread follow-up opening with a mention can keep it in
-  // the stored text. Both readings of the same message are accepted; neither
-  // lets the text say anything the member did not write.
-  const matchesMessage = [
-    normalizeSlackRequestText({ text: messageText, botUserId }),
-    normalizeSlackRequestText({ text: messageText, botUserId: undefined }),
-  ].includes(requestText);
-
-  if (!matchesMessage) {
-    return undefined;
-  }
-
   return await resolveSlackRunAsWorkspaceMemberId({
     client,
-    slackClient,
+    slackClient: slackClientResult.client,
     identity,
   });
 };

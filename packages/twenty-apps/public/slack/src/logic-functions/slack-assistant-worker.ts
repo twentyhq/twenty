@@ -65,7 +65,9 @@ export const slackAssistantWorkerHandler = async (
 
   const isDirectMessage = record.slackChannelType === 'im';
 
-  const isThreadStartingMessage = !isNonEmptyString(record.slackThreadTimestamp);
+  const isThreadStartingMessage = !isNonEmptyString(
+    record.slackThreadTimestamp,
+  );
 
   const parentMessageTimestamp = getSlackAssistantParentMessageTimestamp({
     slackThreadTimestamp: record.slackThreadTimestamp,
@@ -81,14 +83,14 @@ export const slackAssistantWorkerHandler = async (
 
   try {
     const [
-      { conversationContext, requesterName, requesterIdentity },
+      { conversationContext, requesterName, requesterIdentity, requestMessage },
       workspaceBaseUrl,
     ] = await Promise.all([
       fetchSlackAssistantContext({
         slackChannelId,
         parentMessageTimestamp,
+        slackMessageTimestamp,
         slackUserId: record.slackUserId,
-        excludeMessageTimestamps: [slackMessageTimestamp],
       }),
       fetchWorkspaceBaseUrl(),
     ]);
@@ -98,9 +100,7 @@ export const slackAssistantWorkerHandler = async (
       identity: requesterIdentity,
       requestId: record.id,
       requestText,
-      slackChannelId,
-      parentMessageTimestamp,
-      slackMessageTimestamp,
+      requestMessage,
     });
 
     if (isNonEmptyString(runAsWorkspaceMemberId)) {

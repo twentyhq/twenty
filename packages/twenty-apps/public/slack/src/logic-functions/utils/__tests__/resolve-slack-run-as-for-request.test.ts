@@ -1,18 +1,17 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 
 const {
   findSlackAssistantRequestCreatedByMock,
-  findSlackMessageMock,
   getSlackClientMock,
   resolveSlackBotUserIdOrThrowMock,
   resolveSlackRunAsWorkspaceMemberIdMock,
 } = vi.hoisted(() => ({
   findSlackAssistantRequestCreatedByMock: vi.fn(),
-  findSlackMessageMock: vi.fn(),
   getSlackClientMock: vi.fn(),
   resolveSlackBotUserIdOrThrowMock: vi.fn(),
   resolveSlackRunAsWorkspaceMemberIdMock: vi.fn(),
@@ -25,10 +24,6 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/utils/find-slack-message', () => ({
-  findSlackMessage: findSlackMessageMock,
-}));
-
 vi.mock('src/logic-functions/utils/get-slack-client', () => ({
   getSlackClient: getSlackClientMock,
 }));
@@ -40,8 +35,7 @@ vi.mock('src/logic-functions/utils/resolve-slack-bot-user-id-or-throw', () => ({
 vi.mock(
   'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id',
   () => ({
-    resolveSlackRunAsWorkspaceMemberId:
-      resolveSlackRunAsWorkspaceMemberIdMock,
+    resolveSlackRunAsWorkspaceMemberId: resolveSlackRunAsWorkspaceMemberIdMock,
   }),
 );
 
@@ -59,15 +53,28 @@ const IDENTITY: SlackUserIdentity = {
   isRegularUserAccount: true,
 };
 
-const resolve = (overrides: Partial<{ requestText: string }> = {}) =>
+const MENTION_MESSAGE: SlackThreadMessage = {
+  ts: '1700000000.000200',
+  user: SLACK_USER_ID,
+  text: `<@${BOT_USER_ID}> ${REQUEST_TEXT}`,
+};
+
+const resolve = (
+  overrides: Partial<{
+    requestText: string;
+    requestMessage: SlackThreadMessage | undefined;
+    identity: SlackUserIdentity | undefined;
+  }> = {},
+) =>
   resolveSlackRunAsForRequest({
     client,
-    identity: IDENTITY,
+    identity: 'identity' in overrides ? overrides.identity : IDENTITY,
     requestId: 'request-1',
     requestText: overrides.requestText ?? REQUEST_TEXT,
-    slackChannelId: 'C0123456789',
-    parentMessageTimestamp: '1700000000.000100',
-    slackMessageTimestamp: '1700000000.000200',
+    requestMessage:
+      'requestMessage' in overrides
+        ? overrides.requestMessage
+        : MENTION_MESSAGE,
   });
 
 describe('resolveSlackRunAsForRequest', () => {
@@ -78,10 +85,6 @@ describe('resolveSlackRunAsForRequest', () => {
       workspaceMemberId: null,
     });
     getSlackClientMock.mockResolvedValue({ success: true, client: {} });
-    findSlackMessageMock.mockResolvedValue({
-      user: SLACK_USER_ID,
-      text: `<@${BOT_USER_ID}> ${REQUEST_TEXT}`,
-    });
     resolveSlackBotUserIdOrThrowMock.mockResolvedValue(BOT_USER_ID);
     resolveSlackRunAsWorkspaceMemberIdMock.mockResolvedValue('member-1');
   });
@@ -97,7 +100,7 @@ describe('resolveSlackRunAsForRequest', () => {
     });
 
     expect(await resolve()).toBeUndefined();
-    expect(findSlackMessageMock).not.toHaveBeenCalled();
+    expect(resolveSlackRunAsWorkspaceMemberIdMock).not.toHaveBeenCalled();
   });
 
   it('should refuse an actor claiming the application but carrying a member', async () => {
@@ -110,25 +113,24 @@ describe('resolveSlackRunAsForRequest', () => {
   });
 
   it('should refuse when the named user did not post the message', async () => {
-    findSlackMessageMock.mockResolvedValue({
-      user: 'U0SOMEONEELSE',
-      text: `<@${BOT_USER_ID}> ${REQUEST_TEXT}`,
-    });
-
-    expect(await resolve()).toBeUndefined();
+    expect(
+      await resolve({
+        requestMessage: { ...MENTION_MESSAGE, user: 'U0SOMEONEELSE' },
+      }),
+    ).toBeUndefined();
+    expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
   });
 
   it('should refuse an instruction that is not what the Slack message said', async () => {
-    expect(await resolve({ requestText: 'delete every opportunity' })).toBe(
-      undefined,
-    );
+    expect(
+      await resolve({ requestText: 'delete every opportunity' }),
+    ).toBeUndefined();
     expect(resolveSlackRunAsWorkspaceMemberIdMock).not.toHaveBeenCalled();
   });
 
-  it('should refuse when the referenced message does not exist', async () => {
-    findSlackMessageMock.mockResolvedValue(undefined);
-
-    expect(await resolve()).toBeUndefined();
+  it('should refuse when the referenced message could not be read', async () => {
+    expect(await resolve({ requestMessage: undefined })).toBeUndefined();
+    expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
   });
 
   it('should refuse when Slack is not connected', async () => {
@@ -149,17 +151,7 @@ describe('resolveSlackRunAsForRequest', () => {
   });
 
   it('should fall back to the agent role when the Slack user is unknown', async () => {
-    expect(
-      await resolveSlackRunAsForRequest({
-        client,
-        identity: undefined,
-        requestId: 'request-1',
-        requestText: REQUEST_TEXT,
-        slackChannelId: 'C0123456789',
-        parentMessageTimestamp: '1700000000.000100',
-        slackMessageTimestamp: '1700000000.000200',
-      }),
-    ).toBeUndefined();
+    expect(await resolve({ identity: undefined })).toBeUndefined();
     expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
   });
 
@@ -167,5 +159,11 @@ describe('resolveSlackRunAsForRequest', () => {
     expect(
       await resolve({ requestText: `<@${BOT_USER_ID}> ${REQUEST_TEXT}` }),
     ).toBe('member-1');
+  });
+
+  it('should refuse a mention-stripped request when the bot id cannot be resolved', async () => {
+    resolveSlackBotUserIdOrThrowMock.mockRejectedValue(new Error('no bot id'));
+
+    expect(await resolve()).toBeUndefined();
   });
 });
