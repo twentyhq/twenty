@@ -7,6 +7,7 @@ import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claimed-workspace-id.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { hasCallRecordingWithRecallBotMarker } from 'src/logic-functions/data/has-call-recording-with-recall-bot-marker.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import {
@@ -18,6 +19,7 @@ export type CleanupOrphanedRecallBotsResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
   truncatedBotList: boolean;
+  skippedNoBotMarkers: boolean;
 };
 
 // Bots no open CallRecording request claims would still join; cancel them on Recall.
@@ -41,6 +43,16 @@ export const cleanupOrphanedRecallBots = async ({
       scannedBotCount: 0,
       canceledExternalBotIds: [],
       truncatedBotList: false,
+      skippedNoBotMarkers: false,
+    };
+  }
+
+  if (!(await hasCallRecordingWithRecallBotMarker(client))) {
+    return {
+      scannedBotCount: 0,
+      canceledExternalBotIds: [],
+      truncatedBotList: false,
+      skippedNoBotMarkers: true,
     };
   }
 
@@ -60,6 +72,7 @@ export const cleanupOrphanedRecallBots = async ({
       scannedBotCount: 0,
       canceledExternalBotIds: [],
       truncatedBotList: false,
+      skippedNoBotMarkers: false,
     };
   }
 
@@ -72,6 +85,7 @@ export const cleanupOrphanedRecallBots = async ({
       scannedBotCount: listResult.bots.length,
       canceledExternalBotIds: [],
       truncatedBotList: listResult.truncated,
+      skippedNoBotMarkers: false,
     };
   }
 
@@ -109,6 +123,7 @@ export const cleanupOrphanedRecallBots = async ({
     scannedBotCount: listResult.bots.length,
     canceledExternalBotIds,
     truncatedBotList: listResult.truncated,
+    skippedNoBotMarkers: false,
   };
 };
 

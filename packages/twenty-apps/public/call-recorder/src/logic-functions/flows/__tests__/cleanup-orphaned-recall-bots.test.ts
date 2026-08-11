@@ -21,26 +21,60 @@ type CallRecordingNode = {
   id: string;
   recordingRequestStatus?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptedAt?: string | null;
+  deletedAt?: string | null;
 };
+
+const isPresent = (value: string | null | undefined): value is string =>
+  value !== null && value !== undefined;
 
 class FakeCoreApiClient {
   constructor(private callRecordings: CallRecordingNode[]) {}
 
   async query(query: any): Promise<any> {
-    const callRecordingIds = query.callRecordings.__args.filter.id.in;
+    const filter = query.callRecordings.__args.filter;
 
+    if (filter.and !== undefined) {
+      return this.queryBotMarkerPage();
+    }
+
+    return this.queryAliveByIdsPage(filter.id.in);
+  }
+
+  private queryBotMarkerPage() {
+    const markedCallRecordings = this.callRecordings.filter(
+      (callRecording) =>
+        isPresent(callRecording.botScheduleAttemptedAt) ||
+        isPresent(callRecording.externalBotId),
+    );
+
+    return {
+      callRecordings: {
+        edges: markedCallRecordings.slice(0, 1).map((node) => ({ node })),
+      },
+    };
+  }
+
+  private queryAliveByIdsPage(callRecordingIds: string[]) {
     return {
       callRecordings: {
         pageInfo: { hasNextPage: false, endCursor: undefined },
         edges: this.callRecordings
-          .filter((callRecording) =>
-            callRecordingIds.includes(callRecording.id),
+          .filter(
+            (callRecording) =>
+              !isPresent(callRecording.deletedAt) &&
+              callRecordingIds.includes(callRecording.id),
           )
           .map((node) => ({ node })),
       },
     };
   }
 }
+
+const BOT_MARKED_CALL_RECORDING: CallRecordingNode = {
+  id: 'bot-marked-call-recording',
+  botScheduleAttemptedAt: '2026-01-01T07:00:00.000Z',
+};
 
 const buildClient = (callRecordings: CallRecordingNode[]): CoreApiClient =>
   new FakeCoreApiClient(callRecordings) as unknown as CoreApiClient;
@@ -167,6 +201,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: [],
+      skippedNoBotMarkers: false,
     });
     expect(getDeleteCalls()).toHaveLength(0);
   });
@@ -175,7 +210,7 @@ describe('cleanupOrphanedRecallBots', () => {
     stubRecallApi({ bots: [] });
 
     await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -215,6 +250,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: ['stale-cancel-bot'],
+      skippedNoBotMarkers: false,
     });
     expect(fetchMock).toHaveBeenCalledWith(
       `${BASE_URL}/bot/stale-cancel-bot/`,
@@ -252,6 +288,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 2,
       truncatedBotList: false,
       canceledExternalBotIds: ['superseded-bot'],
+      skippedNoBotMarkers: false,
     });
     expect(getDeleteCalls()).toHaveLength(1);
     expect(fetchMock).toHaveBeenCalledWith(
@@ -260,7 +297,7 @@ describe('cleanupOrphanedRecallBots', () => {
     );
   });
 
-  it('cancels bots whose call recording no longer exists', async () => {
+  it('cancels bots whose call recording was deleted', async () => {
     stubRecallApi({
       bots: [
         buildCurrentWorkspaceBot({
@@ -271,7 +308,13 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     const result = await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([
+        {
+          id: 'call-recording-gone',
+          externalBotId: 'orphan-bot',
+          deletedAt: '2026-01-01T10:00:00.000Z',
+        },
+      ]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -280,6 +323,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: ['orphan-bot'],
+      skippedNoBotMarkers: false,
     });
   });
 
@@ -299,6 +343,7 @@ describe('cleanupOrphanedRecallBots', () => {
           id: 'call-recording-1',
           recordingRequestStatus: 'REQUESTED',
           externalBotId: null,
+          botScheduleAttemptedAt: '2026-01-01T09:00:00.000Z',
         },
       ]),
       joinAtAfter: JOIN_AT_AFTER,
@@ -309,6 +354,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: [],
+      skippedNoBotMarkers: false,
     });
     expect(getDeleteCalls()).toHaveLength(0);
   });
@@ -317,7 +363,7 @@ describe('cleanupOrphanedRecallBots', () => {
     stubRecallApi({ bots: [buildBot({ id: 'unrelated-bot' })] });
 
     const result = await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -326,6 +372,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: [],
+      skippedNoBotMarkers: false,
     });
     expect(getDeleteCalls()).toHaveLength(0);
   });
@@ -341,7 +388,7 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     const result = await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -350,6 +397,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: [],
+      skippedNoBotMarkers: false,
     });
     expect(getDeleteCalls()).toHaveLength(0);
   });
@@ -366,7 +414,7 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     const result = await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -375,6 +423,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: [],
+      skippedNoBotMarkers: false,
     });
     expect(getDeleteCalls()).toHaveLength(0);
   });
@@ -390,7 +439,7 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     const result = await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -399,6 +448,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: ['same-workspace-bot'],
+      skippedNoBotMarkers: false,
     });
     expect(fetchMock).toHaveBeenCalledWith(
       `${BASE_URL}/bot/same-workspace-bot/`,
@@ -420,7 +470,7 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     const resultPromise = cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -431,6 +481,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: false,
       canceledExternalBotIds: ['in-call-orphan'],
+      skippedNoBotMarkers: false,
     });
     expect(fetchMock).toHaveBeenCalledWith(
       `${BASE_URL}/bot/in-call-orphan/leave_call/`,
@@ -467,7 +518,7 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     const result = await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -476,6 +527,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 1,
       truncatedBotList: true,
       canceledExternalBotIds: ['orphan-bot'],
+      skippedNoBotMarkers: false,
     });
     expect(
       fetchMock.mock.calls.filter(([, init]) => init.method === 'GET'),
@@ -494,7 +546,7 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     const result = await cleanupOrphanedRecallBots({
-      client: buildClient([]),
+      client: buildClient([BOT_MARKED_CALL_RECORDING]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
@@ -503,6 +555,7 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 0,
       truncatedBotList: false,
       canceledExternalBotIds: [],
+      skippedNoBotMarkers: false,
     });
     expect(getDeleteCalls()).toHaveLength(0);
   });
@@ -528,6 +581,50 @@ describe('cleanupOrphanedRecallBots', () => {
       scannedBotCount: 0,
       truncatedBotList: false,
       canceledExternalBotIds: [],
+      skippedNoBotMarkers: false,
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('skips the Recall list when the workspace has no call recordings', async () => {
+    stubRecallApi({ bots: [] });
+
+    const result = await cleanupOrphanedRecallBots({
+      client: buildClient([]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(result).toEqual({
+      scannedBotCount: 0,
+      truncatedBotList: false,
+      canceledExternalBotIds: [],
+      skippedNoBotMarkers: true,
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('skips the Recall list when no call recording ever attempted a Recall bot', async () => {
+    stubRecallApi({ bots: [] });
+
+    const result = await cleanupOrphanedRecallBots({
+      client: buildClient([
+        {
+          id: 'fireflies-recording',
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: null,
+          botScheduleAttemptedAt: null,
+        },
+      ]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(result).toEqual({
+      scannedBotCount: 0,
+      truncatedBotList: false,
+      canceledExternalBotIds: [],
+      skippedNoBotMarkers: true,
     });
     expect(fetchMock).not.toHaveBeenCalled();
   });
