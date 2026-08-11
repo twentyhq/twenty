@@ -80,10 +80,22 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
       expect(result).toMatchObject({ configurationType, viewId: null });
     });
 
-    it('should treat an empty legacy viewId as an unbound widget', () => {
+    it.each([
+      ['legacy viewId', { viewId: '' }],
+      ['viewUniversalIdentifier', { viewUniversalIdentifier: '' }],
+    ])('should treat an empty %s as an unbound widget', (_label, reference) => {
       const result = convertUniversalConfiguration({
         configurationType,
-        viewId: '',
+        ...reference,
+      });
+
+      expect(result).toMatchObject({ configurationType, viewId: null });
+    });
+
+    it('should treat a non-string view reference as an unbound widget', () => {
+      const result = convertUniversalConfiguration({
+        configurationType,
+        viewUniversalIdentifier: 42,
       });
 
       expect(result).toMatchObject({ configurationType, viewId: null });

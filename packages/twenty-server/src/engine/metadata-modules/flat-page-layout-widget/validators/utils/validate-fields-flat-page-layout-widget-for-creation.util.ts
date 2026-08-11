@@ -4,6 +4,7 @@ import { validate as uuidValidate } from 'uuid';
 
 import { type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
+import { getViewReferenceFromUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/get-view-reference-from-universal-configuration.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
@@ -59,29 +60,17 @@ export const validateFieldsFlatPageLayoutWidgetForCreation = (
     });
   }
 
-  const { viewUniversalIdentifier, viewId: legacyViewUniversalIdentifier } =
-    universalConfiguration as {
-      configurationType: string;
-      viewUniversalIdentifier?: unknown;
-      viewId?: unknown;
-    };
+  const viewReference = getViewReferenceFromUniversalConfiguration(
+    universalConfiguration,
+  );
 
-  const viewUniversalIdentifierToValidate =
-    viewUniversalIdentifier ?? legacyViewUniversalIdentifier;
-
-  if (
-    isDefined(viewUniversalIdentifierToValidate) &&
-    viewUniversalIdentifierToValidate !== null
-  ) {
-    if (
-      typeof viewUniversalIdentifierToValidate !== 'string' ||
-      !uuidValidate(viewUniversalIdentifierToValidate)
-    ) {
+  if (isDefined(viewReference) && viewReference !== null) {
+    if (typeof viewReference !== 'string' || !uuidValidate(viewReference)) {
       errors.push({
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
         message: t`Invalid view reference for fields widget "${widgetTitle}". Expected a valid UUID`,
         userFriendlyMessage: msg`Invalid view reference for fields widget`,
-        value: viewUniversalIdentifierToValidate,
+        value: viewReference,
       });
     }
   }

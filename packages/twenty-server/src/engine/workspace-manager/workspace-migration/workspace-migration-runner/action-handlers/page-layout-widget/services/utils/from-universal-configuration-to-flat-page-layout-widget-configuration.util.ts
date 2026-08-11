@@ -12,6 +12,7 @@ import {
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { getViewReferenceFromUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/get-view-reference-from-universal-configuration.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 const resolveFieldMetadataIdOrThrow = ({
@@ -43,24 +44,18 @@ const resolveFieldMetadataIdOrThrow = ({
   return flatFieldMetadata.id;
 };
 
-// Manifests built before the key was renamed to viewUniversalIdentifier
-// reference the view universal identifier under the viewId key
-const getLegacyViewUniversalIdentifier = (
-  universalConfiguration: FlatPageLayoutWidget['universalConfiguration'],
-): string | null => {
-  const { viewId } = universalConfiguration as { viewId?: string | null };
-
-  return isNonEmptyString(viewId) ? viewId : null;
-};
-
 const resolveViewIdOrThrow = ({
-  viewUniversalIdentifier,
+  universalConfiguration,
   flatViewMaps,
 }: {
-  viewUniversalIdentifier: string | null | undefined;
+  universalConfiguration: FlatPageLayoutWidget['universalConfiguration'];
   flatViewMaps: MetadataFlatEntityMaps<'view'>;
 }): string | null => {
-  if (!isDefined(viewUniversalIdentifier)) {
+  const viewUniversalIdentifier = getViewReferenceFromUniversalConfiguration(
+    universalConfiguration,
+  );
+
+  if (!isNonEmptyString(viewUniversalIdentifier)) {
     return null;
   }
 
@@ -272,13 +267,14 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELDS: {
-      const { viewUniversalIdentifier, newFieldDefaultVisibility, ...rest } =
-        universalConfiguration;
+      const {
+        viewUniversalIdentifier: _viewUniversalIdentifier,
+        newFieldDefaultVisibility,
+        ...rest
+      } = universalConfiguration;
 
       const viewId = resolveViewIdOrThrow({
-        viewUniversalIdentifier:
-          viewUniversalIdentifier ??
-          getLegacyViewUniversalIdentifier(universalConfiguration),
+        universalConfiguration,
         flatViewMaps,
       });
 
@@ -286,12 +282,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.RECORD_TABLE: {
-      const { viewUniversalIdentifier, ...rest } = universalConfiguration;
+      const { viewUniversalIdentifier: _viewUniversalIdentifier, ...rest } =
+        universalConfiguration;
 
       const viewId = resolveViewIdOrThrow({
-        viewUniversalIdentifier:
-          viewUniversalIdentifier ??
-          getLegacyViewUniversalIdentifier(universalConfiguration),
+        universalConfiguration,
         flatViewMaps,
       });
 
