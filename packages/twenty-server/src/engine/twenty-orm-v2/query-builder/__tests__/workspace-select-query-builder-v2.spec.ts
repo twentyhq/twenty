@@ -112,7 +112,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     expect(queryBuilder.getQuery()).toBe(
       'SELECT "person"."id" AS "person_id", "person"."nameFirstName" AS "person_nameFirstName" ' +
         `FROM "${SCHEMA_NAME}"."person" AS "person" ` +
-        'WHERE ("person"."deletedAt" IS NULL)',
+        'WHERE "person"."deletedAt" IS NULL',
     );
   });
 
@@ -151,7 +151,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
 
     expect(queryBuilder.getQuery()).toContain(
       `LEFT JOIN "${SCHEMA_NAME}"."company" AS "company" ` +
-        'ON "person"."companyId" = "company"."id"',
+        'ON ("person"."companyId" = "company"."id")',
     );
   });
 
@@ -213,6 +213,180 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
 
     expect(text).toContain('(("person"."id" = $1) OR ("person"."id" = $2))');
     expect(values).toEqual([1, 2]);
+  });
+
+  it('should negate a NotBrackets group instead of rendering it as a plain group', () => {
+    const { queryBuilder } = buildQueryBuilder();
+    const notBrackets = {
+      '@instanceof': Symbol.for('NotBrackets'),
+      whereFactory: (nested: { where: (sql: string) => unknown }) => {
+        nested.where('"person"."nameFirstName" = \'Ada\'');
+      },
+    };
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.andWhere(notBrackets);
+
+    expect(queryBuilder.getQuery()).toContain(
+      'NOT (("person"."nameFirstName" = \'Ada\'))',
+    );
+  });
+
+  it('should render a plain Brackets group without negation', () => {
+    const { queryBuilder } = buildQueryBuilder();
+    const brackets = {
+      '@instanceof': Symbol.for('Brackets'),
+      whereFactory: (nested: { where: (sql: string) => unknown }) => {
+        nested.where('"person"."nameFirstName" = \'Ada\'');
+      },
+    };
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.andWhere(brackets);
+
+    expect(queryBuilder.getQuery()).not.toContain('NOT (');
+  });
+
+  it('should select only aggregate expressions after select([])', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true, nameFirstName: true } });
+    queryBuilder.select([]);
+    queryBuilder.addSelect('COUNT("person"."id")', 'totalCount');
+
+    const sql = queryBuilder.getQuery();
+
+    expect(sql).toContain('SELECT COUNT("person"."id") AS "totalCount" FROM');
+    expect(sql).not.toContain('"person"."nameFirstName"');
+  });
+
+  it('should count columns referenced only inside aggregates as selected', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect('MAX("person"."nameFirstName")', 'maxFirstName');
+
+    expect(queryBuilder.getSelectedColumnNames()).toContain('nameFirstName');
+  });
+
+  it('should keep an explicit empty selection on a clone', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.select([]);
+    queryBuilder.addSelect('COUNT("person"."id")', 'totalCount');
+
+    expect(queryBuilder.clone().getQuery()).not.toContain('"person"."id" AS');
+  });
+
+  it('should carry applied row-level markers onto a clone', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    expect(queryBuilder.markRowLevelPermissionApplied('person')).toBe(true);
+    expect(queryBuilder.clone().markRowLevelPermissionApplied('person')).toBe(
+      false,
+    );
+  });
+
+  it('should clear applied row-level markers when where() replaces the WHERE', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.markRowLevelPermissionApplied('person');
+    queryBuilder.where('"person"."id" = :id', { id: 1 });
+
+    expect(queryBuilder.markRowLevelPermissionApplied('person')).toBe(true);
+  });
+
+  it('should report joined-alias columns referenced only in order by', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.orderBy({ 'company.name': { order: 'ASC' } });
+
+    const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
+
+    expect(columnNamesByAlias['person']).toEqual(['id']);
+    expect(columnNamesByAlias['company']).toEqual(['name']);
+  });
+
+  it('should report joined-alias columns referenced only in an added select', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.addSelect('"company"."name"', 'company_name');
+
+    expect(queryBuilder.getReferencedColumnNamesByAlias()['company']).toEqual([
+      'name',
+    ]);
+  });
+
+  it('should keep the soft-delete predicate outside an OR chain', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.where('"person"."id" = :a', { a: 1 });
+    queryBuilder.orWhere('"person"."id" = :b', { b: 2 });
+
+    // Without the wrapping parens, AND would bind tighter than OR and rows matching the
+    // first branch would come back unfiltered.
+    expect(queryBuilder.getQuery()).toContain(
+      'WHERE (("person"."id" = :a) OR ("person"."id" = :b)) AND "person"."deletedAt" IS NULL',
+    );
+  });
+
+  it('should filter soft-deleted joined rows in the ON clause', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+
+    const sql = queryBuilder.getQuery();
+
+    expect(sql).toContain('("company"."deletedAt" IS NULL)');
+    expect(sql.indexOf('"company"."deletedAt"')).toBeLessThan(
+      sql.indexOf('WHERE'),
+    );
+  });
+
+  it('should add a joined predicate to ON rather than WHERE', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.addJoinCondition('company', '"company"."name" = :owner');
+    queryBuilder.setParameters({ owner: 'Acme' });
+
+    const sql = queryBuilder.getQuery();
+
+    expect(sql).toContain('("company"."name" = :owner)');
+    expect(sql.indexOf('"company"."name"')).toBeLessThan(sql.indexOf('WHERE'));
+  });
+
+  it('should restore the previous limit when getOne fails', async () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.take(25);
+
+    const failingBuilder = new WorkspaceSelectQueryBuilderV2('person', {
+      tableShape: personTableShape,
+      executor: {
+        execute: async () => {
+          throw new Error('connection lost');
+        },
+      },
+      tableShapeByObjectMetadataId: () => companyTableShape,
+      onBeforeExecute: () => undefined,
+      formatResult: (records) => records as never,
+    });
+
+    failingBuilder.setFindOptions({ select: { id: true } });
+    failingBuilder.take(25);
+
+    await expect(failingBuilder.getOne()).rejects.toThrow('connection lost');
+    expect(failingBuilder.getQuery()).toContain('LIMIT 25');
   });
 
   it('should strip the alias prefix when mapping rows back to records', async () => {

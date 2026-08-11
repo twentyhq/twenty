@@ -8,8 +8,31 @@ import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/qu
 // pg turns a query carrying a `name` into a server-side prepared statement: parsed and
 // planned once per connection, then bound and executed. Query text is generated from
 // metadata and so repeats across requests, which is exactly the shape that benefits.
-const buildStatementName = (text: string): string =>
-  `orm_v2_${createHash('sha1').update(text).digest('hex').slice(0, 24)}`;
+//
+// Every distinct name is retained for the life of a connection, so the set of shapes has
+// to be bounded: past the cap, statements are sent unnamed and simply lose the plan reuse.
+// Shapes are dominated by (object, selected fields), so the cap is generous by design.
+const MAX_PREPARED_STATEMENT_SHAPES = 1000;
+
+const statementNameByText = new Map<string, string>();
+
+const buildStatementName = (text: string): string | undefined => {
+  const existingName = statementNameByText.get(text);
+
+  if (existingName !== undefined) {
+    return existingName;
+  }
+
+  if (statementNameByText.size >= MAX_PREPARED_STATEMENT_SHAPES) {
+    return undefined;
+  }
+
+  const name = `orm_v2_${createHash('sha1').update(text).digest('hex').slice(0, 24)}`;
+
+  statementNameByText.set(text, name);
+
+  return name;
+};
 
 export class PreparedStatementExecutor implements QueryExecutorV2 {
   private readonly pool: Pool;
@@ -25,8 +48,10 @@ export class PreparedStatementExecutor implements QueryExecutorV2 {
   ): Promise<Record<string, unknown>[]> {
     const queryable = this.client ?? this.pool;
 
+    const statementName = buildStatementName(statement.text);
+
     const result = await queryable.query({
-      name: buildStatementName(statement.text),
+      ...(statementName === undefined ? {} : { name: statementName }),
       text: statement.text,
       values: statement.values,
     });

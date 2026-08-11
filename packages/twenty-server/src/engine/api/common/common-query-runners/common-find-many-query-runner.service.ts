@@ -55,6 +55,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 > {
   protected readonly operationName = CommonQueryNames.FIND_MANY;
   protected readonly isReadOnly = true;
+  protected override readonly usesReadRepositoryV2 = true;
 
   async run(
     args: CommonExtendedInput<FindManyQueryArgs>,

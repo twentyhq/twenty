@@ -25,6 +25,11 @@ export const compileNamedParameters = (
   let text = '';
   let index = 0;
 
+  // Synthesized spread keys are prefixed with ':' which cannot appear in a parameter name,
+  // so they can never collide with a caller-supplied one.
+  const buildSpreadItemKey = (parameterName: string, itemIndex: number) =>
+    `:${parameterName}__${itemIndex}`;
+
   const appendValue = (parameterName: string, value: unknown): string => {
     const existingPosition = positionByParameterName.get(parameterName);
 
@@ -98,18 +103,18 @@ export const compileNamedParameters = (
         );
       }
 
+      // An empty list is legal for some operators (containsAny is not in ARRAY_OPERATORS,
+      // so the shared validation lets it through). NULL is valid in both the shapes this
+      // expands into — "IN (NULL)" and "ARRAY[NULL]" — and means "matches nothing" in each.
       if (parameterValue.length === 0) {
-        throw new TwentyOrmV2Exception(
-          `Parameter ":...${parameterName}" expects a non-empty array`,
-          TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
-        );
+        text += 'NULL';
+      } else {
+        text += parameterValue
+          .map((item, itemIndex) =>
+            appendValue(buildSpreadItemKey(parameterName, itemIndex), item),
+          )
+          .join(', ');
       }
-
-      text += parameterValue
-        .map((item, itemIndex) =>
-          appendValue(`${parameterName}__${itemIndex}`, item),
-        )
-        .join(', ');
     } else {
       text += appendValue(parameterName, parameterValue);
     }

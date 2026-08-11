@@ -73,10 +73,23 @@ describe('compileNamedParameters', () => {
     );
   });
 
-  it('should throw when a spread parameter is empty', () => {
-    expect(() =>
-      compileNamedParameters('"id" IN (:...ids)', { ids: [] }),
-    ).toThrow(TwentyOrmV2Exception);
+  it('should expand an empty spread to NULL so it matches nothing', () => {
+    // containsAny is not in ARRAY_OPERATORS, so the shared validation lets an empty list
+    // through; NULL is valid in both "IN (NULL)" and "ARRAY[NULL]".
+    const compiled = compileNamedParameters('"id" IN (:...ids)', { ids: [] });
+
+    expect(compiled.text).toBe('"id" IN (NULL)');
+    expect(compiled.values).toEqual([]);
+  });
+
+  it('should not let a spread item key collide with a caller parameter', () => {
+    const compiled = compileNamedParameters(
+      '"a" IN (:...ids) OR "z" = :ids__0',
+      { ids: ['a', 'b'], ids__0: 99 },
+    );
+
+    expect(compiled.text).toBe('"a" IN ($1, $2) OR "z" = $3');
+    expect(compiled.values).toEqual(['a', 'b', 99]);
   });
 
   it('should throw when a spread parameter is not an array', () => {

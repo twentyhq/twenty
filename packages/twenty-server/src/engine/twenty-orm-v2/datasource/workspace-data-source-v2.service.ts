@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   OnApplicationShutdown,
   OnModuleInit,
 } from '@nestjs/common';
@@ -13,12 +14,17 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceDataSourceV2 } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2';
+import {
+  TwentyOrmV2Exception,
+  TwentyOrmV2ExceptionCode,
+} from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class WorkspaceDataSourceV2Service
   implements OnModuleInit, OnApplicationShutdown
 {
+  private readonly logger = new Logger(WorkspaceDataSourceV2Service.name);
   private primaryPool: Pool | null = null;
   private replicaPool: Pool | null = null;
 
@@ -59,8 +65,9 @@ export class WorkspaceDataSourceV2Service
       : this.primaryPool;
 
     if (!isDefined(pool)) {
-      throw new Error(
+      throw new TwentyOrmV2Exception(
         'WorkspaceDataSourceV2Service has not been initialized. Make sure the module has been initialized.',
+        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
 
@@ -102,7 +109,7 @@ export class WorkspaceDataSourceV2Service
     connectionString: string;
     queryTimeoutMs: number;
   }): Pool {
-    return new Pool({
+    const pool = new Pool({
       connectionString,
       max: this.twentyConfigService.get('PG_POOL_MAX_CONNECTIONS'),
       idleTimeoutMillis: this.twentyConfigService.get(
@@ -116,6 +123,14 @@ export class WorkspaceDataSourceV2Service
         ? { rejectUnauthorized: false }
         : undefined,
     });
+
+    // An idle client that errors emits on the pool, and an unhandled 'error' event would
+    // take the process down.
+    pool.on('error', (error) => {
+      this.logger.error(`Idle client error: ${error.message}`, error.stack);
+    });
+
+    return pool;
   }
 
   async onApplicationShutdown(): Promise<void> {

@@ -105,6 +105,10 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected readonly isReadOnly: boolean = false;
 
+  // Runners that have an ORM v2 code path opt in. Building it for every read-only runner
+  // would pay for a repository that groupBy, for one, never reads.
+  protected readonly usesReadRepositoryV2: boolean = false;
+
   public async execute(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
@@ -367,9 +371,9 @@ export abstract class CommonBaseQueryRunnerService<
     rolePermissionConfig: RolePermissionConfig,
   ) {
     const isOrmV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED] === true;
+      featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED];
 
-    if (!isOrmV2Enabled || !this.isReadOnly) {
+    if (!isOrmV2Enabled || !this.isReadOnly || !this.usesReadRepositoryV2) {
       return undefined;
     }
 

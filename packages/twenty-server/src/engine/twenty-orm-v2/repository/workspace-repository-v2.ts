@@ -2,7 +2,6 @@ import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -75,21 +74,37 @@ export class WorkspaceRepositoryV2 {
       return;
     }
 
-    // The builder knows which columns it selected, so the check reads them directly
-    // rather than recovering them from generated SQL.
-    validateOperationIsPermittedOrThrow({
-      entityName: this.options.tableShape.nameSingular,
-      operationType: 'select',
-      objectsPermissions: this.options.objectRecordsPermissions,
-      flatObjectMetadataMaps:
-        this.options.internalContext.flatObjectMetadataMaps,
-      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
-      objectIdByNameSingular:
-        this.options.internalContext.objectIdByNameSingular,
-      selectedColumns: queryBuilder.getSelectedColumnNames(),
-      allFieldsSelected: false,
-      updatedColumns: [],
-    });
+    // The builder knows which columns it read and on which alias, so the check reads them
+    // directly rather than recovering them from generated SQL. A joined alias is a
+    // different object with its own field permissions, and ordering by one of its columns
+    // reads it just as selecting it does, so each alias is validated against its own object.
+    const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
+
+    for (const [alias, columnNames] of Object.entries(columnNamesByAlias)) {
+      const nameSingular =
+        alias === queryBuilder.alias
+          ? this.options.tableShape.nameSingular
+          : queryBuilder.getJoinedTableShape(alias)?.nameSingular;
+
+      if (!isDefined(nameSingular)) {
+        continue;
+      }
+
+      validateOperationIsPermittedOrThrow({
+        entityName: nameSingular,
+        operationType: 'select',
+        objectsPermissions: this.options.objectRecordsPermissions,
+        flatObjectMetadataMaps:
+          this.options.internalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps:
+          this.options.internalContext.flatFieldMetadataMaps,
+        objectIdByNameSingular:
+          this.options.internalContext.objectIdByNameSingular,
+        selectedColumns: columnNames,
+        allFieldsSelected: false,
+        updatedColumns: [],
+      });
+    }
   }
 
   private applyRowLevelPermissionPredicates(
@@ -158,13 +173,18 @@ export class WorkspaceRepositoryV2 {
       return;
     }
 
-    queryBuilder.andWhere(renderedCondition.sql, renderedCondition.parameters);
-  }
+    if (alias === queryBuilder.alias) {
+      queryBuilder.andWhere(
+        renderedCondition.sql,
+        renderedCondition.parameters,
+      );
 
-  getFlatObjectMetadataOrThrow(objectMetadataId: string): FlatObjectMetadata {
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: objectMetadataId,
-      flatEntityMaps: this.options.internalContext.flatObjectMetadataMaps,
-    });
+      return;
+    }
+
+    // A joined object's predicate belongs in ON: in WHERE it would drop parent rows whose
+    // joined record is filtered out, turning the LEFT JOIN into an inner join.
+    queryBuilder.addJoinCondition(alias, renderedCondition.sql);
+    queryBuilder.setParameters(renderedCondition.parameters);
   }
 }

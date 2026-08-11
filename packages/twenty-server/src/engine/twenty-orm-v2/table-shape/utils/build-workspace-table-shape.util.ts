@@ -10,6 +10,10 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  TwentyOrmV2Exception,
+  TwentyOrmV2ExceptionCode,
+} from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
@@ -84,7 +88,10 @@ export const buildWorkspaceTableShape = ({
       );
 
       if (!isDefined(compositeType)) {
-        continue;
+        throw new TwentyOrmV2Exception(
+          `Composite type "${flatFieldMetadata.type}" has no definition, so the columns for field "${flatFieldMetadata.name}" cannot be derived`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        );
       }
 
       for (const compositeProperty of compositeType.properties) {

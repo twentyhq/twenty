@@ -6,16 +6,39 @@ import {
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
+import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type ExpressionMapLike,
   type FindOptionsLike,
   type OrderByConditionLike,
   type WhereExpressionLike,
   type WhereFactoryLike,
+  isNegatedWhereFactoryLike,
   isWhereFactoryLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
+
+const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
+
+// Aggregate expressions are SQL text, so the columns they read have to be recovered from
+// it for the permission check. CONCAT-style expressions name columns without an alias,
+// which is what ProcessAggregateHelper already knows how to unpack.
+const extractColumnNamesFromExpression = (expression: string): string[] => {
+  const qualifiedColumnNames = [
+    ...expression.matchAll(QUALIFIED_COLUMN_REFERENCE),
+  ].map(([, , columnName]) => columnName);
+
+  if (qualifiedColumnNames.length > 0) {
+    return qualifiedColumnNames;
+  }
+
+  return (
+    ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
+      expression,
+    ) ?? []
+  );
+};
 
 type WhereClause = {
   operator: 'and' | 'or';
@@ -26,6 +49,9 @@ type JoinClause = {
   alias: string;
   targetTableShape: WorkspaceTableShape;
   condition: string;
+  // Predicates that must not turn the LEFT JOIN into an inner join, so they are AND-ed
+  // into ON rather than WHERE: row-level permissions and the joined soft-delete filter.
+  additionalOnConditions: string[];
 };
 
 type SelectClause = {
@@ -69,6 +95,9 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private offsetValue?: number;
   private includeDeleted = false;
   private groupByExpressions: string[] = [];
+  // Set by select(): an explicit list replaces the findOptions selection entirely, and an
+  // empty list means "no main-alias columns", which is how the aggregate builder is set up.
+  private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
 
   constructor(alias: string, context: QueryBuilderV2Context) {
@@ -91,7 +120,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     const cloned = new WorkspaceSelectQueryBuilderV2(this.alias, this.context);
 
     cloned.whereClauses.push(...this.whereClauses);
-    cloned.joinClauses.push(...this.joinClauses);
+    cloned.joinClauses.push(
+      ...this.joinClauses.map((joinClause) => ({
+        ...joinClause,
+        additionalOnConditions: [...joinClause.additionalOnConditions],
+      })),
+    );
     cloned.extraSelectClauses.push(...this.extraSelectClauses);
     cloned.orderByClauses = [...this.orderByClauses];
     cloned.parameters = { ...this.parameters };
@@ -100,6 +134,14 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     cloned.offsetValue = this.offsetValue;
     cloned.includeDeleted = this.includeDeleted;
     cloned.groupByExpressions = [...this.groupByExpressions];
+    cloned.explicitSelection =
+      this.explicitSelection === undefined
+        ? undefined
+        : [...this.explicitSelection];
+
+    for (const alias of this.aliasesWithRowLevelPermissionApplied) {
+      cloned.aliasesWithRowLevelPermissionApplied.add(alias);
+    }
 
     return cloned;
   }
@@ -108,7 +150,11 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     condition: string | WhereFactoryLike,
     parameters?: Record<string, unknown>,
   ): this {
+    // where() discards the accumulated WHERE, including any row-level predicate already
+    // rendered into it, so the markers have to be cleared or the next execution would
+    // silently run without them.
     this.whereClauses.length = 0;
+    this.aliasesWithRowLevelPermissionApplied.clear();
 
     return this.appendWhere('and', condition, parameters);
   }
@@ -145,6 +191,30 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   getFindOptions(): FindOptionsLike {
     return this.findOptions;
+  }
+
+  select(selection?: string | string[], alias?: string): this {
+    this.extraSelectClauses.length = 0;
+
+    if (selection === undefined) {
+      this.explicitSelection = undefined;
+
+      return this;
+    }
+
+    if (Array.isArray(selection)) {
+      this.explicitSelection = selection;
+
+      return this;
+    }
+
+    this.explicitSelection = [];
+    this.extraSelectClauses.push({
+      expression: this.normaliseColumnExpression(selection),
+      alias: alias ?? selection,
+    });
+
+    return this;
   }
 
   addSelect(expression: string, alias: string): this {
@@ -224,6 +294,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       condition:
         condition ??
         `${this.quoteColumn(parentAlias, relationShape.joinColumnName)} = ${this.quoteColumn(alias, 'id')}`,
+      additionalOnConditions: [],
     });
 
     return this;
@@ -286,9 +357,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     this.limitValue = 1;
 
-    const rows = await this.executeSelect();
+    let rows: Record<string, unknown>[];
 
-    this.limitValue = previousLimit;
+    try {
+      rows = await this.executeSelect();
+    } finally {
+      this.limitValue = previousLimit;
+    }
 
     if (rows.length === 0) {
       return null;
@@ -312,11 +387,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     this.limitValue = this.limitValue ?? 1;
 
-    const rows = await this.executeSelect();
+    try {
+      const rows = await this.executeSelect();
 
-    this.limitValue = previousLimit;
-
-    return rows[0] as T | undefined;
+      return rows[0] as T | undefined;
+    } finally {
+      this.limitValue = previousLimit;
+    }
   }
 
   async getCount(): Promise<number> {
@@ -345,6 +422,20 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return Number(rows[0]?.count ?? 0);
   }
 
+  // Adds a predicate to a join's ON clause. In WHERE it would drop parent rows whose
+  // joined record is filtered out, turning the LEFT JOIN into an inner join.
+  addJoinCondition(alias: string, condition: string): this {
+    const joinClause = this.joinClauses.find(
+      (candidate) => candidate.alias === alias,
+    );
+
+    if (isDefined(joinClause)) {
+      joinClause.additionalOnConditions.push(condition);
+    }
+
+    return this;
+  }
+
   getJoinedTableShape(alias: string): WorkspaceTableShape | undefined {
     return this.joinClauses.find((joinClause) => joinClause.alias === alias)
       ?.targetTableShape;
@@ -364,8 +455,48 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   // Columns this query reads on the main alias. The permission layer consumes this
   // directly instead of recovering it from the generated SQL.
+  // Columns referenced per alias across the projection, extra selects and ORDER BY. The
+  // permission layer needs this because a joined alias is a different object with its own
+  // field permissions, and ordering by one of its columns reads it just as a select does.
+  getReferencedColumnNamesByAlias(): Record<string, string[]> {
+    const columnNamesByAlias: Record<string, Set<string>> = {
+      [this.alias]: new Set(this.getSelectedColumnNames()),
+    };
+
+    const expressions = [
+      ...this.extraSelectClauses.map((extraSelect) => extraSelect.expression),
+      ...this.orderByClauses.map((orderByClause) => orderByClause.expression),
+    ];
+
+    for (const expression of expressions) {
+      for (const [, alias, columnName] of expression.matchAll(
+        QUALIFIED_COLUMN_REFERENCE,
+      )) {
+        columnNamesByAlias[alias] = (
+          columnNamesByAlias[alias] ?? new Set<string>()
+        ).add(columnName);
+      }
+    }
+
+    return Object.fromEntries(
+      Object.entries(columnNamesByAlias).map(([alias, columnNames]) => [
+        alias,
+        [...columnNames],
+      ]),
+    );
+  }
+
   getSelectedColumnNames(): string[] {
-    return this.buildProjection().mainAliasColumnNames;
+    const aggregateColumnNames = this.extraSelectClauses.flatMap(
+      (extraSelect) => extractColumnNamesFromExpression(extraSelect.expression),
+    );
+
+    return [
+      ...new Set([
+        ...this.buildProjection().mainAliasColumnNames,
+        ...aggregateColumnNames,
+      ]),
+    ];
   }
 
   private appendWhere(
@@ -394,7 +525,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       this.setParameters(nestedBuilder.parameters);
 
       if (nestedSql.length > 0) {
-        this.whereClauses.push({ operator, sql: `(${nestedSql})` });
+        this.whereClauses.push({
+          operator,
+          sql: isNegatedWhereFactoryLike(condition)
+            ? `NOT (${nestedSql})`
+            : `(${nestedSql})`,
+        });
       }
 
       return this;
@@ -490,9 +626,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     }
 
     const mainAliasColumnNames =
-      selectedColumnNames.length > 0
+      this.explicitSelection ??
+      (selectedColumnNames.length > 0
         ? selectedColumnNames
-        : this.tableShape.columnNames;
+        : this.tableShape.columnNames);
 
     const expressions = mainAliasColumnNames.map(
       (columnName) =>
@@ -518,14 +655,29 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   private buildJoinClause(): string {
     return this.joinClauses
-      .map(
-        (joinClause) =>
-          `LEFT JOIN ${escapeIdentifier(
-            joinClause.targetTableShape.schemaName,
-          )}.${escapeIdentifier(
-            joinClause.targetTableShape.tableName,
-          )} AS ${escapeIdentifier(joinClause.alias)} ON ${joinClause.condition}`,
-      )
+      .map((joinClause) => {
+        const onConditions = [
+          joinClause.condition,
+          ...joinClause.additionalOnConditions,
+        ];
+
+        if (
+          !this.includeDeleted &&
+          joinClause.targetTableShape.hasDeletedAtColumn
+        ) {
+          onConditions.push(
+            `${this.quoteColumn(joinClause.alias, 'deletedAt')} IS NULL`,
+          );
+        }
+
+        return `LEFT JOIN ${escapeIdentifier(
+          joinClause.targetTableShape.schemaName,
+        )}.${escapeIdentifier(
+          joinClause.targetTableShape.tableName,
+        )} AS ${escapeIdentifier(joinClause.alias)} ON ${onConditions
+          .map((condition) => `(${condition})`)
+          .join(' AND ')}`;
+      })
       .join(' ');
   }
 
@@ -538,26 +690,32 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private buildWhereExpression({
     includeSoftDeletePredicate = true,
   }: { includeSoftDeletePredicate?: boolean } = {}): string {
-    const clauses = [...this.whereClauses];
-
-    if (
-      includeSoftDeletePredicate &&
-      !this.includeDeleted &&
-      this.tableShape.hasDeletedAtColumn
-    ) {
-      clauses.push({
-        operator: 'and',
-        sql: `(${this.quoteColumn(this.alias, 'deletedAt')} IS NULL)`,
-      });
-    }
-
-    return clauses
+    const userExpression = this.whereClauses
       .map((clause, index) =>
         index === 0
           ? clause.sql
           : `${clause.operator.toUpperCase()} ${clause.sql}`,
       )
       .join(' ');
+
+    const shouldAddSoftDeletePredicate =
+      includeSoftDeletePredicate &&
+      !this.includeDeleted &&
+      this.tableShape.hasDeletedAtColumn;
+
+    if (!shouldAddSoftDeletePredicate) {
+      return userExpression;
+    }
+
+    const softDeletePredicate = `${this.quoteColumn(this.alias, 'deletedAt')} IS NULL`;
+
+    if (userExpression.length === 0) {
+      return softDeletePredicate;
+    }
+
+    // AND binds tighter than OR, so the accumulated clauses have to be wrapped as a whole:
+    // without this, "A OR B AND deletedAt IS NULL" leaves rows matching A unfiltered.
+    return `(${userExpression}) AND ${softDeletePredicate}`;
   }
 
   private buildGroupByClause(): string {

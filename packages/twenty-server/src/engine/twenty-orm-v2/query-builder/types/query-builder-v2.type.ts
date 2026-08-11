@@ -28,6 +28,16 @@ export const isWhereFactoryLike = (
   condition !== null &&
   typeof (condition as WhereFactoryLike).whereFactory === 'function';
 
+// NotBrackets extends Brackets, so it satisfies WhereFactoryLike too and would otherwise
+// render as a plain group with its negation silently dropped. TypeORM tags both with a
+// well-known symbol, which is what tells them apart without importing typeorm.
+const NOT_BRACKETS_INSTANCE_SYMBOL = Symbol.for('NotBrackets');
+
+export const isNegatedWhereFactoryLike = (condition: unknown): boolean =>
+  isWhereFactoryLike(condition) &&
+  (condition as { '@instanceof'?: symbol })['@instanceof'] ===
+    NOT_BRACKETS_INSTANCE_SYMBOL;
+
 export type OrderByDirectionLike = 'ASC' | 'DESC';
 export type OrderByNullsLike = 'NULLS FIRST' | 'NULLS LAST';
 
