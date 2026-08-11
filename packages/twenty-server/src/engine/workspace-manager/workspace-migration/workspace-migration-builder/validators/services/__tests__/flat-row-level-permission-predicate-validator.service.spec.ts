@@ -154,13 +154,13 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
       expect(result.errors).toEqual([]);
     });
 
-    it.each([[''], ['[]'], [[]]])(
+    it.each([[''], ['[]'], [[]], [null], [undefined]])(
       'should reject %p on an operand that expects a value',
       (value) => {
         const result = service.validateFlatRowLevelPermissionPredicateCreation(
           buildCreationArgs({
-            fieldType: FieldMetadataType.RELATION,
-            operand: RowLevelPermissionPredicateOperand.IS,
+            fieldType: FieldMetadataType.TEXT,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
             value,
           }),
         );

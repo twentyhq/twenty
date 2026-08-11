@@ -364,7 +364,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       isRecordFilterOperandExpectingValue(recordFilterOperand) &&
       !isRecordFilterValueValid({
         operand: recordFilterOperand,
-        value: convertViewFilterValueToString(value),
+        value: isDefined(value) ? convertViewFilterValueToString(value) : '',
       })
     ) {
       return {
