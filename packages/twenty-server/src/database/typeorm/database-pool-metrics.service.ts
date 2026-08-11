@@ -11,6 +11,8 @@ export enum DatabasePoolName {
   Core = 'core',
   WorkspacePrimary = 'workspace_primary',
   WorkspaceReplica = 'workspace_replica',
+  WorkspaceV2Primary = 'workspace_v2_primary',
+  WorkspaceV2Replica = 'workspace_v2_replica',
 }
 
 const ACQUISITION_DURATION_BUCKETS_SECONDS = [
@@ -45,6 +47,7 @@ const POOL_GAUGES = [
 export class DatabasePoolMetricsService {
   private readonly pools = new Map<DatabasePoolName, Pool>();
   private readonly instrumentedDrivers = new WeakSet<PostgresDriver>();
+  private readonly instrumentedPools = new WeakSet<Pool>();
   private readonly acquisitionDurationHistogram: Histogram;
   private readonly acquisitionFailureCounter: Counter;
 
@@ -84,6 +87,48 @@ export class DatabasePoolMetricsService {
           })),
       });
     }
+  }
+
+  // ORM v2 owns raw pg pools rather than a TypeORM driver, so it reports the same
+  // gauges and acquisition timings by wrapping connect() instead of the driver.
+  registerPool({
+    poolName,
+    pool,
+  }: {
+    poolName: DatabasePoolName;
+    pool: Pool;
+  }): void {
+    this.pools.set(poolName, pool);
+
+    if (this.instrumentedPools.has(pool)) {
+      return;
+    }
+
+    const connect = pool.connect.bind(pool);
+
+    pool.connect = async () => {
+      const start = performance.now();
+
+      try {
+        return await connect();
+      } catch (error) {
+        this.acquisitionFailureCounter.add(1, { pool: poolName });
+
+        throw error;
+      } finally {
+        this.acquisitionDurationHistogram.record(
+          (performance.now() - start) / 1000,
+          { pool: poolName },
+        );
+      }
+    };
+
+    this.instrumentedPools.add(pool);
+  }
+
+  // Gauges read the pool on every scrape, so a pool that has been ended must go.
+  unregisterPool(poolName: DatabasePoolName): void {
+    this.pools.delete(poolName);
   }
 
   registerDataSource({

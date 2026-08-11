@@ -1,12 +1,13 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type ExpressionMapLike,
   type FindOptionsLike,
@@ -16,6 +17,8 @@ import {
   isNegatedWhereFactoryLike,
   isWhereFactoryLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
+import { buildOrderByClauses } from 'src/engine/twenty-orm-v2/sql/utils/build-order-by-clauses.util';
+import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils/collect-referenced-column-names.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import {
   buildCountStatement,
@@ -32,8 +35,6 @@ import {
   type WhereClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
-
-const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
 
 export type QueryBuilderV2Context = {
   tableShape: WorkspaceTableShape;
@@ -77,6 +78,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       queryType: 'select',
       joinAttributes: this.joinClauses.map((joinClause) => ({
         alias: { name: joinClause.alias },
+        // Callers reject joins that can duplicate root rows, and read that from the
+        // relation rather than from the join itself. Workspace relations are only
+        // ever to-one or one-to-many, so many-to-many cannot arise here.
+        relation: {
+          isOneToMany: joinClause.relationType === RelationType.ONE_TO_MANY,
+          isManyToMany: false,
+        },
       })),
       wheres: this.whereClauses,
     };
@@ -255,6 +263,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.joinClauses.push({
       alias,
       targetTableShape,
+      relationType: relationShape.relationType,
       condition:
         condition ??
         `${this.quoteColumn(parentAlias, relationShape.joinColumnName)} = ${this.quoteColumn(alias, 'id')}`,
@@ -407,48 +416,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
-    const columnNamesByAlias: Record<string, Set<string>> = {
-      [this.alias]: new Set(this.buildProjection().mainAliasColumnNames),
-    };
-
-    const addColumnName = (alias: string, columnName: string) => {
-      columnNamesByAlias[alias] = (
-        columnNamesByAlias[alias] ?? new Set<string>()
-      ).add(columnName);
-    };
-
-    const expressions = [
-      ...this.extraSelectClauses.map((extraSelect) => extraSelect.expression),
-      ...this.orderByClauses.map((orderByClause) => orderByClause.expression),
-    ];
-
-    for (const expression of expressions) {
-      const qualifiedReferences = [
-        ...expression.matchAll(QUALIFIED_COLUMN_REFERENCE),
-      ];
-
-      // Attributing a qualified column to the main alias would check the wrong object.
-      if (qualifiedReferences.length > 0) {
-        for (const [, alias, columnName] of qualifiedReferences) {
-          addColumnName(alias, columnName);
-        }
-
-        continue;
-      }
-
-      for (const columnName of ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
-        expression,
-      ) ?? []) {
-        addColumnName(this.alias, columnName);
-      }
-    }
-
-    return Object.fromEntries(
-      Object.entries(columnNamesByAlias).map(([alias, columnNames]) => [
-        alias,
-        [...columnNames],
-      ]),
-    );
+    return collectReferencedColumnNames({
+      mainAlias: this.alias,
+      mainAliasColumnNames: this.buildProjection().mainAliasColumnNames,
+      extraSelectClauses: this.extraSelectClauses,
+      orderByClauses: this.orderByClauses,
+    });
   }
 
   getSelectedColumnNames(): string[] {
@@ -503,33 +476,15 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     direction: 'ASC' | 'DESC',
     nulls?: 'NULLS FIRST' | 'NULLS LAST',
   ): this {
-    if (typeof orderByOrExpression === 'string') {
-      this.orderByClauses.push({
-        expression: this.normaliseColumnExpression(orderByOrExpression),
+    this.orderByClauses.push(
+      ...buildOrderByClauses({
+        orderByOrExpression,
         direction,
         nulls,
-      });
-
-      return this;
-    }
-
-    for (const [expression, value] of Object.entries(orderByOrExpression)) {
-      const normalisedExpression = this.normaliseColumnExpression(expression);
-
-      if (typeof value === 'string') {
-        this.orderByClauses.push({
-          expression: normalisedExpression,
-          direction: value,
-        });
-        continue;
-      }
-
-      this.orderByClauses.push({
-        expression: normalisedExpression,
-        direction: value.order ?? 'ASC',
-        nulls: value.nulls,
-      });
-    }
+        normaliseColumnExpression: (expression) =>
+          this.normaliseColumnExpression(expression),
+      }),
+    );
 
     return this;
   }

@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import {
   TwentyOrmV2Exception,
@@ -16,6 +18,7 @@ export type WhereClause = {
 export type JoinClause = {
   alias: string;
   targetTableShape: WorkspaceTableShape;
+  relationType: RelationType;
   condition: string;
   additionalOnConditions: string[];
 };

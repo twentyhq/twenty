@@ -10,6 +10,10 @@ import { Pool } from 'pg';
 import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  DatabasePoolMetricsService,
+  DatabasePoolName,
+} from 'src/database/typeorm/database-pool-metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -33,6 +37,7 @@ export class WorkspaceDataSourceV2Service
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    private readonly databasePoolMetricsService: DatabasePoolMetricsService,
   ) {}
 
   onModuleInit(): void {
@@ -43,6 +48,11 @@ export class WorkspaceDataSourceV2Service
       ),
     });
 
+    this.databasePoolMetricsService.registerPool({
+      poolName: DatabasePoolName.WorkspaceV2Primary,
+      pool: this.primaryPool,
+    });
+
     const replicaUrl = this.twentyConfigService.get('PG_DATABASE_REPLICA_URL');
 
     if (isDefined(replicaUrl)) {
@@ -51,6 +61,11 @@ export class WorkspaceDataSourceV2Service
         queryTimeoutMs: this.twentyConfigService.get(
           'PG_DATABASE_REPLICA_TIMEOUT_MS',
         ),
+      });
+
+      this.databasePoolMetricsService.registerPool({
+        poolName: DatabasePoolName.WorkspaceV2Replica,
+        pool: this.replicaPool,
       });
     }
   }
@@ -133,6 +148,13 @@ export class WorkspaceDataSourceV2Service
   }
 
   async onApplicationShutdown(): Promise<void> {
+    this.databasePoolMetricsService.unregisterPool(
+      DatabasePoolName.WorkspaceV2Primary,
+    );
+    this.databasePoolMetricsService.unregisterPool(
+      DatabasePoolName.WorkspaceV2Replica,
+    );
+
     await this.primaryPool?.end();
     await this.replicaPool?.end();
     this.primaryPool = null;

@@ -52,6 +52,9 @@ export type FindOptionsLike = {
 
 export type ExpressionMapLike = {
   queryType: 'select';
-  joinAttributes: { alias: { name: string } }[];
+  joinAttributes: {
+    alias: { name: string };
+    relation: { isOneToMany: boolean; isManyToMany: boolean };
+  }[];
   wheres: unknown[];
 };
