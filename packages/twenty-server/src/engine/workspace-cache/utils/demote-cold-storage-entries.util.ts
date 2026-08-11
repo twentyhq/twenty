@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 
@@ -65,13 +67,13 @@ export const demoteColdStorageEntries = <T>({
     const entry = localCache.get(localKey);
     const version = entry?.versions.get(hash);
 
-    if (!entry || version?.state !== 'hot') {
+    if (!isDefined(entry) || version?.state !== 'hot') {
       continue;
     }
 
     const blob = serialize({ localKey, data: version.data });
 
-    if (blob === undefined) {
+    if (!isDefined(blob)) {
       continue;
     }
 

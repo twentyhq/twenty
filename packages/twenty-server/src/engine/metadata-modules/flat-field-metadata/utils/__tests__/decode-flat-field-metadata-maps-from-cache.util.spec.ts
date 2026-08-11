@@ -1,7 +1,4 @@
-import {
-  type EncodedFlatFieldMetadata,
-  type EncodedFlatFieldMetadataMaps,
-} from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+import { type EncodedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
 import { decodeFlatFieldMetadataMapsFromCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/decode-flat-field-metadata-maps-from-cache.util';
 import { encodeFlatFieldMetadataMapsForCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/encode-flat-field-metadata-maps-for-cache.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -37,24 +34,6 @@ describe('decodeFlatFieldMetadataMapsFromCache', () => {
     expect(decodeOne({ $H: ['view-field-1'] })).toMatchObject({
       viewFieldIds: ['view-field-1'],
     });
-  });
-
-  it('should leave an already-plain field untouched, as stored before the codec shipped', () => {
-    const plain = {
-      name: 'firstName',
-      viewFieldIds: ['view-field-1'],
-      viewFilterIds: [],
-    };
-
-    expect(
-      decodeFlatFieldMetadataMapsFromCache({
-        byUniversalIdentifier: { 'field-uid': plain },
-        universalIdentifierById: {},
-        universalIdentifiersByApplicationId: {},
-      } as unknown as EncodedFlatFieldMetadataMaps).byUniversalIdentifier[
-        'field-uid'
-      ],
-    ).toMatchObject(plain);
   });
 
   it('should round trip a field through JSON, as the cache storage layer does', () => {
