@@ -1,5 +1,5 @@
-import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { FlatEntityMapsException } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -55,48 +55,8 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
       expect(result).toMatchObject({ configurationType, viewId: VIEW_ID });
     });
 
-    it('should resolve the legacy viewId key to the view id', () => {
-      const result = convertUniversalConfiguration({
-        configurationType,
-        viewId: VIEW_UNIVERSAL_IDENTIFIER,
-      });
-
-      expect(result).toMatchObject({ configurationType, viewId: VIEW_ID });
-    });
-
-    it('should prioritize viewUniversalIdentifier over the legacy viewId key', () => {
-      const result = convertUniversalConfiguration({
-        configurationType,
-        viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
-        viewId: UNKNOWN_UNIVERSAL_IDENTIFIER,
-      });
-
-      expect(result).toMatchObject({ configurationType, viewId: VIEW_ID });
-    });
-
     it('should return a null viewId when no view reference is provided', () => {
       const result = convertUniversalConfiguration({ configurationType });
-
-      expect(result).toMatchObject({ configurationType, viewId: null });
-    });
-
-    it.each([
-      ['legacy viewId', { viewId: '' }],
-      ['viewUniversalIdentifier', { viewUniversalIdentifier: '' }],
-    ])('should treat an empty %s as an unbound widget', (_label, reference) => {
-      const result = convertUniversalConfiguration({
-        configurationType,
-        ...reference,
-      });
-
-      expect(result).toMatchObject({ configurationType, viewId: null });
-    });
-
-    it('should treat a non-string view reference as an unbound widget', () => {
-      const result = convertUniversalConfiguration({
-        configurationType,
-        viewUniversalIdentifier: 42,
-      });
 
       expect(result).toMatchObject({ configurationType, viewId: null });
     });
@@ -110,13 +70,26 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
       ).toThrow(FlatEntityMapsException);
     });
 
-    it('should throw when the legacy viewId does not reference an existing view', () => {
+    it.each([[VIEW_UNIVERSAL_IDENTIFIER], [''], [null]])(
+      'should reject the removed viewId key holding %p instead of storing an unbound widget',
+      (legacyViewId) => {
+        expect(() =>
+          convertUniversalConfiguration({
+            configurationType,
+            viewId: legacyViewId,
+          }),
+        ).toThrow(/rename it to "viewUniversalIdentifier"/);
+      },
+    );
+
+    it('should reject the removed viewId key even when viewUniversalIdentifier is set', () => {
       expect(() =>
         convertUniversalConfiguration({
           configurationType,
-          viewId: UNKNOWN_UNIVERSAL_IDENTIFIER,
+          viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
+          viewId: VIEW_UNIVERSAL_IDENTIFIER,
         }),
-      ).toThrow(FlatEntityMapsException);
+      ).toThrow(/rename it to "viewUniversalIdentifier"/);
     });
   });
 });

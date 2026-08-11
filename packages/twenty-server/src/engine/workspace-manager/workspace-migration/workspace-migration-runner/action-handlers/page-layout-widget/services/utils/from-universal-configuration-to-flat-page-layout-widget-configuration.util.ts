@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ChartFilter,
   type UniversalChartFilter,
@@ -12,7 +11,6 @@ import {
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { getViewReferenceFromUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/get-view-reference-from-universal-configuration.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 const resolveFieldMetadataIdOrThrow = ({
@@ -44,18 +42,30 @@ const resolveFieldMetadataIdOrThrow = ({
   return flatFieldMetadata.id;
 };
 
+// Manifests built before the key was renamed carry the view universal
+// identifier under viewId; resolving it silently would let a stale manifest
+// install a widget bound to nothing
+const assertViewIsNotReferencedByLegacyKey = (
+  universalConfiguration: FlatPageLayoutWidget['universalConfiguration'],
+): void => {
+  if (!('viewId' in universalConfiguration)) {
+    return;
+  }
+
+  throw new FlatEntityMapsException(
+    `Page layout widget configuration references a view through the removed "viewId" key, rename it to "viewUniversalIdentifier"`,
+    FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+  );
+};
+
 const resolveViewIdOrThrow = ({
-  universalConfiguration,
+  viewUniversalIdentifier,
   flatViewMaps,
 }: {
-  universalConfiguration: FlatPageLayoutWidget['universalConfiguration'];
+  viewUniversalIdentifier: string | null | undefined;
   flatViewMaps: MetadataFlatEntityMaps<'view'>;
 }): string | null => {
-  const viewUniversalIdentifier = getViewReferenceFromUniversalConfiguration(
-    universalConfiguration,
-  );
-
-  if (!isNonEmptyString(viewUniversalIdentifier)) {
+  if (!isDefined(viewUniversalIdentifier)) {
     return null;
   }
 
@@ -267,14 +277,13 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELDS: {
-      const {
-        viewUniversalIdentifier: _viewUniversalIdentifier,
-        newFieldDefaultVisibility,
-        ...rest
-      } = universalConfiguration;
+      assertViewIsNotReferencedByLegacyKey(universalConfiguration);
+
+      const { viewUniversalIdentifier, newFieldDefaultVisibility, ...rest } =
+        universalConfiguration;
 
       const viewId = resolveViewIdOrThrow({
-        universalConfiguration,
+        viewUniversalIdentifier,
         flatViewMaps,
       });
 
@@ -282,11 +291,12 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.RECORD_TABLE: {
-      const { viewUniversalIdentifier: _viewUniversalIdentifier, ...rest } =
-        universalConfiguration;
+      assertViewIsNotReferencedByLegacyKey(universalConfiguration);
+
+      const { viewUniversalIdentifier, ...rest } = universalConfiguration;
 
       const viewId = resolveViewIdOrThrow({
-        universalConfiguration,
+        viewUniversalIdentifier,
         flatViewMaps,
       });
 
