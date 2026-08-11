@@ -1,5 +1,7 @@
-import { isCompleteWorkspaceSetupToolPart } from '@/ai/utils/isCompleteWorkspaceSetupToolPart';
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessagePart,
+  isCompleteWorkspaceSetupToolPart,
+} from 'twenty-shared/ai';
 
 export const isHiddenCompleteWorkspaceSetupToolPart = (
   part: ExtendedUIMessagePart,

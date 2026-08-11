@@ -1,15 +1,12 @@
-import { getToolName, isToolUIPart, type ToolUIPart } from 'ai';
+import { type ToolUIPart } from 'ai';
 
-import { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from '../constants/complete-workspace-setup-tool-name.const';
 import { type ExtendedUIMessagePart } from '../types/ExtendedUIMessagePart';
+import { isCompleteWorkspaceSetupToolPart } from './is-complete-workspace-setup-tool-part.util';
 
 export const isSucceededCompleteWorkspaceSetupToolPart = (
   part: ExtendedUIMessagePart,
 ): part is ToolUIPart => {
-  if (
-    !isToolUIPart(part) ||
-    getToolName(part) !== COMPLETE_WORKSPACE_SETUP_TOOL_NAME
-  ) {
+  if (!isCompleteWorkspaceSetupToolPart(part)) {
     return false;
   }
 
