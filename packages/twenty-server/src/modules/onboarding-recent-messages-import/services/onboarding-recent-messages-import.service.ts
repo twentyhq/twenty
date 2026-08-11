@@ -81,9 +81,6 @@ export class OnboardingRecentMessagesImportService {
             workspaceId,
           );
 
-          const batchSizeMatchingSeededIdsSoTheSyncIsNotMarkedCompleted =
-            messageExternalIds.length;
-
           await this.messagingMessagesImportService.processMessageBatchImport(
             {
               ...messageChannel,
@@ -91,7 +88,7 @@ export class OnboardingRecentMessagesImportService {
             },
             messageChannel.connectedAccount,
             workspaceId,
-            batchSizeMatchingSeededIdsSoTheSyncIsNotMarkedCompleted,
+            messageExternalIds.length,
           );
 
           await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
