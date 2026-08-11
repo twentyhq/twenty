@@ -62,7 +62,9 @@ describe('fetchSlackThreadMessages', () => {
     );
   });
 
-  it('should stop after the page cap on an endlessly paginating thread', async () => {
+  // Slack pages a thread oldest first, so the messages read before the cap are
+  // the stale ones. Returning them would present them as the recent turns.
+  it('should stop at the page cap and report the thread as unreadable', async () => {
     const repliesMock = vi.fn().mockResolvedValue({
       messages: [buildMessage(1)],
       response_metadata: { next_cursor: 'cursor-next' },
@@ -71,8 +73,7 @@ describe('fetchSlackThreadMessages', () => {
       conversations: { replies: repliesMock },
     } as unknown as WebClient;
 
-    await fetchThread(client);
-
+    expect(await fetchThread(client)).toBeUndefined();
     expect(repliesMock).toHaveBeenCalledTimes(10);
   });
 

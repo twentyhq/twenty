@@ -35,13 +35,16 @@ export const fetchSlackThreadMessages = async ({
       const nextCursor = replies.response_metadata?.next_cursor;
 
       if (!isNonEmptyString(nextCursor)) {
-        break;
+        return messages;
       }
 
       cursor = nextCursor;
     }
 
-    return messages;
+    // Slack pages a thread oldest first, so stopping at the cap leaves the
+    // newest turns unread. Returning what we have would present ancient
+    // messages as the recent conversation, so treat it as unreadable instead.
+    return undefined;
   } catch {
     return undefined;
   }

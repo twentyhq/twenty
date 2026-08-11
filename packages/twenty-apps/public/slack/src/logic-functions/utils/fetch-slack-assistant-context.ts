@@ -6,6 +6,7 @@ import { fetchSlackThreadMessages } from 'src/logic-functions/utils/fetch-slack-
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { formatSlackConversationContext } from 'src/logic-functions/utils/format-slack-conversation-context';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 
 type SlackAssistantContext = {
   conversationContext: string | undefined;
@@ -40,19 +41,21 @@ export const fetchSlackAssistantContext = async ({
 
   const { client } = slackClientResult;
 
-  const [threadMessages, requesterIdentity] = await Promise.all([
+  const [threadMessages, requesterIdentity, botUserId] = await Promise.all([
     fetchSlackThreadMessages({
       client,
       slackChannelId,
       parentMessageTimestamp,
     }),
     fetchSlackUserIdentity({ client, slackUserId }),
+    resolveSlackBotUserIdOrThrow().catch(() => undefined),
   ]);
 
   return {
     conversationContext: isDefined(threadMessages)
       ? formatSlackConversationContext({
           messages: threadMessages,
+          botUserId,
           excludeMessageTimestamps: [slackMessageTimestamp],
         })
       : undefined,
