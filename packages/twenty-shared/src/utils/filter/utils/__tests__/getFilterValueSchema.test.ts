@@ -194,6 +194,27 @@ describe('getFilterValueSchema', () => {
         ISSUE_23397_VALUE,
       );
     });
+
+    it.each([
+      '{"selectedRecordIds":[]}',
+      '[]',
+      '{"selectedRecordIds":[],"isCurrentWorkspaceMemberSelected":false}',
+    ])('should reject %s, an empty selection', (value) => {
+      expectRejected(
+        { filterType: 'RELATION', operand: ViewFilterOperand.IS },
+        value,
+      );
+    });
+
+    it.each([
+      '{"selectedRecordIds":[],"isCurrentWorkspaceMemberSelected":true}',
+      '{"selectedRecordIds":[],"isCurrentRecordSelected":true}',
+    ])('should accept %s, resolved at read time', (value) => {
+      expectAccepted(
+        { filterType: 'RELATION', operand: ViewFilterOperand.IS },
+        value,
+      );
+    });
   });
 
   describe('uuid', () => {
