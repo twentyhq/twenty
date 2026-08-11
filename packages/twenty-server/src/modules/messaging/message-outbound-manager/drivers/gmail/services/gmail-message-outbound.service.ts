@@ -13,6 +13,7 @@ import { type SendMessageInput } from 'src/modules/messaging/message-outbound-ma
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
+import { resolveOutboundFromHandle } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-from-handle.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -167,11 +168,17 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       userId: 'me',
     });
 
-    const fromEmail = gmailData.emailAddress;
+    const profileEmail = gmailData.emailAddress;
 
-    if (!isNonEmptyString(fromEmail)) {
+    if (!isNonEmptyString(profileEmail)) {
       throw new Error('Gmail profile did not return an email address');
     }
+
+    const fromEmail =
+      resolveOutboundFromHandle({
+        connectedAccount,
+        requestedFromHandle: sendMessageInput.fromHandle,
+      }) ?? profileEmail;
 
     const { data: peopleData } = await peopleClient.people.get({
       resourceName: 'people/me',

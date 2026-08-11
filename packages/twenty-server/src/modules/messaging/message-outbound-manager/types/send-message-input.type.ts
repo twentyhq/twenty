@@ -3,6 +3,7 @@ type EmailAddress = string | string[];
 export type SendMessageInput = {
   body: string;
   subject: string;
+  fromHandle?: string;
   to: EmailAddress;
   cc?: EmailAddress;
   bcc?: EmailAddress;

@@ -9,6 +9,7 @@ export type ComposedEmail = {
   sanitizedHtmlBody: string;
   attachments: MessageAttachment[];
   connectedAccount: ConnectedAccountEntity;
+  fromHandle?: string;
   messageChannelId?: string;
   shouldPersistMessage: boolean;
   inReplyTo?: string;
