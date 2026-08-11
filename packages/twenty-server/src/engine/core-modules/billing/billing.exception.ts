@@ -38,6 +38,7 @@ export enum BillingExceptionCode {
   BILLING_CREDIT_GRANT_NOT_FOUND = 'BILLING_CREDIT_GRANT_NOT_FOUND',
   BILLING_CREDIT_GRANT_VALIDITY_INVALID = 'BILLING_CREDIT_GRANT_VALIDITY_INVALID',
   BILLING_USAGE_UNAVAILABLE = 'BILLING_USAGE_UNAVAILABLE',
+  BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE = 'BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -102,6 +103,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Credit grant must expire after it becomes effective.`;
     case BillingExceptionCode.BILLING_USAGE_UNAVAILABLE:
       return msg`Usage could not be read. Please try again later.`;
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
+      return msg`This kind of credit grant cannot be created by hand.`;
     default:
       assertUnreachable(code);
   }

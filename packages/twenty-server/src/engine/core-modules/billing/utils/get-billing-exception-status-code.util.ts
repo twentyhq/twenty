@@ -27,6 +27,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
     case BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID:
     case BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID:
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
       return 400;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
       return 402;

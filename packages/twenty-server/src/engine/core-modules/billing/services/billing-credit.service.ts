@@ -111,6 +111,9 @@ export class BillingCreditService {
         workspaceId,
         availableDeltaMicro: 0,
         rebuildCounter: true,
+        // The replayed grant is live, so whatever the failed first attempt
+        // left behind, the workspace has credits and must not stay capped.
+        shouldClearCap: true,
       });
 
       return null;
@@ -141,8 +144,17 @@ export class BillingCreditService {
       });
 
     // A retried revocation must not take the same credits off the usage
-    // counter twice, which would block a workspace that still has credits.
+    // counter twice, which would block a workspace that still has credits. It
+    // still has to repair, since the attempt that did revoke can have failed
+    // before refreshing, leaving revoked credits spendable until the period
+    // ends.
     if (!wasRevokedNow) {
+      await this.refreshWorkspaceCreditState({
+        workspaceId,
+        availableDeltaMicro: 0,
+        rebuildCounter: true,
+      });
+
       return grant;
     }
 
@@ -183,10 +195,14 @@ export class BillingCreditService {
     workspaceId,
     availableDeltaMicro,
     rebuildCounter = false,
+    shouldClearCap = availableDeltaMicro > 0,
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
+    // Recomputes the counter from the ledger rather than moving it by a delta,
+    // for repairs where how far the original attempt got is unknowable.
     rebuildCounter?: boolean;
+    shouldClearCap?: boolean;
   }): Promise<void> {
     await this.syncMirrorBalance(workspaceId);
 
@@ -199,7 +215,11 @@ export class BillingCreditService {
       return;
     }
 
-    const { periodStart } = getBillingSubscriptionPeriod(subscription);
+    // Deliberately not getBillingSubscriptionPeriod, which reports the trial
+    // window while trialing: every usage path keys this counter off
+    // currentPeriodStart, so taking the period from anywhere else would move a
+    // key the gate never reads.
+    const periodStart = subscription.currentPeriodStart;
 
     if (rebuildCounter) {
       await this.billingUsageCacheService.invalidateAvailableCredits(
@@ -207,10 +227,8 @@ export class BillingCreditService {
         periodStart,
       );
 
-      // The replayed grant is live, so whatever the failed first attempt left
-      // behind, the workspace has credits and must not stay capped.
       return this.clearCapAndSubscriptionCache(workspaceId, {
-        shouldClearCap: true,
+        shouldClearCap,
       });
     }
 
@@ -241,9 +259,7 @@ export class BillingCreditService {
       );
     }
 
-    return this.clearCapAndSubscriptionCache(workspaceId, {
-      shouldClearCap: availableDeltaMicro > 0,
-    });
+    return this.clearCapAndSubscriptionCache(workspaceId, { shouldClearCap });
   }
 
   private async clearCapAndSubscriptionCache(

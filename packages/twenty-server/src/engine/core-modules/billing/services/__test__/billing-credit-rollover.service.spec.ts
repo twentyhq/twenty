@@ -142,7 +142,30 @@ describe('BillingCreditRolloverService', () => {
       ).toHaveBeenCalledTimes(1);
       expect(
         billingCreditService.refreshWorkspaceCreditState,
-      ).toHaveBeenCalledWith({ workspaceId, availableDeltaMicro: 0 });
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        availableDeltaMicro: 0,
+        rebuildCounter: false,
+        shouldClearCap: false,
+      });
+    });
+
+    // A redelivery after the rows were inserted carries nothing forward, so a
+    // delta of zero would leave the carried credits out of the counter for the
+    // whole period.
+    it('rebuilds the counter when the carry-forward grants were replayed', async () => {
+      billingCreditGrantService.createGrant.mockResolvedValue(null);
+
+      await service.processRolloverOnPeriodTransition(baseParams);
+
+      expect(
+        billingCreditService.refreshWorkspaceCreditState,
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        availableDeltaMicro: 0,
+        rebuildCounter: true,
+        shouldClearCap: true,
+      });
     });
 
     it('refreshes the credit state once for the whole transition', async () => {

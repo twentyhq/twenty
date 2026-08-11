@@ -97,6 +97,7 @@ export class BillingCreditRolloverService {
     });
 
     let carriedForwardMicro = 0;
+    let hasReplayedGrant = false;
 
     // Writes the grants directly rather than through grantCredits: the cache,
     // cap flag and workspace cache only need refreshing once for the whole
@@ -120,14 +121,23 @@ export class BillingCreditRolloverService {
 
       if (isDefined(grant)) {
         carriedForwardMicro += grant.amountMicro;
+      } else {
+        hasReplayedGrant = true;
       }
     }
 
     // Runs unconditionally: closing the old grants moves the balance on its
     // own, so a period where everything was spent still needs the refresh.
+    //
+    // A replayed grant means a previous delivery inserted the rows and then
+    // failed, so this delivery adds nothing to carriedForwardMicro and a delta
+    // of zero would leave the carried credits out of the counter for the whole
+    // period. Rebuild from the ledger instead.
     await this.billingCreditService.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: carriedForwardMicro,
+      rebuildCounter: hasReplayedGrant,
+      shouldClearCap: hasReplayedGrant || carriedForwardMicro > 0,
     });
   }
 }

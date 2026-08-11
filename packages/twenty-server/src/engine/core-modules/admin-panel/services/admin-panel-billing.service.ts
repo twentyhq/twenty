@@ -14,7 +14,10 @@ import {
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import {
+  ADMIN_GRANTABLE_CREDIT_GRANT_TYPES,
+  type BillingCreditGrantType,
+} from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
@@ -63,6 +66,17 @@ export class AdminPanelBillingService {
     reason?: string;
     grantedByUserId: string;
   }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
+    // The admin panel offers only these three, but the mutation is reachable
+    // directly. ROLLOVER and ONBOARDING_REWARD are written by the period
+    // transition and the onboarding jobs, and hand-writing one would change
+    // carry-forward behaviour and misclassify the audit trail.
+    if (!ADMIN_GRANTABLE_CREDIT_GRANT_TYPES.includes(type)) {
+      throw new BillingException(
+        `Cannot grant credits of type ${type} by hand`,
+        BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE,
+      );
+    }
+
     const amountMicro = Math.round(
       amount * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     );

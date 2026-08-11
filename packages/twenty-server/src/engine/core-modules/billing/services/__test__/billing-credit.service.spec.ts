@@ -351,8 +351,12 @@ describe('BillingCreditService', () => {
       },
     );
 
-    it('does not touch the usage counter when the grant was already revoked', async () => {
+    // The attempt that did revoke can have failed before refreshing, leaving
+    // revoked credits spendable, so a retry has to repair without decrementing
+    // a second time.
+    it('repairs without a second decrement when the grant was already revoked', async () => {
       billingUsageCacheService.getAvailableCredits.mockResolvedValue(3_000_000);
+      billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(0);
       billingCreditGrantService.revokeGrant.mockResolvedValue({
         grant: { id: 'grant_1', amountMicro: 2_000_000 },
         wasRevokedNow: false,
@@ -363,7 +367,17 @@ describe('BillingCreditService', () => {
       expect(
         billingUsageCacheService.adjustAvailableCredits,
       ).not.toHaveBeenCalled();
-      expect(billingCustomerRepository.update).not.toHaveBeenCalled();
+      expect(
+        billingUsageCacheService.invalidateAvailableCredits,
+      ).toHaveBeenCalledWith(workspaceId, PERIOD_START);
+      expect(billingCustomerRepository.update).toHaveBeenCalledWith(
+        workspaceId,
+        {},
+        { creditBalanceMicro: 0 },
+      );
+      expect(
+        billingUsageCapService.clearHasReachedCapForWorkspace,
+      ).not.toHaveBeenCalled();
     });
 
     it('does not lift the cap when credits were taken away', async () => {
