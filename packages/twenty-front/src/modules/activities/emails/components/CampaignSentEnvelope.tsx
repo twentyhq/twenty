@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
@@ -12,7 +12,8 @@ import {
 import { EmailComposerFieldRow } from '@/activities/emails/components/EmailComposerFieldRow';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
-import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { RecordChip } from '@/object-record/components/RecordChip';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -44,6 +45,26 @@ export const CampaignSentEnvelope = ({
     loading: areTopicsLoading,
     error: topicsError,
   } = useUnsubscribeTopics();
+
+  // Nothing on this surface is editable, so the list resolves to a plain chip
+  // rather than a disabled picker: the picker draws a full-width input box,
+  // which reads as "you may type here" next to two rows of static text.
+  // withSoftDeleted keeps a list that was deleted after the send visible.
+  const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
+
+  const {
+    record: list,
+    loading: isListLoading,
+    error: listError,
+  } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.MessageList,
+    objectRecordId: campaign.listId ?? '',
+    withSoftDeleted: true,
+    skip: !hasList,
+  });
+
+  const isListKnownDeleted =
+    hasList && !isDefined(list) && !isListLoading && !isDefined(listError);
 
   const fromAddress = campaign.fromAddress?.primaryEmail;
   const subject = campaign.subject;
@@ -81,12 +102,21 @@ export const CampaignSentEnvelope = ({
         label={t`To`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
       >
-        <FormSingleRecordPicker
-          disabled
-          objectNameSingulars={[CoreObjectNameSingular.MessageList]}
-          defaultValue={campaign.listId}
-          onChange={() => {}}
-        />
+        {isDefined(list) ? (
+          <RecordChip
+            record={list}
+            objectNameSingular={CoreObjectNameSingular.MessageList}
+          />
+        ) : !hasList ? (
+          <StyledEmptyValue>{t`No list`}</StyledEmptyValue>
+        ) : (
+          // Same rule as the topic row below: a list is only called deleted
+          // once the query came back empty of its own accord, never because it
+          // is still in flight or failed.
+          isListKnownDeleted && (
+            <StyledEmptyValue>{t`Deleted list`}</StyledEmptyValue>
+          )
+        )}
       </EmailComposerFieldRow>
       {hasUnsubscribeTopic && (
         <EmailComposerFieldRow
