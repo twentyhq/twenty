@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 // Provisionador do modelo de CRM da Petbee para o Twenty.
 //
-// Cria (ou completa) os objetos Pet e Assinatura, os campos da Petbee no
-// objeto de tutor (Person padrão ou um objeto "tutor" customizado que você
-// já tenha criado pela interface) e as relações entre eles, via API de
-// metadados do Twenty.
+// Este script é o "retrato como construído" do CRM da Petbee: ele reproduz,
+// em qualquer instância do Twenty, o modelo que existe hoje em
+// https://crm.petbeetools.com.br (snapshot capturado em 2026-08-11 via API
+// de metadados). Use-o para montar a futura instância de produção ou para
+// reconstruir o ambiente do zero.
 //
-// Idempotente: pode rodar quantas vezes quiser — objetos e campos que já
-// existem são detectados pelo nome e pulados, nunca duplicados. Por isso é
-// seguro rodar contra a sua instância local (onde você já criou pet/tutor)
-// e depois contra a produção.
+// Modelo: Tutor (Person) 1—N Pets 1—N Assinatura N—1 Plano
+//
+// Idempotente: objetos e campos já existentes (pelo nome) são detectados e
+// pulados, nunca duplicados nem sobrescritos. Rodar de novo é sempre seguro.
 //
 // Uso:
 //   TWENTY_API_KEY=<sua-api-key> node petbee/provision-petbee-crm.mjs
-//   TWENTY_API_URL=https://crm.petbee.com.br TWENTY_API_KEY=... node petbee/provision-petbee-crm.mjs
+//   TWENTY_API_URL=https://crm.petbeetools.com.br TWENTY_API_KEY=... node petbee/provision-petbee-crm.mjs
 //   ... --dry-run   (só mostra o que seria feito, sem alterar nada)
 //
 // Requisitos: Node 18+ e uma API key do Twenty (Settings → APIs & Webhooks).
@@ -21,8 +22,6 @@
 const API_URL = (process.env.TWENTY_API_URL ?? 'http://localhost:3000').replace(/\/+$/, '');
 const API_KEY = process.env.TWENTY_API_KEY;
 const DRY_RUN = process.argv.includes('--dry-run');
-// Force um objeto de tutor específico (nameSingular), ex.: PETBEE_TUTOR_OBJECT=tutor
-const TUTOR_OBJECT_OVERRIDE = process.env.PETBEE_TUTOR_OBJECT;
 
 if (!API_KEY) {
   console.error('Erro: defina a variável de ambiente TWENTY_API_KEY.');
@@ -49,7 +48,14 @@ const gql = async (query, variables = {}) => {
     throw new Error('API key inválida ou sem permissão (HTTP ' + response.status + ').');
   }
 
-  const json = await response.json();
+  const body = await response.text();
+  let json;
+
+  try {
+    json = JSON.parse(body);
+  } catch {
+    throw new Error(`Resposta inesperada (HTTP ${response.status}) de ${API_URL}/metadata: ${body.slice(0, 200)}`);
+  }
 
   if (json.errors?.length) {
     throw new Error(json.errors.map((graphqlError) => graphqlError.message).join(' | '));
@@ -57,6 +63,23 @@ const gql = async (query, variables = {}) => {
 
   return json.data;
 };
+
+// "Assinaturas" → "assinaturas", "Data de nascimento" → "dataDeNascimento":
+// mesmo algoritmo que o Twenty usa para derivar o nome do campo espelhado de
+// uma relação a partir do rótulo.
+const labelToFieldName = (label) =>
+  label
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-zA-Z0-9 ]/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .map((word, index) =>
+      index === 0
+        ? word.charAt(0).toLowerCase() + word.slice(1)
+        : word.charAt(0).toUpperCase() + word.slice(1),
+    )
+    .join('');
 
 const fetchObjects = async () => {
   const data = await gql(`
@@ -68,7 +91,6 @@ const fetchObjects = async () => {
             nameSingular
             namePlural
             labelSingular
-            isCustom
             isActive
             fieldsList { id name label type isActive }
           }
@@ -110,7 +132,7 @@ const ensureObject = async (objects, definition) => {
   return { ...data.createOneObject, ...definition, fieldsList: [], isActive: true };
 };
 
-const ensureField = async (object, field) => {
+const ensureField = async (object, field, relationTargetObject) => {
   const existing = (object.fieldsList ?? []).find(
     (existingField) => existingField.name.toLowerCase() === field.name.toLowerCase(),
   );
@@ -118,6 +140,25 @@ const ensureField = async (object, field) => {
   if (existing) {
     console.log(`  • Campo "${field.label}" (${field.name}) já existe em ${object.nameSingular} — pulado.`);
     return existing;
+  }
+
+  // Relações criam um campo espelhado no objeto de destino. Se uma execução
+  // anterior parou no meio e só o espelho existe, recriar falharia — então
+  // detectamos e avisamos em vez de quebrar o restante do provisionamento.
+  if (field.relationCreationPayload && relationTargetObject) {
+    const mirroredFieldName = labelToFieldName(field.relationCreationPayload.targetFieldLabel);
+    const mirrorTaken = (relationTargetObject.fieldsList ?? []).some(
+      (targetField) => targetField.name.toLowerCase() === mirroredFieldName.toLowerCase(),
+    );
+
+    if (mirrorTaken) {
+      console.warn(
+        `  ⚠ Relação "${field.label}" não criada: ${object.nameSingular}.${field.name} não existe, mas ` +
+          `${relationTargetObject.nameSingular}.${mirroredFieldName} já existe (estado parcial de uma execução ` +
+          `anterior?). Resolva manualmente em Settings → Data model e rode de novo.`,
+      );
+      return null;
+    }
   }
 
   if (DRY_RUN) {
@@ -137,35 +178,42 @@ const ensureField = async (object, field) => {
   return data.createOneField;
 };
 
+// Opções compartilhadas entre Plano (inclusos) e Assinatura (extras).
+const ADDON_OPTIONS = [
+  { label: 'Vacinas', value: 'VACINAS', color: 'green', position: 0 },
+  { label: 'Checkup', value: 'CHECKUP', color: 'blue', position: 1 },
+  { label: 'Limpeza Dentária', value: 'LIMPEZA_DENTARIA', color: 'purple', position: 2 },
+];
+
 const run = async () => {
   console.log(`Provisionando o modelo Petbee em ${API_URL}${DRY_RUN ? ' (dry-run)' : ''}…\n`);
 
   const objects = await fetchObjects();
 
-  // Tutor: usa um objeto customizado "tutor" se você já o criou pela
-  // interface; senão usa o objeto padrão Person (recomendado, pois ele já
-  // tem e-mails, telefones, timeline e integrações de e-mail/calendário).
-  const tutorObject = TUTOR_OBJECT_OVERRIDE
-    ? findObject(objects, TUTOR_OBJECT_OVERRIDE)
-    : (findObject(objects, 'tutor') ?? findObject(objects, 'person'));
+  const personObject = findObject(objects, 'person');
 
-  if (!tutorObject) {
-    throw new Error(
-      TUTOR_OBJECT_OVERRIDE
-        ? `Objeto "${TUTOR_OBJECT_OVERRIDE}" (PETBEE_TUTOR_OBJECT) não encontrado nesta instância.`
-        : 'Nem "tutor" nem "person" foram encontrados nesta instância.',
-    );
+  if (!personObject) {
+    throw new Error('Objeto padrão "person" não encontrado nesta instância.');
   }
 
-  console.log(`Usando "${tutorObject.labelSingular}" (${tutorObject.nameSingular}) como objeto de tutor.\n`);
-
-  const petObject = await ensureObject(objects, {
-    nameSingular: 'pet',
-    namePlural: 'pets',
-    labelSingular: 'Pet',
+  // namePlural "petss" reproduz a instância original: o objeto foi criado lá
+  // com singular "pets", e a API de registros usa o plural "petss" nas
+  // queries. Mantido igual para os scripts de migração funcionarem nas duas.
+  const petsObject = await ensureObject(objects, {
+    nameSingular: 'pets',
+    namePlural: 'petss',
+    labelSingular: 'Pets',
     labelPlural: 'Pets',
-    icon: 'IconPaw',
-    description: 'Pet vinculado a um tutor (cliente ou lead da Petbee).',
+    icon: 'IconListNumbers',
+    description: 'Pets individual',
+  });
+
+  const planObject = await ensureObject(objects, {
+    nameSingular: 'plano',
+    namePlural: 'planos',
+    labelSingular: 'Plano',
+    labelPlural: 'Planos',
+    icon: 'IconLicense',
   });
 
   const subscriptionObject = await ensureObject(objects, {
@@ -173,36 +221,29 @@ const run = async () => {
     namePlural: 'assinaturas',
     labelSingular: 'Assinatura',
     labelPlural: 'Assinaturas',
-    icon: 'IconCreditCard',
-    description: 'Assinatura de plano Petbee de um pet, com status e cobrança.',
+    icon: 'IconFileInvoice',
   });
 
-  console.log('\nCampos do Pet:');
-  await ensureField(petObject, {
-    name: 'especie',
-    label: 'Espécie',
-    type: 'SELECT',
-    icon: 'IconCategory',
-    options: [
-      { label: 'Cachorro', value: 'CACHORRO', color: 'blue', position: 0 },
-      { label: 'Gato', value: 'GATO', color: 'purple', position: 1 },
-      { label: 'Ave', value: 'AVE', color: 'yellow', position: 2 },
-      { label: 'Roedor', value: 'ROEDOR', color: 'orange', position: 3 },
-      { label: 'Outro', value: 'OUTRO', color: 'gray', position: 4 },
-    ],
+  console.log('\nCampos de Pets:');
+  await ensureField(petsObject, { name: 'especie', label: 'Espécie', type: 'TEXT', icon: 'IconTypography' });
+  await ensureField(petsObject, { name: 'raca', label: 'Raça', type: 'TEXT', icon: 'IconDna' });
+  await ensureField(petsObject, {
+    name: 'dataDeNascimento',
+    label: 'Data de nascimento',
+    type: 'DATE',
+    icon: 'IconCalendarEvent',
   });
-  await ensureField(petObject, { name: 'raca', label: 'Raça', type: 'TEXT', icon: 'IconDna' });
-  await ensureField(petObject, {
+  await ensureField(petsObject, {
     name: 'sexo',
     label: 'Sexo',
     type: 'SELECT',
     icon: 'IconTag',
     options: [
-      { label: 'Macho', value: 'MACHO', color: 'blue', position: 0 },
-      { label: 'Fêmea', value: 'FEMEA', color: 'pink', position: 1 },
+      { label: 'Macho', value: 'MACHO', color: 'green', position: 0 },
+      { label: 'Fêmea', value: 'FEMEA', color: 'jade', position: 1 },
     ],
   });
-  await ensureField(petObject, {
+  await ensureField(petsObject, {
     name: 'porte',
     label: 'Porte',
     type: 'SELECT',
@@ -214,95 +255,111 @@ const run = async () => {
       { label: 'Gigante', value: 'GIGANTE', color: 'red', position: 3 },
     ],
   });
-  await ensureField(petObject, {
-    name: 'dataNascimento',
-    label: 'Data de nascimento',
-    type: 'DATE',
-    icon: 'IconCalendar',
-  });
-  await ensureField(petObject, {
-    name: 'pesoKg',
-    label: 'Peso (kg)',
-    type: 'NUMBER',
-    icon: 'IconScale',
+  await ensureField(petsObject, { name: 'carteirinha', label: 'Carteirinha', type: 'TEXT', icon: 'IconTypography' });
+  await ensureField(petsObject, { name: 'petIdPetbee', label: 'ID Petbee (pet)', type: 'TEXT', icon: 'IconKey' });
+
+  console.log('\nCampos de Plano:');
+  await ensureField(planObject, {
+    name: 'valorMensal',
+    label: 'Valor mensal',
+    type: 'CURRENCY',
+    icon: 'IconCoin',
     settings: { decimals: 2 },
   });
-  await ensureField(petObject, { name: 'castrado', label: 'Castrado(a)', type: 'BOOLEAN', icon: 'IconScissors' });
-  await ensureField(petObject, { name: 'microchip', label: 'Microchip', type: 'TEXT', icon: 'IconCpu' });
-  await ensureField(petObject, { name: 'observacoes', label: 'Observações', type: 'TEXT', icon: 'IconNotes' });
-
-  console.log('\nCampos da Assinatura:');
-  await ensureField(subscriptionObject, {
-    name: 'plano',
-    label: 'Plano',
-    type: 'SELECT',
-    icon: 'IconPackage',
-    // Ajuste os nomes dos planos abaixo (ou depois, em Settings → Data model).
-    options: [
-      { label: 'Essencial', value: 'ESSENCIAL', color: 'blue', position: 0 },
-      { label: 'Completo', value: 'COMPLETO', color: 'violet', position: 1 },
-      { label: 'Premium', value: 'PREMIUM', color: 'amber', position: 2 },
-    ],
+  await ensureField(planObject, {
+    name: 'ativo',
+    label: 'Ativo',
+    type: 'BOOLEAN',
+    icon: 'IconToggleRight',
+    defaultValue: true,
   });
+  await ensureField(planObject, {
+    name: 'addonsInclusos',
+    label: 'Addons inclusos',
+    type: 'MULTI_SELECT',
+    icon: 'IconGift',
+    options: ADDON_OPTIONS,
+  });
+  await ensureField(planObject, { name: 'planIdPetbee', label: 'ID Petbee (plano)', type: 'TEXT', icon: 'IconKey' });
+
+  console.log('\nCampos de Assinatura:');
   await ensureField(subscriptionObject, {
     name: 'status',
     label: 'Status',
     type: 'SELECT',
-    icon: 'IconCircleCheck',
+    icon: 'IconProgressCheck',
+    defaultValue: "'ATIVA'",
     options: [
       { label: 'Ativa', value: 'ATIVA', color: 'green', position: 0 },
-      { label: 'Inadimplente', value: 'INADIMPLENTE', color: 'orange', position: 1 },
-      { label: 'Pausada', value: 'PAUSADA', color: 'yellow', position: 2 },
-      { label: 'Cancelada', value: 'CANCELADA', color: 'red', position: 3 },
-      { label: 'Encerrada', value: 'ENCERRADA', color: 'gray', position: 4 },
+      { label: 'Bloqueada', value: 'BLOQUEADA', color: 'gray', position: 1 },
+      { label: 'Cancelada', value: 'CANCELADA', color: 'red', position: 2 },
+    ],
+  });
+  await ensureField(subscriptionObject, {
+    name: 'periodicidade',
+    label: 'Periodicidade',
+    type: 'SELECT',
+    icon: 'IconCalendarRepeat',
+    defaultValue: "'MENSAL'",
+    options: [
+      { label: 'Mensal', value: 'MENSAL', color: 'blue', position: 0 },
+      { label: 'Anual', value: 'ANUAL', color: 'green', position: 1 },
     ],
   });
   await ensureField(subscriptionObject, {
     name: 'valorMensal',
-    label: 'Valor mensal',
+    label: 'Valor mensal (MRR)',
     type: 'CURRENCY',
-    icon: 'IconCurrencyDollar',
-    defaultValue: { amountMicros: null, currencyCode: 'BRL' },
+    icon: 'IconCoin',
+    settings: { decimals: 2 },
   });
   await ensureField(subscriptionObject, {
-    name: 'dataInicio',
-    label: 'Início da vigência',
-    type: 'DATE',
-    icon: 'IconCalendar',
-  });
-  await ensureField(subscriptionObject, {
-    name: 'proximaCobranca',
-    label: 'Próxima cobrança',
-    type: 'DATE',
+    name: 'diaVencimento',
+    label: 'Dia de vencimento',
+    type: 'NUMBER',
     icon: 'IconCalendarDue',
   });
   await ensureField(subscriptionObject, {
-    name: 'formaPagamento',
-    label: 'Forma de pagamento',
-    type: 'SELECT',
-    icon: 'IconCreditCard',
-    options: [
-      { label: 'Cartão de crédito', value: 'CARTAO_CREDITO', color: 'blue', position: 0 },
-      { label: 'Pix', value: 'PIX', color: 'green', position: 1 },
-      { label: 'Boleto', value: 'BOLETO', color: 'gray', position: 2 },
-    ],
+    name: 'dataInicio',
+    label: 'Data de início',
+    type: 'DATE',
+    icon: 'IconCalendarPlus',
+  });
+  await ensureField(subscriptionObject, {
+    name: 'dataCancelamento',
+    label: 'Data de cancelamento',
+    type: 'DATE',
+    icon: 'IconCalendarX',
+  });
+  await ensureField(subscriptionObject, {
+    name: 'addons',
+    label: 'Addons (extras)',
+    type: 'MULTI_SELECT',
+    icon: 'IconPlus',
+    options: ADDON_OPTIONS,
+  });
+  await ensureField(subscriptionObject, { name: 'cupom', label: 'Cupom', type: 'TEXT', icon: 'IconTicket' });
+  await ensureField(subscriptionObject, {
+    name: 'subsIdPetbee',
+    label: 'ID Petbee (assinatura)',
+    type: 'TEXT',
+    icon: 'IconKey',
   });
 
-  console.log(`\nCampos do tutor (${tutorObject.nameSingular}):`);
-  await ensureField(tutorObject, { name: 'cpf', label: 'CPF', type: 'TEXT', icon: 'IconId' });
-  await ensureField(tutorObject, {
+  console.log('\nCampos do tutor (Person):');
+  await ensureField(personObject, { name: 'cpf', label: 'CPF', type: 'TEXT', icon: 'IconId' });
+  await ensureField(personObject, {
     name: 'statusCliente',
     label: 'Status do cliente',
     type: 'SELECT',
-    icon: 'IconCircleCheck',
+    icon: 'IconUserCheck',
     options: [
       { label: 'Lead', value: 'LEAD', color: 'blue', position: 0 },
-      { label: 'Cliente ativo', value: 'CLIENTE_ATIVO', color: 'green', position: 1 },
-      { label: 'Inativo', value: 'INATIVO', color: 'gray', position: 2 },
-      { label: 'Ex-cliente', value: 'EX_CLIENTE', color: 'red', position: 3 },
+      { label: 'Ativo', value: 'ATIVO', color: 'green', position: 1 },
+      { label: 'Inativo', value: 'INATIVO', color: 'red', position: 2 },
     ],
   });
-  await ensureField(tutorObject, {
+  await ensureField(personObject, {
     name: 'canalPreferido',
     label: 'Canal preferido',
     type: 'SELECT',
@@ -313,47 +370,76 @@ const run = async () => {
       { label: 'Telefone', value: 'TELEFONE', color: 'yellow', position: 2 },
     ],
   });
+  await ensureField(personObject, { name: 'humanid', label: 'HumanID', type: 'TEXT', icon: 'IconTypography' });
+  await ensureField(personObject, { name: 'hIdPetbee', label: 'ID Petbee (tutor)', type: 'TEXT', icon: 'IconKey' });
+  await ensureField(personObject, {
+    name: 'idBitrix',
+    label: 'ID Bitrix (contato)',
+    type: 'TEXT',
+    icon: 'IconBrandBitbucket',
+  });
+  await ensureField(personObject, { name: 'utmSource', label: 'UTM Source', type: 'TEXT', icon: 'IconBrandGoogle' });
+  await ensureField(personObject, { name: 'utmMedium', label: 'UTM Medium', type: 'TEXT', icon: 'IconAd' });
+  await ensureField(personObject, {
+    name: 'utmCampaign',
+    label: 'UTM Campaign',
+    type: 'TEXT',
+    icon: 'IconSpeakerphone',
+  });
 
   console.log('\nRelações:');
-  // Muitos pets → um tutor; o tutor ganha o campo espelhado "Pets".
-  await ensureField(petObject, {
+  // Muitos pets → um tutor; Person ganha o campo espelhado "Pets".
+  await ensureField(petsObject, {
     name: 'tutor',
     label: 'Tutor',
     type: 'RELATION',
-    icon: 'IconUser',
+    icon: 'IconUsers',
     relationCreationPayload: {
-      targetObjectMetadataId: tutorObject.id,
+      targetObjectMetadataId: personObject.id,
       targetFieldLabel: 'Pets',
-      targetFieldIcon: 'IconPaw',
+      targetFieldIcon: 'IconRelationOneToMany',
       type: 'MANY_TO_ONE',
     },
-  });
+  }, personObject);
+  // Muitas assinaturas → um tutor (quem paga).
+  await ensureField(subscriptionObject, {
+    name: 'tutor',
+    label: 'Tutor',
+    type: 'RELATION',
+    icon: 'IconLink',
+    relationCreationPayload: {
+      targetObjectMetadataId: personObject.id,
+      targetFieldLabel: 'Assinaturas',
+      targetFieldIcon: 'IconFileInvoice',
+      type: 'MANY_TO_ONE',
+    },
+  }, personObject);
   // Muitas assinaturas → um pet (histórico de planos do pet).
   await ensureField(subscriptionObject, {
     name: 'pet',
     label: 'Pet',
     type: 'RELATION',
-    icon: 'IconPaw',
+    icon: 'IconLink',
     relationCreationPayload: {
-      targetObjectMetadataId: petObject.id,
+      targetObjectMetadataId: petsObject.id,
       targetFieldLabel: 'Assinaturas',
-      targetFieldIcon: 'IconCreditCard',
+      targetFieldIcon: 'IconFileInvoice',
       type: 'MANY_TO_ONE',
     },
-  });
-  // Muitas assinaturas → um titular (quem paga), direto no tutor.
+  }, petsObject);
+  // Muitas assinaturas → um plano (catálogo de planos).
   await ensureField(subscriptionObject, {
-    name: 'titular',
-    label: 'Titular',
+    name: 'plano',
+    label: 'Plano',
     type: 'RELATION',
-    icon: 'IconUser',
+    icon: 'IconLink',
     relationCreationPayload: {
-      targetObjectMetadataId: tutorObject.id,
+      targetObjectMetadataId: planObject.id,
       targetFieldLabel: 'Assinaturas',
-      targetFieldIcon: 'IconCreditCard',
+      targetFieldIcon: 'IconFileInvoice',
       type: 'MANY_TO_ONE',
     },
-  });
+  }, planObject);
 
   console.log(`\nPronto${DRY_RUN ? ' (nada foi alterado — dry-run)' : ''}. Abra Settings → Data model no Twenty para revisar.`);
 };

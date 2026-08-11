@@ -1,103 +1,108 @@
 # CRM Petbee sobre o Twenty
 
-Esta pasta contém as customizações da Petbee para o Twenty. Ela fica fora de
+Esta pasta contém as ferramentas da Petbee para o Twenty. Ela fica fora de
 `packages/` de propósito: o código do Twenty segue intocado, então sincronizar
 este fork com o repositório oficial (`twentyhq/twenty`) nunca gera conflito.
 
-## O modelo de dados
+A instância atual roda em **https://crm.petbeetools.com.br** (Railway). O
+modelo abaixo é o retrato do que existe lá (snapshot de 2026-08-11) — e o
+script desta pasta reproduz esse modelo em qualquer instância nova (ex.: a
+futura produção).
+
+## O modelo de dados (como construído)
 
 ```mermaid
 erDiagram
-    TUTOR ||--o{ PET : "tem"
-    PET ||--o{ ASSINATURA : "possui"
-    TUTOR ||--o{ ASSINATURA : "é titular de"
+    TUTOR ||--o{ PETS : "tem"
+    PETS ||--o{ ASSINATURA : "possui"
+    PLANO ||--o{ ASSINATURA : "precifica"
+    TUTOR ||--o{ ASSINATURA : "paga"
 
-    TUTOR {
-        string nome
-        string emails
-        string telefones
-        string cpf
-        select statusCliente "Lead / Cliente ativo / Inativo / Ex-cliente"
+    TUTOR["Tutor (Person)"] {
+        fullName name
+        emails emails
+        phones phones
+        text cpf
+        select statusCliente "Lead / Ativo / Inativo"
         select canalPreferido "WhatsApp / E-mail / Telefone"
+        text humanid
+        text hIdPetbee "ID Petbee"
+        text idBitrix "ID Bitrix (migração)"
+        text utmSource
+        text utmMedium
+        text utmCampaign
     }
-    PET {
-        string nome
-        select especie "Cachorro / Gato / Ave / Roedor / Outro"
-        string raca
-        select sexo
-        select porte
-        date dataNascimento
-        number pesoKg
-        boolean castrado
-        string microchip
+    PETS {
+        text name
+        text especie
+        text raca
+        select sexo "Macho / Fêmea"
+        select porte "Pequeno / Médio / Grande / Gigante"
+        date dataDeNascimento
+        text carteirinha
+        text petIdPetbee "ID Petbee"
+    }
+    PLANO {
+        text name
+        currency valorMensal
+        boolean ativo
+        multiselect addonsInclusos "Vacinas / Checkup / Limpeza Dentária"
+        text planIdPetbee "ID Petbee"
     }
     ASSINATURA {
-        select plano "Essencial / Completo / Premium"
-        select status "Ativa / Inadimplente / Pausada / Cancelada / Encerrada"
-        currency valorMensal
+        select status "Ativa / Bloqueada / Cancelada"
+        select periodicidade "Mensal / Anual"
+        currency valorMensal "MRR"
+        number diaVencimento
         date dataInicio
-        date proximaCobranca
-        select formaPagamento "Cartão / Pix / Boleto"
+        date dataCancelamento
+        multiselect addons "extras"
+        text cupom
+        text subsIdPetbee "ID Petbee"
     }
 ```
 
-- **Tutor** — por padrão é o objeto **Person** do Twenty (recomendado: ele já
-  tem e-mails, telefones, timeline, notas, tarefas e integração com
-  Gmail/Calendar). Se você já criou um objeto customizado chamado `tutor` pela
-  interface, o script detecta e usa ele automaticamente.
-- **Pet** — objeto customizado, com relação *muitos pets → um tutor*.
-- **Assinatura** — objeto customizado ligado ao **pet** (qual pet o plano
-  cobre) e ao **titular** (quem paga). Manter as assinaturas como objeto
-  separado (em vez de um campo "plano ativo" no pet) preserva o histórico:
-  cancelamentos, upgrades e reativações viram registros.
+- **Tutor** é o objeto padrão **Person** do Twenty (com e-mails, telefones,
+  timeline, notas, tarefas e integração Gmail/Calendar), estendido com os
+  campos da Petbee.
+- **Pets** guarda os animais, ligados ao tutor.
+- **Plano** é o catálogo de planos (nome, valor, addons inclusos).
+- **Assinatura** é o coração comercial: liga tutor + pet + plano, com status,
+  periodicidade, MRR, vencimento e cupom. Histórico preservado — upgrades e
+  cancelamentos viram registros, não sobrescrevem nada.
+- Os campos **ID Petbee** (tutor/pet/plano/assinatura) ancoram sincronização
+  com o sistema da Petbee; **ID Bitrix** ancora a migração do Bitrix24 (cada
+  contato importado guarda o ID de origem — dá para reimportar sem duplicar).
 
-Com isso dá para segmentar comunicação com precisão, por exemplo: *tutores
-com assinatura Ativa e pet da espécie Cachorro*, ou *leads com pet idoso sem
-plano* — tudo com filtros e views salvas, sem código.
+> Detalhe técnico importante para scripts de migração: o objeto Pets tem
+> `nameSingular: pets` e `namePlural: petss` (sic). Na API de registros as
+> queries usam o plural — ou seja, `petss`. O provisionador reproduz isso
+> igual para manter compatibilidade entre ambientes.
 
-## Como rodar o provisionador
+## Como reprovisionar em outra instância
 
-1. Na sua instância do Twenty, gere uma API key: **Settings → APIs & Webhooks**.
+1. Na instância de destino, gere uma API key: **Settings → APIs & Webhooks**.
 2. Rode (Node 18+, sem dependências):
 
 ```bash
-# Contra a instância local
-TWENTY_API_KEY=<sua-api-key> node petbee/provision-petbee-crm.mjs
+# Simular primeiro (recomendado)
+TWENTY_API_URL=https://<instancia> TWENTY_API_KEY=<key> node petbee/provision-petbee-crm.mjs --dry-run
 
-# Contra produção
-TWENTY_API_URL=https://crm.suaempresa.com.br TWENTY_API_KEY=<key> node petbee/provision-petbee-crm.mjs
-
-# Só simular, sem alterar nada
-TWENTY_API_KEY=<key> node petbee/provision-petbee-crm.mjs --dry-run
+# Aplicar
+TWENTY_API_URL=https://<instancia> TWENTY_API_KEY=<key> node petbee/provision-petbee-crm.mjs
 ```
 
 O script é **idempotente**: objetos e campos que já existem (pelo nome) são
-pulados, nunca duplicados nem sobrescritos. Pode rodar na instância onde você
-já criou `pet`/`tutor` à mão — ele só completa o que falta.
+pulados, nunca duplicados nem sobrescritos. Rodar duas vezes não faz mal.
 
-Variáveis:
+## Melhorias sugeridas (backlog)
 
-| Variável | Padrão | Para quê |
-|---|---|---|
-| `TWENTY_API_URL` | `http://localhost:3000` | URL da instância |
-| `TWENTY_API_KEY` | — (obrigatória) | API key do workspace |
-| `PETBEE_TUTOR_OBJECT` | auto (`tutor` se existir, senão `person`) | Forçar qual objeto é o tutor |
-
-## Ajustes depois de rodar
-
-- **Nomes dos planos**: Essencial/Completo/Premium são exemplos — edite as
-  opções do campo *Plano* em **Settings → Data model → Assinatura**.
-- **Renomear "Person" para "Tutor"**: se quiser que a interface mostre
-  "Tutores" no menu, edite os rótulos do objeto People em
-  **Settings → Data model** (só muda o rótulo, sem afetar integrações).
-- **Views sugeridas**: crie views filtradas como "Clientes ativos"
-  (statusCliente = Cliente ativo), "Inadimplentes" (Assinaturas com status
-  Inadimplente) e um kanban de Assinaturas agrupado por status.
-
-## Por que via API e não no código?
-
-Objetos criados pela interface ou pela API de metadados ficam no banco do
-workspace — sobrevivem a upgrades do Twenty e não exigem manter um fork
-divergente. Código só será necessário para funcionalidades que a plataforma
-não oferece (ex.: integração própria de WhatsApp); nesse caso, o plano é
-manter essas adições isoladas para facilitar o sync com o upstream.
+- **Espécie como seleção**: hoje `especie` é texto livre em Pets — como
+  seleção (Cachorro/Gato/…) os filtros e a segmentação ficam mais confiáveis.
+  Requer migrar os valores já digitados; fazer quando a base ainda é pequena.
+- **Views salvas**: "Clientes ativos" (statusCliente = Ativo), "Assinaturas
+  bloqueadas", kanban de Assinaturas por status, "Leads sem pet cadastrado".
+- **Workflows**: ex. quando Assinatura muda para Bloqueada → criar tarefa de
+  cobrança para o time.
+- **Migração Bitrix**: exportar contatos/negócios do Bitrix24 e importar
+  preenchendo `idBitrix` — em lotes pequenos, validando a cada lote.
