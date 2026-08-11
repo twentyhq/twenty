@@ -603,14 +603,12 @@ See the [public assets section](/developers/extend/apps/config/public-assets) fo
 
 ## Sharing dependencies across front components
 
-By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies to build those libraries once and have every component of the app load them from a single cached file:
+By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file:
 
-```ts src/front-component-shared-dependencies.ts
-import { defineFrontComponentSharedDependencies } from 'twenty-sdk/define';
-
-export default defineFrontComponentSharedDependencies({
-  dependencies: ['react', 'react-dom/client', 'twenty-ui/input'],
-});
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
 ```
 
 Each component then imports its dependencies exactly as before — nothing changes in your component code:

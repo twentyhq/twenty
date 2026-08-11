@@ -23,7 +23,6 @@ vi.mock('@/cli/utilities/build/common/esbuild-watcher', () => ({
 
 const SHARED_DEPENDENCIES_MANIFEST = {
   dependencies: ['react'],
-  sourcePath: 'src/sharedDependencies.ts',
   builtPath: 'src/sharedDependencies.mjs',
   builtChecksum: null,
 };
@@ -52,7 +51,7 @@ const mockSharedDependenciesBuildWithChecksum = (checksum: string) => {
       await onFileBuilt?.({
         fileFolder: FileFolder.BuiltFrontComponent,
         builtPath: 'src/sharedDependencies.mjs',
-        sourcePath: 'src/sharedDependencies.ts',
+        sourcePath: 'package.json',
         checksum,
       });
 
@@ -211,7 +210,7 @@ describe('FrontComponentsWatcher', () => {
         await onFileBuilt?.({
           fileFolder: FileFolder.BuiltFrontComponent,
           builtPath: 'src/sharedDependencies.mjs',
-          sourcePath: 'src/sharedDependencies.ts',
+          sourcePath: 'package.json',
           checksum: 'stale-checksum',
         });
 

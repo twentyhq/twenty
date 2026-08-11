@@ -156,9 +156,8 @@ export class FrontComponentsWatcher {
     }
 
     return (
-      sharedDependencies.sourcePath !== this.sharedDependencies.sourcePath ||
       sharedDependencies.dependencies.join(',') !==
-        this.sharedDependencies.dependencies.join(',')
+      this.sharedDependencies.dependencies.join(',')
     );
   }
 

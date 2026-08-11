@@ -1,39 +1,32 @@
-import { join } from 'path';
-
 import {
   MINIMAL_APP_PATH,
   SHARED_DEPENDENCIES_APP_PATH,
 } from '@/cli/__tests__/apps/fixture-paths';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 import { normalizeSharedDependencies } from '@/cli/utilities/build/manifest/utils/normalize-shared-dependencies';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from 'twenty-shared/application';
 
 describe('buildManifest shared dependencies', () => {
-  it('extracts the shared dependencies declared by the application', async () => {
-    const { manifest, filePaths, errors } = await buildManifest(
+  it('extracts the shared dependencies declared in package.json', async () => {
+    const { manifest, errors } = await buildManifest(
       SHARED_DEPENDENCIES_APP_PATH,
     );
 
     expect(errors).toEqual([]);
     expect(manifest?.application.frontComponentSharedDependencies).toEqual({
       dependencies: ['react', 'react-dom/client', 'react/jsx-runtime'],
-      sourcePath: join('src', 'front-component-shared-dependencies.ts'),
-      builtPath: join('src', 'front-component-shared-dependencies.mjs'),
+      builtPath: FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
       builtChecksum: null,
     });
-    expect(filePaths.frontComponentSharedDependencies).toEqual([
-      join('src', 'front-component-shared-dependencies.ts'),
-    ]);
   }, 60000);
 
   it('leaves the shared dependencies undefined for an application without one', async () => {
-    const { manifest, filePaths, errors } =
-      await buildManifest(MINIMAL_APP_PATH);
+    const { manifest, errors } = await buildManifest(MINIMAL_APP_PATH);
 
     expect(errors).toEqual([]);
     expect(
       manifest?.application.frontComponentSharedDependencies,
     ).toBeUndefined();
-    expect(filePaths.frontComponentSharedDependencies).toEqual([]);
   }, 60000);
 });
 

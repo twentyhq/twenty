@@ -49,7 +49,7 @@ export const buildSharedDependenciesBundle = async ({
         sharedDependencies.dependencies,
       ),
       resolveDir: appPath,
-      sourcefile: 'twenty-sharedDependencies-entry.js',
+      sourcefile: 'twenty-shared-dependencies-entry.js',
       loader: 'js',
     },
     outfile: absoluteBuiltPath,
@@ -78,7 +78,7 @@ export const buildSharedDependenciesBundle = async ({
   await onFileBuilt({
     fileFolder: FileFolder.BuiltFrontComponent,
     builtPath,
-    sourcePath: sharedDependencies.sourcePath,
+    sourcePath: 'package.json',
     checksum,
   });
 

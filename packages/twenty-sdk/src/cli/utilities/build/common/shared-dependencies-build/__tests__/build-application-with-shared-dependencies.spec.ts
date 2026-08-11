@@ -3,6 +3,7 @@ import { join } from 'path';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
+  FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
   OUTPUT_DIR,
   SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
   type Manifest,
@@ -50,8 +51,7 @@ describe('buildApplication with a shared dependencies bundle', () => {
       builtManifest.application.frontComponentSharedDependencies,
     ).toMatchObject({
       dependencies: ['react', 'react-dom/client', 'react/jsx-runtime'],
-      sourcePath: join('src', 'front-component-shared-dependencies.ts'),
-      builtPath: join('src', 'front-component-shared-dependencies.mjs'),
+      builtPath: FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
     });
     expect(
       builtManifest.application.frontComponentSharedDependencies?.builtChecksum,
@@ -63,8 +63,7 @@ describe('buildApplication with a shared dependencies bundle', () => {
       join(
         SHARED_DEPENDENCIES_APP_PATH,
         OUTPUT_DIR,
-        'src',
-        'front-component-shared-dependencies.mjs',
+        FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
       ),
       'utf-8',
     );

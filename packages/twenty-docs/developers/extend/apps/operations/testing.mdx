@@ -64,7 +64,7 @@ The build step uses esbuild to produce a single self-contained file per logic fu
 
 Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
 
-Front components can also share dependencies through a [shared dependencies bundle](/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Packages listed in `defineFrontComponentSharedDependencies()` are built once into a separate file and loaded from it at runtime instead of being inlined into each component, so a component that imports only shared packages carries almost no dependency code of its own.
+Front components can also share dependencies through a [shared dependencies bundle](/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Packages listed in the `frontComponentSharedDependencies` field of the app's package.json are built once into a separate file and loaded from it at runtime instead of being inlined into each component, so a component that imports only shared packages carries almost no dependency code of its own.
 
 ## Setup
 

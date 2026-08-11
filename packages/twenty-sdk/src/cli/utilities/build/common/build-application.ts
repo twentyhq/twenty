@@ -150,15 +150,7 @@ export const buildApplication = async (
   await copyStaticFiles({
     appPath: options.appPath,
     fileFolder: FileFolder.Source,
-    filePaths: [
-      ...new Set([
-        ...logicFunctions,
-        ...frontComponents,
-        ...(isDefined(sharedDependencies)
-          ? [sharedDependencies.sourcePath]
-          : []),
-      ]),
-    ],
+    filePaths: [...new Set([...logicFunctions, ...frontComponents])],
     collectFileBuilt,
   });
 

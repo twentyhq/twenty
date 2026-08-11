@@ -12,7 +12,6 @@ import { removeBuiltSharedDependenciesBundle } from '@/cli/utilities/build/commo
 
 const SHARED_DEPENDENCIES_MANIFEST = {
   dependencies: ['axios'],
-  sourcePath: 'default-export-shared-dependencies.ts',
   builtPath: 'default-export-shared-dependencies.mjs',
   builtChecksum: null,
 };

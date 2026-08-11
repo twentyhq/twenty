@@ -8,6 +8,7 @@
     "yarn": ">=4.0.2"
   },
   "packageManager": "yarn@4.9.2",
+  "frontComponentSharedDependencies": ["react", "react-dom/client"],
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",

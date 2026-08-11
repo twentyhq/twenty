@@ -19,7 +19,6 @@ const REACT_BUNDLED_MARKER = '@license React';
 
 const SHARED_DEPENDENCIES_MANIFEST = {
   dependencies: ['react', 'react/jsx-runtime', 'react-dom/client'],
-  sourcePath: 'front-component-shared-dependencies.ts',
   builtPath: 'front-component-shared-dependencies.mjs',
   builtChecksum: null,
 };

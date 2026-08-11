@@ -61,13 +61,12 @@ describe('buildApplicationFileList', () => {
     ]);
   });
 
-  it('includes the shared dependencies source and bundle when the application declares one', () => {
+  it('includes the shared dependencies bundle when the application declares one', () => {
     const manifest = {
       application: {
         frontComponentSharedDependencies: {
           dependencies: ['react'],
-          sourcePath: 'src/front-component-shared-dependencies.ts',
-          builtPath: 'src/front-component-shared-dependencies.mjs',
+          builtPath: 'front-component-shared-dependencies.mjs',
           builtChecksum: 'checksum',
         },
       },
@@ -76,12 +75,7 @@ describe('buildApplicationFileList', () => {
     expect(buildApplicationFileList(manifest)).toEqual(
       expect.arrayContaining([
         {
-          relativePath: 'src/front-component-shared-dependencies.ts',
-          fileFolder: FileFolder.Source,
-          isRequired: false,
-        },
-        {
-          relativePath: 'src/front-component-shared-dependencies.mjs',
+          relativePath: 'front-component-shared-dependencies.mjs',
           fileFolder: FileFolder.BuiltFrontComponent,
           isRequired: true,
         },

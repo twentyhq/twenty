@@ -9,7 +9,7 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
-import { normalizeSharedDependencies } from '@/cli/utilities/build/manifest/utils/normalize-shared-dependencies';
+import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -23,9 +23,7 @@ import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
-import { type FrontComponentSharedDependenciesConfig } from '@/sdk/define/front-component-shared-dependencies/front-component-shared-dependencies-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -52,14 +50,13 @@ import {
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
-  type FrontComponentSharedDependenciesManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -126,8 +123,6 @@ export const buildManifest = async (
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
-  const sharedDependenciesManifests: FrontComponentSharedDependenciesManifest[] =
-    [];
   const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
@@ -148,7 +143,6 @@ export const buildManifest = async (
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
-  const sharedDependenciesFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -498,31 +492,6 @@ export const buildManifest = async (
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }
-      case ManifestEntityKey.FrontComponentSharedDependencies: {
-        const extract =
-          await extractManifestFromFile<FrontComponentSharedDependenciesConfig>(
-            {
-              appPath,
-              filePath,
-            },
-          );
-
-        errors.push(...extract.errors);
-        warnings.push(...(extract.warnings ?? []));
-
-        const dependencies = normalizeSharedDependencies(
-          extract.config.dependencies ?? [],
-        );
-
-        sharedDependenciesManifests.push({
-          dependencies,
-          sourcePath: relativePath,
-          builtPath: relativePath.replace(/\.tsx?$/, '.mjs'),
-          builtChecksum: null,
-        });
-        sharedDependenciesFilePaths.push(relativePath);
-        break;
-      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -606,11 +575,12 @@ export const buildManifest = async (
     errors.push('Only one defineApplicationRole is allowed per application');
   }
 
-  if (sharedDependenciesManifests.length > 1) {
-    errors.push(
-      'Only one defineFrontComponentSharedDependencies is allowed per application',
-    );
-  }
+  const {
+    sharedDependencies,
+    errors: sharedDependenciesErrors,
+  } = await extractFrontComponentSharedDependencies(appPath);
+
+  errors.push(...sharedDependenciesErrors);
 
   const resolvedDefaultRoleUniversalIdentifier =
     applicationConfig?.defaultRoleUniversalIdentifier ??
@@ -668,11 +638,8 @@ export const buildManifest = async (
                   },
                 }
               : {}),
-            ...(isNonEmptyArray(sharedDependenciesManifests)
-              ? {
-                  frontComponentSharedDependencies:
-                    sharedDependenciesManifests[0],
-                }
+            ...(isDefined(sharedDependencies)
+              ? { frontComponentSharedDependencies: sharedDependencies }
               : {}),
           };
         })()
@@ -726,7 +693,6 @@ export const buildManifest = async (
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
-    frontComponentSharedDependencies: sharedDependenciesFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };
