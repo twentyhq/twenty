@@ -56,9 +56,9 @@ type StandardRecordPageFlatEntityMaps = Pick<
   | 'flatPageLayoutWidgetMaps'
 >;
 
-@RegisteredWorkspaceCommand('2.29.0', 1786010742000)
+@RegisteredWorkspaceCommand('2.31.0', 1786437482000)
 @Command({
-  name: 'upgrade:2-29:backfill-record-page',
+  name: 'upgrade:2-31:backfill-record-page',
   description:
     'Every object carries a system record-page stack; caller-defined custom record-page layouts coexist with it (the frontend displays a custom layout over the system one when defined). Running after the reconcile-standard-record-page and reconcile-workspace-custom-record-page commands normalized identifiers and ownership, this command backfills the system record-page stack for every object missing it, converging upgraded installs with fresh installs and replacing the frontend hardcoded default-layout fallback with a database guarantee. Twenty-standard objects get their curated stack from the standard definitions (which hold the derived identifiers post-reconcile, so lookups are direct); standard objects the definitions give no record page to stay without one, exactly like fresh installs. Workspace-custom and application objects get the engine default stack (the one objectRecordPageOnCreate always emits through the workspace migration pipeline): the FIELDS_WIDGET view (derived identifier, reserved key), its view fields for every displayable field except the label identifier, and the default layout with its 5 tabs and widgets. The backfill is idempotent and retry-safe: view, view-field, view-field-group and layout creation are gated independently on their derived identifiers, so a retry after a partial failure still backfills the missing view fields and groups of an already-committed view. View fields land in the migration bucket of the application owning their displayed field, matching the engine emission for app-contributed fields on foreign objects. On objects whose view already exists it only tops up missing view-field rows, and it never touches the tabs and widgets of an existing layout, so deliberate customizations survive.',
 })

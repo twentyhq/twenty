@@ -1,12 +1,12 @@
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
-// The pre-2.29 pinned universal identifiers of the 20 curated standard
-// record-page layouts, keyed by their object. The 2-29 record-page re-own
+// The pre-2.31 pinned universal identifiers of the 20 curated standard
+// record-page layouts, keyed by their object. The 2-31 record-page re-own
 // derives layout identifiers from the object, so these literals were removed
 // from the shared constants; the standard reconcile command still needs them
 // to locate the curated layout row of each standard object in workspaces that
 // predate the derivation. Frozen: never mutate these values.
-export const PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER: Record<
+export const PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER: Record<
   string,
   string
 > = {

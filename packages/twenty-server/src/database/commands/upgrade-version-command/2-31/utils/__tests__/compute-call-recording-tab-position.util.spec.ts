@@ -73,7 +73,10 @@ describe('computeCallRecordingTabPosition', () => {
     expect(
       computeCallRecordingTabPosition({
         existingPageLayoutTabs: [
-          buildPageLayoutTab({ universalIdentifier: 'custom-tab', position: 50 }),
+          buildPageLayoutTab({
+            universalIdentifier: 'custom-tab',
+            position: 50,
+          }),
         ],
       }),
     ).toBe(60);
@@ -86,7 +89,10 @@ describe('computeCallRecordingTabPosition', () => {
             position: 10,
             isActive: false,
           }),
-          buildPageLayoutTab({ universalIdentifier: 'custom-tab', position: 20 }),
+          buildPageLayoutTab({
+            universalIdentifier: 'custom-tab',
+            position: 20,
+          }),
         ],
       }),
     ).toBe(30);

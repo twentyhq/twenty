@@ -11,12 +11,12 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type RecordPageReownUpdate,
   type RecordPageReownUpdates,
-} from 'src/database/commands/upgrade-version-command/2-29/types/record-page-reown-updates.type';
+} from 'src/database/commands/upgrade-version-command/2-31/types/record-page-reown-updates.type';
 import {
   collectRecordPageStackTree,
   type RecordPageStackFieldsViewNode,
-} from 'src/database/commands/upgrade-version-command/2-29/utils/collect-record-page-stack-tree.util';
-import { createEmptyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/create-empty-record-page-reown-updates.util';
+} from 'src/database/commands/upgrade-version-command/2-31/utils/collect-record-page-stack-tree.util';
+import { createEmptyRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-31/utils/create-empty-record-page-reown-updates.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 type ReownLogger = { warn: (message: string) => void };

@@ -6,8 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { computeTwentyStandardApplicationAllFlatEntityMapsPre229 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-29.util';
-import { toPre229RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-29.util';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre231 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-31.util';
+import { toPre231RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -21,7 +21,7 @@ const SEND_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
 ];
 
 const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  toPre229RecordPageUniversalIdentifier(
+  toPre231RecordPageUniversalIdentifier(
     STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
       .universalIdentifier,
   );
@@ -82,7 +82,7 @@ export class ConfigureMessageCampaignCommandMenuCommand extends ProvisionedWorks
     }
 
     const standardAllFlatEntityMaps =
-      computeTwentyStandardApplicationAllFlatEntityMapsPre229({
+      computeTwentyStandardApplicationAllFlatEntityMapsPre231({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { collectRecordPageStackTree } from 'src/database/commands/upgrade-version-command/2-29/utils/collect-record-page-stack-tree.util';
+import { collectRecordPageStackTree } from 'src/database/commands/upgrade-version-command/2-31/utils/collect-record-page-stack-tree.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 type ApplicationOwnedFlatEntity = {

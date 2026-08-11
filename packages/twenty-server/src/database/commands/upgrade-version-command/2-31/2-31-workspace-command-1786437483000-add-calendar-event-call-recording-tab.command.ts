@@ -28,7 +28,7 @@ const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
     .callRecording.widgets.transcript.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.31.0', 1786353778242)
+@RegisteredWorkspaceCommand('2.31.0', 1786437483000)
 @Command({
   name: 'upgrade:2-31:add-calendar-event-call-recording-tab',
   description:
@@ -55,12 +55,15 @@ export class AddCalendarEventCallRecordingTabCommand extends ProvisionedWorkspac
         { workspaceId },
       );
 
-    const { flatPageLayoutMaps, flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatPageLayoutMaps',
-        'flatPageLayoutTabMaps',
-        'flatPageLayoutWidgetMaps',
-      ]);
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatPageLayoutMaps',
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+    ]);
 
     const existingPageLayout =
       flatPageLayoutMaps.byUniversalIdentifier[

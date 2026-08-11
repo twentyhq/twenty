@@ -1,4 +1,4 @@
-import { type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/types/record-page-reown-updates.type';
+import { type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-31/types/record-page-reown-updates.type';
 
 export const createEmptyRecordPageReownUpdates =
   (): RecordPageReownUpdates => ({

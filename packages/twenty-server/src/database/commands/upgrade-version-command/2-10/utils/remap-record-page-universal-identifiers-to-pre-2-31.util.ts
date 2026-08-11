@@ -3,13 +3,13 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 
-// The 2-29 record-page reconcile re-owns every standard record-page view,
+// The 2-31 record-page reconcile re-owns every standard record-page view,
 // view field, view field group, page layout, tab and widget onto derived
 // universal identifiers, and the shared constants now resolve to that derived
-// scheme. Upgrade commands registered BEFORE 2-29 run on workspaces whose rows
+// scheme. Upgrade commands registered BEFORE 2-31 run on workspaces whose rows
 // still hold the pre-derivation literals, so any standard record-page entity
 // they read from the standard definitions must be remapped back to the
-// pre-2.29 literals before being compared with or committed to the workspace.
+// pre-2.31 literals before being compared with or committed to the workspace.
 const CALENDAR_EVENT_RECORD_PAGE_VIEW =
   STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields;
 const CALL_RECORDING_RECORD_PAGE_VIEW =
@@ -23,7 +23,7 @@ const CALL_RECORDING_RECORD_PAGE_LAYOUT =
 const MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage;
 
-export const PRE_2_29_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
+export const PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
   string,
   string
 > = {
@@ -143,24 +143,24 @@ export const PRE_2_29_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
     .universalIdentifier]: '9c74d8e2-0b5f-4a19-8630-57d2ba14ce92',
 };
 
-export const toPre229RecordPageUniversalIdentifier = (
+export const toPre231RecordPageUniversalIdentifier = (
   universalIdentifier: string,
 ): string =>
-  PRE_2_29_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED[universalIdentifier] ??
+  PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED[universalIdentifier] ??
   universalIdentifier;
 
-export const remapRecordPageUniversalIdentifiersToPre229 = <T>(
+export const remapRecordPageUniversalIdentifiersToPre231 = <T>(
   flatEntity: T,
 ): T => {
   let serialized = JSON.stringify(flatEntity);
 
   for (const [
     derivedUniversalIdentifier,
-    pre229UniversalIdentifier,
-  ] of Object.entries(PRE_2_29_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED)) {
+    pre231UniversalIdentifier,
+  ] of Object.entries(PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED)) {
     serialized = serialized
       .split(derivedUniversalIdentifier)
-      .join(pre229UniversalIdentifier);
+      .join(pre231UniversalIdentifier);
   }
 
   return JSON.parse(serialized) as T;

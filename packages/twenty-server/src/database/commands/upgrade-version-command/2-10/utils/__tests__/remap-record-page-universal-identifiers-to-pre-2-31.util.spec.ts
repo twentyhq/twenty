@@ -1,11 +1,11 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ViewKey, ViewType } from 'twenty-shared/types';
 
-import { remapRecordPageUniversalIdentifiersToPre229 } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-29.util';
+import { remapRecordPageUniversalIdentifiersToPre231 } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 
-describe('remapRecordPageUniversalIdentifiersToPre229', () => {
-  it('should remap derived record-page universal identifiers to their pre-2.29 literals', () => {
-    const remapped = remapRecordPageUniversalIdentifiersToPre229({
+describe('remapRecordPageUniversalIdentifiersToPre231', () => {
+  it('should remap derived record-page universal identifiers to their pre-2.31 literals', () => {
+    const remapped = remapRecordPageUniversalIdentifiersToPre231({
       universalIdentifier:
         STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
           .universalIdentifier,
@@ -24,8 +24,8 @@ describe('remapRecordPageUniversalIdentifiersToPre229', () => {
     });
   });
 
-  it('should downgrade the FIELDS_WIDGET view key to the pre-2.29 null shape without touching the view type', () => {
-    const remapped = remapRecordPageUniversalIdentifiersToPre229({
+  it('should downgrade the FIELDS_WIDGET view key to the pre-2.31 null shape without touching the view type', () => {
+    const remapped = remapRecordPageUniversalIdentifiersToPre231({
       key: null,
       type: ViewType.FIELDS_WIDGET,
       name: 'Call Recording Record Page Fields',
@@ -44,6 +44,6 @@ describe('remapRecordPageUniversalIdentifiersToPre229', () => {
       universalIdentifier: '11111111-1111-4111-8111-111111111111',
     };
 
-    expect(remapRecordPageUniversalIdentifiersToPre229(input)).toEqual(input);
+    expect(remapRecordPageUniversalIdentifiersToPre231(input)).toEqual(input);
   });
 });

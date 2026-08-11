@@ -1,7 +1,7 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddCalendarEventCallRecordingTabCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786353778242-add-calendar-event-call-recording-tab.command';
+import { AddCalendarEventCallRecordingTabCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437483000-add-calendar-event-call-recording-tab.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -39,7 +39,9 @@ const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
 
 const buildByUniversalIdentifierMap = <
   T extends { universalIdentifier: string },
->(flatEntities: T[]) => ({
+>(
+  flatEntities: T[],
+) => ({
   byUniversalIdentifier: Object.fromEntries(
     flatEntities.map((flatEntity) => [
       flatEntity.universalIdentifier,

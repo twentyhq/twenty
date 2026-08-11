@@ -357,6 +357,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           timeline: 'Timeline',
         },
       },
+      callRecording: {
+        title: 'Call Recording',
+        widgets: {
+          transcript: 'Transcript',
+        },
+      },
     },
   }),
   calendarEventParticipantRecordPage: buildStandardObjectRecordPageLayout({
@@ -373,14 +379,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Timeline',
         widgets: {
           timeline: 'Timeline',
-        },
-      },
-      callRecording: {
-        universalIdentifier: 'a3dff71b-ca06-4709-9b39-ca4f30108ab4',
-        widgets: {
-          transcript: {
-            universalIdentifier: 'dc2f3511-d72e-400b-adc9-fdb8d930dda8',
-          },
         },
       },
     },

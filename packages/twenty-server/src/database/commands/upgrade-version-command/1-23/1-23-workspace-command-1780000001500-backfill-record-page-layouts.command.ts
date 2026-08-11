@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { computeTwentyStandardApplicationAllFlatEntityMapsPre229 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-29.util';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre231 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-31.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -241,7 +241,7 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
     twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
     const standardMaps =
-      computeTwentyStandardApplicationAllFlatEntityMapsPre229({
+      computeTwentyStandardApplicationAllFlatEntityMapsPre231({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,

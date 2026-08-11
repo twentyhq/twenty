@@ -1,8 +1,8 @@
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { ReconcileStandardRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-workspace-command-1786010741000-reconcile-standard-record-page.command';
-import { PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-29/constants/pre-2-29-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
+import { ReconcileStandardRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437481000-reconcile-standard-record-page.command';
+import { PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-31/constants/pre-2-31-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
 import {
   buildByUniversalIdentifierMap,
   type FlatEntityFixture,
@@ -14,7 +14,7 @@ import {
   STANDARD_APPLICATION_ID,
   STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   WORKSPACE_ID,
-} from 'src/database/commands/upgrade-version-command/2-29/__tests__/record-page-reconcile-test-setup';
+} from 'src/database/commands/upgrade-version-command/2-31/__tests__/record-page-reconcile-test-setup';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
@@ -27,8 +27,8 @@ import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manag
 
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company;
-const COMPANY_PRE_2_29_LAYOUT_UNIVERSAL_IDENTIFIER =
-  PRE_2_29_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
+const COMPANY_PRE_2_31_LAYOUT_UNIVERSAL_IDENTIFIER =
+  PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
     COMPANY_OBJECT_UNIVERSAL_IDENTIFIER
   ];
 const CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -39,7 +39,7 @@ const DERIVED = buildDerivedRecordPageStackUniversalIdentifiers({
   objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
 });
 
-// The curated company stack, still on its pre-2.29 pinned literal.
+// The curated company stack, still on its pre-2.31 pinned literal.
 const CURATED_STACK = (() => {
   const stack = buildUnderivedRecordPageStack({
     idPrefix: 'company',
@@ -52,7 +52,7 @@ const CURATED_STACK = (() => {
     ...stack,
     pageLayout: {
       ...stack.pageLayout,
-      universalIdentifier: COMPANY_PRE_2_29_LAYOUT_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: COMPANY_PRE_2_31_LAYOUT_UNIVERSAL_IDENTIFIER,
     },
   };
 })();
@@ -189,7 +189,7 @@ describe('ReconcileStandardRecordPageCommand', () => {
       total: 1,
     });
 
-  it('re-owns the curated stack located by its pre-2.29 literal', async () => {
+  it('re-owns the curated stack located by its pre-2.31 literal', async () => {
     mockWorkspaceCache();
 
     await runOnWorkspace();

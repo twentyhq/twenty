@@ -7,9 +7,9 @@ import {
   FIELD_UNIVERSAL_IDENTIFIER,
   STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   WORKSPACE_ID,
-} from 'src/database/commands/upgrade-version-command/2-29/__tests__/record-page-reconcile-test-setup';
-import { computeRecordPageStackReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/compute-record-page-stack-reown-updates.util';
-import { countRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-29/utils/count-record-page-reown-updates.util';
+} from 'src/database/commands/upgrade-version-command/2-31/__tests__/record-page-reconcile-test-setup';
+import { computeRecordPageStackReownUpdates } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-record-page-stack-reown-updates.util';
+import { countRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-31/utils/count-record-page-reown-updates.util';
 
 const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
 

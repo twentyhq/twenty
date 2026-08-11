@@ -4,9 +4,9 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 // View field groups are created by the user-facing CRUD API, by manifest apps and
-// by the engine, so the column defaults to false; the 2-29 record-page reconcile
+// by the engine, so the column defaults to false; the 2-31 record-page reconcile
 // command flags the engine/standard-derived rows afterwards.
-@RegisteredInstanceCommand('2.29.0', 1786010740000)
+@RegisteredInstanceCommand('2.31.0', 1786437480000)
 export class AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

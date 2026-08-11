@@ -74,7 +74,7 @@ export const buildDerivedRecordPageStackUniversalIdentifiers = ({
   return { pageLayout, homeTab, fieldsWidget, view, viewField, generalGroup };
 };
 
-// An underived pre-2.29 stack: v4 identifiers everywhere, no key.
+// An underived pre-2.31 stack: v4 identifiers everywhere, no key.
 export const buildUnderivedRecordPageStack = ({
   idPrefix,
   objectUniversalIdentifier,
