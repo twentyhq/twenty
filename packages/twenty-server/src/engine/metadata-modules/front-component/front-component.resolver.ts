@@ -42,7 +42,7 @@ export class FrontComponentResolver {
   ) {}
 
   @ResolveField(() => String, { nullable: true })
-  async vendorChecksum(
+  async sharedDependenciesChecksum(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | null> {
@@ -52,8 +52,8 @@ export class FrontComponentResolver {
       ]);
 
     return (
-      flatApplicationMaps.byId[frontComponent.applicationId]?.vendorChecksum ??
-      null
+      flatApplicationMaps.byId[frontComponent.applicationId]
+        ?.sharedDependenciesChecksum ?? null
     );
   }
 

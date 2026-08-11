@@ -9,7 +9,7 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
-import { normalizeVendorDependencies } from '@/cli/utilities/build/manifest/utils/normalize-vendor-dependencies';
+import { normalizeSharedDependencies } from '@/cli/utilities/build/manifest/utils/normalize-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -23,7 +23,7 @@ import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
-import { type VendorConfig } from '@/sdk/define/vendor/vendor-config';
+import { type FrontComponentSharedDependenciesConfig } from '@/sdk/define/front-component-shared-dependencies/front-component-shared-dependencies-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { readFile } from 'node:fs/promises';
@@ -52,7 +52,7 @@ import {
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
-  type VendorManifest,
+  type FrontComponentSharedDependenciesManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
@@ -126,7 +126,8 @@ export const buildManifest = async (
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
-  const vendorManifests: VendorManifest[] = [];
+  const sharedDependenciesManifests: FrontComponentSharedDependenciesManifest[] =
+    [];
   const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
@@ -147,7 +148,7 @@ export const buildManifest = async (
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
-  const vendorFilePaths: string[] = [];
+  const sharedDependenciesFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -497,26 +498,29 @@ export const buildManifest = async (
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }
-      case ManifestEntityKey.Vendor: {
-        const extract = await extractManifestFromFile<VendorConfig>({
-          appPath,
-          filePath,
-        });
+      case ManifestEntityKey.FrontComponentSharedDependencies: {
+        const extract =
+          await extractManifestFromFile<FrontComponentSharedDependenciesConfig>(
+            {
+              appPath,
+              filePath,
+            },
+          );
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        const dependencies = normalizeVendorDependencies(
+        const dependencies = normalizeSharedDependencies(
           extract.config.dependencies ?? [],
         );
 
-        vendorManifests.push({
+        sharedDependenciesManifests.push({
           dependencies,
-          sourceVendorPath: relativePath,
-          builtVendorPath: relativePath.replace(/\.tsx?$/, '.mjs'),
-          builtVendorChecksum: null,
+          sourcePath: relativePath,
+          builtPath: relativePath.replace(/\.tsx?$/, '.mjs'),
+          builtChecksum: null,
         });
-        vendorFilePaths.push(relativePath);
+        sharedDependenciesFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.PublicAssets: {
@@ -591,23 +595,21 @@ export const buildManifest = async (
   }
 
   if (uninstallLogicFunctions.length > 1) {
-    errors.push(
-      'Only one uninstall logic function is allowed per application',
-    );
+    errors.push('Only one uninstall logic function is allowed per application');
   }
 
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
-    errors.push(
-      'Only one settings front component is allowed per application',
-    );
+    errors.push('Only one settings front component is allowed per application');
   }
 
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
 
-  if (vendorManifests.length > 1) {
-    errors.push('Only one defineVendor is allowed per application');
+  if (sharedDependenciesManifests.length > 1) {
+    errors.push(
+      'Only one defineFrontComponentSharedDependencies is allowed per application',
+    );
   }
 
   const resolvedDefaultRoleUniversalIdentifier =
@@ -666,8 +668,11 @@ export const buildManifest = async (
                   },
                 }
               : {}),
-            ...(isNonEmptyArray(vendorManifests)
-              ? { vendor: vendorManifests[0] }
+            ...(isNonEmptyArray(sharedDependenciesManifests)
+              ? {
+                  frontComponentSharedDependencies:
+                    sharedDependenciesManifests[0],
+                }
               : {}),
           };
         })()
@@ -721,7 +726,7 @@ export const buildManifest = async (
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
-    vendor: vendorFilePaths,
+    frontComponentSharedDependencies: sharedDependenciesFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

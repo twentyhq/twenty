@@ -66,14 +66,21 @@ export const manifestUpdateChecksums = ({
     }
 
     if (fileFolder === FileFolder.BuiltFrontComponent) {
-      const vendor = result.application.vendor;
+      const sharedDependencies =
+        result.application.frontComponentSharedDependencies;
 
-      if (isDefined(vendor) && vendor.builtVendorPath === rootBuiltPath) {
+      if (
+        isDefined(sharedDependencies) &&
+        sharedDependencies.builtPath === rootBuiltPath
+      ) {
         result = {
           ...result,
           application: {
             ...result.application,
-            vendor: { ...vendor, builtVendorChecksum: checksum },
+            frontComponentSharedDependencies: {
+              ...sharedDependencies,
+              builtChecksum: checksum,
+            },
           },
         };
         continue;

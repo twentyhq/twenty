@@ -8,7 +8,7 @@ import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-pane
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationAuthorizationModule } from 'src/engine/core-modules/application/application-authorization/application-authorization.module';
 import { ApplicationDevelopmentModule } from 'src/engine/core-modules/application/application-development/application-development.module';
-import { ApplicationVendorModule } from 'src/engine/core-modules/application/application-vendor/application-vendor.module';
+import { FrontComponentSharedDependenciesModule } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { ApplicationOAuthModule } from 'src/engine/core-modules/application/application-oauth/application-oauth.module';
@@ -109,7 +109,7 @@ import { FileModule } from './file/file.module';
     ApplicationInstallModule,
     ApplicationUpgradeModule,
     ApplicationDevelopmentModule,
-    ApplicationVendorModule,
+    FrontComponentSharedDependenciesModule,
     MarketplaceModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,

@@ -11,7 +11,10 @@ import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import type { Location } from 'esbuild';
 import { type ChokidarFsEvent } from '@/cli/types';
-import { ASSETS_DIR, type VendorManifest } from 'twenty-shared/application';
+import {
+  ASSETS_DIR,
+  type FrontComponentSharedDependenciesManifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export type FileBuiltEvent = {
@@ -72,12 +75,17 @@ export class StartWatchersOrchestratorStep {
 
   async handleWatcherRestarts(result: ManifestBuildResult): Promise<void> {
     const { logicFunctions, frontComponents } = result.filePaths;
-    const vendor = result.manifest?.application.vendor;
+    const sharedDependencies =
+      result.manifest?.application.frontComponentSharedDependencies;
 
     if (!this.state.steps.startWatchers.output.watchersStarted) {
       this.state.steps.startWatchers.output.watchersStarted = true;
       this.state.steps.startWatchers.status = 'done';
-      await this.startFileWatchers(logicFunctions, frontComponents, vendor);
+      await this.startFileWatchers(
+        logicFunctions,
+        frontComponents,
+        sharedDependencies,
+      );
 
       return;
     }
@@ -86,8 +94,16 @@ export class StartWatchersOrchestratorStep {
       await this.logicFunctionsWatcher.restart(logicFunctions);
     }
 
-    if (this.frontComponentsWatcher?.shouldRestart(frontComponents, vendor)) {
-      await this.frontComponentsWatcher.restart(frontComponents, vendor);
+    if (
+      this.frontComponentsWatcher?.shouldRestart(
+        frontComponents,
+        sharedDependencies,
+      )
+    ) {
+      await this.frontComponentsWatcher.restart(
+        frontComponents,
+        sharedDependencies,
+      );
     }
   }
 
@@ -166,12 +182,12 @@ export class StartWatchersOrchestratorStep {
   private async startFileWatchers(
     logicFunctions: string[],
     frontComponents: string[],
-    vendor: VendorManifest | undefined,
+    sharedDependencies: FrontComponentSharedDependenciesManifest | undefined,
   ): Promise<void> {
     await Promise.all([
       this.startTscWatcher(),
       this.startLogicFunctionsWatcher(logicFunctions),
-      this.startFrontComponentsWatcher(frontComponents, vendor),
+      this.startFrontComponentsWatcher(frontComponents, sharedDependencies),
       this.startAssetWatcher(),
       this.startDependencyWatcher(),
     ]);
@@ -193,12 +209,12 @@ export class StartWatchersOrchestratorStep {
 
   private async startFrontComponentsWatcher(
     sourcePaths: string[],
-    vendor: VendorManifest | undefined,
+    sharedDependencies: FrontComponentSharedDependenciesManifest | undefined,
   ): Promise<void> {
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.state.appPath,
       sourcePaths,
-      vendor,
+      sharedDependencies,
       shouldSkipTypecheck: this.shouldSkipTypecheck,
       handleBuildError: this.handleFileBuildError.bind(this),
       handleFileBuilt: this.handleFileBuilt.bind(this),

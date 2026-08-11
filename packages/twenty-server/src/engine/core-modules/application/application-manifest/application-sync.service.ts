@@ -176,8 +176,8 @@ export class ApplicationSyncService {
       autoUpgrade: false,
       isSdkLayerStale: false,
       sdkClientCoreChecksum: null,
-      vendorChecksum: null,
-      vendorBuiltPath: null,
+      frontComponentSharedDependenciesChecksum: null,
+      frontComponentSharedDependenciesBuiltPath: null,
       applicationRegistrationId: null,
       primaryPublicDomainId: null,
       createdAt: now,
@@ -256,10 +256,11 @@ export class ApplicationSyncService {
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
 
-    const vendorChecksum =
-      manifest.application.vendor?.builtVendorChecksum ?? null;
-    const vendorBuiltPath =
-      manifest.application.vendor?.builtVendorPath ?? null;
+    const sharedDependenciesChecksum =
+      manifest.application.frontComponentSharedDependencies?.builtChecksum ??
+      null;
+    const sharedDependenciesBuiltPath =
+      manifest.application.frontComponentSharedDependencies?.builtPath ?? null;
 
     const updatedApplication = await this.applicationService.update(
       application.id,
@@ -270,32 +271,35 @@ export class ApplicationSyncService {
         version: packageJson.version,
         packageJsonChecksum: manifest.application.packageJsonChecksum,
         yarnLockChecksum: manifest.application.yarnLockChecksum,
-        vendorChecksum,
-        vendorBuiltPath,
+        frontComponentSharedDependenciesChecksum: sharedDependenciesChecksum,
+        frontComponentSharedDependenciesBuiltPath: sharedDependenciesBuiltPath,
         applicationRegistrationId: resolvedRegistrationId,
         workspaceId,
       },
     );
 
-    if (application.vendorChecksum !== vendorChecksum) {
-      await this.broadcastFrontComponentVendorChecksumUpdates({
+    if (
+      application.frontComponentSharedDependenciesChecksum !==
+      sharedDependenciesChecksum
+    ) {
+      await this.broadcastFrontComponentSharedDependenciesChecksumUpdates({
         workspaceId,
         applicationId: application.id,
-        vendorChecksum,
+        frontComponentSharedDependenciesChecksum: sharedDependenciesChecksum,
       });
     }
 
     return updatedApplication;
   }
 
-  private async broadcastFrontComponentVendorChecksumUpdates({
+  private async broadcastFrontComponentSharedDependenciesChecksumUpdates({
     workspaceId,
     applicationId,
-    vendorChecksum,
+    sharedDependenciesChecksum,
   }: {
     workspaceId: string;
     applicationId: string;
-    vendorChecksum: string | null;
+    sharedDependenciesChecksum: string | null;
   }): Promise<void> {
     try {
       const frontComponents = await this.frontComponentRepository.find({
@@ -310,17 +314,17 @@ export class ApplicationSyncService {
           entityName: 'frontComponent',
           recordId: frontComponent.id,
           properties: {
-            updatedFields: ['vendorChecksum'],
+            updatedFields: ['sharedDependenciesChecksum'],
             after: {
               id: frontComponent.id,
-              vendorChecksum,
+              sharedDependenciesChecksum,
             },
           },
         })),
       });
     } catch (error) {
       this.logger.warn(
-        `Failed to broadcast vendor checksum update for application ${applicationId} in workspace ${workspaceId}`,
+        `Failed to broadcast the shared dependencies checksum update for application ${applicationId} in workspace ${workspaceId}`,
         error,
       );
     }

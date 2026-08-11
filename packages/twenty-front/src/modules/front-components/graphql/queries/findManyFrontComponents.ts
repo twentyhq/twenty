@@ -16,7 +16,7 @@ export const FIND_MANY_FRONT_COMPONENTS = gql`
       universalIdentifier
       updatedAt
       usesSdkClient
-      vendorChecksum
+      sharedDependenciesChecksum
     }
   }
 `;

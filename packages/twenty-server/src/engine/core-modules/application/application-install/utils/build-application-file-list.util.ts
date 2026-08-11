@@ -54,17 +54,18 @@ export const buildApplicationFileList = (
     );
   }
 
-  const vendor = manifest.application.vendor;
+  const sharedDependencies =
+    manifest.application.frontComponentSharedDependencies;
 
-  if (isDefined(vendor)) {
+  if (isDefined(sharedDependencies)) {
     files.push(
       {
-        relativePath: vendor.sourceVendorPath,
+        relativePath: sharedDependencies.sourcePath,
         fileFolder: FileFolder.Source,
         isRequired: false,
       },
       {
-        relativePath: vendor.builtVendorPath,
+        relativePath: sharedDependencies.builtPath,
         fileFolder: FileFolder.BuiltFrontComponent,
         isRequired: true,
       },

@@ -6,12 +6,12 @@ import { createSdkClientModuleBlobUrls } from '@/remote/worker/utils/createSdkCl
 import { revokeSdkClientModuleBlobUrls } from '@/remote/worker/utils/revokeSdkClientModuleBlobUrls';
 import { rewriteModuleImportsToBlobUrls } from '@/remote/worker/utils/rewriteModuleImportsToBlobUrls';
 import { type SdkClientSources } from '@/types/SdkClientSources';
-import { containsVendorImportSpecifier } from '@/utils/containsVendorImportSpecifier';
+import { containsSharedDependenciesImportSpecifier } from '@/utils/containsSharedDependenciesImportSpecifier';
 
 type LoadFrontComponentModuleInput = {
   componentSource: string;
   sdkClientSources?: SdkClientSources;
-  vendorSource?: string;
+  sharedDependenciesSource?: string;
 };
 
 type FrontComponentModule = {
@@ -21,14 +21,15 @@ type FrontComponentModule = {
 export const loadFrontComponentModule = async ({
   componentSource,
   sdkClientSources,
-  vendorSource,
+  sharedDependenciesSource,
 }: LoadFrontComponentModuleInput): Promise<FrontComponentModule> => {
-  const requiresVendor = containsVendorImportSpecifier(componentSource);
+  const requiresSharedDependencies =
+    containsSharedDependenciesImportSpecifier(componentSource);
 
-  if (requiresVendor && !isDefined(vendorSource)) {
+  if (requiresSharedDependencies && !isDefined(sharedDependenciesSource)) {
     throw new CustomError(
-      'The front component imports its vendor bundle, but no vendor bundle was provided',
-      'FRONT_COMPONENT_VENDOR_BUNDLE_MISSING',
+      'The front component imports its shared dependencies bundle, but none was provided',
+      'FRONT_COMPONENT_SHARED_DEPENDENCIES_MISSING',
     );
   }
 
@@ -36,14 +37,17 @@ export const loadFrontComponentModule = async ({
     ? createSdkClientModuleBlobUrls(sdkClientSources)
     : null;
 
-  const vendorModuleBlobUrl =
-    requiresVendor && isDefined(vendorSource)
-      ? createJavaScriptModuleBlobUrl(vendorSource)
+  const sharedDependenciesModuleBlobUrl =
+    requiresSharedDependencies && isDefined(sharedDependenciesSource)
+      ? createJavaScriptModuleBlobUrl(sharedDependenciesSource)
       : null;
 
   const componentModuleSource = rewriteModuleImportsToBlobUrls(
     componentSource,
-    buildBlobUrlBySpecifier({ sdkModuleBlobUrls, vendorModuleBlobUrl }),
+    buildBlobUrlBySpecifier({
+      sdkModuleBlobUrls,
+      sharedDependenciesModuleBlobUrl,
+    }),
   );
 
   const componentModuleBlobUrl = createJavaScriptModuleBlobUrl(
@@ -56,8 +60,8 @@ export const loadFrontComponentModule = async ({
   } finally {
     URL.revokeObjectURL(componentModuleBlobUrl);
 
-    if (isDefined(vendorModuleBlobUrl)) {
-      URL.revokeObjectURL(vendorModuleBlobUrl);
+    if (isDefined(sharedDependenciesModuleBlobUrl)) {
+      URL.revokeObjectURL(sharedDependenciesModuleBlobUrl);
     }
 
     if (isDefined(sdkModuleBlobUrls)) {

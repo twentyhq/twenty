@@ -16,7 +16,7 @@ import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/containsSdkClientImportSpecifier';
-import { containsVendorImportSpecifier } from '@/utils/containsVendorImportSpecifier';
+import { containsSharedDependenciesImportSpecifier } from '@/utils/containsSharedDependenciesImportSpecifier';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -24,7 +24,7 @@ type FrontComponentWorkerEffectProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
-  vendorUrl?: string;
+  sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
   geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -38,7 +38,7 @@ export const FrontComponentWorkerEffect = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
-  vendorUrl,
+  sharedDependenciesUrl,
   applicationVariables,
   geometryTracker,
   setReceiver,
@@ -66,7 +66,7 @@ export const FrontComponentWorkerEffect = ({
       apiUrl,
       functionsBaseUrl,
       sdkClientUrls,
-      vendorUrl,
+      sharedDependenciesUrl,
     });
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
@@ -104,7 +104,7 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
-        const [sdkClientSources, vendorSource] = await Promise.all([
+        const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
           isDefined(sdkClientUrls) &&
           containsSdkClientImportSpecifier(componentSource)
             ? fetchSdkClientSources({
@@ -112,9 +112,10 @@ export const FrontComponentWorkerEffect = ({
                 headers: authorizationHeaders,
               })
             : undefined,
-          isDefined(vendorUrl) && containsVendorImportSpecifier(componentSource)
+          isDefined(sharedDependenciesUrl) &&
+          containsSharedDependenciesImportSpecifier(componentSource)
             ? fetchComponentSource({
-                url: vendorUrl,
+                url: sharedDependenciesUrl,
                 headers: authorizationHeaders,
               })
             : undefined,
@@ -131,7 +132,7 @@ export const FrontComponentWorkerEffect = ({
           apiUrl,
           functionsBaseUrl,
           sdkClientSources,
-          vendorSource,
+          sharedDependenciesSource,
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
@@ -162,7 +163,7 @@ export const FrontComponentWorkerEffect = ({
     apiUrl,
     functionsBaseUrl,
     sdkClientUrls,
-    vendorUrl,
+    sharedDependenciesUrl,
     applicationVariables,
     geometryTracker,
     setError,

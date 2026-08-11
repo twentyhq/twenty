@@ -106,7 +106,7 @@ export interface FrontComponent {
     updatedAt: Scalars['DateTime']
     isHeadless: Scalars['Boolean']
     usesSdkClient: Scalars['Boolean']
-    vendorChecksum?: Scalars['String']
+    sharedDependenciesChecksum?: Scalars['String']
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
     __typename: 'FrontComponent'
@@ -3326,7 +3326,7 @@ export interface FrontComponentGenqlSelection{
     updatedAt?: boolean | number
     isHeadless?: boolean | number
     usesSdkClient?: boolean | number
-    vendorChecksum?: boolean | number
+    sharedDependenciesChecksum?: boolean | number
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
     __typename?: boolean | number

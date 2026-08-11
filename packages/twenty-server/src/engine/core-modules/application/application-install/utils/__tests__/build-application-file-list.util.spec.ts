@@ -61,14 +61,14 @@ describe('buildApplicationFileList', () => {
     ]);
   });
 
-  it('includes the vendor source and bundle when the application declares one', () => {
+  it('includes the shared dependencies source and bundle when the application declares one', () => {
     const manifest = {
       application: {
-        vendor: {
+        frontComponentSharedDependencies: {
           dependencies: ['react'],
-          sourceVendorPath: 'src/vendor.ts',
-          builtVendorPath: 'src/vendor.mjs',
-          builtVendorChecksum: 'checksum',
+          sourcePath: 'src/front-component-shared-dependencies.ts',
+          builtPath: 'src/front-component-shared-dependencies.mjs',
+          builtChecksum: 'checksum',
         },
       },
     } as Manifest;
@@ -76,12 +76,12 @@ describe('buildApplicationFileList', () => {
     expect(buildApplicationFileList(manifest)).toEqual(
       expect.arrayContaining([
         {
-          relativePath: 'src/vendor.ts',
+          relativePath: 'src/front-component-shared-dependencies.ts',
           fileFolder: FileFolder.Source,
           isRequired: false,
         },
         {
-          relativePath: 'src/vendor.mjs',
+          relativePath: 'src/front-component-shared-dependencies.mjs',
           fileFolder: FileFolder.BuiltFrontComponent,
           isRequired: true,
         },

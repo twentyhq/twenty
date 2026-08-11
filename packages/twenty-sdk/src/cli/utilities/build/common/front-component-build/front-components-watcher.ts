@@ -7,14 +7,14 @@ import {
   type OnFileBuiltCallback,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-plugin';
-import { buildVendorBundle } from '@/cli/utilities/build/common/vendor-build/build-vendor-bundle';
-import { type VendorBuildContext } from '@/cli/utilities/build/common/vendor-build/types/vendor-build-context.type';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle';
+import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-build-context.type';
 import { pathExists } from '@/cli/utilities/file/fs-utils';
 import { isNonEmptyArray } from '@sniptt/guards';
 import chokidar, { type FSWatcher } from 'chokidar';
 import { join } from 'path';
 import { FileFolder } from 'twenty-shared/types';
-import { type VendorManifest } from 'twenty-shared/application';
+import { type FrontComponentSharedDependenciesManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 const INSTALLED_DEPENDENCY_VERSION_PATHS = ['package.json', 'yarn.lock'];
@@ -22,7 +22,7 @@ const INSTALLED_DEPENDENCY_VERSION_PATHS = ['package.json', 'yarn.lock'];
 export type FrontComponentsWatcherOptions = {
   appPath: string;
   sourcePaths: string[];
-  vendor?: VendorManifest;
+  sharedDependencies?: FrontComponentSharedDependenciesManifest;
   watch?: boolean;
   shouldSkipTypecheck: () => boolean;
   handleFileBuilt: OnFileBuiltCallback;
@@ -32,49 +32,52 @@ export type FrontComponentsWatcherOptions = {
 export class FrontComponentsWatcher {
   private appPath: string;
   private sourcePaths: string[];
-  private vendor: VendorManifest | undefined;
+  private sharedDependencies:
+    | FrontComponentSharedDependenciesManifest
+    | undefined;
   private watchMode: boolean;
   private shouldSkipTypecheck: () => boolean;
   private handleFileBuilt: OnFileBuiltCallback;
   private handleBuildError: OnBuildErrorCallback;
   private componentsWatcher: EsbuildWatcher | null = null;
-  private vendorBuildContext: VendorBuildContext | null = null;
-  private lastVendorChecksum: string | null = null;
-  private vendorDependencyWatcher: FSWatcher | null = null;
+  private sharedDependenciesBuildContext: SharedDependenciesBuildContext | null =
+    null;
+  private lastSharedDependenciesChecksum: string | null = null;
+  private installedDependenciesWatcher: FSWatcher | null = null;
   private isClosed = false;
   private isApplyingRestart = false;
-  private vendorBuildGeneration = 0;
-  private inFlightVendorBuildPromise: Promise<void> | null = null;
-  private hasVendorBuildRequestedDuringInFlightBuild = false;
+  private sharedDependenciesBuildGeneration = 0;
+  private inFlightSharedDependenciesBuildPromise: Promise<void> | null = null;
+  private hasSharedDependenciesBuildRequestedDuringInFlightBuild = false;
 
   constructor(options: FrontComponentsWatcherOptions) {
     this.appPath = options.appPath;
     this.sourcePaths = options.sourcePaths;
-    this.vendor = options.vendor;
+    this.sharedDependencies = options.sharedDependencies;
     this.watchMode = options.watch ?? true;
     this.shouldSkipTypecheck = options.shouldSkipTypecheck;
     this.handleFileBuilt = options.handleFileBuilt;
     this.handleBuildError = options.handleBuildError;
   }
 
-  getVendorBuildContext(): VendorBuildContext | null {
-    return this.vendorBuildContext;
+  getSharedDependenciesBuildContext(): SharedDependenciesBuildContext | null {
+    return this.sharedDependenciesBuildContext;
   }
 
   shouldRestart(
     sourcePaths: string[],
-    vendor: VendorManifest | undefined,
+    sharedDependencies: FrontComponentSharedDependenciesManifest | undefined,
   ): boolean {
     return (
       (this.componentsWatcher?.shouldRestart(sourcePaths) ?? true) ||
-      this.hasVendorManifestChanged(vendor)
+      this.hasSharedDependenciesManifestChanged(sharedDependencies)
     );
   }
 
   async start(): Promise<void> {
-    if (isDefined(this.vendor)) {
-      await this.requestVendorBuild();
-      await this.startVendorDependencyWatcher();
+    if (isDefined(this.sharedDependencies)) {
+      await this.requestSharedDependenciesBuild();
+      await this.startInstalledDependenciesWatcher();
     }
 
     this.componentsWatcher = new EsbuildWatcher({
@@ -90,7 +93,8 @@ export class FrontComponentsWatcher {
         extraPlugins: [
           createTypecheckPlugin(this.appPath, this.shouldSkipTypecheck),
           ...getFrontComponentBuildPlugins({
-            getVendorBuildContext: () => this.vendorBuildContext,
+            getSharedDependenciesBuildContext: () =>
+              this.sharedDependenciesBuildContext,
           }),
           createStubTwentySdkDefinePlugin(),
         ],
@@ -102,28 +106,29 @@ export class FrontComponentsWatcher {
 
   async restart(
     sourcePaths: string[],
-    vendor: VendorManifest | undefined,
+    sharedDependencies: FrontComponentSharedDependenciesManifest | undefined,
   ): Promise<void> {
     this.isApplyingRestart = true;
 
     try {
-      const hasVendorManifestChanged = this.hasVendorManifestChanged(vendor);
+      const hasSharedDependenciesManifestChanged =
+        this.hasSharedDependenciesManifestChanged(sharedDependencies);
 
       this.sourcePaths = sourcePaths;
 
-      if (hasVendorManifestChanged) {
-        this.vendorBuildGeneration += 1;
-        this.hasVendorBuildRequestedDuringInFlightBuild = false;
-        await this.inFlightVendorBuildPromise;
-        await this.vendorDependencyWatcher?.close();
-        this.vendorDependencyWatcher = null;
-        this.vendor = vendor;
-        this.vendorBuildContext = null;
-        this.lastVendorChecksum = null;
+      if (hasSharedDependenciesManifestChanged) {
+        this.sharedDependenciesBuildGeneration += 1;
+        this.hasSharedDependenciesBuildRequestedDuringInFlightBuild = false;
+        await this.inFlightSharedDependenciesBuildPromise;
+        await this.installedDependenciesWatcher?.close();
+        this.installedDependenciesWatcher = null;
+        this.sharedDependencies = sharedDependencies;
+        this.sharedDependenciesBuildContext = null;
+        this.lastSharedDependenciesChecksum = null;
 
-        if (isDefined(vendor)) {
-          await this.requestVendorBuild();
-          await this.startVendorDependencyWatcher();
+        if (isDefined(sharedDependencies)) {
+          await this.requestSharedDependenciesBuild();
+          await this.startInstalledDependenciesWatcher();
         }
       }
 
@@ -135,83 +140,91 @@ export class FrontComponentsWatcher {
 
   async close(): Promise<void> {
     this.isClosed = true;
-    await this.vendorDependencyWatcher?.close();
-    this.vendorDependencyWatcher = null;
+    await this.installedDependenciesWatcher?.close();
+    this.installedDependenciesWatcher = null;
     await this.componentsWatcher?.close();
     this.componentsWatcher = null;
   }
 
-  private hasVendorManifestChanged(
-    vendor: VendorManifest | undefined,
+  private hasSharedDependenciesManifestChanged(
+    sharedDependencies: FrontComponentSharedDependenciesManifest | undefined,
   ): boolean {
-    if (!isDefined(vendor) || !isDefined(this.vendor)) {
-      return isDefined(vendor) !== isDefined(this.vendor);
+    if (!isDefined(sharedDependencies) || !isDefined(this.sharedDependencies)) {
+      return (
+        isDefined(sharedDependencies) !== isDefined(this.sharedDependencies)
+      );
     }
 
     return (
-      vendor.sourceVendorPath !== this.vendor.sourceVendorPath ||
-      vendor.dependencies.join(',') !== this.vendor.dependencies.join(',')
+      sharedDependencies.sourcePath !== this.sharedDependencies.sourcePath ||
+      sharedDependencies.dependencies.join(',') !==
+        this.sharedDependencies.dependencies.join(',')
     );
   }
 
-  private async requestVendorBuild(): Promise<void> {
-    if (isDefined(this.inFlightVendorBuildPromise)) {
-      this.hasVendorBuildRequestedDuringInFlightBuild = true;
+  private async requestSharedDependenciesBuild(): Promise<void> {
+    if (isDefined(this.inFlightSharedDependenciesBuildPromise)) {
+      this.hasSharedDependenciesBuildRequestedDuringInFlightBuild = true;
 
       return;
     }
 
-    this.inFlightVendorBuildPromise = this.runVendorBuild();
+    this.inFlightSharedDependenciesBuildPromise =
+      this.runSharedDependenciesBuild();
 
     try {
-      await this.inFlightVendorBuildPromise;
+      await this.inFlightSharedDependenciesBuildPromise;
     } finally {
-      this.inFlightVendorBuildPromise = null;
+      this.inFlightSharedDependenciesBuildPromise = null;
 
-      if (this.hasVendorBuildRequestedDuringInFlightBuild) {
-        this.hasVendorBuildRequestedDuringInFlightBuild = false;
+      if (this.hasSharedDependenciesBuildRequestedDuringInFlightBuild) {
+        this.hasSharedDependenciesBuildRequestedDuringInFlightBuild = false;
 
-        await this.requestVendorBuild();
+        await this.requestSharedDependenciesBuild();
       }
     }
   }
 
-  private async runVendorBuild(): Promise<void> {
-    const vendor = this.vendor;
-    const generation = this.vendorBuildGeneration;
+  private async runSharedDependenciesBuild(): Promise<void> {
+    const sharedDependencies = this.sharedDependencies;
+    const generation = this.sharedDependenciesBuildGeneration;
 
-    if (!isDefined(vendor)) {
+    if (!isDefined(sharedDependencies)) {
       return;
     }
 
     const isObsolete = () =>
-      this.isClosed || generation !== this.vendorBuildGeneration;
+      this.isClosed || generation !== this.sharedDependenciesBuildGeneration;
 
     try {
       let builtChecksum: string | null = null;
 
-      const vendorBuildContext = await buildVendorBundle({
-        appPath: this.appPath,
-        vendor,
-        onFileBuilt: async (event) => {
-          builtChecksum = event.checksum;
+      const sharedDependenciesBuildContext =
+        await buildSharedDependenciesBundle({
+          appPath: this.appPath,
+          sharedDependencies,
+          onFileBuilt: async (event) => {
+            builtChecksum = event.checksum;
 
-          if (isObsolete() || event.checksum === this.lastVendorChecksum) {
-            return;
-          }
+            if (
+              isObsolete() ||
+              event.checksum === this.lastSharedDependenciesChecksum
+            ) {
+              return;
+            }
 
-          await this.handleFileBuilt(event);
-        },
-      });
+            await this.handleFileBuilt(event);
+          },
+        });
 
       if (isObsolete()) {
         return;
       }
 
-      this.vendorBuildContext = vendorBuildContext;
+      this.sharedDependenciesBuildContext = sharedDependenciesBuildContext;
 
-      if (builtChecksum !== this.lastVendorChecksum) {
-        this.lastVendorChecksum = builtChecksum;
+      if (builtChecksum !== this.lastSharedDependenciesChecksum) {
+        this.lastSharedDependenciesChecksum = builtChecksum;
 
         if (!this.isApplyingRestart) {
           await this.componentsWatcher?.restart(this.sourcePaths);
@@ -231,7 +244,7 @@ export class FrontComponentsWatcher {
     }
   }
 
-  private async startVendorDependencyWatcher(): Promise<void> {
+  private async startInstalledDependenciesWatcher(): Promise<void> {
     const watchedPaths = (
       await Promise.all(
         INSTALLED_DEPENDENCY_VERSION_PATHS.map(async (watchPath) => {
@@ -246,7 +259,7 @@ export class FrontComponentsWatcher {
       return;
     }
 
-    this.vendorDependencyWatcher = chokidar.watch(watchedPaths, {
+    this.installedDependenciesWatcher = chokidar.watch(watchedPaths, {
       ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 100,
@@ -254,9 +267,9 @@ export class FrontComponentsWatcher {
       },
     });
 
-    this.vendorDependencyWatcher.on('all', (event) => {
+    this.installedDependenciesWatcher.on('all', (event) => {
       if (event === 'add' || event === 'change') {
-        void this.requestVendorBuild();
+        void this.requestSharedDependenciesBuild();
       }
     });
   }

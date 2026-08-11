@@ -4,11 +4,14 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { EsbuildWatcher } from '@/cli/utilities/build/common/esbuild-watcher';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/common/front-component-build/front-components-watcher';
-import { buildVendorBundle } from '@/cli/utilities/build/common/vendor-build/build-vendor-bundle';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle';
 
-vi.mock('@/cli/utilities/build/common/vendor-build/build-vendor-bundle', () => ({
-  buildVendorBundle: vi.fn(),
-}));
+vi.mock(
+  '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle',
+  () => ({
+    buildSharedDependenciesBundle: vi.fn(),
+  }),
+);
 
 vi.mock('@/cli/utilities/file/fs-utils', () => ({
   pathExists: vi.fn(async () => false),
@@ -18,16 +21,18 @@ vi.mock('@/cli/utilities/build/common/esbuild-watcher', () => ({
   EsbuildWatcher: vi.fn(),
 }));
 
-const VENDOR_MANIFEST = {
+const SHARED_DEPENDENCIES_MANIFEST = {
   dependencies: ['react'],
-  sourceVendorPath: 'src/vendor.ts',
-  builtVendorPath: 'src/vendor.mjs',
-  builtVendorChecksum: null,
+  sourcePath: 'src/sharedDependencies.ts',
+  builtPath: 'src/sharedDependencies.mjs',
+  builtChecksum: null,
 };
 
 const SOURCE_PATHS = ['src/my.front-component.tsx'];
 
-const buildVendorBundleMock = vi.mocked(buildVendorBundle);
+const buildSharedDependenciesBundleMock = vi.mocked(
+  buildSharedDependenciesBundle,
+);
 const esbuildWatcherMock = vi.mocked(EsbuildWatcher);
 
 const createComponentsWatcherInstance = () => ({
@@ -41,33 +46,41 @@ let componentsWatcherInstance: ReturnType<
   typeof createComponentsWatcherInstance
 >;
 
-const mockVendorBuildWithChecksum = (checksum: string) => {
-  buildVendorBundleMock.mockImplementation(async ({ onFileBuilt }) => {
-    await onFileBuilt?.({
-      fileFolder: FileFolder.BuiltFrontComponent,
-      builtPath: 'src/vendor.mjs',
-      sourcePath: 'src/vendor.ts',
-      checksum,
-    });
+const mockSharedDependenciesBuildWithChecksum = (checksum: string) => {
+  buildSharedDependenciesBundleMock.mockImplementation(
+    async ({ onFileBuilt }) => {
+      await onFileBuilt?.({
+        fileFolder: FileFolder.BuiltFrontComponent,
+        builtPath: 'src/sharedDependencies.mjs',
+        sourcePath: 'src/sharedDependencies.ts',
+        checksum,
+      });
 
-    return { exportNamesBySpecifier: new Map() };
-  });
+      return { exportNamesBySpecifier: new Map() };
+    },
+  );
 };
 
-const createWatcher = (vendor?: typeof VENDOR_MANIFEST) =>
+const createWatcher = (
+  sharedDependencies?: typeof SHARED_DEPENDENCIES_MANIFEST,
+) =>
   new FrontComponentsWatcher({
     appPath: '/app',
     sourcePaths: SOURCE_PATHS,
-    vendor,
+    sharedDependencies,
     shouldSkipTypecheck: () => true,
     handleFileBuilt: vi.fn(),
     handleBuildError: vi.fn(),
   });
 
-const triggerVendorBuild = (watcher: FrontComponentsWatcher): Promise<void> =>
+const triggerSharedDependenciesBuild = (
+  watcher: FrontComponentsWatcher,
+): Promise<void> =>
   (
-    watcher as unknown as { requestVendorBuild: () => Promise<void> }
-  ).requestVendorBuild();
+    watcher as unknown as {
+      requestSharedDependenciesBuild: () => Promise<void>;
+    }
+  ).requestSharedDependenciesBuild();
 
 describe('FrontComponentsWatcher', () => {
   beforeEach(() => {
@@ -76,27 +89,27 @@ describe('FrontComponentsWatcher', () => {
     esbuildWatcherMock.mockImplementation(function () {
       return componentsWatcherInstance as unknown as EsbuildWatcher;
     });
-    mockVendorBuildWithChecksum('checksum-1');
+    mockSharedDependenciesBuildWithChecksum('checksum-1');
   });
 
-  it('builds the vendor before starting the component builds, without a restart', async () => {
-    const watcher = createWatcher(VENDOR_MANIFEST);
+  it('builds the sharedDependencies before starting the component builds, without a restart', async () => {
+    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
 
     await watcher.start();
 
-    expect(buildVendorBundleMock).toHaveBeenCalledTimes(1);
+    expect(buildSharedDependenciesBundleMock).toHaveBeenCalledTimes(1);
     expect(componentsWatcherInstance.start).toHaveBeenCalledTimes(1);
-    expect(buildVendorBundleMock.mock.invocationCallOrder[0]).toBeLessThan(
-      componentsWatcherInstance.start.mock.invocationCallOrder[0],
-    );
+    expect(
+      buildSharedDependenciesBundleMock.mock.invocationCallOrder[0],
+    ).toBeLessThan(componentsWatcherInstance.start.mock.invocationCallOrder[0]);
     expect(componentsWatcherInstance.restart).not.toHaveBeenCalled();
   });
 
-  it('never runs two vendor builds at the same time', async () => {
+  it('never runs two sharedDependencies builds at the same time', async () => {
     let concurrentBuildCount = 0;
     let maxConcurrentBuildCount = 0;
 
-    buildVendorBundleMock.mockImplementation(async () => {
+    buildSharedDependenciesBundleMock.mockImplementation(async () => {
       concurrentBuildCount += 1;
       maxConcurrentBuildCount = Math.max(
         maxConcurrentBuildCount,
@@ -110,76 +123,76 @@ describe('FrontComponentsWatcher', () => {
       return { exportNamesBySpecifier: new Map() };
     });
 
-    const watcher = createWatcher(VENDOR_MANIFEST);
+    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
 
     await Promise.all([
-      triggerVendorBuild(watcher),
-      triggerVendorBuild(watcher),
-      triggerVendorBuild(watcher),
+      triggerSharedDependenciesBuild(watcher),
+      triggerSharedDependenciesBuild(watcher),
+      triggerSharedDependenciesBuild(watcher),
     ]);
 
     expect(maxConcurrentBuildCount).toBe(1);
   });
 
   it('runs one queued build after the in flight one instead of one per request', async () => {
-    buildVendorBundleMock.mockImplementation(async () => {
+    buildSharedDependenciesBundleMock.mockImplementation(async () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
 
       return { exportNamesBySpecifier: new Map() };
     });
 
-    const watcher = createWatcher(VENDOR_MANIFEST);
+    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
 
     await Promise.all([
-      triggerVendorBuild(watcher),
-      triggerVendorBuild(watcher),
-      triggerVendorBuild(watcher),
+      triggerSharedDependenciesBuild(watcher),
+      triggerSharedDependenciesBuild(watcher),
+      triggerSharedDependenciesBuild(watcher),
     ]);
 
-    expect(buildVendorBundleMock).toHaveBeenCalledTimes(2);
+    expect(buildSharedDependenciesBundleMock).toHaveBeenCalledTimes(2);
   });
 
-  it('restarts the components exactly once when a vendor is added', async () => {
+  it('restarts the components exactly once when a sharedDependencies is added', async () => {
     const watcher = createWatcher(undefined);
 
     await watcher.start();
 
-    expect(buildVendorBundleMock).not.toHaveBeenCalled();
+    expect(buildSharedDependenciesBundleMock).not.toHaveBeenCalled();
 
-    await watcher.restart(SOURCE_PATHS, VENDOR_MANIFEST);
+    await watcher.restart(SOURCE_PATHS, SHARED_DEPENDENCIES_MANIFEST);
 
-    expect(buildVendorBundleMock).toHaveBeenCalledTimes(1);
+    expect(buildSharedDependenciesBundleMock).toHaveBeenCalledTimes(1);
     expect(componentsWatcherInstance.restart).toHaveBeenCalledTimes(1);
   });
 
-  it('restarts the components when a dependency rebuild changes the vendor checksum', async () => {
-    const watcher = createWatcher(VENDOR_MANIFEST);
+  it('restarts the components when a dependency rebuild changes the sharedDependencies checksum', async () => {
+    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
 
     await watcher.start();
 
-    mockVendorBuildWithChecksum('checksum-2');
+    mockSharedDependenciesBuildWithChecksum('checksum-2');
 
-    await triggerVendorBuild(watcher);
+    await triggerSharedDependenciesBuild(watcher);
 
     expect(componentsWatcherInstance.restart).toHaveBeenCalledTimes(1);
   });
 
-  it('does not restart the components when the rebuilt vendor is unchanged', async () => {
-    const watcher = createWatcher(VENDOR_MANIFEST);
+  it('does not restart the components when the rebuilt sharedDependencies is unchanged', async () => {
+    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
 
     await watcher.start();
 
-    await triggerVendorBuild(watcher);
+    await triggerSharedDependenciesBuild(watcher);
 
     expect(componentsWatcherInstance.restart).not.toHaveBeenCalled();
   });
 
-  it('ignores a vendor build that was in flight when the manifest changed', async () => {
+  it('ignores a sharedDependencies build that was in flight when the manifest changed', async () => {
     const handleFileBuilt = vi.fn();
     const watcher = new FrontComponentsWatcher({
       appPath: '/app',
       sourcePaths: SOURCE_PATHS,
-      vendor: VENDOR_MANIFEST,
+      sharedDependencies: SHARED_DEPENDENCIES_MANIFEST,
       shouldSkipTypecheck: () => true,
       handleFileBuilt,
       handleBuildError: vi.fn(),
@@ -189,27 +202,29 @@ describe('FrontComponentsWatcher', () => {
 
     let resolveInFlightBuild: (() => void) | undefined;
 
-    buildVendorBundleMock.mockImplementationOnce(async ({ onFileBuilt }) => {
-      await new Promise<void>((resolve) => {
-        resolveInFlightBuild = resolve;
-      });
+    buildSharedDependenciesBundleMock.mockImplementationOnce(
+      async ({ onFileBuilt }) => {
+        await new Promise<void>((resolve) => {
+          resolveInFlightBuild = resolve;
+        });
 
-      await onFileBuilt?.({
-        fileFolder: FileFolder.BuiltFrontComponent,
-        builtPath: 'src/vendor.mjs',
-        sourcePath: 'src/vendor.ts',
-        checksum: 'stale-checksum',
-      });
+        await onFileBuilt?.({
+          fileFolder: FileFolder.BuiltFrontComponent,
+          builtPath: 'src/sharedDependencies.mjs',
+          sourcePath: 'src/sharedDependencies.ts',
+          checksum: 'stale-checksum',
+        });
 
-      return { exportNamesBySpecifier: new Map() };
-    });
+        return { exportNamesBySpecifier: new Map() };
+      },
+    );
 
-    const inFlightBuild = triggerVendorBuild(watcher);
+    const inFlightBuild = triggerSharedDependenciesBuild(watcher);
 
-    mockVendorBuildWithChecksum('checksum-2');
+    mockSharedDependenciesBuildWithChecksum('checksum-2');
 
     const restartPromise = watcher.restart(SOURCE_PATHS, {
-      ...VENDOR_MANIFEST,
+      ...SHARED_DEPENDENCIES_MANIFEST,
       dependencies: ['react', 'react-dom/client'],
     });
 
@@ -225,17 +240,21 @@ describe('FrontComponentsWatcher', () => {
     );
   });
 
-  it('reports a restart is needed only when the paths or the vendor manifest change', () => {
-    const watcher = createWatcher(VENDOR_MANIFEST);
+  it('reports a restart is needed only when the paths or the sharedDependencies manifest change', () => {
+    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
 
-    expect(watcher.shouldRestart(SOURCE_PATHS, VENDOR_MANIFEST)).toBe(true);
+    expect(
+      watcher.shouldRestart(SOURCE_PATHS, SHARED_DEPENDENCIES_MANIFEST),
+    ).toBe(true);
 
     return watcher.start().then(() => {
-      expect(watcher.shouldRestart(SOURCE_PATHS, VENDOR_MANIFEST)).toBe(false);
+      expect(
+        watcher.shouldRestart(SOURCE_PATHS, SHARED_DEPENDENCIES_MANIFEST),
+      ).toBe(false);
       expect(watcher.shouldRestart(SOURCE_PATHS, undefined)).toBe(true);
       expect(
         watcher.shouldRestart(SOURCE_PATHS, {
-          ...VENDOR_MANIFEST,
+          ...SHARED_DEPENDENCIES_MANIFEST,
           dependencies: ['react', 'react-dom/client'],
         }),
       ).toBe(true);

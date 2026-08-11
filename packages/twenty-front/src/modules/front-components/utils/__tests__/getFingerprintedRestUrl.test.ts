@@ -17,9 +17,11 @@ describe('getFingerprintedRestUrl', () => {
   it('falls back to the bare id URL when no checksum is provided', () => {
     expect(
       getFingerprintedRestUrl({
-        resource: 'application-vendor',
+        resource: 'front-component-shared-dependencies',
         id: 'application-id',
       }),
-    ).toBe(`${REST_API_BASE_URL}/application-vendor/application-id`);
+    ).toBe(
+      `${REST_API_BASE_URL}/front-component-shared-dependencies/application-id`,
+    );
   });
 });

@@ -1,13 +1,13 @@
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
-import { VENDOR_BUNDLE_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildBlobUrlBySpecifier = ({
   sdkModuleBlobUrls,
-  vendorModuleBlobUrl,
+  sharedDependenciesModuleBlobUrl,
 }: {
   sdkModuleBlobUrls: SdkClientUrls | null;
-  vendorModuleBlobUrl: string | null;
+  sharedDependenciesModuleBlobUrl: string | null;
 }): Record<string, string> => ({
   ...(isDefined(sdkModuleBlobUrls)
     ? {
@@ -15,7 +15,9 @@ export const buildBlobUrlBySpecifier = ({
         'twenty-client-sdk/metadata': sdkModuleBlobUrls.metadata,
       }
     : {}),
-  ...(isDefined(vendorModuleBlobUrl)
-    ? { [VENDOR_BUNDLE_IMPORT_SPECIFIER]: vendorModuleBlobUrl }
+  ...(isDefined(sharedDependenciesModuleBlobUrl)
+    ? {
+        [SHARED_DEPENDENCIES_IMPORT_SPECIFIER]: sharedDependenciesModuleBlobUrl,
+      }
     : {}),
 });

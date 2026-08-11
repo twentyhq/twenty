@@ -12,7 +12,7 @@ import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-function
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { type UninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/uninstall-logic-function-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
-import { type VendorConfig } from '@/sdk/define/vendor/vendor-config';
+import { type FrontComponentSharedDependenciesConfig } from '@/sdk/define/front-component-shared-dependencies/front-component-shared-dependencies-config';
 import {
   type AgentManifest,
   type ConnectionProviderManifest,
@@ -50,7 +50,7 @@ export type DefinableEntity =
   | PageLayoutTabConfig
   | PermissionFlagConfig
   | CommandMenuItemConfig
-  | VendorConfig;
+  | FrontComponentSharedDependenciesConfig;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (
   config: T,

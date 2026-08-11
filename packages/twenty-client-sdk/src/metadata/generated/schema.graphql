@@ -107,7 +107,7 @@ type FrontComponent {
   updatedAt: DateTime!
   isHeadless: Boolean!
   usesSdkClient: Boolean!
-  vendorChecksum: String
+  sharedDependenciesChecksum: String
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
 }

@@ -338,7 +338,7 @@ export default {
             "usesSdkClient": [
                 3
             ],
-            "vendorChecksum": [
+            "sharedDependenciesChecksum": [
                 1
             ],
             "applicationTokenPair": [

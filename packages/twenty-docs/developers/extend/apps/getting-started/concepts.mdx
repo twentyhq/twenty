@@ -24,7 +24,7 @@ your-app/
 │   ├── views/                   ← defineView
 │   ├── navigation-menu-items/   ← defineNavigationMenuItem
 │   ├── page-layouts/            ← definePageLayout
-│   └── vendor.ts                ← defineVendor (optional, one per app)
+│   └── front-component-shared-dependencies.ts ← defineFrontComponentSharedDependencies (optional, one per app)
 ├── public/                      ← Static assets (images, icons)
 └── package.json
 ```
@@ -50,7 +50,7 @@ your-app/
 | **Navigation Menu Item** | Custom sidebar entries | [Navigation Menu Items](/developers/extend/apps/layout/navigation-menu-items) |
 | **Page Layout** | Tabs and widgets on a record's detail page | [Page Layouts](/developers/extend/apps/layout/page-layouts) |
 | **Front Component** | Sandboxed React UI inside Twenty | [Front Components](/developers/extend/apps/layout/front-components) |
-| **Vendor** | Dependencies shared by the app's front components | [Vendor Bundle](/developers/extend/apps/layout/front-components#sharing-dependencies-with-a-vendor-bundle) |
+| **Shared Dependencies** | Dependencies shared by the app's front components | [Shared Dependencies](/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
 | **Command Menu Item** | Quick actions and Cmd+K entries | [Command Menu Items](/developers/extend/apps/layout/command-menu-items) |
 
 ## Sandboxing

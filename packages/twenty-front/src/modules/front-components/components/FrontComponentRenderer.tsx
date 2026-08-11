@@ -85,7 +85,7 @@ const FrontComponentRendererContent = ({
     id: frontComponentId,
     applicationId,
     usesSdkClient,
-    vendorChecksum,
+    sharedDependenciesChecksum,
   } = frontComponent;
 
   const { executionContext, frontComponentHostCommunicationApi } =
@@ -130,10 +130,10 @@ const FrontComponentRendererContent = ({
     [applicationId, sdkClientChecksums],
   );
 
-  const vendorUrl = getFingerprintedRestUrl({
-    resource: 'application-vendor',
+  const sharedDependenciesUrl = getFingerprintedRestUrl({
+    resource: 'front-component-shared-dependencies',
     id: applicationId,
-    checksum: vendorChecksum ?? undefined,
+    checksum: sharedDependenciesChecksum ?? undefined,
   });
 
   const componentUrl = getFingerprintedRestUrl({
@@ -165,7 +165,7 @@ const FrontComponentRendererContent = ({
             apiUrl={REACT_APP_SERVER_BASE_URL}
             functionsBaseUrl={functionsBaseUrl}
             sdkClientUrls={sdkClientUrls}
-            vendorUrl={vendorUrl}
+            sharedDependenciesUrl={sharedDependenciesUrl}
             executionContext={executionContext}
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi

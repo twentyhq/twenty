@@ -16,14 +16,16 @@ const FINGERPRINTED_URL = buildFingerprintedUrl(
 );
 const BARE_URL = 'https://api.twenty.com/rest/front-components/component-id';
 
-const VENDOR_SOURCE = 'export const __vendor_react__ = {};';
+const SHARED_DEPENDENCIES_SOURCE =
+  'export const __shared_dependencies_react__ = {};';
 
-const buildFingerprintedVendorUrl = (checksum: string): string =>
-  `https://api.twenty.com/rest/application-vendor/application-id/${checksum}.js`;
+const buildFingerprintedSharedDependenciesUrl = (checksum: string): string =>
+  `https://api.twenty.com/rest/front-component-shared-dependencies/application-id/${checksum}.js`;
 
-const FINGERPRINTED_VENDOR_URL = buildFingerprintedVendorUrl(
-  computeSha256Hex(VENDOR_SOURCE),
-);
+const FINGERPRINTED_SHARED_DEPENDENCIES_URL =
+  buildFingerprintedSharedDependenciesUrl(
+    computeSha256Hex(SHARED_DEPENDENCIES_SOURCE),
+  );
 const LEGACY_MD5_URL = buildFingerprintedUrl(
   createHash('md5').update(COMPONENT_SOURCE).digest('hex'),
 );
@@ -256,29 +258,33 @@ describe('fetchComponentSource', () => {
     expect(cache.put).not.toHaveBeenCalled();
   });
 
-  it('caches a vendor bundle exactly like a front component', async () => {
+  it('caches a shared dependencies bundle exactly like a front component', async () => {
     const cache = new FakeCache();
 
     setupCaches(cache);
 
-    const fetchMock = jest.fn(async () => createFakeJsResponse(VENDOR_SOURCE));
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(SHARED_DEPENDENCIES_SOURCE),
+    );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     const source = await fetchComponentSource({
-      url: FINGERPRINTED_VENDOR_URL,
+      url: FINGERPRINTED_SHARED_DEPENDENCIES_URL,
     });
 
-    expect(source).toBe(VENDOR_SOURCE);
+    expect(source).toBe(SHARED_DEPENDENCIES_SOURCE);
     expect(cache.put).toHaveBeenCalledTimes(1);
-    expect(cache.put.mock.calls[0][0]).toBe(FINGERPRINTED_VENDOR_URL);
+    expect(cache.put.mock.calls[0][0]).toBe(
+      FINGERPRINTED_SHARED_DEPENDENCIES_URL,
+    );
   });
 
-  it('serves a verified vendor cache hit without hitting the network', async () => {
+  it('serves a verified shared dependencies cache hit without hitting the network', async () => {
     const cache = new FakeCache();
 
-    await cache.put(FINGERPRINTED_VENDOR_URL, {
-      text: async () => VENDOR_SOURCE,
+    await cache.put(FINGERPRINTED_SHARED_DEPENDENCIES_URL, {
+      text: async () => SHARED_DEPENDENCIES_SOURCE,
     });
     cache.put.mockClear();
 
@@ -289,43 +295,47 @@ describe('fetchComponentSource', () => {
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     const source = await fetchComponentSource({
-      url: FINGERPRINTED_VENDOR_URL,
+      url: FINGERPRINTED_SHARED_DEPENDENCIES_URL,
     });
 
-    expect(source).toBe(VENDOR_SOURCE);
+    expect(source).toBe(SHARED_DEPENDENCIES_SOURCE);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('evicts the previous vendor bundle of the same application only', async () => {
+  it('evicts the previous shared dependencies bundle of the same application only', async () => {
     const cache = new FakeCache();
 
-    const staleVendorUrl = buildFingerprintedVendorUrl(
-      computeSha256Hex('previous vendor build'),
+    const staleSharedDependenciesUrl = buildFingerprintedSharedDependenciesUrl(
+      computeSha256Hex('previous shared dependencies build'),
     );
-    const otherApplicationVendorUrl =
-      'https://api.twenty.com/rest/application-vendor/other-application-id/0000000000000000000000000000000000000000000000000000000000000000.js';
+    const otherApplicationSharedDependenciesUrl =
+      'https://api.twenty.com/rest/front-component-shared-dependencies/other-application-id/0000000000000000000000000000000000000000000000000000000000000000.js';
 
-    await cache.put(staleVendorUrl, {
-      text: async () => 'previous vendor build',
+    await cache.put(staleSharedDependenciesUrl, {
+      text: async () => 'previous shared dependencies build',
     });
-    await cache.put(otherApplicationVendorUrl, {
-      text: async () => 'other application vendor',
+    await cache.put(otherApplicationSharedDependenciesUrl, {
+      text: async () => 'other application shared dependencies',
     });
     cache.put.mockClear();
 
     setupCaches(cache);
 
-    const fetchMock = jest.fn(async () => createFakeJsResponse(VENDOR_SOURCE));
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(SHARED_DEPENDENCIES_SOURCE),
+    );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    await fetchComponentSource({ url: FINGERPRINTED_VENDOR_URL });
+    await fetchComponentSource({ url: FINGERPRINTED_SHARED_DEPENDENCIES_URL });
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(cache.delete).toHaveBeenCalledWith({ url: staleVendorUrl });
+    expect(cache.delete).toHaveBeenCalledWith({
+      url: staleSharedDependenciesUrl,
+    });
     expect(cache.delete).not.toHaveBeenCalledWith({
-      url: otherApplicationVendorUrl,
+      url: otherApplicationSharedDependenciesUrl,
     });
   });
 

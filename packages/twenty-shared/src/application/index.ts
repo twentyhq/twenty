@@ -39,9 +39,9 @@ export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName'
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
+export { SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/SharedDependenciesImportSpecifier';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
-export { VENDOR_BUNDLE_IMPORT_SPECIFIER } from './constants/VendorBundleImportSpecifier';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
@@ -104,6 +104,7 @@ export type {
   CommandMenuItemManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
+export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
@@ -155,7 +156,6 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
-export type { VendorManifest } from './vendorManifestType';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

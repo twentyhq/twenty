@@ -163,8 +163,8 @@ export { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 
-export { defineVendor } from '@/sdk/define/vendor/define-vendor';
-export type { VendorConfig } from '@/sdk/define/vendor/vendor-config';
+export { defineFrontComponentSharedDependencies } from '@/sdk/define/front-component-shared-dependencies/define-front-component-shared-dependencies';
+export type { FrontComponentSharedDependenciesConfig } from '@/sdk/define/front-component-shared-dependencies/front-component-shared-dependencies-config';
 
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';

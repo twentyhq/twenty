@@ -23,7 +23,7 @@ export enum TargetFunction {
   DefinePageLayout = 'definePageLayout',
   DefinePageLayoutTab = 'definePageLayoutTab',
   DefineCommandMenuItem = 'defineCommandMenuItem',
-  DefineVendor = 'defineVendor',
+  DefineFrontComponentSharedDependencies = 'defineFrontComponentSharedDependencies',
 }
 
 export enum ManifestEntityKey {
@@ -45,7 +45,7 @@ export enum ManifestEntityKey {
   PageLayouts = 'pageLayouts',
   PageLayoutTabs = 'pageLayoutTabs',
   CommandMenuItems = 'commandMenuItems',
-  Vendor = 'vendor',
+  FrontComponentSharedDependencies = 'frontComponentSharedDependencies',
 }
 
 export type EntityFilePaths = Record<ManifestEntityKey, string[]>;
@@ -82,7 +82,8 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
   [TargetFunction.DefinePageLayoutTab]: ManifestEntityKey.PageLayoutTabs,
   [TargetFunction.DefineCommandMenuItem]: ManifestEntityKey.CommandMenuItems,
-  [TargetFunction.DefineVendor]: ManifestEntityKey.Vendor,
+  [TargetFunction.DefineFrontComponentSharedDependencies]:
+    ManifestEntityKey.FrontComponentSharedDependencies,
 };
 
 const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {
