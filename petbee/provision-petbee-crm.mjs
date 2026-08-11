@@ -262,7 +262,7 @@ const run = async () => {
     label: 'Valor mensal',
     type: 'CURRENCY',
     icon: 'IconCurrencyDollar',
-    defaultValue: { amountMicros: null, currencyCode: "'BRL'" },
+    defaultValue: { amountMicros: null, currencyCode: 'BRL' },
   });
   await ensureField(subscriptionObject, {
     name: 'dataInicio',
