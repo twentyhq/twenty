@@ -93,6 +93,7 @@ const buildQueryBuilder = ({
         return rows;
       },
     },
+    objectRecordsPermissions: {},
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
@@ -372,6 +373,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
           throw new Error('connection lost');
         },
       },
+      objectRecordsPermissions: {},
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,

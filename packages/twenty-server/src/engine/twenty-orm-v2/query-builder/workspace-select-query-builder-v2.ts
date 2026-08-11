@@ -1,3 +1,4 @@
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -37,6 +38,7 @@ const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
 export type QueryBuilderV2Context = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutorV2;
+  objectRecordsPermissions: ObjectsPermissions;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -47,6 +49,7 @@ export type QueryBuilderV2Context = {
 export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
+  readonly objectRecordsPermissions: ObjectsPermissions;
 
   private readonly context: QueryBuilderV2Context;
   private readonly whereClauses: WhereClause[] = [];
@@ -65,6 +68,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   constructor(alias: string, context: QueryBuilderV2Context) {
     this.alias = alias;
     this.tableShape = context.tableShape;
+    this.objectRecordsPermissions = context.objectRecordsPermissions;
     this.context = context;
   }
 

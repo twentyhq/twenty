@@ -14,7 +14,7 @@ import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   type WorkspaceColumnShape,
@@ -124,10 +124,7 @@ export const buildWorkspaceTableShape = ({
     objectMetadataId: flatObjectMetadata.id,
     nameSingular: flatObjectMetadata.nameSingular,
     schemaName: getWorkspaceSchemaName(workspaceId),
-    tableName: computeTableName(
-      flatObjectMetadata.nameSingular,
-      flatObjectMetadata.isCustom === true,
-    ),
+    tableName: computeObjectTargetTable(flatObjectMetadata),
     columnShapeByColumnName,
     columnNames: Object.keys(columnShapeByColumnName),
     relationShapeByFieldName,

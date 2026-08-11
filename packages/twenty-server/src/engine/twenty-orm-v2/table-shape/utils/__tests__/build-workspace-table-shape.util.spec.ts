@@ -5,6 +5,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/utils/build-workspace-table-shape.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
@@ -74,7 +75,8 @@ describe('buildWorkspaceTableShape', () => {
   const flatObjectMetadata = {
     id: 'person-object-id',
     nameSingular: 'person',
-    isCustom: false,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
     fieldIds: flatFieldMetadatas.map(
       (flatFieldMetadata) => flatFieldMetadata.id,
     ),
@@ -96,7 +98,7 @@ describe('buildWorkspaceTableShape', () => {
       workspaceId: WORKSPACE_ID,
       flatObjectMetadata: {
         ...flatObjectMetadata,
-        isCustom: true,
+        applicationUniversalIdentifier: 'a-custom-application',
         nameSingular: 'rocket',
       } as unknown as FlatObjectMetadata,
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps(flatFieldMetadatas),

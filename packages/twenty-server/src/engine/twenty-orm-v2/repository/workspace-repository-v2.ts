@@ -44,6 +44,7 @@ export class WorkspaceRepositoryV2 {
       {
         tableShape: this.options.tableShape,
         executor: this.options.executor,
+        objectRecordsPermissions: this.options.objectRecordsPermissions,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
