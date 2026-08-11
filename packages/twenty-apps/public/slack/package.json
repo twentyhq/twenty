@@ -23,7 +23,7 @@
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "@slack/web-api": "^7.8.0"
+    "@slack/web-api": "^7.18.0"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

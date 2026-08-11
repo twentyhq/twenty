@@ -27,15 +27,14 @@ export default defineConnectionProvider({
       'chat:write.public',
       'groups:read',
       'reactions:write',
-      // Inbound scopes, only used by the conversational assistant
+      // Only used by the conversational assistant
       'app_mentions:read',
       'channels:history',
       'groups:history',
       'im:history',
-      // Identity scopes, used to name the requester and to match their Slack
-      // account to a workspace member
       'users:read',
       'users:read.email',
+      'assistant:write',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',

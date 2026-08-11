@@ -1,4 +1,3 @@
-import { SLACK_ASSISTANT_TRANSIENT_TEXTS } from 'src/logic-functions/constants/slack-assistant-transient-texts';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
@@ -13,13 +12,11 @@ type SlackAssistantContext = {
 export const fetchSlackAssistantContext = async ({
   slackChannelId,
   parentMessageTimestamp,
-  isDirectMessage,
   slackUserId,
   excludeMessageTimestamps,
 }: {
   slackChannelId: string;
-  parentMessageTimestamp: string | undefined;
-  isDirectMessage: boolean;
+  parentMessageTimestamp: string;
   slackUserId: string | undefined;
   excludeMessageTimestamps: string[];
 }): Promise<SlackAssistantContext> => {
@@ -40,9 +37,7 @@ export const fetchSlackAssistantContext = async ({
       client,
       channelId: slackChannelId,
       threadTimestamp: parentMessageTimestamp,
-      isDirectMessage,
       excludeMessageTimestamps,
-      excludeMessageTexts: SLACK_ASSISTANT_TRANSIENT_TEXTS,
     }),
     fetchSlackUserIdentity({ client, slackUserId }),
   ]);

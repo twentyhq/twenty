@@ -9,4 +9,5 @@ export const WIDGET_TYPE_TO_RELATION_FIELD_NAME: Partial<
   [WidgetType.TIMELINE]: 'timelineActivities',
   [WidgetType.EMAILS]: 'messageParticipants',
   [WidgetType.CALENDAR]: 'calendarEventParticipants',
+  [WidgetType.CALL_RECORDING_TRANSCRIPT]: 'callRecordings',
 };

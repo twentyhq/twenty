@@ -11,15 +11,16 @@ describe('computeLocalCacheStats', () => {
       workspaces: 0,
       versionsTotal: 0,
       versionsByCount: { '1': 0, '2': 0, '3': 0, '4': 0, '5+': 0 },
+      entriesByKeyName: {},
     });
   });
 
   it('counts entries, distinct workspaces, and total versions', () => {
     const stats = computeLocalCacheStats(
       new Map([
-        ['orm:entity-metadatas:ws-a', entry(1)],
-        ['flat-maps:field-metadata:ws-a', entry(2)],
-        ['orm:entity-metadatas:ws-b', entry(1)],
+        ['ORMEntityMetadatas:ws-a', entry(1)],
+        ['flatFieldMetadataMaps:ws-a', entry(2)],
+        ['ORMEntityMetadatas:ws-b', entry(1)],
       ]),
     );
 
@@ -27,6 +28,10 @@ describe('computeLocalCacheStats', () => {
     // ws-a and ws-b — the same workspace under two providers counts once.
     expect(stats.workspaces).toBe(2);
     expect(stats.versionsTotal).toBe(4);
+    expect(stats.entriesByKeyName).toEqual({
+      ORMEntityMetadatas: 2,
+      flatFieldMetadataMaps: 1,
+    });
   });
 
   it('buckets entries by version count and folds 5+ together', () => {

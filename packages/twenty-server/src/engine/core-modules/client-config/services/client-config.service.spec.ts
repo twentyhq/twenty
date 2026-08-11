@@ -154,7 +154,6 @@ describe('ClientConfigService', () => {
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: true,
         defaultSubdomain: 'app',
-        subdomainMinLength: 1,
         frontDomain: 'app.twenty.com',
         publicFunctionDomain: null,
         support: {

@@ -4,7 +4,9 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
 
 ## 1. Slack app
 
-1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps). Use a dedicated app — do not reuse one across Twenty apps.
+1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps) → **Create New App → From a manifest**, pasting [`slack-app-manifest.json`](./slack-app-manifest.json) with both `<YOUR_TWENTY_SERVER_URL>` placeholders replaced. The manifest is the source of truth for scopes, event subscriptions and the agent surface — the steps below describe what it configures, so an app created from it only needs credentials copied (step 4). Use a dedicated app — do not reuse one across Twenty apps.
+
+   The manifest enables `agent_view` (Slack's Agent messaging experience): the app is listed as an agent in Slack's UI, shows clickable suggested prompts at the top of its Messages tab, and replies show a native thinking status instead of placeholder messages, in DMs and channel threads alike. On an app configured by hand instead, enable **Agents & AI Apps** in the app settings, which also adds the `assistant:write` scope.
 
 2. **OAuth & Permissions → Bot Token Scopes.** Twenty uses Slack's bot OAuth (`oauth/v2/authorize` with `scope=…`), so scopes must be added here and not only under **User Token Scopes**, otherwise Slack refuses the install with *"doesn't have a bot user to install"*.
 
@@ -21,8 +23,9 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `channels:history` | assistant: thread follow-ups in public channels |
    | `groups:history` | assistant: thread follow-ups in private channels |
    | `im:history` | assistant: direct messages |
-   | `users:read` | assistant: name the person who tagged the bot |
+   | `users:read` | assistant: look up the requester's display name |
    | `users:read.email` | assistant: match a Slack account to a workspace member |
+   | `assistant:write` | agent surface: `assistant.threads.*` (statuses, titles, suggested prompts) |
 
    Adding or removing scopes later means existing installs must re-authorize: disconnect and **Add connection** again.
 
@@ -58,6 +61,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Under **Subscribe to bot events**, add:
 
+   - `app_home_opened` — a user opened the bot's Messages tab; sets the suggested prompts
    - `app_mention` — mentions of the bot in a channel
    - `message.im` — direct messages to the bot
    - `message.channels` — replies in public-channel threads, for un-mentioned follow-ups
@@ -68,13 +72,18 @@ The assistant reuses the same Slack connection — no second bot identity.
 
 3. **Reconnect** so the token picks up the assistant scopes.
 
-4. **Role.** The `slack-assistant` agent binds to the app's **Slack Assistant** role automatically on install and upgrade. Anyone who can message the bot acts with that role — Slack users are not mapped to individual Twenty members yet, so keep the role scoped to what you're comfortable exposing.
+4. **Role.** The `slack-assistant` agent binds to the app's **Slack Assistant** role automatically on install and upgrade. That role is the ceiling for everything the bot can do.
+
+   Where a Slack account is linked to a workspace member, the bot also runs with that member's own permissions, so it can never do more than the person asking. Accounts with no link act with the Slack Assistant role alone, so keep it scoped to what you're comfortable exposing to anyone who can message the bot.
 
 ## Behaviour notes
 
+- **Suggested prompts.** With `app_home_opened` subscribed and the Agents feature enabled, opening the bot's Messages tab shows clickable example prompts, refreshed on every open.
+- **Direct messages.** Each new message in the bot's Messages tab starts its own conversation thread: the bot shows a "Twenty is thinking…" status while it works, replies in the thread, and titles the thread after the question. Conversation context is scoped to the thread, not the whole DM history.
+- **Channel mentions.** The bot shows its thinking status in the mention's thread and posts its answer as a thread reply. The status is only visible with the thread open, so the channel itself stays quiet until the answer arrives.
 - **Thread memory.** After a successful reply the bot stays active in that thread, so follow-ups need no mention. Channel threads stay active for 24 hours after the last reply (each reply renews it); DM threads never expire.
 - **No silent dead-ends.** A mention or DM with no request text gets a short hint reply. The first follow-up in a thread whose 24-hour window has lapsed gets an ephemeral nudge (only that member sees it) to mention the bot again.
-- **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a short introduction the first time it is added to a channel, with the details (what to ask it, what it reads, and the shared-role caveat from step 4 above) in a thread reply so the channel itself stays quiet. It fires once per channel for 30 days, and only for the bot's own join — humans joining afterwards trigger nothing. Skip the subscription if you would rather it arrived silently.
+- **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a short introduction the first time it is added to a channel, with the details (what to ask it, what it reads, and how permissions work per step 4 above) in a thread reply so the channel itself stays quiet. It fires once per channel for 30 days, and only for the bot's own join — humans joining afterwards trigger nothing. Skip the subscription if you would rather it arrived silently.
 - **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. Removing the connection releases the claim, so another Twenty workspace can then connect that Slack team. Uninstalling the app releases it too.
 
 ## Workflow field names (for step authors)

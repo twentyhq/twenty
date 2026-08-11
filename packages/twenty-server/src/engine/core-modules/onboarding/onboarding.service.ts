@@ -17,6 +17,10 @@ import {
   INSTALL_ONBOARDING_APPS_JOB_NAME,
   type InstallOnboardingAppsJobData,
 } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
+import {
+  OnboardingException,
+  OnboardingExceptionCode,
+} from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -336,11 +340,45 @@ export class OnboardingService {
       return;
     }
 
-    await this.messageQueueService.add<InstallOnboardingAppsJobData>(
-      INSTALL_ONBOARDING_APPS_JOB_NAME,
-      { workspaceId, universalIdentifiers: installableUniversalIdentifiers },
-      { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
-    );
+    try {
+      await this.messageQueueService.add<InstallOnboardingAppsJobData>(
+        INSTALL_ONBOARDING_APPS_JOB_NAME,
+        { workspaceId, universalIdentifiers: installableUniversalIdentifiers },
+        { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
+      );
+    } catch (error) {
+      const enqueueFailureMessage = `Failed to enqueue the install onboarding apps job for workspace ${workspaceId}`;
+
+      this.logger.error(enqueueFailureMessage, error);
+
+      await this.releaseInstallAppsOnboardingStepClaim({ userId, workspaceId });
+
+      throw new OnboardingException(
+        enqueueFailureMessage,
+        OnboardingExceptionCode.INSTALL_APPS_JOB_ENQUEUE_FAILED,
+      );
+    }
+  }
+
+  private async releaseInstallAppsOnboardingStepClaim({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    try {
+      await this.setOnboardingInstallAppsPending({
+        userId,
+        workspaceId,
+        value: true,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to restore the pending install-apps onboarding step for workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   private async claimInstallAppsOnboardingStep({
