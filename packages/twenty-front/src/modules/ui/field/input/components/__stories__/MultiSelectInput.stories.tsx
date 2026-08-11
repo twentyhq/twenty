@@ -387,6 +387,7 @@ export const RefiningSearchKeepsArrowSelection: Story = {
     });
 
     await userEvent.keyboard('{ArrowDown}');
+    await userEvent.keyboard('{ArrowDown}');
 
     await userEvent.type(searchInput, 'k');
 
@@ -397,7 +398,7 @@ export const RefiningSearchKeepsArrowSelection: Story = {
     await userEvent.keyboard('{Enter}');
 
     await waitFor(() => {
-      expect(args.onOptionSelected).toHaveBeenCalledWith(['content']);
+      expect(args.onOptionSelected).toHaveBeenCalledWith(['viral']);
     });
   },
 };

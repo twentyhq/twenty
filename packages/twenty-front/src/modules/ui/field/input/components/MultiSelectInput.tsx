@@ -44,7 +44,7 @@ export const MultiSelectInput = ({
   dropdownWidth,
   onAddSelectOption,
 }: MultiSelectInputProps) => {
-  const { resetSelectedItem, setSelectedItemId } = useSelectableList(
+  const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
   );
 
@@ -68,27 +68,6 @@ export const MultiSelectInput = ({
   };
 
   const filteredOptionsInDropDown = filterOptions(searchFilter);
-
-  const handleSearchFilterChange = (searchText: string) => {
-    const newSearchFilter = turnIntoEmptyStringIfWhitespacesOnly(searchText);
-    setSearchFilter(newSearchFilter);
-
-    const matchingOptions = filterOptions(newSearchFilter);
-    const firstMatchingOption = matchingOptions[0];
-
-    if (!isNonEmptyString(newSearchFilter) || !isDefined(firstMatchingOption)) {
-      resetSelectedItem();
-      return;
-    }
-
-    const isSelectedItemStillMatching = matchingOptions.some(
-      (option) => option.value === selectedItemId,
-    );
-
-    if (!isSelectedItemStillMatching) {
-      setSelectedItemId(firstMatchingOption.value);
-    }
-  };
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
@@ -137,6 +116,7 @@ export const MultiSelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
       focusId={focusId}
+      shouldSelectFirstItemOnListChange={isNonEmptyString(searchFilter)}
     >
       <DropdownContent
         ref={containerRef}
@@ -146,7 +126,9 @@ export const MultiSelectInput = ({
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={(event) =>
-            handleSearchFilterChange(event.currentTarget.value)
+            setSearchFilter(
+              turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
+            )
           }
           autoFocus
         />
