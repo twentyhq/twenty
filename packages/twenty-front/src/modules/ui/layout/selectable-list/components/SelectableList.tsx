@@ -62,8 +62,9 @@ export const SelectableList = ({
       return;
     }
 
-    const itemIds = selectableItemIdArray ?? selectableItemIdMatrix?.flat();
-    const firstItemId = itemIds?.[0];
+    const itemIds =
+      selectableItemIdArray ?? selectableItemIdMatrix?.flat() ?? [];
+    const firstItemId = itemIds[0];
 
     if (!isDefined(firstItemId)) {
       resetSelectedItem();
