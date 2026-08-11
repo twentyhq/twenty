@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
-import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import { COMPANY_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
@@ -54,7 +54,7 @@ describe('CompanyEnrichmentService', () => {
           useValue: userWorkspaceService,
         },
         {
-          provide: PeopleDataLabsCompanyClientService,
+          provide: PeopleDataLabsClientService,
           useValue: peopleDataLabsCompanyClientService,
         },
         {

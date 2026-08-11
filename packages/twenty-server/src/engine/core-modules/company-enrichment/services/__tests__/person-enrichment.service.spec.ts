@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { PeopleDataLabsPersonClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-person-client.service';
+import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import { PersonEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/person-enrichment.service';
 import { PERSON_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/person-enrichment-attempt-key-value.type';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -54,7 +54,7 @@ describe('PersonEnrichmentService', () => {
           useValue: userWorkspaceService,
         },
         {
-          provide: PeopleDataLabsPersonClientService,
+          provide: PeopleDataLabsClientService,
           useValue: peopleDataLabsPersonClientService,
         },
         {

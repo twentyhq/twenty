@@ -1,12 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-company-min-likelihood.constant';
-import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import { PEOPLE_DATA_LABS_PERSON_MIN_LIKELIHOOD } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-person-min-likelihood.constant';
+import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-describe('PeopleDataLabsCompanyClientService', () => {
-  let service: PeopleDataLabsCompanyClientService;
+describe('PeopleDataLabsClientService', () => {
+  let service: PeopleDataLabsClientService;
   let httpClient: { get: jest.Mock };
   let twentyConfigService: { get: jest.Mock };
 
@@ -18,7 +19,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        PeopleDataLabsCompanyClientService,
+        PeopleDataLabsClientService,
         {
           provide: TwentyConfigService,
           useValue: twentyConfigService,
@@ -30,8 +31,8 @@ describe('PeopleDataLabsCompanyClientService', () => {
       ],
     }).compile();
 
-    service = module.get<PeopleDataLabsCompanyClientService>(
-      PeopleDataLabsCompanyClientService,
+    service = module.get<PeopleDataLabsClientService>(
+      PeopleDataLabsClientService,
     );
   });
 
@@ -51,7 +52,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
     },
   );
 
-  it('should send the domain and minimum likelihood as query parameters', async () => {
+  it('should send the domain and minimum likelihood as company query parameters', async () => {
     httpClient.get.mockResolvedValue({
       status: 200,
       data: { name: 'Acme Inc' },
@@ -65,6 +66,35 @@ describe('PeopleDataLabsCompanyClientService', () => {
         min_likelihood: PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD,
       },
       headers: { 'X-Api-Key': 'pdl-key' },
+    });
+  });
+
+  it('should send the email and minimum likelihood as person query parameters', async () => {
+    httpClient.get.mockResolvedValue({
+      status: 200,
+      data: { full_name: 'Ada Lovelace' },
+    });
+
+    await service.enrichPersonByEmail('ada@acme.com');
+
+    expect(httpClient.get).toHaveBeenCalledWith('/person/enrich', {
+      params: {
+        email: 'ada@acme.com',
+        min_likelihood: PEOPLE_DATA_LABS_PERSON_MIN_LIKELIHOOD,
+      },
+      headers: { 'X-Api-Key': 'pdl-key' },
+    });
+  });
+
+  it('should match a person on data nested under the data key', async () => {
+    httpClient.get.mockResolvedValue({
+      status: 200,
+      data: { status: 200, likelihood: 9, data: { full_name: 'Ada Lovelace' } },
+    });
+
+    await expect(service.enrichPersonByEmail('ada@acme.com')).resolves.toEqual({
+      outcome: 'matched',
+      data: { full_name: 'Ada Lovelace' },
     });
   });
 
