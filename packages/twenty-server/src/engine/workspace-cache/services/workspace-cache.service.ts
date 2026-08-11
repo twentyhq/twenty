@@ -53,12 +53,6 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const HOT_ENTRIES_PER_PROVIDER = 64;
-// Demotion is sliced rather than done in one pass: encoding a single field
-// metadata entry costs ~17ms in prod, so draining the backlog at once blocked
-// the loop for ~2.8s and timed out the 3s liveness probe. The budget cannot go
-// below one entry's cost, so the floor for a slice is roughly that; 10ms every
-// 250ms drains faster than entries go hot again and a no-op tick on a full pod
-// costs 0.14ms.
 const DEMOTION_INTERVAL_MS = 250;
 const DEMOTION_BUDGET_MS = 10;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
@@ -156,8 +150,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.cacheMetricsService.stop();
   }
 
-  // Maintenance used to run inline on the first request after each interval, so
-  // whichever request happened to trigger it was charged the whole cost.
   private startMaintenanceTimers(): void {
     this.sweepTimer = setInterval(
       () => this.sweepLocalCache(),

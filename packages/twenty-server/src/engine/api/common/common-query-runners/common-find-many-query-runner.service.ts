@@ -166,7 +166,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 
-    // Joins are all applied by this point, so the scan shape is known.
     if (canBoundScanWithDirectLimit(queryBuilder)) {
       if (isDefined(args.offset)) {
         queryBuilder.offset(args.offset);

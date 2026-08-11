@@ -118,7 +118,6 @@ describe('demoteColdStorageEntries', () => {
   });
 
   describe('time budget', () => {
-    // Each entry costs 10 "ms" on this fake clock.
     const clockAdvancingPerEntry = () => {
       let elapsed = 0;
 
@@ -150,7 +149,6 @@ describe('demoteColdStorageEntries', () => {
         now: clockAdvancingPerEntry(),
       });
 
-      // startedAt consumes the first tick, so a 25ms budget fits two 10ms entries.
       expect(result.demoted).toBe(2);
       expect(result.remaining).toBe(8);
     });

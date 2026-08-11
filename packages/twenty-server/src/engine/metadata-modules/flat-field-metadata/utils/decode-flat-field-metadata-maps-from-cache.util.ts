@@ -30,8 +30,6 @@ const decodeFlatFieldMetadata = (
   return decoded as FlatFieldMetadata;
 };
 
-// Entries written before the codec shipped are still stored plain, so decoding
-// has to leave an already-plain payload untouched.
 export const decodeFlatFieldMetadataMapsFromCache = (
   encoded: EncodedFlatFieldMetadataMaps | EncodableFlatFieldMetadataMaps,
 ): FlatEntityMaps<FlatFieldMetadata> => {

@@ -19,8 +19,6 @@ export const demoteColdStorageEntries = <T>({
   serialize: (params: { localKey: string; data: T }) => Buffer | undefined;
   now?: () => number;
 }): DemoteColdStorageResult => {
-  // Started before the scan, not after: on a full pod the scan and sort are
-  // themselves part of the slice's cost to the event loop.
   const startedAt = now();
   const hotByProvider = new Map<
     string,
@@ -53,16 +51,12 @@ export const demoteColdStorageEntries = <T>({
     candidates.push(...hot.slice(0, hot.length - hotEntriesPerProvider));
   }
 
-  // Coldest first across every provider, so a slice that runs out of budget
-  // leaves behind the entries most likely to be read again anyway, and the next
-  // slice re-selects the same remaining ones. No cursor to keep in sync.
   candidates.sort((a, b) => a.lastReadAt - b.lastReadAt);
 
   let demoted = 0;
   let index = 0;
 
   for (const { localKey, hash } of candidates) {
-    // Checked between entries, so one slice can overrun by a single entry.
     if (now() - startedAt >= budgetMs) {
       break;
     }

@@ -60,7 +60,6 @@ export const computeLocalCacheStats = (
       if (version.state === 'cold') {
         coldVersionsByKeyName[keyName] += 1;
         coldVersionsTotal += 1;
-        // Exact, unlike the sampled deep-size estimate for hot entries.
         coldBytesByKeyName[keyName] += version.blob.byteLength;
         coldBytesTotal += version.blob.byteLength;
         continue;

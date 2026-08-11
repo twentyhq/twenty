@@ -315,9 +315,6 @@ export class WorkspaceCacheMetricsService {
           }),
         ),
     });
-    // Hot vs cold is the lever cold storage actually pulls: only hot versions are
-    // live object graphs the collector has to trace. Split by provider so the
-    // occupancy can be correlated against twenty_nodejs_gc_duration_seconds.
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_workspace_cache_local_versions_by_state',
       options: {

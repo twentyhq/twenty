@@ -1,6 +1,5 @@
 import { computeLocalCacheStats } from 'src/engine/workspace-cache/utils/compute-local-cache-stats.util';
 
-// Version state matters now, so fixtures build real version maps.
 const entry = (versionCount: number, state: 'hot' | 'cold' = 'hot') => ({
   versions: new Map(
     Array.from({ length: versionCount }, (_, index) => [
