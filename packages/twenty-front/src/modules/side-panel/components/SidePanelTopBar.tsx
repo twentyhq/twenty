@@ -1,7 +1,7 @@
 import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton';
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
-import { SidePanelExpandAiChatButton } from '@/side-panel/components/SidePanelExpandAiChatButton';
+import { SidePanelExpandButton } from '@/side-panel/components/SidePanelExpandButton';
 import { SidePanelTopBarRightCornerIcon } from '@/side-panel/components/SidePanelTopBarRightCornerIcon';
 import { COMMAND_MENU_SIDE_PANEL_PAGES } from '@/side-panel/constants/CommandMenuSidePanelPages';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
@@ -212,12 +212,12 @@ export const SidePanelTopBar = () => {
       </StyledContentContainer>
       <StyledRightControlsContainer>
         <SidePanelTopBarRightCornerIcon />
-        <SidePanelExpandAiChatButton />
+        <SidePanelExpandButton />
         {!shouldHideCloseButton && (
           <IconButton
             Icon={IconX}
             size="small"
-            variant="secondary"
+            variant="tertiary"
             onClick={closeSidePanelMenu}
             ariaLabel={t`Close side panel`}
           />

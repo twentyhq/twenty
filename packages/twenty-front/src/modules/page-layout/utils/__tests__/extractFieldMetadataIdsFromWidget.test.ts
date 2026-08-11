@@ -23,6 +23,8 @@ const createMockWidget = (
 ): PageLayoutWidget => ({
   id: 'widget-1',
   applicationId: '',
+  universalIdentifier: 'universal-identifier-mock',
+  isSystemSideEffect: false,
   isActive: true,
   type: WidgetType.GRAPH,
   title: 'Test',

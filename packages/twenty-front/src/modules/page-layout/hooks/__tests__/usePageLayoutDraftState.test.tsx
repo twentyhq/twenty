@@ -87,6 +87,8 @@ describe('usePageLayoutDraftState', () => {
         objectMetadataId: null,
         tabs: [
           {
+            isSystemSideEffect: false,
+            universalIdentifier: 'universal-identifier-mock',
             id: 'tab-1',
             applicationId: '',
             title: 'Tab 1',
@@ -98,6 +100,8 @@ describe('usePageLayoutDraftState', () => {
             deletedAt: null,
             widgets: [
               {
+                isSystemSideEffect: false,
+                universalIdentifier: 'universal-identifier-mock',
                 id: 'widget-1',
                 applicationId: '',
                 pageLayoutTabId: 'tab-1',

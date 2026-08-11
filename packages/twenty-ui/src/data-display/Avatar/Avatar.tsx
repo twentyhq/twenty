@@ -3,6 +3,7 @@ import { clsx } from 'clsx';
 import { useState } from 'react';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
+import { AvatarImageLoadErrorEffect } from '@ui/data-display/Avatar/components/AvatarImageLoadErrorEffect';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
@@ -51,19 +52,16 @@ export const Avatar = ({
 
   const avatarImageURI = isNonEmptyString(avatarUrl) ? avatarUrl : null;
 
+  const avatarImageFailedToLoad =
+    isNonEmptyString(avatarImageURI) &&
+    erroredAvatarImageURI === avatarImageURI;
+
   const placeholderFirstChar = placeholder?.trim()?.charAt(0);
   const isPlaceholderFirstCharEmpty =
     !placeholderFirstChar || placeholderFirstChar === '';
   const placeholderChar = placeholderFirstChar?.toUpperCase() || '-';
 
-  const showPlaceholder =
-    isNull(avatarImageURI) || erroredAvatarImageURI === avatarImageURI;
-
-  const handleImageError = () => {
-    if (isNonEmptyString(avatarImageURI)) {
-      setErroredAvatarImageURI(avatarImageURI);
-    }
-  };
+  const showPlaceholder = isNull(avatarImageURI) || avatarImageFailedToLoad;
 
   const fixedColor = isPlaceholderFirstCharEmpty
     ? theme.font.color.tertiary
@@ -135,6 +133,12 @@ export const Avatar = ({
       onKeyDown={handleClickableElementKeyDown}
       style={avatarStyle}
     >
+      {isNonEmptyString(avatarImageURI) && (
+        <AvatarImageLoadErrorEffect
+          avatarImageURI={avatarImageURI}
+          onImageLoadError={setErroredAvatarImageURI}
+        />
+      )}
       {Icon ? (
         <Icon
           color={iconColor ? iconColor : 'currentColor'}
@@ -143,11 +147,11 @@ export const Avatar = ({
       ) : showPlaceholder ? (
         <span className={styles.placeholderChar}>{placeholderChar}</span>
       ) : (
-        <img
+        <div
           className={styles.image}
-          src={avatarImageURI}
-          onError={handleImageError}
-          alt=""
+          style={{
+            backgroundImage: `url("${CSS.escape(avatarImageURI)}")`,
+          }}
         />
       )}
     </div>
