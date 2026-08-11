@@ -33,35 +33,46 @@ operational runbooks; normal feature work does not move there.
 **2. Wait for CI.** The check is called `ci-fork-status-check`. Get it green.
 Get a review.
 
-**3. Put it on staging.** Add the label `needs-staging` to your PR. That builds
-an image — takes 20–40 minutes, so add the label early. Then go to
-**Actions → Deploy to staging → Run workflow** and enter your branch name.
+**3. Merge the PR.** Merge the reviewed PR into `main` on GitHub. Never push
+directly to `main`.
 
-**4. Actually try it.** Open `https://crm-staging.spec.tech` and use the thing
+**4. Put the release candidate on staging.** At the scheduled release window,
+typically at the end of the day, choose the exact full commit SHA on `main`
+that you intend to release and wait for its image build. Then go to **Actions →
+Deploy to staging → Run workflow** and enter that SHA.
+
+**5. Actually try it.** Open `https://crm-staging.spec.tech` and use the thing
 you changed. Click around the normal stuff too — people, companies, search.
-Staging has a copy of real data, so it should feel like the real CRM.
+Staging has a copy of real data, so it should feel like the real CRM. Record a
+real pass or fail; seeing no alerts is not the same as completing the smoke
+test.
 
-**5. Merge your PR.**
+**6. Put that exact SHA on production.** If staging passes and Ben is available
+to monitor the release, go to **Actions → Deploy to production → Run workflow**
+and enter the same SHA. The run verifies that the commit is on `main` and
+passed through staging, then pauses for Ben's approval. Once approved, it
+deploys the cloud production VM and waits for the result. If the release window
+ends before validation is complete, wait for the next supported window. If
+staging fails, stop and fix or revert it through another PR.
 
-**6. Put it on production.** Go to **Actions → Deploy to production → Run
-workflow** and enter the merged commit or `main`. The run verifies that the
-commit is on `main` and includes what staging ran, then pauses for Ben's
-approval. Once approved, it deploys the cloud production VM and waits for the
-result.
-
-That's it. Steps 3 and 4 are the ones people skip and shouldn't.
+That's it. Steps 4 and 5 are the ones people skip and shouldn't.
 
 ## Two things that will trip you up
 
-**Staging is one shared slot.** Only one branch can be on staging at a time. If
-you put yours on staging, you've taken the slot until it's merged — and nobody
-can deploy to production until then, because production refuses to deploy
-anything that doesn't include whatever staging last tested. So: **merge what you
-staged, reasonably promptly.** If you need the slot, ask.
+**Staging is one shared slot.** The release window can validate several PRs
+together as one `main` SHA, but staging can run only one SHA at a time. If
+`main` advances after staging, either promote the SHA that actually passed or
+stage and test the newer SHA. Never assume the moving `main` name still means
+the candidate you exercised.
 
 **Production only ever runs code that's on `main`.** You can't promote a branch,
 and you can't skip staging. These are enforced, not conventions — the deploy
 will refuse.
+
+**Pre-merge staging is the exception.** For an unusually risky PR that needs
+cloud validation before review can finish, add `needs-staging` to build its
+image and deploy the PR's exact SHA. It still needs CI and review, and the
+normal release train still stages a selected SHA from `main` before production.
 
 ## How to tell it worked
 
@@ -94,5 +105,6 @@ private `crm-ops/deploy/CLOUD-OPS.md` incident and rollback guidance with Ben.
 
 A job opens a PR every Monday morning bringing in changes from the upstream
 Twenty project. It's usually 100–200 commits. Treat it like any other PR:
-review, stage, test, merge. **Merge it the week it opens** — letting it pile up
-makes the next one bigger and more likely to conflict with our own changes.
+review, merge, stage, test, and promote. **Merge it the week it opens** —
+letting it pile up makes the next one bigger and more likely to conflict with
+our own changes.

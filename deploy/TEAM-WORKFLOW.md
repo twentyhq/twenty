@@ -12,7 +12,7 @@ walkthrough.
 | Environment | Location | Data | Purpose |
 |---|---|---|---|
 | Development | Each developer's machine | Developer-owned Postgres, Redis, and storage | Build and test feature branches |
-| Staging | Google Cloud, `crm-staging.spec.tech` | Isolated copy of production data | Validate a merged or candidate commit |
+| Staging | Google Cloud, `crm-staging.spec.tech` | Isolated copy of production data | Validate a release candidate from `main` before production |
 | Production | Google Cloud, `crm.spec.tech` | Live CRM data | The instance the team uses |
 
 The boundaries are mandatory:
@@ -80,7 +80,7 @@ in the same PR as a GraphQL schema change.
 Promotion is forward-only:
 
 ```text
-feature branch -> pull request/CI -> staging -> production
+feature branch -> pull request/CI/review -> main -> staging -> production
 ```
 
 Schema changes travel with the application code that requires them. Developers
@@ -102,21 +102,34 @@ still travels only through committed instance commands and workspace upgrades.
 See [DEVELOPMENT.md](DEVELOPMENT.md) for what the mirror contains and how it
 must be handled.
 
-1. Identify the exact Git commit SHA to test.
-2. Ensure CI has published the GHCR image for that SHA. For an unmerged PR,
-   adding `needs-staging` triggers the image build.
-3. Run **Deploy to staging** with the branch, tag, or SHA. The workflow wakes
-   cloud staging, deploys the pinned image, runs migrations and health checks,
-   and reports the result.
-4. Exercise the change at `https://crm-staging.spec.tech` and record the smoke
-   test result.
-5. Merge the reviewed PR to `main`.
-6. Run **Deploy to production** for the merged SHA. The workflow verifies that
-   the commit is on `main` and contains the commit staging ran, then waits for
-   the production approval gate before deploying.
+1. Merge each reviewed PR to `main` after its required CI checks pass. Do not
+   push directly to `main`.
+2. At the scheduled release window, typically at the end of the day, identify
+   the exact full commit SHA on `main` to release and wait for CI to publish its
+   GHCR image.
+3. Run **Deploy to staging** with that exact SHA. The workflow wakes cloud
+   staging, deploys the pinned image, runs migrations and health checks, and
+   reports the result.
+4. Exercise the changed behavior and the normal CRM smoke-test paths at
+   `https://crm-staging.spec.tech`. Record an affirmative pass or fail; the
+   absence of alerts alone is not a successful smoke test.
+5. If staging passes and the production owner is available to monitor the
+   release, run **Deploy to production** for the exact SHA staging ran. The
+   workflow verifies that the commit is on `main` and passed through staging,
+   then waits for the production approval gate before deploying. If the
+   release window ends before validation is complete, promote it during the
+   next supported window instead.
+6. If staging fails, do not deploy to production. Revert or fix the problem in
+   another reviewed PR, then deploy and test the new `main` SHA on staging.
 7. Follow the private
    [`crm-ops` cloud runbook](https://github.com/SpeculativeTechnologies/crm-ops/blob/main/deploy/CLOUD-OPS.md)
    for operational checks, backups, incidents, and rollback.
+
+Pre-merge staging is an exception for unusually risky changes that need cloud
+validation before they can be reviewed safely. Add `needs-staging` to publish
+an image for the unmerged PR, deploy its exact SHA, and record what was tested.
+This exception does not replace CI or review. The normal release train still
+deploys a selected SHA from `main` to staging before production.
 
 Do not use `latest` to identify a staging or production release. Deploys use a
 full commit SHA; rollback is another deployment of a known-good SHA.

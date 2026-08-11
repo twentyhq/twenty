@@ -149,20 +149,31 @@ your own initiative, and do not operate the cloud VMs directly.
 
 The sequence, for reference when reporting readiness:
 
-1. Ensure CI has published an image tagged with the exact commit SHA. An
-   unmerged PR needs the `needs-staging` label to build one.
-2. Run **Deploy to staging** for that branch, tag, or SHA and wait for the cloud
+1. After required CI and review, an authorized maintainer merges the PR to
+   `main`.
+2. At the scheduled release window, typically at the end of the day, select the
+   exact full SHA on `main` and wait for CI to publish its image.
+3. Run **Deploy to staging** for that exact SHA and wait for the cloud
    deployment result.
-3. Exercise the change at `https://crm-staging.spec.tech`.
-4. Merge the reviewed PR to `main`.
-5. Run **Deploy to production** for the merged SHA and obtain the production
-   approval.
-6. Follow the private
+4. Exercise the changed behavior and the normal CRM smoke-test paths at
+   `https://crm-staging.spec.tech`, then record an affirmative pass or fail.
+5. If staging passes and the production owner is available to monitor the
+   release, run **Deploy to production** for the exact SHA staging ran and
+   obtain the production approval. Otherwise wait for the next supported
+   release window.
+6. If staging fails, do not promote it. Revert or fix the issue through another
+   reviewed PR and test the new `main` SHA on staging.
+7. Follow the private
    [`crm-ops` cloud runbook](https://github.com/SpeculativeTechnologies/crm-ops/blob/main/deploy/CLOUD-OPS.md)
    for operational checks, backup requirements, and rollback.
 
-Your job ends at a reviewed, merged PR plus a clear statement of what needs
-verifying on staging.
+Pre-merge staging is reserved for unusually risky changes that need cloud
+validation before review can finish. Such a PR needs the `needs-staging` label
+to publish an image. This does not replace CI, review, or the normal release
+train from `main`.
+
+Your job ends at a reviewed PR plus a clear statement of what needs verifying
+on staging. The production owner owns merging and promotion.
 
 ## Handling mirror data
 
