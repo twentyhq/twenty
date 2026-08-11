@@ -28,10 +28,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @ObjectType('ApplicationVariable')
 // All values are always encrypted regardless of `isSecret`. The
 // `isSecret` flag only controls display behavior (masked vs plaintext).
-@Check(
-  'CHK_applicationVariable_value_encrypted',
-  `"value" = '' OR "value" LIKE 'enc:v2:%'`,
-)
+@Check('CHK_applicationVariable_value_encrypted', `"value" LIKE 'enc:v2:%'`)
 export class ApplicationVariableEntity extends SyncableEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -40,8 +37,8 @@ export class ApplicationVariableEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'text' })
   key: string;
 
-  @Column({ nullable: false, type: 'text', default: '' })
-  value: EncryptedString | '';
+  @Column({ nullable: false, type: 'text' })
+  value: EncryptedString;
 
   @Column({ nullable: false, type: 'text', default: '' })
   description: string;

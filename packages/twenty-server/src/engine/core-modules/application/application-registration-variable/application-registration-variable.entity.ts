@@ -33,12 +33,12 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
   'applicationRegistrationId',
 ])
 @Index('IDX_APP_REG_VAR_APP_REGISTRATION_ID', ['applicationRegistrationId'])
-// Constrains `encryptedValue` to the unfilled default ('') or to the
-// versioned envelope. Registration variables are instance-scoped so the
-// envelope's HKDF info does not include a workspaceId.
+// Registration variables are instance-scoped so the envelope's HKDF info
+// does not include a workspaceId. An empty value is stored as the envelope
+// of the empty string, never as ''.
 @Check(
   'CHK_applicationRegistrationVariable_encryptedValue_encrypted',
-  `"encryptedValue" = '' OR "encryptedValue" LIKE 'enc:v2:%'`,
+  `"encryptedValue" LIKE 'enc:v2:%'`,
 )
 @Check(
   'CHK_applicationRegistrationVariable_deprecated_not_required',
@@ -53,8 +53,8 @@ export class ApplicationRegistrationVariableEntity {
   @Column({ nullable: false, type: 'text' })
   key: string;
 
-  @Column({ nullable: false, type: 'text', default: '' })
-  encryptedValue: EncryptedString | '';
+  @Column({ nullable: false, type: 'text' })
+  encryptedValue: EncryptedString;
 
   @Field()
   @Column({ nullable: false, type: 'text', default: '' })

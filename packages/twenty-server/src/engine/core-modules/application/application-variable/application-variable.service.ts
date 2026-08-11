@@ -32,10 +32,6 @@ export class ApplicationVariableEntityService {
   ) {}
 
   getDisplayValue(applicationVariable: ApplicationVariableEntity): string {
-    if (applicationVariable.value === '') {
-      return '';
-    }
-
     const plaintextValue = this.secretEncryptionService.decryptVersionedOrThrow(
       applicationVariable.value,
       { workspaceId: applicationVariable.workspaceId },
@@ -120,10 +116,6 @@ export class ApplicationVariableEntityService {
     value,
     workspaceId,
   }: FlatApplicationVariable): string {
-    if (value === '') {
-      return '';
-    }
-
     return this.secretEncryptionService.decryptVersionedOrThrow(value, {
       workspaceId,
     });

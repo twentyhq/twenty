@@ -84,7 +84,7 @@ describe('ApplicationRegistrationVariableService', () => {
     ({
       id: 'variable-1',
       key: 'API_KEY',
-      encryptedValue: '',
+      encryptedValue: 'enc:v2:deadbeef:' as EncryptedString,
       description: '',
       isSecret: true,
       isRequired: false,
@@ -104,7 +104,11 @@ describe('ApplicationRegistrationVariableService', () => {
       await service.syncVariableSchemas(registrationId, serverVariables);
 
       expect(variableRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({ key: 'API_KEY', isDeprecated: true }),
+        expect.objectContaining({
+          key: 'API_KEY',
+          isDeprecated: true,
+          encryptedValue: 'enc:v2:deadbeef:',
+        }),
       );
     });
 

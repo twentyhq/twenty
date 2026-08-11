@@ -85,7 +85,7 @@ describe('ApplicationVariableEntityService', () => {
     ({
       id: '1',
       key: 'KEY',
-      value: '' as EncryptedString | '',
+      value: 'enc:v2:deadbeef:|instance' as EncryptedString,
       description: '',
       isSecret: false,
       type: FieldMetadataType.TEXT,
@@ -234,12 +234,12 @@ describe('ApplicationVariableEntityService', () => {
       });
     });
 
-    it('should return an empty string for uninitialised variables without decrypting', async () => {
+    it('should decrypt uninitialised variables to an empty string', async () => {
       mockCachedApplicationVariables([
         makeFlatVariable({
           universalIdentifier: 'variable-1',
           key: 'EMPTY_VALUE',
-          value: '',
+          value: `enc:v2:deadbeef:|${workspaceA}` as EncryptedString,
         }),
       ]);
 
@@ -249,9 +249,6 @@ describe('ApplicationVariableEntityService', () => {
       });
 
       expect(result).toEqual({ EMPTY_VALUE: '' });
-      expect(
-        secretEncryptionService.decryptVersionedOrThrow,
-      ).not.toHaveBeenCalled();
     });
 
     it('should reuse provided application variable maps instead of reading the cache', async () => {

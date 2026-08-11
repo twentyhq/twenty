@@ -140,6 +140,7 @@ import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-inst
 import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785229950000-add-message-campaign-widget-type';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
 import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786448585278-add-is-deprecated-to-application-variables';
+import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786459992777-encrypt-empty-application-variables';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -282,4 +283,5 @@ export const INSTANCE_COMMANDS = [
   AddListWidgetViewTypeFastInstanceCommand,
   AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand,
   AddIsDeprecatedToApplicationVariablesFastInstanceCommand,
+  EncryptEmptyApplicationVariablesSlowInstanceCommand,
 ];
