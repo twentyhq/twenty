@@ -84,11 +84,13 @@ const buildUpdateArgs = ({
   operand,
   value,
   flatEntityUpdate,
+  workspaceMemberFieldMetadataUniversalIdentifier = null,
 }: {
   fieldType: FieldMetadataType;
   operand: RowLevelPermissionPredicateOperand;
   value: unknown;
   flatEntityUpdate: Record<string, unknown>;
+  workspaceMemberFieldMetadataUniversalIdentifier?: string | null;
 }) =>
   ({
     universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
@@ -98,8 +100,7 @@ const buildUpdateArgs = ({
         buildPredicate({
           operand,
           value,
-          workspaceMemberFieldMetadataUniversalIdentifier:
-            FIELD_UNIVERSAL_IDENTIFIER,
+          workspaceMemberFieldMetadataUniversalIdentifier,
         }),
       ]),
       ...relatedMaps(fieldType),
@@ -153,6 +154,31 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
       expect(result.errors).toEqual([]);
     });
 
+    it('should reject an empty value on an operand that expects one', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: '',
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain('requires a value');
+    });
+
+    it('should accept a value-less operand with no value', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+          value: null,
+        }),
+      );
+
+      expect(result.errors).toEqual([]);
+    });
+
     it('should skip validation when the value is resolved from the workspace member', () => {
       const result = service.validateFlatRowLevelPermissionPredicateCreation(
         buildCreationArgs({
@@ -175,6 +201,8 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
           fieldType: FieldMetadataType.RELATION,
           operand: RowLevelPermissionPredicateOperand.IS,
           value: { direction: 'NEXT', amount: 30, unit: 'DAY' },
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            FIELD_UNIVERSAL_IDENTIFIER,
           flatEntityUpdate: {
             workspaceMemberFieldMetadataUniversalIdentifier: null,
           },

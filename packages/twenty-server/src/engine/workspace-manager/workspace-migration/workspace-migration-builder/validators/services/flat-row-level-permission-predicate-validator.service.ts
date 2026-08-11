@@ -7,9 +7,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
   type FieldMetadataType,
+  type RowLevelPermissionPredicateOperand,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
-import { getFilterValueValidationIssue, isDefined } from 'twenty-shared/utils';
+import {
+  convertViewFilterValueToString,
+  getFilterValueValidationIssue,
+  isDefined,
+  isRecordFilterOperandExpectingValue,
+} from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
@@ -342,7 +348,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     workspaceMemberFieldMetadataUniversalIdentifier,
   }: {
     fieldType: FieldMetadataType;
-    operand: string;
+    operand: RowLevelPermissionPredicateOperand;
     subFieldName: string | null | undefined;
     value: unknown;
     workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
@@ -351,7 +357,18 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       return undefined;
     }
 
-    const recordFilterOperand = operand as ViewFilterOperand;
+    const recordFilterOperand = operand as unknown as ViewFilterOperand;
+
+    if (
+      isRecordFilterOperandExpectingValue(recordFilterOperand) &&
+      !isNonEmptyString(convertViewFilterValueToString(value))
+    ) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Operand "${operand}" requires a value, an empty predicate would remove the row restriction entirely`,
+        userFriendlyMessage: msg`Predicate is missing a value`,
+      };
+    }
 
     const issue = getFilterValueValidationIssue({
       fieldType,
