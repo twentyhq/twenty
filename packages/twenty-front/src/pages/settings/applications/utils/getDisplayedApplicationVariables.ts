@@ -3,9 +3,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { shouldDisplayVariable } from '~/pages/settings/applications/utils/shouldDisplayVariable';
 
-export const getDisplayedApplicationVariables = (
-  applicationVariables: ApplicationVariable[],
-): ApplicationVariable[] =>
+export const getDisplayedApplicationVariables = <
+  DisplayableApplicationVariable extends Pick<
+    ApplicationVariable,
+    'key' | 'value' | 'isDeprecated'
+  >,
+>(
+  applicationVariables: DisplayableApplicationVariable[],
+): DisplayableApplicationVariable[] =>
   applicationVariables
     .filter((applicationVariable) =>
       shouldDisplayVariable({

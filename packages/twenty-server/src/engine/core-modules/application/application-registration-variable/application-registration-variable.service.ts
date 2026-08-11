@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
@@ -20,6 +20,10 @@ import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/appl
 
 @Injectable()
 export class ApplicationRegistrationVariableService {
+  private readonly logger = new Logger(
+    ApplicationRegistrationVariableService.name,
+  );
+
   constructor(
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
@@ -286,40 +290,50 @@ export class ApplicationRegistrationVariableService {
     return this.variableRepository.findOneOrFail({ where: { id } });
   }
 
-  private isVariableFilled(
+  private decryptValueOrNull(
     variable: ApplicationRegistrationVariableEntity,
-  ): boolean {
+  ): string | null {
     if (variable.encryptedValue === '') {
-      return false;
+      return '';
     }
 
     try {
-      return (
-        this.encryptionService.decryptVersionedOrThrow(
-          variable.encryptedValue,
-        ) !== ''
+      return this.encryptionService.decryptVersionedOrThrow(
+        variable.encryptedValue,
       );
     } catch {
-      return true;
+      this.logger.warn(
+        `Failed to decrypt application registration variable ${variable.id} (key ${variable.key}, registration ${variable.applicationRegistrationId}); treating it as filled`,
+      );
+
+      return null;
     }
+  }
+
+  private isFilledPlaintextValue(plaintextValue: string | null): boolean {
+    return plaintextValue === null || plaintextValue !== '';
+  }
+
+  private isVariableFilled(
+    variable: ApplicationRegistrationVariableEntity,
+  ): boolean {
+    return this.isFilledPlaintextValue(this.decryptValueOrNull(variable));
   }
 
   private toObfuscatedDTO(
     variable: ApplicationRegistrationVariableEntity,
   ): ApplicationRegistrationVariableDTO {
-    const isFilled = this.isVariableFilled(variable);
+    const plaintextValue = this.decryptValueOrNull(variable);
+    const isFilled = this.isFilledPlaintextValue(plaintextValue);
 
     return {
       ...variable,
       isFilled,
-      value:
-        variable.encryptedValue === '' || !isFilled
-          ? null
-          : variable.isSecret
-            ? '•••••••••••••'
-            : this.encryptionService.decryptVersionedOrThrow(
-                variable.encryptedValue,
-              ),
+      value: !isFilled
+        ? null
+        : variable.isSecret || plaintextValue === null
+          ? '•••••••••••••'
+          : plaintextValue,
     };
   }
 

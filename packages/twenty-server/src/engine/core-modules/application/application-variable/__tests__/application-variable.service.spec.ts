@@ -53,16 +53,8 @@ describe('ApplicationVariableEntityService', () => {
               (value: string, _opts?: { workspaceId?: string }) =>
                 value.replace(/^enc:v2:[0-9a-f]+:/, '').replace(/\|.*$/, ''),
             ),
-            decryptAndMaskVersioned: jest.fn(
-              ({
-                value: _value,
-                mask: _mask,
-                workspaceId: _workspaceId,
-              }: {
-                value: string;
-                mask: string;
-                workspaceId?: string;
-              }) => '********',
+            maskDecryptedValue: jest.fn(
+              (_decryptedValue: string, _mask: string) => '********',
             ),
           },
         },
@@ -462,12 +454,10 @@ describe('ApplicationVariableEntityService', () => {
       const result = service.getDisplayValue(variable);
 
       expect(result).toBe('https://example.com');
-      expect(
-        secretEncryptionService.decryptAndMaskVersioned,
-      ).not.toHaveBeenCalled();
+      expect(secretEncryptionService.maskDecryptedValue).not.toHaveBeenCalled();
     });
 
-    it('should call decryptAndMaskVersioned with the row workspaceId for secret variables', () => {
+    it('should decrypt once with the row workspaceId and mask the plaintext for secret variables', () => {
       const variable = {
         id: '1',
         key: 'SECRET_KEY',
@@ -477,15 +467,21 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       } as ApplicationVariableEntity;
 
-      service.getDisplayValue(variable);
+      const result = service.getDisplayValue(variable);
 
+      expect(result).toBe('********');
       expect(
-        secretEncryptionService.decryptAndMaskVersioned,
-      ).toHaveBeenCalledWith({
-        value: 'enc:v2:deadbeef:secret|workspace-123',
-        mask: SECRET_APPLICATION_VARIABLE_MASK,
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledWith('enc:v2:deadbeef:secret|workspace-123', {
         workspaceId: mockWorkspaceId,
       });
+      expect(secretEncryptionService.maskDecryptedValue).toHaveBeenCalledWith(
+        'secret',
+        SECRET_APPLICATION_VARIABLE_MASK,
+      );
     });
 
     it('should return an empty string when a secret variable decrypts to an empty string', () => {
@@ -501,9 +497,7 @@ describe('ApplicationVariableEntityService', () => {
       const result = service.getDisplayValue(variable);
 
       expect(result).toBe('');
-      expect(
-        secretEncryptionService.decryptAndMaskVersioned,
-      ).not.toHaveBeenCalled();
+      expect(secretEncryptionService.maskDecryptedValue).not.toHaveBeenCalled();
     });
   });
 });

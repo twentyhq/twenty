@@ -46,11 +46,10 @@ export class ApplicationVariableEntityService {
     }
 
     if (applicationVariable.isSecret) {
-      return this.secretEncryptionService.decryptAndMaskVersioned({
-        value: applicationVariable.value,
-        mask: SECRET_APPLICATION_VARIABLE_MASK,
-        workspaceId: applicationVariable.workspaceId,
-      });
+      return this.secretEncryptionService.maskDecryptedValue(
+        plaintextValue,
+        SECRET_APPLICATION_VARIABLE_MASK,
+      );
     }
 
     return plaintextValue;

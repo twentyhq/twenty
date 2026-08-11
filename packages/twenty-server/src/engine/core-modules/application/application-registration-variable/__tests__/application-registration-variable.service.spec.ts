@@ -59,9 +59,13 @@ describe('ApplicationRegistrationVariableService', () => {
             encryptVersioned: jest.fn(
               (value: string) => `enc:v2:deadbeef:${value}`,
             ),
-            decryptVersionedOrThrow: jest.fn((value: string) =>
-              value.replace(/^enc:v2:[0-9a-f]+:/, ''),
-            ),
+            decryptVersionedOrThrow: jest.fn((value: string) => {
+              if (!value.startsWith('enc:v2:deadbeef:')) {
+                throw new Error('undecryptable');
+              }
+
+              return value.replace(/^enc:v2:[0-9a-f]+:/, '');
+            }),
           },
         },
       ],
@@ -225,6 +229,36 @@ describe('ApplicationRegistrationVariableService', () => {
       const result = await service.isConfiguredBatch([registrationId]);
 
       expect(result.get(registrationId)).toBe(true);
+    });
+
+    it('should treat an undecryptable required variable as filled', async () => {
+      mockVariables([
+        makeExistingVariable({
+          isRequired: true,
+          encryptedValue: 'enc:v2:00000000:rotated-key' as EncryptedString,
+        }),
+      ]);
+
+      const result = await service.isConfiguredBatch([registrationId]);
+
+      expect(result.get(registrationId)).toBe(true);
+    });
+  });
+
+  describe('findVariablesWithObfuscatedValuesGlobal', () => {
+    it('should mask an undecryptable non-secret value instead of throwing', async () => {
+      variableRepository.find.mockResolvedValue([
+        makeExistingVariable({
+          isSecret: false,
+          encryptedValue: 'enc:v2:00000000:rotated-key' as EncryptedString,
+        }),
+      ]);
+
+      const [variable] =
+        await service.findVariablesWithObfuscatedValuesGlobal(registrationId);
+
+      expect(variable.isFilled).toBe(true);
+      expect(variable.value).toBe('•••••••••••••');
     });
   });
 

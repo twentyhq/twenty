@@ -1,4 +1,3 @@
-import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 
 const makeApplicationVariable = ({
@@ -9,18 +8,7 @@ const makeApplicationVariable = ({
   key: string;
   value?: string;
   isDeprecated?: boolean;
-}) =>
-  ({
-    __typename: 'ApplicationVariable',
-    id: `variable-${key}`,
-    key,
-    value,
-    description: '',
-    isSecret: false,
-    isDeprecated,
-    type: 'TEXT',
-    options: null,
-  }) as unknown as ApplicationVariable;
+}) => ({ key, value, isDeprecated });
 
 describe('getDisplayedApplicationVariables', () => {
   it('should drop a deprecated variable with no value', () => {
