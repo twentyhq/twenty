@@ -269,6 +269,9 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        # The ORM v2 read path is a drop-in replacement, so the suite running
+        # unchanged against it is the signal that matters.
+        orm-v2: [false, true]
     services:
       postgres:
         image: postgres:18
@@ -306,6 +309,7 @@ jobs:
       CLICKHOUSE_PASSWORD: clickhousePassword
       SHARD_COUNTER: 16
       AUTH_COOKIE_SESSIONS_ENABLED: ${{ contains(github.event.pull_request.labels.*.name, 'ci:auth-cookie-sessions') }}
+      TEST_FORCED_FEATURE_FLAGS: ${{ matrix.orm-v2 && 'IS_ORM_V2_READ_PATH_ENABLED' || '' }}
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -350,7 +354,7 @@ jobs:
       # deployment (SERVER_URL is env-only, forced by its jest config), so it
       # cannot ride the main run. One shard is enough.
       - name: Server / Run secure-deployment integration tests
-        if: matrix.shard == 1
+        if: matrix.shard == 1 && !matrix.orm-v2
         run: npx nx run twenty-server:test:integration:secure
 
   cross-version-upgrade:
