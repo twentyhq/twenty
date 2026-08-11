@@ -2,6 +2,7 @@
 
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { BillingExceptionCode } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
@@ -231,10 +232,17 @@ describe('BillingCreditRolloverService', () => {
       );
     });
 
-    it('skips the whole transition when usage could not be read', async () => {
+    // Returning normally would answer the webhook 200 and Stripe would never
+    // redeliver, so the transition would never run: no grant closed, nothing
+    // carried forward, and the balance lost at expiry.
+    it('fails the transition when usage could not be read so Stripe redelivers', async () => {
       billingUsageService.getCreditsUsedBetweenOrNull.mockResolvedValue(null);
 
-      await service.processRolloverOnPeriodTransition(baseParams);
+      await expect(
+        service.processRolloverOnPeriodTransition(baseParams),
+      ).rejects.toMatchObject({
+        code: BillingExceptionCode.BILLING_USAGE_UNAVAILABLE,
+      });
 
       expect(billingCreditGrantService.createGrant).not.toHaveBeenCalled();
       expect(

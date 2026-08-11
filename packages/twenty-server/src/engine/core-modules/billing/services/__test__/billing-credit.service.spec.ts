@@ -44,6 +44,8 @@ describe('BillingCreditService', () => {
   let billingUsageCacheService: jest.Mocked<{
     getAvailableCredits: jest.Mock;
     adjustAvailableCredits: jest.Mock;
+    invalidateAvailableCredits: jest.Mock;
+    markAvailableCreditsStale: jest.Mock;
   }>;
   let billingUsageCapService: jest.Mocked<{
     clearHasReachedCapForWorkspace: jest.Mock;
@@ -68,7 +70,13 @@ describe('BillingCreditService', () => {
             getActiveCreditsMicro: jest.fn().mockResolvedValue(2_000_000),
             materializeLegacyBalance: jest.fn().mockResolvedValue(undefined),
             revokeGrant: jest.fn().mockResolvedValue({
-              grant: { id: 'grant_1', amountMicro: 2_000_000 },
+              grant: {
+                id: 'grant_1',
+                amountMicro: 2_000_000,
+                effectiveAt: PERIOD_START,
+                expiresAt: PERIOD_END,
+                revokedAt: new Date(),
+              },
               wasRevokedNow: true,
             }),
           },
@@ -86,6 +94,8 @@ describe('BillingCreditService', () => {
           useValue: {
             getAvailableCredits: jest.fn().mockResolvedValue(undefined),
             adjustAvailableCredits: jest.fn().mockResolvedValue(0),
+            invalidateAvailableCredits: jest.fn().mockResolvedValue(undefined),
+            markAvailableCreditsStale: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
@@ -232,7 +242,9 @@ describe('BillingCreditService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it('skips a replayed grant without touching any credit state', async () => {
+    // The first attempt can insert the row and then fail on the refresh, so a
+    // replay has to repair the projections rather than assume they are built.
+    it('repairs derived state on a replayed grant without moving the counter', async () => {
       billingCreditGrantService.createGrant.mockResolvedValue(null);
 
       const grant = await service.grantCredits({
@@ -241,10 +253,33 @@ describe('BillingCreditService', () => {
       });
 
       expect(grant).toBeNull();
-      expect(billingCustomerRepository.update).not.toHaveBeenCalled();
+      expect(billingCustomerRepository.update).toHaveBeenCalledWith(
+        workspaceId,
+        {},
+        { creditBalanceMicro: 2_000_000 },
+      );
+      expect(
+        billingUsageCacheService.invalidateAvailableCredits,
+      ).toHaveBeenCalledWith(workspaceId, PERIOD_START);
+      expect(
+        billingUsageCacheService.adjustAvailableCredits,
+      ).not.toHaveBeenCalled();
       expect(
         billingUsageCapService.clearHasReachedCapForWorkspace,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalledWith(workspaceId);
+    });
+
+    // A reader that missed the counter before the grant landed would otherwise
+    // warm it from a balance predating the grant, and that value would stand
+    // until the period ended.
+    it('marks the counter stale when there is none to adjust', async () => {
+      billingUsageCacheService.getAvailableCredits.mockResolvedValue(undefined);
+
+      await service.grantCredits(params);
+
+      expect(
+        billingUsageCacheService.markAvailableCreditsStale,
+      ).toHaveBeenCalledWith(workspaceId, PERIOD_START);
     });
 
     it('no-ops when billing is disabled', async () => {
@@ -273,6 +308,48 @@ describe('BillingCreditService', () => {
         { creditBalanceMicro: 0 },
       );
     });
+
+    // The mutation takes any grant id and a grant can expire between the admin
+    // panel rendering and the revoke landing. Those credits were never in the
+    // counter, so taking them off would block usage until the period ends.
+    it.each([
+      [
+        'expired',
+        {
+          effectiveAt: new Date(Date.now() - 40 * DAY_IN_MS),
+          expiresAt: new Date(Date.now() - 1 * DAY_IN_MS),
+        },
+      ],
+      [
+        'not yet effective',
+        {
+          effectiveAt: new Date(Date.now() + 1 * DAY_IN_MS),
+          expiresAt: new Date(Date.now() + 40 * DAY_IN_MS),
+        },
+      ],
+    ])(
+      'leaves the usage counter alone when revoking a grant that was %s',
+      async (_label, window) => {
+        billingUsageCacheService.getAvailableCredits.mockResolvedValue(
+          3_000_000,
+        );
+        billingCreditGrantService.revokeGrant.mockResolvedValue({
+          grant: {
+            id: 'grant_1',
+            amountMicro: 2_000_000,
+            revokedAt: new Date(),
+            ...window,
+          },
+          wasRevokedNow: true,
+        });
+
+        await service.revokeGrant({ workspaceId, grantId: 'grant_1' });
+
+        expect(
+          billingUsageCacheService.adjustAvailableCredits,
+        ).toHaveBeenCalledWith(workspaceId, PERIOD_START, 0);
+      },
+    );
 
     it('does not touch the usage counter when the grant was already revoked', async () => {
       billingUsageCacheService.getAvailableCredits.mockResolvedValue(3_000_000);

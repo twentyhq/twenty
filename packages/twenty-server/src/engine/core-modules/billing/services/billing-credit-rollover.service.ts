@@ -1,9 +1,13 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -22,8 +26,6 @@ export type ProcessRolloverParams = {
 
 @Injectable()
 export class BillingCreditRolloverService {
-  private readonly logger = new Logger(BillingCreditRolloverService.name);
-
   constructor(
     private readonly billingUsageService: BillingUsageService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
@@ -48,15 +50,16 @@ export class BillingCreditRolloverService {
       });
 
     // Reading usage as zero when the query failed would roll a full unused
-    // allowance over to every workspace invoiced during the outage. Stripe
-    // retries the webhook, so skipping is recoverable and giving credits away
-    // is not.
+    // allowance over to every workspace invoiced during the outage. Throwing
+    // fails the webhook so Stripe redelivers it; returning normally would
+    // answer 200 and the transition would never run, closing no grants and
+    // carrying nothing forward, so the workspace silently loses its balance
+    // at expiry.
     if (!isDefined(usageMicro)) {
-      this.logger.error(
-        `Skipped credit rollover for workspace ${workspaceId}: usage for the period starting ${closingPeriodStart.toISOString()} could not be read`,
+      throw new BillingException(
+        `Cannot roll credits over for workspace ${workspaceId}: usage for the period starting ${closingPeriodStart.toISOString()} could not be read`,
+        BillingExceptionCode.BILLING_USAGE_UNAVAILABLE,
       );
-
-      return;
     }
 
     await this.billingCreditGrantService.materializeLegacyBalance({

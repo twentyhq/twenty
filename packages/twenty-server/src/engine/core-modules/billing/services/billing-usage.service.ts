@@ -226,34 +226,24 @@ export class BillingUsageService {
 
     const { currentPeriodStart, currentPeriodEnd } = currentBillingSubscription;
 
-    const cachedAvailableCredits =
-      await this.billingUsageCacheService.getAvailableCredits(
-        workspaceId,
-        currentPeriodStart,
-      );
-
-    const availableCredits = isDefined(cachedAvailableCredits)
-      ? cachedAvailableCredits
-      : await this.getAvailableCreditsFromClickHouse({
-          workspaceId,
-          currentPeriodStart,
-        });
-
-    if (!isDefined(cachedAvailableCredits)) {
-      await this.billingUsageCacheService.warmAvailableCredits(
+    const { availableCredits, isCounterWarm } =
+      await this.resolveAvailableCreditsForDecrement({
         workspaceId,
         currentPeriodStart,
         currentPeriodEnd,
-        availableCredits,
-      );
-    }
+      });
 
-    const decrementedAvailableCredits =
-      await this.billingUsageCacheService.adjustAvailableCredits(
-        workspaceId,
-        currentPeriodStart,
-        -usedCredits,
-      );
+    // A counter held stale by a recent grant must not be created from a value
+    // that may predate it: incrementing an absent key would install
+    // -usedCredits as the whole balance. Compute this turn locally instead and
+    // let the next read rebuild once the marker lapses.
+    const decrementedAvailableCredits = isCounterWarm
+      ? await this.billingUsageCacheService.adjustAvailableCredits(
+          workspaceId,
+          currentPeriodStart,
+          -usedCredits,
+        )
+      : availableCredits - usedCredits;
 
     const hasJustReachedCap =
       availableCredits > 0 && decrementedAvailableCredits <= 0;
@@ -266,6 +256,41 @@ export class BillingUsageService {
     }
 
     return decrementedAvailableCredits;
+  }
+
+  private async resolveAvailableCreditsForDecrement({
+    workspaceId,
+    currentPeriodStart,
+    currentPeriodEnd,
+  }: {
+    workspaceId: string;
+    currentPeriodStart: Date;
+    currentPeriodEnd: Date;
+  }): Promise<{ availableCredits: number; isCounterWarm: boolean }> {
+    const cachedAvailableCredits =
+      await this.billingUsageCacheService.getAvailableCredits(
+        workspaceId,
+        currentPeriodStart,
+      );
+
+    if (isDefined(cachedAvailableCredits)) {
+      return { availableCredits: cachedAvailableCredits, isCounterWarm: true };
+    }
+
+    const availableCredits = await this.getAvailableCreditsFromClickHouse({
+      workspaceId,
+      currentPeriodStart,
+    });
+
+    const isCounterWarm =
+      await this.billingUsageCacheService.warmAvailableCredits(
+        workspaceId,
+        currentPeriodStart,
+        currentPeriodEnd,
+        availableCredits,
+      );
+
+    return { availableCredits, isCounterWarm };
   }
 
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {

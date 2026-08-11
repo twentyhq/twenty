@@ -152,6 +152,7 @@ export class BillingWebhookInvoiceService {
       invoicePeriodEnd,
       subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
       subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
+      subscriptionInterval: subscription.interval,
       trialStart: subscription.trialStart,
       isFirstPeriodAfterTrial,
     });

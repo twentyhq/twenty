@@ -1,6 +1,9 @@
 /* @license Enterprise */
 
+import { subMonths, subYears } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
+
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 export type BillingPeriodTransition = {
   closingPeriodStart: Date;
@@ -18,6 +21,7 @@ export const deriveBillingPeriodTransition = ({
   invoicePeriodEnd,
   subscriptionCurrentPeriodStart,
   subscriptionCurrentPeriodEnd,
+  subscriptionInterval,
   trialStart,
   isFirstPeriodAfterTrial,
 }: {
@@ -25,15 +29,11 @@ export const deriveBillingPeriodTransition = ({
   invoicePeriodEnd: Date;
   subscriptionCurrentPeriodStart: Date;
   subscriptionCurrentPeriodEnd: Date;
+  subscriptionInterval: SubscriptionInterval;
   trialStart: Date | null | undefined;
   isFirstPeriodAfterTrial: boolean;
 }): BillingPeriodTransition => {
   const boundary = invoicePeriodStart;
-
-  const invoicedDurationMs = Math.max(
-    0,
-    invoicePeriodEnd.getTime() - invoicePeriodStart.getTime(),
-  );
 
   const nextPeriodEnd =
     invoicePeriodEnd.getTime() > boundary.getTime()
@@ -49,7 +49,13 @@ export const deriveBillingPeriodTransition = ({
       return subscriptionCurrentPeriodStart;
     }
 
-    return new Date(boundary.getTime() - invoicedDurationMs);
+    // Calendar arithmetic, not the invoiced duration: consecutive periods
+    // differ in length, so a February renewal bills 28 days and subtracting
+    // those from February 1 would place the closing period at January 4 and
+    // drop three days of usage, which then reads as unspent allowance.
+    return subscriptionInterval === SubscriptionInterval.Year
+      ? subYears(boundary, 1)
+      : subMonths(boundary, 1);
   })();
 
   return {
