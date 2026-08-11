@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { CompanyEnrichmentResolver } from 'src/engine/core-modules/company-enrichment/resolvers/company-enrichment.resolver';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
+import { EnrichmentThrottleService } from 'src/engine/core-modules/company-enrichment/services/enrichment-throttle.service';
 import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import { PersonEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/person-enrichment.service';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
@@ -21,6 +22,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
   providers: [
     CompanyEnrichmentResolver,
     CompanyEnrichmentService,
+    EnrichmentThrottleService,
     PeopleDataLabsClientService,
     PersonEnrichmentService,
   ],
