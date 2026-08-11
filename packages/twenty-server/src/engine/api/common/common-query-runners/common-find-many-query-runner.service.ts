@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { isDefined } from 'class-validator';
 import {
   QUERY_MAX_RECORDS,
@@ -30,7 +32,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
-import { hasOnlyToOneJoins } from 'src/engine/api/common/utils/has-only-to-one-joins.util';
+import { getFanOutJoinAliases } from 'src/engine/api/common/utils/get-fan-out-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -166,19 +168,24 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 
-    // take/skip + any join emits a SELECT DISTINCT wrapper with the LIMIT outside the scan, in two queries.
-    // limit/offset emits a plain LIMIT, equivalent whenever no join fans out.
-    if (hasOnlyToOneJoins(queryBuilder)) {
-      if (isDefined(args.offset)) {
-        queryBuilder.offset(args.offset);
-      }
-      queryBuilder.limit(limit + 1);
-    } else {
-      if (isDefined(args.offset)) {
-        queryBuilder.skip(args.offset);
-      }
-      queryBuilder.take(limit + 1);
+    // A fanning-out join makes a row-level LIMIT return fewer records than asked, so it is
+    // rejected rather than paginated with take/skip, which drops the LIMIT from the scan.
+    const fanOutJoinAliases = getFanOutJoinAliases(queryBuilder);
+
+    if (fanOutJoinAliases.length > 0) {
+      throw new CommonQueryRunnerException(
+        `Cannot filter or order through the to-many relation ${fanOutJoinAliases.join(', ')}`,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Filtering or ordering through a to-many relation is not supported.`,
+        },
+      );
     }
+
+    if (isDefined(args.offset)) {
+      queryBuilder.offset(args.offset);
+    }
+    queryBuilder.limit(limit + 1);
 
     // Add order columns AFTER setFindOptions (setFindOptions clears addSelect)
     // Pass columnsToSelect so we only add columns that aren't already selected
