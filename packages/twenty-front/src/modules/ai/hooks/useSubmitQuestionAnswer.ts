@@ -96,7 +96,10 @@ export const useSubmitQuestionAnswer = () => {
           messagesAtom,
           markQuestionPending(currentMessages, messageId, toolCallId),
         );
-        store.set(agentChatUploadedFilesState.atom, uploadedFiles);
+        store.set(agentChatUploadedFilesState.atom, (currentUploadedFiles) => [
+          ...uploadedFiles,
+          ...currentUploadedFiles,
+        ]);
 
         enqueueErrorSnackBar({
           apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
