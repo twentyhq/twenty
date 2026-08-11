@@ -1,10 +1,10 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type WorkspacePersonEnrichment } from 'twenty-shared/workspace';
 
 import { WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-person-enrichment-field-max-length.constant';
 import { WORKSPACE_PERSON_ENRICHMENT_MAX_JOB_TITLE_LEVELS } from 'src/engine/core-modules/company-enrichment/constants/workspace-person-enrichment-max-job-title-levels.constant';
 import { WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS } from 'src/engine/core-modules/company-enrichment/constants/workspace-person-enrichment-max-skills.constant';
+import { sanitizePromptContextLineArray } from 'src/utils/sanitize-prompt-context-line-array.util';
 import { sanitizePromptContextLine } from 'src/utils/sanitize-prompt-context-line.util';
 
 const sanitizeSingleLineText = (value: unknown): string | null =>
@@ -12,17 +12,6 @@ const sanitizeSingleLineText = (value: unknown): string | null =>
     value,
     WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH,
   );
-
-const sanitizeSingleLineTextArray = (
-  value: unknown,
-  maxItems: number,
-): string[] =>
-  Array.isArray(value)
-    ? value
-        .map((item) => sanitizeSingleLineText(item))
-        .filter(isNonEmptyString)
-        .slice(0, maxItems)
-    : [];
 
 export const sanitizeWorkspacePersonEnrichment = (
   value: unknown,
@@ -43,18 +32,20 @@ export const sanitizeWorkspacePersonEnrichment = (
     enrichedAt,
     fullName: sanitizeSingleLineText(value.fullName),
     jobTitle: sanitizeSingleLineText(value.jobTitle),
-    jobTitleLevels: sanitizeSingleLineTextArray(
-      value.jobTitleLevels,
-      WORKSPACE_PERSON_ENRICHMENT_MAX_JOB_TITLE_LEVELS,
-    ),
+    jobTitleLevels: sanitizePromptContextLineArray({
+      value: value.jobTitleLevels,
+      maxLength: WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH,
+      maxItems: WORKSPACE_PERSON_ENRICHMENT_MAX_JOB_TITLE_LEVELS,
+    }),
     jobCompanyName: sanitizeSingleLineText(value.jobCompanyName),
     industry: sanitizeSingleLineText(value.industry),
     headline: sanitizeSingleLineText(value.headline),
     linkedinUrl: sanitizeSingleLineText(value.linkedinUrl),
-    skills: sanitizeSingleLineTextArray(
-      value.skills,
-      WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS,
-    ),
+    skills: sanitizePromptContextLineArray({
+      value: value.skills,
+      maxLength: WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH,
+      maxItems: WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS,
+    }),
     locality: sanitizeSingleLineText(value.locality),
     region: sanitizeSingleLineText(value.region),
     country: sanitizeSingleLineText(value.country),
