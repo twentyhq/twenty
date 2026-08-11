@@ -8,16 +8,9 @@ const RECORD_ID = process.env.E2E_POSTCARD_RECORD_ID;
 const SHARED_DEPENDENCIES_IMPORT_SPECIFIER = 'twenty:shared-dependencies';
 const REACT_LICENSE_BANNER = '@license React';
 
-// The shared dependencies bundle carries react and react-dom/client (~196 kB built), so
-// anything below this floor means the bundle is empty or truncated. The card
-// component bundle (~69 kB built, mostly the inlined front-component runtime)
-// must stay well under the shared dependencies bundle: react living in the component again is the
-// regression this test exists to catch.
 const MIN_SHARED_DEPENDENCIES_BUNDLE_BYTES = 50_000;
 const MAX_COMPONENT_TO_SHARED_DEPENDENCIES_RATIO = 1 / 2;
 
-// With S3-style storage the endpoint answers with a JSON presigned-url
-// redirect instead of streaming the bytes, so follow it before measuring.
 const resolveJavaScriptBody = async (
   page: Page,
   response: Response,
@@ -63,8 +56,6 @@ test.describe('Postcard shared dependencies bundle', () => {
     }
   });
 
-  // Same diagnostics as card-front-component.spec.ts: the component renders in
-  // an iframe + Web Worker, so surface browser-side failures in the test log.
   test.beforeEach(({ page }) => {
     page.on('console', (message) => {
       console.log(`[browser:${message.type()}] ${message.text()}`);
@@ -117,8 +108,6 @@ test.describe('Postcard shared dependencies bundle', () => {
 
     await page.goto(`${resolveWorkspaceUrl()}/object/postCard/${RECORD_ID}`);
 
-    // The card imports react from the shared dependencies bundle, so a successful render
-    // proves the component executed against the shared react instance.
     const card = page.getByTestId(CARD_TEST_IDS.root);
     await expect(card).toBeVisible();
     await expect(card.getByTestId(CARD_TEST_IDS.name)).toHaveCount(1);
