@@ -48,8 +48,6 @@ export const Avatar = ({
 
   const avatarImageURI = isNonEmptyString(avatarUrl) ? avatarUrl : null;
 
-  // The avatar image renders as a CSS background (below), which has no error
-  // event, so probe the URL off-DOM to keep the error -> placeholder fallback.
   const avatarImageFailedToLoad = useImageLoadErrorProbe(avatarImageURI);
 
   const placeholderFirstChar = placeholder?.trim()?.charAt(0);
@@ -137,9 +135,6 @@ export const Avatar = ({
       ) : showPlaceholder ? (
         <span className={styles.placeholderChar}>{placeholderChar}</span>
       ) : (
-        // Safari fails to repaint an <img> that loads after first paint,
-        // displacing sibling content (Kanban card headers overlap the card
-        // above); a CSS background-image avoids the replaced-element repaint.
         <div
           className={styles.image}
           style={{
