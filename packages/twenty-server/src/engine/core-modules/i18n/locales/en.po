@@ -1947,6 +1947,11 @@ msgstr "Could not resolve the existing object \"{0}\" to rename its default rela
 msgid "Could not resolve the existing object to reconcile its INDEX label identifier view field"
 msgstr "Could not resolve the existing object to reconcile its INDEX label identifier view field"
 
+#. js-lingui-id: TYpgQ/
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
+msgid "Could not resolve the existing object to reconcile its record-page label identifier view field"
+msgstr "Could not resolve the existing object to reconcile its record-page label identifier view field"
+
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5498,10 +5503,10 @@ msgstr "OAuth provider not found."
 msgid "Object already exists"
 msgstr "Object already exists"
 
-#. js-lingui-id: fjXGxN
+#. js-lingui-id: AV0hPh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-msgid "Object already has an INDEX view"
-msgstr "Object already has an INDEX view"
+msgid "Object already has a view with the {reservedViewKey} key"
+msgstr "Object already has a view with the {reservedViewKey} key"
 
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -7565,6 +7570,16 @@ msgstr "Text Document"
 msgid "Text response format should not have a schema"
 msgstr "Text response format should not have a schema"
 
+#. js-lingui-id: kFsyD4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The {reservedViewKey} view key is reserved for the default view"
+msgstr "The {reservedViewKey} view key is reserved for the default view"
+
+#. js-lingui-id: 7s8NoS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
+msgstr "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
+
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
@@ -7742,16 +7757,6 @@ msgstr "The file has not been uploaded yet. Please upload it before confirming."
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "The file is empty or exceeds the maximum allowed size."
 
-#. js-lingui-id: oeePqy
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-msgid "The INDEX view key is reserved for the default view"
-msgstr "The INDEX view key is reserved for the default view"
-
-#. js-lingui-id: jkNMHQ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-msgid "The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition"
-msgstr "The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition"
-
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -7806,6 +7811,11 @@ msgstr "The object to rename could not be found to update its default relations"
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its INDEX view"
 msgstr "The object to update could not be found to reconcile its INDEX view"
+
+#. js-lingui-id: /QTsIU
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
+msgid "The object to update could not be found to reconcile its record page"
+msgstr "The object to update could not be found to reconcile its record page"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
