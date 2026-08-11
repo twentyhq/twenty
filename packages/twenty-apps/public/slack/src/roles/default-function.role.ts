@@ -39,7 +39,6 @@ export default defineApplicationRole({
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
-    // Read-only, and only so a Slack profile email can be matched to a member.
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember

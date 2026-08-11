@@ -6,9 +6,6 @@ import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-
 const THREAD_REPLIES_FETCH_LIMIT = 100;
 const THREAD_REPLIES_MAX_PAGES = 10;
 
-// A top-level message is its own parent and comes back as the only entry, so
-// this covers every shape the assistant sees. Undefined means the thread could
-// not be read, which is not the same as a thread with nothing in it.
 export const fetchSlackThreadMessages = async ({
   client,
   slackChannelId,
@@ -41,9 +38,6 @@ export const fetchSlackThreadMessages = async ({
       cursor = nextCursor;
     }
 
-    // Slack pages a thread oldest first, so stopping at the cap leaves the
-    // newest turns unread. Returning what we have would present ancient
-    // messages as the recent conversation, so treat it as unreadable instead.
     return undefined;
   } catch {
     return undefined;

@@ -47,8 +47,6 @@ export const fetchSlackUserIdentity = async ({
     slackTeamId: isNonEmptyString(user.team_id) ? user.team_id : undefined,
     displayName: resolveDisplayName(user),
     email: isNonEmptyString(email) ? email : undefined,
-    // Bots, deactivated accounts and Slack guests are never auto-linked, whose
-    // team they belong to notwithstanding.
     isRegularUserAccount:
       user.id !== SLACKBOT_USER_ID &&
       user.is_bot !== true &&

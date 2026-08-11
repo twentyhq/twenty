@@ -8,9 +8,6 @@ import { findSlackUserLinkWorkspaceMemberId } from 'src/logic-functions/data/fin
 import { findWorkspaceMemberIdByEmail } from 'src/logic-functions/data/find-workspace-member-id-by-email';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 
-// An email is only as good as whoever vouched for it, and for a Slack Connect
-// user that is another organisation's admin, so only the installing team is
-// auto-linked. The team comes from the live connection, never a cached one.
 const resolveLinkableEmail = async ({
   slackClient,
   identity,
@@ -35,8 +32,6 @@ const resolveLinkableEmail = async ({
   return identity.email;
 };
 
-// Resolving to nothing is not a failure: the assistant then runs with its own
-// role, as every install did before links existed.
 export const resolveSlackRunAsWorkspaceMemberId = async ({
   client,
   slackClient,
@@ -84,8 +79,6 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
       name: identity.displayName ?? slackUserId,
     });
   } catch {
-    // A concurrent request may have won the unique index on team + user. Its
-    // link is authoritative, so read it back rather than assuming ours.
     return await findSlackUserLinkWorkspaceMemberId(client, {
       slackTeamId,
       slackUserId,

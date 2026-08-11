@@ -62,8 +62,6 @@ describe('fetchSlackThreadMessages', () => {
     );
   });
 
-  // Slack pages a thread oldest first, so the messages read before the cap are
-  // the stale ones. Returning them would present them as the recent turns.
   it('should stop at the page cap and report the thread as unreadable', async () => {
     const repliesMock = vi.fn().mockResolvedValue({
       messages: [buildMessage(1)],

@@ -6,8 +6,6 @@ import {
 
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 
-// `prompt` is declared rather than picked: `RunAgentInput` is a XOR between
-// `prompt` and `messages`, so picking it through widens it to optional.
 type RunSlackAssistantAgentInput = Pick<
   RunAgentInput,
   'agentUniversalIdentifier' | 'runAsWorkspaceMemberId'
@@ -17,8 +15,6 @@ type RunSlackAssistantAgentInput = Pick<
   threadTimestamp: string;
 };
 
-// Omitting `runAsWorkspaceMemberId` runs the agent with its own role, which is
-// what an unlinked Slack account gets.
 export const runSlackAssistantAgentWithStatus = async ({
   agentUniversalIdentifier,
   prompt,

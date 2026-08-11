@@ -11,11 +11,6 @@ import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/re
 
 const APPLICATION_ACTOR_SOURCE = 'APPLICATION';
 
-// Any created slackAssistantRequest wakes the worker, and a caller supplying
-// `createdBy` wholesale can name the application, so the record alone never
-// earns a run-as. Slack settles it: the referenced message must exist, be the
-// named user's, and still say what the request claims it said. A record failing
-// any of this still gets an answer, just with the agent role.
 export const resolveSlackRunAsForRequest = async ({
   client,
   identity,
@@ -52,9 +47,6 @@ export const resolveSlackRunAsForRequest = async ({
 
   const botUserId = await resolveSlackBotUserIdOrThrow().catch(() => undefined);
 
-  // The enqueue path only strips the bot mention when the event named the bot,
-  // so a DM can keep it in the stored text. Stripping both sides makes the two
-  // readings compare equal without letting the text say anything new.
   const normalize = (text: string) =>
     normalizeSlackRequestText({ text, botUserId });
 

@@ -104,7 +104,6 @@ export const slackAssistantWorkerHandler = async (
     });
 
     if (isNonEmptyString(runAsWorkspaceMemberId)) {
-      // Audit only, so a failure here must not cost the requester their answer.
       await updateSlackAssistantRequest(client, {
         id: record.id,
         workspaceMemberId: runAsWorkspaceMemberId,
