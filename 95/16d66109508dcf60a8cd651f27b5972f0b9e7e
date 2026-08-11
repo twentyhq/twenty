@@ -1,0 +1,51 @@
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/gmail/services/gmail-message-outbound.service.ts
+  s_71b01cad791275::t_73714203b1d7bf 16
+  s_71b01cad791275::t_373cbf65eca141 171,173,177-181
+  s_71b01cad791275::t_b1f69760f44709 182
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/send-email.service.ts
+  s_71b01cad791275::t_e44ef684235de1 65
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/resolve-outbound-from-handle.util.ts
+  s_71b01cad791275::t_868ce9d30f271d 1-38
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/types/composed-email.type.ts
+  s_71b01cad791275::t_132ae3177e86ce 12
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type.ts
+  s_71b01cad791275::t_6214ce0d4ef265 13
+packages/twenty-server/src/modules/messaging/message-outbound-manager/dtos/send-email.input.ts
+  s_71b01cad791275::t_d5eb4aeb312700 17-19
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/imap/services/imap-smtp-message-outbound.service.ts
+  s_71b01cad791275::t_e328e6d540e8c5 52-56
+  s_71b01cad791275::t_40bf0b9244133b 120-124
+  s_71b01cad791275::t_23e9f1b07012f5 22
+packages/twenty-server/src/modules/messaging/message-outbound-manager/types/send-message-input.type.ts
+  s_71b01cad791275::t_2a1e11f52f9e36 6
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/microsoft/services/microsoft-message-outbound.service.ts
+  s_71b01cad791275::t_910d6a07ba92fd 10
+  s_71b01cad791275::t_3960a4add1005b 155,157-161,164-166
+  s_71b01cad791275::t_f52d2b9ec2e1ea 57-61
+  s_71b01cad791275::t_f8cb4a77e33d31 106-109
+  s_71b01cad791275::t_96966d062488ff 93
+  s_71b01cad791275::t_07047e444358d9 34-38
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/__tests__/resolve-outbound-from-handle.util.spec.ts
+  s_71b01cad791275::t_f5c19577a1bbf1 1-52
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+  s_71b01cad791275::t_73ce4aa6c7dea4 443
+  s_71b01cad791275::t_9e871769d82700 341
+packages/twenty-server/src/modules/messaging/message-outbound-manager/resolvers/send-email.resolver.ts
+  s_71b01cad791275::t_b42b9ea56a8f58 69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9516d66109508dcf60a8cd651f27b5972f0b9e7e",
+  "prompts": {},
+  "sessions": {
+    "s_71b01cad791275": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f29edea1-2061-4138-83c3-374f844b00fe",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
