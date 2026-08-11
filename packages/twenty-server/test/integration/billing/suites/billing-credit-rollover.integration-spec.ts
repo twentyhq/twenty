@@ -132,6 +132,8 @@ describe('Billing credit rollover (integration)', () => {
         grant.sourceGrantId === null,
     );
 
+    expect(compensation).toBeDefined();
+
     // Its expiry was pulled back to the boundary, so the balance counts it
     // once through its carried-forward copy rather than twice.
     expect(new Date(compensation!.expiresAt)).toEqual(CLOSING_PERIOD_END);
