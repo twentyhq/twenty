@@ -6,6 +6,8 @@ import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/ge
 export type PackIdleVersionsResult = {
   packed: number;
   remaining: number;
+  // Costliest pack observed in this slice, to budget the next one. Deliberately not
+  // an all-time maximum: one pathological version would throttle packing for ever.
   packCostEstimateMs: number;
 };
 
@@ -71,13 +73,14 @@ export const packIdleVersions = <T>({
 
   let packed = 0;
   let index = 0;
-  let costliestPackMs = packCostEstimateMs;
+  let costliestPackMs = 0;
 
   for (const { localKey, hash } of candidates) {
-    // Stop before starting a version the budget cannot absorb, rather than after
-    // overrunning it. The estimate carries across slices, so the first version of
-    // a slice is bounded by what packing cost last time.
-    if (now() - startedAt + costliestPackMs >= budgetMs) {
+    // The first version of a slice always runs: one version is indivisible and can
+    // cost more than the whole budget on its own, so gating it would stall packing
+    // for good. Every version after it is gated on what packing cost last slice,
+    // which keeps the overrun to a single version instead of one per candidate.
+    if (index > 0 && now() - startedAt + packCostEstimateMs >= budgetMs) {
       break;
     }
     index += 1;

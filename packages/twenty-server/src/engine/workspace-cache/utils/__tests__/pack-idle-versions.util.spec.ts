@@ -169,15 +169,42 @@ describe('packIdleVersions', () => {
         ]),
       );
 
-    it('should bound the first pack of a slice with the estimate carried from the last one', () => {
+    it('should keep packing one version per slice when a single pack costs more than the whole budget', () => {
+      const localCache = buildCache(3);
+      let estimate = 40;
+      let remaining = Number.POSITIVE_INFINITY;
+      let slices = 0;
+
+      while (remaining > 0 && slices < 10) {
+        const result = run(localCache, 0, {
+          budgetMs: 25,
+          packCostEstimateMs: estimate,
+          now: clockAdvancingPerCall(),
+        });
+
+        expect(result.packed).toBe(1);
+        estimate = result.packCostEstimateMs;
+        remaining = result.remaining;
+        slices += 1;
+      }
+
+      expect(slices).toBe(3);
+      expect(
+        [...localCache.values()].every(
+          (entry) => entry.versions.get('hash-1')?.state === 'packed',
+        ),
+      ).toBe(true);
+    });
+
+    it('should stop the rest of the slice once the carried estimate no longer fits', () => {
       const result = run(buildCache(10), 0, {
         budgetMs: 25,
         packCostEstimateMs: 40,
         now: clockAdvancingPerCall(),
       });
 
-      expect(result.packed).toBe(0);
-      expect(result.remaining).toBe(10);
+      expect(result.packed).toBe(1);
+      expect(result.remaining).toBe(9);
     });
 
     it('should report the costliest pack so the next slice can budget for it', () => {
