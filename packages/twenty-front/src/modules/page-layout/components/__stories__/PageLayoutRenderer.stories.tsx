@@ -75,6 +75,8 @@ const mixedGraphsPageLayoutMocks = {
         {
           __typename: 'PageLayoutWidget',
           applicationId: '',
+          universalIdentifier: 'universal-identifier-mock',
+          isSystemSideEffect: false,
           isActive: true,
           id: 'number-widget',
           pageLayoutTabId: 'mixed-tab',
@@ -99,6 +101,8 @@ const mixedGraphsPageLayoutMocks = {
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget',
           applicationId: '',
           isActive: true,
@@ -127,6 +131,8 @@ const mixedGraphsPageLayoutMocks = {
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget',
           applicationId: '',
           isActive: true,

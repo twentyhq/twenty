@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
-import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
 
 const DASHBOARD_NAME_SINGULAR = CoreObjectNameSingular.Dashboard;
 
@@ -42,11 +41,7 @@ export const getPageLayoutIdForLocation = ({
       }),
     );
 
-    return isDefined(recordPageLayout)
-      ? recordPageLayout.id
-      : getDefaultRecordPageLayoutId({
-          targetObjectNameSingular: objectNameSingular,
-        });
+    return isDefined(recordPageLayout) ? recordPageLayout.id : null;
   }
 
   const pageLayoutMatch = matchPath(AppPath.PageLayoutPage, location.pathname);

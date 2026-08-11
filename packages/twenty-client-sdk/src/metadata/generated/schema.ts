@@ -399,6 +399,9 @@ export type PermissionFlagType = 'API_KEYS_AND_WEBHOOKS' | 'WORKSPACE' | 'WORKSP
 
 export interface ViewField {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     fieldMetadataId: Scalars['UUID']
     isVisible: Scalars['Boolean']
     size: Scalars['Float']
@@ -499,6 +502,9 @@ export interface ViewFieldGroup {
 
 export interface View {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     name: Scalars['String']
     objectMetadataId: Scalars['UUID']
     type: ViewType
@@ -689,6 +695,8 @@ export interface GridPosition {
 
 export interface PageLayoutWidget {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     applicationId: Scalars['UUID']
     pageLayoutTabId: Scalars['UUID']
     title: Scalars['String']
@@ -996,6 +1004,8 @@ export interface WorkflowVersionConfiguration {
 
 export interface PageLayoutTab {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     applicationId: Scalars['UUID']
     title: Scalars['String']
     position: Scalars['Float']
@@ -1020,6 +1030,8 @@ export interface PageLayout {
     tabs?: PageLayoutTab[]
     defaultTabToFocusOnMobileAndSidePanelId?: Scalars['UUID']
     universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
@@ -3638,6 +3650,9 @@ export interface UserWorkspaceGenqlSelection{
 
 export interface ViewFieldGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     fieldMetadataId?: boolean | number
     isVisible?: boolean | number
     size?: boolean | number
@@ -3736,6 +3751,9 @@ export interface ViewFieldGroupGenqlSelection{
 
 export interface ViewGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     name?: boolean | number
     objectMetadataId?: boolean | number
     type?: boolean | number
@@ -3916,6 +3934,8 @@ export interface GridPositionGenqlSelection{
 
 export interface PageLayoutWidgetGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    isSystemSideEffect?: boolean | number
     applicationId?: boolean | number
     pageLayoutTabId?: boolean | number
     title?: boolean | number
@@ -4252,6 +4272,8 @@ export interface WorkflowVersionConfigurationGenqlSelection{
 
 export interface PageLayoutTabGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    isSystemSideEffect?: boolean | number
     applicationId?: boolean | number
     title?: boolean | number
     position?: boolean | number
@@ -4277,6 +4299,8 @@ export interface PageLayoutGenqlSelection{
     tabs?: PageLayoutTabGenqlSelection
     defaultTabToFocusOnMobileAndSidePanelId?: boolean | number
     universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
