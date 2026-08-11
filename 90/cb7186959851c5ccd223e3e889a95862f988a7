@@ -1,0 +1,34 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command.ts
+  s_ce9e1dec22b337::t_fd3cd62630418d 129-133,137-160,162
+  s_ce9e1dec22b337::t_0554d63914ec36 33-35
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command.spec.ts
+  s_ce9e1dec22b337::t_609e6e72379fac 122-125,130
+  s_ce9e1dec22b337::t_0a1cc994125e32 232-252,255-259
+  s_ce9e1dec22b337::t_0bee790c6d84c4 32-44,46-71,82-101
+  s_ce9e1dec22b337::t_989e767929db07 177-183
+  s_549835a63476c4::t_109b0a660843fa 102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "90cb7186959851c5ccd223e3e889a95862f988a7",
+  "prompts": {},
+  "sessions": {
+    "s_549835a63476c4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2965f84-283e-4b61-99a1-807771b028d4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    },
+    "s_ce9e1dec22b337": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d55eb03f-8731-4c73-b370-9a65bea559b7",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
