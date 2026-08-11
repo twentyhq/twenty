@@ -1,0 +1,23 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command.ts
+  s_ce9e1dec22b337::t_d56a242fcd1974 129-138,140-145,151-153,155-156,162-163
+  s_ce9e1dec22b337::t_2d65223638250b 147-150,154,157-160
+  s_ce9e1dec22b337::t_73849cc8f0aeee 31-32
+  s_ce9e1dec22b337::t_51ff78ac0e673f 146
+  s_ce9e1dec22b337::t_7a3802d71e1de8 161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "72f9b6be29da68812840ff34a8abbea365a85997",
+  "prompts": {},
+  "sessions": {
+    "s_ce9e1dec22b337": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d55eb03f-8731-4c73-b370-9a65bea559b7",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
