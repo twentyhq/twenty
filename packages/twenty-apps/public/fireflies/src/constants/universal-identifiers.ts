@@ -37,7 +37,7 @@ export const FIREFLIES_SEARCH_CALLS_UNIVERSAL_IDENTIFIER =
   'cb2dd01d-8dca-4222-acce-1d1dbdef9146';
 
 // Shared core CalendarEvent record page layout that apps attach tabs to,
-// resolved from the derived standard identifiers (re-owned in Twenty 2.28).
+// resolved from the derived standard identifiers (re-owned in Twenty 2.31).
 export const CALENDAR_EVENT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
     .universalIdentifier;
