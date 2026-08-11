@@ -6,12 +6,13 @@ import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
 
 import { COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-max-requests.constant';
 import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-window-ms.constant';
-import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import {
   COMPANY_ENRICHMENT_ATTEMPT_KEY,
   type CompanyEnrichmentAttemptKeyValueTypeMap,
 } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
-import { type PeopleDataLabsCompanyEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-enrich-result.type';
+import { type PeopleDataLabsCompanyData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-data.type';
+import { type PeopleDataLabsEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-enrich-result.type';
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
@@ -33,7 +34,7 @@ export class CompanyEnrichmentService {
 
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
+    private readonly peopleDataLabsClientService: PeopleDataLabsClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
@@ -69,7 +70,7 @@ export class CompanyEnrichmentService {
     }
 
     // Checked before throttling so a disabled feature never burns a throttle token.
-    if (!this.peopleDataLabsCompanyClientService.isEnabled()) {
+    if (!this.peopleDataLabsClientService.isEnabled()) {
       return { outcome: 'unavailable', enrichment: null };
     }
 
@@ -92,9 +93,7 @@ export class CompanyEnrichmentService {
     }
 
     const result =
-      await this.peopleDataLabsCompanyClientService.enrichCompanyByDomain(
-        domain,
-      );
+      await this.peopleDataLabsClientService.enrichCompanyByDomain(domain);
 
     const enrichmentResult = this.resolveEnrichmentResult({
       result,
@@ -119,7 +118,7 @@ export class CompanyEnrichmentService {
     workspaceId,
     domain,
   }: {
-    result: PeopleDataLabsCompanyEnrichResult;
+    result: PeopleDataLabsEnrichResult<PeopleDataLabsCompanyData>;
     workspaceId: string;
     domain: string;
   }): WorkspaceCompanyEnrichmentResult {
@@ -161,7 +160,10 @@ export class CompanyEnrichmentService {
   }: {
     workspaceId: string;
     domain: string;
-    result: Exclude<PeopleDataLabsCompanyEnrichResult, { outcome: 'skipped' }>;
+    result: Exclude<
+      PeopleDataLabsEnrichResult<PeopleDataLabsCompanyData>,
+      { outcome: 'skipped' }
+    >;
   }): Promise<void> {
     // Best-effort telemetry: never let a key-value write failure fail the enrichment.
     // The pre-collapse outcome is recorded so an operator can tell "no PDL match for this

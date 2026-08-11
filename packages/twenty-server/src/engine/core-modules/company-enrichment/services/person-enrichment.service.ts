@@ -6,8 +6,9 @@ import { type WorkspacePersonEnrichmentResult } from 'twenty-shared/workspace';
 
 import { PERSON_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/person-enrichment-throttle-max-requests.constant';
 import { PERSON_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/person-enrichment-throttle-window-ms.constant';
-import { PeopleDataLabsPersonClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-person-client.service';
-import { type PeopleDataLabsPersonEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-person-enrich-result.type';
+import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
+import { type PeopleDataLabsEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-enrich-result.type';
+import { type PeopleDataLabsPersonData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-person-data.type';
 import {
   PERSON_ENRICHMENT_ATTEMPT_KEY,
   type PersonEnrichmentAttemptKeyValueTypeMap,
@@ -31,7 +32,7 @@ export class PersonEnrichmentService {
 
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly peopleDataLabsPersonClientService: PeopleDataLabsPersonClientService,
+    private readonly peopleDataLabsClientService: PeopleDataLabsClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
     private readonly keyValuePairService: KeyValuePairService<PersonEnrichmentAttemptKeyValueTypeMap>,
@@ -92,7 +93,7 @@ export class PersonEnrichmentService {
       return { outcome: 'unavailable', enrichment: null };
     }
 
-    if (!this.peopleDataLabsPersonClientService.isEnabled()) {
+    if (!this.peopleDataLabsClientService.isEnabled()) {
       return { outcome: 'unavailable', enrichment: null };
     }
 
@@ -115,7 +116,7 @@ export class PersonEnrichmentService {
     }
 
     const result =
-      await this.peopleDataLabsPersonClientService.enrichPersonByEmail(
+      await this.peopleDataLabsClientService.enrichPersonByEmail(
         normalizedEmail,
       );
 
@@ -141,7 +142,7 @@ export class PersonEnrichmentService {
     workspaceId,
     email,
   }: {
-    result: PeopleDataLabsPersonEnrichResult;
+    result: PeopleDataLabsEnrichResult<PeopleDataLabsPersonData>;
     workspaceId: string;
     email: string;
   }): WorkspacePersonEnrichmentResult {
@@ -183,7 +184,10 @@ export class PersonEnrichmentService {
   }: {
     workspaceId: string;
     email: string;
-    result: Exclude<PeopleDataLabsPersonEnrichResult, { outcome: 'skipped' }>;
+    result: Exclude<
+      PeopleDataLabsEnrichResult<PeopleDataLabsPersonData>,
+      { outcome: 'skipped' }
+    >;
   }): Promise<void> {
     try {
       await this.keyValuePairService.set({

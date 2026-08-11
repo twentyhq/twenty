@@ -5,17 +5,19 @@ import { type AxiosInstance } from 'axios';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { PEOPLE_DATA_LABS_BASE_URL } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-base-url.constant';
+import { PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-company-min-likelihood.constant';
 import { PEOPLE_DATA_LABS_PERSON_MIN_LIKELIHOOD } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-person-min-likelihood.constant';
 import { PEOPLE_DATA_LABS_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-request-timeout-ms.constant';
+import { type PeopleDataLabsCompanyData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-data.type';
+import { type PeopleDataLabsEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-enrich-result.type';
 import { type PeopleDataLabsPersonData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-person-data.type';
-import { type PeopleDataLabsPersonEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-person-enrich-result.type';
 import { isTransientPeopleDataLabsStatus } from 'src/engine/core-modules/company-enrichment/utils/is-transient-people-data-labs-status.util';
 import { parsePeopleDataLabsResponseItem } from 'src/engine/core-modules/company-enrichment/utils/parse-people-data-labs-response-item.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
-export class PeopleDataLabsPersonClientService {
+export class PeopleDataLabsClientService {
   private readonly httpClient: AxiosInstance;
 
   constructor(
@@ -33,9 +35,41 @@ export class PeopleDataLabsPersonClientService {
     return isNonEmptyString(this.getApiKey());
   }
 
+  async enrichCompanyByDomain(
+    domain: string,
+  ): Promise<PeopleDataLabsEnrichResult<PeopleDataLabsCompanyData>> {
+    return this.enrich({
+      path: '/company/enrich',
+      params: {
+        website: domain,
+        min_likelihood: PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD,
+      },
+      requestedMinLikelihood: PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD,
+    });
+  }
+
   async enrichPersonByEmail(
     email: string,
-  ): Promise<PeopleDataLabsPersonEnrichResult> {
+  ): Promise<PeopleDataLabsEnrichResult<PeopleDataLabsPersonData>> {
+    return this.enrich({
+      path: '/person/enrich',
+      params: {
+        email,
+        min_likelihood: PEOPLE_DATA_LABS_PERSON_MIN_LIKELIHOOD,
+      },
+      requestedMinLikelihood: PEOPLE_DATA_LABS_PERSON_MIN_LIKELIHOOD,
+    });
+  }
+
+  private async enrich<TData>({
+    path,
+    params,
+    requestedMinLikelihood,
+  }: {
+    path: string;
+    params: Record<string, string | number>;
+    requestedMinLikelihood: number;
+  }): Promise<PeopleDataLabsEnrichResult<TData>> {
     const apiKey = this.getApiKey();
 
     if (!isNonEmptyString(apiKey)) {
@@ -43,11 +77,8 @@ export class PeopleDataLabsPersonClientService {
     }
 
     try {
-      const response = await this.httpClient.get('/person/enrich', {
-        params: {
-          email,
-          min_likelihood: PEOPLE_DATA_LABS_PERSON_MIN_LIKELIHOOD,
-        },
+      const response = await this.httpClient.get(path, {
+        params,
         headers: { 'X-Api-Key': apiKey },
       });
 
@@ -68,14 +99,14 @@ export class PeopleDataLabsPersonClientService {
         };
       }
 
-      const parsed = parsePeopleDataLabsResponseItem<PeopleDataLabsPersonData>({
+      const parsed = parsePeopleDataLabsResponseItem<TData>({
         item: {
           ...responseBody,
           status: isNumber(responseBody.status)
             ? responseBody.status
             : response.status,
         },
-        requestedMinLikelihood: PEOPLE_DATA_LABS_PERSON_MIN_LIKELIHOOD,
+        requestedMinLikelihood,
       });
 
       if (parsed.outcome === 'notFound') {
@@ -109,7 +140,11 @@ export class PeopleDataLabsPersonClientService {
   }: {
     httpStatus: number;
     message: string;
-  }): PeopleDataLabsPersonEnrichResult {
+  }): {
+    outcome: 'transientError' | 'permanentError';
+    httpStatus: number;
+    message: string;
+  } {
     return httpStatus === 0 || isTransientPeopleDataLabsStatus(httpStatus)
       ? { outcome: 'transientError', httpStatus, message }
       : { outcome: 'permanentError', httpStatus, message };
