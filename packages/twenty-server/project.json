@@ -198,7 +198,11 @@
         }
       }
     },
-    "test": {},
+    "test": {
+      "options": {
+        "maxWorkers": "50%"
+      }
+    },
     "test:debug": {
       "executor": "nx:run-commands",
       "options": {
