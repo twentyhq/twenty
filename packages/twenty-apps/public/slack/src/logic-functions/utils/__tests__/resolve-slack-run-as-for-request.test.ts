@@ -147,4 +147,25 @@ describe('resolveSlackRunAsForRequest', () => {
 
     expect(await resolve()).toBeUndefined();
   });
+
+  it('should fall back to the agent role when the Slack user is unknown', async () => {
+    expect(
+      await resolveSlackRunAsForRequest({
+        client,
+        identity: undefined,
+        requestId: 'request-1',
+        requestText: REQUEST_TEXT,
+        slackChannelId: 'C0123456789',
+        parentMessageTimestamp: '1700000000.000100',
+        slackMessageTimestamp: '1700000000.000200',
+      }),
+    ).toBeUndefined();
+    expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
+  });
+
+  it('should accept a DM whose stored text kept the bot mention', async () => {
+    expect(
+      await resolve({ requestText: `<@${BOT_USER_ID}> ${REQUEST_TEXT}` }),
+    ).toBe('member-1');
+  });
 });

@@ -81,13 +81,18 @@ export const resolveSlackRunAsForRequest = async ({
   }
 
   const botUserId = await resolveSlackBotUserIdOrThrow().catch(() => undefined);
+  const messageText = message.text ?? '';
 
-  const messageRequestText = normalizeSlackRequestText({
-    text: message.text ?? '',
-    botUserId,
-  });
+  // The enqueue path only strips the bot mention when the event told it who the
+  // bot is, so a DM or thread follow-up opening with a mention can keep it in
+  // the stored text. Both readings of the same message are accepted; neither
+  // lets the text say anything the member did not write.
+  const matchesMessage = [
+    normalizeSlackRequestText({ text: messageText, botUserId }),
+    normalizeSlackRequestText({ text: messageText, botUserId: undefined }),
+  ].includes(requestText);
 
-  if (messageRequestText !== requestText) {
+  if (!matchesMessage) {
     return undefined;
   }
 
