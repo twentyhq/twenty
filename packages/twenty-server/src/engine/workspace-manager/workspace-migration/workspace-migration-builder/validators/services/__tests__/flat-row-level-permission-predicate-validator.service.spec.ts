@@ -154,18 +154,21 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
       expect(result.errors).toEqual([]);
     });
 
-    it('should reject an empty value on an operand that expects one', () => {
-      const result = service.validateFlatRowLevelPermissionPredicateCreation(
-        buildCreationArgs({
-          fieldType: FieldMetadataType.RELATION,
-          operand: RowLevelPermissionPredicateOperand.IS,
-          value: '',
-        }),
-      );
+    it.each([[''], ['[]'], [[]]])(
+      'should reject %p on an operand that expects a value',
+      (value) => {
+        const result = service.validateFlatRowLevelPermissionPredicateCreation(
+          buildCreationArgs({
+            fieldType: FieldMetadataType.RELATION,
+            operand: RowLevelPermissionPredicateOperand.IS,
+            value,
+          }),
+        );
 
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].message).toContain('requires a value');
-    });
+        expect(result.errors).toHaveLength(1);
+        expect(result.errors[0].message).toContain('requires a value');
+      },
+    );
 
     it('should accept a value-less operand with no value', () => {
       const result = service.validateFlatRowLevelPermissionPredicateCreation(

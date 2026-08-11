@@ -15,6 +15,7 @@ import {
   getFilterValueValidationIssue,
   isDefined,
   isRecordFilterOperandExpectingValue,
+  isRecordFilterValueValid,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -361,7 +362,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
     if (
       isRecordFilterOperandExpectingValue(recordFilterOperand) &&
-      !isNonEmptyString(convertViewFilterValueToString(value))
+      !isRecordFilterValueValid({
+        operand: recordFilterOperand,
+        value: convertViewFilterValueToString(value),
+      })
     ) {
       return {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
