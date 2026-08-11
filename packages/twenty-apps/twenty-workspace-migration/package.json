@@ -19,18 +19,18 @@
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "devDependencies": {
-    "@types/node": "^24.7.2",
+    "@types/node": "^26.1.2",
     "@types/react": "^19.0.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "axios": "^1.19.0",
-    "oxlint": "^0.16.0",
+    "oxlint": "^1.77.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "twenty-client-sdk": "2.27.0",
     "twenty-sdk": "2.27.0",
     "twenty-ui": "1.0.0-alpha.1",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^4.2.1",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.0.0"
   }
 }
