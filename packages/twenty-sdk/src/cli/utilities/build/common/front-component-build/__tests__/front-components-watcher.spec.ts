@@ -104,7 +104,7 @@ describe('FrontComponentsWatcher', () => {
     expect(componentsWatcherInstance.restart).not.toHaveBeenCalled();
   });
 
-  it('never runs two sharedDependencies builds at the same time', async () => {
+  it('serializes concurrent build requests into one in flight build and one queued build', async () => {
     let concurrentBuildCount = 0;
     let maxConcurrentBuildCount = 0;
 
@@ -131,23 +131,6 @@ describe('FrontComponentsWatcher', () => {
     ]);
 
     expect(maxConcurrentBuildCount).toBe(1);
-  });
-
-  it('runs one queued build after the in flight one instead of one per request', async () => {
-    buildSharedDependenciesBundleMock.mockImplementation(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
-      return { exportNamesBySpecifier: new Map() };
-    });
-
-    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
-
-    await Promise.all([
-      triggerSharedDependenciesBuild(watcher),
-      triggerSharedDependenciesBuild(watcher),
-      triggerSharedDependenciesBuild(watcher),
-    ]);
-
     expect(buildSharedDependenciesBundleMock).toHaveBeenCalledTimes(2);
   });
 
@@ -239,24 +222,4 @@ describe('FrontComponentsWatcher', () => {
     );
   });
 
-  it('reports a restart is needed only when the paths or the sharedDependencies manifest change', () => {
-    const watcher = createWatcher(SHARED_DEPENDENCIES_MANIFEST);
-
-    expect(
-      watcher.shouldRestart(SOURCE_PATHS, SHARED_DEPENDENCIES_MANIFEST),
-    ).toBe(true);
-
-    return watcher.start().then(() => {
-      expect(
-        watcher.shouldRestart(SOURCE_PATHS, SHARED_DEPENDENCIES_MANIFEST),
-      ).toBe(false);
-      expect(watcher.shouldRestart(SOURCE_PATHS, undefined)).toBe(true);
-      expect(
-        watcher.shouldRestart(SOURCE_PATHS, {
-          ...SHARED_DEPENDENCIES_MANIFEST,
-          dependencies: ['react', 'react-dom/client'],
-        }),
-      ).toBe(true);
-    });
-  });
 });

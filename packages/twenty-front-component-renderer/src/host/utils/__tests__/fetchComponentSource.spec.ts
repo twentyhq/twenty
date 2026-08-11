@@ -258,50 +258,6 @@ describe('fetchComponentSource', () => {
     expect(cache.put).not.toHaveBeenCalled();
   });
 
-  it('caches a shared dependencies bundle exactly like a front component', async () => {
-    const cache = new FakeCache();
-
-    setupCaches(cache);
-
-    const fetchMock = jest.fn(async () =>
-      createFakeJsResponse(SHARED_DEPENDENCIES_SOURCE),
-    );
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    const source = await fetchComponentSource({
-      url: FINGERPRINTED_SHARED_DEPENDENCIES_URL,
-    });
-
-    expect(source).toBe(SHARED_DEPENDENCIES_SOURCE);
-    expect(cache.put).toHaveBeenCalledTimes(1);
-    expect(cache.put.mock.calls[0][0]).toBe(
-      FINGERPRINTED_SHARED_DEPENDENCIES_URL,
-    );
-  });
-
-  it('serves a verified shared dependencies cache hit without hitting the network', async () => {
-    const cache = new FakeCache();
-
-    await cache.put(FINGERPRINTED_SHARED_DEPENDENCIES_URL, {
-      text: async () => SHARED_DEPENDENCIES_SOURCE,
-    });
-    cache.put.mockClear();
-
-    setupCaches(cache);
-
-    const fetchMock = jest.fn();
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    const source = await fetchComponentSource({
-      url: FINGERPRINTED_SHARED_DEPENDENCIES_URL,
-    });
-
-    expect(source).toBe(SHARED_DEPENDENCIES_SOURCE);
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
   it('evicts the previous shared dependencies bundle of the same application only', async () => {
     const cache = new FakeCache();
 

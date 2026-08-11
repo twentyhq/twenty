@@ -16,30 +16,19 @@ describe('getSharedDependenciesBundleCacheControl', () => {
     ).toBe(IMMUTABLE_FILE_CACHE_CONTROL);
   });
 
-  it('returns no-store when the requested checksum differs', () => {
-    expect(
-      getSharedDependenciesBundleCacheControl({
-        requestedChecksum: 'b'.repeat(64),
-        sharedDependenciesChecksum: CHECKSUM,
-      }),
-    ).toBe(PRESIGNED_URL_NO_STORE_CACHE_CONTROL);
-  });
-
-  it('returns no-store when no checksum was requested', () => {
-    expect(
-      getSharedDependenciesBundleCacheControl({
-        requestedChecksum: undefined,
-        sharedDependenciesChecksum: CHECKSUM,
-      }),
-    ).toBe(PRESIGNED_URL_NO_STORE_CACHE_CONTROL);
-  });
-
-  it('returns no-store when the application has no shared dependencies checksum', () => {
-    expect(
-      getSharedDependenciesBundleCacheControl({
-        requestedChecksum: CHECKSUM,
-        sharedDependenciesChecksum: null,
-      }),
-    ).toBe(PRESIGNED_URL_NO_STORE_CACHE_CONTROL);
-  });
+  it.each([
+    ['the requested checksum differs', 'b'.repeat(64), CHECKSUM],
+    ['no checksum was requested', undefined, CHECKSUM],
+    ['the application has no checksum', CHECKSUM, null],
+  ])(
+    'returns no-store when %s',
+    (_label, requestedChecksum, storedChecksum) => {
+      expect(
+        getSharedDependenciesBundleCacheControl({
+          requestedChecksum,
+          sharedDependenciesChecksum: storedChecksum,
+        }),
+      ).toBe(PRESIGNED_URL_NO_STORE_CACHE_CONTROL);
+    },
+  );
 });

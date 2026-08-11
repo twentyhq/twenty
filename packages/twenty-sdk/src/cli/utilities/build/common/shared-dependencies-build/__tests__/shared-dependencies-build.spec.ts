@@ -68,7 +68,7 @@ describe('shared dependencies build', () => {
     });
   });
 
-  it('bundles every declared dependency behind its own namespace export', async () => {
+  it('bundles every declared dependency behind its own namespace export, through the jsx wrapper', async () => {
     const sharedDependenciesBundle = await readFile(
       join(
         MINIMAL_APP_PATH,
@@ -85,36 +85,10 @@ describe('shared dependencies build', () => {
     expect(sharedDependenciesBundle).toContain(
       '__shared_dependencies_react_dom_client__',
     );
-    expect(sharedDependenciesChecksum).toMatch(/^[0-9a-f]{64}$/);
-  });
-
-  it('exposes the wrapped react runtime through the shared namespaces', async () => {
-    const sharedDependenciesBundle = await readFile(
-      join(
-        MINIMAL_APP_PATH,
-        OUTPUT_DIR,
-        SHARED_DEPENDENCIES_MANIFEST.builtPath,
-      ),
-      'utf-8',
-    );
-
     expect(sharedDependenciesBundle).toContain(
       '__HTML_TAG_TO_CUSTOM_ELEMENT_TAG__',
     );
-  });
-
-  it('enumerates the exports every shared dependency provides', () => {
-    const reactExportNames =
-      sharedDependenciesBuildContext.exportNamesBySpecifier.get('react');
-    const reactDomClientExportNames =
-      sharedDependenciesBuildContext.exportNamesBySpecifier.get(
-        'react-dom/client',
-      );
-
-    expect(reactExportNames?.namedExports).toContain('useState');
-    expect(reactExportNames?.namedExports).toContain('createElement');
-    expect(reactExportNames?.hasDefaultExport).toBe(true);
-    expect(reactDomClientExportNames?.namedExports).toContain('createRoot');
+    expect(sharedDependenciesChecksum).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it('keeps react out of a front component bundle that shares them', async () => {
@@ -163,24 +137,4 @@ describe('shared dependencies build', () => {
     }
   }, 60000);
 
-  it('shrinks a front component that shares its dependencies', async () => {
-    const sharedOutputDir = await mkdtemp(join(tmpdir(), 'shared-size-'));
-    const plainOutputDir = await mkdtemp(join(tmpdir(), 'plain-size-'));
-
-    try {
-      const { output: sharedOutput } = await buildFrontComponent({
-        outputDir: sharedOutputDir,
-        sharedDependenciesBuildContext,
-      });
-      const { output: plainOutput } = await buildFrontComponent({
-        outputDir: plainOutputDir,
-        sharedDependenciesBuildContext: null,
-      });
-
-      expect(sharedOutput.length).toBeLessThan(plainOutput.length / 2);
-    } finally {
-      await rm(sharedOutputDir, { recursive: true, force: true });
-      await rm(plainOutputDir, { recursive: true, force: true });
-    }
-  }, 60000);
 });

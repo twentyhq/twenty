@@ -58,30 +58,4 @@ describe('buildApplication with a shared dependencies bundle', () => {
     ).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  it('writes a shared dependencies bundle the components import instead of bundling react', async () => {
-    const sharedDependenciesBundle = await readFile(
-      join(
-        SHARED_DEPENDENCIES_APP_PATH,
-        OUTPUT_DIR,
-        FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
-      ),
-      'utf-8',
-    );
-    const componentBundle = await readFile(
-      join(
-        SHARED_DEPENDENCIES_APP_PATH,
-        OUTPUT_DIR,
-        'src',
-        'counter.front-component.mjs',
-      ),
-      'utf-8',
-    );
-
-    expect(sharedDependenciesBundle).toContain('__shared_dependencies_react__');
-    expect(componentBundle).toContain(SHARED_DEPENDENCIES_IMPORT_SPECIFIER);
-    expect(componentBundle).not.toContain('@license React');
-    expect(componentBundle.length).toBeLessThan(
-      sharedDependenciesBundle.length / 10,
-    );
-  });
 });

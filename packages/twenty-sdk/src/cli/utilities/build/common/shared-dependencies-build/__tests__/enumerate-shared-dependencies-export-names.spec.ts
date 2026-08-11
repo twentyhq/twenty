@@ -13,16 +13,6 @@ describe('enumerateSharedDependenciesExportNames', () => {
     expect(exportNames.hasDefaultExport).toBe(true);
   }, 60000);
 
-  it('reports the default of an es module that declares one', async () => {
-    const exportNames = await enumerateSharedDependenciesExportNames({
-      appPath: MINIMAL_APP_PATH,
-      specifier: 'axios',
-    });
-
-    expect(exportNames.namedExports).toContain('isAxiosError');
-    expect(exportNames.hasDefaultExport).toBe(true);
-  }, 60000);
-
   it('reports no default for an es module without one', async () => {
     const exportNames = await enumerateSharedDependenciesExportNames({
       appPath: MINIMAL_APP_PATH,

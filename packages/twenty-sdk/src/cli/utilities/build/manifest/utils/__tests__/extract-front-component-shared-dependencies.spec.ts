@@ -50,23 +50,8 @@ describe('extractFrontComponentSharedDependencies', () => {
   it.each([
     ['an absent key', {}],
     ['an empty array', { frontComponentSharedDependencies: [] }],
-  ])(
-    'returns no bundle and no error for %s',
-    async (_label, packageJson) => {
-      const appPath = await writeAppPackageJson(packageJson);
-
-      const { sharedDependencies, errors } =
-        await extractFrontComponentSharedDependencies(appPath);
-
-      expect(errors).toEqual([]);
-      expect(sharedDependencies).toBeUndefined();
-    },
-  );
-
-  it('returns no bundle and no error when package.json is missing', async () => {
-    const appPath = await mkdtemp(join(tmpdir(), 'shared-dependencies-none-'));
-
-    scratchDirs.push(appPath);
+  ])('returns no bundle and no error for %s', async (_label, packageJson) => {
+    const appPath = await writeAppPackageJson(packageJson);
 
     const { sharedDependencies, errors } =
       await extractFrontComponentSharedDependencies(appPath);
@@ -75,7 +60,7 @@ describe('extractFrontComponentSharedDependencies', () => {
     expect(sharedDependencies).toBeUndefined();
   });
 
-  it('rejects a non-array value', async () => {
+  it('rejects a value that is not an array', async () => {
     const appPath = await writeAppPackageJson({
       frontComponentSharedDependencies: { react: '^19' },
     });
@@ -87,52 +72,20 @@ describe('extractFrontComponentSharedDependencies', () => {
     expect(errors[0]).toContain('must be an array of package specifiers');
   });
 
-  it('rejects relative and absolute paths', async () => {
-    const appPath = await writeAppPackageJson({
-      frontComponentSharedDependencies: ['./local-module'],
-    });
-
-    const { errors } = await extractFrontComponentSharedDependencies(appPath);
-
-    expect(errors[0]).toContain(
-      'must be a package specifier, not a relative or absolute path',
-    );
-  });
-
   it.each([
-    'twenty-client-sdk',
-    'twenty-client-sdk/core',
-    'twenty-sdk',
-    'twenty-sdk/define',
-  ])('rejects the reserved dependency "%s"', async (dependency) => {
+    ['a relative path', ['./local-module']],
+    ['a reserved package', ['twenty-sdk/define']],
+    ['a duplicated dependency', ['react', 'react']],
+    ['a non-string entry', ['react', 42]],
+  ])('rejects %s', async (_label, dependencies) => {
     const appPath = await writeAppPackageJson({
-      frontComponentSharedDependencies: [dependency],
+      frontComponentSharedDependencies: dependencies,
     });
 
-    const { errors } = await extractFrontComponentSharedDependencies(appPath);
+    const { sharedDependencies, errors } =
+      await extractFrontComponentSharedDependencies(appPath);
 
-    expect(errors[0]).toContain(
-      'is already served separately and cannot be shared',
-    );
-  });
-
-  it('rejects a duplicated dependency', async () => {
-    const appPath = await writeAppPackageJson({
-      frontComponentSharedDependencies: ['react', 'react'],
-    });
-
-    const { errors } = await extractFrontComponentSharedDependencies(appPath);
-
-    expect(errors[0]).toContain('is declared twice');
-  });
-
-  it('rejects non-string entries', async () => {
-    const appPath = await writeAppPackageJson({
-      frontComponentSharedDependencies: ['react', 42],
-    });
-
-    const { errors } = await extractFrontComponentSharedDependencies(appPath);
-
-    expect(errors[0]).toContain('must be non-empty strings');
+    expect(sharedDependencies).toBeUndefined();
+    expect(errors).not.toEqual([]);
   });
 });

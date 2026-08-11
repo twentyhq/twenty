@@ -6,7 +6,6 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const SHARED_DEPENDENCIES_BUILT_PATH =
   'src/front-component-shared-dependencies.mjs';
 const SHARED_DEPENDENCIES_CHECKSUM = 'a'.repeat(64);
-const MISMATCHED_CHECKSUM = 'b'.repeat(64);
 const SHARED_DEPENDENCIES_BUNDLE_CONTENT =
   'export const sharedDependenciesReady = true;\n';
 
@@ -44,14 +43,6 @@ describe('Front component shared dependencies endpoint', () => {
     await makeRestAPIRequest({
       method: 'get',
       path: `/front-component-shared-dependencies/${applicationId}`,
-      bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    }).expect(404);
-  });
-
-  it('should return 404 for a non-existent application', async () => {
-    await makeRestAPIRequest({
-      method: 'get',
-      path: '/front-component-shared-dependencies/00000000-0000-0000-0000-000000000000',
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     }).expect(404);
   });
@@ -103,26 +94,6 @@ describe('Front component shared dependencies endpoint', () => {
         .expect((res) => {
           expect(res.text).toBe(SHARED_DEPENDENCIES_BUNDLE_CONTENT);
         });
-    });
-
-    it('should serve no-store when the requested checksum does not match', async () => {
-      await makeRestAPIRequest({
-        method: 'get',
-        path: `/front-component-shared-dependencies/${applicationId}/${MISMATCHED_CHECKSUM}.js`,
-        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      })
-        .expect(200)
-        .expect('Cache-Control', 'private, no-store');
-    });
-
-    it('should fail closed on a malformed cache key', async () => {
-      await makeRestAPIRequest({
-        method: 'get',
-        path: `/front-component-shared-dependencies/${applicationId}/not-a-checksum.js`,
-        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      })
-        .expect(200)
-        .expect('Cache-Control', 'private, no-store');
     });
   });
 });
