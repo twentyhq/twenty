@@ -13,6 +13,8 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED]: false,
 };
 
+// Temporary: lets CI run the suite against the ORM v2 read path while it is behind a
+// flag. To be deleted once the migration is complete.
 const getForcedFeatureFlags = (): FeatureFlagKey[] => {
   const forcedFeatureFlags = process.env.TEST_FORCED_FEATURE_FLAGS;
 

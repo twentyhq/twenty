@@ -83,7 +83,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
           isManyToMany: false,
         },
       })),
-      wheres: this.whereClauses,
     };
   }
 

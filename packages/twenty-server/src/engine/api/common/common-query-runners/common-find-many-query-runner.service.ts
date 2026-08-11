@@ -7,7 +7,11 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  ObjectRecord,
+  OrderByDirection,
+} from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import {
@@ -55,7 +59,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 > {
   protected readonly operationName = CommonQueryNames.FIND_MANY;
   protected readonly isReadOnly = true;
-  protected override readonly usesReadRepositoryV2 = true;
 
   async run(
     args: CommonExtendedInput<FindManyQueryArgs>,
@@ -70,14 +73,20 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
       workspaceDataSource,
       commonQueryParser,
-      readRepositoryV2,
+      featureFlagsMap,
     } = queryRunnerContext;
 
-    const queryBuilder = (readRepositoryV2 === undefined
-      ? repository.createQueryBuilder(flatObjectMetadata.nameSingular)
-      : readRepositoryV2.createQueryBuilder(
-          flatObjectMetadata.nameSingular,
-        )) as unknown as ReturnType<typeof repository.createQueryBuilder>;
+    const readRepository = featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: true })
+          .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig)
+      : repository;
+
+    const queryBuilder = readRepository.createQueryBuilder(
+      flatObjectMetadata.nameSingular,
+    ) as unknown as ReturnType<typeof repository.createQueryBuilder>;
 
     const aggregateQueryBuilder = queryBuilder.clone();
 

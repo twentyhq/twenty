@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
@@ -56,7 +55,6 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -104,8 +102,6 @@ export abstract class CommonBaseQueryRunnerService<
   protected abstract readonly operationName: CommonQueryNames;
 
   protected readonly isReadOnly: boolean = false;
-
-  protected readonly usesReadRepositoryV2: boolean = false;
 
   public async execute(
     args: CommonInput<Args>,
@@ -355,33 +351,8 @@ export abstract class CommonBaseQueryRunnerService<
       workspaceDataSource: globalWorkspaceDataSource,
       rolePermissionConfig,
       repository,
-      readRepositoryV2: this.resolveReadRepositoryV2({
-        featureFlagsMap: context.featureFlagsMap,
-        nameSingular: queryRunnerContext.flatObjectMetadata.nameSingular,
-        rolePermissionConfig,
-      }),
+      featureFlagsMap: context.featureFlagsMap,
     };
-  }
-
-  private resolveReadRepositoryV2({
-    featureFlagsMap,
-    nameSingular,
-    rolePermissionConfig,
-  }: {
-    featureFlagsMap: Record<string, boolean>;
-    nameSingular: string;
-    rolePermissionConfig: RolePermissionConfig;
-  }) {
-    const isOrmV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED];
-
-    if (!isOrmV2Enabled || !this.isReadOnly || !this.usesReadRepositoryV2) {
-      return undefined;
-    }
-
-    return this.workspaceDataSourceV2Service
-      .getDataSource({ useReplica: true })
-      .getRepository(nameSingular, rolePermissionConfig);
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {

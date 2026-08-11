@@ -43,7 +43,7 @@ export type OrderByValueLike =
 
 export type OrderByConditionLike = Record<string, OrderByValueLike>;
 
-export type FindOptionsSelectLike = Record<string, unknown>;
+export type FindOptionsSelectLike = Record<string, boolean>;
 
 export type FindOptionsLike = {
   select?: FindOptionsSelectLike;
@@ -55,5 +55,4 @@ export type ExpressionMapLike = {
     alias: { name: string };
     relation: { isOneToMany: boolean; isManyToMany: boolean };
   }[];
-  wheres: unknown[];
 };

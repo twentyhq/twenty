@@ -1,4 +1,5 @@
 import { type ObjectLiteral } from 'typeorm';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -6,7 +7,6 @@ import { type GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-ru
 import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 
 export type CommonExtendedQueryRunnerContext = Omit<
   CommonBaseQueryRunnerContext,
@@ -17,5 +17,5 @@ export type CommonExtendedQueryRunnerContext = Omit<
   repository: WorkspaceRepository<ObjectLiteral>;
   commonQueryParser: GraphqlQueryParser;
   workspaceDataSource: GlobalWorkspaceDataSource;
-  readRepositoryV2?: WorkspaceRepositoryV2;
+  featureFlagsMap: Record<FeatureFlagKey, boolean>;
 };
