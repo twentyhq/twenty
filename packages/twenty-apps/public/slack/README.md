@@ -33,7 +33,9 @@ Pick a **workspace shared** or **just for me** Slack connection; steps run with 
 
 ## 💳 Billing
 
-**Free** — no credits, no metering.
+**Free** — the app itself costs no credits and is not metered.
+
+The assistant still runs on your workspace AI credits, billed on the model's token usage, so every mention or DM answered has an indirect cost. The workflow steps only call Slack and consume nothing.
 
 ## 📌 Heads up
 
