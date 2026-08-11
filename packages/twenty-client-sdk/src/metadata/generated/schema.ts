@@ -401,6 +401,9 @@ export type PermissionFlagType = 'API_KEYS_AND_WEBHOOKS' | 'WORKSPACE' | 'WORKSP
 
 export interface ViewField {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     fieldMetadataId: Scalars['UUID']
     isVisible: Scalars['Boolean']
     size: Scalars['Float']
@@ -501,6 +504,9 @@ export interface ViewFieldGroup {
 
 export interface View {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     name: Scalars['String']
     objectMetadataId: Scalars['UUID']
     type: ViewType
@@ -691,6 +697,8 @@ export interface GridPosition {
 
 export interface PageLayoutWidget {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     applicationId: Scalars['UUID']
     pageLayoutTabId: Scalars['UUID']
     title: Scalars['String']
@@ -998,6 +1006,8 @@ export interface WorkflowVersionConfiguration {
 
 export interface PageLayoutTab {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     applicationId: Scalars['UUID']
     title: Scalars['String']
     position: Scalars['Float']
@@ -1022,6 +1032,8 @@ export interface PageLayout {
     tabs?: PageLayoutTab[]
     defaultTabToFocusOnMobileAndSidePanelId?: Scalars['UUID']
     universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
@@ -1397,7 +1409,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3643,6 +3655,9 @@ export interface UserWorkspaceGenqlSelection{
 
 export interface ViewFieldGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     fieldMetadataId?: boolean | number
     isVisible?: boolean | number
     size?: boolean | number
@@ -3741,6 +3756,9 @@ export interface ViewFieldGroupGenqlSelection{
 
 export interface ViewGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     name?: boolean | number
     objectMetadataId?: boolean | number
     type?: boolean | number
@@ -3921,6 +3939,8 @@ export interface GridPositionGenqlSelection{
 
 export interface PageLayoutWidgetGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    isSystemSideEffect?: boolean | number
     applicationId?: boolean | number
     pageLayoutTabId?: boolean | number
     title?: boolean | number
@@ -4257,6 +4277,8 @@ export interface WorkflowVersionConfigurationGenqlSelection{
 
 export interface PageLayoutTabGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    isSystemSideEffect?: boolean | number
     applicationId?: boolean | number
     title?: boolean | number
     position?: boolean | number
@@ -4282,6 +4304,8 @@ export interface PageLayoutGenqlSelection{
     tabs?: PageLayoutTabGenqlSelection
     defaultTabToFocusOnMobileAndSidePanelId?: boolean | number
     universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
@@ -9659,7 +9683,6 @@ export const enumFeatureFlagKey = {
    IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
    IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const,
    IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const,
-   IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED: 'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED' as const,
    IS_NATIVE_CALL_RECORDING_TABS_ENABLED: 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' as const
 }
 

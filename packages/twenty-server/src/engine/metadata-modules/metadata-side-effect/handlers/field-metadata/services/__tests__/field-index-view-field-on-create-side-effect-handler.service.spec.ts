@@ -1,215 +1,18 @@
-import {
-  getFieldUniversalIdentifier,
-  getSystemViewFieldUniversalIdentifier,
-  getSystemViewUniversalIdentifier,
-} from 'twenty-shared/application';
-import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { FieldIndexViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-index-view-field-on-create-side-effect-handler.service';
-import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
-
-const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
-const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000001';
-
-const computeFieldUniversalIdentifier = (name: string) =>
-  getFieldUniversalIdentifier({
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    name,
-  });
-
-const NAME_FIELD_UNIVERSAL_IDENTIFIER = computeFieldUniversalIdentifier('name');
-const PRIORITY_FIELD_UNIVERSAL_IDENTIFIER =
-  computeFieldUniversalIdentifier('priority');
-
-const DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
-  getSystemViewUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier:
-      APPLICATION_UNIVERSAL_IDENTIFIER,
-    objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.INDEX,
-  });
-
-const computeViewFieldUniversalIdentifier = ({
-  viewUniversalIdentifier,
-  fieldMetadataUniversalIdentifier,
-}: {
-  viewUniversalIdentifier: string;
-  fieldMetadataUniversalIdentifier: string;
-}) =>
-  getSystemViewFieldUniversalIdentifier({
-    fieldMetadataApplicationUniversalIdentifier:
-      APPLICATION_UNIVERSAL_IDENTIFIER,
-    viewUniversalIdentifier,
-    fieldMetadataUniversalIdentifier,
-  });
-
-type PendingFieldMetadata = {
-  universalIdentifier: string;
-  objectMetadataUniversalIdentifier: string;
-  applicationUniversalIdentifier: string;
-  name: string;
-  type: FieldMetadataType;
-  isSystemSideEffect: boolean;
-};
-
-const buildPendingFieldMetadata = (
-  name: string,
-  type: FieldMetadataType = FieldMetadataType.TEXT,
-  isSystemSideEffect = false,
-): PendingFieldMetadata => ({
-  universalIdentifier: computeFieldUniversalIdentifier(name),
-  objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  name,
-  type,
-  isSystemSideEffect,
-});
-
-const NAME_FIELD = buildPendingFieldMetadata('name');
-const PRIORITY_FIELD = buildPendingFieldMetadata(
-  'priority',
-  FieldMetadataType.NUMBER,
-);
-
-const OBJECT_METADATA = {
-  universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'ticket',
-  labelIdentifierFieldMetadataUniversalIdentifier:
-    NAME_FIELD_UNIVERSAL_IDENTIFIER,
-};
-
-type WorkspaceView = {
-  id: string;
-  universalIdentifier: string;
-  key: ViewKey | null;
-  isActive?: boolean;
-  deletedAt?: string | null;
-  isSystemSideEffect?: boolean;
-  objectMetadataUniversalIdentifier?: string;
-};
-
-type WorkspaceViewField = {
-  universalIdentifier: string;
-  viewId: string;
-  viewUniversalIdentifier?: string;
-  fieldMetadataUniversalIdentifier?: string;
-  position: number;
-  isActive: boolean;
-  deletedAt?: string | null;
-};
-
-const buildArgs = ({
-  triggerFieldMetadata,
-  pendingFieldMetadatas = [],
-  objectMetadataCreatedInBatch = false,
-  pendingViews = [],
-  pendingViewFields = [],
-  objectMetadataInWorkspace = false,
-  viewsInWorkspace = [],
-  viewFieldsInWorkspace = [],
-}: {
-  triggerFieldMetadata: PendingFieldMetadata;
-  pendingFieldMetadatas?: PendingFieldMetadata[];
-  objectMetadataCreatedInBatch?: boolean;
-  pendingViews?: { universalIdentifier: string; isSystemSideEffect: boolean }[];
-  pendingViewFields?: {
-    universalIdentifier: string;
-    viewUniversalIdentifier: string;
-    fieldMetadataUniversalIdentifier: string;
-  }[];
-  objectMetadataInWorkspace?: boolean;
-  viewsInWorkspace?: WorkspaceView[];
-  viewFieldsInWorkspace?: WorkspaceViewField[];
-}): BuildSideEffectsArgs<'fieldMetadata'> =>
-  ({
-    flatEntity: triggerFieldMetadata,
-    allFlatEntityOperationRecordByMetadataName: {
-      fieldMetadata: {
-        flatEntityToCreate: Object.fromEntries(
-          pendingFieldMetadatas.map((pendingFieldMetadata) => [
-            pendingFieldMetadata.universalIdentifier,
-            pendingFieldMetadata,
-          ]),
-        ),
-        flatEntityToUpdate: {},
-        flatEntityToDelete: {},
-      },
-      objectMetadata: {
-        flatEntityToCreate: objectMetadataCreatedInBatch
-          ? { [OBJECT_UNIVERSAL_IDENTIFIER]: OBJECT_METADATA }
-          : {},
-        flatEntityToUpdate: {},
-        flatEntityToDelete: {},
-      },
-      view: {
-        flatEntityToCreate: Object.fromEntries(
-          pendingViews.map((pendingView) => [
-            pendingView.universalIdentifier,
-            pendingView,
-          ]),
-        ),
-        flatEntityToUpdate: {},
-        flatEntityToDelete: {},
-      },
-      viewField: {
-        flatEntityToCreate: Object.fromEntries(
-          pendingViewFields.map((pendingViewField) => [
-            pendingViewField.universalIdentifier,
-            pendingViewField,
-          ]),
-        ),
-        flatEntityToUpdate: {},
-        flatEntityToDelete: {},
-      },
-    } as unknown as AllFlatEntityOperationRecordByMetadataName,
-    relatedFlatEntityMaps: {
-      flatObjectMetadataMaps: {
-        byUniversalIdentifier: objectMetadataInWorkspace
-          ? { [OBJECT_UNIVERSAL_IDENTIFIER]: OBJECT_METADATA }
-          : {},
-      },
-      flatViewMaps: {
-        byUniversalIdentifier: Object.fromEntries(
-          viewsInWorkspace.map((view) => [
-            view.universalIdentifier,
-            {
-              isActive: true,
-              deletedAt: null,
-              isSystemSideEffect: false,
-              objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-              ...view,
-              // Mirrors fromViewEntityToFlatView: the view aggregates the
-              // view fields pointing at it.
-              viewFieldUniversalIdentifiers: viewFieldsInWorkspace
-                .filter((viewField) => viewField.viewId === view.id)
-                .map((viewField) => viewField.universalIdentifier),
-            },
-          ]),
-        ),
-      },
-      flatViewFieldMaps: {
-        byUniversalIdentifier: Object.fromEntries(
-          viewFieldsInWorkspace.map((viewField) => [
-            viewField.universalIdentifier,
-            viewField,
-          ]),
-        ),
-      },
-    },
-    context: {},
-  }) as unknown as BuildSideEffectsArgs<'fieldMetadata'>;
-
-// Synced INDEX view: the 2-26 reconcile command re-owns every INDEX view to the
-// derived identifier, so the handler resolves it by that identifier alone.
-const SYNCED_INDEX_VIEW: WorkspaceView = {
-  id: 'view-db-id-1',
-  universalIdentifier: DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
-  key: ViewKey.INDEX,
-  isSystemSideEffect: true,
-};
+import {
+  buildArgs,
+  buildPendingFieldMetadata,
+  computeViewFieldUniversalIdentifier,
+  DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+  filterByView,
+  NAME_FIELD,
+  NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  PRIORITY_FIELD,
+  PRIORITY_FIELD_UNIVERSAL_IDENTIFIER,
+  SYNCED_INDEX_VIEW,
+} from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/__tests__/field-view-field-on-create-side-effect-test-setup';
 
 describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
   const handler =
@@ -270,7 +73,13 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       );
 
       expect(viewFields).toHaveLength(1);
-      expect(viewFields[0].position).toBe(1);
+
+      const [indexViewField] = filterByView(
+        viewFields,
+        DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+      );
+
+      expect(indexViewField.position).toBe(1);
     });
 
     it('should still emit when the pending INDEX view is a system side effect (object handler emission)', () => {
@@ -675,16 +484,18 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       throw new Error('expected success');
     }
 
-    expect(
-      Object.values(result.operations.viewField?.flatEntityToCreate ?? {})[0]
-        .position,
-    ).toBe(1);
+    const [indexViewField] = filterByView(
+      Object.values(result.operations.viewField?.flatEntityToCreate ?? {}),
+      DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(indexViewField.position).toBe(1);
   });
 
-  // A second writer claiming the same (view, field) pair is not deduped here:
+  // A second writer claiming the same INDEX (view, field) pair is not deduped:
   // it is a genuine conflict left to surface downstream (engine collision, then
-  // the flat view field validator on the pair).
-  it('should still emit when a pending view field already covers the same (view, field) pair', () => {
+  // the flat view field validator on the pair). Record-page pairs ARE deduped.
+  it('should still emit when a pending view field already covers the same INDEX (view, field) pair', () => {
     const result = handler.buildSideEffects(
       buildArgs({
         triggerFieldMetadata: PRIORITY_FIELD,

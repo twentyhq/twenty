@@ -6,7 +6,9 @@ import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageC
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -56,7 +58,9 @@ export const AiChatPage = () => {
             ) : null
           }
         >
-          <AiChatTab />
+          <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
+            <AiChatTab />
+          </AiChatSurfaceContext.Provider>
         </AiChatMessageListPreambleContext.Provider>
       </StyledCenteredChatContainer>
     </StyledPanel>

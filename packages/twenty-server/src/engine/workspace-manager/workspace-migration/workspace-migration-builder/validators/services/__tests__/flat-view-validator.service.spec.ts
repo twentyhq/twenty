@@ -133,7 +133,9 @@ describe('FlatViewValidatorService INDEX key reservation', () => {
       );
 
       expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].message).toContain('already has an INDEX view');
+      expect(result.errors[0].message).toContain(
+        'already has a view with the INDEX key',
+      );
     });
 
     it('ignores a soft-deleted INDEX view when checking the singleton', () => {

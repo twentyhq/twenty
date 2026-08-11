@@ -598,6 +598,9 @@ enum PermissionFlagType {
 
 type ViewField {
   id: UUID!
+  universalIdentifier: UUID!
+  applicationId: UUID!
+  isSystemSideEffect: Boolean!
   fieldMetadataId: UUID!
   isVisible: Boolean!
   size: Float!
@@ -727,6 +730,9 @@ type ViewFieldGroup {
 
 type View {
   id: UUID!
+  universalIdentifier: UUID!
+  applicationId: UUID!
+  isSystemSideEffect: Boolean!
   name: String!
   objectMetadataId: UUID!
   type: ViewType!
@@ -953,6 +959,8 @@ type GridPosition {
 
 type PageLayoutWidget {
   id: UUID!
+  universalIdentifier: UUID!
+  isSystemSideEffect: Boolean!
   applicationId: UUID!
   pageLayoutTabId: UUID!
   title: String!
@@ -1316,6 +1324,8 @@ type WorkflowVersionConfiguration {
 
 type PageLayoutTab {
   id: UUID!
+  universalIdentifier: UUID!
+  isSystemSideEffect: Boolean!
   applicationId: UUID!
   title: String!
   position: Float!
@@ -1338,6 +1348,8 @@ type PageLayout {
   tabs: [PageLayoutTab!]
   defaultTabToFocusOnMobileAndSidePanelId: UUID
   universalIdentifier: UUID!
+  applicationId: UUID!
+  isSystemSideEffect: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -1740,7 +1752,6 @@ enum FeatureFlagKey {
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
-  IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
   IS_NATIVE_CALL_RECORDING_TABS_ENABLED
 }
 

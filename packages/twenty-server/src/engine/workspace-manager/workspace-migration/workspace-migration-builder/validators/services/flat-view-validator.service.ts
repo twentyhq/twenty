@@ -5,7 +5,6 @@ import {
   FieldMetadataType,
   RelationType,
   ViewCalendarLayout,
-  ViewKey,
   ViewType,
 } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
@@ -460,16 +459,20 @@ export class FlatViewValidatorService {
       });
     }
 
-    if (flatViewToValidate.key === ViewKey.INDEX) {
+    // Every ViewKey value is reserved for an engine-owned singleton view per
+    // object (INDEX table view, FIELDS_WIDGET record-page view).
+    const reservedViewKey = flatViewToValidate.key;
+
+    if (isDefined(reservedViewKey)) {
       if (flatViewToValidate.isSystemSideEffect !== true) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition`,
-          userFriendlyMessage: msg`The INDEX view key is reserved for the default view`,
+          message: t`The ${reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition`,
+          userFriendlyMessage: msg`The ${reservedViewKey} view key is reserved for the default view`,
         });
       }
 
-      const objectAlreadyHasIndexFlatView =
+      const objectAlreadyHasFlatViewWithSameKey =
         isDefined(optimisticFlatObjectMetadata) &&
         optimisticFlatObjectMetadata.viewUniversalIdentifiers.some(
           (viewUniversalIdentifier) => {
@@ -480,16 +483,16 @@ export class FlatViewValidatorService {
 
             return (
               isDefined(flatView) &&
-              flatView.key === ViewKey.INDEX &&
+              flatView.key === reservedViewKey &&
               !isDefined(flatView.deletedAt)
             );
           },
         );
 
-      if (objectAlreadyHasIndexFlatView) {
+      if (objectAlreadyHasFlatViewWithSameKey) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Object already has an INDEX view`,
+          message: t`Object already has a view with the ${reservedViewKey} key`,
           userFriendlyMessage: msg`This object already has a default view`,
         });
       }

@@ -1,3 +1,5 @@
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
 export const APPLICATION_UNIVERSAL_IDENTIFIER =
   '97d24431-ebc7-4156-9705-b6900e73edc8';
 
@@ -34,9 +36,11 @@ export const FIREFLIES_LIST_CALLS_BY_PARTICIPANT_UNIVERSAL_IDENTIFIER =
 export const FIREFLIES_SEARCH_CALLS_UNIVERSAL_IDENTIFIER =
   'cb2dd01d-8dca-4222-acce-1d1dbdef9146';
 
-// Shared core CalendarEvent record page layout that apps attach tabs to.
+// Shared core CalendarEvent record page layout that apps attach tabs to,
+// resolved from the derived standard identifiers (re-owned in Twenty 2.28).
 export const CALENDAR_EVENT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  'b9b10e40-9ce2-4704-8ac6-c6e92e2563c1';
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+    .universalIdentifier;
 
 export const CALENDAR_EVENT_SUMMARY_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER =
   'f4fed96d-1551-40dc-a0c1-0b4d2a782733';

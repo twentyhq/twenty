@@ -1170,6 +1170,15 @@ export default {
             "id": [
                 4
             ],
+            "universalIdentifier": [
+                4
+            ],
+            "applicationId": [
+                4
+            ],
+            "isSystemSideEffect": [
+                3
+            ],
             "fieldMetadataId": [
                 4
             ],
@@ -1401,6 +1410,15 @@ export default {
         "View": {
             "id": [
                 4
+            ],
+            "universalIdentifier": [
+                4
+            ],
+            "applicationId": [
+                4
+            ],
+            "isSystemSideEffect": [
+                3
             ],
             "name": [
                 1
@@ -1864,6 +1882,12 @@ export default {
         "PageLayoutWidget": {
             "id": [
                 4
+            ],
+            "universalIdentifier": [
+                4
+            ],
+            "isSystemSideEffect": [
+                3
             ],
             "applicationId": [
                 4
@@ -2563,6 +2587,12 @@ export default {
             "id": [
                 4
             ],
+            "universalIdentifier": [
+                4
+            ],
+            "isSystemSideEffect": [
+                3
+            ],
             "applicationId": [
                 4
             ],
@@ -2624,6 +2654,12 @@ export default {
             ],
             "universalIdentifier": [
                 4
+            ],
+            "applicationId": [
+                4
+            ],
+            "isSystemSideEffect": [
+                3
             ],
             "createdAt": [
                 6
