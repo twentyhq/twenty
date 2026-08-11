@@ -171,6 +171,18 @@ describe('ApplicationRegistrationVariableService', () => {
       expect(result.get(registrationId)).toBe(false);
     });
 
+    it('should report configured when a required variable decrypts to a real value', async () => {
+      mockVariables([
+        makeExistingVariable({
+          isRequired: true,
+          encryptedValue: 'enc:v2:deadbeef:stored-secret' as EncryptedString,
+        }),
+      ]);
+
+      const result = await service.isConfiguredBatch([registrationId]);
+
+      expect(result.get(registrationId)).toBe(true);
+    });
   });
 
   describe('updateVariableGlobal', () => {
