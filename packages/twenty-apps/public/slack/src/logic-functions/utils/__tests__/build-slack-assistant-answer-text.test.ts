@@ -9,7 +9,7 @@ describe('buildSlackAssistantAnswerText', () => {
       durationMilliseconds: 4200,
     });
 
-    expect(text).toBe('ACME has 3 open opportunities.\n\n_Answered in 4s_');
+    expect(text).toBe('ACME has 3 open opportunities.\n\n_AI-generated · Answered in 4s_');
   });
 
   it('should keep the response body untouched and put the footer after it', () => {
@@ -20,6 +20,6 @@ describe('buildSlackAssistantAnswerText', () => {
         responseText,
         durationMilliseconds: 1000,
       }),
-    ).toBe('**bold**\n- item\n\n_Answered in 1s_');
+    ).toBe('**bold**\n- item\n\n_AI-generated · Answered in 1s_');
   });
 });

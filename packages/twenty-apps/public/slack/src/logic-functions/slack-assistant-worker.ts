@@ -20,7 +20,7 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
-import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
+import { parseSlackAssistantAnswer } from 'src/logic-functions/utils/parse-slack-assistant-answer';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
@@ -110,15 +110,16 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    const responseText = extractAgentResponseText(agentResult);
+    const answer = parseSlackAssistantAnswer(agentResult);
 
-    if (responseText === undefined) {
+    if (answer === undefined) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
         errorMessage: 'Agent returned an empty response',
       });
     }
 
+    const responseText = answer.answer;
     const durationMilliseconds = Date.now() - startedAt;
 
     const deliveryResult = await slackPostMessageHandler({
@@ -133,8 +134,9 @@ export const slackAssistantWorkerHandler = async (
         responseText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH
           ? undefined
           : buildSlackAssistantAnswerBlocks({
-              responseText,
+              answer,
               durationMilliseconds,
+              workspaceBaseUrl,
             }),
     });
 

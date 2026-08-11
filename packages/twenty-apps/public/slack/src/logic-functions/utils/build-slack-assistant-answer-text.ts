@@ -7,4 +7,4 @@ export const buildSlackAssistantAnswerText = ({
   responseText: string;
   durationMilliseconds: number;
 }): string =>
-  `${responseText}\n\n_Answered in ${formatSlackAssistantDuration(durationMilliseconds)}_`;
+  `${responseText}\n\n_AI-generated · Answered in ${formatSlackAssistantDuration(durationMilliseconds)}_`;

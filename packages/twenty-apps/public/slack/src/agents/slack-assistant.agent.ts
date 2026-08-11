@@ -1,6 +1,7 @@
 import { defineAgent } from 'twenty-sdk/define';
 
 import { DEFAULT_SLACK_ASSISTANT_PROMPT } from 'src/constants/default-slack-assistant-prompt';
+import { SLACK_ASSISTANT_RESPONSE_SCHEMA } from 'src/constants/slack-assistant-response-schema';
 import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
@@ -14,6 +15,6 @@ export default defineAgent({
   description:
     'Conversational CRM assistant reached from Slack. Answers questions and acts on workspace data using the Slack Assistant role.',
   prompt: DEFAULT_SLACK_ASSISTANT_PROMPT,
-  responseFormat: { type: 'text' },
+  responseFormat: { type: 'json', schema: SLACK_ASSISTANT_RESPONSE_SCHEMA },
   roleUniversalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
 });
