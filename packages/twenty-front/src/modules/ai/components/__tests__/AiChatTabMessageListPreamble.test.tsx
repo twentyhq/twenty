@@ -42,8 +42,14 @@ jest.mock(
     AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
   }),
 );
-jest.mock('@/ai/components/AgentChatScrollToBottomOnMountLayoutEffect', () => ({
-  AgentChatScrollToBottomOnMountLayoutEffect: () => null,
+jest.mock(
+  '@/ai/components/AgentChatPinScrollToBottomOnMountLayoutEffect',
+  () => ({
+    AgentChatPinScrollToBottomOnMountLayoutEffect: () => null,
+  }),
+);
+jest.mock('@/ai/components/AgentChatStreamingAutoScrollEffect', () => ({
+  AgentChatStreamingAutoScrollEffect: () => null,
 }));
 
 const INSTANCE_ID = 'aiChatTabMessageListPreambleTest';
