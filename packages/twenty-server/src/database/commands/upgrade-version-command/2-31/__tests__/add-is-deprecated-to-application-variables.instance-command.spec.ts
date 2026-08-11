@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786448585278-add-is-deprecated-to-application-variables';
+import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786464090314-add-is-deprecated-to-application-variables';
 import { ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-31/add-is-deprecated-to-application-variables-upgrade-command-name.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
@@ -19,7 +19,7 @@ describe('AddIsDeprecatedToApplicationVariablesFastInstanceCommand', () => {
 
       expect(metadata).toEqual({
         version: '2.31.0',
-        timestamp: 1786448585278,
+        timestamp: 1786464090314,
         type: 'fast',
       });
     });
