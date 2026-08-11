@@ -1,7 +1,7 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786356853935-add-is-deprecated-to-application-variables';
-import { ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-30/add-is-deprecated-to-application-variables-upgrade-command-name.constant';
+import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786448585278-add-is-deprecated-to-application-variables';
+import { ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-31/add-is-deprecated-to-application-variables-upgrade-command-name.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 describe('AddIsDeprecatedToApplicationVariablesFastInstanceCommand', () => {
@@ -12,14 +12,14 @@ describe('AddIsDeprecatedToApplicationVariablesFastInstanceCommand', () => {
   });
 
   describe('registration', () => {
-    it('is registered against 2.30.0 so it stays dormant until 2.30 is current', () => {
+    it('is registered against 2.31.0 so it stays dormant until 2.31 is current', () => {
       const metadata = getRegisteredInstanceCommandMetadata(
         AddIsDeprecatedToApplicationVariablesFastInstanceCommand,
       );
 
       expect(metadata).toEqual({
-        version: '2.30.0',
-        timestamp: 1786356853935,
+        version: '2.31.0',
+        timestamp: 1786448585278,
         type: 'fast',
       });
     });
