@@ -26,11 +26,6 @@ export const useAiChatFileUpload = () => {
         fileFolder: FileFolder.AgentChat,
       });
 
-      setAgentChatSelectedFiles((previousSelectedFiles) =>
-        previousSelectedFiles.filter(
-          (selectedFile) => selectedFile.name !== file.name,
-        ),
-      );
       return {
         filename: file.name,
         mediaType: file.type,
@@ -44,6 +39,12 @@ export const useAiChatFileUpload = () => {
         message: t`Failed to upload file: ${fileName}`,
       });
       return null;
+    } finally {
+      setAgentChatSelectedFiles((previousSelectedFiles) =>
+        previousSelectedFiles.filter(
+          (selectedFile) => selectedFile.name !== file.name,
+        ),
+      );
     }
   };
 
