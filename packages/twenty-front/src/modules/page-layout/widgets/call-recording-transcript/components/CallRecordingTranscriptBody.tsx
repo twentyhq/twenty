@@ -1,4 +1,4 @@
-import { type CalendarEventCallRecordingSelection } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingSelection';
+import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
 import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
@@ -6,7 +6,11 @@ import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/P
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  parseCallRecordingTranscriptEntries,
+} from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -16,13 +20,13 @@ import {
 } from 'twenty-ui/feedback';
 
 type CallRecordingTranscriptBodyProps = {
-  callRecordingSelection: CalendarEventCallRecordingSelection | undefined;
+  callRecording: CalendarEventCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
 };
 
 export const CallRecordingTranscriptBody = ({
-  callRecordingSelection,
+  callRecording,
   loading,
   error,
 }: CallRecordingTranscriptBodyProps) => {
@@ -36,9 +40,9 @@ export const CallRecordingTranscriptBody = ({
     return <PageLayoutWidgetErrorDisplay widgetId={widget.id} error={error} />;
   }
 
-  if (!isDefined(callRecordingSelection)) {
+  if (!isDefined(callRecording)) {
     return (
-      // TODO: might need a dedicated call recording animated placeholder
+      // TODO(ehconitin): might need a dedicated call recording animated placeholder
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
@@ -53,15 +57,15 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  if (isDefined(callRecordingSelection.transcriptEntries)) {
-    return (
-      <CallRecordingTranscriptEntryList
-        entries={callRecordingSelection.transcriptEntries}
-      />
-    );
+  const transcriptEntries = parseCallRecordingTranscriptEntries(
+    callRecording.transcript,
+  );
+
+  if (isNonEmptyArray(transcriptEntries)) {
+    return <CallRecordingTranscriptEntryList entries={transcriptEntries} />;
   }
 
-  if (isCallRecordingTranscriptPending(callRecordingSelection.callRecording)) {
+  if (isCallRecordingTranscriptPending(callRecording)) {
     return (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="loadingMessages" />
@@ -77,7 +81,7 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  if (isCallRecordingTranscriptFailed(callRecordingSelection.callRecording)) {
+  if (isCallRecordingTranscriptFailed(callRecording)) {
     return (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="errorIndex" />

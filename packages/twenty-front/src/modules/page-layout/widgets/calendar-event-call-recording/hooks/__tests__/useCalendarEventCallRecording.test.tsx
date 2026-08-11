@@ -133,7 +133,7 @@ describe('useCalendarEventCallRecording', () => {
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({ skip: true }),
     );
-    expect(result.current.callRecordingSelection).toBeUndefined();
+    expect(result.current.callRecording).toBeUndefined();
   });
 
   it('skips the query when there is no target record', () => {
@@ -144,10 +144,10 @@ describe('useCalendarEventCallRecording', () => {
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({ skip: true }),
     );
-    expect(result.current.callRecordingSelection).toBeUndefined();
+    expect(result.current.callRecording).toBeUndefined();
   });
 
-  it('passes loading through and resolves to no selection without recordings', () => {
+  it('passes loading through and resolves to no recording without records', () => {
     findManyRecordsResult.loading = true;
 
     const { result, rerender } = renderHook(() =>
@@ -162,7 +162,7 @@ describe('useCalendarEventCallRecording', () => {
     });
 
     expect(result.current.loading).toBe(false);
-    expect(result.current.callRecordingSelection).toBeUndefined();
+    expect(result.current.callRecording).toBeUndefined();
   });
 
   it('passes query errors through', () => {
@@ -174,7 +174,7 @@ describe('useCalendarEventCallRecording', () => {
     expect(result.current.error).toBe(queryError);
   });
 
-  it('reacts when a cached pending recording receives a transcript', () => {
+  it('reacts when a cached in-progress recording completes', () => {
     findManyRecordsResult.records = [
       {
         ...readyCallRecording,
@@ -187,17 +187,20 @@ describe('useCalendarEventCallRecording', () => {
       useCalendarEventCallRecording(),
     );
 
-    expect(
-      result.current.callRecordingSelection?.transcriptEntries,
-    ).toBeUndefined();
+    expect(result.current.callRecording?.status).toBe(
+      CallRecordingStatus.PROCESSING,
+    );
 
     act(() => {
       findManyRecordsResult.records = [readyCallRecording];
       rerender();
     });
 
-    expect(result.current.callRecordingSelection?.transcriptEntries).toEqual([
-      expect.objectContaining({ speakerName: 'Ada', text: 'Hello' }),
-    ]);
+    expect(result.current.callRecording?.status).toBe(
+      CallRecordingStatus.COMPLETED,
+    );
+    expect(result.current.callRecording?.transcript).toEqual(
+      readyCallRecording.transcript,
+    );
   });
 });

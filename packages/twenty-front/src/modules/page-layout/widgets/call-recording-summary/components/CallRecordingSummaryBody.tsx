@@ -1,5 +1,5 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { type CalendarEventCallRecordingSelection } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingSelection';
+import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
 import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
@@ -25,13 +25,13 @@ const StyledSummaryContainer = styled.div`
 `;
 
 type CallRecordingSummaryBodyProps = {
-  callRecordingSelection: CalendarEventCallRecordingSelection | undefined;
+  callRecording: CalendarEventCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
 };
 
 export const CallRecordingSummaryBody = ({
-  callRecordingSelection,
+  callRecording,
   loading,
   error,
 }: CallRecordingSummaryBodyProps) => {
@@ -45,9 +45,9 @@ export const CallRecordingSummaryBody = ({
     return <PageLayoutWidgetErrorDisplay widgetId={widget.id} error={error} />;
   }
 
-  if (!isDefined(callRecordingSelection)) {
+  if (!isDefined(callRecording)) {
     return (
-      // TODO: might need a dedicated call recording animated placeholder
+      // TODO(ehconitin): might need a dedicated call recording animated placeholder
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
@@ -62,8 +62,7 @@ export const CallRecordingSummaryBody = ({
     );
   }
 
-  const summaryMarkdown =
-    callRecordingSelection.callRecording.summary?.markdown;
+  const summaryMarkdown = callRecording.summary?.markdown;
 
   if (isNonEmptyString(summaryMarkdown?.trim())) {
     return (
@@ -73,7 +72,7 @@ export const CallRecordingSummaryBody = ({
     );
   }
 
-  if (isCallRecordingTranscriptPending(callRecordingSelection.callRecording)) {
+  if (isCallRecordingTranscriptPending(callRecording)) {
     return (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="loadingMessages" />
@@ -89,7 +88,7 @@ export const CallRecordingSummaryBody = ({
     );
   }
 
-  if (isCallRecordingTranscriptFailed(callRecordingSelection.callRecording)) {
+  if (isCallRecordingTranscriptFailed(callRecording)) {
     return (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="errorIndex" />

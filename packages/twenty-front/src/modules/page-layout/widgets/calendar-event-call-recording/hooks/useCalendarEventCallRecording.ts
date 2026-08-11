@@ -2,7 +2,6 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { type CalendarEventCallRecordingSelection } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingSelection';
 import { selectCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/utils/selectCalendarEventCallRecording';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -31,7 +30,7 @@ const CALL_RECORDING_ORDER_BY: RecordGqlOperationOrderBy = [
 ];
 
 export const useCalendarEventCallRecording = (): {
-  callRecordingSelection: CalendarEventCallRecordingSelection | undefined;
+  callRecording: CalendarEventCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
 } => {
@@ -106,10 +105,10 @@ export const useCalendarEventCallRecording = (): {
     objectMetadataItemId: callRecordingObjectMetadataItem.id,
   });
 
-  const callRecordingSelection = useMemo(
+  const callRecording = useMemo(
     () => selectCalendarEventCallRecording(callRecordings),
     [callRecordings],
   );
 
-  return { callRecordingSelection, loading, error };
+  return { callRecording, loading, error };
 };

@@ -1,32 +1,12 @@
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { type CalendarEventCallRecordingSelection } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingSelection';
-import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
-import {
-  isDefined,
-  isNonEmptyArray,
-  parseCallRecordingTranscriptEntries,
-} from 'twenty-shared/utils';
+import { isCallRecordingInProgress } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingInProgress';
+import { CallRecordingStatus } from '~/generated/graphql';
 
 export const selectCalendarEventCallRecording = (
   callRecordingsInArrivalOrder: CalendarEventCallRecordingCandidate[],
-): CalendarEventCallRecordingSelection | undefined => {
-  for (const callRecording of callRecordingsInArrivalOrder) {
-    const transcriptEntries = parseCallRecordingTranscriptEntries(
-      callRecording.transcript,
-    );
-
-    if (isNonEmptyArray(transcriptEntries)) {
-      return { callRecording, transcriptEntries };
-    }
-  }
-
-  const selectedCallRecording =
-    callRecordingsInArrivalOrder.find(isCallRecordingTranscriptPending) ??
-    callRecordingsInArrivalOrder[0];
-
-  if (!isDefined(selectedCallRecording)) {
-    return undefined;
-  }
-
-  return { callRecording: selectedCallRecording, transcriptEntries: undefined };
-};
+): CalendarEventCallRecordingCandidate | undefined =>
+  callRecordingsInArrivalOrder.find(
+    (callRecording) => callRecording.status === CallRecordingStatus.COMPLETED,
+  ) ??
+  callRecordingsInArrivalOrder.find(isCallRecordingInProgress) ??
+  callRecordingsInArrivalOrder[0];

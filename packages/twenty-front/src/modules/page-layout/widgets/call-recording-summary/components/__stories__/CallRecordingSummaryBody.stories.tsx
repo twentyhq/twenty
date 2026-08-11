@@ -14,6 +14,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   PageLayoutTabLayoutMode,
@@ -188,82 +189,113 @@ type Story = StoryObj<typeof CallRecordingSummaryBody>;
 
 export const Ready: Story = {
   args: {
-    callRecordingSelection: {
-      callRecording: summarizedCallRecording,
-      transcriptEntries: undefined,
-    },
+    callRecording: summarizedCallRecording,
     loading: false,
     error: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Quarterly review call', undefined, {
+      timeout: 5000,
+    });
   },
 };
 
 export const ReadyWhileRecordingIsPending: Story = {
   args: {
-    callRecordingSelection: {
-      callRecording: {
-        ...pendingCallRecording,
-        summary: { markdown: summaryMarkdown },
-      },
-      transcriptEntries: undefined,
+    callRecording: {
+      ...pendingCallRecording,
+      summary: { markdown: summaryMarkdown },
     },
     loading: false,
     error: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Quarterly review call', undefined, {
+      timeout: 5000,
+    });
   },
 };
 
 export const Loading: Story = {
   args: {
-    callRecordingSelection: undefined,
+    callRecording: undefined,
     loading: true,
     error: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    await waitFor(() => {
+      expect(
+        canvasElement.querySelector('.react-loading-skeleton'),
+      ).toBeVisible();
+    });
   },
 };
 
 export const NoSummary: Story = {
   args: {
-    callRecordingSelection: {
-      callRecording: unsummarizedCallRecording,
-      transcriptEntries: undefined,
-    },
+    callRecording: unsummarizedCallRecording,
     loading: false,
     error: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('No Summary');
   },
 };
 
 export const Pending: Story = {
   args: {
-    callRecordingSelection: {
-      callRecording: pendingCallRecording,
-      transcriptEntries: undefined,
-    },
+    callRecording: pendingCallRecording,
     loading: false,
     error: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Processing Recording');
   },
 };
 
 export const Failed: Story = {
   args: {
-    callRecordingSelection: {
-      callRecording: failedCallRecording,
-      transcriptEntries: undefined,
-    },
+    callRecording: failedCallRecording,
     loading: false,
     error: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Processing Failed');
   },
 };
 
 export const NoRecording: Story = {
   args: {
-    callRecordingSelection: undefined,
+    callRecording: undefined,
     loading: false,
     error: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('No Call Recording');
   },
 };
 
 export const QueryError: Story = {
   args: {
-    callRecordingSelection: undefined,
+    callRecording: undefined,
     loading: false,
     error: new Error('Failed to load call recordings'),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Error');
   },
 };

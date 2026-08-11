@@ -1,5 +1,6 @@
 import { CallRecordingTranscriptEntryListItem } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof CallRecordingTranscriptEntryListItem> = {
@@ -25,6 +26,14 @@ export const Default: Story = {
       words: [],
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Ada Lovelace');
+    await canvas.findByText(
+      'Thanks for joining, let us walk through the quarterly numbers.',
+    );
+  },
 };
 
 export const WithHourLongTimestamp: Story = {
@@ -37,6 +46,12 @@ export const WithHourLongTimestamp: Story = {
       words: [],
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Grace Hopper');
+    await canvas.findByText('Let us wrap up and send the follow-ups tomorrow.');
+  },
 };
 
 export const WithoutSpeaker: Story = {
@@ -48,5 +63,10 @@ export const WithoutSpeaker: Story = {
       text: 'Inaudible segment without speaker attribution.',
       words: [],
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Inaudible segment without speaker attribution.');
   },
 };
