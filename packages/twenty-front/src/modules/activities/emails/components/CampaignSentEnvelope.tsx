@@ -12,10 +12,8 @@ import {
 import { EmailComposerFieldRow } from '@/activities/emails/components/EmailComposerFieldRow';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -42,11 +40,8 @@ export const CampaignSentEnvelope = ({
   campaign,
   width,
 }: CampaignSentEnvelopeProps) => {
-  const {
-    unsubscribeTopics,
-    loading: areTopicsLoading,
-    error: topicsError,
-  } = useUnsubscribeTopics();
+  const { unsubscribeTopics, loading: areTopicsLoading } =
+    useUnsubscribeTopics();
 
   // Nothing on this surface is editable, so the list resolves to a plain chip
   // rather than a disabled picker: the picker draws a full-width input box,
@@ -54,35 +49,19 @@ export const CampaignSentEnvelope = ({
   // withSoftDeleted keeps a list that was deleted after the send visible.
   const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
 
-  const {
-    record: list,
-    loading: isListLoading,
-    error: listError,
-  } = useFindOneRecord({
+  const { record: list, loading: isListLoading } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
     objectRecordId: campaign.listId ?? '',
     withSoftDeleted: true,
     skip: !hasList,
   });
 
-  // useFindOneRecord skips the query outright when the role cannot read the
-  // object, which looks exactly like a lookup that came back empty: not
-  // loading, no error, no record. Without this the row would tell a reader who
-  // simply lacks access that the list was deleted.
-  const { objectMetadataItem: messageListObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.MessageList,
-    });
-
-  const { canReadObjectRecords: canReadMessageLists } =
-    useObjectPermissionsForObject(messageListObjectMetadataItem.id);
-
-  const isListKnownDeleted =
-    hasList &&
-    canReadMessageLists &&
-    !isDefined(list) &&
-    !isListLoading &&
-    !isDefined(listError);
+  // A lookup that returns nothing does not tell us why: the list may be
+  // deleted, hidden by object or row-level permissions, or the query may have
+  // failed — and useFindOneRecord skips entirely without read permission, which
+  // is indistinguishable from an empty result. None of that is knowable here,
+  // so the row reports what is true in every case instead of guessing at one.
+  const isListUnresolved = hasList && !isDefined(list) && !isListLoading;
 
   const fromAddress = campaign.fromAddress?.primaryEmail;
   const subject = campaign.subject;
@@ -98,11 +77,10 @@ export const CampaignSentEnvelope = ({
       )
     : undefined;
 
-  const isTopicKnownDeleted =
-    hasUnsubscribeTopic &&
-    !isDefined(unsubscribeTopic) &&
-    !areTopicsLoading &&
-    !isDefined(topicsError);
+  // Same rule as the list row: an id missing from the topics we can see may be
+  // deleted or may simply be one this role cannot read, and the two look alike.
+  const isTopicUnresolved =
+    hasUnsubscribeTopic && !isDefined(unsubscribeTopic) && !areTopicsLoading;
 
   return (
     <CampaignEnvelopeBox width={width}>
@@ -128,11 +106,8 @@ export const CampaignSentEnvelope = ({
         ) : !hasList ? (
           <StyledEmptyValue>{t`No list`}</StyledEmptyValue>
         ) : (
-          // Same rule as the topic row below: a list is only called deleted
-          // once the query came back empty of its own accord, never because it
-          // is still in flight or failed.
-          isListKnownDeleted && (
-            <StyledEmptyValue>{t`Deleted list`}</StyledEmptyValue>
+          isListUnresolved && (
+            <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
           )
         )}
       </EmailComposerFieldRow>
@@ -146,12 +121,8 @@ export const CampaignSentEnvelope = ({
               {unsubscribeTopic.name ?? t`Untitled topic`}
             </StyledValue>
           ) : (
-            // "Deleted" is a claim about the record, so it is only made once
-            // the topics actually came back: neither a slow query nor a failed
-            // one — a network error, or a role that cannot read topics — gets
-            // to report a live topic as gone.
-            isTopicKnownDeleted && (
-              <StyledEmptyValue>{t`Deleted topic`}</StyledEmptyValue>
+            isTopicUnresolved && (
+              <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
             )
           )}
         </EmailComposerFieldRow>
