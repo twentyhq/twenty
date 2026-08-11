@@ -68,8 +68,6 @@ export class PeopleDataLabsPersonClientService {
         };
       }
 
-      // People Data Labs reports the outcome in the body, and can return a body
-      // level 404 under an HTTP 200, so the body status wins when present.
       const parsed = parsePeopleDataLabsResponseItem<PeopleDataLabsPersonData>({
         item: {
           ...responseBody,
