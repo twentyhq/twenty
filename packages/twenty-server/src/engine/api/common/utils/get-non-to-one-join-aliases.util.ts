@@ -1,9 +1,19 @@
-import { type SelectQueryBuilder, type ObjectLiteral } from 'typeorm';
+import { type Alias } from 'typeorm/query-builder/Alias';
+import { type RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 import { isDefined } from 'twenty-shared/utils';
 
-export const getNonToOneJoinAliases = <T extends ObjectLiteral>(
-  queryBuilder: SelectQueryBuilder<T>,
+type QueryBuilderWithJoinAttributes = {
+  expressionMap: {
+    joinAttributes: {
+      alias: Pick<Alias, 'name'>;
+      relation?: Pick<RelationMetadata, 'isOneToMany' | 'isManyToMany'>;
+    }[];
+  };
+};
+
+export const getNonToOneJoinAliases = (
+  queryBuilder: QueryBuilderWithJoinAttributes,
 ): string[] =>
   queryBuilder.expressionMap.joinAttributes
     .filter(
