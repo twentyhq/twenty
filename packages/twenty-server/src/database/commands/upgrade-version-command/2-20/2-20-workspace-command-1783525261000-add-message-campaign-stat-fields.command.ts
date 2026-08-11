@@ -30,6 +30,9 @@ const STAT_FIELD_UNIVERSAL_IDENTIFIERS = [
 // The allMessageCampaigns view is introduced by this feature, so existing
 // workspaces have no messageCampaign view at all. Create the view and every one
 // of its columns (not just the stat columns) so it materializes end to end.
+// The column list is read from the standard application of the running build,
+// which keeps growing after 2.20, so columns whose field is only introduced by a
+// later command are left out here and backfilled by that later command.
 const CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER =
   CAMPAIGN.views.allMessageCampaigns.universalIdentifier;
 
@@ -123,25 +126,40 @@ export class AddMessageCampaignStatFieldsCommand extends ProvisionedWorkspaceCom
       standardAllFlatEntityMaps,
     });
 
+    const availableFieldUniversalIdentifiers = new Set([
+      ...Object.keys(flatFieldMetadataMaps.byUniversalIdentifier),
+      ...fieldsToCreate.map(({ universalIdentifier }) => universalIdentifier),
+    ]);
+
     const viewFieldsToCreate = CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>
         !isDefined(flatViewFieldMaps.byUniversalIdentifier[universalIdentifier]),
-    ).map((universalIdentifier) => {
-      const standardViewField = findFlatEntityByUniversalIdentifier<FlatViewField>(
-        {
-          flatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
-          universalIdentifier,
-        },
-      );
+    )
+      .map((universalIdentifier) => {
+        const standardViewField =
+          findFlatEntityByUniversalIdentifier<FlatViewField>({
+            flatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+            universalIdentifier,
+          });
 
-      if (!isDefined(standardViewField)) {
-        throw new Error(
-          `Standard application is missing messageCampaign view column ${universalIdentifier}`,
+        if (!isDefined(standardViewField)) {
+          throw new Error(
+            `Standard application is missing messageCampaign view column ${universalIdentifier}`,
+          );
+        }
+
+        return standardViewField;
+      })
+      .filter((standardViewField) => {
+        const fieldUniversalIdentifier =
+          standardAllFlatEntityMaps.flatFieldMetadataMaps
+            .universalIdentifierById[standardViewField.fieldMetadataId];
+
+        return (
+          isDefined(fieldUniversalIdentifier) &&
+          availableFieldUniversalIdentifiers.has(fieldUniversalIdentifier)
         );
-      }
-
-      return standardViewField;
-    });
+      });
 
     const hasMetadataChanges =
       fieldsToCreate.length > 0 ||
