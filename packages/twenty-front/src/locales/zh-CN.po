@@ -1504,6 +1504,11 @@ msgstr "添加排序"
 msgid "Add SSO Identity Provider"
 msgstr "添加 SSO 身份提供商"
 
+#. js-lingui-id: ZAh4zP
+#: src/modules/views/view-stack/components/ViewStackTabList.tsx
+msgid "Add stack"
+msgstr ""
+
 #. js-lingui-id: 6Tl23V
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
@@ -1568,6 +1573,11 @@ msgstr "添加 URI"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "添加视图"
+
+#. js-lingui-id: oU1lna
+#: src/modules/views/view-stack/components/ViewStackTabDropdownContent.tsx
+msgid "Add view to this stack"
+msgstr ""
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -13488,6 +13498,11 @@ msgstr "无选择字段"
 msgid "No server administrators found."
 msgstr "未找到服务器管理员。"
 
+#. js-lingui-id: RWRH60
+#: src/modules/views/view-picker/components/ViewPickerStackSelect.tsx
+msgid "No stack"
+msgstr ""
+
 #. js-lingui-id: RQ6tfU
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
@@ -17971,6 +17986,11 @@ msgstr "SSO (SAML / OIDC)"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "SSO Bypass"
 msgstr "SSO绕过"
+
+#. js-lingui-id: P9fBwv
+#: src/modules/views/view-picker/components/ViewPickerStackSelect.tsx
+msgid "Stack"
+msgstr ""
 
 #. js-lingui-id: uavm+q
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
