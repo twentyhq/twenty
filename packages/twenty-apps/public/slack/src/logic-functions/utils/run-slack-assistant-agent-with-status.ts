@@ -4,20 +4,21 @@ import {
   type RunAgentResult,
 } from 'twenty-sdk/logic-function';
 
+import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 
 type RunSlackAssistantAgentInput = Pick<
   RunAgentInput,
   'agentUniversalIdentifier' | 'runAsWorkspaceMemberId'
 > & {
-  prompt: string;
+  messages: SlackAssistantAgentMessage[];
   slackChannelId: string;
   threadTimestamp: string;
 };
 
 export const runSlackAssistantAgentWithStatus = async ({
   agentUniversalIdentifier,
-  prompt,
+  messages,
   runAsWorkspaceMemberId,
   slackChannelId,
   threadTimestamp,
@@ -30,7 +31,7 @@ export const runSlackAssistantAgentWithStatus = async ({
   try {
     return await runAgent({
       agentUniversalIdentifier,
-      prompt,
+      messages,
       runAsWorkspaceMemberId,
     });
   } finally {

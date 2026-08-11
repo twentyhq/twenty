@@ -1,12 +1,12 @@
 import type DataLoader from 'dataloader';
 
+import { type FieldMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
+import { type IndexMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
 import {
   type ApplicationTranslationCatalogLoaderPayload,
   type FieldMetadataLoaderPayload,
-  type FieldMetadataConnectionLoaderPayload,
   type IndexFieldMetadataLoaderPayload,
   type IndexMetadataLoaderPayload,
-  type IndexMetadataConnectionLoaderPayload,
   type SearchFieldMetadataLoaderPayload,
   type IsConfiguredLoaderPayload,
   type MorphRelationLoaderPayload,

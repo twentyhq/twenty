@@ -18,6 +18,8 @@ export const createDefaultStandaloneRichTextWidget = (
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
+    universalIdentifier: id,
+    isSystemSideEffect: false,
     pageLayoutTabId,
     title: 'Untitled Rich Text',
     isActive: true,
