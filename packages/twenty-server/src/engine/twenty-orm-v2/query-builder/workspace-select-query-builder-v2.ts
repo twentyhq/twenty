@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
@@ -17,6 +16,20 @@ import {
   isWhereFactoryLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
+import {
+  buildCountStatement,
+  buildProjection,
+  buildSelectStatement,
+  buildWhereExpression,
+  mapRowToEntity,
+  normaliseColumnExpression,
+  quoteColumn,
+  type JoinClause,
+  type OrderByClause,
+  type SelectClause,
+  type SelectStatementState,
+  type WhereClause,
+} from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
 const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
@@ -38,31 +51,6 @@ const extractColumnNamesFromExpression = (expression: string): string[] => {
       expression,
     ) ?? []
   );
-};
-
-type WhereClause = {
-  operator: 'and' | 'or';
-  sql: string;
-};
-
-type JoinClause = {
-  alias: string;
-  targetTableShape: WorkspaceTableShape;
-  condition: string;
-  // Predicates that must not turn the LEFT JOIN into an inner join, so they are AND-ed
-  // into ON rather than WHERE: row-level permissions and the joined soft-delete filter.
-  additionalOnConditions: string[];
-};
-
-type SelectClause = {
-  expression: string;
-  alias: string;
-};
-
-type OrderByClause = {
-  expression: string;
-  direction: 'ASC' | 'DESC';
-  nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
 export type QueryBuilderV2Context = {
@@ -341,7 +329,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     noFormatting?: boolean;
   }): Promise<T[]> {
     const rows = await this.executeSelect();
-    const entities = rows.map((row) => this.mapRowToEntity<T>(row));
+    const entities = rows.map((row) => mapRowToEntity<T>(row, this.alias));
 
     if (options?.noFormatting) {
       return entities;
@@ -369,7 +357,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return null;
     }
 
-    const entity = this.mapRowToEntity<T>(rows[0]);
+    const entity = mapRowToEntity<T>(rows[0], this.alias);
 
     if (options?.noFormatting) {
       return entity;
@@ -407,14 +395,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     this.context.onBeforeExecute(countBuilder);
 
-    const sql = [
-      `SELECT COUNT(DISTINCT ${countBuilder.quoteColumn(countBuilder.alias, 'id')}) AS "count"`,
-      countBuilder.buildFromClause(),
-      countBuilder.buildJoinClause(),
-      countBuilder.buildWhereClause(),
-    ]
-      .filter((part) => part.length > 0)
-      .join(' ');
+    const sql = buildCountStatement(countBuilder.toSelectStatementState());
 
     const compiled = compileNamedParameters(sql, countBuilder.parameters);
     const rows = await this.context.executor.execute(compiled);
@@ -590,188 +571,47 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     sql: string;
     parameters: Record<string, unknown>;
   } {
-    const sql = [
-      `SELECT ${this.buildProjection().expressions.join(', ')}`,
-      this.buildFromClause(),
-      this.buildJoinClause(),
-      this.buildWhereClause(),
-      this.buildGroupByClause(),
-      this.buildOrderByClause(),
-      isDefined(this.limitValue) ? `LIMIT ${Number(this.limitValue)}` : '',
-      isDefined(this.offsetValue) ? `OFFSET ${Number(this.offsetValue)}` : '',
-    ]
-      .filter((part) => part.length > 0)
-      .join(' ');
-
-    return { sql, parameters: this.parameters };
+    return {
+      sql: buildSelectStatement(this.toSelectStatementState()),
+      parameters: this.parameters,
+    };
   }
 
   private buildProjection(): {
     expressions: string[];
     mainAliasColumnNames: string[];
   } {
-    const selectedColumnNames = Object.entries(this.findOptions.select ?? {})
-      .filter(([, isSelected]) => isSelected === true)
-      .map(([columnName]) => columnName);
-
-    for (const columnName of selectedColumnNames) {
-      if (!isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
-        throw new TwentyOrmV2Exception(
-          `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
-        );
-      }
-    }
-
-    const mainAliasColumnNames =
-      this.explicitSelection ??
-      (selectedColumnNames.length > 0
-        ? selectedColumnNames
-        : this.tableShape.columnNames);
-
-    const expressions = mainAliasColumnNames.map(
-      (columnName) =>
-        `${this.quoteColumn(this.alias, columnName)} AS ${escapeIdentifier(
-          `${this.alias}_${columnName}`,
-        )}`,
-    );
-
-    for (const extraSelect of this.extraSelectClauses) {
-      expressions.push(
-        `${extraSelect.expression} AS ${escapeIdentifier(extraSelect.alias)}`,
-      );
-    }
-
-    return { expressions, mainAliasColumnNames };
+    return buildProjection(this.toSelectStatementState());
   }
 
-  private buildFromClause(): string {
-    return `FROM ${escapeIdentifier(this.tableShape.schemaName)}.${escapeIdentifier(
-      this.tableShape.tableName,
-    )} AS ${escapeIdentifier(this.alias)}`;
+  private buildWhereExpression(options?: {
+    includeSoftDeletePredicate?: boolean;
+  }): string {
+    return buildWhereExpression(this.toSelectStatementState(), options);
   }
 
-  private buildJoinClause(): string {
-    return this.joinClauses
-      .map((joinClause) => {
-        const onConditions = [
-          joinClause.condition,
-          ...joinClause.additionalOnConditions,
-        ];
-
-        if (
-          !this.includeDeleted &&
-          joinClause.targetTableShape.hasDeletedAtColumn
-        ) {
-          onConditions.push(
-            `${this.quoteColumn(joinClause.alias, 'deletedAt')} IS NULL`,
-          );
-        }
-
-        return `LEFT JOIN ${escapeIdentifier(
-          joinClause.targetTableShape.schemaName,
-        )}.${escapeIdentifier(
-          joinClause.targetTableShape.tableName,
-        )} AS ${escapeIdentifier(joinClause.alias)} ON ${onConditions
-          .map((condition) => `(${condition})`)
-          .join(' AND ')}`;
-      })
-      .join(' ');
-  }
-
-  private buildWhereClause(): string {
-    const expression = this.buildWhereExpression();
-
-    return expression.length > 0 ? `WHERE ${expression}` : '';
-  }
-
-  private buildWhereExpression({
-    includeSoftDeletePredicate = true,
-  }: { includeSoftDeletePredicate?: boolean } = {}): string {
-    const userExpression = this.whereClauses
-      .map((clause, index) =>
-        index === 0
-          ? clause.sql
-          : `${clause.operator.toUpperCase()} ${clause.sql}`,
-      )
-      .join(' ');
-
-    const shouldAddSoftDeletePredicate =
-      includeSoftDeletePredicate &&
-      !this.includeDeleted &&
-      this.tableShape.hasDeletedAtColumn;
-
-    if (!shouldAddSoftDeletePredicate) {
-      return userExpression;
-    }
-
-    const softDeletePredicate = `${this.quoteColumn(this.alias, 'deletedAt')} IS NULL`;
-
-    if (userExpression.length === 0) {
-      return softDeletePredicate;
-    }
-
-    // AND binds tighter than OR, so the accumulated clauses have to be wrapped as a whole:
-    // without this, "A OR B AND deletedAt IS NULL" leaves rows matching A unfiltered.
-    return `(${userExpression}) AND ${softDeletePredicate}`;
-  }
-
-  private buildGroupByClause(): string {
-    return this.groupByExpressions.length > 0
-      ? `GROUP BY ${this.groupByExpressions.join(', ')}`
-      : '';
-  }
-
-  private buildOrderByClause(): string {
-    if (this.orderByClauses.length === 0) {
-      return '';
-    }
-
-    return `ORDER BY ${this.orderByClauses
-      .map(
-        (orderByClause) =>
-          `${orderByClause.expression} ${orderByClause.direction}${
-            isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''
-          }`,
-      )
-      .join(', ')}`;
-  }
-
-  // Accepts the forms the shared parsers emit: "alias.column", "column", and
-  // already-quoted `"alias"."column"`.
   private normaliseColumnExpression(expression: string): string {
-    if (expression.includes('"') || expression.includes('(')) {
-      return expression;
-    }
-
-    const parts = expression.split('.');
-
-    if (parts.length === 2) {
-      return this.quoteColumn(parts[0], parts[1]);
-    }
-
-    return this.quoteColumn(this.alias, expression);
+    return normaliseColumnExpression(expression, this.alias);
   }
 
   private quoteColumn(alias: string, columnName: string): string {
-    return `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
+    return quoteColumn(alias, columnName);
   }
 
-  private mapRowToEntity<T extends Record<string, unknown>>(
-    row: Record<string, unknown>,
-  ): T {
-    const entity: Record<string, unknown> = {};
-    const mainAliasPrefix = `${this.alias}_`;
-
-    for (const [columnAlias, value] of Object.entries(row)) {
-      if (columnAlias.startsWith(mainAliasPrefix)) {
-        entity[columnAlias.slice(mainAliasPrefix.length)] = value;
-        continue;
-      }
-
-      entity[columnAlias] = value;
-    }
-
-    return entity as T;
+  private toSelectStatementState(): SelectStatementState {
+    return {
+      alias: this.alias,
+      tableShape: this.tableShape,
+      findOptions: this.findOptions,
+      explicitSelection: this.explicitSelection,
+      extraSelectClauses: this.extraSelectClauses,
+      joinClauses: this.joinClauses,
+      whereClauses: this.whereClauses,
+      orderByClauses: this.orderByClauses,
+      groupByExpressions: this.groupByExpressions,
+      includeDeleted: this.includeDeleted,
+      limitValue: this.limitValue,
+      offsetValue: this.offsetValue,
+    };
   }
 }
