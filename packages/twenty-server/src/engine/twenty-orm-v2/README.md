@@ -11,8 +11,19 @@ Behind `IS_ORM_V2_READ_PATH_ENABLED`. Off, nothing changes.
 
 Workspace entities have no classes. Every one is synthesised per request from
 `core.objectMetadata` / `core.fieldMetadata`, which means TypeORM's entity-metadata graph
-is built to describe tables the metadata already describes. See
-`docs/investigations/orm-read-path/` for the measurements behind that.
+is built to describe tables the metadata already describes. Building it costs 3.2ms for a
+726-column workspace with no relations and 12.6ms once relations are declared on both
+sides, and it is rebuilt per cached workspace.
+
+Two things that came out of tracing the read path, both of which cut against the obvious
+framing:
+
+- **The pg driver, not TypeORM, dominates row handling.** In the profile behind #23980,
+  `parseRow` is 14.6% of slow-request event-loop time and TypeORM entity hydration is 3.0%.
+  The 14.6% survives removing the ORM, so this is not where the win is.
+- **Writes still need `EntityMetadata`.** Insert and update derive their column list,
+  `RETURNING` mapping and `updatedAt` maintenance from it. Bypassing reads shrinks what
+  the metadata cache is used for; it does not delete the cache.
 
 So v2 has no ORM metadata. `WorkspaceTableShape` is the whole model: table name, schema,
 columns, relations, and the composite-column mapping, derived from the flat maps. It is
@@ -29,6 +40,15 @@ per object type rather than thousands, and it can be rebuilt or discarded freely
 | `repository/` | `WorkspaceRepositoryV2`, permissions and result formatting |
 | `datasource/` | pool ownership and per-request data source |
 | `executor/` | prepared-statement execution against `pg` |
+
+## Why not a query-builder library
+
+Kysely, Drizzle standalone, pg-promise, postgres.js and @databases were all measured
+against a hostile identifier and all escape correctly, so injection safety did not pick a
+winner. Compilation cost did: for a 60-column findMany, TypeORM takes 231µs, Kysely 149µs
+and a direct template string 3.7µs. A builder library replaces the part that field
+metadata already drives while keeping most of the cost, so v2 generates the SQL itself and
+uses `pg` for the driver and prepared statements.
 
 ## Why named parameters
 
