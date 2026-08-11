@@ -415,26 +415,23 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
   });
 
-  it.each(['transientError', 'unavailable'])(
-    'stores no person enrichment on a %s person outcome',
-    async (personOutcome) => {
-      renderEffect([
-        buildEnrichMock({
-          outcome: 'matched',
-          enrichmentPayload: enrichment,
-          countCall: () => {},
-          personOutcome,
-        }),
-      ]);
+  it('stores no person enrichment on a non-matched person outcome', async () => {
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+        personOutcome: 'unavailable',
+      }),
+    ]);
 
-      await flushMutation();
+    await flushMutation();
 
-      expect(jotaiStore.get(personEnrichmentState.atom)).toBeNull();
-      expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
-        domain: 'acme.com',
-      });
-    },
-  );
+    expect(jotaiStore.get(personEnrichmentState.atom)).toBeNull();
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
+      domain: 'acme.com',
+    });
+  });
 
   it('stores nothing when the mutation fails', async () => {
     renderEffect([

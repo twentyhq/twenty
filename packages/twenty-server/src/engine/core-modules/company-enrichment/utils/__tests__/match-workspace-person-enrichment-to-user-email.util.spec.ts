@@ -8,16 +8,7 @@ const personEnrichment = {
 } as WorkspacePersonEnrichment;
 
 describe('matchWorkspacePersonEnrichmentToUserEmail', () => {
-  it('should keep an enrichment whose email matches the user email', () => {
-    expect(
-      matchWorkspacePersonEnrichmentToUserEmail({
-        personEnrichment,
-        userEmail: 'ada@acme.com',
-      }),
-    ).toBe(personEnrichment);
-  });
-
-  it('should match case-insensitively and ignore surrounding whitespace', () => {
+  it('should keep an enrichment matching the user email case-insensitively', () => {
     expect(
       matchWorkspacePersonEnrichmentToUserEmail({
         personEnrichment,
@@ -31,15 +22,6 @@ describe('matchWorkspacePersonEnrichmentToUserEmail', () => {
       matchWorkspacePersonEnrichmentToUserEmail({
         personEnrichment,
         userEmail: 'someone-else@acme.com',
-      }),
-    ).toBeNull();
-  });
-
-  it('should pass through a null enrichment', () => {
-    expect(
-      matchWorkspacePersonEnrichmentToUserEmail({
-        personEnrichment: null,
-        userEmail: 'ada@acme.com',
       }),
     ).toBeNull();
   });

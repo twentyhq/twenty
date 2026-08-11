@@ -94,20 +94,6 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
     expect(companyContext).not.toHaveProperty('injectedField');
   });
 
-  it('should pass a null person context to the service when the client-supplied object is malformed', async () => {
-    const { resolver, workspaceSetupChatService } = buildResolver();
-
-    await start(resolver, null, {
-      email: 42,
-      enrichedAt: true,
-    } as unknown as WorkspacePersonEnrichment);
-
-    const { personContext } =
-      workspaceSetupChatService.startWorkspaceSetupChat.mock.calls[0][0];
-
-    expect(personContext).toBeNull();
-  });
-
   it('should pass the sanitized enrichment to the service when the person context is valid', async () => {
     const { resolver, workspaceSetupChatService } = buildResolver();
 

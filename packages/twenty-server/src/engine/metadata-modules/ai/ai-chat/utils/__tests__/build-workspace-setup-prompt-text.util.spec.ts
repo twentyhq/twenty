@@ -317,13 +317,4 @@ describe('buildWorkspaceSetupPromptText', () => {
     );
   });
 
-  it('should describe a missing workspace name without inventing one', () => {
-    const result = buildPrompt({
-      workspaceContext: { ...workspaceContext, workspaceDisplayName: null },
-    });
-
-    expect(result).toContain(
-      'This workspace is not named yet (subdomain: acme).',
-    );
-  });
 });

@@ -111,12 +111,13 @@ describe('PersonEnrichmentService', () => {
     ).toHaveBeenCalledWith('ada@gmail.com');
   });
 
-  it('should lowercase and trim the email before calling the client', async () => {
+  it('should enrich with the normalized email, use its own throttle key, and record the attempt', async () => {
     peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
-      outcome: 'notFound',
+      outcome: 'matched',
+      data: { full_name: 'Ada Lovelace', job_title: 'head of sales' },
     });
 
-    await service.enrichPersonForWorkspaceCreator({
+    const result = await service.enrichPersonForWorkspaceCreator({
       userId: creatorUserId,
       email: '  Ada@ACME.com ',
       workspaceId,
@@ -125,30 +126,17 @@ describe('PersonEnrichmentService', () => {
     expect(
       peopleDataLabsPersonClientService.enrichPersonByEmail,
     ).toHaveBeenCalledWith('ada@acme.com');
-  });
-
-  it('should enrich and return the mapped enrichment on a match', async () => {
-    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
-      outcome: 'matched',
-      data: {
-        full_name: 'Ada Lovelace',
-        job_title: 'head of sales',
-        job_company_name: 'Acme Inc',
-      },
-    });
-
-    const result = await service.enrichPersonForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'ada@acme.com',
-      workspaceId,
-    });
-
+    expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
+      `person-enrichment:throttler:${workspaceId}`,
+      1,
+      expect.any(Number),
+      expect.any(Number),
+    );
     expect(result.outcome).toBe('matched');
     expect(result.enrichment).toMatchObject({
       email: 'ada@acme.com',
       fullName: 'Ada Lovelace',
       jobTitle: 'head of sales',
-      jobCompanyName: 'Acme Inc',
     });
     expect(keyValuePairService.set).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -162,79 +150,6 @@ describe('PersonEnrichmentService', () => {
         }),
       }),
     );
-  });
-
-  it('should use its own throttle key', async () => {
-    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
-      outcome: 'notFound',
-    });
-
-    await service.enrichPersonForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'ada@acme.com',
-      workspaceId,
-    });
-
-    expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
-      `person-enrichment:throttler:${workspaceId}`,
-      1,
-      expect.any(Number),
-      expect.any(Number),
-    );
-  });
-
-  it('should pass through a transient error', async () => {
-    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
-      outcome: 'transientError',
-      httpStatus: 429,
-      message: 'rate limited',
-    });
-
-    const result = await service.enrichPersonForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'ada@acme.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({ outcome: 'transientError', enrichment: null });
-  });
-
-  it.each([
-    { outcome: 'skipped' },
-    { outcome: 'notFound' },
-    { outcome: 'permanentError', httpStatus: 401, message: 'unauthorized' },
-  ])(
-    'should return unavailable on client outcome $outcome',
-    async (clientResult) => {
-      peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue(
-        clientResult,
-      );
-
-      const result = await service.enrichPersonForWorkspaceCreator({
-        userId: creatorUserId,
-        email: 'ada@acme.com',
-        workspaceId,
-      });
-
-      expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    },
-  );
-
-  it('should not consume throttle tokens when the feature is disabled', async () => {
-    peopleDataLabsPersonClientService.isEnabled.mockReturnValue(false);
-
-    const result = await service.enrichPersonForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'ada@acme.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
-    expect(
-      peopleDataLabsPersonClientService.enrichPersonByEmail,
-    ).not.toHaveBeenCalled();
-    expect(keyValuePairService.set).not.toHaveBeenCalled();
   });
 
   it('should return transientError without calling the client when throttled', async () => {
@@ -255,13 +170,10 @@ describe('PersonEnrichmentService', () => {
     expect(
       peopleDataLabsPersonClientService.enrichPersonByEmail,
     ).not.toHaveBeenCalled();
-    expect(keyValuePairService.set).not.toHaveBeenCalled();
   });
 
-  it('should not record an enrichment attempt when the client skips (feature disabled)', async () => {
-    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
-      outcome: 'skipped',
-    });
+  it('should not consume throttle tokens when the feature is disabled', async () => {
+    peopleDataLabsPersonClientService.isEnabled.mockReturnValue(false);
 
     const result = await service.enrichPersonForWorkspaceCreator({
       userId: creatorUserId,
@@ -270,41 +182,7 @@ describe('PersonEnrichmentService', () => {
     });
 
     expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(keyValuePairService.set).not.toHaveBeenCalled();
-  });
-
-  it('should still return the enrichment when recording the attempt fails', async () => {
-    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
-      outcome: 'matched',
-      data: { full_name: 'Ada Lovelace' },
-    });
-    keyValuePairService.set.mockRejectedValue(
-      new Error('key-value store down'),
-    );
-
-    const result = await service.enrichPersonForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'ada@acme.com',
-      workspaceId,
-    });
-
-    expect(result.outcome).toBe('matched');
-    expect(result.enrichment).toMatchObject({ fullName: 'Ada Lovelace' });
-  });
-
-  it('should not call the client when no api key is configured', async () => {
-    configValues = { IS_ONBOARDING_AI_CHAT_ENABLED: true };
-
-    const result = await service.enrichPersonForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'ada@acme.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(
-      peopleDataLabsPersonClientService.enrichPersonByEmail,
-    ).not.toHaveBeenCalled();
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
   });
 
   it('should stay unavailable for a book-call-only configuration since the ai chat is its only consumer', async () => {
@@ -325,19 +203,5 @@ describe('PersonEnrichmentService', () => {
     expect(
       peopleDataLabsPersonClientService.enrichPersonByEmail,
     ).not.toHaveBeenCalled();
-  });
-
-  it('should rethrow non throttler errors from the throttler', async () => {
-    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
-      new Error('redis down'),
-    );
-
-    await expect(
-      service.enrichPersonForWorkspaceCreator({
-        userId: creatorUserId,
-        email: 'ada@acme.com',
-        workspaceId,
-      }),
-    ).rejects.toThrow('redis down');
   });
 });

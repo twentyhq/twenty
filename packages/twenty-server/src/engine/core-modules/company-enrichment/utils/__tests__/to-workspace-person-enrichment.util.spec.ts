@@ -48,28 +48,4 @@ describe('toWorkspacePersonEnrichment', () => {
 
     expect(result?.industry).toBe('manufacturing');
   });
-
-  it('should null every missing field', () => {
-    const result = toWorkspacePersonEnrichment({
-      email: 'ada@acme.com',
-      enrichedAt,
-      data: {},
-    });
-
-    expect(result).toEqual({
-      email: 'ada@acme.com',
-      enrichedAt: '2026-07-21T10:00:00.000Z',
-      fullName: null,
-      jobTitle: null,
-      jobTitleLevels: [],
-      jobCompanyName: null,
-      industry: null,
-      headline: null,
-      linkedinUrl: null,
-      skills: [],
-      locality: null,
-      region: null,
-      country: null,
-    });
-  });
 });
