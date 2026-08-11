@@ -20,7 +20,7 @@ export const getFrontComponentStorageViolationMessage = ({
   }
 
   if (
-    otherEntriesTotalLength + serializedValue.length >
+    otherEntriesTotalLength + key.length + serializedValue.length >
     FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH
   ) {
     return `Storage quota of ${FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH} characters exceeded`;

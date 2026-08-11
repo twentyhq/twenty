@@ -945,16 +945,16 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.storageSet(
-          'local',
-          'theme',
-          '"dark"',
-        );
-        await result.current.frontComponentHostCommunicationApi.storageSet(
-          'session',
-          'visits',
-          '2',
-        );
+        await result.current.frontComponentHostCommunicationApi.storageSet({
+          area: 'local',
+          key: 'theme',
+          serializedValue: '"dark"',
+        });
+        await result.current.frontComponentHostCommunicationApi.storageSet({
+          area: 'session',
+          key: 'visits',
+          serializedValue: '2',
+        });
       });
 
       expect(mockStorageSet).toHaveBeenCalledWith({
@@ -1002,13 +1002,13 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.storageDelete(
-          'local',
-          'theme',
-        );
-        await result.current.frontComponentHostCommunicationApi.storageClear(
-          'session',
-        );
+        await result.current.frontComponentHostCommunicationApi.storageDelete({
+          area: 'local',
+          key: 'theme',
+        });
+        await result.current.frontComponentHostCommunicationApi.storageClear({
+          area: 'session',
+        });
       });
 
       expect(mockStorageDelete).toHaveBeenCalledWith({
@@ -1034,11 +1034,11 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.storageNamespace).toBeUndefined();
 
       await expect(
-        result.current.frontComponentHostCommunicationApi.storageSet(
-          'local',
-          'theme',
-          '"dark"',
-        ),
+        result.current.frontComponentHostCommunicationApi.storageSet({
+          area: 'local',
+          key: 'theme',
+          serializedValue: '"dark"',
+        }),
       ).rejects.toThrow('Device storage requires a signed-in user');
 
       expect(mockStorageSet).not.toHaveBeenCalled();

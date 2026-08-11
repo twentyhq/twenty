@@ -58,12 +58,15 @@ export const LocalStorageRoundTrip: Story = runFrontComponentStory({
 
     await waitFor(
       () => {
-        expect(api.storageSet).toHaveBeenCalledWith(
-          'local',
-          'greeting',
-          'hello',
-        );
-        expect(api.storageDelete).toHaveBeenCalledWith('local', 'greeting');
+        expect(api.storageSet).toHaveBeenCalledWith({
+          area: 'local',
+          key: 'greeting',
+          serializedValue: 'hello',
+        });
+        expect(api.storageDelete).toHaveBeenCalledWith({
+          area: 'local',
+          key: 'greeting',
+        });
       },
       { timeout: HOST_API_TIMEOUT },
     );
@@ -94,7 +97,11 @@ export const SessionStorageRoundTrip: Story = runFrontComponentStory({
 
     await waitFor(
       () => {
-        expect(api.storageSet).toHaveBeenCalledWith('session', 'visits', '2');
+        expect(api.storageSet).toHaveBeenCalledWith({
+          area: 'session',
+          key: 'visits',
+          serializedValue: '2',
+        });
       },
       { timeout: HOST_API_TIMEOUT },
     );
@@ -165,7 +172,7 @@ export const StoragePersistsToTheHostPage: Story = {
     storageNamespace: PERSISTED_STORAGE_NAMESPACE,
     frontComponentHostCommunicationApi: {
       ...hostApiMocks,
-      storageSet: async (area, key, serializedValue) => {
+      storageSet: async ({ area, key, serializedValue }) => {
         frontComponentStorageService.set({
           ...PERSISTED_STORAGE_NAMESPACE,
           area,
@@ -173,14 +180,14 @@ export const StoragePersistsToTheHostPage: Story = {
           serializedValue,
         });
       },
-      storageDelete: async (area, key) => {
+      storageDelete: async ({ area, key }) => {
         frontComponentStorageService.delete({
           ...PERSISTED_STORAGE_NAMESPACE,
           area,
           key,
         });
       },
-      storageClear: async (area) => {
+      storageClear: async ({ area }) => {
         frontComponentStorageService.clear({
           ...PERSISTED_STORAGE_NAMESPACE,
           area,

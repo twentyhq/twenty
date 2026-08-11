@@ -31,19 +31,16 @@ export const createFrontComponentStorageBridge = ({
       hostCommunicationApi: FrontComponentHostCommunicationApiStore,
     ) => Promise<void> | undefined,
   ): void => {
-    const executePersist = () => {
+    const executePersist = (): Promise<void> | undefined =>
       runPersist(getHostCommunicationApi())?.catch(() => {
         console.warn(STORAGE_PERSISTENCE_FAILURE_WARNING);
       });
-    };
 
-    if (!isDefined(getHostCommunicationApi().storageSet)) {
+    const persistResult = executePersist();
+
+    if (!isDefined(persistResult)) {
       pendingPersistOperations.push(executePersist);
-
-      return;
     }
-
-    executePersist();
   };
 
   const getOtherEntriesTotalLength = (excludedKey: string): number => {
@@ -51,7 +48,7 @@ export const createFrontComponentStorageBridge = ({
 
     for (const [key, value] of entries) {
       if (key !== excludedKey) {
-        totalLength += value.length;
+        totalLength += key.length + value.length;
       }
     }
 
@@ -87,7 +84,7 @@ export const createFrontComponentStorageBridge = ({
       cachedKeys = null;
 
       persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageSet?.(area, key, serializedValue),
+        hostCommunicationApi.storageSet?.({ area, key, serializedValue }),
       );
     },
 
@@ -96,7 +93,7 @@ export const createFrontComponentStorageBridge = ({
       cachedKeys = null;
 
       persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageDelete?.(area, key),
+        hostCommunicationApi.storageDelete?.({ area, key }),
       );
     },
 
@@ -105,7 +102,7 @@ export const createFrontComponentStorageBridge = ({
       cachedKeys = null;
 
       persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageClear?.(area),
+        hostCommunicationApi.storageClear?.({ area }),
       );
     },
 

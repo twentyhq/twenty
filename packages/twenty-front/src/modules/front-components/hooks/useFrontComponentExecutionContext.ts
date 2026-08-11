@@ -39,7 +39,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, CustomError, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -378,17 +378,20 @@ export const useFrontComponentExecutionContext = ({
 
   const requireStorageNamespace = (): FrontComponentStorageNamespace => {
     if (!isDefined(storageNamespace)) {
-      throw new Error('Device storage requires a signed-in user');
+      throw new CustomError(
+        'Device storage requires a signed-in user',
+        'FRONT_COMPONENT_STORAGE_REQUIRES_SIGNED_IN_USER',
+      );
     }
 
     return storageNamespace;
   };
 
-  const storageSet: FrontComponentHostCommunicationApi['storageSet'] = async (
+  const storageSet: FrontComponentHostCommunicationApi['storageSet'] = async ({
     area,
     key,
     serializedValue,
-  ) => {
+  }) => {
     frontComponentStorageService.set({
       ...requireStorageNamespace(),
       area,
@@ -398,7 +401,7 @@ export const useFrontComponentExecutionContext = ({
   };
 
   const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
-    async (area, key) => {
+    async ({ area, key }) => {
       frontComponentStorageService.delete({
         ...requireStorageNamespace(),
         area,
@@ -407,7 +410,7 @@ export const useFrontComponentExecutionContext = ({
     };
 
   const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
-    async (area) => {
+    async ({ area }) => {
       frontComponentStorageService.clear({
         ...requireStorageNamespace(),
         area,

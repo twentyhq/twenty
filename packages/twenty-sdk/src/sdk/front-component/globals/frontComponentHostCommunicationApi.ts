@@ -106,20 +106,20 @@ export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
 
-export type StorageSetFunction = (
-  area: FrontComponentStorageArea,
-  key: string,
-  serializedValue: string,
-) => Promise<void>;
+export type StorageSetFunction = (params: {
+  area: FrontComponentStorageArea;
+  key: string;
+  serializedValue: string;
+}) => Promise<void>;
 
-export type StorageDeleteFunction = (
-  area: FrontComponentStorageArea,
-  key: string,
-) => Promise<void>;
+export type StorageDeleteFunction = (params: {
+  area: FrontComponentStorageArea;
+  key: string;
+}) => Promise<void>;
 
-export type StorageClearFunction = (
-  area: FrontComponentStorageArea,
-) => Promise<void>;
+export type StorageClearFunction = (params: {
+  area: FrontComponentStorageArea;
+}) => Promise<void>;
 
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;

@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH } from '@/constants/FrontComponentStorageMaxTotalLength';
 import { FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH } from '@/constants/FrontComponentStorageMaxValueLength';
 import { buildFrontComponentStorageKeyPrefix } from '../buildFrontComponentStorageKeyPrefix';
 import { frontComponentStorageService } from '../frontComponentStorageService';
@@ -167,5 +168,23 @@ describe('frontComponentStorageService', () => {
     expect(
       frontComponentStorageService.snapshot({ ...NAMESPACE, area: 'local' }),
     ).toEqual({});
+  });
+
+  it('should count key lengths toward the total quota', () => {
+    const keyPrefix = buildFrontComponentStorageKeyPrefix(NAMESPACE);
+
+    window.localStorage.setItem(
+      `${keyPrefix}a`,
+      'v'.repeat(FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH - 2),
+    );
+
+    expect(() =>
+      frontComponentStorageService.set({
+        ...NAMESPACE,
+        area: 'local',
+        key: 'b',
+        serializedValue: 'v',
+      }),
+    ).toThrow('Storage quota');
   });
 });

@@ -1,5 +1,5 @@
 import { isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
 
 import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
@@ -56,7 +56,10 @@ export const frontComponentStorageService = {
     serializedValue: string;
   }): void => {
     if (!isString(key) || !isString(serializedValue)) {
-      throw new Error('Storage keys and values must be strings');
+      throw new CustomError(
+        'Storage keys and values must be strings',
+        'FRONT_COMPONENT_STORAGE_INVALID_INPUT',
+      );
     }
 
     const browserStorage = getBrowserStorage(area);
@@ -70,8 +73,12 @@ export const frontComponentStorageService = {
       keyPrefix,
     )) {
       if (existingNamespacedKey !== namespacedKey) {
-        otherEntriesTotalLength +=
+        const existingKeyLength =
+          existingNamespacedKey.length - keyPrefix.length;
+        const existingValueLength =
           browserStorage.getItem(existingNamespacedKey)?.length ?? 0;
+
+        otherEntriesTotalLength += existingKeyLength + existingValueLength;
       }
     }
 
@@ -82,7 +89,10 @@ export const frontComponentStorageService = {
     });
 
     if (isDefined(violationMessage)) {
-      throw new Error(violationMessage);
+      throw new CustomError(
+        violationMessage,
+        'FRONT_COMPONENT_STORAGE_LIMIT_EXCEEDED',
+      );
     }
 
     browserStorage.setItem(namespacedKey, serializedValue);

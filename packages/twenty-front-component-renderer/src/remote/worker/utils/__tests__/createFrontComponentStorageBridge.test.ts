@@ -17,13 +17,13 @@ const createConnectedBridge = () => {
     hostCommunicationApi,
     bridge: createFrontComponentStorageBridge({
       area: 'local',
-      getHostCommunicationApi: () =>
-        hostCommunicationApi as FrontComponentHostCommunicationApiStore,
+      getHostCommunicationApi: () => hostCommunicationApi,
     }),
   };
 };
 
-const flushMicrotasks = () => new Promise((resolve) => setTimeout(resolve, 0));
+const flushPendingPromises = () =>
+  new Promise((resolve) => setTimeout(resolve, 0));
 
 describe('createFrontComponentStorageBridge', () => {
   it('should read back seeded entries synchronously', () => {
@@ -73,11 +73,11 @@ describe('createFrontComponentStorageBridge', () => {
     bridge.setItem('theme', '"dark"');
 
     expect(bridge.getItem('theme')).toBe('"dark"');
-    expect(hostCommunicationApi.storageSet).toHaveBeenCalledWith(
-      'local',
-      'theme',
-      '"dark"',
-    );
+    expect(hostCommunicationApi.storageSet).toHaveBeenCalledWith({
+      area: 'local',
+      key: 'theme',
+      serializedValue: '"dark"',
+    });
   });
 
   it('should persist deletions and clears with the area', () => {
@@ -88,15 +88,17 @@ describe('createFrontComponentStorageBridge', () => {
     bridge.removeItem('theme');
 
     expect(bridge.getItem('theme')).toBeNull();
-    expect(hostCommunicationApi.storageDelete).toHaveBeenCalledWith(
-      'local',
-      'theme',
-    );
+    expect(hostCommunicationApi.storageDelete).toHaveBeenCalledWith({
+      area: 'local',
+      key: 'theme',
+    });
 
     bridge.clear();
 
     expect(bridge.getLength()).toBe(0);
-    expect(hostCommunicationApi.storageClear).toHaveBeenCalledWith('local');
+    expect(hostCommunicationApi.storageClear).toHaveBeenCalledWith({
+      area: 'local',
+    });
   });
 
   it('should tag persisted writes with the session area', () => {
@@ -104,17 +106,16 @@ describe('createFrontComponentStorageBridge', () => {
 
     const bridge = createFrontComponentStorageBridge({
       area: 'session',
-      getHostCommunicationApi: () =>
-        hostCommunicationApi as FrontComponentHostCommunicationApiStore,
+      getHostCommunicationApi: () => hostCommunicationApi,
     });
 
     bridge.setItem('visits', '2');
 
-    expect(hostCommunicationApi.storageSet).toHaveBeenCalledWith(
-      'session',
-      'visits',
-      '2',
-    );
+    expect(hostCommunicationApi.storageSet).toHaveBeenCalledWith({
+      area: 'session',
+      key: 'visits',
+      serializedValue: '2',
+    });
   });
 
   it('should queue writes until the host communication api is available', () => {
@@ -134,7 +135,11 @@ describe('createFrontComponentStorageBridge', () => {
 
     bridge.flushPendingPersistOperations();
 
-    expect(storageSet).toHaveBeenCalledWith('local', 'theme', '"dark"');
+    expect(storageSet).toHaveBeenCalledWith({
+      area: 'local',
+      key: 'theme',
+      serializedValue: '"dark"',
+    });
   });
 
   it('should reject keys longer than the limit', () => {
@@ -186,6 +191,18 @@ describe('createFrontComponentStorageBridge', () => {
     );
   });
 
+  it('should count key lengths toward the total quota', () => {
+    const { bridge } = createConnectedBridge();
+
+    bridge.seed({
+      a: 'v'.repeat(FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH - 2),
+    });
+
+    expect(() => bridge.setItem('b', 'v')).toThrow(
+      expect.objectContaining({ name: 'QuotaExceededError' }),
+    );
+  });
+
   it('should keep the local write when the host refuses it', async () => {
     const consoleWarnSpy = jest
       .spyOn(console, 'warn')
@@ -198,13 +215,12 @@ describe('createFrontComponentStorageBridge', () => {
 
     const bridge = createFrontComponentStorageBridge({
       area: 'local',
-      getHostCommunicationApi: () =>
-        hostCommunicationApi as unknown as FrontComponentHostCommunicationApiStore,
+      getHostCommunicationApi: () => hostCommunicationApi,
     });
 
     bridge.setItem('theme', '"dark"');
 
-    await flushMicrotasks();
+    await flushPendingPromises();
 
     expect(bridge.getItem('theme')).toBe('"dark"');
     expect(consoleWarnSpy).toHaveBeenCalled();
