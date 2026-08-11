@@ -1396,7 +1396,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_PAGE_ENABLED' | 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1578,8 +1578,6 @@ export interface ClientConfig {
     isMultiWorkspaceEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
     defaultSubdomain?: Scalars['String']
-    /** @deprecated Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend. */
-    subdomainMinLength: Scalars['Float']
     frontDomain: Scalars['String']
     publicFunctionDomain?: Scalars['String']
     analyticsEnabled: Scalars['Boolean']
@@ -4857,8 +4855,6 @@ export interface ClientConfigGenqlSelection{
     isMultiWorkspaceEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
     defaultSubdomain?: boolean | number
-    /** @deprecated Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend. */
-    subdomainMinLength?: boolean | number
     frontDomain?: boolean | number
     publicFunctionDomain?: boolean | number
     analyticsEnabled?: boolean | number
@@ -9649,7 +9645,6 @@ export const enumDatabaseEventAction = {
 }
 
 export const enumFeatureFlagKey = {
-   IS_AI_CHAT_PAGE_ENABLED: 'IS_AI_CHAT_PAGE_ENABLED' as const,
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
@@ -9661,7 +9656,9 @@ export const enumFeatureFlagKey = {
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
    IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const,
-   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const
+   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const,
+   IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED: 'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED' as const,
+   IS_NATIVE_CALL_RECORDING_TABS_ENABLED: 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

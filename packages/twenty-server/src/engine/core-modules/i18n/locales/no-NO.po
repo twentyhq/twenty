@@ -3153,6 +3153,11 @@ msgstr "Filteroperand støttes ikke for denne felttypen"
 msgid "Filter uses a select option that does not exist"
 msgstr "Filteret bruker et valgalternativ som ikke finnes"
 
+#. js-lingui-id: NCkLG1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+msgid "Filter value is not valid for this operand"
+msgstr ""
+
 #. js-lingui-id: KujtjC
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Find"
@@ -7143,6 +7148,11 @@ msgstr "Noen av rettighetene du valgte er ikke gyldige. Vennligst prøv igjen me
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
+#. js-lingui-id: RjTo7h
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while starting the app installation. Please try again."
+msgstr ""
+
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "Something went wrong. Please try again."
@@ -8852,6 +8862,16 @@ msgstr "Brukerarbeidsområde ikke funnet."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "User workspace role configuration not found."
 msgstr "Konfigurasjon for brukerens arbeidsområderolle ikke funnet."
+
+#. js-lingui-id: sFN4Dx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
+msgstr ""
+
+#. js-lingui-id: ccqQWi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
+msgstr ""
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts

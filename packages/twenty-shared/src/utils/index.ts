@@ -23,6 +23,8 @@ export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfOb
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
+export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRecordingTranscriptStatusMarker';
+export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
 export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';
 export { evaluateConditionalAvailabilityExpression } from './command-menu-items/evaluateConditionalAvailabilityExpression';
 export { interpolateCommandMenuItemTemplate } from './command-menu-items/interpolateCommandMenuItemTemplate';
@@ -154,7 +156,27 @@ export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
 export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';
 export { isMatchingUUIDFilter } from './filter/utils/isMatchingUUIDFilter';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
-export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
+export {
+  strictArrayOfUuidOrVariableSchema,
+  arrayOfUuidOrVariableSchema,
+} from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
+export {
+  nonEmptyStringFilterValueSchema,
+  numericFilterValueSchema,
+  plainDateFilterValueSchema,
+  instantFilterValueSchema,
+  plainDateOrInstantFilterValueSchema,
+  booleanFilterValueSchema,
+  actorSourceFilterValueSchema,
+} from './filter/utils/validation-schemas/filterValueScalarSchemas';
+export {
+  FILTER_VALUE_SCHEMAS_MAP,
+  COMPOSITE_SUB_FIELD_VALUE_SCHEMAS,
+  FILTER_VALUE_FORMAT_HINTS,
+} from './filter/utils/validation-schemas/filterValueSchemasMap';
+export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
+export type { FilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
+export { getFilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,

@@ -3459,6 +3459,11 @@ msgstr "التقاويم"
 msgid "Call recorder"
 msgstr "مسجِّل المكالمات"
 
+#. js-lingui-id: ahn0Ti
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "Call recording is not available in this workspace."
+msgstr ""
+
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Call-to-action button"
@@ -8066,7 +8071,7 @@ msgid "Expand"
 msgstr "توسيع"
 
 #. js-lingui-id: 8ibXh3
-#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+#: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
 msgid "Expand chat"
 msgstr ""
 
@@ -8080,10 +8085,21 @@ msgstr "توسيع المجلد"
 msgid "Expand navigation panel"
 msgstr ""
 
+#. js-lingui-id: CM8OoE
+#: src/modules/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage.ts
+#: src/modules/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage.ts
+msgid "Expand record"
+msgstr ""
+
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor.tsx
 msgid "Expand to Full Screen"
 msgstr "توسيع لملء الشاشة"
+
+#. js-lingui-id: YcwQIp
+#: src/modules/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage.ts
+msgid "Expand view"
+msgstr ""
 
 #. js-lingui-id: iT7W4v
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
@@ -12779,6 +12795,11 @@ msgstr "لا تتوفر بيانات الفوترة لمساحة العمل هذ
 msgid "No body"
 msgstr "لا يوجد متن"
 
+#. js-lingui-id: 8Qo8A6
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "No call recording exists for this calendar event yet."
+msgstr ""
+
 #. js-lingui-id: c3+z7H
 #: src/modules/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput.tsx
 msgid "No calling code"
@@ -13281,6 +13302,11 @@ msgstr "لم يتم استدعاء أي أدوات"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No topic"
 msgstr "بدون موضوع"
+
+#. js-lingui-id: du4Icj
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "No transcript is available for this recording."
+msgstr ""
 
 #. js-lingui-id: ZCTuAQ
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -13904,12 +13930,16 @@ msgid "Only you will be able to see your emails and events"
 msgstr "أنت فقط من سيتمكن من رؤية رسائلك الإلكترونية وأحداثك"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Open"
 msgstr "افتح"
+
+#. js-lingui-id: Z5AQOT
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "Open a calendar event to view its transcript."
+msgstr ""
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -18491,6 +18521,16 @@ msgstr "سيتم تمرير السجلات المحددة (حتى {maxRecordsFor
 msgid "The shared email you want to use."
 msgstr "البريد الإلكتروني المشترك الذي تريد استخدامه."
 
+#. js-lingui-id: 9q0gnf
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "The transcript could not be generated."
+msgstr ""
+
+#. js-lingui-id: bkXHoz
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "The transcript is empty."
+msgstr ""
+
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it."
@@ -19178,6 +19218,11 @@ msgstr "إجمالي الوقت"
 msgid "Track AI consumption across your workspace."
 msgstr "تتبع استهلاك الذكاء الاصطناعي عبر مساحة العمل الخاصة بك."
 
+#. js-lingui-id: zDTPYv
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "Transcript is being prepared…"
+msgstr ""
+
 #. js-lingui-id: zPGNJm
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Transfer"
@@ -19623,6 +19668,11 @@ msgstr "ملف غير معروف"
 msgid "Unknown object"
 msgstr "كائن غير معروف"
 
+#. js-lingui-id: 0Wy3/1
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
+msgid "Unknown speaker"
+msgstr ""
+
 #. js-lingui-id: rg5AzZ
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Unknown topic"
@@ -19699,6 +19749,11 @@ msgstr "قائمة غير مرتبة بنقاط"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Unpaid"
 msgstr "غير مدفوع"
+
+#. js-lingui-id: fkuUW0
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+msgid "Unrecognized transcript format."
+msgstr ""
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx

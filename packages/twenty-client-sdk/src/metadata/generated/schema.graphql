@@ -1727,7 +1727,6 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
-  IS_AI_CHAT_PAGE_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -1740,6 +1739,8 @@ enum FeatureFlagKey {
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
+  IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
+  IS_NATIVE_CALL_RECORDING_TABS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -1921,7 +1922,6 @@ type ClientConfig {
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
-  subdomainMinLength: Float! @deprecated(reason: "Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend.")
   frontDomain: String!
   publicFunctionDomain: String
   analyticsEnabled: Boolean!
