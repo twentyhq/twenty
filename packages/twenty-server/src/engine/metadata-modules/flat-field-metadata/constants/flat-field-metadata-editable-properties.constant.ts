@@ -7,6 +7,7 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'icon',
     'isActive',
     'isLabelSyncedWithName',
+    'isSearchable',
     'isUnique',
     'label',
     'name',
@@ -21,6 +22,7 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'label',
     'options',
     'settings',
+    'isSearchable',
     'isUnique',
   ],
 } as const satisfies Record<
