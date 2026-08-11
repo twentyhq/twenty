@@ -343,7 +343,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     const rows = await this.executeSelect();
     const entities = rows.map((row) => this.mapRowToEntity<T>(row));
 
-    if (options?.noFormatting === true) {
+    if (options?.noFormatting) {
       return entities;
     }
 
@@ -371,7 +371,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     const entity = this.mapRowToEntity<T>(rows[0]);
 
-    if (options?.noFormatting === true) {
+    if (options?.noFormatting) {
       return entity;
     }
 
@@ -453,8 +453,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return true;
   }
 
-  // Columns this query reads on the main alias. The permission layer consumes this
-  // directly instead of recovering it from the generated SQL.
   // Columns referenced per alias across the projection, extra selects and ORDER BY. The
   // permission layer needs this because a joined alias is a different object with its own
   // field permissions, and ordering by one of its columns reads it just as a select does.
