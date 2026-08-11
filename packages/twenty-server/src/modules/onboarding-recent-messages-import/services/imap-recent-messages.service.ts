@@ -7,8 +7,6 @@ import { type MessageFolder } from 'src/modules/messaging/message-folder-manager
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
 
-const IMAP_INBOX_FOLDER_PATH = 'INBOX';
-
 @Injectable()
 export class ImapRecentMessagesService {
   constructor(private readonly imapClientProvider: ImapClientProvider) {}
@@ -16,20 +14,17 @@ export class ImapRecentMessagesService {
   async getExternalIds({
     connectedAccountId,
     messageFolders,
-    maxCountPerScope,
+    maxCount,
   }: {
     connectedAccountId: string;
     messageFolders: MessageFolder[];
-    maxCountPerScope: number;
+    maxCount: number;
   }): Promise<string[]> {
-    const sentAndInboxFolders = messageFolders.filter(
-      (messageFolder) =>
-        messageFolder.isSentFolder ||
-        getImapFolderPath(messageFolder.externalId)?.toUpperCase() ===
-          IMAP_INBOX_FOLDER_PATH,
+    const sentFolders = messageFolders.filter(
+      (messageFolder) => messageFolder.isSentFolder,
     );
 
-    if (sentAndInboxFolders.length === 0) {
+    if (sentFolders.length === 0) {
       return [];
     }
 
@@ -39,12 +34,12 @@ export class ImapRecentMessagesService {
     try {
       const messageExternalIds: string[] = [];
 
-      for (const messageFolder of sentAndInboxFolders) {
+      for (const messageFolder of sentFolders) {
         messageExternalIds.push(
           ...(await this.getFolderExternalIds({
             imapClient,
             messageFolder,
-            maxCount: maxCountPerScope,
+            maxCount,
           })),
         );
       }

@@ -8,7 +8,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
-import { RECENT_MESSAGES_MAX_PER_SCOPE } from 'src/modules/onboarding-recent-messages-import/constants/recent-messages-max-per-scope.constant';
+import { RECENT_MESSAGES_MAX_COUNT } from 'src/modules/onboarding-recent-messages-import/constants/recent-messages-max-count.constant';
 import { GmailRecentMessagesService } from 'src/modules/onboarding-recent-messages-import/services/gmail-recent-messages.service';
 import { ImapRecentMessagesService } from 'src/modules/onboarding-recent-messages-import/services/imap-recent-messages.service';
 import { MicrosoftRecentMessagesService } from 'src/modules/onboarding-recent-messages-import/services/microsoft-recent-messages.service';
@@ -43,24 +43,24 @@ export class RecentMessagesService {
     connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>;
     messageFolders: MessageFolder[];
   }): Promise<string[]> {
-    const maxCountPerScope = RECENT_MESSAGES_MAX_PER_SCOPE;
+    const maxCount = RECENT_MESSAGES_MAX_COUNT;
 
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return this.gmailRecentMessagesService.getExternalIds({
           connectedAccountId: connectedAccount.id,
-          maxCountPerScope,
+          maxCount,
         });
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftRecentMessagesService.getExternalIds({
           connectedAccountId: connectedAccount.id,
-          maxCountPerScope,
+          maxCount,
         });
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return this.imapRecentMessagesService.getExternalIds({
           connectedAccountId: connectedAccount.id,
           messageFolders,
-          maxCountPerScope,
+          maxCount,
         });
       default:
         throw new MessageImportDriverException(
