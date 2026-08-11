@@ -217,8 +217,11 @@ describe('2-31 slow instance command 1786459992777 - EncryptEmptyApplicationVari
     ).toBe('');
   });
 
-  it('up() applies CHECK constraints that reject empty-string inserts', async () => {
-    await dropCheckConstraints(dataSource);
+  it('up() tightens the constraints once the backfill has encrypted the empty rows', async () => {
+    await seedApplicationVariable('');
+    await seedRegistrationVariable('');
+
+    await command.runDataMigration(dataSource);
 
     const queryRunner = dataSource.createQueryRunner();
 
