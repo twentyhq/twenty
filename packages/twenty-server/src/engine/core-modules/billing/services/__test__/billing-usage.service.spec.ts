@@ -74,7 +74,9 @@ describe('BillingUsageService', () => {
         BillingUsageService,
         {
           provide: BillingCreditGrantService,
-          useValue: { getSpendableCreditsMicro: jest.fn().mockResolvedValue(0) },
+          useValue: {
+            getSpendableCreditsMicro: jest.fn().mockResolvedValue(0),
+          },
         },
         {
           provide: BillingSubscriptionService,
