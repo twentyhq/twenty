@@ -2,10 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkspacePersonEnrichmentResult } from 'twenty-shared/workspace';
+import {
+  type WorkspaceEnrichmentResult,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
 import { PERSON_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/person-enrichment-throttle-max-requests.constant';
 import { PERSON_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/person-enrichment-throttle-window-ms.constant';
+import { EnrichmentThrottleService } from 'src/engine/core-modules/company-enrichment/services/enrichment-throttle.service';
 import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import { type PeopleDataLabsEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-enrich-result.type';
 import { type PeopleDataLabsPersonData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-person-data.type';
@@ -17,11 +21,6 @@ import { readIsPersonEnrichmentEnabled } from 'src/engine/core-modules/company-e
 import { toWorkspacePersonEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-person-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import {
-  ThrottlerException,
-  ThrottlerExceptionCode,
-} from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
@@ -34,7 +33,7 @@ export class PersonEnrichmentService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly peopleDataLabsClientService: PeopleDataLabsClientService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly throttlerService: ThrottlerService,
+    private readonly enrichmentThrottleService: EnrichmentThrottleService,
     private readonly keyValuePairService: KeyValuePairService<PersonEnrichmentAttemptKeyValueTypeMap>,
   ) {}
 
@@ -46,7 +45,7 @@ export class PersonEnrichmentService {
     userId: string;
     email: string;
     workspaceId: string;
-  }): Promise<WorkspacePersonEnrichmentResult> {
+  }): Promise<WorkspaceEnrichmentResult<WorkspacePersonEnrichment>> {
     try {
       return await this.enrichPersonForWorkspaceCreatorOrThrow({
         userId,
@@ -72,7 +71,7 @@ export class PersonEnrichmentService {
     userId: string;
     email: string;
     workspaceId: string;
-  }): Promise<WorkspacePersonEnrichmentResult> {
+  }): Promise<WorkspaceEnrichmentResult<WorkspacePersonEnrichment>> {
     if (!readIsPersonEnrichmentEnabled(this.twentyConfigService)) {
       return { outcome: 'unavailable', enrichment: null };
     }
@@ -97,22 +96,14 @@ export class PersonEnrichmentService {
       return { outcome: 'unavailable', enrichment: null };
     }
 
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `person-enrichment:throttler:${workspaceId}`,
-        1,
-        PERSON_ENRICHMENT_THROTTLE_MAX_REQUESTS,
-        PERSON_ENRICHMENT_THROTTLE_WINDOW_MS,
-      );
-    } catch (error) {
-      if (
-        error instanceof ThrottlerException &&
-        error.code === ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        return { outcome: 'transientError', enrichment: null };
-      }
+    const throttleOutcome = await this.enrichmentThrottleService.consumeToken({
+      throttleKey: `person-enrichment:throttler:${workspaceId}`,
+      maxRequests: PERSON_ENRICHMENT_THROTTLE_MAX_REQUESTS,
+      windowMs: PERSON_ENRICHMENT_THROTTLE_WINDOW_MS,
+    });
 
-      throw error;
+    if (throttleOutcome === 'limitReached') {
+      return { outcome: 'transientError', enrichment: null };
     }
 
     const result =
@@ -145,7 +136,7 @@ export class PersonEnrichmentService {
     result: PeopleDataLabsEnrichResult<PeopleDataLabsPersonData>;
     workspaceId: string;
     email: string;
-  }): WorkspacePersonEnrichmentResult {
+  }): WorkspaceEnrichmentResult<WorkspacePersonEnrichment> {
     if (result.outcome === 'transientError') {
       this.logger.warn(
         `Person enrichment transiently failed for workspace ${workspaceId}: ${result.message}`,
