@@ -778,7 +778,6 @@ enum ViewType {
 
 enum ViewKey {
   INDEX
-  FIELDS_WIDGET
 }
 
 enum ViewOpenRecordIn {

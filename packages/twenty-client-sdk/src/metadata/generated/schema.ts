@@ -542,7 +542,7 @@ export interface View {
 
 export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'LIST' | 'FIELDS_WIDGET' | 'TABLE_WIDGET' | 'KANBAN_WIDGET' | 'LIST_WIDGET' | 'CALENDAR_WIDGET'
 
-export type ViewKey = 'INDEX' | 'FIELDS_WIDGET'
+export type ViewKey = 'INDEX'
 
 export type ViewOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE'
 
@@ -9438,8 +9438,7 @@ export const enumViewType = {
 }
 
 export const enumViewKey = {
-   INDEX: 'INDEX' as const,
-   FIELDS_WIDGET: 'FIELDS_WIDGET' as const
+   INDEX: 'INDEX' as const
 }
 
 export const enumViewOpenRecordIn = {

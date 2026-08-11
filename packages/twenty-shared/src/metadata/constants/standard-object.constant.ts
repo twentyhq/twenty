@@ -1,4 +1,3 @@
-import { SYSTEM_VIEW_KEYS } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
 import { STANDARD_OBJECT_FIELDS } from '@/metadata/constants/standard-object-fields.constant';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/standard-object-universal-identifiers.constant';
 import { buildStandardObjectIndexView } from '@/metadata/utils/internal/build-standard-object-index-view.util';

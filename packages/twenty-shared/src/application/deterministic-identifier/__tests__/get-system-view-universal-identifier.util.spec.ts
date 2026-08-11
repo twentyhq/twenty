@@ -1,6 +1,7 @@
-import { SYSTEM_VIEW_KEYS } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
-import { getSystemViewUniversalIdentifier } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
-import { ViewKey } from '@/types/ViewKey';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
 
 const APP = '11111111-1111-4111-8111-111111111111';
 const OBJECT = '22222222-2222-4222-8222-222222222222';
