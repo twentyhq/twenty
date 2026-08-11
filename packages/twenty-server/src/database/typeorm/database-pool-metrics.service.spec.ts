@@ -55,6 +55,31 @@ const createDataSource = ({
   };
 };
 
+const createRawPool = ({ connectError }: { connectError?: Error } = {}) => {
+  const client = { release: jest.fn() };
+  const connect = jest.fn((callback?: (...args: unknown[]) => void) => {
+    if (callback) {
+      callback(connectError, connectError ? undefined : client, jest.fn());
+
+      return undefined;
+    }
+
+    return connectError
+      ? Promise.reject(connectError)
+      : Promise.resolve(client);
+  });
+
+  const pool = {
+    totalCount: 1,
+    idleCount: 1,
+    waitingCount: 0,
+    options: { max: 10 },
+    connect,
+  } as unknown as Pool;
+
+  return { pool, connect, client };
+};
+
 describe('DatabasePoolMetricsService', () => {
   let service: DatabasePoolMetricsService;
   let gaugeCallbacks: Map<string, GaugeCallback>;
@@ -245,5 +270,66 @@ describe('DatabasePoolMetricsService', () => {
 
     expect(dataSource.obtainMasterConnection).toHaveBeenCalledTimes(1);
     expect(histogramRecord).toHaveBeenCalledTimes(1);
+  });
+
+  // pool.query() acquires its client through the callback form, so instrumentation that
+  // only handles the promise form leaves every pooled query hanging.
+  it('keeps the callback form of connect working', () => {
+    const { pool } = createRawPool();
+
+    service.registerPool({
+      poolName: DatabasePoolName.WorkspaceV2Primary,
+      pool,
+    });
+
+    const onConnect = jest.fn();
+
+    pool.connect(onConnect);
+
+    expect(onConnect).toHaveBeenCalledTimes(1);
+    expect(histogramRecord).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the promise form of connect working', async () => {
+    const { pool, client } = createRawPool();
+
+    service.registerPool({
+      poolName: DatabasePoolName.WorkspaceV2Primary,
+      pool,
+    });
+
+    await expect(pool.connect()).resolves.toBe(client);
+    expect(histogramRecord).toHaveBeenCalledTimes(1);
+  });
+
+  it('counts a failed acquisition in both forms', async () => {
+    const connectError = new Error('pool exhausted');
+    const { pool } = createRawPool({ connectError });
+
+    service.registerPool({
+      poolName: DatabasePoolName.WorkspaceV2Primary,
+      pool,
+    });
+
+    await expect(pool.connect()).rejects.toThrow('pool exhausted');
+    pool.connect(jest.fn());
+
+    expect(counterAdd).toHaveBeenCalledTimes(2);
+  });
+
+  it('stops reporting a pool once it is unregistered', async () => {
+    const { pool } = createRawPool();
+
+    service.registerPool({
+      poolName: DatabasePoolName.WorkspaceV2Primary,
+      pool,
+    });
+    service.unregisterPool(DatabasePoolName.WorkspaceV2Primary);
+
+    const callback = gaugeCallbacks.get(
+      'twenty_database_pool_total_connections',
+    );
+
+    expect(await callback?.()).toEqual([]);
   });
 });
