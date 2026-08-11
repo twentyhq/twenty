@@ -355,19 +355,23 @@ export abstract class CommonBaseQueryRunnerService<
       workspaceDataSource: globalWorkspaceDataSource,
       rolePermissionConfig,
       repository,
-      readRepositoryV2: this.resolveReadRepositoryV2(
-        context.featureFlagsMap,
-        queryRunnerContext.flatObjectMetadata.nameSingular,
+      readRepositoryV2: this.resolveReadRepositoryV2({
+        featureFlagsMap: context.featureFlagsMap,
+        nameSingular: queryRunnerContext.flatObjectMetadata.nameSingular,
         rolePermissionConfig,
-      ),
+      }),
     };
   }
 
-  private resolveReadRepositoryV2(
-    featureFlagsMap: Record<string, boolean>,
-    nameSingular: string,
-    rolePermissionConfig: RolePermissionConfig,
-  ) {
+  private resolveReadRepositoryV2({
+    featureFlagsMap,
+    nameSingular,
+    rolePermissionConfig,
+  }: {
+    featureFlagsMap: Record<string, boolean>;
+    nameSingular: string;
+    rolePermissionConfig: RolePermissionConfig;
+  }) {
     const isOrmV2Enabled =
       featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED];
 
