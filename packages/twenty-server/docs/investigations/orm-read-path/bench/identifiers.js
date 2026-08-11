@@ -97,21 +97,38 @@ const probePgPromise = () => {
   );
 };
 
+// postgres.js assembles SQL lazily at execution time and does not export its escaper, so
+// this is a transcription of it. The probe asserts the transcription still matches the
+// shipped source rather than evaluating anything out of node_modules.
+const POSTGRES_JS_ESCAPE_SOURCE = `return '"' + str.replace(/"/g, '""').replace(/\\./g, '"."') + '"'`;
+
+const postgresJsEscapeIdentifier = (str) =>
+  '"' + str.replace(/"/g, '""').replace(/\./g, '"."') + '"';
+
 const probePostgresJs = () => {
-  // postgres.js assembles SQL lazily at execution time and does not export its escaper,
-  // so evaluate the function straight out of its source.
   const path = require('path');
   const fs = require('fs');
   const source = fs.readFileSync(
     path.join(process.cwd(), 'node_modules', 'postgres', 'src', 'types.js'),
     'utf8',
   );
-  const body = source.match(/export const escapeIdentifier = function escape\(str\) \{([\s\S]*?)\n\}/)[1];
-  // oxlint-disable-next-line no-new-func
-  const escapeIdentifier = new Function('str', body);
 
-  report('postgres.js', 'escapeIdentifier(hostile)', JSON.stringify(escapeIdentifier(HOSTILE)));
-  report('postgres.js', 'escapeIdentifier("a.b")', JSON.stringify(escapeIdentifier('a.b')));
+  if (!source.includes(POSTGRES_JS_ESCAPE_SOURCE)) {
+    report('postgres.js', 'transcription', 'STALE — escapeIdentifier changed upstream');
+
+    return;
+  }
+
+  report(
+    'postgres.js',
+    'escapeIdentifier(hostile)',
+    JSON.stringify(postgresJsEscapeIdentifier(HOSTILE)),
+  );
+  report(
+    'postgres.js',
+    'escapeIdentifier("a.b")',
+    JSON.stringify(postgresJsEscapeIdentifier('a.b')),
+  );
 };
 
 const probeDatabases = () => {
