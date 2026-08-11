@@ -28,6 +28,7 @@
     "@types/node": "^24.7.2",
     "@types/react": "^18.2.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
+    "msw": "^2.12.14",
     "oxlint": "^0.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
