@@ -68,19 +68,30 @@ export class EncryptEmptyApplicationVariablesSlowInstanceCommand
         break;
       }
 
-      for (const row of rows) {
-        await dataSource.query(
-          `UPDATE "core"."${tableName}" SET "${valueColumnName}" = $2 WHERE id = $1 AND "${valueColumnName}" = ''`,
-          [
-            row.id,
+      const countRows: { count: string }[] = await dataSource.query(
+        `WITH "encrypted" AS (
+           UPDATE "core"."${tableName}" AS target
+              SET "${valueColumnName}" = source."encryptedValue"
+             FROM (
+               SELECT unnest($1::uuid[]) AS id, unnest($2::text[]) AS "encryptedValue"
+             ) AS source
+            WHERE target.id = source.id
+              AND target."${valueColumnName}" = ''
+           RETURNING target.id
+         )
+         SELECT COUNT(*) AS "count" FROM "encrypted"`,
+        [
+          rows.map(({ id }) => id),
+          rows.map(({ workspaceId }) =>
             this.secretEncryptionService.encryptVersioned(
               '' as PlaintextString,
-              isWorkspaceScoped ? { workspaceId: row.workspaceId } : {},
+              isWorkspaceScoped ? { workspaceId } : {},
             ),
-          ],
-        );
-        encryptedCount++;
-      }
+          ),
+        ],
+      );
+
+      encryptedCount += Number(countRows[0]?.count ?? 0);
 
       cursor = rows[rows.length - 1].id;
     }

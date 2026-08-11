@@ -43,25 +43,34 @@ const buildFakeDataSource = ({
         .map(({ id }) => ({ id }));
     }
 
-    const [id, encryptedValue] = params as [string, string];
+    const [ids, encryptedValues] = params as [string[], string[]];
+    let encryptedCount = 0;
 
-    if (isApplicationVariableTable) {
-      const target = sortedApplicationVariableRows.find((row) => row.id === id);
+    ids.forEach((id, index) => {
+      if (isApplicationVariableTable) {
+        const target = sortedApplicationVariableRows.find(
+          (row) => row.id === id,
+        );
 
-      if (target?.value === '') {
-        target.value = encryptedValue;
+        if (target?.value === '') {
+          target.value = encryptedValues[index];
+          encryptedCount++;
+        }
+
+        return;
       }
 
-      return [];
-    }
+      const target = sortedRegistrationVariableRows.find(
+        (row) => row.id === id,
+      );
 
-    const target = sortedRegistrationVariableRows.find((row) => row.id === id);
+      if (target?.encryptedValue === '') {
+        target.encryptedValue = encryptedValues[index];
+        encryptedCount++;
+      }
+    });
 
-    if (target?.encryptedValue === '') {
-      target.encryptedValue = encryptedValue;
-    }
-
-    return [];
+    return [{ count: String(encryptedCount) }];
   });
 
   return {
@@ -87,7 +96,7 @@ const buildCommand = () => {
 
 const updateCallCount = (query: jest.Mock): number =>
   query.mock.calls.filter(([sql]: [string]) =>
-    sql.trimStart().startsWith('UPDATE'),
+    !sql.trimStart().startsWith('SELECT'),
   ).length;
 
 describe('EncryptEmptyApplicationVariablesSlowInstanceCommand', () => {
