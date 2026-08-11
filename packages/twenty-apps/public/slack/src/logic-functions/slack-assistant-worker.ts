@@ -117,6 +117,7 @@ export const slackAssistantWorkerHandler = async (
         requestText,
         requesterName,
         conversationMessages,
+        runAsWorkspaceMemberId,
         timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
         workspaceBaseUrl,
       }),
