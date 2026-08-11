@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# .githooks/pre-push — run every gate this repo has before anything leaves the machine.
+#
+# TEMPLATE. The canonical copy lives in claude-code-policy/policy/gate-template/pre-push.
+# Copy it into a repo as .githooks/pre-push; it needs no per-repo edits.
+#
+# GitHub Actions cannot run for this org. Every job in every eMobility-Innovations repo with a
+# workflow returned `conclusion=failure` with `runner_name=""`, `steps=[]` and an empty log
+# archive, annotated:
+#
+#   "The job was not started because recent account payments have failed or your spending limit
+#    needs to be increased."
+#
+# That is an ACCOUNT condition, not a verdict on any code. A red X that means "we did not look"
+# is worse than no X, because everyone learns to ignore it. See
+# internal-knowledge-base/todo/2026-08-09_github-actions-blocked-org-wide-by-billing.md.
+#
+# Install with ./install-hooks.sh — or let the policy package arm it for you at session start
+# (bin/policies/gate-armed.py), which is why a fresh clone is no longer an ungated clone.
+
+set -uo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)" || exit 1
+cd "$REPO_ROOT" || exit 1
+
+# ---------------------------------------------------------------------------
+# THE ESCAPE HATCH IS LOUD *AND* LEAVES A TRACE.
+#
+# Removing the hatch entirely wedges people, and a wedged gate gets routed around — with
+# `--no-verify`, which this hook can never see. So the hatch stays. What changed is that a bypass
+# is no longer invisible the moment the terminal scrolls: it is appended to a log the policy
+# package surfaces at the next session start. On screen it is a decision; in the log it is a
+# decision somebody has to own afterwards.
+# ---------------------------------------------------------------------------
+if [ "${SKIP_VERIFY:-}" = "1" ] || [ "${PANGOLIN_SKIP_VERIFY:-}" = "1" ]; then
+  _log="${CLAUDE_VERIFY_BYPASS_LOG:-$HOME/.claude/cache/verify-bypass.log}"
+  mkdir -p "$(dirname "$_log")" 2>/dev/null || true
+  printf '%s\t%s\t%s\t%s\t%s\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    "$(basename "$REPO_ROOT")" \
+    "$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '?')" \
+    "$(git rev-parse --short HEAD 2>/dev/null || echo '?')" \
+    "${USER:-unknown}@$(hostname -s 2>/dev/null || echo '?')" \
+    >>"$_log" 2>/dev/null || true
+
+  printf '\n'
+  printf '!!  pre-push: SKIP_VERIFY=1 — the gate was BYPASSED, not passed.\n'
+  printf '!!  Nothing in this push has been linted, type-checked or tested.\n'
+  printf '!!  CI cannot check it either (org Actions billing). You are the only gate there was.\n'
+  printf '!!  Logged to %s — the next session start will say so.\n' "$_log"
+  printf '\n'
+  exit 0
+fi
+
+if [ ! -x ./verify.sh ]; then
+  printf 'pre-push: ./verify.sh is missing or not executable — cannot gate this push.\n' >&2
+  printf 'pre-push: refusing. An absent gate is a failure, never a skip.\n' >&2
+  exit 1
+fi
+
+printf '\npre-push: running ./verify.sh (GitHub Actions cannot run for this org)\n'
+
+if ./verify.sh; then
+  printf '\npre-push: gates passed — pushing.\n'
+  exit 0
+fi
+
+printf '\n'
+printf 'pre-push: GATES FAILED — push refused.\n' >&2
+printf 'pre-push: fix the code. To override deliberately: SKIP_VERIFY=1 git push\n' >&2
+exit 1

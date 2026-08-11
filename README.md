@@ -153,6 +153,32 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
 - <a href="https://nestjs.com/"><img src="./packages/twenty-website/public/images/readme/stack-nestjs.svg" width="14" height="14"/> NestJS</a>, with <a href="https://bullmq.io/">BullMQ</a>, <a href="https://www.postgresql.org/"><img src="./packages/twenty-website/public/images/readme/stack-postgresql.svg" width="14" height="14"/> PostgreSQL</a>, <a href="https://redis.io/"><img src="./packages/twenty-website/public/images/readme/stack-redis.svg" width="14" height="14"/> Redis</a>
 - <a href="https://reactjs.org/"><img src="./packages/twenty-website/public/images/readme/stack-react.svg" width="14" height="14"/> React</a>, with <a href="https://jotai.org/">Jotai</a>, <a href="https://linaria.dev/">Linaria</a> and <a href="https://lingui.dev/">Lingui</a>
 
+# eMobility-Innovations local gate
+
+GitHub Actions is permanently unavailable for the eMobility-Innovations organization by operator
+decision. This fork has no workflow-based CI. Run `./install-hooks.sh` once per clone (or let the
+organization policy package arm it); every push then runs `./verify.sh` through the tracked
+pre-push hook.
+
+This repository tracks `twentyhq/twenty` and is deployed rather than developed by this
+organization. At the time the gate was introduced, `git diff upstream/main...HEAD` contained no
+org-specific application changes. The gate therefore does not reproduce Twenty's 35-workflow
+monorepo CI, and it never was a replacement for upstream CI. It checks that GitHub workflows stay
+absent and fails if an org-specific application path appears, requiring a targeted gate for that
+path before it can be pushed.
+
+The removed automation for linting, type checking, unit/integration/E2E tests, builds, API
+compatibility, Docker Compose, releases, translation synchronization, catalog synchronization,
+PR comments, bots, and preview/visual environments belongs to upstream's development process and
+is deliberately not run by this deployment fork. In particular, the two removed deploy workflows
+only dispatched to `twentyhq/twenty-infra` with a Twenty-owned token; they were not this
+organization's deployment path, so there is no local `deploy.sh` replacement. The live deployment
+path for eMobility-Innovations is not recorded in those workflows and remains to be confirmed by
+the operator.
+
+Use `./sync-upstream.sh` to merge `upstream/main` while preserving the permanent workflow removal.
+See `docs/UPSTREAM-DIVERGENCE.md` for the full path inventory.
+
 
 
 # Thanks
