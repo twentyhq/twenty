@@ -1,6 +1,6 @@
 export const SLACK_USER_LINK_SOURCE = {
-  AUTO: 'auto',
-  MANUAL: 'manual',
+  AUTO: 'AUTO',
+  MANUAL: 'MANUAL',
 } as const;
 
 export type SlackUserLinkSource =

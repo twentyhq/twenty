@@ -1,39 +1,74 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-type WorkspaceMemberEmailEdge = {
-  node?: { id?: string; userEmail?: string | null } | null;
-} | null;
+const CANDIDATES_PER_PAGE = 100;
+const MAX_PAGES = 10;
 
 // `ilike` treats `%` and `_` as wildcards and an email may legitimately contain
 // them, so the query only narrows the candidates and the match is decided by an
-// exact case-insensitive comparison. An ambiguous result binds nobody.
+// exact case-insensitive comparison. Every page has to be read before deciding:
+// stopping early could miss a second holder of the same address and bind a
+// Slack account to the wrong member. An ambiguous or unbounded result binds
+// nobody.
 export const findWorkspaceMemberIdByEmail = async (
   client: CoreApiClient,
   email: string,
 ): Promise<string | undefined> => {
-  const queryResult = await client.query({
-    workspaceMembers: {
-      __args: {
-        filter: { userEmail: { ilike: email } },
-        first: 10,
-      },
-      edges: { node: { id: true, userEmail: true } },
-    },
-  });
-
   const normalizedEmail = email.toLowerCase();
+  const matchingMemberIds = new Set<string>();
 
-  const matchingMemberIds = (
-    (queryResult.workspaceMembers?.edges ?? []) as WorkspaceMemberEmailEdge[]
-  )
-    .filter(
-      (edge) =>
-        isNonEmptyString(edge?.node?.userEmail) &&
-        edge.node.userEmail.toLowerCase() === normalizedEmail,
-    )
-    .map((edge) => edge?.node?.id)
-    .filter(isNonEmptyString);
+  let after: string | undefined;
 
-  return matchingMemberIds.length === 1 ? matchingMemberIds[0] : undefined;
+  for (let page = 0; page < MAX_PAGES; page++) {
+    const queryResult = await client.query({
+      workspaceMembers: {
+        __args: {
+          filter: { userEmail: { ilike: email } },
+          first: CANDIDATES_PER_PAGE,
+          ...(isDefined(after) ? { after } : {}),
+        },
+        edges: { cursor: true, node: { id: true, userEmail: true } },
+        pageInfo: { hasNextPage: true, endCursor: true },
+      },
+    });
+
+    const edges = queryResult.workspaceMembers?.edges ?? [];
+
+    for (const edge of edges) {
+      const node = edge?.node;
+
+      if (
+        isNonEmptyString(node?.id) &&
+        isNonEmptyString(node.userEmail) &&
+        node.userEmail.toLowerCase() === normalizedEmail
+      ) {
+        matchingMemberIds.add(node.id);
+      }
+    }
+
+    if (matchingMemberIds.size > 1) {
+      return undefined;
+    }
+
+    const pageInfo = queryResult.workspaceMembers?.pageInfo;
+
+    if (pageInfo?.hasNextPage !== true) {
+      return matchingMemberIds.size === 1
+        ? [...matchingMemberIds][0]
+        : undefined;
+    }
+
+    const endCursor = pageInfo.endCursor;
+
+    if (!isNonEmptyString(endCursor)) {
+      return undefined;
+    }
+
+    after = endCursor;
+  }
+
+  // More candidates than we are willing to walk. Binding on a partial view
+  // could pick the wrong member, so leave the account unlinked.
+  return undefined;
 };

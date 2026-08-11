@@ -3,14 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 
-const { resolveSlackInstalledTeamIdMock } = vi.hoisted(() => ({
-  resolveSlackInstalledTeamIdMock: vi.fn(),
-}));
-
-vi.mock('src/logic-functions/utils/resolve-slack-installed-team-id', () => ({
-  resolveSlackInstalledTeamId: resolveSlackInstalledTeamIdMock,
-}));
-
 const INSTALLED_TEAM_ID = 'T0INSTALLED';
 const SLACK_USER_ID = 'U0123456789';
 
@@ -31,7 +23,6 @@ const buildSlackUser = (overrides: Record<string, unknown> = {}) => ({
 describe('fetchSlackUserIdentity', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    resolveSlackInstalledTeamIdMock.mockResolvedValue(INSTALLED_TEAM_ID);
     usersInfoMock.mockResolvedValue({ user: buildSlackUser() });
   });
 
@@ -64,7 +55,7 @@ describe('fetchSlackUserIdentity', () => {
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'ada',
       email: 'ada@twenty.com',
-      canBeMatchedOnEmail: true,
+      isRegularMemberOfOwnTeam: true,
     });
   });
 
@@ -84,18 +75,13 @@ describe('fetchSlackUserIdentity', () => {
   });
 
   it.each([
-    ['a Slack Connect user from another workspace', { team_id: 'T0EXTERNAL' }],
     ['a multi-channel guest', { is_restricted: true }],
     ['a single-channel guest', { is_ultra_restricted: true }],
     ['a bot', { is_bot: true }],
     ['Slackbot', { id: 'USLACKBOT' }],
     ['a deactivated account', { deleted: true }],
     ['an unconfirmed email', { is_email_confirmed: false }],
-    [
-      'a profile without an email',
-      { profile: { display_name: 'ada', email: undefined } },
-    ],
-  ])('should refuse to match %s on email', async (_label, overrides) => {
+  ])('should not treat %s as a regular member', async (_label, overrides) => {
     usersInfoMock.mockResolvedValue({ user: buildSlackUser(overrides) });
 
     const identity = await fetchSlackUserIdentity({
@@ -103,17 +89,33 @@ describe('fetchSlackUserIdentity', () => {
       slackUserId: SLACK_USER_ID,
     });
 
-    expect(identity?.canBeMatchedOnEmail).toBe(false);
+    expect(identity?.isRegularMemberOfOwnTeam).toBe(false);
   });
 
-  it('should refuse to match on email when the installing team is unknown', async () => {
-    resolveSlackInstalledTeamIdMock.mockResolvedValue(undefined);
+  it('should report a missing email rather than judging eligibility on it', async () => {
+    usersInfoMock.mockResolvedValue({
+      user: buildSlackUser({ profile: { display_name: 'ada' } }),
+    });
 
     const identity = await fetchSlackUserIdentity({
       client,
       slackUserId: SLACK_USER_ID,
     });
 
-    expect(identity?.canBeMatchedOnEmail).toBe(false);
+    expect(identity?.email).toBeUndefined();
+  });
+
+  it('should report the Slack team without judging it', async () => {
+    usersInfoMock.mockResolvedValue({
+      user: buildSlackUser({ team_id: 'T0EXTERNAL' }),
+    });
+
+    const identity = await fetchSlackUserIdentity({
+      client,
+      slackUserId: SLACK_USER_ID,
+    });
+
+    expect(identity?.slackTeamId).toBe('T0EXTERNAL');
+    expect(identity?.isRegularMemberOfOwnTeam).toBe(true);
   });
 });

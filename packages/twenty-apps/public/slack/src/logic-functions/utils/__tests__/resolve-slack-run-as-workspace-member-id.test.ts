@@ -1,3 +1,4 @@
+import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -29,12 +30,15 @@ vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
 
 const client = {} as CoreApiClient;
 
+const authTestMock = vi.fn();
+const slackClient = { auth: { test: authTestMock } } as unknown as WebClient;
+
 const IDENTITY: SlackUserIdentity = {
   slackUserId: 'U0123456789',
   slackTeamId: 'T0INSTALLED',
   displayName: 'ada',
   email: 'ada@twenty.com',
-  canBeMatchedOnEmail: true,
+  isRegularMemberOfOwnTeam: true,
 };
 
 describe('resolveSlackRunAsWorkspaceMemberId', () => {
@@ -43,12 +47,14 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     findSlackUserLinkWorkspaceMemberIdMock.mockResolvedValue(undefined);
     findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
     createSlackUserLinkMock.mockResolvedValue(undefined);
+    authTestMock.mockResolvedValue({ team_id: 'T0INSTALLED' });
   });
 
   it('should return undefined when the Slack user could not be identified', async () => {
     expect(
       await resolveSlackRunAsWorkspaceMemberId({
         client,
+        slackClient,
         identity: undefined,
       }),
     ).toBeUndefined();
@@ -59,17 +65,18 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     findSlackUserLinkWorkspaceMemberIdMock.mockResolvedValue('member-1');
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
     ).toBe('member-1');
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
-  it('should not match on email when the Slack account is not eligible', async () => {
+  it('should not match on email when the Slack account is a bot or guest', async () => {
     expect(
       await resolveSlackRunAsWorkspaceMemberId({
         client,
-        identity: { ...IDENTITY, canBeMatchedOnEmail: false },
+        slackClient,
+        identity: { ...IDENTITY, isRegularMemberOfOwnTeam: false },
       }),
     ).toBeUndefined();
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
@@ -79,7 +86,7 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
     ).toBe('member-1');
     expect(createSlackUserLinkMock).toHaveBeenCalledWith(client, {
       slackTeamId: 'T0INSTALLED',
@@ -91,7 +98,7 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
 
   it('should not store a link when no member owns the email', async () => {
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
     ).toBeUndefined();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
@@ -104,7 +111,7 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
       .mockResolvedValueOnce('member-2');
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({ client, identity: IDENTITY }),
+      await resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity: IDENTITY }),
     ).toBe('member-2');
   });
 
@@ -116,7 +123,46 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     expect(
       await resolveSlackRunAsWorkspaceMemberId({
         client,
-        identity: { ...IDENTITY, canBeMatchedOnEmail: false },
+        slackClient,
+        identity: { ...IDENTITY, isRegularMemberOfOwnTeam: false },
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should not link a Slack Connect user from another workspace', async () => {
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: { ...IDENTITY, slackTeamId: 'T0EXTERNAL' },
+      }),
+    ).toBeUndefined();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should read the installing team from the live connection on every link', async () => {
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+
+    await resolveSlackRunAsWorkspaceMemberId({
+      client,
+      slackClient,
+      identity: IDENTITY,
+    });
+
+    expect(authTestMock).toHaveBeenCalled();
+  });
+
+  it('should not link when the installing team cannot be read', async () => {
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    authTestMock.mockRejectedValue(new Error('invalid_auth'));
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
       }),
     ).toBeUndefined();
   });

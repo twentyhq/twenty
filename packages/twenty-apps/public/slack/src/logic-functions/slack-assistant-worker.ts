@@ -25,11 +25,10 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
-import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
+import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
-import { wasSlackAssistantRequestCreatedByTheApp } from 'src/logic-functions/utils/was-slack-assistant-request-created-by-the-app';
 
 const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
 
@@ -94,15 +93,13 @@ export const slackAssistantWorkerHandler = async (
       fetchWorkspaceBaseUrl(),
     ]);
 
-    const runAsWorkspaceMemberId = (await wasSlackAssistantRequestCreatedByTheApp(
+    const runAsWorkspaceMemberId = await resolveSlackRunAsForRequest({
       client,
-      record.id,
-    ))
-      ? await resolveSlackRunAsWorkspaceMemberId({
-          client,
-          identity: requesterIdentity,
-        })
-      : undefined;
+      identity: requesterIdentity,
+      slackChannelId,
+      parentMessageTimestamp,
+      slackMessageTimestamp,
+    });
 
     if (isNonEmptyString(runAsWorkspaceMemberId)) {
       // Audit only, so a failure here must not cost the requester their answer.

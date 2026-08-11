@@ -3,9 +3,8 @@ export type SlackUserIdentity = {
   slackTeamId: string | undefined;
   displayName: string | undefined;
   email: string | undefined;
-  // False for bots, deactivated accounts, Slack guests and Slack Connect users
-  // from another Slack workspace. Their profile email is vouched for by someone
-  // other than this workspace admin, so it must never bind a workspace member
-  // on its own.
-  canBeMatchedOnEmail: boolean;
+  // False for bots, deactivated accounts and Slack guests. Says nothing about
+  // which Slack workspace they belong to: that is checked against the live
+  // connection at link time, not from anything cached here.
+  isRegularMemberOfOwnTeam: boolean;
 };
