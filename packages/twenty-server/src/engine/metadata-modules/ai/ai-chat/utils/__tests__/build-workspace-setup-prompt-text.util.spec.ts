@@ -139,6 +139,7 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('whatever spreadsheet their CRM produces');
     expect(result).toContain('separate files in one message or several');
+    expect(result).toContain('ask in one line whether that is everything');
     expect(result).toContain('continue as if they had chosen to start fresh');
   });
 
