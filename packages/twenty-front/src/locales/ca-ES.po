@@ -9056,6 +9056,7 @@ msgstr "Francès"
 
 #. js-lingui-id: ejVYRQ
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "From"
 msgstr "De"
@@ -13059,6 +13060,11 @@ msgstr "No s'ha trobat la versió més recent"
 msgid "No limit"
 msgstr "Sense límit"
 
+#. js-lingui-id: nivaRq
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+msgid "No list"
+msgstr ""
+
 #. js-lingui-id: vV85hO
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "No logs were recorded for this step."
@@ -13273,10 +13279,20 @@ msgstr "No hi ha files amb errors"
 msgid "No Select field"
 msgstr "Sense camp de selecció"
 
+#. js-lingui-id: Ylz+jb
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+msgid "No sender"
+msgstr ""
+
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "No server administrators found."
 msgstr "No s'han trobat administradors del servidor."
+
+#. js-lingui-id: eeoVfm
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+msgid "No subject"
+msgstr ""
 
 #. js-lingui-id: RQ6tfU
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
@@ -17878,6 +17894,7 @@ msgstr ""
 #. js-lingui-id: UJmAAK
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -19042,6 +19059,7 @@ msgstr "Títol"
 
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -19536,6 +19554,8 @@ msgid "Unarchive"
 msgstr "Desarxiva"
 
 #. js-lingui-id: jqzUyM
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
 msgstr "No disponible"
@@ -19778,6 +19798,7 @@ msgstr ""
 
 #. js-lingui-id: BEZcuL
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 msgid "Unsubscribe topic"
 msgstr "Tema de baixa de subscripció"
 
@@ -19858,6 +19879,7 @@ msgstr "Rol sense títol"
 
 #. js-lingui-id: jxRjAG
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
