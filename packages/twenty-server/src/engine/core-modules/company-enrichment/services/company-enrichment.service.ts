@@ -2,10 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspaceEnrichmentResult,
+} from 'twenty-shared/workspace';
 
 import { COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-max-requests.constant';
 import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-window-ms.constant';
+import { EnrichmentThrottleService } from 'src/engine/core-modules/company-enrichment/services/enrichment-throttle.service';
 import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import {
   COMPANY_ENRICHMENT_ATTEMPT_KEY,
@@ -17,11 +21,6 @@ import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-en
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
-import {
-  ThrottlerException,
-  ThrottlerExceptionCode,
-} from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -36,7 +35,7 @@ export class CompanyEnrichmentService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly peopleDataLabsClientService: PeopleDataLabsClientService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly throttlerService: ThrottlerService,
+    private readonly enrichmentThrottleService: EnrichmentThrottleService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
   ) {}
 
@@ -48,7 +47,7 @@ export class CompanyEnrichmentService {
     userId: string;
     email: string;
     workspaceId: string;
-  }): Promise<WorkspaceCompanyEnrichmentResult> {
+  }): Promise<WorkspaceEnrichmentResult<WorkspaceCompanyEnrichment>> {
     if (!this.hasEnrichmentConsumer()) {
       return { outcome: 'unavailable', enrichment: null };
     }
@@ -74,22 +73,14 @@ export class CompanyEnrichmentService {
       return { outcome: 'unavailable', enrichment: null };
     }
 
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `company-enrichment:throttler:${workspaceId}`,
-        1,
-        COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS,
-        COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS,
-      );
-    } catch (error) {
-      if (
-        error instanceof ThrottlerException &&
-        error.code === ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        return { outcome: 'transientError', enrichment: null };
-      }
+    const throttleOutcome = await this.enrichmentThrottleService.consumeToken({
+      throttleKey: `company-enrichment:throttler:${workspaceId}`,
+      maxRequests: COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS,
+      windowMs: COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS,
+    });
 
-      throw error;
+    if (throttleOutcome === 'limitReached') {
+      return { outcome: 'transientError', enrichment: null };
     }
 
     const result =
@@ -121,7 +112,7 @@ export class CompanyEnrichmentService {
     result: PeopleDataLabsEnrichResult<PeopleDataLabsCompanyData>;
     workspaceId: string;
     domain: string;
-  }): WorkspaceCompanyEnrichmentResult {
+  }): WorkspaceEnrichmentResult<WorkspaceCompanyEnrichment> {
     if (result.outcome === 'transientError') {
       this.logger.warn(
         `Company enrichment transiently failed for workspace ${workspaceId} (${domain}): ${result.message}`,
