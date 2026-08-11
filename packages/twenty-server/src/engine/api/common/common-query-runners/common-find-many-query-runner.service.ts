@@ -166,6 +166,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 
+    // take/skip switches TypeORM to its two-phase distinct query as soon as any join is present.
+    // A to-one join cannot duplicate root rows, so a plain limit returns the same records in one query.
     if (hasOnlyToOneJoins(queryBuilder)) {
       if (isDefined(args.offset)) {
         queryBuilder.offset(args.offset);
