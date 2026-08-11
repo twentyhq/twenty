@@ -34,6 +34,7 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
+import { validateViewParentOrThrow } from 'src/engine/metadata-modules/view/utils/validate-view-parent-or-throw.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -69,13 +70,24 @@ export class ViewService {
     const {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
-        },
-      );
+      flatViewMaps: existingFlatViewMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatFieldMetadataMaps',
+          'flatObjectMetadataMaps',
+          'flatViewMaps',
+        ],
+      },
+    );
+
+    validateViewParentOrThrow({
+      viewId: createViewInput.id,
+      parentViewId: createViewInput.parentViewId,
+      objectMetadataId: createViewInput.objectMetadataId,
+      flatViewMaps: existingFlatViewMaps,
+    });
 
     const { flatViewToCreate, flatViewGroupsToCreate } =
       fromCreateViewInputToFlatViewToCreate({
@@ -162,6 +174,20 @@ export class ViewService {
         ],
       },
     );
+
+    if (updateViewInput.parentViewId !== undefined) {
+      const existingFlatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: updateViewInput.id,
+        flatEntityMaps: existingFlatViewMaps,
+      });
+
+      validateViewParentOrThrow({
+        viewId: updateViewInput.id,
+        parentViewId: updateViewInput.parentViewId,
+        objectMetadataId: existingFlatView.objectMetadataId,
+        flatViewMaps: existingFlatViewMaps,
+      });
+    }
 
     const { flatViewToUpdate, flatViewGroupsToDelete, flatViewGroupsToCreate } =
       fromUpdateViewInputToFlatViewToUpdateOrThrow({
@@ -337,6 +363,18 @@ export class ViewService {
 
     const now = new Date().toISOString();
 
+    // A destroyed stack root leaves its children dangling, so they are promoted
+    // back to stack roots of their own rather than disappearing from the view bar.
+    const orphanedChildFlatViews = Object.values(
+      existingFlatViewMaps.byUniversalIdentifier,
+    ).flatMap((flatView) =>
+      isDefined(flatView) &&
+      flatView.parentViewId === existingFlatView.id &&
+      !isDefined(flatView.deletedAt)
+        ? [{ ...flatView, parentViewId: null, updatedAt: now }]
+        : [],
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -347,8 +385,11 @@ export class ViewService {
                 ? []
                 : [flatViewFromDestroyInput],
               flatEntityToUpdate: shouldDeactivate
-                ? [{ ...existingFlatView, isActive: false, updatedAt: now }]
-                : [],
+                ? [
+                    { ...existingFlatView, isActive: false, updatedAt: now },
+                    ...orphanedChildFlatViews,
+                  ]
+                : orphanedChildFlatViews,
             },
           },
           workspaceId,

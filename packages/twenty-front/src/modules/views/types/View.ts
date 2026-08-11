@@ -35,6 +35,7 @@ export type View = {
   calendarEndFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;
+  parentViewId?: string | null;
   icon: string;
   openRecordIn: ViewOpenRecordIn;
   anyFieldFilterValue?: string | null;

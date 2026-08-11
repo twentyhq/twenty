@@ -31,6 +31,7 @@ export type GraphQLView = {
   viewSorts: ViewSort[];
   viewGroups: ViewGroup[];
   position: number;
+  parentViewId?: string | null;
   icon: string;
   anyFieldFilterValue?: string | null;
   calendarLayout?: ViewCalendarLayout | null;

@@ -17,6 +17,7 @@ import { viewPickerInputNameComponentState } from '@/views/view-picker/states/vi
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
+import { viewPickerParentViewIdComponentState } from '@/views/view-picker/states/viewPickerParentViewIdComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
@@ -51,6 +52,10 @@ export const ViewPickerContentEffect = () => {
 
   const setViewPickerCalendarEndFieldMetadataId = useSetAtomComponentState(
     viewPickerCalendarEndFieldMetadataIdComponentState,
+  );
+
+  const setViewPickerParentViewId = useSetAtomComponentState(
+    viewPickerParentViewIdComponentState,
   );
 
   const [viewPickerType, setViewPickerType] = useAtomComponentState(
@@ -98,6 +103,11 @@ export const ViewPickerContentEffect = () => {
       } else {
         setViewPickerSelectedIcon(referenceView.icon);
       }
+
+      // In create mode the stack is chosen by whichever control opened the picker.
+      if (viewPickerMode === 'edit') {
+        setViewPickerParentViewId(referenceView.parentViewId ?? '');
+      }
       setViewPickerVisibility(
         hasViewPermission ? referenceView.visibility : ViewVisibility.UNLISTED,
       );
@@ -137,6 +147,7 @@ export const ViewPickerContentEffect = () => {
     setViewPickerCalendarFieldMetadataId,
     setViewPickerCalendarEndFieldMetadataId,
     setViewPickerVisibility,
+    setViewPickerParentViewId,
     viewPickerIsPersisting,
     viewPickerIsDirty,
     viewPickerMode,

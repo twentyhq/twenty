@@ -109,15 +109,19 @@ export const ViewPickerOptionDropdown = ({
     closeDropdown(dropdownId);
   };
 
+  // Curated workspace views are locked for anyone without the Views permission,
+  // so the lock is surfaced on the row rather than only on the index view.
+  const isLocked = isIndexView || !canEditView;
+
   const getVisibilityIcon = () => {
-    if (isIndexView) {
+    if (isLocked) {
       return IconLock;
     }
 
     return null;
   };
 
-  const shouldShowIconAlways = isIndexView;
+  const shouldShowIconAlways = isLocked;
 
   return (
     <>

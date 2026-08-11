@@ -138,6 +138,7 @@ import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/comm
 import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
 import { AddIsExactlyViewFilterOperandsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785774996477-add-is-exactly-view-filter-operands';
 import { AddListViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1785929606728-add-list-view-type';
+import { AddViewParentViewIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786400000000-add-view-parent-view-id';
 import { AddListWidgetViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786227282471-add-list-widget-view-type';
 import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
 
@@ -282,4 +283,5 @@ export const INSTANCE_COMMANDS = [
   AddListViewTypeFastInstanceCommand,
   AddCallRecordingWidgetTypesFastInstanceCommand,
   AddListWidgetViewTypeFastInstanceCommand,
+  AddViewParentViewIdFastInstanceCommand,
 ];

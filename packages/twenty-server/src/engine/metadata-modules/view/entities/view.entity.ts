@@ -27,6 +27,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/add-view-kanban-column-width-upgrade-command-name.constant';
 import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-22/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
+import { ADD_VIEW_PARENT_VIEW_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-31/add-view-parent-view-id-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
@@ -114,6 +115,16 @@ export class ViewEntity
 
   @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;
+
+  // Views form a single level of stacks: a view with a parent is shown inside
+  // that parent's tab in the view bar. Deliberately not a TypeORM relation so
+  // the view stays outside the many-to-one metadata relation graph; orphaned
+  // children are cleaned up by ViewService and tolerated by the frontend.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_PARENT_VIEW_ID_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid', default: null })
+  parentViewId: string | null;
 
   @Column({ nullable: false, default: false, type: 'boolean' })
   isCompact: boolean;

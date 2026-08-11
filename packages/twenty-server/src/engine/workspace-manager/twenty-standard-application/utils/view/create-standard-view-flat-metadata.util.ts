@@ -153,6 +153,7 @@ export const createStandardViewFlatMetadata = <
     mainGroupByFieldMetadataId,
     shouldHideEmptyGroups: false,
     kanbanColumnWidth: null,
+    parentViewId: null,
     calendarLayout: null,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,

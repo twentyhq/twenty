@@ -10,6 +10,7 @@ import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/view
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
+import { viewPickerParentViewIdComponentState } from '@/views/view-picker/states/viewPickerParentViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
@@ -66,6 +67,9 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerVisibilityComponentState,
   );
 
+  const viewPickerParentViewIdCallbackState =
+    useAtomComponentStateCallbackState(viewPickerParentViewIdComponentState);
+
   const { createViewFromCurrentView } = useCreateViewFromCurrentView();
   const { changeView } = useChangeView();
 
@@ -87,6 +91,7 @@ export const useCreateViewFromCurrentState = () => {
 
     const viewPickerMode = store.get(viewPickerModeCallbackState);
     const visibility = store.get(viewPickerVisibilityCallbackState);
+    const parentViewId = store.get(viewPickerParentViewIdCallbackState);
 
     const shouldCopyFiltersAndSortsAndAggregate =
       viewPickerMode === 'create-from-current';
@@ -107,6 +112,7 @@ export const useCreateViewFromCurrentState = () => {
             ? calendarEndFieldMetadataId
             : null,
         visibility,
+        parentViewId: parentViewId === '' ? null : parentViewId,
       },
       shouldCopyFiltersAndSortsAndAggregate,
     );
@@ -130,6 +136,7 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerTypeCallbackState,
     viewPickerModeCallbackState,
     viewPickerVisibilityCallbackState,
+    viewPickerParentViewIdCallbackState,
     isCalendarWeekViewEnabled,
   ]);
 

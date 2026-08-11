@@ -9,6 +9,7 @@ import { viewPickerInputNameComponentState } from '@/views/view-picker/states/vi
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
+import { viewPickerParentViewIdComponentState } from '@/views/view-picker/states/viewPickerParentViewIdComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
@@ -42,6 +43,9 @@ export const useUpdateViewFromCurrentState = () => {
     viewPickerVisibilityComponentState,
   );
 
+  const viewPickerParentViewIdCallbackState =
+    useAtomComponentStateCallbackState(viewPickerParentViewIdComponentState);
+
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
 
   const store = useStore();
@@ -64,6 +68,7 @@ export const useUpdateViewFromCurrentState = () => {
       viewPickerSelectedIconCallbackState,
     );
     const visibility = store.get(viewPickerVisibilityCallbackState);
+    const parentViewId = store.get(viewPickerParentViewIdCallbackState);
 
     try {
       await performViewAPIUpdate({
@@ -72,6 +77,7 @@ export const useUpdateViewFromCurrentState = () => {
           name: viewPickerInputName,
           icon: viewPickerSelectedIcon,
           visibility: visibility,
+          parentViewId: parentViewId === '' ? null : parentViewId,
         },
       });
     } finally {
@@ -87,6 +93,7 @@ export const useUpdateViewFromCurrentState = () => {
     viewPickerInputNameCallbackState,
     viewPickerSelectedIconCallbackState,
     viewPickerVisibilityCallbackState,
+    viewPickerParentViewIdCallbackState,
     performViewAPIUpdate,
     store,
   ]);

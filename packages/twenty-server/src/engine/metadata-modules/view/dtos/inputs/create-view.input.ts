@@ -68,6 +68,11 @@ export class CreateViewInput {
   isCompact?: boolean;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  parentViewId?: string | null;
+
+  @IsOptional()
   @IsBoolean()
   @Field({ nullable: true, defaultValue: false })
   shouldHideEmptyGroups?: boolean;

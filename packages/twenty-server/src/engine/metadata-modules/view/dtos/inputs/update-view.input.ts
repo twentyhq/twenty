@@ -60,6 +60,11 @@ export class UpdateViewInput {
   isCompact?: boolean;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  parentViewId?: string | null;
+
+  @IsOptional()
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,

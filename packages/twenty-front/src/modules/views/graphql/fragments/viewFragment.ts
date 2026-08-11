@@ -22,6 +22,7 @@ export const VIEW_FRAGMENT = gql`
     key
     icon
     position
+    parentViewId
     isCompact
     openRecordIn
     kanbanAggregateOperation
