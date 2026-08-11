@@ -4,7 +4,7 @@ import { ONBOARDING_EMAIL_DIGEST_MAX_TOP_COMPANY_DOMAINS } from 'src/modules/onb
 import { type OnboardingEmailDigestParticipantGroupRow } from 'src/modules/onboarding-email-digest/types/onboarding-email-digest-participant-group-row.type';
 import { type OnboardingEmailDigestTopCompanyDomain } from 'src/modules/onboarding-email-digest/types/onboarding-email-digest-top-company-domain.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
-import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
+import { isExternalDigestHandle } from 'src/modules/onboarding-email-digest/utils/is-external-digest-handle.util';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
 export const buildOnboardingEmailDigestTopCompanyDomains = ({
@@ -23,11 +23,7 @@ export const buildOnboardingEmailDigestTopCompanyDomains = ({
   for (const row of participantGroupRows) {
     const handle = row.handle.toLowerCase();
 
-    if (
-      !isNonEmptyString(handle) ||
-      ownHandles.has(handle) ||
-      isGroupEmail(handle)
-    ) {
+    if (!isExternalDigestHandle({ handle, ownHandles })) {
       continue;
     }
 
