@@ -32,6 +32,7 @@ import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/re
 import { runSlackAssistantAgentWithProgress } from 'src/logic-functions/utils/run-slack-assistant-agent-with-progress';
 import { runSlackReaction } from 'src/logic-functions/utils/run-slack-reaction';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
+import { wasSlackAssistantRequestCreatedByTheApp } from 'src/logic-functions/utils/was-slack-assistant-request-created-by-the-app';
 
 const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
 
@@ -129,10 +130,15 @@ export const slackAssistantWorkerHandler = async (
       fetchWorkspaceBaseUrl(),
     ]);
 
-    const runAsWorkspaceMemberId = await resolveSlackRunAsWorkspaceMemberId({
+    const runAsWorkspaceMemberId = (await wasSlackAssistantRequestCreatedByTheApp(
       client,
-      identity: requesterIdentity,
-    });
+      record.id,
+    ))
+      ? await resolveSlackRunAsWorkspaceMemberId({
+          client,
+          identity: requesterIdentity,
+        })
+      : undefined;
 
     if (isNonEmptyString(runAsWorkspaceMemberId)) {
       // Audit only, so a failure here must not cost the requester their answer.

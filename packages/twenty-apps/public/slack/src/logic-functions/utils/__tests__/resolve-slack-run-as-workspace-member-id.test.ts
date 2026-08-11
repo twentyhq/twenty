@@ -5,26 +5,26 @@ import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-ide
 import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 
 const {
-  findSlackUserMappingWorkspaceMemberIdMock,
+  findSlackUserLinkWorkspaceMemberIdMock,
   findWorkspaceMemberIdByEmailMock,
-  createSlackUserMappingMock,
+  createSlackUserLinkMock,
 } = vi.hoisted(() => ({
-  findSlackUserMappingWorkspaceMemberIdMock: vi.fn(),
+  findSlackUserLinkWorkspaceMemberIdMock: vi.fn(),
   findWorkspaceMemberIdByEmailMock: vi.fn(),
-  createSlackUserMappingMock: vi.fn(),
+  createSlackUserLinkMock: vi.fn(),
 }));
 
-vi.mock('src/logic-functions/data/find-slack-user-mapping', () => ({
-  findSlackUserMappingWorkspaceMemberId:
-    findSlackUserMappingWorkspaceMemberIdMock,
+vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
+  findSlackUserLinkWorkspaceMemberId:
+    findSlackUserLinkWorkspaceMemberIdMock,
 }));
 
 vi.mock('src/logic-functions/data/find-workspace-member-id-by-email', () => ({
   findWorkspaceMemberIdByEmail: findWorkspaceMemberIdByEmailMock,
 }));
 
-vi.mock('src/logic-functions/data/create-slack-user-mapping', () => ({
-  createSlackUserMapping: createSlackUserMappingMock,
+vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
+  createSlackUserLink: createSlackUserLinkMock,
 }));
 
 const client = {} as CoreApiClient;
@@ -40,9 +40,9 @@ const IDENTITY: SlackUserIdentity = {
 describe('resolveSlackRunAsWorkspaceMemberId', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    findSlackUserMappingWorkspaceMemberIdMock.mockResolvedValue(undefined);
+    findSlackUserLinkWorkspaceMemberIdMock.mockResolvedValue(undefined);
     findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
-    createSlackUserMappingMock.mockResolvedValue(undefined);
+    createSlackUserLinkMock.mockResolvedValue(undefined);
   });
 
   it('should return undefined when the Slack user could not be identified', async () => {
@@ -52,17 +52,17 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         identity: undefined,
       }),
     ).toBeUndefined();
-    expect(findSlackUserMappingWorkspaceMemberIdMock).not.toHaveBeenCalled();
+    expect(findSlackUserLinkWorkspaceMemberIdMock).not.toHaveBeenCalled();
   });
 
-  it('should prefer the existing mapping over an email match', async () => {
-    findSlackUserMappingWorkspaceMemberIdMock.mockResolvedValue('member-1');
+  it('should prefer the existing link over an email match', async () => {
+    findSlackUserLinkWorkspaceMemberIdMock.mockResolvedValue('member-1');
 
     expect(
       await resolveSlackRunAsWorkspaceMemberId({ client, identity: IDENTITY }),
     ).toBe('member-1');
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
-    expect(createSlackUserMappingMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should not match on email when the Slack account is not eligible', async () => {
@@ -75,13 +75,13 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
   });
 
-  it('should store the mapping when the email matches a single member', async () => {
+  it('should store the link when the email matches a single member', async () => {
     findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
 
     expect(
       await resolveSlackRunAsWorkspaceMemberId({ client, identity: IDENTITY }),
     ).toBe('member-1');
-    expect(createSlackUserMappingMock).toHaveBeenCalledWith(client, {
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(client, {
       slackTeamId: 'T0INSTALLED',
       slackUserId: 'U0123456789',
       workspaceMemberId: 'member-1',
@@ -89,17 +89,17 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     });
   });
 
-  it('should not store a mapping when no member owns the email', async () => {
+  it('should not store a link when no member owns the email', async () => {
     expect(
       await resolveSlackRunAsWorkspaceMemberId({ client, identity: IDENTITY }),
     ).toBeUndefined();
-    expect(createSlackUserMappingMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
-  it('should defer to the winning mapping when a concurrent request created one', async () => {
+  it('should defer to the winning link when a concurrent request created one', async () => {
     findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
-    createSlackUserMappingMock.mockRejectedValue(new Error('duplicate key'));
-    findSlackUserMappingWorkspaceMemberIdMock
+    createSlackUserLinkMock.mockRejectedValue(new Error('duplicate key'));
+    findSlackUserLinkWorkspaceMemberIdMock
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce('member-2');
 
@@ -108,8 +108,8 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     ).toBe('member-2');
   });
 
-  it('should fall back to the agent role when the mapping lookup throws', async () => {
-    findSlackUserMappingWorkspaceMemberIdMock.mockRejectedValue(
+  it('should fall back to the agent role when the link lookup throws', async () => {
+    findSlackUserLinkWorkspaceMemberIdMock.mockRejectedValue(
       new Error('permission denied'),
     );
 
