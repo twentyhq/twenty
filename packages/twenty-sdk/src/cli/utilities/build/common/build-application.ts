@@ -17,8 +17,8 @@ import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle';
-import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
+import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/translations/load-front-component-translation-catalogs';
 import {

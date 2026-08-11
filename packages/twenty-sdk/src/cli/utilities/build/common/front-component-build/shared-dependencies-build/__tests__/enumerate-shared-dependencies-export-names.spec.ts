@@ -1,5 +1,5 @@
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
-import { enumerateSharedDependenciesExportNames } from '@/cli/utilities/build/common/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
+import { enumerateSharedDependenciesExportNames } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
 
 describe('enumerateSharedDependenciesExportNames', () => {
   it('reports the named exports and the default of a commonjs dependency', async () => {

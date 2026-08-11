@@ -5,7 +5,7 @@ import { resolveWorkspaceUrl } from './utils/resolve-workspace-url';
 
 const RECORD_ID = process.env.E2E_POSTCARD_RECORD_ID;
 
-const SHARED_DEPENDENCIES_IMPORT_SPECIFIER = 'twenty:shared-dependencies';
+const FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER = 'twenty:front-component-shared-dependencies';
 const REACT_LICENSE_BANNER = '@license React';
 
 const MIN_SHARED_DEPENDENCIES_BUNDLE_BYTES = 50_000;
@@ -135,7 +135,7 @@ test.describe('Postcard shared dependencies bundle', () => {
     expect(cardBundleBody).not.toBeNull();
 
     const cardBundleSource = (cardBundleBody as Buffer).toString('utf-8');
-    expect(cardBundleSource).toContain(SHARED_DEPENDENCIES_IMPORT_SPECIFIER);
+    expect(cardBundleSource).toContain(FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER);
     expect(cardBundleSource).not.toContain(REACT_LICENSE_BANNER);
 
     expect((cardBundleBody as Buffer).byteLength).toBeLessThan(

@@ -4,10 +4,10 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { EsbuildWatcher } from '@/cli/utilities/build/common/esbuild-watcher';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/common/front-component-build/front-components-watcher';
-import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
 
 vi.mock(
-  '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle',
+  '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle',
   () => ({
     buildSharedDependenciesBundle: vi.fn(),
   }),

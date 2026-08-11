@@ -1,4 +1,4 @@
-import { SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 import { containsSharedDependenciesImportSpecifier } from '../containsSharedDependenciesImportSpecifier';
 
@@ -6,7 +6,7 @@ describe('containsSharedDependenciesImportSpecifier', () => {
   it('should detect a static import of the shared dependencies bundle', () => {
     expect(
       containsSharedDependenciesImportSpecifier(
-        `import { __shared_dependencies_react__ } from "${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`,
+        `import { __shared_dependencies_react__ } from "${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`,
       ),
     ).toBe(true);
   });
@@ -14,7 +14,7 @@ describe('containsSharedDependenciesImportSpecifier', () => {
   it('should detect a dynamic import of the shared dependencies bundle', () => {
     expect(
       containsSharedDependenciesImportSpecifier(
-        `const sharedDependencies = await import('${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}');`,
+        `const sharedDependencies = await import('${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}');`,
       ),
     ).toBe(true);
   });
@@ -22,7 +22,7 @@ describe('containsSharedDependenciesImportSpecifier', () => {
   it('should not detect the specifier outside of an import context', () => {
     expect(
       containsSharedDependenciesImportSpecifier(
-        `const specifier = "${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`,
+        `const specifier = "${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`,
       ),
     ).toBe(false);
   });

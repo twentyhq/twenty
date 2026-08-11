@@ -1,4 +1,4 @@
-import { seedBuiltSharedDependenciesFile } from 'test/integration/metadata/suites/application/utils/seed-built-shared-dependencies-file.util';
+import { seedBuiltFrontComponentSharedDependenciesFile } from 'test/integration/metadata/suites/application/utils/seed-built-front-component-shared-dependencies-file.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -49,7 +49,7 @@ describe('Front component shared dependencies endpoint', () => {
 
   describe('with a built shared dependencies bundle', () => {
     beforeAll(async () => {
-      const { cleanup } = seedBuiltSharedDependenciesFile({
+      const { cleanup } = seedBuiltFrontComponentSharedDependenciesFile({
         applicationUniversalIdentifier,
         builtPath: SHARED_DEPENDENCIES_BUILT_PATH,
         content: SHARED_DEPENDENCIES_BUNDLE_CONTENT,

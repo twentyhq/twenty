@@ -31,7 +31,7 @@ export class FrontComponentSharedDependenciesService {
     workspaceId: string;
   }): Promise<{
     fileResponse: FileResponse;
-    sharedDependenciesChecksum: string | null;
+    frontComponentSharedDependenciesChecksum: string | null;
   }> {
     const application = await this.applicationService.findOneApplicationOrThrow(
       {
@@ -68,7 +68,7 @@ export class FrontComponentSharedDependenciesService {
     if (isDefined(presignedUrl)) {
       return {
         fileResponse: { type: 'redirect', presignedUrl },
-        sharedDependenciesChecksum:
+        frontComponentSharedDependenciesChecksum:
           application.frontComponentSharedDependenciesChecksum,
       };
     }
@@ -81,7 +81,7 @@ export class FrontComponentSharedDependenciesService {
         stream,
         mimeType: SHARED_DEPENDENCIES_BUNDLE_MIME_TYPE,
       },
-      sharedDependenciesChecksum:
+      frontComponentSharedDependenciesChecksum:
         application.frontComponentSharedDependenciesChecksum,
     };
   }

@@ -2,13 +2,13 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'path';
 
 import * as esbuild from 'esbuild';
-import { SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
-import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle';
-import { removeBuiltSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/__tests__/utils/remove-built-shared-dependencies-bundle';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
+import { removeBuiltSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/__tests__/utils/remove-built-shared-dependencies-bundle';
 
 const SHARED_DEPENDENCIES_MANIFEST = {
   dependencies: ['axios'],
@@ -55,7 +55,7 @@ describe('shared dependency shims for a dependency with a default export', () =>
       expect(
         outputMeta?.imports.some(
           (moduleImport) =>
-            moduleImport.path === SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+            moduleImport.path === FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
         ),
       ).toBe(true);
     } finally {

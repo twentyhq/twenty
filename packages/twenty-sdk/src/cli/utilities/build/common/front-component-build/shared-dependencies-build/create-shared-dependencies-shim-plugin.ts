@@ -1,5 +1,5 @@
-import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-build-context.type';
-import { getSharedDependenciesShimSource } from '@/cli/utilities/build/common/shared-dependencies-build/utils/get-shared-dependencies-shim-source';
+import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import { getSharedDependenciesShimSource } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-shim-source';
 import type * as esbuild from 'esbuild';
 import { isDefined } from 'twenty-shared/utils';
 

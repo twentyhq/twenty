@@ -5,15 +5,15 @@ import { join } from 'path';
 import * as esbuild from 'esbuild';
 import {
   OUTPUT_DIR,
-  SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+  FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
 } from 'twenty-shared/application';
 
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
-import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle';
-import { removeBuiltSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/__tests__/utils/remove-built-shared-dependencies-bundle';
-import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
+import { removeBuiltSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/__tests__/utils/remove-built-shared-dependencies-bundle';
+import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
 
 const REACT_BUNDLED_MARKER = '@license React';
 
@@ -49,14 +49,14 @@ const buildFrontComponent = async ({
 
 describe('shared dependencies build', () => {
   let sharedDependenciesBuildContext: SharedDependenciesBuildContext;
-  let sharedDependenciesChecksum: string;
+  let frontComponentSharedDependenciesChecksum: string;
 
   beforeAll(async () => {
     sharedDependenciesBuildContext = await buildSharedDependenciesBundle({
       appPath: MINIMAL_APP_PATH,
       sharedDependencies: SHARED_DEPENDENCIES_MANIFEST,
       onFileBuilt: ({ checksum }) => {
-        sharedDependenciesChecksum = checksum;
+        frontComponentSharedDependenciesChecksum = checksum;
       },
     });
   }, 120000);
@@ -88,7 +88,7 @@ describe('shared dependencies build', () => {
     expect(sharedDependenciesBundle).toContain(
       '__HTML_TAG_TO_CUSTOM_ELEMENT_TAG__',
     );
-    expect(sharedDependenciesChecksum).toMatch(/^[0-9a-f]{64}$/);
+    expect(frontComponentSharedDependenciesChecksum).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it('keeps react out of a front component bundle that shares them', async () => {
@@ -102,7 +102,7 @@ describe('shared dependencies build', () => {
         sharedDependenciesBuildContext,
       });
 
-      expect(output).toContain(SHARED_DEPENDENCIES_IMPORT_SPECIFIER);
+      expect(output).toContain(FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER);
       expect(output).not.toContain(REACT_BUNDLED_MARKER);
 
       const outputMeta = Object.values(result.metafile?.outputs ?? {}).find(
@@ -113,7 +113,7 @@ describe('shared dependencies build', () => {
         outputMeta?.imports.some(
           (moduleImport) =>
             moduleImport.external === true &&
-            moduleImport.path === SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+            moduleImport.path === FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
         ),
       ).toBe(true);
     } finally {
@@ -130,7 +130,7 @@ describe('shared dependencies build', () => {
         sharedDependenciesBuildContext: null,
       });
 
-      expect(output).not.toContain(SHARED_DEPENDENCIES_IMPORT_SPECIFIER);
+      expect(output).not.toContain(FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER);
       expect(output).toContain(REACT_BUNDLED_MARKER);
     } finally {
       await rm(outputDir, { recursive: true, force: true });

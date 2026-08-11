@@ -1,4 +1,4 @@
-export const normalizeSharedDependencies = (
+export const normalizeFrontComponentSharedDependencies = (
   dependencies: string[],
 ): string[] => {
   const normalizedDependencies = new Set(dependencies);

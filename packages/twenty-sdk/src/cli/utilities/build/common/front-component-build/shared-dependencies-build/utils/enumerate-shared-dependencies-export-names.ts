@@ -1,5 +1,5 @@
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
-import { type SharedDependenciesExportNames } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-export-names.type';
+import { type SharedDependenciesExportNames } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-export-names.type';
 import * as esbuild from 'esbuild';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -256,10 +256,10 @@ export class ApplicationSyncService {
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
 
-    const sharedDependenciesChecksum =
+    const frontComponentSharedDependenciesChecksum =
       manifest.application.frontComponentSharedDependencies?.builtChecksum ??
       null;
-    const sharedDependenciesBuiltPath =
+    const frontComponentSharedDependenciesBuiltPath =
       manifest.application.frontComponentSharedDependencies?.builtPath ?? null;
 
     const updatedApplication = await this.applicationService.update(
@@ -271,8 +271,8 @@ export class ApplicationSyncService {
         version: packageJson.version,
         packageJsonChecksum: manifest.application.packageJsonChecksum,
         yarnLockChecksum: manifest.application.yarnLockChecksum,
-        frontComponentSharedDependenciesChecksum: sharedDependenciesChecksum,
-        frontComponentSharedDependenciesBuiltPath: sharedDependenciesBuiltPath,
+        frontComponentSharedDependenciesChecksum,
+        frontComponentSharedDependenciesBuiltPath,
         applicationRegistrationId: resolvedRegistrationId,
         workspaceId,
       },
@@ -280,12 +280,12 @@ export class ApplicationSyncService {
 
     if (
       application.frontComponentSharedDependenciesChecksum !==
-      sharedDependenciesChecksum
+      frontComponentSharedDependenciesChecksum
     ) {
       await this.broadcastFrontComponentSharedDependenciesChecksumUpdates({
         workspaceId,
         applicationId: application.id,
-        sharedDependenciesChecksum,
+        frontComponentSharedDependenciesChecksum,
       });
     }
 
@@ -295,11 +295,11 @@ export class ApplicationSyncService {
   private async broadcastFrontComponentSharedDependenciesChecksumUpdates({
     workspaceId,
     applicationId,
-    sharedDependenciesChecksum,
+    frontComponentSharedDependenciesChecksum,
   }: {
     workspaceId: string;
     applicationId: string;
-    sharedDependenciesChecksum: string | null;
+    frontComponentSharedDependenciesChecksum: string | null;
   }): Promise<void> {
     try {
       const frontComponents = await this.frontComponentRepository.find({
@@ -314,10 +314,10 @@ export class ApplicationSyncService {
           entityName: 'frontComponent',
           recordId: frontComponent.id,
           properties: {
-            updatedFields: ['sharedDependenciesChecksum'],
+            updatedFields: ['frontComponentSharedDependenciesChecksum'],
             after: {
               id: frontComponent.id,
-              sharedDependenciesChecksum,
+              frontComponentSharedDependenciesChecksum,
             },
           },
         })),

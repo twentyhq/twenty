@@ -1,11 +1,11 @@
-import { normalizeSharedDependencies } from '@/cli/utilities/build/manifest/utils/normalize-shared-dependencies';
+import { normalizeFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/normalize-front-component-shared-dependencies';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import path from 'path';
 import {
   FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
   type FrontComponentSharedDependenciesManifest,
-  SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+  FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
 } from 'twenty-shared/application';
 
 const RESERVED_DEPENDENCY_PREFIXES = ['twenty-client-sdk', 'twenty-sdk'];
@@ -33,7 +33,7 @@ const getSharedDependenciesErrors = (dependencies: string[]): string[] => {
       continue;
     }
 
-    if (dependency === SHARED_DEPENDENCIES_IMPORT_SPECIFIER) {
+    if (dependency === FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER) {
       errors.push(
         `Shared dependency "${dependency}" is reserved and cannot be shared`,
       );
@@ -103,7 +103,7 @@ export const extractFrontComponentSharedDependencies = async (
 
   return {
     sharedDependencies: {
-      dependencies: normalizeSharedDependencies(declaredDependencies),
+      dependencies: normalizeFrontComponentSharedDependencies(declaredDependencies),
       builtPath: FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
       builtChecksum: null,
     },

@@ -7,12 +7,12 @@ import {
 
 export const getSharedDependenciesBundleCacheControl = ({
   requestedChecksum,
-  sharedDependenciesChecksum,
+  frontComponentSharedDependenciesChecksum,
 }: {
   requestedChecksum: string | undefined;
-  sharedDependenciesChecksum: string | null;
+  frontComponentSharedDependenciesChecksum: string | null;
 }): string =>
   isDefined(requestedChecksum) &&
-  requestedChecksum === sharedDependenciesChecksum
+  requestedChecksum === frontComponentSharedDependenciesChecksum
     ? IMMUTABLE_FILE_CACHE_CONTROL
     : PRESIGNED_URL_NO_STORE_CACHE_CONTROL;

@@ -1,16 +1,17 @@
-import { SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 import { rewriteModuleImportsToBlobUrls } from '../rewriteModuleImportsToBlobUrls';
 
 const blobUrlBySpecifier = {
-  [SHARED_DEPENDENCIES_IMPORT_SPECIFIER]: 'blob:shared-dependencies-url',
+  [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER]:
+    'blob:shared-dependencies-url',
   'twenty-client-sdk/core': 'blob:core-url',
   'twenty-client-sdk/metadata': 'blob:metadata-url',
 };
 
 describe('rewriteModuleImportsToBlobUrls', () => {
   it('should rewrite every specifier of the map to its blob url', () => {
-    const source = `import { __shared_dependencies_react__ } from "${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";\nimport { CoreApiClient } from 'twenty-client-sdk/core';\nimport { MetadataApiClient } from "twenty-client-sdk/metadata";`;
+    const source = `import { __shared_dependencies_react__ } from "${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";\nimport { CoreApiClient } from 'twenty-client-sdk/core';\nimport { MetadataApiClient } from "twenty-client-sdk/metadata";`;
 
     expect(rewriteModuleImportsToBlobUrls(source, blobUrlBySpecifier)).toBe(
       'import { __shared_dependencies_react__ } from "blob:shared-dependencies-url";\nimport { CoreApiClient } from \'blob:core-url\';\nimport { MetadataApiClient } from "blob:metadata-url";',
@@ -18,7 +19,7 @@ describe('rewriteModuleImportsToBlobUrls', () => {
   });
 
   it('should rewrite minified imports without whitespace', () => {
-    const source = `import{__shared_dependencies_react__}from"${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`;
+    const source = `import{__shared_dependencies_react__}from"${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`;
 
     expect(rewriteModuleImportsToBlobUrls(source, blobUrlBySpecifier)).toBe(
       'import{__shared_dependencies_react__}from"blob:shared-dependencies-url";',
@@ -34,7 +35,7 @@ describe('rewriteModuleImportsToBlobUrls', () => {
   });
 
   it('should rewrite a deferred import of the shared dependencies bundle', () => {
-    const source = `const sharedDependencies = await import('${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}');`;
+    const source = `const sharedDependencies = await import('${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}');`;
 
     expect(rewriteModuleImportsToBlobUrls(source, blobUrlBySpecifier)).toBe(
       "const sharedDependencies = await import('blob:shared-dependencies-url');",
@@ -42,7 +43,7 @@ describe('rewriteModuleImportsToBlobUrls', () => {
   });
 
   it('should rewrite a side effect only import of the shared dependencies bundle', () => {
-    const source = `import "${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`;
+    const source = `import "${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`;
 
     expect(rewriteModuleImportsToBlobUrls(source, blobUrlBySpecifier)).toBe(
       'import "blob:shared-dependencies-url";',
@@ -75,7 +76,7 @@ describe('rewriteModuleImportsToBlobUrls', () => {
   });
 
   it('should not rewrite a specifier that only appears as a string literal', () => {
-    const source = `const specifier = "${SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`;
+    const source = `const specifier = "${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}";`;
 
     expect(rewriteModuleImportsToBlobUrls(source, blobUrlBySpecifier)).toBe(
       source,

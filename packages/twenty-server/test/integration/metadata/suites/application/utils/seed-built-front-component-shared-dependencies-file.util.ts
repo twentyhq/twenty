@@ -5,7 +5,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const STORAGE_LOCAL_PATH = join(process.cwd(), '.local-storage');
 
-export const seedBuiltSharedDependenciesFile = ({
+export const seedBuiltFrontComponentSharedDependenciesFile = ({
   workspaceId = SEED_APPLE_WORKSPACE_ID,
   applicationUniversalIdentifier,
   builtPath,

@@ -11,7 +11,7 @@ describe('getSharedDependenciesBundleCacheControl', () => {
     expect(
       getSharedDependenciesBundleCacheControl({
         requestedChecksum: CHECKSUM,
-        sharedDependenciesChecksum: CHECKSUM,
+        frontComponentSharedDependenciesChecksum: CHECKSUM,
       }),
     ).toBe(IMMUTABLE_FILE_CACHE_CONTROL);
   });
@@ -26,7 +26,7 @@ describe('getSharedDependenciesBundleCacheControl', () => {
       expect(
         getSharedDependenciesBundleCacheControl({
           requestedChecksum,
-          sharedDependenciesChecksum: storedChecksum,
+          frontComponentSharedDependenciesChecksum: storedChecksum,
         }),
       ).toBe(PRESIGNED_URL_NO_STORE_CACHE_CONTROL);
     },

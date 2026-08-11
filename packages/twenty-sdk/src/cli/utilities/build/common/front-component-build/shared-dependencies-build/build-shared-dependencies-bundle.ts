@@ -1,9 +1,9 @@
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-build-context.type';
-import { enumerateSharedDependenciesExportNames } from '@/cli/utilities/build/common/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
-import { getSharedDependenciesEntrySource } from '@/cli/utilities/build/common/shared-dependencies-build/utils/get-shared-dependencies-entry-source';
-import { getSharedDependenciesNamespaceCollisions } from '@/cli/utilities/build/common/shared-dependencies-build/utils/get-shared-dependencies-namespace-collisions';
+import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import { enumerateSharedDependenciesExportNames } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
+import { getSharedDependenciesEntrySource } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-entry-source';
+import { getSharedDependenciesNamespaceCollisions } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-namespace-collisions';
 import { ensureDir } from '@/cli/utilities/file/fs-utils';
 import crypto from 'crypto';
 import * as esbuild from 'esbuild';

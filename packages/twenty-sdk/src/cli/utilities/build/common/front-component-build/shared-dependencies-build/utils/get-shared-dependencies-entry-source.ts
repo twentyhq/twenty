@@ -1,4 +1,4 @@
-import { toSharedDependenciesNamespaceIdentifier } from '@/cli/utilities/build/common/shared-dependencies-build/utils/to-shared-dependencies-namespace-identifier';
+import { toSharedDependenciesNamespaceIdentifier } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/to-shared-dependencies-namespace-identifier';
 
 export const getSharedDependenciesEntrySource = (
   dependencies: string[],

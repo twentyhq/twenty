@@ -52,7 +52,7 @@ export class FrontComponentSharedDependenciesController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Param('cacheKey') cacheKey?: string,
   ) {
-    const { fileResponse, sharedDependenciesChecksum } =
+    const { fileResponse, frontComponentSharedDependenciesChecksum } =
       await this.frontComponentSharedDependenciesService
         .getBuiltSharedDependenciesPresignedUrlOrStream({
           applicationId,
@@ -94,7 +94,7 @@ export class FrontComponentSharedDependenciesController {
       'Cache-Control',
       getSharedDependenciesBundleCacheControl({
         requestedChecksum: extractChecksumFromCacheKey(cacheKey),
-        sharedDependenciesChecksum,
+        frontComponentSharedDependenciesChecksum,
       }),
     );
 

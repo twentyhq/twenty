@@ -109,7 +109,7 @@ type FrontComponent {
   usesSdkClient: Boolean!
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
-  sharedDependenciesChecksum: String
+  frontComponentSharedDependenciesChecksum: String
 }
 
 type CommandMenuItem {

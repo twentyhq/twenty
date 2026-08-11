@@ -42,7 +42,7 @@ export class FrontComponentResolver {
   ) {}
 
   @ResolveField(() => String, { nullable: true })
-  async sharedDependenciesChecksum(
+  async frontComponentSharedDependenciesChecksum(
     @Parent() frontComponent: FrontComponentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | null> {

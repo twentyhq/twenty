@@ -7,8 +7,8 @@ import {
   type OnFileBuiltCallback,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-plugin';
-import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/shared-dependencies-build/build-shared-dependencies-bundle';
-import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
+import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
 import { pathExists } from '@/cli/utilities/file/fs-utils';
 import { isNonEmptyArray } from '@sniptt/guards';
 import chokidar, { type FSWatcher } from 'chokidar';

@@ -1,6 +1,6 @@
-import { type SharedDependenciesExportNames } from '@/cli/utilities/build/common/shared-dependencies-build/types/shared-dependencies-export-names.type';
-import { toSharedDependenciesNamespaceIdentifier } from '@/cli/utilities/build/common/shared-dependencies-build/utils/to-shared-dependencies-namespace-identifier';
-import { SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { type SharedDependenciesExportNames } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-export-names.type';
+import { toSharedDependenciesNamespaceIdentifier } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/to-shared-dependencies-namespace-identifier';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 export const getSharedDependenciesShimSource = ({
   specifier,
@@ -13,7 +13,7 @@ export const getSharedDependenciesShimSource = ({
     toSharedDependenciesNamespaceIdentifier(specifier);
 
   const lines = [
-    `import { ${namespaceIdentifier} } from ${JSON.stringify(SHARED_DEPENDENCIES_IMPORT_SPECIFIER)};`,
+    `import { ${namespaceIdentifier} } from ${JSON.stringify(FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER)};`,
   ];
 
   for (const [index, exportName] of exportNames.namedExports.entries()) {

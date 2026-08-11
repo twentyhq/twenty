@@ -1,5 +1,5 @@
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
-import { SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildBlobUrlBySpecifier = ({
@@ -17,7 +17,8 @@ export const buildBlobUrlBySpecifier = ({
     : {}),
   ...(isDefined(sharedDependenciesModuleBlobUrl)
     ? {
-        [SHARED_DEPENDENCIES_IMPORT_SPECIFIER]: sharedDependenciesModuleBlobUrl,
+        [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER]:
+          sharedDependenciesModuleBlobUrl,
       }
     : {}),
 });
