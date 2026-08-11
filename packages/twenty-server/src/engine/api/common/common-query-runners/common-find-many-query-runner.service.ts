@@ -30,7 +30,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
-import { canBoundScanWithDirectLimit } from 'src/engine/api/common/utils/can-bound-scan-with-direct-limit.util';
+import { hasOnlyToOneJoins } from 'src/engine/api/common/utils/has-only-to-one-joins.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -166,7 +166,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 
-    if (canBoundScanWithDirectLimit(queryBuilder)) {
+    if (hasOnlyToOneJoins(queryBuilder)) {
       if (isDefined(args.offset)) {
         queryBuilder.offset(args.offset);
       }

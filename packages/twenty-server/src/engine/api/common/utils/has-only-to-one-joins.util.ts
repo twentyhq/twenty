@@ -2,7 +2,7 @@ import { type SelectQueryBuilder, type ObjectLiteral } from 'typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
-export const canBoundScanWithDirectLimit = <T extends ObjectLiteral>(
+export const hasOnlyToOneJoins = <T extends ObjectLiteral>(
   queryBuilder: SelectQueryBuilder<T>,
 ): boolean =>
   queryBuilder.expressionMap.joinAttributes.every(({ relation }) => {
