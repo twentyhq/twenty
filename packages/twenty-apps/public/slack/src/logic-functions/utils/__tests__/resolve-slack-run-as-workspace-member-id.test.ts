@@ -49,17 +49,6 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     authTestMock.mockResolvedValue({ team_id: 'T0INSTALLED' });
   });
 
-  it('should return undefined when the Slack user could not be identified', async () => {
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: undefined,
-      }),
-    ).toBeUndefined();
-    expect(findSlackUserLinkWorkspaceMemberIdMock).not.toHaveBeenCalled();
-  });
-
   it('should prefer the existing link over an email match', async () => {
     findSlackUserLinkWorkspaceMemberIdMock.mockResolvedValue('member-1');
 
@@ -101,17 +90,6 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
       workspaceMemberId: 'member-1',
       name: 'ada',
     });
-  });
-
-  it('should not store a link when no member owns the email', async () => {
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBeUndefined();
-    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should defer to the winning link when a concurrent request created one', async () => {

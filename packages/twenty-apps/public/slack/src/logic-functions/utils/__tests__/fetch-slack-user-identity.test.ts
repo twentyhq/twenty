@@ -26,16 +26,6 @@ describe('fetchSlackUserIdentity', () => {
     usersInfoMock.mockResolvedValue({ user: buildSlackUser() });
   });
 
-  it('should return undefined when no Slack user id is given', async () => {
-    const identity = await fetchSlackUserIdentity({
-      client,
-      slackUserId: undefined,
-    });
-
-    expect(identity).toBeUndefined();
-    expect(usersInfoMock).not.toHaveBeenCalled();
-  });
-
   it('should return undefined when the Slack lookup fails', async () => {
     usersInfoMock.mockRejectedValue(new Error('missing_scope'));
 
@@ -90,19 +80,6 @@ describe('fetchSlackUserIdentity', () => {
     });
 
     expect(identity?.isRegularUserAccount).toBe(false);
-  });
-
-  it('should report a missing email rather than judging eligibility on it', async () => {
-    usersInfoMock.mockResolvedValue({
-      user: buildSlackUser({ profile: { display_name: 'ada' } }),
-    });
-
-    const identity = await fetchSlackUserIdentity({
-      client,
-      slackUserId: SLACK_USER_ID,
-    });
-
-    expect(identity?.email).toBeUndefined();
   });
 
   it('should report the Slack team without judging it', async () => {

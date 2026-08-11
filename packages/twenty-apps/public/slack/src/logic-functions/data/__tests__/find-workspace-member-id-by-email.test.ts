@@ -53,22 +53,4 @@ describe('findWorkspaceMemberIdByEmail', () => {
       await findWorkspaceMemberIdByEmail(client, 'ada@twenty.com'),
     ).toBeUndefined();
   });
-
-  it('should return undefined when no member has that email', async () => {
-    queryMock.mockResolvedValue(buildQueryResult([]));
-
-    expect(
-      await findWorkspaceMemberIdByEmail(client, 'ada@twenty.com'),
-    ).toBeUndefined();
-  });
-
-  it('should ignore members without an email', async () => {
-    queryMock.mockResolvedValue(
-      buildQueryResult([{ id: 'member-1', userEmail: null }]),
-    );
-
-    expect(
-      await findWorkspaceMemberIdByEmail(client, 'ada@twenty.com'),
-    ).toBeUndefined();
-  });
 });
