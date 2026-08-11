@@ -122,6 +122,21 @@ describe('ApplicationRegistrationVariableService', () => {
       );
     });
 
+    it('should drop isRequired when the manifest deprecates a variable', async () => {
+      variableRepository.find.mockResolvedValue([
+        makeExistingVariable({ isRequired: true }),
+      ]);
+
+      await service.syncVariableSchemas(registrationId, {
+        API_KEY: { isRequired: true, isDeprecated: true },
+      });
+
+      expect(variableRepository.update).toHaveBeenCalledWith(
+        'variable-1',
+        expect.objectContaining({ isRequired: false, isDeprecated: true }),
+      );
+    });
+
     it('should update isDeprecated on an existing variable without touching its value', async () => {
       variableRepository.find.mockResolvedValue([
         makeExistingVariable({
@@ -185,9 +200,9 @@ describe('ApplicationRegistrationVariableService', () => {
       applicationRepository.find.mockResolvedValue([]);
     };
 
-    it('should report configured when the only unfilled required variable is deprecated', async () => {
+    it('should report configured when the only unfilled variable is deprecated', async () => {
       mockVariables([
-        makeExistingVariable({ isRequired: true, isDeprecated: true }),
+        makeExistingVariable({ isRequired: false, isDeprecated: true }),
       ]);
 
       const result = await service.isConfiguredBatch([registrationId]);

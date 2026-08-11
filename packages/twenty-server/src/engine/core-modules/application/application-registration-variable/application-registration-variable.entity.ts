@@ -40,6 +40,10 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
   'CHK_applicationRegistrationVariable_encryptedValue_encrypted',
   `"encryptedValue" = '' OR "encryptedValue" LIKE 'enc:v2:%'`,
 )
+@Check(
+  'CHK_applicationRegistrationVariable_deprecated_not_required',
+  `NOT ("isRequired" AND "isDeprecated")`,
+)
 export class ApplicationRegistrationVariableEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

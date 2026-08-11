@@ -138,13 +138,15 @@ export class ApplicationRegistrationVariableService {
 
     for (const [key, schema] of Object.entries(serverVariables)) {
       const existing = existingByKey.get(key);
+      const isDeprecated = schema.isDeprecated ?? false;
+      const isRequired = isDeprecated ? false : (schema.isRequired ?? false);
 
       if (existing) {
         await variableRepository.update(existing.id, {
           description: schema.description ?? '',
           isSecret: schema.isSecret ?? true,
-          isRequired: schema.isRequired ?? false,
-          isDeprecated: schema.isDeprecated ?? false,
+          isRequired,
+          isDeprecated,
           type: schema.type ?? FieldMetadataType.TEXT,
           options: schema.options ?? null,
         });
@@ -156,8 +158,8 @@ export class ApplicationRegistrationVariableService {
             encryptedValue: '',
             description: schema.description ?? '',
             isSecret: schema.isSecret ?? true,
-            isRequired: schema.isRequired ?? false,
-            isDeprecated: schema.isDeprecated ?? false,
+            isRequired,
+            isDeprecated,
             type: schema.type ?? FieldMetadataType.TEXT,
             options: schema.options ?? null,
           }),
@@ -202,9 +204,7 @@ export class ApplicationRegistrationVariableService {
       const areVariablesConfigured = variables
         .filter(
           (variable) =>
-            variable.applicationRegistrationId === id &&
-            variable.isRequired &&
-            !variable.isDeprecated,
+            variable.applicationRegistrationId === id && variable.isRequired,
         )
         .every((variable) => this.isVariableFilled(variable));
 

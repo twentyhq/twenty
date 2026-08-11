@@ -36,7 +36,7 @@ describe('AddIsDeprecatedToApplicationVariablesFastInstanceCommand', () => {
   });
 
   describe('up', () => {
-    it('adds isDeprecated to both tables', async () => {
+    it('adds isDeprecated to both tables and the deprecated-not-required constraint', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
       const queryRunner = { query } as unknown as QueryRunner;
 
@@ -47,12 +47,14 @@ describe('AddIsDeprecatedToApplicationVariablesFastInstanceCommand', () => {
       expect(statements).toEqual([
         'ALTER TABLE "core"."applicationVariable" ADD COLUMN IF NOT EXISTS "isDeprecated" boolean NOT NULL DEFAULT false',
         'ALTER TABLE "core"."applicationRegistrationVariable" ADD COLUMN IF NOT EXISTS "isDeprecated" boolean NOT NULL DEFAULT false',
+        'ALTER TABLE "core"."applicationRegistrationVariable" DROP CONSTRAINT IF EXISTS "CHK_applicationRegistrationVariable_deprecated_not_required"',
+        'ALTER TABLE "core"."applicationRegistrationVariable" ADD CONSTRAINT "CHK_applicationRegistrationVariable_deprecated_not_required" CHECK (NOT ("isRequired" AND "isDeprecated"))',
       ]);
     });
   });
 
   describe('down', () => {
-    it('drops isDeprecated from both tables in reverse order', async () => {
+    it('drops the constraint then isDeprecated from both tables in reverse order', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
       const queryRunner = { query } as unknown as QueryRunner;
 
@@ -61,6 +63,7 @@ describe('AddIsDeprecatedToApplicationVariablesFastInstanceCommand', () => {
       const statements = query.mock.calls.map((call) => call[0] as string);
 
       expect(statements).toEqual([
+        'ALTER TABLE "core"."applicationRegistrationVariable" DROP CONSTRAINT IF EXISTS "CHK_applicationRegistrationVariable_deprecated_not_required"',
         'ALTER TABLE "core"."applicationRegistrationVariable" DROP COLUMN IF EXISTS "isDeprecated"',
         'ALTER TABLE "core"."applicationVariable" DROP COLUMN IF EXISTS "isDeprecated"',
       ]);
