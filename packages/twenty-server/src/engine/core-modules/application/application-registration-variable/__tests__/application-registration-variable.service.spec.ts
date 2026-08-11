@@ -261,7 +261,7 @@ describe('ApplicationRegistrationVariableService', () => {
   });
 
   describe('findVariablesWithObfuscatedValuesGlobal', () => {
-    it('should mask an undecryptable non-secret value instead of throwing', async () => {
+    it('should mask an undecryptable enc:v2 value instead of throwing', async () => {
       variableRepository.find.mockResolvedValue([
         makeExistingVariable({
           isSecret: false,
@@ -274,6 +274,19 @@ describe('ApplicationRegistrationVariableService', () => {
 
       expect(variable.isFilled).toBe(true);
       expect(variable.value).toBe('•••••••••••••');
+    });
+
+    it('should throw for a value that is not an enc:v2 envelope', async () => {
+      variableRepository.find.mockResolvedValue([
+        makeExistingVariable({
+          isSecret: false,
+          encryptedValue: 'legacy-ctr-ciphertext' as EncryptedString,
+        }),
+      ]);
+
+      await expect(
+        service.findVariablesWithObfuscatedValuesGlobal(registrationId),
+      ).rejects.toThrow('undecryptable');
     });
   });
 

@@ -142,6 +142,9 @@ export default {
             "options": [
                 5
             ],
+            "isFilled": [
+                3
+            ],
             "createdAt": [
                 6
             ],
@@ -8459,7 +8462,7 @@ export default {
                 }
             ],
             "createApplicationRegistrationVariable": [
-                174,
+                2,
                 {
                     "input": [
                         457,
@@ -8468,7 +8471,7 @@ export default {
                 }
             ],
             "updateApplicationRegistrationVariable": [
-                174,
+                2,
                 {
                     "input": [
                         458,

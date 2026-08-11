@@ -15,6 +15,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
@@ -301,7 +302,15 @@ export class ApplicationRegistrationVariableService {
       return this.encryptionService.decryptVersionedOrThrow(
         variable.encryptedValue,
       );
-    } catch {
+    } catch (error) {
+      if (
+        !variable.encryptedValue.startsWith(
+          SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
+        )
+      ) {
+        throw error;
+      }
+
       this.logger.warn(
         `Failed to decrypt application registration variable ${variable.id} (key ${variable.key}, registration ${variable.applicationRegistrationId}); treating it as filled`,
       );
@@ -310,21 +319,17 @@ export class ApplicationRegistrationVariableService {
     }
   }
 
-  private isFilledPlaintextValue(plaintextValue: string | null): boolean {
-    return plaintextValue === null || plaintextValue !== '';
-  }
-
   private isVariableFilled(
     variable: ApplicationRegistrationVariableEntity,
   ): boolean {
-    return this.isFilledPlaintextValue(this.decryptValueOrNull(variable));
+    return this.decryptValueOrNull(variable) !== '';
   }
 
   private toObfuscatedDTO(
     variable: ApplicationRegistrationVariableEntity,
   ): ApplicationRegistrationVariableDTO {
     const plaintextValue = this.decryptValueOrNull(variable);
-    const isFilled = this.isFilledPlaintextValue(plaintextValue);
+    const isFilled = plaintextValue !== '';
 
     return {
       ...variable,

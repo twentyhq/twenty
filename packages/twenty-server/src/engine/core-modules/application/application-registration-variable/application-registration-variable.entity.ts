@@ -84,6 +84,11 @@ export class ApplicationRegistrationVariableEntity {
   @Column({ nullable: true, type: 'jsonb', default: null })
   options: ApplicationVariableOption[] | null;
 
+  @Field()
+  get isFilled(): boolean {
+    return this.encryptedValue !== '';
+  }
+
   @Column({ nullable: false, type: 'uuid' })
   applicationRegistrationId: string;
 
