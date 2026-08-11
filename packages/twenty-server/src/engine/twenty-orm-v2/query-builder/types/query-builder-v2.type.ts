@@ -1,7 +1,3 @@
-// Structural stand-ins for the TypeORM shapes the shared query parsers touch. They are
-// declared here rather than imported so ORM v2 carries no typeorm import, while staying
-// assignable from the values those parsers already build.
-
 export type WhereFactoryLike = {
   whereFactory: (queryBuilder: WhereExpressionLike) => void;
 };
@@ -28,9 +24,7 @@ export const isWhereFactoryLike = (
   condition !== null &&
   typeof (condition as WhereFactoryLike).whereFactory === 'function';
 
-// NotBrackets extends Brackets, so it satisfies WhereFactoryLike too and would otherwise
-// render as a plain group with its negation silently dropped. TypeORM tags both with a
-// well-known symbol, which is what tells them apart without importing typeorm.
+// NotBrackets extends Brackets, so only this tag separates them without importing typeorm.
 const NOT_BRACKETS_INSTANCE_SYMBOL = Symbol.for('NotBrackets');
 
 export const isNegatedWhereFactoryLike = (condition: unknown): boolean =>
@@ -56,8 +50,6 @@ export type FindOptionsLike = {
   select?: FindOptionsSelectLike;
 };
 
-// The subset of QueryExpressionMap the shared parsers and permission utils read.
-// ORM v2 populates it as it builds, instead of parsing it back out of generated SQL.
 export type ExpressionMapLike = {
   queryType: 'select';
   joinAttributes: { alias: { name: string } }[];

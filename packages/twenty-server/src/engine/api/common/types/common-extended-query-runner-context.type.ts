@@ -17,7 +17,5 @@ export type CommonExtendedQueryRunnerContext = Omit<
   repository: WorkspaceRepository<ObjectLiteral>;
   commonQueryParser: GraphqlQueryParser;
   workspaceDataSource: GlobalWorkspaceDataSource;
-  // Set only when IS_ORM_V2_READ_PATH_ENABLED is on and the runner is read-only.
-  // Runners that have a v2 path use it; the rest keep using `repository`.
   readRepositoryV2?: WorkspaceRepositoryV2;
 };

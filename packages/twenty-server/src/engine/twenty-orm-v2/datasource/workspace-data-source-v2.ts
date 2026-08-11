@@ -18,9 +18,7 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/t
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/utils/build-workspace-table-shape.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm-v2/utils/resolve-object-records-permissions.util';
 
-// Table shapes are pure data derived from field metadata, so they are cached per request
-// context keyed on the flat maps identity: when the metadata version changes the maps are
-// replaced and the cache entry is dropped with them.
+// Keyed on the flat maps identity, so a metadata version change drops the entry with them.
 const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
   object,
   Map<string, WorkspaceTableShape>

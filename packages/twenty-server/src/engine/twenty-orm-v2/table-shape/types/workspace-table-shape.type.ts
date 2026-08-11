@@ -7,7 +7,6 @@ export type WorkspaceColumnShape = {
   fieldMetadataId: string;
   fieldName: string;
   fieldMetadataType: FieldMetadataType;
-  // Set when the column is one sub-column of a composite field (nameFirstName -> name)
   compositeParentFieldName?: string;
 };
 
@@ -17,12 +16,9 @@ export type WorkspaceRelationShape = {
   relationType: RelationType;
   targetObjectMetadataId: string;
   targetFieldMetadataId: string | null;
-  // Only set on the owning (many-to-one) side
   joinColumnName?: string;
 };
 
-// Everything ORM v2 needs to talk to one workspace table. Derived from field metadata,
-// never from an ORM metadata graph: it holds no methods, no back-references and no cycles.
 export type WorkspaceTableShape = {
   objectMetadataId: string;
   nameSingular: string;

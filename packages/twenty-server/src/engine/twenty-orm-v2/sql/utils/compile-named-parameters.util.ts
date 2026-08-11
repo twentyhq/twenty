@@ -12,9 +12,6 @@ export type CompiledStatement = {
 
 const PARAMETER_NAME_CHARACTER = /[A-Za-z0-9_]/;
 
-// The filter, order and row-level-permission renderers all emit TypeORM-flavoured
-// named parameters (":name", ":...list"). Keeping that dialect is what lets ORM v2
-// reuse them verbatim; this turns it into the positional form pg binds.
 export const compileNamedParameters = (
   sql: string,
   parameters: NamedParameters,
@@ -25,8 +22,6 @@ export const compileNamedParameters = (
   let text = '';
   let index = 0;
 
-  // Synthesized spread keys are prefixed with ':' which cannot appear in a parameter name,
-  // so they can never collide with a caller-supplied one.
   const buildSpreadItemKey = (parameterName: string, itemIndex: number) =>
     `:${parameterName}__${itemIndex}`;
 
@@ -103,9 +98,7 @@ export const compileNamedParameters = (
         );
       }
 
-      // An empty list is legal for some operators (containsAny is not in ARRAY_OPERATORS,
-      // so the shared validation lets it through). NULL is valid in both the shapes this
-      // expands into — "IN (NULL)" and "ARRAY[NULL]" — and means "matches nothing" in each.
+      // Empty is legal for containsAny; NULL matches nothing in both IN and ARRAY.
       if (parameterValue.length === 0) {
         text += 'NULL';
       } else {
@@ -138,7 +131,6 @@ const findClosingQuoteIndex = (
       continue;
     }
 
-    // A doubled quote is an escaped quote, not the end of the literal
     if (sql[index + 1] === quote) {
       index += 2;
       continue;

@@ -105,8 +105,6 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected readonly isReadOnly: boolean = false;
 
-  // Runners that have an ORM v2 code path opt in. Building it for every read-only runner
-  // would pay for a repository that groupBy, for one, never reads.
   protected readonly usesReadRepositoryV2: boolean = false;
 
   public async execute(

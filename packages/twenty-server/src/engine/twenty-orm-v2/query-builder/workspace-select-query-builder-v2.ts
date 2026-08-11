@@ -41,14 +41,9 @@ export type QueryBuilderV2Context = {
     objectMetadataId: string,
   ) => WorkspaceTableShape;
   onBeforeExecute: (queryBuilder: WorkspaceSelectQueryBuilderV2) => void;
-  // Composite fields are reassembled from flat metadata, exactly as ORM v1 does after
-  // TypeORM hydration, so getMany() returns the same shape to callers.
   formatResult: <T>(records: unknown) => T;
 };
 
-// Mirrors the slice of TypeORM's SelectQueryBuilder that the common query runners and the
-// shared GraphQL parsers use, so call sites do not change. Underneath it composes SQL text
-// with named parameters and hands pg a parameterised statement.
 export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
@@ -64,8 +59,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private offsetValue?: number;
   private includeDeleted = false;
   private groupByExpressions: string[] = [];
-  // Set by select(): an explicit list replaces the findOptions selection entirely, and an
-  // empty list means "no main-alias columns", which is how the aggregate builder is set up.
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
 
@@ -119,9 +112,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     condition: string | WhereFactoryLike,
     parameters?: Record<string, unknown>,
   ): this {
-    // where() discards the accumulated WHERE, including the main alias's row-level
-    // predicate, so that marker has to be cleared or the next execution would silently run
-    // without it. Joined predicates live in ON, survive this, and must not be re-added.
+    // Joined predicates live in ON and survive this, so only the main marker is cleared.
     this.whereClauses.length = 0;
     this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
@@ -384,8 +375,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return Number(rows[0]?.count ?? 0);
   }
 
-  // Adds a predicate to a join's ON clause. In WHERE it would drop parent rows whose
-  // joined record is filtered out, turning the LEFT JOIN into an inner join.
   addJoinCondition(alias: string, condition: string): this {
     const joinClause = this.joinClauses.find(
       (candidate) => candidate.alias === alias,
@@ -403,8 +392,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       ?.targetTableShape;
   }
 
-  // Row-level predicates are rendered once per alias: getMany() and getCount() both run
-  // the hook, and a clone must not inherit a second copy of the same predicate.
   markRowLevelPermissionApplied(alias: string): boolean {
     if (this.aliasesWithRowLevelPermissionApplied.has(alias)) {
       return false;
@@ -415,9 +402,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return true;
   }
 
-  // Columns referenced per alias across the projection, extra selects and ORDER BY. The
-  // permission layer needs this because a joined alias is a different object with its own
-  // field permissions, and ordering by one of its columns reads it just as a select does.
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
     const columnNamesByAlias: Record<string, Set<string>> = {
       [this.alias]: new Set(this.buildProjection().mainAliasColumnNames),
@@ -439,8 +423,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         ...expression.matchAll(QUALIFIED_COLUMN_REFERENCE),
       ];
 
-      // A qualified reference belongs to the alias it names and to no other: attributing
-      // "company"."name" to the main alias too would check it against the wrong object.
+      // Attributing a qualified column to the main alias would check the wrong object.
       if (qualifiedReferences.length > 0) {
         for (const [, alias, columnName] of qualifiedReferences) {
           addColumnName(alias, columnName);
@@ -449,7 +432,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         continue;
       }
 
-      // Unqualified columns (CONCAT-style aggregates) can only be the main alias.
       for (const columnName of ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
         expression,
       ) ?? []) {
@@ -486,8 +468,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
       condition.whereFactory(nestedBuilder);
 
-      // A nested group is a fragment of this query's WHERE, so it must not carry its own
-      // copy of the soft-delete predicate: inside an OR group that would change the result.
+      // A nested group is a fragment of this WHERE, so it carries no soft-delete copy.
       const nestedSql = nestedBuilder.buildWhereExpression({
         includeSoftDeletePredicate: false,
       });

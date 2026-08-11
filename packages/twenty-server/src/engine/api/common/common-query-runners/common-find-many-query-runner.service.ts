@@ -73,9 +73,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       readRepositoryV2,
     } = queryRunnerContext;
 
-    // ORM v2 exposes the same builder surface as TypeORM's, but is not nominally the same
-    // class, so the shared parsers need one cast at the boundary. Replacing it with a
-    // structural SelectQueryBuilder interface on the parsers is the next step.
     const queryBuilder = (readRepositoryV2 === undefined
       ? repository.createQueryBuilder(flatObjectMetadata.nameSingular)
       : readRepositoryV2.createQueryBuilder(

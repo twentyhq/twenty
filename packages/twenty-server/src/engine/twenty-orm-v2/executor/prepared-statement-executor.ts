@@ -5,13 +5,7 @@ import { type Pool, type PoolClient } from 'pg';
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
 
-// pg turns a query carrying a `name` into a server-side prepared statement: parsed and
-// planned once per connection, then bound and executed. Query text is generated from
-// metadata and so repeats across requests, which is exactly the shape that benefits.
-//
-// Every distinct name is retained for the life of a connection, so the set of shapes has
-// to be bounded: past the cap, statements are sent unnamed and simply lose the plan reuse.
-// Shapes are dominated by (object, selected fields), so the cap is generous by design.
+// A connection retains every named statement for its lifetime, so the set must be bounded.
 const MAX_PREPARED_STATEMENT_SHAPES = 1000;
 
 const statementNameByText = new Map<string, string>();

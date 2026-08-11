@@ -51,8 +51,6 @@ export class WorkspaceRepositoryV2 {
     );
   }
 
-  // Same contract as WorkspaceSelectQueryBuilder.getMany: rows come back with composite
-  // fields reassembled, using the same flat-metadata formatter as ORM v1.
   formatResult<T>(records: unknown): T {
     return formatResult<T>(
       records,
@@ -74,10 +72,6 @@ export class WorkspaceRepositoryV2 {
       return;
     }
 
-    // The builder knows which columns it read and on which alias, so the check reads them
-    // directly rather than recovering them from generated SQL. A joined alias is a
-    // different object with its own field permissions, and ordering by one of its columns
-    // reads it just as selecting it does, so each alias is validated against its own object.
     const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
 
     for (const [alias, columnNames] of Object.entries(columnNamesByAlias)) {
@@ -182,8 +176,7 @@ export class WorkspaceRepositoryV2 {
       return;
     }
 
-    // A joined object's predicate belongs in ON: in WHERE it would drop parent rows whose
-    // joined record is filtered out, turning the LEFT JOIN into an inner join.
+    // In WHERE this would turn the LEFT JOIN into an inner join.
     queryBuilder.addJoinCondition(alias, renderedCondition.sql);
     queryBuilder.setParameters(renderedCondition.parameters);
   }

@@ -17,8 +17,6 @@ export type JoinClause = {
   alias: string;
   targetTableShape: WorkspaceTableShape;
   condition: string;
-  // Predicates that must not turn the LEFT JOIN into an inner join, so they are AND-ed
-  // into ON rather than WHERE: row-level permissions and the joined soft-delete filter.
   additionalOnConditions: string[];
 };
 
@@ -33,9 +31,6 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-// Everything the SQL text is assembled from. The builder owns this state and mutates it;
-// the functions here only read it, which keeps statement assembly separable from the
-// TypeORM-shaped surface the callers use.
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
@@ -54,8 +49,6 @@ export type SelectStatementState = {
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
-// Accepts the forms the shared parsers emit: "alias.column", "column", and
-// already-quoted `"alias"."column"`.
 export const normaliseColumnExpression = (
   expression: string,
   defaultAlias: string,
@@ -140,8 +133,7 @@ export const buildWhereExpression = (
     return softDeletePredicate;
   }
 
-  // AND binds tighter than OR, so the accumulated clauses have to be wrapped as a whole:
-  // without this, "A OR B AND deletedAt IS NULL" leaves rows matching A unfiltered.
+  // AND binds tighter than OR, so the clauses must be wrapped before the predicate.
   return `(${userExpression}) AND ${softDeletePredicate}`;
 };
 
@@ -224,8 +216,6 @@ export const buildCountStatement = (state: SelectStatementState): string => {
     .join(' ');
 };
 
-// Rows come back with alias-prefixed column names so joined aliases cannot collide with
-// the main one; this strips the prefix back off.
 export const mapRowToEntity = <T extends Record<string, unknown>>(
   row: Record<string, unknown>,
   alias: string,
