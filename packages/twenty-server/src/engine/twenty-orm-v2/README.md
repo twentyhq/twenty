@@ -52,8 +52,10 @@ Only a to-many join can duplicate root rows, and v2 refuses to join to-many at a
 (relations are separate queries), so a plain LIMIT is correct.
 
 **Prepared statements.** Query text is generated from metadata and repeats across
-requests, so every statement carries a name and Postgres parses and plans it once per
-connection.
+requests, so statements carry a name and Postgres parses and plans each once per
+connection. Names are bounded at 1000 distinct SQL shapes, because a connection retains
+every prepared statement for its lifetime; past that cap statements are sent unnamed and
+simply lose the plan reuse.
 
 ## What is the same, deliberately
 

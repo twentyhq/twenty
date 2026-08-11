@@ -34,25 +34,6 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/t
 
 const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
 
-// Aggregate expressions are SQL text, so the columns they read have to be recovered from
-// it for the permission check. CONCAT-style expressions name columns without an alias,
-// which is what ProcessAggregateHelper already knows how to unpack.
-const extractColumnNamesFromExpression = (expression: string): string[] => {
-  const qualifiedColumnNames = [
-    ...expression.matchAll(QUALIFIED_COLUMN_REFERENCE),
-  ].map(([, , columnName]) => columnName);
-
-  if (qualifiedColumnNames.length > 0) {
-    return qualifiedColumnNames;
-  }
-
-  return (
-    ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
-      expression,
-    ) ?? []
-  );
-};
-
 export type QueryBuilderV2Context = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutorV2;
@@ -138,11 +119,11 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     condition: string | WhereFactoryLike,
     parameters?: Record<string, unknown>,
   ): this {
-    // where() discards the accumulated WHERE, including any row-level predicate already
-    // rendered into it, so the markers have to be cleared or the next execution would
-    // silently run without them.
+    // where() discards the accumulated WHERE, including the main alias's row-level
+    // predicate, so that marker has to be cleared or the next execution would silently run
+    // without it. Joined predicates live in ON, survive this, and must not be re-added.
     this.whereClauses.length = 0;
-    this.aliasesWithRowLevelPermissionApplied.clear();
+    this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
     return this.appendWhere('and', condition, parameters);
   }
@@ -439,7 +420,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   // field permissions, and ordering by one of its columns reads it just as a select does.
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
     const columnNamesByAlias: Record<string, Set<string>> = {
-      [this.alias]: new Set(this.getSelectedColumnNames()),
+      [this.alias]: new Set(this.buildProjection().mainAliasColumnNames),
+    };
+
+    const addColumnName = (alias: string, columnName: string) => {
+      columnNamesByAlias[alias] = (
+        columnNamesByAlias[alias] ?? new Set<string>()
+      ).add(columnName);
     };
 
     const expressions = [
@@ -448,12 +435,25 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     ];
 
     for (const expression of expressions) {
-      for (const [, alias, columnName] of expression.matchAll(
-        QUALIFIED_COLUMN_REFERENCE,
-      )) {
-        columnNamesByAlias[alias] = (
-          columnNamesByAlias[alias] ?? new Set<string>()
-        ).add(columnName);
+      const qualifiedReferences = [
+        ...expression.matchAll(QUALIFIED_COLUMN_REFERENCE),
+      ];
+
+      // A qualified reference belongs to the alias it names and to no other: attributing
+      // "company"."name" to the main alias too would check it against the wrong object.
+      if (qualifiedReferences.length > 0) {
+        for (const [, alias, columnName] of qualifiedReferences) {
+          addColumnName(alias, columnName);
+        }
+
+        continue;
+      }
+
+      // Unqualified columns (CONCAT-style aggregates) can only be the main alias.
+      for (const columnName of ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
+        expression,
+      ) ?? []) {
+        addColumnName(this.alias, columnName);
       }
     }
 
@@ -466,16 +466,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   getSelectedColumnNames(): string[] {
-    const aggregateColumnNames = this.extraSelectClauses.flatMap(
-      (extraSelect) => extractColumnNamesFromExpression(extraSelect.expression),
-    );
-
-    return [
-      ...new Set([
-        ...this.buildProjection().mainAliasColumnNames,
-        ...aggregateColumnNames,
-      ]),
-    ];
+    return this.getReferencedColumnNamesByAlias()[this.alias] ?? [];
   }
 
   private appendWhere(

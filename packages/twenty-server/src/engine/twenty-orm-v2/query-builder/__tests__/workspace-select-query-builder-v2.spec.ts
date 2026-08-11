@@ -365,11 +365,6 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
   });
 
   it('should restore the previous limit when getOne fails', async () => {
-    const { queryBuilder } = buildQueryBuilder();
-
-    queryBuilder.setFindOptions({ select: { id: true } });
-    queryBuilder.take(25);
-
     const failingBuilder = new WorkspaceSelectQueryBuilderV2('person', {
       tableShape: personTableShape,
       executor: {
@@ -387,6 +382,34 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
 
     await expect(failingBuilder.getOne()).rejects.toThrow('connection lost');
     expect(failingBuilder.getQuery()).toContain('LIMIT 25');
+  });
+
+  it('should not attribute a joined column to the main alias', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.addSelect('"company"."name"', 'company_name');
+
+    const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
+
+    // "name" exists on company, not on person: checking it against person would fail the
+    // field-permission lookup with an internal error.
+    expect(columnNamesByAlias['person']).toEqual(['id']);
+    expect(columnNamesByAlias['company']).toEqual(['name']);
+  });
+
+  it('should keep joined row-level markers when where() replaces the WHERE', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.markRowLevelPermissionApplied('person');
+    queryBuilder.markRowLevelPermissionApplied('company');
+    queryBuilder.where('"person"."id" = :id', { id: 1 });
+
+    // The main predicate went with the WHERE, the joined one is in ON and stays.
+    expect(queryBuilder.markRowLevelPermissionApplied('person')).toBe(true);
+    expect(queryBuilder.markRowLevelPermissionApplied('company')).toBe(false);
   });
 
   it('should strip the alias prefix when mapping rows back to records', async () => {
