@@ -57,10 +57,6 @@ const HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
     .widgets.fields.universalIdentifier;
 
-const HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
-    .widgets.list.universalIdentifier;
-
 const HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
     .widgets.recipients.universalIdentifier;
@@ -142,10 +138,10 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         ],
       });
 
-    // The details widget this used to create is gone from the standard layout
-    // (2.30 moved its fields above the composer body and deletes the widget), so
-    // it is no longer in the standard flat maps this looks up — asking for it
-    // here would throw on any workspace still upgrading through 2.25.
+    // Every identifier here must still exist in the standard layout:
+    // getStandardFlatEntitiesToCreateOrThrow resolves against the current
+    // standard maps and throws when one is absent, failing the upgrade for
+    // every workspace crossing this version.
     const pageLayoutWidgetsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutWidget>({
         standardFlatEntityMaps:
@@ -153,7 +149,6 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
         universalIdentifiers: [
           COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER,
-          HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
           HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
           HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
         ],
@@ -208,7 +203,6 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
 
     const pageLayoutWidgetsToUpdate = [
       HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-      HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
       HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
     ]
       .map((universalIdentifier) => {
