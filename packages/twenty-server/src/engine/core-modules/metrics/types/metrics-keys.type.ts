@@ -72,6 +72,7 @@ export enum MetricsKeys {
   AiChatTurnCompleted = 'ai-chat/turn-completed',
   AiChatTurnFailed = 'ai-chat/turn-failed',
   WorkspaceMetadataCacheLocalEviction = 'workspace-metadata-cache/local-eviction',
+  WorkspaceMetadataCacheDemoted = 'workspace-metadata-cache/demoted',
   SdkClientGenerationSucceeded = 'sdk-client-generation/succeeded',
   SdkClientGenerationFailed = 'sdk-client-generation/failed',
   SdkClientGenerationDurationMs = 'sdk-client-generation/duration-ms',

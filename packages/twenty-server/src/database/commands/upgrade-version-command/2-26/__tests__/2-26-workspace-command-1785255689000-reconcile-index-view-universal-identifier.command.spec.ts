@@ -1,4 +1,5 @@
 import {
+  SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
@@ -29,7 +30,7 @@ const DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER =
   getSystemViewUniversalIdentifier({
     objectMetadataApplicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.INDEX,
+    viewKey: SYSTEM_VIEW_KEYS.INDEX,
   });
 const DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   getSystemViewFieldUniversalIdentifier({
@@ -261,7 +262,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
       getSystemViewUniversalIdentifier({
         objectMetadataApplicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier: CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER,
-        viewKey: ViewKey.INDEX,
+        viewKey: SYSTEM_VIEW_KEYS.INDEX,
       });
 
     mockWorkspaceCache({

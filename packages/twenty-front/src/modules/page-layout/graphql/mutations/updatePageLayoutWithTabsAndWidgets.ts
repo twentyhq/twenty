@@ -9,10 +9,12 @@ export const UPDATE_PAGE_LAYOUT_WITH_TABS_AND_WIDGETS = gql`
   ) {
     updatePageLayoutWithTabsAndWidgets(id: $id, input: $input) {
       id
+      applicationId
       name
       type
       objectMetadataId
       universalIdentifier
+      isSystemSideEffect
       defaultTabToFocusOnMobileAndSidePanelId
       createdAt
       updatedAt

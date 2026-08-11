@@ -9,7 +9,6 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -54,6 +53,8 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const HOT_ENTRIES_PER_PROVIDER = 64;
+const DEMOTION_INTERVAL_MS = 250;
+const DEMOTION_BUDGET_MS = 10;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
@@ -80,7 +81,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     string,
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
-  private lastLocalCacheSweepAt: number | undefined;
+  private sweepTimer?: ReturnType<typeof setInterval>;
+  private demotionTimer?: ReturnType<typeof setInterval>;
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
@@ -135,10 +137,31 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     this.cacheMetricsService.start(this.localCache);
+    this.startMaintenanceTimers();
   }
 
   onModuleDestroy(): void {
+    if (isDefined(this.sweepTimer)) {
+      clearInterval(this.sweepTimer);
+    }
+    if (isDefined(this.demotionTimer)) {
+      clearInterval(this.demotionTimer);
+    }
     this.cacheMetricsService.stop();
+  }
+
+  private startMaintenanceTimers(): void {
+    this.sweepTimer = setInterval(
+      () => this.sweepLocalCache(),
+      LOCAL_CACHE_SWEEP_INTERVAL_MS,
+    );
+    this.sweepTimer.unref();
+
+    this.demotionTimer = setInterval(
+      () => this.demoteColdEntries(),
+      DEMOTION_INTERVAL_MS,
+    );
+    this.demotionTimer.unref();
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
@@ -159,7 +182,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
-    this.sweepLocalCacheIfDue();
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const memoKey =
@@ -269,10 +291,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
           strategy: 'mint',
         });
-
-        // Invalidation writes entries too, so run the sweep here as well — otherwise an
-        // invalidate-only workload never enforces the per-provider caps.
-        this.sweepLocalCacheIfDue();
 
         // Clear memoizer again after recomputation to evict any stale entries
         // cached by concurrent getOrRecompute calls during the flush window.
@@ -434,10 +452,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
 
-    const [allValues, isCompactStorageEnabled] = await Promise.all([
-      this.cacheStorage.mget<CacheDataType | string>(allKeys),
-      this.resolveCompactStorageEnabled(workspaceId),
-    ]);
+    const allValues = await this.cacheStorage.mget<CacheDataType | string>(
+      allKeys,
+    );
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
       const rawData = allValues[index * 2] as CacheDataType | undefined;
@@ -447,9 +464,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data = isCompactStorageEnabled
-            ? this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData)
-            : rawData;
+          data =
+            this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
         } catch (error) {
           this.logger.warn(
             `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
@@ -523,16 +539,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const computed = await Promise.all(computePromises);
 
-    const recomputedFeatureFlagsMap = computed.find(
-      ({ keyName }) => keyName === 'featureFlagsMap',
-    )?.data as WorkspaceCacheDataMap['featureFlagsMap'] | undefined;
-
-    const isCompactStorageEnabled = isDefined(recomputedFeatureFlagsMap)
-      ? recomputedFeatureFlagsMap[
-          FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
-        ]
-      : await this.resolveCompactStorageEnabled(workspaceId);
-
     const redisEntries: Array<{
       key: string;
       value: StoredCacheDataType | string;
@@ -557,9 +563,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       if (!isLocalDataOnly) {
         redisEntries.push({
           key: `${baseKey}:data`,
-          value: isCompactStorageEnabled
-            ? this.getProviderOrThrow(keyName).encodeForCacheStorage(data)
-            : data,
+          value: this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
         });
       }
 
@@ -663,16 +667,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.cleanupStaleVersions(entry);
   }
 
-  private sweepLocalCacheIfDue(): void {
+  private sweepLocalCache(): void {
     const now = Date.now();
-
-    if (
-      isDefined(this.lastLocalCacheSweepAt) &&
-      now - this.lastLocalCacheSweepAt < LOCAL_CACHE_SWEEP_INTERVAL_MS
-    ) {
-      return;
-    }
-    this.lastLocalCacheSweepAt = now;
 
     const evicted = sweepLocalCache(this.localCache, now, {
       ttlMs: LOCAL_ENTRY_TTL_MS,
@@ -684,27 +680,23 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     if (evicted > 0) {
       this.cacheMetricsService.recordEviction(evicted);
     }
-
-    this.demoteColdEntries();
   }
 
   private demoteColdEntries(): void {
-    demoteColdStorageEntries({
+    const startedAt = performance.now();
+
+    const { demoted, remaining } = demoteColdStorageEntries({
       localCache: this.localCache,
       hotEntriesPerProvider: HOT_ENTRIES_PER_PROVIDER,
+      budgetMs: DEMOTION_BUDGET_MS,
       serialize: ({ localKey, data }) => {
         const separatorIndex = localKey.lastIndexOf(':');
-        const workspaceId = localKey.slice(separatorIndex + 1);
         const keyName = localKey.slice(
           0,
           separatorIndex,
         ) as WorkspaceCacheKeyName;
 
-        if (
-          this.localDataOnlyKeys.has(keyName) ||
-          keyName === 'featureFlagsMap' ||
-          !this.isCompactStorageEnabledInLocalCache(workspaceId)
-        ) {
+        if (this.localDataOnlyKeys.has(keyName)) {
           return undefined;
         }
 
@@ -716,45 +708,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
       },
     });
-  }
 
-  private isCompactStorageEnabledInLocalCache(
-    workspaceId: string,
-  ): boolean | undefined {
-    const entry = this.localCache.get(
-      this.buildCacheKey(workspaceId, 'featureFlagsMap'),
-    );
-    const version = entry?.versions.get(entry.latestHash);
-
-    if (version?.state !== 'hot') {
-      return undefined;
-    }
-
-    return (version.data as WorkspaceCacheDataMap['featureFlagsMap'])[
-      FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
-    ];
-  }
-
-  // A restarted pod reads an already-encoded Redis payload with an empty local
-  // cache, so the flag has to resolve from Redis before any decode happens.
-  private async resolveCompactStorageEnabled(
-    workspaceId: string,
-  ): Promise<boolean> {
-    const localValue = this.isCompactStorageEnabledInLocalCache(workspaceId);
-
-    if (isDefined(localValue)) {
-      return localValue;
-    }
-
-    const featureFlagsMap = await this.cacheStorage.get<
-      WorkspaceCacheDataMap['featureFlagsMap']
-    >(`${this.buildCacheKey(workspaceId, 'featureFlagsMap')}:data`);
-
-    return (
-      featureFlagsMap?.[
-        FeatureFlagKey.IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED
-      ] ?? false
-    );
+    this.cacheMetricsService.recordDemotionSlice({
+      durationSeconds: (performance.now() - startedAt) / 1000,
+      demoted,
+      remaining,
+    });
   }
 
   private readVersion({
@@ -772,6 +731,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return version.data;
     }
 
+    const hydrateStartedAt = performance.now();
     const data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
       JSON.parse(version.blob.toString('utf8')),
     );
@@ -781,6 +741,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       data,
       lastReadAt: Date.now(),
     });
+
+    this.cacheMetricsService.recordHydration(
+      (performance.now() - hydrateStartedAt) / 1000,
+      keyName,
+    );
 
     return data;
   }
