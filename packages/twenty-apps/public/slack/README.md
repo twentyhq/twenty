@@ -36,6 +36,20 @@ Pick a **workspace shared** or **just for me** Slack connection; steps run with 
 
 **Free** — no credits, no metering.
 
+## 🧪 Tests
+
+```bash
+yarn test:unit   # pure handler logic, no server needed
+yarn test        # integration suite, needs a Twenty server
+```
+
+The integration suite syncs the app into the target workspace, then runs its logic
+functions on demand through the SDK (`functionExecute`) and asserts on what they
+return, on the records they write and on the errors they log. Point it at a server
+with `TWENTY_API_URL` and `TWENTY_API_KEY`, or start one with `yarn twenty
+docker:start`. It expects a workspace **without** a Slack connection: the tests
+cover the routing, deduplication and failure paths, not calls to Slack itself.
+
 ## 📌 Heads up
 
 You need to create a Slack app and connect it — see [SETUP.md](./SETUP.md). The assistant needs a few extra steps (signing secret and event subscriptions) on top of the base connection.
