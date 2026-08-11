@@ -1,21 +1,17 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
+import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
-import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
+import { isCallRecordingSummaryFailed } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryFailed';
+import { isCallRecordingSummaryPending } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryPending';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSummaryContainer = styled.div`
@@ -28,14 +24,20 @@ type CallRecordingSummaryBodyProps = {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
+  restriction: WidgetAccessDenialInfo | undefined;
 };
 
 export const CallRecordingSummaryBody = ({
   callRecording,
   loading,
   error,
+  restriction,
 }: CallRecordingSummaryBodyProps) => {
   const widget = useCurrentWidget();
+
+  if (isDefined(restriction)) {
+    return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
+  }
 
   if (loading) {
     return <WidgetSkeletonLoader />;
@@ -47,74 +49,49 @@ export const CallRecordingSummaryBody = ({
 
   if (!isDefined(callRecording)) {
     return (
-      // TODO(ehconitin): might need a dedicated call recording animated placeholder
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noMatchRecord" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No Call Recording`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`No call recording exists for this calendar event yet.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="noMatchRecord"
+        title={t`No Call Recording`}
+        subTitle={t`No call recording exists for this calendar event yet.`}
+      />
     );
   }
 
-  const summaryMarkdown = callRecording.summary?.markdown;
+  const trimmedSummaryMarkdown = callRecording.summary?.markdown?.trim();
 
-  if (isNonEmptyString(summaryMarkdown?.trim())) {
+  if (isNonEmptyString(trimmedSummaryMarkdown)) {
     return (
       <StyledSummaryContainer>
-        <LazyMarkdownRenderer text={summaryMarkdown} />
+        <LazyMarkdownRenderer text={trimmedSummaryMarkdown} />
       </StyledSummaryContainer>
     );
   }
 
-  if (isCallRecordingTranscriptPending(callRecording)) {
+  if (isCallRecordingSummaryPending(callRecording)) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="loadingMessages" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`Processing Recording`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`The call recording is still being processed…`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="loadingMessages"
+        title={t`Processing Recording`}
+        subTitle={t`The call recording is still being processed…`}
+      />
     );
   }
 
-  if (isCallRecordingTranscriptFailed(callRecording)) {
+  if (isCallRecordingSummaryFailed(callRecording)) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="errorIndex" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`Processing Failed`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`The call recording could not be processed.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="errorIndex"
+        title={t`Processing Failed`}
+        subTitle={t`The call recording could not be processed.`}
+      />
     );
   }
 
   return (
-    <AnimatedPlaceholderEmptyContainer>
-      <AnimatedPlaceholder type="noMatchRecord" />
-      <AnimatedPlaceholderEmptyTextContainer>
-        <AnimatedPlaceholderEmptyTitle>
-          {t`No Summary`}
-        </AnimatedPlaceholderEmptyTitle>
-        <AnimatedPlaceholderEmptySubTitle>
-          {t`No summary has been generated for this call recording yet.`}
-        </AnimatedPlaceholderEmptySubTitle>
-      </AnimatedPlaceholderEmptyTextContainer>
-    </AnimatedPlaceholderEmptyContainer>
+    <CallRecordingWidgetEmptyStateDisplay
+      animatedPlaceholderType="noMatchRecord"
+      title={t`No Summary`}
+      subTitle={t`No summary has been generated for this call recording yet.`}
+    />
   );
 };

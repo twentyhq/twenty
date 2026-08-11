@@ -24,12 +24,32 @@ let findManyRecordsResult: {
   refetch: jest.Mock;
 };
 
+let objectPermissionsResult: {
+  canReadObjectRecords: boolean;
+  restrictedFields: Record<string, { canRead?: boolean | null }>;
+};
+
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
     objectMetadataItem: {
       id: 'call-recording-object-id',
+      labelSingular: 'Call Recording',
+      fields: [
+        { id: 'status-field-id', name: 'status', label: 'Status' },
+        { id: 'transcript-field-id', name: 'transcript', label: 'Transcript' },
+        { id: 'summary-field-id', name: 'summary', label: 'Summary' },
+        {
+          id: 'created-at-field-id',
+          name: 'createdAt',
+          label: 'Creation date',
+        },
+      ],
     },
   }),
+}));
+
+jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
+  useObjectPermissionsForObject: () => objectPermissionsResult,
 }));
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
@@ -85,10 +105,18 @@ describe('useCalendarEventCallRecording', () => {
       error: undefined,
       refetch: jest.fn(),
     };
+    objectPermissionsResult = {
+      canReadObjectRecords: true,
+      restrictedFields: {},
+    };
   });
 
   it('queries every call recording field for the current calendar event in arrival order', () => {
-    renderHook(() => useCalendarEventCallRecording());
+    renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
 
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -107,8 +135,36 @@ describe('useCalendarEventCallRecording', () => {
     );
   });
 
+  it('scopes the SSE query id per widget', () => {
+    renderHook(() =>
+      useCalendarEventCallRecording({ queryScope: 'call-recording-summary' }),
+    );
+
+    expect(mockUseListenToEventsForQuery).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryId: 'call-recording-summary-calendar-event-id',
+      }),
+    );
+
+    renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(mockUseListenToEventsForQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        queryId: 'call-recording-transcript-calendar-event-id',
+      }),
+    );
+  });
+
   it('refetches after the SSE client reconnects', async () => {
-    renderHook(() => useCalendarEventCallRecording());
+    renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
 
     const { onSseReconnected } = mockUseListenToEventsForQuery.mock
       .calls[0][0] as {
@@ -128,7 +184,11 @@ describe('useCalendarEventCallRecording', () => {
       targetObjectNameSingular: 'person',
     };
 
-    const { result } = renderHook(() => useCalendarEventCallRecording());
+    const { result } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
 
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({ skip: true }),
@@ -139,7 +199,11 @@ describe('useCalendarEventCallRecording', () => {
   it('skips the query when there is no target record', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = undefined;
 
-    const { result } = renderHook(() => useCalendarEventCallRecording());
+    const { result } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
 
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({ skip: true }),
@@ -147,11 +211,58 @@ describe('useCalendarEventCallRecording', () => {
     expect(result.current.callRecording).toBeUndefined();
   });
 
+  it('reports an object restriction and skips the query without read permission', () => {
+    objectPermissionsResult = {
+      canReadObjectRecords: false,
+      restrictedFields: {},
+    };
+
+    const { result } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(result.current.restriction).toEqual({
+      type: 'object',
+      objectName: 'Call Recording',
+    });
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: true }),
+    );
+  });
+
+  it('reports a field restriction only for the scope that reads the field', () => {
+    objectPermissionsResult = {
+      canReadObjectRecords: true,
+      restrictedFields: { 'summary-field-id': { canRead: false } },
+    };
+
+    const { result: summaryResult } = renderHook(() =>
+      useCalendarEventCallRecording({ queryScope: 'call-recording-summary' }),
+    );
+
+    expect(summaryResult.current.restriction).toEqual({
+      type: 'field',
+      fieldNames: ['Summary'],
+    });
+
+    const { result: transcriptResult } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(transcriptResult.current.restriction).toBeUndefined();
+  });
+
   it('passes loading through and resolves to no recording without records', () => {
     findManyRecordsResult.loading = true;
 
     const { result, rerender } = renderHook(() =>
-      useCalendarEventCallRecording(),
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
     );
 
     expect(result.current.loading).toBe(true);
@@ -169,7 +280,11 @@ describe('useCalendarEventCallRecording', () => {
     const queryError = new Error('Query failed');
     findManyRecordsResult.error = queryError;
 
-    const { result } = renderHook(() => useCalendarEventCallRecording());
+    const { result } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
 
     expect(result.current.error).toBe(queryError);
   });
@@ -184,7 +299,9 @@ describe('useCalendarEventCallRecording', () => {
     ];
 
     const { result, rerender } = renderHook(() =>
-      useCalendarEventCallRecording(),
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
     );
 
     expect(result.current.callRecording?.status).toBe(

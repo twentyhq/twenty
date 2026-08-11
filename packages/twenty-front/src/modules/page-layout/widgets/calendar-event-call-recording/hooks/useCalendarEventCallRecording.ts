@@ -1,10 +1,13 @@
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { selectCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/utils/selectCalendarEventCallRecording';
+import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
@@ -15,7 +18,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 const CALL_RECORDING_QUERY_LIMIT = 50;
 
-// mapObjectMetadataToGraphQLQuery drops unreadable and absent fields from the query
 const CALL_RECORDING_RECORD_FIELDS = {
   id: true,
   status: true,
@@ -29,10 +31,27 @@ const CALL_RECORDING_ORDER_BY: RecordGqlOperationOrderBy = [
   { id: 'AscNullsFirst' },
 ];
 
-export const useCalendarEventCallRecording = (): {
+type CalendarEventCallRecordingQueryScope =
+  | 'call-recording-summary'
+  | 'call-recording-transcript';
+
+const REQUIRED_FIELD_NAMES_BY_QUERY_SCOPE: Record<
+  CalendarEventCallRecordingQueryScope,
+  string[]
+> = {
+  'call-recording-summary': ['status', 'summary', 'createdAt'],
+  'call-recording-transcript': ['status', 'transcript', 'createdAt'],
+};
+
+export const useCalendarEventCallRecording = ({
+  queryScope,
+}: {
+  queryScope: CalendarEventCallRecordingQueryScope;
+}): {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
+  restriction: WidgetAccessDenialInfo | undefined;
 } => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
@@ -41,13 +60,54 @@ export const useCalendarEventCallRecording = (): {
       objectNameSingular: CoreObjectNameSingular.CallRecording,
     });
 
+  const callRecordingObjectPermissions = useObjectPermissionsForObject(
+    callRecordingObjectMetadataItem.id,
+  );
+
   const calendarEventId =
     targetRecordIdentifier?.targetObjectNameSingular ===
     CoreObjectNameSingular.CalendarEvent
       ? targetRecordIdentifier.id
       : undefined;
 
-  const shouldSkipQuery = !isDefined(calendarEventId);
+  const requiredFieldMetadataItems = REQUIRED_FIELD_NAMES_BY_QUERY_SCOPE[
+    queryScope
+  ]
+    .map((requiredFieldName) =>
+      callRecordingObjectMetadataItem.fields.find(
+        (field) => field.name === requiredFieldName,
+      ),
+    )
+    .filter(isDefined);
+
+  const restrictedFieldNames = requiredFieldMetadataItems
+    .filter(
+      (fieldMetadataItem) =>
+        callRecordingObjectPermissions.restrictedFields[fieldMetadataItem.id]
+          ?.canRead === false,
+    )
+    .map((fieldMetadataItem) =>
+      isNonEmptyString(fieldMetadataItem.label)
+        ? fieldMetadataItem.label
+        : fieldMetadataItem.name,
+    );
+
+  const objectRestriction: WidgetAccessDenialInfo | undefined =
+    callRecordingObjectPermissions.canReadObjectRecords
+      ? undefined
+      : {
+          type: 'object',
+          objectName: callRecordingObjectMetadataItem.labelSingular,
+        };
+
+  const fieldRestriction: WidgetAccessDenialInfo | undefined =
+    restrictedFieldNames.length > 0
+      ? { type: 'field', fieldNames: restrictedFieldNames }
+      : undefined;
+
+  const restriction = objectRestriction ?? fieldRestriction;
+
+  const shouldSkipQuery = !isDefined(calendarEventId) || isDefined(restriction);
 
   const callRecordingFilter = useMemo(
     () =>
@@ -86,7 +146,7 @@ export const useCalendarEventCallRecording = (): {
   }, [refetch]);
 
   useListenToEventsForQuery({
-    queryId: `calendar-event-call-recording-${calendarEventId}`,
+    queryId: `${queryScope}-${calendarEventId}`,
     operationSignature,
     skip: shouldSkipQuery,
     onSseReconnected: refetchCallRecordingOnSseReconnected,
@@ -105,10 +165,7 @@ export const useCalendarEventCallRecording = (): {
     objectMetadataItemId: callRecordingObjectMetadataItem.id,
   });
 
-  const callRecording = useMemo(
-    () => selectCalendarEventCallRecording(callRecordings),
-    [callRecordings],
-  );
+  const callRecording = selectCalendarEventCallRecording(callRecordings);
 
-  return { callRecording, loading, error };
+  return { callRecording, loading, error, restriction };
 };

@@ -2,13 +2,15 @@ import { useCalendarEventCallRecording } from '@/page-layout/widgets/calendar-ev
 import { CallRecordingSummaryBody } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody';
 
 export const CallRecordingSummaryWidgetContent = () => {
-  const { callRecording, loading, error } = useCalendarEventCallRecording();
+  const { callRecording, loading, error, restriction } =
+    useCalendarEventCallRecording({ queryScope: 'call-recording-summary' });
 
   return (
     <CallRecordingSummaryBody
       callRecording={callRecording}
       loading={loading}
       error={error}
+      restriction={restriction}
     />
   );
 };

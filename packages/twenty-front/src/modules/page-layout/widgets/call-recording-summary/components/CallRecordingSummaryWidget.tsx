@@ -1,3 +1,4 @@
+import { CallRecordingWidgetUnavailableDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay';
 import { useIsCalendarEventCallRecordingWidgetVisible } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useIsCalendarEventCallRecordingWidgetVisible';
 import { CallRecordingSummaryWidgetContent } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryWidgetContent';
 import { styled } from '@linaria/react';
@@ -15,7 +16,11 @@ export const CallRecordingSummaryWidget = () => {
   const isWidgetVisible = useIsCalendarEventCallRecordingWidgetVisible();
 
   if (!isWidgetVisible) {
-    return null;
+    return (
+      <StyledWidgetContainer>
+        <CallRecordingWidgetUnavailableDisplay />
+      </StyledWidgetContainer>
+    );
   }
 
   return (

@@ -1,3 +1,5 @@
+import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
+import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
 import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
@@ -5,32 +7,32 @@ import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-rec
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { t } from '@lingui/core/macro';
 import {
   isDefined,
   isNonEmptyArray,
   parseCallRecordingTranscriptEntries,
 } from 'twenty-shared/utils';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
 
 type CallRecordingTranscriptBodyProps = {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
+  restriction: WidgetAccessDenialInfo | undefined;
 };
 
 export const CallRecordingTranscriptBody = ({
   callRecording,
   loading,
   error,
+  restriction,
 }: CallRecordingTranscriptBodyProps) => {
   const widget = useCurrentWidget();
+
+  if (isDefined(restriction)) {
+    return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
+  }
 
   if (loading) {
     return <WidgetSkeletonLoader />;
@@ -42,18 +44,11 @@ export const CallRecordingTranscriptBody = ({
 
   if (!isDefined(callRecording)) {
     return (
-      // TODO(ehconitin): might need a dedicated call recording animated placeholder
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noMatchRecord" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No Call Recording`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`No call recording exists for this calendar event yet.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="noMatchRecord"
+        title={t`No Call Recording`}
+        subTitle={t`No call recording exists for this calendar event yet.`}
+      />
     );
   }
 
@@ -67,47 +62,29 @@ export const CallRecordingTranscriptBody = ({
 
   if (isCallRecordingTranscriptPending(callRecording)) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="loadingMessages" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`Preparing Transcript`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`Transcript is being prepared…`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="loadingMessages"
+        title={t`Preparing Transcript`}
+        subTitle={t`Transcript is being prepared…`}
+      />
     );
   }
 
   if (isCallRecordingTranscriptFailed(callRecording)) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="errorIndex" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`Transcript Failed`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`The transcript could not be generated.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="errorIndex"
+        title={t`Transcript Failed`}
+        subTitle={t`The transcript could not be generated.`}
+      />
     );
   }
 
   return (
-    <AnimatedPlaceholderEmptyContainer>
-      <AnimatedPlaceholder type="noMatchRecord" />
-      <AnimatedPlaceholderEmptyTextContainer>
-        <AnimatedPlaceholderEmptyTitle>
-          {t`No Transcript`}
-        </AnimatedPlaceholderEmptyTitle>
-        <AnimatedPlaceholderEmptySubTitle>
-          {t`No transcript is available for this recording.`}
-        </AnimatedPlaceholderEmptySubTitle>
-      </AnimatedPlaceholderEmptyTextContainer>
-    </AnimatedPlaceholderEmptyContainer>
+    <CallRecordingWidgetEmptyStateDisplay
+      animatedPlaceholderType="noMatchRecord"
+      title={t`No Transcript`}
+      subTitle={t`No transcript is available for this recording.`}
+    />
   );
 };
