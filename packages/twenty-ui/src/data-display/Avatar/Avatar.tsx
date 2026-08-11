@@ -1,9 +1,10 @@
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { useEffect, useState } from 'react';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
+import { useImageLoadErrorProbe } from '@ui/data-display/Avatar/hooks/useImageLoadErrorProbe';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
+import { escapeCssStringValue } from '@ui/data-display/Avatar/utils/escapeCssStringValue';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useTheme } from '@ui/theme-constants';
@@ -45,40 +46,18 @@ export const Avatar = ({
 }: AvatarProps) => {
   const theme = useTheme();
 
-  const [erroredAvatarImageURI, setErroredAvatarImageURI] = useState<
-    string | null
-  >(null);
-
   const avatarImageURI = isNonEmptyString(avatarUrl) ? avatarUrl : null;
+
+  // The avatar image renders as a CSS background (below), which has no error
+  // event, so probe the URL off-DOM to keep the error -> placeholder fallback.
+  const avatarImageFailedToLoad = useImageLoadErrorProbe(avatarImageURI);
 
   const placeholderFirstChar = placeholder?.trim()?.charAt(0);
   const isPlaceholderFirstCharEmpty =
     !placeholderFirstChar || placeholderFirstChar === '';
   const placeholderChar = placeholderFirstChar?.toUpperCase() || '-';
 
-  const showPlaceholder =
-    isNull(avatarImageURI) || erroredAvatarImageURI === avatarImageURI;
-
-  // The avatar image renders as a CSS background (below), which has no error
-  // event, so probe the URL off-DOM to keep the error -> placeholder fallback.
-  useEffect(() => {
-    if (!isNonEmptyString(avatarImageURI)) {
-      return;
-    }
-
-    let isCancelled = false;
-    const probeImage = new Image();
-    probeImage.onerror = () => {
-      if (!isCancelled) {
-        setErroredAvatarImageURI(avatarImageURI);
-      }
-    };
-    probeImage.src = avatarImageURI;
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [avatarImageURI]);
+  const showPlaceholder = isNull(avatarImageURI) || avatarImageFailedToLoad;
 
   const fixedColor = isPlaceholderFirstCharEmpty
     ? theme.font.color.tertiary
@@ -163,7 +142,9 @@ export const Avatar = ({
         // above); a CSS background-image avoids the replaced-element repaint.
         <div
           className={styles.image}
-          style={{ backgroundImage: `url("${avatarImageURI}")` }}
+          style={{
+            backgroundImage: `url("${escapeCssStringValue(avatarImageURI)}")`,
+          }}
         />
       )}
     </div>
