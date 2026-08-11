@@ -1,6 +1,6 @@
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
@@ -59,11 +59,26 @@ export const Avatar = ({
   const showPlaceholder =
     isNull(avatarImageURI) || erroredAvatarImageURI === avatarImageURI;
 
-  const handleImageError = () => {
-    if (isNonEmptyString(avatarImageURI)) {
-      setErroredAvatarImageURI(avatarImageURI);
+  // The avatar image renders as a CSS background (below), which has no error
+  // event, so probe the URL off-DOM to keep the error -> placeholder fallback.
+  useEffect(() => {
+    if (!isNonEmptyString(avatarImageURI)) {
+      return;
     }
-  };
+
+    let isCancelled = false;
+    const probeImage = new Image();
+    probeImage.onerror = () => {
+      if (!isCancelled) {
+        setErroredAvatarImageURI(avatarImageURI);
+      }
+    };
+    probeImage.src = avatarImageURI;
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [avatarImageURI]);
 
   const fixedColor = isPlaceholderFirstCharEmpty
     ? theme.font.color.tertiary
@@ -143,11 +158,12 @@ export const Avatar = ({
       ) : showPlaceholder ? (
         <span className={styles.placeholderChar}>{placeholderChar}</span>
       ) : (
-        <img
+        // Safari fails to repaint an <img> that loads after first paint,
+        // displacing sibling content (Kanban card headers overlap the card
+        // above); a CSS background-image avoids the replaced-element repaint.
+        <div
           className={styles.image}
-          src={avatarImageURI}
-          onError={handleImageError}
-          alt=""
+          style={{ backgroundImage: `url("${avatarImageURI}")` }}
         />
       )}
     </div>
