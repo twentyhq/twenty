@@ -46,6 +46,32 @@ export class PersonEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspacePersonEnrichmentResult> {
+    try {
+      return await this.enrichPersonForWorkspaceCreatorOrThrow({
+        userId,
+        email,
+        workspaceId,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Person enrichment unexpectedly failed for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return { outcome: 'transientError', enrichment: null };
+    }
+  }
+
+  private async enrichPersonForWorkspaceCreatorOrThrow({
+    userId,
+    email,
+    workspaceId,
+  }: {
+    userId: string;
+    email: string;
+    workspaceId: string;
+  }): Promise<WorkspacePersonEnrichmentResult> {
     if (!readIsPersonEnrichmentEnabled(this.twentyConfigService)) {
       return { outcome: 'unavailable', enrichment: null };
     }
@@ -66,7 +92,6 @@ export class PersonEnrichmentService {
       return { outcome: 'unavailable', enrichment: null };
     }
 
-    // Checked before throttling so a disabled feature never burns a throttle token.
     if (!this.peopleDataLabsPersonClientService.isEnabled()) {
       return { outcome: 'unavailable', enrichment: null };
     }
@@ -100,7 +125,6 @@ export class PersonEnrichmentService {
       email: normalizedEmail,
     });
 
-    // 'skipped' means the feature is disabled (no API key); don't persist the email in that case.
     if (result.outcome !== 'skipped') {
       await this.recordEnrichmentAttempt({
         workspaceId,
@@ -161,9 +185,6 @@ export class PersonEnrichmentService {
     email: string;
     result: Exclude<PeopleDataLabsPersonEnrichResult, { outcome: 'skipped' }>;
   }): Promise<void> {
-    // Best-effort telemetry: never let a key-value write failure fail the enrichment.
-    // The pre-collapse outcome is recorded so an operator can tell "no PDL match for this
-    // email" apart from "the PDL integration is broken" (both surface as 'unavailable').
     try {
       await this.keyValuePairService.set({
         userId: null,
