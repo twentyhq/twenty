@@ -1,15 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { EnrichmentThrottleService } from 'src/engine/core-modules/company-enrichment/services/enrichment-throttle.service';
 import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import { PersonEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/person-enrichment.service';
 import { PERSON_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/person-enrichment-attempt-key-value.type';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import {
-  ThrottlerException,
-  ThrottlerExceptionCode,
-} from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
@@ -20,7 +16,7 @@ describe('PersonEnrichmentService', () => {
     enrichPersonByEmail: jest.Mock;
     isEnabled: jest.Mock;
   };
-  let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
+  let enrichmentThrottleService: { consumeToken: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
   let configValues: Record<string, unknown>;
 
@@ -39,7 +35,9 @@ describe('PersonEnrichmentService', () => {
       enrichPersonByEmail: jest.fn(),
       isEnabled: jest.fn().mockReturnValue(true),
     };
-    throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
+    enrichmentThrottleService = {
+      consumeToken: jest.fn().mockResolvedValue('consumed'),
+    };
     keyValuePairService = { set: jest.fn() };
     configValues = {
       IS_ONBOARDING_AI_CHAT_ENABLED: true,
@@ -58,8 +56,8 @@ describe('PersonEnrichmentService', () => {
           useValue: peopleDataLabsPersonClientService,
         },
         {
-          provide: ThrottlerService,
-          useValue: throttlerService,
+          provide: EnrichmentThrottleService,
+          useValue: enrichmentThrottleService,
         },
         {
           provide: TwentyConfigService,
@@ -90,7 +88,7 @@ describe('PersonEnrichmentService', () => {
     expect(
       peopleDataLabsPersonClientService.enrichPersonByEmail,
     ).not.toHaveBeenCalled();
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(enrichmentThrottleService.consumeToken).not.toHaveBeenCalled();
   });
 
   it('should enrich a free-mail address since person enrichment has no work-domain gate', async () => {
@@ -126,12 +124,11 @@ describe('PersonEnrichmentService', () => {
     expect(
       peopleDataLabsPersonClientService.enrichPersonByEmail,
     ).toHaveBeenCalledWith('ada@acme.com');
-    expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
-      `person-enrichment:throttler:${workspaceId}`,
-      1,
-      expect.any(Number),
-      expect.any(Number),
-    );
+    expect(enrichmentThrottleService.consumeToken).toHaveBeenCalledWith({
+      throttleKey: `person-enrichment:throttler:${workspaceId}`,
+      maxRequests: expect.any(Number),
+      windowMs: expect.any(Number),
+    });
     expect(result.outcome).toBe('matched');
     expect(result.enrichment).toMatchObject({
       email: 'ada@acme.com',
@@ -153,7 +150,7 @@ describe('PersonEnrichmentService', () => {
   });
 
   it('should return transientError instead of rejecting when a dependency unexpectedly throws', async () => {
-    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
+    enrichmentThrottleService.consumeToken.mockRejectedValue(
       new Error('redis down'),
     );
 
@@ -167,12 +164,7 @@ describe('PersonEnrichmentService', () => {
   });
 
   it('should return transientError without calling the client when throttled', async () => {
-    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
-      new ThrottlerException(
-        'Limit reached',
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      ),
-    );
+    enrichmentThrottleService.consumeToken.mockResolvedValue('limitReached');
 
     const result = await service.enrichPersonForWorkspaceCreator({
       userId: creatorUserId,
@@ -196,7 +188,7 @@ describe('PersonEnrichmentService', () => {
     });
 
     expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(enrichmentThrottleService.consumeToken).not.toHaveBeenCalled();
   });
 
   it('should stay unavailable for a book-call-only configuration since the ai chat is its only consumer', async () => {

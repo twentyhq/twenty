@@ -1,15 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
+import { EnrichmentThrottleService } from 'src/engine/core-modules/company-enrichment/services/enrichment-throttle.service';
 import { PeopleDataLabsClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-client.service';
 import { COMPANY_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import {
-  ThrottlerException,
-  ThrottlerExceptionCode,
-} from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
@@ -20,7 +16,7 @@ describe('CompanyEnrichmentService', () => {
     enrichCompanyByDomain: jest.Mock;
     isEnabled: jest.Mock;
   };
-  let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
+  let enrichmentThrottleService: { consumeToken: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
   let configValues: Record<string, unknown>;
 
@@ -39,7 +35,9 @@ describe('CompanyEnrichmentService', () => {
       enrichCompanyByDomain: jest.fn(),
       isEnabled: jest.fn().mockReturnValue(true),
     };
-    throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
+    enrichmentThrottleService = {
+      consumeToken: jest.fn().mockResolvedValue('consumed'),
+    };
     keyValuePairService = { set: jest.fn() };
     configValues = {
       IS_ONBOARDING_AI_CHAT_ENABLED: true,
@@ -58,8 +56,8 @@ describe('CompanyEnrichmentService', () => {
           useValue: peopleDataLabsCompanyClientService,
         },
         {
-          provide: ThrottlerService,
-          useValue: throttlerService,
+          provide: EnrichmentThrottleService,
+          useValue: enrichmentThrottleService,
         },
         {
           provide: TwentyConfigService,
@@ -215,7 +213,7 @@ describe('CompanyEnrichmentService', () => {
     });
 
     expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(enrichmentThrottleService.consumeToken).not.toHaveBeenCalled();
     expect(
       peopleDataLabsCompanyClientService.enrichCompanyByDomain,
     ).not.toHaveBeenCalled();
@@ -229,16 +227,11 @@ describe('CompanyEnrichmentService', () => {
       workspaceId,
     });
 
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(enrichmentThrottleService.consumeToken).not.toHaveBeenCalled();
   });
 
   it('should return transientError without calling the client when throttled', async () => {
-    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
-      new ThrottlerException(
-        'Limit reached',
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      ),
-    );
+    enrichmentThrottleService.consumeToken.mockResolvedValue('limitReached');
 
     const result = await service.enrichCompanyForWorkspaceCreator({
       userId: creatorUserId,
@@ -263,12 +256,7 @@ describe('CompanyEnrichmentService', () => {
   });
 
   it('should not record an enrichment attempt when throttled', async () => {
-    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
-      new ThrottlerException(
-        'Limit reached',
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      ),
-    );
+    enrichmentThrottleService.consumeToken.mockResolvedValue('limitReached');
 
     await service.enrichCompanyForWorkspaceCreator({
       userId: creatorUserId,
@@ -344,7 +332,7 @@ describe('CompanyEnrichmentService', () => {
     });
 
     expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(enrichmentThrottleService.consumeToken).not.toHaveBeenCalled();
     expect(
       peopleDataLabsCompanyClientService.enrichCompanyByDomain,
     ).not.toHaveBeenCalled();
@@ -401,7 +389,7 @@ describe('CompanyEnrichmentService', () => {
   });
 
   it('should rethrow non throttler errors from the throttler', async () => {
-    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
+    enrichmentThrottleService.consumeToken.mockRejectedValue(
       new Error('redis down'),
     );
 
