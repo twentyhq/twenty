@@ -88,7 +88,7 @@ describe('ViewFilterGroupService', () => {
         where: {
           deletedAt: expect.anything(),
         },
-        order: { positionInViewFilterGroup: 'ASC' },
+        order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
         relations: [
           'workspace',
           'view',
@@ -121,7 +121,7 @@ describe('ViewFilterGroupService', () => {
           viewId,
           deletedAt: expect.anything(),
         },
-        order: { positionInViewFilterGroup: 'ASC' },
+        order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
         relations: [
           'workspace',
           'view',

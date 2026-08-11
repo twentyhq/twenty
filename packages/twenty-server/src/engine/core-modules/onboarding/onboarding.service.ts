@@ -692,15 +692,56 @@ export class OnboardingService {
       return;
     }
 
-    await this.messageQueueService.add<InstallOnboardingAppsJobData>(
-      INSTALL_ONBOARDING_APPS_JOB_NAME,
-      {
-        workspaceId,
-        universalIdentifiers: installableUniversalIdentifiers,
-        userId,
-      },
-      { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
-    );
+    try {
+      await this.messageQueueService.add<InstallOnboardingAppsJobData>(
+        INSTALL_ONBOARDING_APPS_JOB_NAME,
+        {
+          workspaceId,
+          universalIdentifiers: installableUniversalIdentifiers,
+          userId,
+        },
+        { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
+      );
+    } catch (error) {
+      const enqueueFailureMessage = `Failed to enqueue the install onboarding apps job for workspace ${workspaceId}`;
+
+      this.logger.error(enqueueFailureMessage, error);
+
+      await this.releaseInstallAppsOnboardingStepClaim({ userId, workspaceId });
+
+      throw new OnboardingException(
+        enqueueFailureMessage,
+        OnboardingExceptionCode.INSTALL_APPS_JOB_ENQUEUE_FAILED,
+      );
+    }
+  }
+
+  private async releaseInstallAppsOnboardingStepClaim({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    try {
+      await this.runStepTransitionInLockedTransaction(
+        { userId, workspaceId },
+        async (queryRunner) =>
+          this.setOnboardingInstallAppsPending(
+            {
+              userId,
+              workspaceId,
+              value: true,
+            },
+            queryRunner,
+          ),
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to restore the pending install-apps onboarding step for workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   async clearReversibleOnboardingStepHistoryAfterAppsInstalled({

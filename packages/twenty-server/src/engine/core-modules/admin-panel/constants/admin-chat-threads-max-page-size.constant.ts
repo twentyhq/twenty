@@ -1,0 +1,1 @@
+export const ADMIN_CHAT_THREADS_MAX_PAGE_SIZE = 100;

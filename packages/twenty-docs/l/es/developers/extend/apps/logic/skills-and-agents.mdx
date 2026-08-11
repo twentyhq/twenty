@@ -152,5 +152,36 @@ export default defineApplicationRole({
   **Evita los bucles:** si llamas a `runAgent()` desde un trigger de evento de base de datos `*.updated` y el agente actualiza el mismo registro, limita el alcance del trigger con `updatedFields` a un campo que el agente nunca escriba (por ejemplo, la URL de origen), o comprueba si algún campo de destino sigue vacío antes de llamar a `runAgent()`.
 </Warning>
 
+### Ejecución en nombre de un miembro del espacio de trabajo
+
+Pasa `runAsWorkspaceMemberId` cuando la ejecución es activada por una persona — por ejemplo, un bot de chat que responde a un mensaje — para que el agente actúe como ese miembro en lugar de como la aplicación:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+La ejecución queda entonces restringida a lo que **tanto** el rol del agente como el rol del miembro permiten, los registros que crea se atribuyen a ese miembro y se aplican los permisos a nivel de fila de ese miembro. Omite el campo para ejecuciones autónomas (trabajos programados, disparadores de eventos de base de datos): esos conservan el rol propio del agente.
+
+Tu aplicación es responsable de asociar a la persona que activó la ejecución con un miembro del espacio de trabajo. Para poder designar uno se requiere un token de acceso de la aplicación, y a quién puede
+designar un token depende de si lleva asociado un usuario:
+
+* Un token **sin usuario asociado** puede designar a cualquier miembro. Una función lógica se ejecuta
+  con uno, y lo mismo ocurre con los tokens generados mediante `client_credentials` o a partir de una clave de API.
+* Un token emitido **en nombre de un usuario**, como el que recibe un componente de interfaz, solo puede
+  designar al miembro propio de ese usuario.
+
+Cualquier otro caso — una sesión de usuario simple, una clave de API sin un token de la aplicación — no puede
+designar a ningún miembro.
+
+<Warning>
+  `runAgent()` produce un error cuando no se puede resolver el miembro del espacio de trabajo — un
+  miembro desconocido o eliminado, o uno sin rol. Nunca recurre al
+  rol propio del agente, ya que eso otorgaría más acceso del que solicitó quien llama.
+</Warning>
+
 </Accordion>
 </AccordionGroup>

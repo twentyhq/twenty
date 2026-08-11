@@ -174,11 +174,13 @@ export class PageLayoutWidgetService {
           resolveOverridableEntityProperty(widget, 'pageLayoutTabId') ===
             pageLayoutTabId && !isDefined(widget.deletedAt),
       )
-      .sort(
-        (widgetA, widgetB) =>
+      .sort((widgetA, widgetB) => {
+        const createdAtComparison =
           new Date(widgetA.createdAt).getTime() -
-          new Date(widgetB.createdAt).getTime(),
-      )
+          new Date(widgetB.createdAt).getTime();
+
+        return createdAtComparison || widgetA.id.localeCompare(widgetB.id);
+      })
       .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto);
   }
 

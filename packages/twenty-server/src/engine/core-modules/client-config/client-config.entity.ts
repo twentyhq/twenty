@@ -226,6 +226,9 @@ export class PublicFeatureFlagMetadata {
   @Field(() => String)
   description: string;
 
+  @Field(() => String)
+  icon: string;
+
   @Field(() => String, { nullable: true })
   imagePath?: string;
 }
@@ -276,9 +279,6 @@ export class ClientConfig {
 
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
-
-  @Field(() => Number)
-  subdomainMinLength: number;
 
   @Field(() => String)
   frontDomain: string;

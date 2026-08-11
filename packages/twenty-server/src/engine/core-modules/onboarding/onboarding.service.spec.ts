@@ -482,9 +482,101 @@ describe('OnboardingService', () => {
           universalIdentifiers: [callRecorderId],
           isAutoSkipped: false,
         }),
-      ).rejects.toThrow('queue unavailable');
+      ).rejects.toThrow(OnboardingException);
 
-      expect(userVarsService.set).not.toHaveBeenCalled();
+      expect(userVarsService.set).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+        }),
+        expect.anything(),
+      );
+    });
+
+    it('should restore the pending step and throw when enqueuing fails', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest
+        .spyOn(messageQueueService, 'add')
+        .mockRejectedValue(new Error('queue failure'));
+
+      await expect(
+        service.triggerInstallAppsOnboardingStep({
+          userId,
+          workspaceId,
+          universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
+        }),
+      ).rejects.toThrow(OnboardingException);
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+          value: true,
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should let the user retry the step after a failed enqueue', async () => {
+      let isInstallAppsStepPending = true;
+
+      jest.spyOn(userVarsService, 'delete').mockImplementation(async () => {
+        const affectedRows = isInstallAppsStepPending ? 1 : 0;
+
+        isInstallAppsStepPending = false;
+
+        return affectedRows;
+      });
+      jest.spyOn(userVarsService, 'set').mockImplementation(async () => {
+        isInstallAppsStepPending = true;
+      });
+      jest
+        .spyOn(messageQueueService, 'add')
+        .mockRejectedValueOnce(new Error('queue failure'))
+        .mockResolvedValueOnce(undefined);
+
+      await expect(
+        service.triggerInstallAppsOnboardingStep({
+          userId,
+          workspaceId,
+          universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
+        }),
+      ).rejects.toThrow(OnboardingException);
+
+      await service.triggerInstallAppsOnboardingStep({
+        userId,
+        workspaceId,
+        universalIdentifiers: [callRecorderId],
+        isAutoSkipped: false,
+      });
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+      expect(messageQueueService.add).toHaveBeenLastCalledWith(
+        INSTALL_ONBOARDING_APPS_JOB_NAME,
+        { workspaceId, universalIdentifiers: [callRecorderId], userId },
+        { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
+      );
+    });
+
+    it('should still throw when restoring the pending step fails', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest
+        .spyOn(messageQueueService, 'add')
+        .mockRejectedValue(new Error('queue failure'));
+      jest
+        .spyOn(userVarsService, 'set')
+        .mockRejectedValue(new Error('database failure'));
+
+      await expect(
+        service.triggerInstallAppsOnboardingStep({
+          userId,
+          workspaceId,
+          universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
+        }),
+      ).rejects.toThrow(OnboardingException);
     });
   });
 
