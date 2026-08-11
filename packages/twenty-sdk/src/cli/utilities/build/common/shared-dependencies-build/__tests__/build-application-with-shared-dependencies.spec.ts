@@ -1,11 +1,10 @@
-import { readFile, rm } from 'node:fs/promises';
+import { rm } from 'node:fs/promises';
 import { join } from 'path';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
   FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
   OUTPUT_DIR,
-  SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
   type Manifest,
 } from 'twenty-shared/application';
 
