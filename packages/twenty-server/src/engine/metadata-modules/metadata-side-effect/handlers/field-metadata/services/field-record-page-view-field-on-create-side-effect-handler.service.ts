@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
+import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
 import { computeRecordPageViewFieldForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-page-view-field-for-existing-object.util';
 import {
   computeSameBatchViewFieldPositionByFieldUniversalIdentifier,
@@ -30,7 +31,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
     metadataName: 'fieldMetadata',
     name: 'fieldRecordPageViewFieldOnCreate',
     description:
-      'When a caller-provided field is created, provision its engine-owned view field on the engine-owned FIELDS_WIDGET record-page view, resolved strictly by its derived universal identifier. On an existing object the emission is widget-driven: visibility follows the FIELDS widget newFieldDefaultVisibility and the view field appends into the last active view field group, degrading to no group (the common case: custom objects are created with zero groups). On same-batch object+field creation no widget map exists yet, so the default widget configuration is derived statelessly from the constant (visible, no group, deterministic caller-then-system position shared with objectRecordPageOnCreate). Noop when the object has no engine record-page view, when no active FIELDS widget references it, when the widget does not declare newFieldDefaultVisibility, when the field is the object label identifier (the record page displays it in the title), or when the (view, field) pair is already synced, whatever its identifier. A caller-pending view field for the same pair is not deferred to: the engine always produces its system side effects, and the pair-uniqueness validator surfaces the conflict to the caller, exactly like INDEX. The INDEX counterpart is fieldIndexViewFieldOnCreate.',
+      'When a caller-provided field is created, provision its engine-owned view field on the engine-owned FIELDS_WIDGET record-page view, resolved strictly by its derived universal identifier. On an existing object the emission is widget-driven: visibility follows the FIELDS widget newFieldDefaultVisibility and the view field appends into the last active view field group, degrading to no group (the common case: custom objects are created with zero groups), after the existing active positions and offset by the field rank among the batch emitting caller fields, so batch creations keep the caller-declared order without position collisions. On same-batch object+field creation no widget map exists yet, so the default widget configuration is derived statelessly from the constant (visible, no group, deterministic caller-then-system position shared with objectRecordPageOnCreate). Noop when the object has no engine record-page view, when no active FIELDS widget references it, when the widget does not declare newFieldDefaultVisibility, when the field is the object label identifier (the record page displays it in the title), or when the (view, field) pair is already synced, whatever its identifier. A caller-pending view field for the same pair is not deferred to: the engine always produces its system side effects, and the pair-uniqueness validator surfaces the conflict to the caller, exactly like INDEX. The INDEX counterpart is fieldIndexViewFieldOnCreate.',
   },
 ) {
   buildSideEffects({
@@ -80,6 +81,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
           parentFlatObjectMetadata,
           recordPageViewUniversalIdentifier,
           relatedFlatEntityMaps,
+          allFlatEntityOperationRecordByMetadataName,
         });
 
     if (!isDefined(flatRecordPageViewFieldToCreate)) {
@@ -165,15 +167,20 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
     parentFlatObjectMetadata,
     recordPageViewUniversalIdentifier,
     relatedFlatEntityMaps,
+    allFlatEntityOperationRecordByMetadataName,
   }: {
     sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
     parentFlatObjectMetadata: ParentFlatObjectMetadataForViewFields;
     recordPageViewUniversalIdentifier: string;
     relatedFlatEntityMaps: BuildSideEffectsArgs<'fieldMetadata'>['relatedFlatEntityMaps'];
+    allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'fieldMetadata'>['allFlatEntityOperationRecordByMetadataName'];
   }): UniversalFlatViewField | undefined {
+    const { labelIdentifierFieldMetadataUniversalIdentifier } =
+      parentFlatObjectMetadata;
+
     if (
       sourceFlatFieldMetadata.universalIdentifier ===
-      parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier
+      labelIdentifierFieldMetadataUniversalIdentifier
     ) {
       return undefined;
     }
@@ -183,7 +190,9 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
         recordPageViewUniversalIdentifier
       ];
 
-    const pairAlreadySynced =
+    const isPairAlreadySynced = (
+      fieldMetadataUniversalIdentifier: string,
+    ): boolean =>
       isDefined(existingRecordPageFlatView) &&
       existingRecordPageFlatView.viewFieldUniversalIdentifiers.some(
         (viewFieldUniversalIdentifier) => {
@@ -195,19 +204,47 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
           return (
             isDefined(existingFlatViewField) &&
             existingFlatViewField.fieldMetadataUniversalIdentifier ===
-              sourceFlatFieldMetadata.universalIdentifier &&
+              fieldMetadataUniversalIdentifier &&
             !isDefined(existingFlatViewField.deletedAt)
           );
         },
       );
 
-    if (pairAlreadySynced) {
+    if (isPairAlreadySynced(sourceFlatFieldMetadata.universalIdentifier)) {
       return undefined;
     }
+
+    // Every field of a batch reads the same pre-batch snapshot, so a bare
+    // max+1 append would collide. Offsetting by the field's rank among the
+    // batch's emitting caller fields keeps positions distinct and preserves
+    // the caller-declared order, statelessly (no dependency on the order the
+    // engine processes the batch).
+    const emittingCallerFlatFieldMetadatas =
+      computeCallerFlatFieldMetadatasForObject({
+        objectMetadataUniversalIdentifier:
+          sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
+        labelIdentifierFieldMetadataUniversalIdentifier,
+        allFlatEntityOperationRecordByMetadataName,
+      }).filter(
+        (callerFlatFieldMetadata) =>
+          callerFlatFieldMetadata.universalIdentifier !==
+            labelIdentifierFieldMetadataUniversalIdentifier &&
+          !isPairAlreadySynced(callerFlatFieldMetadata.universalIdentifier),
+      );
+
+    const batchAppendOffset = Math.max(
+      emittingCallerFlatFieldMetadatas.findIndex(
+        (callerFlatFieldMetadata) =>
+          callerFlatFieldMetadata.universalIdentifier ===
+          sourceFlatFieldMetadata.universalIdentifier,
+      ),
+      0,
+    );
 
     return computeRecordPageViewFieldForExistingObject({
       sourceFlatFieldMetadata,
       recordPageViewUniversalIdentifier,
+      batchAppendOffset,
       flatViewMaps: relatedFlatEntityMaps.flatViewMaps,
       flatViewFieldMaps: relatedFlatEntityMaps.flatViewFieldMaps,
       flatViewFieldGroupMaps: relatedFlatEntityMaps.flatViewFieldGroupMaps,
