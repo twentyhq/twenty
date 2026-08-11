@@ -3158,6 +3158,11 @@ msgstr "Филтер користи опцију избора која не по
 msgid "Filter value is not valid for this operand"
 msgstr ""
 
+#. js-lingui-id: 8oFGnQ
+#: src/engine/api/common/common-query-runners/common-find-many-query-runner.service.ts
+msgid "Filtering or ordering through this relation is not supported."
+msgstr ""
+
 #. js-lingui-id: KujtjC
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Find"
