@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
@@ -15,16 +15,11 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
-import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
 @Injectable()
 export class ApplicationRegistrationVariableService {
-  private readonly logger = new Logger(
-    ApplicationRegistrationVariableService.name,
-  );
-
   constructor(
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
@@ -293,44 +288,24 @@ export class ApplicationRegistrationVariableService {
     return this.variableRepository.findOneOrFail({ where: { id } });
   }
 
-  private decryptValueOrNull(
+  private decryptValue(
     variable: ApplicationRegistrationVariableEntity,
-  ): string | null {
-    if (variable.encryptedValue === '') {
-      return '';
-    }
-
-    try {
-      return this.encryptionService.decryptVersionedOrThrow(
-        variable.encryptedValue,
-      );
-    } catch (error) {
-      if (
-        !variable.encryptedValue.startsWith(
-          SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
-        )
-      ) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Failed to decrypt application registration variable ${variable.id} (key ${variable.key}, registration ${variable.applicationRegistrationId}); treating it as filled`,
-      );
-
-      return null;
-    }
+  ): string {
+    return variable.encryptedValue === ''
+      ? ''
+      : this.encryptionService.decryptVersionedOrThrow(variable.encryptedValue);
   }
 
   private isVariableFilled(
     variable: ApplicationRegistrationVariableEntity,
   ): boolean {
-    return this.decryptValueOrNull(variable) !== '';
+    return this.decryptValue(variable) !== '';
   }
 
   private toObfuscatedDTO(
     variable: ApplicationRegistrationVariableEntity,
   ): ApplicationRegistrationVariableDTO {
-    const plaintextValue = this.decryptValueOrNull(variable);
+    const plaintextValue = this.decryptValue(variable);
     const isFilled = plaintextValue !== '';
 
     return {
@@ -338,7 +313,7 @@ export class ApplicationRegistrationVariableService {
       isFilled,
       value: !isFilled
         ? null
-        : variable.isSecret || plaintextValue === null
+        : variable.isSecret
           ? '•••••••••••••'
           : plaintextValue,
     };
