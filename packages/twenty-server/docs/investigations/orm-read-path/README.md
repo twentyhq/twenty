@@ -185,9 +185,7 @@ there. Any of the candidate libraries provides both.
 
 ## 4. Measurements
 
-Re-run with `node bench/entity-metadata.js` and `node bench/compile.js` after
-`npm i typeorm@0.3.31 kysely drizzle-orm pg-promise postgres @databases/pg` in that
-directory. Numbers below from this container, Node on Linux.
+Numbers below from this container, Node on Linux. See the appendix for how to re-run them.
 
 ### 4.1 What `EntityMetadata` costs to build
 
