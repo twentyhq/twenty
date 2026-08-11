@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { BooleanFieldComparisonInput } from 'src/engine/metadata-modules/pagination/dtos/boolean-field-comparison.input';
-import { type MetadataFilterColumn } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
 import { UUIDFilterComparisonInput } from 'src/engine/metadata-modules/pagination/dtos/uuid-filter-comparison.input';
+import { type MetadataFilterColumn } from 'src/engine/metadata-modules/pagination/types/metadata-filter-column.type';
 
 @InputType('ObjectFilter')
 export class ObjectFilterInput {

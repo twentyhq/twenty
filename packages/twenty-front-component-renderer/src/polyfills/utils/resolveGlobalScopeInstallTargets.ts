@@ -1,12 +1,14 @@
-import { isObject } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { resolvePolyfillWindow } from '@/polyfills/utils/resolvePolyfillWindow';
 
 export const resolveGlobalScopeInstallTargets = (
   globalScope: Record<string, unknown>,
 ): Record<string, unknown>[] => {
-  const polyfillWindow = globalScope.window;
+  const polyfillWindow = resolvePolyfillWindow(globalScope);
 
-  if (isObject(polyfillWindow) && polyfillWindow !== globalScope) {
-    return [globalScope, polyfillWindow as Record<string, unknown>];
+  if (isDefined(polyfillWindow)) {
+    return [globalScope, polyfillWindow];
   }
 
   return [globalScope];
