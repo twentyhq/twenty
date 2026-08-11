@@ -79,8 +79,8 @@ export const validateFieldsFlatPageLayoutWidgetForCreation = (
     ) {
       errors.push({
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        message: t`Invalid viewUniversalIdentifier for fields widget "${widgetTitle}". Expected a valid UUID`,
-        userFriendlyMessage: msg`Invalid viewUniversalIdentifier for fields widget`,
+        message: t`Invalid view reference for fields widget "${widgetTitle}". Expected a valid UUID`,
+        userFriendlyMessage: msg`Invalid view reference for fields widget`,
         value: viewUniversalIdentifierToValidate,
       });
     }

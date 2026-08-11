@@ -80,6 +80,15 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
       expect(result).toMatchObject({ configurationType, viewId: null });
     });
 
+    it('should treat an empty legacy viewId as an unbound widget', () => {
+      const result = convertUniversalConfiguration({
+        configurationType,
+        viewId: '',
+      });
+
+      expect(result).toMatchObject({ configurationType, viewId: null });
+    });
+
     it('should throw when the referenced view is not found', () => {
       expect(() =>
         convertUniversalConfiguration({

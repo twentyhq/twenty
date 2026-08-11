@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ChartFilter,
   type UniversalChartFilter,
@@ -49,7 +50,7 @@ const getLegacyViewUniversalIdentifier = (
 ): string | null => {
   const { viewId } = universalConfiguration as { viewId?: string | null };
 
-  return viewId ?? null;
+  return isNonEmptyString(viewId) ? viewId : null;
 };
 
 const resolveViewIdOrThrow = ({
