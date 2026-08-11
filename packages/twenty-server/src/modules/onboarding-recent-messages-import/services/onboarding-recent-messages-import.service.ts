@@ -94,6 +94,11 @@ export class OnboardingRecentMessagesImportService {
             batchSizeMatchingSeededIdsSoTheSyncIsNotMarkedCompleted,
           );
 
+          await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
+            [messageChannel.id],
+            workspaceId,
+          );
+
           this.logger.log(
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Imported ${messageExternalIds.length} recent messages`,
           );
