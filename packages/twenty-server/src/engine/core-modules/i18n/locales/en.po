@@ -2087,6 +2087,16 @@ msgstr "Creation date"
 msgid "Creation DateTime"
 msgstr "Creation DateTime"
 
+#. js-lingui-id: iMikvq
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Credit grant must expire after it becomes effective."
+msgstr "Credit grant must expire after it becomes effective."
+
+#. js-lingui-id: J0OIhA
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Credit grant not found."
+msgstr "Credit grant not found."
+
 #. js-lingui-id: 6Oaeoc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgid "Cron"
@@ -8261,6 +8271,11 @@ msgstr "This index does not exist or has already been deleted."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 
+#. js-lingui-id: wQ3edW
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of credit grant cannot be created by hand."
+msgstr "This kind of credit grant cannot be created by hand."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -8805,6 +8820,11 @@ msgstr "URL must be a string"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-url.util.ts
 msgid "URL must be a string for widget \"{widgetTitle}\""
 msgstr "URL must be a string for widget \"{widgetTitle}\""
+
+#. js-lingui-id: P7NKk0
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Usage could not be read. Please try again later."
+msgstr "Usage could not be read. Please try again later."
 
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
