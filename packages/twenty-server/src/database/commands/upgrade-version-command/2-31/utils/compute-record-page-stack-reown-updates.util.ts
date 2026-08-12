@@ -2,9 +2,9 @@ import {
   SYSTEM_VIEW_KEYS,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
+  getSystemViewFieldGroupUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getSystemViewFieldGroupUniversalIdentifier,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -223,18 +223,6 @@ export const computeRecordPageStackReownUpdates = ({
   return reownUpdates;
 };
 
-// One system FIELDS_WIDGET view per object: resolve it by identifier first
-// (the pre-2.31 pinned literal for standard objects, then the derived
-// identifier on reruns), then by the twenty-standard-owned widget reference,
-// then by the isSystemSideEffect flag (post-2-15 custom objects, whose
-// engine view is flagged while user-added views never are). A lone leftover
-// candidate wins by elimination; several leftovers (pre-2-15 custom rows are
-// stuck unflagged, so an added user view is indistinguishable) are ambiguous
-// and selection is refused with a warning rather than scored, matching the
-// layout decision table: the backfill provisions the derived stack next and
-// the untouched views keep working as user-space customs. Every
-// non-selected FIELDS widget view reached through the layout is user-space
-// and must not be re-owned.
 const selectSystemFieldsViewId = ({
   workspaceId,
   logger,
