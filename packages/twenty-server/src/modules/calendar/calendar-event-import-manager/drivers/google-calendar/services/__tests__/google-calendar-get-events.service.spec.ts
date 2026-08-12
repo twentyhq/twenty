@@ -85,33 +85,18 @@ describe('GoogleCalendarGetEventsService', () => {
       },
     });
 
-    await expect(
-      service.getCalendarEvents(connectedAccount, 'stale-sync-token'),
-    ).rejects.toMatchObject({
-      code: CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-    });
-    await expect(
-      service.getCalendarEvents(connectedAccount, 'stale-sync-token'),
-    ).rejects.toBeInstanceOf(CalendarEventImportDriverException);
-  });
-
-  it('does not silently return an empty successful page on 410, unlike the pre-fix behavior', async () => {
-    list.mockRejectedValue({
-      code: undefined,
-      response: {
-        status: 410,
-        data: {
-          error: { errors: [{ reason: 'fullSyncRequired', message: '' }] },
-        },
-      },
-    });
-
     const call = service.getCalendarEvents(
       connectedAccount,
       'stale-sync-token',
     );
 
-    await expect(call).rejects.toBeDefined();
+    await expect(call).rejects.toBeInstanceOf(
+      CalendarEventImportDriverException,
+    );
+    await expect(call).rejects.toMatchObject({
+      code: CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+    });
+    expect(list).toHaveBeenCalledTimes(1);
   });
 
   it('maps a non-410 error through parseGoogleCalendarError instead of swallowing it', async () => {

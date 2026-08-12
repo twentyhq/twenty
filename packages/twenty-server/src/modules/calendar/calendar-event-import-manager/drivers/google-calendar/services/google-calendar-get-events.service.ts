@@ -90,6 +90,20 @@ export class GoogleCalendarGetEventsService {
   }
 
   private handleError(error: GaxiosError): never {
+    // An expired or invalidated sync token is an expected, self-healing
+    // condition rather than a failure, so it is logged at warn and never
+    // reaches the error-level logging below.
+    if (error.response?.status === 410) {
+      this.logger.warn(
+        'Google Calendar sync token is no longer valid (410), a full resync is required',
+      );
+
+      throw new CalendarEventImportDriverException(
+        'Google Calendar sync token is no longer valid, a full resync is required',
+        CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      );
+    }
+
     this.logger.error(
       `Error in ${GoogleCalendarGetEventsService.name} - getCalendarEvents`,
       error.code,
@@ -106,16 +120,6 @@ export class GoogleCalendarGetEventsService {
       ].includes(error.code)
     ) {
       throw parseGaxiosError(error);
-    }
-    if (error.response?.status === 410) {
-      this.logger.warn(
-        'Google Calendar sync token is no longer valid (410), a full resync is required',
-      );
-
-      throw new CalendarEventImportDriverException(
-        'Google Calendar sync token is no longer valid, a full resync is required',
-        CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
     }
 
     this.logger.error(
