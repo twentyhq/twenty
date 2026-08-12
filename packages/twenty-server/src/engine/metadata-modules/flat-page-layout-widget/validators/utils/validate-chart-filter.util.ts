@@ -1,11 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type UniversalChartFilter } from 'twenty-shared/types';
 import {
-  FieldMetadataType,
-  type UniversalChartFilter,
-} from 'twenty-shared/types';
-import {
-  FILTER_OPERANDS_MAP,
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
@@ -13,6 +9,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { getEffectiveFilterFieldType } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-effective-filter-field-type.util';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
@@ -20,17 +17,6 @@ import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-
 type UniversalChartRecordFilter = NonNullable<
   UniversalChartFilter['recordFilters']
 >[number];
-
-const getEffectiveFieldType = ({
-  fieldType,
-  relationTargetFieldType,
-}: {
-  fieldType: FieldMetadataType;
-  relationTargetFieldType: FieldMetadataType | undefined;
-}): FieldMetadataType =>
-  fieldType === FieldMetadataType.RELATION && isDefined(relationTargetFieldType)
-    ? relationTargetFieldType
-    : fieldType;
 
 const validateChartRecordFilter = ({
   recordFilter,
@@ -78,14 +64,10 @@ const validateChartRecordFilter = ({
       })
     : undefined;
 
-  const effectiveFieldType = getEffectiveFieldType({
+  const effectiveFieldType = getEffectiveFilterFieldType({
     fieldType: filterField.type,
     relationTargetFieldType: relationTargetField?.type,
   });
-
-  if (!(effectiveFieldType in FILTER_OPERANDS_MAP)) {
-    return [];
-  }
 
   const allowedOperands = getFilterOperandsForFilterableFieldType({
     filterType: getFilterTypeFromFieldType(effectiveFieldType),

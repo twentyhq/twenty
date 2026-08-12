@@ -12,6 +12,10 @@ const SELECT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-2222-4222-8222-000000000002';
 const RELATION_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-000000000003';
+const MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-4444-4444-8444-000000000004';
+const RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-5555-4555-8555-000000000005';
 const UNKNOWN_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-9999-4999-8999-000000000009';
 
@@ -38,6 +42,14 @@ const flatFieldMetadataMaps = {
     [RELATION_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
       RELATION_FIELD_UNIVERSAL_IDENTIFIER,
       FieldMetadataType.RELATION,
+    ),
+    [MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+      MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+      FieldMetadataType.MORPH_RELATION,
+    ),
+    [RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+      RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      FieldMetadataType.RICH_TEXT,
     ),
   },
 } as unknown as MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
@@ -108,19 +120,52 @@ describe('validateChartFilter', () => {
     expect(errors[0].message).toContain('is not supported on field type');
   });
 
-  it('should resolve the relation target field type to validate the value', () => {
+  it.each([
+    ['RELATION', RELATION_FIELD_UNIVERSAL_IDENTIFIER],
+    ['MORPH_RELATION', MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER],
+  ])(
+    'should resolve the relation target field type of a %s field to validate the value',
+    (_label, fieldUniversalIdentifier) => {
+      const errors = validateFilter([
+        {
+          fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
+          relationTargetFieldMetadataUniversalIdentifier:
+            DATE_FIELD_UNIVERSAL_IDENTIFIER,
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'not-a-relative-date',
+        },
+      ]);
+
+      expect(errors).toHaveLength(1);
+      expect(errors[0].message).toContain('DATE');
+    },
+  );
+
+  it('should validate a MORPH_RELATION filter without a target against relation operands', () => {
     const errors = validateFilter([
       {
-        fieldMetadataUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
-        relationTargetFieldMetadataUniversalIdentifier:
-          DATE_FIELD_UNIVERSAL_IDENTIFIER,
+        fieldMetadataUniversalIdentifier:
+          MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
         operand: ViewFilterOperand.IS_RELATIVE,
-        value: 'not-a-relative-date',
+        value: 'NEXT_30_DAY',
       },
     ]);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('DATE');
+    expect(errors[0].message).toContain('is not supported on field type');
+  });
+
+  it('should validate a RICH_TEXT filter instead of skipping it', () => {
+    const errors = validateFilter([
+      {
+        fieldMetadataUniversalIdentifier: RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+        operand: ViewFilterOperand.IS_RELATIVE,
+        value: 'NEXT_30_DAY',
+      },
+    ]);
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('is not supported on field type');
   });
 
   it('should report an error per invalid filter', () => {

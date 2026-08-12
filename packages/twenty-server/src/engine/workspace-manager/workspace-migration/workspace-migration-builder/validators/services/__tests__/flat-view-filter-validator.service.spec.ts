@@ -124,6 +124,36 @@ describe('FlatViewFilterValidatorService', () => {
 
       expect(result.errors).toEqual([]);
     });
+
+    it('should reject an unsupported operand on a MORPH_RELATION field', () => {
+      const result = service.validateFlatViewFilterCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.MORPH_RELATION,
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'NEXT_30_DAY',
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain(
+        'is not supported on field type',
+      );
+    });
+
+    it('should reject an unsupported operand on a RICH_TEXT field', () => {
+      const result = service.validateFlatViewFilterCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RICH_TEXT,
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'NEXT_30_DAY',
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain(
+        'is not supported on field type',
+      );
+    });
   });
 
   describe('value validation on update', () => {
