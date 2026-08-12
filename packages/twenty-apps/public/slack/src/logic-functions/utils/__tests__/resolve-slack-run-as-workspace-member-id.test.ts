@@ -201,7 +201,7 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     ).toBe('member-1');
   });
 
-  it('should fall back to the email match when the link lookup throws', async () => {
+  it('should refuse run-as when the link lookup throws, since a manual link may exist', async () => {
     findSlackUserLinkMock.mockRejectedValue(new Error('permission denied'));
     findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
 
@@ -211,7 +211,9 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         slackClient,
         identity: IDENTITY,
       }),
-    ).toBe('member-1');
+    ).toBeUndefined();
+    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should not link a Slack Connect user from another workspace', async () => {

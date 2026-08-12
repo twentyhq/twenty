@@ -9,6 +9,7 @@ import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link
 import { findWorkspaceMemberIdByEmail } from 'src/logic-functions/data/find-workspace-member-id-by-email';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
+import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 
 const resolveLinkableEmail = async ({
   slackClient,
@@ -49,10 +50,15 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
 
   const { slackUserId, slackTeamId } = identity;
 
-  const existingLink = await findSlackUserLink(client, {
-    slackTeamId,
-    slackUserId,
-  }).catch(() => undefined);
+  let existingLink: SlackUserLink | undefined;
+
+  try {
+    existingLink = await findSlackUserLink(client, { slackTeamId, slackUserId });
+  } catch {
+    // a failed lookup is not proof there is no link: a manual link may exist,
+    // so refuse run-as rather than email-match past an admin's explicit mapping
+    return undefined;
+  }
 
   if (existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL) {
     return isNonEmptyString(existingLink.workspaceMemberId)
