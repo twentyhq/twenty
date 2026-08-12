@@ -124,6 +124,8 @@ export class GroupByWithRecordsV2Service {
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: selectedFieldsResult.select,
+        isOrmV2ReadPathEnabled: true,
+        useReplica: true,
       });
     }
 
