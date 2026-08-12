@@ -3,6 +3,7 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { v4 } from 'uuid';
 import { IconX } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -59,6 +60,11 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     BillingCreditGrantType.COMPENSATION,
   );
   const [reason, setReason] = useState('');
+  // Identifies one intended grant for as long as the modal stays open, so a
+  // RetryLink retry or a resubmit after a lost response returns the grant the
+  // first attempt wrote rather than crediting the workspace twice. Closing the
+  // modal starts a new one.
+  const [clientOperationId, setClientOperationId] = useState(() => v4());
 
   const [grantWorkspaceCredits, { loading }] = useMutation(
     GRANT_WORKSPACE_CREDITS,
@@ -77,6 +83,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     setAmount('');
     setType(BillingCreditGrantType.COMPENSATION);
     setReason('');
+    setClientOperationId(v4());
     closeModal(modalInstanceId);
   };
 
@@ -94,6 +101,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
           amount: parsedAmount,
           type,
           reason: trimmedReason || null,
+          clientOperationId,
         },
       });
 

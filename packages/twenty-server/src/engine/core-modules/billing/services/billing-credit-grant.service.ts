@@ -323,6 +323,17 @@ export class BillingCreditGrantService {
     };
   }
 
+  async findGrantByIdempotencyKey(
+    workspaceId: string,
+    idempotencyKey: string,
+  ): Promise<BillingCreditGrantEntity | null> {
+    const grant = await this.billingCreditGrantRepository.findOne(workspaceId, {
+      where: { idempotencyKey },
+    });
+
+    return grant ?? null;
+  }
+
   // Whether the ledger has taken over from billingCustomer.creditBalanceMicro
   // for this workspace. Public so the mirror write can refuse to overwrite a
   // balance the backfill has not reached yet.

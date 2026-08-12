@@ -801,6 +801,7 @@ export class AdminPanelResolver {
       amount: input.amount,
       type: input.type,
       reason: input.reason,
+      clientOperationId: input.clientOperationId,
       grantedByUserId: actor.id,
     });
   }

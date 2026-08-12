@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
@@ -24,12 +26,14 @@ const GRANT_MUTATION = `
     $amount: Float!
     $type: BillingCreditGrantType!
     $reason: String
+    $clientOperationId: UUID!
   ) {
     grantWorkspaceCredits(
       workspaceId: $workspaceId
       amount: $amount
       type: $type
       reason: $reason
+      clientOperationId: $clientOperationId
     ) {
       id
       amount
@@ -51,6 +55,12 @@ const REVOKE_MUTATION = `
     }
   }
 `;
+
+const grantCredits = (variables: Record<string, unknown>) =>
+  callAdminGraphql(GRANT_MUTATION, {
+    clientOperationId: randomUUID(),
+    ...variables,
+  });
 
 const callAdminGraphql = (query: string, variables: Record<string, unknown>) =>
   client
@@ -81,7 +91,7 @@ describe('Admin credit grant and revoke (integration)', () => {
   });
 
   it('records a granted amount on the ledger and mirrors it', async () => {
-    const response = await callAdminGraphql(GRANT_MUTATION, {
+    const response = await grantCredits({
       workspaceId,
       amount: 2,
       type: BillingCreditGrantType.COMPENSATION,
@@ -114,7 +124,7 @@ describe('Admin credit grant and revoke (integration)', () => {
       500_000,
     );
 
-    await callAdminGraphql(GRANT_MUTATION, {
+    await grantCredits({
       workspaceId,
       amount: 2,
       type: BillingCreditGrantType.COMPENSATION,
@@ -136,7 +146,7 @@ describe('Admin credit grant and revoke (integration)', () => {
       500_000,
     );
 
-    const granted = await callAdminGraphql(GRANT_MUTATION, {
+    const granted = await grantCredits({
       workspaceId,
       amount: 2,
       type: BillingCreditGrantType.COMPENSATION,
@@ -170,7 +180,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     BillingCreditGrantType.ROLLOVER,
     BillingCreditGrantType.ONBOARDING_REWARD,
   ])('refuses to grant a %s by hand', async (type) => {
-    const response = await callAdminGraphql(GRANT_MUTATION, {
+    const response = await grantCredits({
       workspaceId,
       amount: 1,
       type,
@@ -184,7 +194,7 @@ describe('Admin credit grant and revoke (integration)', () => {
   });
 
   it('refuses an amount above the configured ceiling', async () => {
-    const response = await callAdminGraphql(GRANT_MUTATION, {
+    const response = await grantCredits({
       workspaceId,
       amount: 1_000_000_000,
       type: BillingCreditGrantType.COMPENSATION,
@@ -195,5 +205,30 @@ describe('Admin credit grant and revoke (integration)', () => {
       'BILLING_CREDIT_AMOUNT_INVALID',
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+  });
+
+  // The admin panel keeps one operation id per open modal, so an Apollo retry
+  // or a resubmit after a lost response must answer with the grant the first
+  // attempt wrote rather than crediting the workspace a second time.
+  it('answers a retried grant with the original instead of granting twice', async () => {
+    const clientOperationId = randomUUID();
+    const variables = {
+      workspaceId,
+      amount: 25,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: 'Retried by the client',
+      clientOperationId,
+    };
+
+    const first = await callAdminGraphql(GRANT_MUTATION, variables);
+    const second = await callAdminGraphql(GRANT_MUTATION, variables);
+
+    expect(second.body.data.grantWorkspaceCredits.id).toBe(
+      first.body.data.grantWorkspaceCredits.id,
+    );
+    expect(await listCreditGrants(workspaceId)).toHaveLength(1);
+    expect(await getMirroredCreditBalance(workspaceId)).toBe(
+      25 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+    );
   });
 });

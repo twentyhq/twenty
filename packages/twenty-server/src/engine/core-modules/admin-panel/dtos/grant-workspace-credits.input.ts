@@ -34,4 +34,11 @@ export class GrantWorkspaceCreditsInput {
   @IsString()
   @MaxLength(500)
   reason?: string;
+
+  // Identifies one intended grant, so a retried mutation returns the grant the
+  // first attempt wrote instead of handing out the credits a second time.
+  @Field(() => UUIDScalarType)
+  @IsNotEmpty()
+  @IsUUID()
+  clientOperationId: string;
 }

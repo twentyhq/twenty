@@ -58,18 +58,19 @@ export class AdminPanelBillingService {
     amount,
     type,
     reason,
+    clientOperationId,
     grantedByUserId,
   }: {
     workspaceId: string;
     amount: number;
     type: BillingCreditGrantType;
     reason?: string;
+    clientOperationId: string;
     grantedByUserId: string;
   }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
-    // The admin panel offers only these three, but the mutation is reachable
-    // directly. ROLLOVER and ONBOARDING_REWARD are written by the period
-    // transition and the onboarding jobs, and hand-writing one would change
-    // carry-forward behaviour and misclassify the audit trail.
+    // Enforced server side because the mutation is reachable directly, not only
+    // through the admin panel's picker. See ADMIN_GRANTABLE_CREDIT_GRANT_TYPES
+    // for why these two are excluded.
     if (!ADMIN_GRANTABLE_CREDIT_GRANT_TYPES.includes(type)) {
       throw new BillingException(
         `Cannot grant credits of type ${type} by hand`,
@@ -94,22 +95,38 @@ export class AdminPanelBillingService {
       );
     }
 
+    const idempotencyKey = buildAdminGrantIdempotencyKey(clientOperationId);
+
     const grant = await this.billingCreditService.grantCredits({
       workspaceId,
       amountMicro,
       type,
       reason,
+      idempotencyKey,
       grantedByUserId,
     });
 
-    if (!isDefined(grant)) {
+    if (isDefined(grant)) {
+      return this.toCreditGrantDTO(grant);
+    }
+
+    // A null grant is either a replay of this same operation, which must answer
+    // with the grant the first attempt wrote rather than hand out the credits
+    // again, or an instance without billing.
+    const replayedGrant =
+      await this.billingCreditGrantService.findGrantByIdempotencyKey(
+        workspaceId,
+        idempotencyKey,
+      );
+
+    if (!isDefined(replayedGrant)) {
       throw new BillingException(
         `Could not grant credits to workspace ${workspaceId}, billing is disabled on this instance`,
         BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
       );
     }
 
-    return this.toCreditGrantDTO(grant);
+    return this.toCreditGrantDTO(replayedGrant);
   }
 
   async revokeWorkspaceCreditGrant({
@@ -299,3 +316,8 @@ export class AdminPanelBillingService {
     }
   }
 }
+
+// Namespaced so an operation id can never collide with the carry-forward or
+// backfill keys, which live in the same unique index.
+const buildAdminGrantIdempotencyKey = (clientOperationId: string): string =>
+  `admin-grant:${clientOperationId}`;

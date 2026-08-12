@@ -6,7 +6,7 @@ import {
 } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 
 export type CarryForwardGrantInput = {
-  id: string;
+  grantId: string;
   type: BillingCreditGrantType;
   amountMicro: number;
   createdAt: Date;
@@ -69,16 +69,10 @@ export const computeCarryForwardGrants = ({
     createdAt: new Date(0),
   };
 
-  const grantBuckets: CreditBucket[] = liveGrants
-    .filter((grant) => grant.amountMicro > 0)
-    .map((grant) => ({
-      grantId: grant.id,
-      type: grant.type,
-      amountMicro: grant.amountMicro,
-      createdAt: grant.createdAt,
-    }));
-
-  const buckets = [allowanceBucket, ...grantBuckets].sort(compareSpendingOrder);
+  const buckets = [
+    allowanceBucket,
+    ...liveGrants.filter((grant) => grant.amountMicro > 0),
+  ].sort(compareSpendingOrder);
 
   let remainingUsageMicro = Math.max(0, usageMicro);
 

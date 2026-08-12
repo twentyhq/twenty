@@ -17,23 +17,15 @@ export class BackfillCreditBalanceIntoGrantsSlowInstanceCommand
   implements SlowInstanceCommand
 {
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    // Nothing to move on an instance without billing: neither the ledger nor
-    // the column it mirrors exists there.
     const presentTables = await dataSource.query(
       `SELECT tablename FROM pg_tables
         WHERE schemaname = 'core'
           AND tablename IN ('billingCreditGrant', 'billingCustomer', 'billingSubscription')`,
     );
 
-    const presentTableNames = new Set(
-      presentTables.map((row: { tablename: string }) => row.tablename),
-    );
-
-    if (
-      !presentTableNames.has('billingCreditGrant') ||
-      !presentTableNames.has('billingCustomer') ||
-      !presentTableNames.has('billingSubscription')
-    ) {
+    // Nothing to move on an instance without billing: neither the ledger nor
+    // the column it mirrors exists there.
+    if (presentTables.length < 3) {
       return;
     }
 

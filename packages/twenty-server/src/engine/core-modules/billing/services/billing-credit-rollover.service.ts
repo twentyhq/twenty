@@ -108,7 +108,7 @@ export class BillingCreditRolloverService {
     const carryForwardGrants = computeCarryForwardGrants({
       allowanceMicro: closingAllowanceMicro,
       liveGrants: closingGrants.map((grant) => ({
-        id: grant.id,
+        grantId: grant.id,
         type: grant.type,
         amountMicro: grant.amountMicro,
         createdAt: grant.createdAt,

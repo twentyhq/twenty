@@ -10,13 +10,8 @@ import {
 } from 'typeorm';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { bigintColumnTransformer } from 'src/engine/core-modules/billing/utils/bigint-column-transformer.util';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
-
-const bigintTransformer = {
-  to: (value: number) => value,
-  from: (value: string | number | null) =>
-    typeof value === 'string' ? Number(value) : (value ?? 0),
-};
 
 @Entity({ name: 'billingCreditGrant', schema: 'core' })
 @Index('IDX_BILLING_CREDIT_GRANT_WORKSPACE_ID_EXPIRES_AT', [
@@ -27,7 +22,11 @@ export class BillingCreditGrantEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'bigint', transformer: bigintTransformer })
+  @Column({
+    nullable: false,
+    type: 'bigint',
+    transformer: bigintColumnTransformer,
+  })
   amountMicro: number;
 
   @Column({

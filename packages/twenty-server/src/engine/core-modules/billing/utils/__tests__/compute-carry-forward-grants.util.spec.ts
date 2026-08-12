@@ -9,7 +9,7 @@ import {
 const grant = (
   overrides: Partial<CarryForwardGrantInput> = {},
 ): CarryForwardGrantInput => ({
-  id: 'grant_1',
+  grantId: 'grant_1',
   type: BillingCreditGrantType.ROLLOVER,
   amountMicro: 0,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
@@ -68,7 +68,7 @@ describe('computeCarryForwardGrants', () => {
       const result = computeCarryForwardGrants({
         allowanceMicro: ALLOWANCE,
         liveGrants: [
-          grant({ id: 'previous_rollover', amountMicro: ALLOWANCE }),
+          grant({ grantId: 'previous_rollover', amountMicro: ALLOWANCE }),
         ],
         usageMicro: 0,
         rolloverCapMicro: ROLLOVER_CAP,
@@ -86,7 +86,9 @@ describe('computeCarryForwardGrants', () => {
     it('merges the allowance and previous rollovers into a single grant', () => {
       const result = computeCarryForwardGrants({
         allowanceMicro: ALLOWANCE,
-        liveGrants: [grant({ id: 'previous_rollover', amountMicro: 400_000 })],
+        liveGrants: [
+          grant({ grantId: 'previous_rollover', amountMicro: 400_000 }),
+        ],
         usageMicro: 1_200_000,
         rolloverCapMicro: ROLLOVER_CAP,
       });
@@ -118,7 +120,7 @@ describe('computeCarryForwardGrants', () => {
         allowanceMicro: ALLOWANCE,
         liveGrants: [
           grant({
-            id: 'compensation_1',
+            grantId: 'compensation_1',
             type: BillingCreditGrantType.COMPENSATION,
             amountMicro: 200_000_000,
           }),
@@ -146,7 +148,7 @@ describe('computeCarryForwardGrants', () => {
         allowanceMicro: ALLOWANCE,
         liveGrants: [
           grant({
-            id: 'compensation_1',
+            grantId: 'compensation_1',
             type: BillingCreditGrantType.COMPENSATION,
             amountMicro: 500_000,
           }),
@@ -168,9 +170,9 @@ describe('computeCarryForwardGrants', () => {
       const result = computeCarryForwardGrants({
         allowanceMicro: ALLOWANCE,
         liveGrants: [
-          grant({ id: 'previous_rollover', amountMicro: 500_000 }),
+          grant({ grantId: 'previous_rollover', amountMicro: 500_000 }),
           grant({
-            id: 'reward_1',
+            grantId: 'reward_1',
             type: BillingCreditGrantType.ONBOARDING_REWARD,
             amountMicro: 1_000_000,
           }),
@@ -193,13 +195,13 @@ describe('computeCarryForwardGrants', () => {
         allowanceMicro: 0,
         liveGrants: [
           grant({
-            id: 'reward_old',
+            grantId: 'reward_old',
             type: BillingCreditGrantType.ONBOARDING_REWARD,
             amountMicro: 400_000,
             createdAt: new Date('2026-01-01T00:00:00.000Z'),
           }),
           grant({
-            id: 'compensation_new',
+            grantId: 'compensation_new',
             type: BillingCreditGrantType.COMPENSATION,
             amountMicro: 600_000,
             createdAt: new Date('2026-02-01T00:00:00.000Z'),
@@ -253,7 +255,7 @@ describe('computeCarryForwardGrants', () => {
         allowanceMicro: ALLOWANCE,
         liveGrants: [
           grant({
-            id: 'compensation_1',
+            grantId: 'compensation_1',
             type: BillingCreditGrantType.COMPENSATION,
             amountMicro: 1_000,
           }),
@@ -278,7 +280,7 @@ describe('computeCarryForwardGrants', () => {
         allowanceMicro: 0,
         liveGrants: [
           grant({
-            id: 'empty',
+            grantId: 'empty',
             type: BillingCreditGrantType.COMPENSATION,
             amountMicro: 0,
           }),

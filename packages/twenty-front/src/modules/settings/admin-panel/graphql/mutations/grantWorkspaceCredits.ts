@@ -6,12 +6,14 @@ export const GRANT_WORKSPACE_CREDITS = gql`
     $amount: Float!
     $type: BillingCreditGrantType!
     $reason: String
+    $clientOperationId: UUID!
   ) {
     grantWorkspaceCredits(
       workspaceId: $workspaceId
       amount: $amount
       type: $type
       reason: $reason
+      clientOperationId: $clientOperationId
     ) {
       id
       amount
