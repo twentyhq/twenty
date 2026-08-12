@@ -1,13 +1,13 @@
 import { computeLocalCacheStats } from 'src/engine/workspace-cache/utils/compute-local-cache-stats.util';
 
-const entry = (versionCount: number, state: 'hot' | 'cold' = 'hot') => ({
+const entry = (versionCount: number, state: 'live' | 'packed' = 'live') => ({
   versions: new Map(
     Array.from({ length: versionCount }, (_, index) => [
       `hash-${index}`,
-      state === 'hot'
-        ? { state: 'hot' as const, data: 'data', lastReadAt: index }
+      state === 'live'
+        ? { state: 'live' as const, data: 'data', lastReadAt: index }
         : {
-            state: 'cold' as const,
+            state: 'packed' as const,
             blob: Buffer.alloc(100),
             lastReadAt: index,
           },
@@ -25,12 +25,12 @@ describe('computeLocalCacheStats', () => {
       versionsTotal: 0,
       versionsByCount: { '1': 0, '2': 0, '3': 0, '4': 0, '5+': 0 },
       entriesByKeyName: {},
-      hotVersionsByKeyName: {},
-      coldVersionsByKeyName: {},
-      coldBytesByKeyName: {},
-      hotVersionsTotal: 0,
-      coldVersionsTotal: 0,
-      coldBytesTotal: 0,
+      liveVersionsByKeyName: {},
+      packedVersionsByKeyName: {},
+      packedBytesByKeyName: {},
+      liveVersionsTotal: 0,
+      packedVersionsTotal: 0,
+      packedBytesTotal: 0,
     });
   });
 
@@ -73,23 +73,23 @@ describe('computeLocalCacheStats', () => {
     });
   });
 
-  it('splits versions by storage state and sums exact cold bytes', () => {
+  it('splits versions by storage state and sums exact packed bytes', () => {
     const stats = computeLocalCacheStats(
       new Map([
-        ['flatFieldMetadataMaps:ws-a', entry(2, 'cold')],
-        ['flatFieldMetadataMaps:ws-b', entry(1, 'hot')],
-        ['ORMEntityMetadatas:ws-a', entry(1, 'hot')],
+        ['flatFieldMetadataMaps:ws-a', entry(2, 'packed')],
+        ['flatFieldMetadataMaps:ws-b', entry(1, 'live')],
+        ['ORMEntityMetadatas:ws-a', entry(1, 'live')],
       ]),
     );
 
-    expect(stats.hotVersionsTotal).toBe(2);
-    expect(stats.coldVersionsTotal).toBe(2);
-    expect(stats.coldBytesTotal).toBe(200);
-    expect(stats.coldVersionsByKeyName).toEqual({
+    expect(stats.liveVersionsTotal).toBe(2);
+    expect(stats.packedVersionsTotal).toBe(2);
+    expect(stats.packedBytesTotal).toBe(200);
+    expect(stats.packedVersionsByKeyName).toEqual({
       flatFieldMetadataMaps: 2,
       ORMEntityMetadatas: 0,
     });
-    expect(stats.hotVersionsByKeyName).toEqual({
+    expect(stats.liveVersionsByKeyName).toEqual({
       flatFieldMetadataMaps: 1,
       ORMEntityMetadatas: 1,
     });
