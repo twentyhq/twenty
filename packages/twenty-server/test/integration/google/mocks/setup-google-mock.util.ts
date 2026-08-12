@@ -33,8 +33,32 @@ export type GoogleMock = {
   ) => void;
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
+  failMessageList: (failure: GoogleApiFailure) => void;
+  failCalendarEventList: (failure: GoogleApiFailure) => void;
   declineTokenRefresh: () => void;
 };
+
+export type GoogleApiFailure = {
+  status: number;
+  reason: string;
+  message: string;
+};
+
+const googleApiErrorResponse = ({
+  status,
+  reason,
+  message,
+}: GoogleApiFailure) =>
+  HttpResponse.json(
+    {
+      error: {
+        code: status,
+        message,
+        errors: [{ reason, message }],
+      },
+    },
+    { status },
+  );
 
 export const setupGoogleMock = ({
   handle,
@@ -104,6 +128,18 @@ export const setupGoogleMock = ({
             },
             { status: 429 },
           ),
+        ),
+      ),
+    failMessageList: (failure) =>
+      httpMock.use(
+        http.get('*/gmail/v1/users/me/messages', () =>
+          googleApiErrorResponse(failure),
+        ),
+      ),
+    failCalendarEventList: (failure) =>
+      httpMock.use(
+        http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
+          googleApiErrorResponse(failure),
         ),
       ),
     declineTokenRefresh: () =>
