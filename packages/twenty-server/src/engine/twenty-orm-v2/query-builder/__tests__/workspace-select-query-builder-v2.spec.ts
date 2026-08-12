@@ -4,6 +4,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { TwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { buildColumnResultAlias } from 'src/engine/twenty-orm-v2/sql/utils/build-column-result-alias.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
 const SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
@@ -81,11 +82,15 @@ const personTableShape: WorkspaceTableShape = {
 
 const buildQueryBuilder = ({
   rows = [],
-}: { rows?: Record<string, unknown>[] } = {}) => {
+  tableShape = personTableShape,
+}: {
+  rows?: Record<string, unknown>[];
+  tableShape?: WorkspaceTableShape;
+} = {}) => {
   const executedStatements: CompiledStatement[] = [];
 
   const queryBuilder = new WorkspaceSelectQueryBuilderV2('person', {
-    tableShape: personTableShape,
+    tableShape,
     executor: {
       execute: async (statement) => {
         executedStatements.push(statement);
@@ -436,6 +441,41 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     expect(queryBuilder.getQuery()).toContain(
       'SELECT "person"."id" AS "person_id" FROM',
     );
+  });
+
+  it('should keep result aliases within the postgres identifier limit', async () => {
+    const longColumnName = `veryLongSubfield${'X'.repeat(60)}`;
+    const otherLongColumnName = `veryLongSubfield${'Y'.repeat(60)}`;
+    const resultAlias = buildColumnResultAlias('person', longColumnName);
+    const otherResultAlias = buildColumnResultAlias(
+      'person',
+      otherLongColumnName,
+    );
+
+    const { queryBuilder } = buildQueryBuilder({
+      tableShape: {
+        ...personTableShape,
+        columnShapeByColumnName: {
+          ...personTableShape.columnShapeByColumnName,
+          [longColumnName]: buildColumn(longColumnName),
+          [otherLongColumnName]: buildColumn(otherLongColumnName),
+        },
+      },
+      rows: [{ [resultAlias]: 'left', [otherResultAlias]: 'right' }],
+    });
+
+    queryBuilder.setFindOptions({
+      select: { [longColumnName]: true, [otherLongColumnName]: true },
+    });
+
+    expect(resultAlias.length).toBeLessThanOrEqual(63);
+    expect(resultAlias).not.toBe(otherResultAlias);
+    expect(queryBuilder.getQuery()).toContain(
+      `"person"."${longColumnName}" AS "${resultAlias}"`,
+    );
+    await expect(queryBuilder.getMany()).resolves.toEqual([
+      { [longColumnName]: 'left', [otherLongColumnName]: 'right' },
+    ]);
   });
 
   it('should report the columns it selected so permissions do not have to parse SQL', () => {

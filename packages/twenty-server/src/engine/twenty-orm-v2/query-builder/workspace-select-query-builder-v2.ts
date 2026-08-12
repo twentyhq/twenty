@@ -21,6 +21,7 @@ import { buildOrderByClauses } from 'src/engine/twenty-orm-v2/sql/utils/build-or
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils/collect-referenced-column-names.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import {
+  buildColumnNameByResultAlias,
   buildCountStatement,
   buildProjection,
   buildSelectStatement,
@@ -309,7 +310,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     noFormatting?: boolean;
   }): Promise<T[]> {
     const rows = await this.executeSelect();
-    const entities = rows.map((row) => mapRowToEntity<T>(row, this.alias));
+    const columnNameByResultAlias = this.buildColumnNameByResultAlias();
+    const entities = rows.map((row) =>
+      mapRowToEntity<T>(row, columnNameByResultAlias),
+    );
 
     if (options?.noFormatting) {
       return entities;
@@ -337,7 +341,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return null;
     }
 
-    const entity = mapRowToEntity<T>(rows[0], this.alias);
+    const entity = mapRowToEntity<T>(
+      rows[0],
+      this.buildColumnNameByResultAlias(),
+    );
 
     if (options?.noFormatting) {
       return entity;
@@ -507,6 +514,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     mainAliasColumnNames: string[];
   } {
     return buildProjection(this.toSelectStatementState());
+  }
+
+  private buildColumnNameByResultAlias(): Record<string, string> {
+    return buildColumnNameByResultAlias(
+      this.alias,
+      this.buildProjection().mainAliasColumnNames,
+    );
   }
 
   private buildWhereExpression(options?: {

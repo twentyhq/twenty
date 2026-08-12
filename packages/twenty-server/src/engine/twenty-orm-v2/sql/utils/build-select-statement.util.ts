@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { buildColumnResultAlias } from 'src/engine/twenty-orm-v2/sql/utils/build-column-result-alias.util';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
@@ -94,7 +95,7 @@ export const buildProjection = (
   const expressions = mainAliasColumnNames.map(
     (columnName) =>
       `${quoteColumn(state.alias, columnName)} AS ${escapeIdentifier(
-        `${state.alias}_${columnName}`,
+        buildColumnResultAlias(state.alias, columnName),
       )}`,
   );
 
@@ -218,22 +219,32 @@ export const buildCountStatement = (state: SelectStatementState): string => {
     .join(' ');
 };
 
-// Columns selected for another alias, e.g. relation order-by columns, are dropped
-// so an entity never carries raw join output.
+// Only the projected columns of the main alias become entity properties: anything else
+// in the row, such as a relation order-by column, is raw join output.
 export const mapRowToEntity = <T extends Record<string, unknown>>(
   row: Record<string, unknown>,
-  alias: string,
+  columnNameByResultAlias: Record<string, string>,
 ): T => {
   const entity: Record<string, unknown> = {};
-  const mainAliasPrefix = `${alias}_`;
 
-  for (const [columnAlias, value] of Object.entries(row)) {
-    if (!columnAlias.startsWith(mainAliasPrefix)) {
-      continue;
+  for (const [resultAlias, columnName] of Object.entries(
+    columnNameByResultAlias,
+  )) {
+    if (resultAlias in row) {
+      entity[columnName] = row[resultAlias];
     }
-
-    entity[columnAlias.slice(mainAliasPrefix.length)] = value;
   }
 
   return entity as T;
 };
+
+export const buildColumnNameByResultAlias = (
+  alias: string,
+  mainAliasColumnNames: string[],
+): Record<string, string> =>
+  Object.fromEntries(
+    mainAliasColumnNames.map((columnName) => [
+      buildColumnResultAlias(alias, columnName),
+      columnName,
+    ]),
+  );
