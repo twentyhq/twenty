@@ -44,7 +44,7 @@ Write your text first so it starts streaming immediately: before it, do not call
 
 ${firstReplyInstruction}
 
-A written question does not count: this reply is unfinished until the ask_questions call is made, so make it before you stop.
+A written question does not count, and a heading with nothing under it is not an ending: this reply is unfinished until the ask_questions call is made in the same turn as the text, so make the call immediately after your last sentence rather than stopping.
 
 ## Migrating from another CRM
 

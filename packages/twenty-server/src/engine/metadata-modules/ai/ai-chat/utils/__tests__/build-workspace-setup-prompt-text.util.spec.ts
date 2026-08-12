@@ -55,6 +55,9 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('required ask_questions call');
     expect(result).toContain('A written question does not count');
+    expect(result).toContain(
+      'a heading with nothing under it is not an ending',
+    );
     expect(result).toContain('needs no skill and no learn_tools step');
     expect(result).toContain(
       'do not call load_skills, learn_tools, execute_tool, or web search',
