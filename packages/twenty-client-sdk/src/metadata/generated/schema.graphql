@@ -3767,6 +3767,7 @@ enum FileFolder {
   AppTarball
   GeneratedSdkClient
   Dpa
+  MediaCapture
 }
 
 """The `Upload` scalar type represents a file upload."""

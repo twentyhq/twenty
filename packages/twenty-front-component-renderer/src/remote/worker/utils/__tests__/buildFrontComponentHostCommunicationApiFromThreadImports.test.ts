@@ -13,6 +13,7 @@ const createHostThreadImportsStub = () =>
     closeSidePanel: jest.fn(),
     updateProgress: jest.fn(),
     copyToClipboard: jest.fn(),
+    captureMedia: jest.fn(),
     hostFetch: jest.fn(),
   }) as unknown as FrontComponentHostThreadExports;
 
@@ -30,6 +31,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       );
 
     expect(Object.keys(hostCommunicationApi).sort()).toEqual([
+      'captureMedia',
       'closeSidePanel',
       'copyToClipboard',
       'enqueueSnackbar',
@@ -61,6 +63,9 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     );
     expect(hostCommunicationApi.copyToClipboard).toBe(
       hostThreadImports.copyToClipboard,
+    );
+    expect(hostCommunicationApi.captureMedia).toBe(
+      hostThreadImports.captureMedia,
     );
   });
 

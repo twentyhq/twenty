@@ -37,6 +37,7 @@ const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
+const mockRequestMediaCapture = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
@@ -139,6 +140,15 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
     copyToClipboard: mockCopyToClipboard,
   }),
 }));
+
+jest.mock(
+  '@/front-components/media-capture/hooks/useFrontComponentMediaCapture',
+  () => ({
+    useFrontComponentMediaCapture: () => ({
+      requestMediaCapture: mockRequestMediaCapture,
+    }),
+  }),
+);
 
 jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
   setRecordPageActiveTabId: (params: unknown) =>
@@ -917,6 +927,92 @@ describe('useFrontComponentExecutionContext', () => {
       );
 
       dateNowSpy.mockRestore();
+    });
+  });
+
+  describe('captureMedia', () => {
+    it('should fail without opening the capture flow when mediaType is invalid', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const captureResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+          {
+            mediaType: 'screen',
+          } as unknown as Parameters<
+            typeof result.current.frontComponentHostCommunicationApi.captureMedia
+          >[0],
+        );
+      });
+
+      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+    });
+
+    it('should forward a valid request with the default max duration', async () => {
+      mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const captureResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+          { mediaType: 'audio' },
+        );
+      });
+
+      expect(mockRequestMediaCapture).toHaveBeenCalledWith({
+        frontComponentId: FRONT_COMPONENT_ID,
+        mediaType: 'audio',
+        fieldMetadataId: undefined,
+        maxDurationSeconds: 300,
+      });
+      expect(captureResult).toEqual({ status: 'cancelled' });
+    });
+
+    it('should clamp the requested max duration to the allowed ceiling', async () => {
+      mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.captureMedia({
+          mediaType: 'video',
+          maxDurationSeconds: 999999,
+        });
+      });
+
+      expect(mockRequestMediaCapture).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mediaType: 'video',
+          maxDurationSeconds: 600,
+        }),
+      );
+    });
+
+    it('should drop a non-string fieldMetadataId', async () => {
+      mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.captureMedia({
+          mediaType: 'audio',
+          fieldMetadataId: 42,
+        } as unknown as Parameters<
+          typeof result.current.frontComponentHostCommunicationApi.captureMedia
+        >[0]);
+      });
+
+      expect(mockRequestMediaCapture).toHaveBeenCalledWith(
+        expect.objectContaining({ fieldMetadataId: undefined }),
+      );
     });
   });
 });

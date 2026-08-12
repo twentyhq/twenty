@@ -1986,6 +1986,7 @@ export enum FileFolder {
   EmailImage = 'EmailImage',
   FilesField = 'FilesField',
   GeneratedSdkClient = 'GeneratedSdkClient',
+  MediaCapture = 'MediaCapture',
   PublicAsset = 'PublicAsset',
   Source = 'Source',
   Workflow = 'Workflow'

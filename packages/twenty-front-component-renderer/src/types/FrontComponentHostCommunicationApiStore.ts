@@ -1,4 +1,5 @@
 import {
+  type CaptureMediaFunction,
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
@@ -20,4 +21,5 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  captureMedia?: CaptureMediaFunction;
 };

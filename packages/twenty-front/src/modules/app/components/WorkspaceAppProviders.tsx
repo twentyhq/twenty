@@ -12,6 +12,7 @@ import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOut
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { RequestFreshCaptchaTokenEffect } from '@/captcha/components/RequestFreshCaptchaTokenEffect';
 import { CommandMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/CommandMenuConfirmationModalManager';
+import { FrontComponentMediaCaptureModalManager } from '@/front-components/media-capture/components/FrontComponentMediaCaptureModalManager';
 import { CommandRunner } from '@/command-menu-item/engine-command/components/CommandRunner';
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
@@ -70,6 +71,7 @@ export const WorkspaceAppProviders = () => {
                             <Outlet />
                             <GlobalFilePreviewModal />
                             <CommandMenuConfirmationModalManager />
+                            <FrontComponentMediaCaptureModalManager />
                             <CommandRunner />
                           </StrictMode>
                         </DialogManager>

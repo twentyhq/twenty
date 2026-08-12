@@ -1,5 +1,6 @@
 export { Trans } from './components/Trans';
 export type { TransProps } from './components/Trans';
+export { captureMedia } from './functions/captureMedia';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
@@ -27,6 +28,12 @@ export type {
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
+  CaptureMediaFailureReason,
+  CaptureMediaFunction,
+  CaptureMediaMediaType,
+  CaptureMediaParams,
+  CaptureMediaResult,
+  CapturedMediaFile,
   CloseSidePanelFunction,
   CommandConfirmationModalAccent,
   CommandConfirmationModalResult,

@@ -100,6 +100,43 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
+export type CaptureMediaMediaType = 'audio' | 'video';
+
+export type CaptureMediaParams = {
+  mediaType: CaptureMediaMediaType;
+  // Recordings uploaded for a FILES field can be attached to records; without
+  // a fieldMetadataId the file lands in the generic media-capture folder.
+  fieldMetadataId?: string;
+  maxDurationSeconds?: number;
+};
+
+export type CapturedMediaFile = {
+  fileId: string;
+  path: string;
+  url: string;
+  size: number;
+  mimeType: string;
+  durationSeconds: number;
+};
+
+export type CaptureMediaFailureReason =
+  | 'permission-denied'
+  | 'no-device'
+  | 'device-in-use'
+  | 'blocked'
+  | 'busy'
+  | 'upload-failed'
+  | 'unknown';
+
+export type CaptureMediaResult =
+  | { status: 'captured'; file: CapturedMediaFile }
+  | { status: 'cancelled' }
+  | { status: 'failed'; reason: CaptureMediaFailureReason };
+
+export type CaptureMediaFunction = (
+  params: CaptureMediaParams,
+) => Promise<CaptureMediaResult>;
+
 export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
@@ -114,6 +151,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  captureMedia?: CaptureMediaFunction;
 };
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from '../constants/front-component-host-communication-api-key';

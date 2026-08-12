@@ -2173,6 +2173,16 @@ msgstr "Κεχριμπαρί"
 msgid "Amount Micros"
 msgstr "Ποσό σε μικρομονάδες"
 
+#. js-lingui-id: gAI0va
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "An application in this workspace is asking to record audio with your microphone. Recording starts only after you click Start recording, and you review the result before it is shared."
+msgstr ""
+
+#. js-lingui-id: sGPUR4
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "An application in this workspace is asking to record video with your camera and microphone. Recording starts only after you click Start recording, and you review the result before it is shared."
+msgstr ""
+
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
@@ -3501,6 +3511,9 @@ msgstr "Δεν μπορείτε να σαρώσετε; Αντιγράψτε το
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -15291,6 +15304,16 @@ msgstr "Εγγραφή"
 msgid "Record (ID)"
 msgstr "Εγγραφή (ID)"
 
+#. js-lingui-id: DMnMkg
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "Record again"
+msgstr ""
+
+#. js-lingui-id: wVRDWC
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "Record audio"
+msgstr ""
+
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -15334,6 +15357,11 @@ msgstr "Ρυθμίσεις πίνακα εγγραφών"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Record Type"
 msgstr "Τύπος εγγραφής"
+
+#. js-lingui-id: ZV3JOb
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "Record video"
+msgstr ""
 
 #. js-lingui-id: bSHWVY
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
@@ -17720,6 +17748,11 @@ msgstr "Ξεκινήστε μια νέα συνδρομή Enterprise."
 msgid "Start date"
 msgstr "Ημερομηνία Έναρξης"
 
+#. js-lingui-id: IJaotC
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "Start recording"
+msgstr ""
+
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
 #: src/modules/settings/billing/components/StartSubscriptionConfirmationModal.tsx
@@ -17793,6 +17826,11 @@ msgstr "Επιλογές φίλτρου βήματος"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "Διακοπή μίμησης"
+
+#. js-lingui-id: pJ/IRc
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "Stop recording"
+msgstr ""
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -20163,6 +20201,11 @@ msgstr "Το μεταφορτωμένο περιεχόμενο είναι υπε
 msgid "Uploading..."
 msgstr "Μεταφόρτωση..."
 
+#. js-lingui-id: gANddk
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "Uploading…"
+msgstr ""
+
 #. js-lingui-id: PZd7QF
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Upserted {objectLabel}"
@@ -20297,6 +20340,11 @@ msgstr "Χρησιμοποιήστε μόνο γράμματα, αριθμούς
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Χρησιμοποιήστε το API μας ή προσθέστε το πρώτο σας {objectLabel} χειροκίνητα"
+
+#. js-lingui-id: /J59HU
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
+msgid "Use recording"
+msgstr ""
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts

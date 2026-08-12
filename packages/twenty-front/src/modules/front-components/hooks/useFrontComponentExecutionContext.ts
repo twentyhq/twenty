@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import {
@@ -24,6 +24,9 @@ import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useU
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
+import { FRONT_COMPONENT_MEDIA_CAPTURE_DEFAULT_MAX_DURATION_SECONDS } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureDefaultMaxDurationSeconds';
+import { FRONT_COMPONENT_MEDIA_CAPTURE_MAX_DURATION_SECONDS } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureMaxDurationSeconds';
+import { useFrontComponentMediaCapture } from '@/front-components/media-capture/hooks/useFrontComponentMediaCapture';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
@@ -88,6 +91,7 @@ export const useFrontComponentExecutionContext = ({
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { copyToClipboard: copyToClipboardWithSnackbar } = useCopyToClipboard();
+  const { requestMediaCapture } = useFrontComponentMediaCapture();
   const { t, i18n } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
   const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
@@ -361,6 +365,40 @@ export const useFrontComponentExecutionContext = ({
       );
     };
 
+  const captureMedia: FrontComponentHostCommunicationApi['captureMedia'] =
+    async (params) => {
+      // Params come from sandboxed application code: validate them as
+      // untrusted input before they reach the capture modal.
+      if (
+        !isDefined(params) ||
+        (params.mediaType !== 'audio' && params.mediaType !== 'video')
+      ) {
+        return { status: 'failed', reason: 'unknown' };
+      }
+
+      const fieldMetadataId = isNonEmptyString(params.fieldMetadataId)
+        ? params.fieldMetadataId
+        : undefined;
+
+      const requestedMaxDurationSeconds =
+        isNumber(params.maxDurationSeconds) &&
+        Number.isFinite(params.maxDurationSeconds)
+          ? params.maxDurationSeconds
+          : FRONT_COMPONENT_MEDIA_CAPTURE_DEFAULT_MAX_DURATION_SECONDS;
+
+      const maxDurationSeconds = Math.min(
+        Math.max(Math.floor(requestedMaxDurationSeconds), 1),
+        FRONT_COMPONENT_MEDIA_CAPTURE_MAX_DURATION_SECONDS,
+      );
+
+      return await requestMediaCapture({
+        frontComponentId,
+        mediaType: params.mediaType,
+        fieldMetadataId,
+        maxDurationSeconds,
+      });
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -372,6 +410,7 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      captureMedia,
     };
 
   return {

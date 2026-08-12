@@ -132,7 +132,14 @@ export type {
 export { createFrontComponentRemoteWorker } from './remote/worker/utils/createFrontComponentRemoteWorker';
 export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
-export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
+export type {
+  CaptureMediaFailureReason,
+  CaptureMediaMediaType,
+  CaptureMediaParams,
+  CaptureMediaResult,
+  CapturedMediaFile,
+  FrontComponentExecutionContext,
+} from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export type { ElementGeometrySnapshot } from './types/ElementGeometrySnapshot';
 export type { ViewportGeometrySnapshot } from './types/ViewportGeometrySnapshot';
