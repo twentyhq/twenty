@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { MessageChannelSyncStatus } from 'twenty-shared/types';
 
+import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
@@ -53,6 +54,7 @@ describe('IMAP messages import (integration)', () => {
             port: greenmail.imapPort,
             username: HANDLE,
             password: 'greenmail-password',
+            connectionSecurity: EmailConnectionSecurity.NONE,
           },
         },
       },

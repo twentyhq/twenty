@@ -26,7 +26,7 @@ export const startGreenmailContainer = async (): Promise<GreenmailServer> => {
         '-Dgreenmail.setup.test.imap -Dgreenmail.setup.test.smtp -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled',
     })
     .withExposedPorts(GREENMAIL_IMAP_PORT, GREENMAIL_SMTP_PORT)
-    .withWaitStrategy(Wait.forLogMessage(/Started GreenMail/i))
+    .withWaitStrategy(Wait.forListeningPorts())
     .start();
 
   return {

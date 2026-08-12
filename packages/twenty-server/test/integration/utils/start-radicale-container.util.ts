@@ -28,7 +28,7 @@ export const startRadicaleContainer = async (): Promise<RadicaleServer> => {
       '/data/collections',
     ])
     .withExposedPorts(RADICALE_PORT)
-    .withWaitStrategy(Wait.forHttp('/', RADICALE_PORT).forStatusCode(200))
+    .withWaitStrategy(Wait.forListeningPorts())
     .start();
 
   return {
