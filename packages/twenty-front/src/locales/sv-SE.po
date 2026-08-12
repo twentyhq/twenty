@@ -6402,6 +6402,7 @@ msgstr "Genom att radera denna metod kommer den permanent att tas bort från dit
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "Föråldrad"
 

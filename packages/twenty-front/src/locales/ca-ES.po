@@ -6402,6 +6402,7 @@ msgstr "Eliminar aquest mètode el eliminarà permanentment del teu compte."
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "Obsolet"
 

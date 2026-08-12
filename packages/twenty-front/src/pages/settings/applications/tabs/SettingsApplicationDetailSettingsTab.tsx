@@ -7,6 +7,7 @@ import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/sett
 import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
 import { SettingsApplicationGeneralSection } from '~/pages/settings/applications/tabs/SettingsApplicationGeneralSection';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
+import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
 export const SettingsApplicationDetailSettingsTab = ({
@@ -26,8 +27,8 @@ export const SettingsApplicationDetailSettingsTab = ({
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
-  const envVariables = [...(application?.applicationVariables ?? [])].sort(
-    (a, b) => a.key.localeCompare(b.key),
+  const envVariables = getDisplayedApplicationVariables(
+    application?.applicationVariables ?? [],
   );
 
   const hasHttpTriggeredFunctions =

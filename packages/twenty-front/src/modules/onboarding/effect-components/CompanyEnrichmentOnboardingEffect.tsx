@@ -79,7 +79,9 @@ export const CompanyEnrichmentOnboardingEffect = () => {
 
         const dropBookCallStep = async () => {
           try {
-            await completeBookCallOnboardingStep();
+            await completeBookCallOnboardingStep({
+              variables: { hasBookedCall: false, isAutoSkipped: true },
+            });
 
             return true;
           } catch {

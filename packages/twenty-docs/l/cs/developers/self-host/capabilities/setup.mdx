@@ -393,15 +393,21 @@ Platí pouze v případě, že back-end neposkytuje front-end. Nasazení se stej
 zde nic nepotřebují.
 
 Uveďte každý původ prohlížeče, který komunikuje s API, oddělený čárkami. `SERVER_URL`
-a `FRONTEND_URL` jsou již důvěryhodné.
+a `FRONTEND_URL` jsou již důvěryhodné. Server zapisuje varování do logu, když jej prohlížeč
+volá z nedeklarovaného původu.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 ```
 
 <Warning>
-Aktualizace na verzi s relacemi pomocí souborů cookie to vyžaduje. Front-end
-nyní posílá přihlašovací údaje u každého požadavku a prohlížeče odmítají odpověď s přihlašovacími údaji z nedeklarovaného původu, takže se aplikace nenačte, dokud to nenastavíte.
+Front-end odesílá přihlašovací údaje u každého požadavku a prohlížeče odmítnou
+odpověď s přihlašovacími údaji z nedeklarovaného původu, takže se aplikace nenačte, dokud toto nenastavíte.
 </Warning>
 
 Pokud jsou dva hostitelé na různých registrovatelných doménách (nejen na různých subdoménách), nastavte také `AUTH_COOKIE_SAME_SITE=none`, což vyžaduje HTTPS.
+
+Pokud je povolen vícepracovní prostředí (multi-workspace), neuvádějte zde každý dílčí doménový název pracovního prostoru.
+Místo toho směrujte API cesty (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) na back-end na každém hostiteli pracovního prostoru, takže každý
+pracovní prostor zůstává stejného původu (same-origin) — takto běží Twenty Cloud.

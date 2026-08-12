@@ -2,7 +2,12 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type DataSource, type QueryRunner, Repository } from 'typeorm';
+import {
+  type DataSource,
+  type EntityManager,
+  type QueryRunner,
+  Repository,
+} from 'typeorm';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
@@ -37,11 +42,11 @@ describe('OnboardingService', () => {
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
-  const mockQueryRunner = {} as QueryRunner;
-
-  let transactionQueryRunner: QueryRunner | undefined = mockQueryRunner;
+  let mockQueryRunner: QueryRunner;
+  let transactionQueryRunner: QueryRunner | undefined;
 
   beforeEach(async () => {
+    mockQueryRunner = { query: jest.fn() } as unknown as QueryRunner;
     transactionQueryRunner = mockQueryRunner;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -63,7 +68,7 @@ describe('OnboardingService', () => {
           provide: UserVarsService,
           useValue: {
             get: jest.fn(),
-            getAll: jest.fn(),
+            getAll: jest.fn().mockResolvedValue(new Map()),
             set: jest.fn(),
             setIfNotExists: jest.fn().mockResolvedValue(true),
             delete: jest.fn(),
@@ -94,8 +99,15 @@ describe('OnboardingService', () => {
         {
           provide: getDataSourceToken(),
           useValue: {
-            transaction: jest.fn((runInTransaction) =>
-              runInTransaction({ queryRunner: transactionQueryRunner }),
+            transaction: jest.fn(
+              async (
+                runInTransaction: (
+                  entityManager: EntityManager,
+                ) => Promise<unknown>,
+              ) =>
+                runInTransaction({
+                  queryRunner: transactionQueryRunner,
+                } as EntityManager),
             ),
           },
         },
@@ -167,9 +179,9 @@ describe('OnboardingService', () => {
         isPlanRequired: true,
       });
 
-      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
-        OnboardingStatus.BOOK_CALL,
-      );
+      expect(
+        await service.getOnboardingStatus({ userId: user.id, workspaceId }),
+      ).toBe(OnboardingStatus.BOOK_CALL);
     });
 
     it('should ignore a pending BOOK_CALL once the workspace has a subscription', async () => {
@@ -178,9 +190,9 @@ describe('OnboardingService', () => {
         isPlanRequired: false,
       });
 
-      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
-        OnboardingStatus.COMPLETED,
-      );
+      expect(
+        await service.getOnboardingStatus({ userId: user.id, workspaceId }),
+      ).toBe(OnboardingStatus.COMPLETED);
     });
 
     it('should ignore a pending BOOK_CALL once the booking page is unconfigured', async () => {
@@ -190,9 +202,9 @@ describe('OnboardingService', () => {
         isBookCallStepConfigured: false,
       });
 
-      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
-        OnboardingStatus.PLAN_REQUIRED,
-      );
+      expect(
+        await service.getOnboardingStatus({ userId: user.id, workspaceId }),
+      ).toBe(OnboardingStatus.PLAN_REQUIRED);
     });
 
     it('should keep INVITE_TEAM ahead of a pending BOOK_CALL', async () => {
@@ -204,17 +216,17 @@ describe('OnboardingService', () => {
         isPlanRequired: true,
       });
 
-      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
-        OnboardingStatus.INVITE_TEAM,
-      );
+      expect(
+        await service.getOnboardingStatus({ userId: user.id, workspaceId }),
+      ).toBe(OnboardingStatus.INVITE_TEAM);
     });
 
     it('should return PLAN_REQUIRED when no step is pending and a plan is required', async () => {
       mockOnboardingState({ pendingSteps: [], isPlanRequired: true });
 
-      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
-        OnboardingStatus.PLAN_REQUIRED,
-      );
+      expect(
+        await service.getOnboardingStatus({ userId: user.id, workspaceId }),
+      ).toBe(OnboardingStatus.PLAN_REQUIRED);
     });
   });
 
@@ -229,11 +241,14 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        },
+        mockQueryRunner,
+      );
       expect(billingCreditService.grantCredits).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId,
@@ -253,11 +268,14 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        },
+        mockQueryRunner,
+      );
       expect(billingCreditService.grantCredits).not.toHaveBeenCalled();
     });
 
@@ -332,18 +350,23 @@ describe('OnboardingService', () => {
         userId,
         workspaceId,
         universalIdentifiers: [callRecorderId, peopleDataLabsId],
+        isAutoSkipped: false,
       });
 
-      expect(userVarsService.delete).toHaveBeenCalledWith({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-      });
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+        },
+        mockQueryRunner,
+      );
       expect(messageQueueService.add).toHaveBeenCalledWith(
         INSTALL_ONBOARDING_APPS_JOB_NAME,
         {
           workspaceId,
           universalIdentifiers: [callRecorderId, peopleDataLabsId],
+          userId,
         },
         { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
       );
@@ -357,6 +380,7 @@ describe('OnboardingService', () => {
         userId,
         workspaceId,
         universalIdentifiers: [callRecorderId],
+        isAutoSkipped: false,
       });
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
@@ -369,10 +393,98 @@ describe('OnboardingService', () => {
         userId,
         workspaceId,
         universalIdentifiers: ['00000000-0000-0000-0000-000000000000'],
+        isAutoSkipped: false,
       });
 
       expect(userVarsService.delete).toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should record the step as reversible when the user skipped it', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.triggerInstallAppsOnboardingStep({
+        userId,
+        workspaceId,
+        universalIdentifiers: [],
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.APPS_INSTALLATION],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should not record the step as reversible when it was auto-skipped', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.triggerInstallAppsOnboardingStep({
+        userId,
+        workspaceId,
+        universalIdentifiers: [],
+        isAutoSkipped: true,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should leave clearing the steps to go back to to the install job', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.triggerInstallAppsOnboardingStep({
+        userId,
+        workspaceId,
+        universalIdentifiers: [callRecorderId],
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should clear every step to go back to once the install job runs', async () => {
+      await service.clearReversibleOnboardingStepHistoryAfterAppsInstalled({
+        userId,
+        workspaceId,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should keep the steps to go back to when the install job could not be enqueued', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest
+        .spyOn(messageQueueService, 'add')
+        .mockRejectedValue(new Error('queue unavailable'));
+
+      await expect(
+        service.triggerInstallAppsOnboardingStep({
+          userId,
+          workspaceId,
+          universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
+        }),
+      ).rejects.toThrow(OnboardingException);
+
+      expect(userVarsService.set).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+        }),
+        expect.anything(),
+      );
     });
 
     it('should restore the pending step and throw when enqueuing fails', async () => {
@@ -386,6 +498,7 @@ describe('OnboardingService', () => {
           userId,
           workspaceId,
           universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
         }),
       ).rejects.toThrow(OnboardingException);
 
@@ -396,7 +509,7 @@ describe('OnboardingService', () => {
           key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
           value: true,
         },
-        undefined,
+        mockQueryRunner,
       );
     });
 
@@ -423,6 +536,7 @@ describe('OnboardingService', () => {
           userId,
           workspaceId,
           universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
         }),
       ).rejects.toThrow(OnboardingException);
 
@@ -430,12 +544,13 @@ describe('OnboardingService', () => {
         userId,
         workspaceId,
         universalIdentifiers: [callRecorderId],
+        isAutoSkipped: false,
       });
 
       expect(messageQueueService.add).toHaveBeenCalledTimes(2);
       expect(messageQueueService.add).toHaveBeenLastCalledWith(
         INSTALL_ONBOARDING_APPS_JOB_NAME,
-        { workspaceId, universalIdentifiers: [callRecorderId] },
+        { workspaceId, universalIdentifiers: [callRecorderId], userId },
         { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
       );
     });
@@ -454,8 +569,468 @@ describe('OnboardingService', () => {
           userId,
           workspaceId,
           universalIdentifiers: [callRecorderId],
+          isAutoSkipped: false,
         }),
       ).rejects.toThrow(OnboardingException);
+    });
+  });
+
+  describe('skipOnboardingConnectAccountStep', () => {
+    it('should record the step as reversible when the user skipped it', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.skipOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.SYNC_EMAIL],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should not record the step as reversible when it was auto-skipped', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.skipOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+        isAutoSkipped: true,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should not record the step as reversible when it was already consumed', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
+
+      await service.skipOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should clear every step to go back to when it granted the import-contacts reward', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest.spyOn(userWorkspaceRepository, 'countBy').mockResolvedValue(1);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
+
+      await service.completeOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [],
+        },
+        mockQueryRunner,
+      );
+    });
+  });
+
+  describe('completeOnboardingProfileStepIfNameProvided', () => {
+    it('should record the step as reversible when a name was provided', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingProfileStepIfNameProvided({
+        userId,
+        workspaceId,
+        firstName: 'Ada',
+      });
+
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.PROFILE_CREATION],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should not record anything when the step was not pending', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
+
+      await service.completeOnboardingProfileStepIfNameProvided({
+        userId,
+        workspaceId,
+        firstName: 'Ada',
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should not touch the step when no name part was provided', async () => {
+      await service.completeOnboardingProfileStepIfNameProvided({
+        userId,
+        workspaceId,
+        firstName: '',
+        lastName: '',
+      });
+
+      expect(userVarsService.delete).not.toHaveBeenCalled();
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('completeOnboardingBookCallStep', () => {
+    it('should record the step as reversible when the user skipped the call', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: false,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.BOOK_CALL],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should clear every step to go back to when a call was booked', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: true,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should not record the step as reversible when it was dropped automatically', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: false,
+        isAutoSkipped: true,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should not record the step as reversible when it was already consumed', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
+
+      await service.completeOnboardingBookCallStep({
+        userId,
+        workspaceId,
+        hasBookedCall: false,
+        isAutoSkipped: false,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('completeOnboardingInviteTeamStep', () => {
+    it('should record the step as reversible when no invitation was sent', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingInviteTeamStep({
+        userId,
+        workspaceId,
+        hasSentInvitations: false,
+      });
+
+      expect(userVarsService.delete).toHaveBeenCalledWith(
+        {
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.INVITE_TEAM],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should clear every step to go back to when invitations were sent', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+
+      await service.completeOnboardingInviteTeamStep({
+        userId,
+        workspaceId,
+        hasSentInvitations: true,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [],
+        },
+        mockQueryRunner,
+      );
+    });
+
+    it('should not record the step as reversible when the step was not pending', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(0);
+
+      await service.completeOnboardingInviteTeamStep({
+        userId,
+        workspaceId,
+        hasSentInvitations: false,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getPreviousReversibleOnboardingStatus', () => {
+    it('should return the last recorded step', async () => {
+      jest
+        .spyOn(userVarsService, 'get')
+        .mockResolvedValue([
+          OnboardingStatus.SYNC_EMAIL,
+          OnboardingStatus.APPS_INSTALLATION,
+        ]);
+
+      await expect(
+        service.getPreviousReversibleOnboardingStatus({ userId, workspaceId }),
+      ).resolves.toBe(OnboardingStatus.APPS_INSTALLATION);
+    });
+
+    it('should return null when no step was recorded', async () => {
+      jest.spyOn(userVarsService, 'get').mockResolvedValue(undefined);
+
+      await expect(
+        service.getPreviousReversibleOnboardingStatus({ userId, workspaceId }),
+      ).resolves.toBeNull();
+    });
+  });
+
+  describe('goBackToPreviousOnboardingStep', () => {
+    beforeEach(() => {
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue({
+        id: workspaceId,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as WorkspaceEntity);
+    });
+
+    it('should pop the last step, re-arm its pending flag and return the resulting statuses', async () => {
+      jest
+        .spyOn(userVarsService, 'get')
+        .mockResolvedValueOnce([
+          OnboardingStatus.SYNC_EMAIL,
+          OnboardingStatus.APPS_INSTALLATION,
+        ])
+        .mockResolvedValue([OnboardingStatus.SYNC_EMAIL]);
+      jest
+        .spyOn(userVarsService, 'getAll')
+        .mockResolvedValue(
+          new Map<string, boolean>([
+            [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING, true],
+          ]),
+        );
+
+      const result = await service.goBackToPreviousOnboardingStep({
+        userId,
+        workspaceId,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
+          value: [OnboardingStatus.SYNC_EMAIL],
+        },
+        mockQueryRunner,
+      );
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+          value: true,
+        },
+        mockQueryRunner,
+      );
+      expect(result.onboardingStatus).toBe(OnboardingStatus.APPS_INSTALLATION);
+      expect(result.previousOnboardingStatus).toBe(OnboardingStatus.SYNC_EMAIL);
+    });
+
+    it('should take the step transition lock before reading the history', async () => {
+      const lockThenReadCallOrder: string[] = [];
+
+      jest
+        .spyOn(mockQueryRunner, 'query')
+        .mockImplementation(async (statement: string) => {
+          lockThenReadCallOrder.push(`query:${statement}`);
+
+          return [];
+        });
+      jest.spyOn(userVarsService, 'get').mockImplementation(async () => {
+        lockThenReadCallOrder.push('readHistory');
+
+        return [OnboardingStatus.SYNC_EMAIL];
+      });
+      jest
+        .spyOn(userVarsService, 'getAll')
+        .mockResolvedValue(
+          new Map<string, boolean>([
+            [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING, true],
+          ]),
+        );
+
+      await service.goBackToPreviousOnboardingStep({ userId, workspaceId });
+
+      expect(mockQueryRunner.query).toHaveBeenCalledWith(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+        [`onboarding-step-transition:${userId}:${workspaceId}`],
+      );
+      expect(lockThenReadCallOrder[0]).toBe(
+        'query:SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+      );
+      expect(lockThenReadCallOrder[1]).toBe('readHistory');
+    });
+
+    it('should re-arm the invite-team flag for the navigating user only when going back to invite team', async () => {
+      jest
+        .spyOn(userVarsService, 'get')
+        .mockResolvedValueOnce([OnboardingStatus.INVITE_TEAM])
+        .mockResolvedValue([]);
+      jest
+        .spyOn(userVarsService, 'getAll')
+        .mockResolvedValue(
+          new Map<string, boolean>([
+            [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING, true],
+          ]),
+        );
+
+      const result = await service.goBackToPreviousOnboardingStep({
+        userId,
+        workspaceId,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+          value: true,
+        },
+        mockQueryRunner,
+      );
+      expect(result.onboardingStatus).toBe(OnboardingStatus.INVITE_TEAM);
+      expect(result.previousOnboardingStatus).toBeNull();
+    });
+
+    it('should re-arm the book-call step when going back to it', async () => {
+      jest
+        .spyOn(userVarsService, 'get')
+        .mockResolvedValueOnce([OnboardingStatus.BOOK_CALL])
+        .mockResolvedValue([]);
+      jest
+        .spyOn(userVarsService, 'getAll')
+        .mockResolvedValue(
+          new Map<string, boolean>([
+            [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING, true],
+          ]),
+        );
+      jest
+        .spyOn(billingService, 'isSubscriptionIncompleteOnboardingStatus')
+        .mockResolvedValue(true);
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation(
+          (key: string) =>
+            (key === 'CALENDAR_BOOKING_PAGE_ID'
+              ? 'team/twenty/talk-to-us'
+              : 50) as never,
+        );
+
+      const result = await service.goBackToPreviousOnboardingStep({
+        userId,
+        workspaceId,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+          value: true,
+        },
+        mockQueryRunner,
+      );
+      expect(result.onboardingStatus).toBe(OnboardingStatus.BOOK_CALL);
+    });
+
+    it('should throw when there is no recorded step to go back to', async () => {
+      jest.spyOn(userVarsService, 'get').mockResolvedValue([]);
+
+      await expect(
+        service.goBackToPreviousOnboardingStep({ userId, workspaceId }),
+      ).rejects.toThrow(OnboardingException);
+      expect(userVarsService.set).not.toHaveBeenCalled();
     });
   });
 

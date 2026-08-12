@@ -300,6 +300,7 @@ export class WorkspaceInvitationService {
       this.twentyConfigService.get('IS_BILLING_ENABLED') &&
       (isOnboardingInviteRewardOverride ??
         (await this.onboardingService.isOnboardingInviteTeamPending({
+          userId: sender.userId,
           workspaceId: workspace.id,
         })));
 
@@ -395,9 +396,12 @@ export class WorkspaceInvitationService {
       }
     }
 
-    await this.onboardingService.setOnboardingInviteTeamPending({
+    await this.onboardingService.completeOnboardingInviteTeamStep({
+      userId: sender.userId,
       workspaceId: workspace.id,
-      value: false,
+      hasSentInvitations: invitationResults.some(
+        (invitationResult) => invitationResult.status === 'fulfilled',
+      ),
     });
 
     const i18n = this.i18nService.getI18nInstance(sender.locale);

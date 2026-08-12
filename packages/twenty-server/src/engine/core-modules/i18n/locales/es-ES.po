@@ -7193,6 +7193,11 @@ msgstr "Algunos de los permisos seleccionados no son válidos. Por favor, intent
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "No se pudieron encontrar algunas membresías del espacio de trabajo. Puede que ya no tengan acceso a este espacio de trabajo."
 
+#. js-lingui-id: eAMUPx
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while saving your onboarding progress."
+msgstr ""
+
 #. js-lingui-id: RjTo7h
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while starting the app installation. Please try again."
@@ -8066,6 +8071,11 @@ msgstr "Hay un problema con su token. Por favor, intente de nuevo."
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "There is no failed message to retry."
 msgstr "No hay ningún mensaje fallido para reintentar."
+
+#. js-lingui-id: jMDu2a
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "There is no previous onboarding step to go back to."
+msgstr ""
 
 #. js-lingui-id: Yi0Q/T
 #: src/engine/core-modules/workspace/services/workspace.service.ts
