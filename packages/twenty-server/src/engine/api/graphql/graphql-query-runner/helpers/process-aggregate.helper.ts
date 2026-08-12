@@ -34,56 +34,6 @@ export class ProcessAggregateHelper {
     }
   };
 
-  public static extractColumnNamesFromAggregateExpression = (
-    selection: string,
-  ): string[] | null => {
-    // Match content between CONCAT(" and ") - handle multiple columns
-    const concatMatches = selection.match(
-      /CONCAT\("([^"]+)"(?:,"([^"]+)")*\)/g,
-    );
-
-    if (concatMatches) {
-      // Extract all column names between quotes after CONCAT
-      const columnNames = selection.match(/"([^"]+)"/g)?.map((match) => {
-        const fullColumn = match.slice(1, -1);
-        // If there's a dot, extract only the column name (part after the dot)
-        const parts = fullColumn.split('.');
-
-        return parts[parts.length - 1];
-      });
-
-      return columnNames || null;
-    }
-
-    // For non-CONCAT expressions, match table.column pattern within quotes
-    // Look for patterns like "table"."column" and extract only the column part
-    const tableColumnMatches = selection.match(/"[^"]+"\."([^"]+)"/g);
-
-    if (tableColumnMatches) {
-      const columnNames = tableColumnMatches
-        .map((match) => {
-          // Extract the column name from "table"."column" pattern
-          const columnMatch = match.match(/"[^"]+"\."([^"]+)"/);
-
-          return columnMatch ? columnMatch[1] : null;
-        })
-        .filter(Boolean);
-
-      return columnNames.length > 0
-        ? columnNames.filter((c) => isDefined(c))
-        : null;
-    }
-
-    // Fallback: match single quoted content that doesn't contain dots
-    const singleColumnMatch = selection.match(/"([^".]+)"/);
-
-    if (singleColumnMatch) {
-      return [singleColumnMatch[1]];
-    }
-
-    return null;
-  };
-
   public static getAggregateExpression = (
     aggregatedField: AggregationField,
     objectMetadataNameSingular: string,

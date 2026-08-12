@@ -1,8 +1,8 @@
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type OrderByClause,
   type SelectClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
+import { extractColumnNamesFromAggregateExpression } from 'src/utils/extract-column-names-from-aggregate-expression.util';
 
 const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
 
@@ -45,7 +45,7 @@ export const collectReferencedColumnNames = ({
       continue;
     }
 
-    for (const columnName of ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
+    for (const columnName of extractColumnNamesFromAggregateExpression(
       expression,
     ) ?? []) {
       addColumnName(mainAlias, columnName);
