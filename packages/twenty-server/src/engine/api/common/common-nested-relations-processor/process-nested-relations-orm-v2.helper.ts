@@ -58,10 +58,6 @@ type ProcessNestedRelationsOrmV2Args<T extends ObjectRecord = ObjectRecord> = {
   selectedFields: Record<string, any>;
 };
 
-// ORM v2 counterpart of ProcessNestedRelationsV2Helper. Batched loading and relation
-// aggregates use the shared builder surface; the per-parent-limit path is composed as
-// raw SQL (CROSS JOIN LATERAL) and run through the v2 pool, since v2's table-shape
-// builder cannot model the table-less `FROM (subquery)` the v1 helper relies on.
 @Injectable()
 export class ProcessNestedRelationsOrmV2Helper {
   constructor(
@@ -519,8 +515,6 @@ export class ProcessNestedRelationsOrmV2Helper {
 
     perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
 
-    // perParentLimit is inlined (a numeric constant) rather than bound, because the
-    // per-parent LIMIT lives inside the composed lateral subquery, not the builder.
     const perParentRecordIdsSql = `${perParentRecordIdsQueryBuilder.getQuery()} LIMIT ${Number(perParentLimit)}`;
 
     const parentValues = sanitizedIds.map((id) => `('${id}'::uuid)`).join(', ');
