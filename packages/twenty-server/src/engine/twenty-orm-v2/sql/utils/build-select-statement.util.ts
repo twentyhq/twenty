@@ -230,6 +230,19 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     .join(' ');
 };
 
+export const buildCountStatement = (state: SelectStatementState): string => {
+  const whereExpression = buildWhereExpression(state);
+
+  return [
+    'SELECT COUNT(1) AS "count"',
+    buildFromClause(state),
+    buildJoinClause(state),
+    whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
+  ]
+    .filter((part) => part.length > 0)
+    .join(' ');
+};
+
 // Only the projected columns of the main alias become entity properties: anything else
 // in the row, such as a relation order-by column, is raw join output.
 export const mapRowToEntity = <T extends Record<string, unknown>>(
