@@ -16,6 +16,7 @@ const TARGET_OBJECT_NAME_SINGULARS = [
   'fellowship',
   'mentorship',
   'jobCandidacy',
+  'fundraisingOpportunity',
 ];
 
 // Only types backed by a single scalar column, where NOT NULL without a
@@ -35,7 +36,7 @@ const COLUMN_BACKED_FIELD_TYPES: FieldMetadataType[] = [
 @Command({
   name: 'upgrade:2-32:make-required-fields-without-defaults-optional',
   description:
-    'Make custom fields that are non-nullable without a default value nullable, so record creation stops failing on recruitment, fellowship, mentorship and jobCandidacy',
+    'Make custom fields that are non-nullable without a default value nullable, so record creation stops failing on recruitment, fellowship, mentorship, jobCandidacy and fundraisingOpportunity',
 })
 export class MakeRequiredFieldsWithoutDefaultsOptionalCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
