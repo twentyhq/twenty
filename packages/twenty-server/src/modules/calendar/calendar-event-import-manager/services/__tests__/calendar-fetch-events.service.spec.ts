@@ -154,6 +154,34 @@ describe('CalendarFetchEventsService', () => {
     ]);
   });
 
+  it('does not reconcile against local state when the full sync result is only partial', async () => {
+    // CalDAV deliberately turns one sub-calendar's failure into an empty,
+    // successful-looking partial result so the rest of the account still
+    // syncs (see CalDavFetchEventsService.syncCalendar). An event missing
+    // from that partial result may simply belong to the calendar that
+    // failed to fetch, not one that was deleted - reconciling against it
+    // would wrongly remove still-valid events.
+    associationFind.mockResolvedValue([
+      { eventExternalId: 'event-still-exists' },
+      { eventExternalId: 'event-on-the-calendar-that-failed-to-fetch' },
+    ]);
+    getCalendarEvents.mockResolvedValue({
+      calendarEventIds: ['event-still-exists'],
+      calendarEventIdsToDelete: [],
+      nextSyncCursor: 'new-sync-token',
+      isPartial: true,
+    });
+
+    await service.fetchCalendarEvents(
+      calendarChannelNoSyncCursor,
+      connectedAccount,
+      'workspace-1',
+    );
+
+    expect(associationFind).not.toHaveBeenCalled();
+    expect(associationDelete).not.toHaveBeenCalled();
+  });
+
   it('does not reconcile against local state on an incremental sync', async () => {
     getCalendarEvents.mockResolvedValue({
       calendarEventIds: ['event-kept'],

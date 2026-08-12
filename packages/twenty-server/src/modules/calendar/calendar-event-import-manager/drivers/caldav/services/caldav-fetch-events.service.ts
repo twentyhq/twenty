@@ -24,6 +24,7 @@ type CalendarSyncResult = {
   newSyncToken?: string;
   newCtag?: string;
   newEtags?: Record<string, string>;
+  failed?: boolean;
 };
 
 @Injectable()
@@ -48,6 +49,7 @@ export class CalDavFetchEventsService {
     changedHrefs: string[];
     cancelledHrefs: string[];
     syncCursor: CalDavSyncCursor;
+    isPartial: boolean;
   }> {
     const calendars = await this.listEventCalendars(client);
 
@@ -61,6 +63,11 @@ export class CalDavFetchEventsService {
       changedHrefs: results.flatMap((result) => result.changedHrefs),
       cancelledHrefs: results.flatMap((result) => result.cancelledHrefs),
       syncCursor: this.mergeSyncCursor(results),
+      // A per-calendar failure is swallowed in syncCalendar below so one bad
+      // sub-calendar doesn't take down the whole account's sync, but that
+      // means this aggregate result is not a complete, authoritative
+      // snapshot - callers must not treat an omitted event as deleted.
+      isPartial: results.some((result) => result.failed),
     };
   }
 
@@ -143,6 +150,7 @@ export class CalDavFetchEventsService {
         newSyncToken: syncCursor?.syncTokens[calendar.url],
         newCtag: syncCursor?.ctags?.[calendar.url],
         newEtags: syncCursor?.etags?.[calendar.url],
+        failed: true,
       };
     }
   }

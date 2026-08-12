@@ -38,6 +38,7 @@ export class CalDavGetEventsService {
         calendarEventIds: result.changedHrefs,
         calendarEventIdsToDelete: result.cancelledHrefs,
         nextSyncCursor: JSON.stringify(result.syncCursor),
+        isPartial: result.isPartial,
       };
     } catch (error) {
       this.logger.error(

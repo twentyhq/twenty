@@ -15,6 +15,12 @@ export type GetCalendarEventsResponse = {
   calendarEventIds: string[];
   calendarEventIdsToDelete: string[];
   nextSyncCursor: string;
+  // True when the driver could not fetch a complete, authoritative result
+  // (e.g. one CalDAV sub-calendar failed while others succeeded). A full
+  // sync's absence-as-deletion reconciliation is only safe to run against a
+  // complete result - otherwise events that simply failed to be re-fetched
+  // would be misread as deleted.
+  isPartial?: boolean;
 };
 
 @Injectable()

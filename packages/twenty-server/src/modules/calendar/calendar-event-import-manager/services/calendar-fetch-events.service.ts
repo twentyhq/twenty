@@ -56,11 +56,15 @@ export class CalendarFetchEventsService {
         try {
           const isFullSync = !calendarChannel.syncCursor;
 
-          const { calendarEventIds, calendarEventIdsToDelete, nextSyncCursor } =
-            await this.getCalendarEventsService.getCalendarEvents(
-              connectedAccount,
-              calendarChannel.syncCursor || undefined,
-            );
+          const {
+            calendarEventIds,
+            calendarEventIdsToDelete,
+            nextSyncCursor,
+            isPartial,
+          } = await this.getCalendarEventsService.getCalendarEvents(
+            connectedAccount,
+            calendarChannel.syncCursor || undefined,
+          );
 
           const calendarChannelEventAssociationRepository =
             await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
@@ -75,8 +79,12 @@ export class CalendarFetchEventsService {
           // active incremental sync-token chain, so events deleted during a
           // sync gap are silently absent rather than flagged. Reconcile by
           // diffing what we already associated against what the full sync
-          // just returned.
-          if (isFullSync) {
+          // just returned - but only when the driver reports a complete
+          // result. A partial result (e.g. one CalDAV sub-calendar failing
+          // while others succeed) omits events it simply couldn't fetch,
+          // not events that were deleted, so reconciling against it would
+          // wrongly remove still-valid events.
+          if (isFullSync && !isPartial) {
             const existingAssociations =
               await calendarChannelEventAssociationRepository.find({
                 where: { calendarChannelId: calendarChannel.id },
