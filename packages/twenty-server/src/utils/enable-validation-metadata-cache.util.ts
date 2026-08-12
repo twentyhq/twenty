@@ -44,9 +44,6 @@ export const enableValidationMetadataCache = (): void => {
       return cached;
     }
 
-    // Safe to memoize: a target's own and inherited validation metadata is fully
-    // registered at class load, before the target can ever be validated. Classes loaded
-    // later only register their own metadata and never change this target's result.
     const metadatas = computeTargetValidationMetadatas(
       targetConstructor,
       targetSchema,
