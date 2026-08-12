@@ -125,6 +125,7 @@ export class BillingCreditService {
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
+        addsCredits: true,
         isReplay: true,
         subscription,
       });
@@ -135,6 +136,7 @@ export class BillingCreditService {
     await this.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: amountMicro,
+      addsCredits: true,
       subscription,
     });
 
@@ -192,6 +194,7 @@ export class BillingCreditService {
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
+        addsCredits: false,
         isReplay: true,
         adjustmentKey,
       });
@@ -212,6 +215,7 @@ export class BillingCreditService {
     await this.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: wasActiveWhenRevoked ? -grant.amountMicro : 0,
+      addsCredits: false,
       adjustmentKey,
     });
 
@@ -266,12 +270,17 @@ export class BillingCreditService {
   async refreshWorkspaceCreditState({
     workspaceId,
     availableDeltaMicro,
+    addsCredits,
     isReplay = false,
     adjustmentKey,
     subscription: knownSubscription,
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
+    // Whether the write that led here could have made credits spendable. Only
+    // the caller knows: a replay of either a grant or a revocation carries a
+    // delta of zero, and the sign cannot tell them apart.
+    addsCredits: boolean;
     // A replay cannot know how far the original attempt got, so the counter is
     // recomputed from the ledger unless adjustmentKey says it already moved.
     isReplay?: boolean;
@@ -341,13 +350,13 @@ export class BillingCreditService {
       );
     }
 
-    // The ledger decides rather than this call's delta, since a replay carries
-    // a delta of zero even though credits were carried into the period and a
-    // replayed grant may since have been revoked. A revocation never lifts it
-    // either way: what it leaves behind may already be spent, and only the
-    // usage counter knows that.
+    // How much is left comes from the ledger rather than this call's delta,
+    // since a replay carries a delta of zero even though credits were carried
+    // into the period and a replayed grant may since have been revoked. A
+    // revocation never lifts the banner whatever the ledger holds: what it
+    // leaves behind may already be spent, and only the counter knows that.
     return this.clearCapAndSubscriptionCache(workspaceId, {
-      shouldClearCap: activeCreditsMicro > 0 && availableDeltaMicro >= 0,
+      shouldClearCap: addsCredits && activeCreditsMicro > 0,
     });
   }
 

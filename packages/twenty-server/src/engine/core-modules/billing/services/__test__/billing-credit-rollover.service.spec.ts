@@ -151,6 +151,7 @@ describe('BillingCreditRolloverService', () => {
       ).toHaveBeenCalledWith({
         workspaceId,
         availableDeltaMicro: 0,
+        addsCredits: true,
         isReplay: false,
         adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
       });
@@ -171,6 +172,7 @@ describe('BillingCreditRolloverService', () => {
       ).toHaveBeenCalledWith({
         workspaceId,
         availableDeltaMicro: 0,
+        addsCredits: true,
         isReplay: true,
         adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
       });
