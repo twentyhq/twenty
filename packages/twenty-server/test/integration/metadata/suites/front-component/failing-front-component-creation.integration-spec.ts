@@ -88,7 +88,8 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when sourceComponentPath is a folder path without extension',
+    title:
+      'when sourceComponentPath is a folder path without extension',
     context: {
       input: {
         name: 'FolderSourcePathTest',

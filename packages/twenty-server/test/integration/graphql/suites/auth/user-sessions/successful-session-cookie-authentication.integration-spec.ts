@@ -1,3 +1,4 @@
+
 import {
   extractSessionCookie,
   postMetadataOperationWithHeaders,
@@ -43,4 +44,5 @@ describe('successful session cookie authentication (integration)', () => {
       email: 'tim@apple.dev',
     });
   });
+
 });

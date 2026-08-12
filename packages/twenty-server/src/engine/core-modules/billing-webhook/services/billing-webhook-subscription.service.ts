@@ -24,6 +24,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -64,6 +65,7 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceService: WorkspaceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
+    private readonly billingCreditService: BillingCreditService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -113,6 +115,10 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
+    // Credits can be granted before this row exists, and those writes mirrored
+    // onto nothing. The row is here now, so put the ledger balance on it.
+    await this.billingCreditService.reconcileMirroredBalance(workspaceId);
+
     const liveCustomerSubscriptions =
       await this.stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule(
         String(data.object.customer),
@@ -132,11 +138,41 @@ export class BillingWebhookSubscriptionService {
       ? liveCustomerSubscriptions
       : [...liveCustomerSubscriptions, subscriptionWithSchedule];
 
-    await this.billingSubscriptionRepository.upsert(
+    const incomingSubscription =
       transformStripeSubscriptionEventToDatabaseSubscription(
         workspaceId,
         subscriptionWithSchedule,
-      ),
+      );
+
+    // Stripe only ever reports the current window, so the boundary the period
+    // just moved off is captured here or lost. The rollover needs it to bound
+    // the usage it settles.
+    const storedSubscription = await this.billingSubscriptionRepository.findOne(
+      {
+        where: {
+          stripeSubscriptionId: incomingSubscription.stripeSubscriptionId,
+        },
+        select: {
+          id: true,
+          currentPeriodStart: true,
+          previousPeriodStart: true,
+        },
+      },
+    );
+
+    const hasPeriodAdvanced =
+      isDefined(storedSubscription) &&
+      isDefined(incomingSubscription.currentPeriodStart) &&
+      storedSubscription.currentPeriodStart.getTime() <
+        incomingSubscription.currentPeriodStart.getTime();
+
+    await this.billingSubscriptionRepository.upsert(
+      {
+        ...incomingSubscription,
+        ...(hasPeriodAdvanced
+          ? { previousPeriodStart: storedSubscription.currentPeriodStart }
+          : {}),
+      },
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,

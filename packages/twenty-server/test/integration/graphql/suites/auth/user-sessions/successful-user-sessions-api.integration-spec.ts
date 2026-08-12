@@ -103,9 +103,7 @@ describe('successful user sessions API (integration)', () => {
     ).findOneBy({ id: otherSessionRow.id });
 
     expect(revokedRow?.revokedAt).not.toBeNull();
-    expect(revokedRow?.revokedReason).toBe(
-      UserSessionRevokedReason.UserRevoked,
-    );
+    expect(revokedRow?.revokedReason).toBe(UserSessionRevokedReason.UserRevoked);
 
     const sessions = await fetchSessions();
 
@@ -127,9 +125,9 @@ describe('successful user sessions API (integration)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(
-      response.body.data.revokeAllOtherUserSessions,
-    ).toBeGreaterThanOrEqual(1);
+    expect(response.body.data.revokeAllOtherUserSessions).toBeGreaterThanOrEqual(
+      1,
+    );
 
     const sessions = await fetchSessions();
 

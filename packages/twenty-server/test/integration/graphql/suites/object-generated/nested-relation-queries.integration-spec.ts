@@ -202,9 +202,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
           },
         },
         {
-          id: TEST_PERSON_2_ID,
-          jobTitle: 'new-record',
-          company: {
+        id: TEST_PERSON_2_ID,
+        jobTitle: 'new-record',
+        company: {
             connect: {
               where: { domainName: { primaryLinkUrl: 'company1.com' } },
             },

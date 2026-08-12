@@ -24,6 +24,7 @@ export const deriveBillingPeriodTransition = ({
   subscriptionInterval,
   trialStart,
   isFirstPeriodAfterTrial,
+  subscriptionPreviousPeriodStart,
   ledgerPeriodStart,
 }: {
   invoicePeriodStart: Date;
@@ -33,9 +34,13 @@ export const deriveBillingPeriodTransition = ({
   subscriptionInterval: SubscriptionInterval;
   trialStart: Date | null | undefined;
   isFirstPeriodAfterTrial: boolean;
-  // Where the ledger says the closing period started, for the case where the
-  // subscription has already moved on and cannot say.
-  ledgerPeriodStart?: Date | null;
+  // Where the subscription recorded the previous period starting, captured when
+  // it advanced. Null for a subscription that has not transitioned since the
+  // column was added.
+  subscriptionPreviousPeriodStart: Date | null;
+  // Where the ledger says the closing period started, used only when the
+  // subscription has no record of it.
+  ledgerPeriodStart: Date | null;
 }): BillingPeriodTransition => {
   const boundary = invoicePeriodStart;
 
@@ -53,11 +58,21 @@ export const deriveBillingPeriodTransition = ({
       return subscriptionCurrentPeriodStart;
     }
 
-    // The ledger holds the exact instant, and calendar arithmetic cannot
-    // reproduce it for month-end anchors: a period running January 31 to
-    // February 28 comes back as starting January 28, which widens the usage
-    // window into the period before and drags already expired grants back
-    // into the carry-forward.
+    // Recorded when the subscription advanced, so it is exact whatever the
+    // anchor. Calendar arithmetic cannot reproduce it for month-end anchors: a
+    // period running January 31 to February 28 comes back as starting January
+    // 28, which widens the usage window into the period before and drags
+    // already expired grants back into the carry-forward.
+    if (
+      isDefined(subscriptionPreviousPeriodStart) &&
+      subscriptionPreviousPeriodStart.getTime() < boundary.getTime()
+    ) {
+      return subscriptionPreviousPeriodStart;
+    }
+
+    // Only until each subscription has transitioned once with the column in
+    // place. The ledger records the boundary whenever the previous transition
+    // closed a grant there, which is most workspaces but not all.
     if (
       isDefined(ledgerPeriodStart) &&
       ledgerPeriodStart.getTime() < boundary.getTime()

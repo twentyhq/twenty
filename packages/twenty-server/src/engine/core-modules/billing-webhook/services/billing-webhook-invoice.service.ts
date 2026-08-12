@@ -144,8 +144,8 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    // The subscription.updated webhook races this one, and once it lands the
-    // subscription no longer knows where the closing period started.
+    // Only needed while subscriptions that predate previousPeriodStart are
+    // still transitioning for the first time.
     const ledgerPeriodStart =
       await this.billingCreditGrantService.findPeriodStartBefore({
         workspaceId: subscription.workspaceId,
@@ -165,6 +165,7 @@ export class BillingWebhookInvoiceService {
       subscriptionInterval: subscription.interval,
       trialStart: subscription.trialStart,
       isFirstPeriodAfterTrial,
+      subscriptionPreviousPeriodStart: subscription.previousPeriodStart,
       ledgerPeriodStart,
     });
 

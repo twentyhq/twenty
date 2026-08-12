@@ -29,6 +29,14 @@ export class CreateBillingCreditGrantTableFastInstanceCommand
       `DO $$ BEGIN CREATE TYPE "core"."billingCreditGrant_type_enum" AS ENUM ('ROLLOVER', 'ONBOARDING_REWARD', 'COMPENSATION', 'SALES'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
 
+    // An instance that ran a pre-release build of this command has the type
+    // already, so the create above is swallowed and its value set is whatever
+    // that build declared. Reconcile rather than leave a value the entity can
+    // write but the type does not accept.
+    await queryRunner.query(
+      `ALTER TYPE "core"."billingCreditGrant_type_enum" ADD VALUE IF NOT EXISTS 'SALES'`,
+    );
+
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."billingCreditGrant" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),

@@ -112,12 +112,14 @@ export class AdminPanelBillingService {
 
     // A null grant is either a replay of this same operation, which must answer
     // with the grant the first attempt wrote rather than hand out the credits
-    // again, or an instance without billing.
-    const replayedGrant =
-      await this.billingCreditGrantService.findGrantByIdempotencyKey(
-        workspaceId,
-        idempotencyKey,
-      );
+    // again, or an instance without billing. The ledger table only exists in
+    // the first case, so it is only queried there.
+    const replayedGrant = this.twentyConfigService.get('IS_BILLING_ENABLED')
+      ? await this.billingCreditGrantService.findGrantByIdempotencyKey(
+          workspaceId,
+          idempotencyKey,
+        )
+      : null;
 
     if (!isDefined(replayedGrant)) {
       throw new BillingException(

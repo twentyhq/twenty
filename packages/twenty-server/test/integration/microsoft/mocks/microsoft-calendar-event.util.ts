@@ -2,9 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { type Event } from '@microsoft/microsoft-graph-types';
 
-export const microsoftCalendarEvent = (
-  overrides: Partial<Event> = {},
-): Event => {
+export const microsoftCalendarEvent = (overrides: Partial<Event> = {}): Event => {
   const id = overrides.id ?? `microsoft-calendar-event-${randomUUID()}`;
 
   return {

@@ -17,6 +17,8 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
+      ledgerPeriodStart: null,
     });
 
     expect(result).toEqual({
@@ -38,6 +40,8 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart,
       isFirstPeriodAfterTrial: true,
+      subscriptionPreviousPeriodStart: null,
+      ledgerPeriodStart: null,
     });
 
     expect(result).toEqual({
@@ -60,6 +64,8 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
+      ledgerPeriodStart: null,
     });
 
     expect(result.closingPeriodStart).toEqual(JANUARY);
@@ -75,6 +81,8 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Year,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
+      ledgerPeriodStart: null,
     });
 
     expect(result.closingPeriodStart).toEqual(
@@ -91,6 +99,8 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
+      ledgerPeriodStart: null,
     });
 
     expect(result.closingPeriodStart).toEqual(
@@ -107,6 +117,8 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: true,
+      subscriptionPreviousPeriodStart: null,
+      ledgerPeriodStart: null,
     });
 
     expect(result.closingPeriodStart).toEqual(JANUARY);
@@ -128,6 +140,7 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
       ledgerPeriodStart,
     });
 
@@ -143,6 +156,7 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
       ledgerPeriodStart: MARCH,
     });
 
@@ -158,6 +172,7 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
       ledgerPeriodStart: null,
     });
 
@@ -175,10 +190,34 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
       ledgerPeriodStart: new Date('2026-01-15T00:00:00.000Z'),
     });
 
     expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
+
+  // The subscription records the boundary when it advances, so it is exact for
+  // any anchor. The ledger only knows it when the previous transition happened
+  // to close a grant there.
+  it('prefers the period start the subscription recorded over the ledger', () => {
+    const monthEndBoundary = new Date('2026-02-28T00:00:00.000Z');
+
+    const result = deriveBillingPeriodTransition({
+      invoicePeriodStart: monthEndBoundary,
+      invoicePeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
+      subscriptionCurrentPeriodStart: monthEndBoundary,
+      subscriptionCurrentPeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
+      subscriptionInterval: SubscriptionInterval.Month,
+      trialStart: null,
+      isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: new Date('2026-01-31T00:00:00.000Z'),
+      ledgerPeriodStart: new Date('2026-01-20T00:00:00.000Z'),
+    });
+
+    expect(result.closingPeriodStart).toEqual(
+      new Date('2026-01-31T00:00:00.000Z'),
+    );
   });
 
   it('uses the subscription period end when the invoice carries no forward period', () => {
@@ -190,6 +229,8 @@ describe('deriveBillingPeriodTransition', () => {
       subscriptionInterval: SubscriptionInterval.Month,
       trialStart: null,
       isFirstPeriodAfterTrial: false,
+      subscriptionPreviousPeriodStart: null,
+      ledgerPeriodStart: null,
     });
 
     expect(result.nextPeriodStart).toEqual(FEBRUARY);

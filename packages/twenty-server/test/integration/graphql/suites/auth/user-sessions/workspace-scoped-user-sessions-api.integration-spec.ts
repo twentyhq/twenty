@@ -100,9 +100,9 @@ describe('workspace-scoped user sessions API (integration)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(
-      response.body.data.revokeAllOtherUserSessions,
-    ).toBeGreaterThanOrEqual(1);
+    expect(response.body.data.revokeAllOtherUserSessions).toBeGreaterThanOrEqual(
+      1,
+    );
 
     const ycResponse = await postMetadataOperationWithHeaders(
       currentUserIdentityQueryFactory(),

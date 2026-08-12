@@ -184,7 +184,8 @@ describe('Custom object creation deterministic field universal identifiers', () 
       expect(reverseField?.universalIdentifier).toBe(
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier,
-          objectUniversalIdentifier: standardRelationObject.universalIdentifier,
+          objectUniversalIdentifier:
+            standardRelationObject.universalIdentifier,
           relationTargetObjectUniversalIdentifier: objectUniversalIdentifier,
         }),
       );

@@ -60,11 +60,15 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     BillingCreditGrantType.COMPENSATION,
   );
   const [reason, setReason] = useState('');
-  // Identifies one intended grant for as long as the modal stays open, so a
-  // RetryLink retry or a resubmit after a lost response returns the grant the
-  // first attempt wrote rather than crediting the workspace twice. Closing the
-  // modal starts a new one.
-  const [clientOperationId, setClientOperationId] = useState(() => v4());
+  // Identifies one intended grant, so a RetryLink retry or a resubmit after a
+  // lost response is answered with the grant the first attempt wrote rather
+  // than crediting the workspace twice. Keyed on the submitted values, since
+  // editing the amount and resubmitting is a different intent that must not be
+  // answered with the earlier grant.
+  const [submittedGrant, setSubmittedGrant] = useState<{
+    payload: string;
+    clientOperationId: string;
+  } | null>(null);
 
   const [grantWorkspaceCredits, { loading }] = useMutation(
     GRANT_WORKSPACE_CREDITS,
@@ -83,7 +87,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     setAmount('');
     setType(BillingCreditGrantType.COMPENSATION);
     setReason('');
-    setClientOperationId(v4());
+    setSubmittedGrant(null);
     closeModal(modalInstanceId);
   };
 
@@ -93,6 +97,14 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     }
 
     const trimmedReason = reason.trim();
+    const payload = JSON.stringify([parsedAmount, type, trimmedReason]);
+
+    const clientOperationId =
+      submittedGrant?.payload === payload
+        ? submittedGrant.clientOperationId
+        : v4();
+
+    setSubmittedGrant({ payload, clientOperationId });
 
     try {
       await grantWorkspaceCredits({

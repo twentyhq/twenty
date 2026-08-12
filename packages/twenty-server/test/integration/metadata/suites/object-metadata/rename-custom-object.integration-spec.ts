@@ -146,9 +146,7 @@ describe('Custom object renaming', () => {
       standardObjectRelationsMap[relation].relationFieldMetadataId =
         relationFieldMetadataId;
       // @ts-expect-error legacy noImplicitAny
-      standardObjectRelationsMap[
-        relation
-      ].relationFieldMetadataUniversalIdentifier =
+      standardObjectRelationsMap[relation].relationFieldMetadataUniversalIdentifier =
         relationFieldMetadata?.universalIdentifier;
     });
   });
@@ -217,8 +215,7 @@ describe('Custom object renaming', () => {
 
   it('3. should reject direct deletion of a system side-effect relation field', async () => {
     // @ts-expect-error legacy noImplicitAny
-    const timelineActivityRelation =
-      standardObjectRelationsMap['timelineActivity'];
+    const timelineActivityRelation = standardObjectRelationsMap['timelineActivity'];
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 
@@ -233,8 +230,7 @@ describe('Custom object renaming', () => {
 
   it('4. should reject direct edition of a system side-effect relation field', async () => {
     // @ts-expect-error legacy noImplicitAny
-    const timelineActivityRelation =
-      standardObjectRelationsMap['timelineActivity'];
+    const timelineActivityRelation = standardObjectRelationsMap['timelineActivity'];
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 
@@ -252,8 +248,7 @@ describe('Custom object renaming', () => {
 
   it('5. should reject a morph relations update payload on a system side-effect relation field', async () => {
     // @ts-expect-error legacy noImplicitAny
-    const timelineActivityRelation =
-      standardObjectRelationsMap['timelineActivity'];
+    const timelineActivityRelation = standardObjectRelationsMap['timelineActivity'];
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 

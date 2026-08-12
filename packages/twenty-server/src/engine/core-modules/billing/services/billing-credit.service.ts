@@ -218,6 +218,21 @@ export class BillingCreditService {
     return grant;
   }
 
+  // The mirror column only exists once a workspace has a billingCustomer row,
+  // so a grant written before that (an onboarding reward at signup) mirrors
+  // onto nothing. Called when the row appears, so rolling this release back
+  // does not lose those credits. Remove along with creditBalanceMicro.
+  async reconcileMirroredBalance(workspaceId: string): Promise<void> {
+    if (!this.billingService.isBillingEnabled()) {
+      return;
+    }
+
+    await this.cacheLockService.withLock(
+      () => this.syncMirrorBalance(workspaceId),
+      buildBillingCreditStateLockKey(workspaceId),
+    );
+  }
+
   private async syncMirrorBalance(workspaceId: string): Promise<number> {
     const activeCreditsMicro =
       await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
@@ -326,12 +341,12 @@ export class BillingCreditService {
       );
     }
 
-    // A rebuilt counter takes the cap from what the ledger actually holds,
-    // since a replayed grant may since have been revoked or expired.
+    // Taken from what the ledger actually holds rather than from this call's
+    // delta: a replay carries a delta of zero even though credits were carried
+    // into the period, and a replayed grant may since have been revoked. The
+    // banner should be up exactly when there is nothing left to spend.
     return this.clearCapAndSubscriptionCache(workspaceId, {
-      shouldClearCap: rebuildCounter
-        ? activeCreditsMicro > 0
-        : availableDeltaMicro > 0,
+      shouldClearCap: activeCreditsMicro > 0,
     });
   }
 

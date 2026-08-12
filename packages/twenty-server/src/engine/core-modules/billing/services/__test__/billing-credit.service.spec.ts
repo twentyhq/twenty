@@ -479,12 +479,29 @@ describe('BillingCreditService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it('does not lift the cap when credits were taken away', async () => {
+    // The banner is up exactly when there is nothing left to spend, so what
+    // decides it is the balance the revoke leaves behind, not the direction of
+    // the adjustment.
+    it('leaves the cap in place when the revoke empties the balance', async () => {
+      billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(0);
+
       await service.revokeGrant({ workspaceId, grantId: 'grant_1' });
 
       expect(
         billingUsageCapService.clearHasReachedCapForWorkspace,
       ).not.toHaveBeenCalled();
+    });
+
+    it('lifts the cap when the revoke leaves other credits behind', async () => {
+      billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(
+        500_000,
+      );
+
+      await service.revokeGrant({ workspaceId, grantId: 'grant_1' });
+
+      expect(
+        billingUsageCapService.clearHasReachedCapForWorkspace,
+      ).toHaveBeenCalledWith(workspaceId);
     });
   });
 });

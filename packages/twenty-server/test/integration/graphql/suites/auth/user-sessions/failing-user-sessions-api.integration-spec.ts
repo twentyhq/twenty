@@ -34,9 +34,7 @@ describe('failing user sessions API (integration)', () => {
 
     const sessionRow = await getCoreRepository<UserSessionEntity>(
       UserSessionEntity,
-    ).findOneBy({
-      tokenHash: hashUserSessionToken(sessionCookie.sessionToken),
-    });
+    ).findOneBy({ tokenHash: hashUserSessionToken(sessionCookie.sessionToken) });
 
     if (!sessionRow) {
       throw new Error('Expected a persisted session row');

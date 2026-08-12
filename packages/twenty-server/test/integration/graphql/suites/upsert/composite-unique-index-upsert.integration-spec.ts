@@ -214,9 +214,7 @@ const upsertDualRecords = (data: object[], upsert: boolean) =>
     }),
   );
 
-const getDualRecords = (response: {
-  body: { data: Record<string, unknown> };
-}) =>
+const getDualRecords = (response: { body: { data: Record<string, unknown> } }) =>
   response.body.data.createDualCompositeUpsertRecords as {
     id: string;
     aFirstKey: string;
@@ -256,6 +254,7 @@ describe('upsert with composite unique index', () => {
 
     expect(created.id).toBe(recordId);
     expect(created.payload).toBe('original');
+
 
     const upserted = getRecords(
       await upsertRecords(
