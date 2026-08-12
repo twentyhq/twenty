@@ -97,7 +97,7 @@ describe('CalDAV calendar events import (integration)', () => {
         handle: HANDLE,
         connectionParameters: {
           CALDAV: {
-            host: `${radicale.host}:${radicale.port}`,
+            host: `http://${radicale.host}:${radicale.port}`,
             port: radicale.port,
             username: HANDLE,
             password: 'radicale-password',

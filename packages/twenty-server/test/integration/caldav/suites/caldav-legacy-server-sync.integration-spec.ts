@@ -93,7 +93,7 @@ describe('CalDAV legacy server sync (integration)', () => {
         handle: HANDLE,
         connectionParameters: {
           CALDAV: {
-            host: `${proxy.host}:${proxy.port}`,
+            host: `http://${proxy.host}:${proxy.port}`,
             port: proxy.port,
             username: HANDLE,
             password: 'radicale-password',
