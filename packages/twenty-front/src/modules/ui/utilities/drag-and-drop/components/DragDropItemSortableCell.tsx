@@ -1,3 +1,5 @@
+import { type CollisionDetector } from '@dnd-kit/abstract';
+import { defaultCollisionDetection } from '@dnd-kit/collision';
 import {
   RestrictToHorizontalAxis,
   RestrictToVerticalAxis,
@@ -57,6 +59,7 @@ const StyledSortableRoot = styled.div<{
 type DragDropItemSortableCellProps = {
   accept?: string;
   children: ReactNode;
+  collisionDetector?: CollisionDetector;
   data?: Record<string, unknown>;
   disabled?: boolean;
   fadeSourceWhileDragging?: boolean;
@@ -76,6 +79,7 @@ type DragDropItemSortableCellProps = {
 export const DragDropItemSortableCell = ({
   accept,
   children,
+  collisionDetector = defaultCollisionDetection,
   data,
   disabled = false,
   fadeSourceWhileDragging = false,
@@ -96,6 +100,7 @@ export const DragDropItemSortableCell = ({
     type,
     accept,
     collisionPriority: SORTABLE_COLLISION_PRIORITY,
+    collisionDetector,
     // Sortable metadata stays authoritative over consumer data so drag
     // handlers always resolve the cell's real group and position.
     data: {
