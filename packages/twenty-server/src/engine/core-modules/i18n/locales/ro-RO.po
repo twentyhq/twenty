@@ -7193,6 +7193,11 @@ msgstr ""
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Unele calități de membru în acest spațiu de lucru nu au putut fi găsite. Este posibil să nu mai aibă acces la acest spațiu de lucru."
 
+#. js-lingui-id: eAMUPx
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while saving your onboarding progress."
+msgstr ""
+
 #. js-lingui-id: RjTo7h
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while starting the app installation. Please try again."
@@ -8066,6 +8071,11 @@ msgstr "Există o problemă cu tokenul dvs. Vă rugăm să încercați din nou."
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "There is no failed message to retry."
 msgstr "Nu există niciun mesaj eșuat de reîncercat."
+
+#. js-lingui-id: jMDu2a
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "There is no previous onboarding step to go back to."
+msgstr ""
 
 #. js-lingui-id: Yi0Q/T
 #: src/engine/core-modules/workspace/services/workspace.service.ts

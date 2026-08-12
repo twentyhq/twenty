@@ -7193,6 +7193,11 @@ msgstr "Az Ön által kiválasztott engedélyek közül néhány nem érvényes.
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Egyes munkaterületi tagságok nem találhatók. Lehet, hogy már nincs hozzáférésük ehhez a munkaterülethez."
 
+#. js-lingui-id: eAMUPx
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while saving your onboarding progress."
+msgstr ""
+
 #. js-lingui-id: RjTo7h
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while starting the app installation. Please try again."
@@ -8066,6 +8071,11 @@ msgstr "Probléma van a tokenjével. Kérjük, próbálja újra."
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "There is no failed message to retry."
 msgstr "Nincs olyan sikertelen üzenet, amely újrapróbálható lenne."
+
+#. js-lingui-id: jMDu2a
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "There is no previous onboarding step to go back to."
+msgstr ""
 
 #. js-lingui-id: Yi0Q/T
 #: src/engine/core-modules/workspace/services/workspace.service.ts
