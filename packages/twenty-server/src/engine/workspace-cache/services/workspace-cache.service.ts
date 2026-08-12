@@ -141,13 +141,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         }
 
         if (isDefined(options?.packingPonderation)) {
-          const ponderation = options.packingPonderation;
-
           this.packingPonderationByKey.set(
             workspaceCacheKeyName,
-            Number.isFinite(ponderation) && ponderation >= 1
-              ? Math.floor(ponderation)
-              : DEFAULT_PACKING_PONDERATION,
+            options.packingPonderation,
           );
         }
       }

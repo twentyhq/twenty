@@ -37,7 +37,11 @@ export const packIdleVersions = <T>({
       continue;
     }
 
-    const ponderation = ponderationOf(localKey);
+    const rawPonderation = ponderationOf(localKey);
+    const ponderation =
+      Number.isFinite(rawPonderation) && rawPonderation >= 1
+        ? Math.floor(rawPonderation)
+        : 1;
 
     if (ponderation > ponderationBudget) {
       continue;

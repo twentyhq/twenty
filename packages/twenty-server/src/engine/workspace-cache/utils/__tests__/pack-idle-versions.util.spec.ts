@@ -202,4 +202,19 @@ describe('packIdleVersions', () => {
     expect(stateOf(localCache, `${FIELD_METADATA}:ws-heavy`)).toBe('live');
     expect(stateOf(localCache, `${FIELD_METADATA}:ws-light`)).toBe('packed');
   });
+
+  it('should treat a non-finite or below-one ponderation as one', () => {
+    const localCache = new Map([
+      [`${FIELD_METADATA}:ws-nan`, liveEntry(IDLE - 2_000)],
+      [`${FIELD_METADATA}:ws-zero`, liveEntry(IDLE - 1_000)],
+    ]);
+
+    const result = run(localCache, 4, {
+      ponderationOf: (localKey) => (localKey.endsWith('nan') ? Number.NaN : 0),
+    });
+
+    expect(result.packed).toBe(2);
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-nan`)).toBe('packed');
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-zero`)).toBe('packed');
+  });
 });
