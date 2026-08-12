@@ -3,6 +3,7 @@ import {
   type CaptureMediaFailureReason,
   type CaptureMediaMediaType,
 } from 'twenty-front-component-renderer';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { mapMediaCaptureErrorToFailureReason } from '@/front-components/media-capture/utils/mapMediaCaptureErrorToFailureReason';
@@ -177,7 +178,9 @@ export const useFrontComponentMediaRecorder = ({
         }
 
         const blob = new Blob(recordedChunksRef.current, {
-          type: mediaRecorder.mimeType || `${mediaType}/webm`,
+          type: isNonEmptyString(mediaRecorder.mimeType)
+            ? mediaRecorder.mimeType
+            : `${mediaType}/webm`,
         });
 
         setRecordedBlob(blob);
