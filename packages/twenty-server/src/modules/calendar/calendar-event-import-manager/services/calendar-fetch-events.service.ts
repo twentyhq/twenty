@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isString } from '@sniptt/guards';
 import { Any, Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -53,21 +54,55 @@ export class CalendarFetchEventsService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         try {
+          const isFullSync = !calendarChannel.syncCursor;
+
           const { calendarEventIds, calendarEventIdsToDelete, nextSyncCursor } =
             await this.getCalendarEventsService.getCalendarEvents(
               connectedAccount,
               calendarChannel.syncCursor || undefined,
             );
 
-          if (calendarEventIdsToDelete.length > 0) {
-            const calendarChannelEventAssociationRepository =
-              await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-                workspaceId,
-                'calendarChannelEventAssociation',
+          const calendarChannelEventAssociationRepository =
+            await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              workspaceId,
+              'calendarChannelEventAssociation',
+            );
+
+          let eventExternalIdsToDelete = calendarEventIdsToDelete;
+
+          // A full sync (no syncToken) only ever returns events that still
+          // exist: Google does not emit cancelled tombstones outside of an
+          // active incremental sync-token chain, so events deleted during a
+          // sync gap are silently absent rather than flagged. Reconcile by
+          // diffing what we already associated against what the full sync
+          // just returned.
+          if (isFullSync) {
+            const existingAssociations =
+              await calendarChannelEventAssociationRepository.find({
+                where: { calendarChannelId: calendarChannel.id },
+              });
+
+            const fetchedExternalIds = new Set([
+              ...calendarEventIds,
+              ...calendarEventIdsToDelete,
+            ]);
+
+            const staleExternalIds = existingAssociations
+              .map((association) => association.eventExternalId)
+              .filter(isString)
+              .filter(
+                (eventExternalId) => !fetchedExternalIds.has(eventExternalId),
               );
 
+            eventExternalIdsToDelete = [
+              ...calendarEventIdsToDelete,
+              ...staleExternalIds,
+            ];
+          }
+
+          if (eventExternalIdsToDelete.length > 0) {
             await calendarChannelEventAssociationRepository.delete({
-              eventExternalId: Any(calendarEventIdsToDelete),
+              eventExternalId: Any(eventExternalIdsToDelete),
               calendarChannelId: calendarChannel.id,
             });
 

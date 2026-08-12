@@ -9,6 +9,10 @@ import { parseGoogleCalendarError } from 'src/modules/calendar/calendar-event-im
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
 @Injectable()
 export class GoogleCalendarGetEventsService {
@@ -48,16 +52,8 @@ export class GoogleCalendarGetEventsService {
           pageToken: nextPageToken,
           showDeleted: true,
         })
-        .catch(async (error: GaxiosError) => {
+        .catch((error: GaxiosError) => {
           this.handleError(error);
-
-          return {
-            data: {
-              items: [],
-              nextSyncToken: undefined,
-              nextPageToken: undefined,
-            },
-          };
         });
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;
@@ -93,7 +89,7 @@ export class GoogleCalendarGetEventsService {
     };
   }
 
-  private handleError(error: GaxiosError) {
+  private handleError(error: GaxiosError): never {
     this.logger.error(
       `Error in ${GoogleCalendarGetEventsService.name} - getCalendarEvents`,
       error.code,
@@ -111,24 +107,33 @@ export class GoogleCalendarGetEventsService {
     ) {
       throw parseGaxiosError(error);
     }
-    if (error.response?.status !== 410) {
-      this.logger.error(
-        `Calendar event import error for Google Calendar. status: ${error.response?.status}`,
+    if (error.response?.status === 410) {
+      this.logger.warn(
+        'Google Calendar sync token is no longer valid (410), a full resync is required',
       );
-      this.logger.error(error);
-      const googleCalendarError = {
-        code: error.response?.status,
-        reason:
-          error.response?.data?.error?.errors?.[0].reason ||
-          error.response?.data?.error ||
-          '',
-        message:
-          error.response?.data?.error?.errors?.[0].message ||
-          error.response?.data?.error_description ||
-          '',
-      };
 
-      throw parseGoogleCalendarError(googleCalendarError);
+      throw new CalendarEventImportDriverException(
+        'Google Calendar sync token is no longer valid, a full resync is required',
+        CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      );
     }
+
+    this.logger.error(
+      `Calendar event import error for Google Calendar. status: ${error.response?.status}`,
+    );
+    this.logger.error(error);
+    const googleCalendarError = {
+      code: error.response?.status,
+      reason:
+        error.response?.data?.error?.errors?.[0].reason ||
+        error.response?.data?.error ||
+        '',
+      message:
+        error.response?.data?.error?.errors?.[0].message ||
+        error.response?.data?.error_description ||
+        '',
+    };
+
+    throw parseGoogleCalendarError(googleCalendarError);
   }
 }
