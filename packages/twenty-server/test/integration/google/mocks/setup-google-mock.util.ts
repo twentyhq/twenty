@@ -1,6 +1,7 @@
 import { type calendar_v3, type gmail_v1 } from 'googleapis';
 import { http, HttpResponse } from 'msw';
 
+import { gmailFailingMessageFetchHandlers } from 'test/integration/google/mocks/gmail-failing-message-fetch-handlers.util';
 import { gmailHistoryHandler } from 'test/integration/google/mocks/gmail-history-handler.util';
 import { gmailMailboxHandlers } from 'test/integration/google/mocks/gmail-mailbox-handlers.util';
 import { gmailMessageListHandler } from 'test/integration/google/mocks/gmail-message-list-handler.util';
@@ -34,6 +35,7 @@ export type GoogleMock = {
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
   failMessageList: (failure: GoogleApiFailure) => void;
+  failMessageFetch: (failure: GoogleApiFailure) => void;
   failCalendarEventList: (failure: GoogleApiFailure) => void;
   declineTokenRefresh: () => void;
 };
@@ -136,6 +138,8 @@ export const setupGoogleMock = ({
           googleApiErrorResponse(failure),
         ),
       ),
+    failMessageFetch: (failure) =>
+      httpMock.use(...gmailFailingMessageFetchHandlers(failure)),
     failCalendarEventList: (failure) =>
       httpMock.use(
         http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>

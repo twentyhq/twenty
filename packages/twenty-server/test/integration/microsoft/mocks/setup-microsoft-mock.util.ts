@@ -1,4 +1,5 @@
 import { type Event, type MailFolder } from '@microsoft/microsoft-graph-types';
+import { http, HttpResponse } from 'msw';
 
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import { microsoftAuthHandlers } from 'test/integration/microsoft/mocks/microsoft-auth-handlers.util';
@@ -27,7 +28,22 @@ export type MicrosoftMock = {
     options?: { deltaToken?: string },
   ) => void;
   failSubscriptionRenewal: () => void;
+  failMessageDelta: (failure: MicrosoftGraphFailure) => void;
+  failCalendarDelta: (failure: MicrosoftGraphFailure) => void;
 };
+
+export type MicrosoftGraphFailure = {
+  status: number;
+  code: string;
+  message: string;
+};
+
+const microsoftGraphErrorResponse = ({
+  status,
+  code,
+  message,
+}: MicrosoftGraphFailure) =>
+  HttpResponse.json({ error: { code, message } }, { status });
 
 export const setupMicrosoftMock = ({
   handle,
@@ -61,6 +77,18 @@ export const setupMicrosoftMock = ({
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {
           renewalFails: true,
         }),
+      ),
+    failMessageDelta: (failure) =>
+      httpMock.use(
+        http.get('*/messages/delta', () =>
+          microsoftGraphErrorResponse(failure),
+        ),
+      ),
+    failCalendarDelta: (failure) =>
+      httpMock.use(
+        http.get('*/me/calendar/events/delta', () =>
+          microsoftGraphErrorResponse(failure),
+        ),
       ),
   };
 };
