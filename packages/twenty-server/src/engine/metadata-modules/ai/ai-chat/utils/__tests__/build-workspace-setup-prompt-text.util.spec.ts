@@ -129,20 +129,19 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('end that reply without calling ask_questions');
     expect(result).toContain('cannot take attachments');
-    expect(result).toContain(
-      'question-free until they say the upload is complete',
-    );
+    expect(result).toContain('upload all the files into this chat at once');
   });
 
-  it('should tolerate spreadsheets and multiple files while asking for CSV', () => {
+  it('should tolerate spreadsheets and propose right away when files arrive', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
     });
 
     expect(result).toContain('whatever spreadsheet their CRM produces');
-    expect(result).toContain('separate files in one message or several');
-    expect(result).toContain('ask in one line whether that is everything');
+    expect(result).toContain('separate files sent in one message');
+    expect(result).toContain('read them right away');
+    expect(result).toContain('Never ask whether more files are coming');
     expect(result).toContain('continue as if they had chosen to start fresh');
   });
 
