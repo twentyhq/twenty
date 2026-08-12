@@ -350,13 +350,17 @@ export class BillingCreditService {
       );
     }
 
-    // How much is left comes from the ledger rather than this call's delta,
-    // since a replay carries a delta of zero even though credits were carried
-    // into the period and a replayed grant may since have been revoked. A
-    // revocation never lifts the banner whatever the ledger holds: what it
-    // leaves behind may already be spent, and only the counter knows that.
+    // The banner may only come down when this write actually put something
+    // spendable in front of the workspace: the caller says whether it could,
+    // the counter says whether it did, and the ledger says whether any of it
+    // survives. A replay that finds the counter already moved did nothing, and
+    // its grants may well have been spent since, so it leaves the banner alone
+    // while a replay that rebuilt the counter is the repair that lifts it.
     return this.clearCapAndSubscriptionCache(workspaceId, {
-      shouldClearCap: addsCredits && activeCreditsMicro > 0,
+      shouldClearCap:
+        addsCredits &&
+        activeCreditsMicro > 0 &&
+        (rebuildCounter || availableDeltaMicro > 0),
     });
   }
 

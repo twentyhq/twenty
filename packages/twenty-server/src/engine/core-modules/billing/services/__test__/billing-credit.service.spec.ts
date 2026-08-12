@@ -504,4 +504,47 @@ describe('BillingCreditService', () => {
       ).not.toHaveBeenCalled();
     });
   });
+
+  describe('refreshWorkspaceCreditState', () => {
+    // Stripe redelivers events it already handled. The grants are still live in
+    // the ledger, but the workspace may have spent them since, and this replay
+    // adds nothing on top.
+    it('leaves the cap in place when a replay finds the counter already moved', async () => {
+      billingUsageCacheService.hasCounterAdjustmentBeenApplied.mockResolvedValue(
+        true,
+      );
+
+      await service.refreshWorkspaceCreditState({
+        workspaceId,
+        availableDeltaMicro: 0,
+        addsCredits: true,
+        isReplay: true,
+        adjustmentKey: 'rollover:2026-02-01T00:00:00.000Z',
+      });
+
+      expect(
+        billingUsageCapService.clearHasReachedCapForWorkspace,
+      ).not.toHaveBeenCalled();
+    });
+
+    // The delivery that wrote the grants never reached the counter, so this one
+    // rebuilds it and the credits become spendable here.
+    it('lifts the cap when a replay rebuilds the counter', async () => {
+      billingUsageCacheService.hasCounterAdjustmentBeenApplied.mockResolvedValue(
+        false,
+      );
+
+      await service.refreshWorkspaceCreditState({
+        workspaceId,
+        availableDeltaMicro: 0,
+        addsCredits: true,
+        isReplay: true,
+        adjustmentKey: 'rollover:2026-02-01T00:00:00.000Z',
+      });
+
+      expect(
+        billingUsageCapService.clearHasReachedCapForWorkspace,
+      ).toHaveBeenCalledWith(workspaceId);
+    });
+  });
 });
