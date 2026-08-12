@@ -17,13 +17,13 @@ import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
-import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import {
   RECORDS_PER_GROUP_LIMIT,
   RELATIONS_PER_RECORD_LIMIT,
   SUB_QUERY_PREFIX,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+import { buildGroupByRecordConditions } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-group-by-record-conditions.util';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -185,13 +185,11 @@ export class GroupByWithRecordsV2Service {
       );
     }
 
-    const groupConditions = this.buildGroupConditions({
-      groupsResult,
-      groupByDefinitions,
-      subQueryBuilder,
-    });
+    const { sql: groupConditionsSql, parameters: groupConditionParameters } =
+      buildGroupByRecordConditions({ groupsResult, groupByDefinitions });
 
-    subQueryBuilder.andWhere(groupConditions);
+    subQueryBuilder.setParameters(groupConditionParameters);
+    subQueryBuilder.andWhere(groupConditionsSql);
 
     subQueryBuilder.addSelect(
       this.buildRowNumberExpression({
@@ -277,44 +275,12 @@ export class GroupByWithRecordsV2Service {
 
     for (const joinInfo of relationJoins) {
       addRelationJoinAliasToQueryBuilder({
-        queryBuilder: subQueryBuilder as unknown as RecordQueryBuilder,
+        queryBuilder: subQueryBuilder,
         parentAlias: flatObjectMetadata.nameSingular,
         relationName: joinInfo.joinAlias,
       });
     }
 
     return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy} ${orderByRawSQL})`;
-  }
-
-  private buildGroupConditions({
-    groupsResult,
-    groupByDefinitions,
-    subQueryBuilder,
-  }: {
-    groupsResult: Array<Record<string, unknown>>;
-    groupByDefinitions: GroupByDefinition[];
-    subQueryBuilder: WorkspaceSelectQueryBuilderV2;
-  }): string {
-    const groupConditions = groupsResult.map((group, groupIndex) => {
-      const conditions = groupByDefinitions
-        .map((groupByDefinition, definitionIndex) => {
-          const parameterValue = group[groupByDefinition.alias];
-
-          if (!isDefined(parameterValue)) {
-            return `${groupByDefinition.expression} IS NULL`;
-          }
-
-          const parameterName = `groupValue_${groupIndex}_${definitionIndex}`;
-
-          subQueryBuilder.setParameter(parameterName, parameterValue);
-
-          return `${groupByDefinition.expression} = :${parameterName}`;
-        })
-        .join(' AND ');
-
-      return `(${conditions})`;
-    });
-
-    return `(${groupConditions.join(' OR ')})`;
   }
 }

@@ -23,6 +23,7 @@ import {
   RELATIONS_PER_RECORD_LIMIT,
   SUB_QUERY_PREFIX,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+import { buildGroupByRecordConditions } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-group-by-record-conditions.util';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -171,11 +172,8 @@ export class GroupByWithRecordsService {
       .map((def) => `"${def.alias}"`)
       .join(', ');
 
-    const groupConditions = this.buildGroupConditions(
-      groupsResult,
-      groupByDefinitions,
-      queryBuilderForSubQuery,
-    );
+    const { sql: groupConditions, parameters: groupConditionParameters } =
+      buildGroupByRecordConditions({ groupsResult, groupByDefinitions });
 
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
@@ -190,6 +188,7 @@ export class GroupByWithRecordsService {
     const subQuery = queryBuilderForSubQuery
       .select(recordSelectWithAlias)
       .addSelect(groupBySelectWithAlias)
+      .setParameters(groupConditionParameters)
       .andWhere(groupConditions);
 
     this.applyPartitionByToBuilder({
@@ -294,31 +293,5 @@ export class GroupByWithRecordsService {
       `ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions})`,
       'record_row_number',
     );
-  }
-
-  private buildGroupConditions(
-    groupsResult: Array<Record<string, unknown>>,
-    groupByDefinitions: GroupByDefinition[],
-    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
-  ): string {
-    const groupConditions = groupsResult.map((group, groupIndex) => {
-      const conditions = groupByDefinitions
-        .map((def, defIndex) => {
-          const paramName = `groupValue_${groupIndex}_${defIndex}`;
-          const paramValue = group[def.alias];
-
-          if (!isDefined(paramValue)) {
-            return `${def.expression} IS NULL`;
-          }
-          queryBuilder.setParameter(paramName, paramValue);
-
-          return `${def.expression} = :${paramName}`;
-        })
-        .join(' AND ');
-
-      return `(${conditions})`;
-    });
-
-    return `(${groupConditions.join(' OR ')})`;
   }
 }
