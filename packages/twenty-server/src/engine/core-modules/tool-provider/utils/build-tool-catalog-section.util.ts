@@ -112,7 +112,8 @@ const buildDatabaseCrudCatalogSection = (
 
     const findManyExample =
       tools.find(
-        (t) => t.operation === 'find_many' && t.objectName === exampleObjectName,
+        (t) =>
+          t.operation === 'find_many' && t.objectName === exampleObjectName,
       ) ?? tools.find((t) => t.operation === 'find_many');
     const findOneExample = tools.find(
       (t) =>
