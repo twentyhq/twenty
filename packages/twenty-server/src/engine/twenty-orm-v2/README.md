@@ -94,17 +94,23 @@ findMany round trip.
 ## Covered so far
 
 `createQueryBuilder`, `clone`, `where` / `andWhere` / `orWhere` (strings, bracket
-factories, and object literals like `{ id: In([...]) }` — `in` and equality only),
-`setParameters`, `setFindOptions({ select })`, `addSelect`, `orderBy` / `addOrderBy`,
-`leftJoin` on to-one relations, `withDeleted`, `limit` / `offset`, `take` / `skip`
-(aliases of `limit` / `offset` — safe because v2 never joins to-many),
-`getMany`, `getOne`, `getRawOne`, `getCount`, `getQuery`, `getQueryAndParameters`.
+factories, and object literals like `{ id: In([...]) }` — `in` only), `setParameters` /
+`setParameter`, `setFindOptions({ select })`, `select` / `addSelect`, `orderBy` /
+`addOrderBy`, `groupBy` / `addGroupBy`, `leftJoin` on to-one relations, `withDeleted`,
+`limit` / `offset`, `take` / `skip` (aliases of `limit` / `offset` — safe because v2
+never joins to-many), `getMany`, `getOne`, `getRawOne`, `getRawMany`, `getCount`,
+`applyRowLevelPermissions`, `getQuery`, `getQueryAndParameters`. The repository also
+exposes `executeRaw` for statements the table-shape builder cannot model (see below).
 
-The surface stops there on purpose: anything the wired runners cannot reach
-(`getRawMany`, `groupBy`) is left to v1 until a runner needs it.
+Wired into `CommonFindManyQueryRunnerService`, `CommonFindOneQueryRunnerService`,
+`CommonFindDuplicatesQueryRunnerService` and `CommonGroupByQueryRunnerService`. Other
+runners keep `repository`.
 
-Wired into `CommonFindManyQueryRunnerService`, `CommonFindOneQueryRunnerService` and
-`CommonFindDuplicatesQueryRunnerService`. Other runners keep `repository`.
+group-by "with records" is the one path that is not a transparent swap: it wraps a
+builder subquery in a table-less `FROM (subquery)` JSON_AGG query, which the
+table-shape builder cannot represent. `GroupByWithRecordsV2Service` builds the inner
+subquery with the v2 builder and runs the composed outer query through
+`repository.executeRaw`; the runner flag-branches between it and the v1 service.
 
 ## Not covered yet
 

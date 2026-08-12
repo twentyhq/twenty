@@ -43,6 +43,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
+  groupByExpressions: string[];
   orderByClauses: OrderByClause[];
   includeDeleted: boolean;
   limitValue?: number;
@@ -178,6 +179,14 @@ export const buildJoinClause = (state: SelectStatementState): string =>
     })
     .join(' ');
 
+export const buildGroupByClause = (state: SelectStatementState): string => {
+  if (state.groupByExpressions.length === 0) {
+    return '';
+  }
+
+  return `GROUP BY ${state.groupByExpressions.join(', ')}`;
+};
+
 export const buildOrderByClause = (state: SelectStatementState): string => {
   if (state.orderByClauses.length === 0) {
     return '';
@@ -222,6 +231,7 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     buildFromClause(state),
     buildJoinClause(state),
     whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
+    buildGroupByClause(state),
     buildOrderByClause(state),
     isDefined(state.limitValue) ? `LIMIT :${LIMIT_PARAMETER_NAME}` : '',
     isDefined(state.offsetValue) ? `OFFSET :${OFFSET_PARAMETER_NAME}` : '',

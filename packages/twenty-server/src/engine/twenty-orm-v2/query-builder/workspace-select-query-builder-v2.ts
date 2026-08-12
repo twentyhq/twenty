@@ -65,6 +65,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private readonly joinClauses: JoinClause[] = [];
   private readonly extraSelectClauses: SelectClause[] = [];
   private orderByClauses: OrderByClause[] = [];
+  private groupByExpressions: string[] = [];
   private parameters: Record<string, unknown> = {};
   private findOptions: FindOptionsLike = {};
   private limitValue?: number;
@@ -105,6 +106,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     );
     cloned.extraSelectClauses.push(...this.extraSelectClauses);
     cloned.orderByClauses = [...this.orderByClauses];
+    cloned.groupByExpressions = [...this.groupByExpressions];
     cloned.parameters = { ...this.parameters };
     cloned.findOptions = { ...this.findOptions };
     cloned.limitValue = this.limitValue;
@@ -159,6 +161,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.parameters = { ...this.parameters, ...parameters };
 
     return this;
+  }
+
+  setParameter(key: string, value: unknown): this {
+    return this.setParameters({ [key]: value });
   }
 
   getParameters(): Record<string, unknown> {
@@ -221,6 +227,18 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     nulls?: 'NULLS FIRST' | 'NULLS LAST',
   ): this {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
+  }
+
+  groupBy(expression: string): this {
+    this.groupByExpressions = [this.normaliseColumnExpression(expression)];
+
+    return this;
+  }
+
+  addGroupBy(expression: string): this {
+    this.groupByExpressions.push(this.normaliseColumnExpression(expression));
+
+    return this;
   }
 
   leftJoin(relationPath: string, alias: string, condition?: string): this {
@@ -366,6 +384,18 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     } finally {
       this.limitValue = previousLimit;
     }
+  }
+
+  async getRawMany<T extends Record<string, unknown>>(): Promise<T[]> {
+    const rows = await this.executeSelect();
+
+    return rows as T[];
+  }
+
+  applyRowLevelPermissions(): this {
+    this.context.onBeforeExecute(this);
+
+    return this;
   }
 
   async getCount(): Promise<number> {
@@ -582,6 +612,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
+      groupByExpressions: this.groupByExpressions,
       orderByClauses: this.orderByClauses,
       includeDeleted: this.includeDeleted,
       limitValue: this.limitValue,
