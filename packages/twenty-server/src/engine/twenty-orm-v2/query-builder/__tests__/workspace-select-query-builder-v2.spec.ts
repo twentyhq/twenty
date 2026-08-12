@@ -424,9 +424,18 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
 
     const records = await queryBuilder.getMany();
 
-    expect(records).toEqual([
-      { id: 'person-1', nameFirstName: 'Ada', company_name: 'Acme' },
-    ]);
+    expect(records).toEqual([{ id: 'person-1', nameFirstName: 'Ada' }]);
+  });
+
+  it('should not widen the projection when a relation is joined', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+
+    expect(queryBuilder.getQuery()).toContain(
+      'SELECT "person"."id" AS "person_id" FROM',
+    );
   });
 
   it('should report the columns it selected so permissions do not have to parse SQL', () => {

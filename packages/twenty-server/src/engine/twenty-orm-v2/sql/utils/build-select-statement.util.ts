@@ -218,6 +218,8 @@ export const buildCountStatement = (state: SelectStatementState): string => {
     .join(' ');
 };
 
+// Columns selected for another alias, e.g. relation order-by columns, are dropped
+// so an entity never carries raw join output.
 export const mapRowToEntity = <T extends Record<string, unknown>>(
   row: Record<string, unknown>,
   alias: string,
@@ -226,12 +228,11 @@ export const mapRowToEntity = <T extends Record<string, unknown>>(
   const mainAliasPrefix = `${alias}_`;
 
   for (const [columnAlias, value] of Object.entries(row)) {
-    if (columnAlias.startsWith(mainAliasPrefix)) {
-      entity[columnAlias.slice(mainAliasPrefix.length)] = value;
+    if (!columnAlias.startsWith(mainAliasPrefix)) {
       continue;
     }
 
-    entity[columnAlias] = value;
+    entity[columnAlias.slice(mainAliasPrefix.length)] = value;
   }
 
   return entity as T;
