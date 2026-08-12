@@ -22,6 +22,11 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 
 type ReownLogger = { warn: (message: string) => void };
 
+type SystemFieldsViewSelection =
+  | { status: 'selected'; viewId: string }
+  | { status: 'none' }
+  | { status: 'ambiguous' };
+
 type RecordPageStackMaps = Pick<
   AllFlatEntityMaps,
   | 'flatViewMaps'
@@ -81,6 +86,31 @@ export const computeRecordPageStackReownUpdates = ({
     flatPageLayoutWidgetMaps,
   });
 
+  const systemFieldsViewSelection = selectSystemFieldsView({
+    workspaceId,
+    logger,
+    stackTree,
+    flatObjectMetadata,
+    engineOwnedApplicationUniversalIdentifiers,
+    twentyStandardApplicationUniversalIdentifier,
+  });
+
+  // An ambiguous view selection skips the WHOLE stack, not just the view:
+  // re-owning the layout and widgets while their FIELDS configuration still
+  // points at an un-reowned view would leave a half-derived system stack the
+  // backfill never repairs (it does not touch widgets of an existing layout).
+  // Untouched, the stack degrades to a user custom layout, which the
+  // frontend prefers anyway, and the backfill provisions a coherent derived
+  // stack beside it.
+  if (systemFieldsViewSelection.status === 'ambiguous') {
+    return reownUpdates;
+  }
+
+  const systemFieldsViewId =
+    systemFieldsViewSelection.status === 'selected'
+      ? systemFieldsViewSelection.viewId
+      : undefined;
+
   pushReownUpdate({
     workspaceId,
     logger,
@@ -88,15 +118,6 @@ export const computeRecordPageStackReownUpdates = ({
     flatEntity: flatPageLayout,
     derivedUniversalIdentifier: derivedPageLayoutUniversalIdentifier,
     flatEntitiesByUniversalIdentifier: flatPageLayoutMaps.byUniversalIdentifier,
-  });
-
-  const systemFieldsViewId = selectSystemFieldsViewId({
-    workspaceId,
-    logger,
-    stackTree,
-    flatObjectMetadata,
-    engineOwnedApplicationUniversalIdentifiers,
-    twentyStandardApplicationUniversalIdentifier,
   });
 
   const seenDerivedTabUniversalIdentifiers = new Set<string>();
@@ -223,7 +244,11 @@ export const computeRecordPageStackReownUpdates = ({
   return reownUpdates;
 };
 
-const selectSystemFieldsViewId = ({
+// One system FIELDS_WIDGET view per object, resolved by identifier or
+// unforgeable ownership, never by walk order; indistinguishable candidates
+// (pre-2-15 custom rows are stuck unflagged) refuse selection rather than
+// score.
+const selectSystemFieldsView = ({
   workspaceId,
   logger,
   stackTree,
@@ -237,7 +262,7 @@ const selectSystemFieldsViewId = ({
   flatObjectMetadata: ComputeRecordPageStackReownUpdatesArgs['flatObjectMetadata'];
   engineOwnedApplicationUniversalIdentifiers: Set<string>;
   twentyStandardApplicationUniversalIdentifier: string;
-}): string | undefined => {
+}): SystemFieldsViewSelection => {
   const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
     objectMetadataApplicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
@@ -304,20 +329,24 @@ const selectSystemFieldsViewId = ({
     candidates.find(({ fieldsView }) => fieldsView.flatView.isSystemSideEffect);
 
   if (isDefined(selectedCandidate)) {
-    return selectedCandidate.fieldsView.flatView.id;
+    return { status: 'selected', viewId: selectedCandidate.fieldsView.flatView.id };
   }
 
   if (candidates.length > 1) {
     logger.warn(
-      `Ambiguous FIELDS widget views for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping view re-own (candidates: ${candidates
+      `Ambiguous FIELDS widget views for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping the whole stack re-own (candidates: ${candidates
         .map(({ fieldsView }) => fieldsView.flatView.id)
         .join(', ')})`,
     );
 
-    return undefined;
+    return { status: 'ambiguous' };
   }
 
-  return candidates[0]?.fieldsView.flatView.id;
+  if (candidates.length === 1) {
+    return { status: 'selected', viewId: candidates[0].fieldsView.flatView.id };
+  }
+
+  return { status: 'none' };
 };
 
 const computeRecordPageViewReownUpdates = ({

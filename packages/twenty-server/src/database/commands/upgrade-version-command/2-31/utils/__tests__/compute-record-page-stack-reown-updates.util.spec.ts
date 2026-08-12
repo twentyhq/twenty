@@ -392,8 +392,10 @@ describe('computeRecordPageStackReownUpdates', () => {
   });
 
   // Pre-2-15 custom rows are stuck at isSystemSideEffect false, so the engine
-  // view and a user-added view are indistinguishable: refuse selection.
-  it('warns and re-owns no view when a custom object has several unflagged FIELDS widget views', () => {
+  // view and a user-added view are indistinguishable: refuse selection and
+  // skip the whole stack, otherwise a re-owned layout would keep a FIELDS
+  // widget pointing at an un-reowned view the backfill never repairs.
+  it('warns and re-owns nothing when a custom object has several unflagged FIELDS widget views', () => {
     const customObjectMetadata = {
       universalIdentifier: '20202020-0000-4000-8000-0000000000cd',
       applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -426,8 +428,7 @@ describe('computeRecordPageStackReownUpdates', () => {
     expect(warnMock).toHaveBeenCalledWith(
       expect.stringContaining('Ambiguous FIELDS widget views'),
     );
-    expect(reownUpdates.viewUpdates).toHaveLength(0);
-    expect(reownUpdates.viewFieldUpdates).toHaveLength(0);
+    expect(countRecordPageReownUpdates(reownUpdates)).toBe(0);
   });
 
   it('skips the second standard group claiming the same name with a warning', () => {
