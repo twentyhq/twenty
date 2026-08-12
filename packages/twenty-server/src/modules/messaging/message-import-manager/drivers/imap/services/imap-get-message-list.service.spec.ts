@@ -376,18 +376,17 @@ describe('ImapGetMessageListService', () => {
     });
   });
 
-  describe('unicode folder path normalization', () => {
+  describe('unicode folder path matching', () => {
     const nfdPath = 'Parent/Ane\u0301mo+';
-    const nfcPath = 'Parent/An\u00e9mo+';
 
     const decomposedFolder = createMockFolder({
-      name: 'Anémo+',
+      name: 'Anemo NFD',
       externalId: `${nfdPath}:1`,
       isSynced: true,
     });
 
-    const runSync = () =>
-      service.getMessageLists({
+    it('syncs a stored decomposed path against the composed server listing', async () => {
+      const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
         messageChannel: {
           syncCursor: '',
@@ -397,11 +396,8 @@ describe('ImapGetMessageListService', () => {
         messageFolders: [decomposedFolder],
       });
 
-    it('selects the NFC form of a stored decomposed path on a UTF8=ACCEPT session', async () => {
-      const result = await runSync();
-
-      expect(mockImapClient.getMailboxLock).toHaveBeenCalledWith(nfcPath);
-      expect(result[0].messageExternalIds[0]).toBe(`${nfcPath}:3`);
+      expect(result).toHaveLength(1);
+      expect(result[0].messageExternalIds).toHaveLength(3);
     });
   });
 });

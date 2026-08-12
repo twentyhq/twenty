@@ -15,6 +15,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { parseImapAuthenticationError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-authentication-error.util';
+import { withNormalizedMailboxPaths } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/with-normalized-mailbox-paths.util';
 
 @Injectable()
 export class ImapClientProvider {
@@ -125,7 +126,7 @@ export class ImapClientProvider {
         `Connected to IMAP server for ${connectedAccount.handle}`,
       );
 
-      return client;
+      return withNormalizedMailboxPaths(client);
     } catch (error) {
       try {
         await client.logout();
