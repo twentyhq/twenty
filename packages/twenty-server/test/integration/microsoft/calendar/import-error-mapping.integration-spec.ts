@@ -55,7 +55,7 @@ describe('Microsoft calendar import error mapping (integration)', () => {
   });
 
   beforeEach(async () => {
-    await resetCalendarChannelSyncState(channel.calendarChannelId);
+    await resetCalendarChannelSyncState(channel.calendarChannelId, '');
 
     await getCoreRepository<ConnectedAccountEntity>(
       ConnectedAccountEntity,
@@ -144,7 +144,7 @@ describe('Microsoft calendar import error mapping (integration)', () => {
       CalendarChannelEntity,
     ).findOneByOrFail({ id: channel.calendarChannelId });
 
-    expect(storedChannel.syncCursor).toBe('reset-cursor');
+    expect(storedChannel.syncCursor).toBeFalsy();
   }, 60000);
 
   it('restarts the calendar channel from a clean cursor on a 410 expired delta token', async () => {

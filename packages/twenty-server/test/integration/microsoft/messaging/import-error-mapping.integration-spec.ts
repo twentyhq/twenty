@@ -59,7 +59,7 @@ describe('Microsoft messaging import error mapping (integration)', () => {
   });
 
   beforeEach(async () => {
-    await resetMessageChannelSyncState(channel.channelId);
+    await resetMessageChannelSyncState(channel.channelId, '');
 
     await getCoreRepository<ConnectedAccountEntity>(
       ConnectedAccountEntity,
