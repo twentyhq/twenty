@@ -132,9 +132,15 @@ export const setupGoogleMock = ({
           ),
         ),
       ),
+    // A channel carrying a sync cursor fetches through the history endpoint
+    // rather than the message list, so both have to fail for the failure to
+    // surface regardless of which path the channel takes.
     failMessageList: (failure) =>
       httpMock.use(
         http.get('*/gmail/v1/users/me/messages', () =>
+          googleApiErrorResponse(failure),
+        ),
+        http.get('*/gmail/v1/users/me/history', () =>
           googleApiErrorResponse(failure),
         ),
       ),
