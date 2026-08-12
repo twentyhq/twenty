@@ -393,17 +393,22 @@ Este relevant doar dacă nu lași back-end-ul să servească front-end-ul. Imple
 nu au nevoie de nimic aici.
 
 Declară fiecare origine de browser care comunică cu API-ul, separate prin virgulă. `SERVER_URL`
-și `FRONTEND_URL` sunt deja de încredere.
+și `FRONTEND_URL` sunt deja de încredere. Serverul înregistrează un avertisment în jurnale atunci când un browser
+îl apelează dintr-o origine nedeclarată.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 ```
 
 <Warning>
-Actualizarea la o versiune cu sesiuni bazate pe cookie face ca acest lucru să fie obligatoriu. Partea de front-end
-acum trimite datele de autentificare la fiecare cerere, iar browserele resping un răspuns cu date de autentificare
+Partea de front-end trimite datele de autentificare la fiecare cerere, iar browserele resping un răspuns cu date de autentificare
 provenit de la o origine nedeclarată, astfel încât aplicația nu se încarcă până când nu configurați această opțiune.
 </Warning>
 
 Dacă cele două gazde se află pe domenii înregistrabile diferite (nu doar pe
 subdomenii diferite), setați, de asemenea, `AUTH_COOKIE_SAME_SITE=none`, ceea ce necesită HTTPS.
+
+Cu multi-workspace activat, nu lista fiecare subdomeniu de workspace aici.
+În schimb, direcționați căile API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) către back-end pe fiecare hostname de workspace, astfel încât fiecare
+workspace să rămână de aceeași origine — acesta este modul în care rulează Twenty Cloud.
