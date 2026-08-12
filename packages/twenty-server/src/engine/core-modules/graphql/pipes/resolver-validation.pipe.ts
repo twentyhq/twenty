@@ -6,9 +6,36 @@ import {
 } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
-import { type ValidationError, validate } from 'class-validator';
+import {
+  getMetadataStorage,
+  type ValidationError,
+  validate,
+} from 'class-validator';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
+// class-validator rescans its global metadata store on every validate() call, so we
+// skip the whole plainToInstance + validate roundtrip for argument types that carry no
+// validation decorators. Metadata is registered at class load time, so the answer is
+// stable per constructor and cached. always=true keeps the lookup conservative: any
+// declared constraint (including group-only ones) counts as "has metadata".
+const hasValidationMetadataByTarget = new WeakMap<object, boolean>();
+
+const targetHasValidationMetadata = (metatype: Type<unknown>): boolean => {
+  const cached = hasValidationMetadataByTarget.get(metatype);
+
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const hasMetadata =
+    getMetadataStorage().getTargetValidationMetadatas(metatype, '', true, false)
+      .length > 0;
+
+  hasValidationMetadataByTarget.set(metatype, hasMetadata);
+
+  return hasMetadata;
+};
 
 const safeClassValidatorValidateWrapper = async (
   object: object,
@@ -26,6 +53,10 @@ export class ResolverValidationPipe implements PipeTransform {
     const { metatype } = metadata;
 
     if (!metatype || !this.toValidate(metatype)) {
+      return value;
+    }
+
+    if (!targetHasValidationMetadata(metatype)) {
       return value;
     }
 
