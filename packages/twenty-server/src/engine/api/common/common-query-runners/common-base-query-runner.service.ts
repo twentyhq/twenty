@@ -379,6 +379,12 @@ export abstract class CommonBaseQueryRunnerService<
       return repository;
     }
 
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.OrmV2ReadPathUsed,
+      amount: 1,
+      attributes: { operation: this.operationName },
+    });
+
     return this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: this.isReadOnly })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
