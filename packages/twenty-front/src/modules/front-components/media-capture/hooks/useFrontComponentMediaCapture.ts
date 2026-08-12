@@ -8,6 +8,7 @@ import {
   type FrontComponentMediaCaptureRequest,
   frontComponentMediaCaptureRequestState,
 } from '@/front-components/media-capture/states/frontComponentMediaCaptureRequestState';
+import { normalizeMediaCaptureMaxDurationSeconds } from '@/front-components/media-capture/utils/normalizeMediaCaptureMaxDurationSeconds';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -20,7 +21,10 @@ export const useFrontComponentMediaCapture = () => {
 
   const requestMediaCapture = useCallback(
     (
-      request: Omit<FrontComponentMediaCaptureRequest, 'onResult'>,
+      request: Omit<
+        FrontComponentMediaCaptureRequest,
+        'onResult' | 'maxDurationSeconds'
+      > & { maxDurationSeconds?: number },
     ): Promise<CaptureMediaResult> => {
       const pendingMediaCaptureRequest = store.get(
         frontComponentMediaCaptureRequestState.atom,
@@ -40,7 +44,13 @@ export const useFrontComponentMediaCapture = () => {
       }
 
       return new Promise<CaptureMediaResult>((resolve) => {
-        setFrontComponentMediaCaptureRequest({ ...request, onResult: resolve });
+        setFrontComponentMediaCaptureRequest({
+          ...request,
+          maxDurationSeconds: normalizeMediaCaptureMaxDurationSeconds(
+            request.maxDurationSeconds,
+          ),
+          onResult: resolve,
+        });
         openModal(FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID);
       });
     },

@@ -17,10 +17,13 @@ const VIDEO_MIME_TYPE_PREFERENCES = [
   'video/mp4',
 ];
 
-export const pickSupportedMediaRecorderMimeType = (
-  mediaType: CaptureMediaMediaType,
-  isMimeTypeSupported: (mimeType: string) => boolean,
-): string | undefined => {
+export const pickSupportedMediaRecorderMimeType = ({
+  mediaType,
+  isMimeTypeSupported,
+}: {
+  mediaType: CaptureMediaMediaType;
+  isMimeTypeSupported: (mimeType: string) => boolean;
+}): string | undefined => {
   const mimeTypePreferences =
     mediaType === 'audio'
       ? AUDIO_MIME_TYPE_PREFERENCES

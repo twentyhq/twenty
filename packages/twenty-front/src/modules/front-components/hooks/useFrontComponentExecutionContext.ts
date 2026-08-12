@@ -24,8 +24,6 @@ import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useU
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
-import { FRONT_COMPONENT_MEDIA_CAPTURE_DEFAULT_MAX_DURATION_SECONDS } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureDefaultMaxDurationSeconds';
-import { FRONT_COMPONENT_MEDIA_CAPTURE_MAX_DURATION_SECONDS } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureMaxDurationSeconds';
 import { useFrontComponentMediaCapture } from '@/front-components/media-capture/hooks/useFrontComponentMediaCapture';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -367,8 +365,8 @@ export const useFrontComponentExecutionContext = ({
 
   const captureMedia: FrontComponentHostCommunicationApi['captureMedia'] =
     async (params) => {
-      // Params come from sandboxed application code: validate them as
-      // untrusted input before they reach the capture modal.
+      // Params come from sandboxed application code: reject malformed shapes
+      // here; numeric normalization is owned by the media-capture module.
       if (
         !isDefined(params) ||
         (params.mediaType !== 'audio' && params.mediaType !== 'video')
@@ -376,26 +374,15 @@ export const useFrontComponentExecutionContext = ({
         return { status: 'failed', reason: 'unknown' };
       }
 
-      const fieldMetadataId = isNonEmptyString(params.fieldMetadataId)
-        ? params.fieldMetadataId
-        : undefined;
-
-      const requestedMaxDurationSeconds =
-        isNumber(params.maxDurationSeconds) &&
-        Number.isFinite(params.maxDurationSeconds)
-          ? params.maxDurationSeconds
-          : FRONT_COMPONENT_MEDIA_CAPTURE_DEFAULT_MAX_DURATION_SECONDS;
-
-      const maxDurationSeconds = Math.min(
-        Math.max(Math.floor(requestedMaxDurationSeconds), 1),
-        FRONT_COMPONENT_MEDIA_CAPTURE_MAX_DURATION_SECONDS,
-      );
-
       return await requestMediaCapture({
         frontComponentId,
         mediaType: params.mediaType,
-        fieldMetadataId,
-        maxDurationSeconds,
+        fieldMetadataId: isNonEmptyString(params.fieldMetadataId)
+          ? params.fieldMetadataId
+          : undefined,
+        maxDurationSeconds: isNumber(params.maxDurationSeconds)
+          ? params.maxDurationSeconds
+          : undefined,
       });
     };
 

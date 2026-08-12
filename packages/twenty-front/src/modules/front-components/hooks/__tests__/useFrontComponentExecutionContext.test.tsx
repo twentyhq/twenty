@@ -950,7 +950,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
 
-    it('should forward a valid request with the default max duration', async () => {
+    it('should forward a valid request to the media capture module', async () => {
       mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
 
       const { result } = renderUseFrontComponentExecutionContext({
@@ -967,12 +967,12 @@ describe('useFrontComponentExecutionContext', () => {
         frontComponentId: FRONT_COMPONENT_ID,
         mediaType: 'audio',
         fieldMetadataId: undefined,
-        maxDurationSeconds: 300,
+        maxDurationSeconds: undefined,
       });
       expect(captureResult).toEqual({ status: 'cancelled' });
     });
 
-    it('should clamp the requested max duration to the allowed ceiling', async () => {
+    it('should drop a non-numeric max duration', async () => {
       mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
 
       const { result } = renderUseFrontComponentExecutionContext({
@@ -982,14 +982,16 @@ describe('useFrontComponentExecutionContext', () => {
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.captureMedia({
           mediaType: 'video',
-          maxDurationSeconds: 999999,
-        });
+          maxDurationSeconds: '120',
+        } as unknown as Parameters<
+          typeof result.current.frontComponentHostCommunicationApi.captureMedia
+        >[0]);
       });
 
       expect(mockRequestMediaCapture).toHaveBeenCalledWith(
         expect.objectContaining({
           mediaType: 'video',
-          maxDurationSeconds: 600,
+          maxDurationSeconds: undefined,
         }),
       );
     });

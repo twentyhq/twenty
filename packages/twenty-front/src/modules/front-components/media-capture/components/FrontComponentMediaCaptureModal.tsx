@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { type CaptureMediaResult } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
@@ -8,13 +8,16 @@ import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureModalInstanceId';
+import { useFrontComponentMediaRecorder } from '@/front-components/media-capture/hooks/useFrontComponentMediaRecorder';
 import { type FrontComponentMediaCaptureRequest } from '@/front-components/media-capture/states/frontComponentMediaCaptureRequestState';
-import { formatSecondsAsTimer } from '@/front-components/media-capture/utils/formatSecondsAsTimer';
 import { getMediaCaptureFileExtension } from '@/front-components/media-capture/utils/getMediaCaptureFileExtension';
-import { mapMediaCaptureErrorToFailureReason } from '@/front-components/media-capture/utils/mapMediaCaptureErrorToFailureReason';
-import { pickSupportedMediaRecorderMimeType } from '@/front-components/media-capture/utils/pickSupportedMediaRecorderMimeType';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
-import { StyledCenteredButton } from '@/ui/layout/modal/components/ConfirmationModal';
+import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
+import {
+  StyledCenteredButton,
+  StyledCenteredTitle,
+  StyledSectionContainer,
+} from '@/ui/layout/modal/components/ConfirmationModal';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { FileFolder } from '~/generated-metadata/graphql';
 
@@ -24,14 +27,6 @@ type FrontComponentMediaCaptureModalProps = {
 };
 
 type MediaCaptureStep = 'consent' | 'recording' | 'preview' | 'uploading';
-
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-`;
-
-const StyledSectionContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[6]};
-`;
 
 const StyledRecordingRow = styled.div`
   align-items: center;
@@ -76,227 +71,56 @@ export const FrontComponentMediaCaptureModal = ({
   const { uploadFile } = useDirectFileUpload();
 
   const [step, setStep] = useState<MediaCaptureStep>('consent');
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
-  const [recordedBlobUrl, setRecordedBlobUrl] = useState<string | null>(null);
-
-  // The refs below hold imperative recording handles and bookkeeping shared
-  // with MediaRecorder listeners; they never drive rendering.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const recordedChunksRef = useRef<Blob[]>([]);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const recordedBlobUrlRef = useRef<string | null>(null);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const elapsedIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
-    null,
-  );
-  // oxlint-disable-next-line twenty/no-state-useref
-  const recordingStartedAtRef = useRef<number>(0);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const finalDurationSecondsRef = useRef<number>(0);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const hasEmittedResultRef = useRef(false);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const isStartingRecordingRef = useRef(false);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const liveVideoPreviewRef = useRef<HTMLVideoElement | null>(null);
-
-  const isAudioCapture = mediaCaptureRequest.mediaType === 'audio';
-
-  const stopMediaStream = () => {
-    mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
-    mediaStreamRef.current = null;
-  };
-
-  const clearElapsedInterval = () => {
-    if (isDefined(elapsedIntervalRef.current)) {
-      clearInterval(elapsedIntervalRef.current);
-      elapsedIntervalRef.current = null;
-    }
-  };
-
-  const revokeRecordedBlobUrl = () => {
-    if (isDefined(recordedBlobUrlRef.current)) {
-      URL.revokeObjectURL(recordedBlobUrlRef.current);
-      recordedBlobUrlRef.current = null;
-    }
-  };
 
   // The capture result must be emitted exactly once: a cancel racing an
   // in-flight upload would otherwise resolve the same request twice.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const hasEmittedResultRef = useRef(false);
+
+  const isAudioCapture = mediaCaptureRequest.mediaType === 'audio';
+
+  const {
+    elapsedSeconds,
+    recordedBlob,
+    recordedBlobUrl,
+    liveVideoPreviewRef,
+    startRecording,
+    stopRecording,
+    discardRecording,
+    releaseRecorderResources,
+    getRecordingDurationSeconds,
+  } = useFrontComponentMediaRecorder({
+    mediaType: mediaCaptureRequest.mediaType,
+    maxDurationSeconds: mediaCaptureRequest.maxDurationSeconds,
+    isCaptureSettled: () => hasEmittedResultRef.current,
+    onRecordingReady: () => setStep('preview'),
+    onRecorderError: () => emitResult({ status: 'failed', reason: 'unknown' }),
+  });
+
   const emitResult = (result: CaptureMediaResult) => {
     if (hasEmittedResultRef.current) {
       return;
     }
     hasEmittedResultRef.current = true;
 
-    clearElapsedInterval();
-
-    if (mediaRecorderRef.current?.state === 'recording') {
-      mediaRecorderRef.current.stop();
-    }
-
-    stopMediaStream();
+    releaseRecorderResources();
     onResult(result);
   };
 
-  useEffect(() => {
-    return () => {
-      clearElapsedInterval();
-
-      if (mediaRecorderRef.current?.state === 'recording') {
-        mediaRecorderRef.current.stop();
-      }
-
-      stopMediaStream();
-      revokeRecordedBlobUrl();
-    };
-    // Cleanup only touches refs, so mount-scoped registration is safe.
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (
-      step === 'recording' &&
-      !isAudioCapture &&
-      isDefined(liveVideoPreviewRef.current) &&
-      isDefined(mediaStreamRef.current)
-    ) {
-      liveVideoPreviewRef.current.srcObject = mediaStreamRef.current;
-    }
-  }, [step, isAudioCapture]);
-
-  const handleStopRecording = () => {
-    finalDurationSecondsRef.current = Math.max(
-      1,
-      Math.round((Date.now() - recordingStartedAtRef.current) / 1000),
-    );
-
-    clearElapsedInterval();
-
-    if (mediaRecorderRef.current?.state === 'recording') {
-      mediaRecorderRef.current.stop();
-    }
-  };
-
   const handleStartRecording = async () => {
-    // Guarded through a ref: state updates are async, so a second click
-    // during the permission prompt would otherwise start a second stream
-    // and orphan the first one with the microphone still live.
-    if (isStartingRecordingRef.current || hasEmittedResultRef.current) {
-      return;
-    }
-    isStartingRecordingRef.current = true;
+    const startResult = await startRecording();
 
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia(
-        isAudioCapture ? { audio: true } : { audio: true, video: true },
-      );
-
-      // The request may have been cancelled while the permission prompt was
-      // open; adopting the stream now would leave the device recording.
-      if (hasEmittedResultRef.current) {
-        mediaStream.getTracks().forEach((track) => track.stop());
-
-        return;
-      }
-
-      stopMediaStream();
-      mediaStreamRef.current = mediaStream;
-
-      const preferredMimeType = pickSupportedMediaRecorderMimeType(
-        mediaCaptureRequest.mediaType,
-        (mimeType) => MediaRecorder.isTypeSupported(mimeType),
-      );
-
-      const mediaRecorder = new MediaRecorder(
-        mediaStream,
-        isDefined(preferredMimeType)
-          ? { mimeType: preferredMimeType }
-          : undefined,
-      );
-
-      mediaRecorderRef.current = mediaRecorder;
-      recordedChunksRef.current = [];
-
-      mediaRecorder.addEventListener('dataavailable', (event) => {
-        if (event.data.size > 0) {
-          recordedChunksRef.current.push(event.data);
-        }
-      });
-
-      // Without this a recorder failure would strand the capture request:
-      // no 'preview' step is reached and the worker promise never settles.
-      mediaRecorder.addEventListener('error', () => {
-        clearElapsedInterval();
-        stopMediaStream();
-        emitResult({ status: 'failed', reason: 'unknown' });
-      });
-
-      mediaRecorder.addEventListener('stop', () => {
-        stopMediaStream();
-        clearElapsedInterval();
-
-        if (hasEmittedResultRef.current) {
-          return;
-        }
-
-        const blobMimeType =
-          mediaRecorder.mimeType ||
-          (isAudioCapture ? 'audio/webm' : 'video/webm');
-        const blob = new Blob(recordedChunksRef.current, {
-          type: blobMimeType,
-        });
-
-        revokeRecordedBlobUrl();
-        const blobUrl = URL.createObjectURL(blob);
-        recordedBlobUrlRef.current = blobUrl;
-
-        setRecordedBlob(blob);
-        setRecordedBlobUrl(blobUrl);
-        setStep('preview');
-      });
-
-      recordingStartedAtRef.current = Date.now();
-      finalDurationSecondsRef.current = 0;
-      setElapsedSeconds(0);
-
-      // A one second timeslice bounds how much recording is lost if the
-      // recorder errors mid-way, without flooding the chunk list.
-      mediaRecorder.start(1000);
-
-      elapsedIntervalRef.current = setInterval(() => {
-        const nextElapsedSeconds = Math.floor(
-          (Date.now() - recordingStartedAtRef.current) / 1000,
-        );
-
-        setElapsedSeconds(nextElapsedSeconds);
-
-        if (nextElapsedSeconds >= mediaCaptureRequest.maxDurationSeconds) {
-          handleStopRecording();
-        }
-      }, 250);
-
+    if (startResult.outcome === 'started') {
       setStep('recording');
-    } catch (error) {
-      stopMediaStream();
-      emitResult({
-        status: 'failed',
-        reason: mapMediaCaptureErrorToFailureReason(error),
-      });
-    } finally {
-      isStartingRecordingRef.current = false;
+    }
+
+    if (startResult.outcome === 'failed') {
+      emitResult({ status: 'failed', reason: startResult.reason });
     }
   };
 
   const handleRecordAgain = () => {
-    revokeRecordedBlobUrl();
-    setRecordedBlob(null);
-    setRecordedBlobUrl(null);
+    discardRecording();
     setStep('consent');
   };
 
@@ -308,12 +132,8 @@ export const FrontComponentMediaCaptureModal = ({
     setStep('uploading');
 
     try {
-      const mimeType =
-        recordedBlob.type.split(';')[0] ||
-        (isAudioCapture ? 'audio/webm' : 'video/webm');
-      const fileExtension = getMediaCaptureFileExtension(recordedBlob.type);
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `${mediaCaptureRequest.mediaType}-recording-${timestamp}.${fileExtension}`;
+      const filename = `${mediaCaptureRequest.mediaType}-recording-${timestamp}.${getMediaCaptureFileExtension(recordedBlob.type)}`;
 
       const recordedFile = new File([recordedBlob], filename, {
         type: recordedBlob.type,
@@ -333,8 +153,8 @@ export const FrontComponentMediaCaptureModal = ({
           path: uploadedFile.path,
           url: uploadedFile.url,
           size: uploadedFile.size,
-          mimeType,
-          durationSeconds: finalDurationSecondsRef.current,
+          mimeType: recordedBlob.type.split(';')[0],
+          durationSeconds: getRecordingDurationSeconds(),
         },
       });
     } catch {
@@ -357,6 +177,17 @@ export const FrontComponentMediaCaptureModal = ({
   const consentText = isAudioCapture
     ? t`An application in this workspace is asking to record audio with your microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`
     : t`An application in this workspace is asking to record video with your camera and microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`;
+
+  const cancelButton = (
+    <StyledCenteredButton
+      onClick={handleCancel}
+      variant="secondary"
+      title={t`Cancel`}
+      fullWidth
+      justify="center"
+      dataTestId="media-capture-modal-cancel-button"
+    />
+  );
 
   return (
     <ModalStatefulWrapper
@@ -386,14 +217,7 @@ export const FrontComponentMediaCaptureModal = ({
               {consentText}
             </Section>
           </StyledSectionContainer>
-          <StyledCenteredButton
-            onClick={handleCancel}
-            variant="secondary"
-            title={t`Cancel`}
-            fullWidth
-            justify="center"
-            dataTestId="media-capture-modal-cancel-button"
-          />
+          {cancelButton}
           <StyledCenteredButton
             onClick={handleStartRecording}
             variant="primary"
@@ -419,20 +243,15 @@ export const FrontComponentMediaCaptureModal = ({
           <StyledRecordingRow>
             <StyledRecordingDot />
             <StyledTimer>
-              {formatSecondsAsTimer(elapsedSeconds)} /{' '}
-              {formatSecondsAsTimer(mediaCaptureRequest.maxDurationSeconds)}
+              {formatCallRecordingTranscriptTimestamp(elapsedSeconds)} /{' '}
+              {formatCallRecordingTranscriptTimestamp(
+                mediaCaptureRequest.maxDurationSeconds,
+              )}
             </StyledTimer>
           </StyledRecordingRow>
+          {cancelButton}
           <StyledCenteredButton
-            onClick={handleCancel}
-            variant="secondary"
-            title={t`Cancel`}
-            fullWidth
-            justify="center"
-            dataTestId="media-capture-modal-cancel-button"
-          />
-          <StyledCenteredButton
-            onClick={handleStopRecording}
+            onClick={stopRecording}
             variant="primary"
             accent="danger"
             title={t`Stop recording`}
@@ -453,14 +272,7 @@ export const FrontComponentMediaCaptureModal = ({
             )}
             {step === 'preview' && (
               <>
-                <StyledCenteredButton
-                  onClick={handleCancel}
-                  variant="secondary"
-                  title={t`Cancel`}
-                  fullWidth
-                  justify="center"
-                  dataTestId="media-capture-modal-cancel-button"
-                />
+                {cancelButton}
                 <StyledCenteredButton
                   onClick={handleRecordAgain}
                   variant="secondary"

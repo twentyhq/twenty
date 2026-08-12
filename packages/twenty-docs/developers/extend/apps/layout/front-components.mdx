@@ -475,16 +475,18 @@ Front components can trigger navigation, modals, and notifications using functio
 | `enqueueSnackbar(params)` | Show a toast notification |
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
-| `captureMedia(params)` | Record audio or video with the device microphone or camera and upload the result |
+| `recordAudio(params?)` | Record audio with the device microphone and upload the result |
+| `recordVideo(params?)` | Record video with the device camera and microphone and upload the result |
+| `captureMedia(params)` | Generic form of the two functions above (`mediaType: 'audio' \| 'video'`) |
 
-### Capturing audio or video
+### Recording audio or video
 
-`captureMedia({ mediaType: 'audio' | 'video', maxDurationSeconds?, fieldMetadataId? })` opens a host-owned recorder: the user consents, records, reviews the result, and only then is the file uploaded. The component never touches the raw media stream.
+`recordAudio` and `recordVideo` open a host-owned recorder: the user consents, records, reviews the result, and only then is the file uploaded. The component never touches the raw media stream.
 
 ```tsx
-import { captureMedia } from 'twenty-sdk/front-component';
+import { recordAudio } from 'twenty-sdk/front-component';
 
-const result = await captureMedia({ mediaType: 'audio', maxDurationSeconds: 120 });
+const result = await recordAudio({ maxDurationSeconds: 120 });
 
 if (result.status === 'captured') {
   // result.file: { fileId, path, url, size, mimeType, durationSeconds }
