@@ -148,7 +148,7 @@ describe('InstallOnboardingAppsJob', () => {
     );
   });
 
-  it('should skip installing apps whose registration cannot be found but still credit the full count', async () => {
+  it('should credit only the apps that were actually installed when a registration cannot be found', async () => {
     jest
       .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
       .mockImplementation(async (universalIdentifier) =>
@@ -167,7 +167,7 @@ describe('InstallOnboardingAppsJob', () => {
 
     expect(onboardingService.creditInstallAppsReward).toHaveBeenCalledWith({
       workspaceId,
-      rewardAppsCount: 2,
+      rewardAppsCount: 1,
     });
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       1,

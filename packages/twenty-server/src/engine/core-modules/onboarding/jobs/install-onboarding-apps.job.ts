@@ -29,7 +29,7 @@ export class InstallOnboardingAppsJob {
     universalIdentifiers,
     userId,
   }: InstallOnboardingAppsJobData): Promise<void> {
-    let hasInstalledAnyApp = false;
+    let installedAppsCount = 0;
 
     for (const universalIdentifier of universalIdentifiers) {
       const hasInstalledApp = await this.installApp({
@@ -37,16 +37,18 @@ export class InstallOnboardingAppsJob {
         workspaceId,
       });
 
-      hasInstalledAnyApp = hasInstalledAnyApp || hasInstalledApp;
+      if (hasInstalledApp) {
+        installedAppsCount += 1;
+      }
     }
 
-    if (!hasInstalledAnyApp) {
+    if (installedAppsCount === 0) {
       return;
     }
 
     await this.onboardingService.creditInstallAppsReward({
       workspaceId,
-      rewardAppsCount: universalIdentifiers.length,
+      rewardAppsCount: installedAppsCount,
     });
 
     if (isDefined(userId)) {
