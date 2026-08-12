@@ -6402,6 +6402,7 @@ msgstr "Η διαγραφή αυτής της μεθόδου θα την αφα�
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "Καταργημένο"
 

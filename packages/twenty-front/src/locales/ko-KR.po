@@ -6402,6 +6402,7 @@ msgstr "이 방법을 삭제하면 계정에서 영구적으로 제거됩니다.
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "사용 중단됨"
 

@@ -6402,6 +6402,7 @@ msgstr "Smazáním této metody ji trvale odeberete ze svého účtu."
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "Zastaralé"
 

@@ -6402,6 +6402,7 @@ msgstr "Usunięcie tej metody spowoduje jej trwałe usunięcie z Twojego konta."
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "Przestarzałe"
 
