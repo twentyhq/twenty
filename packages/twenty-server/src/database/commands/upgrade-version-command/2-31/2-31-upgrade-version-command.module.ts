@@ -6,6 +6,7 @@ import { AddCalendarEventCallRecordingTabCommand } from 'src/database/commands/u
 import { ReconcileStandardRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437481000-reconcile-standard-record-page.command';
 import { ReconcileWorkspaceCustomRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437481500-reconcile-workspace-custom-record-page.command';
 import { BackfillRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437482000-backfill-record-page.command';
+import { TrimMessageCampaignRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786456707000-trim-message-campaign-record-page.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -26,6 +27,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ReconcileStandardRecordPageCommand,
     ReconcileWorkspaceCustomRecordPageCommand,
     BackfillRecordPageCommand,
+    TrimMessageCampaignRecordPageCommand,
   ],
 })
 export class V2_31_UpgradeVersionCommandModule {}

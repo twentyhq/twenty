@@ -344,6 +344,9 @@ export default {
             "applicationVariables": [
                 5
             ],
+            "frontComponentSharedDependenciesChecksum": [
+                1
+            ],
             "__typename": [
                 1
             ]

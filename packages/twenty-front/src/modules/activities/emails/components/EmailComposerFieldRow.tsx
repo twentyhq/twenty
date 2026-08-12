@@ -20,11 +20,12 @@ const StyledRow = styled.div`
   }
 `;
 
-const StyledLabel = styled.span`
+const StyledLabel = styled.span<{ $minWidth: string | undefined }>`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
+  min-width: ${({ $minWidth }) => $minWidth ?? 'auto'};
 `;
 
 const StyledContent = styled.div`
@@ -38,6 +39,9 @@ type EmailComposerFieldRowProps = {
   label: string;
   children: ReactNode;
   trailing?: ReactNode;
+  // A floor, not a fixed width: mixed-length labels line up without a long
+  // translation running underneath its control.
+  labelMinWidth?: string;
 };
 
 // The visible label is a plain span, so it cannot be associated with whatever
@@ -47,9 +51,12 @@ export const EmailComposerFieldRow = ({
   label,
   children,
   trailing,
+  labelMinWidth,
 }: EmailComposerFieldRowProps) => (
   <StyledRow role="group" aria-label={label}>
-    <StyledLabel aria-hidden="true">{label}</StyledLabel>
+    <StyledLabel aria-hidden="true" $minWidth={labelMinWidth}>
+      {label}
+    </StyledLabel>
     <StyledContent>{children}</StyledContent>
     {trailing}
   </StyledRow>

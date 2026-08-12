@@ -1,16 +1,16 @@
-export type HotVersionEntry<T> = {
-  state: 'hot';
+export type LiveVersionEntry<T> = {
+  state: 'live';
   data: T;
   lastReadAt: number;
 };
 
-export type ColdVersionEntry = {
-  state: 'cold';
+export type PackedVersionEntry = {
+  state: 'packed';
   blob: Buffer;
   lastReadAt: number;
 };
 
-export type VersionEntry<T> = HotVersionEntry<T> | ColdVersionEntry;
+export type VersionEntry<T> = LiveVersionEntry<T> | PackedVersionEntry;
 
 export type WorkspaceLocalCacheEntry<T> = {
   versions: Map<string, VersionEntry<T>>;

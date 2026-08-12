@@ -1,5 +1,6 @@
 import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ApplicationFileToStore = {
   relativePath: string;
@@ -51,6 +52,17 @@ export const buildApplicationFileList = (
         isRequired: true,
       },
     );
+  }
+
+  const sharedDependencies =
+    manifest.application.frontComponentSharedDependencies;
+
+  if (isDefined(sharedDependencies)) {
+    files.push({
+      relativePath: sharedDependencies.builtPath,
+      fileFolder: FileFolder.BuiltFrontComponent,
+      isRequired: true,
+    });
   }
 
   for (const publicAsset of manifest.publicAssets ?? []) {

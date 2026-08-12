@@ -18,7 +18,7 @@ import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
-import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
+import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
@@ -79,7 +79,7 @@ export const slackAssistantWorkerHandler = async (
   };
 
   try {
-    const [{ conversationContext, requesterName }, workspaceBaseUrl] =
+    const [{ conversationMessages, requesterName }, workspaceBaseUrl] =
       await Promise.all([
         fetchSlackAssistantContext({
           slackChannelId,
@@ -92,10 +92,10 @@ export const slackAssistantWorkerHandler = async (
 
     const agentResult = await runSlackAssistantAgentWithStatus({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
-      prompt: buildSlackAssistantPrompt({
+      messages: buildSlackAssistantMessages({
         requestText,
         requesterName,
-        conversationContext,
+        conversationMessages,
         timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
         workspaceBaseUrl,
       }),
