@@ -12,9 +12,10 @@ import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/re
 const APPLICATION_ACTOR_SOURCE = 'APPLICATION';
 
 // Run-as is only earned by a message the member directed at the assistant: a
-// DM, a message carrying the bot mention, or a follow-up in a thread where the
-// assistant already replied. Without this, any thread post a member ever wrote
-// could be replayed as a request on their permissions.
+// DM, a message carrying the bot mention, or a follow-up in a thread where
+// this same member already mentioned the bot. The last leg is deliberately
+// personal: an earlier assistant reply to someone else must not turn another
+// member's casual thread post into a request on their permissions.
 const isMessageAddressedToBot = ({
   requestMessage,
   threadMessages,
@@ -34,7 +35,9 @@ const isMessageAddressedToBot = ({
     return false;
   }
 
-  if ((requestMessage.text ?? '').includes(`<@${assistantBotUserId}>`)) {
+  const botMention = `<@${assistantBotUserId}>`;
+
+  if ((requestMessage.text ?? '').includes(botMention)) {
     return true;
   }
 
@@ -42,8 +45,9 @@ const isMessageAddressedToBot = ({
 
   return threadMessages.some(
     (message) =>
-      message.user === assistantBotUserId &&
-      Number.parseFloat(message.ts ?? '') < requestTimestamp,
+      message.user === requestMessage.user &&
+      Number.parseFloat(message.ts ?? '') < requestTimestamp &&
+      (message.text ?? '').includes(botMention),
   );
 };
 

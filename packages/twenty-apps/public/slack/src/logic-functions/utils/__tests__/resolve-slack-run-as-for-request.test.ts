@@ -177,25 +177,50 @@ describe('resolveSlackRunAsForRequest', () => {
     expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
   });
 
-  it('should accept a mentionless follow-up in a thread the assistant already replied in', async () => {
+  it('should accept a mentionless follow-up when the member addressed the bot earlier in the thread', async () => {
     expect(
       await resolve({
         requestMessage: MENTIONLESS_MESSAGE,
         threadMessages: [
-          { ts: '1700000000.000100', user: BOT_USER_ID, text: 'Earlier answer' },
+          {
+            ts: '1700000000.000100',
+            user: SLACK_USER_ID,
+            text: `<@${BOT_USER_ID}> earlier question`,
+          },
           MENTIONLESS_MESSAGE,
         ],
       }),
     ).toBe('member-1');
   });
 
-  it('should not count an assistant reply that came after the message as addressing', async () => {
+  it('should refuse a mentionless post when only someone else addressed the bot in the thread', async () => {
+    expect(
+      await resolve({
+        requestMessage: MENTIONLESS_MESSAGE,
+        threadMessages: [
+          {
+            ts: '1700000000.000050',
+            user: 'U0SOMEONEELSE',
+            text: `<@${BOT_USER_ID}> a colleague's question`,
+          },
+          { ts: '1700000000.000100', user: BOT_USER_ID, text: 'Earlier answer' },
+          MENTIONLESS_MESSAGE,
+        ],
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should not count a mention that came after the message as addressing', async () => {
     expect(
       await resolve({
         requestMessage: MENTIONLESS_MESSAGE,
         threadMessages: [
           MENTIONLESS_MESSAGE,
-          { ts: '1700000000.000300', user: BOT_USER_ID, text: 'Later answer' },
+          {
+            ts: '1700000000.000300',
+            user: SLACK_USER_ID,
+            text: `<@${BOT_USER_ID}> later question`,
+          },
         ],
       }),
     ).toBeUndefined();
