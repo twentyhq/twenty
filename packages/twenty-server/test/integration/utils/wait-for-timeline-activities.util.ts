@@ -10,10 +10,10 @@ export const waitForTimelineActivities = async (
 ) => {
   await expectEventually(async () => {
     const [{ count }] = await global.testDataSource.query(
-      `SELECT count(*)::int AS count FROM "${TEST_SCHEMA_NAME}"."timelineActivity" WHERE "${targetColumnName}" = ANY($1)`,
+      `SELECT count(DISTINCT "${targetColumnName}")::int AS count FROM "${TEST_SCHEMA_NAME}"."timelineActivity" WHERE "${targetColumnName}" = ANY($1)`,
       [recordIds],
     );
 
-    expect(count).toBeGreaterThanOrEqual(recordIds.length);
+    expect(count).toBe(recordIds.length);
   });
 };
