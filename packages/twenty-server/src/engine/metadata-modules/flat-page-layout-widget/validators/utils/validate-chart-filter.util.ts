@@ -2,29 +2,24 @@ import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   FieldMetadataType,
-  type FilterableAndTSVectorFieldType,
   type UniversalChartFilter,
 } from 'twenty-shared/types';
 import {
   FILTER_OPERANDS_MAP,
   getFilterOperandsForFilterableFieldType,
+  getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 type UniversalChartRecordFilter = NonNullable<
   UniversalChartFilter['recordFilters']
 >[number];
-
-const isFilterableFieldType = (
-  fieldType: FieldMetadataType,
-): fieldType is FilterableAndTSVectorFieldType =>
-  fieldType in FILTER_OPERANDS_MAP;
 
 const getEffectiveFieldType = ({
   fieldType,
@@ -44,7 +39,7 @@ const validateChartRecordFilter = ({
 }: {
   recordFilter: UniversalChartRecordFilter;
   widgetTitle: string;
-  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+  flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 }): FlatPageLayoutWidgetValidationError[] => {
   const {
     fieldMetadataUniversalIdentifier,
@@ -88,12 +83,12 @@ const validateChartRecordFilter = ({
     relationTargetFieldType: relationTargetField?.type,
   });
 
-  if (!isFilterableFieldType(effectiveFieldType)) {
+  if (!(effectiveFieldType in FILTER_OPERANDS_MAP)) {
     return [];
   }
 
   const allowedOperands = getFilterOperandsForFilterableFieldType({
-    filterType: effectiveFieldType,
+    filterType: getFilterTypeFromFieldType(effectiveFieldType),
     subFieldName,
   });
 
@@ -146,7 +141,7 @@ export const validateChartFilter = ({
 }: {
   filter: UniversalChartFilter | undefined;
   widgetTitle: string;
-  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+  flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 }): FlatPageLayoutWidgetValidationError[] => {
   const recordFilters = filter?.recordFilters;
 

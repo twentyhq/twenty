@@ -4,9 +4,8 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
-import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateChartFilter } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
 const DATE_FIELD_UNIVERSAL_IDENTIFIER = '20202020-1111-4111-8111-000000000001';
 const SELECT_FIELD_UNIVERSAL_IDENTIFIER =
@@ -19,14 +18,12 @@ const UNKNOWN_FIELD_UNIVERSAL_IDENTIFIER =
 const flatFieldMetadata = (
   universalIdentifier: string,
   type: FieldMetadataType,
-) =>
-  ({
-    id: universalIdentifier,
-    universalIdentifier,
-    type,
-    label: 'Some field',
-    isActive: true,
-  }) as FlatFieldMetadata;
+) => ({
+  universalIdentifier,
+  type,
+  label: 'Some field',
+  isActive: true,
+});
 
 const flatFieldMetadataMaps = {
   byUniversalIdentifier: {
@@ -43,9 +40,7 @@ const flatFieldMetadataMaps = {
       FieldMetadataType.RELATION,
     ),
   },
-  universalIdentifierById: {},
-  universalIdentifiersByApplicationId: {},
-} as unknown as MetadataFlatEntityMaps<'fieldMetadata'>;
+} as unknown as MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 
 const validateFilter = (recordFilters: UniversalChartFilter['recordFilters']) =>
   validateChartFilter({
@@ -159,7 +154,11 @@ describe('validateChartFilter', () => {
 
   it('should report a filter without any field reference', () => {
     const errors = validateFilter([
-      { operand: ViewFilterOperand.IS, value: 'anything' },
+      {
+        fieldMetadataUniversalIdentifier: null,
+        operand: ViewFilterOperand.IS,
+        value: 'anything',
+      },
     ]);
 
     expect(errors).toHaveLength(1);
