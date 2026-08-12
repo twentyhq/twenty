@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 Consulta la [sección de recursos públicos](/l/es/developers/extend/apps/config/public-assets) para más detalles.
 
+## Dependencias compartidas en los componentes frontales
+
+Por defecto, cada componente frontal agrupa su propia copia de las librerías que importa, por lo que una aplicación con cinco componentes viene React cinco veces. Declara las dependencias compartidas en el paquete `package de tu aplicación. son` para construir esas librerías una vez y tener cada componente de la aplicación cargarlas desde un solo archivo caché:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Cada componente importa sus dependencias exactamente como antes — nada cambia en su código de componente:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Algunas cosas que debes saber:
+
+* **Un paquete de dependencias compartidas por aplicación.** El paquete se construye a partir de las propias dependencias de tu aplicación, por lo que conservas el control total de las versiones que envías.
+* **Lista los especificadores exactos que importas.** `twenty-ui/input` y `twenty-ui/display` son dos entradas; un nombre de paquete solo no cubre sus subrutas. La lista `react` cubre automáticamente `react/jsx-runtime`.
+* **Comparte `react-dom/client` junto a `react`.** Cada componente renderiza a través de `createRoot`, así que dejarlo fuera significa que cada componente todavía incluye React DOM.
+* \*\*El paquete está en caché. \* Se sirve bajo una URL de contenido hash con un caché inmutable de larga duración, para que se descargue una vez y se vuelva a utilizar a través de todos los componentes de la aplicación hasta que una de sus dependencias cambie.
+* **Los componentes que no importan ninguno de los paquetes compartidos nunca lo descargan.**
+
 ## Estilo
 
 Los componentes de frontend admiten varios enfoques de estilos. Puedes usar:

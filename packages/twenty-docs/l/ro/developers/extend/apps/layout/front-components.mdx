@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 Consultați [secțiunea despre resurse publice](/l/ro/developers/extend/apps/config/public-assets) pentru detalii.
 
+## Partajare dependențe între componentele din față
+
+În mod implicit, fiecare componentă din față grupează propria copie a bibliotecilor pe care le importă, astfel încât o aplicație cu cinci componente expediază React de cinci ori. Declară dependențe partajate în fișierul `pachet al aplicației tale. son` pentru a construi acele biblioteci o dată și a avea fiecare componentă a aplicației să le încarce dintr-un singur fișier cache:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Fiecare componentă importă apoi dependențele sale exact ca înainte - nimic nu modifică codul componentei tale:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Câteva lucruri de știut:
+
+* **Un pachet de dependențe partajate pentru fiecare aplicație.** Pachetul este construit din propriile dependențe ale aplicației dvs., așa că țineți controlul deplin asupra versiunilor pe care le expediați.
+* **Listați specificatorii pe care îi importați.** `douăzeci și ui/input` și `douăzeci și ui/afișează` sunt două intrări; doar un nume de pachet nu acoperă subcăile sale. Listarea `react` acoperă automat `react/jsx-runtime`.
+* **Distribuie `react-dom/client` alături de `react`.** Fiecare componentă redă prin `createRoot`, astfel lăsând-o înseamnă că fiecare componentă încă lipsește React DOM.
+* \*\*Pachetul este cacheat. \* Este servită sub un URL content-hash cu o geocutie mutabilă de lungă durată, astfel încât acesta este descărcat o dată și reutilizat pe toate componentele aplicației până când una dintre dependențele sale se schimbă.
+* **Componente care importă niciunul dintre pachetele partajate nu îl descarcă niciodată.**
+
 ## Stilizare
 
 Componentele front-end acceptă mai multe abordări de stilizare. Puteți folosi:

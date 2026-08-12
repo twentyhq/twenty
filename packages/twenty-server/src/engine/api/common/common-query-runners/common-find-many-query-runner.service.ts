@@ -35,6 +35,7 @@ import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
 import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
@@ -61,7 +62,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonFindManyOutput> {
     const {
-      repository,
       authContext,
       rolePermissionConfig,
       flatObjectMetadata,
@@ -71,9 +71,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       commonQueryParser,
     } = queryRunnerContext;
 
-    const queryBuilder = repository.createQueryBuilder(
-      flatObjectMetadata.nameSingular,
-    );
+    const readRepository = this.getReadRepository(queryRunnerContext);
+
+    const queryBuilder: ReadRecordQueryBuilder =
+      readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
@@ -220,7 +221,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
-      ? await aggregateQueryBuilder.getRawOne()
+      ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
       : undefined;
 
     if (isDefined(args.selectedFieldsResult.relations)) {

@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 Voir la [section sur les ressources publiques](/l/fr/developers/extend/apps/config/public-assets) pour plus de détails.
 
+## Partage des dépendances entre les composants frontaux
+
+Par défaut, chaque composant frontal contient sa propre copie des bibliothèques qu'il importe, donc une application avec cinq composants envoie React cinq fois. Déclarer les dépendances partagées dans le `package de votre application. son` pour construire ces bibliothèques une fois et que chaque composant de l'application les charge à partir d'un fichier mis en cache:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Chaque composant importe ensuite ses dépendances exactement comme avant, rien ne change dans le code de votre composant:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Quelques points à connaître :
+
+* **Un lot de dépendances partagées par application.** Le bundle est construit à partir des propres dépendances de votre application, de sorte que vous gardez le contrôle total des versions que vous envoyez.
+* **Lister les spécifications exactes que vous importez.** `vingt-ui/input` et `vingt-ui/display` sont deux entrées; un nom de paquet seul ne couvre pas ses sous-chemins. La liste `react` couvre automatiquement `react/jsx-runtime`.
+* **Partagez `react-dom/client` avec `react`.** Chaque composant est rendu via `createRoot`, donc le laisser dehors signifie que chaque composant contient toujours React DOM.
+* \*\*Le bundle est mis en cache. \* Il est servi sous une URL de hachage de contenu avec une cache immuable de longue durée, ainsi il est téléchargé une fois et réutilisé dans tous les composants de l'application jusqu'à ce que l'une de ses dépendances change.
+* **Les composants qui n'importent aucun des paquets partagés ne le téléchargent jamais.**
+
 ## Stylisation
 
 Les composants frontaux prennent en charge plusieurs approches de stylisation. Vous pouvez utiliser :
