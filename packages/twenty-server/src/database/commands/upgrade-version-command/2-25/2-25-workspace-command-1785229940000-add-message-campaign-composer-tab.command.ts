@@ -77,18 +77,6 @@ const HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
       .universalIdentifier,
   );
 
-const HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER =
-  toPre231RecordPageUniversalIdentifier(
-    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.widgets.details
-      .universalIdentifier,
-  );
-
-const HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER =
-  toPre231RecordPageUniversalIdentifier(
-    MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.widgets.list
-      .universalIdentifier,
-  );
-
 const HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER =
   toPre231RecordPageUniversalIdentifier(
     MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.widgets.recipients
@@ -172,15 +160,17 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         ],
       });
 
+    // Every identifier here must still exist in the standard layout:
+    // getStandardFlatEntitiesToCreateOrThrow resolves against the current
+    // standard maps and throws when one is absent, failing the upgrade for
+    // every workspace crossing this version.
     const pageLayoutWidgetsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutWidget>({
         standardFlatEntityMaps:
           standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
         universalIdentifiers: [
-          HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER,
           COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER,
-          HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
           HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
           HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
         ],
@@ -234,9 +224,7 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         : [];
 
     const pageLayoutWidgetsToUpdate = [
-      HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER,
       HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-      HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
       HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
     ]
       .map((universalIdentifier) => {

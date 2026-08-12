@@ -231,7 +231,10 @@ export const NoResultsSearchFallback: Story = {
     const searchInput = await canvas.findByTestId(SIDE_PANEL_FOCUS_ID);
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'input without results');
-    expect(await canvas.findByText('No results found')).toBeVisible();
+    expect(await canvas.findByText('Fallback')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
+    });
   },
   parameters: {
     msw: {

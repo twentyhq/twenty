@@ -34,6 +34,7 @@ type FrontComponentRendererProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -48,6 +49,7 @@ export const FrontComponentRenderer = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sharedDependenciesUrl,
   applicationVariables,
   executionContext,
   frontComponentHostCommunicationApi,
@@ -73,6 +75,7 @@ export const FrontComponentRenderer = ({
           apiUrl={apiUrl}
           functionsBaseUrl={functionsBaseUrl}
           sdkClientUrls={sdkClientUrls}
+          sharedDependenciesUrl={sharedDependenciesUrl}
           applicationVariables={applicationVariables}
           geometryTracker={geometryTracker}
           setReceiver={setReceiver}

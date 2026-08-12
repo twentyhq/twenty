@@ -131,7 +131,7 @@ describe('ResourceCreditService', () => {
         'sub_123',
       );
 
-      expect(result).toEqual({ tierQuantity: 5000, unitPriceCents: 5 });
+      expect(result).toEqual({ tierQuantity: 5000 });
     });
 
     it('returns null when subscription not found', async () => {
