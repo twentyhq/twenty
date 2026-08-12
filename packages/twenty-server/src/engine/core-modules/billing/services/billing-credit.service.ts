@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
+import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -72,49 +73,26 @@ export class BillingCreditService {
     );
   }
 
-  // Inside the lock, not before it: a grant that waited behind a period
-  // transition would otherwise carry the period the wait started in, so it
-  // would land already expired while its amount still went onto the counter
-  // for the period that had meanwhile opened.
-  private async resolveGrantValidity(
-    params: GrantCreditsParams,
-  ): Promise<{ effectiveAt: Date; expiresAt: Date }> {
-    const effectiveAt = params.effectiveAt ?? new Date();
-
-    if (isDefined(params.expiresAt)) {
-      return { effectiveAt, expiresAt: params.expiresAt };
-    }
-
-    // Only needed to default the validity window; callers that supply their own
-    // (the period transition) would otherwise pay for a three-table join.
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId: params.workspaceId,
-      });
-
-    // A lapsed subscription still carries the period that just ended, and
-    // that is exactly the workspace someone is most likely to be granting
-    // credits to. Falling back keeps the grant from expiring on creation.
-    const currentPeriodEnd = isDefined(subscription)
-      ? getBillingSubscriptionPeriod(subscription).periodEnd
-      : null;
-    const hasUsablePeriodEnd =
-      isDefined(currentPeriodEnd) &&
-      currentPeriodEnd.getTime() > effectiveAt.getTime();
-
-    return {
-      effectiveAt,
-      expiresAt: hasUsablePeriodEnd
-        ? currentPeriodEnd
-        : addDays(effectiveAt, PROVISIONAL_GRANT_VALIDITY_IN_DAYS),
-    };
-  }
-
   private async writeGrantAndRefreshState(
     params: GrantCreditsParams,
   ): Promise<BillingCreditGrantEntity | null> {
     const { workspaceId, amountMicro } = params;
-    const { effectiveAt, expiresAt } = await this.resolveGrantValidity(params);
+
+    // Read once for the whole write: the validity window and the state refresh
+    // both need it, and both run inside the lock. Reading it here rather than
+    // before the lock is what keeps a grant that waited behind a period
+    // transition from carrying the period the wait started in, which would
+    // land it already expired while its amount still went onto the counter for
+    // the period that had meanwhile opened.
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      });
+
+    const { effectiveAt, expiresAt } = resolveGrantValidity(
+      params,
+      subscription,
+    );
 
     await this.billingCreditGrantService.materializeLegacyBalance({
       workspaceId,
@@ -147,7 +125,8 @@ export class BillingCreditService {
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
-        rebuildCounter: true,
+        isReplay: true,
+        subscription,
       });
 
       return null;
@@ -156,6 +135,7 @@ export class BillingCreditService {
     await this.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: amountMicro,
+      subscription,
     });
 
     return grant;
@@ -197,26 +177,23 @@ export class BillingCreditService {
         revokedByUserId,
       });
 
+    const adjustmentKey = buildRevocationAdjustmentKey(grantId);
+
     // A retried revocation must not take the same credits off the usage
     // counter twice, which would block a workspace that still has credits.
     // Whether the attempt that did revoke got as far as the counter is
-    // recorded, so a retry can tell the two apart: already applied means
-    // repair the rest and leave the counter alone, never applied means rebuild
-    // from the ledger. Guessing either way is wrong, since always rebuilding
-    // freezes ClickHouse lag in as extra credit on every double click and
-    // never rebuilding leaves revoked credits spendable until the period ends.
+    // recorded under adjustmentKey, so the refresh can tell the two apart:
+    // already applied means repair the rest and leave the counter alone, never
+    // applied means rebuild from the ledger. Guessing either way is wrong,
+    // since always rebuilding freezes ClickHouse lag in as extra credit on
+    // every double click and never rebuilding leaves revoked credits spendable
+    // until the period ends.
     if (!wasRevokedNow) {
-      const wasCounterAdjusted =
-        await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
-          workspaceId,
-          buildRevocationAdjustmentKey(grantId),
-        );
-
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
-        rebuildCounter: !wasCounterAdjusted,
-        adjustmentKey: buildRevocationAdjustmentKey(grantId),
+        isReplay: true,
+        adjustmentKey,
       });
 
       return grant;
@@ -235,28 +212,26 @@ export class BillingCreditService {
     await this.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: wasActiveWhenRevoked ? -grant.amountMicro : 0,
-      adjustmentKey: buildRevocationAdjustmentKey(grantId),
+      adjustmentKey,
     });
 
     return grant;
   }
 
-  async hasCounterAdjustmentBeenApplied({
-    workspaceId,
-    adjustmentKey,
-  }: {
-    workspaceId: string;
-    adjustmentKey: string;
-  }): Promise<boolean> {
-    return this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
-      workspaceId,
-      adjustmentKey,
-    );
-  }
-
   private async syncMirrorBalance(workspaceId: string): Promise<number> {
     const activeCreditsMicro =
       await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
+
+    // Until the backfill reaches a workspace the column is still the only copy
+    // of its balance, and an empty ledger sums to zero. Callers materialize the
+    // legacy balance before writing, but the guard belongs here too rather than
+    // resting on an ordering contract between services.
+    if (
+      activeCreditsMicro === 0 &&
+      !(await this.billingCreditGrantService.hasAnyGrant(workspaceId))
+    ) {
+      return 0;
+    }
 
     await this.billingCustomerRepository.update(
       workspaceId,
@@ -276,25 +251,27 @@ export class BillingCreditService {
   async refreshWorkspaceCreditState({
     workspaceId,
     availableDeltaMicro,
-    rebuildCounter = false,
-    shouldClearCap = availableDeltaMicro > 0,
+    isReplay = false,
     adjustmentKey,
+    subscription: knownSubscription,
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
-    // Recomputes the counter from the ledger rather than moving it by a delta,
-    // for repairs where how far the original attempt got is unknowable.
-    rebuildCounter?: boolean;
-    shouldClearCap?: boolean;
+    // A replay cannot know how far the original attempt got, so the counter is
+    // recomputed from the ledger unless adjustmentKey says it already moved.
+    isReplay?: boolean;
     // Names a one-off adjustment so a retry can see it already landed.
     adjustmentKey?: string;
+    // Saves a re-read for a caller that already has it in hand.
+    subscription?: BillingSubscriptionEntity;
   }): Promise<void> {
     const activeCreditsMicro = await this.syncMirrorBalance(workspaceId);
 
     const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
+      knownSubscription ??
+      (await this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
-      });
+      }));
 
     if (!isDefined(subscription)) {
       return;
@@ -306,53 +283,37 @@ export class BillingCreditService {
     // key the gate never reads.
     const periodStart = subscription.currentPeriodStart;
 
+    const rebuildCounter =
+      isReplay &&
+      (!isDefined(adjustmentKey) ||
+        !(await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
+          workspaceId,
+          adjustmentKey,
+        )));
+
     if (rebuildCounter) {
       await this.billingUsageCacheService.invalidateAvailableCredits(
         workspaceId,
         periodStart,
       );
-
-      if (isDefined(adjustmentKey)) {
-        await this.billingUsageCacheService.markCounterAdjustmentApplied(
-          workspaceId,
-          adjustmentKey,
-          subscription.currentPeriodEnd,
-        );
-      }
-
-      // A replayed grant may since have been revoked or expired, so the cap
-      // follows what the ledger actually holds rather than the caller's
-      // assumption.
-      return this.clearCapAndSubscriptionCache(workspaceId, {
-        shouldClearCap: activeCreditsMicro > 0,
-      });
-    }
-
-    // Adjusting the warm counter instead of flushing it avoids recomputing
-    // from ClickHouse while its async inserts for recent usage are still
-    // landing, which would credit the workspace for usage it already spent.
-    if (availableDeltaMicro !== 0) {
+    } else if (availableDeltaMicro !== 0) {
+      // Adjusting the warm counter instead of flushing it avoids recomputing
+      // from ClickHouse while its async inserts for recent usage are still
+      // landing, which would credit the workspace for usage it already spent.
       const cachedAvailableCredits =
         await this.billingUsageCacheService.getAvailableCredits(
           workspaceId,
           periodStart,
         );
 
+      // Nothing to do when the counter is cold. A reader can only warm it while
+      // holding this same lock, so it cannot be mid-computation now, and the
+      // next one to take the lock reads a ledger that already has this write.
       if (isDefined(cachedAvailableCredits)) {
         await this.billingUsageCacheService.adjustAvailableCredits(
           workspaceId,
           periodStart,
           availableDeltaMicro,
-        );
-      } else {
-        // Nothing to adjust, and a reader that missed the counter before this
-        // write landed is still free to warm it from a balance that predates
-        // the grant. That value would then stand until the period ends, so
-        // mark the counter unwarmable for a short while and let readers
-        // compute straight from the ledger until the marker lapses.
-        await this.billingUsageCacheService.markAvailableCreditsStale(
-          workspaceId,
-          periodStart,
         );
       }
     }
@@ -365,7 +326,13 @@ export class BillingCreditService {
       );
     }
 
-    return this.clearCapAndSubscriptionCache(workspaceId, { shouldClearCap });
+    // A rebuilt counter takes the cap from what the ledger actually holds,
+    // since a replayed grant may since have been revoked or expired.
+    return this.clearCapAndSubscriptionCache(workspaceId, {
+      shouldClearCap: rebuildCounter
+        ? activeCreditsMicro > 0
+        : availableDeltaMicro > 0,
+    });
   }
 
   private async clearCapAndSubscriptionCache(
@@ -388,3 +355,31 @@ export class BillingCreditService {
 // thing that can see it.
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
+
+const resolveGrantValidity = (
+  params: GrantCreditsParams,
+  subscription: BillingSubscriptionEntity | undefined,
+): { effectiveAt: Date; expiresAt: Date } => {
+  const effectiveAt = params.effectiveAt ?? new Date();
+
+  if (isDefined(params.expiresAt)) {
+    return { effectiveAt, expiresAt: params.expiresAt };
+  }
+
+  // A lapsed subscription still carries the period that just ended, and that is
+  // exactly the workspace someone is most likely to be granting credits to.
+  // Falling back keeps the grant from expiring on creation.
+  const currentPeriodEnd = isDefined(subscription)
+    ? getBillingSubscriptionPeriod(subscription).periodEnd
+    : null;
+  const hasUsablePeriodEnd =
+    isDefined(currentPeriodEnd) &&
+    currentPeriodEnd.getTime() > effectiveAt.getTime();
+
+  return {
+    effectiveAt,
+    expiresAt: hasUsablePeriodEnd
+      ? currentPeriodEnd
+      : addDays(effectiveAt, PROVISIONAL_GRANT_VALIDITY_IN_DAYS),
+  };
+};

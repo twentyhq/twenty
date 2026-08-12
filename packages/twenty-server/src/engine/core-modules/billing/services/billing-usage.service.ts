@@ -25,7 +25,10 @@ import { BillingUsageCapService } from 'src/engine/core-modules/billing/services
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { CacheLockException } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
+import {
+  CacheLockException,
+  CacheLockExceptionCode,
+} from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -34,6 +37,17 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 type UsageSumRow = {
   total: string | number | null;
+};
+
+type AvailableCreditsParams = {
+  workspaceId: string;
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+};
+
+type ResolvedAvailableCredits = {
+  availableCredits: number;
+  isCounterWarm: boolean;
 };
 
 // This gate runs before every credit-consuming execution, so it waits far less
@@ -277,95 +291,76 @@ export class BillingUsageService {
   // the cold path closes that; a hit returns before the lock, keeping the warm
   // path, which is the overwhelming majority of calls, free of Redis round
   // trips.
-  private async resolveAvailableCredits({
-    workspaceId,
-    currentPeriodStart,
-    currentPeriodEnd,
-  }: {
-    workspaceId: string;
-    currentPeriodStart: Date;
-    currentPeriodEnd: Date;
-  }): Promise<{ availableCredits: number; isCounterWarm: boolean }> {
-    const cachedAvailableCredits =
+  private async readWarmAvailableCredits(
+    params: AvailableCreditsParams,
+  ): Promise<ResolvedAvailableCredits | undefined> {
+    const availableCredits =
       await this.billingUsageCacheService.getAvailableCredits(
-        workspaceId,
-        currentPeriodStart,
+        params.workspaceId,
+        params.currentPeriodStart,
       );
 
-    if (isDefined(cachedAvailableCredits)) {
-      return { availableCredits: cachedAvailableCredits, isCounterWarm: true };
+    return isDefined(availableCredits)
+      ? { availableCredits, isCounterWarm: true }
+      : undefined;
+  }
+
+  private async resolveAvailableCredits(
+    params: AvailableCreditsParams,
+  ): Promise<ResolvedAvailableCredits> {
+    const warmAvailableCredits = await this.readWarmAvailableCredits(params);
+
+    if (isDefined(warmAvailableCredits)) {
+      return warmAvailableCredits;
     }
 
     try {
       return await this.cacheLockService.withLock(
-        async () => {
-          // Whoever held the lock may have been another reader that already
-          // warmed the counter, so this pays for ClickHouse only once.
-          const warmedAvailableCredits =
-            await this.billingUsageCacheService.getAvailableCredits(
-              workspaceId,
-              currentPeriodStart,
-            );
-
-          if (isDefined(warmedAvailableCredits)) {
-            return {
-              availableCredits: warmedAvailableCredits,
-              isCounterWarm: true,
-            };
-          }
-
-          return this.computeAndWarmAvailableCredits({
-            workspaceId,
-            currentPeriodStart,
-            currentPeriodEnd,
-          });
-        },
-        buildBillingCreditStateLockKey(workspaceId),
+        async () =>
+          // Another reader may have warmed it while this one waited, so a burst
+          // of cold reads pays for ClickHouse once rather than once each.
+          (await this.readWarmAvailableCredits(params)) ??
+          (await this.computeAndWarmAvailableCredits(params)),
+        buildBillingCreditStateLockKey(params.workspaceId),
         AVAILABLE_CREDITS_WARM_UP_LOCK_OPTIONS,
       );
     } catch (error) {
-      if (!(error instanceof CacheLockException)) {
+      if (
+        !(error instanceof CacheLockException) ||
+        error.code !== CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT
+      ) {
         throw error;
       }
 
-      // Blocking an execution because a grant is being written would be worse
-      // than the double count the lock exists to prevent, and the stale marker
-      // still stops a pre-grant balance being installed for the whole period.
+      // Failing the execution because a grant is being written would be worse
+      // than answering from a value this call computed itself. Deliberately
+      // does not warm: holding the lock is what makes installing a computed
+      // value safe, so the counter stays cold until an uncontended read.
       this.logger.warn(
-        `Computing available credits for workspace ${workspaceId} without the credit state lock: ${error.message}`,
+        `Computing available credits for workspace ${params.workspaceId} without the credit state lock: ${error.message}`,
       );
 
-      return this.computeAndWarmAvailableCredits({
-        workspaceId,
-        currentPeriodStart,
-        currentPeriodEnd,
-      });
+      return {
+        availableCredits: await this.getAvailableCreditsFromClickHouse(params),
+        isCounterWarm: false,
+      };
     }
   }
 
-  private async computeAndWarmAvailableCredits({
-    workspaceId,
-    currentPeriodStart,
-    currentPeriodEnd,
-  }: {
-    workspaceId: string;
-    currentPeriodStart: Date;
-    currentPeriodEnd: Date;
-  }): Promise<{ availableCredits: number; isCounterWarm: boolean }> {
-    const availableCredits = await this.getAvailableCreditsFromClickHouse({
-      workspaceId,
-      currentPeriodStart,
-    });
+  private async computeAndWarmAvailableCredits(
+    params: AvailableCreditsParams,
+  ): Promise<ResolvedAvailableCredits> {
+    const availableCredits =
+      await this.getAvailableCreditsFromClickHouse(params);
 
-    const isCounterWarm =
-      await this.billingUsageCacheService.warmAvailableCredits(
-        workspaceId,
-        currentPeriodStart,
-        currentPeriodEnd,
-        availableCredits,
-      );
+    await this.billingUsageCacheService.warmAvailableCredits(
+      params.workspaceId,
+      params.currentPeriodStart,
+      params.currentPeriodEnd,
+      availableCredits,
+    );
 
-    return { availableCredits, isCounterWarm };
+    return { availableCredits, isCounterWarm: true };
   }
 
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {

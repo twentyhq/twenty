@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -102,10 +103,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       handleClose();
     } catch (error) {
       enqueueErrorSnackBar({
-        message:
-          error instanceof Error
-            ? error.message
-            : t`Could not grant credits to this workspace.`,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };

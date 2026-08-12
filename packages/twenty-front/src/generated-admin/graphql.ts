@@ -310,10 +310,9 @@ export type ApplicationRegistrationVariableDto = {
 /** The origin of a batch of credits granted to a workspace */
 export enum BillingCreditGrantType {
   COMPENSATION = 'COMPENSATION',
-  MANUAL_ADJUSTMENT = 'MANUAL_ADJUSTMENT',
   ONBOARDING_REWARD = 'ONBOARDING_REWARD',
-  PARTNERSHIP = 'PARTNERSHIP',
-  ROLLOVER = 'ROLLOVER'
+  ROLLOVER = 'ROLLOVER',
+  SALES = 'SALES'
 }
 
 export enum ConfigSource {

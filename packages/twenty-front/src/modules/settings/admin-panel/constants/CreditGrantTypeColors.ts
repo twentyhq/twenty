@@ -7,8 +7,7 @@ export const CREDIT_GRANT_TYPE_COLORS: Record<
   ThemeColor
 > = {
   [BillingCreditGrantType.COMPENSATION]: 'orange',
-  [BillingCreditGrantType.PARTNERSHIP]: 'purple',
-  [BillingCreditGrantType.MANUAL_ADJUSTMENT]: 'gray',
+  [BillingCreditGrantType.SALES]: 'purple',
   [BillingCreditGrantType.ONBOARDING_REWARD]: 'blue',
   [BillingCreditGrantType.ROLLOVER]: 'green',
 };

@@ -4,17 +4,11 @@ import { Injectable } from '@nestjs/common';
 
 import { buildBillingUsageAvailableCreditsCacheKey } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-cache-key.util';
 import { buildBillingUsageAvailableCreditsCachePattern } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-cache-pattern.util';
-import { buildBillingUsageAvailableCreditsStaleMarkerKey } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-stale-marker-key.util';
-import { buildBillingUsageAvailableCreditsStaleMarkerPattern } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-stale-marker-pattern.util';
 import { buildBillingUsageCounterAdjustmentKey } from 'src/engine/core-modules/billing/utils/build-billing-usage-counter-adjustment-key.util';
 import { buildBillingUsageCounterAdjustmentPattern } from 'src/engine/core-modules/billing/utils/build-billing-usage-counter-adjustment-pattern.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-
-// Long enough to outlive an in-flight availability computation, short enough
-// that a workspace only reads through to ClickHouse briefly after a grant.
-const AVAILABLE_CREDITS_STALE_MARKER_TTL_MS = 60_000;
 
 @Injectable()
 export class BillingUsageCacheService {
@@ -32,28 +26,19 @@ export class BillingUsageCacheService {
     );
   }
 
-  // Skips the write while a grant has the counter marked stale, so a value
-  // computed before that grant landed cannot be installed for the rest of the
-  // period. Returns whether the counter is now warm.
+  // Callers must hold buildBillingCreditStateLockKey: that is what stops a
+  // value computed before a grant landed from being installed after it.
   async warmAvailableCredits(
     workspaceId: string,
     periodStart: Date | string,
     periodEnd: Date | string,
     availableCredits: number,
-  ): Promise<boolean> {
-    if (await this.isAvailableCreditsStale(workspaceId, periodStart)) {
-      return false;
-    }
-
-    const ttlMs = Math.max(new Date(periodEnd).getTime() - Date.now(), 0);
-
+  ): Promise<void> {
     await this.billingUsageCacheStorage.set(
       buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
       availableCredits,
-      ttlMs,
+      msUntil(periodEnd),
     );
-
-    return true;
   }
 
   async hasCounterAdjustmentBeenApplied(
@@ -72,35 +57,11 @@ export class BillingUsageCacheService {
     adjustmentKey: string,
     periodEnd: Date | string,
   ): Promise<void> {
-    const ttlMs = Math.max(new Date(periodEnd).getTime() - Date.now(), 0);
-
     await this.billingUsageCacheStorage.set(
       buildBillingUsageCounterAdjustmentKey(workspaceId, adjustmentKey),
       true,
-      ttlMs,
+      msUntil(periodEnd),
     );
-  }
-
-  async markAvailableCreditsStale(
-    workspaceId: string,
-    periodStart: Date | string,
-  ): Promise<void> {
-    await this.billingUsageCacheStorage.set(
-      buildBillingUsageAvailableCreditsStaleMarkerKey(workspaceId, periodStart),
-      true,
-      AVAILABLE_CREDITS_STALE_MARKER_TTL_MS,
-    );
-  }
-
-  private async isAvailableCreditsStale(
-    workspaceId: string,
-    periodStart: Date | string,
-  ): Promise<boolean> {
-    const marker = await this.billingUsageCacheStorage.get<boolean>(
-      buildBillingUsageAvailableCreditsStaleMarkerKey(workspaceId, periodStart),
-    );
-
-    return marker === true;
   }
 
   // Signed: usage moves it down, a grant moves it up.
@@ -130,18 +91,12 @@ export class BillingUsageCacheService {
     );
   }
 
-  // Separate from flushAvailableCredits on purpose: flushing the counters must
-  // not drop the markers, or a reader mid-computation could warm a pre-grant
-  // balance straight back in. Clearing them is for resetting state wholesale.
-  async flushAvailableCreditsStaleMarkers(workspaceId: string): Promise<void> {
-    await this.billingUsageCacheStorage.flushByPattern(
-      buildBillingUsageAvailableCreditsStaleMarkerPattern(workspaceId),
-    );
-  }
-
   async flushCounterAdjustmentMarkers(workspaceId: string): Promise<void> {
     await this.billingUsageCacheStorage.flushByPattern(
       buildBillingUsageCounterAdjustmentPattern(workspaceId),
     );
   }
 }
+
+const msUntil = (date: Date | string): number =>
+  Math.max(new Date(date).getTime() - Date.now(), 0);

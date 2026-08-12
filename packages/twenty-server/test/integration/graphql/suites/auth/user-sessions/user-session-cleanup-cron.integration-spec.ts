@@ -16,7 +16,8 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-const daysAgo = (days: number): Date => new Date(Date.now() - days * ONE_DAY_MS);
+const daysAgo = (days: number): Date =>
+  new Date(Date.now() - days * ONE_DAY_MS);
 const daysFromNow = (days: number): Date =>
   new Date(Date.now() + days * ONE_DAY_MS);
 
@@ -236,7 +237,9 @@ describe('user session cleanup cron (integration)', () => {
       expect(remainingIds).not.toContain(
         getSeededAppTokenId('refresh token revoked beyond retention'),
       );
-      expect(remainingIds).toContain(getSeededAppTokenId('active refresh token'));
+      expect(remainingIds).toContain(
+        getSeededAppTokenId('active refresh token'),
+      );
       expect(remainingIds).toContain(
         getSeededAppTokenId('refresh token expired within retention'),
       );

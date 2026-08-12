@@ -323,7 +323,10 @@ export class BillingCreditGrantService {
     };
   }
 
-  private async hasAnyGrant(workspaceId: string): Promise<boolean> {
+  // Whether the ledger has taken over from billingCustomer.creditBalanceMicro
+  // for this workspace. Public so the mirror write can refuse to overwrite a
+  // balance the backfill has not reached yet.
+  async hasAnyGrant(workspaceId: string): Promise<boolean> {
     return this.billingCreditGrantRepository.exists(workspaceId, { where: {} });
   }
 

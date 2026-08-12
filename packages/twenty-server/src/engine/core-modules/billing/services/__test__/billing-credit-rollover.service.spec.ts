@@ -41,7 +41,6 @@ describe('BillingCreditRolloverService', () => {
   }>;
   let billingCreditService: jest.Mocked<{
     refreshWorkspaceCreditState: jest.Mock;
-    hasCounterAdjustmentBeenApplied: jest.Mock;
   }>;
 
   beforeEach(async () => {
@@ -71,7 +70,6 @@ describe('BillingCreditRolloverService', () => {
           provide: BillingCreditService,
           useValue: {
             refreshWorkspaceCreditState: jest.fn().mockResolvedValue(undefined),
-            hasCounterAdjustmentBeenApplied: jest.fn().mockResolvedValue(false),
           },
         },
         {
@@ -153,15 +151,17 @@ describe('BillingCreditRolloverService', () => {
       ).toHaveBeenCalledWith({
         workspaceId,
         availableDeltaMicro: 0,
-        rebuildCounter: false,
+        isReplay: false,
         adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
       });
     });
 
     // A redelivery after the rows were inserted carries nothing forward, so a
     // delta of zero would leave the carried credits out of the counter for the
-    // whole period.
-    it('rebuilds the counter when the carry-forward grants were replayed', async () => {
+    // whole period. Whether the counter actually needs rebuilding is decided by
+    // the refresh, which owns the adjustment marker; the transition only
+    // reports that it saw a replay.
+    it('reports a replay when the carry-forward grants already existed', async () => {
       billingCreditGrantService.createGrant.mockResolvedValue(null);
 
       await service.processRolloverOnPeriodTransition(baseParams);
@@ -171,27 +171,7 @@ describe('BillingCreditRolloverService', () => {
       ).toHaveBeenCalledWith({
         workspaceId,
         availableDeltaMicro: 0,
-        rebuildCounter: true,
-        adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
-      });
-    });
-
-    // Stripe redelivers events it already handled, and rebuilding then would
-    // recompute from ClickHouse and credit back usage it has not ingested yet.
-    it('leaves the counter alone when the replayed transition already moved it', async () => {
-      billingCreditGrantService.createGrant.mockResolvedValue(null);
-      billingCreditService.hasCounterAdjustmentBeenApplied.mockResolvedValue(
-        true,
-      );
-
-      await service.processRolloverOnPeriodTransition(baseParams);
-
-      expect(
-        billingCreditService.refreshWorkspaceCreditState,
-      ).toHaveBeenCalledWith({
-        workspaceId,
-        availableDeltaMicro: 0,
-        rebuildCounter: false,
+        isReplay: true,
         adjustmentKey: ROLLOVER_ADJUSTMENT_KEY,
       });
     });

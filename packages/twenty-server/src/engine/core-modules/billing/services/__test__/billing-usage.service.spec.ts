@@ -98,7 +98,7 @@ describe('BillingUsageService', () => {
           provide: BillingUsageCacheService,
           useValue: {
             getAvailableCredits: jest.fn().mockResolvedValue(undefined),
-            warmAvailableCredits: jest.fn().mockResolvedValue(true),
+            warmAvailableCredits: jest.fn().mockResolvedValue(undefined),
             adjustAvailableCredits: jest.fn().mockResolvedValue(0),
           },
         },
@@ -185,9 +185,10 @@ describe('BillingUsageService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    // Blocking an execution because someone is writing a grant would be worse
-    // than the double count the lock guards against.
-    it('computes without the lock rather than failing when it cannot be acquired', async () => {
+    // Failing the execution because someone is writing a grant would be worse
+    // than answering from a value this call computed itself. It must not warm
+    // though: holding the lock is what makes installing a value safe.
+    it('computes without warming rather than failing when the lock times out', async () => {
       cacheLockService.withLock.mockRejectedValue(
         new CacheLockException(
           'Failed to acquire lock',
@@ -196,7 +197,9 @@ describe('BillingUsageService', () => {
       );
 
       expect(await service.hasAvailableCredits(workspaceId)).toBe(true);
-      expect(billingUsageCacheService.warmAvailableCredits).toHaveBeenCalled();
+      expect(
+        billingUsageCacheService.warmAvailableCredits,
+      ).not.toHaveBeenCalled();
     });
 
     it('propagates failures that are not a lock timeout', async () => {
@@ -223,10 +226,15 @@ describe('BillingUsageService', () => {
     });
 
     // Incrementing an absent key would install -usedCredits as the whole
-    // balance, so a counter the stale marker refuses to warm is only computed.
-    it('subtracts locally when the counter could not be warmed', async () => {
+    // balance, so a call that could not warm the counter only computes.
+    it('subtracts locally when the lock timed out and nothing was warmed', async () => {
       billingCreditGrantService.getSpendableCreditsMicro.mockResolvedValue(0);
-      billingUsageCacheService.warmAvailableCredits.mockResolvedValue(false);
+      cacheLockService.withLock.mockRejectedValue(
+        new CacheLockException(
+          'Failed to acquire lock',
+          CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT,
+        ),
+      );
 
       expect(
         await service.decrementAvailableCreditsInCache({

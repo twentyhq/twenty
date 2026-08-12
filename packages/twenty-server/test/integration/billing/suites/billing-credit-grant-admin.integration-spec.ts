@@ -150,7 +150,9 @@ describe('Admin credit grant and revoke (integration)', () => {
     });
 
     expect(revoked.body.errors).toBeUndefined();
-    expect(revoked.body.data.revokeWorkspaceCreditGrant.revokedAt).not.toBeNull();
+    expect(
+      revoked.body.data.revokeWorkspaceCreditGrant.revokedAt,
+    ).not.toBeNull();
 
     const grants = await listCreditGrants(workspaceId);
 

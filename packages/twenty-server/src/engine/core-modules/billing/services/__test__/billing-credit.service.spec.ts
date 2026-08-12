@@ -38,6 +38,7 @@ describe('BillingCreditService', () => {
     getActiveCreditsMicro: jest.Mock;
     revokeGrant: jest.Mock;
     materializeLegacyBalance: jest.Mock;
+    hasAnyGrant: jest.Mock;
   }>;
   let billingSubscriptionService: jest.Mocked<{
     getCurrentBillingSubscription: jest.Mock;
@@ -46,7 +47,6 @@ describe('BillingCreditService', () => {
     getAvailableCredits: jest.Mock;
     adjustAvailableCredits: jest.Mock;
     invalidateAvailableCredits: jest.Mock;
-    markAvailableCreditsStale: jest.Mock;
     hasCounterAdjustmentBeenApplied: jest.Mock;
     markCounterAdjustmentApplied: jest.Mock;
   }>;
@@ -72,6 +72,7 @@ describe('BillingCreditService', () => {
               .fn()
               .mockResolvedValue({ id: 'grant_1', amountMicro: 2_000_000 }),
             getActiveCreditsMicro: jest.fn().mockResolvedValue(2_000_000),
+            hasAnyGrant: jest.fn().mockResolvedValue(true),
             materializeLegacyBalance: jest.fn().mockResolvedValue(undefined),
             revokeGrant: jest.fn().mockResolvedValue({
               grant: {
@@ -99,7 +100,6 @@ describe('BillingCreditService', () => {
             getAvailableCredits: jest.fn().mockResolvedValue(undefined),
             adjustAvailableCredits: jest.fn().mockResolvedValue(0),
             invalidateAvailableCredits: jest.fn().mockResolvedValue(undefined),
-            markAvailableCreditsStale: jest.fn().mockResolvedValue(undefined),
             hasCounterAdjustmentBeenApplied: jest.fn().mockResolvedValue(false),
             markCounterAdjustmentApplied: jest
               .fn()
@@ -322,14 +322,20 @@ describe('BillingCreditService', () => {
     // A reader that missed the counter before the grant landed would otherwise
     // warm it from a balance predating the grant, and that value would stand
     // until the period ended.
-    it('marks the counter stale when there is none to adjust', async () => {
+    // A reader can only warm the counter while holding the same lock this
+    // write holds, so it cannot be mid-computation, and the next reader to take
+    // the lock sees a ledger that already contains this grant.
+    it('leaves a cold counter alone rather than seeding it', async () => {
       billingUsageCacheService.getAvailableCredits.mockResolvedValue(undefined);
 
       await service.grantCredits(params);
 
       expect(
-        billingUsageCacheService.markAvailableCreditsStale,
-      ).toHaveBeenCalledWith(workspaceId, PERIOD_START);
+        billingUsageCacheService.adjustAvailableCredits,
+      ).not.toHaveBeenCalled();
+      expect(
+        billingUsageCacheService.invalidateAvailableCredits,
+      ).not.toHaveBeenCalled();
     });
 
     it('no-ops when billing is disabled', async () => {

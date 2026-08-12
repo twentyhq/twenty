@@ -8,8 +8,7 @@ export const CREDIT_GRANT_TYPE_LABELS: Record<
   MessageDescriptor
 > = {
   [BillingCreditGrantType.COMPENSATION]: msg`Compensation`,
-  [BillingCreditGrantType.PARTNERSHIP]: msg`Partnership`,
-  [BillingCreditGrantType.MANUAL_ADJUSTMENT]: msg`Manual adjustment`,
+  [BillingCreditGrantType.SALES]: msg`Sales`,
   [BillingCreditGrantType.ONBOARDING_REWARD]: msg`Onboarding reward`,
   [BillingCreditGrantType.ROLLOVER]: msg`Rollover`,
 };

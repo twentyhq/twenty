@@ -180,9 +180,10 @@ export const getMirroredCreditBalance = async (
 export const resetBillingCreditState = async (
   workspaceId: string,
 ): Promise<void> => {
-  await query(`DELETE FROM core."billingCreditGrant" WHERE "workspaceId" = $1`, [
-    workspaceId,
-  ]);
+  await query(
+    `DELETE FROM core."billingCreditGrant" WHERE "workspaceId" = $1`,
+    [workspaceId],
+  );
   await query(
     `UPDATE core."billingCustomer" SET "creditBalanceMicro" = 0 WHERE "workspaceId" = $1`,
     [workspaceId],
@@ -190,10 +191,9 @@ export const resetBillingCreditState = async (
   const cache = getBillingUsageCacheService();
 
   await cache.flushAvailableCredits(workspaceId);
-  // Markers survive a counter flush by design, so a grant in one test would
-  // otherwise stop the next one warming its counter, and a transition in one
-  // test would make the next one read its own first delivery as a replay.
-  await cache.flushAvailableCreditsStaleMarkers(workspaceId);
+  // Adjustment markers outlive a counter flush by design, so a transition in
+  // one test would otherwise make the next one read its first delivery as a
+  // replay that had already moved the counter.
   await cache.flushCounterAdjustmentMarkers(workspaceId);
 };
 

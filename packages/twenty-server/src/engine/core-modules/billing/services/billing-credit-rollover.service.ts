@@ -156,23 +156,17 @@ export class BillingCreditRolloverService {
     // that wrote them got as far as the counter. Stripe also redelivers events
     // it already handled successfully, and rebuilding then would throw away a
     // correct warm counter and recompute it from ClickHouse, crediting back
-    // whatever usage has not been ingested yet. So the transition records that
-    // it moved the counter, and a replay rebuilds only when that is absent.
-    const adjustmentKey = buildRolloverAdjustmentKey(nextPeriodStart);
-    const hasAdjustedCounter = hasReplayedGrant
-      ? await this.billingCreditService.hasCounterAdjustmentBeenApplied({
-          workspaceId,
-          adjustmentKey,
-        })
-      : false;
-
+    // whatever usage has not been ingested yet. So the transition records under
+    // adjustmentKey that it moved the counter, and the refresh rebuilds only
+    // when that record is absent.
+    //
     // Runs unconditionally: closing the old grants moves the balance on its
     // own, so a period where everything was spent still needs the refresh.
     await this.billingCreditService.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: carriedForwardMicro,
-      rebuildCounter: hasReplayedGrant && !hasAdjustedCounter,
-      adjustmentKey,
+      isReplay: hasReplayedGrant,
+      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
     });
   }
 }

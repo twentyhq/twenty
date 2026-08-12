@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -76,7 +77,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 
   const [grantPendingRevocation, setGrantPendingRevocation] =
     useState<CreditGrant | null>(null);
-  const [revokingGrantId, setRevokingGrantId] = useState<string | null>(null);
+  const [isRevoking, setIsRevoking] = useState(false);
 
   const [revokeWorkspaceCreditGrant] = useMutation(
     REVOKE_WORKSPACE_CREDIT_GRANT,
@@ -95,7 +96,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
     // The refetch that clears the row lands well after the mutation resolves,
     // so without this the button stays live and a second click revokes an
     // already revoked grant.
-    setRevokingGrantId(creditGrantId);
+    setIsRevoking(true);
 
     try {
       await revokeWorkspaceCreditGrant({
@@ -105,13 +106,10 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
       enqueueSuccessSnackBar({ message: t`Credit grant revoked.` });
     } catch (error) {
       enqueueErrorSnackBar({
-        message:
-          error instanceof Error
-            ? error.message
-            : t`Could not revoke this credit grant.`,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
-      setRevokingGrantId(null);
+      setIsRevoking(false);
       setGrantPendingRevocation(null);
     }
   };
@@ -170,7 +168,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
                       Icon={IconTrash}
                       size="small"
                       accent="danger"
-                      disabled={isDefined(revokingGrantId)}
+                      disabled={isRevoking}
                       onClick={() => handleRevokeClick(creditGrant)}
                     />
                   )}
@@ -192,7 +190,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
             : ''
         }
         confirmButtonText={t`Revoke`}
-        loading={isDefined(revokingGrantId)}
+        loading={isRevoking}
         onConfirmClick={() => {
           if (isDefined(grantPendingRevocation)) {
             handleRevoke(grantPendingRevocation.id);

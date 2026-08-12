@@ -26,7 +26,7 @@ export class CreateBillingCreditGrantTableFastInstanceCommand
     }
 
     await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."billingCreditGrant_type_enum" AS ENUM ('ROLLOVER', 'ONBOARDING_REWARD', 'COMPENSATION', 'PARTNERSHIP', 'MANUAL_ADJUSTMENT'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+      `DO $$ BEGIN CREATE TYPE "core"."billingCreditGrant_type_enum" AS ENUM ('ROLLOVER', 'ONBOARDING_REWARD', 'COMPENSATION', 'SALES'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
 
     await queryRunner.query(

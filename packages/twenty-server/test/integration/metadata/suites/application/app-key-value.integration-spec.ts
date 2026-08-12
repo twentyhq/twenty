@@ -225,6 +225,8 @@ describe('application key-value store (e2e)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.setAppKeyValue.value).toBe(SEED_APPLE_WORKSPACE_ID);
+    expect(response.body.data.setAppKeyValue.value).toBe(
+      SEED_APPLE_WORKSPACE_ID,
+    );
   });
 });

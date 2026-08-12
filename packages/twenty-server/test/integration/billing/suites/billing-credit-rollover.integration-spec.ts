@@ -55,8 +55,9 @@ describe('Billing credit rollover (integration)', () => {
 
   beforeAll(async () => {
     workspaceId = await getSeededBillingWorkspaceId();
-    billingUsageService =
-      getAppProviderByClassName<BillingUsageService>('BillingUsageService');
+    billingUsageService = getAppProviderByClassName<BillingUsageService>(
+      'BillingUsageService',
+    );
   });
 
   beforeEach(async () => {
