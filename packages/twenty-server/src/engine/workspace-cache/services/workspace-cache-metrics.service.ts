@@ -116,13 +116,13 @@ export class WorkspaceCacheMetricsService {
   recordPackingRun({
     durationSeconds,
     packed,
-    remaining,
+    pending,
   }: {
     durationSeconds: number;
     packed: number;
-    remaining: number;
+    pending: number;
   }): void {
-    this.packingBacklog = remaining;
+    this.packingBacklog = pending;
 
     if (packed === 0) {
       return;
@@ -368,7 +368,7 @@ export class WorkspaceCacheMetricsService {
       metricName: 'twenty_workspace_cache_packing_backlog',
       options: {
         description:
-          'Versions left over when the last packing run hit its per-run cap',
+          'Versions currently eligible for packing, whether or not the last run reached them',
       },
       callback: async () => this.packingBacklog,
     });

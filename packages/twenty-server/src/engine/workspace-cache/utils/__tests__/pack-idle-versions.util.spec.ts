@@ -27,13 +27,13 @@ const pack = () => Buffer.from('packed');
 
 const run = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
-  maxVersionsPerRun: number,
+  maxEntryVersionsPerRun: number,
   packOverride?: () => Buffer | undefined,
 ) =>
   packIdleVersions({
     localCache,
     minIdleMs: IDLE_MS,
-    maxVersionsPerRun,
+    maxEntryVersionsPerRun,
     pack: packOverride ?? pack,
     nowEpochMs: () => NOW_EPOCH_MS,
   });
@@ -68,7 +68,7 @@ describe('packIdleVersions', () => {
     const result = run(localCache, 2);
 
     expect(result.packed).toBe(2);
-    expect(result.remaining).toBe(1);
+    expect(result.pending).toBe(1);
     expect(stateOf(localCache, `${FIELD_METADATA}:ws-coldest`)).toBe('packed');
     expect(stateOf(localCache, `${FIELD_METADATA}:ws-colder`)).toBe('packed');
     expect(stateOf(localCache, `${ORM}:ws-warm`)).toBe('live');
@@ -81,11 +81,11 @@ describe('packIdleVersions', () => {
         liveEntry(IDLE - index),
       ]),
     );
-    let remaining = Number.POSITIVE_INFINITY;
+    let pending = Number.POSITIVE_INFINITY;
     let runs = 0;
 
-    while (remaining > 0 && runs < 10) {
-      remaining = run(localCache, 2).remaining;
+    while (pending > 0 && runs < 10) {
+      pending = run(localCache, 2).pending;
       runs += 1;
     }
 
@@ -122,6 +122,6 @@ describe('packIdleVersions', () => {
     const result = run(localCache, 2);
 
     expect(result.packed).toBe(0);
-    expect(result.remaining).toBe(0);
+    expect(result.pending).toBe(0);
   });
 });
