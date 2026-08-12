@@ -1,6 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ImapFlow } from 'imapflow';
+
+import { normalizeImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-folder-path.util';
 
 export const getImapFolderPath = (
+  client: Pick<ImapFlow, 'enabled'>,
   externalId: string | null | undefined,
 ): string | null => {
   if (!isNonEmptyString(externalId)) {
@@ -8,16 +12,11 @@ export const getImapFolderPath = (
   }
 
   const lastColonIndex = externalId.lastIndexOf(':');
-
-  if (lastColonIndex === -1) {
-    return externalId;
-  }
-
   const trailingSegment = externalId.slice(lastColonIndex + 1);
+  const folderPath =
+    lastColonIndex !== -1 && /^\d+$/.test(trailingSegment)
+      ? externalId.slice(0, lastColonIndex)
+      : externalId;
 
-  if (!/^\d+$/.test(trailingSegment)) {
-    return externalId;
-  }
-
-  return externalId.slice(0, lastColonIndex);
+  return normalizeImapFolderPath(client, folderPath);
 };

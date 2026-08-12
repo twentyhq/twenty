@@ -44,13 +44,15 @@ const MESSAGE_CHANNEL: Pick<MessageChannelEntity, 'messageFolderImportPolicy'> =
 
 describe('ImapGetAllFoldersService', () => {
   let service: ImapGetAllFoldersService;
-  let mockImapClient: jest.Mocked<Pick<ImapFlow, 'list' | 'status'>>;
+  let mockImapClient: jest.Mocked<Pick<ImapFlow, 'list' | 'status'>> &
+    Pick<ImapFlow, 'enabled'>;
   let imapFindSentFolderService: jest.Mocked<ImapFindSentFolderService>;
 
   beforeEach(async () => {
     mockImapClient = {
       list: jest.fn().mockResolvedValue([]),
       status: jest.fn(),
+      enabled: new Set<string>(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -232,5 +234,52 @@ describe('ImapGetAllFoldersService', () => {
         expect(paths).not.toContain('Shared Folders');
       },
     );
+  });
+
+  describe('unicode folder path normalization', () => {
+    it('should store the NFC form of a decomposed folder path on a UTF8=ACCEPT session', async () => {
+      const nfdPath = 'Ane\u0301mo';
+      const nfcPath = 'An\u00e9mo';
+
+      mockImapClient.enabled.add('UTF8=ACCEPT');
+      mockImapClient.list.mockResolvedValue([
+        createMockMailbox({ path: nfdPath }),
+      ]);
+      mockImapClient.status.mockResolvedValue({
+        uidValidity: BigInt(7),
+      } as any);
+
+      const result = await service.getAllMessageFolders(
+        CONNECTED_ACCOUNT,
+        MESSAGE_CHANNEL,
+      );
+
+      expect(mockImapClient.status).toHaveBeenCalledWith(nfcPath, {
+        uidValidity: true,
+      });
+      expect(result.map((folder) => folder.externalId)).toContain(
+        `${nfcPath}:7`,
+      );
+    });
+
+    it('should keep the listed path byte-exact when the session has no UTF8=ACCEPT', async () => {
+      const nfdPath = 'Ane\u0301mo';
+
+      mockImapClient.list.mockResolvedValue([
+        createMockMailbox({ path: nfdPath }),
+      ]);
+      mockImapClient.status.mockResolvedValue({
+        uidValidity: BigInt(7),
+      } as any);
+
+      const result = await service.getAllMessageFolders(
+        CONNECTED_ACCOUNT,
+        MESSAGE_CHANNEL,
+      );
+
+      expect(result.map((folder) => folder.externalId)).toContain(
+        `${nfdPath}:7`,
+      );
+    });
   });
 });

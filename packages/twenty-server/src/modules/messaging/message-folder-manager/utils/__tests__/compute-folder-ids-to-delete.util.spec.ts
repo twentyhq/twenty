@@ -75,4 +75,36 @@ describe('computeFolderIdsToDelete', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('should not delete a stored decomposed externalId when discovery returns its NFC form', () => {
+    const discoveredFolders = [
+      {
+        name: 'Anémo',
+        externalId: 'An\u00e9mo:7',
+        isSynced: true,
+        isSentFolder: false,
+        parentFolderId: null,
+      },
+    ];
+
+    const existingFolders = [
+      {
+        id: 'folder-id',
+        name: 'Anémo',
+        externalId: 'Ane\u0301mo:7',
+        isSynced: true,
+        isSentFolder: false,
+        parentFolderId: null,
+        syncCursor: 'cursor',
+        pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+      },
+    ];
+
+    const result = computeFolderIdsToDelete({
+      discoveredFolders,
+      existingFolders,
+    });
+
+    expect(result).toEqual([]);
+  });
 });

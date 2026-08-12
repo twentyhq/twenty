@@ -124,4 +124,36 @@ describe('computeFoldersToUpdate', () => {
 
     expect(result.size).toBe(0);
   });
+
+  it('should match a stored decomposed externalId to its NFC form and canonicalize it in place', () => {
+    const discoveredFolders = [
+      {
+        name: 'Anémo',
+        externalId: 'An\u00e9mo:7',
+        isSynced: true,
+        isSentFolder: false,
+        parentFolderId: null,
+      },
+    ];
+
+    const existingFolders = [
+      {
+        id: 'folder-id',
+        name: 'Anémo',
+        externalId: 'Ane\u0301mo:7',
+        isSynced: true,
+        isSentFolder: false,
+        parentFolderId: null,
+        syncCursor: 'cursor',
+        pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+      },
+    ];
+
+    const result = computeFoldersToUpdate({
+      discoveredFolders,
+      existingFolders,
+    });
+
+    expect(result.get('folder-id')?.externalId).toBe('An\u00e9mo:7');
+  });
 });

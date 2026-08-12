@@ -3,12 +3,17 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { isImapFlowError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-flow-error.util';
+import { isImapMailboxNotFoundError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-mailbox-not-found-error.util';
 import { isImapNetworkError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-network-error.util';
 
 export const parseImapMessageListFetchError = (
   error: Error,
   options?: { cause?: Error },
 ): MessageImportDriverException => {
+  if (error instanceof MessageImportDriverException) {
+    return error;
+  }
+
   if (!error) {
     return new MessageImportDriverException(
       'Unknown IMAP message list fetch error: No error provided',
@@ -31,6 +36,14 @@ export const parseImapMessageListFetchError = (
     return new MessageImportDriverException(
       `Unknown IMAP message list fetch error: ${errorMessage}`,
       MessageImportDriverExceptionCode.UNKNOWN,
+      { cause: options?.cause || error },
+    );
+  }
+
+  if (isImapMailboxNotFoundError(error)) {
+    return new MessageImportDriverException(
+      `IMAP mailbox not found: ${error.responseText || errorMessage}`,
+      MessageImportDriverExceptionCode.NOT_FOUND,
       { cause: options?.cause || error },
     );
   }

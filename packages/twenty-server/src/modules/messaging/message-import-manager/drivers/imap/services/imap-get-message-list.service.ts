@@ -11,11 +11,13 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
 import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
 import { resolveMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
+import { isImapMailboxNotFoundError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-mailbox-not-found-error.util';
+import { normalizeImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-folder-path.util';
+import { parseImapMessageListFetchError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-message-list-fetch-error.util';
 import { parseSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -30,7 +32,6 @@ export class ImapGetMessageListService {
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
     private readonly imapSyncService: ImapSyncService,
-    private readonly errorHandler: ImapMessageListFetchErrorHandler,
   ) {}
 
   async getMessageLists({
@@ -55,12 +56,43 @@ export class ImapGetMessageListService {
     const client = await this.imapClientProvider.getClient(connectedAccount.id);
 
     try {
+      const existingFolderPaths = await this.listExistingFolderPaths(client);
       const results: GetMessageListsResponse = [];
 
       for (const folder of foldersToProcess) {
-        const response = await this.getMessageList(client, folder);
+        const folderPath = getImapFolderPath(client, folder.externalId);
 
-        results.push({ ...response, folderId: folder.id });
+        if (!isDefined(folderPath)) {
+          this.logger.warn(
+            `Skipping folder ${folder.name}: externalId has no path`,
+          );
+          continue;
+        }
+
+        if (!existingFolderPaths.has(folderPath)) {
+          this.logger.warn(
+            `Skipping folder ${folder.name}: mailbox does not exist on the server`,
+          );
+          continue;
+        }
+
+        try {
+          const response = await this.getMessageList(
+            client,
+            folderPath,
+            folder,
+          );
+
+          results.push({ ...response, folderId: folder.id });
+        } catch (error) {
+          if (!isImapMailboxNotFoundError(error)) {
+            throw error;
+          }
+
+          this.logger.warn(
+            `Skipping folder ${folder.name}: mailbox was deleted during sync`,
+          );
+        }
       }
 
       return results;
@@ -68,27 +100,31 @@ export class ImapGetMessageListService {
       this.logger.error(
         `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
       );
-      this.errorHandler.handleError(error);
-      throw error;
+
+      throw parseImapMessageListFetchError(error, { cause: error });
     } finally {
       await this.imapClientProvider.closeClient(client);
     }
   }
 
+  private async listExistingFolderPaths(
+    client: ImapFlow,
+  ): Promise<Set<string>> {
+    const mailboxList = await client.list();
+
+    return new Set(
+      mailboxList.map((mailbox) =>
+        normalizeImapFolderPath(client, mailbox.path),
+      ),
+    );
+  }
+
   private async getMessageList(
     client: ImapFlow,
+    folderPath: string,
     folder: MessageFolder,
   ): Promise<GetOneMessageListResponse> {
-    const folderPath = getImapFolderPath(folder.externalId);
-
-    if (!isDefined(folderPath)) {
-      throw new MessageImportDriverException(
-        `Folder ${folder.name} has no path`,
-        MessageImportDriverExceptionCode.NOT_FOUND,
-      );
-    }
-
-    if (await this.canSkipFolderSync(client, folder)) {
+    if (await this.canSkipFolderSync(client, folderPath, folder)) {
       this.logger.log(`Skipping folder ${folder.name}: no new messages`);
 
       return {
@@ -146,12 +182,6 @@ export class ImapGetMessageListService {
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,
       };
-    } catch (error) {
-      this.logger.error(
-        `Error syncing folder ${folder.name}: ${error.message}`,
-      );
-      this.errorHandler.handleError(error);
-      throw error;
     } finally {
       lock.release();
     }
@@ -159,12 +189,12 @@ export class ImapGetMessageListService {
 
   private async canSkipFolderSync(
     client: ImapFlow,
+    folderPath: string,
     folder: MessageFolder,
   ): Promise<boolean> {
-    const folderPath = getImapFolderPath(folder.externalId);
     const previousCursor = parseSyncCursor(folder.syncCursor);
 
-    if (!isDefined(folderPath) || !isDefined(previousCursor)) {
+    if (!isDefined(previousCursor)) {
       return false;
     }
 

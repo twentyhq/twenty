@@ -4,6 +4,7 @@ import { isNumber } from 'class-validator';
 import { ListResponse, type ImapFlow } from 'imapflow';
 
 import { getImapSentFolderCandidatesByRegex } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util';
+import { normalizeImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-folder-path.util';
 
 type SentFolderResult = {
   name: string;
@@ -27,6 +28,10 @@ export class ImapFindSentFolderService {
   public async findSentFolder(client: ImapFlow): Promise<SentFolderResult> {
     try {
       const list = await client.list();
+
+      for (const folder of list) {
+        folder.path = normalizeImapFolderPath(client, folder.path);
+      }
 
       this.logger.debug(
         `Available folders: ${list.map((item) => item.path).join(', ')}`,

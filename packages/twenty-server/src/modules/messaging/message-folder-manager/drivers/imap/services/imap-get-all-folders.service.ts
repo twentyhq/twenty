@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow, type ListResponse } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,6 +16,7 @@ import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
+import { normalizeImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-folder-path.util';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 @Injectable()
@@ -66,6 +68,18 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   ): Promise<DiscoveredMessageFolder[]> {
     const folders: DiscoveredMessageFolder[] = [];
     const pathToExternalIdMap = new Map<string, string>();
+
+    for (const mailbox of mailboxList) {
+      mailbox.path = normalizeImapFolderPath(client, mailbox.path);
+
+      if (isNonEmptyString(mailbox.parentPath)) {
+        mailbox.parentPath = normalizeImapFolderPath(
+          client,
+          mailbox.parentPath,
+        );
+      }
+    }
+
     const sentFolder =
       await this.imapFindSentFolderService.findSentFolder(client);
 
@@ -96,7 +110,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     for (const mailbox of mailboxList) {
-      if (!this.isValidMailbox(mailbox, folders)) {
+      if (!this.isValidMailbox(client, mailbox, folders)) {
         if (!pathToExternalIdMap.has(mailbox.path)) {
           pathToExternalIdMap.set(mailbox.path, mailbox.path);
         }
@@ -159,6 +173,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   }
 
   private isValidMailbox(
+    client: ImapFlow,
     mailbox: ListResponse,
     existingFolders: DiscoveredMessageFolder[],
   ): boolean {
@@ -167,7 +182,8 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     const isDuplicate = existingFolders.some(
-      (folder) => getImapFolderPath(folder?.externalId) === mailbox.path,
+      (folder) =>
+        getImapFolderPath(client, folder?.externalId) === mailbox.path,
     );
 
     return !isDuplicate;

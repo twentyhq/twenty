@@ -7,6 +7,7 @@ import {
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { canonicalizeFolderExternalId } from 'src/modules/messaging/message-folder-manager/utils/canonicalize-folder-external-id.util';
 
 export const computeFoldersToUpdate = ({
   discoveredFolders,
@@ -16,14 +17,17 @@ export const computeFoldersToUpdate = ({
   existingFolders: MessageFolder[];
 }): Map<string, Partial<MessageFolderEntity>> => {
   const existingFoldersByExternalId = new Map(
-    existingFolders.map((folder) => [folder.externalId, folder]),
+    existingFolders.map((folder) => [
+      canonicalizeFolderExternalId(folder.externalId),
+      folder,
+    ]),
   );
 
   const foldersToUpdate = new Map<string, Partial<MessageFolderEntity>>();
 
   for (const discoveredFolder of discoveredFolders) {
     const existingFolder = existingFoldersByExternalId.get(
-      discoveredFolder.externalId,
+      canonicalizeFolderExternalId(discoveredFolder.externalId),
     );
 
     if (!existingFolder) {
@@ -36,12 +40,14 @@ export const computeFoldersToUpdate = ({
 
     const discoveredFolderData = {
       name: discoveredFolder.name,
+      externalId: discoveredFolder.externalId,
       isSentFolder: discoveredFolder.isSentFolder,
       parentFolderId,
     };
 
     const existingFolderData = {
       name: existingFolder.name,
+      externalId: existingFolder.externalId,
       isSentFolder: existingFolder.isSentFolder,
       parentFolderId: isNonEmptyString(existingFolder.parentFolderId)
         ? existingFolder.parentFolderId

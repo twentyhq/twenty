@@ -6,6 +6,7 @@ import {
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { canonicalizeFolderExternalId } from 'src/modules/messaging/message-folder-manager/utils/canonicalize-folder-external-id.util';
 
 export const computeFoldersToCreate = ({
   discoveredFolders,
@@ -16,14 +17,18 @@ export const computeFoldersToCreate = ({
   existingFolders: MessageFolder[];
   messageChannelId: string;
 }): Partial<MessageFolderEntity>[] => {
-  const existingFoldersByExternalId = new Map(
-    existingFolders.map((folder) => [folder.externalId, folder]),
+  const existingFolderExternalIds = new Set(
+    existingFolders.map((folder) =>
+      canonicalizeFolderExternalId(folder.externalId),
+    ),
   );
 
   return discoveredFolders
     .filter(
       (discoveredFolder) =>
-        !existingFoldersByExternalId.has(discoveredFolder.externalId),
+        !existingFolderExternalIds.has(
+          canonicalizeFolderExternalId(discoveredFolder.externalId),
+        ),
     )
     .map((discoveredFolder) => ({
       name: discoveredFolder.name,
