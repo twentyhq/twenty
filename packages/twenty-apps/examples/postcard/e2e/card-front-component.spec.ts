@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { CARD_TEST_IDS } from '../src/components/card-test-ids';
-import { resolveWorkspaceUrl } from './utils/resolve-workspace-url';
+import { resolveE2eWorkspaceUrl } from './utils/resolve-e2e-workspace-url';
 
 // Seeded postcard record the preview should display.
 const RECORD_ID = process.env.E2E_POSTCARD_RECORD_ID;
@@ -74,7 +74,7 @@ test.describe('Postcard card front component', () => {
   test('renders the postcard name and status badge in the record preview', async ({
     page,
   }) => {
-    await page.goto(`${resolveWorkspaceUrl()}/object/postCard/${RECORD_ID}`);
+    await page.goto(`${resolveE2eWorkspaceUrl()}/object/postCard/${RECORD_ID}`);
 
     const card = page.getByTestId(CARD_TEST_IDS.root);
     await expect(card).toBeVisible();

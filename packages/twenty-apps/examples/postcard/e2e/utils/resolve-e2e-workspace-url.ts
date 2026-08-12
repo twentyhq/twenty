@@ -8,7 +8,7 @@ const WORKSPACE_ORIGIN_FILE = path.resolve(
   'workspace-origin.txt',
 );
 
-export const resolveWorkspaceUrl = (): string => {
+export const resolveE2eWorkspaceUrl = (): string => {
   const fromEnv = process.env.E2E_WORKSPACE_URL;
   if (fromEnv) {
     return fromEnv.replace(/\/$/, '');
