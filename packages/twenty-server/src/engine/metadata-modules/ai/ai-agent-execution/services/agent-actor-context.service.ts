@@ -171,10 +171,6 @@ export class AgentActorContextService {
         workspaceMemberId: workspaceMember.id,
         source: FieldActorSource.AGENT,
       }),
-      // viaApplication keeps the acting application on the swapped context for
-      // provenance and future install-time grants; it is not the `application`
-      // field on purpose, which would intersect the member's permissions with
-      // the application's default role
       authContext: buildUserAuthContext({
         workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
         userWorkspaceId: userWorkspace.id,

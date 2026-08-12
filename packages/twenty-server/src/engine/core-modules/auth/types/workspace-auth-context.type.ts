@@ -24,10 +24,6 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
   application?: NonNullable<RawAuthContext['application']>;
-  // Provenance only: the application whose agent is acting for this user in a
-  // run-as execution. Unlike `application` (a user-bound application token) it
-  // must never participate in role resolution — the member's own role is the
-  // permission boundary until install-time application grants exist.
   viaApplication?: NonNullable<RawAuthContext['application']>;
 }
 

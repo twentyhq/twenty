@@ -145,8 +145,6 @@ describe('AgentActorContextService', () => {
     });
 
     expect(result.authContext.viaApplication).toBe(viaApplication);
-    // the application field would intersect the member's permissions with the
-    // application default role, so run-as must never populate it
     expect(result.authContext.application).toBeUndefined();
   });
 
