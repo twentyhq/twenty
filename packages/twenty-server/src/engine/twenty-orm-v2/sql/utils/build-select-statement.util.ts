@@ -73,7 +73,7 @@ export const buildProjection = (
   state: SelectStatementState,
 ): { expressions: string[]; mainAliasColumnNames: string[] } => {
   const selectedColumnNames = Object.entries(state.findOptions.select ?? {})
-    .filter(([, isSelected]) => isSelected === true)
+    .filter(([, isSelected]) => isSelected)
     .map(([columnName]) => columnName);
 
   for (const columnName of selectedColumnNames) {
