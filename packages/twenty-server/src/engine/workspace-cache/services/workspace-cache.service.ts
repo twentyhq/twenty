@@ -40,6 +40,7 @@ import {
   type WorkspaceLocalCacheEntry,
 } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
+import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
@@ -694,16 +695,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       localCache: this.localCache,
       minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
       maxEntryVersionsPerRun: MAX_ENTRY_VERSIONS_PER_PACKING_RUN,
+      isPackable: (localKey) =>
+        !this.localDataOnlyKeys.has(
+          getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
+        ),
       pack: ({ localKey, data }) => {
-        const separatorIndex = localKey.lastIndexOf(':');
-        const keyName = localKey.slice(
-          0,
-          separatorIndex,
+        const keyName = getKeyNameFromLocalCacheKey(
+          localKey,
         ) as WorkspaceCacheKeyName;
-
-        if (this.localDataOnlyKeys.has(keyName)) {
-          return undefined;
-        }
 
         return Buffer.from(
           JSON.stringify(

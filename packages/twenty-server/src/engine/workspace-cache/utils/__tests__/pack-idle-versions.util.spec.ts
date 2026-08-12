@@ -28,13 +28,17 @@ const pack = () => Buffer.from('packed');
 const run = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
   maxEntryVersionsPerRun: number,
-  packOverride?: () => Buffer | undefined,
+  overrides?: {
+    pack?: () => Buffer | undefined;
+    isPackable?: (localKey: string) => boolean;
+  },
 ) =>
   packIdleVersions({
     localCache,
     minIdleMs: IDLE_MS,
     maxEntryVersionsPerRun,
-    pack: packOverride ?? pack,
+    isPackable: overrides?.isPackable ?? (() => true),
+    pack: overrides?.pack ?? pack,
     nowEpochMs: () => NOW_EPOCH_MS,
   });
 
@@ -110,8 +114,25 @@ describe('packIdleVersions', () => {
   it('should leave the version live when pack declines it', () => {
     const localCache = new Map([[`${FIELD_METADATA}:ws-a`, liveEntry(IDLE)]]);
 
-    expect(run(localCache, 2, () => undefined).packed).toBe(0);
+    expect(run(localCache, 2, { pack: () => undefined }).packed).toBe(0);
     expect(stateOf(localCache, `${FIELD_METADATA}:ws-a`)).toBe('live');
+  });
+
+  it('should not let an unpackable provider starve the versions behind it', () => {
+    const localCache = new Map([
+      [`${ORM}:ws-coldest`, liveEntry(IDLE - 2_000)],
+      [`${ORM}:ws-colder`, liveEntry(IDLE - 1_000)],
+      [`${FIELD_METADATA}:ws-warm`, liveEntry(IDLE)],
+    ]);
+
+    const result = run(localCache, 2, {
+      isPackable: (localKey) => !localKey.startsWith(ORM),
+    });
+
+    expect(result.packed).toBe(1);
+    expect(result.pending).toBe(0);
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-warm`)).toBe('packed');
+    expect(stateOf(localCache, `${ORM}:ws-coldest`)).toBe('live');
   });
 
   it('should ignore versions that are already packed', () => {

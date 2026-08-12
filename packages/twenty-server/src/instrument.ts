@@ -24,7 +24,17 @@ const meterDrivers = parseArrayEnvVar(
   [],
 );
 
-const parseSampleRate = (value: string | undefined, fallback: number) => {
+const parseSampleRate = ({
+  value,
+  fallback,
+}: {
+  value: string | undefined;
+  fallback: number;
+}) => {
+  if (value === undefined || value.trim() === '') {
+    return fallback;
+  }
+
   const parsed = Number(value);
 
   return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1
@@ -33,10 +43,10 @@ const parseSampleRate = (value: string | undefined, fallback: number) => {
 };
 
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
-  const tracesSampleRate = parseSampleRate(
-    process.env.SENTRY_TRACES_SAMPLE_RATE,
-    0.1,
-  );
+  const tracesSampleRate = parseSampleRate({
+    value: process.env.SENTRY_TRACES_SAMPLE_RATE,
+    fallback: 0.1,
+  });
 
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
@@ -72,10 +82,10 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,
-    profilesSampleRate: parseSampleRate(
-      process.env.SENTRY_PROFILES_SAMPLE_RATE,
-      0.01,
-    ),
+    profilesSampleRate: parseSampleRate({
+      value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
+      fallback: 0.01,
+    }),
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
