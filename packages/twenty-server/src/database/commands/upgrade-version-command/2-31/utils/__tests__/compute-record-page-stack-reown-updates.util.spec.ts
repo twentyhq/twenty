@@ -173,7 +173,10 @@ describe('computeRecordPageStackReownUpdates', () => {
     );
   });
 
-  it('warns on a dangling FIELDS widget view and skips the view branch', () => {
+  // A stack without a resolvable system view must not be re-owned at all:
+  // a derived layout whose FIELDS widget dangles would never be repaired by
+  // the backfill, which does not touch widgets of an existing layout.
+  it('warns and re-owns nothing when the only FIELDS widget view is dangling', () => {
     const stack = buildStack();
 
     stack.fieldsWidget.configuration.viewId = 'unknown-view-db-id';
@@ -181,12 +184,9 @@ describe('computeRecordPageStackReownUpdates', () => {
     const reownUpdates = runCompute({ stack });
 
     expect(warnMock).toHaveBeenCalledWith(
-      expect.stringContaining('Dangling FIELDS widget view unknown-view-db-id'),
+      expect.stringContaining('No resolvable system FIELDS widget view'),
     );
-    expect(reownUpdates.viewUpdates).toHaveLength(0);
-    expect(reownUpdates.viewFieldUpdates).toHaveLength(0);
-    // The widget itself is still re-owned.
-    expect(reownUpdates.pageLayoutWidgetUpdates).toHaveLength(1);
+    expect(countRecordPageReownUpdates(reownUpdates)).toBe(0);
   });
 
   it('warns and skips a view field whose displayed field is missing', () => {

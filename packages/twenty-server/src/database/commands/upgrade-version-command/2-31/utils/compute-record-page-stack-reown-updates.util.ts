@@ -95,21 +95,18 @@ export const computeRecordPageStackReownUpdates = ({
     twentyStandardApplicationUniversalIdentifier,
   });
 
-  // An ambiguous view selection skips the WHOLE stack, not just the view:
-  // re-owning the layout and widgets while their FIELDS configuration still
-  // points at an un-reowned view would leave a half-derived system stack the
-  // backfill never repairs (it does not touch widgets of an existing layout).
-  // Untouched, the stack degrades to a user custom layout, which the
-  // frontend prefers anyway, and the backfill provisions a coherent derived
-  // stack beside it.
-  if (systemFieldsViewSelection.status === 'ambiguous') {
+  // No selected view (ambiguous or none) skips the WHOLE stack, not just the
+  // view: re-owning the layout and widgets without a connected system view
+  // would leave a half-derived stack the backfill never repairs (it does not
+  // touch widgets of an existing layout) and the field handlers would noop on
+  // forever. Untouched, the stack degrades to a user custom layout, which
+  // the frontend prefers anyway, and the backfill provisions a coherent
+  // derived stack beside it.
+  if (systemFieldsViewSelection.status !== 'selected') {
     return reownUpdates;
   }
 
-  const systemFieldsViewId =
-    systemFieldsViewSelection.status === 'selected'
-      ? systemFieldsViewSelection.viewId
-      : undefined;
+  const systemFieldsViewId = systemFieldsViewSelection.viewId;
 
   pushReownUpdate({
     workspaceId,
@@ -345,6 +342,10 @@ const selectSystemFieldsView = ({
   if (candidates.length === 1) {
     return { status: 'selected', viewId: candidates[0].fieldsView.flatView.id };
   }
+
+  logger.warn(
+    `No resolvable system FIELDS widget view for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping the whole stack re-own`,
+  );
 
   return { status: 'none' };
 };
