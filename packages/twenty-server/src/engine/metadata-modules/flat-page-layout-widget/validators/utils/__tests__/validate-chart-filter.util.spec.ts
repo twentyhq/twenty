@@ -1,13 +1,12 @@
-import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type UniversalChartFilter,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateChartFilter } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util';
-import {
-  type AllGraphWidgetConfigurationType,
-  WidgetConfigurationType,
-} from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 const DATE_FIELD_UNIVERSAL_IDENTIFIER = '20202020-1111-4111-8111-000000000001';
 const SELECT_FIELD_UNIVERSAL_IDENTIFIER =
@@ -48,12 +47,9 @@ const flatFieldMetadataMaps = {
   universalIdentifiersByApplicationId: {},
 } as unknown as MetadataFlatEntityMaps<'fieldMetadata'>;
 
-const validateFilter = (recordFilters: unknown[]) =>
+const validateFilter = (recordFilters: UniversalChartFilter['recordFilters']) =>
   validateChartFilter({
-    graphUniversalConfiguration: {
-      configurationType: WidgetConfigurationType.BAR_CHART,
-      filter: { recordFilters },
-    } as unknown as UniversalFlatPageLayoutWidget<AllGraphWidgetConfigurationType>['universalConfiguration'],
+    filter: { recordFilters },
     widgetTitle: 'Deals per month',
     flatFieldMetadataMaps,
   });
@@ -172,9 +168,7 @@ describe('validateChartFilter', () => {
 
   it('should accept a configuration without any filter', () => {
     const errors = validateChartFilter({
-      graphUniversalConfiguration: {
-        configurationType: WidgetConfigurationType.BAR_CHART,
-      } as unknown as UniversalFlatPageLayoutWidget<AllGraphWidgetConfigurationType>['universalConfiguration'],
+      filter: undefined,
       widgetTitle: 'Deals per month',
       flatFieldMetadataMaps,
     });

@@ -55,7 +55,7 @@ export const validateGraphFlatPageLayoutWidgetForCreation = (
   errors.push(...typeSpecificErrors);
 
   const chartFilterErrors = validateChartFilter({
-    graphUniversalConfiguration,
+    filter: graphUniversalConfiguration.filter,
     widgetTitle,
     flatFieldMetadataMaps:
       optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataMaps,

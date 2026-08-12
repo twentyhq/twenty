@@ -4,7 +4,6 @@ import {
   FieldMetadataType,
   type FilterableAndTSVectorFieldType,
   type UniversalChartFilter,
-  type ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
   FILTER_OPERANDS_MAP,
@@ -16,13 +15,16 @@ import {
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
-import { type AllGraphWidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 type UniversalChartRecordFilter = NonNullable<
   UniversalChartFilter['recordFilters']
 >[number];
+
+const isFilterableFieldType = (
+  fieldType: FieldMetadataType,
+): fieldType is FilterableAndTSVectorFieldType =>
+  fieldType in FILTER_OPERANDS_MAP;
 
 const getEffectiveFieldType = ({
   fieldType,
@@ -86,18 +88,20 @@ const validateChartRecordFilter = ({
     relationTargetFieldType: relationTargetField?.type,
   });
 
-  if (!(effectiveFieldType in FILTER_OPERANDS_MAP)) {
+  if (!isFilterableFieldType(effectiveFieldType)) {
     return [];
   }
 
   const allowedOperands = getFilterOperandsForFilterableFieldType({
-    filterType: effectiveFieldType as FilterableAndTSVectorFieldType,
+    filterType: effectiveFieldType,
     subFieldName,
   });
 
-  const operand = rawOperand as ViewFilterOperand;
+  const operand = allowedOperands.find(
+    (allowedOperand) => allowedOperand === rawOperand,
+  );
 
-  if (!allowedOperands.includes(operand)) {
+  if (!isDefined(operand)) {
     const allowedOperandsText = allowedOperands.join(', ');
 
     return [
@@ -136,15 +140,15 @@ const validateChartRecordFilter = ({
 };
 
 export const validateChartFilter = ({
-  graphUniversalConfiguration,
+  filter,
   widgetTitle,
   flatFieldMetadataMaps,
 }: {
-  graphUniversalConfiguration: UniversalFlatPageLayoutWidget<AllGraphWidgetConfigurationType>['universalConfiguration'];
+  filter: UniversalChartFilter | undefined;
   widgetTitle: string;
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
 }): FlatPageLayoutWidgetValidationError[] => {
-  const recordFilters = graphUniversalConfiguration.filter?.recordFilters;
+  const recordFilters = filter?.recordFilters;
 
   if (!isDefined(recordFilters)) {
     return [];
